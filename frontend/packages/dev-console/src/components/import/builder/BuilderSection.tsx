@@ -11,6 +11,10 @@ export interface ImageSectionProps {
 }
 
 const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) => {
+  if (!builderImages) {
+    return null;
+  }
+
   return (
     <FormSection title="Builder" divider>
       <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />

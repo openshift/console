@@ -22,21 +22,29 @@ export const usePrometheusPoll = ({
   const url = getPrometheusURL({ endpoint, endTime, namespace, query, samples, timeout, timespan });
   const [error, setError] = useState();
   const [response, setResponse] = useState();
+  const [loading, setLoading] = useState(true);
   const safeFetch = useSafeFetch();
-  const tick = useCallback(() => url && safeFetch(url)
-    .then(data => {
-      setResponse(data);
-      setError(undefined);
-    })
-    .catch(err => {
-      setError(err);
-      // eslint-disable-next-line no-console
-      console.error(`Error polling Prometheus: ${err}`);
-    }), [url]);
+  const tick = useCallback(() => {
+    if (url) {
+      safeFetch(url)
+        .then(data => {
+          setResponse(data);
+          setError(undefined);
+        })
+        .catch(err => {
+          setError(err);
+          // eslint-disable-next-line no-console
+          console.error(`Error polling Prometheus: ${err}`);
+        })
+        .then(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [url]);
 
   usePoll(tick, delay, endTime, query, timespan);
 
-  return [response, error] as [PrometheusResponse, Error];
+  return [response, error, loading] as [PrometheusResponse, Error, boolean];
 };
 
 type PrometheusPollProps = {

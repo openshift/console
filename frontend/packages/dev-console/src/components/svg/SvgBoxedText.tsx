@@ -1,6 +1,7 @@
 import * as React from 'react';
-import SvgDropShadowFilter from './SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../utils/svg-utils';
+import SvgResourceIcon from '../topology/shapes/ResourceIcon';
+import SvgDropShadowFilter from './SvgDropShadowFilter';
 
 export interface State {
   bb?: { width: number; height: number };
@@ -14,6 +15,7 @@ export interface SvgBoxedTextProps {
   x?: number;
   y?: number;
   cornerRadius?: number;
+  kind?: string;
 }
 
 const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
@@ -21,8 +23,10 @@ const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
 /**
  * Renders a `<text>` component with a `<rect>` box behind.
  */
-export default class SvgBoxedText extends React.PureComponent<SvgBoxedTextProps, State> {
+export default class SvgBoxedText extends React.Component<SvgBoxedTextProps, State> {
   private readonly textRef = React.createRef<SVGTextElement>();
+
+  private iconRef = React.createRef<any>();
 
   constructor(props) {
     super(props);
@@ -55,24 +59,43 @@ export default class SvgBoxedText extends React.PureComponent<SvgBoxedTextProps,
       cornerRadius = 4,
       x = 0,
       y = 0,
+      kind,
       ...other
     } = this.props;
     const { bb } = this.state;
+    const iconSpace: number =
+      kind && this.iconRef.current ? this.iconRef.current.getBBox().width + paddingX : 0;
+
     return (
       <g className={className}>
         <SvgDropShadowFilter id={FILTER_ID} />
         {bb && (
           <rect
             filter={createSvgIdUrl(FILTER_ID)}
-            x={x - paddingX - bb.width / 2}
-            width={bb.width + paddingX * 2}
+            x={x - paddingX - bb.width / 2 - iconSpace / 2}
+            width={bb.width + paddingX * 2 + iconSpace}
             y={y - paddingY - bb.height / 2}
             height={bb.height + paddingY * 2}
             rx={cornerRadius}
             ry={cornerRadius}
           />
         )}
-        <text {...other} ref={this.textRef} x={x} y={y} textAnchor="middle" dy="0.3em">
+        {bb && kind && (
+          <SvgResourceIcon
+            ref={this.iconRef}
+            x={x - bb.width / 2 - paddingX / 2}
+            y={y}
+            kind={kind}
+          />
+        )}
+        <text
+          ref={this.textRef}
+          {...other}
+          x={x + iconSpace / 2}
+          y={y}
+          textAnchor="middle"
+          dy="0.35em"
+        >
           {children}
         </text>
       </g>

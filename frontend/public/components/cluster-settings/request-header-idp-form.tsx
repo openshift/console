@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
@@ -180,8 +181,19 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         <ListInput label="Name Headers" onChange={this.nameHeadersChanged} helpText="The set of headers to check for the display name." />
         <ListInput label="Email Headers" onChange={this.emailHeadersChanged} helpText="The set of headers to check for the email address." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { Loading } from '@console/internal/components/utils';
 import { useFormikContext, FormikValues } from 'formik';
 

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   MachineKind,
   MachineSetKind,

@@ -1,5 +1,5 @@
 import { ComponentType } from 'react';
-import { ObjectMetadata } from '@console/internal/module/k8s';
+import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 
 export interface ResourceProps {
   kind: string;
@@ -25,6 +25,11 @@ export interface TopologyDataResources {
   replicasets: Resource;
   buildconfigs: Resource;
   builds: Resource;
+  daemonSets?: Resource;
+  ksroutes?: Resource;
+  configurations?: Resource;
+  revisions?: Resource;
+  ksservices?: Resource;
 }
 
 export interface Node {
@@ -76,6 +81,7 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: ResourceProps[];
+  pods: K8sResourceKind[];
   data: D;
 }
 
@@ -83,6 +89,7 @@ export interface WorkloadData {
   url?: string;
   editUrl?: string;
   builderImage?: string;
+  kind?: string;
   isKnativeResource?: boolean;
   donutStatus: {
     pods: Pod[];

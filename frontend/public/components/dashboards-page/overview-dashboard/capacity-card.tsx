@@ -12,7 +12,7 @@ import { CapacityBody, CapacityItem } from '../../dashboard/capacity-card';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB } from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
-import { OverviewQuery, overviewQueries } from './queries';
+import { OverviewQuery, capacityQueries } from './queries';
 
 const getLastStats = (response, getStats: GetStats): React.ReactText => {
   const stats = getStats(response);
@@ -27,7 +27,7 @@ const getQueries = () => {
       pluginQueries[queryKey] = pluginQuery.properties.query;
     }
   });
-  return _.defaults(pluginQueries, overviewQueries);
+  return _.defaults(pluginQueries, capacityQueries);
 };
 
 export const CapacityCard_: React.FC<DashboardItemProps> = ({

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import SvgBoxedText, { SvgBoxedTextProps, State } from '../SvgBoxedText';
+import SvgResourceIcon from '../../topology/shapes/ResourceIcon';
 
 describe('SvgBoxedText', () => {
   it('should initially render without a backdrop', () => {
@@ -29,5 +30,26 @@ describe('SvgBoxedText', () => {
       width: 70,
       height: 30,
     });
+  });
+
+  it('should render a text with backdrop around it if kind is given', () => {
+    const wrapper = shallow(<SvgBoxedText x={100} y={200} kind="Deployment" />);
+    wrapper.setState({ bb: { width: 50, height: 20 } });
+    expect(wrapper.find('rect')).toHaveLength(1);
+    expect(wrapper.find(SvgResourceIcon)).toHaveLength(1);
+    const badge = wrapper.find(SvgResourceIcon).first();
+    expect(
+      badge
+        .shallow()
+        .find('text')
+        .text(),
+    ).toEqual('D');
+  });
+
+  it('should not render ResourceIcon if kind is not given', () => {
+    const wrapper = shallow(<SvgBoxedText x={100} y={200} />);
+    wrapper.setState({ bb: { width: 50, height: 20 } });
+    expect(wrapper.find('rect')).toHaveLength(1);
+    expect(wrapper.find(SvgResourceIcon)).toHaveLength(0);
   });
 });

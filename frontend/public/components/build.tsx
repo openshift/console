@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { Status } from '@console/shared';
 import { K8sResourceKindReference, referenceFor, K8sResourceKind, k8sPatch, K8sKind } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -23,7 +25,6 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  StatusIconAndText,
   Timestamp,
 } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
@@ -172,7 +173,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
         <div className="col-sm-6">
           <BuildStrategy resource={build}>
             <dt>Status</dt>
-            <dd><StatusIconAndText status={build.status.phase} /></dd>
+            <dd><Status status={build.status.phase} /></dd>
             {logSnippet && <dt>Log Snippet</dt>}
             {logSnippet && <dd><pre>{logSnippet}</pre></dd>}
             {message && <dt>Reason</dt>}
@@ -286,7 +287,7 @@ const BuildsTableRow: React.FC<BuildsTableRowProps> = ({obj, index, key, style})
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIconAndText status={obj.status.phase} />
+        <Status status={obj.status.phase} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {fromNow(obj.metadata.creationTimestamp)}

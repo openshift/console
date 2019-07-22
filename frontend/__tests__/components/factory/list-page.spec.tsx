@@ -51,7 +51,7 @@ describe(FireMan_.displayName, () => {
     const createProps = {foo: 'bar'};
     const button = wrapper.setProps({canCreate: true, createProps, createButtonText: 'Create Me!'}).find('#yaml-create');
 
-    expect(wrapper.find('#yaml-create').text()).toEqual('Create Me!');
+    expect(wrapper.find('#yaml-create').shallow().text()).toEqual('Create Me!');
 
     Object.keys(createProps).forEach((key) => {
       expect(createProps[key] === button.props()[key]).toBe(true);

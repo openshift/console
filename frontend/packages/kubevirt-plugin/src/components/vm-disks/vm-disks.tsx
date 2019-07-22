@@ -2,19 +2,17 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
 import { getResource } from 'kubevirt-web-ui-components';
-import { getNamespace, getName } from '@console/shared';
+import { getNamespace, getName, createBasicLookup, createLookup } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
-
 import { VMLikeEntityKind } from '../../types';
-import { asVm } from '../../selectors/selectors';
+import { asVM } from '../../selectors/selectors';
 import {
   getDataVolumeTemplates,
   getDisks,
@@ -22,16 +20,15 @@ import {
   getVolumePersistentVolumeClaimName,
   getVolumes,
 } from '../../selectors/vm';
-import { createBasicLookup, createLookup } from '../../utils';
-import { DiskRow } from './disk-row';
-import { StorageBundle, StorageType, VMDiskRowProps } from './types';
-import { CreateDiskRowFirehose } from './create-disk-row';
 import { getPvcStorageClassName, getPvcStorageSize } from '../../selectors/pvc/selectors';
 import {
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
 } from '../../selectors/dv/selectors';
 import { VMLikeEntityTabProps } from '../vms/types';
+import { DiskRow } from './disk-row';
+import { StorageBundle, StorageType, VMDiskRowProps } from './types';
+import { CreateDiskRowFirehose } from './create-disk-row';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
   switch (props.obj.storageType) {
@@ -56,7 +53,7 @@ const getStoragesData = (
   },
   addNewDisk: boolean,
 ): StorageBundle[] => {
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
 
   const pvcLookup = createLookup(pvcs, getName);
   const datavolumeLookup = createLookup(datavolumes, getName);
@@ -112,7 +109,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
 
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
 
   return (
     <div className="co-m-list">
@@ -132,8 +129,9 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
         {createError && (
           <Alert
             variant="danger"
-            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
             title={createError}
+            className="kubevirt-vm-create-device-error"
+            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
           />
         )}
         <Table
@@ -185,6 +183,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               setCreateError(error);
             },
           }}
+          virtualize
           loaded
         />
       </div>

@@ -9,8 +9,8 @@ import {
 } from '@patternfly/react-icons';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
-import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
+import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 
 import './PipelineVisualizationTask.scss';
 

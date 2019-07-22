@@ -1,7 +1,7 @@
 import { TransformTopologyData, getPodStatus, podStatus } from '../topology-utils';
+import { WorkloadData } from '../topology-types';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
-import { WorkloadData } from '../topology-types';
 
 describe('TopologyUtils ', () => {
   it('should be able to create an object', () => {
@@ -105,6 +105,24 @@ describe('TopologyUtils ', () => {
     );
   });
 
+  it('should return a Scaled to zero pod status in a non-serverless application', () => {
+    // simulate pod are scaled to zero in nodejs deployment.
+    const mockResources = { ...MockResources, pods: { data: [] } };
+    mockResources.deploymentConfigs.data[0].metadata.annotations = {
+      'idling.alpha.openshift.io/idled-at': '2019-04-22T11:58:33Z',
+    };
+    const transformTopologyData = new TransformTopologyData(mockResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const status = getPodStatus(
+      (topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods[0],
+    );
+    expect(podStatus.includes(status)).toBe(true);
+    expect(status).toEqual('Scaled to 0');
+  });
+
   it('should return false for non knative resource', () => {
     const mockResources = { ...MockResources, pods: { data: [] } };
     const transformTopologyData = new TransformTopologyData(mockResources);
@@ -138,5 +156,72 @@ describe('TopologyUtils ', () => {
     const topologyTransformedData = result.topology;
     const keys = Object.keys(topologyTransformedData);
     expect((topologyTransformedData[keys[0]].data as WorkloadData).isKnativeResource).toBeTruthy();
+  });
+
+  it('should return a valid daemon set', () => {
+    const transformTopologyData = new TransformTopologyData(MockResources);
+    transformTopologyData.transformDataBy('daemonSets');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect(result.graph.nodes).toHaveLength(1);
+    expect(topologyTransformedData[keys[0]].resources[0].kind).toEqual('DaemonSet');
+  });
+  it('should return a daemon set pod ', () => {
+    const transformTopologyData = new TransformTopologyData(MockResources);
+    transformTopologyData.transformDataBy('daemonSets');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect(result.graph.nodes).toHaveLength(1);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods).toHaveLength(
+      1,
+    );
+  });
+
+  it('should return knative routes for knative resource', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).url).toEqual(
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    );
+  });
+
+  it('should return revision resources for knative workloads', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const revRes = topologyTransformedData[keys[0]].resources.filter(
+      (item) =>
+        item.kind &&
+        item.kind === 'Revision' &&
+        item.apiVersion &&
+        item.apiVersion === 'serving.knative.dev/v1alpha1',
+    );
+    expect(revRes.length).toEqual(1);
+  });
+
+  it('should return Configuration resources for knative workloads', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const configRes = topologyTransformedData[keys[0]].resources.filter(
+      (item) =>
+        item.kind &&
+        item.kind === 'Configuration' &&
+        item.apiVersion &&
+        item.apiVersion === 'serving.knative.dev/v1alpha1',
+    );
+    expect(configRes).toHaveLength(1);
   });
 });

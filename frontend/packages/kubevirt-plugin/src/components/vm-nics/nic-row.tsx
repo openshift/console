@@ -1,18 +1,16 @@
 import * as React from 'react';
-
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { getDeletetionTimestamp, DASH } from '@console/shared';
-
 import { TemplateModel } from '@console/internal/models';
 import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
-import { VMNicRowProps } from './types';
 import { VirtualMachineModel } from '../../models';
-import { isVm } from '../../selectors/selectors';
-import { nicTableColumnClasses } from './utils';
+import { isVM } from '../../selectors/selectors';
 import { dimensifyRow } from '../../utils/table';
+import { nicTableColumnClasses } from './utils';
+import { VMNicRowProps } from './types';
 
 const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, nic): KebabOption => ({
   label: 'Delete',
@@ -23,7 +21,7 @@ const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, nic): KebabOption => (
       vmLikeEntity,
     }),
   accessReview: asAccessReview(
-    isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
+    isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
     'patch',
   ),

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import {
   CancelAcceptButtons,
   Dropdown,
@@ -9,27 +8,24 @@ import {
   VALIDATION_INFO_TYPE,
 } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
-
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, HelpBlock } from 'patternfly-react';
-import { TemplateModel } from '@console/internal/models';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getNamespace } from '@console/shared';
-
-import { VMNicRowProps } from './types';
-import { isVm } from '../../selectors/selectors';
-import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../../models';
+import { getVMLikeModel } from '../../selectors/selectors';
+import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getAddNicPatches } from '../../k8s/patches/vm/vm-nic-patches';
 import { VMKind, VMLikeEntityKind } from '../../types';
-
-import '../vm-disks/_create-device-row.scss';
-import { getNetworkBindings, nicTableColumnClasses } from './utils';
 import { getNetworkChoices } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { NetworkType } from '../../constants/vm';
 import { validateNicName } from '../../utils/validations/vm';
+import { getDefaultNetworkBinding, getNetworkBindings, nicTableColumnClasses } from './utils';
+import { VMNicRowProps } from './types';
+
+import '../vm-disks/_create-device-row.scss';
 
 const createNic = ({
   vmLikeEntity,
@@ -37,12 +33,8 @@ const createNic = ({
 }: {
   vmLikeEntity: VMLikeEntityKind;
   nic: any;
-}): Promise<VMLikeEntityKind> => {
-  const patches = getAddNicPatches(vmLikeEntity, nic);
-  const model = isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel;
-
-  return k8sPatch(model, vmLikeEntity, patches);
-};
+}): Promise<VMLikeEntityKind> =>
+  k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, getAddNicPatches(vmLikeEntity, nic));
 
 type NetworkColumn = {
   network: string;
@@ -136,9 +128,15 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
         <NetworkColumn
           network={network}
           onChange={(net) => {
-            if (net.networkType === NetworkType.POD) {
+            const { networkType: newNetworkType } = net;
+            if (newNetworkType === NetworkType.POD) {
               setMacAddress('');
             }
+
+            if (!binding || !getNetworkBindings(newNetworkType).includes(binding)) {
+              setBinding(getDefaultNetworkBinding(newNetworkType));
+            }
+
             setNetwork(net);
           }}
           hasNADs={hasNADs}
@@ -172,8 +170,8 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             createNic({ vmLikeEntity, nic: { name, model, network, binding, mac: macAddress } })
               .then(onCreateRowDismiss)
               .catch((error) => {
+                onCreateRowError((error && error.message) || 'Error occured, please try again');
                 setCreating(false);
-                onCreateRowError(error || 'Error occured, please try again');
               });
           }}
           disabled={!isValid}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
@@ -198,8 +199,19 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         <p className="co-help-text">Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>.</p>
         <ListInput label="Team" onChange={this.teamsChanged} helpText="Restricts which teams are allowed to log in. The format is <org>/<team>." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

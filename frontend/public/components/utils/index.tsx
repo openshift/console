@@ -10,7 +10,6 @@ export * from './log-window';
 export * from './resource-icon';
 export * from './resource-link';
 export * from './resource-log';
-export * from './volume-icon';
 export * from './timestamp';
 export * from './horizontal-nav';
 export * from './details-page';
@@ -27,7 +26,6 @@ export * from './number-spinner';
 export * from './cloud-provider';
 export * from './documentation';
 export * from './router';
-export * from './operator-states';
 export * from './link';
 export * from './alerts';
 export * from './async';
@@ -48,7 +46,6 @@ export * from './request-size-input';
 export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
-export * from './status-icon';
 export * from './list-input';
 export * from './rbac';
 export * from './poll-hook';
@@ -57,6 +54,7 @@ export * from './safe-fetch-hook';
 export * from './camel-case-wrap';
 export * from './truncate-middle';
 export * from './expand-collapse';
+export * from './volume-type';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
@@ -90,7 +88,8 @@ export type FirehoseResource = {
   isList?: boolean;
   selector?: Selector;
   prop: string;
-  namespaced?: boolean,
+  namespaced?: boolean;
+  optional?: boolean;
 };
 
 export type FirehoseResult<R extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]> = {

@@ -238,7 +238,7 @@ export type VirtualBodyProps = {
   expand: boolean;
 }
 
-type TableOwnProps = {
+export type TableProps = {
   customData?: object;
   data?: any[];
   defaultSortFunc?: string;
@@ -264,7 +264,7 @@ type TableOptionProps = {
   UI: any;
 }
 
-export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwnProps,TableOptionProps>(
+export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableProps,TableOptionProps>(
   stateToProps,
   {sortList: UIActions.sortList},
   null,

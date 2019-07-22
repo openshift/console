@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { testedRegistry } from '../plugin-test-utils';
 
 describe('Perspective', () => {

@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { Status } from '@console/shared';
 import {
   DetailsPage,
   ListPage,
@@ -19,7 +21,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  StatusIconAndText,
 } from './utils';
 
 const menuActions = Kebab.factory.common;
@@ -62,7 +63,7 @@ const TemplateInstanceTableRow: React.FC<TemplateInstanceTableRowProps> = ({obj,
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIconAndText status={getTemplateInstanceStatus(obj)} />
+        <Status status={getTemplateInstanceStatus(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
@@ -120,7 +121,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj})
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Status</dt>
-                <dd><StatusIconAndText status={status} /></dd>
+                <dd><Status status={status} /></dd>
                 {secretName && (
                   <React.Fragment>
                     <dt>Parameters</dt>

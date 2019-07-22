@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+
+import { Status } from '@console/shared';
 import { DeploymentModel } from '../models';
 import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
@@ -22,7 +24,6 @@ import {
   pluralize,
   ResourceSummary,
   SectionHeading,
-  StatusIconAndText,
   togglePaused,
   WorkloadPausedAlert,
 } from './utils';
@@ -98,8 +99,8 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) 
               <dt>Status</dt>
               <dd>
                 {deployment.status.availableReplicas === deployment.status.updatedReplicas && deployment.spec.replicas === deployment.status.availableReplicas
-                  ? <StatusIconAndText status="Up to date" />
-                  : <StatusIconAndText status="Updating" />}
+                  ? <Status status="Up to date" />
+                  : <Status status="Updating" />}
               </dd>
             </ResourceSummary>
           </div>
@@ -114,7 +115,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) 
       <ContainerTable containers={deployment.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={deployment.spec.template} heading="Volumes" />
+      <VolumesTable resource={deployment} heading="Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />

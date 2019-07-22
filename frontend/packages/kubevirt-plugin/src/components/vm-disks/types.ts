@@ -1,4 +1,5 @@
-import { EntityMap, VMLikeEntityKind, VMKind } from '../../types';
+import { EntityMap } from '@console/shared';
+import { VMLikeEntityKind, VMKind } from '../../types';
 
 export enum StorageType {
   STORAGE_TYPE_VM = 'storage-type-vm',

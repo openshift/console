@@ -3,15 +3,13 @@ import * as _ from 'lodash';
 import { Form, Button } from 'patternfly-react';
 import { FormikProps, FormikValues } from 'formik';
 import { ButtonBar } from '@console/internal/components/utils';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import { SourceToImageFormProps } from './import-types';
 import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
-
-export interface SourceToImageFormProps {
-  builderImages?: NormalizedBuilderImages;
-}
+import ServerlessSection from './serverless/ServerlessSection';
+import RouteCheckbox from './route/RouteCheckbox';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
   values,
@@ -26,8 +24,10 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
   <Form onReset={handleReset} onSubmit={handleSubmit}>
     <div className="co-m-pane__form">
       <AppSection project={values.project} />
+      <ServerlessSection />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <GitSection project={values.project} showSample />
+      <RouteCheckbox />
       <AdvancedSection values={values} />
     </div>
     <br />

@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
 import { getAddNicPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
+import { Patch } from '@console/internal/module/k8s';
 import { getInterfaces, getNetworks, getNicBootOrder } from '../../../selectors/vm';
-import { getVmLikePatches } from '../vm-template';
-import { Patch, VMLikeEntityKind } from '../../../types';
+import { getVMLikePatches } from '../vm-template';
+import { VMLikeEntityKind } from '../../../types';
 
 export const getRemoveNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
-  return getVmLikePatches(vmLikeEntity, (vm) => {
+  return getVMLikePatches(vmLikeEntity, (vm) => {
     const nicName = nic.name;
     const nics = getInterfaces(vm);
     const networks = getNetworks(vm);
@@ -48,7 +49,7 @@ export const getRemoveNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
 };
 
 export const getAddNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
-  return getVmLikePatches(vmLikeEntity, (vm) => {
+  return getVMLikePatches(vmLikeEntity, (vm) => {
     return getAddNicPatch(vm, nic);
   });
 };

@@ -1,5 +1,15 @@
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 import { NameValuePair, NameValueFromPair } from '../formik-fields/field-types';
+import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+
+export interface SourceToImageFormProps {
+  builderImages?: NormalizedBuilderImages;
+}
+
+export interface GitImportFormProps {
+  builderImages?: NormalizedBuilderImages;
+}
 
 export interface FirehoseList {
   data?: K8sResourceKind[];
@@ -20,6 +30,7 @@ export interface DeployImageFormData {
   route: RouteData;
   build: BuildData;
   deployment: DeploymentData;
+  limits: LimitsData;
 }
 
 export interface GitImportFormData {
@@ -27,11 +38,14 @@ export interface GitImportFormData {
   project: ProjectData;
   application: ApplicationData;
   git: GitData;
+  docker: DockerData;
+  serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
+  limits: LimitsData;
 }
 
 export interface ApplicationData {
@@ -68,6 +82,11 @@ export interface GitData {
   secret: string;
 }
 
+export interface DockerData {
+  dockerfilePath?: string;
+  containerPort?: number;
+}
+
 export interface RouteData {
   create: boolean;
   targetPort: string;
@@ -93,6 +112,7 @@ export interface BuildData {
     config: boolean;
   };
   env: (NameValuePair | NameValueFromPair)[];
+  strategy: string;
 }
 
 export interface DeploymentData {
@@ -106,6 +126,14 @@ export interface DeploymentData {
 
 export interface ServerlessData {
   trigger: boolean;
+  scaling: ServerlessScaling;
+}
+
+export interface ServerlessScaling {
+  minpods: number;
+  maxpods: number | '';
+  concurrencytarget: number | '';
+  concurrencylimit: number | '';
 }
 
 export enum GitTypes {
@@ -113,6 +141,19 @@ export enum GitTypes {
   github = 'GitHub',
   gitlab = 'GitLab',
   bitbucket = 'Bitbucket',
+}
+
+export enum ImportTypes {
+  git = 'git',
+  docker = 'docker',
+  s2i = 's2i',
+}
+
+export interface ImportData {
+  type: ImportTypes;
+  title: string;
+  buildStrategy: string;
+  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps>;
 }
 
 export enum TerminationTypes {
@@ -130,4 +171,26 @@ export enum InsecureTrafficTypes {
 export enum PassthroughInsecureTrafficTypes {
   none = 'None',
   redirect = 'Redirect',
+}
+
+export interface LimitsData {
+  cpu: ResourceType;
+  memory: ResourceType;
+}
+
+export interface ResourceType {
+  request: number;
+  requestUnit: string;
+  limit: number;
+  limitUnit: string;
+}
+
+export enum CPUUnits {
+  m = 'millicores',
+  '' = 'cores',
+}
+
+export enum MemoryUnits {
+  Mi = 'Mi',
+  Gi = 'Gi',
 }

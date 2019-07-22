@@ -31,7 +31,9 @@ export const EndpointList: React.SFC<EndpointListProps> = (props) => <div classN
     <div className="col-xs-4"></div>
   </div>
   <div className="rows">
-    { props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />) }
+    { props.endpoints
+      ? props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />)
+      : <span className="text-muted">No endpoints</span> }
   </div>
 </div>;
 

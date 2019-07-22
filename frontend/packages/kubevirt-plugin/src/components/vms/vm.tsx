@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
 import {
   getResource,
   getVmStatus,
@@ -11,27 +10,23 @@ import {
   // VM_SIMPLE_STATUS_TO_TEXT,
   //  DASHES,
 } from 'kubevirt-web-ui-components';
-import { getName, getNamespace, getUID } from '@console/shared';
-
+import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
-
-import { K8sEntityMap, VMIKind, VMKind } from '../../types';
-import { menuActions } from './menu-actions';
-import { createLookup } from '../../utils';
-import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
-import { vmStatusFilter } from './table-filters';
+import { VMIKind, VMKind } from '../../types';
+import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
-
+import { getBasicID } from '../../utils';
 import { openCreateVmWizard } from '../modals';
+import { vmStatusFilter } from './table-filters';
+import { menuActions } from './menu-actions';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
@@ -72,11 +67,15 @@ const VMRow: React.FC<VMRowProps> = ({
   key,
   style,
 }) => {
+  const dimensify = dimensifyRow(tableColumnClasses);
   const name = getName(vm);
   const namespace = getNamespace(vm);
   const uid = getUID(vm);
   const vmStatus = getVmStatus(vm, pods, migrations);
-  const dimensify = dimensifyRow(tableColumnClasses);
+  const lookupID = getBasicID(vm);
+
+  const migration = migrationLookup[lookupID];
+  const vmi = vmiLookup[lookupID];
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -91,9 +90,13 @@ const VMRow: React.FC<VMRowProps> = ({
       </TableData>
       <TableData className={dimensify(true)}>
         <Kebab
-          options={menuActions.map((action) =>
-            action(VirtualMachineModel, vm, { vmStatus, migrationLookup, vmiLookup }),
-          )}
+          options={menuActions.map((action) => {
+            return action(VirtualMachineModel, vm, {
+              vmStatus,
+              migration,
+              vmi,
+            });
+          })}
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
         />
@@ -113,7 +116,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       customData={{
         pods: resources.pods.data || [],
         migrations: resources.migrations.data || [],
-        vmiLookup: createLookup(resources.vmis),
+        vmiLookup: createLookup(resources.vmis, getBasicID),
         migrationLookup: createLookup(
           resources.migrations,
           (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,

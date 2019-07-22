@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Button } from '@patternfly/react-core';
 
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { filterList } from '../../actions/k8s';
@@ -119,6 +120,7 @@ ListPageWrapper_.propTypes = {
   ListComponent: PropTypes.func.isRequired,
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
+  customData: PropTypes.any,
 };
 
 /** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, canExpand?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any}> */
@@ -209,7 +211,7 @@ export const FireMan_ = connect(null, {filterList})(
       if (canCreate) {
         if (createProps.to) {
           createLink = <Link className="co-m-primary-action" {...createProps}>
-            <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
+            <Button variant="primary" id="yaml-create">{createButtonText}</Button>
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
@@ -224,7 +226,7 @@ export const FireMan_ = connect(null, {filterList})(
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">
-            <button className="btn btn-primary" id="yaml-create" {...createProps}>{createButtonText}</button>
+            <Button variant="primary" id="yaml-create" {...createProps}>{createButtonText}</Button>
           </div>;
         }
         if (!_.isEmpty(createAccessReview)) {
@@ -386,7 +388,7 @@ export const ListPage = withFallback(props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any}>} */
 export const MultiListPage = props => {
   const {
     autoFocus,
@@ -407,6 +409,7 @@ export const MultiListPage = props => {
     staticFilters,
     textFilter,
     title,
+    customData,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -439,6 +442,7 @@ export const MultiListPage = props => {
         ListComponent={ListComponent}
         rowFilters={rowFilters}
         staticFilters={staticFilters}
+        customData={customData}
       />
     </Firehose>
   </FireMan_>;

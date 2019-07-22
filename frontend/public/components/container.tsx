@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import { Status } from '@console/shared';
 import {
   ContainerLifecycle,
   ContainerLifecycleStage,
@@ -28,7 +29,6 @@ import {
   ResourceLink,
   ScrollToTopOnMount,
   SectionHeading,
-  StatusIconAndText,
   Timestamp,
 } from './utils';
 import { resourcePath } from './utils/resource-link';
@@ -190,7 +190,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
         <SectionHeading text="Container Overview" />
         <dl className="co-m-pane__details">
           <dt>State</dt>
-          <dd><StatusIconAndText status={stateValue} /></dd>
+          <dd><Status status={stateValue} /></dd>
           <dt>ID</dt>
           <dd className="co-break-all">{status.containerID || '-'}</dd>
           <dt>Restarts</dt>

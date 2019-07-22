@@ -11,7 +11,7 @@ import {
 import { DetailsBody, DetailItem } from '../../dashboard/details-card';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { InfrastructureModel, ClusterVersionModel } from '../../../models';
-import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, getClusterName, ClusterVersionKind } from '../../../module/k8s';
+import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, ClusterVersionKind, getClusterID } from '../../../module/k8s';
 import { FLAGS } from '../../../const';
 import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FirehoseResource } from '../../utils';
@@ -66,13 +66,13 @@ export const DetailsCard_ = connect(mapStateToProps)(({
     };
   }, [openshiftFlag, watchK8sResource, stopWatchK8sResource, watchURL, stopWatchURL]);
 
-  const clusterVersion = _.get(resources, 'cv');
-  const clusterVersionLoaded = _.get(clusterVersion, 'loaded', false);
-  const openshiftVersion = getOpenShiftVersion(_.get(clusterVersion, 'data') as ClusterVersionKind);
+  const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
+  const clusterVersionError = _.get(resources.cv, 'loadError');
+  const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
 
-  const infrastructure = _.get(resources, 'infrastructure');
-  const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
-  const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
+  const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
+  const infrastructureError = _.get(resources.infrastructure, 'loadError');
+  const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
 
 
   const kubernetesVersionResponse = urlResults.getIn(['version', 'result']);
@@ -87,22 +87,22 @@ export const DetailsCard_ = connect(mapStateToProps)(({
           {openshiftFlag ? (
             <>
               <DetailItem
-                key="name"
-                title="Name"
-                value={getClusterName()}
-                isLoading={false}
+                key="clusterid"
+                title="Cluster ID"
+                value={getClusterID(clusterVersionData)}
+                isLoading={!clusterVersionLoaded && !clusterVersionError}
               />
               <DetailItem
                 key="provider"
                 title="Provider"
                 value={getInfrastructurePlatform(infrastructureData)}
-                isLoading={!infrastructureLoaded}
+                isLoading={!infrastructureLoaded && !infrastructureError}
               />
               <DetailItem
                 key="openshift"
                 title="OpenShift version"
-                value={openshiftVersion}
-                isLoading={!clusterVersionLoaded}
+                value={getOpenShiftVersion(clusterVersionData)}
+                isLoading={!clusterVersionLoaded && !clusterVersionError}
               />
             </>
           ) : (

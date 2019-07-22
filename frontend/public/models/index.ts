@@ -951,3 +951,16 @@ export const ConsoleNotificationModel: K8sKind = {
   id: 'consolenotification',
   crd: true,
 };
+
+export const ConsoleExternalLogLinkModel: K8sKind = {
+  label: 'Console External Log Link',
+  labelPlural: 'Console External Log Links',
+  apiVersion: 'v1',
+  apiGroup: 'console.openshift.io',
+  plural: 'consoleexternalloglinks',
+  abbr: 'CELL',
+  namespaced: false,
+  kind: 'ConsoleExternalLogLink',
+  id: 'consoleexternalloglink',
+  crd: true,
+};

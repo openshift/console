@@ -4,7 +4,8 @@ import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
-import { Alert } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
 
 import * as ace from 'brace';
 import 'brace/ext/searchbox';
@@ -369,7 +370,7 @@ export const EditYAML = connect(stateToProps)(
           </div>}
           <div className="co-p-has-sidebar">
             <div className="co-p-has-sidebar__body">
-              <div className={classNames('yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r} style={{height: this.state.height}}>
+              <div className={classNames('pf-c-form yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r} style={{height: this.state.height}}>
                 <div className="absolute-zero">
                   <div className="full-width-and-height yaml-editor__flexbox">
                     <div id={this.id} key={this.id} className="yaml-editor__acebox" />
@@ -377,11 +378,13 @@ export const EditYAML = connect(stateToProps)(
                       {error && <Alert isInline className="co-alert co-alert--scrollable" variant="danger" title="An error occurred"><div className="co-pre-line">{error}</div></Alert>}
                       {success && <Alert isInline className="co-alert" variant="success" title={success} />}
                       {stale && <Alert isInline className="co-alert" variant="info" title="This object has been updated.">Click reload to see the new version.</Alert>}
-                      {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                      {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
-                      {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
-                      <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
-                      {download && <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>}
+                      <ActionGroup className="pf-c-form__group--no-top-margin">
+                        {create && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Create</Button>}
+                        {!create && !readOnly && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Save</Button>}
+                        {!create && <Button type="submit" variant="secondary" id="reload-object" onClick={() => this.reload()}>Reload</Button>}
+                        <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>Cancel</Button>
+                        {download && <Button type="submit" variant="secondary" className="pf-c-button--align-right hidden-sm hidden-xs" onClick={() => this.download()}><DownloadIcon /> Download</Button>}
+                      </ActionGroup>
                     </div>
                   </div>
                 </div>

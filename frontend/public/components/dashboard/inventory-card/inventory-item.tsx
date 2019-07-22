@@ -1,47 +1,34 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
+import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import * as plugins from '../../../plugins';
-import { LoadingInline } from '../../utils';
+import {
+  LoadingInline,
+} from '../../utils';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
-    <Icon
-      type="fa"
-      name="check-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--ok"
-    />
+    <GreenCheckCircleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.WARN]: (
-    <Icon
-      type="fa"
-      name="exclamation-triangle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--warn"
-    />
+    <YellowExclamationTriangleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.ERROR]: (
-    <Icon
-      type="fa"
-      name="exclamation-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--error"
-    />
+    <RedExclamationCircleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.PROGRESS]: (
-    <Icon
-      type="pf"
-      name="in-progress"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--progress"
-    />
+    <InProgressIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.NOT_MAPPED]: (
-    <Icon
-      type="fa"
-      name="question-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--question"
-    />
+    <QuestionCircleIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--question" />
   ),
 };
 
@@ -55,21 +42,38 @@ const getStatusGroupIcons = () => {
   return groupStatusIcons;
 };
 
-export const InventoryItem: React.FC<InventoryItemProps> = ({ isLoading, singularTitle, pluralTitle, count, children }) => {
-  const title = count !== 1 ? pluralTitle : singularTitle;
+export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
+  ({ isLoading, singularTitle, pluralTitle, count, children, error = false }) => {
+    const title = count !== 1 ? pluralTitle : singularTitle;
+    let status: React.ReactNode;
+    if (error) {
+      status = <div className="text-secondary">Unavailable</div>;
+    } else if (isLoading) {
+      status = <LoadingInline />;
+    } else {
+      status = children;
+    }
+    return (
+      <div className="co-inventory-card__item">
+        <div className="co-inventory-card__item-title">{isLoading || error ? title : `${count} ${title}`}</div>
+        <div className="co-inventory-card__item-status">{status}</div>
+      </div>
+    );
+  }
+);
+
+export const Status: React.FC<StatusProps> = React.memo(({ groupID, count }) => {
+  const statusGroupIcons = getStatusGroupIcons();
+  const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   return (
-    <div className="co-inventory-card__item">
-      <div className="co-inventory-card__item-title">{isLoading ? title : `${count} ${title}`}</div>
-      {isLoading ? <LoadingInline /> : (
-        <div className="co-inventory-card__item-status">
-          {children}
-        </div>
-      )}
+    <div className="co-inventory-card__status">
+      {groupIcon}
+      <span className="co-inventory-card__status-text">{count}</span>
     </div>
   );
-};
+});
 
-const Status: React.FC<StatusProps> = React.memo(({ groupID, count, statusIDs, kind, namespace, filterType}) => {
+const StatusLink: React.FC<StatusLinkProps> = React.memo(({groupID, count, statusIDs, kind, namespace, filterType}) => {
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
   const to = filterType && statusItems.length > 0 ? `/k8s/${namespacePath}/${kind.plural}?rowFilter-${filterType}=${statusItems}` : `/k8s/${namespacePath}/${kind.plural}`;
@@ -85,44 +89,51 @@ const Status: React.FC<StatusProps> = React.memo(({ groupID, count, statusIDs, k
   );
 });
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React.memo(({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace }) => {
-  const groups = mapper(resources, additionalResources);
-  const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
-  return (
-    <InventoryItem
-      isLoading={isLoading}
-      singularTitle={singularTitle}
-      pluralTitle={pluralTitle}
-      count={resources.length}
-    >
-      {Object.keys(groups).filter(key => groups[key].count > 0).map(key => (
-        <Status
-          key={key}
-          kind={kind}
-          namespace={namespace}
-          groupID={key}
-          count={groups[key].count}
-          statusIDs={groups[key].statusIDs}
-          filterType={groups[key].filterType}
-        />
-      ))}
-    </InventoryItem>
-  );
-});
+export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React.memo(
+  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error }) => {
+    const groups = mapper(resources, additionalResources);
+    const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
+    return (
+      <InventoryItem
+        isLoading={isLoading}
+        singularTitle={singularTitle}
+        pluralTitle={pluralTitle}
+        count={resources.length}
+        error={error}
+      >
+        {Object.keys(groups).filter(key => groups[key].count > 0).map(key => (
+          <StatusLink
+            key={key}
+            kind={kind}
+            namespace={namespace}
+            groupID={key}
+            count={groups[key].count}
+            statusIDs={groups[key].statusIDs}
+            filterType={groups[key].filterType}
+          />
+        ))}
+      </InventoryItem>
+    );
+  }
+);
 
 export type StatusGroupMapper = (resources: K8sResourceKind[], additionalResources?: {[key: string]: K8sResourceKind[]}) => {[key in InventoryStatusGroup | string]: {filterType?: string, statusIDs: string[], count: number}};
 
 type InventoryItemProps = {
-  isLoading: boolean,
-  singularTitle: string,
-  pluralTitle: string,
-  count: number,
-  children?: React.ReactChild[],
+  isLoading: boolean;
+  singularTitle: string;
+  pluralTitle: string;
+  count: number;
+  children?: React.ReactNode;
+  error: boolean;
 };
 
 type StatusProps = {
   groupID: InventoryStatusGroup | string;
   count: number;
+}
+
+type StatusLinkProps = StatusProps & {
   statusIDs: string[];
   kind: K8sKind;
   namespace?: string;
@@ -137,4 +148,5 @@ type ResourceInventoryItemProps = {
   useAbbr?: boolean;
   isLoading: boolean;
   namespace?: string;
+  error: boolean;
 }

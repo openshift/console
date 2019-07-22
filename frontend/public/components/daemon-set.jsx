@@ -120,7 +120,7 @@ const Details = ({obj: daemonset}) => <React.Fragment>
     <ContainerTable containers={daemonset.spec.template.spec.containers} />
   </div>
   <div className="co-m-pane__body">
-    <VolumesTable podTemplate={daemonset.spec.template} heading="Volumes" />
+    <VolumesTable resource={daemonset} heading="Volumes" />
   </div>
 </React.Fragment>;
 

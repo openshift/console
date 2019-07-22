@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
 import {
@@ -112,8 +113,19 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
             hideContents />
         </div>
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

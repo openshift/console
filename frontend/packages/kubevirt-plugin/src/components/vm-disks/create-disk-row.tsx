@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   Text,
   Integer,
@@ -8,23 +7,21 @@ import {
   VALIDATION_INFO_TYPE,
   getResource,
 } from 'kubevirt-web-ui-components';
-
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { HelpBlock, FormGroup } from 'patternfly-react';
-import { StorageClassModel, TemplateModel } from '@console/internal/models';
+import { StorageClassModel } from '@console/internal/models';
 import { getName } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { VMDiskRowProps } from './types';
 import { getVmPreferableDiskBus } from '../../selectors/vm';
-import { isVm } from '../../selectors/selectors';
-import { VirtualMachineModel } from '../../models';
+import { getVMLikeModel } from '../../selectors/selectors';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
+import { validateDiskName } from '../../utils/validations/vm';
+import { VMDiskRowProps } from './types';
 
 import './_create-device-row.scss';
-import { validateDiskName } from '../../utils/validations/vm';
 
 const createDisk = ({
   vmLikeEntity,
@@ -32,12 +29,8 @@ const createDisk = ({
 }: {
   vmLikeEntity: VMLikeEntityKind;
   disk: any;
-}): Promise<VMLikeEntityKind> => {
-  const patches = getAddDiskPatches(vmLikeEntity, disk);
-  const model = isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel;
-
-  return k8sPatch(model, vmLikeEntity, patches);
-};
+}): Promise<VMLikeEntityKind> =>
+  k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, getAddDiskPatches(vmLikeEntity, disk));
 
 type StorageClassColumn = {
   storageClass: string;
@@ -136,8 +129,8 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
             createDisk({ vmLikeEntity, disk: { name, size, bus, storageClass } })
               .then(onCreateRowDismiss)
               .catch((error) => {
+                onCreateRowError((error && error.message) || 'Error occured, please try again');
                 setCreating(false);
-                onCreateRowError(error || 'Error occured, please try again');
               });
           }}
           disabled={!isValid}

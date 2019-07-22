@@ -10,14 +10,7 @@ import {
   ChartThemeVariant,
   getCustomTheme,
 } from '@patternfly/react-charts';
-import {
-  Alert,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  TextInput,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, TextInput } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
@@ -28,18 +21,13 @@ import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeF
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
 import { PrometheusResponse } from '../graphs';
+import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
-
-// Plotly default colors
-// TODO: Remove this once PatternFly's default colors are finalized
-export const graphColors = [
-  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-];
+export const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 
 // Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
 export const omitInternalLabels = (labels: Labels): Labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
@@ -54,13 +42,16 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
     setText(formatPrometheusDuration(span));
   }, [span]);
 
-  const setSpan = (newText: string) => {
+  const debouncedOnChange = React.useCallback(_.debounce(onChange, 400), [onChange]);
+
+  const setSpan = (newText: string, isDebounced = false) => {
     const newSpan = parsePrometheusDuration(newText);
     const newIsValid = (newSpan > 0);
     setIsValid(newIsValid);
     setText(newText);
     if (newIsValid && newSpan !== span) {
-      onChange(newSpan);
+      const fn = isDebounced ? debouncedOnChange : onChange;
+      fn(newSpan);
     }
   };
 
@@ -69,7 +60,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       aria-label="graph timespan"
       className="query-browser__span-text"
       isValid={isValid}
-      onChange={setSpan}
+      onChange={v => setSpan(v, true)}
       type="text"
       value={text}
     />
@@ -78,7 +69,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       items={dropdownItems}
       menuClassName="query-browser__span-dropdown-menu"
       noSelection={true}
-      onChange={setSpan}
+      onChange={v => setSpan(v)}
       title="&nbsp;"
     />
     <button
@@ -100,12 +91,12 @@ const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) =>
         domainPadding={{y: 20}}
         height={200}
         width={width}
-        theme={theme}
+        theme={chartTheme}
         scale={{x: 'time', y: 'linear'}}
       >
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
-        <ChartGroup colorScale={graphColors}>
+        <ChartGroup>
           {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>
@@ -232,25 +223,20 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     return error ? <Error error={error} /> : null;
   }
 
-  const isEmptyState = !updating && _.isEmpty(graphData);
-
-  return <div className={classNames('query-browser__wrapper', {'graph-empty-state': isEmptyState})}>
-    <div className="query-browser__controls query-browser__controls--graph">
+  return <div className={classNames('query-browser__wrapper', {'graph-empty-state': _.isEmpty(graphData)})}>
+    <div className="query-browser__controls">
       <div className="query-browser__controls--left">
         <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
-        <div className="query-browser__loading">
-          {updating && <LoadingInline />}
-        </div>
+        {updating && <div className="query-browser__loading">
+          <LoadingInline />
+        </div>}
       </div>
       {GraphLink && <div className="query-browser__controls--right">
         <GraphLink />
       </div>}
     </div>
     {error && <Error error={error} />}
-    {isEmptyState && <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-      <Title size="sm">No Prometheus datapoints found</Title>
-    </EmptyState>}
+    {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
     {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
   </div>;
 };

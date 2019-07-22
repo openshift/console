@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-
 import { ActivePlugin } from '../../typings';
 import { printPluginStats } from '../plugin-stats';
 

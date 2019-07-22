@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;
 import * as fileSaver from 'file-saver';
+import { Button } from '@patternfly/react-core';
 
 import { DownloadButton, DownloadButtonProps } from '../../../public/components/utils/download-button';
 import * as coFetch from '../../../public/co-fetch';
 
 describe(DownloadButton.displayName, () => {
-  let wrapper: ShallowWrapper<DownloadButtonProps>;
+  let wrapper: ReactWrapper<DownloadButtonProps>;
   const url = 'http://google.com';
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) => new Promise(resolve => spy.and.callFake((...args) => {
@@ -16,7 +17,7 @@ describe(DownloadButton.displayName, () => {
   }));
 
   beforeEach(() => {
-    wrapper = shallow(<DownloadButton url={url} />);
+    wrapper = mount(<DownloadButton url={url} />);
 
     spyOn(fileSaver, 'saveAs').and.returnValue(null);
   });
@@ -27,12 +28,12 @@ describe(DownloadButton.displayName, () => {
       done();
     });
 
-    wrapper.find('button').simulate('click');
+    wrapper.find(Button).simulate('click');
   });
 
   it('renders "Downloading..." if download is in flight', (done) => {
     spyAndExpect(spyOn(coFetch, 'coFetch'))(Promise.resolve()).then(() => {
-      expect(wrapper.find('button').text().trim()).toEqual('Downloading...');
+      expect(wrapper.find(Button).text().trim()).toEqual('Downloading...');
       done();
     });
 

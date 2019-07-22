@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
@@ -117,20 +118,32 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
             required />
         </div>
         <div className="form-group">
-          <label className="control-label" htmlFor="hosted-domain">Hosted Domain</label>
+          <label className="control-label co-required" htmlFor="hosted-domain">Hosted Domain</label>
           <input className="pf-c-form-control"
             type="text"
             onChange={this.hostedDomainChanged}
             value={hostedDomain}
             id="hosted-domain"
-            aria-describedby="idp-hosted-domain-help" />
+            aria-describedby="idp-hosted-domain-help"
+            required />
           <p className="help-block" id="idp-hosted-domain-help">
-            Optionally restrict users to a Google App domain.
+            Restrict users to a Google App domain.
           </p>
         </div>
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

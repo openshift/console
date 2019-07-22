@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { saveAs } from 'file-saver';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
 
 import { coFetch } from '../../co-fetch';
 
@@ -23,9 +24,9 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
   };
 
   return <React.Fragment>
-    <button className="btn btn-primary" style={{marginBottom: 10}} disabled={inFlight} type="button" onClick={() => download()}>
-      <i className="fa fa-fw fa-download" aria-hidden="true" />&nbsp;Download{inFlight && <React.Fragment>ing...</React.Fragment>}
-    </button>
+    <Button variant="primary" style={{marginBottom: 10}} isDisabled={inFlight} type="button" onClick={() => download()}>
+      <DownloadIcon /> Download{inFlight && <React.Fragment>ing...</React.Fragment>}
+    </Button>
     { error && <Alert isInline className="co-alert co-break-word" variant="danger" title={error.toString()} /> }
   </React.Fragment>;
 };

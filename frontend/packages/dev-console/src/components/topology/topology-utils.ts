@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { LabelSelector } from '@console/internal/module/k8s/label-selector';
+import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
+import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
 
 export const podColor = {
@@ -43,6 +44,10 @@ function isContainerLoopingFilter(containerStatus) {
   return (
     containerStatus.state.waiting && containerStatus.state.waiting.reason === 'CrashLoopBackOff'
   );
+}
+
+function isKnativeDeployment(dc: ResourceProps): boolean {
+  return !!(dc.metadata && dc.metadata.labels && dc.metadata.labels[KNATIVE_SERVING_LABEL]);
 }
 
 function podWarnings(pod) {
@@ -92,6 +97,7 @@ export class TransformTopologyData {
 
   private deploymentKindMap = {
     deployments: { dcKind: 'Deployment', rcKind: 'ReplicaSet', rController: 'replicasets' },
+    daemonSets: { dcKind: 'DaemonSet', rcKind: 'ReplicaSet', rController: 'replicasets' },
     deploymentConfigs: {
       dcKind: 'DeploymentConfig',
       rcKind: 'ReplicationController',
@@ -99,12 +105,29 @@ export class TransformTopologyData {
     },
   };
 
+  private transformPods = (pods): K8sResourceKind[] => {
+    return _.map(pods, (pod) =>
+      _.merge(_.pick(pod, 'metadata', 'status', 'spec.containers'), {
+        id: pod.metadata.uid,
+        name: pod.metadata.name,
+        kind: 'Pod',
+      }),
+    );
+  };
+
   private selectorsByService;
 
   private allServices;
 
   constructor(public resources: TopologyDataResources, public application?: string) {
-    this.allServices = _.keyBy(this.resources.services.data, 'metadata.name');
+    if (this.resources.ksservices && this.resources.ksservices.data) {
+      this.allServices = _.keyBy(
+        [...this.resources.services.data, ...this.resources.ksservices.data],
+        'metadata.name',
+      );
+    } else {
+      this.allServices = _.keyBy(this.resources.services.data, 'metadata.name');
+    }
     this.selectorsByService = this.getSelectorsByService();
   }
 
@@ -113,6 +136,13 @@ export class TransformTopologyData {
    */
   public getTopologyData() {
     return this.topologyData;
+  }
+
+  /**
+   * get the route data
+   */
+  getRouteData(ksroute) {
+    return !_.isEmpty(ksroute.status) ? ksroute.status.url : null;
   }
 
   /**
@@ -135,16 +165,36 @@ export class TransformTopologyData {
       deploymentConfig.kind = targetDeploymentsKind;
       const dcUID = _.get(deploymentConfig, 'metadata.uid');
 
-      const replicationController = this.getReplicationController(
+      const replicationControllers = this.getReplicationControllers(
         deploymentConfig,
         targetDeployment,
       );
-      const dcPods = this.getPods(replicationController);
+      const current = _.head(replicationControllers);
+      const previous = _.nth(replicationControllers, 1);
+      const currentPods = current
+        ? this.transformPods(this.getPods(current, deploymentConfig))
+        : [];
+      const previousPods = previous
+        ? this.transformPods(this.getPods(previous, deploymentConfig))
+        : [];
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
+      // list of Knative resources
+      const ksroute = this.getKSRoute(deploymentConfig);
+      const configurations = this.getConfigurations(deploymentConfig);
+      const revisions = this.getRevisions(deploymentConfig);
       // list of resources in the
-      const nodeResources = [deploymentConfig, replicationController, service, route, buildConfigs];
+      const nodeResources = [
+        deploymentConfig,
+        current,
+        service,
+        route,
+        buildConfigs,
+        ksroute,
+        configurations,
+        revisions,
+      ];
       // populate the graph Data
       this.createGraphData(deploymentConfig);
       // add the lookup object
@@ -158,22 +208,20 @@ export class TransformTopologyData {
 
         type: 'workload',
         resources: _.map(nodeResources, (resource) => {
-          resource.name = _.get(resource, 'metadata.name');
-          return resource;
+          return {
+            ...resource,
+            name: _.get(resource, 'metadata.name'),
+          };
         }),
+        pods: [...currentPods, ...previousPods],
         data: {
-          url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : null,
+          url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : this.getRouteData(ksroute),
+          kind: targetDeploymentsKind,
           editUrl: deploymentsAnnotations['app.openshift.io/edit-url'],
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
           isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
           donutStatus: {
-            pods: _.map(dcPods, (pod) =>
-              _.merge(_.pick(pod, 'metadata', 'status', 'spec.containers'), {
-                id: _.get(pod, 'metadata.uid'),
-                name: _.get(pod, 'metadata.name'),
-                kind: 'Pod',
-              }),
-            ),
+            pods: currentPods,
           },
         },
       };
@@ -182,7 +230,13 @@ export class TransformTopologyData {
   }
 
   private getSelectorsByService() {
-    const allServices = _.keyBy(this.resources.services.data, 'metadata.name');
+    let allServices = _.keyBy(this.resources.services.data, 'metadata.name');
+    if (this.resources.ksservices && this.resources.ksservices.data) {
+      allServices = _.keyBy(
+        [...this.resources.services.data, ...this.resources.ksservices.data],
+        'metadata.name',
+      );
+    }
     const selectorsByService = _.mapValues(allServices, (service) => {
       return new LabelSelector(service.spec.selector);
     });
@@ -221,6 +275,72 @@ export class TransformTopologyData {
       }
     });
     return route;
+  }
+
+  /**
+   * get the knative route information from the service
+   * @param service
+   */
+  private getKSRoute(dc: ResourceProps): ResourceProps {
+    const route = {
+      kind: 'Route',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    const { ksroutes } = this.resources;
+    if (isKnativeDeployment(dc)) {
+      _.forEach(ksroutes && ksroutes.data, (routeConfig) => {
+        if (dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(routeConfig, 'metadata.name')) {
+          _.merge(route, routeConfig);
+        }
+      });
+    }
+    return route;
+  }
+
+  /**
+   * get the configuration information from the service
+   * @param replicationController
+   */
+  private getConfigurations(dc: ResourceProps): ResourceProps {
+    const configuration = {
+      kind: 'Configuration',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    const { configurations } = this.resources;
+    if (isKnativeDeployment(dc)) {
+      _.forEach(configurations && configurations.data, (config) => {
+        if (dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(config, 'metadata.name')) {
+          _.merge(configuration, config);
+        }
+      });
+    }
+    return configuration;
+  }
+
+  /**
+   * get the revision information from the service
+   * @param replicationController
+   */
+  private getRevisions(dc: ResourceProps): ResourceProps {
+    const revision = {
+      kind: 'Revision',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    const { revisions } = this.resources;
+    if (isKnativeDeployment(dc)) {
+      _.forEach(revisions && revisions.data, (revisionConfig) => {
+        if (dc.metadata.ownerReferences[0].uid === revisionConfig.metadata.uid) {
+          _.merge(revision, revisionConfig);
+        }
+      });
+    }
+    return revision;
   }
 
   private getBuildConfigs(
@@ -293,20 +413,39 @@ export class TransformTopologyData {
   }
 
   /**
+   * check if the deployment/deploymentconfig is idled.
+   * @param deploymentConfig
+   */
+  private isIdled(deploymentConfig: ResourceProps): boolean {
+    return !!_.get(
+      deploymentConfig,
+      "metadata.annotations['idling.alpha.openshift.io/idled-at']",
+      false,
+    );
+  }
+
+  /**
    * Get all the pods from a replication controller or a replicaset.
    * @param replicationController
    */
-  private getPods(replicationController: ResourceProps) {
+  private getPods(replicationController: ResourceProps, deploymentConfig: ResourceProps) {
+    const deploymentCondition = {
+      uid: _.get(replicationController, 'metadata.uid'),
+      controller: true,
+    };
+    const daemonSetCondition = {
+      uid: _.get(deploymentConfig, 'metadata.uid'),
+    };
+    const condition =
+      deploymentConfig.kind === 'DaemonSet' ? daemonSetCondition : deploymentCondition;
     const dcPodsData = _.filter(this.resources.pods.data, (pod) => {
-      return _.some(_.get(pod, 'metadata.ownerReferences'), {
-        uid: _.get(replicationController, 'metadata.uid'),
-        controller: true,
-      });
+      return _.some(_.get(pod, 'metadata.ownerReferences'), condition);
     });
     if (
       dcPodsData &&
       !dcPodsData.length &&
-      this.isKnativeServing(replicationController, 'metadata.labels')
+      (this.isKnativeServing(replicationController, 'metadata.labels') ||
+        this.isIdled(deploymentConfig))
     ) {
       return [
         {
@@ -323,10 +462,10 @@ export class TransformTopologyData {
    * @param deploymentConfig
    * @param targetDeployment 'deployments' || 'deploymentConfigs'
    */
-  private getReplicationController(
+  private getReplicationControllers(
     deploymentConfig: ResourceProps,
     targetDeployment: string,
-  ): ResourceProps {
+  ): ResourceProps[] {
     // Get the current replication controller or replicaset
     const targetReplicationControllersKind = this.deploymentKindMap[targetDeployment].rcKind;
     const replicationControllers = this.deploymentKindMap[targetDeployment].rController;
@@ -342,9 +481,13 @@ export class TransformTopologyData {
       },
     );
     const sortedControllers = this.sortByDeploymentVersion(rControllers, true);
-    return _.merge(_.head(sortedControllers), {
-      kind: targetReplicationControllersKind,
-    });
+    return _.size(sortedControllers)
+      ? _.map(sortedControllers, (nextController) =>
+          _.merge(nextController, {
+            kind: targetReplicationControllersKind,
+          }),
+        )
+      : ([{ kind: targetReplicationControllersKind }] as ResourceProps[]);
   }
 
   /**

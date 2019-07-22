@@ -5,7 +5,7 @@ export const nameInput = $('#inputUsername');
 export const passwordInput = $('#inputPassword');
 export const submitButton = $('button[type=submit]');
 export const logOutLink = element(by.linkText('Log out'));
-export const userDropdown = $('[data-test=user-dropdown] .pf-c-dropdown__toggle');
+export const userDropdown = $('[data-test=user-dropdown] .pf-c-app-launcher__toggle');
 
 export const selectProvider = async(provider: string) => {
   const idpLink = element(by.cssContainingText('.idp', provider));

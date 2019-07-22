@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import PodStatus from './PodStatus';
-import { NodeProps, WorkloadData } from '../topology-types';
 import KnativeIcon from './KnativeIcon';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
@@ -28,6 +28,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       innerRadius={radius * 0.55}
       icon={workload.data.builderImage}
       label={workload.name}
+      kind={workload.data.kind}
       selected={selected}
       onSelect={onSelect}
       attachments={[

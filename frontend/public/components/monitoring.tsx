@@ -1,12 +1,13 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert } from '@patternfly/react-core';
+import { Alert , ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
@@ -21,10 +22,12 @@ import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
 import { Tooltip } from './utils/tooltip';
+import { AlertManagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import {
   ActionsMenu,
   ButtonBar,
   ExternalLink,
+  Firehose,
   getURLSearchParams,
   history,
   Kebab,
@@ -181,7 +184,7 @@ const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
   const GraphLink = () => query
-    ? <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>View in Metrics</Link>
+    ? <Link to={`/monitoring/query-browser?query0=${encodeURIComponent(query)}`}>View in Metrics</Link>
     : null;
 
   return <QueryBrowser
@@ -627,16 +630,10 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   }
 
   render() {
-    const {alertmanagerLinkPath, CreateButton, data, filters, Header, kindPlural, loaded, loadError, PageDescription, reduxID, Row, rowFilter} = this.props;
+    const {CreateButton, data, filters, Header, kindPlural, loaded, loadError, PageDescription, reduxID, Row, rowFilter} = this.props;
 
     return <React.Fragment>
-      <Helmet>
-        <title>{kindPlural}</title>
-      </Helmet>
       <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">
-          <span>{kindPlural}<HeaderAlertmanagerLink path={alertmanagerLinkPath} /></span>
-        </h1>
         <PageDescription />
       </div>
       <div className="co-m-pane__filter-bar">
@@ -795,12 +792,11 @@ const silencesRowFilter = {
 };
 
 const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring/silences/~new">
-  <button className="btn btn-primary">Create Silence</button>
+  <Button variant="primary">Create Silence</Button>
 </Link>;
 
 const SilencesPage_ = props => <MonitoringListPage
   {...props}
-  alertmanagerLinkPath="/#/silences"
   CreateButton={CreateButton}
   Header={SilenceTableHeader}
   kindPlural="Silences"
@@ -949,9 +945,12 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
               </button>
             </div>
           </div>)}
-          <button type="button" className="btn btn-link btn--silence-add-more" onClick={this.addMatcher}>
-            <i className="fa fa-plus-circle" aria-hidden="true" /> Add More
-          </button>
+          <Button
+            onClick={this.addMatcher}
+            type="button"
+            variant="link">
+            <PlusCircleIcon /> Add More
+          </Button>
         </div>
         <div className="co-form-section__separator"></div>
 
@@ -965,8 +964,19 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
         </div>
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
-          <Link to={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural} className="btn btn-default">Cancel</Link>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              {saveButtonText || 'Save'}
+            </Button>
+            <Button
+              component="a"
+              href={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural}
+              variant="secondary">
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;
@@ -991,6 +1001,12 @@ const CreateSilence = () => {
   return _.isEmpty(matchers)
     ? <SilenceForm saveButtonText="Create" title="Create Silence" />
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
+};
+
+const AlertManagerYAML = () => {
+  return <Firehose resources={[{kind: 'Secret', name: 'alertmanager-main', namespace: 'openshift-monitoring', isList: false, prop: 'obj'}]}>
+    <AlertManagerYAMLEditorWrapper />
+  </Firehose>;
 };
 
 const PollerPages = () => {
@@ -1064,12 +1080,50 @@ const PollerPages = () => {
   </Switch>;
 };
 
-export const MonitoringUI = () => <Switch>
+export const MonitoringUI = ({match}) => <Switch>
   <Redirect from="/monitoring" exact to="/monitoring/alerts" />
   <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
   <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
+  <Route path="/monitoring/(alertmanageryaml|alerts|silences)" exact render={() => <AlertingPage match={match} />} />
   <Route component={PollerPages} />
 </Switch>;
+
+const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
+  const AlertPath = '/monitoring/alerts';
+  const SilencePath = '/monitoring/silences';
+  const YAMLPath = '/monitoring/alertmanageryaml';
+  return <React.Fragment>
+    <div className="co-m-nav-title co-m-nav-title--detail">
+      <h1 className="co-m-pane__heading">
+        <div className="co-m-pane__name co-resource-item">
+          <span id="resource-title" className="co-resource-item__resource-name">Alerting</span>
+          <HeaderAlertmanagerLink path="/#/alerts" />
+        </div>
+      </h1>
+    </div>
+    <div className="co-m-horizontal-nav__menu">
+      <ul className="co-m-horizontal-nav__menu-primary">
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertPath})}>
+          <Link to={AlertPath}>Alerts</Link>
+        </li>
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === SilencePath})}>
+          <Link to={SilencePath}>Silences</Link>
+        </li>
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === YAMLPath})}>
+          <Link to={YAMLPath}>YAML</Link>
+        </li>
+        <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
+      </ul>
+    </div>
+    <Switch>
+      <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
+      <Route component={PollerPages} />
+    </Switch>
+  </React.Fragment>;
+};
 
 type Silence = {
   comment: string;
@@ -1165,4 +1219,8 @@ export type ListPageProps = {
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
+};
+
+type AlertingPageProps = {
+  match: any;
 };

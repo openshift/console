@@ -36,12 +36,14 @@ import {
   EmptyBox,
   resourceObjPath,
   FirehoseResult,
+  FirehoseResource,
 } from '../utils';
 
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
-
+import * as plugins from '../../plugins';
+import { OverviewCRD } from '@console/plugin-sdk';
 
 // List of container status waiting reason values that we should call out as errors in project status rows.
 const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
@@ -729,18 +731,23 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
           ready={obj.status.replicas}
           resource={current ? current.obj : obj}
         />;
-
-      return {
+      let overviewItems = {
         alerts,
         buildConfigs,
         current,
         isRollingOut,
         obj,
         previous,
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
       };
+
+      this.props.utils.forEach(element => {
+        overviewItems = {...overviewItems, ...element(obj, this.props)};
+      });
+      return overviewItems;
     });
   }
 
@@ -779,6 +786,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         isRollingOut,
         obj,
         previous,
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
@@ -922,11 +930,12 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
 const OverviewMainContent = connect<OverviewMainContentPropsFromState, OverviewMainContentPropsFromDispatch, OverviewMainContentOwnProps>(mainContentStateToProps, mainContentDispatchToProps)(OverviewMainContent_);
 
-const overviewStateToProps = ({UI}): OverviewPropsFromState => {
+const overviewStateToProps = ({UI,FLAGS}): OverviewPropsFromState => {
   const selectedUID = UI.getIn(['overview', 'selectedUID']);
   const resources = UI.getIn(['overview', 'resources']);
+  const resourceList = plugins.registry.getOverviewCRDs().filter(resource => FLAGS.get(resource.properties.required));
   const selectedItem = !!resources && resources.get(selectedUID);
-  return { selectedItem };
+  return { selectedItem , resourceList};
 
 };
 
@@ -936,7 +945,7 @@ const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
   };
 };
 
-const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, dismissDetails}) => {
+const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourceList, title, dismissDetails}) => {
   const namespace = _.get(match, 'params.name');
   const sidebarOpen = !_.isEmpty(selectedItem);
   const className = classnames('overview', {'overview--sidebar-shown': sidebarOpen});
@@ -955,7 +964,7 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, 
   });
 
   // TODO: Update resources for native Kubernetes clusters.
-  const resources = [
+  let resources: FirehoseResource[] = [
     {
       isList: true,
       kind: 'Build',
@@ -1029,6 +1038,11 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, 
       prop: 'statefulSets',
     },
   ];
+  let crdUtils = [];
+  resourceList.forEach(resource => {
+    resources = [...resources, ...resource.properties.resources(namespace)];
+    crdUtils = [...crdUtils, resource.properties.utils];
+  });
 
   return <div className={className}>
     <div className="overview__main-column" ref={ref} style={{height}}>
@@ -1039,6 +1053,7 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, 
             namespace={namespace}
             selectedItem={selectedItem}
             title={title}
+            utils={crdUtils}
           />
         </Firehose>
       </div>
@@ -1093,6 +1108,9 @@ export type OverviewItem = {
   routes: K8sResourceKind[];
   services: K8sResourceKind[];
   status?: React.ReactNode;
+  ksroutes?: K8sResourceKind[];
+  configurations?: K8sResourceKind[];
+  revisions?: K8sResourceKind[];
 };
 
 export type PodOverviewItem = {
@@ -1170,9 +1188,10 @@ type OverviewMainContentOwnProps = {
   selectedItem: OverviewItem;
   statefulSets?: FirehoseResult;
   title?: string;
+  utils?: Function[];
 };
 
-type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
+export type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
 
 type OverviewMainContentState = {
   readonly items: any[];
@@ -1183,6 +1202,7 @@ type OverviewMainContentState = {
 
 type OverviewPropsFromState = {
   selectedItem: any;
+  resourceList: OverviewCRD[];
 };
 
 type OverviewPropsFromDispatch = {

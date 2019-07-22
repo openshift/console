@@ -22,6 +22,8 @@ type Descriptor = {
 }
 ```
 
+The `x-descriptors` field can be thought of as "capabilities" (and is referenced in the code using this term). Capabilities are defined in `types.ts` provide a mapping between descriptors and different UI components (implemented as React components) using [URN format](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier).
+
 ### Example
 
 From the `ClusterServiceVersion` for [etcd-operator](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/deploy/chart/catalog_resources/ocs/etcdoperator.v0.9.2.clusterserviceversion.yaml):
@@ -70,8 +72,8 @@ To add a new React component associated with a spec/status descriptor, make a pu
 
 1. Make a React component that accepts props of type `DescriptorProps` and renders the spec/status value.
   - Place component in its own module in either the `spec`, `status`, or `action` directory
-  - Ensure that empty values and errors are properly handled
-2. Add a new "capability" URN to the `SpecCapability`/`StatusCapability` enum.
+  - Ensure that **empty values** and **errors** are properly handled
+2. Add a new "capability" URN to the `SpecCapability`/`StatusCapability` enum in `types.ts`
 3. Update the `capabilityComponents` map with the capability/component key-value pair.
 
 ### Testing

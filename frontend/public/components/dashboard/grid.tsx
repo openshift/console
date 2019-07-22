@@ -3,6 +3,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens';
 
 import { useRefWidth } from '../utils/ref-width-hook';
+import { DashboardCardSpan } from '@console/plugin-sdk';
 
 export enum GridPosition {
   MAIN = 'MAIN',
@@ -10,9 +11,9 @@ export enum GridPosition {
   RIGHT = 'RIGHT',
 }
 
-const mapCardsToGrid = (cards: React.ComponentType<any>[], keyPrefix: string): React.ReactNode[] =>
-  cards.map((Card, index) => (
-    <GridItem key={`${keyPrefix}-${index}`} span={12}><Card /></GridItem>
+const mapCardsToGrid = (cards: GridDashboardCard[], keyPrefix: string, ignoreCardSpan: boolean = false): React.ReactNode[] =>
+  cards.map(({Card, span = 12}, index) => (
+    <GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}><Card /></GridItem>
   ));
 
 export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards = [], rightCards = [] }) => {
@@ -22,17 +23,17 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCar
       <Grid className="co-dashboard-grid">
         <GridItem lg={12} md={12} sm={12}>
           <Grid className="co-dashboard-grid">
-            {mapCardsToGrid(mainCards, 'main')}
+            {mapCardsToGrid(mainCards, 'main', true)}
           </Grid>
         </GridItem>
         <GridItem key="left" lg={12} md={12} sm={12}>
           <Grid className="co-dashboard-grid">
-            {mapCardsToGrid(leftCards, 'left')}
+            {mapCardsToGrid(leftCards, 'left', true)}
           </Grid>
         </GridItem>
         <GridItem key="right" lg={12} md={12} sm={12}>
           <Grid className="co-dashboard-grid">
-            {mapCardsToGrid(rightCards, 'right')}
+            {mapCardsToGrid(rightCards, 'right', true)}
           </Grid>
         </GridItem>
       </Grid>
@@ -59,8 +60,13 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCar
   return <div ref={containerRef}>{grid}</div>;
 };
 
+export type GridDashboardCard = {
+  Card: React.ComponentType<any>;
+  span?: DashboardCardSpan;
+}
+
 type DashboardGridProps = {
-  mainCards: React.ComponentType<any>[],
-  leftCards?: React.ComponentType<any>[],
-  rightCards?: React.ComponentType<any>[],
+  mainCards: GridDashboardCard[],
+  leftCards?: GridDashboardCard[],
+  rightCards?: GridDashboardCard[],
 };

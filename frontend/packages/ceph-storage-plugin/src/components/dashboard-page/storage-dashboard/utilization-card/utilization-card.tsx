@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -14,13 +13,13 @@ import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
 import { UtilizationBody } from '@console/internal/components/dashboard/utilization-card/utilization-body';
 import { UtilizationItem } from '@console/internal/components/dashboard/utilization-card/utilization-item';
-import { humanizeIOPS, humanizeLatency } from './utils';
 import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from '../../../../constants';
 import {
   StorageDashboardQuery,
   UTILIZATION_QUERY,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '../../../../constants/queries';
+import { humanizeIOPS, humanizeLatency } from './utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);

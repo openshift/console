@@ -83,6 +83,22 @@ const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
           helpText="Secret with credentials for pulling your source code."
         />
       </ExpandCollapse>
+      {values.build.strategy === 'Docker' && (
+        <React.Fragment>
+          <InputField
+            type="text"
+            name="docker.dockerfilePath"
+            label="Dockerfile Path"
+            helpText="Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field."
+          />
+          <InputField
+            type="number"
+            name="docker.containerPort"
+            label="Container Port"
+            helpText="Port number the container exposes"
+          />
+        </React.Fragment>
+      )}
     </FormSection>
   );
 };

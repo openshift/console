@@ -843,6 +843,14 @@ spec:
     text: Optional link text
   color: '#fff'
   backgroundColor: '#0088ce'
+`).setIn([referenceForModel(k8sModels.ConsoleExternalLogLinkModel), 'default'], `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLogLink
+metadata:
+  name: example
+spec:
+  hrefTemplate: 'https://example.com/logs?resourceName=\${resourceName}&containerName=\${containerName}&resourceNamespace=\${resourceNamespace}&podLabels=\${podLabels}'
+  text: Example Logs
 `);
 
 const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()

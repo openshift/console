@@ -1,43 +1,41 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 import classNames from 'classnames';
 
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import { HealthState } from './states';
 import { LoadingInline } from '../../utils';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
   let icon;
-  let iconClassModifier;
   switch (state) {
     case HealthState.OK:
-      icon = 'check-circle';
-      iconClassModifier = 'ok';
+      icon = <GreenCheckCircleIcon />;
       break;
     case HealthState.ERROR:
-      icon = 'exclamation-circle';
-      iconClassModifier = 'error';
+      icon = <RedExclamationCircleIcon />;
       break;
     case HealthState.WARNING:
     default:
-      icon = 'exclamation-triangle';
-      iconClassModifier = 'warning';
+      icon = <YellowExclamationTriangleIcon />;
   }
-  return (
-    <div className={`co-health-card__icon co-health-card__icon--${iconClassModifier}`}>
-      <Icon type="fa" name={icon} />
-    </div>
-  );
+  return <div className="co-health-card__icon">{icon}</div>;
 };
 
-export const HealthItem: React.FC<HealthItemProps> = React.memo(({ className, state, message, details }) => (
-  <div className={classNames('co-health-card__item', className)}>
-    {state === HealthState.LOADING ? <LoadingInline /> : <HealthItemIcon state={state} />}
-    <div>
-      {message && <span className="co-health-card__text">{message}</span>}
-      {details && <div className="co-health-card__text co-health-card__subtitle">{details}</div>}
+export const HealthItem: React.FC<HealthItemProps> = React.memo(
+  ({ className, state, message, details }) => (
+    <div className={classNames('co-health-card__item', className)}>
+      {state === HealthState.LOADING ? <LoadingInline /> : <HealthItemIcon state={state} />}
+      <div>
+        {message && <span className="co-health-card__text">{message}</span>}
+        {details && <div className="co-health-card__text co-health-card__subtitle">{details}</div>}
+      </div>
     </div>
-  </div>
-));
+  ),
+);
 
 type HealthItemProps = {
   className?: string;
@@ -48,4 +46,4 @@ type HealthItemProps = {
 
 type HealthItemIconProps = {
   state?: HealthState;
-}
+};

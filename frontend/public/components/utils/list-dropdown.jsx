@@ -144,6 +144,7 @@ ListDropdown.propTypes = {
     namespace: PropTypes.string,
   })).isRequired,
   placeholder: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 const NsDropdown_ = props => {

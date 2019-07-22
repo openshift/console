@@ -76,7 +76,8 @@ describe(EnvironmentPage.name, () => {
     });
 
     it('renders save and reload buttons', () => {
-      expect(wrapper.find('.environment-buttons button').exists()).toEqual(true);
+      expect(wrapper.find({type: 'submit', variant: 'primary'}).shallow().text()).toEqual('Save');
+      expect(wrapper.find({type: 'button', variant: 'secondary'}).shallow().text()).toEqual('Reload');
     });
   });
 

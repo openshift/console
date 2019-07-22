@@ -1,10 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
-import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ArrowCircleUpIcon, CaretDownIcon, EllipsisVIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import {
+  ApplicationLauncher,
+  ApplicationLauncherGroup,
+  ApplicationLauncherItem,
+  ApplicationLauncherSeparator,
+  Button,
+  Toolbar,
+  ToolbarGroup,
+  ToolbarItem,
+} from '@patternfly/react-core';
 
-import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
@@ -12,12 +20,19 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
-import * as plugins from '../plugins';
+import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
+
+const multiClusterManager = {
+  label: 'OpenShift Cluster Manager',
+  externalLink: true,
+  href: 'https://cloud.redhat.com/openshift',
+  image: <img src={openshiftLogoImg} alt="" />,
+};
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
     <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
-      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true"></span>
+      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true" />
     </a>
   </ToolbarItem>
   : null;
@@ -52,7 +67,6 @@ class MastheadToolbar_ extends React.Component {
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
-    this._renderMenuItems = this._renderMenuItems.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
     this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
@@ -146,11 +160,6 @@ class MastheadToolbar_ extends React.Component {
     });
   }
 
-  _onClusterManager(e) {
-    e.preventDefault();
-    window.open('https://cloud.redhat.com/openshift', '_blank').opener = null;
-  }
-
   _onAboutModal(e) {
     e.preventDefault();
     this.setState({ showAboutModal: true });
@@ -158,11 +167,6 @@ class MastheadToolbar_ extends React.Component {
 
   _closeAboutModal() {
     this.setState({ showAboutModal: false });
-  }
-
-  _onDocumentation(e) {
-    e.preventDefault();
-    window.open(openshiftHelpBase, '_blank').opener = null;
   }
 
   _onCommandLineTools(e) {
@@ -175,60 +179,102 @@ class MastheadToolbar_ extends React.Component {
     window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
   }
 
-  _getPerspectiveActions() {
-    const perspectives = plugins.registry.getPerspectives();
-    if (perspectives.length <= 1) {
-      return [];
-    }
-    const { setActivePerspective } = this.props;
-    return [
-      { separator: true },
-      ...perspectives
-        .sort((a, b) => a.properties.name.localeCompare(b.properties.name))
-        .map(p => ({
-          label: <React.Fragment>{p.properties.icon}{' '}{p.properties.name}</React.Fragment>,
-          callback: e => {
-            e.preventDefault();
-            setActivePerspective(p.properties.id);
-            history.push('/');
-          },
-        })),
-    ];
-  }
-
   _getAdditionalLinks(links, type) {
     return _.sortBy(_.filter(links, link => link.spec.location === type), 'spec.text');
   }
 
-  _launchActions() {
-    return [
-      {
-        label: 'Multi-Cluster Manager',
-        callback: this._onClusterManager,
-        externalLink: true,
-      },
-      ...this._getPerspectiveActions(),
-    ];
+  _getSectionLauncherItems(launcherItems, sectionName) {
+    return _.sortBy(
+      _.filter(launcherItems, link => _.get(link, 'spec.applicationMenu.section', '') === sectionName),
+      'spec.text'
+    );
   }
+
+  _sectionSort(section) {
+    switch (section.name) {
+      case 'Red Hat Applications':
+        return 0;
+      case 'Third Party Applications':
+        return 1;
+      case 'Customer Applications':
+        return 2;
+      case '':
+        return 9; // Items w/o sections go last
+      default:
+        return 3; // Custom groups come after well-known groups
+    }
+  }
+
+  _launchActions = () => {
+    const { consoleLinks } = this.props;
+    const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
+
+    const redHatApplications = {
+      name: 'Red Hat Applications',
+      isSection: true,
+      actions: [multiClusterManager],
+    };
+
+    const sections = _.reduce(launcherItems, (accumulator, item) => {
+      const sectionName = _.get(item, 'spec.applicationMenu.section', '');
+      if (!_.find(accumulator, {name: sectionName})) {
+        accumulator.push({name: sectionName, isSection: true, actions: []});
+      }
+      return accumulator;
+    }, [redHatApplications]);
+
+    _.sortBy(sections, [this._sectionSort, 'name']);
+
+    _.each(sections, section => {
+      const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
+      _.each(sectionItems, item => {
+        section.actions.push(
+          {
+            label: _.get(item, 'spec.text'),
+            externalLink: true,
+            href: _.get(item, 'spec.href'),
+            image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
+          }
+        );
+      });
+    });
+
+    return sections;
+  };
 
   _helpActions(additionalHelpActions) {
     const helpActions = [];
-    helpActions.push({
-      label: 'Documentation',
-      callback: this._onDocumentation,
-      externalLink: true,
-    }, {
-      label: 'Command Line Tools',
-      callback: this._onCommandLineTools,
-    }, {
-      label: 'About',
-      callback: this._onAboutModal,
-    }, ...additionalHelpActions);
+    helpActions.push(
+      {
+        name: '',
+        isSection: true,
+        actions: [
+          {
+            label: 'Documentation',
+            externalLink: true,
+            href: openshiftHelpBase,
+          },
+          {
+            label: 'Command Line Tools',
+            callback: this._onCommandLineTools,
+          },
+          {
+            label: 'About',
+            callback: this._onAboutModal,
+          },
+        ],
+      }
+    );
+
+    if (!_.isEmpty(additionalHelpActions.actions)) {
+      helpActions.push(additionalHelpActions);
+    }
+
     return helpActions;
   }
 
   _getAdditionalActions(links) {
-    return _.map(links, link => {
+    const actions = _.map(links, link => {
       return {
         callback: (e) => {
           e.preventDefault();
@@ -238,15 +284,59 @@ class MastheadToolbar_ extends React.Component {
         externalLink: true,
       };
     });
+
+    return {
+      name: '',
+      isSection: true,
+      actions,
+    };
   }
 
-  _renderMenuItems(actions) {
-    return actions.map((action, i) => action.separator
-      ? <DropdownSeparator key={i} />
-      : <DropdownItem key={i} onClick={action.callback}>
-        {action.label}{action.externalLink && <span className="co-external-link"></span>}
-      </DropdownItem>
-    );
+  _externalProps = action => action.externalLink ? {isExternal: true, target: '_blank', rel: 'noopener noreferrer'} : {};
+
+  _renderApplicationItems(actions) {
+    return _.map(actions, (action, index) => {
+
+      if (action.isSection) {
+        return (
+          <ApplicationLauncherGroup key={`group_${index}`} label={action.name}>
+            <React.Fragment>
+              {_.map(action.actions, sectionAction => {
+                return (
+                  <ApplicationLauncherItem
+                    key={sectionAction.label}
+                    icon={sectionAction.image}
+                    href={sectionAction.href || '#'}
+                    onClick={sectionAction.callback}
+                    {...this._externalProps(sectionAction)}
+                  >
+                    {sectionAction.label}
+                  </ApplicationLauncherItem>
+                );
+              })}
+              {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+            </React.Fragment>
+          </ApplicationLauncherGroup>
+        );
+      }
+
+      return (
+        <ApplicationLauncherGroup key={`group_${index}`}>
+          <React.Fragment>
+            <ApplicationLauncherItem
+              key={action.label}
+              icon={action.image}
+              href={action.href || '#'}
+              onClick={action.callback}
+              {...this._externalProps(action)}
+            >
+              {action.label}
+            </ApplicationLauncherItem>
+            {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+          </React.Fragment>
+        </ApplicationLauncherGroup>
+      );
+    });
   }
 
   _renderMenu(mobile) {
@@ -262,6 +352,8 @@ class MastheadToolbar_ extends React.Component {
 
     const actions = [];
     if (flags[FLAGS.AUTH_ENABLED]) {
+      const userActions = [];
+
       const logout = e => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
@@ -271,51 +363,47 @@ class MastheadToolbar_ extends React.Component {
         }
       };
 
-      if (mobile || !_.isEmpty(additionalUserActions)) {
-        actions.push({
-          separator: true,
-        });
-      }
-
       if (window.SERVER_FLAGS.requestTokenURL) {
-        actions.push({
+        userActions.push({
           label: 'Copy Login Command',
           callback: this._copyLoginCommand,
           externalLink: true,
         });
       }
 
-      actions.push({
+      userActions.push({
         label: 'Log out',
         callback: logout,
       });
+
+      actions.push({
+        name: '',
+        isSection: true,
+        actions: userActions,
+      });
     }
 
-    if (!_.isEmpty(additionalUserActions)) {
-      actions.unshift(...additionalUserActions);
-
-      if (mobile) {
-        actions.unshift({
-          separator: true,
-        });
-      }
+    if (!_.isEmpty(additionalUserActions.actions)) {
+      actions.unshift(additionalUserActions);
     }
 
     if (mobile) {
       actions.unshift(...helpActions);
 
       if (flags[FLAGS.OPENSHIFT]) {
-        actions.unshift(...launchActions, {separator: true});
+        actions.unshift(...launchActions);
       }
 
       return (
-        <Dropdown
-          isPlain
-          position="right"
+        <ApplicationLauncher
+          className="co-app-launcher"
           onSelect={this._onKebabDropdownSelect}
-          toggle={<KebabToggle onToggle={this._onKebabDropdownToggle} />}
+          onToggle={this._onKebabDropdownToggle}
           isOpen={isKebabDropdownOpen}
-          dropdownItems={this._renderMenuItems(actions)}
+          items={this._renderApplicationItems(actions)}
+          position="right"
+          toggleIcon={<EllipsisVIcon />}
+          isGrouped
         />
       );
     }
@@ -324,15 +412,24 @@ class MastheadToolbar_ extends React.Component {
       return <div className="co-username">{username}</div>;
     }
 
+    const userToggle = (
+      <span className="pf-c-dropdown__toggle">
+        <span className="co-username">{username}</span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </span>
+    );
+
     return (
-      <Dropdown
+      <ApplicationLauncher
         data-test="user-dropdown"
-        isPlain
-        position="right"
+        className="co-app-launcher"
         onSelect={this._onUserDropdownSelect}
+        onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
-        toggle={<DropdownToggle className="co-username" onToggle={this._onUserDropdownToggle}>{username}</DropdownToggle>}
-        dropdownItems={this._renderMenuItems(actions)}
+        items={this._renderApplicationItems(actions)}
+        position="right"
+        toggleIcon={userToggle}
+        isGrouped
       />
     );
   }
@@ -361,32 +458,28 @@ class MastheadToolbar_ extends React.Component {
             }
             {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
-              <Dropdown
-                isPlain
-                position="right"
+              <ApplicationLauncher
+                className="co-app-launcher"
                 data-test-id="application-launcher"
                 onSelect={this._onApplicationLauncherDropdownSelect}
-                toggle={
-                  <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>
-                    <ThIcon />
-                  </DropdownToggle>
-                }
+                onToggle={this._onApplicationLauncherDropdownToggle}
                 isOpen={isApplicationLauncherDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._launchActions())}
+                items={this._renderApplicationItems(this._launchActions())}
+                position="right"
+                isGrouped
               />
             </ToolbarItem>}
             <ToolbarItem>
-              <Dropdown
-                isPlain
-                position="right"
+              <ApplicationLauncher
+                className="co-app-launcher"
+                data-test="help-dropdown-toggle"
                 onSelect={this._onHelpDropdownSelect}
-                toggle={
-                  <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle} data-test="help-dropdown-toggle">
-                    <QuestionCircleIcon />
-                  </DropdownToggle>
-                }
+                onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
+                items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
+                position="right"
+                toggleIcon={<QuestionCircleIcon />}
+                isGrouped
               />
             </ToolbarItem>
           </ToolbarGroup>
@@ -411,8 +504,7 @@ const mastheadToolbarStateToProps = state => ({
 });
 
 export const MastheadToolbar = connect(
-  mastheadToolbarStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective }
+  mastheadToolbarStateToProps
 )(
   connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(
     MastheadToolbar_

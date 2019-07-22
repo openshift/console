@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, OverlayTrigger, Popover } from 'patternfly-react';
+import { Button, OverlayTrigger, Popover } from 'patternfly-react';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 export const DashboardCardHelp: React.FC<DashboardCardTitleHelpProps> = React.memo(({ children }) => {
   if (React.Children.count(children) === 0) {
@@ -9,11 +10,7 @@ export const DashboardCardHelp: React.FC<DashboardCardTitleHelpProps> = React.me
   return (
     <OverlayTrigger overlay={overlay} placement="top" trigger={['click']} rootClose>
       <Button bsStyle="link">
-        <Icon
-          type="fa"
-          name="info-circle"
-          className="co-dashboard-header__icon"
-        />
+        <InfoCircleIcon className="co-dashboard-header__icon" />
       </Button>
     </OverlayTrigger>
   );

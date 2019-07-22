@@ -4,7 +4,7 @@
   padding: 0;
   position: absolute;
   right: 4px;
-  top: 0;
+  top: 2px;
 }
 
 .query-browser__dropdown--subtitle {
@@ -30,12 +30,7 @@
   flex-wrap: wrap-reverse;
   justify-content: space-between;
   margin-bottom: 15px;
-  padding: 0 20px;
   width: 100%;
-
-  &--graph {
-    padding: 0;
-  }
 }
 
 .query-browser__controls--left {
@@ -72,6 +67,7 @@
 }
 
 .query-browser__query {
+  line-height: 1;
   margin-left: 10px;
   margin-right: 15px;
   width: 100%;
@@ -137,4 +133,16 @@
   overflow: visible;
   padding: 10px;
   width: 100%;
+}
+
+.co-alert-manager-yaml__explanation {
+  margin-bottom: 0;
+}
+
+.co-alert-manager-yaml__form-entry-wrapper {
+  position: relative;
+}
+
+.co-alert-manager-yaml__form co-file-dropzone__textarea {
+  min-height: 400px;
 }

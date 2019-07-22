@@ -73,5 +73,68 @@ describe('ValidationUtils', () => {
         );
       });
     });
+
+    it('should throw an error if request is greater than limit', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.cpu.request = 3;
+      mockData.limits.cpu.requestUnit = 'm';
+      mockData.limits.cpu.limit = 2;
+      mockData.limits.cpu.limitUnit = 'm';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('CPU limit must be greater than or equal to request.');
+      });
+    });
+
+    it('should throw an error if memory request is greater than limit', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.memory.request = 3;
+      mockData.limits.memory.requestUnit = 'Gi';
+      mockData.limits.memory.limit = 3;
+      mockData.limits.memory.limitUnit = 'Mi';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('Memory limit must be greater than or equal to request.');
+      });
+    });
+
+    it('request should entered individual without validation of limit field', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.cpu.request = 3;
+      mockData.limits.cpu.requestUnit = 'm';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('');
+      });
+    });
+
+    it('should throw an error if dockerfilePath is invalid', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.build.strategy = 'Docker';
+      mockData.docker.dockerfilePath = '/Dockerfile';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('DockerfilePath must be a relative path');
+      });
+    });
+
+    it('should throw an error if containerPort is not an integer', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.build.strategy = 'Docker';
+      mockData.docker.containerPort = 808.5;
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('Container port should be an Integer');
+      });
+    });
+
+    it('should not disable create button when buildStrategy is docker and no builderImage is available', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.image.selected = '';
+      mockData.build.strategy = 'Docker';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+      mockData.build.strategy = 'Source';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+    });
   });
 });

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { ChevronCircleRightIcon } from '@patternfly/react-icons';
-import { PipelineVisualizationTask } from './PipelineVisualizationTask';
 import { PipelineVisualizationTaskItem } from '../../utils/pipeline-utils';
+import { PipelineVisualizationTask } from './PipelineVisualizationTask';
 
 import './PipelineVisualizationGraph.scss';
 

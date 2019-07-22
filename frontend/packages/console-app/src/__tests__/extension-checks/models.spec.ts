@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as staticModels from '@console/internal/models';
 import { testedRegistry } from '../plugin-test-utils';

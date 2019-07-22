@@ -17,6 +17,10 @@ export const mockFormData: GitImportFormData = {
     showGitType: false,
     secret: '',
   },
+  docker: {
+    dockerfilePath: 'Dockerfile',
+    containerPort: 8080,
+  },
   image: {
     selected: 'nodejs',
     recommended: '',
@@ -46,6 +50,7 @@ export const mockFormData: GitImportFormData = {
       image: true,
       config: true,
     },
+    strategy: 'Source',
   },
   deployment: {
     env: [],
@@ -56,4 +61,27 @@ export const mockFormData: GitImportFormData = {
     replicas: 1,
   },
   labels: {},
+  serverless: {
+    trigger: false,
+    scaling: {
+      minpods: 0,
+      maxpods: '',
+      concurrencytarget: '',
+      concurrencylimit: '',
+    },
+  },
+  limits: {
+    cpu: {
+      request: null,
+      requestUnit: 'millicores',
+      limit: null,
+      limitUnit: 'millicores',
+    },
+    memory: {
+      request: null,
+      requestUnit: 'MiB',
+      limit: null,
+      limitUnit: 'MiB',
+    },
+  },
 };

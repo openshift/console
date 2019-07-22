@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { ANNOTATION_FIRST_BOOT, BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../../../constants/vm';
 import { getBootDeviceIndex, getDisks, getInterfaces } from '../../../selectors/vm';
 import { VMKind } from '../../../types/vm';

@@ -6,7 +6,6 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
 } from '@console/plugin-sdk';
-
 import { BaremetalHostModel } from './models';
 
 type ConsumedExtensions =
@@ -50,7 +49,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: BaremetalHostModel,
       loader: () =>
         import('./components/host' /* webpackChunkName: "metal3-baremetalhost" */).then(
-          (m) => m.BaremetalHostsPage,
+          (m) => m.BaremetalHostsPageConnected,
         ),
     },
   },
@@ -60,7 +59,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: BaremetalHostModel,
       loader: () =>
         import('./components/host-detail' /* webpackChunkName: "metal3-baremetalhost" */).then(
-          (m) => m.BaremetalHostDetailPage,
+          (m) => m.BaremetalHostDetailPageConnected,
         ),
     },
   },

@@ -30,4 +30,13 @@ module.exports = {
 
   // Disallow Unused Expressions
   'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+
+  // Sort imports into groups
+  'import/order': [
+    'error',
+    {
+      groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+      'newlines-between': 'never',
+    },
+  ],
 };

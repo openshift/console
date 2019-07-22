@@ -31,10 +31,6 @@ $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
   color: inherit;
 }
 
-.form-control[disabled], fieldset[disabled] .form-control {
-  cursor: auto;
-}
-
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
@@ -96,6 +92,14 @@ kbd {
   max-width: 100%;
 }
 
+.pf-c-button--align-right {
+  margin-left: auto !important;
+}
+
+.pf-c-button.pf-m-link--align-left {
+  padding-left: 0;
+}
+
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {
@@ -121,11 +125,10 @@ kbd {
     @media(max-width: $grid-float-breakpoint-max) {
       margin-right: 8px !important;
     }
-    .pf-c-dropdown__toggle {
+    .pf-c-dropdown__toggle, .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
     }
   }
-
 
   &__main {
     // `z-index: auto` is required for fullscreen terminal
@@ -160,6 +163,7 @@ kbd {
 // specificity targeting form elements to override --pf-global--FontSize--md
 .pf-c-page,
 .modal-dialog {
+  .pf-c-app-launcher,
   .pf-c-button,
   .pf-c-dropdown,
   .pf-c-dropdown__menu-item,

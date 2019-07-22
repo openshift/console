@@ -6,12 +6,13 @@ import { connect } from 'react-redux';
 import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
+import { Status } from '@console/shared';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceIcon, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceIcon, ResourceSummary, MsgBox, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -85,7 +86,7 @@ const NamespacesTableRow = ({obj: ns, index, key, style}) => {
         <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
       </TableData>
       <TableData className={classNames(namespacesColumnClasses[1], 'co-break-word')}>
-        <StatusIconAndText status={ns.status.phase} />
+        <Status status={ns.status.phase} />
       </TableData>
       <TableData className={namespacesColumnClasses[2]}>
         <LabelList kind="Namespace" labels={ns.metadata.labels} />
@@ -170,7 +171,7 @@ const ProjectTableRow = ({obj: project, index, key, style, customData = {}}) => 
         )}
       </TableData>
       <TableData className={projectColumnClasses[1]}>
-        <StatusIconAndText status={project.status.phase} />
+        <Status status={project.status.phase} />
       </TableData>
       <TableData className={classNames(projectColumnClasses[2], 'co-break-word')}>
         {requester || <span className="text-muted">No requester</span>}
@@ -302,7 +303,7 @@ export const NamespaceSummary = ({ns}) => {
     <div className="col-sm-6 col-xs-12">
       <dl className="co-m-pane__details">
         <dt>Status</dt>
-        <dd><StatusIconAndText status={ns.status.phase} /></dd>
+        <dd><Status status={ns.status.phase} /></dd>
         {canListSecrets && <React.Fragment>
           <dt>Default Pull Secret</dt>
           <dd><PullSecret namespace={ns} /></dd>

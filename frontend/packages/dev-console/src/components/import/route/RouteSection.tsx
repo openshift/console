@@ -1,26 +1,26 @@
 import * as React from 'react';
-import { CheckboxField } from '../../formik-fields';
+import { useFormikContext, FormikValues } from 'formik';
 import FormSection from '../section/FormSection';
+import { RouteData } from '../import-types';
 import CreateRoute from './CreateRoute';
 import SecureRoute from './SecureRoute';
-import { RouteData } from '../import-types';
 
 interface RouteSectionProps {
   route: RouteData;
 }
 
 const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
+  const {
+    values: {
+      serverless: { trigger: serverlessTrigger },
+    },
+  } = useFormikContext<FormikValues>();
   return (
     <FormSection title="Routing">
-      <CheckboxField
-        type="checkbox"
-        name="route.create"
-        label="Create a route to the application"
-      />
       {route.create && (
         <React.Fragment>
           <CreateRoute />
-          <SecureRoute />
+          {!serverlessTrigger && <SecureRoute />}
         </React.Fragment>
       )}
     </FormSection>

@@ -1,7 +1,7 @@
-import { TemplateKind } from '@console/internal/module/k8s';
-import { Patch, VMLikeEntityKind, VMKind } from '../../../types';
-import { isVm } from '../../../selectors/selectors';
-import { selectVm } from '../../../selectors/vm-template/selectors';
+import { TemplateKind, Patch } from '@console/internal/module/k8s';
+import { VMLikeEntityKind, VMKind } from '../../../types';
+import { isVM } from '../../../selectors/selectors';
+import { selectVM } from '../../../selectors/vm-template/selectors';
 
 export const addPrefixToPatch = (prefix: string, patch: Patch): Patch => ({
   ...patch,
@@ -13,16 +13,16 @@ export const getTemplatePatchPrefix = (vmTemplate: TemplateKind, vm: VMKind): st
   return vmIndex < 0 ? null : `/objects/${vmIndex}`;
 };
 
-export const getVmLikePatches = (
+export const getVMLikePatches = (
   vmLikeEntity: VMLikeEntityKind,
   patchesSupplier: (vm: VMKind) => Patch[],
 ): Patch[] => {
   let vm;
   let templatePrefix = null;
-  if (isVm(vmLikeEntity)) {
+  if (isVM(vmLikeEntity)) {
     vm = vmLikeEntity;
   } else {
-    vm = selectVm(vmLikeEntity as TemplateKind);
+    vm = selectVM(vmLikeEntity as TemplateKind);
     templatePrefix = getTemplatePatchPrefix(vmLikeEntity as TemplateKind, vm);
   }
 

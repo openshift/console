@@ -16,12 +16,11 @@
 
 .co-events-card__item {
   border-bottom: solid 1px $pf-color-black-200;
-  padding: 0 1.5em;
+  padding: 0 1.5rem 15px 1.5rem;
 }
 
 .co-events-card__item-icon--error {
   align-items: center;
-  color: $pf-color-red-100;
   display: flex;
   font-size: 1.2rem;
   margin-right: 0.3em;
@@ -40,18 +39,8 @@
   white-space: nowrap;
 }
 
-.co-events-card__item-source {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .co-events-card__item-subheader {
   display: flex;
   justify-content: space-between;
   white-space: pre;
-}
-
-.co-events-card__item-timestamp {
-  display: inline-block;
 }

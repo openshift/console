@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { TableData, TableRow } from '@console/internal/components/factory';
 import {
   asAccessReview,
@@ -8,15 +7,14 @@ import {
   LoadingInline,
 } from '@console/internal/components/utils';
 import { getDeletetionTimestamp, DASH } from '@console/shared';
-
 import { TemplateModel } from '@console/internal/models';
 import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
 import { getDiskBus } from '../../selectors/vm';
-import { VMDiskRowProps } from './types';
 import { VirtualMachineModel } from '../../models';
-import { isVm } from '../../selectors/selectors';
+import { isVM } from '../../selectors/selectors';
+import { VMDiskRowProps } from './types';
 
 const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => ({
   label: 'Delete',
@@ -27,7 +25,7 @@ const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => 
       vmLikeEntity,
     }),
   accessReview: asAccessReview(
-    isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
+    isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
     'patch',
   ),

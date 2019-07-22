@@ -3,6 +3,7 @@ import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { history } from '@console/internal/components/utils';
 import { getNamespace } from '@console/internal/components/utils/link';
 import { k8sCreate, K8sKind, K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
+import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
@@ -116,12 +117,13 @@ export const triggerPipeline = (
   return (): Action => ({
     label: 'Trigger',
     callback: () => {
-      // eslint-disable-next-line promise/catch-or-return
-      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun)).then(() => {
-        if (redirectURL) {
-          redirectToResourceList(redirectURL);
-        }
-      });
+      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
+        .then(() => {
+          if (redirectURL) {
+            redirectToResourceList(redirectURL);
+          }
+        })
+        .catch((err) => errorModal({ error: err.message }));
     },
   });
 };
@@ -176,12 +178,13 @@ export const rerunPipeline = (
   return (): Action => ({
     label: 'Trigger Last Run',
     callback: () => {
-      // eslint-disable-next-line promise/catch-or-return
-      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun)).then(() => {
-        if (redirectURL) {
-          redirectToResourceList(redirectURL);
-        }
-      });
+      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
+        .then(() => {
+          if (redirectURL) {
+            redirectToResourceList(redirectURL);
+          }
+        })
+        .catch((err) => errorModal({ error: err.message }));
     },
   });
 };

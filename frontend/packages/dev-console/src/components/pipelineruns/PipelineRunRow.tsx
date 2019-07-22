@@ -1,19 +1,14 @@
 import * as React from 'react';
+import { Status } from '@console/shared';
 import { TableRow, TableData } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceLink,
-  Timestamp,
-  ResourceKebab,
-  StatusIconAndText,
-} from '@console/internal/components/utils';
+import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { reRunPipelineRun, stopPipelineRun } from '../../utils/pipeline-actions';
-import { PipelineTaskStatus } from './PipelineTaskStatus';
 import { PipelineRun } from '../../utils/pipeline-augment';
-import { tableColumnClasses } from './pipelinerun-table';
 import { PipelineRunModel } from '../../models';
+import { PipelineTaskStatus } from './PipelineTaskStatus';
+import { tableColumnClasses } from './pipelinerun-table';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
@@ -40,7 +35,7 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
         <Timestamp timestamp={obj.status && obj.status.startTime} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIconAndText status={pipelineRunFilterReducer(obj)} />
+        <Status status={pipelineRunFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <PipelineTaskStatus pipelinerun={obj} />

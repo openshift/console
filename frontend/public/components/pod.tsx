@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { Status, ErrorStatus } from '@console/shared';
 
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
 import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
@@ -21,7 +22,6 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   Selector,
-  StatusIconAndText,
   Timestamp,
   navFactory,
   units,
@@ -33,7 +33,6 @@ import { requirePrometheus, Area } from './graphs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
-import { RedExclamationCircleIcon } from '@console/internal/components/utils/status-icon';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -47,8 +46,7 @@ export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
     return <CamelCaseWrap value={readiness} />;
   }
   return <span className="co-error co-icon-and-text">
-    <RedExclamationCircleIcon className="co-icon-and-text__icon" />
-    <CamelCaseWrap value={readiness} />
+    <ErrorStatus title={readiness} />
   </span>;
 };
 Readiness.displayName = 'Readiness';
@@ -82,7 +80,7 @@ const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) 
         <NodeLink name={pod.spec.nodeName} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <StatusIconAndText status={phase} />
+        <Status status={phase} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <Readiness pod={pod} />
@@ -150,7 +148,7 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({pod, container}) => {
       <ContainerLink pod={pod} name={container.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">{container.image || '-'}</div>
-    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIconAndText status={cstate.label} /></div>
+    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><Status status={cstate.label} /></div>
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
@@ -207,7 +205,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <br />
 </React.Fragment>);
 
-export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <StatusIconAndText status={podPhase(pod)} />;
+export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <Status status={podPhase(pod)} />;
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({pod}) => {
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
@@ -276,7 +274,7 @@ const Details: React.FC<PodDetailsProps> = ({obj: pod}) => {
       <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={pod} heading="Volumes" />
+      <VolumesTable resource={pod} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

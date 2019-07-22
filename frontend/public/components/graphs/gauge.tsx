@@ -10,45 +10,44 @@ import { getInstantVectorStats } from './utils';
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 
 export const GaugeChart: React.FC<GaugeChartProps> = ({
-  query = '',
-  thresholds = DEFAULT_THRESHOLDS,
-  invert = false,
-  usedLabel = 'used',
-  label,
-  remainderLabel = 'available',
-  title,
-  theme,
   data,
-  secondaryTitle = usedLabel,
   error = false,
+  invert = false,
+  label,
+  loading,
+  query = '',
+  remainderLabel = 'available',
+  theme,
+  thresholds = DEFAULT_THRESHOLDS,
+  title,
+  usedLabel = 'used',
+
+  // Don't sort, Uses previously declared props
+  secondaryTitle = usedLabel,
 }) => {
   const [ref, width] = useRefWidth();
   const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${d.y} ${remainderLabel}`;
-  return (
-    <PrometheusGraph className="graph-wrapper--title-center" title={title}>
-      <div ref={ref} className="graph-wrapper--gauge">
-        <PrometheusGraphLink query={query}>
-          <ChartDonutThreshold
-            data={thresholds}
-            height={width} // Changes the scale of the graph, not actual width and height
-            y="value"
-            width={width}
-          >
-            <ChartDonutUtilization
-              labels={labels}
-              data={error ? {y: 0}: data}
-              invert={invert}
-              subTitle={error ? null : secondaryTitle}
-              themeColor={ChartThemeColor.green}
-              thresholds={thresholds}
-              title={error ? 'No Data' : label}
-              theme={theme}
-            />
-          </ChartDonutThreshold>
-        </PrometheusGraphLink>
-      </div>
-    </PrometheusGraph>
-  );
+  return <PrometheusGraph className="graph-wrapper--title-center graph-wrapper--gauge" ref={ref} title={title}>
+    <PrometheusGraphLink query={query}>
+      <ChartDonutThreshold
+        data={thresholds}
+        height={width} // Changes the scale of the graph, not actual width and height
+        y="value"
+        width={width}
+      >
+        <ChartDonutUtilization
+          labels={labels}
+          data={error ? { y: 0 } : data}
+          invert={invert}
+          subTitle={error || loading ? null : secondaryTitle}
+          themeColor={ChartThemeColor.green}
+          thresholds={thresholds}
+          title={loading ? 'Loading' : error ? 'No Data' : label}
+          theme={theme}
+        />
+      </ChartDonutThreshold>
+    </PrometheusGraphLink>
+  </PrometheusGraph>;
 };
 
 export const Gauge: React.FC<GaugeProps> = ({
@@ -56,49 +55,54 @@ export const Gauge: React.FC<GaugeProps> = ({
   invert,
   namespace,
   percent = 0,
-  remainderLabel,
   query,
+  remainderLabel,
+  secondaryTitle,
+  theme,
   thresholds,
   title,
   usedLabel,
-  theme,
-  secondaryTitle,
 }) => {
-  const [response, error] = usePrometheusPoll({
+  const [response, error, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
     query,
   });
 
-  const data = response ?
-    getInstantVectorStats(response, null, humanize).map(({label, y}) => ({x: label, y}))[0]
-    : {x: humanize(percent).string, y: percent};
-  return (
-    <GaugeChart
-      query={query}
-      thresholds={thresholds}
-      invert={invert}
-      usedLabel={usedLabel}
-      label={data.x}
-      data={data}
-      remainderLabel={remainderLabel}
-      title={title}
-      theme={theme}
-      error={!!error}
-      secondaryTitle={secondaryTitle}
-    />
+  const [data] = response ? (
+    getInstantVectorStats(response, null, humanize).map(({ label, y }) => ({ x: label, y }))
+  ) : (
+    [{ x: humanize(percent).string, y: percent }]
   );
+  return <GaugeChart
+    data={data}
+    error={!!error}
+    invert={invert}
+    label={data.x}
+    loading={loading}
+    query={query}
+    remainderLabel={remainderLabel}
+    secondaryTitle={secondaryTitle}
+    theme={theme}
+    thresholds={thresholds}
+    title={title}
+    usedLabel={usedLabel}
+  />;
 };
 
 type GaugeChartProps = {
-  invert?: boolean;
-  label: string;
   data: {
     x: string,
     y: React.ReactText,
   };
+  error?: boolean;
+  invert?: boolean;
+  isLoaded?: boolean;
+  label: string;
+  loading?: boolean;
   query?: string;
   remainderLabel?: string;
+  secondaryTitle?: string;
   theme?: any;
   thresholds?: {
     value: number;
@@ -106,8 +110,6 @@ type GaugeChartProps = {
   }[];
   title?: string;
   usedLabel?: string;
-  secondaryTitle?: string;
-  error?: boolean;
 }
 
 type GaugeProps = {

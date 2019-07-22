@@ -1,64 +1,48 @@
 import * as React from 'react';
-
 import { getResource, getServicesForVm } from 'kubevirt-web-ui-components';
-
 import {
   Firehose,
   StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
   FirehoseResult,
+  useAccessReview,
+  asAccessReview,
 } from '@console/internal/components/utils';
-
-import { getName, getNamespace } from '@console/shared';
+import { getNamespace } from '@console/shared';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { PodModel, ServiceModel } from '@console/internal/models';
-
+import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
-import { VirtualMachineInstanceModel, VirtualMachineInstanceMigrationModel } from '../../models';
-import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { getLoadedData } from '../../utils';
+import { VirtualMachineInstanceModel } from '../../models';
+import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';
 
-export const VMDetailsFirehose: React.FC<VMTabProps> = ({ obj: vm }) => {
-  const name = getName(vm);
-  const namespace = getNamespace(vm);
-
-  const vmiRes = getResource(VirtualMachineInstanceModel, {
-    name,
-    namespace,
-    isList: false,
-    prop: 'vmi',
-    optional: true,
-  });
-
-  const resources = [
-    vmiRes,
-    getResource(PodModel, { namespace, prop: 'pods' }),
-    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
-    getResource(ServiceModel, { namespace, prop: 'services' }),
-  ];
+export const VMDetailsFirehose: React.FC<VMTabProps> = ({ obj: vm, vmi, pods, migrations }) => {
+  const resources = [getResource(ServiceModel, { namespace: getNamespace(vm), prop: 'services' })];
 
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VMDetails vm={vm} />
+        <VMDetails vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </Firehose>
     </div>
   );
 };
 
 const VMDetails: React.FC<VMDetailsProps> = (props) => {
-  const { vm, ...restProps } = props;
-  const flatResources = {
+  const { vm, vmi, pods, migrations, ...restProps } = props;
+  const mainResources = {
     vm,
-    vmi: getLoadedData(props.vmi),
-    pods: getLoadedData(props.pods),
-    migrations: getLoadedData(props.migrations),
+    vmi,
+    pods,
+    migrations,
   };
 
   const vmServicesData = getServicesForVm(getLoadedData(props.services, []), vm);
+
+  const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vm, 'patch'));
 
   return (
     <StatusBox data={vm} {...restProps}>
@@ -67,10 +51,10 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
         <SectionHeading text="VM Overview" />
         <div className="row">
           <div className="col-sm-6">
-            <VMResourceSummary {...flatResources} />
+            <VMResourceSummary canUpdateVM={canUpdate} {...mainResources} />
           </div>
           <div className="col-sm-6">
-            <VMDetailsList {...flatResources} />
+            <VMDetailsList {...mainResources} />
           </div>
         </div>
       </div>
@@ -84,8 +68,8 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
 
 type VMDetailsProps = {
   vm: VMKind;
-  pods?: FirehoseResult<PodKind[]>;
-  migrations?: FirehoseResult<K8sResourceKind[]>;
+  pods?: PodKind[];
+  migrations?: K8sResourceKind[];
+  vmi?: VMIKind;
   services?: FirehoseResult<K8sResourceKind[]>;
-  vmi?: FirehoseResult<VMIKind>;
 };

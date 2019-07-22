@@ -22,6 +22,7 @@ import {
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
+  getClusterID,
 } from '../../module/k8s';
 import {
   EmptyBox,
@@ -178,7 +179,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
       <div className="co-m-pane__body-group">
         <dl className="co-m-pane__details">
           <dt>Cluster ID</dt>
-          <dd className="co-break-all co-select-to-copy">{cv.spec.clusterID}</dd>
+          <dd className="co-break-all co-select-to-copy">{getClusterID(cv)}</dd>
           <dt>Desired Release Image</dt>
           <dd className="co-break-all co-select-to-copy">
             {imageParts.length === 2

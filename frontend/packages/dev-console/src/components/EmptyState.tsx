@@ -28,8 +28,22 @@ const ODCEmptyState: React.FunctionComponent<Props> = ({ title, activeNamespace 
             <CardHeader>Import from Git</CardHeader>
             <CardBody>Import code from your git repository to be built and deployed </CardBody>
             <CardFooter>
-              <Link className="pf-c-button pf-m-secondary" to="/import">
+              <Link className="pf-c-button pf-m-secondary" to="/import?importType=git">
                 Import from Git
+              </Link>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem sm={6} md={6} lg={4}>
+          <Card className="odc-empty-state__card">
+            <CardHeader>Deploy Image</CardHeader>
+            <CardBody>Deploy an existing image from an image registry or image stream tag</CardBody>
+            <CardFooter>
+              <Link
+                className="pf-c-button pf-m-secondary"
+                to={`/deploy-image?preselected-ns=${activeNamespace}`}
+              >
+                Deploy Image
               </Link>
             </CardFooter>
           </Card>
@@ -47,14 +61,11 @@ const ODCEmptyState: React.FunctionComponent<Props> = ({ title, activeNamespace 
         </GridItem>
         <GridItem sm={6} md={6} lg={4}>
           <Card className="odc-empty-state__card">
-            <CardHeader>Deploy Image</CardHeader>
-            <CardBody>Deploy an existing image from an image registry or image stream tag</CardBody>
+            <CardHeader>Import from Dockerfile</CardHeader>
+            <CardBody>Import your Dockerfile from your git repo to be built & deployed</CardBody>
             <CardFooter>
-              <Link
-                className="pf-c-button pf-m-secondary"
-                to={`/deploy-image?preselected-ns=${activeNamespace}`}
-              >
-                Deploy Image
+              <Link className="pf-c-button pf-m-secondary" to="/import?importType=docker">
+                Import from Dockerfile
               </Link>
             </CardFooter>
           </Card>

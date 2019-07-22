@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { getStorageSize } from '../selectors';
 
 export const getPvcResources = (pvc) => _.get(pvc, 'spec.resources');

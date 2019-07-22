@@ -39,6 +39,12 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
     isSearchingForImage: false,
     serverless: {
       trigger: false,
+      scaling: {
+        minpods: 0,
+        maxpods: '',
+        concurrencytarget: '',
+        concurrencylimit: '',
+      },
     },
     route: {
       create: true,
@@ -62,6 +68,7 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
         image: true,
         config: true,
       },
+      strategy: 'Source',
     },
     deployment: {
       env: [],
@@ -73,6 +80,20 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
     },
     labels: {},
     env: {},
+    limits: {
+      cpu: {
+        request: null,
+        requestUnit: 'm',
+        limit: null,
+        limitUnit: 'm',
+      },
+      memory: {
+        request: null,
+        requestUnit: 'Mi',
+        limit: null,
+        limitUnit: 'Mi',
+      },
+    },
   };
 
   const handleSubmit = (values, actions) => {

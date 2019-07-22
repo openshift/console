@@ -1,5 +1,4 @@
 import { stopPipelineRun, rerunPipeline } from '../pipeline-actions';
-
 import { PipelineRun, Pipeline } from '../pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../models';
 

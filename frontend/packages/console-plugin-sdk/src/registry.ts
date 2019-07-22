@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   Extension,
   ActivePlugin,
@@ -18,6 +17,9 @@ import {
   isDashboardsInventoryItemGroup,
   isDashboardsOverviewQuery,
   isDashboardsOverviewUtilizationItem,
+  isDashboardsOverviewTopConsumerItem,
+  isOverviewResourceTab,
+  isOverviewCRD,
 } from './typings';
 
 /**
@@ -88,5 +90,17 @@ export class ExtensionRegistry {
 
   public getDashboardsInventoryItemGroups() {
     return this.extensions.filter(isDashboardsInventoryItemGroup);
+  }
+
+  public getDashboardsOverviewTopConsumerItems() {
+    return this.extensions.filter(isDashboardsOverviewTopConsumerItem);
+  }
+
+  public getOverviewResourceTabs() {
+    return this.extensions.filter(isOverviewResourceTab);
+  }
+
+  public getOverviewCRDs() {
+    return this.extensions.filter(isOverviewCRD);
   }
 }

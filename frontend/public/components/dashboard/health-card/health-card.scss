@@ -10,15 +10,8 @@
 }
 
 .co-health-card__alerts-icon {
-  margin-right: 1.5em;
-}
-
-.co-health-card__alerts-icon--critical {
-  color: $pf-color-red-100;
-}
-
-.co-health-card__alerts-icon--warning {
-  color: $pf-color-gold-400;
+  font-size: 20px;
+  margin-right: 1rem;
 }
 
 .co-health-card__alerts-item {
@@ -36,18 +29,6 @@
 
 .co-health-card__icon {
   font-size: 1.5rem;
-}
-
-.co-health-card__icon--error {
-  color: $pf-color-red-100;
-}
-
-.co-health-card__icon--ok {
-  color: $pf-color-light-green-400;
-}
-
-.co-health-card__icon--warning {
-  color: $pf-color-gold-400;
 }
 
 .co-health-card__item {

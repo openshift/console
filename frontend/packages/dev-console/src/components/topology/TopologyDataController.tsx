@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Firehose } from '@console/internal/components/utils';
+import { Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { knativeServingResources } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { TopologyDataResources, TopologyDataModel } from './topology-types';
 import { TransformTopologyData } from './topology-utils';
 
@@ -21,6 +22,7 @@ export interface TopologyDataControllerProps {
   namespace: string;
   render(RenderProps): React.ReactElement;
   application: string;
+  knative: boolean;
 }
 
 const Controller: React.FC<ControllerProps> = React.memo(
@@ -32,6 +34,7 @@ const Controller: React.FC<ControllerProps> = React.memo(
         ? new TransformTopologyData(resources, application)
             .transformDataBy('deployments')
             .transformDataBy('deploymentConfigs')
+            .transformDataBy('daemonSets')
             .getTopologyData()
         : null,
     }),
@@ -41,8 +44,9 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   namespace,
   render,
   application,
+  knative,
 }) => {
-  const resources = [
+  let resources: FirehoseResource[] = [
     {
       isList: true,
       kind: 'DeploymentConfig',
@@ -54,6 +58,12 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       kind: 'Deployment',
       namespace,
       prop: 'deployments',
+    },
+    {
+      isList: true,
+      kind: 'DaemonSet',
+      namespace,
+      prop: 'daemonSets',
     },
     {
       isList: true,
@@ -98,6 +108,11 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       prop: 'builds',
     },
   ];
+
+  if (knative) {
+    const knativeResource = knativeServingResources(namespace);
+    resources = [...resources, ...knativeResource];
+  }
   return (
     <Firehose resources={resources} forceUpdate>
       <Controller application={application} render={render} />

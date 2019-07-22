@@ -17,6 +17,7 @@ import {
   SectionHeading,
   navFactory,
 } from './utils';
+import { ResourceEventStream } from './events';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -144,7 +145,11 @@ export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
     {...props}
     kind={machineReference}
     menuActions={menuActions}
-    pages={[navFactory.details(MachineDetails), navFactory.editYaml()]}
+    pages={[
+      navFactory.details(MachineDetails),
+      navFactory.editYaml(),
+      navFactory.events(ResourceEventStream),
+    ]}
   />;
 
 export type MachineDetailsProps = {

@@ -95,15 +95,3 @@ export const V2VVMwareModel: K8sKind = {
   kind: 'V2VVmware',
   id: 'v2vvmware',
 };
-
-export const NodeMaintenance: K8sKind = {
-  label: 'NodeMaintenance',
-  labelPlural: 'NodeMaintenances',
-  apiVersion: 'v1alpha1',
-  apiGroup: 'kubevirt.io',
-  plural: 'nodemaintenances',
-  abbr: 'NM',
-  namespaced: false,
-  kind: 'NodeMaintenance',
-  id: 'nodemaintenance',
-};

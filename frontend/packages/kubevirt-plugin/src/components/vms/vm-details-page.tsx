@@ -1,20 +1,32 @@
 import * as React from 'react';
-
+import { getResource } from 'kubevirt-web-ui-components';
 import { navFactory } from '@console/internal/components/utils';
-
-import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-
-import { VMDetailsFirehose } from './vm-details';
+import { PodModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
+import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
+import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
+import { VMDetailsFirehose } from './vm-details';
+import { menuActionsCreator } from './menu-actions';
 
-// import { VmEvents } from './vm-events';
-// import { menuActions } from './menu-actions';
+export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
+  const { name, namespace } = props;
 
-export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProps) => {
+  const resources = [
+    getResource(VirtualMachineInstanceModel, {
+      name,
+      namespace,
+      isList: false,
+      prop: 'vmi',
+      optional: true,
+    }),
+    getResource(PodModel, { namespace, prop: 'pods' }),
+    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+  ];
+
   const consolePage = {
     href: 'consoles',
     name: 'Consoles',
@@ -37,14 +49,14 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
     navFactory.details(VMDetailsFirehose),
     navFactory.editYaml(),
     consolePage,
-    navFactory.events(ResourceEventStream),
+    navFactory.events(VMEvents),
     nicsPage,
     disksPage,
   ];
 
-  const menuActions = undefined; // TODO(mlibra): menuActions
-
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  return (
+    <DetailsPage {...props} menuActions={menuActionsCreator} pages={pages} resources={resources} />
+  );
 };
 
 type VirtualMachinesDetailsPageProps = {

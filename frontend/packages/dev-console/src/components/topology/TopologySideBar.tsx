@@ -28,7 +28,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
   let itemtoShowOnSideBar;
   if (item) {
     const dc = item.resources.filter(
-      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment',
+      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment' || o.kind === 'DaemonSet',
     );
     const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
     const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));
@@ -39,7 +39,35 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
       routes,
       services,
       buildConfigs,
+      pods: item.pods,
     };
+
+    const ksroutes = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Route' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    const configurations = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Configuration' &&
+          o.apiVersion &&
+          o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    const revisions = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Revision' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    if (configurations.length) {
+      itemtoShowOnSideBar = {
+        ...itemtoShowOnSideBar,
+        ...{ ksroutes, configurations, revisions },
+      };
+    }
   }
 
   return (

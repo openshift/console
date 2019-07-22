@@ -2,8 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
@@ -446,8 +446,21 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <div className="co-form-section__separator"></div>
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create'}</button>
-            <Link to={UIActions.formatNamespacedRouteForResource('rolebindings')} className="btn btn-default" id="cancel">Cancel</Link>
+            <ActionGroup className="pf-c-form">
+              <Button
+                type="submit"
+                id="save-changes"
+                variant="primary">
+                {saveButtonText || 'Create'}
+              </Button>
+              <Button
+                component="a"
+                to={UIActions.formatNamespacedRouteForResource('rolebindings')}
+                id="cancel"
+                variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
           </ButtonBar>
         </form>
       </div>;

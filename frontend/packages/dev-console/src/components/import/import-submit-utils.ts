@@ -7,6 +7,7 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
+import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { GitImportFormData } from './import-types';
@@ -15,7 +16,7 @@ const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 export const createImageStream = (
   formData: GitImportFormData,
-  { metadata: { name: imageStreamName } }: K8sResourceKind,
+  imageStreamData: K8sResourceKind,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {
   const {
@@ -24,6 +25,7 @@ export const createImageStream = (
     application: { name: application },
     labels: userLabels,
   } = formData;
+  const imageStreamName = imageStreamData && imageStreamData.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
@@ -48,12 +50,38 @@ export const createBuildConfig = (
     project: { name: namespace },
     application: { name: application },
     git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
+    docker: { dockerfilePath },
     image: { tag: selectedTag },
-    build: { env, triggers },
+    build: { env, triggers, strategy: buildStrategy },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
+
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  let buildStrategyData;
+
+  switch (buildStrategy) {
+    case 'Docker':
+      buildStrategyData = {
+        dockerStrategy: { env, dockerfilePath },
+      };
+      break;
+    default:
+      buildStrategyData = {
+        sourceStrategy: {
+          env,
+          from: {
+            kind: 'ImageStreamTag',
+            name: `${imageStreamName}:${selectedTag}`,
+            namespace: imageStreamNamespace,
+          },
+        },
+      };
+      break;
+  }
+
   const buildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
@@ -79,15 +107,8 @@ export const createBuildConfig = (
         ...(secretName ? { sourceSecret: { name: secretName } } : {}),
       },
       strategy: {
-        type: 'Source',
-        sourceStrategy: {
-          env,
-          from: {
-            kind: 'ImageStreamTag',
-            name: `${imageStream.metadata.name}:${selectedTag}`,
-            namespace: imageStream.metadata.namespace,
-          },
-        },
+        type: buildStrategy,
+        ...buildStrategyData,
       },
       triggers: [
         ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
@@ -111,9 +132,11 @@ export const createDeploymentConfig = (
     image: { ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
+    limits: { cpu, memory },
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
 
   const deploymentConfig = {
@@ -138,6 +161,20 @@ export const createDeploymentConfig = (
               image: `${name}:latest`,
               ports,
               env,
+              resources: {
+                ...((cpu.limit || memory.limit) && {
+                  limits: {
+                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+                  },
+                }),
+                ...((cpu.request || memory.request) && {
+                  requests: {
+                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+                  },
+                }),
+              },
             },
           ],
         },
@@ -173,10 +210,19 @@ export const createService = (
     application: { name: application },
     image: { ports },
     labels: userLabels,
+    route: { targetPort },
+    docker: { containerPort },
+    build: { strategy: buildStrategy },
   } = formData;
+  let port;
+  if (buildStrategy === 'Docker') {
+    port = { containerPort, protocol: 'TCP' };
+  } else {
+    port = ports.find((p) => targetPort === makePortName(p)) || _.head(ports);
+  }
 
-  const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
   const service = {
     kind: 'Service',
@@ -190,11 +236,11 @@ export const createService = (
       selector: podLabels,
       ports: [
         {
-          port: firstPort.containerPort,
-          targetPort: firstPort.containerPort,
-          protocol: firstPort.protocol,
+          port: port.containerPort,
+          targetPort: port.containerPort,
+          protocol: port.protocol,
           // Use the same naming convention as the CLI.
-          name: makePortName(firstPort),
+          name: makePortName(port),
         },
       ],
     },
@@ -214,11 +260,20 @@ export const createRoute = (
     application: { name: application },
     image: { ports },
     labels: userLabels,
-    route: { hostname, secure, path, tls },
+    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
+    docker: { containerPort },
+    build: { strategy: buildStrategy },
   } = formData;
 
-  const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  let targetPort;
+  if (buildStrategy === 'Docker') {
+    targetPort = makePortName({ containerPort: _.toInteger(containerPort), protocol: 'TCP' });
+  } else {
+    targetPort = routeTargetPort || makePortName(_.head(ports));
+  }
+
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const route = {
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',
@@ -241,7 +296,7 @@ export const createRoute = (
         // at endpoints, not services, when resolving ports, so port numbers
         // will not resolve correctly if the service port and container port
         // numbers don't match.
-        targetPort: makePortName(firstPort),
+        targetPort,
       },
       wildcardPolicy: 'None',
     },
@@ -250,28 +305,53 @@ export const createRoute = (
   return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
-export const createResources = (
+export const createResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
+    application: { name: applicationName },
+    project: { name: projectName },
     route: { create: canCreateRoute },
     image: { ports },
+    build: { strategy: buildStrategy },
+    limits,
+    serverless: { scaling },
+    route,
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [
-    createDeploymentConfig(formData, imageStream, dryRun),
     createImageStream(formData, imageStream, dryRun),
     createBuildConfig(formData, imageStream, dryRun),
   ];
 
-  if (!_.isEmpty(ports)) {
+  if (formData.serverless.trigger) {
+    // knative service doesn't have dry run capability so returning the promises.
+    if (dryRun) {
+      return Promise.all(requests);
+    }
+
+    const [imageStreamResponse] = await Promise.all(requests);
+    return Promise.all([
+      createKnativeService(
+        applicationName,
+        projectName,
+        scaling,
+        limits,
+        route,
+        imageStreamResponse.status.dockerImageRepository,
+      ),
+    ]);
+  }
+
+  requests.push(createDeploymentConfig(formData, imageStream, dryRun));
+
+  if (!_.isEmpty(ports) || buildStrategy === 'Docker') {
     requests.push(createService(formData, imageStream, dryRun));
     if (canCreateRoute) {
       requests.push(createRoute(formData, imageStream, dryRun));
     }
   }
-
   return Promise.all(requests);
 };

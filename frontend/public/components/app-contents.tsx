@@ -55,24 +55,22 @@ type DefaultPageProps = {
 
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
-
-  if (flagPending(openshiftFlag)) {
+  if (Object.keys(flags).some(key => flagPending(flags[key]))) {
     return <Loading />;
   }
   // support redirecting to perspective landing page
-  return openshiftFlag ? (
+  return flags[FLAGS.OPENSHIFT] ? (
     <Redirect
       to={
         plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
-          .properties.landingPageURL
+          .properties.getLandingPageURL(flags)
       }
     />
   ) : (
     <Redirect
       to={
         plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
-          .properties.k8sLandingPageURL
+          .properties.getK8sLandingPageURL(flags)
       }
     />
   );
@@ -81,7 +79,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) 
 const DefaultPage = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
 }))(
-  connectToFlags(FLAGS.OPENSHIFT)(DefaultPage_),
+  connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_),
 );
 
 const LazyRoute = (props) => (
@@ -143,10 +141,6 @@ const AppContents = connect((state: RootState) => ({
           <LazyRoute path="/provisionedservices/ns/:ns" loader={() => import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(m => m.ProvisionedServicesPage)} />
           <Route path="/provisionedservices" component={NamespaceRedirect} />
 
-          <LazyRoute path="/operatormanagement/all-namespaces" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
-          <LazyRoute path="/operatormanagement/ns/:ns" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
-          <Route path="/operatormanagement" component={NamespaceRedirect} />
-
           <LazyRoute path="/brokermanagement" loader={() => import('./broker-management' /* webpackChunkName: "brokermanagment" */).then(m => m.BrokerManagementPage)} />
 
           <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/~new`} exact loader={() => import('./operator-lifecycle-manager' /* webpackChunkName: "create-subscription-yaml" */).then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
@@ -197,7 +191,11 @@ const AppContents = connect((state: RootState) => ({
 
           <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/~new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
 
+          <LazyRoute path="/monitoring/alerts" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
+          <LazyRoute path="/monitoring/silences" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
+          <LazyRoute path="/monitoring/alertmanageryaml" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
           <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
+
           <LazyRoute path="/settings/idp/github" exact loader={() => import('./cluster-settings/github-idp-form' /* webpackChunkName: "github-idp-form" */).then(m => m.AddGitHubPage)} />
           <LazyRoute path="/settings/idp/gitlab" exact loader={() => import('./cluster-settings/gitlab-idp-form' /* webpackChunkName: "gitlab-idp-form" */).then(m => m.AddGitLabPage)} />
           <LazyRoute path="/settings/idp/google" exact loader={() => import('./cluster-settings/google-idp-form' /* webpackChunkName: "google-idp-form" */).then(m => m.AddGooglePage)} />

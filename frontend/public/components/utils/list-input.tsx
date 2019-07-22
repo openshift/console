@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import { Button } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
@@ -66,9 +68,13 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
           </div>
         ))}
         {helpText && <div className="co-list-input__help-block help-block" id={this.helpID}>{helpText}</div>}
-        <button type="button" className="btn btn-link co-list-input__add-btn" onClick={() => this.addValue()}>
-          <i className="fa fa-plus-circle pairs-list__add-icon" aria-hidden="true" />Add More
-        </button>
+        <Button
+          className="pf-m-link--align-left"
+          onClick={() => this.addValue()}
+          type="button"
+          variant="link">
+          <PlusCircleIcon /> Add More
+        </Button>
       </div>
     );
   }

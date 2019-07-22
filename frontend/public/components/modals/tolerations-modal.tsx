@@ -1,5 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
@@ -167,9 +169,13 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
             })}
           </React.Fragment>
         }
-        <button type="button" className="btn btn-link" onClick={this._addRow}>
-          <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add More
-        </button>
+        <Button
+          className="btn btn-link"
+          onClick={this._addRow}
+          type="button"
+          variant="link">
+          <PlusCircleIcon data-test-id="pairs-list__add-icon" /> Add More
+        </Button>
       </ModalBody>
       <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitText="Save" cancel={this._cancel} />
     </form>;

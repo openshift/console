@@ -9,19 +9,15 @@ import { monitoringReducerName, MonitoringRoutes } from '../../reducers/monitori
 import {
   BuildConfigModel,
   BuildModel,
-  CatalogSourceModel,
   ChargebackReportModel,
   ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
-  InstallPlanModel,
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
   MachineModel,
   MachineSetModel,
-  PackageManifestModel,
-  SubscriptionModel,
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
@@ -35,25 +31,13 @@ type SeparatorProps = {
 const Separator: React.FC<SeparatorProps> = () => <NavItemSeparator />;
 
 const searchStartsWith = ['search'];
-const operatorManagementStartsWith = [
-  referenceForModel(PackageManifestModel),
-  PackageManifestModel.plural,
-  // FIXME(alecmerdler): Needed for backwards-compatibility with new API groups
-  'packages.apps.redhat.com~v1alpha1~PackageManifest',
-  referenceForModel(SubscriptionModel),
-  SubscriptionModel.plural,
-  referenceForModel(InstallPlanModel),
-  InstallPlanModel.plural,
-  referenceForModel(CatalogSourceModel),
-  CatalogSourceModel.plural,
-];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
+const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules', 'monitoring/silences', 'monitoring/alertmanageryaml'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
@@ -71,8 +55,7 @@ const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}
   const showGrafana = canAccess && !!grafanaURL;
   return showAlerts || showSilences || showPrometheus || showGrafana || kibanaURL
     ? <NavSection title="Monitoring">
-      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
-      {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerting" startsWith={monitoringAlertsStartsWith} />}
       {showAlerts && <HrefLink href="/monitoring/query-browser" name="Query Browser" />}
       {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
@@ -85,6 +68,7 @@ const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(Monitorin
 const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
+      <HrefLink href="/dashboards" activePath="/dashboards/" name="Dashboards" required={FLAGS.CAN_LIST_NS} />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
@@ -102,12 +86,6 @@ const AdminNav = () => (
         resource={ClusterServiceVersionModel.plural}
         required={FLAGS.CAN_LIST_PACKAGE_MANIFEST}
         name="Installed Operators"
-      />
-      <HrefLink
-        href="/operatormanagement"
-        name="Operator Management"
-        activePath="/operatormanagement/"
-        startsWith={operatorManagementStartsWith}
       />
     </NavSection>
 
@@ -178,7 +156,6 @@ const AdminNav = () => (
     </NavSection>
 
     <NavSection title="Administration">
-      <HrefLink href="/cluster-status" name="Cluster Status" activePath="/cluster-status/" required={FLAGS.CAN_LIST_NS} />
       <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
       <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
       <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />

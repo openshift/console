@@ -9,10 +9,10 @@ import { EventKind } from '../../../module/k8s';
 
 export const EventsBody: React.FC<EventsBodyProps> = ({ events, filter }) => {
   let eventsBody;
-  if (!(events && events.loaded)) {
-    eventsBody = <div className="co-events-card__body-loading"><LoadingInline /></div>;
-  } else if (events.loadError) {
+  if (events && events.loadError) {
     eventsBody = <ErrorLoadingEvents />;
+  } else if (!(events && events.loaded)) {
+    eventsBody = <div className="co-events-card__body-loading"><LoadingInline /></div>;
   } else {
     const filteredEvents = filter ? events.data.filter(filter) : events.data;
     const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);

@@ -1,10 +1,26 @@
 import * as _ from 'lodash';
-import { Plugin, ResourceNSNavItem, ModelFeatureFlag, ModelDefinition } from '@console/plugin-sdk';
+import {
+  Plugin,
+  ResourceNSNavItem,
+  ModelFeatureFlag,
+  ModelDefinition,
+  OverviewResourceTab,
+  OverviewCRD,
+  ResourceListPage,
+} from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { FLAG_KNATIVE_SERVING } from './const';
+import { knativeServingResources } from './utils/create-knative-utils';
+import { getKnativeServingResources } from './utils/get-knative-resources';
 
-type ConsumedExtensions = ResourceNSNavItem | ModelFeatureFlag | ModelDefinition;
+type ConsumedExtensions =
+  | ResourceNSNavItem
+  | ModelFeatureFlag
+  | ModelDefinition
+  | OverviewResourceTab
+  | OverviewCRD
+  | ResourceListPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -47,10 +63,59 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Serverless',
       componentProps: {
-        name: models.ConfigurationModel.labelPlural,
-        resource: referenceForModel(models.ConfigurationModel),
+        name: models.RouteModel.labelPlural,
+        resource: referenceForModel(models.RouteModel),
         required: FLAG_KNATIVE_SERVING,
       },
+    },
+  },
+  {
+    type: 'Overview/Resource',
+    properties: {
+      name: 'Resources',
+      key: 'configurations',
+      loader: () =>
+        import(
+          './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResources,
+      required: FLAG_KNATIVE_SERVING,
+      utils: getKnativeServingResources,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.RevisionModel,
+      loader: async () =>
+        (await import(
+          './components/revisions/RevisionsPage' /* webpackChunkName: "knative-revisions-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.ServiceModel,
+      loader: async () =>
+        (await import(
+          './components/services/ServicesPage' /* webpackChunkName: "knative-services-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.RouteModel,
+      loader: async () =>
+        (await import(
+          './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
+        )).default,
     },
   },
 ];

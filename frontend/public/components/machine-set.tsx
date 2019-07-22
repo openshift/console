@@ -23,6 +23,7 @@ import {
   useAccessReview,
 } from './utils';
 import { Tooltip } from './utils/tooltip';
+import { ResourceEventStream } from './events';
 
 const machineReplicasModal = (resourceKind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => configureReplicaCountModal({
   resourceKind,
@@ -247,6 +248,7 @@ export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = prop
     navFactory.details(MachineSetDetails),
     navFactory.editYaml(),
     navFactory.machines(MachineTabPage),
+    navFactory.events(ResourceEventStream),
   ]}
 />;
 

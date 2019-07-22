@@ -5,6 +5,7 @@ import * as crudView from '../views/crud.view';
 import * as monitoringView from '../views/monitoring.view';
 import * as namespaceView from '../views/namespace.view';
 import * as sidenavView from '../views/sidenav.view';
+import * as horizontalnavView from '../views/horizontal-nav.view';
 
 const testAlertName = 'Watchdog';
 
@@ -23,9 +24,9 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('displays the Alerts list page', async() => {
-    await sidenavView.clickNavLink(['Monitoring', 'Alerts']);
+    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
-    expect(monitoringView.listPageHeading.getText()).toContain('Alerts');
+    expect(monitoringView.listPageHeading.getText()).toContain('Alerting');
   });
 
   it('does not have a namespace dropdown', async() => {
@@ -105,9 +106,10 @@ describe('Monitoring: Silences', () => {
   });
 
   it('displays the Silences list page', async() => {
-    await sidenavView.clickNavLink(['Monitoring', 'Silences']);
+    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
-    expect(monitoringView.listPageHeading.getText()).toContain('Silences');
+    await horizontalnavView.clickHorizontalTab('Silences');
+    expect(monitoringView.helpText.getText()).toContain('Silences temporarily mute alerts based on a set of conditions');
   });
 
   it('does not have a namespace dropdown', async() => {
@@ -130,8 +132,9 @@ describe('Monitoring: Silences', () => {
   });
 
   it('filters Silences by name', async() => {
-    await sidenavView.clickNavLink(['Monitoring', 'Silences']);
+    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Silences');
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
     expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
@@ -159,8 +162,9 @@ describe('Monitoring: Silences', () => {
   });
 
   it('expires the Silence', async() => {
-    await sidenavView.clickNavLink(['Monitoring', 'Silences']);
+    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Silences');
     await crudView.nameFilter.sendKeys(testAlertName);
     const row = crudView.rowForName(testAlertName);
     await monitoringView.wait(until.presenceOf(row));
@@ -168,5 +172,27 @@ describe('Monitoring: Silences', () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.modalConfirmButton));
     await monitoringView.modalConfirmButton.click();
     await monitoringView.wait(until.not(until.presenceOf(row)));
+  });
+});
+
+describe('Monitoring: YAML', () => {
+  afterEach(() => {
+    checkLogs();
+    checkErrors();
+  });
+
+  it('displays the YAML page', async() => {
+    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
+    await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await crudView.isLoaded();
+    expect(monitoringView.alertManagerYamlForm.isPresent()).toBe(true);
+  });
+
+  it('saves alert-manager.yaml', async() => {
+    expect(monitoringView.successAlert.isPresent()).toBe(false);
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+    expect(monitoringView.successAlert.isPresent()).toBe(true);
   });
 });

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   DashboardsCard,
   DashboardsTab,
@@ -8,7 +7,6 @@ import {
   Plugin,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
-
 import * as models from './models';
 
 type ConsumedExtensions = ModelFeatureFlag | ModelDefinition | DashboardsTab | DashboardsCard;
@@ -34,6 +32,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'object-service',
       title: 'Object Service',
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/health-card/health-card' /* webpackChunkName: "object-service-health-card" */
+        ).then((m) => m.default),
     },
   },
   {
@@ -73,10 +82,43 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
       position: GridPosition.RIGHT,
       loader: () =>
         import(
           './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
         ).then((m) => m.default),
     },
   },
