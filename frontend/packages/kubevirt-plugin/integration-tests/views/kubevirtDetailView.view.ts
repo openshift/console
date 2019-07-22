@@ -19,26 +19,28 @@ export const applyBtn = $('button.kubevirt-cancel-accept-buttons.btn-primary');
 // Used to determine presence of a new row by looking for confirmation buttons
 export const newResourceRow = $('.kubevirt-vm-create-device-row__confirmation-buttons');
 
-export const rowForName = (name: string) =>
+const tableContent = $('.ReactVirtualized__VirtualGrid.ReactVirtualized__List');
+export const tableRows = () => tableContent.getText().then((text) => text.split('\n'));
+export const tableRowForName = (name: string) =>
   resourceRows
     .filter((row) =>
       row
-        .$$('div')
+        .$$('td')
         .first()
         .getText()
         .then((text) => text === name),
     )
     .first();
 
-const kebabForName = (name: string) => rowForName(name).$('button.co-kebab__button');
+const kebabForName = (name: string) => tableRowForName(name).$('[data-test-id=kebab-button]');
 export const selectKebabOption = async (name: string, option: string) => {
   await browser.wait(until.presenceOf(kebabForName(name)));
   // open kebab dropdown
   await kebabForName(name).click();
   // select given option from opened dropdown
-  await rowForName(name)
-    .$('.co-kebab__dropdown')
-    .$$('a')
+  await tableRowForName(name)
+    .$('.dropdown-menu-right')
+    .$$('button')
     .filter((link) => link.getText().then((text) => text.startsWith(option)))
     .first()
     .click();

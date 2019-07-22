@@ -9,7 +9,7 @@ export const PAGE_LOAD_TIMEOUT_SECS = 15 * SEC;
 export const TEMPLATE_ACTIONS_TIMEOUT_SECS = 90 * SEC;
 export const VM_ACTIONS_TIMEOUT_SECS = 250 * SEC;
 export const VM_BOOTUP_TIMEOUT_SECS = 200 * SEC;
-export const VM_MIGRATION_TIMEOUT_SECS = 150 * SEC;
+export const VM_MIGRATION_TIMEOUT_SECS = 190 * SEC;
 export const VM_STOP_TIMEOUT_SECS = 10 * SEC;
 export const VM_IP_ASSIGNMENT_TIMEOUT_SECS = 180 * SEC;
 export const WINDOWS_IMPORT_TIMEOUT_SECS = 150 * SEC;
@@ -47,6 +47,17 @@ export const TABS = {
   NICS: 'Network Interfaces',
 };
 Object.freeze(TABS);
+
+// Tab names
+export const VMACTIONS = {
+  START: 'Start',
+  STOP: 'Stop',
+  CLONE: 'Clone',
+  RESTART: 'Restart',
+  MIGRATE: 'Events',
+  DELETE: 'Delete',
+};
+Object.freeze(VMACTIONS);
 
 // Network tab columns in VM Wizard
 export const networkWizardTabCol = {

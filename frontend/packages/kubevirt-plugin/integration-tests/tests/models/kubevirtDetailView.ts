@@ -1,7 +1,12 @@
 /* eslint-disable no-await-in-loop */
-import { selectDropdownOption, click } from '../../../../console-shared/src/test-utils/utils';
+import { browser, ExpectedConditions as until } from 'protractor';
+import {
+  selectDropdownOption,
+  click,
+  waitForCount,
+} from '../../../../console-shared/src/test-utils/utils';
 import { isLoaded, resourceRows } from '../../../../../integration-tests/views/crud.view';
-import { TABS, diskTabCol, networkTabCol } from '../utils/consts';
+import { TABS, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import { StorageResource, NetworkResource } from '../utils/types';
 import { fillInput } from '../utils/utils';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
@@ -11,31 +16,29 @@ import { DetailView } from './detailView';
 export class KubevirtDetailView extends DetailView {
   async getAttachedDisks(): Promise<StorageResource[]> {
     await this.navigateToTab(TABS.DISKS);
-    const resources = [];
-    for (const row of await resourceRows) {
-      const cells = row.$$('div');
-      resources.push({
-        name: await cells.get(diskTabCol.name).getText(),
-        size: (await cells.get(diskTabCol.size).getText()).match(/^\d*/)[0],
-        storageClass: await cells.get(diskTabCol.storageClass).getText(),
-      });
-    }
-    return resources;
+    const rows = await kubevirtDetailView.tableRows();
+    return rows.map((line) => {
+      const cols = line.split(/\s+/);
+      return {
+        name: cols[diskTabCol.name],
+        size: cols[diskTabCol.size].slice(0, -2),
+        storageClass: cols[diskTabCol.storageClass],
+      };
+    });
   }
 
   async getAttachedNICs(): Promise<NetworkResource[]> {
     await this.navigateToTab(TABS.NICS);
-    const resources = [];
-    for (const row of await resourceRows) {
-      const cells = row.$$('div');
-      resources.push({
-        name: await cells.get(networkTabCol.name).getText(),
-        mac: await cells.get(networkTabCol.mac).getText(),
-        networkDefinition: await cells.get(networkTabCol.networkDefinition).getText(),
-        binding: await cells.get(networkTabCol.binding).getText(),
-      });
-    }
-    return resources;
+    const rows = await kubevirtDetailView.tableRows();
+    return rows.map((line) => {
+      const cols = line.split(/\s+/);
+      return {
+        name: cols[networkTabCol.name],
+        mac: cols[networkTabCol.mac],
+        networkDefinition: cols[networkTabCol.networkDefinition],
+        binding: cols[networkTabCol.binding],
+      };
+    });
   }
 
   async addDisk(disk: StorageResource) {
@@ -50,8 +53,10 @@ export class KubevirtDetailView extends DetailView {
 
   async removeDisk(name: string) {
     await this.navigateToTab(TABS.DISKS);
+    const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async addNIC(nic: NetworkResource) {
@@ -67,7 +72,9 @@ export class KubevirtDetailView extends DetailView {
 
   async removeNIC(name: string) {
     await this.navigateToTab(TABS.NICS);
+    const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 }
