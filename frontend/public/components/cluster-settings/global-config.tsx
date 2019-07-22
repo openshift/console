@@ -2,17 +2,21 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Alert, Button } from '@patternfly/react-core';
+import * as plugins from '../../plugins';
 
+import { RootState } from '../../redux';
+import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { K8sKind, k8sList } from '../../module/k8s';
 import { resourcePathFromModel } from '../utils/resource-link';
 import { LoadingBox } from '../utils/status-box';
 
-const globalConfigListStateToProps = ({k8s}) => ({
-  configResources: k8s.getIn(['RESOURCES', 'configResources']),
+const stateToProps = (state: RootState) => ({
+  configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
+  flags: state[featureReducerName],
 });
 
 const ItemRow = ({item}) => {
-  const resourceLink = resourcePathFromModel(item.model, item.metadata.name, item.metadata.namespace);
+  const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
   return <div className="row co-resource-list__item">
     <div className="col-sm-10 col-xs-12">
       <Button
@@ -42,6 +46,10 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     loading: true,
   }
 
+  getGlobalConfigs(): plugins.GlobalConfig[] {
+    return plugins.registry.getGlobalConfigs();
+  }
+
   componentDidMount() {
     let errorMessage = '';
     Promise.all(this.props.configResources.map((model: K8sKind) => {
@@ -52,16 +60,35 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
           return [];
         }).then(items => items.map((i: K8sKind) => ({...i, model})));
     })).then((responses) => {
-      const items = _.sortBy(_.flatten(responses), 'kind', 'asc');
+      const flattenedResponses = _.flatten(responses);
+      const winnowedResponses = flattenedResponses.map(item => ({model: item.model, uid: item.metadata.uid, name: item.metadata.name, namespace: item.metadata.namespace, kind: item.kind}));
+      const sortedResponses = _.sortBy(_.flatten(winnowedResponses), 'kind', 'asc');
+
       this.setState({
-        items,
+        items: sortedResponses,
         loading: false,
       });
     });
   }
 
+  checkFlags(c: plugins.GlobalConfig): GlobalConfigObjectProps {
+    const { flags } = this.props;
+    const { required } = c.properties;
+
+    const requiredArray = required ? _.castArray(required) : [];
+    const requirementMissing = _.some(requiredArray, flag => (
+      flag && (flagPending(flags.get(flag)) || !flags.get(flag))
+    ));
+    return requirementMissing ? null : c.properties;
+  }
+
   render() {
     const { errorMessage, items, loading } = this.state;
+
+    const globalConfigs = this.getGlobalConfigs();
+    const usableConfigs = globalConfigs.filter(item => this.checkFlags(item)).map(item => item.properties);
+    const allItems = usableConfigs.length > 0 && items.concat(usableConfigs);
+    const sortedItems = usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
 
     return <div className="co-m-pane__body">
       {errorMessage && <Alert isInline className="co-alert" variant="danger" title="Error loading resources">{errorMessage}</Alert>}
@@ -76,7 +103,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
             <div className="col-sm-2 hidden-xs"></div>
           </div>
           <div className="co-m-table-grid__body">
-            { _.map(items, item => <ItemRow item={item} key={item.metadata.uid} />)}
+            { _.map(sortedItems, item => <ItemRow item={item} key={item.uid} />)}
           </div>
         </div>
       </React.Fragment>}
@@ -84,10 +111,11 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   }
 }
 
-export const GlobalConfigPage = connect(globalConfigListStateToProps)(GlobalConfigPage_);
+export const GlobalConfigPage = connect(stateToProps)(GlobalConfigPage_);
 
 type GlobalConfigPageProps = {
   configResources: K8sKind[];
+  flags?: FeatureState;
 };
 
 type GlobalConfigPageState = {
@@ -95,3 +123,11 @@ type GlobalConfigPageState = {
   items: any,
   loading: boolean,
 };
+
+type GlobalConfigObjectProps = {
+  kind: string;
+  model: K8sKind;
+  name: string;
+  namespace: string;
+  uid: string;
+}

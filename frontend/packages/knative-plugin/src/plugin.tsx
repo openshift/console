@@ -7,6 +7,7 @@ import {
   OverviewResourceTab,
   OverviewCRD,
   ResourceListPage,
+  GlobalConfig,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
@@ -18,6 +19,7 @@ type ConsumedExtensions =
   | ResourceNSNavItem
   | ModelFeatureFlag
   | ModelDefinition
+  | GlobalConfig
   | OverviewResourceTab
   | OverviewCRD
   | ResourceListPage;
@@ -34,6 +36,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.KnativeServingModel,
       flag: FLAG_KNATIVE_SERVING,
+    },
+  },
+  {
+    type: 'GlobalConfig',
+    properties: {
+      kind: 'KnativeServing',
+      model: models.KnativeServingModel,
+      name: 'knative-serving',
+      namespace: 'knative-serving',
+      required: FLAG_KNATIVE_SERVING,
+      uid: 'knative-serving',
     },
   },
   {
