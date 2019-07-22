@@ -1,4 +1,5 @@
 import {
+  DashboardsOverviewInventoryItem,
   Plugin,
   ResourceNSNavItem,
   ResourceListPage,
@@ -6,9 +7,13 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
 } from '@console/plugin-sdk';
-import { BaremetalHostModel } from './models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { MachineModel, NodeModel } from '@console/internal/models';
+import { BaremetalHostModel, NodeMaintenanceModel } from './models';
+import { getBMHStatusGroups } from './components/dashboard/utils';
 
 type ConsumedExtensions =
+  | DashboardsOverviewInventoryItem
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
@@ -61,6 +66,35 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/host-detail' /* webpackChunkName: "metal3-baremetalhost" */).then(
           (m) => m.BaremetalHostDetailPageConnected,
         ),
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Inventory/Item',
+    properties: {
+      resource: {
+        isList: true,
+        kind: referenceForModel(BaremetalHostModel),
+        prop: 'hosts',
+      },
+      additionalResources: [
+        {
+          isList: true,
+          kind: referenceForModel(MachineModel),
+          prop: 'machines',
+        },
+        {
+          isList: true,
+          kind: NodeModel.kind,
+          prop: 'nodes',
+        },
+        {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceModel),
+          prop: 'maintenaces',
+        },
+      ],
+      model: BaremetalHostModel,
+      mapper: getBMHStatusGroups,
     },
   },
 ];
