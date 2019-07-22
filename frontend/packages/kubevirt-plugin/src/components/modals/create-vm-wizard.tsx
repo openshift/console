@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { connect } from 'react-redux';
 import {
   CreateVmWizard,
   getResource,
@@ -19,8 +20,18 @@ import {
   VirtualMachineModel,
   NetworkAttachmentDefinitionModel,
   DataVolumeModel,
+  V2VVMwareModel,
 } from '../../models';
 import { createModalResourceLauncher } from './modal-resource-launcher';
+
+const mapStateToProps = ({ k8s }) => {
+  const kindsInFlight = k8s.getIn(['RESOURCES', 'inFlight']);
+  const k8sModels = k8s.getIn(['RESOURCES', 'models']);
+
+  return { isV2vVmwareCrd: !kindsInFlight && !!k8sModels.get(V2VVMwareModel.kind) };
+};
+
+const CreateVmWizardDecorated = connect(mapStateToProps)(CreateVmWizard);
 
 export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
   const resources = [
@@ -79,7 +90,11 @@ export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
     };
   };
 
-  const launcher = createModalResourceLauncher(CreateVmWizard, resources, resourcesToProps);
+  const launcher = createModalResourceLauncher(
+    CreateVmWizardDecorated,
+    resources,
+    resourcesToProps,
+  );
 
   // TODO(mlibra): The CreateVmWizard will be refactored later when being moved from web-ui-components to openshift/console, so following props will not be needed. So far we need to meet contract to keep backward compatibility.
   launcher({
