@@ -40,4 +40,3 @@ describe(DownloadButton.displayName, () => {
     wrapper.find('button').simulate('click');
   });
 });
-

@@ -38,4 +38,3 @@ describe(PullSecret.displayName, () => {
     expect(wrapper.find(LoadingInline).exists()).toBe(true);
   });
 });
-
