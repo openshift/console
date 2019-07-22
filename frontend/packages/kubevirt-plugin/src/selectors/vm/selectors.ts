@@ -1,11 +1,23 @@
 import * as _ from 'lodash';
 import { createBasicLookup } from '@console/shared';
-import { BUS_VIRTIO, NetworkType } from '../../constants/vm';
+import {
+  BUS_VIRTIO,
+  NetworkType,
+  TEMPLATE_FLAVOR_LABEL,
+  TEMPLATE_OS_LABEL,
+  TEMPLATE_OS_NAME_ANNOTATION,
+  TEMPLATE_WORKLOAD_LABEL,
+} from '../../constants/vm';
 import { VMKind } from '../../types';
+import { findKeySuffixValue, getValueByPrefix } from '../utils';
+import { getAnnotations, getLabels } from '../selectors';
 import { getDiskBus } from './disk';
 import { getNicBus } from './nic';
 import { Network } from './types';
 
+export const getMemory = (vm: VMKind) =>
+  _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
+export const getCPU = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.cpu.cores');
 export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
 export const getInterfaces = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.devices.interfaces', []);
@@ -13,6 +25,14 @@ export const getInterfaces = (vm: VMKind) =>
 export const getNetworks = (vm: VMKind) => _.get(vm, 'spec.template.spec.networks', []);
 export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes', []);
 export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates', []);
+
+export const getOperatingSystem = (vm: VMKind) =>
+  findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
+export const getOperatingSystemName = (vm: VMKind) =>
+  getValueByPrefix(getAnnotations(vm), `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vm)}`);
+export const getWorkloadProfile = (vm: VMKind) =>
+  findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
+export const getFlavor = (vm: VMKind) => findKeySuffixValue(getLabels(vm), TEMPLATE_FLAVOR_LABEL);
 
 export const isVMRunning = (value: VMKind) =>
   _.get(value, 'spec.running', false) as VMKind['spec']['running'];
@@ -54,4 +74,13 @@ export const getUsedNetworks = (vm: VMKind): Network[] => {
       return null;
     })
     .filter((i) => i);
+};
+
+export const getFlavorDescription = (vm) => {
+  const cpu = getCPU(vm);
+  const memory = getMemory(vm);
+  const cpuStr = cpu ? `${cpu} CPU` : '';
+  const memoryStr = memory ? `${memory} Memory` : '';
+  const resourceStr = cpuStr && memoryStr ? `${cpuStr}, ${memoryStr}` : `${cpuStr}${memoryStr}`;
+  return resourceStr || undefined;
 };

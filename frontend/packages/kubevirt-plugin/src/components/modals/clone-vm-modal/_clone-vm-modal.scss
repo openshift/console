@@ -1,0 +1,27 @@
+@import "../../../../../../public/style/vars";
+
+.kubevirt-clone-vm-modal__configuration-summary {
+  overflow-y: auto;
+  max-height: 450px;
+  dt {
+    color: $color-text-muted;
+    text-transform: capitalize;
+  }
+}
+
+.kubevirt-clone-vm-modal__start_vm_checkbox > input[type="checkbox"] {
+  margin: -0.25em 0 0 !important;
+}
+
+.kubevirt-clone-vm-modal__description {
+  min-height: 3em;
+  resize: vertical;
+}
+
+.kubevirt-clone-vm-modal__error-group--item {
+  margin-bottom: 0.5em;
+}
+
+.kubevirt-clone-vm-modal__error-group--end {
+  margin-bottom: 1.5em;
+}
