@@ -20,6 +20,10 @@
   margin: 0;
 }
 
+.build-overview__status {
+  flex-wrap: wrap;
+}
+
 .build-overview__status-message {
   margin-bottom: 10px;
 }

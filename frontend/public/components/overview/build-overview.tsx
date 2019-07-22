@@ -17,7 +17,7 @@ import {
 } from '../utils';
 
 import { BuildConfigOverviewItem } from '.';
-import { SyncIcon } from '@patternfly/react-icons';
+import { SyncAltIcon } from '@patternfly/react-icons';
 
 const conjugateBuildPhase = (phase: BuildPhase): string => {
   switch (phase) {
@@ -64,10 +64,13 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({build}) => {
 
   return <li className="list-group-item build-overview__item">
     <div className="build-overview__item-title">
-      <div>
-        {phase === 'Running'
-          ? <><StatusIconAndText icon={<SyncIcon />} title={phase} spin iconOnly /> {statusTitle}</>
-          : <><Status status={phase} iconOnly /> {statusTitle}</>}
+      <div className="build-overview__status co-icon-and-text">
+        <div className="co-icon-and-text__icon co-icon-flex-child">
+          {phase === 'Running'
+            ? <StatusIconAndText icon={<SyncAltIcon />} title={phase} spin iconOnly />
+            : <Status status={phase} iconOnly />}
+        </div>
+        {statusTitle}
       </div>
       <div>
         <BuildLogLink build={build} />
