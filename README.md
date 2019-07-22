@@ -229,7 +229,11 @@ $ ./test-gui.sh olm
 
 #### Hacking Integration Tests
 
-Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts) to see what the tests are actually doing.
+To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` enviorment variable:
+
+```
+$ NO_HEADLESS=true ./test-gui.sh olm
+```
 
 ##### Debugging Integration Tests
 
