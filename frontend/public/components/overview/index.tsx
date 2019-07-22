@@ -306,7 +306,7 @@ const sortReplicationControllersByRevision = (replicationControllers: K8sResourc
   return sortByRevision(replicationControllers, getDeploymentConfigVersion);
 };
 
-const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
+export const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 
   const byCreationTime = (left, right) => {
     const leftCreationTime = new Date(_.get(left, 'metadata.creationTimestamp', Date.now()));

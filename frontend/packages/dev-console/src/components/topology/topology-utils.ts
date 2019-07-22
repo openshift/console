@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
+import { sortBuilds } from '@console/internal/components/overview';
 import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
 
 export const podColor = {
@@ -345,10 +346,10 @@ export class TransformTopologyData {
 
   private getBuildConfigs(
     deploymentConfig: ResourceProps,
-  ): ResourceProps & { builds: ResourceProps[] } {
+  ): ResourceProps & { builds: K8sResourceKind[] } {
     const buildConfig = {
       kind: 'BuildConfig',
-      builds: [] as ResourceProps[],
+      builds: [] as K8sResourceKind[],
       metadata: {},
       status: {},
       spec: {},
@@ -360,7 +361,7 @@ export class TransformTopologyData {
     ]);
     if (bconfig) {
       const bc = _.merge(buildConfig, bconfig);
-      const builds = this.getBuilds(bc);
+      const builds = sortBuilds(this.getBuilds(bc));
       return { ...bc, builds };
     }
     return buildConfig;
