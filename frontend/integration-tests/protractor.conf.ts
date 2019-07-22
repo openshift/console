@@ -35,8 +35,8 @@ export const config: Config = {
     acceptInsecureCerts: true,
     chromeOptions: {
       args: [
+        ...(process.env.NO_HEADLESS ? [] : ['--headless']),
         '--disable-gpu',
-        '--headless',
         '--no-sandbox',
         '--window-size=1920,1200',
         '--disable-background-timer-throttling',
