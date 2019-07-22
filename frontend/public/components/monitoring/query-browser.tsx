@@ -224,7 +224,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   return <div className={classNames('query-browser__wrapper', {'graph-empty-state': _.isEmpty(graphData)})}>
-    <div className="query-browser__controls query-browser__controls--graph">
+    <div className="query-browser__controls">
       <div className="query-browser__controls--left">
         <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
         {updating && <div className="query-browser__loading">
