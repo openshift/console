@@ -5,7 +5,7 @@ import { InputField } from '../../formik-fields';
 import { getValidationState } from '../../formik-fields/field-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
 
-export const CREATE_APPLICATION_KEY = 'create-application-key';
+export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 
 export interface ApplicationSelectorProps {
   namespace?: string;
