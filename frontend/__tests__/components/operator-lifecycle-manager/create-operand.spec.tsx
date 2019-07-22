@@ -15,8 +15,8 @@ import {
 } from '../../../public/components/operator-lifecycle-manager/create-operand';
 import { Firehose } from '../../../public/components/utils/firehose';
 import * as k8s from '../../../public/module/k8s';
-import { testClusterServiceVersion, testResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionModel } from '../../../public/models';
+import { testClusterServiceVersion, testResourceInstance, testModel, testCRD } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionModel, CustomResourceDefinitionModel } from '../../../public/models';
 import { CreateYAML } from '../../../public/components/create-yaml';
 import { referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { BreadCrumbs } from '../../../public/components/utils';
@@ -26,7 +26,7 @@ describe(CreateOperand.displayName, () => {
 
   beforeEach(() => {
     const match = {params: {appName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance)}, isExact: true, url: '', path: ''};
-    wrapper = shallow(<CreateOperand operandModel={testModel} clusterServiceVersion={{data: testClusterServiceVersion, loaded: true}} loaded={true} match={match} />);
+    wrapper = shallow(<CreateOperand operandModel={testModel} clusterServiceVersion={{data: testClusterServiceVersion, loaded: true, loadError: null}} customResourceDefinition={{data: testCRD, loaded: true, loadError: null}} loaded={true} match={match} />);
   });
 
   it('renders breadcrumb links for given ClusterServiceVersion', () => {
@@ -45,7 +45,7 @@ describe(CreateOperand.displayName, () => {
   it('passes sample object to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
     data.metadata.annotations = {'alm-examples': JSON.stringify([testResourceInstance])};
-    wrapper = wrapper.setProps({clusterServiceVersion: {data, loaded: true}});
+    wrapper = wrapper.setProps({clusterServiceVersion: {data, loaded: true, loadError: null}});
 
     expect(wrapper.find(CreateOperandYAML).props().sample).toEqual(testResourceInstance);
   });
@@ -64,13 +64,10 @@ describe(CreateOperandPage.displayName, () => {
   it('renders a <Firehose> for the correct resources', () => {
     const wrapper = shallow(<CreateOperandPage.WrappedComponent match={match} operandModel={testModel} />);
 
-    expect(wrapper.find(Firehose).props().resources).toEqual([{
-      kind: k8s.referenceForModel(ClusterServiceVersionModel),
-      name: match.params.appName,
-      namespace: match.params.ns,
-      isList: false,
-      prop: 'clusterServiceVersion',
-    }]);
+    expect(wrapper.find(Firehose).props().resources).toEqual([
+      {kind: k8s.referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'clusterServiceVersion'},
+      {kind: CustomResourceDefinitionModel.kind, name: k8s.nameForModel(testModel), isList: false, prop: 'customResourceDefinition'},
+    ]);
   });
 });
 
@@ -83,12 +80,26 @@ describe(CreateOperandForm.displayName, () => {
   }));
 
   beforeEach(() => {
-    wrapper = shallow(<CreateOperandForm namespace="default" operandModel={testModel} providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]} clusterServiceVersion={testClusterServiceVersion} />);
+    wrapper = shallow(<CreateOperandForm namespace="default" operandModel={testModel} providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]} clusterServiceVersion={testClusterServiceVersion} customResourceDefinition={testCRD} />);
   });
 
   it('renders form', () => {
     expect(referenceForProvidedAPI(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])).toEqual(k8s.referenceForModel(testModel));
+
     expect(wrapper.find('form').exists()).toBe(true);
+  });
+
+  it('renders input component for each field', () => {
+    wrapper.find('.co-create-operand__form-group').forEach(formGroup => {
+      const descriptor = testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.find(d => d.displayName === formGroup.find('.form-label').text());
+
+      expect(descriptor).toBeDefined();
+    });
+  });
+
+  it('renders alert to use YAML editor for full control over all operand fields', () => {
+    expect(wrapper.find(Alert).props().title).toEqual('Note: Some fields may not be represented in this form. Please select "Edit YAML" for full control of object creation.');
+    expect(wrapper.find(Alert).props().variant).toEqual('info');
   });
 
   it('calls `k8sCreate` to create new operand if form is valid', (done) => {
@@ -107,10 +118,10 @@ describe(CreateOperandForm.displayName, () => {
 
   it('displays errors if calling `k8sCreate` fails', (done) => {
     const error = {message: 'Failed to create'} as k8s.Status;
-    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject(error))
+    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject({json: error}))
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 10)))
       .then(() => {
-        expect(wrapper.find(Alert).props().title).toEqual(error.message);
+        expect(wrapper.find(Alert).at(0).props().title).toEqual(error.message);
         done();
       });
 

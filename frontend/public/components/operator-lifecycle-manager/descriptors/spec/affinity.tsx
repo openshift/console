@@ -10,16 +10,18 @@ const requiredTooltip = 'Required rules must be met before a pod can be schedule
 const preferredTooltip = 'Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.';
 const defaultMatchExpression: MatchExpression = {key: '', operator: 'Exists'};
 
+export const defaultNodeAffinity = {
+  requiredDuringSchedulingIgnoredDuringExecution: {
+    nodeSelectorTerms: [{matchExpressions: [_.cloneDeep(defaultMatchExpression)]}],
+  },
+  preferredDuringSchedulingIgnoredDuringExecution: [{
+    weight: 1,
+    preference: {matchExpressions: [_.cloneDeep(defaultMatchExpression)]},
+  }],
+} as NodeAffinityType;
+
 export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
-  const affinity: NodeAffinityType = _.defaultsDeep(props.affinity, {
-    requiredDuringSchedulingIgnoredDuringExecution: {
-      nodeSelectorTerms: [{matchExpressions: [defaultMatchExpression]}],
-    },
-    preferredDuringSchedulingIgnoredDuringExecution: [{
-      weight: 1,
-      preference: {matchExpressions: [defaultMatchExpression]},
-    }],
-  });
+  const {affinity} = props;
 
   const addRequired = () => _.set(affinity, 'requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms',
     affinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.concat([{matchExpressions: []}])
@@ -98,21 +100,22 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
   </dl>;
 };
 
-// TODO(alecmerdler): Very similar to `NodeAffinity`, might be able to use a HOC to reuse functionality
-export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
-  const affinity: PodAffinityType = _.defaultsDeep(props.affinity, {
-    requiredDuringSchedulingIgnoredDuringExecution: [{
+export const defaultPodAffinity = {
+  requiredDuringSchedulingIgnoredDuringExecution: [{
+    topologyKey: 'failure-domain.beta.kubernetes.io/zone',
+    labelSelector: {matchExpressions: [_.cloneDeep(defaultMatchExpression)]},
+  }],
+  preferredDuringSchedulingIgnoredDuringExecution: [{
+    weight: 1,
+    podAffinityTerm: {
       topologyKey: 'failure-domain.beta.kubernetes.io/zone',
-      labelSelector: {matchExpressions: [defaultMatchExpression]},
-    }],
-    preferredDuringSchedulingIgnoredDuringExecution: [{
-      weight: 1,
-      podAffinityTerm: {
-        topologyKey: 'failure-domain.beta.kubernetes.io/zone',
-        labelSelector: {matchExpressions: [defaultMatchExpression]},
-      },
-    }],
-  });
+      labelSelector: {matchExpressions: [_.cloneDeep(defaultMatchExpression)]},
+    },
+  }],
+} as PodAffinityType;
+
+export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
+  const {affinity} = props;
 
   const addRequired = () => _.set(affinity, 'requiredDuringSchedulingIgnoredDuringExecution',
     affinity.requiredDuringSchedulingIgnoredDuringExecution.concat([{topologyKey: '', labelSelector: {matchExpressions: []}}])
@@ -198,7 +201,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
         </div>
         <MatchExpressions
           matchExpressions={podAffinityTerm.labelSelector.matchExpressions || [] as MatchExpression[]}
-          onChangeMatchExpressions={matchExpressions => props.onChangeAffinity(_.set(affinity, `preferredDuringSchedulingIgnoredDuringExecution[${i}].labelSelector.matchExpressions`, matchExpressions))}
+          onChangeMatchExpressions={matchExpressions => props.onChangeAffinity(_.set(affinity, `preferredDuringSchedulingIgnoredDuringExecution[${i}].podAffinityTerm.labelSelector.matchExpressions`, matchExpressions))}
           allowedOperators={['In', 'NotIn', 'Exists', 'DoesNotExist']} />
       </div>) }
       <div className="row">
@@ -207,7 +210,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           className="btn btn-link"
           style={{marginLeft: '10px'}}
           onClick={() => props.onChangeAffinity(addPreference())}>
-          <PlusCircleIcon className="co-icon-space-r" />Add Another Preference
+          <PlusCircleIcon className="co-icon-space-r" />Add Preferred
         </button>
       </div>
     </dd>

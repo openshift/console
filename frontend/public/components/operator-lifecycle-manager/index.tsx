@@ -11,8 +11,6 @@ export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from '.
 export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
 export { SubscriptionsPage } from './subscription';
 
-export const copiedLabelKey = 'olm.copiedFrom';
-
 export enum AppCatalog {
   rhOperators = 'rh-operators',
 }

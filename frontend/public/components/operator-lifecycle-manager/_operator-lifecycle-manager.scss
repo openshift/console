@@ -110,6 +110,11 @@
   height: 25px;
 }
 
+.co-create-operand__form-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .co-create-operand__header {
   border-bottom: 1px solid #ddd;
   padding: 10px 15px;

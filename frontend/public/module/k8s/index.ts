@@ -641,15 +641,17 @@ export type K8sKind = {
   verbs?: K8sVerb[];
 };
 
+export type Cause = {
+  field: string;
+  message: string;
+  reason: string;
+};
+
 export type Status = {
   apiVersion: 'v1';
   kind: 'Status';
   details: {
-    causes: {
-      field: string;
-      message: string;
-      reason: string;
-    }[];
+    causes: Cause[];
     group: string;
     kind: string;
   };

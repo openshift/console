@@ -230,19 +230,17 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       </React.Fragment>
       <div className="co-form-section__separator" />
       { formError() }
-      <React.Fragment>
-        <ActionGroup className="pf-c-form">
-          <Button
-            onClick={() => submit()}
-            isDisabled={formValid()}
-            variant="primary">
-            Subscribe
-          </Button>
-          <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </React.Fragment>
+      <ActionGroup className="pf-c-form">
+        <Button
+          onClick={() => submit()}
+          isDisabled={formValid()}
+          variant="primary">
+          Subscribe
+        </Button>
+        <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
+          Cancel
+        </Button>
+      </ActionGroup>
     </div>
     <div className="col-xs-6">
       <ClusterServiceVersionLogo displayName={_.get(channels, '[0].currentCSVDesc.displayName')} icon={_.get(channels, '[0].currentCSVDesc.icon[0]')} provider={provider} />
