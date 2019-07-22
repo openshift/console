@@ -77,7 +77,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className}) =>
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -88,7 +88,6 @@ export class ListPageWrapper_ extends React.PureComponent {
       rowFilters,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
-
     const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
       const count = _.isFunction(numbers) ? numbers(data) : undefined;
       return <CheckBoxes
@@ -124,6 +123,7 @@ ListPageWrapper_.propTypes = {
   customData: PropTypes.any,
 };
 
+/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, canExpand?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any}> */
 export const FireMan_ = connect(null, {filterList})(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
@@ -258,6 +258,7 @@ export const FireMan_ = connect(null, {filterList})(
             resources,
             expand: this.state.expand,
             reduxIDs: this.state.reduxIDs,
+            applyFilter:this.applyFilter,
           })}
         </div>
       </React.Fragment>;
