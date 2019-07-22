@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, HintBlock, Modal } from 'patternfly-react';
+import { HintBlock, Modal } from 'patternfly-react';
+import { Button } from '@patternfly/react-core';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
 import { Link } from 'react-router-dom';
 
@@ -112,15 +113,15 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
             <PropertiesSidePanel>
               { !installed
                 ? <Link
-                  className="btn btn-primary co-catalog-page__overlay-create"
+                  className="pf-c-button pf-m-primary co-catalog-page__overlay-create"
                   to={createLink}>
                   Install
                 </Link>
                 : <Button
-                  bsStyle="default"
                   className="co-catalog-page__overlay-create"
-                  disabled={!installed}
-                  onClick={() => history.push(uninstallLink())}>
+                  isDisabled={!installed}
+                  onClick={() => history.push(uninstallLink())}
+                  variant="secondary">
                   Uninstall
                 </Button> }
               <PropertyItem label="Operator Version" value={version || notAvailable} />

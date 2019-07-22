@@ -72,7 +72,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         </div>
       </div>
     </ModalBody>
-    <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitButtonClass="btn-danger" submitText="Remove Volume" cancel={props.cancel} />
+    <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitDanger submitText="Remove Volume" cancel={props.cancel} />
   </form>;
 };
 

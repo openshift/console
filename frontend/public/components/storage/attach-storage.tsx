@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { connectToPlural } from '../../kinds';
 import { ContainerSpec, k8sCreate, k8sGet, K8sKind, k8sPatch, referenceFor } from '../../module/k8s';
@@ -315,16 +316,18 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           </p>
         </div>}
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary" id="save-changes">
-            Save
-          </button>
-          <button
-            type="button"
-            className="btn btn-default"
-            onClick={history.goBack}
-          >
-            Cancel
-          </button>
+          <ActionGroup className="pf-c-form">
+            <Button type="submit" variant="primary" id="save-changes">
+              Save
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}
+            >
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>

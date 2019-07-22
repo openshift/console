@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import {Base64} from 'js-base64';
 import {k8sPatch, K8sResourceKind} from '../../module/k8s';
@@ -55,12 +56,14 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({obj, onC
       </div>
       }
       <ButtonBar errorMessage={errorMsg} successMessage={successMsg} inProgress={inProgress}>
-        {!_.isEmpty(yamlStringData) && <button type="submit" className="btn btn-primary" id="save-changes">
-          Save
-        </button> }
-        <button type="button" className="btn btn-default" id="cancel" onClick={onCancel}>
-          Cancel
-        </button>
+        <ActionGroup className="pf-c-form">
+          {!_.isEmpty(yamlStringData) && <Button type="submit" variant="primary" id="save-changes">
+            Save
+          </Button> }
+          <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
+            Cancel
+          </Button>
+        </ActionGroup>
       </ButtonBar>
     </form>
   </div>;

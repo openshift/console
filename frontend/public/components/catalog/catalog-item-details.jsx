@@ -72,7 +72,7 @@ export class CatalogTileDetails extends React.Component {
             <div className="modal-body-inner-shadow-covers">
               <div className="co-catalog-page__overlay-body">
                 <PropertiesSidePanel>
-                  <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button" title={this.props.item.createLabel} onClick={closeOverlay}>{this.props.item.createLabel}</Link>
+                  <Link className="pf-c-button pf-m-primary co-catalog-page__overlay-create" to={href} role="button" title={this.props.item.createLabel} onClick={closeOverlay}>{this.props.item.createLabel}</Link>
                   {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
                   {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
                   {creationTimestamp && <PropertyItem label="Created At" value={<Timestamp timestamp={creationTimestamp} />} />}

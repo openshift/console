@@ -9,7 +9,7 @@ export const nsDropdown = $('#namespace');
 export const nameInput = $('#name');
 export const trySampleButton = element(by.partialButtonText('Try Sample'));
 export const routeCheckbox = $('.checkbox input');
-export const submitButton = $('.btn-primary');
+export const submitButton = $('.pf-m-primary');
 
 export const visitOpenShiftImageStream = async(name: string) => {
   await browser.get(`${appHost}/k8s/ns/openshift/imagestreams/${name}`);

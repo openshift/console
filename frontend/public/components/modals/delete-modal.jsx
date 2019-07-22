@@ -66,7 +66,7 @@ class DeleteModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitButtonClass="btn-danger" submitText={this.props.btnText || 'Delete'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitDanger submitText={this.props.btnText || 'Delete'} cancel={this._cancel} />
     </form>;
   }
 }
