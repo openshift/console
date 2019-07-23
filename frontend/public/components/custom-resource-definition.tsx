@@ -2,12 +2,14 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { BanIcon } from '@patternfly/react-icons';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
+import { GreenCheckCircleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
 
@@ -86,8 +88,8 @@ const CRDTableRow: React.FC<CRDTableRowProps> = ({obj: crd, index, key, style}) 
       <TableData className={tableColumnClasses[4]}>
         {
           isEstablished(crd.status.conditions)
-            ? <span><i className="pficon pficon-ok" aria-hidden="true"></i></span>
-            : <span><i className="fa fa-ban" aria-hidden="true"></i></span>
+            ? <span><GreenCheckCircleIcon /></span>
+            : <span><BanIcon /></span>
         }
       </TableData>
       <TableData className={tableColumnClasses[5]}>

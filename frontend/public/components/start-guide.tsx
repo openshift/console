@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from 'patternfly-react';
+import { CloseIcon } from '@patternfly/react-icons';
 
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { DocumentationSidebar, Disabled } from './utils';
@@ -29,7 +30,7 @@ export const StartGuide: React.FC<StartGuideProps> = (props) => {
 
   return isVisible
     ? <div className="co-well">
-      {dismissKey && <Button className="co-well__close-button" aria-label="Close" bsStyle="link" onClick={dismiss}><i className="pficon pficon-close" aria-hidden="true" /></Button>}
+      {dismissKey && <Button className="co-well__close-button" aria-label="Close" bsStyle="link" onClick={dismiss}><CloseIcon /></Button>}
       {startGuide}
     </div>
     : null;

@@ -1,10 +1,20 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import {
+  BanIcon,
+  PendingIcon,
+  SyncAltIcon,
+} from '@patternfly/react-icons';
+
 import { resourcePath, ExternalLink } from './utils';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+} from '@console/shared';
 
 const getStages = (status): any[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {
@@ -24,16 +34,16 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
   const statusClass = _.lowerCase(status);
   const icon = ({
     new: '',
-    pending: 'pficon pficon-pending',
-    running: 'fa fa-refresh fa-fw',
-    complete: 'pficon pficon-ok',
-    failed: 'pficon pficon-error-circle-o',
-    cancelled: 'fa fa-ban',
+    pending: <PendingIcon />,
+    running: <SyncAltIcon className="fa-spin" />,
+    complete: <GreenCheckCircleIcon />,
+    failed: <RedExclamationCircleIcon />,
+    cancelled: <BanIcon />,
   })[statusClass];
 
   return icon
     ? <span className={`build-pipeline__status-icon build-pipeline__status-icon--${statusClass}`}>
-      <span className={icon} aria-hidden="true"></span>
+      {icon}
     </span>
     : null;
 };

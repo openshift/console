@@ -14,13 +14,14 @@ import {
 } from '@console/internal/components/utils';
 import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
 import { createModal, GetModalContainer } from '@console/internal/components/factory';
+import { RedExclamationCircleIcon } from '@console/shared';
 
 const NotFound: React.FC<NotFoundProps> = ({ message }) => (
   <Box className="text-center">
     <MsgBox title="Not Found" detail="Requested resource not found." />
     {_.isString(message) && (
       <div className="alert alert-danger text-left">
-        <span className="pficon pficon-error-circle-o" />
+        <RedExclamationCircleIcon />
         {message}
       </div>
     )}

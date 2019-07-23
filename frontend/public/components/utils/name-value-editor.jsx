@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PficonDragdropIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
 import { ValueFromPair } from './value-from-pair';
@@ -86,7 +86,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
                   onClick={this._append}
                   type="button"
                   variant="link">
-                  <PlusCircleIcon data-test-id="pairs-list__add-icon" /> {addString}
+                  <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />{addString}
                 </Button>
                 {
                   addConfigMapSecret &&
@@ -96,7 +96,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
                         onClick={this._appendConfigMapOrSecret}
                         type="button"
                         variant="link">
-                        <PlusCircleIcon data-test-id="pairs-list__add-icon" /> Add from Config Map or Secret
+                        <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />Add from Config Map or Secret
                       </Button>
                     </React.Fragment>
                 }
@@ -324,7 +324,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true"></i><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
@@ -332,7 +332,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           {allowSorting && !readOnly &&
             <div className="col-xs-1 pairs-list__action">
               {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
-                <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
+                <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
               </button>)}
             </div>
           }
@@ -408,7 +408,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, valueString, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true"></i><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
@@ -416,7 +416,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           { !readOnly &&
             <div className="col-xs-1 pairs-list__action">
               {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
-                <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
+                <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
               </button>)}
             </div>
           }

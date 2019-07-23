@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { CubeIcon } from '@patternfly/react-icons';
 import { Timestamp, units } from '@console/internal/components/utils';
 import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
@@ -37,11 +38,7 @@ const SearchResults: React.FC = () => {
         )}
         <div className="row">
           <div className="col-sm-3 col-md-2 hidden-xs text-right h2">
-            <span
-              className="fa fa-cube text-muted"
-              style={{ fontSize: '100px' }}
-              aria-hidden="true"
-            />
+            <CubeIcon className="text-muted" style={{ fontSize: '100px' }} />
           </div>
           <div className="col-sm-9 col-md-10">
             <h2 className="co-image-name-results__heading co-break-word">

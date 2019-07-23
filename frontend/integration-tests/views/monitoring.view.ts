@@ -14,7 +14,7 @@ export const detailsHeadingRuleIcon = $('.co-m-nav-title .co-m-resource-alertrul
 export const detailsHeadingSilenceIcon = $('.co-m-nav-title .co-m-resource-silence');
 export const detailsSubHeadings = $$('.co-m-pane__body h2');
 export const labels = $$('.co-m-label');
-export const expiredSilenceIcon = $('.co-m-pane__details .fa-ban');
+export const expiredSilenceIcon = $('.co-m-pane__details [data-test-id="ban-icon"]');
 export const ruleLink = $('.co-m-pane__details .co-resource-item__resource-name');
 export const silenceComment = $$('.co-m-pane__details dd').get(-2);
 export const firstAlertsListLink = $$('.co-resource-list__item a.co-resource-item').first();

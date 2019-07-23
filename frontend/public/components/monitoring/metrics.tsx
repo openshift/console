@@ -9,7 +9,13 @@ import {
   Switch,
   Title,
 } from '@patternfly/react-core';
-import { ChartLineIcon, TimesIcon } from '@patternfly/react-icons';
+import {
+  AngleDownIcon,
+  AngleRightIcon,
+  ChartLineIcon,
+  CompressIcon,
+  TimesIcon,
+} from '@patternfly/react-icons';
 import {
   IDecorator,
   ISortBy,
@@ -112,9 +118,10 @@ const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(HeaderPr
 export const graphStateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
 
 const ToggleGraph_ = ({hideGraphs, toggle}) => {
-  const iconClass = `fa fa-${hideGraphs ? 'line-chart' : 'compress'}`;
+  const icon = hideGraphs ? <ChartLineIcon className="co-icon-space-r" /> : <CompressIcon className="co-icon-space-r" />;
+
   return <button type="button" className="btn btn-link" onClick={toggle}>
-    {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
+    {hideGraphs ? 'Show' : 'Hide'} Graph {icon}
   </button>;
 };
 export const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
@@ -157,7 +164,7 @@ const MetricsDropdown = ({onChange, onLoad}) => {
 const ExpandButton = ({isExpanded, onClick}) => {
   const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
   return <button aria-label={title} className="btn btn-link query-browser__expand-button" onClick={onClick} title={title}>
-    <i aria-hidden="true" className={`fa fa-angle-${isExpanded ? 'down' : 'right'} query-browser__expand-icon`} />
+    {isExpanded ? <AngleDownIcon className="query-browser__expand-icon" /> : <AngleRightIcon className="query-browser__expand-icon" />}
   </button>;
 };
 

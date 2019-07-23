@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { Alert, AlertActionLink } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
+import { CompressIcon, ExpandIcon, DownloadIcon } from '@patternfly/react-icons';
 
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import * as classNames from 'classnames';
@@ -36,10 +37,6 @@ const streamStatusMessages = {
 
 // Component for log stream controls
 const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, status, toggleStreaming, resource, containerName, podLogLinks}) => {
-  const expandCompressClass = classNames('fa', {
-    'fa-expand': !isFullscreen,
-    'fa-compress': isFullscreen,
-  });
   return <div className="co-toolbar">
     <div className="co-toolbar__group co-toolbar__group--left">
       <div className="co-toolbar__item">
@@ -77,11 +74,13 @@ const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, stat
         </React.Fragment>;
       })}
       <button className="btn btn-link" onClick={onDownload}>
-        <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+        <DownloadIcon className="co-icon-space-r" />Download
       </button>
       <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
       <button className="btn btn-link" onClick={toggleFullscreen}>
-        <i className={expandCompressClass} aria-hidden="true"></i>&nbsp;{isFullscreen ? 'Collapse' : 'Expand'}
+        {isFullscreen
+          ? <React.Fragment><CompressIcon className="co-icon-space-r" />Collapse</React.Fragment>
+          : <React.Fragment><ExpandIcon className="co-icon-space-r" />Expand</React.Fragment>}
       </button>
     </div>
   </div>;

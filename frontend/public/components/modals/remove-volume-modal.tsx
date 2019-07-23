@@ -4,6 +4,7 @@ import * as React from 'react';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { ContainerSpec, getVolumeType, K8sKind, k8sPatch, K8sResourceKind, Volume, VolumeMount } from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
@@ -57,7 +58,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
     <ModalTitle>Remove Volume</ModalTitle>
     <ModalBody className="modal-body">
       <div className="co-delete-modal">
-        <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o" />
+        <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
         <div>
           <p className="lead">Remove volume <span className="co-break-word">{volume.volumeDetail.name}</span>?</p>
           <div>Are you sure you want to remove volume <strong className="co-break-word">{volume.volumeDetail.name}</strong>

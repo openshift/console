@@ -8,18 +8,19 @@
 @import '~patternfly-react-extensions/dist/sass/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
-@import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
+@import "~@fortawesome/fontawesome-free/scss/variables";
 
 @import "style/base";
 
-// Overrides
-@import "style/overrides";
-
 // Mixins
-@import "style/mixin/prefix";
 @import "style/mixin/break-word";
+@import "style/mixin/font-awesome";
+@import "style/mixin/prefix";
 @import "style/mixin/scroll-shadows";
 @import "style/mixin/truncate";
+
+// Overrides
+@import "style/overrides";
 
 /* CUSTOM STYLES */
 
@@ -29,7 +30,6 @@
 @import "style/layout";
 @import "style/text";
 @import "style/forms";
-@import "style/status";
 
 // React Components
 @import "components/utils/alerts";

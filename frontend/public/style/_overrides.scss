@@ -20,6 +20,11 @@ $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
   margin-bottom: 0;
   padding-bottom: 12px;
   padding-top: 25px;
+  > li + li:before {
+    @include font-awesome-free-solid;
+    content: fa-content($fa-var-angle-right);
+    font-size: 12px;
+  }
 }
 
 // account for collapsing space between .btn

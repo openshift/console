@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
@@ -68,8 +69,8 @@ export const SecretData: React.FC<SecretDataProps> = ({data}) => {
         {dl.length
           ? <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
             {reveal
-              ? <React.Fragment><i className="fa fa-eye-slash" aria-hidden="true" /> Hide Values</React.Fragment>
-              : <React.Fragment><i className="fa fa-eye" aria-hidden="true" /> Reveal Values</React.Fragment>}
+              ? <React.Fragment><EyeSlashIcon className="co-icon-space-r" />Hide Values</React.Fragment>
+              : <React.Fragment><EyeIcon className="co-icon-space-r" />Reveal Values</React.Fragment>}
           </button>
           : null}
       </SectionHeading>

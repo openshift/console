@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from 'react-lightweight-tooltip';
+import { PasteIcon } from '@patternfly/react-icons';
 
 export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props) => {
   const overrides = Object.freeze({
@@ -56,7 +57,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
     <Tooltip content={tooltipContent} styles={overrides}>
       <CTC text={props.value} onCopy={() => setCopied(true)}>
         <button onMouseEnter={() => setCopied(false)} className="btn btn-default co-copy-to-clipboard__btn fix" type="button">
-          <i className="fa fa-clipboard" aria-hidden="true"></i>
+          <PasteIcon />
           <span className="sr-only">Copy to Clipboard</span>
         </button>
       </CTC>

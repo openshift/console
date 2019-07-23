@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { MatchExpression } from '../../../../module/k8s';
 import { Dropdown } from '../../../utils';
@@ -53,7 +54,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
           className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon"
           onClick={() => props.onChangeMatchExpressions(props.matchExpressions.filter((e, index) => index !== i))}
           aria-label="Delete">
-          <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
+          <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
         </button>
       </div>
     </div>) }
@@ -63,7 +64,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
         className="btn btn-link"
         style={{marginLeft: '10px'}}
         onClick={() => onChangeMatchExpressions(matchExpressions.concat({key: '', operator: 'Exists'}))}>
-        <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add More
+        <PlusCircleIcon className="co-icon-space-r" />Add More
       </button>
     </div>
   </React.Fragment>;

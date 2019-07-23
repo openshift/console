@@ -64,10 +64,10 @@
     background-color: $color-pf-blue-100 !important;
 
     &::after {
+      @include font-awesome-free-solid;
       align-self: center;
-      content: $fa-var-chevron-right;
+      content: fa-content($fa-var-chevron-right);
       display: block;
-      font-family: 'FontAwesome';
       position: absolute;
       right: 30px;
     }

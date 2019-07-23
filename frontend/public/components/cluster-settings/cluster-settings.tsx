@@ -3,6 +3,11 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
+import {
+  AddCircleOIcon,
+  ArrowCircleUpIcon,
+  SyncAltIcon,
+} from '@patternfly/react-icons';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
@@ -33,6 +38,11 @@ import {
   SectionHeading,
   Timestamp,
 } from '../utils';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{path: '/spec/desiredUpdate', op: 'remove'}]).catch(err => {
@@ -49,7 +59,7 @@ const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button classNa
 
 const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
   <div>
-    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Invalid cluster version
+    <RedExclamationCircleIcon /> Invalid cluster version
   </div>
   <Button bsStyle="primary" onClick={() => cancelUpdate(cv)}>
     Cancel update
@@ -58,7 +68,7 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragmen
 
 const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
   <div className="co-update-status">
-    <i className="fa fa-arrow-circle-o-up update-pending" aria-hidden={true} /> Update available
+    <ArrowCircleUpIcon className="update-pending" /> Update available
   </div>
   <div>
     <Button bsStyle="primary" onClick={() => clusterUpdateModal({cv})}>
@@ -70,24 +80,24 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <Reac
 const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
   const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
   return <React.Fragment>
-    {updatingCondition.message && <div><i className="fa-spin fa fa-refresh" aria-hidden={true} /> {updatingCondition.message}</div>}
+    {updatingCondition.message && <div><SyncAltIcon className="fa-spin" /> {updatingCondition.message}</div>}
     <Link to="/settings/cluster/clusteroperators">View details</Link>
   </React.Fragment>;
 };
 
 const ErrorRetrievingMessage: React.SFC<{}> = () => <div>
-  <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Error retrieving
+  <RedExclamationCircleIcon /> Error retrieving
 </div>;
 
 const FailingMessage: React.SFC<{}> = () => <React.Fragment>
   <div>
-    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Failing
+    <RedExclamationCircleIcon /> Failing
   </div>
   <Link to="/settings/cluster/clusteroperators">View details</Link>
 </React.Fragment>;
 
 const UpToDateMessage: React.SFC<{}> = () => <span>
-  <i className="pficon pficon-ok" aria-hidden={true} /> Up to date
+  <GreenCheckCircleIcon /> Up to date
 </span>;
 
 const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
@@ -116,7 +126,7 @@ const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion
       ? <span className="co-select-to-copy">{desiredVersion}</span>
-      : <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
+      : <React.Fragment><YellowExclamationTriangleIcon />&nbsp;Unknown</React.Fragment>;
   }
 
   return <React.Fragment>{lastVersion || 'None'}</React.Fragment>;
@@ -194,7 +204,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
           <dd>
             {_.isEmpty(autoscalers)
               ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                <i className="pficon pficon-add-circle-o" aria-hidden="true" /> Create Autoscaler
+                <AddCircleOIcon className="co-icon-space-r" />Create Autoscaler
               </Link>
               : autoscalers.map(autoscaler => <div key={autoscaler.metadata.uid}><ResourceLink kind={clusterAutoscalerReference} name={autoscaler.metadata.name} /></div>)}
           </dd>

@@ -8,8 +8,8 @@
   @include co-x-prefix(user-select, none);
   cursor: pointer;
   font-size: 20px;
-  vertical-align: middle;
-  margin-top: -1px;
+  position: relative;
+  top: 4px;
 }
 
 .co-m-number-spinner__up-icon {

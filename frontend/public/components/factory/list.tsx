@@ -10,6 +10,7 @@ import {
   List as VirtualList,
   WindowScroller,
 } from 'react-virtualized';
+import { LongArrowAltUpIcon, LongArrowAltDownIcon } from '@patternfly/react-icons';
 
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
@@ -154,7 +155,7 @@ export class ColHead extends React.Component<ColHeadProps> {
     const onClick = () => applySort(sortField, sortFunc, newSortOrder, children);
     return <div className={className}>
       <a className={isSorted ? undefined : 'co-m-table-grid__sort-link--unsorted'} onClick={onClick}>{children}</a>
-      {isSorted && <i className={`co-m-table-grid__sort-arrow fa fa-long-arrow-${currentSortOrder === 'asc' ? 'up' : 'down'}`}></i>}
+      {isSorted && (currentSortOrder === 'asc' ? <LongArrowAltUpIcon className="co-m-table-grid__sort-arrow" /> : <LongArrowAltDownIcon className="co-m-table-grid__sort-arrow" />)}
     </div>;
   }
 }

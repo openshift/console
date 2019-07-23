@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
-import { Status as TooltipStatus } from '@console/shared';
+import { Status as TooltipStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
@@ -189,7 +189,7 @@ const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListIt
   dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
 });
 
-export const ResourceItemDeleting = () => <span className="co-resource-item__deleting"><i className="pficon pficon-warning-triangle-o" aria-hidden="true" /> Deleting</span>;
+export const ResourceItemDeleting = () => <span className="co-resource-item__deleting"><YellowExclamationTriangleIcon /> Deleting</span>;
 
 const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
   ({dismissDetails, item, metrics, selectItem, selectedUID}: ProjectOverviewListItemProps) => {

@@ -67,6 +67,7 @@
     ]
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.9.0",
     "@patternfly/patternfly": "2.21.5",
     "@patternfly/react-charts": "4.4.16",
     "@patternfly/react-core": "3.73.1",
@@ -79,7 +80,6 @@
     "core-js": "2.x",
     "d3": "^5.9.2",
     "file-saver": "1.3.x",
-    "font-awesome": "4.7.x",
     "formik": "2.0.1-rc.1",
     "fuzzysearch": "1.0.x",
     "history": "4.x",

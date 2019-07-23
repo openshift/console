@@ -15,7 +15,7 @@ describe(Phase.displayName, () => {
     wrapper.setProps({status});
 
     expect(wrapper.find('.co-error').exists()).toBe(true);
-    expect(wrapper.find('.fa.fa-ban').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="ban-icon"]').exists()).toBe(true);
   });
 
   it('renders status text', () => {
@@ -24,6 +24,6 @@ describe(Phase.displayName, () => {
 
     expect(wrapper.find('.co-error').exists()).toBe(false);
     expect(wrapper.text()).toContain(status);
-    expect(wrapper.find('.fa.fa-ban').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="ban-icon"]').exists()).toBe(false);
   });
 });

@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
+import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 
 import { ClusterOperatorModel } from '../../models';
 import {
@@ -35,21 +36,25 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
+import {
+  GreenCheckCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
-const getIconClass = (status: OperatorStatus) => {
+const getIcon = (status: OperatorStatus) => {
   return {
-    [OperatorStatus.Available]: 'pficon pficon-ok text-success',
-    [OperatorStatus.Updating]: 'fa fa-refresh',
-    [OperatorStatus.Degraded]: 'pficon pficon-warning-triangle-o text-warning',
-    [OperatorStatus.Unknown]: 'pficon pficon-unknown',
+    [OperatorStatus.Available]: <GreenCheckCircleIcon />,
+    [OperatorStatus.Updating]: <SyncAltIcon />,
+    [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
 
 const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({status}) => {
-  const iconClass = getIconClass(status);
-  return <React.Fragment><i className={iconClass} aria-hidden="true" /> {status}</React.Fragment>;
+  const icon = getIcon(status);
+  return <React.Fragment>{icon} {status}</React.Fragment>;
 };
 
 const tableColumnClasses = [

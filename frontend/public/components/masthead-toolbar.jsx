@@ -21,6 +21,7 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const multiClusterManager = {
   label: 'OpenShift Cluster Manager',
@@ -32,7 +33,7 @@ const multiClusterManager = {
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
     <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
-      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true" />
+      <YellowExclamationTriangleIcon className="co-system-status-icon" />
     </a>
   </ToolbarItem>
   : null;

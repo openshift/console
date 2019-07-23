@@ -5,7 +5,7 @@ $pipeline-font-base: 13px;
 $pipeline-in-progress-color: $color-pf-blue-400;
 $pipeline-new-color: $color-pf-blue-100;
 $pipeline-pending-color: $color-pf-black-300;
-$pipeline-success-color: $color-pf-green-400;
+$pipeline-success-color: $pf-color-light-green-400;
 $pipeline-require-attention-color: $color-pf-gold-400;
 $pipeline-circle-animation-time: 0.35s;
 $pipeline-circle-diameter: 18px;
@@ -148,12 +148,6 @@ $pipelineStageScreenSize: (
   }
 }
 
-.build-pipeline__status-icon--complete {
-  color: $pipeline-success-color;
-}
-.build-pipeline__status-icon--failed{
-  color: $pipeline-failed-color;
-}
 .build-pipeline__status-icon--cancelled{
   color: $pipeline-aborted-color;
 }
@@ -274,10 +268,10 @@ $pipelineStageStatus: (
   transform: rotate(-90deg);
   width: $pipeline-circle-diameter;
   &:after {
+    @include font-awesome-free-solid;
     animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time ($pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time + ($pipeline-inner-circle-animation-time * 2)) linear forwards;
     color: $pipeline-inner-circle-color;
-    font-family: 'FontAwesome';
-    font-size: 12px;
+    font-size: 10px;
     left: 50%;
     opacity: 0;
     position: absolute;

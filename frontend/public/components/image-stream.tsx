@@ -11,6 +11,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -103,12 +104,12 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
       {!from && <span className="text-muted">pushed image</span>}
     </span>
     <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
-      {!imageStreamStatus && dockerRepositoryCheck && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unable to resolve</React.Fragment>}
+      {!imageStreamStatus && dockerRepositoryCheck && <React.Fragment><YellowExclamationTriangleIcon />&nbsp;Unable to resolve</React.Fragment>}
       {!imageStreamStatus && !dockerRepositoryCheck && !from && <React.Fragment>Not synced yet</React.Fragment>}
       {/* We have no idea why in this case  */}
       {!imageStreamStatus && !dockerRepositoryCheck && from && <React.Fragment>Unresolved</React.Fragment>}
       {imageStreamStatus && image && <React.Fragment>{image}</React.Fragment>}
-      {imageStreamStatus && !image && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;There is no image associated with this tag</React.Fragment>}
+      {imageStreamStatus && !image && <React.Fragment><YellowExclamationTriangleIcon />&nbsp;There is no image associated with this tag</React.Fragment>}
     </span>
     <div className="col-md-3 hidden-sm hidden-xs">
       {created && <Timestamp timestamp={created} />}
@@ -145,7 +146,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
         <p>Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong> commands. <ExternalLink href="https://podman.io/" text="Learn more." /></p>
       </div>
     }>
-    <button className="btn btn-link btn-link--no-btn-default-values hidden-sm hidden-xs" type="button"><QuestionCircleIcon /> Do you need to work with this Image Stream outside of the web console?</button>
+    <button className="btn btn-link btn-link--no-btn-default-values hidden-sm hidden-xs" type="button"><QuestionCircleIcon className="co-icon-space-r" />Do you need to work with this Image Stream outside of the web console?</button>
   </Popover>;
 };
 

@@ -261,15 +261,14 @@ $co-external-link-padding-right: 15px;
 // append external-link icon to <a> so that it doesn't wrap without text
 // there must be no white space between the text and the closing </a> tag holding the pseudo element
 .co-external-link:after {
-  content: "\f08e";
-  display:inline-block;
-  font-family: 'FontAwesome';
+  @include font-awesome-free-solid;
+  content: fa-content($fa-var-external-link-alt);
   font-size: 75%;
   height: 16px;
-  position:relative;
   margin-left: 3px;
   margin-right: -15px; // width + margin-left
-  top:0;
+  position: relative;
+  top: 0;
   width: 12px;
   .pf-c-dropdown__menu-item & {
     color: $color-pf-black-600;
@@ -291,6 +290,12 @@ $co-external-link-padding-right: 15px;
 // Add additional padding-right so icon doesn't abut .co-action-divider
 .co-external-link--within-toolbar {
   padding-right:  ($co-external-link-padding-right + $padding-base-horizontal);
+}
+
+.co-icon-flex-child {
+  flex: 0 0 auto;
+  position: relative;
+  top: 0.125em;
 }
 
 .co-toolbar {
@@ -403,7 +408,7 @@ $co-external-link-padding-right: 15px;
   max-width: 600px;
 }
 
-// Enable word-break and append pficon-var-edit icon ::after so that it doesn't wrap without text
+// Enable word-break and append pencil icon ::after so that it doesn't wrap without text
 .co-modal-btn-link {
   outline: none;
   padding: 0 20px 0 0;
@@ -411,10 +416,9 @@ $co-external-link-padding-right: 15px;
   word-break: break-all; // Firefox
   word-break: break-word;
   &::after {
+    @include font-awesome-free-solid;
     color: $color-pf-black-600;
-    content: $pficon-var-edit;
-    display: inline-block;
-    font-family: $icon-font-name-pf;
+    content: fa-content($fa-var-pencil-alt);
     line-height: 1;
     margin-left: 5px;
     margin-right: -20px; // width + margin-left

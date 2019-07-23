@@ -22,7 +22,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({ icon, title, spin
           className: classNames(
             spin && 'fa-spin',
             icon.props.className,
-            !iconOnly && 'co-icon-and-text__icon',
+            !iconOnly && 'co-icon-and-text__icon co-icon-flex-child',
           ),
         })}
       {!iconOnly && <CamelCaseWrap value={title} />}
