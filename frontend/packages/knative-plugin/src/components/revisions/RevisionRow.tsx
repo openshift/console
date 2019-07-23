@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
+import * as _ from 'lodash';
 import { TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -22,6 +23,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({ obj, index, key, style }) => 
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;
+  const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -36,12 +38,14 @@ const RevisionRow: React.FC<RevisionRowProps> = ({ obj, index, key, style }) => 
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
-        <ResourceLink
-          kind={serviceReference}
-          name={obj.metadata.labels['serving.knative.dev/service']}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.labels['serving.knative.dev/service']}
-        />
+        {service && (
+          <ResourceLink
+            kind={serviceReference}
+            name={service}
+            namespace={obj.metadata.namespace}
+            title={service}
+          />
+        )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
