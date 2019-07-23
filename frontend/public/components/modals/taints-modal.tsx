@@ -76,14 +76,14 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
         {_.isEmpty(taints)
           ? <EmptyBox label="Taints" />
           : <React.Fragment>
-            <div className="row hidden-sm hidden-xs">
+            <div className="row taint-modal__heading hidden-sm hidden-xs">
               <div className="col-sm-4 text-secondary text-uppercase">Key</div>
               <div className="col-sm-3 text-secondary text-uppercase">Value</div>
               <div className="col-sm-4 text-secondary text-uppercase">Effect</div>
               <div className="col-sm-1 co-empty__header"></div>
             </div>
             {_.map(taints, (c, i) =>
-              <div className="row" key={i}>
+              <div className="row taint-modal__row" key={i}>
                 <div className="col-md-4 col-sm-6 col-xs-6 taint-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
                   <input type="text" className="pf-c-form-control" value={c.key} onChange={(e) => this._change(e, i, 'key')} required />

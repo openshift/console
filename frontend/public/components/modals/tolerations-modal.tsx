@@ -110,7 +110,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
         {_.isEmpty(tolerations)
           ? <EmptyBox label="Tolerations" />
           : <React.Fragment>
-            <div className="row hidden-sm hidden-xs">
+            <div className="row toleration-modal__heading hidden-sm hidden-xs">
               <div className="col-md-4 text-secondary text-uppercase">Key</div>
               <div className="col-md-2 text-secondary text-uppercase">Operator</div>
               <div className="col-md-3 text-secondary text-uppercase">Value</div>
@@ -119,7 +119,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
             </div>
             {_.map(tolerations, (t, i) => {
               const { key, operator, value, effect = '' } = t;
-              return <div className="row" key={i}>
+              return <div className="row toleration-modal__row" key={i}>
                 <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
                   <input type="text" className="pf-c-form-control" value={key} onChange={(e) => this._change(e, i, 'key')} readOnly={!this._isEditable(t)} />
