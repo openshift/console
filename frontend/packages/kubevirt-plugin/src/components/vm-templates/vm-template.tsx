@@ -118,6 +118,7 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (p
       aria-label={VM_TEMPLATE_LABEL_PLURAL}
       Header={VMTemplateTableHeader}
       Row={VMTemplateTableRow}
+      virtualize
     />
   );
 };
