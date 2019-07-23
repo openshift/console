@@ -75,7 +75,7 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Cluster inventory</DashboardCardTitle>
+        <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceInventoryItem isLoading={!nodesLoaded} error={!!nodesLoadError} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
