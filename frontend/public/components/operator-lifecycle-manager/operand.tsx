@@ -126,19 +126,19 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
   );
 };
 
-enum OperatorStatusType {
+export enum OperatorStatusType {
   condition = 'condition',
   phase = 'phase',
   status = 'status',
 }
 
-const OperatorStatusTypeText = {
+export const OperatorStatusTypeText = {
   [OperatorStatusType.condition]: 'Condition:',
   [OperatorStatusType.phase]: 'Phase:',
   [OperatorStatusType.status]: 'Status:',
 };
 
-const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({statusObject}) => {
+export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({statusObject}) => {
   for (const key of Object.keys(OperatorStatusType)) {
     if (statusObject.hasOwnProperty(key)) {
       const status = statusObject[key];
@@ -409,7 +409,7 @@ export type OperandTableRowProps = {
   style: object;
 };
 
-type OperandStatusIconAndTextProps = {
+export type OperandStatusIconAndTextProps = {
   statusObject: object;
 };
 
