@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../../utils/svg-utils';
@@ -23,6 +24,7 @@ export interface BaseNodeProps {
   kind?: string;
   children?: React.ReactNode;
   attachments?: React.ReactNode;
+  isDragging?: boolean;
 }
 
 const FILTER_ID = 'BaseNodeDropShadowFilterId';
@@ -83,11 +85,16 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
       onSelect,
       children,
       attachments,
+      isDragging,
     } = this.props;
     const { hover, labelHover } = this.state;
 
+    const contentsClasses = classNames('odc-base-node__contents', {
+      'odc-m-is-highlight': isDragging,
+    });
+
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <g transform={`translate(${x}, ${y})`} className="odc-base-node">
         <g
           onClick={
             onSelect
@@ -99,7 +106,6 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
           }
           onMouseEnter={() => this.setState({ hover: true })}
           onMouseLeave={() => this.setState({ hover: false })}
-          className="odc-base-node"
         >
           <SvgDropShadowFilter id={FILTER_ID} />
           <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
@@ -110,41 +116,43 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
             r={outerRadius}
             filter={hover ? createSvgIdUrl(FILTER_ID_HOVER) : createSvgIdUrl(FILTER_ID)}
           />
-          <image
-            x={-innerRadius}
-            y={-innerRadius}
-            width={innerRadius * 2}
-            height={innerRadius * 2}
-            xlinkHref={
-              getImageForIconClass(`icon-${icon}`) || getImageForIconClass('icon-openshift')
-            }
-          />
-          {label != null && (
-            <SvgBoxedText
-              className="odc-base-node__label"
-              y={outerRadius + 20}
-              x={0}
-              paddingX={8}
-              paddingY={4}
-              kind={kind}
-              onMouseEnter={this.onLabelEnter}
-              onMouseLeave={this.onLabelLeave}
-            >
-              {labelHover ? label : truncateEnd(label)}
-            </SvgBoxedText>
-          )}
-          {selected && (
-            <circle
-              className="odc-base-node__selection"
-              cx={0}
-              cy={0}
-              r={outerRadius + 1}
-              strokeWidth={2}
+          <g className={contentsClasses}>
+            <image
+              x={-innerRadius}
+              y={-innerRadius}
+              width={innerRadius * 2}
+              height={innerRadius * 2}
+              xlinkHref={
+                getImageForIconClass(`icon-${icon}`) || getImageForIconClass('icon-openshift')
+              }
             />
-          )}
-          {children}
+            {label != null && (
+              <SvgBoxedText
+                className="odc-base-node__label"
+                y={outerRadius + 20}
+                x={0}
+                paddingX={8}
+                paddingY={4}
+                kind={kind}
+                onMouseEnter={this.onLabelEnter}
+                onMouseLeave={this.onLabelLeave}
+              >
+                {labelHover ? label : truncateEnd(label)}
+              </SvgBoxedText>
+            )}
+            {selected && (
+              <circle
+                className="odc-base-node__selection"
+                cx={0}
+                cy={0}
+                r={outerRadius + 1}
+                strokeWidth={2}
+              />
+            )}
+            {children}
+          </g>
         </g>
-        {attachments}
+        <g className={contentsClasses}>{attachments}</g>
       </g>
     );
   }

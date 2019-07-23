@@ -2,3 +2,12 @@
   stroke: var(--pf-global--BackgroundColor--dark-200);
   stroke-width: 2px;
 }
+
+.odc-m-drag-active {
+  .odc-base-edge {
+    opacity: 0.3;
+    &.odc-m-is-highlight {
+      opacity: 0.5;
+    }
+  }
+}

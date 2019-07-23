@@ -7,7 +7,7 @@ type ConnectsToProps = EdgeProps;
 
 const TARGET_ARROW_MARKER_ID = 'connectsToTargetArrowMarker';
 
-const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target }) => (
+const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target, isDragging }) => (
   <React.Fragment>
     <SvgArrowMarker
       id={TARGET_ARROW_MARKER_ID}
@@ -15,7 +15,12 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target }) => (
       markerSize={12}
       // className={'odc-connects-to-marker'}
     />
-    <BaseEdge source={source} target={target} targetMarkerId={TARGET_ARROW_MARKER_ID} />
+    <BaseEdge
+      source={source}
+      target={target}
+      targetMarkerId={TARGET_ARROW_MARKER_ID}
+      isDragging={isDragging}
+    />
   </React.Fragment>
 );
 

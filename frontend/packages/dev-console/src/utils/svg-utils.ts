@@ -31,6 +31,12 @@ function roundedHull1(polyPoints: Point[], hp: HullPaddingGetter): string {
   return `M ${p1} A ${padding},${padding},0,0,0,${p2} A ${padding},${padding},0,0,0,${p1}`;
 }
 
+// Return a point that extends a segment a given length
+export function extensionPoint(a: Point, b: Point, length: number): Point {
+  const lengthAB: number = Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
+  return [b[0] + ((b[0] - a[0]) / lengthAB) * length, b[1] + ((b[1] - a[1]) / lengthAB) * length];
+}
+
 // Returns the path for a rounded hull around two points (a "capsule" shape).
 function roundedHull2(polyPoints: Point[], hp: HullPaddingGetter): string {
   const offsetVector1 = vecScale(hp(polyPoints[0]), unitNormal(polyPoints[0], polyPoints[1]));

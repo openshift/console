@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
+import { confirmModal, errorModal } from '@console/internal/components/modals';
 import SvgDefsProvider from '../svg/SvgDefsProvider';
 import {
   ViewNode,
@@ -17,6 +18,7 @@ import {
   ViewGroup,
   GroupProvider,
   GroupProps,
+  GroupElementInterface,
 } from './topology-types';
 
 const ZOOM_EXTENT: [number, number] = [0.25, 4];
@@ -40,6 +42,9 @@ interface State {
   };
   groups: string[];
   graph?: GraphModel;
+  dragNodeId: string;
+  sourceGroup: string;
+  targetGroup: string;
 }
 
 export interface D3ForceDirectedRendererProps {
@@ -53,6 +58,7 @@ export interface D3ForceDirectedRendererProps {
   nodeSize: number;
   selected?: string;
   onSelect?(string): void;
+  onUpdateNodeGroup?(nodeId: string, targetGroup: string): Promise<any>;
 }
 
 function getEdgeId(d: Edge): string {
@@ -84,6 +90,9 @@ export default class D3ForceDirectedRenderer extends React.Component<
       edges: [],
       groupsById: {},
       groups: [],
+      dragNodeId: '',
+      sourceGroup: '',
+      targetGroup: '',
     };
 
     this.simulation = d3
@@ -102,7 +111,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
       return prevState;
     }
 
-    const { nodes, edges, groups, nodesById, edgesById, groupsById } = prevState;
+    const { graph, nodes, edges, groups, nodesById, edgesById, groupsById } = prevState;
 
     // Not the most efficient checks but ensures that if the nodes and edges are the same,
     // then we re-use the old state.
@@ -153,7 +162,11 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
     let newGroupsById = groupsById;
     let newGroups = nextProps.graph.groups.map((d) => d.id);
-    if (newNodes === nodes && _.isEqual(newGroups, groups)) {
+    if (
+      newNodes === nodes &&
+      _.isEqual(newGroups, groups) &&
+      _.isEqual(graph.groups, nextProps.graph.groups)
+    ) {
       newGroups = groups;
     } else {
       newGroupsById = nextProps.graph.groups.reduce(
@@ -259,6 +272,11 @@ export default class D3ForceDirectedRenderer extends React.Component<
     this.$svg = d3.select(node);
   };
 
+  private refGroupSvg = (groupElement: GroupElementInterface, groupId: string) => {
+    const { groupsById } = this.state;
+    groupsById[groupId].element = groupElement;
+  };
+
   private onZoom = () => {
     this.setState({ zoomTransform: d3.event.transform });
   };
@@ -310,18 +328,34 @@ export default class D3ForceDirectedRenderer extends React.Component<
     }
   };
 
+  private lockNodes = () => {
+    const { nodes, nodesById } = this.state;
+    nodes.forEach((id) => {
+      nodesById[id].fx = nodesById[id].x;
+      nodesById[id].fy = nodesById[id].y;
+    });
+  };
+
+  private unlockNodes = () => {
+    const { nodes, nodesById } = this.state;
+    nodes.forEach((id) => {
+      nodesById[id].fx = null;
+      nodesById[id].fy = null;
+    });
+  };
+
   private onNodeEnter = ($node: NodeSelection) => {
     $node.call(
       d3
         .drag<SVGGElement, ViewNode>()
-        .on('start', (d) => this.onNodeDragStart(d))
+        .on('start', () => this.onNodeDragStart())
         .on('drag', (d) => this.onNodeDragged(d))
         .on('end', (d) => this.onNodeDragEnd(d))
         .filter(() => this.state.nodes.length > 1),
     );
   };
 
-  private onNodeDragStart = (d: ViewNode) => {
+  private onNodeDragStart = () => {
     d3.event.sourceEvent.stopPropagation();
 
     if (d3.event.sourceEvent.which !== 1) {
@@ -331,11 +365,20 @@ export default class D3ForceDirectedRenderer extends React.Component<
     if (this.dragCount) {
       this.dragCount++;
     }
-    d.fx = d.x;
-    d.fy = d.y;
+  };
+
+  private initializeNodeDrag = (d: ViewNode) => {
+    const { groups, groupsById } = this.state;
+
+    this.lockNodes();
+
+    const sourceGroup = _.find(groups, (id: string) => _.includes(groupsById[id].nodes, d));
+    this.setState({ dragNodeId: d.id, sourceGroup, targetGroup: sourceGroup });
   };
 
   private onNodeDragged = (d: ViewNode) => {
+    const { groups, groupsById, targetGroup } = this.state;
+
     if (d3.event.sourceEvent.which !== 1) {
       return;
     }
@@ -343,14 +386,35 @@ export default class D3ForceDirectedRenderer extends React.Component<
     if (!this.dragCount && (Math.abs(d.x - d3.event.x) > 5 || Math.abs(d.y - d3.event.y) > 5)) {
       this.dragCount++;
       this.simulation.alphaTarget(0.1).restart();
+      this.initializeNodeDrag(d);
+      return;
     }
+
     if (this.dragCount) {
-      d.fx = d3.event.x;
-      d.fy = d3.event.y;
+      d.fx = d3.event.x; // Math.min(width, Math.max(0, d3.event.x));
+      d.fy = d3.event.y; // Math.min(height, Math.max(0, d3.event.y));
+
+      if (d3.event.dx === 0 && d3.event.dy === 0) {
+        return;
+      }
+      const point: [number, number] = [d3.event.x, d3.event.y];
+
+      const newTargetGroup = _.find(groups, (groupId) => {
+        const groupElement: any = groupsById[groupId].element;
+        return groupElement && groupElement.isPointInGroup(point);
+      });
+
+      if (newTargetGroup !== targetGroup) {
+        this.setState({ targetGroup: newTargetGroup });
+      }
     }
   };
 
   private onNodeDragEnd = (d: ViewNode) => {
+    const { onUpdateNodeGroup } = this.props;
+    const { sourceGroup, targetGroup, groupsById } = this.state;
+    const targetGroupName = _.get(groupsById[targetGroup], 'name', '');
+
     if (d3.event.sourceEvent.which !== 1) {
       return;
     }
@@ -361,8 +425,50 @@ export default class D3ForceDirectedRenderer extends React.Component<
         this.simulation.alphaTarget(0);
       }
     }
-    d.fx = null;
-    d.fy = null;
+
+    const onComplete = () => {
+      this.unlockNodes();
+      this.setState({ dragNodeId: '', sourceGroup: '', targetGroup: '' });
+    };
+
+    if (sourceGroup === targetGroup || !onUpdateNodeGroup) {
+      onComplete();
+      return;
+    }
+
+    if (sourceGroup) {
+      const title = targetGroup ? 'Move Component Node' : 'Remove Component Node from Application';
+      const message = (
+        <React.Fragment>
+          Are you sure you want to {targetGroup ? 'move' : 'remove'} <strong>{d.name}</strong> from{' '}
+          {groupsById[sourceGroup].name}
+          {targetGroup ? ` to ${targetGroupName}` : ''}?
+        </React.Fragment>
+      );
+      const btnText = targetGroup ? 'Move' : 'Remove';
+
+      confirmModal({
+        title,
+        message,
+        btnText,
+        close: onComplete,
+        executeFn: () => {
+          return onUpdateNodeGroup(d.id, targetGroupName).catch((err) => {
+            const error = err.message;
+            errorModal({ error });
+          });
+        },
+      });
+      return;
+    }
+
+    onUpdateNodeGroup(d.id, targetGroupName)
+      .then(onComplete)
+      .catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+        onComplete();
+      });
   };
 
   private onGroupEnter = ($group: GroupSelection) => {
@@ -504,26 +610,108 @@ export default class D3ForceDirectedRenderer extends React.Component<
     return groupLinks;
   }
 
-  render() {
-    const {
-      width,
-      height,
-      nodeProvider,
-      edgeProvider,
-      groupProvider,
-      selected,
-      onSelect,
-      topology,
-    } = this.props;
-    const { nodes, edges, nodesById, edgesById, groups, groupsById, zoomTransform } = this.state;
+  private draggedEdges() {
+    const { dragNodeId, edgesById } = this.state;
+    if (!dragNodeId) {
+      return [];
+    }
+    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
+    });
+    return _.map(edges, 'id');
+  }
+
+  private draggedNodes() {
+    const { dragNodeId, edgesById, nodes } = this.state;
+    if (!dragNodeId) {
+      return [];
+    }
+    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
+    });
+
+    return _.filter(nodes, (nodeId: string) =>
+      _.find(edges, (edge: ViewEdge) => edge.source.id === nodeId || edge.target.id === nodeId),
+    );
+  }
+
+  renderNode(nodeId: string) {
+    const { nodeProvider, selected, onSelect, topology } = this.props;
+    const { nodesById, dragNodeId } = this.state;
+
+    const data = topology[nodeId];
+    const viewNode = nodesById[nodeId];
+    const Component = nodeProvider(viewNode.type);
     return (
-      <svg height={height} width={width} ref={this.refSvg} onClick={this.deselect}>
+      <ViewWrapper
+        component={Component}
+        {...viewNode}
+        view={viewNode}
+        data={data}
+        key={nodeId}
+        selected={nodeId === selected}
+        onSelect={onSelect ? () => onSelect(nodeId) : null}
+        onEnter={this.onNodeEnter}
+        isDragging={nodeId === dragNodeId}
+      />
+    );
+  }
+
+  renderEdge(edgeId: string) {
+    const { topology, edgeProvider } = this.props;
+    const { edgesById, dragNodeId } = this.state;
+
+    const data = topology[edgeId];
+    const viewEdge = edgesById[edgeId];
+    const Component = edgeProvider(viewEdge.type);
+    return (
+      <Component
+        {...viewEdge}
+        key={edgeId}
+        data={data}
+        isDragging={viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId}
+      />
+    );
+  }
+
+  renderDragItems(edges, nodes) {
+    return (
+      <React.Fragment>
+        {_.map(edges, (edgeId) => this.renderEdge(edgeId))}
+        {_.map(nodes, (nodeId) => this.renderNode(nodeId))}
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    const { width, height, groupProvider } = this.props;
+    const {
+      nodes,
+      edges,
+      groups,
+      groupsById,
+      zoomTransform,
+      dragNodeId,
+      sourceGroup,
+      targetGroup,
+    } = this.state;
+    const draggedEdges = this.draggedEdges();
+    const draggedNodes = this.draggedNodes();
+    return (
+      <svg
+        height={height}
+        width={width}
+        ref={this.refSvg}
+        onClick={this.deselect}
+        className={dragNodeId ? 'odc-m-drag-active' : ''}
+      >
         <SvgDefsProvider>
           <g transform={zoomTransform && zoomTransform.toString()} ref={this.zoomGroup}>
             <g>
               {groups.map((groupId) => {
                 const viewGroup = groupsById[groupId];
                 const Component = groupProvider(viewGroup.type);
+
                 return (
                   <GroupWrapper
                     component={Component}
@@ -531,36 +719,23 @@ export default class D3ForceDirectedRenderer extends React.Component<
                     key={groupId}
                     onEnter={this.onGroupEnter}
                     view={viewGroup}
+                    dropSource={groupId === sourceGroup}
+                    dropTarget={groupId === targetGroup}
+                    groupRef={(ref: GroupElementInterface) => this.refGroupSvg(ref, groupId)}
                   />
                 );
               })}
             </g>
             <g>
-              {edges.map((edgeId) => {
-                const data = topology[edgeId];
-                const viewEdge = edgesById[edgeId];
-                const Component = edgeProvider(viewEdge.type);
-                return <Component {...viewEdge} key={edgeId} data={data} />;
-              })}
+              {edges.map((edgeId) =>
+                _.includes(draggedEdges, edgeId) ? null : this.renderEdge(edgeId),
+              )}
             </g>
             <g>
-              {nodes.map((nodeId) => {
-                const data = topology[nodeId];
-                const viewNode = nodesById[nodeId];
-                const Component = nodeProvider(viewNode.type);
-                return (
-                  <ViewWrapper
-                    component={Component}
-                    {...viewNode}
-                    view={viewNode}
-                    data={data}
-                    key={nodeId}
-                    selected={nodeId === selected}
-                    onSelect={onSelect ? () => onSelect(nodeId) : null}
-                    onEnter={this.onNodeEnter}
-                  />
-                );
-              })}
+              {nodes.map((nodeId) =>
+                _.includes(draggedNodes, nodeId) ? null : this.renderNode(nodeId),
+              )}
+              {dragNodeId && this.renderDragItems(draggedEdges, draggedNodes)}
             </g>
           </g>
         </SvgDefsProvider>
@@ -576,6 +751,7 @@ type ViewWrapperProps = NodeProps & {
   onEnter(NodeSelection): void;
   view: ViewNode;
   data: TopologyDataObject;
+  isDragging?: boolean;
 };
 
 class ViewWrapper extends React.Component<ViewWrapperProps> {

@@ -1,5 +1,6 @@
 .odc-base-node {
   cursor: pointer;
+
   &__bg {
     fill: var(--pf-global--BackgroundColor--light-100);
   }
@@ -18,3 +19,13 @@
     }
   }
 }
+
+.odc-m-drag-active {
+  .odc-base-node__contents {
+    opacity: 0.3;
+    &.odc-m-is-highlight {
+      opacity: 1;
+    }
+  }
+}
+
