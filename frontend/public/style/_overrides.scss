@@ -360,10 +360,14 @@ kbd {
   display: table;
   table-layout: fixed;
   width: 100%;
+  &:first-child::before {
+    content: none;
+    width: 0 !important;
+  }
 }
 
 // override .co-m-table-grid [class*='col-'], .co-m-table-grid .row
-.pf-c-table.pf-c-virtualized tr> td {
+.pf-c-table.pf-c-virtualized tr > td {
   vertical-align: top;
 }
 
@@ -376,11 +380,6 @@ kbd {
   .co-clusterserviceversion-logo {
     align-items: center;
   }
-}
-
-.pf-c-table tbody > tr > :first-child::before {
-  content: none;
-  width: 0 !important;
 }
 
 .pf-c-table.pf-m-compact .pf-c-table__action {
