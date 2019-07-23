@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, OverlayTrigger, Popover } from 'patternfly-react';
+import { Button } from 'patternfly-react';
+import { Popover, PopoverPosition } from '@patternfly/react-core';
 
 const DashboardCardButtonLink: React.FC<DashboardCardButtonLinkProps> = React.memo(({ children, ...rest }) => (
   <Button bsStyle="link" className="co-dashboard-card__button-link" {...rest}>{children}</Button>
@@ -17,15 +18,16 @@ export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = Rea
     if (React.Children.count(children) === 0) {
       return null;
     }
-    const overlay = (
-      <Popover id="popover" title={popupTitle}>
-        {children}
-      </Popover>
-    );
+
     return (
-      <OverlayTrigger overlay={overlay} placement="right" trigger={['click']} rootClose>
+      <Popover
+        position={PopoverPosition.right}
+        headerContent={popupTitle}
+        bodyContent={children}
+        enableFlip
+      >
         <DashboardCardButtonLink>{linkTitle}</DashboardCardButtonLink>
-      </OverlayTrigger>
+      </Popover>
     );
   }
 );
