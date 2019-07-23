@@ -311,6 +311,7 @@ export const createResources = async (
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
+    name,
     application: { name: applicationName },
     project: { name: projectName },
     route: { create: canCreateRoute },
@@ -320,6 +321,7 @@ export const createResources = async (
     serverless: { scaling },
     route,
   } = formData;
+  const imageStreamName = imageStream && imageStream.metadata.name;
 
   const requests: Promise<K8sResourceKind>[] = [
     createImageStream(formData, imageStream, dryRun),
@@ -335,12 +337,14 @@ export const createResources = async (
     const [imageStreamResponse] = await Promise.all(requests);
     return Promise.all([
       createKnativeService(
+        name,
         applicationName,
         projectName,
         scaling,
         limits,
         route,
         imageStreamResponse.status.dockerImageRepository,
+        imageStreamName,
       ),
     ]);
   }

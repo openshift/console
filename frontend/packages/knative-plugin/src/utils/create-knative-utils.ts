@@ -28,12 +28,13 @@ interface ResourceType {
 
 export const createKnativeService = (
   name: string,
+  applicationName: string,
   namespace: string,
   scaling: ServerlessScaling,
   limits: LimitsData,
   { targetPort },
-  imageStreamName: string,
-  imageStreamTag?: string,
+  imageStreamUrl: string,
+  imageStreamName?: string,
 ): Promise<K8sResourceKind> => {
   const contTargetPort: number = parseInt(targetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
@@ -61,6 +62,12 @@ export const createKnativeService = (
     spec: {
       template: {
         metadata: {
+          labels: {
+            'app.kubernetes.io/part-of': applicationName,
+            'app.kubernetes.io/component': name,
+            'app.kubernetes.io/instance': name,
+            'app.kubernetes.io/name': imageStreamName,
+          },
           annotations: {
             ...(concurrencytarget && {
               'autoscaling.knative.dev/target': `${concurrencytarget}`,
@@ -72,7 +79,7 @@ export const createKnativeService = (
         spec: {
           ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
           container: {
-            image: `${imageStreamName}${imageStreamTag ? `:${imageStreamTag}` : ''}`,
+            image: `${imageStreamUrl}`,
             ...(contTargetPort && {
               ports: [
                 {
