@@ -67,11 +67,11 @@ const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
 const menuActionRestart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatus, vmi }: ActionArgs,
+  { vmStatus, vmi, migration }: ActionArgs,
 ): KebabOption => {
   const title = 'Restart Virtual Machine';
   return {
-    hidden: isVMImporting(vmStatus) || !isVMRunningWithVMI({ vm, vmi }),
+    hidden: isVMImporting(vmStatus) || !isVMRunningWithVMI({ vm, vmi }) || isMigrating(migration),
     label: title,
     callback: () =>
       confirmModal({
