@@ -138,12 +138,7 @@ export class VirtualMachine extends KubevirtDetailView {
 
     // Networking
     for (const resource of networkResources) {
-      await wizard.addNIC(
-        resource.name,
-        resource.mac,
-        resource.networkDefinition,
-        resource.binding,
-      );
+      await wizard.addNIC(resource);
     }
     await wizard.next();
 

@@ -2,7 +2,7 @@ import { $, browser, ExpectedConditions as until } from 'protractor';
 import { createItemButton, isLoaded } from '../../../../../integration-tests/views/crud.view';
 import { selectDropdownOption, click } from '../../../../console-shared/src/test-utils/utils';
 import { fillInput } from '../utils/utils';
-import { CloudInitConfig, StorageResource } from '../utils/types';
+import { CloudInitConfig, StorageResource, NetworkResource } from '../utils/types';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
 
@@ -80,8 +80,9 @@ export class Wizard {
     await isLoaded();
   }
 
-  async addNIC(name: string, mac: string, networkDefinition: string, binding: string) {
+  async addNIC(NICConfig: NetworkResource) {
     await click(wizardView.createNIC);
+    const { name, mac, networkDefinition, binding } = NICConfig;
     const rowsCount = await this.getTableRowsCount();
     // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
     await wizardView.selectTableDropdownAttribute(rowsCount, 'network', networkDefinition);
