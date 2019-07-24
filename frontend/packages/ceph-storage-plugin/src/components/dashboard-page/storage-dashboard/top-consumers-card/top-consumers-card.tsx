@@ -64,7 +64,7 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Top Consumers</DashboardCardTitle>
-        <div className="ceph-top-consumer-card__dropdown">
+        <div>
           <Dropdown
             className="btn-group ceph-top-consumer-card__dropdown--right"
             id="metric-type"

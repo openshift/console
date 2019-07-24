@@ -1,14 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { CardHeader, CardHeaderProps } from '@patternfly/react-core';
 
-export const DashboardCardHeader: React.FC<DashboardCardHeaderProps> = React.memo(({ className, children, ...props }) => (
-  <CardHeader {...props} className={classNames('co-dashboard-card__header', className)}>
+export const DashboardCardHeader: React.FC<DashboardCardHeaderProps> = React.memo(({ className, children }) => (
+  <div className={classNames('co-dashboard-card__header', className)}>
     {children}
-  </CardHeader>
+  </div>
 ));
 
-type DashboardCardHeaderProps = CardHeaderProps & {
+type DashboardCardHeaderProps = {
   className?: string;
   children: React.ReactNode;
 };
