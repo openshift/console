@@ -20,7 +20,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         if (mount.name !== rowVolumeData.name) {
           return;
         }
-        if (mount.mountPath === rowVolumeData.mountPath) {
+        if (mount.mountPath === rowVolumeData.mountPath && container.name === rowVolumeData.container) {
           patches.push({op: 'remove', path: `/spec/template/spec/containers/${i}/volumeMounts/${j}`});
         } else {
           allowRemoveVolume = false;

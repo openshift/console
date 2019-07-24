@@ -43,7 +43,7 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
     return [];
   }
 
-  const m = {};
+  const data: RowVolumeData[] = [];
   const volumes = (pod.spec.volumes || []).reduce((p, v: Volume) => {
     p[v.name] = v;
     return p;
@@ -51,13 +51,11 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
 
   _.forEach(pod.spec.containers, (c: ContainerSpec) => {
     _.forEach(c.volumeMounts, (v: VolumeMount) => {
-      const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}_${v.mountPath}`;
-      const mount = {container: c.name, mountPath: v.mountPath, subPath: v.subPath};
-      m[k] = {name: v.name, readOnly: !!v.readOnly, volumeDetail: volumes[v.name],
-        container: mount.container, mountPath: mount.mountPath, subPath: mount.subPath, resource};
+      data.push({name: v.name, readOnly: !!v.readOnly, volumeDetail: volumes[v.name],
+        container: c.name, mountPath: v.mountPath, subPath: v.subPath, resource});
     });
   });
-  return _.values(m);
+  return data;
 };
 
 const ContainerLink: React.FC<ContainerLinkProps> = ({name, pod}) => <span className="co-resource-item co-resource-item--inline">
