@@ -291,8 +291,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             Create
           </Button>
           <Button
-            component="a"
-            href={`/k8s/ns/${props.namespace}/clusterserviceversions/${props.clusterServiceVersion.metadata.name}/${referenceForModel(props.operandModel)}`}
+            onClick={history.goBack}
             variant="secondary">
             Cancel
           </Button>
