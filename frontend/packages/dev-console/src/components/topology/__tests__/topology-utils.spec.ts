@@ -1,5 +1,6 @@
-import { TransformTopologyData, getPodStatus, podStatus } from '../topology-utils';
+import { getPodStatus, podStatus } from '@console/shared';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
+import { TransformTopologyData } from '../topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 

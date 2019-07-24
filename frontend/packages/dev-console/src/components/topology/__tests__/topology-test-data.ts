@@ -1,4 +1,5 @@
-import { TopologyDataModel, TopologyDataResources, Resource } from '../topology-types';
+import { Resource } from '@console/shared';
+import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 
 export const resources: TopologyDataResources = {
   replicationControllers: { data: [] },

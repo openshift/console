@@ -11,7 +11,8 @@ import {
   ServiceModel,
   BuildConfigModel,
 } from '@console/internal/models';
-import { TopologyDataObject, ResourceProps } from './topology-types';
+import { ResourceProps } from '@console/shared';
+import { TopologyDataObject } from './topology-types';
 import './TopologySideBar.scss';
 
 export type TopologySideBarProps = {

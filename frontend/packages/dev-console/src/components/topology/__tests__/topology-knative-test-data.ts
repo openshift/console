@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars, no-undef */
-import { TopologyDataResources, Resource } from '../topology-types';
+import { Resource } from '@console/shared';
+import { TopologyDataResources } from '../topology-types';
 
 export const sampleKnativeDeployments = {
   data: [

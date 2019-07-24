@@ -3,100 +3,12 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import {
-  DeploymentModel,
-  DaemonSetModel,
-  StatefulSetModel,
-  DeploymentConfigModel,
-} from '@console/internal/models';
-import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
+import { ResourceProps, TransformPodData } from '@console/shared';
+import { TopologyDataModel, TopologyDataResources } from './topology-types';
 
-export const podColor = {
-  Running: '#0066CC',
-  'Not Ready': '#519DE9',
-  Warning: '#F0AB00',
-  Empty: '#FFFFFF',
-  Failed: '#CC0000',
-  Pending: '#8BC1F7',
-  Succceeded: '#519149',
-  Terminating: '#002F5D',
-  Unknown: '#A18FFF',
-  'Scaled to 0': '#FFFFFF',
-  Idle: '#FFFFFF',
-  'Autoscaled to 0': '#FFFFFF',
-};
-
-export const podStatus = Object.keys(podColor);
-
-function numContainersReadyFilter(pod) {
-  let numReady = 0;
-  _.forEach(pod.status.containerStatuses, function(status) {
-    if (status.ready) {
-      numReady++;
-    }
-  });
-  return numReady;
-}
-
-function isReady(pod) {
-  const numReady = numContainersReadyFilter(pod);
-  const total = _.size(pod.spec.containers);
-
-  return numReady === total;
-}
-
-function isContainerFailedFilter(containerStatus) {
-  return containerStatus.state.terminated && containerStatus.state.terminated.exitCode !== 0;
-}
-
-function isContainerLoopingFilter(containerStatus) {
-  return (
-    containerStatus.state.waiting && containerStatus.state.waiting.reason === 'CrashLoopBackOff'
-  );
-}
-
-function isKnativeDeployment(dc: ResourceProps): boolean {
+const isKnativeDeployment = (dc: ResourceProps): boolean => {
   return !!(dc.metadata && dc.metadata.labels && dc.metadata.labels[KNATIVE_SERVING_LABEL]);
-}
-
-function podWarnings(pod) {
-  if (pod.status.phase === 'Running' && pod.status.containerStatuses) {
-    return _.map(pod.status.containerStatuses, function(containerStatus) {
-      if (!containerStatus.state) {
-        return null;
-      }
-
-      if (isContainerFailedFilter(containerStatus)) {
-        if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
-          return 'Failed';
-        }
-        return 'Warning';
-      }
-      if (isContainerLoopingFilter(containerStatus)) {
-        return 'Failed';
-      }
-      return null;
-    }).filter((x) => x);
-  }
-  return null;
-}
-
-export function getPodStatus(pod) {
-  if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
-    return 'Terminating';
-  }
-  const warnings = podWarnings(pod);
-  if (warnings !== null && warnings.length) {
-    if (warnings.includes('Failed')) {
-      return 'Failed';
-    }
-    return 'Warning';
-  }
-  if (pod.status.phase === 'Running' && !isReady(pod)) {
-    return 'Not Ready';
-  }
-  return _.get(pod, 'status.phase', 'Unknown');
-}
+};
 
 export class TransformTopologyData {
   private topologyData: TopologyDataModel = {
@@ -104,42 +16,11 @@ export class TransformTopologyData {
     topology: {},
   };
 
-  private deploymentKindMap = {
-    deployments: {
-      dcKind: DeploymentModel.kind,
-      rcKind: 'ReplicaSet',
-      rController: 'replicasets',
-    },
-    daemonSets: {
-      dcKind: DaemonSetModel.kind,
-      rcKind: 'ReplicaSet',
-      rController: 'replicasets',
-    },
-    statefulSets: {
-      dcKind: StatefulSetModel.kind,
-      rcKind: 'ReplicaSet',
-      rController: 'replicasets',
-    },
-    deploymentConfigs: {
-      dcKind: DeploymentConfigModel.kind,
-      rcKind: 'ReplicationController',
-      rController: 'replicationControllers',
-    },
-  };
-
-  private transformPods = (pods): K8sResourceKind[] => {
-    return _.map(pods, (pod) =>
-      _.merge(_.pick(pod, 'metadata', 'status', 'spec.containers'), {
-        id: pod.metadata.uid,
-        name: pod.metadata.name,
-        kind: 'Pod',
-      }),
-    );
-  };
-
   private selectorsByService;
 
   private allServices;
+
+  private transformPodData;
 
   constructor(public resources: TopologyDataResources, public application?: string) {
     if (this.resources.ksservices && this.resources.ksservices.data) {
@@ -151,6 +32,7 @@ export class TransformTopologyData {
       this.allServices = _.keyBy(this.resources.services.data, 'metadata.name');
     }
     this.selectorsByService = this.getSelectorsByService();
+    this.transformPodData = new TransformPodData(this.resources);
   }
 
   /**
@@ -172,13 +54,13 @@ export class TransformTopologyData {
    * @param targetDeployment
    */
   public transformDataBy(targetDeployment = 'deployments'): TransformTopologyData {
-    if (!this.deploymentKindMap[targetDeployment]) {
+    if (!this.transformPodData.deploymentKindMap[targetDeployment]) {
       throw new Error(`Invalid target deployment resource: (${targetDeployment})`);
     }
     if (_.isEmpty(this.resources[targetDeployment].data)) {
       return this;
     }
-    const targetDeploymentsKind = this.deploymentKindMap[targetDeployment].dcKind;
+    const targetDeploymentsKind = this.transformPodData.deploymentKindMap[targetDeployment].dcKind;
 
     // filter data based on the active application
     const resourceData = this.filterBasedOnActiveApplication(this.resources[targetDeployment].data);
@@ -187,17 +69,21 @@ export class TransformTopologyData {
       deploymentConfig.kind = targetDeploymentsKind;
       const dcUID = _.get(deploymentConfig, 'metadata.uid');
 
-      const replicationControllers = this.getReplicationControllers(
+      const replicationControllers = this.transformPodData.getReplicationControllers(
         deploymentConfig,
         targetDeployment,
       );
       const current = _.head(replicationControllers);
       const previous = _.nth(replicationControllers, 1);
       const currentPods = current
-        ? this.transformPods(this.getPods(current, deploymentConfig))
+        ? this.transformPodData.transformPods(
+            this.transformPodData.getPods(current, deploymentConfig),
+          )
         : [];
       const previousPods = previous
-        ? this.transformPods(this.getPods(previous, deploymentConfig))
+        ? this.transformPodData.transformPods(
+            this.transformPodData.getPods(previous, deploymentConfig),
+          )
         : [];
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
@@ -244,7 +130,10 @@ export class TransformTopologyData {
             deploymentsAnnotations['app.openshift.io/edit-url'] ||
             deploymentsAnnotations['app.openshift.io/vcs-uri'],
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
-          isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
+          isKnativeResource: this.transformPodData.isKnativeServing(
+            deploymentConfig,
+            'metadata.labels',
+          ),
           donutStatus: {
             pods: currentPods,
             build: builds && builds[0],
@@ -429,104 +318,6 @@ export class TransformTopologyData {
   }
 
   /**
-   * check if config is knative serving resource.
-   * @param configRes
-   * @param properties
-   */
-  private isKnativeServing(configRes: ResourceProps, properties: string): boolean {
-    const deploymentsLabels = _.get(configRes, properties) || {};
-    return !!deploymentsLabels['serving.knative.dev/configuration'];
-  }
-
-  /**
-   * check if the deployment/deploymentconfig is idled.
-   * @param deploymentConfig
-   */
-  private isIdled(deploymentConfig: ResourceProps): boolean {
-    return !!_.get(
-      deploymentConfig,
-      "metadata.annotations['idling.alpha.openshift.io/idled-at']",
-      false,
-    );
-  }
-
-  /**
-   * Get all the pods from a replication controller or a replicaset.
-   * @param replicationController
-   */
-  private getPods(replicationController: ResourceProps, deploymentConfig: ResourceProps) {
-    const deploymentCondition = {
-      uid: _.get(replicationController, 'metadata.uid'),
-      controller: true,
-    };
-    const dcCondition = {
-      uid: _.get(deploymentConfig, 'metadata.uid'),
-    };
-    const condition =
-      deploymentConfig.kind === DaemonSetModel.kind ||
-      deploymentConfig.kind === StatefulSetModel.kind
-        ? dcCondition
-        : deploymentCondition;
-    const dcPodsData = _.filter(this.resources.pods.data, (pod) => {
-      return _.some(_.get(pod, 'metadata.ownerReferences'), condition);
-    });
-    if (
-      dcPodsData &&
-      !dcPodsData.length &&
-      this.isKnativeServing(replicationController, 'metadata.labels')
-    ) {
-      return [
-        {
-          ..._.pick(replicationController, 'metadata', 'status', 'spec'),
-          status: { phase: 'Autoscaled to 0' },
-        },
-      ];
-    }
-    if (dcPodsData && !dcPodsData.length && this.isIdled(deploymentConfig)) {
-      return [
-        {
-          ..._.pick(replicationController, 'metadata', 'status', 'spec'),
-          status: { phase: 'Idle' },
-        },
-      ];
-    }
-    return dcPodsData;
-  }
-
-  /**
-   * fetches all the replication controllers from the deployment
-   * @param deploymentConfig
-   * @param targetDeployment 'deployments' || 'deploymentConfigs'
-   */
-  private getReplicationControllers(
-    deploymentConfig: ResourceProps,
-    targetDeployment: string,
-  ): ResourceProps[] {
-    // Get the current replication controller or replicaset
-    const targetReplicationControllersKind = this.deploymentKindMap[targetDeployment].rcKind;
-    const replicationControllers = this.deploymentKindMap[targetDeployment].rController;
-    const dcUID = _.get(deploymentConfig, 'metadata.uid');
-
-    const rControllers = _.filter(
-      this.resources[replicationControllers].data,
-      (replicationController) => {
-        return _.some(_.get(replicationController, 'metadata.ownerReferences'), {
-          uid: dcUID,
-          controller: true,
-        });
-      },
-    );
-    const sortedControllers = this.sortByDeploymentVersion(rControllers, true);
-    return _.size(sortedControllers)
-      ? _.map(sortedControllers, (nextController) =>
-          _.merge(nextController, {
-            kind: targetReplicationControllersKind,
-          }),
-        )
-      : ([{ kind: targetReplicationControllersKind }] as ResourceProps[]);
-  }
-
-  /**
    * create graph data from the deploymentconfig.
    * @param deploymentConfig
    */
@@ -595,45 +386,4 @@ export class TransformTopologyData {
       });
     }
   }
-
-  /**
-   * sort the deployement version
-   */
-  private sortByDeploymentVersion = (
-    replicationControllers: ResourceProps[],
-    descending: boolean,
-  ) => {
-    const version = 'openshift.io/deployment-config.latest-version';
-    const compareDeployments = (left, right) => {
-      const leftVersion = parseInt(_.get(left, version), 10);
-      const rightVersion = parseInt(_.get(right, version), 10);
-
-      // Fall back to sorting by name if right Name no deployment versions.
-      let leftName: string;
-      let rightName: string;
-      if (!_.isFinite(leftVersion) && !_.isFinite(rightVersion)) {
-        leftName = _.get(left, 'metadata.name', '');
-        rightName = _.get(right, 'metadata.name', '');
-        if (descending) {
-          return rightName.localeCompare(leftName);
-        }
-        return leftName.localeCompare(rightName);
-      }
-
-      if (!leftVersion) {
-        return descending ? 1 : -1;
-      }
-
-      if (!rightVersion) {
-        return descending ? -1 : 1;
-      }
-
-      if (descending) {
-        return rightVersion - leftVersion;
-      }
-      return leftVersion - rightVersion;
-    };
-
-    return _.toArray(replicationControllers).sort(compareDeployments);
-  };
 }

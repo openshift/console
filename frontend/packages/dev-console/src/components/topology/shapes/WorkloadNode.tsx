@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternfly/react-icons';
 import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
-import { Status } from '@console/shared';
+import { Status, calculateRadius, PodStatus } from '@console/shared';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildConfigModel } from '@console/internal/models';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
-import PodStatus from './PodStatus';
 import KnativeIcon from './KnativeIcon';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
@@ -19,17 +18,15 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   selected,
   onSelect,
 }) => {
-  const radius = size / 2;
-  const podStatusStrokeWidth = (8 / 104) * size;
-  const podStatusInset = (5 / 104) * size;
-  const podStatusOuterRadius = radius - podStatusInset;
-  const podStatusInnerRadius = podStatusOuterRadius - podStatusStrokeWidth;
-  const decoratorRadius = radius * 0.25;
+  const { radius, podStatusOuterRadius, podStatusInnerRadius, decoratorRadius } = calculateRadius(
+    size,
+  );
   const {
     data: {
       donutStatus: { build },
     },
   } = workload;
+
   return (
     <BaseNode
       x={x}
