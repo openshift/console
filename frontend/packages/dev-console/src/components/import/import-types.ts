@@ -125,7 +125,7 @@ export interface DeploymentData {
 }
 
 export interface ServerlessData {
-  trigger: boolean;
+  enabled: boolean;
   scaling: ServerlessScaling;
 }
 

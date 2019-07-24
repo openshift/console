@@ -36,13 +36,13 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
         </ProgressiveListItem>
       )}
       {/* Hide Deployment for Serverless */}
-      {values.serverless.trigger ? null : (
+      {values.serverless.enabled ? null : (
         <ProgressiveListItem name="Deployment Configuration">
           <DeploymentConfigSection namespace={values.project.name} />
         </ProgressiveListItem>
       )}
       <ProgressiveListItem name="Scaling">
-        {values.serverless.trigger ? <ServerlessScalingSection /> : <ScalingSection />}
+        {values.serverless.enabled ? <ServerlessScalingSection /> : <ScalingSection />}
       </ProgressiveListItem>
       <ProgressiveListItem name="Resource Limits">
         <ResourceLimitSection />

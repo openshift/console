@@ -238,7 +238,7 @@ export const createResources = async (
 
   const requests: Promise<K8sResourceKind>[] = [];
   requests.push(createImageStream(formData, dryRun));
-  if (!formData.serverless.trigger) {
+  if (!formData.serverless.enabled) {
     requests.push(createDeploymentConfig(formData, dryRun));
 
     if (!_.isEmpty(ports)) {

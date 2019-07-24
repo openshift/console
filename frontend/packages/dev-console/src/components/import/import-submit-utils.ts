@@ -326,7 +326,7 @@ export const createResources = async (
     createBuildConfig(formData, imageStream, dryRun),
   ];
 
-  if (formData.serverless.trigger) {
+  if (formData.serverless.enabled) {
     // knative service doesn't have dry run capability so returning the promises.
     if (dryRun) {
       return Promise.all(requests);

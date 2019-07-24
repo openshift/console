@@ -21,8 +21,8 @@ export const deployValidationSchema = yup.object().shape({
     status: yup.string().required('Required'),
   }),
   serverless: yup.object().shape({
-    trigger: yup.boolean(),
-    scaling: yup.object().when('trigger', {
+    enabled: yup.boolean(),
+    scaling: yup.object().when('enabled', {
       is: true,
       then: yup.object({
         minpods: yup

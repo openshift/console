@@ -17,7 +17,7 @@ const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
         <CheckboxField
           type="checkbox"
           label="Enable scaling to zero when idle"
-          name="serverless.trigger"
+          name="serverless.enabled"
         />
       </FormSection>
     );
