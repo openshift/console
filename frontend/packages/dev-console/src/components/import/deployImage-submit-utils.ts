@@ -233,6 +233,7 @@ export const createResources = async (
     project: { name: projectName },
     isi: { ports },
     serverless: { scaling },
+    labels: userLabels,
     limits,
     route,
   } = formData;
@@ -258,6 +259,7 @@ export const createResources = async (
         scaling,
         limits,
         route,
+        userLabels,
         imageStreamResponse.status.dockerImageRepository,
       ),
     );

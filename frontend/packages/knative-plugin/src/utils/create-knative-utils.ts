@@ -6,6 +6,7 @@ import {
   ConfigurationModel,
   RouteModel,
 } from '@console/knative-plugin';
+import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 
 interface ServerlessScaling {
   minpods: number;
@@ -33,6 +34,7 @@ export const createKnativeService = (
   scaling: ServerlessScaling,
   limits: LimitsData,
   { targetPort },
+  labels,
   imageStreamUrl: string,
   imageStreamName?: string,
 ): Promise<K8sResourceKind> => {
@@ -52,6 +54,8 @@ export const createKnativeService = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
+  const defaultLabel = getAppLabels(name, applicationName, imageStreamName);
+  delete defaultLabel.app;
   const knativeDeployResource: K8sResourceKind = {
     kind: 'Service',
     apiVersion: 'serving.knative.dev/v1alpha1',
@@ -63,10 +67,8 @@ export const createKnativeService = (
       template: {
         metadata: {
           labels: {
-            'app.kubernetes.io/part-of': applicationName,
-            'app.kubernetes.io/component': name,
-            'app.kubernetes.io/instance': name,
-            'app.kubernetes.io/name': imageStreamName,
+            ...defaultLabel,
+            ...labels,
           },
           annotations: {
             ...(concurrencytarget && {

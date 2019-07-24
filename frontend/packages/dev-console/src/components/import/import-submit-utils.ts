@@ -317,11 +317,12 @@ export const createResources = async (
     route: { create: canCreateRoute },
     image: { ports },
     build: { strategy: buildStrategy },
+    labels: userLabels,
     limits,
     serverless: { scaling },
     route,
   } = formData;
-  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamName = _.get(imageStream, 'metadata.name');
 
   const requests: Promise<K8sResourceKind>[] = [
     createImageStream(formData, imageStream, dryRun),
@@ -343,6 +344,7 @@ export const createResources = async (
         scaling,
         limits,
         route,
+        userLabels,
         imageStreamResponse.status.dockerImageRepository,
         imageStreamName,
       ),
