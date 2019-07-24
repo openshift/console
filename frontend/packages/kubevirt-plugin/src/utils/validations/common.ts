@@ -42,7 +42,7 @@ export const validateDNS1123SubdomainValue = (value) => {
   }
   for (let i = 1; i < value.length - 1; i++) {
     const char = value.charAt(i);
-    if (!char.match('[-a-zA-Z0-9.]')) {
+    if (!char.match('[-a-zA-Z0-9]')) {
       const offender = char.match('\\s') ? 'whitespace characters' : char;
       return getValidationObject(`${DNS1123_CONTAINS_ERROR} ${offender}`);
     }
