@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { LoadingInline, Humanize } from '../../utils';
 import { GaugeChart } from '../../graphs/gauge';
@@ -6,7 +7,7 @@ import { GaugeChart } from '../../graphs/gauge';
 const NOT_AVAILABLE = 'Not available';
 
 export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, used, total, formatValue, isLoading = false }) => {
-  const error = used == null || total == null;
+  const error = (!_.isFinite(used) || !_.isFinite(total)) ? 'No Data' : '';
   const totalFormatted = formatValue(total || 0);
   const usedFormatted = formatValue(used || 0, null, totalFormatted.unit);
   const available = formatValue(totalFormatted.value - usedFormatted.value, totalFormatted.unit, totalFormatted.unit);
