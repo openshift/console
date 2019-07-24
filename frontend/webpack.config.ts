@@ -129,6 +129,7 @@ const config: webpack.Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml'],
     }),
+    new webpack.IgnorePlugin(/prettier/),
     extractCSS,
     // https://github.com/microsoft/monaco-editor-webpack-plugin/issues/13
     new webpack.ContextReplacementPlugin(
