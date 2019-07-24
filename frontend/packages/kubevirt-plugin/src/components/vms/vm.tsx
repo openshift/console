@@ -113,6 +113,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       aria-label={VirtualMachineModel.labelPlural}
       Header={VMHeader}
       Row={VMRow}
+      virtualize
       customData={{
         pods: getLoadedData(resources.pods, []),
         migrations: getLoadedData(resources.migrations, []),
