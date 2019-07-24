@@ -34,15 +34,11 @@
 .co-health-card__item {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
 }
 
 .co-health-card__separator {
   border-bottom: 1px solid $pf-color-black-200;
-}
-
-.co-health-card__subsystem-item {
-  padding-top: 5px;
+  margin: 10px -14px;
 }
 
 .co-health-card__subtitle {
@@ -51,6 +47,7 @@
 }
 
 .co-health-card__text {
+  display: block;
   font-size: 0.875rem;
   margin-left: 1rem;
 }
