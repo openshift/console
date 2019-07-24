@@ -7452,10 +7452,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
-kubevirt-web-ui-components@~0.1.38:
-  version "0.1.38"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.38.tgz#6393309718d0089655738782f590cf9a46ec392d"
-  integrity sha512-R7qk5ps0r7hATrJjmWJcYkabPGFeCXhbQAOafvnMlxbMNmNM0Qixx2hd9BNp4VCJJBVdxpY2YFlJan2+RnMaQA==
+kubevirt-web-ui-components@~0.1.39:
+  version "0.1.39"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.39.tgz#0e7f7ac4fb20f3042a68e10f64103b6a83e884ca"
+  integrity sha512-ba04mqP4WVraJPhN6ZwYywJ2/uIzu2eeOB4KePHQzcXKgnBtc+JHzsuEgY8x4L8K06rVyGRKVmBq+BxjveD5/g==
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
