@@ -69,7 +69,7 @@ type CreateDiskRowProps = VMDiskRowProps & { storageClasses?: FirehoseResult<K8s
 
 export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
   storageClasses,
-  customData: { vm, vmLikeEntity, diskLookup, onCreateRowDismiss, onCreateRowError },
+  customData: { vm, vmLikeEntity, diskLookup, onCreateRowDismiss, onCreateRowError, forceRerender },
   index,
   style,
 }) => {
@@ -93,8 +93,16 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
             nameError && nameError.type === ValidationErrorType.Error ? nameError.type : null
           }
         >
-          <Text id="disk-name" disabled={creating} onChange={setName} value={name} />
-          <HelpBlock className="kubevirt-vm-create-device-row__cell--help">
+          <Text
+            id="disk-name"
+            disabled={creating}
+            onChange={(v) => {
+              setName(v);
+              forceRerender();
+            }}
+            value={name}
+          />
+          <HelpBlock>
             {nameError && nameError.type === ValidationErrorType.Error && nameError.message}
           </HelpBlock>
         </FormGroup>
