@@ -34,10 +34,11 @@ const TYPES = {
     space: false,
     divisor: 1000,
   },
-  decimalBytesPerSec: {
-    units: ['Bps', 'KBps', 'MBps', 'GBps', 'TBps', 'PBps', 'EBps'],
+  decimalBitsPerSec: {
+    units: ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps'],
     space: true,
     divisor: 1000,
+    bits: true,
   },
 };
 
@@ -53,9 +54,11 @@ const getType = (name) => {
   return type;
 };
 
-const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferredUnit) => {
+const convertBaseValueToUnits = (value, unitArray, divisor, bits, initialUnit, preferredUnit) => {
   const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
   const units_ = unitArray.slice(sliceIndex);
+
+  value = bits && !initialUnit ? value * 8 : value;
 
   if (preferredUnit || preferredUnit === '') {
     const unitIndex = units_.indexOf(preferredUnit);
@@ -141,11 +144,11 @@ const humanize = units.humanize = (value, typeName, useRound = false, initialUni
     value = 0;
   }
 
-  let converted = convertBaseValueToUnits(value, type.units, type.divisor, initialUnit, preferredUnit);
+  let converted = convertBaseValueToUnits(value, type.units, type.divisor, type.bits, initialUnit, preferredUnit);
 
   if (useRound) {
     converted.value = round(converted.value);
-    converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, converted.unit, preferredUnit);
+    converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, type.bits, converted.unit, preferredUnit);
   }
 
   return {
@@ -169,7 +172,7 @@ const formatPercentage = (value, options) => {
 export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
 export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
 export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
-export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
+export const humanizeDecimalBitsPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBitsPerSec', true, initialUnit, preferredUnit);
 export const humanizeNumber = (v, initialUnit, preferredUnit) => humanize(v, 'numeric', true, initialUnit, preferredUnit);
 export const humanizeCpuCores = v => {
   const value = v < 1 ? round(v*1000) : v;

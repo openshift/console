@@ -10,7 +10,7 @@ import {
 } from '../../dashboard/dashboard-card';
 import { CapacityBody, CapacityItem } from '../../dashboard/capacity-card';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
-import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB } from '../../utils';
+import { humanizePercentage, humanizeDecimalBitsPerSec, humanizeBinaryBytesWithoutB } from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
 import { OverviewQuery, capacityQueries } from './queries';
 
@@ -82,7 +82,7 @@ export const CapacityCard_: React.FC<DashboardItemProps> = ({
             title="Network"
             used={getLastStats(networkUsed, getInstantVectorStats)}
             total={getLastStats(networkTotal, getInstantVectorStats)}
-            formatValue={humanizeDecimalBytesPerSec}
+            formatValue={humanizeDecimalBitsPerSec}
             isLoading={!(networkUsed && networkTotal)}
           />
         </CapacityBody>

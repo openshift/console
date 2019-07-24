@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CPU_DESC, MEMORY_DESC, STORAGE_DESC, NETWORK_DESC } from './strings';
-import { humanizeNumber, humanizeBinaryBytesWithoutB, humanizeDecimalBytesPerSec, Humanize } from '../../utils';
+import { humanizeNumber, humanizeBinaryBytesWithoutB, humanizeDecimalBitsPerSec, Humanize } from '../../utils';
 import { MetricType } from './metric-type';
 
 export const metricTypeMap: MetricTypeMap = {
@@ -19,7 +19,7 @@ export const metricTypeMap: MetricTypeMap = {
   },
   [MetricType.NETWORK]: {
     description: NETWORK_DESC,
-    humanize: humanizeDecimalBytesPerSec,
+    humanize: humanizeDecimalBitsPerSec,
   },
 };
 

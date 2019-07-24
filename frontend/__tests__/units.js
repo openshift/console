@@ -219,6 +219,46 @@ describe('units', () => {
     test_(1125899906842624, '1 Pi');
   });
 
+  describe('should humanize decimalBitsPerSec values', () => {
+    const test_ = (value, expected, initialValue) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'decimalBitsPerSec', true, initialValue).string).toEqual(expected);
+      });
+    };
+
+    test_('banana', '0 bps');
+    test_(-1, '-8 bps');
+    test_(-0, '0 bps');
+    test_(1/0, '0 bps');
+    test_(-1/0, '0 bps');
+    test_('100$', '0 bps');
+    test_(Number.MIN_VALUE, '0 bps');
+    test_(0, '0 bps');
+    test_(NaN, '0 bps');
+    test_(0.124125, '0.993 bps');
+    test_(0.125, '1 bps');
+    test_(0.127, '1.02 bps');
+    test_(1, '8 bps');
+    test_(12, '96 bps');
+    test_(123, '984 bps');
+    test_(125, '1 Kbps');
+    test_(1000, '8 Kbps');
+    test_(1023, '8.18 Kbps');
+    test_(1023.999, '8.19 Kbps');
+    test_(10000, '80 Kbps');
+    test_(100000, '800 Kbps');
+    test_(1000000, '8 Mbps');
+    test_(10000000, '80 Mbps');
+    test_(100000000, '800 Mbps');
+    test_(1000000000, '8 Gbps');
+    test_(1000000000000, '8 Tbps');
+    test_(1000000000000000, '8 Pbps');
+    test_(1, '1 bps', 'bps');
+    test_(0.125, '0.125 bps', 'bps');
+    test_(1023.999, '1.02 Kbps', 'bps');
+    test_(1000, '1 Mbps', 'Kbps');
+  });
+
   describe('should de-humanize binaryBytesWithoutB values', () => {
     const test_ = (value, expected) => {
       it(`${value} into ${expected}`, () => {

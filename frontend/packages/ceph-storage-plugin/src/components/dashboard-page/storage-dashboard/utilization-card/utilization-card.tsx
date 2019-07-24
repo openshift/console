@@ -10,7 +10,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
-import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
+import { humanizeDecimalBitsPerSec } from '@console/internal/components/utils';
 import { UtilizationBody } from '@console/internal/components/dashboard/utilization-card/utilization-body';
 import { UtilizationItem } from '@console/internal/components/dashboard/utilization-card/utilization-item';
 import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from '../../../../constants';
@@ -104,7 +104,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             title="Throughput"
             data={throughputStats}
             isLoading={!throughputUtilization}
-            humanizeValue={humanizeDecimalBytesPerSec}
+            humanizeValue={humanizeDecimalBitsPerSec}
             query={
               UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY] +
               UTILIZATION_QUERY_HOUR_MAP[duration]
@@ -114,7 +114,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             title="Recovery"
             data={recoveryStats}
             isLoading={!recoveryUtilization}
-            humanizeValue={humanizeDecimalBytesPerSec}
+            humanizeValue={humanizeDecimalBitsPerSec}
             query={
               UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY] +
               UTILIZATION_QUERY_HOUR_MAP[duration]

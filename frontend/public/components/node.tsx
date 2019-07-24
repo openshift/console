@@ -9,7 +9,7 @@ import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBitsPerSec } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -172,14 +172,14 @@ const NodeGraphs = requirePrometheus(({node}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network In"
-          humanize={humanizeDecimalBytesPerSec}
+          humanize={humanizeDecimalBitsPerSec}
           query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network Out"
-          humanize={humanizeDecimalBytesPerSec}
+          humanize={humanizeDecimalBitsPerSec}
           query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`}
         />
       </div>
