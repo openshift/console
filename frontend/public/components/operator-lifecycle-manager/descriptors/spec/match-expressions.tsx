@@ -13,13 +13,13 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
   const changeValue = (value: string, index: number) => onChangeMatchExpressions(matchExpressions.map((exp, i) => i === index ? _.set(exp, 'value', value) : exp));
 
   return <React.Fragment>
-    <div className="row hidden-sm hidden-xs">
+    <div className="row toleration-modal__heading hidden-sm hidden-xs">
       <div className="col-md-4 text-secondary text-uppercase">Key</div>
       <div className="col-md-2 text-secondary text-uppercase">Operator</div>
       <div className="col-md-3 text-secondary text-uppercase">Value</div>
       <div className="col-md-1"></div>
     </div>
-    { props.matchExpressions.map((expression, i) => <div className="row" key={i}>
+    { props.matchExpressions.map((expression, i) => <div className="row toleration-modal__row" key={i}>
       <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
         <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
         <input
