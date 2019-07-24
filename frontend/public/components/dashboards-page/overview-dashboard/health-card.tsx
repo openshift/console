@@ -129,7 +129,7 @@ const HealthCard_ = connect(mapStateToProps)(({
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Health</DashboardCardTitle>
         {subsystems.length > 0 && !flagPending(openshiftFlag) && (
-          <DashboardCardPopupLink linkTitle="See all" popupTitle="Subsystem health">
+          <DashboardCardPopupLink linkTitle="See all" popupTitle="Subsystem Health">
             <HealthItem
               message={getName(openshiftFlag)}
               details={k8sHealthState.message}
