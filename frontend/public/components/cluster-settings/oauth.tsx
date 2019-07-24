@@ -48,19 +48,21 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
     </div>;
 };
 
+export const addIDPItems = Object.freeze({
+  basicauth: 'Basic Authentication',
+  github: 'GitHub',
+  gitlab: 'GitLab',
+  google: 'Google',
+  htpasswd: 'HTPasswd',
+  keystone: 'Keystone',
+  ldap: 'LDAP',
+  oidconnect: 'OpenID Connect',
+  requestheader: 'Request Header',
+});
+
 const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => {
   const { identityProviders, tokenConfig } = obj.spec;
-  const addIDPItems = {
-    basicauth: 'Basic Authentication',
-    github: 'GitHub',
-    gitlab: 'GitLab',
-    google: 'Google',
-    htpasswd: 'HTPasswd',
-    keystone: 'Keystone',
-    ldap: 'LDAP',
-    oidconnect: 'OpenID Connect',
-    requestheader: 'Request Header',
-  };
+
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="OAuth Overview" />
