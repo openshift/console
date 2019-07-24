@@ -22,6 +22,10 @@
   }
 }
 
+tags-input {
+  min-width: 100%;
+}
+
 tags-input:focus,
 tags-input .host:focus {
   outline: none;
