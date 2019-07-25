@@ -63,6 +63,7 @@ const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly }) =>
     case 'Complete':
     case 'Completed':
     case 'Enabled':
+    case 'Succeeded':
     case 'Ready':
     case 'Up to date':
       return <SuccessStatus {...statusProps} />;
