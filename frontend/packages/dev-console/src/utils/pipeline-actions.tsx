@@ -115,7 +115,7 @@ export const triggerPipeline = (
 ): ActionFunction => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return (): Action => ({
-    label: 'Trigger',
+    label: 'Start',
     callback: () => {
       k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
         .then(() => {
@@ -170,13 +170,13 @@ export const rerunPipeline = (
   if (!latestRun || !latestRun.metadata) {
     // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
     return (): Action => ({
-      label: <div className="dropdown__disabled">Trigger Last Run</div>,
+      label: <div className="dropdown__disabled">Start Last Run</div>,
       callback: null,
     });
   }
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return (): Action => ({
-    label: 'Trigger Last Run',
+    label: 'Start Last Run',
     callback: () => {
       k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
         .then(() => {
@@ -193,13 +193,13 @@ export const stopPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
   if (!pipelineRun || pipelineRunFilterReducer(pipelineRun) !== 'Running') {
     // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
     return (): Action => ({
-      label: <div className="dropdown__disabled">Stop Pipeline Run</div>,
+      label: <div className="dropdown__disabled">Stop</div>,
       callback: null,
     });
   }
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return (): Action => ({
-    label: 'Stop Pipeline Run',
+    label: 'Stop',
     callback: () => {
       k8sUpdate(PipelineRunModel, pipelineRun, {
         spec: { ...pipelineRun.spec, status: 'PipelineRunCancelled' },
