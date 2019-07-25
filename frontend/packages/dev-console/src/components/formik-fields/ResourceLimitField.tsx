@@ -9,6 +9,8 @@ import { getFieldId } from './field-utils';
 const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
   label,
   unitName,
+  unitOptions,
+  defaultUnitSize,
   helpText,
   ...props
 }) => {
@@ -33,6 +35,8 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
           setFieldValue(unitName, val.unit);
           setFieldTouched(props.name, true);
         }}
+        dropdownUnits={unitOptions}
+        defaultRequestSizeUnit={defaultUnitSize}
         defaultRequestSizeValue={field.value}
         describedBy={`${fieldId}-helper`}
       />

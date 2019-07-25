@@ -7,14 +7,14 @@ describe(ProgressiveListFooter.name, () => {
     const wrapper = shallow(
       <ProgressiveListFooter text="DummyText" items={['Foo']} onShowItem={() => {}} />,
     );
-    expect(wrapper.find('p').exists()).toBe(true);
+    expect(wrapper.find('div').exists()).toBe(true);
   });
 
   it('should return null if items array is empty', () => {
     const wrapper = shallow(
       <ProgressiveListFooter text="DummyText" items={[]} onShowItem={() => {}} />,
     );
-    expect(wrapper.find('p').exists()).toBe(false);
+    expect(wrapper.find('div').exists()).toBe(false);
   });
 
   it('should generate correct text', () => {
@@ -25,7 +25,7 @@ describe(ProgressiveListFooter.name, () => {
         onShowItem={() => {}}
       />,
     );
-    expect(wrapper.find('p').text()).toEqual('Dummy text Foo, Bar and One.');
+    expect(wrapper.find('div').text()).toEqual('Dummy text Foo, Bar and One.');
   });
 
   it('should have number of button equals to items in array', () => {

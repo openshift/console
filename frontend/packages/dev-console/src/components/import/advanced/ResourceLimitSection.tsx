@@ -11,8 +11,8 @@ const ResourceLimitSection: React.FC = () => {
         name="limits.cpu.request"
         label="Request"
         unitName="limits.cpu.requestUnit"
-        dropdownUnits={CPUUnits}
-        defaultRequestSizeUnit="m"
+        unitOptions={CPUUnits}
+        defaultUnitSize="m"
         helpText="The minimum amount of CPU the container is guaranteed."
       />
 
@@ -20,8 +20,8 @@ const ResourceLimitSection: React.FC = () => {
         name="limits.cpu.limit"
         label="Limit"
         unitName="limits.cpu.limitUnit"
-        dropdownUnits={CPUUnits}
-        defaultRequestSizeUnit="m"
+        unitOptions={CPUUnits}
+        defaultUnitSize="m"
         helpText="The maximum amount of CPU the container is allowed to use when running."
       />
 
@@ -30,8 +30,8 @@ const ResourceLimitSection: React.FC = () => {
         name="limits.memory.request"
         label="Request"
         unitName="limits.memory.requestUnit"
-        dropdownUnits={MemoryUnits}
-        defaultRequestSizeUnit="Mi"
+        unitOptions={MemoryUnits}
+        defaultUnitSize="Mi"
         helpText="The minimum amount of Memory the container is guaranteed."
       />
 
@@ -39,8 +39,8 @@ const ResourceLimitSection: React.FC = () => {
         name="limits.memory.limit"
         label="Limit"
         unitName="limits.memory.limitUnit"
-        dropdownUnits={MemoryUnits}
-        defaultRequestSizeUnit="Mi"
+        unitOptions={MemoryUnits}
+        defaultUnitSize="Mi"
         helpText="The maximum amount of Memory the container is allowed to use when running."
       />
     </FormSection>

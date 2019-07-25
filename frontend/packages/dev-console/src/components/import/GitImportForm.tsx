@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Form, Button } from 'patternfly-react';
+import { Form, ActionGroup, ButtonVariant, Button } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { ButtonBar } from '@console/internal/components/utils';
 import { GitImportFormProps } from './import-types';
@@ -10,6 +10,8 @@ import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
 import RouteCheckbox from './route/RouteCheckbox';
+import DockerSection from './git/DockerSection';
+import FormSectionDivider from './section/FormSectionDivider';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -21,21 +23,29 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   isSubmitting,
   dirty,
 }) => (
-  <Form onReset={handleReset} onSubmit={handleSubmit}>
-    <div className="co-m-pane__form">
-      <GitSection project={values.project} />
-      <AppSection project={values.project} />
-      <ServerlessSection />
-      <BuilderSection image={values.image} builderImages={builderImages} />
-      <RouteCheckbox />
-      <AdvancedSection values={values} />
-    </div>
-    <br />
+  <Form onSubmit={handleSubmit}>
+    <GitSection />
+    <DockerSection buildStrategy={values.build.strategy} />
+    <FormSectionDivider />
+    <AppSection project={values.project} />
+    <FormSectionDivider />
+    <ServerlessSection />
+    <BuilderSection image={values.image} builderImages={builderImages} />
+    <RouteCheckbox />
+    <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-      <Button disabled={!dirty || !_.isEmpty(errors)} type="submit" bsStyle="primary">
-        Create
-      </Button>
-      <Button type="reset">Cancel</Button>
+      <ActionGroup className="pf-c-form">
+        <Button
+          type="submit"
+          variant={ButtonVariant.primary}
+          isDisabled={!dirty || !_.isEmpty(errors)}
+        >
+          Create
+        </Button>
+        <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
+          Cancel
+        </Button>
+      </ActionGroup>
     </ButtonBar>
   </Form>
 );

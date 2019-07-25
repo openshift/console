@@ -16,15 +16,19 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) =
   }
 
   return (
-    <FormSection title="Builder" fullWidth>
-      <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
+    <React.Fragment>
+      <FormSection title="Builder" fullWidth>
+        <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
+      </FormSection>
       {image.tag && (
-        <BuilderImageTagSelector
-          selectedBuilderImage={builderImages[image.selected]}
-          selectedImageTag={image.tag}
-        />
+        <FormSection>
+          <BuilderImageTagSelector
+            selectedBuilderImage={builderImages[image.selected]}
+            selectedImageTag={image.tag}
+          />
+        </FormSection>
       )}
-    </FormSection>
+    </React.Fragment>
   );
 };
 

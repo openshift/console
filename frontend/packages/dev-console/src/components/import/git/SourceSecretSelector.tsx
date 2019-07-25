@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
+import { getFieldId } from '../../formik-fields/field-utils';
 import { sourceSecretModalLauncher } from './CreateSourceSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
@@ -26,7 +27,7 @@ const SourceSecretSelector: React.FC = () => {
   return (
     <React.Fragment>
       <FormGroup
-        fieldId="source-secret-selector-field"
+        fieldId={getFieldId('source-secret', 'dropdown')}
         label="Source Secret"
         helperText="Secret with credentials for pulling your source code."
       >

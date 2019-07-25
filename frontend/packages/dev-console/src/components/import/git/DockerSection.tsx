@@ -20,7 +20,8 @@ const DockerSection: React.FC<DockerSectionProps> = ({ buildStrategy }) =>
         type={TextInputTypes.number}
         name="docker.containerPort"
         label="Container Port"
-        helpText="Port number the container exposes"
+        helpText="Port number the container exposes."
+        style={{ maxWidth: '100%' }}
       />
     </FormSection>
   );

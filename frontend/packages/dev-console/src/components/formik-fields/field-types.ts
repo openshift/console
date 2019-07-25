@@ -5,6 +5,7 @@ export interface FieldProps {
   label?: string;
   helpText?: string;
   required?: boolean;
+  style?: React.CSSProperties;
 }
 
 export interface InputFieldProps extends FieldProps {
@@ -37,8 +38,8 @@ export interface EnvironmentFieldProps extends FieldProps {
 
 export interface ResourceLimitFieldProps extends FieldProps {
   unitName: string;
-  dropdownUnits: object;
-  defaultRequestSizeUnit: string;
+  unitOptions: object;
+  defaultUnitSize: string;
   fullWidth?: boolean;
 }
 
