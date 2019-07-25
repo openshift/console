@@ -9,3 +9,5 @@ approvers:
   - rawagner
   - cloudbehl
   - gnehapk
+labels:
+  - component/ceph

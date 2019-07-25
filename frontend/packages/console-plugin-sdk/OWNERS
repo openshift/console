@@ -6,3 +6,5 @@ approvers:
   - christianvogt
   - spadgett
   - vojtechszocs
+labels:
+  - component/sdk

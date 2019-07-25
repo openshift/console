@@ -8,3 +8,5 @@ approvers:
   - jtomasek
   - honza
   - flofuchs
+labels:
+  - component/metal3
