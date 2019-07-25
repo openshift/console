@@ -18,6 +18,11 @@ export const podColor = {
   'Scaled to 0': '#FFFFFF',
 };
 
+export const DEPLOYMENTKIND = 'Deployment';
+export const DEPLOYMENTCONFIGKIND = 'DeploymentConfig';
+export const DAEMONSETKIND = 'DaemonSet';
+export const STATEFULSETKIND = 'StatefulSet';
+
 export const podStatus = Object.keys(podColor);
 
 function numContainersReadyFilter(pod) {
@@ -99,6 +104,7 @@ export class TransformTopologyData {
   private deploymentKindMap = {
     deployments: { dcKind: 'Deployment', rcKind: 'ReplicaSet', rController: 'replicasets' },
     daemonSets: { dcKind: 'DaemonSet', rcKind: 'ReplicaSet', rController: 'replicasets' },
+    statefulSets: { dcKind: 'StatefulSet', rcKind: 'ReplicaSet', rController: 'replicasets' },
     deploymentConfigs: {
       dcKind: 'DeploymentConfig',
       rcKind: 'ReplicationController',
@@ -434,11 +440,13 @@ export class TransformTopologyData {
       uid: _.get(replicationController, 'metadata.uid'),
       controller: true,
     };
-    const daemonSetCondition = {
+    const dcCondition = {
       uid: _.get(deploymentConfig, 'metadata.uid'),
     };
     const condition =
-      deploymentConfig.kind === 'DaemonSet' ? daemonSetCondition : deploymentCondition;
+      deploymentConfig.kind === DAEMONSETKIND || deploymentConfig.kind === STATEFULSETKIND
+        ? dcCondition
+        : deploymentCondition;
     const dcPodsData = _.filter(this.resources.pods.data, (pod) => {
       return _.some(_.get(pod, 'metadata.ownerReferences'), condition);
     });

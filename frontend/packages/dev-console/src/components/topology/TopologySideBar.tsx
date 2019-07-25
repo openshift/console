@@ -4,12 +4,20 @@ import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
 import { TopologyDataObject, ResourceProps } from './topology-types';
 import './TopologySideBar.scss';
+import {
+  DEPLOYMENTCONFIGKIND,
+  DEPLOYMENTKIND,
+  DAEMONSETKIND,
+  STATEFULSETKIND,
+} from './topology-utils';
 
 export type TopologySideBarProps = {
   item: TopologyDataObject;
   show: boolean;
   onClose: Function;
 };
+
+const possibleKinds = [DEPLOYMENTCONFIGKIND, DEPLOYMENTKIND, DAEMONSETKIND, STATEFULSETKIND];
 
 /**
  * REMOVE: once we get labels in place
@@ -27,9 +35,7 @@ function metadataUIDCheck(items: any): ResourceProps[] {
 const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }) => {
   let itemtoShowOnSideBar;
   if (item) {
-    const dc = item.resources.filter(
-      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment' || o.kind === 'DaemonSet',
-    );
+    const dc = item.resources.filter((o) => possibleKinds.includes(o.kind));
     const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
     const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));
     const buildConfigs = metadataUIDCheck(item.resources.filter((o) => o.kind === 'BuildConfig'));

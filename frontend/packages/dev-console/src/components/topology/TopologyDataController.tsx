@@ -35,6 +35,7 @@ const Controller: React.FC<ControllerProps> = React.memo(
             .transformDataBy('deployments')
             .transformDataBy('deploymentConfigs')
             .transformDataBy('daemonSets')
+            .transformDataBy('statefulSets')
             .getTopologyData()
         : null,
     }),
@@ -106,6 +107,12 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       kind: 'Build',
       namespace,
       prop: 'builds',
+    },
+    {
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      prop: 'statefulSets',
     },
   ];
 
