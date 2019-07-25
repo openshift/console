@@ -1,35 +1,36 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { NumberSpinner } from '@console/internal/components/utils';
-import { InputFieldProps } from './field-types';
-import { getValidationState } from './field-utils';
+import { FormGroup } from '@patternfly/react-core';
+import { FieldProps } from './field-types';
+import { getFieldId } from './field-utils';
 
-const NumberSpinnerField: React.FC<InputFieldProps> = ({ label, helpText, ...props }) => {
+const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, ...props }) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId(props.name, 'number-spinner');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      controlId={`${props.name}-field`}
-      validationState={getValidationState(error, touched)}
+      fieldId={fieldId}
+      label={label}
+      helperText={helpText}
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired={required}
     >
-      {label && (
-        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
-      )}
       <NumberSpinner
-        id={`${props.name}-field`}
         {...field}
         {...props}
+        id={fieldId}
         changeValueBy={(operation: number) => {
           setFieldValue(props.name, _.toInteger(field.value) + operation);
           setFieldTouched(props.name, true);
         }}
-        aria-describedby={helpText && `${props.name}-help`}
+        aria-describedby={`${fieldId}-helper`}
       />
-      {helpText && <HelpBlock id={`${props.name}-help`}>{helpText}</HelpBlock>}
-      {touched && error && <HelpBlock>{error}</HelpBlock>}
     </FormGroup>
   );
 };

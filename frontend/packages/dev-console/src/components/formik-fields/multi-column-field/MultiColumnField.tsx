@@ -1,22 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FieldArray } from 'formik';
-import { FormGroup } from 'patternfly-react';
+import { FormGroup } from '@patternfly/react-core';
+import { MultiColumnFieldProps } from '../field-types';
 import MultiColumnFieldHeader from './MultiColumnFieldHeader';
 import MultiColumnFieldRow from './MultiColumnFieldRow';
 import MultiColumnFieldFooter from './MultiColumnFieldFooter';
 
-export interface MultiColumnFieldProps {
-  name: string;
-  addLabel?: string;
-  emptyValues: { [name: string]: string };
-  headers: string[];
-  children: React.ReactNode;
-}
-
 const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   children,
   name,
+  label,
+  helpText,
+  required,
   addLabel,
   headers,
   emptyValues,
@@ -26,7 +22,12 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
     render={({ push, remove, form }) => {
       const fieldValue = _.get(form.values, name, []);
       return (
-        <FormGroup>
+        <FormGroup
+          fieldId={`form-multi-column-input-${name.replace(/\./g, '-')}-field`}
+          label={label}
+          helperText={helpText}
+          isRequired={required}
+        >
           <MultiColumnFieldHeader headers={headers} />
           {fieldValue.length > 0 &&
             fieldValue.map((value, index) => (
