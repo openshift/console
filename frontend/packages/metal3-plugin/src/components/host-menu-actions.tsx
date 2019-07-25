@@ -1,16 +1,31 @@
 import * as React from 'react';
 import { asAccessReview, KebabOption } from '@console/internal/components/utils';
-import { k8sKill, K8sKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
-import { getMachineNodeName, getName } from '@console/shared';
+import {
+  k8sKill,
+  K8sKind,
+  K8sResourceKind,
+  k8sPatch,
+  MachineKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
+import { getMachineNode, getMachineNodeName, getName } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
-import { findNodeMaintenance, getHostMachine, getNodeMaintenanceReason } from '../selectors';
-import { NodeMaintenanceModel } from '../models';
+import {
+  findNodeMaintenance,
+  getHostMachine,
+  getNodeMaintenanceReason,
+  isHostPoweredOn,
+} from '../selectors';
+import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
+import { getHostStatus } from '../utils/host-status';
 import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
+import { powerOffHostModal } from './modals/power-off-host-modal';
 
 type ActionArgs = {
   nodeName?: string;
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability: boolean;
+  status: string;
 };
 
 export const SetNodeMaintanance = (
@@ -20,7 +35,7 @@ export const SetNodeMaintanance = (
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-  label: 'Start Maintenance',
+  label: 'Start maintenance',
   callback: () => startNodeMaintenanceModal({ nodeName }),
 });
 
@@ -30,7 +45,7 @@ export const RemoveNodeMaintanance = (
   resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => {
-  const title = 'Stop Maintenance';
+  const title = 'Stop maintenance';
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
@@ -56,21 +71,56 @@ export const RemoveNodeMaintanance = (
   };
 };
 
-export const menuActions = [SetNodeMaintanance, RemoveNodeMaintanance];
+export const PowerOn = (kindObj: K8sKind, host: K8sResourceKind): KebabOption => {
+  const title = 'Power on';
+  return {
+    hidden: isHostPoweredOn(host),
+    label: title,
+    callback: () => {
+      k8sPatch(BaremetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
+    },
+    accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
+  };
+};
 
-type ExtraResources = { machines: MachineKind[]; nodeMaintenances: K8sResourceKind[] };
+export const PowerOff = (
+  kindObj: K8sKind,
+  host: K8sResourceKind,
+  resources: null,
+  { hasNodeMaintenanceCapability, nodeName, status }: ActionArgs,
+) => ({
+  hidden: !isHostPoweredOn(host),
+  label: 'Shut down',
+  callback: () => powerOffHostModal({ hasNodeMaintenanceCapability, host, nodeName, status }),
+  accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
+});
+
+export const menuActions = [SetNodeMaintanance, RemoveNodeMaintanance, PowerOn, PowerOff];
+
+type ExtraResources = {
+  machines: MachineKind[];
+  nodes: NodeKind[];
+  nodeMaintenances: K8sResourceKind[];
+};
 
 export const menuActionsCreator = (
   kindObj: K8sKind,
   host: K8sResourceKind,
-  { machines, nodeMaintenances }: ExtraResources,
+  { machines, nodes, nodeMaintenances }: ExtraResources,
   { hasNodeMaintenanceCapability },
 ) => {
   const machine = getHostMachine(host, machines);
+  const node = getMachineNode(machine, nodes);
   const nodeName = getMachineNodeName(machine);
   const nodeMaintenance = findNodeMaintenance(nodeMaintenances, nodeName);
+  const status = getHostStatus({ host, machine, node, nodeMaintenance });
 
   return menuActions.map((action) => {
-    return action(kindObj, host, null, { hasNodeMaintenanceCapability, nodeMaintenance, nodeName });
+    return action(kindObj, host, null, {
+      hasNodeMaintenanceCapability,
+      nodeMaintenance,
+      nodeName,
+      status: status.status,
+    });
   });
 };
