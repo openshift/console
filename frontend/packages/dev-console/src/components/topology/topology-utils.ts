@@ -3,7 +3,13 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import { TopologyDataResources, ResourceProps, TopologyDataModel, KINDS } from './topology-types';
+import {
+  DeploymentModel,
+  DaemonSetModel,
+  StatefulSetModel,
+  DeploymentConfigModel,
+} from '@console/internal/models';
+import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
 
 export const podColor = {
   Running: '#0066CC',
@@ -97,11 +103,23 @@ export class TransformTopologyData {
   };
 
   private deploymentKindMap = {
-    deployments: { dcKind: KINDS.DEPLOYMENT, rcKind: 'ReplicaSet', rController: 'replicasets' },
-    daemonSets: { dcKind: KINDS.DAEMONSET, rcKind: 'ReplicaSet', rController: 'replicasets' },
-    statefulSets: { dcKind: KINDS.STATEFULSET, rcKind: 'ReplicaSet', rController: 'replicasets' },
+    deployments: {
+      dcKind: DeploymentModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
+    daemonSets: {
+      dcKind: DaemonSetModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
+    statefulSets: {
+      dcKind: StatefulSetModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
     deploymentConfigs: {
-      dcKind: KINDS.DEPLOYMENTCONFIG,
+      dcKind: DeploymentConfigModel.kind,
       rcKind: 'ReplicationController',
       rController: 'replicationControllers',
     },
@@ -439,7 +457,8 @@ export class TransformTopologyData {
       uid: _.get(deploymentConfig, 'metadata.uid'),
     };
     const condition =
-      deploymentConfig.kind === KINDS.DAEMONSET || deploymentConfig.kind === KINDS.STATEFULSET
+      deploymentConfig.kind === DaemonSetModel.kind ||
+      deploymentConfig.kind === StatefulSetModel.kind
         ? dcCondition
         : deploymentCondition;
     const dcPodsData = _.filter(this.resources.pods.data, (pod) => {

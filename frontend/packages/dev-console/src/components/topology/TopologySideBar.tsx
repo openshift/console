@@ -2,7 +2,16 @@ import * as React from 'react';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
-import { TopologyDataObject, ResourceProps, KINDS } from './topology-types';
+import {
+  DeploymentConfigModel,
+  DeploymentModel,
+  DaemonSetModel,
+  StatefulSetModel,
+  RouteModel,
+  ServiceModel,
+  BuildConfigModel,
+} from '@console/internal/models';
+import { TopologyDataObject, ResourceProps } from './topology-types';
 import './TopologySideBar.scss';
 
 export type TopologySideBarProps = {
@@ -12,10 +21,10 @@ export type TopologySideBarProps = {
 };
 
 const possibleKinds = [
-  KINDS.DEPLOYMENTCONFIG,
-  KINDS.DEPLOYMENT,
-  KINDS.DAEMONSET,
-  KINDS.STATEFULSET,
+  DeploymentConfigModel.kind,
+  DeploymentModel.kind,
+  DaemonSetModel.kind,
+  StatefulSetModel.kind,
 ];
 
 /**
@@ -34,11 +43,13 @@ function metadataUIDCheck(items: any): ResourceProps[] {
 const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }) => {
   let itemtoShowOnSideBar;
   if (item) {
-    const dc = item.resources.filter(({ kind }) => possibleKinds.includes(kind as KINDS));
-    const routes = metadataUIDCheck(item.resources.filter(({ kind }) => kind === KINDS.ROUTE));
-    const services = metadataUIDCheck(item.resources.filter(({ kind }) => kind === KINDS.SERVICE));
+    const dc = item.resources.filter(({ kind }) => possibleKinds.includes(kind));
+    const routes = metadataUIDCheck(item.resources.filter(({ kind }) => kind === RouteModel.kind));
+    const services = metadataUIDCheck(
+      item.resources.filter(({ kind }) => kind === ServiceModel.kind),
+    );
     const buildConfigs = metadataUIDCheck(
-      item.resources.filter(({ kind }) => kind === KINDS.BUILDCONFIG),
+      item.resources.filter(({ kind }) => kind === BuildConfigModel.kind),
     );
     itemtoShowOnSideBar = {
       obj: { apiVersion: 'apps.openshift.io/v1', ...dc[0] },
