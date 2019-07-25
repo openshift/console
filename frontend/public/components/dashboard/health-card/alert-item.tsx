@@ -13,7 +13,7 @@ const getSeverityIcon = (severity: string) => {
     case 'warning':
     default:
       return (
-        <YellowExclamationTriangleIcon className="co-health-card__alerts-icons" />
+        <YellowExclamationTriangleIcon className="co-health-card__alerts-icon" />
       );
   }
 };
