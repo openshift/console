@@ -12,7 +12,7 @@ export class VMIMigration {
       apiVersion: apiVersionForModel(VirtualMachineInstanceMigrationModel),
       kind: VirtualMachineInstanceMigrationModel.kind,
       metadata: {
-        name: null,
+        generateName: null,
         namespace: null,
       },
       spec: {
@@ -22,7 +22,7 @@ export class VMIMigration {
   }
 
   setName(name) {
-    this.data.metadata.name = name;
+    this.data.metadata.generateName = `${name}-`;
     return this;
   }
 
