@@ -13262,19 +13262,20 @@ yaml-ast-parser-custom-tags@0.0.43:
   resolved "https://registry.yarnpkg.com/yaml-ast-parser-custom-tags/-/yaml-ast-parser-custom-tags-0.0.43.tgz#46968145ce4e24cb03c3312057f0f141b93a7d02"
   integrity sha512-R5063FF/JSAN6qXCmylwjt9PcDH6M0ExEme/nJBzLspc6FJDmHHIqM7xh2WfEmsTJqClF79A9VkXjkAqmZw9SQ==
 
-yaml-language-server@0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.5.2.tgz#dd2e60801b4ae233daac79c37a88e18012221ddb"
-  integrity sha512-DEVMXSXZioXR5q9OJsN1a1jVKxIfHTUZ/wTRy3H5w1M4/e8JV0AosuqQebHcd0FRMTGw2pscLFJ7fp0lLQmQww==
+yaml-language-server@0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.5.3.tgz#0d2c9f10a80fb199d8e8c59a43f58672672aee4c"
+  integrity sha512-7/hGwbZOpXUa/alkBSTZYLyVcYGtkbCeCmQS6kS54KPv1G2LKlM5yCFAtMN57lEaZpJp/0qa+EqfLZiPYsL6hw==
   dependencies:
     js-yaml "^3.13.1"
-    prettier "^1.17.1"
     request-light "^0.2.4"
     vscode-json-languageservice "3.2.0"
     vscode-languageserver "^5.2.1"
     vscode-languageserver-types "^3.14.0"
     vscode-uri "^2.0.2"
     yaml-ast-parser-custom-tags "0.0.43"
+  optionalDependencies:
+    prettier "^1.17.1"
 
 yargs-parser@^5.0.0:
   version "5.0.0"
