@@ -65,7 +65,6 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
         name="image.tag"
         label="Builder Image Version"
         items={tagItems}
-        selectedKey={selectedImageTag}
         title={tagItems[selectedImageTag]}
         fullWidth
         required

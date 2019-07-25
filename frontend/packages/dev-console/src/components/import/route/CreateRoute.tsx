@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FormGroup } from 'patternfly-react';
-import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
+import { useFormikContext, FormikValues } from 'formik';
+import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, DropdownField } from '../../formik-fields';
 import { makePortName } from '../../../utils/imagestream-utils';
 
@@ -25,27 +25,25 @@ const CreateRoute: React.FC = () => {
 
   if (serverlessEnabled) {
     return (
-      <FormGroup>
-        <InputField
-          type="text"
-          name="route.targetPort"
-          label="Target Port"
-          placeholder="8080"
-          helpText="Target port for traffic."
-        />
-      </FormGroup>
+      <InputField
+        type={TextInputTypes.text}
+        name="route.targetPort"
+        label="Target Port"
+        placeholder="8080"
+        helpText="Target port for traffic."
+      />
     );
   }
   return (
-    <FormGroup>
+    <React.Fragment>
       <InputField
-        type="text"
+        type={TextInputTypes.text}
         name="route.hostname"
         label="Hostname"
         helpText="Public hostname for the route. If not specified, a hostname is generated."
       />
       <InputField
-        type="text"
+        type={TextInputTypes.text}
         name="route.path"
         label="Path"
         placeholder="/"
@@ -56,13 +54,12 @@ const CreateRoute: React.FC = () => {
           name="route.targetPort"
           label="Target Port"
           items={portOptions}
-          selectedKey={targetPort}
           title={portOptions[targetPort] || 'Select target port'}
           helpText="Target port for traffic."
           fullWidth
         />
       )}
-    </FormGroup>
+    </React.Fragment>
   );
 };
 

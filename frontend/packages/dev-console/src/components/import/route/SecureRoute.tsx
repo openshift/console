@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { useFormikContext, FormikValues } from 'formik';
+import { FormHelperText } from '@patternfly/react-core';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '../../formik-fields';
 import {
   TerminationTypes,
@@ -15,20 +15,19 @@ const SecureRoute: React.FC = () => {
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormGroup>
-      <ControlLabel>Security</ControlLabel>
+    <React.Fragment>
       <CheckboxField
         name="route.secure"
         label="Secure Route"
+        formLabel="Security"
         helpText="Routes can be secured using several TLS termination types for serving certificates."
       />
       {secure && (
-        <div>
+        <React.Fragment>
           <DropdownField
             name="route.tls.termination"
             label="TLS Termination"
             items={TerminationTypes}
-            selectedKey={tls.termination}
             title="Select termination type"
             fullWidth
           />
@@ -40,7 +39,6 @@ const SecureRoute: React.FC = () => {
                 ? PassthroughInsecureTrafficTypes
                 : InsecureTrafficTypes
             }
-            selectedKey={tls.insecureEdgeTerminationPolicy}
             title="Select insecure traffic type"
             helpText="Policy for traffic on insecure schemes like HTTP."
             fullWidth
@@ -48,10 +46,10 @@ const SecureRoute: React.FC = () => {
           {tls.termination && tls.termination !== 'passthrough' && (
             <React.Fragment>
               <h3>Certificates</h3>
-              <HelpBlock>
+              <FormHelperText isHidden={false}>
                 TLS certificates for edge and re-encrypt termination. If not specified, the
                 router&apos;s default certificate is used.
-              </HelpBlock>
+              </FormHelperText>
               <DroppableFileInputField
                 name="route.tls.certificate"
                 label="Certificate"
@@ -76,9 +74,9 @@ const SecureRoute: React.FC = () => {
               )}
             </React.Fragment>
           )}
-        </div>
+        </React.Fragment>
       )}
-    </FormGroup>
+    </React.Fragment>
   );
 };
 
