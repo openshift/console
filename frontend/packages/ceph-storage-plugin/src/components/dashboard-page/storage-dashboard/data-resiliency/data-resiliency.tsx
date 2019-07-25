@@ -79,7 +79,7 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     progressPercentage = ((Number(cleanAndActivePg) / Number(totalPg)) * 100).toFixed(1);
   }
   return (
-    <DashboardCard>
+    <DashboardCard className="ceph-data-resiliency__dashboard-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Data Resiliency</DashboardCardTitle>
       </DashboardCardHeader>
