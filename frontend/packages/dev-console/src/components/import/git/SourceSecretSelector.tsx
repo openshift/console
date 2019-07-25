@@ -1,19 +1,14 @@
 import * as React from 'react';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { useFormikContext, FormikValues, useField } from 'formik';
+import { FormGroup } from '@patternfly/react-core';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { sourceSecretModalLauncher } from './CreateSourceSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 
-export interface SourceSecretSelectorProps {
-  namespace: string;
-  helpText: string;
-}
-
-const SourceSecretSelector: React.FC<SourceSecretSelectorProps> = ({ namespace, helpText }) => {
+const SourceSecretSelector: React.FC = () => {
   const [secret] = useField('git.secret');
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   const handleSave = (name: string) => {
     setFieldValue('git.secret', name);
@@ -22,19 +17,23 @@ const SourceSecretSelector: React.FC<SourceSecretSelectorProps> = ({ namespace, 
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_SOURCE_SECRET) {
       setFieldValue('git.secret', secret.value);
-      sourceSecretModalLauncher({ namespace, save: handleSave });
+      sourceSecretModalLauncher({ namespace: values.project.name, save: handleSave });
     } else {
       setFieldValue('git.secret', key);
     }
   };
+
   return (
     <React.Fragment>
-      <FormGroup controlId="source-secret-selector-field">
-        <ControlLabel>Source Secret</ControlLabel>
+      <FormGroup
+        fieldId="source-secret-selector-field"
+        label="Source Secret"
+        helperText="Secret with credentials for pulling your source code."
+      >
         <SourceSecretDropdown
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
-          namespace={namespace}
+          namespace={values.project.name}
           actionItem={{
             actionTitle: 'Create New Secret',
             actionKey: CREATE_SOURCE_SECRET,
@@ -43,7 +42,6 @@ const SourceSecretSelector: React.FC<SourceSecretSelectorProps> = ({ namespace, 
           title={secret.value}
           onChange={handleDropdownChange}
         />
-        <HelpBlock>{helpText}</HelpBlock>
       </FormGroup>
     </React.Fragment>
   );

@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, DropdownField } from '../../formik-fields';
-import { GitTypes, ProjectData } from '../import-types';
+import { GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
-import SourceSecretSelector from './SourceSecretSelector';
+import AdvancedGitOptions from './AdvancedGitOptions';
 
 export interface GitSectionProps {
-  project: ProjectData;
   showSample?: boolean;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
+const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
   const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const tag = values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
@@ -44,9 +43,9 @@ const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
   }, [sampleRepo, setFieldValue, tag, validateForm, values.image.selected, values.name]);
 
   return (
-    <FormSection title="Git" divider>
+    <FormSection title="Git">
       <InputField
-        type="text"
+        type={TextInputTypes.text}
         name="git.url"
         label="Git Repo URL"
         onBlur={handleGitUrlBlur}
@@ -57,50 +56,13 @@ const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
           name="git.type"
           label="Git Type"
           items={GitTypes}
-          selectedKey={values.git.type}
           title={GitTypes[values.git.type]}
           fullWidth
           required
         />
       )}
       {sampleRepo && <SampleRepo onClick={fillSample} />}
-      <ExpandCollapse
-        textExpanded="Hide Advanced Git Options"
-        textCollapsed="Show Advanced Git Options"
-      >
-        <InputField
-          type="text"
-          name="git.ref"
-          label="Git Reference"
-          helpText="Optional branch, tag, or commit."
-        />
-        <InputField
-          type="text"
-          name="git.dir"
-          label="Context Dir"
-          helpText="Optional subdirectory for the application source code, used as a context directory for build."
-        />
-        <SourceSecretSelector
-          namespace={project.name}
-          helpText="Secret with credentials for pulling your source code."
-        />
-      </ExpandCollapse>
-      {values.build.strategy === 'Docker' && (
-        <React.Fragment>
-          <InputField
-            type="text"
-            name="docker.dockerfilePath"
-            label="Dockerfile Path"
-            helpText="Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field."
-          />
-          <InputField
-            type="number"
-            name="docker.containerPort"
-            label="Container Port"
-            helpText="Port number the container exposes"
-          />
-        </React.Fragment>
-      )}
+      <AdvancedGitOptions />
     </FormSection>
   );
 };
