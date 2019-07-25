@@ -204,8 +204,8 @@ export class TransformTopologyData {
       this.topologyData.topology[dcUID] = {
         id: dcUID,
         name:
-          deploymentsLabels['app.kubernetes.io/instance'] ||
-          _.get(deploymentConfig, 'metadata.name'),
+          _.get(deploymentConfig, 'metadata.name') ||
+          deploymentsLabels['app.kubernetes.io/instance'],
 
         type: 'workload',
         resources: _.map(nodeResources, (resource) => {
