@@ -12,13 +12,9 @@ type ServerlessSectionProps = {
 const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
   if (flags[FLAG_KNATIVE_SERVING]) {
     return (
-      <FormSection title="Serverless Options" divider>
+      <FormSection title="Serverless Options">
         <TechPreviewBadge />
-        <CheckboxField
-          type="checkbox"
-          label="Enable scaling to zero when idle"
-          name="serverless.enabled"
-        />
+        <CheckboxField label="Enable scaling to zero when idle" name="serverless.enabled" />
       </FormSection>
     );
   }

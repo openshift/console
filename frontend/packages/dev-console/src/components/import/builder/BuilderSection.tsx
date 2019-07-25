@@ -16,7 +16,7 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) =
   }
 
   return (
-    <FormSection title="Builder" divider>
+    <FormSection title="Builder" fullWidth>
       <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
       {image.tag && (
         <BuilderImageTagSelector

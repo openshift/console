@@ -15,14 +15,12 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({ names
   };
 
   return (
-    <FormSection title="Deployment Configuration">
+    <FormSection title="Deployment Configuration" fullWidth>
       <CheckboxField
-        type="checkbox"
         name="deployment.triggers.image"
         label="Auto deploy when new image is available"
       />
       <CheckboxField
-        type="checkbox"
         name="deployment.triggers.config"
         label="Auto deploy when deployment configuration changes"
       />
