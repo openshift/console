@@ -5,7 +5,6 @@ import { coFetchJSON } from '../../co-fetch';
 import { K8sKind, referenceForModel, SwaggerDefinitions } from './';
 
 const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
-const SWAGGER_TIMESTAMP_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-last-updated`;
 
 export const getDefinitionKey = _.memoize((model: K8sKind, definitions: SwaggerDefinitions): string => {
   return _.findKey(definitions, (def: SwaggerDefinition) => {
@@ -31,32 +30,14 @@ export const getStoredSwagger = (): SwaggerDefinitions => {
   }
 };
 
-const isSwaggerStale = () => {
-  // Avoid refreshing the entire document on cellular connections.
-  const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-  if (connection && connection.effectiveType === 'cellular') {
-    return false;
-  }
-  // Store the swagger definitions in localStorage, but refresh once per day.
-  // This document is large, so avoid reloading it too often.
-  const lastUpdated = Number(window.localStorage.getItem(SWAGGER_TIMESTAMP_LOCAL_STORAGE_KEY));
-  return !_.isFinite(lastUpdated) || lastUpdated < (Date.now() - (1000 * 60 * 60 * 24));
-};
-
 const storeSwagger = (swagger: SwaggerAPISpec) => {
   // Only store definitions to reduce the document size.
   const json = JSON.stringify(swagger.definitions || {});
   window.localStorage.setItem(SWAGGER_LOCAL_STORAGE_KEY, json);
-  window.localStorage.setItem(SWAGGER_TIMESTAMP_LOCAL_STORAGE_KEY, `${Date.now()}`);
 };
 
 export const fetchSwagger = async(): Promise<SwaggerDefinitions> => {
   try {
-    const storedSwagger = getStoredSwagger();
-    if (storedSwagger && !isSwaggerStale()) {
-      return storedSwagger;
-    }
-
     const swagger: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
     storeSwagger(swagger);
     return swagger.definitions;
