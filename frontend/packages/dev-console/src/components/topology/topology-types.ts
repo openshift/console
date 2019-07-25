@@ -152,3 +152,13 @@ export type NodeProvider = (string) => ComponentType<NodeProps>;
 export type EdgeProvider = (string) => ComponentType<EdgeProps>;
 
 export type GroupProvider = (string) => ComponentType<GroupProps>;
+
+export enum KINDS {
+  DEPLOYMENT = 'Deployment',
+  DEPLOYMENTCONFIG = 'DeploymentConfig',
+  DAEMONSET = 'DaemonSet',
+  STATEFULSET = 'StatefulSet',
+  ROUTE = 'Route',
+  SERVICE = 'Service',
+  BUILDCONFIG = 'BuildConfig',
+}

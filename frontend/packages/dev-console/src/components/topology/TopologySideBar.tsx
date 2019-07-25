@@ -2,14 +2,8 @@ import * as React from 'react';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
-import { TopologyDataObject, ResourceProps } from './topology-types';
+import { TopologyDataObject, ResourceProps, KINDS } from './topology-types';
 import './TopologySideBar.scss';
-import {
-  DEPLOYMENTCONFIGKIND,
-  DEPLOYMENTKIND,
-  DAEMONSETKIND,
-  STATEFULSETKIND,
-} from './topology-utils';
 
 export type TopologySideBarProps = {
   item: TopologyDataObject;
@@ -17,7 +11,12 @@ export type TopologySideBarProps = {
   onClose: Function;
 };
 
-const possibleKinds = [DEPLOYMENTCONFIGKIND, DEPLOYMENTKIND, DAEMONSETKIND, STATEFULSETKIND];
+const possibleKinds = [
+  KINDS.DEPLOYMENTCONFIG,
+  KINDS.DEPLOYMENT,
+  KINDS.DAEMONSET,
+  KINDS.STATEFULSET,
+];
 
 /**
  * REMOVE: once we get labels in place
@@ -35,10 +34,12 @@ function metadataUIDCheck(items: any): ResourceProps[] {
 const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }) => {
   let itemtoShowOnSideBar;
   if (item) {
-    const dc = item.resources.filter((o) => possibleKinds.includes(o.kind));
-    const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
-    const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));
-    const buildConfigs = metadataUIDCheck(item.resources.filter((o) => o.kind === 'BuildConfig'));
+    const dc = item.resources.filter(({ kind }) => possibleKinds.includes(kind as KINDS));
+    const routes = metadataUIDCheck(item.resources.filter(({ kind }) => kind === KINDS.ROUTE));
+    const services = metadataUIDCheck(item.resources.filter(({ kind }) => kind === KINDS.SERVICE));
+    const buildConfigs = metadataUIDCheck(
+      item.resources.filter(({ kind }) => kind === KINDS.BUILDCONFIG),
+    );
     itemtoShowOnSideBar = {
       obj: { apiVersion: 'apps.openshift.io/v1', ...dc[0] },
       kind: dc[0].kind,
