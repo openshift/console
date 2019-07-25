@@ -308,17 +308,28 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       super(props);
       const componentProps: any = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const columns = props.Header(componentProps);
-      //sort by first column
-      this.state = {
-        columns,
-        sortBy: {},
-      };
+      const { currentSortField, currentSortFunc, currentSortOrder} = props;
+
+      this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
       this._applySort = this._applySort.bind(this);
       this._onSort = this._onSort.bind(this);
       this._handleResize = this._handleResize.bind(this);
       this._bindBodyRef = this._bindBodyRef.bind(this);
       this._refreshGrid = this._refreshGrid.bind(this);
-      this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
+
+      let sortBy = {};
+      if (currentSortField && currentSortOrder) {
+        const columnIndex = _.findIndex(columns, { sortField: currentSortField });
+        if (columnIndex > -1){
+          sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
+        }
+      } else if (currentSortFunc && currentSortOrder) {
+        const columnIndex = _.findIndex(columns, { sortFunc: currentSortField });
+        if (columnIndex > -1){
+          sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
+        }
+      }
+      this.state = { columns, sortBy };
 
       this._cellMeasurementCache = new CellMeasurerCache({
         fixedWidth: true,
