@@ -26,7 +26,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
   return (
     <React.Fragment>
-      {hasAvailableUpdates(cv.data) && <Alert className="co-alert co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
+      {clusterVersion && hasAvailableUpdates(clusterVersion) && <Alert className="co-alert co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
       <TextContent>
         <TextList component="dl">
           {openshiftVersion && (
