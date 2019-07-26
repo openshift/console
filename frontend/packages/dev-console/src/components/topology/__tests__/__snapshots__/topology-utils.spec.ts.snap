@@ -429,7 +429,7 @@ Object {
         "url": "http://analytics.io",
       },
       "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
-      "name": "analytics",
+      "name": "analytics-deployment",
       "pods": Array [
         Object {
           "id": "5cec460e-680d-11e9-8c69-5254003f9382",
@@ -880,7 +880,7 @@ Object {
         "url": "http://wit.io",
       },
       "id": "60a9b423-680d-11e9-8c69-5254003f9382",
-      "name": "wit",
+      "name": "wit-deployment",
       "pods": Array [
         Object {
           "id": "610c7d95-680d-11e9-8c69-5254003f9382",
