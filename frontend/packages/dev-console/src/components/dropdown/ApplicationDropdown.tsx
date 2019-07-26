@@ -23,6 +23,7 @@ interface ApplicationDropdownProps {
     actionKey: string;
   };
   selectedKey: string;
+  autoSelect?: boolean;
   onChange?: (key: string, name?: string) => void;
 }
 
