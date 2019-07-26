@@ -2,6 +2,7 @@
 .idea
 .vscode
 .protractor-fail-fast
+.DS_Store
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
