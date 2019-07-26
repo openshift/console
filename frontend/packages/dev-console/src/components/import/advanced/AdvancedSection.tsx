@@ -3,6 +3,7 @@ import { FormikValues } from 'formik';
 import ProgressiveList from '../../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import RouteSection from '../route/RouteSection';
+import ServerlessRouteSection from '../serverless/ServerlessRouteSection';
 import LabelSection from './LabelSection';
 import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
@@ -27,7 +28,11 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
       onVisibleItemChange={handleVisibleItemChange}
     >
       <ProgressiveListItem name="Routing">
-        <RouteSection route={values.route} />
+        {values.serverless.enabled ? (
+          <ServerlessRouteSection route={values.route} />
+        ) : (
+          <RouteSection route={values.route} />
+        )}
       </ProgressiveListItem>
       {/* Hide Build for Deploy Image */}
       {values.isi ? null : (

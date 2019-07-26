@@ -10,7 +10,6 @@ const CreateRoute: React.FC = () => {
     values: {
       image: { ports },
       route: { targetPort },
-      serverless: { enabled: serverlessEnabled },
     },
   } = useFormikContext<FormikValues>();
   const portOptions = ports.reduce((acc, port) => {
@@ -23,17 +22,6 @@ const CreateRoute: React.FC = () => {
     return acc;
   }, {});
 
-  if (serverlessEnabled) {
-    return (
-      <InputField
-        type={TextInputTypes.text}
-        name="route.targetPort"
-        label="Target Port"
-        placeholder="8080"
-        helpText="Target port for traffic."
-      />
-    );
-  }
   return (
     <React.Fragment>
       <InputField

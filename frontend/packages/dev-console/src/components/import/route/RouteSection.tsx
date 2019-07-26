@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useFormikContext, FormikValues } from 'formik';
 import FormSection from '../section/FormSection';
 import { RouteData } from '../import-types';
 import CreateRoute from './CreateRoute';
@@ -10,17 +9,12 @@ interface RouteSectionProps {
 }
 
 const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
-  const {
-    values: {
-      serverless: { enabled: serverlessEnabled },
-    },
-  } = useFormikContext<FormikValues>();
   return (
     <FormSection title="Routing">
       {route.create && (
         <React.Fragment>
           <CreateRoute />
-          {!serverlessEnabled && <SecureRoute />}
+          <SecureRoute />
         </React.Fragment>
       )}
     </FormSection>
