@@ -5,7 +5,7 @@ import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
-import { formatNamespacedRouteForResource, getActiveNamespace } from '../../actions/ui';
+import { getActiveNamespace } from '../../actions/ui';
 import { ServiceModel, RouteModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 
@@ -363,8 +363,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
                 Create
               </Button>
               <Button
-                component="a"
-                href={formatNamespacedRouteForResource('routes')}
+                onClick={history.goBack}
                 id="cancel"
                 variant="secondary">
                 Cancel
