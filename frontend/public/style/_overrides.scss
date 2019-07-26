@@ -97,6 +97,16 @@ kbd {
   max-width: 100%;
 }
 
+// Temp fix to adjust dropdown item spacing until issue can be addressed upstream in PatternFly
+.pf-c-app-launcher {
+  &__group {
+    padding-top: 0 !important;
+  }
+  &__group-title {
+    padding-top: 8px !important;
+  }
+}
+
 .pf-c-button--align-right {
   margin-left: auto !important;
 }
