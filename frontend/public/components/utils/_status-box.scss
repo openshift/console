@@ -24,6 +24,15 @@
   }
 }
 
+.cos-status-box--loading {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  min-height: 50px;
+  width: 100%;
+}
+
 .co-m-loader--inline {
   display: inline-block;
   margin: 0;

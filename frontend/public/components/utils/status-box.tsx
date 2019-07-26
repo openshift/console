@@ -28,7 +28,7 @@ Loading.displayName = 'Loading';
 export const LoadingInline: React.FC<{}> = () => <Loading className="co-m-loader--inline" />;
 LoadingInline.displayName = 'LoadingInline';
 
-export const LoadingBox: React.FC<LoadingBoxProps> = ({className}) => <Box className={className}><Loading /></Box>;
+export const LoadingBox: React.FC<LoadingBoxProps> = ({className}) => <Box className={classNames('cos-status-box--loading', className)}><Loading /></Box>;
 LoadingBox.displayName = 'LoadingBox';
 
 export const EmptyBox: React.FC<EmptyBoxProps> = ({label}) => <Box>
