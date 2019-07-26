@@ -131,11 +131,6 @@ const config: webpack.Configuration = {
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,
-    // https://github.com/microsoft/monaco-editor-webpack-plugin/issues/13
-    new webpack.ContextReplacementPlugin(
-      /monaco-editor-core\/esm\/vs\/editor\/common\/services/,
-      __dirname
-    ),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
