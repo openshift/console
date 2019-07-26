@@ -66,7 +66,7 @@ export const getURLSearchParams = () => {
   return all;
 };
 
-export const ExternalLink: React.FC<ExternalLinkProps> = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+export const ExternalLink: React.FC<ExternalLinkProps> = ({href, text, additionalClassName='', dataTestID}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>{text}</a>;
 
 // Open links in a new window and set noopener/noreferrer.
 export const LinkifyExternal: React.FC<{children: React.ReactNode}> = ({children}) => <Linkify properties={{target: '_blank', rel: 'noopener noreferrer'}}>{children}</Linkify>;
@@ -76,4 +76,5 @@ type ExternalLinkProps = {
   href: string;
   text: string;
   additionalClassName?: string;
+  dataTestID?: string;
 };

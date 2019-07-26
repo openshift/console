@@ -199,4 +199,91 @@ describe('CRD extensions', () => {
     });
   });
 
+  describe('ConsoleExternalLogLink CRD', () => {
+    const crd = 'ConsoleExternalLogLink';
+    const name = `${testName}-cell`;
+    const podName = `${testName}-pod`;
+    const cell = $(`[data-test-id=${name}]`);
+    const text = `${name} Logs`;
+    const namespaceFilter = '^openshift-';
+
+    it(`displays YAML editor for creating a new ${crd} instance`, async() => {
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await crudView.isLoaded();
+      await crudView.clickKebabAction(crd, 'View Instances');
+      await crudView.isLoaded();
+      await crudView.createYAMLButton.click();
+      await yamlView.isLoaded();
+      const content = await yamlView.getEditorContent();
+      const newContent = _.defaultsDeep({}, {metadata: {name}, spec: {text}}, safeLoad(content));
+      await yamlView.setEditorContent(safeDump(newContent));
+      expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
+    });
+
+    it(`creates a new ${crd} instance`, async() => {
+      await yamlView.saveButton.click();
+      expect(crudView.errorMessage.isPresent()).toBe(false);
+    });
+
+    it(`displays detail view for ${crd} instance`, async() => {
+      await browser.wait(until.presenceOf(crudView.resourceTitle));
+      expect(browser.getCurrentUrl()).toContain(`/${name}`);
+      expect(crudView.resourceTitle.getText()).toEqual(name);
+    });
+
+    it(`creates a new test pod to display the ${crd} instance`, async() => {
+      await browser.get(`${appHost}/k8s/ns/${testName}/pods`);
+      await crudView.isLoaded();
+      await crudView.createYAMLButton.click();
+      await yamlView.isLoaded();
+      const content = await yamlView.getEditorContent();
+      const newContent = _.defaultsDeep({}, {metadata: {name: podName, labels: {app: name}}}, safeLoad(content));
+      await yamlView.setEditorContent(safeDump(newContent));
+      await yamlView.saveButton.click();
+      expect(crudView.errorMessage.isPresent()).toBe(false);
+    });
+
+    it(`displays the ${crd} instance on the test pod`, async() => {
+      await browser.wait(until.presenceOf(crudView.resourceTitle));
+      await browser.getCurrentUrl().then((url) => browser.get(`${url}/logs`));
+      await browser.wait(until.presenceOf(cell));
+      expect(cell.getText()).toContain(text);
+    });
+
+    it(`displays YAML editor for adding namespaceFilter to the ${crd} instance`, async() => {
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await crudView.isLoaded();
+      await crudView.clickKebabAction(crd, 'View Instances');
+      await crudView.resourceRowsPresent();
+      await crudView.editRow(crd)(name);
+      await yamlView.isLoaded();
+      const content = await yamlView.getEditorContent();
+      const newContent = _.defaultsDeep({}, {spec: {namespaceFilter}}, safeLoad(content));
+      await yamlView.setEditorContent(safeDump(newContent));
+      expect(yamlView.getEditorContent()).toContain(`namespaceFilter: ${namespaceFilter}`);
+      await yamlView.saveButton.click();
+      await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
+      expect(crudView.successMessage.isPresent()).toBe(true);
+    });
+
+    it(`does not display the ${crd} instance on the test pod`, async() => {
+      await browser.get(`${appHost}/k8s/ns/${testName}/pods/${podName}/logs`);
+      await crudView.isLoaded();
+      expect(cell.isPresent()).toBe(false);
+    });
+
+    it('deletes the test pod', async() => {
+      await browser.get(`${appHost}/k8s/ns/${testName}/pods?name=${podName}`);
+      await crudView.isLoaded();
+      await crudView.deleteRow('Pod')(podName);
+    });
+
+    it(`deletes the ${crd} instance`, async() => {
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await crudView.isLoaded();
+      await crudView.clickKebabAction(crd, 'View Instances');
+      await crudView.resourceRowsPresent();
+      await crudView.deleteRow(crd)(name);
+    });
+  });
 });
