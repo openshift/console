@@ -141,6 +141,7 @@ const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defa
     currentSortFunc,
     currentSortOrder,
     data: newData,
+    unfilteredData: data,
     listId,
   };
 };
@@ -250,6 +251,7 @@ export type TableProps = {
   Rows?: (...args)=> any[];
   'aria-label': string;
   virtualize?: boolean;
+  AllItemsFilteredMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   loaded?: boolean;
   reduxID?: string;
@@ -274,6 +276,8 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
     static propTypes = {
       customData: PropTypes.object,
       data: PropTypes.array,
+      unfilteredData: PropTypes.array,
+      AllItemsFilteredMsg: PropTypes.func,
       EmptyMsg: PropTypes.func,
       expand: PropTypes.bool,
       fieldSelector: PropTypes.string,
@@ -477,6 +481,8 @@ export type TableInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
+  unfilteredData?: any[];
+  AllItemsFilteredMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   expand?: boolean;
   fieldSelector?: string;
