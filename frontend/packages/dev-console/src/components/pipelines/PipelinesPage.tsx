@@ -27,6 +27,7 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       filterLabel="by name"
       textFilter="name"
       resources={resources}
+      title={PipelineModel.labelPlural}
     >
       <Firehose resources={resources}>
         <PipelineAugmentRunsWrapper />
