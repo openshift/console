@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
+import * as _ from 'lodash';
 import { BuildConfigsPage } from '@console/internal/components/build-config';
+import { withStartGuide } from '../../../../public/components/start-guide';
 import DefaultPage from './DefaultPage';
 
 export interface BuildConfigPageProps {
@@ -9,15 +11,17 @@ export interface BuildConfigPageProps {
     ns?: string;
   }>;
 }
-const BuildConfigPage: React.FC<BuildConfigPageProps> = (props) => {
-  const namespace = props.match.params.ns;
+const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
+
+const BuildConfigPage = withStartGuide((props: BuildConfigPageProps) => {
+  const { noProjectsAvailable, ns } = allParams(props);
   return (
     <React.Fragment>
       <Helmet>
         <title>Builds</title>
       </Helmet>
-      {namespace ? (
-        <BuildConfigsPage {...props} />
+      {ns ? (
+        <BuildConfigsPage {...props} mock={noProjectsAvailable} />
       ) : (
         <DefaultPage title="Build Configs">
           Select a project to view the list of build configs
@@ -25,6 +29,6 @@ const BuildConfigPage: React.FC<BuildConfigPageProps> = (props) => {
       )}
     </React.Fragment>
   );
-};
+});
 
 export default BuildConfigPage;
