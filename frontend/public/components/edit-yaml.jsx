@@ -7,6 +7,11 @@ import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
+import {
+  global_BackgroundColor_100 as lineNumberActiveForeground,
+  global_BackgroundColor_300 as lineNumberForeground,
+  global_BackgroundColor_dark_100 as editorBackground,
+} from '@patternfly/react-tokens';
 
 import { k8sCreate, k8sUpdate, referenceFor, groupVersionFor, referenceForModel } from '../module/k8s';
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
@@ -19,6 +24,24 @@ import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-lan
 import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '../module/k8s/openapi-to-json-schema';
 import * as URL from 'url';
+
+window.monaco.editor.defineTheme('console', {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [
+    // avoid pf tokens for `rules` since tokens are opaque strings that might not be hex values
+    { token: 'number', foreground: 'ace12e' },
+    { token: 'type', foreground: '73bcf7' },
+    { token: 'string', foreground: 'f0ab00' },
+    { token: 'keyword', foreground: 'cbc0ff' },
+  ],
+  colors: {
+    'editor.background': editorBackground.value,
+    'editorGutter.background': '#292e34', // no pf token defined
+    'editorLineNumber.activeForeground': lineNumberActiveForeground.value,
+    'editorLineNumber.foreground': lineNumberForeground.value,
+  },
+});
 
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const sampleObj = safeLoad(yamlTemplates.getIn([kind, templateName]));
@@ -511,7 +534,7 @@ export const EditYAML = connect(stateToProps)(
                   <MonacoEditor
                     ref={this.monacoRef}
                     language="yaml"
-                    theme="vs-dark"
+                    theme="console"
                     value={yaml}
                     options={options}
                     editorDidMount={this.editorDidMount}

@@ -41,3 +41,8 @@
   font-weight: 300;
   margin: 0;
 }
+
+// This can't be customized in a theme, so use CSS.
+.yaml-editor .monaco-editor .margin .current-line {
+  background-color: var(--pf-global--BackgroundColor--dark-200);
+}
