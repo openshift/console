@@ -45,19 +45,16 @@ const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
   grafanaURL: state[monitoringReducerName].get(MonitoringRoutes.Grafana),
   kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
-  prometheusURL: state[monitoringReducerName].get(MonitoringRoutes.Prometheus),
 });
 
-const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}) => {
+const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL}) => {
   const showAlerts = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
-  const showPrometheus = canAccess && !!prometheusURL;
   const showGrafana = canAccess && !!grafanaURL;
-  return showAlerts || showSilences || showPrometheus || showGrafana || kibanaURL
+  return showAlerts || showSilences || showGrafana || kibanaURL
     ? <NavSection title="Monitoring">
       {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerting" startsWith={monitoringAlertsStartsWith} />}
-      {showAlerts && <HrefLink href="/monitoring/query-browser" name="Query Browser" />}
-      {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
+      {showAlerts && <HrefLink href="/monitoring/query-browser" name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
