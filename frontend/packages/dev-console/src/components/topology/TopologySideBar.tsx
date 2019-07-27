@@ -2,6 +2,15 @@ import * as React from 'react';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
+import {
+  DeploymentConfigModel,
+  DeploymentModel,
+  DaemonSetModel,
+  StatefulSetModel,
+  RouteModel,
+  ServiceModel,
+  BuildConfigModel,
+} from '@console/internal/models';
 import { TopologyDataObject, ResourceProps } from './topology-types';
 import './TopologySideBar.scss';
 
@@ -10,6 +19,13 @@ export type TopologySideBarProps = {
   show: boolean;
   onClose: Function;
 };
+
+const possibleKinds = [
+  DeploymentConfigModel.kind,
+  DeploymentModel.kind,
+  DaemonSetModel.kind,
+  StatefulSetModel.kind,
+];
 
 /**
  * REMOVE: once we get labels in place
@@ -27,12 +43,14 @@ function metadataUIDCheck(items: any): ResourceProps[] {
 const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }) => {
   let itemtoShowOnSideBar;
   if (item) {
-    const dc = item.resources.filter(
-      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment' || o.kind === 'DaemonSet',
+    const dc = item.resources.filter(({ kind }) => possibleKinds.includes(kind));
+    const routes = metadataUIDCheck(item.resources.filter(({ kind }) => kind === RouteModel.kind));
+    const services = metadataUIDCheck(
+      item.resources.filter(({ kind }) => kind === ServiceModel.kind),
     );
-    const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
-    const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));
-    const buildConfigs = metadataUIDCheck(item.resources.filter((o) => o.kind === 'BuildConfig'));
+    const buildConfigs = metadataUIDCheck(
+      item.resources.filter(({ kind }) => kind === BuildConfigModel.kind),
+    );
     itemtoShowOnSideBar = {
       obj: { apiVersion: 'apps.openshift.io/v1', ...dc[0] },
       kind: dc[0].kind,

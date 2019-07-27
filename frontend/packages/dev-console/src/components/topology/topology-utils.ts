@@ -3,6 +3,12 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
+import {
+  DeploymentModel,
+  DaemonSetModel,
+  StatefulSetModel,
+  DeploymentConfigModel,
+} from '@console/internal/models';
 import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
 
 export const podColor = {
@@ -97,10 +103,23 @@ export class TransformTopologyData {
   };
 
   private deploymentKindMap = {
-    deployments: { dcKind: 'Deployment', rcKind: 'ReplicaSet', rController: 'replicasets' },
-    daemonSets: { dcKind: 'DaemonSet', rcKind: 'ReplicaSet', rController: 'replicasets' },
+    deployments: {
+      dcKind: DeploymentModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
+    daemonSets: {
+      dcKind: DaemonSetModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
+    statefulSets: {
+      dcKind: StatefulSetModel.kind,
+      rcKind: 'ReplicaSet',
+      rController: 'replicasets',
+    },
     deploymentConfigs: {
-      dcKind: 'DeploymentConfig',
+      dcKind: DeploymentConfigModel.kind,
       rcKind: 'ReplicationController',
       rController: 'replicationControllers',
     },
@@ -434,11 +453,14 @@ export class TransformTopologyData {
       uid: _.get(replicationController, 'metadata.uid'),
       controller: true,
     };
-    const daemonSetCondition = {
+    const dcCondition = {
       uid: _.get(deploymentConfig, 'metadata.uid'),
     };
     const condition =
-      deploymentConfig.kind === 'DaemonSet' ? daemonSetCondition : deploymentCondition;
+      deploymentConfig.kind === DaemonSetModel.kind ||
+      deploymentConfig.kind === StatefulSetModel.kind
+        ? dcCondition
+        : deploymentCondition;
     const dcPodsData = _.filter(this.resources.pods.data, (pod) => {
       return _.some(_.get(pod, 'metadata.ownerReferences'), condition);
     });
