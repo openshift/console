@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { Alert, Button } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
+import { Alert } from '@patternfly/react-core';
 import * as plugins from '../../plugins';
 
 import { RootState } from '../../redux';
@@ -41,13 +42,7 @@ const ItemRow = ({item}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-sm-12">
-      <Button
-        className="pf-m-link--align-left"
-        component="a"
-        href={resourceLink}
-        variant="link">
-        {item.kind}
-      </Button>
+      <Link to={resourceLink}>{item.kind}</Link>
     </div>
     <div className="dropdown-kebab-pf">
       <Kebab options={menuItems} />
