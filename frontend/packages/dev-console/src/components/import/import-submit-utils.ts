@@ -25,9 +25,10 @@ export const createImageStream = (
     application: { name: application },
     labels: userLabels,
     git: { url: repository, ref },
+    image: { tag },
   } = formData;
   const imageStreamName = imageStreamData && imageStreamData.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
   const defaultAnnotations = getAppAnnotations(repository, ref);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
@@ -62,7 +63,7 @@ export const createBuildConfig = (
   const imageStreamName = imageStream && imageStream.metadata.name;
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultLabels = getAppLabels(name, application, imageStreamName, selectedTag);
   const defaultAnnotations = getAppAnnotations(repository, ref);
   let buildStrategyData;
 
@@ -134,7 +135,7 @@ export const createDeploymentConfig = (
     name,
     project: { name: namespace },
     application: { name: application },
-    image: { ports },
+    image: { ports, tag },
     deployment: { env, replicas, triggers },
     labels: userLabels,
     limits: { cpu, memory },
@@ -142,7 +143,7 @@ export const createDeploymentConfig = (
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
   const defaultAnnotations = getAppAnnotations(repository, ref);
   const podLabels = getPodLabels(name);
 
@@ -216,7 +217,7 @@ export const createService = (
     name,
     project: { name: namespace },
     application: { name: application },
-    image: { ports },
+    image: { ports, tag },
     labels: userLabels,
     route: { targetPort },
     docker: { containerPort },
@@ -231,7 +232,7 @@ export const createService = (
   }
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
   const defaultAnnotations = getAppAnnotations(repository, ref);
   const podLabels = getPodLabels(name);
   const service = {
@@ -269,7 +270,7 @@ export const createRoute = (
     name,
     project: { name: namespace },
     application: { name: application },
-    image: { ports },
+    image: { ports, tag },
     labels: userLabels,
     route: { hostname, secure, path, tls, targetPort: routeTargetPort },
     docker: { containerPort },
@@ -285,7 +286,7 @@ export const createRoute = (
   }
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
   const defaultAnnotations = getAppAnnotations(repository, ref);
   const route = {
     kind: 'Route',
@@ -329,7 +330,7 @@ export const createResources = async (
     application: { name: applicationName },
     project: { name: projectName },
     route: { create: canCreateRoute },
-    image: { ports },
+    image: { ports, tag: imageTag },
     build: { strategy: buildStrategy },
     labels: userLabels,
     limits,
@@ -365,6 +366,7 @@ export const createResources = async (
         imageStreamResponse.status.dockerImageRepository,
         imageStreamName,
         defaultAnnotations,
+        imageTag,
       ),
     ]);
   }
