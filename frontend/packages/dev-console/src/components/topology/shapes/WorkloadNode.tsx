@@ -26,7 +26,6 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       donutStatus: { build },
     },
   } = workload;
-  console.log('###################3', workload.data.donutStatus.build);
   return (
     <BaseNode
       x={x}
