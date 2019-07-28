@@ -8,7 +8,7 @@ import { CatalogTileViewPage } from './catalog-items';
 import { serviceClassDisplayName, referenceForModel } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
 import { connectToFlags, flagPending } from '../../reducers/features';
-import { Firehose, PageHeading, StatusBox } from '../utils';
+import { Firehose, PageHeading, skeletonCatalog, StatusBox } from '../utils';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
@@ -24,18 +24,6 @@ import {
 import { ClusterServiceClassModel, ClusterServiceVersionModel } from '../../models';
 import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
 import * as operatorLogo from '../../imgs/operator.svg';
-
-export const skeletonCatalog = <div className="loading-skeleton--catalog">
-  <div className="skeleton-catalog--list" />
-  <div className="skeleton-catalog--grid">
-    <div className="skeleton-catalog--tile" />
-    <div className="skeleton-catalog--tile" />
-    <div className="skeleton-catalog--tile" />
-    <div className="skeleton-catalog--tile" />
-    <div className="skeleton-catalog--tile" />
-    <div className="skeleton-catalog--tile" />
-  </div>
-</div>;
 
 export class CatalogListPage extends React.Component {
   constructor(props) {
