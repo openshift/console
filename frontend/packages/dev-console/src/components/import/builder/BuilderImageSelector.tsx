@@ -37,11 +37,11 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   );
 
   React.useEffect(() => {
-    if (builderImageCount === 1) {
+    if (!selected.value && builderImageCount === 1) {
       const image = _.find(builderImages);
       handleImageChange(image.name);
     }
-  }, [builderImageCount, builderImages, handleImageChange]);
+  }, [builderImageCount, builderImages, handleImageChange, selected.value]);
 
   if (builderImageCount === 1) {
     return null;
