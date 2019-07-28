@@ -200,6 +200,7 @@ export class TransformTopologyData {
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
+      const { builds } = buildConfigs;
       // list of Knative resources
       const ksroute = this.getKSRoute(deploymentConfig);
       const configurations = this.getConfigurations(deploymentConfig);
@@ -242,6 +243,7 @@ export class TransformTopologyData {
           isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
           donutStatus: {
             pods: currentPods,
+            build: builds && builds[0],
           },
         },
       };

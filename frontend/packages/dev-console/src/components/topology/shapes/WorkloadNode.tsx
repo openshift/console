@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Status } from '@console/shared';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -20,6 +21,12 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   const podStatusOuterRadius = radius - podStatusInset;
   const podStatusInnerRadius = podStatusOuterRadius - podStatusStrokeWidth;
   const decoratorRadius = radius * 0.25;
+  const {
+    data: {
+      donutStatus: { build },
+    },
+  } = workload;
+  console.log('###################3', workload.data.donutStatus.build);
   return (
     <BaseNode
       x={x}
@@ -59,6 +66,25 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
               <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} />
+            </g>
+          </Decorator>
+        ),
+        build && (
+          <Decorator
+            key="build"
+            x={-radius + decoratorRadius * 0.7}
+            y={radius - decoratorRadius * 0.7}
+            radius={decoratorRadius}
+            title={`${build.metadata.name} ${build.status && build.status.phase}`}
+          >
+            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+              <foreignObject width={decoratorRadius} height={decoratorRadius}>
+                <Status
+                  title={`${build.metadata.name} ${build.status && build.status.phase}`}
+                  status={build.status.phase}
+                  iconOnly
+                />
+              </foreignObject>
             </g>
           </Decorator>
         ),
