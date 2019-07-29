@@ -95,7 +95,7 @@ class ListDropdown_ extends React.Component {
   }
 
   render() {
-    const {desc, fixed, placeholder, id, loaded} = this.props;
+    const {desc, fixed, placeholder, id, loaded, disabled} = this.props;
     const items = {};
 
     _.keys(this.state.items).forEach(key => {
@@ -116,7 +116,8 @@ class ListDropdown_ extends React.Component {
         onChange={this.onChange}
         id={id}
         dropDownClassName="dropdown--full-width"
-        menuClassName="dropdown-menu--text-wrap" />;
+        menuClassName="dropdown-menu--text-wrap"
+        disabled={disabled} />;
 
     return <div>
       { Component }

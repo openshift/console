@@ -12,14 +12,27 @@ describe('Deploy Image', () => {
   const imageName = 'mysql';
 
   describe('Deploy Image page', () => {
-    it('should auto-fill the namespace/project', async() => {
+    it('should render project/namespace dropdown when all-namespace is selected', async() => {
       // Navigate to the deploy-image page
-      await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
+      await browser.get(`${appHost}/deploy-image/all-namespaces`);
 
-      const nsSpan = '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .co-resource-item__resource-name';
+      const nsSpan =
+        '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .pf-c-dropdown__toggle-text--placeholder';
       // Wait for the Project field to appear
       await browser.wait(until.presenceOf(element(by.css(nsSpan))));
       // Confirm that the project field has the right text
+      expect(element(by.css(nsSpan)).getText()).toEqual('Select namespace');
+    });
+
+    it('should render project/namespace dropdown disabled when in a project context', async() => {
+      // Navigate to the deploy-image page
+      await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
+
+      const nsSpan =
+        '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .co-resource-item .co-resource-item__resource-name';
+      // Wait for the Project field to appear
+      await browser.wait(until.presenceOf(element(by.css(nsSpan))));
+      // Confirm that the project field does not exist
       expect(element(by.css(nsSpan)).getText()).toEqual(testName);
     });
 
@@ -38,12 +51,16 @@ describe('Deploy Image', () => {
 
     it('should fill in the application', async() => {
       // Set the application name
+      // Wait for the Application Dropdown field to appear
+      await browser.wait(
+        until.elementToBeClickable(element(by.id('application-form-app-dropdown'))),
+      );
       // Click on the dropdown
       await element(by.id('application-form-app-dropdown')).click();
       // Wait for the Create Application button to appear
-      await browser.wait(until.presenceOf(element(by.id('create-application-key-link'))));
+      await browser.wait(until.presenceOf(element(by.id('#CREATE_APPLICATION_KEY#-link'))));
       // Click on the Create New Application button
-      await element(by.id('create-application-key-link')).click();
+      await element(by.id('#CREATE_APPLICATION_KEY#-link')).click();
       // Wait for the Application Name field to appear
       await browser.wait(until.presenceOf(element(by.id('form-input-application-name-field'))));
       // Enter the new Application name

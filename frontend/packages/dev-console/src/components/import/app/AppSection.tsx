@@ -15,7 +15,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project }) => {
         data-test-id="application-form-namespace-dropdown"
         name="project.name"
         label="Project"
-        selectedKey={project.name}
+        disabled={!!project.name}
         fullWidth
         required
       />
