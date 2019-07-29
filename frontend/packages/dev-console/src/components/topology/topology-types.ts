@@ -30,6 +30,7 @@ export interface TopologyDataResources {
   configurations?: Resource;
   revisions?: Resource;
   ksservices?: Resource;
+  statefulSets?: Resource;
 }
 
 export interface Node {

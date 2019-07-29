@@ -139,7 +139,6 @@ const HealthCard_ = connect(mapStateToProps)(({
               <div key={index}>
                 <div className="co-health-card__separator" />
                 <HealthItem
-                  className="co-health-card__subsystem-item"
                   message={subsystems[index].properties.title}
                   details={subsystem.message}
                   state={subsystem.state}

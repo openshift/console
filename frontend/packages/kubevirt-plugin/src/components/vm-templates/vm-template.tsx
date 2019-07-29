@@ -25,8 +25,8 @@ const selector = {
   matchLabels: { [TEMPLATE_TYPE_LABEL]: 'vm' },
 };
 
-const tableColumnClass = classNames('col-lg-2', 'col-sm-4', 'col-xs-4');
-const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'hidden-sm', 'hidden-xs');
+const tableColumnClass = classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-4');
+const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs');
 
 const tableColumnClasses = [
   tableColumnClass,

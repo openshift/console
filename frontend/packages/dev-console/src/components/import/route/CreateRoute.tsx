@@ -10,7 +10,7 @@ const CreateRoute: React.FC = () => {
     values: {
       image: { ports },
       route: { targetPort },
-      serverless: { trigger: serverlessTrigger },
+      serverless: { enabled: serverlessEnabled },
     },
   } = useFormikContext<FormikValues>();
   const portOptions = ports.reduce((acc, port) => {
@@ -23,7 +23,7 @@ const CreateRoute: React.FC = () => {
     return acc;
   }, {});
 
-  if (serverlessTrigger) {
+  if (serverlessEnabled) {
     return (
       <FormGroup>
         <InputField

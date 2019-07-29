@@ -22,12 +22,10 @@ import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/
 
 import './_clone-vm-modal.scss';
 
-const getNicsDescription = (vm: VMKind) => {
-  const interfaces = getInterfaces(vm);
-  return interfaces
-    .map((intface) => [intface.name, intface.model, intface.macAddress].filter((i) => !!i))
-    .map((intface) => <div key={intface[0]}>{intface.join(' - ')}</div>);
-};
+const getNicsDescription = (vm: VMKind) =>
+  getInterfaces(vm).map(({ name, model }) => (
+    <div key={name}>{model ? `${name} - ${model}` : name}</div>
+  ));
 
 const getDisksDescription = (
   vm: VMKind,

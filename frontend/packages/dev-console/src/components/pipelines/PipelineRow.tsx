@@ -22,9 +22,9 @@ interface PipelineRowProps {
 
 const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => {
   const menuActions = [
-    triggerPipeline(obj, obj.latestRun, ''),
     rerunPipeline(obj, obj.latestRun, ''),
-    ...Kebab.factory.common,
+    triggerPipeline(obj, obj.latestRun, ''),
+    Kebab.factory.Delete,
   ];
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>

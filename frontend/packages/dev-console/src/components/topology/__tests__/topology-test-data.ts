@@ -11,6 +11,7 @@ export const resources: TopologyDataResources = {
   buildconfigs: { data: [] },
   builds: { data: [] },
   daemonSets: { data: [] },
+  statefulSets: { data: [] },
 };
 
 export const topologyData: TopologyDataModel = {
@@ -521,6 +522,43 @@ export const samplePods: Resource = {
       status: {
         phase: 'Pending',
         startTime: '2019-07-15T09:50:59Z',
+      },
+    },
+    {
+      kind: 'Pod',
+      apiVersion: 'v1',
+      metadata: {
+        name: 'alertmanager-main-0',
+        generateName: 'alertmanager-main-',
+        namespace: 'openshift-monitoring',
+        selfLink: '/api/v1/namespaces/openshift-monitoring/pods/alertmanager-main-0',
+        uid: 'db4924ec-adfb-11e9-ac86-062ae0b85aca',
+        resourceVersion: '14171',
+        creationTimestamp: '2019-07-24T10:14:43Z',
+        labels: {
+          alertmanager: 'main',
+          app: 'alertmanager',
+          'controller-revision-hash': 'alertmanager-main-5b9d487b7f',
+          'statefulset.kubernetes.io/pod-name': 'alertmanager-main-0',
+        },
+        annotations: {
+          'openshift.io/scc': 'restricted',
+        },
+        ownerReferences: [
+          {
+            apiVersion: 'apps/v1',
+            kind: 'StatefulSet',
+            name: 'alertmanager-main',
+            uid: 'db365c19-adfb-11e9-ac86-062ae0b85aca',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+      },
+      spec: {},
+      status: {
+        phase: 'Running',
+        startTime: '2019-07-24T10:14:56Z',
       },
     },
   ],
@@ -1099,6 +1137,148 @@ const sampleDaemonSets = {
     },
   ],
 };
+
+const sampleStatefulSets: Resource = {
+  data: [
+    {
+      metadata: {
+        name: 'alertmanager-main',
+        namespace: 'openshift-monitoring',
+        selfLink: '/apis/apps/v1/namespaces/openshift-monitoring/statefulsets/alertmanager-main',
+        uid: 'db365c19-adfb-11e9-ac86-062ae0b85aca',
+        resourceVersion: '14506',
+        generation: 1,
+        creationTimestamp: '2019-07-24T10:14:43Z',
+        labels: {
+          alertmanager: 'main',
+        },
+        ownerReferences: [
+          {
+            apiVersion: 'monitoring.coreos.com/v1',
+            kind: 'Alertmanager',
+            name: 'main',
+            uid: 'db2f029d-adfb-11e9-8783-0a4de0430898',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+      },
+      spec: {
+        replicas: 3,
+        selector: {
+          matchLabels: {
+            alertmanager: 'main',
+            app: 'alertmanager',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              alertmanager: 'main',
+              app: 'alertmanager',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'alertmanager',
+                image:
+                  'registry.svc.ci.openshift.org/ocp/4.2-2019-07-24-010407@sha256:7f17f55f2f3901d83ad1757ffb1c617963e713916e54c870531446e8f80edc8a',
+                args: [
+                  '--config.file=/etc/alertmanager/config/alertmanager.yaml',
+                  '--cluster.listen-address=[$(POD_IP)]:6783',
+                  '--storage.path=/alertmanager',
+                  '--data.retention=120h',
+                  '--web.listen-address=127.0.0.1:9093',
+                  '--web.external-url=https://alertmanager-main-openshift-monitoring.apps.rorai-cluster3.devcluster.openshift.com/',
+                  '--web.route-prefix=/',
+                  '--cluster.peer=alertmanager-main-0.alertmanager-operated.openshift-monitoring.svc:6783',
+                  '--cluster.peer=alertmanager-main-1.alertmanager-operated.openshift-monitoring.svc:6783',
+                  '--cluster.peer=alertmanager-main-2.alertmanager-operated.openshift-monitoring.svc:6783',
+                ],
+                ports: [
+                  {
+                    name: 'mesh',
+                    containerPort: 6783,
+                    protocol: 'TCP',
+                  },
+                ],
+                env: [
+                  {
+                    name: 'POD_IP',
+                    valueFrom: {
+                      fieldRef: {
+                        apiVersion: 'v1',
+                        fieldPath: 'status.podIP',
+                      },
+                    },
+                  },
+                ],
+                resources: {
+                  requests: {
+                    memory: '200Mi',
+                  },
+                },
+                volumeMounts: [
+                  {
+                    name: 'config-volume',
+                    mountPath: '/etc/alertmanager/config',
+                  },
+                  {
+                    name: 'alertmanager-main-db',
+                    mountPath: '/alertmanager',
+                  },
+                  {
+                    name: 'secret-alertmanager-main-tls',
+                    readOnly: true,
+                    mountPath: '/etc/alertmanager/secrets/alertmanager-main-tls',
+                  },
+                  {
+                    name: 'secret-alertmanager-main-proxy',
+                    readOnly: true,
+                    mountPath: '/etc/alertmanager/secrets/alertmanager-main-proxy',
+                  },
+                ],
+                terminationMessagePath: '/dev/termination-log',
+                terminationMessagePolicy: 'File',
+                imagePullPolicy: 'IfNotPresent',
+              },
+            ],
+            restartPolicy: 'Always',
+            terminationGracePeriodSeconds: 120,
+            dnsPolicy: 'ClusterFirst',
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
+            serviceAccountName: 'alertmanager-main',
+            serviceAccount: 'alertmanager-main',
+            securityContext: {},
+            schedulerName: 'default-scheduler',
+            priorityClassName: 'system-cluster-critical',
+          },
+        },
+        serviceName: 'alertmanager-operated',
+        podManagementPolicy: 'OrderedReady',
+        updateStrategy: {
+          type: 'RollingUpdate',
+        },
+        revisionHistoryLimit: 10,
+      },
+      status: {
+        observedGeneration: 1,
+        replicas: 3,
+        readyReplicas: 3,
+        currentReplicas: 3,
+        updatedReplicas: 3,
+        currentRevision: 'alertmanager-main-5b9d487b7f',
+        updateRevision: 'alertmanager-main-5b9d487b7f',
+        collisionCount: 0,
+      },
+      kind: 'StatefulSet',
+    },
+  ],
+};
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
@@ -1110,4 +1290,5 @@ export const MockResources: TopologyDataResources = {
   buildconfigs: sampleBuildConfigs,
   builds: sampleBuilds,
   daemonSets: sampleDaemonSets,
+  statefulSets: sampleStatefulSets,
 };

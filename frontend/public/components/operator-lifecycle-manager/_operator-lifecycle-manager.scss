@@ -13,12 +13,13 @@
 }
 
 .co-clusterserviceversion-logo__icon {
-  background: #fff;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  background: #fff;
+  display: flex;
+  flex: 0 0 auto;
+  height: 60px;
+  justify-content: center;
+  width: 60px;
 }
 
 .co-m-nav-title--logo .co-clusterserviceversion-logo__icon {
@@ -40,6 +41,11 @@
 
 .co-clusterserviceversion-logo__name__provider {
   font-size: 13px;
+}
+
+.co-clusterserviceversion-empty__state__namespace {
+  font-style: italic;
+  font-weight: bold;
 }
 
 .co-crd-card-row {

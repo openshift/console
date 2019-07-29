@@ -70,7 +70,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       },
     },
     serverless: {
-      trigger: false,
+      enabled: false,
       scaling: {
         minpods: 0,
         maxpods: '',

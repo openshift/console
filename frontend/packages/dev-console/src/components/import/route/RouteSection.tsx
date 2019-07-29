@@ -12,7 +12,7 @@ interface RouteSectionProps {
 const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
   const {
     values: {
-      serverless: { trigger: serverlessTrigger },
+      serverless: { enabled: serverlessEnabled },
     },
   } = useFormikContext<FormikValues>();
   return (
@@ -20,7 +20,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
       {route.create && (
         <React.Fragment>
           <CreateRoute />
-          {!serverlessTrigger && <SecureRoute />}
+          {!serverlessEnabled && <SecureRoute />}
         </React.Fragment>
       )}
     </FormSection>

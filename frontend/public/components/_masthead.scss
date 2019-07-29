@@ -1,8 +1,5 @@
 .co-system-status-icon {
-  margin-top: 3px;
-  .visible-xs-block & {
-    margin-top: 5px;
-  }
+  font-size: $pf-header-icon-fontsize;
 }
 
 .co-username {

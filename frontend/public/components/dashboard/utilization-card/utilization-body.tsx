@@ -10,7 +10,7 @@ const formatDate = (date: Date): string => {
   return `${date.getHours()}:${minutes}`;
 };
 
-const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps, narrow = false }) => {
+const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
   const [containerRef, width] = useRefWidth();
   return (
     <div ref={containerRef}>
@@ -21,7 +21,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps, narrow = 
         orientation="top"
         height={15}
         width={width}
-        padding={{ top: 30, bottom: 0, left: 70, right: narrow ? 45 : 30 }}
+        padding={{ top: 30, bottom: 0, left: 70, right: 30 }}
         style={{
           axis: {visibility: 'hidden'},
         }}
@@ -34,22 +34,21 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps, narrow = 
 export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
   const [containerRef, width] = useRefWidth();
 
-  const axis = width < parseInt(breakpointSM.value, 10) ? (
-    <>
-      <Row>
-        <Col className="co-utilization-card__body-time-axis--narrow">
-          {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} narrow />}
+  const axis = width < parseInt(breakpointSM.value, 10) ?
+    timestamps.length === 0 ? null : (
+      <Row className="co-utilization-card__item">
+        <Col>
+          <UtilizationAxis timestamps={timestamps} />
         </Col>
       </Row>
-    </>
-  ) : (
-    <Row className="co-utilization-card__item">
-      <Col lg={5} md={5} sm={5} xs={5} />
-      <Col lg={7} md={7} sm={7} xs={7} className="co-utilization-card__body-time-axis--wide">
-        {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
-      </Col>
-    </Row>
-  );
+    ) : (
+      <Row className="co-utilization-card__item">
+        <Col lg={5} md={5} sm={5} xs={5} />
+        <Col lg={7} md={7} sm={7} xs={7}>
+          {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
+        </Col>
+      </Row>
+    );
   return (
     <div ref={containerRef}>
       {axis}
@@ -65,5 +64,4 @@ type UtilizationBodyProps = {
 
 type UtilizationAxisProps = {
   timestamps: Date[];
-  narrow?: boolean;
 }

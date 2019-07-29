@@ -38,7 +38,7 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
     },
     isSearchingForImage: false,
     serverless: {
-      trigger: false,
+      enabled: false,
       scaling: {
         minpods: 0,
         maxpods: '',

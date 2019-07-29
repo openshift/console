@@ -311,22 +311,25 @@ export const createResources = async (
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
+    name,
     application: { name: applicationName },
     project: { name: projectName },
     route: { create: canCreateRoute },
     image: { ports },
     build: { strategy: buildStrategy },
+    labels: userLabels,
     limits,
     serverless: { scaling },
     route,
   } = formData;
+  const imageStreamName = _.get(imageStream, 'metadata.name');
 
   const requests: Promise<K8sResourceKind>[] = [
     createImageStream(formData, imageStream, dryRun),
     createBuildConfig(formData, imageStream, dryRun),
   ];
 
-  if (formData.serverless.trigger) {
+  if (formData.serverless.enabled) {
     // knative service doesn't have dry run capability so returning the promises.
     if (dryRun) {
       return Promise.all(requests);
@@ -335,12 +338,15 @@ export const createResources = async (
     const [imageStreamResponse] = await Promise.all(requests);
     return Promise.all([
       createKnativeService(
+        name,
         applicationName,
         projectName,
         scaling,
         limits,
         route,
+        userLabels,
         imageStreamResponse.status.dockerImageRepository,
+        imageStreamName,
       ),
     ]);
   }

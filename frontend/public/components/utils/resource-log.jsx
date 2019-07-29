@@ -69,7 +69,7 @@ const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, stat
           .replace('${resourceNamespace}', encodeURIComponent(namespace))
           .replace('${podLabels}', JSON.stringify(resource.metadata.labels));
         return <React.Fragment key={link.metadata.uid}>
-          <ExternalLink href={url} text={link.spec.text} additionalClassName="co-external-link--within-toolbar btn btn-link" />
+          <ExternalLink href={url} text={link.spec.text} additionalClassName="co-external-link--within-toolbar btn btn-link" dataTestID={link.metadata.name} />
           <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
         </React.Fragment>;
       })}

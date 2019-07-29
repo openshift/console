@@ -980,8 +980,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
               {saveButtonText || 'Save'}
             </Button>
             <Button
-              component="a"
-              href={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural}
+              onClick={history.goBack}
               variant="secondary">
               Cancel
             </Button>

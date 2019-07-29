@@ -454,8 +454,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
                 {saveButtonText || 'Create'}
               </Button>
               <Button
-                component="a"
-                to={UIActions.formatNamespacedRouteForResource('rolebindings')}
+                onClick={history.goBack}
                 id="cancel"
                 variant="secondary">
                 Cancel

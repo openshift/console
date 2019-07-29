@@ -1,15 +1,8 @@
-.co-utilization-card__body-time-axis--wide {
-  padding-left: 0;
-}
-
-.co-utilization-card__body-time-axis--narrow {
-  border-bottom: 1px solid $pf-color-black-300;
-  margin-right: 0.25em;
-}
-
 .co-utilization-card__item {
   border-bottom: 1px solid $pf-color-black-300;
   font-size: 1.333em;
+  margin: 0;
+  padding: 0;
 }
 
 .co-utilization-card__item-chart {
@@ -26,7 +19,6 @@
 
 .co-utilization-card__item-chart--wide {
   border-left: 1px solid $pf-color-black-300;
-  padding-left: 0;
 }
 
 .co-utilization-card__item-current {
@@ -38,7 +30,8 @@
 }
 
 .co-utilization-card__item-row--narrow {
-  margin-right: 0.25em;
+  margin: 0;
+  padding: 0;
 }
 
 .co-utilization-card__item-title-row--narrow {

@@ -22,7 +22,7 @@
     "test-gui": "yarn run test-suite --suite all",
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
-    "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "plugin-stats": "node ./plugin-stats.js"
   },
   "jest": {
@@ -68,13 +68,13 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@patternfly/patternfly": "2.21.5",
-    "@patternfly/react-charts": "4.4.16",
-    "@patternfly/react-core": "3.73.1",
-    "@patternfly/react-table": "2.14.7",
-    "@patternfly/react-tokens": "2.6.8",
-    "@patternfly/react-topology": "2.6.4",
-    "@patternfly/react-virtualized-extension": "1.1.66",
+    "@patternfly/patternfly": "2.23.0",
+    "@patternfly/react-charts": "4.7.1",
+    "@patternfly/react-core": "3.75.2",
+    "@patternfly/react-table": "2.14.23",
+    "@patternfly/react-tokens": "2.6.13",
+    "@patternfly/react-topology": "2.6.20",
+    "@patternfly/react-virtualized-extension": "1.1.82",
     "abort-controller": "3.0.0",
     "classnames": "2.x",
     "core-js": "2.x",
@@ -125,7 +125,7 @@
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^3.12.2",
-    "yaml-language-server": "0.5.2",
+    "yaml-language-server": "0.5.3",
     "yup": "^0.27.0"
   },
   "devDependencies": {

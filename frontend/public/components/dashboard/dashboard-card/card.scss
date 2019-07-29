@@ -9,6 +9,8 @@
 .co-dashboard-card__button-link {
   line-height: 1;
   padding: 0;
+  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
 }
 
 .co-dashboard-card__header {
@@ -16,16 +18,15 @@
   border-bottom: 1px solid $pf-color-black-300;
   display: flex;
   justify-content: space-between;
-}
-
-.co-dashboard-card__link {
-  line-height: 1;
-  padding: 0;
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-left: var(--pf-c-card--child--PaddingLeft);
 }
 
 .co-dashboard-card__title {
   font-size: 1rem;
   margin: 0;
+  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
 }
 
 .co-dashboard-header__icon {

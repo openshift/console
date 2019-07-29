@@ -6,19 +6,41 @@ import * as plugins from '../../plugins';
 
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
-import { K8sKind, k8sList } from '../../module/k8s';
-import { resourcePathFromModel } from '../utils/resource-link';
-import { LoadingBox } from '../utils/status-box';
+import { K8sKind, k8sList, referenceForModel } from '../../module/k8s';
+import { resourcePathFromModel, Kebab, LoadingBox } from '../utils';
+import { addIDPItems } from './oauth';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
   flags: state[featureReducerName],
 });
 
+const editYAMLMenuItem = (name: string, resourceLink: string) => ({
+  label: `Edit ${name} Resource`,
+  href: `${resourceLink}/yaml`,
+});
+
+const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
+  label: `Explore ${name} API`,
+  href: apiExplorerLink,
+});
+
+const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
+  label,
+  href: `/settings/idp/${id}`,
+}));
+
 const ItemRow = ({item}) => {
   const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+  const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
+  const menuItems = [
+    editYAMLMenuItem(item.kind, resourceLink),
+    viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
+    ...(item.kind === 'OAuth') ? oauthMenuItems : [],
+  ];
+
   return <div className="row co-resource-list__item">
-    <div className="col-sm-10 col-xs-12">
+    <div className="col-sm-12">
       <Button
         className="pf-m-link--align-left"
         component="a"
@@ -27,14 +49,8 @@ const ItemRow = ({item}) => {
         {item.kind}
       </Button>
     </div>
-    <div className="col-sm-2 hidden-xs">
-      <Button
-        className="pull-right"
-        component="a"
-        href={`${resourceLink}/yaml`}
-        variant="secondary">
-        Edit YAML
-      </Button>
+    <div className="dropdown-kebab-pf">
+      <Kebab options={menuItems} />
     </div>
   </div>;
 };

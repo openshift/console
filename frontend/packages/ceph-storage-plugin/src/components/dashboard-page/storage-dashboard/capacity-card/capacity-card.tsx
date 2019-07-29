@@ -17,6 +17,7 @@ import {
   GetStats,
 } from '@console/internal/components/graphs/utils';
 import { StorageDashboardQuery, CAPACITY_USAGE_QUERIES } from '../../../../constants/queries';
+import './capacity-card.scss';
 
 const getLastStats = (response, getStats: GetStats): React.ReactText => {
   const stats = getStats(response);
@@ -78,7 +79,7 @@ export const CapacityCard: React.FC<DashboardItemProps> = ({
   const storageUsed = prometheusResults.getIn([matchingQueries[1], 'result']);
 
   return (
-    <DashboardCard>
+    <DashboardCard className="ceph-capacity-card__dashboard-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity</DashboardCardTitle>
         <Dropdown

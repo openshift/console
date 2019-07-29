@@ -32,17 +32,17 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
           .then((listres) => {
             this.setState({
               menuActions: [
-                triggerPipeline(
-                  res,
-                  getLatestRun({ data: listres }, 'creationTimestamp'),
-                  'pipelines',
-                ),
                 rerunPipeline(
                   res,
                   getLatestRun({ data: listres }, 'creationTimestamp'),
                   'pipelines',
                 ),
-                ...Kebab.factory.common,
+                triggerPipeline(
+                  res,
+                  getLatestRun({ data: listres }, 'creationTimestamp'),
+                  'pipelines',
+                ),
+                Kebab.factory.Delete,
               ],
             });
           })
