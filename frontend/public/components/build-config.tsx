@@ -175,7 +175,7 @@ export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
 export type BuildConfigsDetailsProps = {
-  obj: any;
+  obj: K8sResourceKind;
 };
 
 export type BuildConfigsPageProps = {
