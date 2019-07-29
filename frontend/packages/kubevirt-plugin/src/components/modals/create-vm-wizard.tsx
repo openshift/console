@@ -12,6 +12,7 @@ import {
   TemplateModel,
   PersistentVolumeClaimModel,
   StorageClassModel,
+  ConfigMapModel,
 } from '@console/internal/models';
 import { getName } from '@console/shared';
 import { units, Firehose } from '@console/internal/components/utils';
@@ -22,6 +23,7 @@ import {
   DataVolumeModel,
   V2VVMwareModel,
 } from '../../models';
+import { STORAGE_CLASS_CONFIG_MAP_NAMESPACE, STORAGE_CLASS_CONFIG_MAP_NAME } from '../../constants';
 import { createModalResourceLauncher } from './modal-resource-launcher';
 
 const mapStateToProps = ({ k8s }) => {
@@ -57,6 +59,13 @@ export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
       prop: 'persistentVolumeClaims',
     }),
     getResource(DataVolumeModel, { namespace: activeNamespace, prop: 'dataVolumes' }),
+    getResource(ConfigMapModel, {
+      name: STORAGE_CLASS_CONFIG_MAP_NAME,
+      namespace: STORAGE_CLASS_CONFIG_MAP_NAMESPACE,
+      prop: 'storageClassConfigMap',
+      isList: false,
+      optional: true,
+    }),
   ];
 
   const resourcesToProps = (props) => {
@@ -87,6 +96,7 @@ export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
       ...flatten('storageClasses'),
       ...flatten('persistentVolumeClaims'),
       ...flatten('dataVolumes'),
+      ...flatten('storageClassConfigMap'),
     };
   };
 
