@@ -28,21 +28,32 @@ export const createModal: CreateModal = getModalContainer => {
 };
 
 export const createModalLauncher: CreateModalLauncher = (Component) => (props) => {
-  const getModalContainer: GetModalContainer = (onClose) => (
-    <Provider store={store}>
-      <Router {...{history, basename: window.SERVER_FLAGS.basePath}}>
-        <Modal
-          isOpen={true}
-          contentLabel="Modal"
-          onRequestClose={onClose}
-          className={classNames('modal-dialog', props.modalClassName)}
-          overlayClassName="co-overlay"
-          shouldCloseOnOverlayClick={!props.blocking}>
-          <Component {..._.omit(props, 'blocking', 'modalClassName') as any} cancel={onClose} close={onClose} />
-        </Modal>
-      </Router>
-    </Provider>
-  );
+  const getModalContainer: GetModalContainer = (onClose) => {
+    const _handleClose = (e: React.SyntheticEvent) => {
+      onClose && onClose(e);
+      props.close && props.close();
+    };
+    const _handleCancel = (e: React.SyntheticEvent) => {
+      props.cancel && props.cancel();
+      _handleClose(e);
+    };
+
+    return (
+      <Provider store={store}>
+        <Router {...{history, basename: window.SERVER_FLAGS.basePath}}>
+          <Modal
+            isOpen={true}
+            contentLabel="Modal"
+            onRequestClose={_handleClose}
+            className={classNames('modal-dialog', props.modalClassName)}
+            overlayClassName="co-overlay"
+            shouldCloseOnOverlayClick={!props.blocking}>
+            <Component {..._.omit(props, 'blocking', 'modalClassName') as any} cancel={_handleCancel} close={_handleClose} />
+          </Modal>
+        </Router>
+      </Provider>
+    );
+  };
   return createModal(getModalContainer);
 };
 
@@ -96,8 +107,8 @@ export type CreateModalLauncherProps = {
 };
 
 export type ModalComponentProps = {
-  cancel: (e?: Event) => void;
-  close: (e?: Event) => void;
+  cancel?: () => void;
+  close?: () => void;
 };
 
 export type ModalTitleProps = {
@@ -126,4 +137,4 @@ export type ModalSubmitFooterProps = {
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(C: React.ComponentType<P>) =>
-  (props: Omit<P, keyof ModalComponentProps> & CreateModalLauncherProps) => {result: Promise<{}>};
+  (props: P & CreateModalLauncherProps) => {result: Promise<{}>};

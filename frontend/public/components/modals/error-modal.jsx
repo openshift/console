@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 
-export const ModalErrorContent = ({ error, title = 'Error', cancel }) => (
+export const ModalErrorContent = ({ error, title = 'Error', cancel = undefined }) => (
   <div className="modal-content">
     <ModalTitle>{title}</ModalTitle>
     <ModalBody>{error}</ModalBody>

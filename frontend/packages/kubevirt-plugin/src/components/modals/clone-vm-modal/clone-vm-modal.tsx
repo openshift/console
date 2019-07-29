@@ -101,7 +101,7 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
 
   const onCancelClick = (e) => {
     e.stopPropagation();
-    cancel(e);
+    cancel();
   };
 
   return (

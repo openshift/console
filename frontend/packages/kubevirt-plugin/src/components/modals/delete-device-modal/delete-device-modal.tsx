@@ -82,8 +82,8 @@ export type DeleteDeviceModalProps = {
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
-  cancel: () => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
 };
 
 export const deleteDeviceModal = createModalLauncher(DeleteDeviceModal);

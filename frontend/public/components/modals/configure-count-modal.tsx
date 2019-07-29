@@ -75,6 +75,6 @@ export type ConfigureCountModalProps = {
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
-  cancel: (error: any) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
 };

@@ -51,8 +51,8 @@ export class SubscriptionChannelModal extends PromiseComponent<SubscriptionChann
 export const createSubscriptionChannelModal = createModalLauncher<SubscriptionChannelModalProps>(SubscriptionChannelModal);
 
 export type SubscriptionChannelModalProps = {
-  cancel: (e: Event) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   subscription: SubscriptionKind;
   pkg: PackageManifestKind;
