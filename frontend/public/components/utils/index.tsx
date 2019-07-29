@@ -55,6 +55,7 @@ export * from './camel-case-wrap';
 export * from './truncate-middle';
 export * from './expand-collapse';
 export * from './volume-type';
+export * from './skeleton-catalog';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

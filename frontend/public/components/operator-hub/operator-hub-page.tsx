@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
 
-import { Firehose, PageHeading, StatusBox, MsgBox, ExternalLink, withFallback } from '../utils';
+import { Firehose, PageHeading, StatusBox, MsgBox, ExternalLink, skeletonCatalog, withFallback } from '../utils';
 import { ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
 import { fromRequirements } from '../../module/k8s/selector';
@@ -13,7 +13,6 @@ import { OperatorHubTileView } from './operator-hub-items';
 import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { installedFor, subscriptionFor } from '../operator-lifecycle-manager/operator-group';
 import { OperatorHubItem, OperatorHubCSVAnnotations } from './index';
-import { skeletonCatalog } from '../catalog/catalog-page';
 
 import * as operatorImg from '../../imgs/operator.svg';
 
