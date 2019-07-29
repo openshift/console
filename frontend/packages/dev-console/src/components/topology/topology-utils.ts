@@ -237,7 +237,9 @@ export class TransformTopologyData {
         data: {
           url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : this.getRouteData(ksroute),
           kind: targetDeploymentsKind,
-          editUrl: deploymentsAnnotations['app.openshift.io/edit-url'],
+          editUrl:
+            deploymentsAnnotations['app.openshift.io/edit-url'] ||
+            deploymentsAnnotations['app.openshift.io/vcs-uri'],
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
           isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
           donutStatus: {
