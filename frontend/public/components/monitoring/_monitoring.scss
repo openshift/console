@@ -1,3 +1,7 @@
+.graph-wrapper--query-browser {
+  padding-left: 40px;
+}
+
 .query-browser__clear-icon {
   color: $color-pf-black-600;
   font-size: 18px;
@@ -190,6 +194,19 @@ $tooltip-background-color: #151515;
   overflow: visible;
   padding: 10px;
   width: 100%;
+}
+
+.query-browser__zoom-overlay {
+  background-color: rgba(0, 0, 0, 0.2);
+  bottom: 0;
+  position: absolute;
+  top: 0;
+  z-index: $zindex-modal;
+}
+
+.query-browser__zoom {
+  cursor: ew-resize;
+  position: relative;
 }
 
 .co-alert-manager-yaml__explanation {
