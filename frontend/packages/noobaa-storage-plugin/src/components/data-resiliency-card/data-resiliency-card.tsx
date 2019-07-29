@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Icon } from 'patternfly-react';
 import { pluralize, Progress } from '@patternfly/react-core';
+import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -30,15 +30,15 @@ const getFormattedEta = (eta: number): string => {
 const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResilient }) =>
   isResilient ? (
     <>
-      <div className="nb-data-resiliency__status-title--ok">Your Data is Resilient</div>
+      <div className="nb-data-resiliency__title">Your data is resilient</div>
       <div className="nb-data-resiliency__icon--ok">
-        <Icon type="fa" name="check-circle" size="5x" />
+        <GreenCheckCircleIcon />
       </div>
     </>
   ) : (
     <>
       <div className="nb-data-resiliency__icon--error">
-        <Icon type="fa" name="exclamation-triangle" size="5x" />
+        <RedExclamationCircleIcon />
       </div>
       <div className="nb-data-resiliency__status-title--error">No data available</div>
     </>
@@ -50,7 +50,7 @@ const DataResiliencyBuildBody: React.FC<DataResiliencyBuildBody> = React.memo(
       <>
         <div className="nb-data-resiliency__title">Rebuilding data</div>
         <Progress
-          className="nb-data-resiliency__utilization-bar"
+          className="nb-data-resiliency__progress-bar"
           value={progressPercentage}
           title="Rebuilding in Progress"
           label={`${progressPercentage}%`}

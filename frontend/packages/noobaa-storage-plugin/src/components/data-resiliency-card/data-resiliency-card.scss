@@ -1,10 +1,8 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
-
 .nb-data-resiliency__dashboard-body {
   display: flex;
   flex-direction: column;
-  height: 15.9em;
   justify-content: center;
+  margin-top: 1.5em;
   text-align: center;
 }
 
@@ -13,27 +11,24 @@
 }
 
 .nb-data-resiliency__icon--error {
-  color: $pf-color-red-100;
+  font-size: 60px;
 }
 
 .nb-data-resiliency__icon--ok {
-  color: $pf-color-light-green-400;
+  font-size: 60px;
+}
+
+.nb-data-resiliency__progress-bar {
+  text-align: left;
+  grid-gap: 0rem;
 }
 
 .nb-data-resiliency__status-title--error {
   margin-top: 1.5625em;
 }
 
-.nb-data-resiliency__status-title--ok {
-  margin-bottom: 3.5em;
-}
-
 .nb-data-resiliency__title {
-  margin-bottom: 6em;
-  text-align: center;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 3em;
 }
-
-.nb-data-resiliency__utilization-bar {
-  text-align: left;
-}
-
