@@ -180,7 +180,7 @@ export type BuildConfigsDetailsProps = {
 
 export type BuildConfigsPageProps = {
   filterLabel?: string;
-  mock?: any;
+  mock?: boolean;
 };
 
 export type BuildConfigsDetailsPageProps = {
