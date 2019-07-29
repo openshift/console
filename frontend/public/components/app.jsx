@@ -17,7 +17,7 @@ import { Navigation } from './nav';
 import { history } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
-import { ActionType, watchAPIServices } from '../actions/k8s';
+import { receivedResources, watchAPIServices } from '../actions/k8s';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -128,7 +128,7 @@ const startDiscovery = () => store.dispatch(watchAPIServices());
 // Load cached API resources from localStorage to speed up page load.
 getCachedResources().then(resources => {
   if (resources) {
-    store.dispatch({type: ActionType.ReceivedResources, resources});
+    store.dispatch(receivedResources(resources));
   }
   // Still perform discovery to refresh the cache.
   startDiscovery();
