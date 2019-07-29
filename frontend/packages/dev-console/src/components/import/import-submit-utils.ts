@@ -9,7 +9,7 @@ import {
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
-import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
+import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
 import { GitImportFormData } from './import-types';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
@@ -24,9 +24,11 @@ export const createImageStream = (
     project: { name: namespace },
     application: { name: application },
     labels: userLabels,
+    git: { url: repository, ref },
   } = formData;
   const imageStreamName = imageStreamData && imageStreamData.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
@@ -34,6 +36,7 @@ export const createImageStream = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
     },
   };
 
@@ -60,6 +63,7 @@ export const createBuildConfig = (
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
   const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
   let buildStrategyData;
 
   switch (buildStrategy) {
@@ -89,6 +93,7 @@ export const createBuildConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
     },
     spec: {
       output: {
@@ -133,10 +138,12 @@ export const createDeploymentConfig = (
     deployment: { env, replicas, triggers },
     labels: userLabels,
     limits: { cpu, memory },
+    git: { url: repository, ref },
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
   const podLabels = getPodLabels(name);
 
   const deploymentConfig = {
@@ -146,6 +153,7 @@ export const createDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
     },
     spec: {
       selector: podLabels,
@@ -213,6 +221,7 @@ export const createService = (
     route: { targetPort },
     docker: { containerPort },
     build: { strategy: buildStrategy },
+    git: { url: repository, ref },
   } = formData;
   let port;
   if (buildStrategy === 'Docker') {
@@ -223,6 +232,7 @@ export const createService = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
   const podLabels = getPodLabels(name);
   const service = {
     kind: 'Service',
@@ -231,6 +241,7 @@ export const createService = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
     },
     spec: {
       selector: podLabels,
@@ -263,6 +274,7 @@ export const createRoute = (
     route: { hostname, secure, path, tls, targetPort: routeTargetPort },
     docker: { containerPort },
     build: { strategy: buildStrategy },
+    git: { url: repository, ref },
   } = formData;
 
   let targetPort;
@@ -274,6 +286,7 @@ export const createRoute = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
   const route = {
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',
@@ -281,6 +294,7 @@ export const createRoute = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
     },
     spec: {
       to: {
@@ -321,6 +335,7 @@ export const createResources = async (
     limits,
     serverless: { scaling },
     route,
+    git: { url: repository, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
 
@@ -328,6 +343,8 @@ export const createResources = async (
     createImageStream(formData, imageStream, dryRun),
     createBuildConfig(formData, imageStream, dryRun),
   ];
+
+  const defaultAnnotations = getAppAnnotations(repository, ref);
 
   if (formData.serverless.enabled) {
     // knative service doesn't have dry run capability so returning the promises.
@@ -347,6 +364,7 @@ export const createResources = async (
         userLabels,
         imageStreamResponse.status.dockerImageRepository,
         imageStreamName,
+        defaultAnnotations,
       ),
     ]);
   }

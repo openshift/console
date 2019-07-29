@@ -37,6 +37,7 @@ export const createKnativeService = (
   labels,
   imageStreamUrl: string,
   imageStreamName?: string,
+  annotations?: { [name: string]: string },
 ): Promise<K8sResourceKind> => {
   const contTargetPort: number = parseInt(targetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
@@ -76,6 +77,7 @@ export const createKnativeService = (
             }),
             ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
             ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
+            ...annotations,
           },
         },
         spec: {
