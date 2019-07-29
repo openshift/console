@@ -127,13 +127,13 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
 };
 
 export enum OperatorStatusType {
-  condition = 'condition',
+  conditions = 'conditions',
   phase = 'phase',
   status = 'status',
 }
 
 export const OperatorStatusTypeText = {
-  [OperatorStatusType.condition]: 'Condition:',
+  [OperatorStatusType.conditions]: 'Conditions:',
   [OperatorStatusType.phase]: 'Phase:',
   [OperatorStatusType.status]: 'Status:',
 };
