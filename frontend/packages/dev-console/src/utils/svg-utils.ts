@@ -19,7 +19,7 @@ function vecSum(pv1: Point, pv2: Point): Point {
 function unitNormal(p0: Point, p1: Point): Point {
   const n = [p0[1] - p1[1], p1[0] - p0[0]];
   const nLength = Math.sqrt(n[0] * n[0] + n[1] * n[1]);
-  return [n[0] / nLength, n[1] / nLength];
+  return nLength > 0 ? [n[0] / nLength, n[1] / nLength] : [0, 0];
 }
 
 // Returns the path for a rounded hull around a single point (a circle).
