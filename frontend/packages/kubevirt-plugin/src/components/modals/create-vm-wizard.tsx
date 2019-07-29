@@ -78,7 +78,8 @@ export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
     return {
       selectedNamespace,
       templates,
-
+      templatesLoaded:
+        userTemplates && commonTemplates && userTemplates.loaded && commonTemplates.loaded,
       ...flatten('namespaces'),
       ...flatten('virtualMachines'),
       ...flatten('userTemplates'),
