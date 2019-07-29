@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Status } from '@console/shared';
+import { Status, GreenOutlinedCheckCircleIcon } from '@console/shared';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -77,13 +77,17 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             title={`${build.metadata.name} ${build.status && build.status.phase}`}
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <foreignObject width={decoratorRadius} height={decoratorRadius}>
-                <Status
-                  title={`${build.metadata.name} ${build.status && build.status.phase}`}
-                  status={build.status.phase}
-                  iconOnly
-                />
-              </foreignObject>
+              {build.status.phase === 'Complete' ? (
+                <GreenOutlinedCheckCircleIcon />
+              ) : (
+                <foreignObject width={decoratorRadius} height={decoratorRadius}>
+                  <Status
+                    title={`${build.metadata.name} ${build.status && build.status.phase}`}
+                    status={build.status.phase}
+                    iconOnly
+                  />
+                </foreignObject>
+              )}
             </g>
           </Decorator>
         ),
