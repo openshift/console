@@ -16,7 +16,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { CephClusterModel } from '../../../models';
-import { CEPH_STORAGE_NAMESPACE, CEPH_CLUSTER_NAME } from '../../../constants/index';
+import { CEPH_STORAGE_NAMESPACE } from '../../../constants/index';
 
 const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
   _.get(infrastructure, 'status.platform');
@@ -36,8 +36,7 @@ const cephClusterResource: FirehoseResource = {
   kind: referenceForModel(CephClusterModel),
   namespaced: true,
   namespace: CEPH_STORAGE_NAMESPACE,
-  name: CEPH_CLUSTER_NAME,
-  isList: false,
+  isList: true,
   prop: 'ceph',
 };
 
@@ -61,7 +60,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
 
   const cephCluster = _.get(resources, 'ceph');
   const cephClusterLoaded = _.get(cephCluster, 'loaded', false);
-  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind;
+  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
 
   return (
     <DashboardCard>
@@ -73,7 +72,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="name"
             title="Name"
-            value={getName(cephClusterData)}
+            value={getName(_.get(cephClusterData, 0))}
             isLoading={!cephClusterLoaded}
           />
           <DetailItem
@@ -85,7 +84,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="version"
             title="Version"
-            value={getCephVersion(cephClusterData)}
+            value={getCephVersion(_.get(cephClusterData, 0))}
             isLoading={!cephClusterLoaded}
           />
         </DetailsBody>

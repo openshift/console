@@ -3,7 +3,6 @@ export const CEPH_DEGRADED = 'Ceph health is degraded';
 export const CEPH_ERROR = 'Ceph health is in error state';
 export const CEPH_UNKNOWN = 'Ceph is not available';
 export const CEPH_STORAGE_NAMESPACE = 'openshift-storage';
-export const CEPH_CLUSTER_NAME = 'rook-ceph';
 export const ONE_HR = '1 Hour';
 export const SIX_HR = '6 Hours';
 export const TWENTY_FOUR_HR = '24 Hours';
