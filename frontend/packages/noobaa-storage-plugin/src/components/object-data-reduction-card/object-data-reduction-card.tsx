@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -38,10 +37,14 @@ const DataReductionCard: React.FC<DashboardItemProps> = ({
     ObjectDataReductionQueries.SAVINGS_QUERY,
     'result',
   ]);
+  const logicalSavingsQueryResult = prometheusResults.getIn([
+    ObjectDataReductionQueries.LOGICAL_SAVINGS_QUERY,
+    'result',
+  ]);
 
   const efficiency = getPropsData(efficiencyQueryResult);
   const savings = getPropsData(savingsQueryResult);
-  const logicalSize = _.get(savingsQueryResult, 'data.result[0].metric.logical_size', null);
+  const logicalSize = getPropsData(logicalSavingsQueryResult);
 
   const efficiencyProps = {
     efficiency,
@@ -50,8 +53,8 @@ const DataReductionCard: React.FC<DashboardItemProps> = ({
 
   const savingsProps = {
     savings,
-    logicalSize,
-    isLoading: !savingsQueryResult,
+    logicalSize: Number(logicalSize),
+    isLoading: !savingsQueryResult && !logicalSavingsQueryResult,
   };
 
   return (

@@ -74,7 +74,7 @@ const getObjectStorageHealthState = (
     }
   }
   if (!_.isNil(buckets) && !_.isNil(unhealthyBuckets)) {
-    value = Number((Number(unhealthyBuckets) / Number(buckets)).toFixed(1));
+    value = Number(unhealthyBuckets) / Number(buckets);
     if (value >= 0.5) {
       result.message = 'Many buckets have issues';
       result.state = HealthState.ERROR;
