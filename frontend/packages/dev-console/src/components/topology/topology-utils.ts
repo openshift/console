@@ -275,7 +275,7 @@ export class TransformTopologyData {
       return data;
     }
     return data.filter((dc) => {
-      return dc.metadata.labels[PART_OF] && dc.metadata.labels[PART_OF] === this.application;
+      return _.get(dc, ['metadata', 'labels', PART_OF]) === this.application;
     });
   }
 
