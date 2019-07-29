@@ -9,14 +9,12 @@ import {
   ChartThemeColor,
   ChartThemeVariant,
   ChartTooltip,
+  ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
 import { Alert, TextInput } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
-
-// This is not yet available as part of PatternFly
-import { createContainer } from 'victory-create-container';
 
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
@@ -99,7 +97,7 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
       <div className="query-browser__tooltip">
         <div className="query-browser__tooltip-group">
           <div className="query-browser__series-btn" style={{backgroundColor: colors[i % colors.length]}}></div>
-          <div className="query-browser__tooltip-time">{twentyFourHourTime(datum.x)}</div>
+          {datum.x && <div className="query-browser__tooltip-time">{twentyFourHourTime(datum.x)}</div>}
         </div>
         <div className="query-browser__tooltip-group">
           <div className="co-nowrap co-truncate">{query}</div>
@@ -111,36 +109,25 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
   </foreignObject>;
 };
 
-const Graph: React.FC<GraphProps> = React.memo(({domain, data, metadata, onZoom, span}) => {
+const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, data, span}) => {
   const [containerRef, width] = useRefWidth();
 
-  const Container = createContainer('selection', 'voronoi');
-  const flyoutComponent = <Tooltip metadata={metadata} />;
-  const labelComponent = <ChartTooltip flyoutComponent={flyoutComponent} />;
-  const containerComponent = <Container
-    labels={_.noop}
-    labelComponent={labelComponent}
-    onSelection={(points, range) => onZoom(range)}
-  />;
-
-  return <div className="graph-wrapper">
-    <div ref={containerRef} style={{width: '100%'}}>
-      <Chart
-        containerComponent={containerComponent}
-        domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
-        domainPadding={{y: 20}}
-        height={200}
-        width={width}
-        theme={chartTheme}
-        scale={{x: 'time', y: 'linear'}}
-      >
-        <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-        <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
-        <ChartGroup>
-          {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
-        </ChartGroup>
-      </Chart>
-    </div>
+  return <div ref={containerRef} style={{width: '100%'}}>
+    {width && <Chart
+      containerComponent={containerComponent}
+      domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
+      domainPadding={{y: 20}}
+      height={200}
+      scale={{x: 'time', y: 'linear'}}
+      theme={chartTheme}
+      width={width}
+    >
+      <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
+      <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
+      <ChartGroup>
+        {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
+      </ChartGroup>
+    </Chart>}
   </div>;
 });
 
@@ -182,9 +169,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const [domain, setDomain] = React.useState();
   const [error, setError] = React.useState();
+  const [isZooming, setIsZooming] = React.useState(false);
   const [results, setResults] = React.useState();
   const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
   const [updating, setUpdating] = React.useState(true);
+  const [x1, setX1] = React.useState(0);
+  const [x2, setX2] = React.useState(0);
 
   const endTime = _.get(domain, 'x[1]');
 
@@ -254,19 +244,57 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     setSpan(newSpan);
   }, []);
 
-  const onZoom = React.useCallback(({x, y}: Domain) => {
-    setDomain({x, y});
-    setSpan(x[1] - x[0]);
-  }, []);
+  const containerComponent = React.useMemo(() => {
+    const metadata = _.flatMap(results, (r, i) => _.map(r, ({metric}) => ({
+      query: queries[i],
+      labels: omitInternalLabels(metric),
+    })));
+
+    const flyoutComponent = <Tooltip metadata={metadata} />;
+    const labelComponent = <ChartTooltip flyoutComponent={flyoutComponent} />;
+    return <ChartVoronoiContainer labels={() => ''} labelComponent={labelComponent} />;
+  }, [queries, results]);
 
   if (hideGraphs) {
     return error ? <Error error={error} /> : null;
   }
 
-  const metadata = _.flatMap(results, (r, i) => _.map(r, ({metric}) => ({
-    query: queries[i],
-    labels: omitInternalLabels(metric),
-  })));
+  const onMouseDown = (e) => {
+    if (!isZooming) {
+      setIsZooming(true);
+      setX1(e.clientX - e.currentTarget.getBoundingClientRect().left);
+    }
+  };
+
+  const onMouseMove = (e) => {
+    if (isZooming) {
+      setX2(e.clientX - e.currentTarget.getBoundingClientRect().left);
+    }
+  };
+
+  const onMouseUp = (e) => {
+    if (isZooming) {
+      setIsZooming(false);
+
+      const {width} = e.currentTarget.getBoundingClientRect();
+      const oldFrom = _.get(domain, 'x[0]', Date.now() - span);
+      let from = oldFrom + (span * Math.min(x1, x2) / width);
+      let to = oldFrom + (span * Math.max(x1, x2) / width);
+      let newSpan = to - from;
+
+      // Don't allow zooming to less than 10 seconds
+      const minSpan = 10 * 1000;
+      if (newSpan < minSpan) {
+        newSpan = minSpan;
+        const middle = (from + to) / 2;
+        from = middle - (newSpan / 2);
+        to = middle + (newSpan / 2);
+      }
+
+      setDomain({x: [from, to], y: undefined});
+      setSpan(newSpan);
+    }
+  };
 
   return <div className={classNames('query-browser__wrapper', {'graph-empty-state': _.isEmpty(graphData)})}>
     <div className="query-browser__controls">
@@ -282,7 +310,19 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
     {error && <Error error={error} />}
     {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
-    {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} metadata={metadata} onZoom={onZoom} span={span} />}
+    {!_.isEmpty(graphData) && <div
+      className="graph-wrapper graph-wrapper--query-browser"
+    >
+      <div className="query-browser__zoom" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+        {isZooming && <div className="query-browser__zoom-overlay" style={{left: Math.min(x1, x2), width: Math.abs(x1 - x2)}}></div>}
+        <Graph
+          containerComponent={isZooming ? undefined : containerComponent}
+          data={graphData}
+          domain={domain}
+          span={span}
+        />
+      </div>
+    </div>}
   </div>;
 };
 const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
@@ -308,10 +348,9 @@ export type PrometheusSeries = {
 };
 
 type GraphProps = {
+  containerComponent: React.ReactElement;
   data: GraphDataPoint[][];
   domain: Domain;
-  metadata: {labels: Labels, query: string}[];
-  onZoom: (range: Domain) => void;
   span: number;
 };
 

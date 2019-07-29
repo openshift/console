@@ -55,7 +55,7 @@ export const queryBrowserTheme = {
   chart: {
     padding: {
       bottom: 0,
-      left: 40,
+      left: 0,
       right: 0,
       top: 0,
     },
