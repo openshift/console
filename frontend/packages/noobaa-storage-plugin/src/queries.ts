@@ -5,7 +5,7 @@ export enum DATA_RESILIENCE_QUERIES {
 
 export const ObjectDataReductionQueries = {
   EFFICIENCY_QUERY: 'NooBaa_reduction_ratio',
-  SAVINGS_QUERY: 'NooBaa_savings',
+  SAVINGS_QUERY: 'NooBaa_object_savings',
 };
 
 export enum HealthCardQueries {
