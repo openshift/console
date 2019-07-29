@@ -117,10 +117,17 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       });
 
     this.setState({ items: sortedList });
+    if (
+      (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
+      allSelectorItem &&
+      allSelectorItem.allSelectorKey !== this.props.selectedKey
+    ) {
+      this.onChange(allSelectorItem.allSelectorKey);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(this.state, nextState)) {
+    if (_.isEqual(this.state, nextState) && _.isEqual(this.props, nextProps)) {
       return false;
     }
     return true;
