@@ -79,8 +79,8 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
 export const removeVolumeModal = createModalLauncher(RemoveVolumeModal);
 
 export type RemoveVolumeModalProps = {
-  cancel: (e: Event) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
   volume: RowVolumeData;
   kind: K8sKind;
   resource: K8sResourceKind;

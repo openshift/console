@@ -85,8 +85,8 @@ export type PowerOffHostModalProps = {
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
-  cancel: () => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
 };
 
 const PowerOffHostModal = withHandlePromise(
@@ -98,8 +98,8 @@ const PowerOffHostModal = withHandlePromise(
     inProgress,
     errorMessage,
     handlePromise,
-    close,
-    cancel,
+    close = undefined,
+    cancel = undefined,
   }: PowerOffHostModalProps) => {
     const name = getName(host);
     const [canPowerOffSafely, setCanPowerOffSafely] = React.useState(false);

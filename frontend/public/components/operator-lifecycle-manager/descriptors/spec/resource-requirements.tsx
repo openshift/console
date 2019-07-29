@@ -46,7 +46,7 @@ export const ResourceRequirementsModal = withHandlePromise((props: ResourceRequi
       </div>
       <ResourceRequirements cpu={cpu} memory={memory} onChangeCPU={setCPU} onChangeMemory={setMemory} />
     </ModalBody>
-    <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText="Save" cancel={e => props.cancel(e)} />
+    <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText="Save" cancel={props.cancel} />
   </form>;
 });
 
@@ -79,8 +79,8 @@ export type ResourceRequirementsModalProps = {
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
-  cancel: (error: any) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
 };
 
 export type ResourceRequirementsProps = {

@@ -56,8 +56,8 @@ export type DisableApplicationModalProps = {
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
-  cancel: (error: any) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
   k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
   k8sPatch: (kind: K8sKind, resource: K8sResourceKind, data: {op: string, path: string, value: any}[]) => Promise<any>;

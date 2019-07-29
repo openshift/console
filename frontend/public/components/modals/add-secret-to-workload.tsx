@@ -221,7 +221,7 @@ type WorkloadItem = {
 };
 
 export type AddSecretToWorkloadModalProps = {
-  cancel: (e: Event) => void;
+  cancel: () => void;
   close: () => void;
   secretName: string;
   namespace: string;

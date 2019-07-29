@@ -76,8 +76,8 @@ export class InstallPlanApprovalModal extends PromiseComponent<InstallPlanApprov
 export const createInstallPlanApprovalModal = createModalLauncher<InstallPlanApprovalModalProps>(InstallPlanApprovalModal);
 
 export type InstallPlanApprovalModalProps = {
-  cancel: (e: Event) => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   obj: InstallPlanKind | SubscriptionKind;
 };
