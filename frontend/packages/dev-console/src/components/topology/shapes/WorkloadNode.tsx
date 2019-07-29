@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Status, GreenOutlinedCheckCircleIcon } from '@console/shared';
+import { Link } from 'react-router-dom';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -26,6 +27,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       donutStatus: { build },
     },
   } = workload;
+  console.log('######################', build);
   return (
     <BaseNode
       x={x}
@@ -69,27 +71,33 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
           </Decorator>
         ),
         build && (
-          <Decorator
-            key="build"
-            x={-radius + decoratorRadius * 0.7}
-            y={radius - decoratorRadius * 0.7}
-            radius={decoratorRadius}
-            title={`${build.metadata.name} ${build.status && build.status.phase}`}
+          <Link
+            to={`/k8s/ns/${build.metadata.namespace}/buildconfigs/${
+              build.metadata.ownerReferences[0].name
+            }`}
           >
-            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              {build.status.phase === 'Complete' ? (
-                <GreenOutlinedCheckCircleIcon />
-              ) : (
-                <foreignObject width={decoratorRadius} height={decoratorRadius}>
-                  <Status
-                    title={`${build.metadata.name} ${build.status && build.status.phase}`}
-                    status={build.status.phase}
-                    iconOnly
-                  />
-                </foreignObject>
-              )}
-            </g>
-          </Decorator>
+            <Decorator
+              key="build"
+              x={-radius + decoratorRadius * 0.7}
+              y={radius - decoratorRadius * 0.7}
+              radius={decoratorRadius}
+              title={`${build.metadata.name} ${build.status && build.status.phase}`}
+            >
+              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                {build.status.phase === 'Complete' ? (
+                  <GreenOutlinedCheckCircleIcon />
+                ) : (
+                  <foreignObject width={decoratorRadius} height={decoratorRadius}>
+                    <Status
+                      title={`${build.metadata.name} ${build.status && build.status.phase}`}
+                      status={build.status.phase}
+                      iconOnly
+                    />
+                  </foreignObject>
+                )}
+              </g>
+            </Decorator>
+          </Link>
         ),
       ]}
     >
