@@ -3,7 +3,6 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
-  OutlinedCheckCircleIcon,
 } from '@patternfly/react-icons';
 import {
   global_success_color_100 as successColor,
@@ -17,10 +16,6 @@ export type ColoredIconProps = {
 
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className }) => {
   return <CheckCircleIcon color={successColor.value} className={className} />;
-};
-
-export const GreenOutlinedCheckCircleIcon: React.FC<ColoredIconProps> = ({ className }) => {
-  return <OutlinedCheckCircleIcon color={successColor.value} className={className} />;
 };
 
 export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({ className }) => {

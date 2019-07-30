@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Status, GreenOutlinedCheckCircleIcon } from '@console/shared';
+import { Status } from '@console/shared';
 import { Link } from 'react-router-dom';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import PodStatus from './PodStatus';
 import KnativeIcon from './KnativeIcon';
+import BuildSuccessIcon from './BuildSuccessIcon';
+
+export type GreenOutlinedCheckCircleIconProps = {
+  className?: string;
+};
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,
@@ -84,9 +89,9 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 {build.status.phase === 'Complete' ? (
-                  <GreenOutlinedCheckCircleIcon />
+                  <BuildSuccessIcon />
                 ) : (
-                  <foreignObject width={decoratorRadius} height={decoratorRadius}>
+                  <foreignObject width={decoratorRadius} height={decoratorRadius + 1}>
                     <Status
                       title={`${build.metadata.name} ${build.status && build.status.phase}`}
                       status={build.status.phase}
