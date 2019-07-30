@@ -106,6 +106,11 @@ kbd {
     padding-top: 8px !important;
   }
 }
+// Temp fix to adjust user menu dropdown toggle padding until it can be converted back to a standard dropdown
+.co-user-menu .pf-c-app-launcher__toggle {
+  padding-left: 0;
+  padding-right: 0;
+}
 
 .pf-c-button--align-right {
   margin-left: auto !important;
