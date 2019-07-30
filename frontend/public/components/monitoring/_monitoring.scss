@@ -196,17 +196,17 @@ $tooltip-background-color: #151515;
   width: 100%;
 }
 
+.query-browser__zoom {
+  cursor: ew-resize;
+  position: relative;
+}
+
 .query-browser__zoom-overlay {
   background-color: rgba(0, 0, 0, 0.2);
   bottom: 0;
   position: absolute;
   top: 0;
   z-index: $zindex-modal;
-}
-
-.query-browser__zoom {
-  cursor: ew-resize;
-  position: relative;
 }
 
 .co-alert-manager-yaml__explanation {

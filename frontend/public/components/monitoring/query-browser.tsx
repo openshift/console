@@ -262,7 +262,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const onMouseDown = (e) => {
     if (!isZooming) {
       setIsZooming(true);
-      setX1(e.clientX - e.currentTarget.getBoundingClientRect().left);
+      const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
+      setX1(x);
+      setX2(x);
     }
   };
 
