@@ -12,7 +12,7 @@ import {
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
-import { Alert, TextInput } from '@patternfly/react-core';
+import { Alert, Button, TextInput } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
@@ -71,11 +71,12 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       onChange={v => setSpan(v)}
       title="&nbsp;"
     />
-    <button
-      className="btn btn-default query-browser__inline-control"
+    <Button
+      className="query-browser__inline-control"
       onClick={() => setSpan(defaultSpanText)}
       type="button"
-    >Reset Zoom</button>
+      variant="tertiary"
+    >Reset Zoom</Button>
   </React.Fragment>;
 });
 

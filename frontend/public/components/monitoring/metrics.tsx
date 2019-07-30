@@ -1,6 +1,7 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
+  ActionGroup,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -495,8 +496,10 @@ export const QueryBrowserPage = withFallback(() => {
                 <MetricsDropdown onChange={onMetricChange} onLoad={setMetrics} />
               </div>
               <div className="query-browser__controls--right">
-                <button type="button" className="btn btn-default query-browser__inline-control" onClick={addQuery}>Add Query</button>
-                <button type="submit" className="btn btn-primary">Run Queries</button>
+                <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+                  <Button type="button" className="query-browser__inline-control" onClick={addQuery} variant="secondary">Add Query</Button>
+                  <Button type="submit" variant="primary">Run Queries</Button>
+                </ActionGroup>
               </div>
             </div>
             {_.map(queries, (q, i) => {

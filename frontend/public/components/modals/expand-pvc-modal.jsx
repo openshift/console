@@ -56,7 +56,7 @@ class ExpandPVCModal extends PromiseComponent {
           dropdownUnits={dropdownUnits}
         />
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitButtonClass="btn-primary" submitText="Expand" cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Expand" cancel={this._cancel} />
     </form>;
   }
 }

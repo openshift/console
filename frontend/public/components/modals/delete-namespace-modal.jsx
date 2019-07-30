@@ -41,7 +41,7 @@ class DeleteNamespaceModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter submitText="Delete" submitDisabled={!this.state.isTypedNsMatching} submitButtonClass="btn-danger" cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
+      <ModalSubmitFooter submitText="Delete" submitDisabled={!this.state.isTypedNsMatching} cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitDanger />
     </form>;
   }
 }

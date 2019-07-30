@@ -32,7 +32,7 @@ export const operatorCommunityWarningIsLoaded = () => browser.wait(until.presenc
   .then(() => browser.sleep(500));
 export const operatorCommunityWarningIsClosed = () => browser.wait(until.not(until.presenceOf(communityWarningModal)), 1000)
   .then(() => browser.sleep(500));
-export const closeCommunityWarningModal = () => communityWarningModal.$('.btn-default').click();
-export const acceptCommunityWarningModal = () => communityWarningModal.$('.btn-primary').click();
+export const closeCommunityWarningModal = () => communityWarningModal.$('.pf-m-secondary').click();
+export const acceptCommunityWarningModal = () => communityWarningModal.$('.pf-m-primary').click();
 export const acceptForeverCommunityWarningModal = () => $('.co-modal-ignore-warning__checkbox').$('input').click()
   .then(() => acceptCommunityWarningModal());

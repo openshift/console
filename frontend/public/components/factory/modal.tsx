@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as Modal from 'react-modal';
-import * as PropTypes from 'prop-types';
 import { Router } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -74,27 +74,20 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage,
   </ButtonBar>;
 };
 
-export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, cancelText, submitDisabled, submitButtonClass='btn-primary'}) => {
+export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, cancelText, submitDisabled, submitDanger}) => {
   const onCancelClick = e => {
     e.stopPropagation();
     cancel(e);
   };
 
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
-    <button type="button" onClick={onCancelClick} className="btn btn-default">{cancelText || 'Cancel'}</button>
-    <button type="submit" className={classNames('btn', submitButtonClass)} disabled={submitDisabled} id="confirm-action">{submitText}</button>
+    <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+      <Button type="button" variant="secondary" onClick={onCancelClick}>{cancelText || 'Cancel'}</Button>
+      {submitDanger
+        ? <Button type="submit" variant="danger" isDisabled={submitDisabled} id="confirm-action">{submitText}</Button>
+        : <Button type="submit" variant="primary" isDisabled={submitDisabled} id="confirm-action">{submitText}</Button>}
+    </ActionGroup>
   </ModalFooter>;
-};
-
-ModalSubmitFooter.propTypes = {
-  cancel: PropTypes.func.isRequired,
-  cancelText: PropTypes.node,
-  errorMessage: PropTypes.string.isRequired,
-  inProgress: PropTypes.bool.isRequired,
-  message: PropTypes.string,
-  submitText: PropTypes.node.isRequired,
-  submitButtonClass: PropTypes.string,
-  submitDisabled: PropTypes.bool,
 };
 
 export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) => React.ReactElement;
@@ -133,7 +126,7 @@ export type ModalSubmitFooterProps = {
   cancelText?: React.ReactNode;
   submitText: React.ReactNode;
   submitDisabled?: boolean;
-  submitButtonClass?: string;
+  submitDanger?: boolean;
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(C: React.ComponentType<P>) =>

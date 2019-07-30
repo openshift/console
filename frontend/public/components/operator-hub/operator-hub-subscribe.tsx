@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
-import { Alert } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 
 import { Firehose, history, NsDropdown, BreadCrumbs, StatusBox, resourceListPathFromModel } from '../utils';
 import { referenceForModel, k8sCreate, apiVersionForModel, kindForReference, apiVersionForReference, k8sListPartialMetadata } from '../../module/k8s';
@@ -231,15 +231,17 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <div className="co-form-section__separator" />
       { formError() }
       <React.Fragment>
-        <button
-          className="btn btn-primary"
-          onClick={() => submit()}
-          disabled={formValid()}>
-          Subscribe
-        </button>
-        <button className="btn btn-default" onClick={() => history.push('/operatorhub')}>
-          Cancel
-        </button>
+        <ActionGroup className="pf-c-form">
+          <Button
+            onClick={() => submit()}
+            isDisabled={formValid()}
+            variant="primary">
+            Subscribe
+          </Button>
+          <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
+            Cancel
+          </Button>
+        </ActionGroup>
       </React.Fragment>
     </div>
     <div className="col-xs-6">

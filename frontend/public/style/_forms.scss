@@ -77,6 +77,10 @@
   padding-right: 25px;
 }
 
+.pf-c-form__actions--right {
+  justify-content: flex-end;
+}
+
 .pf-c-form__group--no-top-margin {
   margin-top: 0 !important;
 }
