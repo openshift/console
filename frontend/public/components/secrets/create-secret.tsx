@@ -271,7 +271,7 @@ const getImageSecretType = (secretKey: string): SecretType => {
   }
 };
 
-class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretFormState> {
+export class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretFormState> {
   constructor(props) {
     super(props);
     const data = this.props.isCreate ? {'.dockerconfigjson': '{}'} : this.props.stringData;
@@ -1058,7 +1058,7 @@ type BaseEditSecretProps_ = {
   titleVerb: string;
   secretTypeAbstraction?: SecretTypeAbstraction;
   saveButtonText?: string;
-  explanation: string;
+  explanation?: string;
   onCancel?: () => void;
   onSave?: (name: string) => void;
 };
