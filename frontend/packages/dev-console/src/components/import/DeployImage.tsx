@@ -61,6 +61,9 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
         privateKey: '',
       },
     },
+    serverlessRoute: {
+      targetPort: '',
+    },
     build: {
       env: [],
       triggers: {

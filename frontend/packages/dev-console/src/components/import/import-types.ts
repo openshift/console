@@ -28,6 +28,7 @@ export interface DeployImageFormData {
   labels: { [name: string]: string };
   env: { [name: string]: string };
   route: RouteData;
+  serverlessRoute?: ServerlessRouteData;
   build: BuildData;
   deployment: DeploymentData;
   limits: LimitsData;
@@ -42,6 +43,7 @@ export interface GitImportFormData {
   serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
+  serverlessRoute?: ServerlessRouteData;
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
@@ -94,6 +96,10 @@ export interface RouteData {
   hostname: string;
   secure: boolean;
   tls: TLSData;
+}
+
+export interface ServerlessRouteData {
+  targetPort: string;
 }
 
 export interface TLSData {
