@@ -26,6 +26,7 @@ export const validationSchema = yup.object().shape({
   git: yup.object().shape({
     url: yup
       .string()
+      .max(2000, 'Please enter a URL that is less then 2000 characters.')
       .matches(urlRegex, 'Invalid Git URL.')
       .required('Required'),
     type: yup.string().when('showGitType', {
