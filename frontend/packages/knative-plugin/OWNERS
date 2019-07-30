@@ -3,9 +3,11 @@ reviewers:
   - debsmita1
   - divyanshiGupta
   - christianvogt
+  - gijohn
   - joshuawilson
   - invincibleJai
   - karthikjeeyar
+  - nemesis09
   - rohitkrai03
   - sahil143
   - vikram-raj
@@ -13,3 +15,5 @@ approvers:
   - christianvogt
   - joshuawilson
   - rohitkrai03
+labels:
+  - component/knative

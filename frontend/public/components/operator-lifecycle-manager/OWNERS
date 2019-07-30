@@ -5,3 +5,5 @@ approvers:
   - alecmerdler
   - ecordell
   - spadgett
+labels:
+  - component/olm
