@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 
-import { units, validate, convertToBaseValue } from '../public/components/utils/units';
+import { units, validate, convertToBaseValue, humanizePercentage } from '../public/components/utils/units';
 
-xdescribe('units', () => {
+describe('units', () => {
   describe('round', () => {
     const testRound = (n, expected) => {
       it(`${n} into ${expected}`, () => {
@@ -40,7 +40,7 @@ xdescribe('units', () => {
     test_(1/0, '0');
     test_(-1/0, '0');
     test_('100$', '0');
-    test_(Number.MIN_VALUE, '5e-324');
+    test_(Number.MIN_VALUE, '0');
     test_(0, '0');
     test_(0.1234, '0.1234');
     test_(NaN, '0');
@@ -62,14 +62,14 @@ xdescribe('units', () => {
     test_(1000000000, '1b');
     test_(10000000000, '10b');
     test_(100000000000, '100b');
-    test_(1000000000000, '1000b');
-    test_(1000000000001, '1000.000000001b');
+    test_(1000000000000, '1,000b');
+    test_(1000000000001, '1,000.000000001b');
   });
 
   describe('should humanize percentage values', () => {
     const test_ = (value, expected) => {
       it(`${value} into ${expected}`, () => {
-        expect(units.humanize(value, 'percentage', false).string).toEqual(expected);
+        expect(humanizePercentage(value).string).toEqual(expected);
       });
     };
 
@@ -79,30 +79,30 @@ xdescribe('units', () => {
     test_(1/0, '0%');
     test_(-1/0, '0%');
     test_('100$', '0%');
-    test_(Number.MIN_VALUE, '5e-324%');
+    test_(Number.MIN_VALUE, '0%');
     test_(0, '0%');
-    test_(0.1234, '0.1234%');
+    test_(0.1234, '0.1%');
     test_(NaN, '0%');
     test_(1, '1%');
     test_(12, '12%');
     test_(123, '123%');
-    test_(123.123, '123.123%');
-    test_(999.999, '999.999%');
+    test_(123.123, '123.1%');
+    test_(999.999, '1,000%');
     test_(1.000, '1%');
-    test_(1.001, '1.001%');
-    test_(1.011, '1.011%');
-    test_(5.123, '5.123%');
+    test_(1.001, '1%');
+    test_(1.011, '1%');
+    test_(5.123, '5.1%');
     test_(10.000, '10%');
-    test_(10.234, '10.234%');
+    test_(10.234, '10.2%');
     test_(100, '100%');
-    test_(1000, '1000%');
-    test_(10000, '10000%');
-    test_(100000, '100000%');
-    test_(1000000, '1000000%');
-    test_(10000000, '10000000%');
-    test_(100000000, '100000000%');
-    test_(1000000000, '1000000000%');
-    test_(1000000001, '1000000001%');
+    test_(1000, '1,000%');
+    test_(10000, '10,000%');
+    test_(100000, '100,000%');
+    test_(1000000, '1,000,000%');
+    test_(10000000, '10,000,000%');
+    test_(100000000, '100,000,000%');
+    test_(1000000000, '1,000,000,000%');
+    test_(1000000001, '1,000,000,001%');
   });
 
   describe('should humanize decimalBytes values', () => {
@@ -140,7 +140,7 @@ xdescribe('units', () => {
     test_(1000000000000, '1 TB');
     test_(1000000000000000, '1 PB');
     test_(1000000000000000000, '1 EB');
-    test_(1000000000000000000000, '1000 EB');
+    test_(1000000000000000000000, '1,000 EB');
   });
 
   describe('should humanize binaryBytes values', () => {
@@ -163,8 +163,8 @@ xdescribe('units', () => {
     test_(12, '12 B');
     test_(123, '123 B');
     test_(123.123, '123.1 B');
-    test_(999.999, '1000 B');
-    test_(1023, '1023 B');
+    test_(999.999, '1,000 B');
+    test_(1023, '1,023 B');
     test_(1023.999, '1 KiB');
     test_(1024, '1 KiB');
     test_(1025, '1 KiB');
@@ -201,8 +201,8 @@ xdescribe('units', () => {
     test_(12, '12 i');
     test_(123, '123 i');
     test_(123.123, '123.1 i');
-    test_(999.999, '1000 i');
-    test_(1023, '1023 i');
+    test_(999.999, '1,000 i');
+    test_(1023, '1,023 i');
     test_(1023.999, '1 Ki');
     test_(1024, '1 Ki');
     test_(1025, '1 Ki');
