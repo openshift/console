@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternfly/react-icons';
+import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
 import { Status } from '@console/shared';
 import { Link } from 'react-router-dom';
 import { NodeProps, WorkloadData } from '../topology-types';
@@ -7,11 +8,6 @@ import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import PodStatus from './PodStatus';
 import KnativeIcon from './KnativeIcon';
-import BuildSuccessIcon from './BuildSuccessIcon';
-
-export type GreenOutlinedCheckCircleIconProps = {
-  className?: string;
-};
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,
@@ -89,7 +85,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 {build.status.phase === 'Complete' ? (
-                  <BuildSuccessIcon />
+                  <OutlinedCheckCircleIcon color={successColor.value} />
                 ) : (
                   <foreignObject
                     width={decoratorRadius}
