@@ -14,7 +14,7 @@ export const getRangeVectorStats: GetStats = response => {
 export const getInstantVectorStats: GetStats = (response, metric, humanize) => {
   const results = _.get(response, 'data.result', []);
   return results.map(r => {
-    const y = _.get(r, 'value[1]');
+    const y = parseFloat(_.get(r, 'value[1]'));
     return {
       label: humanize ? humanize(y).string : null,
       x: _.get(r, ['metric', metric], ''),
