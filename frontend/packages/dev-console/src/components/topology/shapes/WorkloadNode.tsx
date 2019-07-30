@@ -3,6 +3,8 @@ import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternf
 import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
 import { Status } from '@console/shared';
 import { Link } from 'react-router-dom';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BuildConfigModel } from '@console/internal/models';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -72,12 +74,14 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
         ),
         build && (
           <Link
-            to={`/k8s/ns/${build.metadata.namespace}/buildconfigs/${
-              build.metadata.ownerReferences[0].name
-            }`}
+            key="build"
+            to={resourcePathFromModel(
+              BuildConfigModel,
+              build.metadata.ownerReferences[0].name,
+              build.metadata.namespace,
+            )}
           >
             <Decorator
-              key="build"
               x={-radius + decoratorRadius * 0.7}
               y={radius - decoratorRadius * 0.7}
               radius={decoratorRadius}
