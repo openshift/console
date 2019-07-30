@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { HelpBlock } from 'patternfly-react';
 import { LevelUpAltIcon } from '@patternfly/react-icons';
+import { FormHelperText, Button, ButtonVariant } from '@patternfly/react-core';
 
 export interface SampleRepoProps {
   onClick: () => void;
 }
 
 const SampleRepo = (props) => (
-  <HelpBlock>
-    <button {...props} type="button" className="btn btn-link btn-link--no-btn-default-values">
+  <FormHelperText isHidden={false}>
+    <Button {...props} type="button" variant={ButtonVariant.link} isInline>
       Try Sample <LevelUpAltIcon />
-    </button>
-  </HelpBlock>
+    </Button>
+  </FormHelperText>
 );
 
 export default SampleRepo;

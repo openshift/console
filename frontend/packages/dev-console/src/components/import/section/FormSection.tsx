@@ -1,22 +1,21 @@
 import * as React from 'react';
-import FormSectionHeading from './FormSectionHeading';
-import FormSectionDivider from './FormSectionDivider';
-import FormSectionSubHeading from './FormSectionSubHeading';
+import cx from 'classnames';
+import { FormHelperText } from '@patternfly/react-core';
+import './FormSection.scss';
 
 export interface FormSectionProps {
-  title: string;
-  subTitle?: string;
-  divider?: boolean;
+  title?: React.ReactNode;
+  subTitle?: React.ReactNode;
+  fullWidth?: boolean;
   children: React.ReactNode;
 }
 
-const FormSection: React.FC<FormSectionProps> = ({ title, subTitle, divider, children }) => (
-  <React.Fragment>
-    <FormSectionHeading title={title} />
-    {subTitle && <FormSectionSubHeading subTitle={subTitle} />}
+const FormSection: React.FC<FormSectionProps> = ({ title, subTitle, fullWidth, children }) => (
+  <div className={cx('pf-c-form', { 'co-m-pane__form': !fullWidth })}>
+    {title && <h2 className="odc-form-section__heading">{title}</h2>}
+    {subTitle && <FormHelperText isHidden={false}>{subTitle}</FormHelperText>}
     {children}
-    {divider && <FormSectionDivider />}
-  </React.Fragment>
+  </div>
 );
 
 export default FormSection;

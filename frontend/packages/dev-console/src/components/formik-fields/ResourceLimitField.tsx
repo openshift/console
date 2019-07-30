@@ -1,41 +1,45 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { RequestSizeInput } from '@console/internal/components/utils';
-import { getValidationState } from './field-utils';
+import { FormGroup } from '@patternfly/react-core';
 import { ResourceLimitFieldProps } from './field-types';
+import { getFieldId } from './field-utils';
 
 const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
-  inputLabel,
-  name,
+  label,
   unitName,
+  unitOptions,
+  defaultUnitSize,
   helpText,
   ...props
 }) => {
-  const [field, { touched, error }] = useField(name);
+  const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-
-  const onRequestSizeInputChange = (val) => {
-    setFieldValue(name, _.toNumber(val.value));
-    setFieldValue(unitName, val.unit);
-    setFieldTouched(name, true);
-  };
-
+  const fieldId = getFieldId(props.name, 'resource-limit');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
   return (
-    <FormGroup controlId={`${name}-field`} validationState={getValidationState(error, touched)}>
-      <ControlLabel className={cx({ 'co-required': props.required })}>{inputLabel}</ControlLabel>
+    <FormGroup
+      fieldId={fieldId}
+      label={label}
+      helperText={helpText}
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired={props.required}
+    >
       <RequestSizeInput
-        name={name}
-        onChange={onRequestSizeInputChange}
-        dropdownUnits={props.unitItems}
-        defaultRequestSizeUnit={props.unitSelectedKey}
+        {...props}
+        onChange={(val) => {
+          setFieldValue(props.name, _.toNumber(val.value));
+          setFieldValue(unitName, val.unit);
+          setFieldTouched(props.name, true);
+        }}
+        dropdownUnits={unitOptions}
+        defaultRequestSizeUnit={defaultUnitSize}
         defaultRequestSizeValue={field.value}
-        describedBy={`${name}-help`}
+        describedBy={`${fieldId}-helper`}
       />
-      {helpText && <HelpBlock id={`${name}-help`}>{helpText}</HelpBlock>}
-      {touched && error && <HelpBlock>{error}</HelpBlock>}
     </FormGroup>
   );
 };

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, NSDropdownField } from '../../formik-fields';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
@@ -10,7 +11,7 @@ export interface AppSectionProps {
 
 const AppSection: React.FC<AppSectionProps> = ({ project }) => {
   return (
-    <FormSection title="General" divider>
+    <FormSection title="General">
       <NSDropdownField
         data-test-id="application-form-namespace-dropdown"
         name="project.name"
@@ -21,7 +22,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project }) => {
       />
       <ApplicationSelector namespace={project.name} />
       <InputField
-        type="text"
+        type={TextInputTypes.text}
         data-test-id="application-form-app-name"
         name="name"
         label="Name"

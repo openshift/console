@@ -2,12 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
+import { FormGroup, FormHelperText } from '@patternfly/react-core';
 import { CheckCircleIcon, StarIcon } from '@patternfly/react-icons';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
-import { getValidationState } from '../../formik-fields/field-utils';
+import { getFieldId } from '../../formik-fields/field-utils';
 import BuilderImageCard from './BuilderImageCard';
-
 import './BuilderImageSelector.scss';
 
 export interface BuilderImageSelectorProps {
@@ -47,20 +46,25 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
     return null;
   }
 
+  const fieldId = getFieldId('image.name', 'selector');
+  const isValid = !(selectedTouched && selectedError);
+  const errorMessage = !isValid ? selectedError : '';
   return (
     <FormGroup
-      controlId="builder-image-selector-field"
-      validationState={getValidationState(selectedError, selectedTouched)}
+      fieldId={fieldId}
+      label="Builder Image"
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired
     >
-      <ControlLabel className="co-required">Builder Image</ControlLabel>
       {loadingRecommendedImage && <LoadingInline />}
       {values.image.recommended && (
         <React.Fragment>
           <CheckCircleIcon className="odc-builder-image-selector__success-icon" />
-          <HelpBlock>
+          <FormHelperText>
             Recommended builder images are represented by{' '}
             <StarIcon style={{ color: 'var(--pf-global--success-color--100)' }} /> icon
-          </HelpBlock>
+          </FormHelperText>
         </React.Fragment>
       )}
       {loadingImageStream ? (
@@ -78,7 +82,6 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
           ))}
         </div>
       )}
-      {selectedTouched && selectedError && <HelpBlock>{selectedError}</HelpBlock>}
     </FormGroup>
   );
 };

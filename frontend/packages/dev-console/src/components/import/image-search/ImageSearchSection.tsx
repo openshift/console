@@ -6,11 +6,7 @@ import SearchResults from './SearchResults';
 
 const ImageSearchSection: React.FC = () => {
   return (
-    <FormSection
-      title="Image Search"
-      subTitle="Deploy an existing image from an image registry."
-      divider
-    >
+    <FormSection title="Image Search" subTitle="Deploy an existing image from an image registry.">
       <ImageSearch />
       <SearchStatus />
       <SearchResults />

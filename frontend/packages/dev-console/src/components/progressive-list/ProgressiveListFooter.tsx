@@ -15,7 +15,7 @@ const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
     return null;
   }
   return (
-    <p>
+    <div>
       {text}
       {items.map((opt, index) => {
         let preText = ' ';
@@ -40,7 +40,7 @@ const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
           </React.Fragment>
         );
       })}
-    </p>
+    </div>
   );
 };
 

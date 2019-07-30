@@ -15,19 +15,13 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace }) =>
   };
 
   return (
-    <FormSection title="Build Configuration">
+    <FormSection title="Build Configuration" fullWidth>
+      <CheckboxField name="build.triggers.webhook" label="Configure a webhook build trigger" />
       <CheckboxField
-        type="checkbox"
-        name="build.triggers.webhook"
-        label="Configure a webhook build trigger"
-      />
-      <CheckboxField
-        type="checkbox"
         name="build.triggers.image"
         label="Automatically build a new image when the builder image changes"
       />
       <CheckboxField
-        type="checkbox"
         name="build.triggers.config"
         label="Launch the first build when the build configuration is created"
       />

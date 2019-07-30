@@ -17,7 +17,7 @@ describe('Deploy Image', () => {
       await browser.get(`${appHost}/deploy-image/all-namespaces`);
 
       const nsSpan =
-        '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .pf-c-dropdown__toggle-text--placeholder';
+        '#form-ns-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .pf-c-dropdown__toggle-text--placeholder';
       // Wait for the Project field to appear
       await browser.wait(until.presenceOf(element(by.css(nsSpan))));
       // Confirm that the project field has the right text
@@ -29,7 +29,7 @@ describe('Deploy Image', () => {
       await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
 
       const nsSpan =
-        '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .co-resource-item .co-resource-item__resource-name';
+        '#form-ns-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .co-resource-item .co-resource-item__resource-name';
       // Wait for the Project field to appear
       await browser.wait(until.presenceOf(element(by.css(nsSpan))));
       // Confirm that the project field does not exist
@@ -53,10 +53,10 @@ describe('Deploy Image', () => {
       // Set the application name
       // Wait for the Application Dropdown field to appear
       await browser.wait(
-        until.elementToBeClickable(element(by.id('application-form-app-dropdown'))),
+        until.elementToBeClickable(element(by.id('form-dropdown-application-name-field'))),
       );
       // Click on the dropdown
-      await element(by.id('application-form-app-dropdown')).click();
+      await element(by.id('form-dropdown-application-name-field')).click();
       // Wait for the Create Application button to appear
       await browser.wait(until.presenceOf(element(by.id('#CREATE_APPLICATION_KEY#-link'))));
       // Click on the Create New Application button

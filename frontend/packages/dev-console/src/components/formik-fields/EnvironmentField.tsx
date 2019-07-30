@@ -1,17 +1,20 @@
 import * as React from 'react';
-import cx from 'classnames';
 import { useFormikContext, FormikValues } from 'formik';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { EnvironmentPage } from '@console/internal/components/environment';
+import { FormGroup } from '@patternfly/react-core';
 import { EnvironmentFieldProps, NameValuePair, NameValueFromPair } from './field-types';
+import { getFieldId } from './field-utils';
 
-const EnvironmentField: React.FC<EnvironmentFieldProps> = ({ label, helpText, ...props }) => {
+const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
+  label,
+  helpText,
+  required,
+  ...props
+}) => {
   const { setFieldValue } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId(props.name, 'env-input');
   return (
-    <FormGroup controlId={`${props.name}-field`}>
-      {label && (
-        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
-      )}
+    <FormGroup fieldId={fieldId} label={label} helperText={helpText} isRequired={required}>
       <EnvironmentPage
         obj={props.obj}
         envPath={props.envPath}
@@ -20,7 +23,6 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({ label, helpText, ..
         addConfigMapSecret
         useLoadingInline
       />
-      {helpText && <HelpBlock id={`${props.name}-help`}>{helpText}</HelpBlock>}
     </FormGroup>
   );
 };

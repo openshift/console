@@ -3,9 +3,9 @@ import * as React from 'react';
 const FormSectionDivider: React.FC = () => (
   <hr
     style={{
-      marginTop: '30px',
-      marginBottom: '30px',
-      borderBottom: '0.8px solid var(--pf-global--Color--400)',
+      margin: 0,
+      borderBottom: '0.5px solid var(--pf-global--Color--400)',
+      width: '100%',
     }}
   />
 );

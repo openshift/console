@@ -1,19 +1,29 @@
-export interface InputFieldProps {
+import { TextInputTypes } from '@patternfly/react-core';
+
+export interface FieldProps {
   name: string;
-  type?: string;
   label?: string;
   helpText?: string;
   required?: boolean;
+  style?: React.CSSProperties;
+}
+
+export interface InputFieldProps extends FieldProps {
+  type: TextInputTypes;
   placeholder?: string;
   onChange?: (event) => void;
   onBlur?: (event) => void;
+}
+
+export interface CheckboxFieldProps extends FieldProps {
+  formLabel?: string;
 }
 
 export interface SearchInputFieldProps extends InputFieldProps {
   onSearch: (searchTerm: string) => void;
 }
 
-export interface DropdownFieldProps extends InputFieldProps {
+export interface DropdownFieldProps extends FieldProps {
   items?: object;
   selectedKey?: string;
   title?: React.ReactNode;
@@ -21,9 +31,23 @@ export interface DropdownFieldProps extends InputFieldProps {
   disabled?: boolean;
 }
 
-export interface EnvironmentFieldProps extends InputFieldProps {
+export interface EnvironmentFieldProps extends FieldProps {
   obj?: object;
   envPath: string[];
+}
+
+export interface ResourceLimitFieldProps extends FieldProps {
+  unitName: string;
+  unitOptions: object;
+  defaultUnitSize: string;
+  fullWidth?: boolean;
+}
+
+export interface MultiColumnFieldProps extends FieldProps {
+  addLabel?: string;
+  emptyValues: { [name: string]: string };
+  headers: string[];
+  children: React.ReactNode;
 }
 
 export interface NameValuePair {
@@ -48,16 +72,4 @@ export interface SecretKeyRef {
     key: string;
     name: string;
   };
-}
-
-export interface ResourceLimitFieldProps {
-  type?: string;
-  name: string;
-  unitName: string;
-  inputLabel: string;
-  unitItems: object;
-  unitSelectedKey: string;
-  helpText?: string;
-  required?: boolean;
-  fullWidth?: boolean;
 }

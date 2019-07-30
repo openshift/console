@@ -5,6 +5,7 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { getPorts } from '@console/internal/components/source-to-image';
 import { useFormikContext, FormikValues } from 'formik';
+import { TextInputTypes } from '@patternfly/react-core';
 import { InputSearchField } from '../../formik-fields';
 
 const getSuggestedName = (name: string): string | undefined => {
@@ -74,7 +75,7 @@ const ImageSearch: React.FC = () => {
   return (
     <React.Fragment>
       <InputSearchField
-        type="text"
+        type={TextInputTypes.text}
         data-test-id="deploy-image-search-term"
         name="searchTerm"
         label="Image Name"

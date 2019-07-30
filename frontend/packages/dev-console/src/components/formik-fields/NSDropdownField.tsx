@@ -1,33 +1,40 @@
 import * as React from 'react';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { NsDropdown } from '@console/internal/components/utils';
+import { FormGroup } from '@patternfly/react-core';
 import { DropdownFieldProps } from './field-types';
-import { getValidationState } from './field-utils';
+import { getFieldId } from './field-utils';
 
-const NSDropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, ...props }) => {
+const NSDropdownField: React.FC<DropdownFieldProps> = ({
+  label,
+  helpText,
+  required,
+  fullWidth,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId(props.name, 'ns-dropdown');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      controlId={`${props.name}-field`}
-      validationState={getValidationState(error, touched)}
+      fieldId={fieldId}
+      label={label}
+      helperText={helpText}
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired={required}
     >
-      {label && (
-        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
-      )}
       <NsDropdown
-        id={`namespace-dropdown-${props.name.replace(/\./g, '-')}-field`}
-        name={`${props.name}-field`}
+        {...props}
+        id={fieldId}
         selectedKey={field.value}
-        dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
+        dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
         onChange={(value: string) => setFieldValue(props.name, value)}
         onBlur={() => setFieldTouched(props.name, true)}
-        {...props}
       />
-      {helpText && <HelpBlock id={`${props.name}-help`}>{helpText}</HelpBlock>}
-      {touched && error && <HelpBlock>{error}</HelpBlock>}
     </FormGroup>
   );
 };

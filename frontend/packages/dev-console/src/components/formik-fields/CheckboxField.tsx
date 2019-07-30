@@ -1,27 +1,40 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { useField } from 'formik';
-import { FormGroup, HelpBlock, Checkbox } from 'patternfly-react';
-import { InputFieldProps } from './field-types';
-import { getValidationState } from './field-utils';
+import { FormGroup, Checkbox } from '@patternfly/react-core';
+import { CheckboxFieldProps } from './field-types';
+import { getFieldId } from './field-utils';
 
-const CheckboxField: React.FC<InputFieldProps> = ({ label, helpText, ...props }) => {
+const CheckboxField: React.FC<CheckboxFieldProps> = ({
+  label,
+  formLabel,
+  helpText,
+  required,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
+  const fieldId = getFieldId(props.name, 'checkbox');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      controlId={`${props.name}-field`}
-      validationState={getValidationState(error, touched)}
+      fieldId={fieldId}
+      label={formLabel}
+      helperText={helpText}
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired={required}
     >
       <Checkbox
         {...field}
         {...props}
-        checked={field.value}
-        aria-describedby={helpText && `${props.name}-help`}
-      >
-        {label}
-      </Checkbox>
-      {helpText && <HelpBlock id={`${props.name}-help`}>{helpText}</HelpBlock>}
-      {touched && error && <HelpBlock>{error}</HelpBlock>}
+        id={fieldId}
+        label={label}
+        isChecked={field.value}
+        isValid={isValid}
+        aria-describedby={`${fieldId}-helper`}
+        onChange={(value, event) => field.onChange(event)}
+      />
     </FormGroup>
   );
 };

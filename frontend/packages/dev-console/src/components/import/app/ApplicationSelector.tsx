@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { FormGroup, ControlLabel, HelpBlock } from 'patternfly-react';
 import { useFormikContext, FormikValues, useField } from 'formik';
+import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '../../formik-fields';
-import { getValidationState } from '../../formik-fields/field-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
+import { getFieldId } from '../../formik-fields/field-utils';
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 
@@ -13,7 +13,11 @@ export interface ApplicationSelectorProps {
 
 const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) => {
   const [selectedKey, { touched, error }] = useField('application.selectedKey');
-  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId('application-name', 'dropdown');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
+
   const onDropdownChange = (key: string, application: string) => {
     setFieldTouched('application.selectedKey', true);
     if (key === CREATE_APPLICATION_KEY) {
@@ -23,19 +27,22 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
       setFieldValue('application.name', application);
       setFieldValue('application.selectedKey', key);
     }
+    validateForm();
   };
 
   return (
     <React.Fragment>
       <FormGroup
-        controlId="app-selector-field"
-        validationState={getValidationState(error, touched)}
+        fieldId={fieldId}
+        label="Application"
+        helperTextInvalid={errorMessage}
+        isValid={isValid}
+        isRequired
       >
-        <ControlLabel className="co-required">Application</ControlLabel>
         <ApplicationDropdown
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
-          id="application-form-app-dropdown"
+          id={fieldId}
           namespace={namespace}
           actionItem={{
             actionTitle: 'Create New Application',
@@ -44,11 +51,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
           selectedKey={selectedKey.value}
           onChange={onDropdownChange}
         />
-        {touched && error && <HelpBlock>{error}</HelpBlock>}
       </FormGroup>
       {selectedKey.value === CREATE_APPLICATION_KEY && (
         <InputField
-          type="text"
+          type={TextInputTypes.text}
           name="application.name"
           label="Application Name"
           data-test-id="application-form-app-input"
