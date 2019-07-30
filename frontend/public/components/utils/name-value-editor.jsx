@@ -323,7 +323,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
   }
 
   render() {
-    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
+    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets, index} = this.props;
     const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
@@ -351,11 +351,11 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           }
           {
             !readOnly &&
-              <div className="col-xs-1">
+              (index > 0 && (<div className="col-xs-1">
                 <button type="button" className={classNames('btn', 'btn-link', 'btn-link--inherit-color', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
                   {deleteButton}
                 </button>
-              </div>
+              </div>))
           }
         </div>)
     );
@@ -407,7 +407,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
   }
 
   render() {
-    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, valueString, readOnly, pair, configMaps, secrets} = this.props;
+    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, valueString, readOnly, pair, configMaps, secrets, index} = this.props;
     const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
@@ -428,11 +428,11 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           </div>
           {
             readOnly ? null :
-              <div className="col-xs-1">
+              (index > 0 && (<div className="col-xs-1">
                 <button type="button" className="btn btn-link btn-link--inherit-color pairs-list__span-btns" onClick={this._onRemove}>
                   {deleteButton}
                 </button>
-              </div>
+              </div>))
           }
         </div>)
     );
