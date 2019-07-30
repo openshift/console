@@ -37,20 +37,24 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     </DropdownItem>,
   ];
 
-  const kpiDropdownItems = [
+  const providersKpiDropdownItems = [
     <DropdownItem id="iops" key="iops" component="button">
       I/O Operations
     </DropdownItem>,
     <DropdownItem id="usage" key="phyVslog" component="button">
-      {type === typesDropdown.accounts ? 'Logical Usage' : 'Physical vs. Logical Usage'}
+      Physical vs. Logical Usage
     </DropdownItem>,
-    <DropdownItem
-      id="egress"
-      key="egress"
-      component="button"
-      isDisabled={type === typesDropdown.accounts}
-    >
+    <DropdownItem id="egress" key="egress" component="button">
       Egress
+    </DropdownItem>,
+  ];
+
+  const accountKpiDropdownItems = [
+    <DropdownItem id="iops" key="iops" component="button">
+      I/O Operations
+    </DropdownItem>,
+    <DropdownItem id="usage" key="phyVslog" component="button">
+      Logical Usage
     </DropdownItem>,
   ];
 
@@ -103,7 +107,9 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
         toggle={<DropdownToggle onToggle={onToggleKpiDropdown}>{kpi}</DropdownToggle>}
         position={DropdownPosition.right}
         isOpen={isOpenKpiDropdown}
-        dropdownItems={kpiDropdownItems}
+        dropdownItems={
+          type === typesDropdown.accounts ? accountKpiDropdownItems : providersKpiDropdownItems
+        }
       />
     </div>
   );
