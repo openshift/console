@@ -183,6 +183,8 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
   <span className="co-m-label__value">{v}</span>
 </div>;
 
+const queryBrowserURL = query => `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
+
 const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   if (hideGraphs) {
     return null;
@@ -192,9 +194,7 @@ const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   // 3 times the rule's duration, but not less than 30 minutes
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
-  const GraphLink = () => query
-    ? <Link to={`/monitoring/query-browser?query0=${encodeURIComponent(query)}`}>View in Metrics</Link>
-    : null;
+  const GraphLink = () => query ? <Link to={queryBrowserURL(query)}>View in Metrics</Link> : null;
 
   return <QueryBrowser
     defaultTimespan={timespan}
@@ -386,7 +386,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                 </React.Fragment>}
                 <dt>Expression</dt>
                 <dd>
-                  <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>
+                  <Link to={queryBrowserURL(query)}>
                     <pre className="co-pre-wrap monitoring-query">{query}</pre>
                   </Link>
                 </dd>
