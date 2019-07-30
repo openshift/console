@@ -8,3 +8,5 @@ approvers:
   - alecmerdler
   - jeff-phillips-18
   - spadgett
+labels:
+  - component/olm

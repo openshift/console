@@ -1,0 +1,9 @@
+reviewers:
+  - kyoto
+  - spadgett
+  - TheRealJon
+approvers:
+  - kyoto
+  - spadgett
+labels:
+  - component/monitoring
