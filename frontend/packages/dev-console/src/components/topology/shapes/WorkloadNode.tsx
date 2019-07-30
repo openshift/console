@@ -91,7 +91,11 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
                 {build.status.phase === 'Complete' ? (
                   <BuildSuccessIcon />
                 ) : (
-                  <foreignObject width={decoratorRadius} height={decoratorRadius + 1}>
+                  <foreignObject
+                    width={decoratorRadius}
+                    height={decoratorRadius}
+                    style={{ fontSize: decoratorRadius }}
+                  >
                     <Status
                       title={`${build.metadata.name} ${build.status && build.status.phase}`}
                       status={build.status.phase}
