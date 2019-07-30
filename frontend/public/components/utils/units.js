@@ -122,7 +122,7 @@ const getDefaultFractionDigits = value => {
   return 1;
 };
 
-const round = units.round = (value, options) => {
+const formatValue = (value, options) => {
   const fractionDigits = getDefaultFractionDigits(value);
   const {locales, ...rest} = _.defaults(options, {
     maximumFractionDigits: fractionDigits,
@@ -132,6 +132,14 @@ const round = units.round = (value, options) => {
     return Intl.NumberFormat(locales, rest).format(0);
   }
   return Intl.NumberFormat(locales, rest).format(value);
+};
+
+const round = units.round = (value, fractionDigits) => {
+  if (!isFinite(value)) {
+    return 0;
+  }
+  const multiplier = Math.pow(10, fractionDigits || getDefaultFractionDigits(value));
+  return Math.round(value * multiplier) / multiplier;
 };
 
 const humanize = units.humanize = (value, typeName, useRound = false, initialUnit, preferredUnit) => {
@@ -148,8 +156,10 @@ const humanize = units.humanize = (value, typeName, useRound = false, initialUni
     converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, converted.unit, preferredUnit);
   }
 
+  const formattedValue = formatValue(converted.value);
+
   return {
-    string: type.space ? `${converted.value} ${converted.unit}`: converted.value + converted.unit,
+    string: type.space ? `${formattedValue} ${converted.unit}`: formattedValue + converted.unit,
     unit: converted.unit,
     value: converted.value,
   };
@@ -175,16 +185,21 @@ export const humanizeCpuCores = v => {
   const value = v < 1 ? round(v*1000) : v;
   const unit = v < 1 ? 'm' : '';
   return {
-    string: `${value}${unit}`,
+    string: `${formatValue(value)}${unit}`,
     unit,
     value,
   };
 };
-export const humanizePercentage = value => ({
-  string: formatPercentage(value/100),
-  unit: '%',
-  value,
-});
+export const humanizePercentage = value => {
+  if (!isFinite(value)) {
+    value = 0;
+  }
+  return {
+    string: formatPercentage(value/100),
+    unit: '%',
+    value: round(value, 1),
+  };
+};
 
 units.dehumanize = (value, typeName) => {
   const type = getType(typeName);
