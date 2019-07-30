@@ -43,7 +43,7 @@ const getStatusGroupIcons = () => {
 };
 
 export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
-  ({ isLoading, singularTitle, pluralTitle, count, children, error = false }) => {
+  ({ isLoading, singularTitle, pluralTitle, count, children, error = false, link = null}) => {
     const title = count !== 1 ? pluralTitle : singularTitle;
     let status: React.ReactNode;
     if (error) {
@@ -53,9 +53,14 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     } else {
       status = children;
     }
+    let label = <>{isLoading || error ? title : `${count} ${title}`}</>;
+
+    if (link) {
+      label = <Link to={link}>{label}</Link>;
+    }
     return (
       <div className="co-inventory-card__item">
-        <div className="co-inventory-card__item-title">{isLoading || error ? title : `${count} ${title}`}</div>
+        <div className="co-inventory-card__item-title">{label}</div>
         <div className="co-inventory-card__item-status">{status}</div>
       </div>
     );
@@ -126,6 +131,7 @@ type InventoryItemProps = {
   count: number;
   children?: React.ReactNode;
   error: boolean;
+  link?: string;
 };
 
 type StatusProps = {

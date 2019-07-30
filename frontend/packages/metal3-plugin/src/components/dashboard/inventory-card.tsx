@@ -101,6 +101,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           singularTitle="Disk"
           pluralTitle="Disks"
           count={diskCount}
+          link="disks"
           error={null}
         />
 
@@ -109,6 +110,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           singularTitle="NIC"
           pluralTitle="NICs"
           count={nicCount}
+          link="nics"
           error={null}
         />
         <InventoryItem
