@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { checkAccess, history, KebabItems, ResourceName } from './index';
+import { useSafetyFirst } from '../safety-first';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -477,7 +478,7 @@ class ActionsMenuDropdown extends DropdownMixin {
 }
 
 const ActionsMenu_ = ({actions, impersonate, title = undefined}) => {
-  const [isVisible, setVisible] = React.useState(false);
+  const [isVisible, setVisible] = useSafetyFirst(false);
 
   // Check if any actions are visible when actions have access reviews.
   React.useEffect(() => {
@@ -501,7 +502,7 @@ const ActionsMenu_ = ({actions, impersonate, title = undefined}) => {
     Promise.all(promises)
       .then((results) => setVisible(_.some(results, 'status.allowed')))
       .catch(() => setVisible(true));
-  }, [actions, impersonate]);
+  }, [actions, impersonate, setVisible]);
 
   return isVisible
     ? <ActionsMenuDropdown actions={actions} title={title} />
