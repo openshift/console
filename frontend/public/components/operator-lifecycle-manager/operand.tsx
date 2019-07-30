@@ -140,7 +140,7 @@ export const OperatorStatusTypeText = {
 
 export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({statusObject}) => {
   for (const key of Object.keys(OperatorStatusType)) {
-    if (statusObject.hasOwnProperty(key)) {
+    if (statusObject && statusObject.hasOwnProperty(key)) {
       const status = statusObject[key];
       const statusIcon = status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />;
       return <span className="co-icon-and-text">{OperatorStatusTypeText[key]}&nbsp;{statusIcon}</span>;
