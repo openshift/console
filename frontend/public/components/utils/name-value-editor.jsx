@@ -22,9 +22,9 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
   }
 
   _append() {
-    const {updateParentData, nameValuePairs, nameValueId, allowSorting} = this.props;
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
 
-    updateParentData({nameValuePairs: allowSorting ? nameValuePairs.concat([['', '', nameValuePairs.length]]) : nameValuePairs.concat([['', '']])}, nameValueId);
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', '', nameValuePairs.length]])}, nameValueId);
   }
 
   _appendConfigMapOrSecret() {
@@ -37,8 +37,9 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     const {updateParentData, nameValueId} = this.props;
     const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
     nameValuePairs.splice(i, 1);
+    nameValuePairs.forEach((values, index) => values[2] = index); // update the indices in order.
 
-    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]}, nameValueId);
+    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '', 0]]}, nameValueId);
   }
 
   _change(e, i, type) {
@@ -61,10 +62,11 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
 
   render() {
     const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets, addConfigMapSecret} = this.props;
+    const isEmpty = nameValuePairs.length === 1 && nameValuePairs[0].every(value => !value);
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [NameValueEditorPair.Index], i);
 
-      return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
+      return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} isEmpty={isEmpty} />;
     });
     return <React.Fragment>
       <div className="row">
@@ -323,7 +325,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
   }
 
   render() {
-    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
+    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets, isEmpty} = this.props;
     const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
@@ -350,7 +352,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
               </div>
           }
           {
-            !readOnly &&
+            !readOnly && !isEmpty &&
               <div className="col-xs-1">
                 <button type="button" className={classNames('btn', 'btn-link', 'btn-link--inherit-color', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
                   {deleteButton}
