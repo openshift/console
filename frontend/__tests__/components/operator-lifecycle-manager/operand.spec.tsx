@@ -387,7 +387,7 @@ describe('OperandStatusIconAndText', () => {
     expect(wrapper.childAt(2).props().title).toEqual('Running');
   });
 
-  it('dispalys the correct status and status type for a phase value of running', () => {
+  it('displays the correct status and status type for a phase value of running', () => {
     const obj = {
       status: {
         phase: 'Running',
