@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternfly/react-icons';
+import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
+import { Status } from '@console/shared';
+import { Link } from 'react-router-dom';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BuildConfigModel } from '@console/internal/models';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -20,6 +25,11 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   const podStatusOuterRadius = radius - podStatusInset;
   const podStatusInnerRadius = podStatusOuterRadius - podStatusStrokeWidth;
   const decoratorRadius = radius * 0.25;
+  const {
+    data: {
+      donutStatus: { build },
+    },
+  } = workload;
   return (
     <BaseNode
       x={x}
@@ -61,6 +71,41 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
               <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} />
             </g>
           </Decorator>
+        ),
+        build && (
+          <Link
+            key="build"
+            to={resourcePathFromModel(
+              BuildConfigModel,
+              build.metadata.ownerReferences[0].name,
+              build.metadata.namespace,
+            )}
+          >
+            <Decorator
+              x={-radius + decoratorRadius * 0.7}
+              y={radius - decoratorRadius * 0.7}
+              radius={decoratorRadius}
+              title={`${build.metadata.name} ${build.status && build.status.phase}`}
+            >
+              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                {build.status.phase === 'Complete' ? (
+                  <OutlinedCheckCircleIcon color={successColor.value} />
+                ) : (
+                  <foreignObject
+                    width={decoratorRadius}
+                    height={decoratorRadius}
+                    style={{ fontSize: decoratorRadius }}
+                  >
+                    <Status
+                      title={`${build.metadata.name} ${build.status && build.status.phase}`}
+                      status={build.status.phase}
+                      iconOnly
+                    />
+                  </foreignObject>
+                )}
+              </g>
+            </Decorator>
+          </Link>
         ),
       ]}
     >

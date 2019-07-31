@@ -44,6 +44,7 @@ Object {
       "data": Object {
         "builderImage": undefined,
         "donutStatus": Object {
+          "build": undefined,
           "pods": Array [
             Object {
               "id": "19e6c6a5-680f-11e9-8c69-5254003f9382",
@@ -303,6 +304,7 @@ Object {
       "data": Object {
         "builderImage": "python",
         "donutStatus": Object {
+          "build": undefined,
           "pods": Array [
             Object {
               "id": "5cec460e-680d-11e9-8c69-5254003f9382",
@@ -757,6 +759,7 @@ Object {
       "data": Object {
         "builderImage": "nodejs",
         "donutStatus": Object {
+          "build": undefined,
           "pods": Array [
             Object {
               "id": "610c7d95-680d-11e9-8c69-5254003f9382",

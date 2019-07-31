@@ -5,7 +5,9 @@ export interface ResourceProps {
   kind: string;
   apiVersion?: string;
   metadata: ObjectMetadata;
-  status: {};
+  status: {
+    [key: string]: any;
+  };
   spec: {
     [key: string]: any;
   };
@@ -94,6 +96,7 @@ export interface WorkloadData {
   isKnativeResource?: boolean;
   donutStatus: {
     pods: Pod[];
+    build: ResourceProps;
   };
 }
 
