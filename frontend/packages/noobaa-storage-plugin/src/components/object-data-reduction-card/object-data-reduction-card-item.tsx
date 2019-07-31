@@ -44,7 +44,7 @@ export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
   ({ savings, logicalSize, isLoading }) => {
     let text = <span className="text-secondary">Unavailable</span>;
     const infoText =
-      'Efficiency ratio refers to the deduplication and compression process effectiveness.';
+      'Savings shows the uncompressed and non-deduped data that would have been stored without those techniques';
 
     if (isLoading) {
       text = <LoadingInline />;

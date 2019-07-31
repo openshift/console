@@ -5,10 +5,11 @@ import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared'
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
+import { DashboardCardHelp } from '@console/internal/components/dashboard/dashboard-card';
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
 import {
-  withDashboardResources,
   DashboardItemProps,
+  withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 
@@ -71,6 +72,8 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     'result',
   ]);
 
+  const infoText =
+    'Data Resiliency presents status of data replication and rebalancing operations.';
   const totalPg = getCapacityStats(totalPGRaw);
   const cleanAndActivePg = getCapacityStats(cleanAndActivePGRaw);
 
@@ -82,6 +85,7 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     <DashboardCard className="ceph-data-resiliency__dashboard-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Data Resiliency</DashboardCardTitle>
+        <DashboardCardHelp>{infoText}</DashboardCardHelp>
       </DashboardCardHeader>
       <DashboardCardBody
         className="ceph-data-resiliency__dashboard-body"
