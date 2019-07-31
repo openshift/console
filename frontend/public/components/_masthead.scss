@@ -1,4 +1,4 @@
-.co-system-status-icon {
+.co-masthead-icon {
   font-size: $pf-header-icon-fontsize;
 }
 
@@ -14,10 +14,6 @@
   @media(min-width: $screen-md-min) {
     max-width: 300px !important;
   }
-}
-
-.co-update-icon svg {
-  color: $color-pf-blue-400;
 }
 
 .co-app-launcher {

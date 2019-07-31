@@ -33,7 +33,7 @@ const multiClusterManager = {
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
     <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
-      <YellowExclamationTriangleIcon className="co-system-status-icon" />
+      <YellowExclamationTriangleIcon className="co-masthead-icon" />
     </a>
   </ToolbarItem>
   : null;
@@ -42,8 +42,8 @@ const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
   return updatesAvailable
     ? <ToolbarItem>
-      <Button className="co-update-icon" variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
-        <ArrowCircleUpIcon />
+      <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
+        <ArrowCircleUpIcon color="#08c" className="co-masthead-icon" />
       </Button>
     </ToolbarItem>
     : null;
