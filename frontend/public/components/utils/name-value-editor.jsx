@@ -22,9 +22,9 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
   }
 
   _append() {
-    const {updateParentData, nameValuePairs, nameValueId, allowSorting} = this.props;
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
 
-    updateParentData({nameValuePairs: allowSorting ? nameValuePairs.concat([['', '', nameValuePairs.length]]) : nameValuePairs.concat([['', '']])}, nameValueId);
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', '', nameValuePairs.length]])}, nameValueId);
   }
 
   _appendConfigMapOrSecret() {
@@ -37,8 +37,9 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     const {updateParentData, nameValueId} = this.props;
     const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
     nameValuePairs.splice(i, 1);
+    nameValuePairs.forEach((values, index) => values[2] = index); // update the indices in order.
 
-    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]}, nameValueId);
+    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '', 0]]}, nameValueId);
   }
 
   _change(e, i, type) {
