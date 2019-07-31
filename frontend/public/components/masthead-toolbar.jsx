@@ -397,6 +397,7 @@ class MastheadToolbar_ extends React.Component {
 
       return (
         <ApplicationLauncher
+          aria-label="Utility menu"
           className="co-app-launcher"
           onSelect={this._onKebabDropdownSelect}
           onToggle={this._onKebabDropdownToggle}
@@ -422,8 +423,9 @@ class MastheadToolbar_ extends React.Component {
 
     return (
       <ApplicationLauncher
+        aria-label="User menu"
         data-test="user-dropdown"
-        className="co-app-launcher"
+        className="co-app-launcher co-user-menu"
         onSelect={this._onUserDropdownSelect}
         onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
@@ -472,6 +474,7 @@ class MastheadToolbar_ extends React.Component {
             </ToolbarItem>}
             <ToolbarItem>
               <ApplicationLauncher
+                aria-label="Help menu"
                 className="co-app-launcher"
                 data-test="help-dropdown-toggle"
                 onSelect={this._onHelpDropdownSelect}
@@ -487,7 +490,7 @@ class MastheadToolbar_ extends React.Component {
           <ToolbarGroup>
             {/* mobile -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
-            {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
+            {/* mobile -- kebab dropdown [(application launcher |) documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
