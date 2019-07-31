@@ -27,7 +27,11 @@ export const VMNicRow: React.FC<VMNicRowProps> = (props) => {
   }
 };
 
-const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewNic: boolean): NetworkBundle[] => {
+const getNicsData = (
+  vmLikeEntity: VMLikeEntityKind,
+  addNewNic: boolean,
+  rerenderFlag: boolean,
+): NetworkBundle[] => {
   const vm = asVM(vmLikeEntity);
   const networkLookup = createBasicLookup(getNetworks(vm), (network) => _.get(network, 'name'));
 
@@ -40,13 +44,14 @@ const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewNic: boolean): Ne
   }));
 
   return addNewNic
-    ? [{ networkType: NetworkRowType.NETWORK_TYPE_CREATE }, ...nicsWithType]
+    ? [{ networkType: NetworkRowType.NETWORK_TYPE_CREATE, rerenderFlag }, ...nicsWithType]
     : nicsWithType;
 };
 
 export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
+  const [rerenderFlag, setRerenderFlag] = useSafetyFirst(false); // TODO: HACK: fire changes in Virtualize Table for CreateNicRow. Remove after deprecating CreateNicRow
 
   const vm = asVM(vmLikeEntity);
   const preferableNicBus = getVmPreferableNicBus(vm);
@@ -76,7 +81,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
         )}
         <Table
           aria-label="VM Nics List"
-          data={getStoragesData(vmLikeEntity, isCreating)}
+          data={getNicsData(vmLikeEntity, isCreating, rerenderFlag)}
           Header={() =>
             dimensifyHeader(
               [
@@ -127,6 +132,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
               setIsCreating(false);
               setCreateError(error);
             },
+            forceRerender: () => setRerenderFlag(!rerenderFlag),
           }}
           virtualize
           loaded

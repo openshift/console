@@ -24,5 +24,6 @@ export type VMDiskRowProps = {
     diskLookup: EntityMap<any>;
     onCreateRowDismiss: () => void;
     onCreateRowError: (error: string) => void;
+    forceRerender: () => void;
   };
 };
