@@ -37,9 +37,13 @@ const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
   return resource.kind === 'Pod' ? resource as PodKind : resource.spec.template;
 };
 
+const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) => {
+  return !!_.findKey(containers, 'volumeMounts');
+};
+
 const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
   const pod: PodTemplate = getPodTemplate(resource);
-  if (!pod || !pod.spec || !pod.spec.volumes) {
+  if (_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers)) {
     return [];
   }
 
@@ -139,7 +143,7 @@ export const VolumesTable = props => {
   const pod: PodTemplate = getPodTemplate(resource);
   return <React.Fragment>
     {props.heading && <SectionHeading text={props.heading} />}
-    {_.isEmpty(pod.spec.volumes)
+    {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers)
       ? <EmptyBox label="Volumes" />
       : (
         <Table {...tableProps} aria-label="Volumes" loaded={true} label={props.heading} data={data} Header={VolumesTableHeader} Row={VolumesTableRow} virtualize />

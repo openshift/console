@@ -6,16 +6,18 @@ import { getVolumeLocation, getVolumeType } from '../../module/k8s/pods';
 import { ResourceLink } from './';
 
 export const VolumeType: React.FC<VolumeTypeProps> = ({volume, namespace}) => {
-  if (volume.secret) {
-    return <ResourceLink kind="Secret" name={volume.secret.secretName} namespace={namespace} />;
-  }
+  if (volume) {
+    if (volume.secret) {
+      return <ResourceLink kind="Secret" name={volume.secret.secretName} namespace={namespace} />;
+    }
 
-  if (volume.configMap) {
-    return <ResourceLink kind="ConfigMap" name={volume.configMap.name} namespace={namespace} />;
-  }
+    if (volume.configMap) {
+      return <ResourceLink kind="ConfigMap" name={volume.configMap.name} namespace={namespace} />;
+    }
 
-  if (volume.persistentVolumeClaim) {
-    return <ResourceLink kind="PersistentVolumeClaim" name={volume.persistentVolumeClaim.claimName} namespace={namespace} />;
+    if (volume.persistentVolumeClaim) {
+      return <ResourceLink kind="PersistentVolumeClaim" name={volume.persistentVolumeClaim.claimName} namespace={namespace} />;
+    }
   }
 
   const type = getVolumeType(volume);
