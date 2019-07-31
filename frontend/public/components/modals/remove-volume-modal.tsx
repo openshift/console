@@ -32,8 +32,10 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
     // Either way, we cannot give the cmd to remove it
     if (allowRemoveVolume) {
       const volumes: Volume[] = _.get(resource, 'spec.template.spec.volumes', []);
-      const volumeIndex = volumes.findIndex((v: Volume) => v.name === rowVolumeData.volumeDetail.name);
-      patches.push({op: 'remove', path: `/spec/template/spec/volumes/${volumeIndex}`});
+      const volumeIndex = volumes.findIndex((v: Volume) => v.name === rowVolumeData.name);
+      if (volumeIndex > -1) {
+        patches.push({op: 'remove', path: `/spec/template/spec/volumes/${volumeIndex}`});
+      }
     }
     return patches;
   };
@@ -60,8 +62,8 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
       <div className="co-delete-modal">
         <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
         <div>
-          <p className="lead">Remove volume <span className="co-break-word">{volume.volumeDetail.name}</span>?</p>
-          <div>Are you sure you want to remove volume <strong className="co-break-word">{volume.volumeDetail.name}</strong>
+          <p className="lead">Remove volume <span className="co-break-word">{volume.name}</span>?</p>
+          <div>Are you sure you want to remove volume <strong className="co-break-word">{volume.name}</strong>
             <span> from <strong>{ kind.label }</strong>: <strong>{ resource.metadata.name }</strong>?</span>
           </div>
           {type && <div>
