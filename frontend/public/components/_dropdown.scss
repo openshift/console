@@ -52,11 +52,12 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 
 .dropdown-menu--text-wrap {
   max-width: 100%;
-  li a {
-    min-width: 0;
-    overflow-wrap: break-word;
-    white-space: normal;
-    word-wrap: break-word;
+  li {
+    a,
+    button {
+      @include co-break-word;
+      white-space: normal;
+    }
   }
 }
 
