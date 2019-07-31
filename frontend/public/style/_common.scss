@@ -489,25 +489,8 @@ $co-external-link-padding-right: 15px;
   background-color: $color-co-m-row-hover;
 }
 
-.co-m-inline-loader,
 .co-m-loader {
   min-width: 18px;
-}
-
-.co-m-inline-loader {
-  display: inline-block;
-  cursor: default;
-  &:hover {
-    text-decoration: none;
-  }
-}
-
-.co-m-loader {
-  display: block;
-  left: 50%;
-  margin: -11px 0 0 -13px;
-  position: absolute;
-  top: 50%;
 }
 
 .co-m-loader-dot__one,
