@@ -104,6 +104,12 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
       trigger: {
         type: 'manual',
       },
+      serviceAccount:
+        latestRun && latestRun.spec && latestRun.spec.serviceAccount
+          ? latestRun.spec.serviceAccount
+          : pipeline && pipeline.spec && pipeline.spec.serviceAccount
+          ? pipeline.spec.serviceAccount
+          : '',
     },
   };
 };

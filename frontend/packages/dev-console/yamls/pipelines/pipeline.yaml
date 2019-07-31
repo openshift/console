@@ -16,6 +16,7 @@ spec:
     - name: hello-world-2
       taskRef:
         name: hello-world-2
+  serviceAccount: pipeline
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
@@ -32,12 +33,14 @@ spec:
     - name: hello-world-3
       taskRef:
         name: hello-world-3
+  serviceAccount: pipeline
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: mapit-deploy-pipeline
 spec:
+  serviceAccount: pipeline
   resources:
   - name: mapit-git
     type: git
@@ -100,6 +103,7 @@ kind: Pipeline
 metadata:
   name: mapit-build-pipeline
 spec:
+  serviceAccount: pipeline
   resources:
   - name: mapit-git
     type: git
