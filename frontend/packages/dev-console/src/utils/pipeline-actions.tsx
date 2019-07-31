@@ -43,6 +43,7 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
     );
     return null;
   }
+  // TODO: Add serviceAccount for start scenario by fetching details from user
   return {
     apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
     kind: PipelineRunModel.kind,
@@ -104,6 +105,10 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
       trigger: {
         type: 'manual',
       },
+      serviceAccount:
+        latestRun && latestRun.spec && latestRun.spec.serviceAccount
+          ? latestRun.spec.serviceAccount
+          : 'pipeline',
     },
   };
 };

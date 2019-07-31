@@ -58,6 +58,7 @@ export interface Pipeline extends K8sResourceKind {
     params: Param[];
     resources: PipelineResource[];
     tasks: K8sResourceKind[];
+    serviceAccount?: string;
   };
 }
 
@@ -69,6 +70,7 @@ export interface PipelineRun extends K8sResourceKind {
       type: string;
     };
     resources: PipelineResource[];
+    serviceAccount?: string;
   };
   status?: {
     succeededCondition?: string;
