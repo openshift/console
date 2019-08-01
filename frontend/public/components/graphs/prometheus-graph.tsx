@@ -22,7 +22,7 @@ export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
     const url = getPrometheusExpressionBrowserURL(urls, [query]);
     return query
-      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{children}</a>
+      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>{children}</a>
       : <React.Fragment>{children}</React.Fragment>;
   }
 );
