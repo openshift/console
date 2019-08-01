@@ -654,16 +654,14 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         </div>
       </div>
       <div className="co-m-pane__body">
-        <div className="row">
-          <CheckBoxes
-            items={rowFilter.items}
-            itemCount={_.size(data)}
-            numbers={_.countBy(data, rowFilter.reducer)}
-            reduxIDs={[reduxID]}
-            selected={rowFilter.selected}
-            type={rowFilter.type}
-          />
-        </div>
+        <CheckBoxes
+          items={rowFilter.items}
+          itemCount={_.size(data)}
+          numbers={_.countBy(data, rowFilter.reducer)}
+          reduxIDs={[reduxID]}
+          selected={rowFilter.selected}
+          type={rowFilter.type}
+        />
         <div className="row">
           <div className="col-xs-12">
             <Table

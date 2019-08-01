@@ -103,10 +103,7 @@ export class ListPageWrapper_ extends React.PureComponent {
     });
 
     return <div>
-      {!_.isEmpty(data) && <div className="row">
-        {RowsOfRowFilters}
-      </div>
-      }
+      {!_.isEmpty(data) && RowsOfRowFilters}
       <div className="row">
         <div className="col-xs-12">
           <ListComponent {...this.props} data={data} />
