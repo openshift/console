@@ -65,7 +65,7 @@ function podWarnings(pod) {
       }
 
       if (isContainerFailedFilter(containerStatus)) {
-        if (_.has(pod, ['metadata.deletionTimestamp'])) {
+        if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
           return 'Failed';
         }
         return 'Warning';
@@ -80,7 +80,7 @@ function podWarnings(pod) {
 }
 
 export function getPodStatus(pod) {
-  if (_.has(pod, ['metadata.deletionTimestamp'])) {
+  if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
     return 'Terminating';
   }
   const warnings = podWarnings(pod);
