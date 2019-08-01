@@ -1,10 +1,16 @@
-export const getAppLabels = (name: string, application: string, imageStreamName?: string) => {
+export const getAppLabels = (
+  name: string,
+  application: string,
+  imageStreamName?: string,
+  selectedTag?: string,
+) => {
   return {
     app: name,
     'app.kubernetes.io/part-of': application,
     'app.kubernetes.io/instance': name,
     'app.kubernetes.io/component': name,
     'app.kubernetes.io/name': imageStreamName,
+    'app.openshift.io/runtime-version': selectedTag,
   };
 };
 
