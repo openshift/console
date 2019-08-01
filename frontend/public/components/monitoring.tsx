@@ -245,9 +245,8 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         </h1>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Alert Overview">
-          {state !== AlertStates.NotFiring && <ToggleGraph />}
-        </SectionHeading>
+        {state !== AlertStates.NotFiring && <ToggleGraph />}
+        <SectionHeading text="Alert Overview" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
@@ -397,9 +396,8 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       </div>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <SectionHeading text="Active Alerts">
-            <ToggleGraph />
-          </SectionHeading>
+          <ToggleGraph />
+          <SectionHeading text="Active Alerts" />
           <div className="row">
             <div className="col-sm-12">
               <Graph rule={rule} />

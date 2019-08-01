@@ -119,9 +119,9 @@ const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(HeaderPr
 export const graphStateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
 
 const ToggleGraph_ = ({hideGraphs, toggle}) => {
-  const icon = hideGraphs ? <ChartLineIcon className="co-icon-space-r" /> : <CompressIcon className="co-icon-space-r" />;
+  const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
-  return <button type="button" className="btn btn-link" onClick={toggle}>
+  return <button type="button" className="btn btn-link query-browser__toggle-graph" onClick={toggle}>
     {hideGraphs ? 'Show' : 'Hide'} Graph {icon}
   </button>;
 };
@@ -469,7 +469,7 @@ export const QueryBrowserPage = withFallback(() => {
     </div>
     <div className="co-m-pane__body">
       <div className="row">
-        <div className="col-xs-12 text-right">
+        <div className="col-xs-12">
           <ToggleGraph />
         </div>
       </div>
