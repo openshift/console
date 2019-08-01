@@ -235,6 +235,12 @@ To see what the tests are actually doing, it is posible to run in none `headless
 $ NO_HEADLESS=true ./test-gui.sh olm
 ```
 
+To use a specific binary version of chrome, it is posible to set the `CHROME_BINARY_PATH` enviorment variable:
+
+```
+$ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-gui.sh olm
+```
+
 ##### Debugging Integration Tests
 
 1. `cd frontend; yarn run build`
