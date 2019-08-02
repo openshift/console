@@ -47,7 +47,13 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
     if (!monitor) {
       return;
     }
-    const file = monitor.getItem().files[0];
+    const [file] = monitor.getItem().files;
+
+    // If unsupported file type is dropped into drop zone, file will be undefined
+    if (!file) {
+      return;
+    }
+
     // limit size size uploading to 1 mb
     if (file.size <= maxFileUploadSize) {
       const reader = new FileReader();

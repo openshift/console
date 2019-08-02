@@ -38,6 +38,7 @@ export const createKnativeService = (
   imageStreamUrl: string,
   imageStreamName?: string,
   annotations?: { [name: string]: string },
+  imageTag?: string,
 ): Promise<K8sResourceKind> => {
   const contTargetPort: number = parseInt(targetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
@@ -55,7 +56,7 @@ export const createKnativeService = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels(name, applicationName, imageStreamName);
+  const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
   delete defaultLabel.app;
   const knativeDeployResource: K8sResourceKind = {
     kind: 'Service',

@@ -95,6 +95,7 @@ export type K8sResourceKind = {
   };
   status?: {[key: string]: any};
   type?: {[key: string]: any};
+  data?: {[key: string]: any};
 };
 
 export type VolumeMount = {

@@ -39,6 +39,7 @@ interface ResourceDropdownProps {
   placeholder?: string;
   resources?: FirehoseList[];
   selectedKey: string;
+  autoSelect?: boolean;
   resourceFilter?: (resource: any) => boolean;
   onChange?: (key: string, name?: string) => void;
 }
@@ -66,13 +67,19 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       resourceFilter,
       dataSelector,
       selectedKey,
+      autoSelect,
     } = nextProps;
 
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
       return;
     }
-    if (!this.props.loaded || !selectedKey) {
+
+    // If autoSelect is true only then have an item pre-selected based on selectedKey.
+    if (autoSelect) {
+      const selectedItemKey = !selectedKey ? _.get(_.keys(this.state.items), 0) : selectedKey;
+      this.onChange(selectedItemKey);
+    } else if (!this.props.loaded || !selectedKey) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
@@ -137,8 +144,10 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     const name = this.state.items[key];
     const { actionItem, onChange } = this.props;
     const title = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
-    onChange && this.props.onChange(key, name);
-    this.setState({ title });
+    if (title !== this.state.title) {
+      onChange && this.props.onChange(key, name);
+      this.setState({ title });
+    }
   };
 
   render() {

@@ -81,6 +81,7 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
     interfaceLookup,
     onCreateRowDismiss,
     onCreateRowError,
+    forceRerender,
   },
   index,
   style,
@@ -108,8 +109,16 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             nameError && nameError.type === ValidationErrorType.Error ? nameError.type : null
           }
         >
-          <Text id="nic-name" disabled={creating} onChange={setName} value={name} />
-          <HelpBlock className="kubevirt-vm-create-device-row__cell--help">
+          <Text
+            id="nic-name"
+            disabled={creating}
+            onChange={(v) => {
+              setName(v);
+              forceRerender();
+            }}
+            value={name}
+          />
+          <HelpBlock>
             {nameError && nameError.type === ValidationErrorType.Error && nameError.message}
           </HelpBlock>
         </FormGroup>

@@ -52,6 +52,7 @@ const getStoragesData = (
     datavolumes: FirehoseResult<K8sResourceKind[]>;
   },
   addNewDisk: boolean,
+  rerenderFlag: boolean,
 ): StorageBundle[] => {
   const vm = asVM(vmLikeEntity);
 
@@ -101,13 +102,14 @@ const getStoragesData = (
   });
 
   return addNewDisk
-    ? [{ storageType: StorageType.STORAGE_TYPE_CREATE }, ...disksWithType]
+    ? [{ storageType: StorageType.STORAGE_TYPE_CREATE, rerenderFlag }, ...disksWithType]
     : disksWithType;
 };
 
 export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolumes }) => {
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
+  const [forceRerenderFlag, setForceRerenderFlag] = useSafetyFirst(false); // TODO: HACK: fire changes in Virtualize Table for CreateNicRow. Remove after deprecating CreateNicRow
 
   const vm = asVM(vmLikeEntity);
 
@@ -143,6 +145,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               datavolumes,
             },
             isCreating,
+            forceRerenderFlag,
           )}
           Header={() => [
             {
@@ -182,6 +185,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               setIsCreating(false);
               setCreateError(error);
             },
+            forceRerender: () => setForceRerenderFlag(!forceRerenderFlag),
           }}
           virtualize
           loaded

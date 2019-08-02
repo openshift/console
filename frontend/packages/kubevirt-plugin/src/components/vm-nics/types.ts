@@ -26,5 +26,6 @@ export type VMNicRowProps = {
     preferableNicBus: string;
     onCreateRowDismiss: () => void;
     onCreateRowError: (error: string) => void;
+    forceRerender: () => void;
   };
 };

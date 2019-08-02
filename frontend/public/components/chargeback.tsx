@@ -7,8 +7,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { Conditions } from './conditions';
-import { ColHead, DetailsPage, ListHeader, ListPage, Table, TableRow, TableData } from './factory';
-import { getQueryArgument, setQueryArgument } from './utils/router';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
 import {
@@ -160,7 +159,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
-const COLS_BLACK_LIST = new Set(['period_start', 'period_end']);
+const COLS_BLACK_LIST = new Set(['data_start', 'data_end']);
 
 const DataCell = ({name, value}) => {
   if (_.isFinite(value)) {
@@ -174,30 +173,29 @@ const DataCell = ({name, value}) => {
   return value;
 };
 
-const DataTable = ({rows, orderBy, sortBy, applySort, keys}:DataTableProps) => {
+const DataTable = ({cols, rows}:DataTableProps) => {
   const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
   const className = `col-md-${size}`;
-  return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20, marginLeft: -15, marginRight: -15}}>
-    <ListHeader>
-      {_.map(keys, k => <ColHead
-        className={classNames(className, {'text-right': _.isFinite(_.get(rows, [0, k]))})}
-        key={k}
-        sortField={k}
-        sortFunc={k}
-        currentSortOrder={orderBy}
-        currentSortField={sortBy}
-        currentSortFunc={sortBy}
-        applySort={applySort}>
-        {k.replace(/_/g, ' ')}
-      </ColHead>
-      )}
-    </ListHeader>
-    <div className="co-m-table-grid__body">
-      {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
-        {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} /></div>)}
-      </div>)}
-    </div>
-  </div>;
+
+  const DataTableHeader = () => _.map(cols, col => {
+    return ({
+      sortField: col,
+      title: col.replace(/_/g, ' '),
+      transforms: [sortable],
+      props: { className },
+    });
+  });
+
+  const DataTableRows = ({componentProps: {data}}) => _.map(data, (r) => _.map(r, (v, k) => {
+    return {title: <DataCell name={k} value={v} />};
+  }));
+
+  return <Table aria-label="Usage Report"
+    Header={DataTableHeader}
+    Rows={DataTableRows}
+    data={rows}
+    virtualize={false}
+    loaded={true} />;
 };
 
 class ReportData extends React.Component<ReportDataProps, ReportDataState> {
@@ -205,11 +203,12 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     super(props);
     this.state = {
       inFlight: false,
+      isReportFinished: false,
       error: null,
       data: null,
       sortBy: null,
       orderBy: null,
-      keys: [],
+      cols: [],
       rows: null,
     };
   }
@@ -230,68 +229,55 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.inFlight) {
+    // if request is still inFlight or the report has finished running, then return
+    if (this.state.inFlight || this.state.isReportFinished) {
       return;
     }
     const conditions = _.get(nextProps.obj, 'status.conditions');
-    const isFinished = _.some(conditions, {type: 'Running', status: 'False'});
-    if (isFinished) {
-      this.fetchData();
+    const isReportFinished = _.some(conditions, {type: 'Running', status: 'False'});
+    if (isReportFinished) {
+      this.setState({
+        isReportFinished: true,
+      }, () => this.fetchData());
     }
   }
 
   makeTable(data=this.state.data) {
-    const keys = this.filterKeys(data);
-    const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
-    const orderBy = getQueryArgument('orderBy') || (sortBy === keys[0] ? 'asc' : 'desc');
-    const rows = this.transformData(data, sortBy, orderBy);
+    if (_.isEmpty(data)) {
+      return;
+    }
+    const cols = this.getColumns(data);
+    const rows = this.getRows(data);
 
     this.setState({
       data,
-      sortBy,
-      orderBy,
-      keys,
+      cols,
       rows,
     });
   }
 
-  orderBy(col) {
-    setQueryArgument('orderBy', col);
-    this.makeTable();
-  }
-
-  sortBy(col) {
-    setQueryArgument('sortBy', col);
-    this.makeTable();
-  }
-
-  filterKeys(data=[]) {
-    const keys = _.keys(data[0]).filter(k => {
+  getColumns(data=[]) {
+    const cols = _.keys(data[0]).filter(k => {
       if (COLS_BLACK_LIST.has(k)) {
         return false;
       }
       return true;
     });
-    return keys;
+    return cols;
   }
 
-  transformData(data, sortBy, orderBy) {
+  getRows(data) {
     const rows = _.map(data, (row) => {
       return _.omitBy(row, (v, k) => {
         return COLS_BLACK_LIST.has(k);
       });
     });
-    return _.orderBy(rows, sortBy, orderBy);
-  }
-
-  applySort(sortBy, func, orderBy) {
-    this.sortBy(sortBy);
-    this.orderBy(orderBy);
+    return rows;
   }
 
   render() {
     const {obj} = this.props;
-    const {data, sortBy, orderBy, keys, rows, inFlight, error} = this.state;
+    const {data, cols, rows, inFlight, error} = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
     if (inFlight) {
@@ -302,8 +288,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       if (data.error) {
         dataElem = <LoadError label="Report" message={data.error} />;
       } else {
-        dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows}
-          applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
+        dataElem = <DataTable cols={cols} rows={rows} />;
       }
     }
     const format = 'csv';
@@ -324,7 +309,7 @@ const reportsPages = [
 
 const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
 
-export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} />;
+export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} virtualize />;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
   if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
@@ -459,7 +444,7 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
   </div>;
 };
 
-export const ReportGenerationQueriesList: React.SFC = props => <Table aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} />;
+export const ReportGenerationQueriesList: React.SFC = props => <Table aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} virtualize />;
 
 export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = props => <div>
   <ChargebackNavBar match={props.match} />
@@ -482,18 +467,16 @@ export type ReportDataState = {
   error: any,
   data: any,
   inFlight: boolean,
+  isReportFinished: boolean,
   sortBy: string,
   orderBy: string,
-  keys: string[],
+  cols: string[],
   rows: any[],
 };
 
 export type DataTableProps = {
   rows: any[],
-  orderBy: string,
-  sortBy: string,
-  applySort: any,
-  keys: string[],
+  cols: string[],
 };
 
 export type ReportsPageProps = {

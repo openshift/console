@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { getPorts } from '@console/internal/components/source-to-image';
 import { useFormikContext, FormikValues } from 'formik';
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
+import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { InputSearchField } from '../../formik-fields';
+import { secretModalLauncher } from '../CreateSecretModal';
 
 const getSuggestedName = (name: string): string | undefined => {
   if (!name) {
@@ -20,6 +21,9 @@ const getSuggestedName = (name: string): string | undefined => {
 
 const ImageSearch: React.FC = () => {
   const { values, setFieldValue, setFieldError } = useFormikContext<FormikValues>();
+  const [newImageSecret, setNewImageSecret] = React.useState('');
+  const [alertVisible, shouldHideAlert] = React.useState(true);
+  const namespace = values.project.name;
   const handleSearch = (searchTerm: string) => {
     const importImage = {
       kind: 'ImageStreamImport',
@@ -72,6 +76,11 @@ const ImageSearch: React.FC = () => {
       });
   };
 
+  const handleSave = (name: string) => {
+    setNewImageSecret(name);
+    values.searchTerm && handleSearch(values.searchTerm);
+  };
+
   return (
     <React.Fragment>
       <InputSearchField
@@ -84,11 +93,30 @@ const ImageSearch: React.FC = () => {
       />
       <div className="help-block" id="image-name-help">
         To deploy an image from a private repository, you must{' '}
-        <Link to={`/k8s/ns/${values.project.name || 'default'}/secrets/~new/image`}>
+        <Button
+          variant="link"
+          isInline
+          onClick={() =>
+            secretModalLauncher({
+              namespace,
+              save: handleSave,
+              secretType: SecretTypeAbstraction.image,
+            })
+          }
+        >
           create an image pull secret
-        </Link>{' '}
+        </Button>{' '}
         with your image registry credentials.
       </div>
+      {newImageSecret && alertVisible && (
+        <Alert
+          isInline
+          className="co-alert"
+          variant="success"
+          title={`Secret ${newImageSecret} was created.`}
+          action={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
+        />
+      )}
     </React.Fragment>
   );
 };

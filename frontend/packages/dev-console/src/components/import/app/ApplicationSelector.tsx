@@ -48,6 +48,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
             actionTitle: 'Create New Application',
             actionKey: CREATE_APPLICATION_KEY,
           }}
+          autoSelect
           selectedKey={selectedKey.value}
           onChange={onDropdownChange}
         />

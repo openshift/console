@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as plugins from '@console/internal/plugins';
 import { Formik } from 'formik';
 import { history, AsyncComponent } from '@console/internal/components/utils';
-import { getActivePerspective } from '@console/internal/reducers/ui';
+import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
+import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { GitImportFormData, FirehoseList, ImportData } from './import-types';
 import { createResources } from './import-submit-utils';
@@ -18,6 +19,7 @@ export interface ImportFormProps {
 
 export interface StateProps {
   perspective: string;
+  activeApplication: string;
 }
 
 const ImportForm: React.FC<ImportFormProps & StateProps> = ({
@@ -25,6 +27,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   imageStreams,
   importData,
   perspective,
+  activeApplication,
 }) => {
   const initialValues: GitImportFormData = {
     name: '',
@@ -32,8 +35,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       name: namespace || '',
     },
     application: {
-      name: '',
-      selectedKey: '',
+      name: activeApplication,
+      selectedKey: activeApplication,
     },
     git: {
       url: '',
@@ -160,8 +163,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => {
+  const perspective = getActivePerspective(state);
+  const activeApplication = getActiveApplication(state);
   return {
-    perspective: getActivePerspective(state),
+    perspective,
+    activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
   };
 };
 
