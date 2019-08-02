@@ -19,8 +19,8 @@ import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
 import { ValidationErrorType } from '../../utils/validations/common';
 import { validateDiskName } from '../../utils/validations/vm';
+import { GENERAL_ERROR_MSG } from '../../utils/validations/strings';
 import { VMDiskRowProps } from './types';
-
 import './_create-device-row.scss';
 
 const createDisk = ({
@@ -135,7 +135,7 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
             createDisk({ vmLikeEntity, disk: { name, size, bus, storageClass } })
               .then(onCreateRowDismiss)
               .catch((error) => {
-                onCreateRowError((error && error.message) || 'Error occured, please try again');
+                onCreateRowError((error && error.message) || GENERAL_ERROR_MSG);
                 setCreating(false);
               });
           }}
