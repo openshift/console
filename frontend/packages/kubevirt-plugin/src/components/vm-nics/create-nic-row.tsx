@@ -117,7 +117,7 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
       <TableData id="nic-model" className={dimensify()}>
         {model}
       </TableData>
-      <TableData id="nic-binding" className={dimensify()}>
+      <TableData className={dimensify()}>
         <NetworkColumn
           network={network}
           onChange={(net) => {
