@@ -49,7 +49,7 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const dataURL = (obj, format='json') => {
-  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v1/reports/get?name=${obj.metadata.name}&namespace=${obj.metadata.namespace}&format=${format}`;
+  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;
 };
 
 const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
@@ -159,11 +159,22 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
-const COLS_BLACK_LIST = new Set(['data_start', 'data_end']);
+const numericUnits = new Set([
+  'bytes',
+  'byte_seconds',
+  'cpu_core_seconds',
+  'cpu_cores',
+  'memory_bytes',
+  'memory_byte_seconds',
+  'seconds',
+]);
 
-const DataCell = ({name, value}) => {
-  if (_.isFinite(value)) {
+const DataCell = ({name, value, unit}: DataTableCellProps) => {
+  if (numericUnits.has(unit)) {
     return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
+  }
+  if (unit === 'date' || unit === 'time') {
+    return <Timestamp timestamp={value} />;
   }
   name = _.startCase(name);
   const model = modelFor(name);
@@ -173,21 +184,24 @@ const DataCell = ({name, value}) => {
   return value;
 };
 
-const DataTable = ({cols, rows}:DataTableProps) => {
-  const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
-  const className = `col-md-${size}`;
+const DataTable = ({cols, rows, schema}: DataTableProps) => {
+
+  const getUnit = (col: string) => {
+    const colSchema = _.find(schema.values, {'name': col});
+    return _.get(colSchema, 'unit');
+  };
 
   const DataTableHeader = () => _.map(cols, col => {
     return ({
+      sortAsNumber: numericUnits.has(getUnit(col)),
       sortField: col,
       title: col.replace(/_/g, ' '),
       transforms: [sortable],
-      props: { className },
     });
   });
 
-  const DataTableRows = ({componentProps: {data}}) => _.map(data, (r) => _.map(r, (v, k) => {
-    return {title: <DataCell name={k} value={v} />};
+  const DataTableRows = ({componentProps: {data}}: DataTableRowsProps) => _.map(data, (r) => _.map(r, (v, c) => {
+    return {title: <DataCell name={c} value={v} unit={getUnit(c)} />};
   }));
 
   return <Table aria-label="Usage Report"
@@ -243,7 +257,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   }
 
   makeTable(data=this.state.data) {
-    if (_.isEmpty(data)) {
+    if (!data || _.isEmpty(data.results)) {
       return;
     }
     const cols = this.getColumns(data);
@@ -256,22 +270,64 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     });
   }
 
-  getColumns(data=[]) {
-    const cols = _.keys(data[0]).filter(k => {
-      if (COLS_BLACK_LIST.has(k)) {
-        return false;
-      }
-      return true;
-    });
-    return cols;
+  getColumns(data: {results: any[]}) {
+    const firstRow = _.head(data.results);
+    return _.map(firstRow.values, item => item.name);
   }
 
-  getRows(data) {
-    const rows = _.map(data, (row) => {
-      return _.omitBy(row, (v, k) => {
-        return COLS_BLACK_LIST.has(k);
-      });
+  getRows(data: {results: any[]}) {
+    /* Converts data to rows:
+    //  data = {
+    //   results: [
+    //     {
+    //       values: [
+    //         {
+    //           name: "period_start",
+    //           value: "2019-01-01T00:00:00Z",
+    //           unit: "date"
+    //         },
+    //         {
+    //           name: "pod_usage_cpu_core_seconds",
+    //           value: 235.73856000000004,
+    //           unit: "core_seconds"
+    //         },
+    //         ...
+    //       ]
+    //     },
+    //     {
+    //       values: [
+    //         {
+    //           name: "period_start",
+    //           value: "2019-01-01T00:00:00Z",
+    //           unit: "date"
+    //         },
+    //         {
+    //           name: "pod_usage_cpu_core_seconds",
+    //           value: 21.864000000000004,
+    //           unit: "core_seconds"
+    //
+    //   ... to ...
+    //
+    //   rows = [
+    //   {
+    //   "period_start": "2019-01-01T00:00:00Z",
+    //   "pod_usage_cpu_core_seconds": 235.73856000000004
+    //   ...
+    //  },
+    //  {
+    //   "period_start": "2019-01-01T00:00:00Z",
+    //   "pod_usage_cpu_core_seconds": 21.864000000000004
+    //   ...
+    //  },
+    //  ...
+     */
+    const rows = _.map(data.results, ({values}) => {
+      return _.reduce(values, (acc, {name, value}) => {
+        acc[name] = value;
+        return acc;
+      }, {});
     });
+
     return rows;
   }
 
@@ -279,7 +335,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     const {obj} = this.props;
     const {data, cols, rows, inFlight, error} = this.state;
 
-    let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
+    let dataElem = <MsgBox title="No Data" detail="Report contains no results." />;
     if (inFlight) {
       dataElem = <div className="row"><div className="col-xs-12 text-center"><LoadingInline /></div></div>;
     } else if (error) {
@@ -288,7 +344,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       if (data.error) {
         dataElem = <LoadError label="Report" message={data.error} />;
       } else {
-        dataElem = <DataTable cols={cols} rows={rows} />;
+        dataElem = <DataTable cols={cols} rows={rows} schema={_.head(data.results)} />;
       }
     }
     const format = 'csv';
@@ -457,53 +513,64 @@ export const ReportGenerationQueriesDetailsPage: React.SFC<ReportGenerationQueri
 };
 
 export type ReportsDetailsProps = {
-  obj: any,
+  obj: any;
 };
 
 export type ReportDataProps = {
-  obj: any,
+  obj: any;
 };
 export type ReportDataState = {
-  error: any,
-  data: any,
-  inFlight: boolean,
-  isReportFinished: boolean,
-  sortBy: string,
-  orderBy: string,
-  cols: string[],
-  rows: any[],
+  error: any;
+  data: any;
+  inFlight: boolean;
+  isReportFinished: boolean;
+  sortBy: string;
+  orderBy: string;
+  cols: string[];
+  rows: any[];
 };
 
 export type DataTableProps = {
-  rows: any[],
-  cols: string[],
+  rows: any[];
+  cols: string[];
+  schema: any;
+};
+
+export type DataTableCellProps = {
+  name: string;
+  value: any;
+  unit: string;
+};
+
+export type DataTableRowsProps = {
+  componentProps: {data: any[]};
 };
 
 export type ReportsPageProps = {
-  filterLabel: string,
-  flags: {[_: string]: boolean},
-  match: {url: string},
+  filterLabel: string;
+  flags: {[_: string]: boolean};
+  match: {url: string};
 };
 
 export type ReportsDetailsPageProps = {
-  match: any,
+  match: any;
 };
 
 export type ReportGenerationQueriesRowProps = {
-  obj: any,
+  obj: any;
 };
 
 export type ReportGenerationQueriesDetailsProps = {
-  obj: any,
+  obj: any;
 };
 
 export type ReportGenerationQueriesPageProps = {
-  filterLabel: string,
-  match: {url: string},
+  filterLabel: string;
+  match: {url: string};
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {
-  match: any,
+  match: any;
 };
 
 ReportsList.displayName = 'ReportsList';

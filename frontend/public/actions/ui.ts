@@ -178,14 +178,14 @@ export const stopImpersonate = () => (dispatch) => {
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
-export const sortList = (listId: string, field: string, func: any, orderBy: string, column: string) => {
+export const sortList = (listId: string, field: string, func: string, sortAsNumber: boolean, orderBy: string, column: string) => {
   const url = new URL(window.location.href);
   const sp = new URLSearchParams(window.location.search);
   sp.set('orderBy', orderBy);
   sp.set('sortBy', column);
   history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
-  return action(ActionType.SortList, {listId, field, func, orderBy});
+  return action(ActionType.SortList, {listId, field, func, sortAsNumber, orderBy});
 };
 export const setCreateProjectMessage = (message: string) => action(ActionType.SetCreateProjectMessage, {message});
 export const setUser = (user: any) => action(ActionType.SetUser, {user});
