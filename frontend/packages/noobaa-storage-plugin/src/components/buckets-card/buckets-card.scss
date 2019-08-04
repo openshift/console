@@ -17,9 +17,12 @@
   }
 }
 
+.nb-bucket-card__status-icon {
+  color: $pf-color-black-700;
+}
+
 .nb-buckets-card__row-status-item {
   display: flex;
-  margin-right: 0.5em;
   flex-shrink: 0;
 }
 

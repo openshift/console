@@ -12,6 +12,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { getMetric } from '../../utils';
 import { ResourceProvidersBody } from './resource-providers-card-body';
 import { ResourceProvidersItem, ProviderType } from './resource-providers-card-item';
 import './resource-providers-card.scss';
@@ -19,6 +20,7 @@ import './resource-providers-card.scss';
 const RESOURCE_PROVIDERS_QUERY = {
   PROVIDERS_TYPES: ' NooBaa_cloud_types',
   UNHEALTHY_PROVIDERS_TYPES: 'NooBaa_unhealthy_cloud_types',
+  RESOURCES_LINK_QUERY: 'NooBaa_system_info',
 };
 
 const getProviderType = (provider: ProviderPrometheusData): string =>
@@ -62,6 +64,16 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
     RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES,
     'result',
   ]);
+  const resourcesLinksResponse = prometheusResults.getIn([
+    RESOURCE_PROVIDERS_QUERY.RESOURCES_LINK_QUERY,
+    'result',
+  ]);
+
+  const noobaaSystemAddress = getMetric(resourcesLinksResponse, 'system_address');
+  const noobaaSystemName = getMetric(resourcesLinksResponse, 'system_name');
+  let link = null;
+  if (noobaaSystemAddress && noobaaSystemName)
+    link = `${noobaaSystemAddress}/fe/systems/${noobaaSystemName}/resources/cloud/`;
 
   const allProviders = createProvidersList(providersTypesQueryResult);
   const unhealthyProviders = createProvidersList(unhealthyProvidersTypesQueryResult);
@@ -85,9 +97,10 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
         >
           {providerTypes.map((provider) => (
             <ResourceProvidersItem
-              key={provider}
-              title={provider}
               count={allProviders[provider]}
+              key={provider}
+              link={link}
+              title={provider}
               unhealthyProviders={unhealthyProviders}
             />
           ))}

@@ -10,10 +10,12 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { getMetric } from '../../utils';
 import { BucketsItem, BucketsType } from './buckets-card-item';
 import './buckets-card.scss';
 
 enum BucketsCardQueries {
+  BUCKETS_LINK_QUERY = 'NooBaa_system_info',
   BUCKETS_COUNT = 'NooBaa_num_buckets',
   BUCKET_OBJECTS_COUNT = 'NooBaa_num_objects',
   BUCKET_CLAIMS_COUNT = 'NooBaa_num_buckets_claims',
@@ -58,6 +60,16 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     BucketsCardQueries.UNHEALTHY_BUCKETS_CLAIMS,
     'result',
   ]);
+  const bucketsLinksResponse = prometheusResults.getIn([
+    BucketsCardQueries.BUCKETS_LINK_QUERY,
+    'result',
+  ]);
+
+  const noobaaSystemAddress = getMetric(bucketsLinksResponse, 'system_address');
+  const noobaaSystemName = getMetric(bucketsLinksResponse, 'system_name');
+  let link = null;
+  if (noobaaSystemAddress && noobaaSystemName)
+    link = `${noobaaSystemAddress}/fe/systems/${noobaaSystemName}/buckets/data-buckets`;
 
   const bucketProps: BucketsType = {
     bucketsCount: getPropsData(objectBucketsCount),
@@ -77,8 +89,8 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>Buckets</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <BucketsItem title="ObjectBucket" {...bucketProps} />
-        <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} />
+        <BucketsItem title="ObjectBucket" {...bucketProps} link={link} />
+        <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={link} />
       </DashboardCardBody>
     </DashboardCard>
   );
