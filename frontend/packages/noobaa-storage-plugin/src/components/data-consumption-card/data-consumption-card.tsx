@@ -119,7 +119,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Data consumption</DashboardCardTitle>
+        <DashboardCardTitle>Data Consumption</DashboardCardTitle>
         <DataConsumptionDropdown
           type={metricType}
           setType={setMetricType}
