@@ -11,10 +11,10 @@ export enum PrometheusEndpoint {
 // Range vector queries require end, start, and step search params
 const getRangeVectorSearchParams = (timespan: number, endTime: number = Date.now(), samples: number = 60): URLSearchParams => {
   const params = new URLSearchParams();
-  if (timespan) {
-    params.set('start', String((endTime - timespan) / 1000));
-    params.set('end', String(endTime / 1000));
-    params.set('step', String((timespan / samples) / 1000));
+  if (timespan > 0) {
+    params.append('start', `${(endTime - timespan) / 1000}`);
+    params.append('end', `${endTime / 1000}`);
+    params.append('step', `${timespan / samples / 1000}`);
   }
   return params;
 };
@@ -27,11 +27,10 @@ const getSearchParams = ({endpoint, endTime, timespan, samples, ...params}: Prom
   return searchParams;
 };
 
-export const getPrometheusURL = (props: PrometheusURLProps): string => {
+export const getPrometheusURL = (props: PrometheusURLProps, basePath: string = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH): string => {
   if (!props.query) {
     return '';
   }
-  const basePath = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH;
   const params = getSearchParams(props);
   return `${basePath}/${props.endpoint}?${params.toString()}`;
 };
@@ -41,7 +40,7 @@ type PrometheusURLProps = {
   endTime?: number;
   namespace?: string;
   query: string;
-  samples: number;
+  samples?: number;
   timeout?: string;
-  timespan: number;
+  timespan?: number;
 };

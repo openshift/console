@@ -93,7 +93,7 @@ type AreaChartProps = {
   humanize?: Humanize;
   height?: number,
   loading?: boolean;
-  query: string;
+  query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
