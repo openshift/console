@@ -7,7 +7,7 @@ import {
   createResource,
   deleteResource,
 } from '../../../console-shared/src/test-utils/utils';
-import { getVmManifest, basicVmConfig } from './utils/mocks';
+import { getVmManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import { TABS, DASH, VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
@@ -57,11 +57,11 @@ describe('Test VM overview', () => {
     const expectation = {
       name: vmName,
       description: testName,
-      os: basicVmConfig.operatingSystem,
-      profile: basicVmConfig.workloadProfile,
+      os: basicVMConfig.operatingSystem,
+      profile: basicVMConfig.workloadProfile,
       template: 'rhel7-desktop-tiny',
       bootOrder: ['rootdisk', 'nic0', 'cloudinitdisk'],
-      flavor: basicVmConfig.flavor,
+      flavor: basicVMConfig.flavor,
       ip: DASH,
       pod: DASH,
       node: DASH,

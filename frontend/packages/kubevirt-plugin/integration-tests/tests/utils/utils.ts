@@ -1,8 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
-import { ElementFinder, browser, ExpectedConditions as until } from 'protractor';
-import { STORAGE_CLASS } from './consts';
+import { $, $$, ElementFinder, browser, by, ExpectedConditions as until } from 'protractor';
+import { appHost } from '../../../../../integration-tests/protractor.conf';
+import {
+  isLoaded,
+  createYAMLButton,
+  rowForName,
+} from '../../../../../integration-tests/views/crud.view';
+import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
 import { NodePortService } from './types';
 
 export async function fillInput(elem: ElementFinder, value: string) {
@@ -13,7 +19,7 @@ export async function fillInput(elem: ElementFinder, value: string) {
     if (attempts < 0) {
       throw Error(`Failed to fill input with value: '${value}'.`);
     }
-    await browser.wait(until.elementToBeClickable(elem));
+    await browser.wait(until.and(until.presenceOf(elem), until.elementToBeClickable(elem)));
     // TODO: line below can be removed when pf4 tables in use.
     await elem.click();
     await elem.clear();
@@ -21,8 +27,38 @@ export async function fillInput(elem: ElementFinder, value: string) {
   } while ((await elem.getAttribute('value')) !== value && attempts > 0);
 }
 
+export async function createProject(name: string) {
+  // Use projects if OpenShift so non-admin users can run tests.
+  const resource = browser.params.openshift === 'true' ? 'projects' : 'namespaces';
+  await browser.get(`${appHost}/k8s/cluster/${resource}`);
+  await isLoaded();
+  const exists = await rowForName(name).isPresent();
+  if (!exists) {
+    await createYAMLButton.click();
+    await browser.wait(until.presenceOf($('.modal-body__field')));
+    await $$('.modal-body__field')
+      .get(0)
+      .$('input')
+      .sendKeys(name);
+    await $$('.modal-body__field')
+      .get(1)
+      .$('input')
+      .sendKeys(`test-name=${name}`);
+    await $('.modal-content')
+      .$('#confirm-action')
+      .click();
+    await browser.wait(until.urlContains(`/${name}`), PAGE_LOAD_TIMEOUT_SECS);
+  }
+}
+
 export async function getInputValue(elem: ElementFinder) {
   return elem.getAttribute('value');
+}
+
+export async function selectSelectorOption(selectorId: string, option: string) {
+  await $(selectorId)
+    .all(by.css(`option[value="${option}"]`))
+    .click();
 }
 
 export function getRandStr(length: number) {

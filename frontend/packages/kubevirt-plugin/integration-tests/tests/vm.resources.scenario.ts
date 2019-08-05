@@ -10,7 +10,7 @@ import {
   getDropdownOptions,
 } from '../../../console-shared/src/test-utils/utils';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
-import { multusNad, hddDisk, networkInterface, getVmManifest } from './utils/mocks';
+import { multusNAD, hddDisk, networkInterface, getVmManifest } from './utils/mocks';
 import { getResourceObject } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, VM_ACTIONS_TIMEOUT_SECS, TABS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
@@ -20,12 +20,12 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async () => {
-    createResources([multusNad, testVm]);
+    createResources([multusNAD, testVm]);
     await vm.action('Start');
   }, VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(() => {
-    deleteResources([multusNad, testVm]);
+    deleteResources([multusNAD, testVm]);
   });
 
   it(

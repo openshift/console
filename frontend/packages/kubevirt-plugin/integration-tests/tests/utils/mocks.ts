@@ -3,7 +3,7 @@ import { CloudInitConfig } from './types';
 import { STORAGE_CLASS } from './consts';
 import { getRandomMacAddress } from './utils';
 
-export const multusNad = {
+export const multusNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
   kind: 'NetworkAttachmentDefinition',
   metadata: {
@@ -45,12 +45,12 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
   };
 };
 
-export const basicVmConfig = {
+export const basicVMConfig = {
   operatingSystem: 'Red Hat Enterprise Linux 7.6',
   flavor: 'tiny',
   workloadProfile: 'desktop',
   sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
-  sourceContainer: 'kubevirt/cirros-registry-disk-demo:latest',
+  sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}.example.com`,
 };
 
@@ -58,7 +58,7 @@ export const networkInterface = {
   name: `nic1-${testName.slice(-5)}`,
   mac: getRandomMacAddress(),
   binding: 'bridge',
-  networkDefinition: multusNad.metadata.name,
+  networkDefinition: multusNAD.metadata.name,
 };
 
 export const networkBindingMethods = {
@@ -82,7 +82,7 @@ export const hddDisk = {
 export const cloudInitCustomScriptConfig: CloudInitConfig = {
   useCloudInit: true,
   useCustomScript: true,
-  customScript: basicVmConfig.cloudInitScript,
+  customScript: basicVMConfig.cloudInitScript,
 };
 
 export function getVmManifest(
@@ -91,25 +91,28 @@ export function getVmManifest(
   name?: string,
   cloudinit?: string,
 ) {
+  const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
-    name: name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`,
+    name: vmName,
     annotations: {
       'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
     namespace,
     labels: {
-      app: `vm-${provisionSource.toLowerCase()}-${namespace}`,
+      app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
-      'vm.kubevirt.io/template': 'rhel7-desktop-tiny',
+      'vm.kubevirt.io/template': 'rhel7-desktop-tiny-v0.6.2',
       'vm.kubevirt.io/template-namespace': 'openshift',
+      'vm.kubevirt.io/template.revision': '1',
+      'vm.kubevirt.io/template.version': 'v0.6.2',
       'workload.template.kubevirt.io/desktop': 'true',
     },
   };
   const urlSource = {
     http: {
-      url: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+      url: basicVMConfig.sourceURL,
     },
   };
   const dataVolumeTemplate = {
@@ -119,6 +122,7 @@ export function getVmManifest(
     spec: {
       pvc: {
         accessModes: ['ReadWriteMany'],
+        volumeMode: 'Block',
         resources: {
           requests: {
             storage: '1Gi',
@@ -137,7 +141,7 @@ export function getVmManifest(
   };
   const containerDisk = {
     containerDisk: {
-      image: 'kubevirt/cirros-registry-disk-demo:latest',
+      image: basicVMConfig.sourceContainer,
     },
     name: 'rootdisk',
   };
@@ -201,6 +205,8 @@ export function getVmManifest(
       template: {
         metadata: {
           labels: {
+            'kubevirt.io/domain': metadata.name,
+            'kubevirt.io/size': 'tiny',
             'vm.kubevirt.io/name': metadata.name,
           },
         },
@@ -213,6 +219,13 @@ export function getVmManifest(
             },
             devices: {
               disks,
+              inputs: [
+                {
+                  bus: 'virtio',
+                  name: 'tablet',
+                  type: 'tablet',
+                },
+              ],
               interfaces: [
                 {
                   bootOrder: 2,
@@ -228,6 +241,7 @@ export function getVmManifest(
               },
             },
           },
+          evictionStrategy: 'LiveMigrate',
           terminationGracePeriodSeconds: 0,
           networks: [
             {
