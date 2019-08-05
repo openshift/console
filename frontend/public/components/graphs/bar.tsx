@@ -29,6 +29,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
   titleClassName,
   loading = false,
+  LabelComponent,
 }) => {
   const [containerRef, width] = useRefWidth();
 
@@ -42,16 +43,16 @@ export const BarChart: React.FC<BarChartProps> = ({
     top: 0,
   };
 
-  const sortedData = data.sort((a, b) => b.y - a.y);
-
   return (
     <PrometheusGraph ref={containerRef} title={title} className={titleClassName} >
       {
-        sortedData.length ? (
+        data.length ? (
           <PrometheusGraphLink query={query}>
-            {sortedData.map((datum, index) => (
+            {data.map((datum, index) => (
               <React.Fragment key={index}>
-                <div className="graph-bar__label">{datum.x}</div>
+                <div className="graph-bar__label">
+                  {LabelComponent ? <LabelComponent title={datum.x} metric={datum.metric} /> : datum.x}
+                </div>
                 <div className="graph-bar__chart">
                   <ChartBar
                     barWidth={barWidth}
@@ -61,7 +62,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                     theme={theme}
                     height={barWidth + padding.bottom}
                     width={width}
-                    domain={{y: [0, sortedData[0].y]}}
+                    domain={{y: [0, data[0].y]}}
                     padding={padding}
                   />
                 </div>
@@ -100,9 +101,15 @@ export const Bar: React.FC<BarProps> = ({
   );
 };
 
+type LabelComponentProps = {
+  title: Date | string | number;
+  metric?: {[key: string]: string};
+}
+
 type BarChartProps = {
+  LabelComponent?: React.ComponentType<LabelComponentProps>;
   barWidth?: number;
-  query: string;
+  query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
   data?: DataPoint[];

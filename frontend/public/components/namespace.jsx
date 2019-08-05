@@ -271,7 +271,7 @@ export const TopPodsBarChart = ({ns}) => (
   <Bar
     title="Memory Usage by Pod (Top 10)"
     namespace={ns.metadata.name}
-    query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
+    query={`sort_desc(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
     humanize={humanizeDecimalBytes}
     metric="pod_name"
   />

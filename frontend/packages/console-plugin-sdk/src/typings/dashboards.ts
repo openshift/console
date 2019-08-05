@@ -71,6 +71,9 @@ namespace ExtensionProperties {
   }
 
   export interface DashboardsOverviewTopConsumerItem {
+    /** The k8s model of top consumer item */
+    model: K8sKind;
+
     /** The name of the top consumer item */
     name: string;
 

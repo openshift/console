@@ -245,6 +245,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/TopConsumers/Item',
     properties: {
+      model: PodModel,
       name: 'Prometheus',
       metric: 'pod_name',
       queries: {
