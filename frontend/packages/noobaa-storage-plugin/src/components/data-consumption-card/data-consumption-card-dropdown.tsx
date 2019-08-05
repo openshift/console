@@ -54,7 +54,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
       I/O Operations
     </DropdownItem>,
     <DropdownItem id="usage" key="phyVslog" component="button">
-      Logical Usage
+      Logical Used Capacity
     </DropdownItem>,
   ];
 

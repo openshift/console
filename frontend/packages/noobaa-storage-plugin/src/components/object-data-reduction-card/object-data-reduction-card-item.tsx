@@ -30,7 +30,7 @@ export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
       );
     }
     return (
-      <ItemBody title="Efficiency">
+      <ItemBody title="Efficiency Ratio">
         <div className="nb-object-data-reduction-card__row-status-item">
           {text}
           <DashboardCardHelp>{infoText}</DashboardCardHelp>

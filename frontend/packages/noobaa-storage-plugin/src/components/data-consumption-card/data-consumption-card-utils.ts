@@ -39,7 +39,7 @@ const iopsChartData: GetBarChartData = (data, metricType, metric1, metric2) => {
 
 const accountsLogicalUsageChartData: GetBarChartData = (data, metricType) => [
   data.map((logicalUsage) => ({
-    name: 'Logical Usage',
+    name: 'Logical Used Capacity',
     x: getMetric(logicalUsage, metricType),
     y: Number(humanizeBinaryBytesWithoutB(Number(getValue(logicalUsage))).value),
   })),
@@ -99,7 +99,7 @@ const accountsLogicalUsageChartLegendData = (data: [BarChartData[]]) => {
   const { unit, value } = humanizeBinaryBytesWithoutB(
     data[0].reduce((total: number, logicalUsage: BarChartData) => total + logicalUsage.y, 0),
   );
-  return [{ name: `Logical usage ${value}${unit}` }];
+  return [{ name: `Logical Used Capacity ${value}${unit}` }];
 };
 
 const providersEgressChartLegendData = (data: [BarChartData[]]) => {
