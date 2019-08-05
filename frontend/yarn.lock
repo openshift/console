@@ -134,10 +134,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.23.0.tgz#3351eb69a0e45aaf055940b0ad4a7fde6102a174"
   integrity sha512-vL0Bn66R7Yrkmv0kuhDzi1FJCdMpayfkCJW/WJJf0Ahf3YjDXdwNY+2kUcC55hkLVLzlK3+kx2l8d0FdJ9y0aQ==
 
-"@patternfly/react-charts@4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-4.7.1.tgz#e55cf4d069138bf6691272bb04682d73dddeda6f"
-  integrity sha512-3OO4kkJWge7YEK+Xp1tA2T38zqHIC5j08c4ueyuB8dX9phOpsF5Rsu6hdzKgUjYaGQnKBeWNVDI1o5Z8cUXlfQ==
+"@patternfly/react-charts@4.7.3":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-4.7.3.tgz#996c5b1815ba3cb29236951c5d24f82647dfb636"
+  integrity sha512-rQ6xAFjvWD1Na+sEu7fxnYvwqU2o+mGm2oPpgJ1NtyYDwx1s2bUbiddmUrqxDt/XYb4QvzU0BIuCKIwpnKleig==
   dependencies:
     "@patternfly/react-styles" "^3.5.7"
   optionalDependencies:
