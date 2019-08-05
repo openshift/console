@@ -84,17 +84,17 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
             </div>
             {_.map(taints, (c, i) =>
               <div className="row taint-modal__row" key={i}>
-                <div className="col-md-4 col-sm-6 col-xs-6 taint-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
-                  <input type="text" className="pf-c-form-control" value={c.key} onChange={(e) => this._change(e, i, 'key')} required />
+                <div className="col-md-4 col-xs-5 taint-modal__field">
+                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Key</div>
+                  <input type="text" className="pf-c-form-control taint-modal__input" value={c.key} onChange={(e) => this._change(e, i, 'key')} required />
                 </div>
-                <div className="col-md-3 col-sm-5 col-xs-5 taint-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
-                  <input type="text" className="pf-c-form-control" value={c.value} onChange={(e) => this._change(e, i, 'value')} />
+                <div className="col-md-3 col-xs-5 taint-modal__field">
+                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Value</div>
+                  <input type="text" className="pf-c-form-control taint-modal__input" value={c.value} onChange={(e) => this._change(e, i, 'value')} />
                 </div>
                 <div className="clearfix visible-sm visible-xs"></div>
-                <div className="col-md-4 col-sm-6 col-xs-6 taint-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Effect</div>
+                <div className="col-md-4 col-xs-5 taint-modal__field">
+                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Effect</div>
                   <Dropdown
                     className="taint-modal__dropdown"
                     dropDownClassName="dropdown--full-width"
@@ -103,8 +103,8 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
                     selectedKey={c.effect}
                     title={effects[c.effect]} />
                 </div>
-                <div className="col-md-1 col-md-offset-0 col-sm-offset-11 col-xs-offset-11">
-                  <button type="button" className="btn btn-link btn-link--inherit-color taint-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
+                <div className="col-md-1 col-md-offset-0 col-sm-offset-10 col-xs-offset-10">
+                  <button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color taint-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
                     <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                   </button>
                 </div>
@@ -112,6 +112,7 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
             )}
           </React.Fragment>}
         <Button
+          className="pf-m-link--align-left"
           onClick={this._addRow}
           type="button"
           variant="link">
