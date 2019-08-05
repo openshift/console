@@ -117,14 +117,13 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, dat
     {width > 0 && <Chart
       containerComponent={containerComponent}
       domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
-      domainPadding={{y: 20}}
       height={200}
       scale={{x: 'time', y: 'linear'}}
       theme={chartTheme}
       width={width}
     >
       <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-      <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
+      <ChartAxis dependentAxis tickCount={6} tickFormat={value => humanizeNumber(value).string} />
       <ChartGroup>
         {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
       </ChartGroup>
@@ -313,9 +312,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
     {error && <Error error={error} />}
     {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
-    {!_.isEmpty(graphData) && <div
-      className="graph-wrapper graph-wrapper--query-browser"
-    >
+    {!_.isEmpty(graphData) && <div className="graph-wrapper graph-wrapper--query-browser">
       <div className="query-browser__zoom" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
         {isZooming && <div className="query-browser__zoom-overlay" style={{left: Math.min(x1, x2), width: Math.abs(x1 - x2)}}></div>}
         <Graph
