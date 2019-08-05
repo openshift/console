@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import * as cx from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import {
@@ -15,6 +16,7 @@ import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import './PipelineVisualizationTask.scss';
 
 interface TaskProps {
+  name: string;
   loaded?: boolean;
   task?: {
     data: K8sResourceKind;
@@ -29,6 +31,7 @@ interface TaskProps {
 interface PipelineVisualizationTaskProp {
   namespace: string;
   task: {
+    name?: string;
     taskRef: {
       name: string;
     };
@@ -59,26 +62,31 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
   }
 };
 
-export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = (props) => {
+export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
+  task,
+  namespace,
+}) => {
   return (
     <Firehose
       resources={[
         {
           kind: 'Task',
-          name: props.task.taskRef.name,
-          namespace: props.namespace,
+          name: task.taskRef.name,
+          namespace,
           prop: 'task',
         },
       ]}
     >
-      <TaskComponent namespace={props.namespace} status={props.task.status} />
+      <TaskComponent
+        name={task.name || ''}
+        namespace={namespace}
+        status={task.status || { duration: '', reason: 'pending' }}
+      />
     </Firehose>
   );
 };
-const TaskComponent: React.FC<TaskProps> = (props) => {
-  const task = props.task.data;
-  const { status } = props;
-
+const TaskComponent: React.FC<TaskProps> = ({ task, status, name }) => {
+  const taskData = task.data;
   return (
     <li
       className={cx('odc-pipeline-vis-task')}
@@ -92,11 +100,13 @@ const TaskComponent: React.FC<TaskProps> = (props) => {
       <Tooltip
         position="bottom"
         enableFlip={false}
-        content={<PipelineVisualizationStepList steps={(task.spec && task.spec.steps) || []} />}
+        content={
+          <PipelineVisualizationStepList steps={(taskData.spec && taskData.spec.steps) || []} />
+        }
       >
         <div className="odc-pipeline-vis-task__content">
           <div className={cx('odc-pipeline-vis-task__title', { 'is-text-center': !status })}>
-            {task.metadata ? task.metadata.name : ''}
+            {name || _.get(task, ['metadata', 'name'], '')}
           </div>
           {status && status.reason && (
             <div className="odc-pipeline-vis-task__status">
