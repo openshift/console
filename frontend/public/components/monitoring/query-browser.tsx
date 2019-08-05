@@ -114,7 +114,7 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, dat
   const [containerRef, width] = useRefWidth();
 
   return <div ref={containerRef} style={{width: '100%'}}>
-    {width && <Chart
+    {width > 0 && <Chart
       containerComponent={containerComponent}
       domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
       domainPadding={{y: 20}}
