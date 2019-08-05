@@ -49,6 +49,8 @@ export const UtilizationCard: React.FC<UtilizationCardProps> = ({
     return () => stopWatchK8sResource(machineResource);
   }, [watchK8sResource, stopWatchK8sResource, namespace, machineName]);
 
+  const machineLoaded = _.get(resources.machine, 'loaded');
+  const machineLoadError = _.get(resources.machine, 'loadError');
   const machineAddresses = _.get(resources.machine, 'data.status.addresses', []);
   const machineIP = _.get(machineAddresses.find((addr) => addr.type === 'InternalIP'), 'address');
 
@@ -90,6 +92,9 @@ export const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const networkOutStats = getRangeVectorStats(networkOutUtilization);
   const numberOfPodsStats = getRangeVectorStats(numberOfPods);
 
+  const itemIsLoading = (prometheusResult) =>
+    !machineLoadError && (machineLoaded ? (machineIP ? !prometheusResult : false) : true);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -100,42 +105,42 @@ export const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="CPU usage"
             data={cpuStats}
-            isLoading={!cpuUtilization}
+            isLoading={itemIsLoading(cpuUtilization)}
             humanizeValue={humanizePercentage}
             query={queries[HostQuery.CPU_UTILIZATION]}
           />
           <UtilizationItem
             title="Memory usage"
             data={memoryStats}
-            isLoading={!memoryUtilization}
+            isLoading={itemIsLoading(memoryUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.MEMORY_UTILIZATION]}
           />
           <UtilizationItem
             title="Number of pods"
             data={numberOfPodsStats}
-            isLoading={!numberOfPods}
+            isLoading={itemIsLoading(numberOfPods)}
             humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
             query={queries[HostQuery.NUMBER_OF_PODS]}
           />
           <UtilizationItem
             title="Network In"
             data={networkInStats}
-            isLoading={!networkInUtilization}
+            isLoading={itemIsLoading(networkInUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
           />
           <UtilizationItem
             title="Network Out"
             data={networkOutStats}
-            isLoading={!networkOutUtilization}
+            isLoading={itemIsLoading(networkOutUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
           />
           <UtilizationItem
             title="Filesystem"
             data={storageStats}
-            isLoading={!storageUtilization}
+            isLoading={itemIsLoading(storageUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.STORAGE_UTILIZATION]}
           />
