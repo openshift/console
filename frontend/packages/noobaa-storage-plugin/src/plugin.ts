@@ -107,7 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
         ).then((m) => m.default),
     },
   },
@@ -118,7 +118,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
+          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
         ).then((m) => m.default),
     },
   },
