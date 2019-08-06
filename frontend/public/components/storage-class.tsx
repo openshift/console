@@ -90,6 +90,8 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
         <dd>{obj.reclaimPolicy || '-'}</dd>
         <dt>Default Class</dt>
         <dd>{isDefaultClass(obj).toString()}</dd>
+        <dt>Volume Binding Mode</dt>
+        <dd>{obj.volumeBindingMode || '-'}</dd>
       </div>
     </div>
   </div>
