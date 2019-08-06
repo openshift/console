@@ -94,6 +94,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="Pods"
           count={podCount}
           error={podError}
+          data-test-id="metal3-plugin-dashboard-inventory-pod"
         />
 
         <InventoryItem
@@ -102,6 +103,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="Disks"
           count={diskCount}
           error={null}
+          data-test-id="metal3-plugin-dashboard-inventory-disk"
         />
 
         <InventoryItem
@@ -110,6 +112,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="NICs"
           count={nicCount}
           error={null}
+          data-test-id="metal3-plugin-dashboard-inventory-nic"
         />
         <InventoryItem
           isLoading={false}
@@ -117,6 +120,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="CPUs"
           count={cpuCount}
           error={null}
+          data-test-id="metal3-plugin-dashboard-inventory-cpu"
         />
 
         <InventoryItem
@@ -125,6 +129,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="Fans"
           count={fanCount}
           error={fanError}
+          data-test-id="metal3-plugin-dashboard-inventory-fan"
         >
           <Status groupID={InventoryStatusGroup.OK} count={fanCount - fanNotOkCount} />
           <Status groupID={InventoryStatusGroup.ERROR} count={fanNotOkCount} />
@@ -136,6 +141,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="PSUs"
           count={psuCount}
           error={psuError}
+          data-test-id="metal3-plugin-dashboard-inventory-psu"
         >
           <Status groupID={InventoryStatusGroup.OK} count={psuCount - psuNotOkCount} />
           <Status groupID={InventoryStatusGroup.ERROR} count={psuNotOkCount} />
