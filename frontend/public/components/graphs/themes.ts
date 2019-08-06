@@ -62,7 +62,27 @@ export const queryBrowserTheme = {
   },
   dependentAxis: {
     style: {
-      grid: {stroke: '#EDEDED'},
+      axis: {
+        stroke: 'none',
+      },
+      grid: {
+        stroke: '#EDEDED',
+      },
+      tickLabels: {
+        padding: 0,
+      },
+    },
+  },
+  independentAxis: {
+    style: {
+      tickLabels: {
+        padding: 2,
+      },
+      ticks: {
+        size: 5,
+        strokeWidth: 1,
+        stroke: '#d2d2d2',
+      },
     },
   },
 };

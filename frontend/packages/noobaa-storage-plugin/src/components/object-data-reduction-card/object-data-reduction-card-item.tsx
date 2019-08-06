@@ -30,7 +30,7 @@ export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
       );
     }
     return (
-      <ItemBody title="Efficiency">
+      <ItemBody title="Efficiency Ratio">
         <div className="nb-object-data-reduction-card__row-status-item">
           {text}
           <DashboardCardHelp>{infoText}</DashboardCardHelp>
@@ -50,13 +50,12 @@ export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
       text = <LoadingInline />;
     } else if (!_.isNil(savings)) {
       const savingsPercentage = logicalSize
-        ? humanizePercentage((100 * Number(savings)) / Number(logicalSize))
+        ? `(${humanizePercentage((100 * Number(savings)) / logicalSize).string})`
         : null;
       const savingsFormattted = humanizeBinaryBytesWithoutB(Number(savings));
       text = (
         <span className="nb-object-data-reduction-card__row-status-item-text">
-          {savingsFormattted.value}
-          {savingsFormattted.unit}({savingsPercentage.string})
+          {`${savingsFormattted.string} ${savingsPercentage}`}
         </span>
       );
     }
@@ -83,6 +82,6 @@ type EfficiencyItemProps = {
 
 type SavingsItemProps = {
   savings: string;
-  logicalSize: string;
+  logicalSize: number;
   isLoading: boolean;
 };
