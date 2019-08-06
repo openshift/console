@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow, mount, } from 'enzyme';
+import { shallow, mount, ReactWrapper } from 'enzyme';
 
 import { clusterVersionProps } from '../../__mocks__/clusterVersinMock';
 import {
@@ -20,6 +20,7 @@ import {
     getClusterUpdateStatus,
     ClusterUpdateStatus,
     getClusterID,
+    K8sResourceKind,
 } from '../../public/module/k8s';
 import {
     Firehose,
@@ -34,7 +35,7 @@ import { PodModel, } from '../../public/models';
 import { referenceForModel } from '../../public/module/k8s';
 import { Firehose } from '../../public/components/utils';
 import * as dependency from '../../public/components/modals';
-import * as dep from '../../public/module/k8s';
+
 
 
 
@@ -88,8 +89,7 @@ describe('Cluster Version Details Table page', () => {
     beforeEach(() => {
         cv = clusterVersionProps;
 
-
-        wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
+        wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />)
     });
 
     it('should render ClusterVersionDetailsTable component', () => {
@@ -115,29 +115,14 @@ describe('Cluster Version Details Table page', () => {
     it('should render correct  title Update Status', () => {
         expect(wrapper.contains('Update Status')).toBeTruthy();
     });
-    // xit('should render correct  Cluster ID', () => {
-    //     //expect(wrapper.find('.co-break-all .co-select-to-copy')).toBe();
-    //     getClusterID = jest.fn((cv, 'test')=> 'testing')
-    //     expect(wrapper.contains('Hello')).toBeTruthy();
-    // });
 
     it('should render correct Cluster ID, Desired Release Image, and Cluster Version Configuration values', () => {
         const row0 = wrapper.childAt(0).childAt(1).childAt(0);
 
         expect((row0.props().children[0])).toEqual(<dt>Cluster ID</dt>);
         expect((row0.props().children[1])).toEqual(<dd className="co-break-all co-select-to-copy">342d8338-c08f-44ae-a82e-a032a4481fa9</dd>);
-
+        // expect((row0.props().children[2])).toEqual(<dt>Desired Release Image</dt>);
     });
-
-    // it('should render correct history table', () => {
-    //     const tiles = wrapper.find('table'); 
-
-    //     expect(tiles.exists()).toBe(true);
-    //   //  expect(tiles.length).toEqual(31);
-
-    //     console.log( tiles)
-    //   //  expect(wrapper.props().history[0]).toBe('home');
-    // });
 });
 
 
@@ -186,16 +171,6 @@ describe('Update Status', () => {
         expect(wrapper.text()).toBe(' Up to date');
     });
 
-    xit('calls the dependency - clusterChannelModal with props', () => {
-        dep.ClusterUpdateStatus.Updating = jest.fn();
-
-        // wrapper.find('button').first().simulate('click');
-        // expect(dependency.clusterChannelModal).toHaveBeenCalledTimes(1);
-        // const props = {cv: cv};
-        // expect(dependency.clusterChannelModal).toBeCalledWith(props);
-        expect(wrapper.text()).toBe(' Updating');
-    });
-
 });
 describe('Current Version', () => {
     let wrapper;
@@ -229,4 +204,34 @@ describe('Current Version Header', () => {
     });
 
 
+});
+
+describe('Using Mount : Cluster Version Details Table page', () => {
+    let wrapper;
+
+    let cv;
+
+    beforeEach(() => {
+        cv = clusterVersionProps;
+
+        wrapper = mount(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
+    });
+
+
+    xit('should render correct Cluster ID, Desired Release Image, and Cluster Version Configuration values', () => {
+        const row0 = wrapper.childAt(0).childAt(1).childAt(0);
+
+        //  const checkList = wrapper.props();
+        //  console.log(checkList);
+        //  expect(checkList.obj.spec.clusterID).toEqual("342d8338-c08f-44ae-a82e-a032a4481fa9");
+
+        // expect((row0.props().children[0])).toEqual(<dt>Cluster ID</dt>);
+        // expect((row0.props().children[1])).toEqual(<dd className="co-break-all co-select-to-copy">342d8338-c08f-44ae-a82e-a032a4481fa9</dd>);
+        // expect((row0.props().children[2])).toEqual(<dt>Desired Release Image</dt>);
+        // expect((row0.props().children[3])).toEqual(<dt>Desired Release Image</dt>);
+        // expect((row0.props().children[4])).toEqual(<dt>Cluster Version Configuration</dt>);
+        // expect((row0.props().children[5])).toEqual(<dt>Desired Release Image</dt>);
+
+        //expect(wrapper.find('.co-break-all3fdd')).toEqual(<dt>Desired Release Image</dt>);
+    });
 });
