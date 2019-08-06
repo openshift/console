@@ -75,7 +75,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Service Details</DashboardCardTitle>
+        <DashboardCardTitle>Details</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
