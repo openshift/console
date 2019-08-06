@@ -164,6 +164,7 @@ export const config: Config = {
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
       'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
       'tests/crd-extensions.scenario.ts',
     ]),
     login: [
@@ -171,6 +172,7 @@ export const config: Config = {
     ],
     devconsole: [
       'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
     ],
   },
   params: {

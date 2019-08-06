@@ -28,7 +28,11 @@ const ODCEmptyState: React.FunctionComponent<Props> = ({ title, activeNamespace 
             <CardHeader>Import from Git</CardHeader>
             <CardBody>Import code from your git repository to be built and deployed </CardBody>
             <CardFooter>
-              <Link className="pf-c-button pf-m-secondary" to="/import?importType=git">
+              <Link
+                data-test-id="import-from-git"
+                className="pf-c-button pf-m-secondary"
+                to="/import?importType=git"
+              >
                 Import from Git
               </Link>
             </CardFooter>

@@ -1,9 +1,9 @@
 import { browser, $ } from 'protractor';
 import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
-import {
-  switchPerspective,
-  Perspective,
-} from '../../views/devconsole-view/dev-perspective.view';
+import { switchPerspective, Perspective } from '../../views/devconsole-view/dev-perspective.view';
+
+export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
+export const sideHeader = $('#page-sidebar .oc-nav-header h1');
 
 describe('Application Launcher Menu', () => {
   beforeAll(async() => {
@@ -14,10 +14,6 @@ describe('Application Launcher Menu', () => {
     checkLogs();
     checkErrors();
   });
-
-  const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
-  const sideHeader = $('#page-sidebar .oc-nav-header h1');
-
 
   it('Switch from admin to dev perspective', async() => {
     await switchPerspective(Perspective.Administrator);
@@ -34,5 +30,4 @@ describe('Application Launcher Menu', () => {
     expect(sideHeader.getText()).toContain('Administrator');
     expect(pageSidebar.getText()).toContain('Administration');
   });
-
 });
