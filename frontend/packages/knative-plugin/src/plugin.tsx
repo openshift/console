@@ -13,7 +13,13 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
-import { FLAG_KNATIVE_SERVING } from './const';
+import {
+  FLAG_KNATIVE_SERVING_CONFIGURATION,
+  FLAG_KNATIVE_SERVING,
+  FLAG_KNATIVE_SERVING_REVISION,
+  FLAG_KNATIVE_SERVING_ROUTE,
+  FLAG_KNATIVE_SERVING_SERVICE,
+} from './const';
 import { knativeServingResources } from './utils/create-knative-utils';
 import { getKnativeServingResources } from './utils/get-knative-resources';
 
@@ -37,8 +43,36 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
+      model: models.ConfigurationModel,
+      flag: FLAG_KNATIVE_SERVING_CONFIGURATION,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
       model: models.KnativeServingModel,
       flag: FLAG_KNATIVE_SERVING,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.RevisionModel,
+      flag: FLAG_KNATIVE_SERVING_REVISION,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.RouteModel,
+      flag: FLAG_KNATIVE_SERVING_ROUTE,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ServiceModel,
+      flag: FLAG_KNATIVE_SERVING_SERVICE,
     },
   },
   {
@@ -59,7 +93,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.ServiceModel.labelPlural,
         resource: referenceForModel(models.ServiceModel),
-        required: FLAG_KNATIVE_SERVING,
+        required: FLAG_KNATIVE_SERVING_SERVICE,
       },
     },
   },
@@ -70,7 +104,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RevisionModel.labelPlural,
         resource: referenceForModel(models.RevisionModel),
-        required: FLAG_KNATIVE_SERVING,
+        required: FLAG_KNATIVE_SERVING_REVISION,
       },
     },
   },
@@ -81,7 +115,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RouteModel.labelPlural,
         resource: referenceForModel(models.RouteModel),
-        required: FLAG_KNATIVE_SERVING,
+        required: FLAG_KNATIVE_SERVING_ROUTE,
       },
     },
   },
