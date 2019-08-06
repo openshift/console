@@ -23,3 +23,8 @@ export const getProjectOverviewListItem = (kindModel, name) => {
 export const sidebarIsLoaded = () => {
   return browser.wait(until.presenceOf($('.resource-overview')));
 };
+
+export const ClickOverviewItemsDetailsPodsLink = async(kindModel) => {
+  const OverviewListItemsPodsLink = $(`.project-overview__item--${kindModel.kind} .project-overview__detail--status a`);
+  await OverviewListItemsPodsLink.click();
+};
