@@ -77,7 +77,11 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
     // If autoSelect is true only then have an item pre-selected based on selectedKey.
     if (autoSelect) {
-      const selectedItemKey = !selectedKey ? _.get(_.keys(this.state.items), 0) : selectedKey;
+      const dropdownItem =
+        this.props.loaded && _.isEmpty(this.state.items) && this.props.actionItem
+          ? this.props.actionItem.actionKey
+          : _.get(_.keys(this.state.items), 0);
+      const selectedItemKey = selectedKey || dropdownItem;
       this.onChange(selectedItemKey);
     } else if (!this.props.loaded || !selectedKey) {
       this.setState({
