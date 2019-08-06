@@ -1,19 +1,16 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router-dom';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import ServiceList from './ServiceList';
 
 export interface ServicesPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
+  namespace: string;
 }
 
-const ServicesPage: React.FC<ServicesPageProps> = ({ match }) => (
+const ServicesPage: React.FC<ServicesPageProps> = ({ namespace }) => (
   <ListPage
-    namespace={match.params.ns}
+    namespace={namespace}
     canCreate
     kind={referenceForModel(ServiceModel)}
     ListComponent={ServiceList}

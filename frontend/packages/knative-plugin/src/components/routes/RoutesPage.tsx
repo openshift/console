@@ -1,19 +1,16 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router-dom';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../models';
 import RouteList from './RouteList';
 
 export interface RoutesPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
+  namespace: string;
 }
 
-const RoutesPage: React.FC<RoutesPageProps> = ({ match }) => (
+const RoutesPage: React.FC<RoutesPageProps> = ({ namespace }) => (
   <ListPage
-    namespace={match.params.ns}
+    namespace={namespace}
     canCreate={false}
     kind={referenceForModel(RouteModel)}
     ListComponent={RouteList}
