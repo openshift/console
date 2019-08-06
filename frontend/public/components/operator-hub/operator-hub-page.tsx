@@ -26,7 +26,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       obj: pkg,
       kind: PackageManifestModel.kind,
       name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-      uid: `${pkg.metadata.name}-${pkg.status.catalogSourceNamespace}`,
+      uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
       installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
       subscription: subscriptionFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
       // FIXME: Just use `installed`

@@ -1,5 +1,4 @@
 import { browser, $, element, ExpectedConditions as until, by } from 'protractor';
-import { safeDump, safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { execSync } from 'child_process';
 
@@ -11,11 +10,11 @@ import * as operatorHubView from '../../views/operator-hub.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
-describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', () => {
+describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
+  const jaegerResources = new Set(['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap']);
   const deleteRecoveryTime = 60000;
-  const redisOperatorName = 'redis-enterprise-operator';
-  const testLabel = 'automatedTestName';
-  const redisEnterpriseCluster = `${testName}-redisenterprisecluster`;
+  const jaegerOperatorName = 'jaeger-operator';
+  const jaegerName = 'my-jaeger';
 
   const catalogNamespace = _.get(browser.params, 'globalCatalogNamespace', 'openshift-marketplace');
   const globalOperatorsNamespace = _.get(browser.params, 'globalOperatorsNamespace', 'openshift-operators');
@@ -51,8 +50,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
   afterAll(() => {
     [
       `kubectl delete catalogsource -n ${catalogNamespace} ${catalogSource.metadata.name}`,
-      `kubectl delete subscription -n ${globalOperatorsNamespace} redis-enterprise`,
-      `kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} redis-enterprise-operator.v0.0.1`,
+      `kubectl delete subscription -n ${globalOperatorsNamespace} jaeger`,
+      `kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} jaeger-operator.v1.8.2`,
     ].forEach(cmd => _.attempt(() => execSync(cmd)));
   });
 
@@ -64,12 +63,12 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
   it('displays subscription creation form for selected Operator', async() => {
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
-    await catalogPageView.catalogTileFor('Redis Enterprise').click();
+    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
 
-    expect(operatorHubView.createSubscriptionFormName.getText()).toEqual('Redis Enterprise');
+    expect(operatorHubView.createSubscriptionFormName.getText()).toEqual('Jaeger Tracing');
   });
 
   it('selects all namespaces for Operator subscription', async() => {
@@ -87,86 +86,91 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox('installState-installed');
 
-    expect(catalogPageView.catalogTileFor('Redis Enterprise').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileFor('Jaeger Tracing').isDisplayed()).toBe(true);
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async() => {
-    await catalogPageView.catalogTileFor('Redis Enterprise').click();
+    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
 
-    await browser.wait(until.visibilityOf(crudView.rowForOperator('Redis Enterprise')), 30000);
+    await browser.wait(until.visibilityOf(crudView.rowForOperator('Jaeger Tracing')), 30000);
   });
 
-  it('creates Redis Operator `Deployment`', async() => {
+  it('creates Operator `Deployment`', async() => {
     await browser.get(`${appHost}/k8s/all-namespaces/deployments`);
     await crudView.isLoaded();
-    await crudView.filterForName(redisOperatorName);
-    await browser.wait(until.textToBePresentInElement(crudView.rowForName(redisOperatorName).$('a[title=pods]'), '1 of 1 pods'), 100000);
+    await crudView.filterForName(jaegerOperatorName);
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(jaegerOperatorName).$('a[title=pods]'), '1 of 1 pods'), 100000);
 
-    expect(crudView.rowForName(redisOperatorName).isDisplayed()).toBe(true);
+    expect(crudView.rowForName(jaegerOperatorName).isDisplayed()).toBe(true);
   });
 
-  xit('recreates Redis Operator `Deployment` if manually deleted', async() => {
-    await crudView.deleteRow('Deployment')(redisOperatorName);
-    await browser.wait(until.textToBePresentInElement(crudView.rowForName(redisOperatorName).$('a[title=pods]'), '0 of 1 pods'));
-    await browser.wait(until.textToBePresentInElement(crudView.rowForName(redisOperatorName).$('a[title=pods]'), '1 of 1 pods'));
+  xit('recreates Operator `Deployment` if manually deleted', async() => {
+    await crudView.deleteRow('Deployment')(jaegerOperatorName);
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(jaegerOperatorName).$('a[title=pods]'), '0 of 1 pods'));
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(jaegerOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
-    expect(crudView.rowForName(redisOperatorName).isDisplayed()).toBe(true);
+    expect(crudView.rowForName(jaegerOperatorName).isDisplayed()).toBe(true);
   }, deleteRecoveryTime);
 
-  it('displays metadata about Redis Operator in the "Overview" section', async() => {
+  it('displays metadata about Operator in the "Overview" section', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await crudView.rowForOperator('Redis Enterprise').$('.co-clusterserviceversion-logo').click();
+    await crudView.rowForOperator('Jaeger Tracing').$('.co-clusterserviceversion-logo').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
   });
 
-  it('displays empty message in the "Redis Enterprise Cluster" section', async() => {
-    await element(by.linkText('Redis Enterprise Cluster')).click();
+  it('displays empty message in the "Jaeger" section', async() => {
+    await element(by.linkText('Jaeger')).click();
     await crudView.isLoaded();
 
     expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
     expect(crudView.statusMessageDetail.getText()).toEqual('Operands are declarative components used to define the behavior of the application.');
   });
 
-  it('displays YAML editor for creating a new `RedisEnterpriseCluster` instance', async() => {
-    await browser.wait(until.visibilityOf(element(by.buttonText('Create Redis Enterprise Cluster'))));
-    await element(by.buttonText('Create Redis Enterprise Cluster')).click();
+  it('displays YAML editor for creating a new `Jaeger` instance', async() => {
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create Jaeger'))));
+    await element(by.buttonText('Create Jaeger')).click();
     await yamlView.isLoaded();
 
-    const content = await yamlView.getEditorContent();
-    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-redisenterprisecluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
-    await yamlView.setEditorContent(safeDump(newContent));
-
-    expect($('.co-create-operand__header').getText()).toContain('Create Redis Enterprise Cluster');
+    expect($('.co-create-operand__header').getText()).toContain('Create Jaeger');
   });
 
-  it('displays new `RedisEnterpriseCluster` that was created from YAML editor', async() => {
+  it('displays new `Jaeger` that was created from YAML editor', async() => {
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName(redisEnterpriseCluster)));
+    await browser.wait(until.visibilityOf(crudView.rowForName(jaegerName)));
 
-    expect(crudView.rowForName(redisEnterpriseCluster).getText()).toContain('RedisEnterpriseCluster');
+    expect(crudView.rowForName(jaegerName).getText()).toContain('Jaeger');
   });
 
-  it('displays metadata about the created `RedisEnterpriseCluster` in its "Overview" section', async() => {
-    await crudView.rowForName(redisEnterpriseCluster).element(by.linkText(redisEnterpriseCluster)).click();
+  it('displays metadata about the created `Jaeger` in its "Overview" section', async() => {
+    await crudView.rowForName(jaegerName).element(by.linkText(jaegerName)).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
-  it('displays the raw YAML for the `RedisEnterpriseCluster`', async() => {
+  it('displays the raw YAML for the `Jaeger`', async() => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
     await $('.yaml-editor__buttons').element(by.buttonText('Save')).click();
     await browser.wait(until.visibilityOf(crudView.successMessage), 2000);
 
-    expect(crudView.successMessage.getText()).toContain(`${redisEnterpriseCluster} has been updated to version`);
+    expect(crudView.successMessage.getText()).toContain(`${jaegerName} has been updated to version`);
+  });
+
+  it('displays Kubernetes objects associated with the `Jaeger` in its "Resources" section', async() => {
+    await element(by.linkText('Resources')).click();
+    await crudView.isLoaded();
+
+    jaegerResources.forEach(kind => {
+      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
+    });
   });
 
   it('displays button to uninstall the Operator', async() => {
@@ -174,7 +178,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
     await catalogPageView.clickFilterCheckbox('installState-installed');
-    await catalogPageView.catalogTileFor('Redis Enterprise').click();
+    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
     await operatorHubView.operatorModalIsLoaded();
 
     expect(operatorHubView.operatorModalUninstallBtn.isDisplayed()).toBe(true);
@@ -186,6 +190,6 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await element(by.cssContainingText('#confirm-action', 'Remove')).click();
     await crudView.isLoaded();
 
-    expect(crudView.rowForOperator('Redis Enterprise').isPresent()).toBe(false);
+    expect(crudView.rowForOperator('Jaeger Tracing').isPresent()).toBe(false);
   });
 });
