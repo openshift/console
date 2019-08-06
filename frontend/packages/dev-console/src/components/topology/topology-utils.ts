@@ -22,6 +22,8 @@ export const podColor = {
   Terminating: '#002F5D',
   Unknown: '#A18FFF',
   'Scaled to 0': '#FFFFFF',
+  Idle: '#FFFFFF',
+  'Autoscaled to 0': '#FFFFFF',
 };
 
 export const podStatus = Object.keys(podColor);
@@ -471,13 +473,20 @@ export class TransformTopologyData {
     if (
       dcPodsData &&
       !dcPodsData.length &&
-      (this.isKnativeServing(replicationController, 'metadata.labels') ||
-        this.isIdled(deploymentConfig))
+      this.isKnativeServing(replicationController, 'metadata.labels')
     ) {
       return [
         {
           ..._.pick(replicationController, 'metadata', 'status', 'spec'),
-          status: { phase: 'Scaled to 0' },
+          status: { phase: 'Autoscaled to 0' },
+        },
+      ];
+    }
+    if (dcPodsData && !dcPodsData.length && this.isIdled(deploymentConfig)) {
+      return [
+        {
+          ..._.pick(replicationController, 'metadata', 'status', 'spec'),
+          status: { phase: 'Idle' },
         },
       ];
     }

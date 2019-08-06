@@ -37,6 +37,11 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
       x: pod,
       y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
     }));
+
+    if (_.isEmpty(data)) {
+      _.update(vData, `[${_.findKey(vData, { x: 'Scaled to 0' })}]['y']`, () => 1);
+    }
+
     const tooltipEvent: any = showTooltip
       ? [
           {
@@ -86,7 +91,10 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
         style={{
           data: {
             fill: (d: PodData) => podColor[d.x],
-            stroke: (d: PodData) => (d.x === 'Scaled to 0' && d.y > 0 ? '#BBBBBB' : 'none'),
+            stroke: (d: PodData) =>
+              (d.x === 'Scaled to 0' || d.x === 'Idle' || d.x === 'Autoscaled to 0') && d.y > 0
+                ? '#BBBBBB'
+                : 'none',
             strokeWidth: 1,
           },
         }}
