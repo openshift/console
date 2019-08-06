@@ -9,8 +9,11 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { FirehoseResource } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '@console/internal/models';
 import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES, VMS } from '../../../../constants';
-import { TOP_CONSUMER_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
+import { StorageDashboardQuery, TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
 import { TopConsumersBody } from './top-consumers-card-body';
 import './top-consumers-card.scss';
 
@@ -24,12 +27,19 @@ const TopConsumerSortByValue = {
   [BY_USED]: 'BY_USED',
   [BY_REQUESTED]: 'BY_REQUESTED',
 };
-
 const TopConsumerResourceValueMapping = {
   Projects: 'namespace',
   'Storage Classes': 'storageclass',
   Pods: 'pod',
 };
+
+const k8sResources: FirehoseResource[] = [
+  {
+    isList: true,
+    kind: StorageClassModel.kind,
+    prop: 'sc',
+  },
+];
 
 const metricTypes = _.keys(TopConsumerResourceValue);
 const sortByTypes = _.keys(TopConsumerSortByValue);
@@ -38,22 +48,39 @@ const metricTypesOptions = _.zipObject(metricTypes, metricTypes);
 const sortByOptions = _.zipObject(sortByTypes, sortByTypes);
 
 const TopConsumerCard: React.FC<DashboardItemProps> = ({
-  watchPrometheus,
-  stopWatchPrometheusQuery,
   prometheusResults,
+  resources,
+  stopWatchK8sResource,
+  stopWatchPrometheusQuery,
+  watchK8sResource,
+  watchPrometheus,
 }) => {
   const [metricType, setMetricType] = React.useState(metricTypes[0]);
   const [sortBy, setSortBy] = React.useState(sortByTypes[0]);
   React.useEffect(() => {
+    k8sResources.forEach((r) => watchK8sResource(r));
     const query =
       TOP_CONSUMER_QUERIES[
         StorageDashboardQuery[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]]
       ];
     watchPrometheus(query);
-    return () => stopWatchPrometheusQuery(query);
-  }, [watchPrometheus, stopWatchPrometheusQuery, metricType, sortBy]);
+    return () => {
+      k8sResources.forEach((r) => stopWatchK8sResource(r));
+      stopWatchPrometheusQuery(query);
+    };
+  }, [
+    watchK8sResource,
+    stopWatchK8sResource,
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    metricType,
+    sortBy,
+  ]);
 
-  const topConsumerstats = prometheusResults.getIn([
+  const scLoaded = _.get(resources.sc, 'loaded');
+  const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
+
+  const topConsumerStats = prometheusResults.getIn([
     TOP_CONSUMER_QUERIES[
       StorageDashboardQuery[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]]
     ],
@@ -85,9 +112,11 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <TopConsumersBody
-          topConsumerStats={topConsumerstats}
+          topConsumerStats={topConsumerStats}
           metricType={TopConsumerResourceValueMapping[metricType]}
           sortByOption={sortBy}
+          scLoaded={scLoaded}
+          scData={scData}
         />
       </DashboardCardBody>
     </DashboardCard>

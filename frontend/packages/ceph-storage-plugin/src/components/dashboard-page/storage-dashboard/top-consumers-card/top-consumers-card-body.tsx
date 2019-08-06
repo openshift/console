@@ -14,8 +14,11 @@ import {
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import { EmptyState, EmptyStateIcon, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
-import { getGraphVectorStats, getMetricType } from './utils';
+import { getfilteredTopConsumerStats, getGraphVectorStats, getMetricType } from './utils';
+
+const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 
 const chartPropsValue = {
   chartHeight: 175,
@@ -27,6 +30,7 @@ const chartLegendPropsValue = {
   symbolSpacer: 7,
   height: 30,
   gutter: 10,
+  itemPerRow: 5,
 };
 
 const getYTickValues = (value: number): number[] => [
@@ -38,24 +42,48 @@ const getYTickValues = (value: number): number[] => [
   Math.floor((6 * value) / 4),
 ];
 
+const getFilteredStorageClassData = (
+  storageClassData: K8sResourceKind[],
+): K8sResourceKind[] =>
+  storageClassData.filter((sc: K8sResourceKind) =>
+    cephStorageProvisioners.includes(_.get(sc, 'provisioner')),
+  );
+
+const sortNamespaces = (a, b) => {
+  const aLength = _.get(a, 'values').length;
+  const bLength = _.get(b, 'values').length;
+  const x = _.get(a, ['values', aLength - 1, 1]);
+  const y = _.get(b, ['values', bLength - 1, 1]);
+  return y - x;
+};
+
+const getFilteredMetrics = (scLoaded, scData, topConsumerStats) => {
+  const filteredSCData = getFilteredStorageClassData(scData);
+  const filteredSCNames = filteredSCData.map((sc) => _.get(sc, 'metadata.name'));
+  return getfilteredTopConsumerStats(scLoaded, topConsumerStats, filteredSCNames);
+};
+
+const getMaxCapacity = (topConsumerStatsResult) => {
+  const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
+  const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
+  return humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
+};
+
 export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
-  ({ topConsumerStats, metricType, sortByOption }) => {
+  ({ topConsumerStats, metricType, sortByOption, scLoaded, scData }) => {
     if (!topConsumerStats) {
       return <LoadingInline />;
     }
-    const topConsumerStatsResult = _.get(topConsumerStats, 'data.result', []);
+    const topConsumerStatsResult = getFilteredMetrics(scLoaded, scData, topConsumerStats);
+
     if (topConsumerStatsResult.length) {
+      const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
+      const sortedResult = topConsumerStatsResult.sort(sortNamespaces);
       const legends = topConsumerStatsResult.map((resource) => ({
         name: getMetricType(resource, metricType),
       }));
-      const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
-      const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
-      const maxCapacityConverted = humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
-      const chartData = getGraphVectorStats(
-        topConsumerStats,
-        metricType,
-        maxCapacityConverted.unit,
-      );
+
+      const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
       const chartLineList = chartData.map((data, i) => (
         <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key
@@ -95,6 +123,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             symbolSpacer={chartLegendPropsValue.symbolSpacer}
             height={chartLegendPropsValue.height}
             gutter={chartLegendPropsValue.gutter}
+            itemsPerRow={chartLegendPropsValue.itemPerRow}
             orientation="horizontal"
             style={{
               labels: { fontSize: 8 },
@@ -116,4 +145,6 @@ type TopConsumerBodyProps = {
   topConsumerStats: PrometheusResponse[];
   metricType?: string;
   sortByOption?: string;
+  scLoaded: boolean;
+  scData: K8sResourceKind[];
 };

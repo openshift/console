@@ -5,8 +5,7 @@ import { PrometheusResponse, DataPoint } from '@console/internal/components/grap
 export const getMetricType = (resource, metricType) => _.get(resource, ['metric', metricType], '');
 
 export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
-  const result = _.get(response, 'data.result', []);
-  return result.map((r) => {
+  return response.map((r) => {
     return r.values.map((arr) => ({
       name: getMetricType(r, metricType),
       x: new Date(arr[0] * 1000),
@@ -15,4 +14,29 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
   });
 };
 
-type GetStats = (response: PrometheusResponse[], metric?: string, unit?: string) => DataPoint[];
+export const getfilteredTopConsumerStats: FilterTopConsumer = (
+  scLoaded,
+  topConsumerStats,
+  filteredSCNames,
+) => {
+  let filteredTopConsumerStats = [];
+  const result = _.get(topConsumerStats, 'data.result', []);
+  if (scLoaded) {
+    filteredTopConsumerStats = result.filter((stats: PrometheusResponse['data']['result']) =>
+      filteredSCNames.includes(_.get(stats, 'metric.storageclass')),
+    );
+  }
+  return filteredTopConsumerStats;
+};
+
+type GetStats = (
+  response: PrometheusResponse['data']['result'][],
+  metric?: string,
+  unit?: string,
+) => DataPoint[][];
+
+type FilterTopConsumer = (
+  scLoaded: boolean,
+  topConsumerStats: PrometheusResponse,
+  filteredSCNames: string[],
+) => PrometheusResponse['data']['result'][];
