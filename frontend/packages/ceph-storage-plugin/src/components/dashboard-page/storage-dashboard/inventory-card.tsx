@@ -19,9 +19,10 @@ import {
   NodeModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
+  StorageClassModel,
 } from '@console/internal/models';
 import { ResourceInventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
-import { getCephNodes, getCephPVs, getCephPVCs } from '../../../selectors';
+import { getCephNodes, getCephPVs, getCephPVCs, getCephSC } from '../../../selectors';
 
 const k8sResources: FirehoseResource[] = [
   {
@@ -38,6 +39,11 @@ const k8sResources: FirehoseResource[] = [
     isList: true,
     kind: PersistentVolumeClaimModel.kind,
     prop: 'pvcs',
+  },
+  {
+    isList: true,
+    kind: StorageClassModel.kind,
+    prop: 'sc',
   },
 ];
 
@@ -65,6 +71,10 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   const pvsLoadError = _.get(resources.pvs, 'loadError');
   const pvsData = _.get(resources.pvs, 'data', []) as K8sResourceKind[];
 
+  const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
+  const filteredCephSc = getCephSC(scData);
+  const filteredSCNames = filteredCephSc.map((sc) => _.get(sc, 'metadata.name'));
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -83,7 +93,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           error={!!pvcsLoadError}
           kind={PersistentVolumeClaimModel}
           useAbbr
-          resources={getCephPVCs(pvcsData)}
+          resources={getCephPVCs(filteredSCNames, pvcsData)}
           mapper={getPVCStatusGroups}
         />
         <ResourceInventoryItem

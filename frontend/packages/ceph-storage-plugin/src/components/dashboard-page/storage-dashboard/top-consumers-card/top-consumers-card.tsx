@@ -10,7 +10,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES, VMS } from '../../../../constants';
-import { TOP_CONSUMER_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
+import { StorageDashboardQuery, TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
 import { TopConsumersBody } from './top-consumers-card-body';
 import './top-consumers-card.scss';
 
@@ -24,7 +24,6 @@ const TopConsumerSortByValue = {
   [BY_USED]: 'BY_USED',
   [BY_REQUESTED]: 'BY_REQUESTED',
 };
-
 const TopConsumerResourceValueMapping = {
   Projects: 'namespace',
   'Storage Classes': 'storageclass',
@@ -38,9 +37,9 @@ const metricTypesOptions = _.zipObject(metricTypes, metricTypes);
 const sortByOptions = _.zipObject(sortByTypes, sortByTypes);
 
 const TopConsumerCard: React.FC<DashboardItemProps> = ({
-  watchPrometheus,
-  stopWatchPrometheusQuery,
   prometheusResults,
+  stopWatchPrometheusQuery,
+  watchPrometheus,
 }) => {
   const [metricType, setMetricType] = React.useState(metricTypes[0]);
   const [sortBy, setSortBy] = React.useState(sortByTypes[0]);
@@ -53,7 +52,7 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
     return () => stopWatchPrometheusQuery(query);
   }, [watchPrometheus, stopWatchPrometheusQuery, metricType, sortBy]);
 
-  const topConsumerstats = prometheusResults.getIn([
+  const topConsumerStats = prometheusResults.getIn([
     TOP_CONSUMER_QUERIES[
       StorageDashboardQuery[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]]
     ],
@@ -85,7 +84,7 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <TopConsumersBody
-          topConsumerStats={topConsumerstats}
+          topConsumerStats={topConsumerStats}
           metricType={TopConsumerResourceValueMapping[metricType]}
           sortByOption={sortBy}
         />

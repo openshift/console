@@ -38,6 +38,20 @@ const getYTickValues = (value: number): number[] => [
   Math.floor((6 * value) / 4),
 ];
 
+const sortResources: SortResourcesProps = (a, b) => {
+  const aVal = _.get(a, 'values');
+  const bVal = _.get(b, 'values');
+  const x = _.get(a, ['values', aVal.length - 1, 1]);
+  const y = _.get(b, ['values', bVal.length - 1, 1]);
+  return y - x;
+};
+
+const getMaxCapacity = (topConsumerStatsResult: PrometheusResponse['data']['result']) => {
+  const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
+  const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
+  return humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
+};
+
 export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
   ({ topConsumerStats, metricType, sortByOption }) => {
     if (!topConsumerStats) {
@@ -45,17 +59,13 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     }
     const topConsumerStatsResult = _.get(topConsumerStats, 'data.result', []);
     if (topConsumerStatsResult.length) {
+      const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
+      const sortedResult = topConsumerStatsResult.sort(sortResources);
       const legends = topConsumerStatsResult.map((resource) => ({
         name: getMetricType(resource, metricType),
       }));
-      const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
-      const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
-      const maxCapacityConverted = humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
-      const chartData = getGraphVectorStats(
-        topConsumerStats,
-        metricType,
-        maxCapacityConverted.unit,
-      );
+
+      const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
       const chartLineList = chartData.map((data, i) => (
         <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key
@@ -112,3 +122,8 @@ type TopConsumerBodyProps = {
   metricType?: string;
   sortByOption?: string;
 };
+
+type SortResourcesProps = (
+  a: PrometheusResponse['data']['result'],
+  b: PrometheusResponse['data']['result'],
+) => number;
