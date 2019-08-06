@@ -5,7 +5,11 @@ import {
   Perspective,
 } from '../../views/devconsole-view/dev-perspective.view';
 
+export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
+export const sideHeader = $('#page-sidebar .oc-nav-header h1');
+
 describe('Application Launcher Menu', () => {
+  
   beforeAll(async() => {
     await browser.get(`${appHost}/k8s/cluster/projects`);
   });
@@ -14,10 +18,6 @@ describe('Application Launcher Menu', () => {
     checkLogs();
     checkErrors();
   });
-
-  const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
-  const sideHeader = $('#page-sidebar .oc-nav-header h1');
-
 
   it('Switch from admin to dev perspective', async() => {
     await switchPerspective(Perspective.Administrator);
