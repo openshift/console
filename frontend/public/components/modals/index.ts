@@ -68,3 +68,6 @@ export const removeVolumeModal = (props) => import('./remove-volume-modal' /* we
 
 export const configureMachineAutoscalerModal = (props) => import('./configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */)
   .then(m => m.configureMachineAutoscalerModal(props));
+
+export const createAlertRoutingModal = (props) => import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */)
+  .then(m => m.createAlertRoutingModal(props));
