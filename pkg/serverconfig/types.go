@@ -1,6 +1,5 @@
 package serverconfig
 
-
 // This file is a copy of the struct within the console operator:
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
@@ -14,6 +13,7 @@ type Config struct {
 	Auth          `yaml:"auth"`
 	Customization `yaml:"customization"`
 	Providers     `yaml:"providers"`
+	Proxy         `yaml:"proxy"`
 }
 
 // ServingInfo holds configuration for serving HTTP.
@@ -58,4 +58,9 @@ type Customization struct {
 
 type Providers struct {
 	StatuspageID string `yaml:"statuspageID,omitempty"`
+}
+
+// Proxy holds proxy configuration
+type Proxy struct {
+	TrustedCAFile string `yaml:"trustedCAFile,omitempty"`
 }
