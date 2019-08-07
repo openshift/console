@@ -237,7 +237,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       });
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [disabledSeriesKey, filterLabels, results, samples, span]);
+  ), [disabledSeriesKey, filterLabels, results]);
 
   const onSpanChange = React.useCallback((newSpan: number) => {
     setDomain(undefined);
