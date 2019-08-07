@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { MatchExpression } from '../../../../module/k8s';
@@ -21,7 +22,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
     </div>
     { props.matchExpressions.map((expression, i) => <div className="row toleration-modal__row" key={i}>
       <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
-        <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
+        <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Key</div>
         <input
           type="text"
           className="form-control"
@@ -29,7 +30,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
           onChange={e => changeKey(e.target.value, i)} />
       </div>
       <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-        <div className="hidden-md hidden-lg text-secondary text-uppercase">Operator</div>
+        <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Operator</div>
         <Dropdown
           className="toleration-modal__dropdown"
           dropDownClassName="dropdown--full-width"
@@ -40,7 +41,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
       </div>
       <div className="clearfix visible-sm visible-xs"></div>
       <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
-        <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
+        <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Value</div>
         <input
           type="text"
           className="form-control"
@@ -51,7 +52,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
       <div className="col-md-1 col-sm-2 col-xs-2">
         <button
           type="button"
-          className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon"
+          className="pf-c-button pf-m-plain btn-link--inherit-color toleration-modal__delete-icon"
           onClick={() => props.onChangeMatchExpressions(props.matchExpressions.filter((e, index) => index !== i))}
           aria-label="Delete">
           <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
@@ -59,13 +60,14 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
       </div>
     </div>) }
     <div className="row">
-      <button
+      <Button
+        className="pf-m-link--align-left"
         type="button"
-        className="btn btn-link"
         style={{marginLeft: '10px'}}
-        onClick={() => onChangeMatchExpressions(matchExpressions.concat({key: '', operator: 'Exists'}))}>
+        onClick={() => onChangeMatchExpressions(matchExpressions.concat({key: '', operator: 'Exists'}))}
+        variant="link">
         <PlusCircleIcon className="co-icon-space-r" />Add More
-      </button>
+      </Button>
     </div>
   </React.Fragment>;
 };

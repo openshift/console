@@ -94,16 +94,22 @@
 }
 
 .toleration-modal__field, .taint-modal__field  {
-  padding-top: 5px;
   padding-right: 0;
 }
 
+.toleration-modal__field, .taint-modal__input {
+  margin-bottom: 5px;
+  @media(max-width: $screen-sm-max) {
+    margin-bottom: 10px;
+  }
+}
+
 .toleration-modal__heading, .taint-modal__heading {
-  margin-bottom: 0;
+  margin-bottom: 5px;
 }
 
 .toleration-modal__row, .taint-modal__row {
-  margin-bottom: 16px;
+  margin-bottom: 15px;
   @media(max-width: $screen-sm-max) {
     margin-bottom: 24px;
   }

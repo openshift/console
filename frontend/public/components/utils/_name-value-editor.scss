@@ -1,6 +1,4 @@
 $drag-column-width: 28px;
-$drag-row-margin-left: 8px;
-$drag-row-margin-top: 6px;
 
 .co-empty__header {
   padding: 0;
@@ -12,7 +10,24 @@ $drag-row-margin-top: 6px;
   width: $drag-column-width;
 }
 
+.pairs-list__action-icon {
+  background: transparent;
+  border: 0;
+  display: flex;
+  padding-left: $grid-gutter-width / 2 !important;
+}
+
+.pairs-list__action-icon--reorder {
+  cursor: move;
+}
+
+.pairs-list__heading {
+  margin-bottom: 5px;
+}
+
 .pairs-list__row {
+  align-items: center;
+  display: flex;
   padding-bottom: 15px;
 }
 
@@ -33,7 +48,6 @@ $drag-row-margin-top: 6px;
 
 .pairs-list__value-field,
 .pairs-list__name-field {
-  padding-top: 5px;
   padding-right: 0;
 }
 
@@ -52,22 +66,7 @@ $drag-row-margin-top: 6px;
   cursor: pointer;
 }
 
-.pairs-list__action-icon {
-  margin-left: $drag-row-margin-left;
-  margin-top: $drag-row-margin-top;
-  width: auto;
-}
-
-.pairs-list__action-icon--reorder {
-  cursor: move;
-}
-
-.pairs-list__delete-icon {
-  line-height: 35px;
-}
-
 .pairs-list__span-btns {
-  margin-left: -$drag-row-margin-left;
-  margin-top: $drag-row-margin-top;
-  white-space: pre;
+  border: 0;
+  display: flex;
 }

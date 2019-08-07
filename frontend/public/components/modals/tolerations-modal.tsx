@@ -121,11 +121,11 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
               const { key, operator, value, effect = '' } = t;
               return <div className="row toleration-modal__row" key={i}>
                 <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
+                  <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Key</div>
                   <input type="text" className="pf-c-form-control" value={key} onChange={(e) => this._change(e, i, 'key')} readOnly={!this._isEditable(t)} />
                 </div>
                 <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Operator</div>
+                  <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Operator</div>
                   { this._isEditable(t)
                     ? <Dropdown
                       className="toleration-modal__dropdown"
@@ -138,7 +138,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                 </div>
                 <div className="clearfix visible-sm visible-xs"></div>
                 <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
+                  <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Value</div>
                   <input
                     type="text"
                     className="pf-c-form-control"
@@ -147,7 +147,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                     readOnly={!this._isEditable(t) || operator === 'Exists'} />
                 </div>
                 <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                  <div className="hidden-md hidden-lg text-secondary text-uppercase">Effect</div>
+                  <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">Effect</div>
                   { this._isEditable(t)
                     ? <Dropdown
                       className="toleration-modal__dropdown"
@@ -160,7 +160,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                 </div>
                 <div className="col-md-1 col-sm-2 col-xs-2">
                   {this._isEditable(t) && (
-                    <button type="button" className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
+                    <button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
                       <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                     </button>
                   )}
@@ -170,7 +170,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
           </React.Fragment>
         }
         <Button
-          className="btn btn-link"
+          className="pf-m-link--align-left"
           onClick={this._addRow}
           type="button"
           variant="link">
