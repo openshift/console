@@ -6,14 +6,15 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { useRefWidth, humanizePercentage, Humanize } from '../utils';
 import { getInstantVectorStats } from './utils';
+import { DataPoint } from '.';
 
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 
 export const GaugeChart: React.FC<GaugeChartProps> = ({
   data,
-  error = false,
+  error,
+  humanize = humanizePercentage,
   invert = false,
-  label,
   loading,
   query = '',
   remainderLabel = 'available',
@@ -23,9 +24,12 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   usedLabel = 'used',
 
   // Don't sort, Uses previously declared props
+  label = data ? humanize(data.y).string : 'No Data',
   secondaryTitle = usedLabel,
 }) => {
   const [ref, width] = useRefWidth();
+  const ready = !error && !loading;
+  const status = loading ? 'Loading' : error;
   const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${d.y} ${remainderLabel}`;
   return <PrometheusGraph className="graph-wrapper--title-center graph-wrapper--gauge" ref={ref} title={title}>
     <PrometheusGraphLink query={query}>
@@ -37,12 +41,12 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
       >
         <ChartDonutUtilization
           labels={labels}
-          data={error ? { y: 0 } : data}
+          data={ready ? data : { y: 0 }}
           invert={invert}
-          subTitle={error || loading ? null : secondaryTitle}
+          subTitle={ready ? secondaryTitle : ''}
           themeColor={ChartThemeColor.green}
           thresholds={thresholds}
-          title={loading ? 'Loading' : error ? 'No Data' : label}
+          title={status || label}
           theme={theme}
         />
       </ChartDonutThreshold>
@@ -76,7 +80,7 @@ export const Gauge: React.FC<GaugeProps> = ({
   );
   return <GaugeChart
     data={data}
-    error={!!error}
+    error={!!error && 'No Data'}
     invert={invert}
     label={data.x}
     loading={loading}
@@ -91,11 +95,9 @@ export const Gauge: React.FC<GaugeProps> = ({
 };
 
 type GaugeChartProps = {
-  data: {
-    x: string,
-    y: React.ReactText,
-  };
-  error?: boolean;
+  data: DataPoint;
+  error?: string;
+  humanize?: Humanize;
   invert?: boolean;
   isLoaded?: boolean;
   label: string;
@@ -114,17 +116,17 @@ type GaugeChartProps = {
 
 type GaugeProps = {
   humanize?: Humanize;
+  invert?: boolean;
   namespace?: string;
   percent?: number;
-  invert?: boolean;
-  remainderLabel?: string,
   query?: string,
+  remainderLabel?: string,
+  secondaryTitle?: string,
   thresholds?: {
     value: number;
     color?: string;
   }[];
   title?: string,
-  usedLabel?: string,
   theme?: any,
-  secondaryTitle?: string,
+  usedLabel?: string,
 }
