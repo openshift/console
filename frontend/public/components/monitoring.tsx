@@ -1013,6 +1013,44 @@ const AlertManagerYAML = () => {
   </Firehose>;
 };
 
+const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
+  const alertPath = '/monitoring/alerts';
+  const silencePath = '/monitoring/silences';
+  const YAMLPath = '/monitoring/alertmanageryaml';
+  return <React.Fragment>
+    <div className="co-m-nav-title co-m-nav-title--detail">
+      <h1 className="co-m-pane__heading">
+        <div className="co-m-pane__name co-resource-item">
+          <span id="resource-title" className="co-resource-item__resource-name">Alerting</span>
+          <HeaderAlertmanagerLink path="/#/alerts" />
+        </div>
+      </h1>
+    </div>
+    <div className="co-m-horizontal-nav__menu">
+      <ul className="co-m-horizontal-nav__menu-primary">
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === alertPath})}>
+          <Link to={alertPath}>Alerts</Link>
+        </li>
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === silencePath})}>
+          <Link to={silencePath}>Silences</Link>
+        </li>
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === YAMLPath})}>
+          <Link to={YAMLPath}>YAML</Link>
+        </li>
+        <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
+      </ul>
+    </div>
+    <Switch>
+      <Route path="/monitoring/alerts" exact component={AlertsPage} />
+      <Route path="/monitoring/silences" exact component={SilencesPage} />
+      <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
+    </Switch>
+  </React.Fragment>;
+};
+
 const PollerPages = () => {
   React.useEffect(() => {
     const poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data: any[]) => any): void => {
@@ -1075,59 +1113,20 @@ const PollerPages = () => {
   }, []);
 
   return <Switch>
-    <Route path="/monitoring/alerts" exact component={AlertsPage} />
-    <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
+    <Route path="/monitoring/(alertmanageryaml|alerts|silences)" exact component={AlertingPage} />
     <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
-    <Route path="/monitoring/silences" exact component={SilencesPage} />
+    <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
     <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
     <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
   </Switch>;
 };
 
-export const MonitoringUI = ({match}) => <Switch>
+export const MonitoringUI = () => <Switch>
   <Redirect from="/monitoring" exact to="/monitoring/alerts" />
   <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
   <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
-  <Route path="/monitoring/(alertmanageryaml|alerts|silences)" exact render={() => <AlertingPage match={match} />} />
   <Route component={PollerPages} />
 </Switch>;
-
-const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
-  const AlertPath = '/monitoring/alerts';
-  const SilencePath = '/monitoring/silences';
-  const YAMLPath = '/monitoring/alertmanageryaml';
-  return <React.Fragment>
-    <div className="co-m-nav-title co-m-nav-title--detail">
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name co-resource-item">
-          <span id="resource-title" className="co-resource-item__resource-name">Alerting</span>
-          <HeaderAlertmanagerLink path="/#/alerts" />
-        </div>
-      </h1>
-    </div>
-    <div className="co-m-horizontal-nav__menu">
-      <ul className="co-m-horizontal-nav__menu-primary">
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertPath})}>
-          <Link to={AlertPath}>Alerts</Link>
-        </li>
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === SilencePath})}>
-          <Link to={SilencePath}>Silences</Link>
-        </li>
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === YAMLPath})}>
-          <Link to={YAMLPath}>YAML</Link>
-        </li>
-        <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
-      </ul>
-    </div>
-    <Switch>
-      <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
-      <Route component={PollerPages} />
-    </Switch>
-  </React.Fragment>;
-};
 
 type Silence = {
   comment: string;

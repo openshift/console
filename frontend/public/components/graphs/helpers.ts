@@ -10,16 +10,19 @@ export enum PrometheusEndpoint {
 
 // Range vector queries require end, start, and step search params
 const getRangeVectorSearchParams = (timespan: number, endTime: number = Date.now(), samples: number = 60): URLSearchParams => {
-  const init = timespan ? [
-    [ 'end', `${endTime / 1000}` ],
-    [ 'start', `${(endTime - timespan) / 1000}` ],
-    [ 'step', `${timespan / samples / 1000}` ],
-  ] : [];
-  return new URLSearchParams(init);
+  const params = new URLSearchParams();
+  if (timespan) {
+    params.set('start', String((endTime - timespan) / 1000));
+    params.set('end', String(endTime / 1000));
+    params.set('step', String((timespan / samples) / 1000));
+  }
+  return params;
 };
 
 const getSearchParams = ({endpoint, endTime, timespan, samples, ...params}: PrometheusURLProps): URLSearchParams => {
-  const searchParams = endpoint === PrometheusEndpoint.QUERY_RANGE ? getRangeVectorSearchParams(timespan, endTime, samples) : new URLSearchParams();
+  const searchParams = endpoint === PrometheusEndpoint.QUERY_RANGE
+    ? getRangeVectorSearchParams(timespan, endTime, samples)
+    : new URLSearchParams();
   _.each(params, (value, key) => value && searchParams.append(key, value.toString()));
   return searchParams;
 };

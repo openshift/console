@@ -15,7 +15,7 @@ import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factor
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { Gauge } from './graphs';
+import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
@@ -116,11 +116,10 @@ export const ResourceUsageRow = ({quota, resourceType}) => {
   </div>;
 };
 
-const NoQuotaGuage = ({title}) => <Gauge
-  label="No Quota"
+const NoQuotaGuage = ({title}) => <GaugeChart
+  error="No Quota"
   thresholds={[{value: 100}]}
   title={title}
-  usedLabel=""
 />;
 
 export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
@@ -128,8 +127,8 @@ export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
   return <div className="co-resource-quota-chart-row">
     {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) ?
       <div className="co-resource-quota-gauge-chart">
-        <Gauge
-          percent={getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent}
+        <GaugeChart
+          data={{ y: getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent }}
           thresholds={gaugeChartThresholds}
           title="CPU Request"
         />
@@ -141,8 +140,8 @@ export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
     }
     {resourceTypesSet.has('limits.cpu') ?
       <div className="co-resource-quota-gauge-chart">
-        <Gauge
-          percent={getResourceUsage(quota, 'limits.cpu').percent}
+        <GaugeChart
+          data={{ y: getResourceUsage(quota, 'limits.cpu').percent }}
           thresholds={gaugeChartThresholds}
           title="CPU Limit"
         />
@@ -154,8 +153,8 @@ export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
     }
     {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) ?
       <div className="co-resource-quota-gauge-chart">
-        <Gauge
-          percent={getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent}
+        <GaugeChart
+          data={{ y: getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent }}
           thresholds={gaugeChartThresholds}
           title="Memory Request"
         />
@@ -167,8 +166,8 @@ export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
     }
     {resourceTypesSet.has('limits.memory') ?
       <div className="co-resource-quota-gauge-chart">
-        <Gauge
-          percent={getResourceUsage(quota, 'limits.memory').percent}
+        <GaugeChart
+          data={{ y: getResourceUsage(quota, 'limits.memory').percent }}
           thresholds={gaugeChartThresholds}
           title="Memory Limit"
         />
