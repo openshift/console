@@ -86,6 +86,7 @@ export interface Condition {
   type: string;
   status: string;
   reason?: string;
+  message?: string;
 }
 
 export interface Param {
@@ -215,6 +216,9 @@ export const getRunStatusColor = (status: string): StatusMessage => {
       return { message: 'PipelineRun Not started Yet', pftoken: pendingColor };
   }
 };
+
+export const truncateName = (name: string, length: number): string =>
+  name.length < length ? name : `${name.slice(0, length - 1)}...`;
 
 export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): TaskStatus => {
   const totalTasks =
