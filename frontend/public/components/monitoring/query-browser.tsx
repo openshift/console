@@ -118,12 +118,13 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, dat
       containerComponent={containerComponent}
       domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
       height={200}
+      minDomain={{y: 0}}
       scale={{x: 'time', y: 'linear'}}
       theme={chartTheme}
       width={width}
     >
       <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-      <ChartAxis dependentAxis tickCount={6} tickFormat={value => humanizeNumber(value).string} />
+      <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={value => humanizeNumber(value).string} />
       <ChartGroup>
         {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
       </ChartGroup>
