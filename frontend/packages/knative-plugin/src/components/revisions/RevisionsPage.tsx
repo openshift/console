@@ -14,7 +14,7 @@ export interface RevisionsPageProps {
 const RevisionsPage: React.FC<RevisionsPageProps> = ({ match }) => (
   <ListPage
     namespace={match.params.ns}
-    canCreate
+    canCreate={false}
     kind={referenceForModel(RevisionModel)}
     ListComponent={RevisionList}
   />

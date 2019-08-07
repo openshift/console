@@ -8,9 +8,11 @@ import {
   OverviewCRD,
   ResourceListPage,
   GlobalConfig,
+  YAMLTemplate,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
+import { yamlTemplates } from './yaml-templates';
 import { FLAG_KNATIVE_SERVING } from './const';
 import { knativeServingResources } from './utils/create-knative-utils';
 import { getKnativeServingResources } from './utils/get-knative-resources';
@@ -22,7 +24,8 @@ type ConsumedExtensions =
   | GlobalConfig
   | OverviewResourceTab
   | OverviewCRD
-  | ResourceListPage;
+  | ResourceListPage
+  | YAMLTemplate;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -129,6 +132,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         (await import(
           './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
         )).default,
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: models.ServiceModel,
+      template: yamlTemplates.getIn([models.ServiceModel, 'default']),
     },
   },
 ];
