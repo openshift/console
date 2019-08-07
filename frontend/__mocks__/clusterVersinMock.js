@@ -18,33 +18,33 @@ export const clusterVersionProps = {
     status: {
       availableUpdates: null,
       conditions: [
-        // {
-        //   lastTransitionTime: '2019-07-29T09:20:13Z',
-        //   message: 'Done applying 4.2.0-0.ci-2019-07-22-025130',
-        //   status: 'True',
-        //   type: 'Available'
-        // },
-        // {
-        //   lastTransitionTime: '2019-07-30T04:18:13Z',
-        //   message: 'Cluster operator monitoring is reporting a failure: Failed to rollout the stack. Error: running task Updating prometheus-adapter failed: reconciling PrometheusAdapter Deployment failed: updating deployment object failed: waiting for DeploymentRollout of prometheus-adapter: deployment prometheus-adapter is not ready. status: (replicas: 3, updated: 1, ready: 2, unavailable: 1)',
-        //   reason: 'ClusterOperatorDegraded',
-        //   status: 'True',
-        //   type: 'Failing'
-        // },
-        // {
-        //   lastTransitionTime: '2019-07-29T09:20:13Z',
-        //   message: 'Error while reconciling 4.2.0-0.ci-2019-07-22-025130: the cluster operator monitoring is degraded',
-        //   reason: 'ClusterOperatorDegraded',
-        //   status: 'False',
-        //   type: 'Progressing'
-        // },
-        // {
-        //   lastTransitionTime: '2019-07-29T09:04:05Z',
-        //   message: 'Unable to retrieve available updates: currently installed version 4.2.0-0.ci-2019-07-22-025130 not found in the "stable-4.2" channel',
-        //   reason: 'RemoteFailed',
-        //   status: 'False',
-        //   type: 'RetrievedUpdates'
-        // }
+        {
+          lastTransitionTime: '2019-07-29T09:20:13Z',
+          message: 'Done applying 4.2.0-0.ci-2019-07-22-025130',
+          status: 'True',
+          type: 'Available'
+        },
+        {
+          lastTransitionTime: '2019-07-30T04:18:13Z',
+          message: 'Cluster operator monitoring is reporting a failure: Failed to rollout the stack. Error: running task Updating prometheus-adapter failed: reconciling PrometheusAdapter Deployment failed: updating deployment object failed: waiting for DeploymentRollout of prometheus-adapter: deployment prometheus-adapter is not ready. status: (replicas: 3, updated: 1, ready: 2, unavailable: 1)',
+          reason: 'ClusterOperatorDegraded',
+          status: 'True',
+          type: 'Failing'
+        },
+        {
+          lastTransitionTime: '2019-07-29T09:20:13Z',
+          message: 'Error while reconciling 4.2.0-0.ci-2019-07-22-025130: the cluster operator monitoring is degraded',
+          reason: 'ClusterOperatorDegraded',
+          status: 'False',
+          type: 'Progressing'
+        },
+        {
+          lastTransitionTime: '2019-07-29T09:04:05Z',
+          message: 'Unable to retrieve available updates: currently installed version 4.2.0-0.ci-2019-07-22-025130 not found in the "stable-4.2" channel',
+          reason: 'RemoteFailed',
+          status: 'False',
+          type: 'RetrievedUpdates'
+        }
       ],
       desired: {
         force: false,

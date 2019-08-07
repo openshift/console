@@ -240,7 +240,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
   </React.Fragment>;
 };
 
-const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
+export const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
 
 const pages = [{
   href: '',
