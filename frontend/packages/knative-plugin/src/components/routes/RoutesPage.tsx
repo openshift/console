@@ -14,7 +14,7 @@ export interface RoutesPageProps {
 const RoutesPage: React.FC<RoutesPageProps> = ({ match }) => (
   <ListPage
     namespace={match.params.ns}
-    canCreate
+    canCreate={false}
     kind={referenceForModel(RouteModel)}
     ListComponent={RouteList}
   />
