@@ -98,7 +98,7 @@ describe('TopologyUtils ', () => {
     );
   });
 
-  it('should return a Scaled to zero pod status in a non-serverless application', () => {
+  it('should return a Idle pod status in a non-serverless application', () => {
     // simulate pod are scaled to zero in nodejs deployment.
     const mockResources = { ...MockResources, pods: { data: [] } };
     mockResources.deploymentConfigs.data[0].metadata.annotations = {
@@ -111,7 +111,7 @@ describe('TopologyUtils ', () => {
       (topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods[0],
     );
     expect(podStatus.includes(status)).toBe(true);
-    expect(status).toEqual('Scaled to 0');
+    expect(status).toEqual('Idle');
   });
 
   it('should return false for non knative resource', () => {
@@ -132,7 +132,7 @@ describe('TopologyUtils ', () => {
       (topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods[0],
     );
     expect(podStatus.includes(status)).toBe(true);
-    expect(status).toEqual('Scaled to 0');
+    expect(status).toEqual('Autoscaled to 0');
   });
 
   it('should return true for knative resource', () => {
