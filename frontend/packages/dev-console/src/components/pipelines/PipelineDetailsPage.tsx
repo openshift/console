@@ -8,6 +8,8 @@ import { triggerPipeline, rerunPipeline } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import PipelineDetails from './PipelineDetails';
+import PipelineResources from './PipelineResources';
+import PipelineParameters from './PipelineParameters';
 import PipelineRuns from './PipelineRuns';
 
 interface PipelineDetailsPageStates {

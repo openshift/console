@@ -1,21 +1,28 @@
 import * as React from 'react';
 import { Form, Button } from 'patternfly-react';
 import { Formik } from 'formik';
-import { Alert } from '@patternfly/react-core';
+import { Alert, TextInputTypes } from '@patternfly/react-core';
 import * as yup from 'yup';
 import * as _ from 'lodash';
 import { ButtonBar } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils';
-import { GitTypes } from '../import/import-types';
 import { MultiColumnField, InputField, DropdownField } from '../formik-fields';
 import { FormikProps, FormikValues } from 'formik';
+import { k8sUpdate } from '@console/internal/module/k8s';
+import { PipelineModel } from '../../models';
 
-export interface GitImportFormProps {}
+export interface PipelineResourceFormProps {}
 
-const PipelineResourceForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = (props) => {
+const PipelineResourceForm: React.FC<FormikProps<FormikValues> & PipelineResourceFormProps> = (
+  props,
+) => {
   console.log('form', props);
   const errorMessage = 'All fields are required';
-  const success = 'hoechhe';
+  enum itemTypes {
+    '' = 'Please choose Git type',
+    git = 'Git',
+    image = 'Image',
+  }
   return (
     <Form onReset={props.handleReset} onSubmit={props.handleSubmit}>
       <div className="co-m-pane__form">
@@ -23,20 +30,15 @@ const PipelineResourceForm: React.FC<FormikProps<FormikValues> & GitImportFormPr
           name="resources"
           addLabel="Add Pipeline Resources"
           headers={['Name', 'GitTypes']}
-          emptyValues={{ name: '', gitType: '' }}
+          emptyValues={{ name: '', type: '' }}
         >
-          <InputField name="name" type="text" placeholder="Name" />
-          <DropdownField name="gitType" items={GitTypes} fullWidth />
+          <InputField name="name" type={TextInputTypes.text} placeholder="Name" />
+          <DropdownField name="type" items={itemTypes} fullWidth />
         </MultiColumnField>
         <hr />
         <ButtonBar inProgress={props.isSubmitting}>
           {props.dirty && !_.isEmpty(props.errors) && (
-            <Alert
-              isInline
-              className="co-alert"
-              variant="danger"
-              title={errorMessage}
-            />
+            <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
           )}
           {props.dirty && _.isEmpty(props.errors) && (
             <Alert
@@ -48,8 +50,11 @@ const PipelineResourceForm: React.FC<FormikProps<FormikValues> & GitImportFormPr
               Click Reload to update and lose edits, or Save Changes to overwrite.
             </Alert>
           )}
-          {props.dirty && props.status === 'submitted' && (
-            <Alert isInline className="co-alert" variant="success" title={success} />
+          {props.dirty && props.isSubmitting && (
+            <Alert isInline className="co-alert" variant="success" title={"Saving..."} />
+          )}
+          {props.dirty && props.status === 'success'&& (
+            <Alert isInline className="co-alert" variant="success" title={props.status.success} />
           )}
           <Button
             disabled={!props.dirty || !_.isEmpty(props.errors)}
@@ -65,21 +70,30 @@ const PipelineResourceForm: React.FC<FormikProps<FormikValues> & GitImportFormPr
   );
 };
 
-const PipelineResources = ({obj}) => {
-  console.log('resource',obj);
+const PipelineResources = ({ obj }) => {
+  console.log('resource', obj);
   const initialValues = {
     name: 'pipeline-resources',
-    resources: _.get(obj.spec,'resources',[]),
+    resources: _.get(obj.spec, 'resources', []),
   };
-  const handleSubmit = (values) => {
-    console.log('mnk', values);
+  const handleSubmit = (values, actions) => {
+    actions.setSubmitting(true);
+    k8sUpdate(
+      PipelineModel,
+      { ...obj, spec: { ...obj.spec, resources: values.resources } },
+      obj.metadata.namespace,
+      obj.metadata.name,
+    ).then(() => {
+      actions.setSubmitting(false);
+      actions.setStatus({ success: 'Pipeline Resources updated !' });
+    });
   };
   const validationSchema = yup.object().shape({
     name: yup.string().required('Required'),
     resources: yup.array().of(
       yup.object().shape({
         name: yup.string().required('Required'),
-        gitType: yup.string().required('Required'),
+        type: yup.string().required('Required'),
       }),
     ),
   });
