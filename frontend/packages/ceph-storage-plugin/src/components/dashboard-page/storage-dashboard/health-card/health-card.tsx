@@ -47,7 +47,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Health</DashboardCardTitle>
+        <DashboardCardTitle>OCS Health</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={cephHealthState.state === HealthState.LOADING}>
         <HealthBody>

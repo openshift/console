@@ -65,7 +65,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>OCS Details</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>

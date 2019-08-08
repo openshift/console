@@ -83,7 +83,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>OCS Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceInventoryItem
