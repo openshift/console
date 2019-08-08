@@ -189,6 +189,9 @@ const ssarChecks = [{
 }, {
   flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
   resourceAttributes:{ group: OperatorGroupModel.apiGroup, resource: OperatorGroupModel.plural, verb: 'list' },
+}, {
+  flag: FLAGS.CAN_LIST_CHARGEBACK_REPORTS,
+  resourceAttributes:{ group: 'metering.openshift.io', resource: 'reports', namespace: 'openshift-metering', verb: 'list' },
 }];
 
 const ssarCheckActions = ssarChecks.map(({flag, resourceAttributes, after}) => {

@@ -23,6 +23,7 @@ import {
 import { referenceForModel } from '../../module/k8s';
 import { ExternalLink, HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { NavSection } from './section';
+import { formatNamespacedRouteForResource } from '../../actions/ui';
 
 type SeparatorProps = {
   required?: string;
@@ -39,6 +40,7 @@ const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules', 'monitoring/silences', 'monitoring/alertmanageryaml'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
+const meteringStartsWith = ['metering.openshift.io'];
 const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
 const monitoringNavSectionStateToProps = (state) => ({
@@ -161,7 +163,10 @@ const AdminNav = () => (
       <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-      <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
+      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(ChargebackReportModel), 'openshift-metering')}
+        name="Chargeback"
+        required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]}
+        startsWith={meteringStartsWith} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>
