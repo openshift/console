@@ -28,12 +28,12 @@ export class ResourceSidebarWrapper extends React.Component {
   }
 
   render() {
-    const {style, label, linkLabel, children} = this.props;
+    const {style, label, linkLabel, children, isCreateMode} = this.props;
     const {height} = style;
     const {showSidebar} = this.state;
 
     if (!showSidebar) {
-      return <div className="co-p-has-sidebar__sidebar--hidden hidden-sm hidden-xs">
+      return <div className={`co-p-has-sidebar__sidebar--hidden hidden-sm hidden-xs ${isCreateMode && 'co-p-has-sidebar__new-mode'}`}>
         <button className="btn btn-link" onClick={this.toggleSidebar}>
           <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />{linkLabel}
         </button>
@@ -74,7 +74,7 @@ export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
 };
 
 export const ResourceSidebar = props => {
-  const {kindObj, height} = props;
+  const {kindObj, height, isCreateMode} = props;
   if (!kindObj || !props.isCreateMode) {
     return null;
   }
@@ -82,7 +82,7 @@ export const ResourceSidebar = props => {
   const {kind, label} = kindObj;
   const SidebarComponent = resourceSidebars.get(kind);
   if (SidebarComponent) {
-    return <ResourceSidebarWrapper label={`${label} Samples`} linkLabel="View Samples" style={{height}}>
+    return <ResourceSidebarWrapper label={`${label} Samples`} linkLabel="View Samples" style={{height}} isCreateMode={isCreateMode}>
       <SidebarComponent {...props} />
     </ResourceSidebarWrapper>;
   }

@@ -17,6 +17,7 @@ import { k8sCreate, k8sUpdate, referenceFor, groupVersionFor, referenceForModel 
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
 import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
+import { resourceSidebars } from './sidebars/resource-sidebars';
 import { yamlTemplates } from '../models/yaml-templates';
 
 import { getStoredSwagger } from '../module/k8s/swagger';
@@ -515,10 +516,13 @@ export const EditYAML = connect(stateToProps)(
       const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
 
       const {error, success, stale, yaml, height} = this.state;
-      const {create, obj, download = true, header} = this.props;
+      const {create, obj, download = true, header, kind} = this.props;
       const readOnly = this.props.readOnly || this.state.notAllowed;
       const options = { readOnly, scrollBeyondLastLine: false };
       const model = this.getModel(obj);
+      const sideBar = (create && resourceSidebars.get(kind))
+        ? <ResourceSidebar isCreateMode={create} kindObj={model} height={height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
+        : <ExploreTypeSidebar isCreateMode={create} kindObj={model} height={this.state.height} />;
       const editYamlComponent = <div className="co-file-dropzone">
         { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
@@ -554,8 +558,7 @@ export const EditYAML = connect(stateToProps)(
                   </div>
                 </div>
               </div>
-              {create && <ResourceSidebar isCreateMode={create} kindObj={model} height={height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />}
-              {!create && <ExploreTypeSidebar kindObj={model} height={this.state.height} />}
+              {sideBar}
             </div>
           </div>
         </div>

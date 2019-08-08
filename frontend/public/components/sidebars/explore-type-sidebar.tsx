@@ -116,8 +116,8 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   );
 };
 
-export const ExploreTypeSidebar: React.FC<ExploreTypeSidebarProps> = ({height, ...exploreTypeProps}) => (
-  <ResourceSidebarWrapper label={exploreTypeProps.kindObj.kind} linkLabel="View Schema" style={{height}} startHidden>
+export const ExploreTypeSidebar: React.FC<ExploreTypeSidebarProps> = ({height, isCreateMode, ...exploreTypeProps}) => (
+  <ResourceSidebarWrapper label={exploreTypeProps.kindObj.kind} linkLabel="View Schema" style={{height}} isCreateMode={isCreateMode} startHidden>
     <ExploreType {...exploreTypeProps} scrollTop={sidebarScrollTop} />
   </ResourceSidebarWrapper>
 );
@@ -129,4 +129,5 @@ type ExploreTypeProps = {
 
 type ExploreTypeSidebarProps = {
   height: number;
+  isCreateMode?: boolean;
 } & ExploreTypeProps;
