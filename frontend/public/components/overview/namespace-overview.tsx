@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { requirePrometheus } from '../graphs';
 import { Health } from '../graphs/health';
 import { deleteModal, NamespaceLineCharts, NamespaceSummary, TopPodsBarChart } from '../namespace';
-import { Firehose, LoadingInline, ResourceLink, resourceListPathFromModel, StatusBox } from '../utils';
+import { Firehose, ResourceLink, resourceListPathFromModel, StatusBox } from '../utils';
 import { RoleBindingModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { getQuotaResourceTypes, hasComputeResources, QuotaGaugeCharts, QuotaScopesInline } from '../resource-quota';
@@ -64,7 +64,7 @@ const ResourceQuotas: React.SFC<QuotaBoxesProps> = ({resourceQuotas}) => {
   const { loaded, loadError, data: quotas } = resourceQuotas;
 
   if (!loaded) {
-    return <LoadingInline />;
+    return null;
   }
   if (loadError) {
     <StatusBox loadError={loadError} />;

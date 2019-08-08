@@ -34,6 +34,8 @@ export const config: Config = {
     browserName: 'chrome',
     acceptInsecureCerts: true,
     chromeOptions: {
+      // A path to chrome binary, if undefined will use system chrome browser.
+      binary: process.env.CHROME_BINARY_PATH,
       args: [
         ...(process.env.NO_HEADLESS ? [] : ['--headless']),
         '--disable-gpu',

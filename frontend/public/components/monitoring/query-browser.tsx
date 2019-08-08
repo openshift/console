@@ -117,6 +117,7 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, dat
     {width > 0 && <Chart
       containerComponent={containerComponent}
       domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
+      domainPadding={{y: 1}}
       height={200}
       minDomain={{y: 0}}
       scale={{x: 'time', y: 'linear'}}
@@ -217,12 +218,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // interval relative to the graph's timespan, but not less than 5s.
   const delay = endTime ? null : Math.max(span / 120, 5000);
 
-  const queriesKey = JSON.stringify(queries);
-  const disabledSeriesKey = JSON.stringify(disabledSeries);
+  usePoll(tick, delay, endTime, queries, samples, span);
 
-  usePoll(tick, delay, endTime, queriesKey, samples, span);
-
-  React.useEffect(() => setUpdating(true), [endTime, queriesKey, samples, span]);
+  React.useEffect(() => setUpdating(true), [endTime, queries, samples, span]);
 
   const graphData: GraphDataPoint[][] = React.useMemo(() => _.flatten(
     _.map(results, (result, responseIndex) => {
@@ -237,8 +235,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         return isIgnored ? [{x: null, y: null}] : formatSeriesValues(values, samples, span);
       });
     })
+  // Some of the hook dependencies are not included because we instead want those dependencies to trigger an Prometheus
+  // API call, which will update `results` and then trigger this hook
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [disabledSeriesKey, filterLabels, results]);
+  ), [disabledSeries, filterLabels, results]);
 
   const onSpanChange = React.useCallback((newSpan: number) => {
     setDomain(undefined);

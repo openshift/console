@@ -1,19 +1,16 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router-dom';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../models';
 import RevisionList from './RevisionList';
 
 export interface RevisionsPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
+  namespace: string;
 }
 
-const RevisionsPage: React.FC<RevisionsPageProps> = ({ match }) => (
+const RevisionsPage: React.FC<RevisionsPageProps> = ({ namespace }) => (
   <ListPage
-    namespace={match.params.ns}
+    namespace={namespace}
     canCreate={false}
     kind={referenceForModel(RevisionModel)}
     ListComponent={RevisionList}

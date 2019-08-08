@@ -73,6 +73,8 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   private dragCount: number = 0;
 
+  private ignoreNextSizeChange: boolean = false;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -205,10 +207,25 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   componentDidUpdate(prevProps: D3ForceDirectedRendererProps, prevState: State) {
     let restart = false;
-    if (prevProps.width !== this.props.width || prevProps.height !== this.props.height) {
+    const sizeChanged =
+      prevProps.width !== this.props.width || prevProps.height !== this.props.height;
+
+    if (!this.ignoreNextSizeChange && sizeChanged) {
       this.simulation.force('center', d3.forceCenter(this.props.width / 2, this.props.height / 2));
       restart = true;
     }
+
+    if (this.ignoreNextSizeChange && sizeChanged) {
+      this.ignoreNextSizeChange = false;
+      if (this.props.selected) {
+        this.makeNodeVisible(this.props.selected);
+      }
+    }
+
+    if (!!this.props.selected !== !!prevProps.selected) {
+      this.ignoreNextSizeChange = true;
+    }
+
     if (
       prevState.nodes !== this.state.nodes ||
       prevState.edges !== this.state.edges ||
@@ -228,6 +245,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         .alpha(0.2);
       restart = true;
     }
+
     if (restart) {
       this.simulation.restart();
     }
@@ -243,6 +261,53 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   private onZoom = () => {
     this.setState({ zoomTransform: d3.event.transform });
+  };
+
+  private makeNodeVisible = (nodeId: string) => {
+    const { width, height } = this.props;
+    const { nodesById, zoomTransform = { x: 0, y: 0, k: 1 } } = this.state;
+    const node: ViewNode = nodesById[nodeId];
+    let moveToNode = false;
+    const panOffset = 20;
+
+    if (!node) {
+      return;
+    }
+
+    const center = {
+      x: (width / 2 - zoomTransform.x) / zoomTransform.k,
+      y: (height / 2 - zoomTransform.y) / zoomTransform.k,
+    };
+
+    const nodeMin = {
+      x: zoomTransform.x + (node.x - node.size / 2) * zoomTransform.k,
+      y: zoomTransform.y + (node.y - node.size / 2) * zoomTransform.k,
+    };
+    const nodeMax = {
+      x: zoomTransform.x + (node.x + node.size / 2) * zoomTransform.k,
+      y: zoomTransform.y + (node.y + node.size / 2) * zoomTransform.k,
+    };
+
+    if (nodeMax.x < 0) {
+      center.x += (nodeMin.x - panOffset) / zoomTransform.k;
+      moveToNode = true;
+    }
+    if (nodeMin.x > width) {
+      center.x += (nodeMax.x - width + panOffset) / zoomTransform.k;
+      moveToNode = true;
+    }
+    if (nodeMax.y < 0) {
+      center.y += (nodeMin.y - panOffset) / zoomTransform.k;
+      moveToNode = true;
+    }
+    if (nodeMin.y > height) {
+      center.y += (nodeMax.y - height + panOffset) / zoomTransform.k;
+      moveToNode = true;
+    }
+
+    if (moveToNode) {
+      this.zoom.translateTo(this.$svg, center.x, center.y);
+    }
   };
 
   private onNodeEnter = ($node: NodeSelection) => {

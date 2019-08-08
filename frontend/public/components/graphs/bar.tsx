@@ -52,17 +52,19 @@ export const BarChart: React.FC<BarChartProps> = ({
             {sortedData.map((datum, index) => (
               <React.Fragment key={index}>
                 <div className="graph-bar__label">{datum.x}</div>
-                <ChartBar
-                  barWidth={barWidth}
-                  data={[datum]}
-                  horizontal
-                  labelComponent={<ChartLabel x={width} />}
-                  theme={theme}
-                  height={barWidth + padding.bottom}
-                  width={width}
-                  domain={{y: [0, sortedData[0].y]}}
-                  padding={padding}
-                />
+                <div className="graph-bar__chart">
+                  <ChartBar
+                    barWidth={barWidth}
+                    data={[datum]}
+                    horizontal
+                    labelComponent={<ChartLabel x={width} />}
+                    theme={theme}
+                    height={barWidth + padding.bottom}
+                    width={width}
+                    domain={{y: [0, sortedData[0].y]}}
+                    padding={padding}
+                  />
+                </div>
               </React.Fragment>
             ))}
           </PrometheusGraphLink>

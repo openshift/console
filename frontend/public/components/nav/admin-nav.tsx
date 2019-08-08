@@ -109,7 +109,7 @@ const AdminNav = () => (
     <NavSection title="Networking">
       <ResourceNSLink resource="services" name="Services" />
       <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
-      <ResourceNSLink resource="ingresses" name="Ingress" />
+      <ResourceNSLink resource="ingresses" name="Ingresses" />
       <ResourceNSLink resource="networkpolicies" name="Network Policies" />
     </NavSection>
 

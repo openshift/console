@@ -418,7 +418,7 @@ export const QueryBrowserPage = withFallback(() => {
     {label: 'Delete all queries', callback: deleteAllQueries},
   ];
 
-  const onDataUpdate = (allQueries: PrometheusSeries[][]) => {
+  const onDataUpdate = React.useCallback((allQueries: PrometheusSeries[][]) => {
     const newQueries = _.map(allQueries, (querySeries, i) => {
       const allSeries = _.map(querySeries, s => ({
         labels: omitInternalLabels(s.metric),
@@ -427,7 +427,7 @@ export const QueryBrowserPage = withFallback(() => {
       return Object.assign({}, queries[i], {allSeries});
     });
     setQueries(newQueries);
-  };
+  }, [queries]);
 
   const onMetricChange = (metric: string) => {
     if (focusedQuery) {
@@ -453,7 +453,14 @@ export const QueryBrowserPage = withFallback(() => {
 
   let colorOffset = 0;
 
-  const queryStrings = _.map(queries, 'query');
+  /* eslint-disable react-hooks/exhaustive-deps */
+  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
+  // re-renders of QueryBrowser, which can be quite slow
+  const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
+  const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
+  const disabledSeriesMemoKey = JSON.stringify(_.map(queries, 'disabledSeries'));
+  const disabledSeries = React.useMemo(() => _.map(queries, 'disabledSeries'), [disabledSeriesMemoKey]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   return <React.Fragment>
     <Helmet>
@@ -486,7 +493,7 @@ export const QueryBrowserPage = withFallback(() => {
             </div>
             : <QueryBrowser
               defaultTimespan={30 * 60 * 1000}
-              disabledSeries={_.map(queries, 'disabledSeries')}
+              disabledSeries={disabledSeries}
               onDataUpdate={onDataUpdate}
               queries={queryStrings}
             />}
@@ -546,7 +553,7 @@ export const QueryBrowserPage = withFallback(() => {
 });
 
 type PrometheusQuery = {
-  allSeries?: {labels: Labels, value: number}[];
+  allSeries?: {labels: Labels, value: string}[];
   disabledSeries?: Labels[];
   enabled?: boolean;
   expanded?: boolean;

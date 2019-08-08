@@ -67,7 +67,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
       return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
     });
     return <React.Fragment>
-      <div className="row">
+      <div className="row pairs-list__heading">
         {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header"></div>}
         <div className="col-xs-5 text-secondary text-uppercase">{nameString}</div>
         <div className="col-xs-5 text-secondary text-uppercase">{valueString}</div>
@@ -90,15 +90,15 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
                 </Button>
                 {
                   addConfigMapSecret &&
-                    <React.Fragment>
-                      <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
-                      <Button
-                        onClick={this._appendConfigMapOrSecret}
-                        type="button"
-                        variant="link">
-                        <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />Add from Config Map or Secret
-                      </Button>
-                    </React.Fragment>
+                  <React.Fragment>
+                    <Button
+                      className="pf-m-link--align-left"
+                      onClick={this._appendConfigMapOrSecret}
+                      type="button"
+                      variant="link">
+                      <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />Add from Config Map or Secret
+                    </Button>
+                  </React.Fragment>
                 }
               </div>
           }
@@ -188,7 +188,7 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
     });
 
     return <React.Fragment>
-      <div className="row">
+      <div className="row pairs-list__heading">
         {!readOnly && <div className="col-xs-1 co-empty__header"></div>}
         <div className="col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
         <div className="col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
@@ -324,14 +324,14 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteIcon = <React.Fragment><MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" /><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           {allowSorting && !readOnly &&
             <div className="col-xs-1 pairs-list__action">
-              {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
+              {connectDragSource(<button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
                 <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
               </button>)}
             </div>
@@ -351,9 +351,9 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           }
           {
             !readOnly &&
-              <div className="col-xs-1">
-                <button type="button" className={classNames('btn', 'btn-link', 'btn-link--inherit-color', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
-                  {deleteButton}
+              <div className="col-xs-1 pairs-list__action">
+                <button type="button" data-test-id="pairs-list__delete-btn" className={classNames('pf-c-button', 'pf-m-plain', 'btn-link--inherit-color', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
+                  {deleteIcon}
                 </button>
               </div>
           }
@@ -415,7 +415,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           { !readOnly &&
             <div className="col-xs-1 pairs-list__action">
-              {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
+              {connectDragSource(<button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
                 <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
               </button>)}
             </div>
@@ -428,8 +428,8 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           </div>
           {
             readOnly ? null :
-              <div className="col-xs-1">
-                <button type="button" className="btn btn-link btn-link--inherit-color pairs-list__span-btns" onClick={this._onRemove}>
+              <div className="col-xs-1 pairs-list__action">
+                <button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__span-btns" onClick={this._onRemove}>
                   {deleteButton}
                 </button>
               </div>
