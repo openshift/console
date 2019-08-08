@@ -1,96 +1,75 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { ChartDonut, ChartThemeVariant, ChartThemeColor } from '@patternfly/react-charts';
 import { ChartPieIcon } from '@patternfly/react-icons';
 import { DataPoint } from '@console/internal/components/graphs';
-import { LoadingInline, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-
-type MetricDataType = {
-  x: string;
-  y: number;
-};
+import {
+  LoadingInline,
+  humanizePercentage,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils';
+import './capacity-card-body.scss';
 
 type LegendDataType = {
   name: string;
 };
 
 // as per the noobaa spec,
-// a. omit 'Others' label
-// b. sort it in descending order
-// c. collect the first 'N' items
-// d. rest of the miscs data should be aggregated
-//    into 'Others' label,
-// and separating Data and Legend array from DataPoint
-const getMetricDataAndLegend = (
-  metricDataPoint: DataPoint[],
-  maxSize: number = 6,
+// a. sort it in descending order and pick the top 6 items (excluding 'Others' label)
+// b. append the 'Others' label
+// PS: 'metricData' argument passed to this function will be in sorted form and
+//     with 'Others' label appended to it
+const getLegendAndChartData = (
+  metricData: DataPoint[],
+  total: number,
 ): {
-  metricData: MetricDataType[];
+  metricData: DataPoint[];
   metricLegend: LegendDataType[];
-  total: number;
 } => {
-  let metricData: MetricDataType[] = [];
   const metricLegend: LegendDataType[] = [];
-  let total = 0;
 
-  if (!metricDataPoint || !metricDataPoint.length) {
-    return { metricData, metricLegend, total };
+  // if there is no data, return the empty values
+  if (!metricData || !metricData.length) {
+    return { metricData, metricLegend };
   }
-  metricDataPoint.forEach((mDP) => {
-    const tmpMetricData: MetricDataType = { x: `${mDP.x}`, y: Number(mDP.y) };
-    // skip 'Others' label
-    if (tmpMetricData.x === 'Others') return;
-    total += tmpMetricData.y;
-    metricData.push(tmpMetricData);
+  // get the percentage
+  metricData.forEach((m) => {
+    metricLegend.push({ name: `${m.x}` });
+    m.y = total ? (m.y / total) * 100 : 100;
   });
-  metricData = _.sortBy(metricData, ['y']).reverse();
-  // collect the other data
-  const extraData = metricData.splice(maxSize, metricData.length);
-  // if there are any extra / other items, reduce it to a single entry
-  if (extraData.length) {
-    const otherData = extraData.reduce((prev, curr) => {
-      return { x: 'Others', y: prev.y + curr.y };
-    });
-    metricData.push(otherData);
-  }
-  metricData = metricData.map((m) => {
-    metricLegend.push({ name: m.x });
-    return { x: m.x, y: (m.y / total) * 100 };
-  });
-  return { metricData, metricLegend, total };
+  return { metricData, metricLegend };
 };
 
-export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({ isLoading, metricsData }) => {
+export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({
+  isLoading,
+  metricsData,
+  totalUsage,
+}) => {
   if (isLoading) {
     return <LoadingInline />;
   }
-  // trying to avoid redundant code
-  const { metricData, metricLegend, total } = getMetricDataAndLegend(metricsData);
+  const { metricData, metricLegend } = getLegendAndChartData(metricsData, totalUsage);
   if (!metricData.length) {
     return <GraphEmpty icon={ChartPieIcon} />;
   }
+  const totalHumanized = humanizeBinaryBytes(totalUsage, null, totalUsage ? null : 'MiB');
   return (
-    <div>
-      <span className="text-secondary">
-        <h4>Usage Breakdown</h4>
-      </span>
-      <ChartDonut
-        donutHeight={250}
-        donutWidth={110}
-        labelPosition="startAngle"
-        legendPosition="right"
-        legendData={metricLegend}
-        legendOrientation="vertical"
-        data={metricData}
-        labels={(datum) => `${datum.x}: ${datum.y.toFixed(2)}%`}
-        subTitlePosition="bottom"
-        themeColor={ChartThemeColor.multi}
-        themeVariant={ChartThemeVariant.light}
-        title={humanizeBinaryBytesWithoutB(total).string}
-        radius={53}
-        innerRadius={46}
-      />
+    <div className="nb-capacity-card__chart-body">
+      <div className="noobaa-capacity-card__item">
+        <ChartDonut
+          width={275}
+          height={150}
+          labelPosition="centroid"
+          legendPosition="right"
+          legendData={metricLegend}
+          legendOrientation="vertical"
+          data={metricData}
+          labels={(datum) => `${datum.x}: ${humanizePercentage(totalUsage ? datum.y : 0).string}`}
+          themeColor={ChartThemeColor.multi}
+          themeVariant={ChartThemeVariant.light}
+          title={totalHumanized.string}
+        />
+      </div>
     </div>
   );
 };
@@ -98,4 +77,5 @@ export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({ isLoading, m
 type CapacityCardBodyProps = {
   isLoading: boolean;
   metricsData: DataPoint[];
+  totalUsage: number;
 };
