@@ -103,7 +103,7 @@ export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, k
     />{isKeyRef &&
     <Dropdown
       menuClassName="value-from__menu dropdown-menu--text-wrap"
-      className="value-from"
+      className="value-from value-from--key"
       autocompleteFilter={keyAutocompleteFilter}
       autocompletePlaceholder="Key"
       items={itemKeys}
