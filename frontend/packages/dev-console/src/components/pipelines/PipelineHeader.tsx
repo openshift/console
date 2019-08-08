@@ -23,7 +23,7 @@ const PipelineHeader = () => {
     },
     {
       title: 'Task Status',
-      sortField: 'latestRun.status.completionTime',
+      sortField: 'latestRun.status.succeededCondition',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
