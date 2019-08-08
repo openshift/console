@@ -9,7 +9,7 @@ import {
   HOST_POWER_STATUS_POWERED_OFF,
 } from '../constants';
 
-export * from './node-maintanance';
+export * from './node-maintenance';
 
 export const getHostOperationalStatus = (host: K8sResourceKind) =>
   _.get(host, 'status.operationalStatus');

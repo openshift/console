@@ -62,7 +62,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
           </HelpBlock>
         </FormGroup>
         {forceOff && (
-          <Alert variant="warning" title="Applications may be temporarily disrupted.">
+          <Alert variant="warning" title="Applications may be temporarily disrupted." isInline>
             Workloads currently running on this host will not be moved before shutting down. This
             may cause service disruptions.
           </Alert>
