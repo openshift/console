@@ -117,6 +117,7 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, dat
     {width > 0 && <Chart
       containerComponent={containerComponent}
       domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
+      domainPadding={{y: 1}}
       height={200}
       minDomain={{y: 0}}
       scale={{x: 'time', y: 'linear'}}
