@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { Status, SuccessStatus } from '@console/shared';
+import { Status, SuccessStatus, StatusType } from '@console/shared';
 import { ClusterServiceVersionKind, referenceForProvidedAPI } from './index';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
@@ -127,26 +127,50 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
 };
 
 export enum OperatorStatusType {
-  conditions = 'conditions',
   phase = 'phase',
   status = 'status',
+  state = 'state',
+  conditions = 'conditions',
 }
 
 export const OperatorStatusTypeText = {
-  [OperatorStatusType.conditions]: 'Conditions:',
   [OperatorStatusType.phase]: 'Phase:',
   [OperatorStatusType.status]: 'Status:',
+  [OperatorStatusType.state]: 'State:',
+  [OperatorStatusType.conditions]: 'Condition:',
 };
 
 export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({statusObject}) => {
-  for (const key of Object.keys(OperatorStatusType)) {
-    if (statusObject && statusObject.hasOwnProperty(key)) {
-      const status = statusObject[key];
-      const statusIcon = status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />;
-      return <span className="co-icon-and-text">{OperatorStatusTypeText[key]}&nbsp;{statusIcon}</span>;
-    }
+  let iconAndText = <div className="text-muted">Unknown</div>;
+  if (_.isEmpty(statusObject)) {
+    return iconAndText;
   }
-  return <div className="text-muted">Unknown</div>;
+  _.forEach(OperatorStatusType, (key: string) => {
+    if (_.has(statusObject, key)) {
+      const status = statusObject[key];
+      if (!_.isEmpty(status)) {
+        let statusIcon;
+        if (key !== OperatorStatusType.conditions) {
+          if (status === 'Running') {
+            statusIcon = <SuccessStatus title={status} />;
+          } else if (Object.keys(StatusType).some(statusKey => StatusType[statusKey] === status)) {
+            statusIcon = <Status status={status} />;
+          } else {
+            statusIcon = <Status status="Info">{status}</Status>;
+          }
+        } else if (_.has(status[0], 'type')) {
+          statusIcon = Object.keys(StatusType).some(statusKey => StatusType[statusKey] === status[0].type)
+            ? <Status status={status[0].type} />
+            : <Status status="Info">{status[0].type}</Status>;
+        }
+        if (statusIcon) {
+          iconAndText = <span className="co-icon-and-text">{OperatorStatusTypeText[key]}&nbsp;{statusIcon}</span>;
+          return false;
+        }
+      }
+    }
+  });
+  return iconAndText;
 };
 
 export const OperandList: React.SFC<OperandListProps> = (props) => {
