@@ -98,9 +98,11 @@ const CancelAction = (kind, obj) => ({
   accessReview: asAccessReview(kind, obj, 'patch'),
 });
 
+const menuActions = [CancelAction, ...replicaSetMenuActions];
+
 export const ReplicationControllersDetailsPage = props => <DetailsPage
   {...props}
-  menuActions={[CancelAction, ...replicaSetMenuActions]}
+  menuActions={menuActions}
   pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
@@ -142,7 +144,7 @@ const ReplicationControllerTableRow = ({obj, index, key, style}) => {
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
   );
