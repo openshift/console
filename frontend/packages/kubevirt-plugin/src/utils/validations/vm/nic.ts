@@ -1,8 +1,13 @@
 import { EntityMap } from '@console/shared';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '../common';
-import { addMissingSubject } from '../../grammar';
+import { getValidationObject, validateDNS1123SubdomainValue, ValidationObject } from '../common';
+import { addMissingSubject, makeSentence } from '../../grammar';
+import { MAC_ADDRESS_INVALID_ERROR, NIC_NAME_EXISTS } from '../strings';
+import { isValidMAC } from './validations';
 
-export const validateNicName = (name: string, interfaceLookup: EntityMap<any>) => {
+export const validateNicName = (
+  name: string,
+  interfaceLookup: EntityMap<any>,
+): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
 
   if (validation) {
@@ -10,11 +15,13 @@ export const validateNicName = (name: string, interfaceLookup: EntityMap<any>) =
   }
 
   if (!validation && interfaceLookup[name]) {
-    validation = {
-      type: ValidationErrorType.Error,
-      message: 'Interface with this name already exists!',
-    };
+    validation = getValidationObject(NIC_NAME_EXISTS);
   }
 
   return validation;
+};
+
+export const validateMACAddress = (mac: string): ValidationObject => {
+  const isValid = mac === '' || (mac && isValidMAC(mac));
+  return isValid ? null : getValidationObject(makeSentence(MAC_ADDRESS_INVALID_ERROR));
 };

@@ -15,11 +15,11 @@ import { VMKind, VMLikeEntityKind } from '../../types';
 import { getNetworkChoices } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { NetworkType } from '../../constants/vm';
-import { ValidationErrorType } from '../../utils/validations/common';
-import { validateNicName } from '../../utils/validations/vm';
+import { getValidationErrorMessage, getValidationErrorType } from '../../utils/validations/common';
+import { validateMACAddress, validateNicName } from '../../utils/validations/vm';
+import { GENERAL_ERROR_MSG } from '../../utils/validations/strings';
 import { getDefaultNetworkBinding, getNetworkBindings, nicTableColumnClasses } from './utils';
 import { VMNicRowProps } from './types';
-
 import '../vm-disks/_create-device-row.scss';
 
 const createNic = ({
@@ -98,16 +98,15 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
   const id = 'create-nic-row';
 
   const nameError = validateNicName(name, interfaceLookup);
-  const isValid = !nameError && network && binding;
+  const macAddressError = validateMACAddress(macAddress);
+  const isValid = !nameError && !macAddressError && network && binding;
 
   return (
     <TableRow id={id} index={index} trKey={id} style={style}>
       <TableData className={dimensify()}>
         <FormGroup
           className="kubevirt-vm-create-device-row__cell--no_bottom"
-          validationState={
-            nameError && nameError.type === ValidationErrorType.Error ? nameError.type : null
-          }
+          validationState={getValidationErrorType(nameError)}
         >
           <Text
             id="nic-name"
@@ -118,9 +117,7 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             }}
             value={name}
           />
-          <HelpBlock>
-            {nameError && nameError.type === ValidationErrorType.Error && nameError.message}
-          </HelpBlock>
+          <HelpBlock>{getValidationErrorMessage(nameError)}</HelpBlock>
         </FormGroup>
       </TableData>
       <TableData id="nic-model" className={dimensify()}>
@@ -157,12 +154,21 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
         />
       </TableData>
       <TableData className={dimensify()}>
-        <Text
-          id="nic-mac-address"
-          onChange={setMacAddress}
-          value={macAddress}
-          disabled={creating || networkType === NetworkType.POD}
-        />
+        <FormGroup
+          className="kubevirt-vm-create-device-row__cell--no_bottom"
+          validationState={getValidationErrorType(macAddressError)}
+        >
+          <Text
+            id="nic-mac-address"
+            onChange={(v) => {
+              setMacAddress(v);
+              forceRerender();
+            }}
+            value={macAddress}
+            disabled={creating || networkType === NetworkType.POD}
+          />
+          <HelpBlock>{getValidationErrorMessage(macAddressError)}</HelpBlock>
+        </FormGroup>
       </TableData>
       <TableData className="kubevirt-vm-create-device-row__confirmation-buttons">
         <CancelAcceptButtons
@@ -172,7 +178,7 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             createNic({ vmLikeEntity, nic: { name, model, network, binding, mac: macAddress } })
               .then(onCreateRowDismiss)
               .catch((error) => {
-                onCreateRowError((error && error.message) || 'Error occured, please try again');
+                onCreateRowError((error && error.message) || GENERAL_ERROR_MSG);
                 setCreating(false);
               });
           }}

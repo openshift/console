@@ -25,13 +25,27 @@ export enum ValidationErrorType {
 export const getValidationObject = (
   message: string,
   type: ValidationErrorType = ValidationErrorType.Error,
-) => ({
+): ValidationObject => ({
   message,
   type,
 });
 
+export const getValidationErrorType = (validationObject: ValidationObject): ValidationErrorType => {
+  return (
+    validationObject && validationObject.type === ValidationErrorType.Error && validationObject.type
+  );
+};
+
+export const getValidationErrorMessage = (validationObject: ValidationObject): string => {
+  return (
+    validationObject &&
+    validationObject.type === ValidationErrorType.Error &&
+    validationObject.message
+  );
+};
+
 // DNS-1123 subdomain
-export const validateDNS1123SubdomainValue = (value: string) => {
+export const validateDNS1123SubdomainValue = (value: string): ValidationObject => {
   if (!value) {
     return getValidationObject(makeSentence(EMPTY_ERROR, false), ValidationErrorType.TrivialError);
   }
@@ -86,4 +100,9 @@ export const validateDNS1123SubdomainValue = (value: string) => {
   }
 
   return result && getValidationObject(result, ValidationErrorType.Error);
+};
+
+export type ValidationObject = {
+  message: string;
+  type?: ValidationErrorType;
 };
