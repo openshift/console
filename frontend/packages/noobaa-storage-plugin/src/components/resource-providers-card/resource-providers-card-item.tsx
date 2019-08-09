@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ArrowCircleDownIcon } from '@patternfly/react-icons';
+import { RedExclamationCircleIcon } from '@console/shared';
 
 const ResourceProvidersItemStatus: React.FC<ResourceProvidersRowStatusProps> = React.memo(
   ({ status }) => (
     <div className="nb-resource-providers-card__row-status">
       <div className="nb-resource-providers-card__row-status-item">
         <div>
-          <ArrowCircleDownIcon />
+          <RedExclamationCircleIcon />
         </div>
         <div className="nb-resource-providers-card__row-status-item-text">{status}</div>
       </div>
