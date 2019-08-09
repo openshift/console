@@ -242,75 +242,59 @@ export const catalogListPageProps = {
     'loaded': true,
     'selected': null,
   },
-  'templates': {
-    'data': [
-      {
-        'metadata': {
-          'name': 'amq63-basic',
-          'namespace': 'openshift',
-          'selfLink': '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-basic',
-          'uid': 'effe623a-682c-11e9-be91-0a580a82000e',
-          'resourceVersion': '9593',
-          'creationTimestamp': '2019-04-26T14:09:42Z',
-          'labels': {
-            'samples.operator.openshift.io/managed': 'true',
-          },
-          'annotations': {
-            'description': 'Application template for JBoss A-MQ brokers. These can be deployed as standalone or in a mesh. This template doesn\'t feature SSL support.',
-            'iconClass': 'icon-amq',
-            'openshift.io/display-name': 'Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)',
-            'openshift.io/provider-display-name': 'Red Hat, Inc.',
-            'samples.operator.openshift.io/version': '4.1.0-0.ci-2019-04-26-103919',
-            'tags': 'messaging,amq,jboss',
-            'version': '1.4.12',
-          },
-        },
-        'message': 'A new messaging service has been created in your project. It will handle the protocol(s) "${MQ_PROTOCOL}". The username/password for accessing the service is ${MQ_USERNAME}/${MQ_PASSWORD}.',
-        'objects': [
-        ],
-        'parameters': [
-        ],
+  'templateMetadata': [
+    {
+      'apiVersion': 'meta.k8s.io/v1beta1',
+      'kind': 'PartialObjectMetadata',
+      'metadata': {
+        'name': 'amq63-basic',
+        'namespace': 'openshift',
+        'selfLink': '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-basic',
+        'uid': 'effe623a-682c-11e9-be91-0a580a82000e',
+        'resourceVersion': '9593',
+        'creationTimestamp': '2019-04-26T14:09:42Z',
         'labels': {
-          'template': 'amq63-basic',
-          'xpaas': '1.4.12',
+          'samples.operator.openshift.io/managed': 'true',
+        },
+        'annotations': {
+          'description': 'Application template for JBoss A-MQ brokers. These can be deployed as standalone or in a mesh. This template doesn\'t feature SSL support.',
+          'iconClass': 'icon-amq',
+          'openshift.io/display-name': 'Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)',
+          'openshift.io/provider-display-name': 'Red Hat, Inc.',
+          'samples.operator.openshift.io/version': '4.1.0-0.ci-2019-04-26-103919',
+          'tags': 'messaging,amq,jboss',
+          'version': '1.4.12',
         },
       },
-      {
-        'metadata': {
-          'name': 'amq63-persistent',
-          'namespace': 'openshift',
-          'selfLink': '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-persistent',
-          'uid': 'f2469368-682c-11e9-994a-0a580a80000a',
-          'resourceVersion': '10083',
-          'creationTimestamp': '2019-04-26T14:09:46Z',
-          'labels': {
-            'samples.operator.openshift.io/managed': 'true',
-          },
-          'annotations': {
-            'description': 'An example JBoss A-MQ application. For more information about using this template, see https://github.com/jboss-openshift/application-templates.',
-            'iconClass': 'icon-amq',
-            'openshift.io/display-name': 'JBoss A-MQ 6.3 (no SSL)',
-            'openshift.io/provider-display-name': 'Red Hat, Inc.',
-            'samples.operator.openshift.io/version': '4.1.0-0.ci-2019-04-26-103919',
-            'tags': 'messaging,amq,jboss',
-            'template.openshift.io/documentation-url': 'https://access.redhat.com/documentation/en/red-hat-jboss-amq/',
-            'template.openshift.io/long-description': 'This template defines resources needed to develop Red Hat JBoss A-MQ 6.3 based application, including a deployment configuration and using persistence.',
-            'template.openshift.io/support-url': 'https://access.redhat.com',
-            'version': '1.4.12',
-          },
-        },
-        'message': 'A new persistent messaging service has been created in your project. It will handle the protocol(s) "${MQ_PROTOCOL}". The username/password for accessing the service is ${MQ_USERNAME}/${MQ_PASSWORD}.',
-        'objects': [
-        ],
-        'parameters': [
-        ],
+    },
+    {
+      'apiVersion': 'meta.k8s.io/v1beta1',
+      'kind': 'PartialObjectMetadata',
+      'metadata': {
+        'name': 'amq63-persistent',
+        'namespace': 'openshift',
+        'selfLink': '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-persistent',
+        'uid': 'f2469368-682c-11e9-994a-0a580a80000a',
+        'resourceVersion': '10083',
+        'creationTimestamp': '2019-04-26T14:09:46Z',
         'labels': {
-          'template': 'amq63-persistent',
-          'xpaas': '1.4.12',
+          'samples.operator.openshift.io/managed': 'true',
+        },
+        'annotations': {
+          'description': 'An example JBoss A-MQ application. For more information about using this template, see https://github.com/jboss-openshift/application-templates.',
+          'iconClass': 'icon-amq',
+          'openshift.io/display-name': 'JBoss A-MQ 6.3 (no SSL)',
+          'openshift.io/provider-display-name': 'Red Hat, Inc.',
+          'samples.operator.openshift.io/version': '4.1.0-0.ci-2019-04-26-103919',
+          'tags': 'messaging,amq,jboss',
+          'template.openshift.io/documentation-url': 'https://access.redhat.com/documentation/en/red-hat-jboss-amq/',
+          'template.openshift.io/long-description': 'This template defines resources needed to develop Red Hat JBoss A-MQ 6.3 based application, including a deployment configuration and using persistence.',
+          'template.openshift.io/support-url': 'https://access.redhat.com',
+          'version': '1.4.12',
         },
       },
-    ],
-  },
+    },
+  ],
   'imageStreams': {
     'data': [
       { // first imagestream is not a builder
