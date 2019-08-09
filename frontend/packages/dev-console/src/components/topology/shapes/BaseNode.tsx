@@ -71,6 +71,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
           }
           onMouseEnter={() => this.setState({ hover: true })}
           onMouseLeave={() => this.setState({ hover: false })}
+          className="odc-base-node"
         >
           <SvgDropShadowFilter id={FILTER_ID} />
           <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
