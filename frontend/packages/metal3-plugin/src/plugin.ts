@@ -34,6 +34,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: BaremetalHostModel,
       flag: METAL3_FLAG,
+      gateExtensions: true,
     },
   },
   {
@@ -44,7 +45,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Bare Metal Hosts',
         resource: 'baremetalhosts',
-        required: METAL3_FLAG,
       },
     },
   },

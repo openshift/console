@@ -25,6 +25,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.NooBaaSystemModel,
       flag: NOOBAA_FLAG,
+      gateExtensions: true,
     },
   },
   {

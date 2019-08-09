@@ -48,8 +48,8 @@ const mergePluginChild = (Children: React.ReactElement[], pluginChild: React.Rea
 export const NavSection = connect(mapStateToProps)(
   connectToExtensions(mapExtensionsToProps)(
     class NavSection extends React.Component<Props, NavSectionState> {
-      public props: Props;
-      public state: NavSectionState;
+      readonly props: Props;
+      readonly state: NavSectionState;
 
       constructor(props) {
         super(props);

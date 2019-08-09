@@ -9,19 +9,31 @@ import {
 } from './typings';
 import { ExtensionRegistry } from './registry';
 
+// TODO(vojtech): unit test
+
+/**
+ * Check whether the given extension is always-on.
+ *
+ * The implementation is based on type declarations, i.e. return `true`
+ * for extensions whose declared type implements `AlwaysOnExtension`.
+ */
 const isAlwaysOnExtension = (e: Extension): e is AlwaysOnExtension => {
   return isFeatureFlag(e) || isModelDefinition(e);
 };
 
+/**
+ * Check whether the given extension is gateable by feature flags.
+ */
 const isGateableExtension = (e: Extension) => !isAlwaysOnExtension(e);
 
+/**
+ * Get flags which are supposed to gate all of the plugin's extensions.
+ */
 const getGatingFlags = (p: ActivePlugin) => {
-  return [
-    ...p.extensions
-      .filter(isFeatureFlag)
-      .filter((e) => e.properties.gateExtensions === undefined || e.properties.gateExtensions)
-      .map((e) => e.properties.flag),
-  ];
+  return p.extensions
+    .filter(isFeatureFlag)
+    .filter((e) => e.properties.gateExtensions)
+    .map((e) => e.properties.flag);
 };
 
 const sanitizeExtension = (e: Extension) => {
@@ -34,10 +46,7 @@ const sanitizeExtension = (e: Extension) => {
 };
 
 /**
- * Maintains a list of all Console extensions and provides access to ones which
- * are currently in use.
- *
- * TODO(vojtech): unit test
+ * Maintains a list of all Console extensions and provides access to them.
  */
 export class PluginStore {
   private readonly extensions: Extension[];
@@ -91,7 +100,7 @@ export class PluginStore {
   }
 
   /**
-   * For testing purposes only.
+   * Get all extensions. Intended mainly for testing purposes.
    */
   public getAllExtensions() {
     return _.clone(this.extensions);

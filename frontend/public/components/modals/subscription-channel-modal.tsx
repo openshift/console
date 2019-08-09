@@ -9,7 +9,7 @@ import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { RadioInput } from '../radio';
 
 export class SubscriptionChannelModal extends PromiseComponent<SubscriptionChannelModalProps, SubscriptionChannelModalState> {
-  public state: SubscriptionChannelModalState;
+  readonly state: SubscriptionChannelModalState;
 
   constructor(public props: SubscriptionChannelModalProps) {
     super(props);

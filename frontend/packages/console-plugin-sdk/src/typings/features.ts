@@ -7,8 +7,8 @@ namespace ExtensionProperties {
     model: K8sKind;
     /** The name of the feature flag. */
     flag: string;
-    /** Whether to gate all of the plugin's extensions by this feature flag. Defaults to `true`. */
-    gateExtensions?: boolean;
+    /** Whether to gate all of the plugin's extensions by this feature flag. */
+    gateExtensions: boolean;
   }
 }
 

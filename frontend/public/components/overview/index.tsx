@@ -13,7 +13,6 @@ import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
 import { PodStatus } from '../pod';
 import * as UIActions from '../../actions/ui';
-import { FeatureState } from '../../reducers/features';
 import {
   apiVersionForModel,
   K8sResourceKind,
@@ -929,14 +928,11 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
 const OverviewMainContent = connect<OverviewMainContentPropsFromState, OverviewMainContentPropsFromDispatch, OverviewMainContentOwnProps>(mainContentStateToProps, mainContentDispatchToProps)(OverviewMainContent_);
 
-const overviewStateToProps = ({ UI, FLAGS }): OverviewPropsFromState => {
+const overviewStateToProps = ({ UI }): OverviewPropsFromState => {
   const selectedUID = UI.getIn(['overview', 'selectedUID']);
   const resources = UI.getIn(['overview', 'resources']);
   const selectedItem = !!resources && resources.get(selectedUID);
-  return {
-    selectedItem,
-    flags: FLAGS,
-  };
+  return { selectedItem };
 };
 
 const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
@@ -945,13 +941,8 @@ const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
   };
 };
 
-const overviewExtensionsToProps = (
-  extensions: Extension[],
-  ownProps: OverviewPropsFromState & OverviewPropsFromDispatch
-) => ({
-  resourceList: extensions
-    .filter(isOverviewCRD)
-    .filter(resource => ownProps.flags.get(resource.properties.required)),
+const overviewExtensionsToProps = (extensions: Extension[]) => ({
+  resourceList: extensions.filter(isOverviewCRD),
 });
 
 const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourceList, title, dismissDetails}) => {
@@ -1213,7 +1204,6 @@ type OverviewMainContentState = {
 
 type OverviewPropsFromState = {
   selectedItem: any;
-  flags: FeatureState;
 };
 
 type OverviewPropsFromDispatch = {

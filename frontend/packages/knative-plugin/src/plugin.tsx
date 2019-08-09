@@ -36,6 +36,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.KnativeServingModel,
       flag: FLAG_KNATIVE_SERVING,
+      gateExtensions: true,
     },
   },
   {
@@ -45,7 +46,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.KnativeServingModel,
       name: 'knative-serving',
       namespace: 'knative-serving',
-      required: FLAG_KNATIVE_SERVING,
       uid: 'knative-serving',
     },
   },
@@ -56,7 +56,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.ServiceModel.labelPlural,
         resource: referenceForModel(models.ServiceModel),
-        required: FLAG_KNATIVE_SERVING,
       },
     },
   },
@@ -67,7 +66,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RevisionModel.labelPlural,
         resource: referenceForModel(models.RevisionModel),
-        required: FLAG_KNATIVE_SERVING,
       },
     },
   },
@@ -78,7 +76,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RouteModel.labelPlural,
         resource: referenceForModel(models.RouteModel),
-        required: FLAG_KNATIVE_SERVING,
       },
     },
   },
@@ -97,7 +94,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResources,
-      required: FLAG_KNATIVE_SERVING,
       utils: getKnativeServingResources,
     },
   },

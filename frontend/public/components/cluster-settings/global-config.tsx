@@ -6,14 +6,12 @@ import { Alert } from '@patternfly/react-core';
 
 import { connectToExtensions, Extension, isGlobalConfig, GlobalConfig } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
-import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { K8sKind, k8sList, referenceForModel } from '../../module/k8s';
 import { resourcePathFromModel, Kebab, LoadingBox } from '../utils';
 import { addIDPItems } from './oauth';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
-  flags: state[featureReducerName],
 });
 
 const extensionsToProps = (extensions: Extension[]) => ({
@@ -82,21 +80,10 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     });
   }
 
-  checkFlags(c: GlobalConfig): GlobalConfigObjectProps {
-    const { flags } = this.props;
-    const { required } = c.properties;
-
-    const requiredArray = required ? _.castArray(required) : [];
-    const requirementMissing = _.some(requiredArray, flag => (
-      flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-    ));
-    return requirementMissing ? null : c.properties;
-  }
-
   render() {
     const { errorMessage, items, loading } = this.state;
 
-    const usableConfigs = this.props.globalConfigs.filter(item => this.checkFlags(item)).map(item => item.properties);
+    const usableConfigs = this.props.globalConfigs.map(item => item.properties);
     const allItems = usableConfigs.length > 0 && items.concat(usableConfigs);
     const sortedItems = usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
 
@@ -126,7 +113,6 @@ export const GlobalConfigPage = connect(stateToProps)(connectToExtensions(extens
 type GlobalConfigPageProps = {
   configResources: K8sKind[];
   globalConfigs: GlobalConfig[];
-  flags?: FeatureState;
 };
 
 type GlobalConfigPageState = {
@@ -134,11 +120,3 @@ type GlobalConfigPageState = {
   items: any,
   loading: boolean,
 };
-
-type GlobalConfigObjectProps = {
-  kind: string;
-  model: K8sKind;
-  name: string;
-  namespace: string;
-  uid: string;
-}

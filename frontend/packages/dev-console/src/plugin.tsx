@@ -44,6 +44,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.PipelineModel,
       flag: SHOW_PIPELINE,
+      gateExtensions: false,
     },
   },
   {
@@ -63,8 +64,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Topology',
         href: '/topology',
-        required: FLAGS.OPENSHIFT,
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -74,8 +77,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Builds',
         resource: 'buildconfigs',
-        required: FLAGS.OPENSHIFT,
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -85,8 +90,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Pipelines',
         resource: 'pipelines',
-        required: SHOW_PIPELINE,
       },
+    },
+    flags: {
+      required: [SHOW_PIPELINE],
     },
   },
   {
@@ -97,8 +104,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Projects',
         resource: 'projects',
-        required: FLAGS.OPENSHIFT,
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {

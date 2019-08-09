@@ -50,6 +50,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       flag: FLAG_KUBEVIRT,
+      gateExtensions: true,
     },
   },
   {
@@ -59,22 +60,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Virtual Machines',
         resource: models.VirtualMachineModel.plural,
-        required: FLAG_KUBEVIRT,
       },
       mergeAfter: 'Pods',
     },
   },
   {
-    // NOTE(yaacov): vmtemplates is a template resource with a selector.
-    // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
-    // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
     type: 'NavItem/ResourceNS',
     properties: {
       section: 'Workloads',
       componentProps: {
         name: 'Virtual Machine Templates',
         resource: 'vmtemplates',
-        required: FLAG_KUBEVIRT,
       },
       mergeAfter: 'Virtual Machines',
     },
@@ -90,6 +86,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.VirtualMachineModel,
+      loader: () =>
+        import(
+          './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
+        ).then((m) => m.VirtualMachinesDetailsPage),
+    },
+  },
+  {
     type: 'YAMLTemplate',
     properties: {
       model: models.VirtualMachineModel,
@@ -102,16 +108,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: TemplateModel,
       template: VMTemplateYAMLTemplates.getIn(['vm-template']),
       templateName: 'vm-template',
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.VirtualMachineModel,
-      loader: () =>
-        import(
-          './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
-        ).then((m) => m.VirtualMachinesDetailsPage),
     },
   },
   {
@@ -139,7 +135,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      path: `/k8s/ns/:ns/vmtemplates/:name`,
+      path: '/k8s/ns/:ns/vmtemplates/:name',
       loader: () =>
         import(
           './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */

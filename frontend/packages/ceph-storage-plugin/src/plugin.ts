@@ -40,6 +40,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.CephClusterModel,
       flag: CEPH_FLAG,
+      gateExtensions: true,
     },
   },
   {

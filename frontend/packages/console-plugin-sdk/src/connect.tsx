@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as _ from 'lodash';
 import { RootState } from '@console/internal/redux';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { pluginStore } from '@console/internal/plugins';
@@ -25,11 +24,9 @@ export const connectToExtensions: ConnectToExtensions = (mapExtensionsToProps) =
     allFlags: state[featureReducerName],
   });
 
-  const ComponentWrapper = connect(mapStateToProps)((props) => {
-    const flags = props.allFlags;
-    const ownProps = _.omit(props, 'allFlags') as any;
+  const ComponentWrapper = connect(mapStateToProps)(({ allFlags: flags, ...ownProps }) => {
     const extensions = pluginStore.getExtensionsInUse(flags);
-    const extensionProps = mapExtensionsToProps(extensions, ownProps);
+    const extensionProps = mapExtensionsToProps(extensions, ownProps as any);
     return <Component {...ownProps} {...extensionProps} />;
   });
 

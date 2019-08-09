@@ -9,7 +9,7 @@ import { RadioInput } from '../radio';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 
 export class InstallPlanApprovalModal extends PromiseComponent<InstallPlanApprovalModalProps, InstallPlanApprovalModalState> {
-  public state: InstallPlanApprovalModalState;
+  readonly state: InstallPlanApprovalModalState;
 
   constructor(public props: InstallPlanApprovalModalProps) {
     super(props);
