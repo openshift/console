@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import {
-  humanizeBinaryBytesWithoutB,
   humanizeDecimalBytes,
+  humanizeBinaryBytes,
+  humanizeNumber,
 } from '@console/internal/components/utils';
 import { getMetric, getValue, PrometheusMetricResult } from '../../utils';
 import {
@@ -13,99 +14,157 @@ import {
   BY_EGRESS,
 } from '../../constants';
 
-/* Chart Data Handlers */
-
-const iopsChartData: GetBarChartData = (data, metricType, metric1, metric2) => {
-  const arr1 = [];
-  const arr2 = [];
-  _.forEach(data, (iops) => {
-    const y1 = getMetric(iops, metric1);
-    const y2 = getMetric(iops, metric2);
-    const reads = {
-      name: 'Total Reads',
-      x: getMetric(iops, metricType),
-      y: Number(humanizeDecimalBytes(y1).value),
-    };
-    const writes = {
-      name: 'Total Writes',
-      x: getMetric(iops, metricType),
-      y: Number(humanizeDecimalBytes(y2).value),
-    };
-    arr1.push(reads);
-    arr2.push(writes);
-  });
-  return arr1.length > 0 && arr2.length > 0 ? [arr1, arr2] : [];
+/* utility function to convert number in words */
+export const numberInWords = (n: number): string => {
+  const hNumber = humanizeNumber(n);
+  // units: ['', 'k', 'm', 'b'],
+  const mapToWord: { [k: string]: string } = {
+    '': '',
+    k: 'thousands',
+    m: 'millions',
+    b: 'billions',
+  };
+  return mapToWord[hNumber.unit];
 };
 
-const accountsLogicalUsageChartData: GetBarChartData = (data, metricType) => [
-  data.map((logicalUsage) => ({
-    name: 'Logical Used Capacity',
-    x: getMetric(logicalUsage, metricType),
-    y: Number(humanizeBinaryBytesWithoutB(Number(getValue(logicalUsage))).value),
-  })),
-];
+/* Chart Data Handlers */
+
+const iopsChartData: GetBarChartData = (data, metricType, readMetric, writeMetric) => {
+  const readArr: BarChartData[] = [];
+  const writeArr: BarChartData[] = [];
+  _.forEach(data, (iops) => {
+    const readYAxisValue = Number(getMetric(iops, readMetric));
+    const writeYAxisValue = Number(getMetric(iops, writeMetric));
+    let humanizedTotal = humanizeDecimalBytes(readYAxisValue);
+    const reads: BarChartData = {
+      name: 'Total Reads',
+      x: getMetric(iops, metricType),
+      y: Number(humanizedTotal.value),
+      unit: humanizedTotal.unit,
+      yOriginal: readYAxisValue,
+    };
+    humanizedTotal = humanizeDecimalBytes(writeYAxisValue);
+    const writes: BarChartData = {
+      name: 'Total Writes',
+      x: getMetric(iops, metricType),
+      y: Number(humanizedTotal.value),
+      unit: humanizedTotal.unit,
+      yOriginal: writeYAxisValue,
+    };
+    readArr.push(reads);
+    writeArr.push(writes);
+  });
+  return readArr.length && writeArr.length ? [readArr, writeArr] : [];
+};
+
+const accountsLogicalUsageChartData: GetBarChartData = (data, metricType) => {
+  const mappedData = data.map((logicalUsage) => {
+    const logicalUsageVal = Number(getValue(logicalUsage));
+    const humanizedData = humanizeBinaryBytes(logicalUsageVal);
+    return {
+      name: 'Logical Used Capacity',
+      x: getMetric(logicalUsage, metricType),
+      y: Number(humanizedData.value),
+      unit: humanizedData.unit,
+      yOriginal: logicalUsageVal,
+    };
+  });
+  return [mappedData];
+};
+
 const providersPhysicalVsLogicalChartData: GetBarChartData = (data) => {
-  const arr1 = [];
-  const arr2 = [];
+  const readArr: BarChartData[] = [];
+  const writeArr: BarChartData[] = [];
   _.forEach(data, (physicalVsLogicalData) => {
-    const y1 = Number(getMetric(physicalVsLogicalData, 'physical_size'));
-    const y2 = Number(getMetric(physicalVsLogicalData, 'logical_size'));
+    const readYAxisValue = Number(getMetric(physicalVsLogicalData, 'physical_size'));
+    const writeYAxisValue = Number(getMetric(physicalVsLogicalData, 'logical_size'));
+    let humanizedData = humanizeBinaryBytes(readYAxisValue);
     const reads = {
       name: 'Total Physical',
       x: getMetric(physicalVsLogicalData, 'type'),
-      y: Number(humanizeDecimalBytes(y1).value),
+      y: Number(humanizedData.value),
+      unit: humanizedData.unit,
+      yOriginal: readYAxisValue,
     };
+    humanizedData = humanizeBinaryBytes(writeYAxisValue);
     const writes = {
       name: 'Total Logical',
       x: getMetric(physicalVsLogicalData, 'type'),
-      y: Number(humanizeDecimalBytes(y2).value),
+      y: Number(humanizedData.value),
+      unit: humanizedData.unit,
+      yOriginal: writeYAxisValue,
     };
-    arr1.push(reads);
-    arr2.push(writes);
+    readArr.push(reads);
+    writeArr.push(writes);
   });
-  return arr1.length > 0 && arr2.length > 0 ? [arr1, arr2] : [];
+  return readArr.length && writeArr.length ? [readArr, writeArr] : [];
 };
 
-const providersEgressChartData: GetBarChartData = (data) => [
-  data.map((egress) => ({
-    name: getMetric(egress, 'type'),
-    x: getMetric(egress, 'type'),
-    y: Number(humanizeBinaryBytesWithoutB(Number(getValue(egress))).value),
-  })),
-];
+const providersEgressChartData: GetBarChartData = (data) => {
+  const mappedData: BarChartData[] = data.map((egress) => {
+    const egressVal = Number(getValue(egress));
+    const humanizedData = humanizeBinaryBytes(egressVal);
+    const egressType = getMetric(egress, 'type');
+    return {
+      name: egressType,
+      x: egressType,
+      y: Number(humanizedData.value),
+      unit: humanizedData.unit,
+      yOriginal: egressVal,
+    };
+  });
+  return [mappedData];
+};
 
 /* Legends Data Handlers */
 
 const iopsChartLegendData = (data: [BarChartData[], BarChartData[]]) => {
-  const totalReads = data[0].reduce((total: number, iops: BarChartData) => total + iops.y, 0);
-  const totalWrites = data[1].reduce((total: number, iops: BarChartData) => total + iops.y, 0);
-  return [{ name: `Total Reads ${totalReads}` }, { name: `Total Writes ${totalWrites}` }];
+  const totalReads = data[0].reduce(
+    (total: number, iops: BarChartData) => total + iops.yOriginal,
+    0,
+  );
+  const totalWrites = data[1].reduce(
+    (total: number, iops: BarChartData) => total + iops.yOriginal,
+    0,
+  );
+  const humanizedReads = humanizeNumber(totalReads.toFixed(1));
+  const humanizedWrites = humanizeNumber(totalWrites.toFixed(1));
+  return [
+    { name: `Total Reads ${humanizedReads.string}` },
+    { name: `Total Writes ${humanizedWrites.string}` },
+  ];
 };
 
 const providersPhysicalVsLogicalChartLegendData = (data: [BarChartData[], BarChartData[]]) => {
-  const valueL = humanizeBinaryBytesWithoutB(
-    data[0].reduce((total: number, logical: BarChartData) => total + logical.y, 0),
+  const valueL = data[0].reduce(
+    (total: number, logical: BarChartData) => total + logical.yOriginal,
+    0,
   );
-  const valueP = humanizeBinaryBytesWithoutB(
-    data[1].reduce((total: number, physical: BarChartData) => total + physical.y, 0),
+  const valueLH = humanizeBinaryBytes(valueL.toFixed(1));
+  const valueP = data[1].reduce(
+    (total: number, physical: BarChartData) => total + physical.yOriginal,
+    0,
   );
+  const valuePH = humanizeBinaryBytes(valueP.toFixed(1));
   return [
-    { name: `Total Logical ${valueL.value}${valueP.unit}` },
-    { name: `Total Physical ${valueP.value}${valueP.unit}` },
+    { name: `Total Logical    ${valueLH.string}` },
+    { name: `Total Physical   ${valuePH.string}` },
   ];
 };
 
 const accountsLogicalUsageChartLegendData = (data: [BarChartData[]]) => {
-  const { unit, value } = humanizeBinaryBytesWithoutB(
-    data[0].reduce((total: number, logicalUsage: BarChartData) => total + logicalUsage.y, 0),
+  const totalLU = data[0].reduce(
+    (total: number, logicalUsage: BarChartData) => total + logicalUsage.yOriginal,
+    0,
   );
-  return [{ name: `Logical Used Capacity ${value}${unit}` }];
+  const totalLUH = humanizeBinaryBytes(totalLU.toFixed(1));
+  return [{ name: `Logical Used Capacity ${totalLUH.string}` }];
 };
 
 const providersEgressChartLegendData = (data: [BarChartData[]]) => {
   const result = data[0].map((egress: BarChartData) => {
-    const { unit, value } = humanizeBinaryBytesWithoutB(egress.y);
-    return { name: `${egress.x} ${value}${unit}` };
+    const totalH = humanizeBinaryBytes(egress.yOriginal.toFixed(1));
+    return { name: `${egress.x}  ${totalH.string}` };
   });
   return result;
 };
@@ -138,11 +197,13 @@ export type BarChartData = {
   x: string;
   y: number;
   name: string;
+  unit: string;
+  yOriginal: number;
 };
 
 export type GetBarChartData = (
   data: PrometheusMetricResult[],
   metricType?: string,
-  metric1?: string,
-  metric2?: string,
+  readMetric?: string,
+  writeMetric?: string,
 ) => [BarChartData[], BarChartData[]] | BarChartData[] | [BarChartData[]];
