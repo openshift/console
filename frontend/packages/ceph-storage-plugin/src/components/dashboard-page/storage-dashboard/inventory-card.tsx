@@ -21,22 +21,7 @@ import {
   PersistentVolumeModel,
 } from '@console/internal/models';
 import { ResourceInventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
-
-const cephStorageProvisioners = ['ceph.rook.io/block'];
-
-const getFilteredPVCsData = (pvcsData: K8sResourceKind[]): K8sResourceKind[] =>
-  pvcsData.filter((pvc: K8sResourceKind) =>
-    cephStorageProvisioners.includes(
-      _.get(pvc, 'metadata.annotations["volume.beta.kubernetes.io/storage-provisioner"]'),
-    ),
-  );
-
-const getFilteredPVsData = (pvsData: K8sResourceKind[]): K8sResourceKind[] =>
-  pvsData.filter((pv: K8sResourceKind) =>
-    cephStorageProvisioners.includes(
-      _.get(pv, 'metadata.annotations["pv.kubernetes.io/provisioned-by"]'),
-    ),
-  );
+import { getCephNodes, getCephPVs, getCephPVCs } from '../../../selectors';
 
 const k8sResources: FirehoseResource[] = [
   {
@@ -90,7 +75,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           isLoading={!nodesLoaded}
           error={!!nodesLoadError}
           kind={NodeModel}
-          resources={nodesData}
+          resources={getCephNodes(nodesData)}
           mapper={getNodeStatusGroups}
         />
         <ResourceInventoryItem
@@ -98,7 +83,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           error={!!pvcsLoadError}
           kind={PersistentVolumeClaimModel}
           useAbbr
-          resources={getFilteredPVCsData(pvcsData)}
+          resources={getCephPVCs(pvcsData)}
           mapper={getPVCStatusGroups}
         />
         <ResourceInventoryItem
@@ -106,7 +91,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           error={!!pvsLoadError}
           kind={PersistentVolumeModel}
           useAbbr
-          resources={getFilteredPVsData(pvsData)}
+          resources={getCephPVs(pvsData)}
           mapper={getPVStatusGroups}
         />
       </DashboardCardBody>
