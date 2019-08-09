@@ -58,7 +58,7 @@ export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, k
   const secretItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
-  const keyTitle = _.isEmpty(key) ? <span className="text-muted">Select a key</span> : <span>{key}</span>;
+  const keyTitle = _.isEmpty(key) ? <span className="pf-c-dropdown__toggle-text--placeholder">Select a key</span> : <span>{key}</span>;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
 
@@ -125,7 +125,7 @@ const FieldRef = ({data: {fieldPath}}) => <React.Fragment>
 
 const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange, disabled, kind}) => {
   const placeholderString = 'Config Map or Secret';
-  const nameTitle = _.isEmpty(name) ? <span className="text-muted">Select a resource</span> : <ResourceName kind={kind} name={name} />;
+  const nameTitle = _.isEmpty(name) ? <span className="pf-c-dropdown__toggle-text--placeholder">Select a resource</span> : <ResourceName kind={kind} name={name} />;
 
   if (disabled) {
     return <React.Fragment>
@@ -142,7 +142,7 @@ const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange
 
 const ConfigMapSecretRef = ({data: {name, key}, configMaps, secrets, onChange, disabled, kind}) => {
   const placeholderString = 'Config Map or Secret';
-  const nameTitle = _.isEmpty(name) ? <span className="text-muted">Select a resource</span> : <ResourceName kind={kind} name={name} />;
+  const nameTitle = _.isEmpty(name) ? <span className="pf-c-dropdown__toggle-text--placeholder">Select a resource</span> : <ResourceName kind={kind} name={name} />;
   const isKeyRef = false;
   const nameString = _.isEmpty(name) ? '' : `${name} - ${kind}`;
 
