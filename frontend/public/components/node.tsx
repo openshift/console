@@ -144,6 +144,7 @@ const filters = [{
 export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
+  const instanceQuery = `{instance='${node.metadata.name}'}`;
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
 
@@ -153,14 +154,14 @@ const NodeGraphs = requirePrometheus(({node}) => {
         <Area
           title="Memory Usage"
           humanize={humanizeDecimalBytes}
-          query={ipQuery && `node_memory_Active_bytes${ipQuery}`}
+          query={`node_memory_Active_bytes${instanceQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
           humanize={humanizeCpuCores}
-          query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`}
+          query={`instance:node_cpu:rate:sum${instanceQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -173,21 +174,21 @@ const NodeGraphs = requirePrometheus(({node}) => {
         <Area
           title="Network In"
           humanize={humanizeDecimalBytesPerSec}
-          query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`}
+          query={`instance:node_network_receive_bytes:rate:sum${instanceQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network Out"
           humanize={humanizeDecimalBytesPerSec}
-          query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`}
+          query={`instance:node_network_transmit_bytes:rate:sum${instanceQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
           humanize={humanizeDecimalBytes}
-          query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`}
+          query={`instance:node_filesystem_usage:sum${instanceQuery}`}
         />
       </div>
     </div>
