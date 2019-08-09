@@ -4,6 +4,7 @@ import {
   ResourceNSNavItem,
   ResourceListPage,
   ResourceDetailsPage,
+  RoutePage,
   ModelFeatureFlag,
   ModelDefinition,
 } from '@console/plugin-sdk';
@@ -17,6 +18,7 @@ type ConsumedExtensions =
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
+  | RoutePage
   | ModelFeatureFlag
   | ModelDefinition;
 
@@ -66,6 +68,16 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/host-detail' /* webpackChunkName: "metal3-baremetalhost" */).then(
           (m) => m.BaremetalHostDetailPageConnected,
         ),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${referenceForModel(BaremetalHostModel)}/~new/form`,
+      loader: async () =>
+        (await import('./components/add-host' /* webpackChunkName: "metal3-baremetalhost" */))
+          .default,
     },
   },
   {
