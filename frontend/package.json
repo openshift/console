@@ -151,7 +151,7 @@
     "browser-env": "3.x",
     "cache-loader": "1.x",
     "chalk": "2.3.x",
-    "chromedriver": "^2.43.3",
+    "chromedriver": "76.x",
     "circular-dependency-plugin": "5.0.2",
     "css-loader": "0.28.x",
     "enzyme": "^3.9.0",
