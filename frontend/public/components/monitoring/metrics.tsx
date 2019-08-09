@@ -198,7 +198,8 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':'
     const allTokens = getTextBeforeCursor().split(/[^a-zA-Z0-9_:]+/);
 
-    setToken(_.last(allTokens));
+    // We always do case insensitive autocompletion, so convert to lower case immediately
+    setToken(_.toLower(_.last(allTokens)));
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -236,13 +237,22 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     inputRef.current.focus();
   };
 
+  // Order autocompletion suggestions so that exact matches (token as a substring) are first, then fuzzy matches after
+  // Exact matches are sorted first by how early the token appears and secondarily by string length (shortest first)
+  // Fuzzy matches are sorted by string length (shortest first)
   const isMatch = v => fuzzyCaseInsensitive(token, v);
+  const matchScore = (v: string): number => {
+    const i = v.toLowerCase().indexOf(token);
+    return i === -1 ? Infinity : i;
+  };
+  const filterSuggestions = (options: string[]): string[] => _.sortBy(options.filter(isMatch), [matchScore, 'length']);
+
   const allSuggestions = token.length < 2
     ? {}
     : _.omitBy({
-      ['Aggregation Operators']: aggregationOperators.filter(isMatch),
-      ['Functions']: prometheusFunctions.filter(isMatch),
-      ['Metrics']: metrics.filter(isMatch),
+      ['Aggregation Operators']: filterSuggestions(aggregationOperators),
+      ['Functions']: filterSuggestions(prometheusFunctions),
+      ['Metrics']: filterSuggestions(metrics),
     }, _.isEmpty);
 
   // Set the default textarea height to the number of lines in the query text

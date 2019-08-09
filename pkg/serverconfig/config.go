@@ -35,8 +35,15 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addAuth(fs, &config.Auth)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
+	addTrustedCAFile(fs, &config.Proxy)
 
 	return nil
+}
+
+func addTrustedCAFile(fs *flag.FlagSet, proxy *Proxy) {
+	if proxy.TrustedCAFile != "" {
+		fs.Set("user-auth-oidc-ca-file", proxy.TrustedCAFile)
+	}
 }
 
 func addServingInfo(fs *flag.FlagSet, servingInfo *ServingInfo) (err error) {

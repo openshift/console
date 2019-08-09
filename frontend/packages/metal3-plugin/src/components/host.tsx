@@ -124,15 +124,27 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
   );
 };
 
-const HostList: React.FC<HostListProps> = (props) => (
-  <Table {...props} aria-label="Baremetal Hosts" Header={HostsTableHeader} Row={HostsTableRow} />
-);
-
 type HostListProps = React.ComponentProps<typeof Table> & {
   data: HostRowBundle[];
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
+};
+
+const HostList: React.FC<HostListProps> = (props) => (
+  <Table
+    {...props}
+    defaultSortField="host.metadata.name"
+    aria-label="Baremetal Hosts"
+    Header={HostsTableHeader}
+    Row={HostsTableRow}
+    virtualize
+  />
+);
+
+type BaremetalHostsPageProps = {
+  namespace: string;
+  hasNodeMaintenanceCapability: boolean;
 };
 
 const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = ({
@@ -183,21 +195,31 @@ const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = ({
     if (loaded) {
       const nodeMaintenanceLookup = createLookup(nodeMaintenances, getNodeMaintenanceNodeName);
 
-      return hostsData.map((host) => {
-        const machine = getHostMachine(host, machinesData);
-        const node = getMachineNode(machine, nodesData);
-        const nodeMaintenance = nodeMaintenanceLookup[getName(node)];
-        return {
-          ...host,
-          host,
-          machine,
-          node,
-          nodeMaintenance,
-          status: getHostStatus({ host, machine, node, nodeMaintenance }),
-        };
-      });
+      return hostsData.map(
+        (host): HostRowBundle => {
+          const machine = getHostMachine(host, machinesData);
+          const node = getMachineNode(machine, nodesData);
+          const nodeMaintenance = nodeMaintenanceLookup[getName(node)];
+          return {
+            // TODO(jtomasek): this is needed to make 'name' textFilter work.
+            // Remove this when it is possible to pass custom textFilter as a function
+            metadata: { name: host.metadata.name },
+            host,
+            machine,
+            node,
+            nodeMaintenance,
+            status: getHostStatus({ host, machine, node, nodeMaintenance }),
+          };
+        },
+      );
     }
     return [];
+  };
+
+  const createHostProps = {
+    to: `/k8s/ns/${props.namespace || 'default'}/${referenceForModel(
+      BaremetalHostModel,
+    )}/~new/form`,
   };
 
   return (
@@ -205,6 +227,7 @@ const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = ({
       {...props}
       canCreate
       rowFilters={[hostStatusFilter]}
+      createProps={createHostProps}
       createButtonText="Add Host"
       namespace={props.namespace}
       resources={resources}
@@ -213,11 +236,6 @@ const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = ({
       customData={{ hasNodeMaintenanceCapability }}
     />
   );
-};
-
-type BaremetalHostsPageProps = {
-  namespace: string;
-  hasNodeMaintenanceCapability: boolean;
 };
 
 const hostsPageStateToProps = ({ k8s }) => ({

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ArrowCircleDownIcon } from '@patternfly/react-icons';
 import { LoadingInline, pluralize } from '@console/internal/components/utils';
+import { RedExclamationCircleIcon } from '@console/shared';
 
 const pluralizeWithNotation = (i: number, suffix: string, singular: string) =>
   `${i}${suffix} ${i === 1 ? singular : `${singular}s`}`;
@@ -19,7 +19,7 @@ const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status }
     ) : Number(status) > 0 ? (
       <React.Fragment>
         <div>
-          <ArrowCircleDownIcon />
+          <RedExclamationCircleIcon />
         </div>
         <div className="nb-buckets-card__row-status-item-text">{status}</div>
       </React.Fragment>

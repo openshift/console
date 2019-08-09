@@ -1,7 +1,8 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { HostMultiStatus } from '../utils/host-status';
 
-export type HostRowBundle = K8sResourceKind & {
+export type HostRowBundle = {
+  metadata?: { name: string };
   machine: MachineKind;
   node: NodeKind;
   host: K8sResourceKind;

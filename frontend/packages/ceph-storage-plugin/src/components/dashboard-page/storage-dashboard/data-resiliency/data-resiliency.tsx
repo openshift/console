@@ -40,7 +40,7 @@ const DataResiliencyBuildBody: React.FC<DataResiliencyBuildBody> = ({ progressPe
   <>
     <div className="ceph-data-resiliency__title">Rebuilding data resiliency</div>
     <Progress
-      className="ceph-data-resiliency__utilization-bar"
+      className="ceph-data-resiliency__progress-bar"
       value={progressPercentage}
       title="Rebuilding in Progress"
       label={`${progressPercentage}%`}
