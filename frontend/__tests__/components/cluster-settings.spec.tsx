@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount, ShallowWrapper } from 'enzyme';
 
 import { clusterVersionProps } from '../../__mocks__/clusterVersinMock';
 import {
@@ -15,27 +15,21 @@ import {
 } from '../../public/components/cluster-settings/cluster-settings';
 import { GlobalConfigPage } from '../../public/components/cluster-settings/global-config';
 import {
-  ClusterVersionKind,
-} from '../../public/module/k8s';
-import {
   Firehose,
   HorizontalNav,
   ResourceLink,
   Timestamp,
 } from '../../public/components/utils';
-import {
-  AddCircleOIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon} from '@patternfly/react-icons';
 
 
 describe('Cluster Settings page', () => {
-  let wrapper;
+  let wrapper : ShallowWrapper<any>;
   const match = { url: '', params: { ns: 'default', plural: 'pods' }, isExact: true, path: '' };
 
   beforeEach(() => {
     wrapper = shallow(<ClusterSettingsPage match={match} />);
   });
-
 
   it('should render ClusterSettingsPage component', () => {
     expect(wrapper.exists()).toBe(true);
@@ -66,8 +60,8 @@ describe('Cluster Settings page', () => {
 });
 
 describe('Cluster Version Details Table page', () => {
-  let wrapper;
-  let cv: ClusterVersionKind;
+  let wrapper : ShallowWrapper<any>;
+  let cv;
 
   beforeEach(() => {
     cv = clusterVersionProps;
@@ -103,11 +97,9 @@ describe('Cluster Version Details Table page', () => {
 
 describe('Current Channel component', () => {
   let wrapper;
-  let cv: ClusterVersionKind;
 
   beforeEach(() => {
-    cv = clusterVersionProps;
-    wrapper = mount(<CurrentChannel cv={cv} />);
+    wrapper = mount(<CurrentChannel cv={clusterVersionProps} />);
   });
 
   it('should accept props', () => {
@@ -119,8 +111,8 @@ describe('Current Channel component', () => {
 });
 
 describe('Current Version', () => {
-  let wrapper;
-  let cv: ClusterVersionKind;
+  let wrapper: ShallowWrapper<any>;
+  let cv;
 
   beforeEach(() => {
     cv = clusterVersionProps;
@@ -133,8 +125,8 @@ describe('Current Version', () => {
 
 });
 describe('Current Version Header', () => {
-  let wrapper;
-  let cv: ClusterVersionKind;
+  let wrapper: ShallowWrapper<any>;
+  let cv;
 
   beforeEach(() => {
     cv = clusterVersionProps;
