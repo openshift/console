@@ -17,7 +17,7 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       kind: PipelineModel.kind,
       namespace,
       prop: PipelineModel.id,
-      filters,
+      filters: { ...filters },
     },
   ];
   return namespace ? (
