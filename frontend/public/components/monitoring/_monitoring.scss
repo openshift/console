@@ -78,6 +78,11 @@
   }
 }
 
+.query-browser__no-data-warning {
+  border-bottom: solid 1px $color-grey-background-border;
+  padding: 10px 20px;
+}
+
 .query-browser__query {
   line-height: 1;
   margin: 0 15px;
@@ -144,7 +149,8 @@
 }
 
 .query-browser__table-cell {
-  padding-right: 0;
+  @include co-break-word;
+  padding-right: 0 !important;
 }
 
 $tooltip-background-color: #151515;
