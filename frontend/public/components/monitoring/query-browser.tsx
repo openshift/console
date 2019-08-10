@@ -28,9 +28,6 @@ const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2
 const dropdownItems = _.zipObject(spans, spans);
 export const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 
-// Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
-export const omitInternalLabels = (labels: Labels): Labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
-
 const Error = ({error}) => <Alert isInline className="co-alert" variant="danger" title="An error occurred">{_.get(error, 'json.error', error.message)}</Alert>;
 
 const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, onChange, span}) => {
@@ -225,12 +222,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const graphData: GraphDataPoint[][] = React.useMemo(() => _.flatten(
     _.map(results, (result, responseIndex) => {
       return _.map(result, ({metric, values}) => {
-        const labels = omitInternalLabels(metric);
-
         // If filterLabels is specified, ignore all series that don't match
         const isIgnored = filterLabels
-          ? _.some(labels, (v, k) => filterLabels[k] !== v)
-          : _.some(disabledSeries[responseIndex], s => _.isEqual(s, labels));
+          ? _.some(metric, (v, k) => filterLabels[k] !== v)
+          : _.some(disabledSeries[responseIndex], s => _.isEqual(s, metric));
 
         return isIgnored ? [{x: null, y: null}] : formatSeriesValues(values, samples, span);
       });
@@ -248,7 +243,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const containerComponent = React.useMemo(() => {
     const metadata = _.flatMap(results, (r, i) => _.map(r, ({metric}) => ({
       query: queries[i],
-      labels: omitInternalLabels(metric),
+      labels: metric,
     })));
 
     const flyoutComponent = <Tooltip metadata={metadata} />;
