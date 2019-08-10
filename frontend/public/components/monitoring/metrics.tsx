@@ -31,14 +31,23 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
-import { PrometheusEndpoint } from '../graphs/helpers';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
-import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, LoadingInline, useSafeFetch } from '../utils';
+import {
+  ActionsMenu,
+  Dropdown,
+  ExternalLink,
+  getURLSearchParams,
+  Kebab,
+  LoadingInline,
+  usePoll,
+  useSafeFetch,
+} from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
 import { chartTheme, Labels, PrometheusSeries, QueryBrowser } from './query-browser';
@@ -285,47 +294,58 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
   </div>;
 };
 
-const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, onSubmit, onUpdate, query}) => {
-  const {allSeries, disabledSeries, enabled, expanded, text} = query;
-
+const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabledSeries, query, toggleSeries}) => {
+  const [data, setData] = React.useState({});
+  const [isError, setIsError] = React.useState(false);
   const [sortBy, setSortBy] = React.useState<ISortBy>({index: 0, direction: 'asc'});
 
-  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+  const safeFetch = React.useCallback(useSafeFetch(), [query]);
 
-  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
+  const tick = () => safeFetch(getPrometheusURL({endpoint: PrometheusEndpoint.QUERY, query}))
+    .then(response => {
+      setData(_.get(response, 'data.result'));
+      setIsError(false);
+    })
+    .catch(() => setIsError(true));
 
-  const onSort = (e, index, direction) => setSortBy({index, direction});
+  usePoll(tick, 15 * 1000, query);
 
-  const kebabOptions = [
-    {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
-    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
-    {label: 'Delete query', callback: onDelete},
-  ];
+  if (allSeries && allSeries.length === 0) {
+    return <div className="query-browser__no-data-warning">
+      <YellowExclamationTriangleIcon /> No datapoints found.
+    </div>;
+  }
 
   const cellProps = {
-    props: {className: 'co-truncate query-browser__table-cell'},
-
-    // Only enable table sorting if we have multiple rows
-    transforms: _.isEmpty(allSeries) ? undefined : [sortable as (v: any) => IDecorator],
+    props: {className: 'query-browser__table-cell'},
+    transforms: [sortable as (v: any) => IDecorator],
   };
 
-  const allLabelKeys = _.uniq(_.flatMap(allSeries, s => _.keys(s.labels))).sort();
+  const allLabelKeys = _.uniq(_.flatMap(allSeries, s => _.keys(s))).sort();
   const columns = [
     '',
     ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
     {title: 'Value', ...cellProps},
   ];
 
-  const unsortedRows = _.map(allSeries, ({labels, value}, i) => [
+  const getValue = labels => {
+    if (isError) {
+      return <div><span className="text-muted"><RedExclamationCircleIcon /> Error loading value</span></div>;
+    }
+    const series = _.find(data, ({metric}) => _.isEqual(metric, labels));
+    return _.get(series, 'value[1]', <div><span className="text-muted">None</span></div>);
+  };
+
+  const unsortedRows = _.map(allSeries, (labels, i) => [
     <div key="series-button">
       <SeriesButton
         colorIndex={colorOffset + i}
         isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
-        onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
+        onClick={() => toggleSeries(labels)}
       />
     </div>,
     ..._.map(allLabelKeys, k => labels[k]),
-    value,
+    getValue(labels),
   ]);
 
   const rows = _.orderBy(unsortedRows, [sortBy.index], [sortBy.direction]) as string[][];
@@ -343,6 +363,36 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
   } else if (columns.length <= 14) {
     breakPoint = 'grid2xl';
   }
+
+  const onSort = (e, index, direction) => setSortBy({index, direction});
+
+  return <Table
+    cells={columns}
+    gridBreakPoint={TableGridBreakpoint[breakPoint]}
+    onSort={onSort}
+    rows={rows}
+    sortBy={sortBy}
+    variant={TableVariant.compact}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>;
+};
+
+const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, onSubmit, onUpdate, queryObj}) => {
+  const {allSeries, disabledSeries, enabled, expanded, text, query} = queryObj;
+
+  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+
+  const toggleSeries = (labels: Labels) => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)});
+
+  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? allSeries : []});
+
+  const kebabOptions = [
+    {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
+    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
+    {label: 'Delete query', callback: onDelete},
+  ];
 
   const switchLabel = `${enabled ? 'Disable' : 'Enable'} query`;
 
@@ -363,17 +413,13 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
         <Kebab options={kebabOptions} />
       </div>
     </div>
-    {expanded && !_.isEmpty(rows) && <Table
-      cells={columns}
-      gridBreakPoint={TableGridBreakpoint[breakPoint]}
-      onSort={onSort}
-      rows={rows}
-      sortBy={sortBy}
-      variant={TableVariant.compact}
-    >
-      <TableHeader />
-      <TableBody />
-    </Table>}
+    {query && expanded && allSeries && <QueryTable
+      allSeries={allSeries}
+      colorOffset={colorOffset}
+      disabledSeries={disabledSeries}
+      query={query}
+      toggleSeries={toggleSeries}
+    />}
   </div>;
 };
 
@@ -430,10 +476,7 @@ export const QueryBrowserPage = withFallback(() => {
 
   const onDataUpdate = React.useCallback((allQueries: PrometheusSeries[][]) => {
     const newQueries = _.map(allQueries, (querySeries, i) => {
-      const allSeries = _.map(querySeries, s => ({
-        labels: s.metric,
-        value: _.last(s.values)[1],
-      }));
+      const allSeries = _.map(querySeries, 'metric');
       return Object.assign({}, queries[i], {allSeries});
     });
     setQueries(newQueries);
@@ -552,7 +595,7 @@ export const QueryBrowserPage = withFallback(() => {
                 onDelete={deleteQuery}
                 onSubmit={runQueries}
                 onUpdate={patch => updateQuery(i, patch)}
-                query={q}
+                queryObj={q}
               />;
             })}
           </form>
@@ -563,7 +606,7 @@ export const QueryBrowserPage = withFallback(() => {
 });
 
 type PrometheusQuery = {
-  allSeries?: {labels: Labels, value: string}[];
+  allSeries?: Labels[];
   disabledSeries?: Labels[];
   enabled?: boolean;
   expanded?: boolean;
@@ -577,7 +620,7 @@ type QueryProps = {
   onDelete: () => void;
   onSubmit: () => void;
   onUpdate: (patch: PrometheusQuery) => void;
-  query: PrometheusQuery;
+  queryObj: PrometheusQuery;
 };
 type QueryInputProps = {
   metrics: string[],
@@ -585,4 +628,11 @@ type QueryInputProps = {
   onSubmit: () => void;
   onUpdate: (text: string) => void;
   value: string,
+};
+type QueryTableProps = {
+  allSeries?: Labels[];
+  colorOffset: number;
+  disabledSeries: Labels[];
+  query: string;
+  toggleSeries: (labels: Labels) => void;
 };
