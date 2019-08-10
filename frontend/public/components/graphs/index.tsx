@@ -29,11 +29,11 @@ export type PrometheusResponse = {
       metric: {[key: string]: any}
       values?: [number, string | number][];
       value?: [number, string | number];
-    }
+    }[]
   },
-  errorType: string;
-  error: string;
-  warnings: string[];
+  errorType?: string;
+  error?: string;
+  warnings?: string[];
 }
 
 export type DomainPadding = number | {

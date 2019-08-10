@@ -102,7 +102,7 @@ export const Bar: React.FC<BarProps> = ({
 
 type BarChartProps = {
   barWidth?: number;
-  query: string;
+  query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
   data?: DataPoint[];
