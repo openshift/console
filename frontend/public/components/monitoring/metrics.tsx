@@ -41,7 +41,7 @@ import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, LoadingInline, useSafeFetch } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
-import { chartTheme, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
+import { chartTheme, Labels, PrometheusSeries, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
   'avg',
@@ -312,7 +312,7 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
   const allLabelKeys = _.uniq(_.flatMap(allSeries, s => _.keys(s.labels))).sort();
   const columns = [
     '',
-    ...allLabelKeys.map(title => ({title, ...cellProps})),
+    ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
     {title: 'Value', ...cellProps},
   ];
 
@@ -431,7 +431,7 @@ export const QueryBrowserPage = withFallback(() => {
   const onDataUpdate = React.useCallback((allQueries: PrometheusSeries[][]) => {
     const newQueries = _.map(allQueries, (querySeries, i) => {
       const allSeries = _.map(querySeries, s => ({
-        labels: omitInternalLabels(s.metric),
+        labels: s.metric,
         value: _.last(s.values)[1],
       }));
       return Object.assign({}, queries[i], {allSeries});
