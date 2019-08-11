@@ -203,6 +203,23 @@ yarn run test-gui-openshift
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
+#### Using specific version of Chrome browser
+
+Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver
+supports specific Chrome versions.
+
+By default test use the Chrome browser instlled by the system, it is also posible to [download](https://www.chromium.org/getting-involved/download-chromium) a specific version
+of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using enviroment variables.
+Downloading chrome requires `curl`, `unzip` and `sha256sum` command line utilities installed.
+
+```
+# # For Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
+$ export FORCE_CHRMOE_BRANCH_BASE="665006"
+$ export FORCE_CHRMOE_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
+$ ./test-gui.sh e2e
+
+```
+
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
