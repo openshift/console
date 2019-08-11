@@ -8,6 +8,7 @@
 /Godeps/_workspace/src/github.com/openshift/console
 /frontend/.cache-loader
 /frontend/__coverage__
+/frontend/__chrome_browser__
 /frontend/**/node_modules
 /frontend/public/bower_components
 /frontend/public/dist
