@@ -949,10 +949,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
               </button>
             </div>
           </div>)}
-          <Button
-            onClick={this.addMatcher}
-            type="button"
-            variant="link">
+          <Button className="pf-m-link--align-left" onClick={this.addMatcher} type="button" variant="link">
             <PlusCircleIcon className="co-icon-space-r" />Add More
           </Button>
         </div>
