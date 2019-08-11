@@ -841,11 +841,10 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
     const startsAt = formatDate(now);
     const endsAt = formatDate(new Date(now.setHours(now.getHours() + 2)));
     const data = _.defaults(props.defaults, {startsAt, endsAt, matchers: [], createdBy: '', comment: ''});
-    this.state = {data, error: undefined, inProgress: false};
-
     if (_.isEmpty(data.matchers)) {
-      this.addMatcher();
+      data.matchers.push({name: '', value: '', isRegex: false});
     }
+    this.state = {data, error: undefined, inProgress: false};
   }
 
   setField = (path: string, v: any): void => {
