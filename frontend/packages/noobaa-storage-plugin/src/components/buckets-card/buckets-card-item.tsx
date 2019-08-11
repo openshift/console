@@ -1,15 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { LoadingInline, pluralize } from '@console/internal/components/utils';
 import { RedExclamationCircleIcon } from '@console/shared';
-
-const pluralizeWithNotation = (i: number, suffix: string, singular: string) =>
-  `${i}${suffix} ${i === 1 ? singular : `${singular}s`}`;
+import { LoadingInline, pluralize, humanizeNumber } from '@console/internal/components/utils';
 
 const formatCount = (count: number) => {
-  if (count < 1000) return pluralizeWithNotation(count, '', 'Object');
-  if (count >= 1000 && count < 1000000) return pluralizeWithNotation(count / 1000, 'K', 'Object');
-  return pluralizeWithNotation(count / 1000000, 'M', 'Object');
+  const hCount = humanizeNumber(count);
+  return `${hCount.string} Object${count === 1 ? '' : 's'}`;
 };
 
 const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status }) => (
