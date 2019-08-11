@@ -207,8 +207,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setError(undefined);
     })
     .catch(err => {
-      setError(err);
-      setUpdating(false);
+      if (err.name !== 'AbortError') {
+        setError(err);
+        setUpdating(false);
+      }
     });
 
   // If an end time was set, stop polling since we are no longer displaying the latest data. Otherwise use a polling
