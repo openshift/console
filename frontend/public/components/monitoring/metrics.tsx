@@ -115,6 +115,9 @@ const prometheusFunctions = [
   'year()',
 ];
 
+// Stores information about the currently focused query input
+let focusedQuery;
+
 const HeaderPrometheusLink_ = ({queries, urls}) => {
   const url = getPrometheusExpressionBrowserURL(urls, queries);
   return _.isEmpty(url)
@@ -194,7 +197,7 @@ const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
   </div>;
 };
 
-const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, onUpdate, value = ''}) => {
+const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, onUpdate, value = ''}) => {
   const [token, setToken] = React.useState('');
 
   const inputRef = React.useRef(null);
@@ -220,25 +223,31 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     }
   };
 
-  const onTextareaBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    if (!_.get(e, 'relatedTarget.dataset.autocomplete')) {
-      onBlur(e);
-      setToken('');
-    }
+  const onBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    focusedQuery = {
+      index,
+      selection: {
+        start: e.target.selectionStart,
+        end: e.target.selectionEnd,
+      },
+      target: e.target,
+    };
+    setToken('');
   };
 
-  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // Use onMouseDown instead of onClick so that this is run before the onBlur handler
+  const onMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Replace the autocomplete token with the selected autocomplete option
     const re = new RegExp(`${_.escapeRegExp(token)}$`);
     const newTextBeforeCursor = getTextBeforeCursor().replace(re, e.currentTarget.dataset.autocomplete);
     onUpdate(newTextBeforeCursor + value.substring(inputRef.current.selectionEnd));
 
-    setToken('');
-    inputRef.current.focus();
-
     // Move cursor to just after the text we inserted (use _.defer() so this is called after the textarea value is set)
     const cursorPosition = newTextBeforeCursor.length;
-    _.defer(() => inputRef.current.setSelectionRange(cursorPosition, cursorPosition));
+    _.defer(() => {
+      inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+      inputRef.current.focus();
+    });
   };
 
   const onClear = () => {
@@ -271,7 +280,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     <textarea
       autoFocus
       className="pf-c-form-control query-browser__query-input"
-      onBlur={onTextareaBlur}
+      onBlur={onBlur}
       onChange={onChange}
       onKeyDown={onKeyDown}
       placeholder="Expression (press Shift+Enter for newlines)"
@@ -287,7 +296,9 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
       {_.map(allSuggestions, (suggestions, title) => <React.Fragment key={title}>
         <div className="text-muted query-browser__dropdown--subtitle">{title}</div>
         {_.map(suggestions, s => <li key={s}>
-          <button className="pf-c-dropdown__menu-item" data-autocomplete={s} onClick={onClick} type="button">{s}</button>
+          <button className="pf-c-dropdown__menu-item" data-autocomplete={s} onMouseDown={onMouseDown} type="button">
+            {s}
+          </button>
         </li>)}
       </React.Fragment>)}
     </ul>}
@@ -379,7 +390,7 @@ const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabled
   </Table>;
 };
 
-const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, onSubmit, onUpdate, queryObj}) => {
+const Query: React.FC<QueryProps> = ({colorOffset, index, metrics, onDelete, onSubmit, onUpdate, queryObj}) => {
   const {allSeries, disabledSeries, enabled, expanded, text, query} = queryObj;
 
   const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
@@ -400,8 +411,8 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
     <div className="query-browser__query-controls">
       <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
       <QueryInput
+        index={index}
         metrics={metrics}
-        onBlur={onBlur}
         onSubmit={onSubmit}
         onUpdate={v => onUpdate({text: v})}
         value={text}
@@ -437,7 +448,6 @@ export const QueryBrowserPage = withFallback(() => {
   // `text` is the current string in the text input and `query` is the value displayed in the graph
   const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
-  const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState();
   const [queries, setQueries] = React.useState(getParamsQueries() || [defaultQueryObj]);
 
@@ -567,31 +577,13 @@ export const QueryBrowserPage = withFallback(() => {
                 ? [defaultQueryObj]
                 : queries.filter((v, k) => k !== i));
 
-              const onBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-                if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
-                  // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we
-                  // know where to insert the metric when it is selected
-                  setFocusedQuery({
-                    index: i,
-                    selection: {
-                      start: e.target.selectionStart,
-                      end: e.target.selectionEnd,
-                    },
-                    target: e.target,
-                  });
-                } else {
-                  // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
-                  setFocusedQuery(undefined);
-                }
-              };
-
               colorOffset += _.get(queries, [i - 1, 'allSeries', 'length'], 0);
 
               return <Query
                 colorOffset={colorOffset}
+                index={i}
                 key={i}
                 metrics={metrics}
-                onBlur={onBlur}
                 onDelete={deleteQuery}
                 onSubmit={runQueries}
                 onUpdate={patch => updateQuery(i, patch)}
@@ -615,16 +607,16 @@ type PrometheusQuery = {
 };
 type QueryProps = {
   colorOffset: number;
+  index: number;
   metrics: string[],
-  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onDelete: () => void;
   onSubmit: () => void;
   onUpdate: (patch: PrometheusQuery) => void;
   queryObj: PrometheusQuery;
 };
 type QueryInputProps = {
+  index: number;
   metrics: string[],
-  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onSubmit: () => void;
   onUpdate: (text: string) => void;
   value: string,
