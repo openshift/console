@@ -49,12 +49,36 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   }
 
   storageTypes = Object.freeze({
-    local: {
-      title: 'Local',
-      provisioner: 'kubernetes.io/no-provisioner',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#local',
-      parameters: {},
-      volumeBindingMode: 'WaitForFirstConsumer',
+    cephFs: {
+      title: 'Ceph FS',
+      provisioner: 'cephfs.csi.ceph.com',
+      documentationLink: 'https://rook.github.io/docs/rook/master/ceph-filesystem.html',
+      parameters: {
+        clusterID: {
+          name: 'Namespace',
+        },
+        fsName: {
+          name: 'Filesystem Name',
+          hintText: 'CephFS filesystem name into which the volume shall be created',
+        },
+        pool: {
+          name: 'Pool',
+          hintText: 'Ceph pool into which the volume shall be created',
+          required: true,
+        },
+        'csi.storage.k8s.io/provisioner-secret-name': {
+          name: 'Provisioner Secret Name',
+        },
+        'csi.storage.k8s.io/provisioner-secret-namespace': {
+          name: 'Provisioner Secret Namespace',
+        },
+        'csi.storage.k8s.io/node-stage-secret-name': {
+          name: 'Node Stage Secret Name',
+        },
+        'csi.storage.k8s.io/node-stage-secret-namespace': {
+          name: 'Node Stage Secret Namespace',
+        },
+      },
     },
     aws: {
       title: 'AWS Elastic Block Storage',
@@ -90,6 +114,41 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           name: 'KMS Key ID',
           hintText: 'The full Amazon Resource Name of the key to use when encrypting the volume',
           visible: (params) => _.get(params, 'encrypted.value', false),
+        },
+      },
+    },
+    azureDisk: {
+      title: 'Azure Disk',
+      provisioner: 'kubernetes.io/azure-disk',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-disk',
+      parameters: {
+        storageaccounttype: {
+          name: 'Storage Account Type',
+          hintText: 'Storage Account Type',
+        },
+        kind: {
+          name: 'Account Kind',
+          values: {shared: 'shared', dedicated: 'dedicated', managed: 'managed'},
+          hintText: 'Select Account Kind',
+        },
+      },
+    },
+    azureFile: {
+      title: 'Azure File',
+      provisioner: 'kubernetes.io/azure-file',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-file',
+      parameters: {
+        skuName: {
+          name: 'SKU Name',
+          hintText: 'Azure storage account SKU tier',
+        },
+        location: {
+          name: 'Location',
+          hintText: 'Azure storage account location',
+        },
+        storageAccount: {
+          name: 'Azure Storage Account Name',
+          hintText: 'Azure Storage Account Name',
         },
       },
     },
@@ -178,6 +237,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
       },
     },
+    local: {
+      title: 'Local',
+      provisioner: 'kubernetes.io/no-provisioner',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#local',
+      parameters: {},
+      volumeBindingMode: 'WaitForFirstConsumer',
+    },
     openstackCinder: {
       title: 'OpenStack Cinder',
       provisioner: 'kubernetes.io/cinder',
@@ -188,152 +254,6 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
         availability:{
           name: 'Availability Zone',
-        },
-      },
-    },
-    azureFile: {
-      title: 'Azure File',
-      provisioner: 'kubernetes.io/azure-file',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-file',
-      parameters: {
-        skuName: {
-          name: 'SKU Name',
-          hintText: 'Azure storage account SKU tier',
-        },
-        location: {
-          name: 'Location',
-          hintText: 'Azure storage account location',
-        },
-        storageAccount: {
-          name: 'Azure Storage Account Name',
-          hintText: 'Azure Storage Account Name',
-        },
-      },
-    },
-    azureDisk: {
-      title: 'Azure Disk',
-      provisioner: 'kubernetes.io/azure-disk',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-disk',
-      parameters: {
-        storageaccounttype: {
-          name: 'Storage Account Type',
-          hintText: 'Storage Account Type',
-        },
-        kind: {
-          name: 'Account Kind',
-          values: {shared: 'shared', dedicated: 'dedicated', managed: 'managed'},
-          hintText: 'Select Account Kind',
-        },
-      },
-    },
-    quobyte: {
-      title: 'Quobyte',
-      provisioner: 'kubernetes.io/quobyte',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#quobyte',
-      parameters: {
-        quobyteAPIServer: {
-          name: 'Quobyte API Server',
-          hintText: 'Quobyte API Server',
-        },
-        registry: {
-          name: 'Registry Address(es)',
-          hintText: 'Registry Address(es)',
-        },
-        adminSecretName: {
-          name: 'Admin Secret Name',
-          hintText: 'Admin Secret Name',
-        },
-        adminSecretNamespace: {
-          name: 'Admin Secret Namespace',
-          hintText: 'Admin Secret Namespace',
-        },
-        user: {
-          name: 'User',
-          hintText: 'User',
-        },
-        group: {
-          name: 'Group',
-          hintText: 'Group',
-        },
-        quobyteConfig: {
-          name: 'Quobyte Configuration',
-          hintText: 'Quobyte Configuration',
-        },
-        quobyteTenant: {
-          name: 'Quobyte Tenant',
-          hintText: 'Quobyte tenant ID used to create/delete the volume',
-        },
-      },
-    },
-    cephRbd: {
-      title: 'Ceph RBD',
-      provisioner: 'kubernetes.io/rbd',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#ceph-rbd',
-      parameters: {
-        monitors: {
-          name: 'Monitors',
-          required: true,
-          hintText: 'Monitors',
-        },
-        adminId: {
-          name: 'Admin Client ID',
-          hintText: 'Admin Client ID',
-        },
-        adminSecretName: {
-          name: 'Admin Secret Name',
-          required: true,
-          hintText: 'Admin Secret Name',
-        },
-        adminSecretNamespace: {
-          name: 'Admin Secret Namespace',
-          hintText: 'Admin Secret Namespace',
-        },
-        pool: {
-          name: 'Pool',
-          hintText: 'Pool',
-        },
-        userId: {
-          name: 'User Client ID',
-          hintText: 'Ceph client ID used to map the RBD image',
-        },
-        userSecretName: {
-          name: 'User Secret Name',
-          required: true,
-          hintText: 'User Secret Name',
-        },
-        userSecretNamespace: {
-          name: 'User Secret Namespace',
-          hintText: 'User Secret Namespace',
-        },
-        fsType: {
-          name: 'Filesystem Type',
-          hintText: 'Filesystem Type',
-        },
-        imageFormat: {
-          name: 'Image Format',
-          values: {1: '1', 2: '2'},
-          hintText: 'Select Image Format',
-        },
-        imageFeatures: {
-          name: 'Image Features',
-          hintText: 'Image Features',
-          visible: (params) => _.get(params, 'imageFormat.value') === '2',
-        },
-      },
-    },
-    vSphereVolume: {
-      title: 'vSphere Volume',
-      provisioner: 'kubernetes.io/vsphere-volume',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#vsphere',
-      parameters: {
-        diskformat: {
-          name: 'Disk Format',
-          values: {thin: 'thin', zeroedthick: 'zeroed thick', eagerzeroedthick: 'eager zeroed thick'},
-          hintText: 'Select Disk Format',
-        },
-        datastore: {
-          name: 'Datastore',
-          hintText: 'Datastore',
         },
       },
     },
@@ -398,6 +318,45 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           name: 'Ephemeral',
           type: 'checkbox',
           format: (value) => value.toString(),
+        },
+      },
+    },
+    quobyte: {
+      title: 'Quobyte',
+      provisioner: 'kubernetes.io/quobyte',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#quobyte',
+      parameters: {
+        quobyteAPIServer: {
+          name: 'Quobyte API Server',
+          hintText: 'Quobyte API Server',
+        },
+        registry: {
+          name: 'Registry Address(es)',
+          hintText: 'Registry Address(es)',
+        },
+        adminSecretName: {
+          name: 'Admin Secret Name',
+          hintText: 'Admin Secret Name',
+        },
+        adminSecretNamespace: {
+          name: 'Admin Secret Namespace',
+          hintText: 'Admin Secret Namespace',
+        },
+        user: {
+          name: 'User',
+          hintText: 'User',
+        },
+        group: {
+          name: 'Group',
+          hintText: 'Group',
+        },
+        quobyteConfig: {
+          name: 'Quobyte Configuration',
+          hintText: 'Quobyte Configuration',
+        },
+        quobyteTenant: {
+          name: 'Quobyte Tenant',
+          hintText: 'Quobyte tenant ID used to create/delete the volume',
         },
       },
     },
@@ -474,6 +433,55 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             const adminSecretName = _.get(params, 'adminSecretName.value', null);
             return adminSecretName !== null && adminSecretName !== '';
           },
+        },
+      },
+    },
+    vSphereVolume: {
+      title: 'vSphere Volume',
+      provisioner: 'kubernetes.io/vsphere-volume',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#vsphere',
+      parameters: {
+        diskformat: {
+          name: 'Disk Format',
+          values: {thin: 'thin', zeroedthick: 'zeroed thick', eagerzeroedthick: 'eager zeroed thick'},
+          hintText: 'Select Disk Format',
+        },
+        datastore: {
+          name: 'Datastore',
+          hintText: 'Datastore',
+        },
+      },
+    },
+    cephRbd: {
+      title: 'Ceph RBD',
+      provisioner: 'rbd.csi.ceph.com',
+      documentationLink: 'https://rook.github.io/docs/rook/master/ceph-block.html',
+      parameters: {
+        clusterID: {
+          name: 'Namespace',
+        },
+        pool: {
+          name: 'Pool',
+        },
+        imageFormat: {
+          name: 'Image Format',
+          values: {1: '1', 2: '2'},
+        },
+        imageFeatures: {
+          name: 'Image Features',
+          visible: (params) => _.get(params, 'imageFormat.value') === '2',
+        },
+        'csi.storage.k8s.io/provisioner-secret-name': {
+          name: 'Provisioner Secret Name',
+        },
+        'csi.storage.k8s.io/provisioner-secret-namespace': {
+          name: 'Provisioner Secret Namespace',
+        },
+        'csi.storage.k8s.io/node-stage-secret-name': {
+          name: 'Node Stage Secret Name',
+        },
+        'csi.storage.k8s.io/node-stage-secret-namespace': {
+          name: 'Node Stage Secret Namespace',
         },
       },
     },
