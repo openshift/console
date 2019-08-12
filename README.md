@@ -20,7 +20,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 2. [go](https://golang.org/) >= 1.11+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. `jq` (for `contrib/environment.sh`)
-5. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
+5. Google Chrome/Chromium == 76.x for integration tests
 
 ### Build everything:
 
@@ -184,7 +184,7 @@ Run frontend tests:
 
 ### Integration Tests
 
-Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/). Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
+Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
@@ -203,14 +203,13 @@ yarn run test-gui-openshift
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
-#### Using specific version of Chrome browser
+#### Using specific version of Chrome browser (Linux only)
 
-Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver
-supports specific Chrome versions.
+Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver supports specific Chrome versions.
 
-By default test use the Chrome browser installed by the system, it is also possibly to [download](https://www.chromium.org/getting-involved/download-chromium) a specific version
-of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using environment variables.
-Downloading chrome requires `curl`, `unzip` and `sha256sum` command line utilities installed.
+By default test use the Chrome browser installed by the system. On Linux systems, it is possible to [download](https://www.chromium.org/getting-involved/download-chromium)
+a specific version of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using environment variables.
+Downloading chrome requires `curl`, `unzip`, and `sha256sum` command line utilities installed.
 
 ```
 # # For Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
