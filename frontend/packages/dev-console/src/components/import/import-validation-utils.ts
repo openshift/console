@@ -6,9 +6,18 @@ const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
 const relativePathRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/;
+const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 
 export const validationSchema = yup.object().shape({
-  name: yup.string().required('Required'),
+  name: yup
+    .string()
+    .matches(nameRegex, {
+      message:
+        'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+      excludeEmptyString: true,
+    })
+    .max(253, 'Cannot be longer than 253 characters.')
+    .required('Required'),
   project: yup.object().shape({
     name: yup.string().required('Required'),
   }),
@@ -213,5 +222,8 @@ export const detectGitRepoName = (url: string): string | undefined => {
     return undefined;
   }
 
-  return url.split('/').pop();
+  return url
+    .split('/')
+    .pop()
+    .replace('.', '-');
 };

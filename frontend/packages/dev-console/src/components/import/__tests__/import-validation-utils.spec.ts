@@ -54,6 +54,17 @@ describe('ValidationUtils', () => {
       });
     });
 
+    it('should throw an error if name is invalid', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.name = 'app_name';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe(
+          'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+        );
+      });
+    });
+
     it('should throw an error if path is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.route.path = 'path';
