@@ -6,7 +6,6 @@ import {
   menuActions,
 } from '../deployment';
 import {
-  DeploymentPodCounts,
   LoadingInline,
   ResourceSummary,
   WorkloadPausedAlert,
@@ -15,19 +14,23 @@ import {
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { PodRing } from '@console/shared';
 
-const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({item}) => {
+const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({item: {obj: d, pods: pods}}) => {
   return <div className="overview__sidebar-pane-body resource-overview__body">
-    {item.obj.spec.paused && <WorkloadPausedAlert obj={item.obj} model={DeploymentModel} />}
+    {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
     <div className="resource-overview__pod-counts">
-      <DeploymentPodCounts resource={item.obj} resourceKind={DeploymentModel} />
+      <PodRing pods={pods}
+        obj={d}
+        resourceKind={DeploymentModel}
+        path="/spec/replicas" />
     </div>
     <div className="resource-overview__summary">
-      <ResourceSummary resource={item.obj} showPodSelector showNodeSelector showTolerations>
+      <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>
         <dt>Status</dt>
         <dd>
           {
-            item.obj.status.availableReplicas === item.obj.status.updatedReplicas
+            d.status.availableReplicas === d.status.updatedReplicas
               ? 'Active'
               : <div>
                 <span className="co-icon-space-r"><LoadingInline /></span> Updating
@@ -37,7 +40,7 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({i
       </ResourceSummary>
     </div>
     <div className="resource-overview__details">
-      <DeploymentDetailsList deployment={item.obj} />
+      <DeploymentDetailsList deployment={d} />
     </div>
   </div>;
 };

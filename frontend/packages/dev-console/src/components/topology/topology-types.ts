@@ -1,21 +1,5 @@
 import { ComponentType } from 'react';
-import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
-
-export interface ResourceProps {
-  kind: string;
-  apiVersion?: string;
-  metadata: ObjectMetadata;
-  status: {
-    [key: string]: any;
-  };
-  spec: {
-    [key: string]: any;
-  };
-}
-
-export interface Resource {
-  data: ResourceProps[];
-}
+import { Pod, ResourceProps, Resource } from '@console/shared';
 
 export interface TopologyDataResources {
   replicationControllers: Resource;
@@ -70,21 +54,12 @@ export interface TopologyDataModel {
   topology: TopologyDataMap;
 }
 
-export interface Pod {
-  id: string;
-  name: string;
-  kind: string;
-  metadata: {};
-  status: { phase: string };
-  spec: {};
-}
-
 export interface TopologyDataObject<D = {}> {
   id: string;
   name: string;
   type: string;
   resources: ResourceProps[];
-  pods: K8sResourceKind[];
+  pods: Pod[];
   data: D;
 }
 

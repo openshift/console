@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { VictoryPie } from 'victory';
-import { Pod } from '../topology-types';
+import { ChartDonut } from '@patternfly/react-charts';
 import Tooltip from '../SvgPodTooltip';
-import { podColor, getPodStatus, podStatus } from '../topology-utils';
+import { Pod } from '../../types';
+import { calculateRadius, podStatus, getPodStatus, podColor } from '../../utils';
 
 type PodData = {
   x: string;
@@ -11,27 +11,33 @@ type PodData = {
 };
 
 type PodStatusProps = {
-  innerRadius: number;
-  outerRadius: number;
-  size: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  size?: number;
   standalone?: boolean;
   x?: number;
   y?: number;
   data: Pod[];
   showTooltip?: boolean;
+  title?: string;
+  subTitle?: string;
 };
+
+const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
 
 class PodStatus extends React.PureComponent<PodStatusProps> {
   render() {
     const {
-      innerRadius,
-      outerRadius,
+      innerRadius = podStatusInnerRadius,
+      outerRadius = podStatusOuterRadius,
       x,
       y,
       data,
-      size,
+      size = 130,
       standalone = false,
       showTooltip = true,
+      title = '',
+      subTitle = '',
     } = this.props;
     const vData: PodData[] = podStatus.map((pod) => ({
       x: pod,
@@ -72,7 +78,7 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
         ]
       : undefined;
     return (
-      <VictoryPie
+      <ChartDonut
         events={tooltipEvent}
         animate={{
           duration: 2000,
@@ -84,6 +90,8 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
         data={vData}
         height={size}
         width={size}
+        title={title}
+        subTitle={subTitle}
         labelComponent={<Tooltip x={size / 2} y={size * -0.2} />}
         /*
           // @ts-ignore */

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Status } from '@console/shared';
+import { Status, PodRingController, PodRing } from '@console/shared';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -19,7 +19,6 @@ import {
   Kebab,
   KebabAction,
   ContainerTable,
-  DeploymentPodCounts,
   navFactory,
   pluralize,
   ResourceSummary,
@@ -27,6 +26,7 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
+  LoadingInline,
 } from './utils';
 
 import {
@@ -132,7 +132,16 @@ export const DeploymentConfigsDetails: React.FC<{obj: K8sResourceKind}> = ({obj:
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Config Overview" />
       {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
-      <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
+      <PodRingController
+        namespace={dc.metadata.namespace}
+        kind={dc.kind}
+        render={(d) => {
+          return d.loaded ? <PodRing pods={d.data[dc.metadata.uid].pods}
+            obj={dc}
+            resourceKind={DeploymentConfigModel}
+            path="/spec/replicas" /> : <LoadingInline />;
+        }}
+      />
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">

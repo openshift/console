@@ -2,10 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { checkPodEditAccess } from '@console/shared';
 import { impersonateStateToProps } from '../../reducers/ui';
-import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind, SelfSubjectAccessReviewKind } from '../../module/k8s';
+import { K8sKind, K8sResourceKind, SelfSubjectAccessReviewKind } from '../../module/k8s';
 import { configureReplicaCountModal } from '../modals';
-import { checkAccess, LoadingInline, pluralize } from './';
+import { LoadingInline, pluralize } from './';
 import { Tooltip } from './tooltip';
 
 
@@ -47,15 +48,22 @@ class DeploymentPodCounts_ extends React.Component<DPCProps & { impersonate?: st
   }
 
   componentDidMount() {
-    this.checkEditAccess();
+    const {resource, resourceKind, impersonate} = this.props;
+    checkPodEditAccess(resource, resourceKind, impersonate).then((resp: SelfSubjectAccessReviewKind) =>
+      this.setState({ editable: resp.status.allowed })).catch((error) => {
+      throw error;
+    });
   }
 
   componentDidUpdate(prevProps: DPCProps) {
-    const { resource, resourceKind } = this.props;
+    const { resource, resourceKind, impersonate } = this.props;
     if (_.get(prevProps.resource, 'metadata.uid') !== _.get(resource, 'metadata.uid') ||
         _.get(prevProps.resourceKind, 'apiGroup') !== _.get(resourceKind, 'apiGroup') ||
         _.get(prevProps.resourceKind, 'path') !== _.get(resourceKind, 'path')) {
-      this.checkEditAccess();
+      checkPodEditAccess(resource, resourceKind, impersonate).then((resp: SelfSubjectAccessReviewKind) =>
+        this.setState({ editable: resp.status.allowed })).catch((error) => {
+        throw error;
+      });
     }
   }
 
@@ -69,22 +77,6 @@ class DeploymentPodCounts_ extends React.Component<DPCProps & { impersonate?: st
     }
 
     return { waitingForUpdate: false, desiredCount: -1 };
-  }
-
-  checkEditAccess() {
-    const { resource, resourceKind: model, impersonate } = this.props;
-    if (_.isEmpty(resource) || !model) {
-      return;
-    }
-    const { name, namespace } = resource.metadata;
-    const resourceAttributes: AccessReviewResourceAttributes = {
-      group: model.apiGroup,
-      resource: model.plural,
-      verb: 'patch',
-      name,
-      namespace,
-    };
-    checkAccess(resourceAttributes, impersonate).then((resp: SelfSubjectAccessReviewKind) => this.setState({ editable: resp.status.allowed }));
   }
 
   render() {
