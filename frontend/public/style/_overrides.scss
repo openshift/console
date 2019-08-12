@@ -72,6 +72,12 @@ kbd {
   font-size: $font-size-base;
 }
 
+// fix bug where monaco-aria-container is visible in Firefox but shouldn't be
+// bug occurs only if the suggestions overlay has been enabled
+.monaco-aria-container {
+  top: -999em;
+}
+
 // PatternFly 4 overrides
 
 .pf-c-about-modal-box {
