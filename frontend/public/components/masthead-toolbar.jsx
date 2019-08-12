@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { ArrowCircleUpIcon, CaretDownIcon, EllipsisVIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import {
+  ArrowCircleUpIcon,
+  CaretDownIcon,
+  EllipsisVIcon,
+  PlusCircleIcon,
+  QuestionCircleIcon,
+} from '@patternfly/react-icons';
 import {
   ApplicationLauncher,
   ApplicationLauncherGroup,
@@ -12,7 +18,9 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import classNames from 'classnames';
 
+import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
@@ -38,10 +46,10 @@ const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(sta
   </ToolbarItem>
   : null;
 
-const UpdatesAvailableButton = ({obj, onClick}) => {
+const UpdatesAvailableButton = ({obj, onClick, systemStatusButtonPresent}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
   return updatesAvailable
-    ? <ToolbarItem>
+    ? <ToolbarItem className={classNames({'hidden-sm': systemStatusButtonPresent})}>
       <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
         <ArrowCircleUpIcon color="#08c" className="co-masthead-icon" />
       </Button>
@@ -72,6 +80,7 @@ class MastheadToolbar_ extends React.Component {
     this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
     this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
+    this._onImportYAML = this._onImportYAML.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
@@ -147,6 +156,12 @@ class MastheadToolbar_ extends React.Component {
     this.setState({
       isApplicationLauncherDropdownOpen,
     });
+  }
+
+  _onImportYAML(e) {
+    e.preventDefault();
+    const importYAMLPath = UIActions.formatNamespacedRouteForResource('import', this.props.activeNamespace);
+    history.push(importYAMLPath);
   }
 
   _onHelpDropdownSelect() {
@@ -391,6 +406,15 @@ class MastheadToolbar_ extends React.Component {
     if (mobile) {
       actions.unshift(...helpActions);
 
+      actions.unshift({
+        name: '',
+        isSection: true,
+        actions: [{
+          label: 'Import YAML',
+          callback: this._onImportYAML,
+        }],
+      });
+
       if (flags[FLAGS.OPENSHIFT]) {
         actions.unshift(...launchActions);
       }
@@ -456,10 +480,10 @@ class MastheadToolbar_ extends React.Component {
             {
               flags[FLAGS.CLUSTER_VERSION] &&
                 <Firehose resources={resources}>
-                  <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
+                  <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))} />
                 </Firehose>
             }
-            {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
+            {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <ApplicationLauncher
                 className="co-app-launcher"
@@ -472,6 +496,11 @@ class MastheadToolbar_ extends React.Component {
                 isGrouped
               />
             </ToolbarItem>}
+            <ToolbarItem>
+              <Button variant="plain" aria-label="Import YAML" onClick={this._onImportYAML}>
+                <PlusCircleIcon className="co-masthead-icon" />
+              </Button>
+            </ToolbarItem>
             <ToolbarItem>
               <ApplicationLauncher
                 aria-label="Help menu"
@@ -490,7 +519,7 @@ class MastheadToolbar_ extends React.Component {
           <ToolbarGroup>
             {/* mobile -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
-            {/* mobile -- kebab dropdown [(application launcher |) documentation, about (| logout)] */}
+            {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
@@ -502,9 +531,10 @@ class MastheadToolbar_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = state => ({
-  user: state.UI.get('user'),
-  consoleLinks: state.UI.get('consoleLinks'),
+const mastheadToolbarStateToProps = ({UI}) => ({
+  activeNamespace: UI.get('activeNamespace'),
+  user: UI.get('user'),
+  consoleLinks: UI.get('consoleLinks'),
 });
 
 export const MastheadToolbar = connect(

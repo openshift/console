@@ -13,6 +13,7 @@ import {
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
 
+import { ALL_NAMESPACES_KEY } from '../const';
 import { k8sCreate, k8sUpdate, referenceFor, groupVersionFor, referenceForModel } from '../module/k8s';
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
 import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
@@ -265,6 +266,10 @@ export const EditYAML = connect(stateToProps)(
 
       // If this is a namesapced resource, default to the active namespace when none is specified in the YAML.
       if (!obj.metadata.namespace && model.namespaced) {
+        if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
+          this.handleError('No "metadata.namespace" field found in YAML.');
+          return;
+        }
         obj.metadata.namespace = this.props.activeNamespace;
       }
 
