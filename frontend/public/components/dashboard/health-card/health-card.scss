@@ -6,21 +6,18 @@
 
 .co-health-card__alerts-border {
   border-top: 1px solid $pf-color-black-300;
-  padding-top: 1em;
 }
 
 .co-health-card__alerts-icon {
-  font-size: 20px;
+  font-size: 1.2rem;
   margin-right: 1rem;
+  margin-top: 0.2rem;
 }
 
 .co-health-card__alerts-item {
-  display: table;
+  align-items: center;
+  display: flex;
   margin-bottom: 0.5em;
-}
-
-.co-health-card__alerts-item-message {
-  display: table-cell;
 }
 
 .co-health-card__body {
