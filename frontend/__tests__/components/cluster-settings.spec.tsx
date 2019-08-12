@@ -95,7 +95,11 @@ describe('Cluster Version Details Table page', () => {
     expect(wrapper.find(ResourceLink).at(0).props().name).toEqual('version');
     expect(wrapper.find(Link).childAt(1).text()).toEqual('Create Autoscaler');
     expect(wrapper.find(Timestamp).at(0).props().timestamp).toEqual('2019-07-29T09:04:05Z');
-    expect(wrapper.find(Timestamp).at(1).props().timestamp).toEqual('2019-07-29T09:20:13Z');q
+    expect(wrapper.find(Timestamp).at(1).props().timestamp).toEqual('2019-07-29T09:20:13Z');
+    expect(wrapper.find(ResourceLink).at(0).props().name).toEqual('version');
+    expect(wrapper.find(Link).childAt(1).text()).toEqual('Create Autoscaler');
+    expect(wrapper.find(Timestamp).at(0).props().timestamp).toEqual('2019-07-29T09:04:05Z');
+    expect(wrapper.find(Timestamp).at(1).props().timestamp).toEqual('2019-07-29T09:20:13Z');
   });
 });
 
