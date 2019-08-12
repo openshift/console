@@ -46,6 +46,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
     const { label, required, helpText } = this.props;
     const { values } = this.state;
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
+    const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
       <div className="form-group">
         <label className={classNames('control-label', { 'co-required': required })}>{label}</label>
@@ -69,6 +70,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
               onClick={() => this.removeValue(i)}
               aria-label="Remove"
               variant="plain"
+              disabled={isEmpty}
             >
               <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
             </Button>
