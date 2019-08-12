@@ -208,8 +208,8 @@ resources.
 Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver
 supports specific Chrome versions.
 
-By default test use the Chrome browser instlled by the system, it is also posible to [download](https://www.chromium.org/getting-involved/download-chromium) a specific version
-of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using enviroment variables.
+By default test use the Chrome browser installed by the system, it is also possibly to [download](https://www.chromium.org/getting-involved/download-chromium) a specific version
+of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using environment variables.
 Downloading chrome requires `curl`, `unzip` and `sha256sum` command line utilities installed.
 
 ```
