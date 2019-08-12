@@ -1,0 +1,12 @@
+.odc-svg-tooltip {
+  pointer-events: none;
+
+  & rect, & polygon {
+    fill: var(--pf-global--Color--300);
+  }
+
+  & text {
+    fill: var(--pf-global--Color--light-100);
+    font-size: var(--pf-global--FontSize--sm);
+  }
+}

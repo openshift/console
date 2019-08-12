@@ -36,11 +36,11 @@ describe('BaseNode', () => {
     ).toBe('1234567890abcde…');
   });
 
-  it('should show long labels on hover', () => {
+  it('should show long labels on label hover', () => {
     const wrapper = shallow<BaseNodeProps, State>(
       <BaseNode outerRadius={100} label="1234567890abcdefgh" />,
     );
-    wrapper.setState({ hover: true });
+    wrapper.setState({ labelHover: true });
     expect(
       wrapper
         .find(SvgBoxedText)
@@ -66,17 +66,6 @@ describe('BaseNode', () => {
         .first()
         .props().filter,
     ).toBe('url(/#BaseNodeDropShadowFilterId--hover)');
-  });
-
-  it('should show long labels when selected', () => {
-    const wrapper = shallow(<BaseNode outerRadius={100} selected label="1234567890abcdefgh" />);
-    expect(
-      wrapper
-        .find(SvgBoxedText)
-        .shallow()
-        .find('text')
-        .text(),
-    ).toBe('1234567890abcdefgh');
   });
 
   it('should render selection', () => {

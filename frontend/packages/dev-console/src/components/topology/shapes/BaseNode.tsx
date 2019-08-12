@@ -8,6 +8,7 @@ import './BaseNode.scss';
 
 export interface State {
   hover?: boolean;
+  labelHover?: boolean;
 }
 
 export interface BaseNodeProps {
@@ -37,10 +38,37 @@ const truncateEnd = (text: string = ''): string => {
 };
 
 export default class BaseNode extends React.Component<BaseNodeProps, State> {
+  hoverTimer = null;
+
+  unmounted: boolean = false;
+
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
+  onLabelEnter = () => {
+    if (!this.hoverTimer) {
+      this.hoverTimer = setTimeout(() => {
+        if (!this.unmounted) {
+          this.setState({ labelHover: true });
+        }
+      }, 200);
+    }
+  };
+
+  onLabelLeave = () => {
+    this.setState({ labelHover: false });
+
+    if (this.hoverTimer) {
+      clearTimeout(this.hoverTimer);
+      this.hoverTimer = null;
+    }
+  };
 
   render() {
     const {
@@ -56,7 +84,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
       children,
       attachments,
     } = this.props;
-    const { hover } = this.state;
+    const { hover, labelHover } = this.state;
 
     return (
       <g transform={`translate(${x}, ${y})`}>
@@ -99,8 +127,10 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
               paddingX={8}
               paddingY={4}
               kind={kind}
+              onMouseEnter={this.onLabelEnter}
+              onMouseLeave={this.onLabelLeave}
             >
-              {selected || hover ? label : truncateEnd(label)}
+              {labelHover ? label : truncateEnd(label)}
             </SvgBoxedText>
           )}
           {selected && (
