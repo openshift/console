@@ -85,7 +85,7 @@ describe('Cluster Version Details Table page', () => {
     expect(wrapper.find(CurrentChannel).at(0).props().cv.spec.channel).toEqual('stable-4.2');
     expect(wrapper.find(CurrentVersion).at(0).props().cv.status.desired.version).toEqual('4.2.0-0.ci-2019-07-22-025130');
 
-    const texts = wrapper.find('[data-test-id="cluster-version-details-table"]').map(node => node.text());
+    const texts = wrapper.find('[data-test-id="cv-details-table"]').map(node => node.text());
     expect(texts).toEqual([
       '342d8338-c08f-44ae-a82e-a032a4481fa9',
       'registry.svc.ci.openshift.org/ocp/release@sha256:12da30aa8d94d8d4d4db3f8c88a30b6bdaf847bc714b2a551a2637a89c36f3c1',

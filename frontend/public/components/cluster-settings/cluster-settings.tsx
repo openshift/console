@@ -192,7 +192,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
           <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table">{getClusterID(cv)}</dd>
           <dt>Desired Release Image</dt>
           <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table">
-            {imageParts.length === 2 
+            {imageParts.length === 2
               ? <React.Fragment><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</React.Fragment>
               : desiredImage || '-'}
           </dd>
