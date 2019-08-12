@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import { ClusterRoleBindingModel } from '../../models';
+import { ClusterRoleBindingModel, RoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
 import { MultiListPage, Table, TableRow, TableData } from '../factory';
@@ -207,36 +207,44 @@ const roleResources = [
   {kind: 'ClusterRoleBinding', namespaced: false, optional: true},
 ];
 
-export const RoleBindingsPage = ({namespace, showTitle=true, mock}) => <MultiListPage
-  canCreate={true}
-  createButtonText="Create Binding"
-  createProps={{to: '/k8s/cluster/rolebindings/~new'}}
-  mock={mock}
-  filterLabel="by role or subject"
-  flatten={flatten}
-  label="Role Bindings"
-  ListComponent={BindingsList}
-  namespace={namespace}
-  resources={roleResources}
-  rowFilters={[{
-    type: 'role-binding-kind',
-    selected: ['cluster', 'namespace'],
-    reducer: bindingType,
-    items: ({ClusterRoleBinding: data}) => {
-      const items = [
-        {id: 'namespace', title: 'Namespace Role Bindings'},
-        {id: 'system', title: 'System Role Bindings'},
-      ];
-      if (data && data.loaded && !data.loadError) {
-        items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
-      }
-      return items;
-    },
-  }]}
-  showTitle={showTitle}
-  textFilter="role-binding"
-  title="Role Bindings"
-/>;
+export const RoleBindingsPage = ({namespace, showTitle=true, mock}) => {
+  const createNS = namespace || 'default';
+  const roleBindingAccessReview = {
+    model: RoleBindingModel,
+    namespace: createNS,
+  };
+  return <MultiListPage
+    canCreate={true}
+    createButtonText="Create Binding"
+    createProps={{to: '/k8s/cluster/rolebindings/~new'}}
+    createAccessReview={roleBindingAccessReview}
+    mock={mock}
+    filterLabel="by role or subject"
+    flatten={flatten}
+    label="Role Bindings"
+    ListComponent={BindingsList}
+    namespace={namespace}
+    resources={roleResources}
+    rowFilters={[{
+      type: 'role-binding-kind',
+      selected: ['cluster', 'namespace'],
+      reducer: bindingType,
+      items: ({ClusterRoleBinding: data}) => {
+        const items = [
+          {id: 'namespace', title: 'Namespace Role Bindings'},
+          {id: 'system', title: 'System Role Bindings'},
+        ];
+        if (data && data.loaded && !data.loadError) {
+          items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
+        }
+        return items;
+      },
+    }]}
+    showTitle={showTitle}
+    textFilter="role-binding"
+    title="Role Bindings"
+  />;
+}
 
 const NsRoleDropdown_ = props => {
   const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
