@@ -184,7 +184,7 @@ Run frontend tests:
 
 ### Integration Tests
 
-Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
+Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/). Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
@@ -217,7 +217,6 @@ Downloading chrome requires `curl`, `unzip` and `sha256sum` command line utiliti
 $ export FORCE_CHRMOE_BRANCH_BASE="665006"
 $ export FORCE_CHRMOE_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
 $ ./test-gui.sh e2e
-
 ```
 
 #### How the Integration Tests Run in CI
