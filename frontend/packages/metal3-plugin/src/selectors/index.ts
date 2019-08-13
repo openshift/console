@@ -23,6 +23,7 @@ export const getHostVendorInfo = (host: K8sResourceKind) =>
   _.get(host, 'status.hardware.systemVendor', {});
 export const getHostTotalStorageCapacity = (host: K8sResourceKind) =>
   _.reduce(getHostStorage(host), (sum: number, disk: BaremetalHostDisk) => sum + disk.sizeBytes, 0);
+export const getHostBios = (host: K8sResourceKind) => _.get(host, 'status.hardware.firmware.bios');
 
 export const getHostMachine = (host: K8sResourceKind, machines: MachineKind[] = []) =>
   machines.find((machine: MachineKind) => getHostMachineName(host) === getName(machine));
