@@ -52,15 +52,15 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
 
 export const CAPACITY_USAGE_QUERIES = {
   [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
-  [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes[60m:5m]',
+  [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes',
   [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_VMS_QUERY]:
-    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) by (pod))))',
+    'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(rbd.csi.ceph.com)|(cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
   [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_PODS_QUERY]:
-    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) by (pod))))',
+    'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod !~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(rbd.csi.ceph.com)|(cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
   [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_REQUESTED_QUERY]:
-    'sum(max(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (persistentvolumeclaim))',
+    'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(rbd.csi.ceph.com)|(cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
   [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_USED_QUERY]:
-    'sum(max(kubelet_volume_stats_used_bytes) by (persistentvolumeclaim))',
+    'sum((kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(rbd.csi.ceph.com)|(cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
 };
 
 export const TOP_CONSUMER_QUERIES = {

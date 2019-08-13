@@ -11,11 +11,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { Dropdown, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
-import {
-  getInstantVectorStats,
-  getRangeVectorStats,
-  GetStats,
-} from '@console/internal/components/graphs/utils';
+import { getInstantVectorStats, GetStats } from '@console/internal/components/graphs/utils';
 import { StorageDashboardQuery, CAPACITY_USAGE_QUERIES } from '../../../../constants/queries';
 import './capacity-card.scss';
 
@@ -78,6 +74,9 @@ export const CapacityCard: React.FC<DashboardItemProps> = ({
   const storageTotal = prometheusResults.getIn([matchingQueries[0], 'result']);
   const storageUsed = prometheusResults.getIn([matchingQueries[1], 'result']);
 
+  const statUsed: React.ReactText = getLastStats(storageUsed, getInstantVectorStats);
+  const statTotal: React.ReactText = getLastStats(storageTotal, getInstantVectorStats);
+
   return (
     <DashboardCard className="ceph-capacity-card__dashboard-card">
       <DashboardCardHeader>
@@ -93,8 +92,8 @@ export const CapacityCard: React.FC<DashboardItemProps> = ({
         <CapacityBody>
           <CapacityItem
             title="Storage"
-            used={getLastStats(storageUsed, getRangeVectorStats)}
-            total={getLastStats(storageTotal, getInstantVectorStats)}
+            used={statUsed}
+            total={statTotal}
             formatValue={humanizeBinaryBytesWithoutB}
             isLoading={!(storageUsed && storageTotal)}
           />
