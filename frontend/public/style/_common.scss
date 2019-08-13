@@ -298,6 +298,10 @@ $co-external-link-padding-right: 15px;
   top: 0.125em;
 }
 
+.co-line-clamp {
+  @include co-line-clamp;
+}
+
 .co-toolbar {
   align-items: stretch;
   display: flex;

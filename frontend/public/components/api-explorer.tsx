@@ -25,6 +25,7 @@ import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
+import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { resourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
@@ -62,7 +63,7 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
 const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({activeNamespace, model}) => {
   const to = getAPIResourceLink(activeNamespace, model);
   return <span className="co-resource-item">
-    <span className="co-resource-icon--fixed-width"><ResourceIcon kind={referenceForModel(model)} /></span>
+    <span className="co-resource-icon--fixed-width hidden-xs"><ResourceIcon kind={referenceForModel(model)} /></span>
     <Link to={to} className="co-resource-item__resource-name">{model.kind}</Link>
   </span>;
 };
@@ -81,26 +82,54 @@ const Group: React.FC<{value: string}> = ({value}) => {
     : <>{first}<span className="text-muted">.{rest.join('.')}</span></>;
 };
 
+const tableClasses = [
+  'col-lg-3 col-md-3 col-sm-5 col-xs-4',
+  'col-lg-2 col-md-2 col-sm-4 col-xs-4',
+  'col-lg-2 col-md-2 col-sm-3 col-xs-4',
+  'col-lg-2 hidden-md hidden-sm hidden-xs',
+  'col-lg-3 col-md-5 hidden-sm hidden-xs',
+];
+
 const APIResourceHeader = () => [{
   title: 'Kind',
   sortField: 'kind',
   transforms: [sortable],
+  props: { className: tableClasses[0] },
 }, {
   title: 'Group',
   sortField: 'apiGroup',
   transforms: [sortable],
+  props: { className: tableClasses[1] },
 }, {
   title: 'Version',
   sortField: 'apiVersion',
   transforms: [sortable],
+  props: { className: tableClasses[2] },
+}, {
+  title: 'Namespaced',
+  sortField: 'namespaced',
+  transforms: [sortable],
+  props: { className: tableClasses[3] },
+}, {
+  title: 'Description',
+  props: { className: tableClasses[4] },
 }];
 
 const APIResourceRows = ({componentProps: {data}}) => _.map(data, (model: K8sKind) => [{
   title: <APIResourceLink model={model} />,
+  props: { className: tableClasses[0] },
 }, {
   title: <span className="co-select-to-copy"><Group value={model.apiGroup} /></span>,
+  props: { className: tableClasses[1] },
 }, {
   title: model.apiVersion,
+  props: { className: tableClasses[2] },
+}, {
+  title: model.namespaced ? 'true' : 'false',
+  props: { className: tableClasses[3] },
+}, {
+  title: <div className="co-line-clamp">{getResourceDescription(model)}</div>,
+  props: { className: tableClasses[4] },
 }]);
 
 const stateToProps = ({k8s}) => ({
@@ -158,8 +187,7 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
     }
 
     if (textFilter) {
-      const text = textFilter.toLowerCase();
-      return fuzzy(text, kind.toLowerCase()) || (apiGroup && fuzzy(text, apiGroup));
+      return fuzzyCaseInsensitive(textFilter, kind);
     }
 
     return true;
@@ -190,7 +218,7 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
       <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
         <TextFilter
           defaultValue={textFilter}
-          label="by kind or group"
+          label="by kind"
           onChange={(e) => setTextFilter(e.target.value)}
         />
       </div>
@@ -212,10 +240,10 @@ APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: React.FC<{}> = () => <>
   <Helmet>
-    <title>API Explorer</title>
+    <title>Explore API Resources</title>
   </Helmet>
   <div className="co-m-nav-title">
-    <h1 className="co-m-pane__heading">API Explorer</h1>
+    <h1 className="co-m-pane__heading">Explore API Resources</h1>
   </div>
   <APIResourcesList />
 </>;
@@ -438,7 +466,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
   }
 
   const breadcrumbs = [{
-    name: 'API Explorer',
+    name: 'Explore',
     path: '/api-explorer',
   }, {
     name: 'Resource Details',

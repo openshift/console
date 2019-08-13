@@ -46,7 +46,7 @@ const ItemRow = ({item}) => {
       <Link to={resourceLink}>{item.kind}</Link>
     </div>
     <div className="hidden-xs col-sm-7">
-      {description || '-'}
+      <div className="co-line-clamp">{description || '-'}</div>
     </div>
     <div className="dropdown-kebab-pf">
       <Kebab options={menuItems} />

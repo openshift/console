@@ -68,6 +68,7 @@ const AdminNav = () => (
       <HrefLink href="/dashboards" activePath="/dashboards/" name="Dashboards" required={FLAGS.CAN_LIST_NS} />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
+      <HrefLink href="/api-explorer" name="Explore" startsWith={apiExplorerStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>
 
@@ -161,7 +162,6 @@ const AdminNav = () => (
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
       <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
-      <HrefLink href="/api-explorer" name="API Explorer" startsWith={apiExplorerStartsWith} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>
