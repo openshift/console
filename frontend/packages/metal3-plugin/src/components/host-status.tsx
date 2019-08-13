@@ -19,6 +19,7 @@ import {
   HOST_STATUS_UNDER_MAINTENANCE,
 } from '../constants';
 import { BaremetalHostModel } from '../models';
+import { getHostErrorMessage } from '../selectors';
 
 // TODO(jtomasek): Update this with onClick handler once add discovered host functionality
 // is available
@@ -39,27 +40,23 @@ export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
 };
 
 type BaremetalHostStatusProps = {
-  host?: K8sResourceKind;
   status: HostMultiStatus;
 };
 
-const BaremetalHostStatus = ({
-  host,
-  status: { status, title, errorMessage },
-}: BaremetalHostStatusProps) => {
+const BaremetalHostStatus = ({ status: { status, title, ...props } }: BaremetalHostStatusProps) => {
   const statusTitle = title || status;
 
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
-      return <AddDiscoveredHostButton host={host} />;
+      return <AddDiscoveredHostButton host={props.host} />;
     case status === HOST_STATUS_UNDER_MAINTENANCE:
       return <StatusIconAndText icon={<MaintenanceIcon />} title={statusTitle} />;
     case HOST_PROGRESS_STATES.includes(status):
       return <ProgressStatus title={statusTitle} />;
+    case HOST_ERROR_STATES.includes(status):
+      return <ErrorStatus title={statusTitle}>{getHostErrorMessage(props.host)}</ErrorStatus>;
     case HOST_SUCCESS_STATES.includes(status):
       return <SuccessStatus title={statusTitle} />;
-    case HOST_ERROR_STATES.includes(status):
-      return <ErrorStatus title={statusTitle}>{errorMessage}</ErrorStatus>;
     default:
       return <Status status={status} title={statusTitle} />;
   }
