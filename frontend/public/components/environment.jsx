@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FieldLevelHelp } from 'patternfly-react';
-import { Alert, Button, ActionGroup } from '@patternfly/react-core';
+import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
@@ -95,19 +95,17 @@ const getContainersObjectForDropdown = (containerArray) => {
   }, {});
 };
 
-/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
-const stateToProps = ({k8s, UI}, {obj}) => ({
-  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
-  impersonate: UI.get('impersonate'),
-});
-
 class CurrentEnvVars {
-  constructor() {
+  constructor(data, isContainerArray, path) {
     this.currentEnvVars = {};
     this.state = { allowed: true };
+    if (!_.isEmpty(data)) {
+      (arguments.length > 1) ? this.setResultObject(data, isContainerArray, path) : this.setRawData(data);
+    }
   }
 
   setRawData(rawEnvData) {
+    this.rawEnvData = rawEnvData;
     this.isContainerArray = _.isArray(rawEnvData.containers);
     this.isCreate = _.isEmpty(rawEnvData);
     this.hasInitContainers = !_.isUndefined(rawEnvData.initContainers);
@@ -246,6 +244,13 @@ class CurrentEnvVars {
       });
   }
 }
+
+/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
+const stateToProps = ({k8s, UI}, {obj}) => ({
+  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
+  impersonate: UI.get('impersonate'),
+});
+
 export const EnvironmentPage = connect(stateToProps)(
   class EnvironmentPage extends PromiseComponent {
   /**
@@ -260,8 +265,7 @@ export const EnvironmentPage = connect(stateToProps)(
       this.saveChanges = this._saveChanges.bind(this);
       this.updateEnvVars = this._updateEnvVars.bind(this);
       this.selectContainer = this._selectContainer.bind(this);
-      const currentEnvVars = new CurrentEnvVars();
-      currentEnvVars.setRawData(this.props.rawEnvData);
+      const currentEnvVars = new CurrentEnvVars(this.props.rawEnvData);
       this.state = {
         currentEnvVars,
         success: null,
@@ -304,7 +308,16 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     componentDidUpdate(prevProps) {
-      const { obj, model, impersonate, readOnly } = this.props;
+      const { obj, model, impersonate, readOnly, rawEnvData } = this.props;
+      const { dirty } = this.state;
+
+      if (!_.isEqual(rawEnvData, prevProps.rawEnvData)) {
+        this.setState({
+          ...!dirty && { currentEnvVars: new CurrentEnvVars(rawEnvData) },
+          stale: dirty,
+        });
+      }
+
       if (_.get(prevProps.obj, 'metadata.uid') !== _.get(obj, 'metadata.uid') ||
           _.get(prevProps.model, 'apiGroup') !== _.get(model, 'apiGroup') ||
           _.get(prevProps.model, 'path') !== _.get(model, 'path') ||
@@ -344,18 +357,14 @@ export const EnvironmentPage = connect(stateToProps)(
      * @param i
      */
     _updateEnvVars(env, i = 0, type = EnvType.ENV) {
-      const {rawEnvData, onChange} = this.props;
+      const {onChange} = this.props;
       const {currentEnvVars, containerType} = this.state;
       const currentEnv = _.cloneDeep(currentEnvVars);
-      const originalEnv = new CurrentEnvVars();
-      originalEnv.setRawData(rawEnvData);
       currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
-      const modified = !_.isEqual(currentEnv, originalEnv);
-
       this.setState({
         currentEnvVars: currentEnv,
+        dirty: true,
         success: null,
-        modified,
       });
       _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
     }
@@ -366,39 +375,13 @@ export const EnvironmentPage = connect(stateToProps)(
      */
     _reload() {
       const {rawEnvData} = this.props;
-      this.setState((prevState) => {
-        const {currentEnvVars} = prevState;
-        const reloadedEnvVars = _.cloneDeep(currentEnvVars);
-        reloadedEnvVars.setRawData(rawEnvData);
-        return {
-          errorMessage: null,
-          success: null,
-          modified: false,
-          stale: false,
-          currentEnvVars: reloadedEnvVars,
-        };
+      this.setState({
+        currentEnvVars: new CurrentEnvVars(rawEnvData),
+        dirty: false,
+        errorMessage: null,
+        stale: false,
+        success: null,
       });
-    }
-
-    /**
-     * Build out our currentEnvVars state object from our incoming props.
-     * If there is a change and are read/write let the user know we have updated vars otherwise just refresh the page.
-     * For no change return null
-     *
-     * @param nextProps
-     * @param prevState
-     */
-    static getDerivedStateFromProps(nextProps, prevState) {
-      const { currentEnvVars } = prevState;
-      const { rawEnvData, readOnly } = nextProps;
-      const incomingEnvVars = new CurrentEnvVars();
-      incomingEnvVars.setRawData(rawEnvData);
-      if (_.isEqual(currentEnvVars, incomingEnvVars)) {
-        return null;
-      }
-      return readOnly ? {
-        currentEnvVars,
-      } : {stale: true, success: null};
     }
 
     _selectContainer(containerName) {
@@ -437,17 +420,18 @@ export const EnvironmentPage = connect(stateToProps)(
       const patches = currentEnvVars.getPatches(envPath);
       const promise = k8sPatch(model, obj, patches);
       this.handlePromise(promise).then((res) => {
-        const newEnvVars = new CurrentEnvVars();
-        newEnvVars.setResultObject(res, currentEnvVars.isContainerArray, envPath);
-
         this.setState({
-          success: 'Successfully updated the environment variables.',
+          currentEnvVars: new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath),
+          dirty: false,
           errorMessage: null,
-          currentEnvVars: newEnvVars,
-          modified: false,
           stale: false,
+          success: 'Successfully updated the environment variables.',
         });
       });
+    }
+
+    dismissSuccess = () => {
+      this.setState({ success: null });
     }
 
     render() {
@@ -511,7 +495,7 @@ export const EnvironmentPage = connect(stateToProps)(
           <div className="pf-c-form environment-buttons">
             {errorMessage && <Alert isInline className="co-alert" variant="danger" title={errorMessage} />}
             {stale && <Alert isInline className="co-alert" variant="info" title="The information on this page is no longer current.">Click Reload to update and lose edits, or Save Changes to overwrite.</Alert>}
-            {success && <Alert isInline className="co-alert" variant="success" title={success} />}
+            {success && <Alert isInline className="co-alert" variant="success" title={success} action={<AlertActionCloseButton onClose={this.dismissSuccess} />} />}
             {!readOnly && <ActionGroup>
               <Button isDisabled={inProgress} type="submit" variant="primary" onClick={this.saveChanges}>Save</Button>
               <Button isDisabled={inProgress} type="button" variant="secondary" onClick={this.reload}>Reload</Button>
