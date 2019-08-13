@@ -27,13 +27,13 @@ export const PipelineVisualizationGraph: React.FC<PipelineVisualizationGraphProp
           return (
             <div
               className={cx('odc-pipeline-vis-graph__stage', { 'is-parallel': stage.length > 1 })}
-              key={stage.map((t) => t.taskRef.name).join(',')}
+              key={stage.map((t) => `${t.taskRef.name}-${t.name}`).join(',')}
             >
               <ul className="odc-pipeline-vis-graph__stage-column">
                 {stage.map((task) => {
                   return (
                     <PipelineVisualizationTask
-                      key={task.taskRef.name}
+                      key={`${task.taskRef.name}-${task.name}`}
                       task={task}
                       namespace={namespace}
                     />
