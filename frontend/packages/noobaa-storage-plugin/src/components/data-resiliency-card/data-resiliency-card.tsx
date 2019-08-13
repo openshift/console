@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { pluralize, Progress } from '@patternfly/react-core';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon } from '@console/shared';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -13,6 +13,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import { getPropsData } from '../../utils';
 import './data-resiliency-card.scss';
@@ -38,9 +39,9 @@ const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResili
   ) : (
     <>
       <div className="nb-data-resiliency__icon--error">
-        <RedExclamationCircleIcon />
+        <ExclamationTriangleIcon />
       </div>
-      <div className="nb-data-resiliency__status-title--error">No data available</div>
+      <div>Not available</div>
     </>
   );
 

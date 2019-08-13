@@ -16,7 +16,7 @@ const ItemBody: React.FC<ItemBodyProps> = React.memo(({ title, children }) => (
 
 export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
   ({ efficiency, isLoading }) => {
-    let text = <span className="text-secondary">Unavailable</span>;
+    let text = <span className="nb-object-data-reduction-card__row-subtitle">Unavailable</span>;
     const infoText =
       'Efficiency ratio refers to the deduplication and compression process effectiveness.';
 
@@ -42,7 +42,7 @@ export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
 
 export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
   ({ savings, logicalSize, isLoading }) => {
-    let text = <span className="text-secondary">Unavailable</span>;
+    let text = <span className="nb-object-data-reduction-card__row-subtitle">Unavailable</span>;
     const infoText =
       'Savings shows the uncompressed and non-deduped data that would have been stored without those techniques';
 

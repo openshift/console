@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Progress } from '@patternfly/react-core';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon } from '@console/shared';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -11,8 +11,8 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
-
 import './data-resiliency.scss';
 
 const getCapacityStats = (response) => {
@@ -30,9 +30,9 @@ const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResili
   ) : (
     <>
       <div className="ceph-data-resiliency__icon-error">
-        <RedExclamationCircleIcon />
+        <ExclamationTriangleIcon />
       </div>
-      <div className="ceph-data-resiliency__status-title-error">No data available</div>
+      <div>Not available</div>
     </>
   );
 

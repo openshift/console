@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
 .ceph-data-resiliency__dashboard-body {
   display: flex;
   flex-direction: column;
@@ -7,7 +9,9 @@
 }
 
 .ceph-data-resiliency__icon-error {
-  font-size: 60px;
+  color: $pf-color-black-600;
+  font-size: 5rem;
+  margin-top: 1.6rem;
 }
 
 .ceph-data-resiliency__icon-ok {
@@ -17,10 +21,6 @@
 .ceph-data-resiliency__progress-bar {
   text-align: left;
   grid-gap: 0rem;
-}
-
-.ceph-data-resiliency__status-title-error {
-  margin-top: 1.5625em;
 }
 
 .ceph-data-resiliency__status-title-ok {
