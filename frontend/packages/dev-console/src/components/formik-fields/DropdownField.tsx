@@ -27,8 +27,10 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
         selectedKey={field.value}
         dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
         aria-describedby={`${fieldId}-helper`}
-        onChange={(value: string) => setFieldValue(props.name, value)}
-        onBlur={() => setFieldTouched(props.name, true)}
+        onChange={(value: string) => {
+          setFieldValue(props.name, value);
+          setFieldTouched(props.name, true);
+        }}
       />
     </FormGroup>
   );

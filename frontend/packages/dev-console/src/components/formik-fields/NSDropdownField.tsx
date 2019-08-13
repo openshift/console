@@ -32,8 +32,10 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
         id={fieldId}
         selectedKey={field.value}
         dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
-        onChange={(value: string) => setFieldValue(props.name, value)}
-        onBlur={() => setFieldTouched(props.name, true)}
+        onChange={(value: string) => {
+          setFieldValue(props.name, value);
+          setFieldTouched(props.name, true);
+        }}
       />
     </FormGroup>
   );
