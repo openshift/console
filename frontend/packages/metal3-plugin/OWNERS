@@ -2,8 +2,10 @@ reviewers:
   - jtomasek
   - honza
   - knowncitizen
+  - flofuchs
 approvers:
   - jtomasek
   - honza
+  - flofuchs
 labels:
   - component/metal3
