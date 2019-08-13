@@ -12,11 +12,11 @@ import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { getHostBMCAddress, getHostMachine, getNodeMaintenanceNodeName } from '../selectors';
 import { getHostStatus } from '../utils/host-status';
 import { BaremetalHostRole } from './host-role';
-import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
 import { hostStatusFilter } from './table-filters';
 import { menuActions } from './host-menu-actions';
 import { HostRowBundle } from './types';
+import NodeCell from './NodeCell';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -41,8 +41,8 @@ const HostsTableHeader = () => [
     props: { className: tableColumnClasses[1] },
   },
   {
-    title: 'Machine',
-    sortField: 'host.spec.consumerRef.name',
+    title: 'Node',
+    sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
@@ -100,7 +100,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
         <BaremetalHostStatus host={host} status={status} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <MachineCell host={host} status={status} />
+        <NodeCell nodeName={nodeName} namespace={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <BaremetalHostRole machine={machine} />
