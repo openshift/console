@@ -157,6 +157,7 @@ const logos = new Map()
   .set('icon-rails', railsImg)
   .set('icon-redis', redisImg)
   .set('icon-rh-integration', rhIntegrationImg)
+  .set('icon-java', openjdkImg)
   // Use the upstream icon.
   .set('icon-rh-openjdk', openjdkImg)
   .set('icon-rh-tomcat', rhTomcatImg)
