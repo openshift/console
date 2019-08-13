@@ -52,6 +52,7 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
   return (
     <g className={`odc-resource-icon odc-resource-icon-${kindStr.toLowerCase()}`}>
       {rect}
+      <title>{kindStr}</title>
       <text ref={textRef} x={x} y={y} textAnchor="middle" dy="0.35em">
         {KindAbbr}
       </text>
