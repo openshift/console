@@ -33,10 +33,10 @@ import {
   Dropdown,
   Firehose,
   StatusBox,
-  EmptyBox,
   resourceObjPath,
   FirehoseResult,
   FirehoseResource,
+  MsgBox,
 } from '../utils';
 
 import { ProjectOverview } from './project-overview';
@@ -332,8 +332,6 @@ const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired =
     {ready} of {desired} pods
   </Link>;
 };
-
-const OverviewEmptyState = () => <EmptyBox label="Workloads" />;
 
 const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
   const {selectedGroup, groupOptions, filterValue} = UI.get('overview').toJS();
@@ -897,8 +895,14 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   render() {
-    const {loaded, loadError, project} = this.props;
+    const {loaded, loadError, project, namespace} = this.props;
     const {filteredItems, groupedItems, firstLabel} = this.state;
+    const OverviewEmptyState = () => <MsgBox
+      title="No Workloads Found."
+      detail={<div>
+        <Link to={UIActions.formatNamespacedRouteForResource('import', namespace)}>Import YAML</Link> or <Link to={`/add/ns/${namespace}`}>add other content</Link> to your project.
+      </div>}
+    />;
 
     const skeletonOverview = <div className="skeleton-overview">
       <div className="skeleton-overview--head" />
