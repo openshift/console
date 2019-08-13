@@ -152,6 +152,18 @@ export const config: Config = {
       'tests/monitoring.scenario.ts',
       'tests/crd-extensions.scenario.ts',
     ]),
+    release: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
+      'tests/source-to-image.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+    ]),
     all: suite([
       'tests/crud.scenario.ts',
       'tests/overview/overview.scenareio.ts',
