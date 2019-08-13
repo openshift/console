@@ -16,19 +16,19 @@ import { InventoryStatusGroup } from './status-group';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
-    <GreenCheckCircleIcon className="co-inventory-card__status-icon" />
+    <GreenCheckCircleIcon />
   ),
   [InventoryStatusGroup.WARN]: (
-    <YellowExclamationTriangleIcon className="co-inventory-card__status-icon" />
+    <YellowExclamationTriangleIcon />
   ),
   [InventoryStatusGroup.ERROR]: (
-    <RedExclamationCircleIcon className="co-inventory-card__status-icon" />
+    <RedExclamationCircleIcon />
   ),
   [InventoryStatusGroup.PROGRESS]: (
-    <InProgressIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--progress" />
+    <InProgressIcon className="co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.NOT_MAPPED]: (
-    <QuestionCircleIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--question" />
+    <QuestionCircleIcon className="co-inventory-card__status-icon--question" />
   ),
 };
 
@@ -67,7 +67,7 @@ export const Status: React.FC<StatusProps> = React.memo(({ groupID, count }) => 
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   return (
     <div className="co-inventory-card__status">
-      {groupIcon}
+      <span className="co-inventory-card__status-icon">{groupIcon}</span>
       <span className="co-inventory-card__status-text">{count}</span>
     </div>
   );
@@ -82,7 +82,7 @@ const StatusLink: React.FC<StatusLinkProps> = React.memo(({groupID, count, statu
   return (
     <div className="co-inventory-card__status">
       <Link to={to} style={{textDecoration: 'none'}}>
-        {groupIcon}
+        <span className="co-inventory-card__status-icon">{groupIcon}</span>
         <span className="co-inventory-card__status-text">{count}</span>
       </Link>
     </div>
