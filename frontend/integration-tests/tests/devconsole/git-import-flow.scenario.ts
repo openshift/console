@@ -10,12 +10,10 @@ import {
   builderImage,
   buildImageVersion,
   createButton,
+  builderImageVersionName,
 } from '../../views/devconsole-view/git-imort-flow';
 import { newApplicationName, newAppName } from '../../views/devconsole-view/new-app-name.view';
-import { switchPerspective, Perspective } from '../../views/devconsole-view/dev-perspective.view';
-import { sideHeader } from '../../tests/devconsole/dev-perspective.scenario';
-
-export const version = element(by.id('8-RHOAR-link'));
+import { switchPerspective, Perspective, sideHeader } from '../../views/devconsole-view/dev-perspective.view';
 
 describe('git import flow', () => {
   let newApplication;
@@ -41,10 +39,12 @@ describe('git import flow', () => {
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
     expect(importFromGitHeader.getText()).toContain('Import from git');
+    await appName.click();
+    expect(appName.getAttribute('value')).toBe('nodejs-ex.git');
     await addApplication(newApplication, newApp);
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
-    await setBuilderImage(version);
+    await setBuilderImage(builderImageVersionName);
     expect(builderImage.isSelected());
     expect(buildImageVersion.getText()).toContain('8-RHOAR');
     await browser.wait(until.elementToBeClickable(createButton), 5000);

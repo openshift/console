@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as until, by, element } from 'protractor';
+import { browser, ExpectedConditions as until, by, element, $ } from 'protractor';
 
 export const switcher = element(by.css('[data-test-id="perspective-switcher-toggle"]'));
 
@@ -12,6 +12,10 @@ export enum Perspective {
   Developer = 'Developer Perspective',
   Administrator = ' Administrator Perspective',
 }
+
+export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
+export const sideHeader = $('#page-sidebar .oc-nav-header h1');
+
 
 export const switchPerspective = async function(perspective: Perspective) {
   await browser.wait(until.elementToBeClickable(switcher), 5000);

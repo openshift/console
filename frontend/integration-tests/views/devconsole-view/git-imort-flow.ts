@@ -15,6 +15,7 @@ export const builderImage = element(
 );
 export const buildImageVersion = element(by.id('form-dropdown-image-tag-field'));
 export const createButton = element(by.css('[data-test-id="import-git-create-button"]'));
+export const builderImageVersionName = element(by.id('8-RHOAR-link'));
 
 export const navigateImportFromGit = async function() {
   await browser.wait(until.elementToBeClickable(addNavigate), 5000);

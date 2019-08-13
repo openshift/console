@@ -1,9 +1,6 @@
-import { browser, $ } from 'protractor';
+import { browser } from 'protractor';
 import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
-import { switchPerspective, Perspective } from '../../views/devconsole-view/dev-perspective.view';
-
-export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
-export const sideHeader = $('#page-sidebar .oc-nav-header h1');
+import { switchPerspective, Perspective, pageSidebar, sideHeader } from '../../views/devconsole-view/dev-perspective.view';
 
 describe('Application Launcher Menu', () => {
   beforeAll(async() => {
