@@ -51,9 +51,9 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
   });
 };
 
-const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
+export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => clusterChannelModal({cv})}>
+export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => clusterChannelModal({cv})}>
   {cv.spec.channel || '-'}
 </button>;
 
@@ -100,7 +100,7 @@ const UpToDateMessage: React.SFC<{}> = () => <span>
   <GreenCheckCircleIcon /> Up to date
 </span>;
 
-const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
+export const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   switch (status) {
     case ClusterUpdateStatus.Invalid:
@@ -118,7 +118,7 @@ const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   }
 };
 
-const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
+export const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
@@ -132,7 +132,7 @@ const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
   return <React.Fragment>{lastVersion || 'None'}</React.Fragment>;
 };
 
-const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
+export const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   return <React.Fragment>
@@ -144,14 +144,14 @@ const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
   </React.Fragment>;
 };
 
-const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
+export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   return <React.Fragment>
     { status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable ? 'Current Version' : 'Last Completed Version' }
   </React.Fragment>;
 };
 
-const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
+export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
@@ -187,11 +187,11 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
         </div>
       </div>
       <div className="co-m-pane__body-group">
-        <dl className="co-m-pane__details">
+        <dl className="co-m-pane__details" >
           <dt>Cluster ID</dt>
-          <dd className="co-break-all co-select-to-copy">{getClusterID(cv)}</dd>
+          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">{getClusterID(cv)}</dd>
           <dt>Desired Release Image</dt>
-          <dd className="co-break-all co-select-to-copy">
+          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
             {imageParts.length === 2
               ? <React.Fragment><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</React.Fragment>
               : desiredImage || '-'}
@@ -227,8 +227,8 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
             </thead>
             <tbody>
               {_.map(history, (update, i) => <tr key={i}>
-                <td className="co-break-all co-select-to-copy">{update.version || '-'}</td>
-                <td>{update.state || '-'}</td>
+                <td className="co-break-all co-select-to-copy" data-test-id="cv-details-table-version">{update.version || '-'}</td>
+                <td data-test-id="cv-details-table-state">{update.state || '-'}</td>
                 <td><Timestamp timestamp={update.startedTime} /></td>
                 <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
               </tr>)}
@@ -240,7 +240,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   </React.Fragment>;
 };
 
-const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
+export const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
 
 const pages = [{
   href: '',
