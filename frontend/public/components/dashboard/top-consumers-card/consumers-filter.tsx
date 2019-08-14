@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 import { CPU_DESC, MEMORY_DESC, STORAGE_DESC, NETWORK_DESC } from './strings';
-import { humanizeNumber, humanizeBinaryBytesWithoutB, humanizeDecimalBytesPerSec, Humanize } from '../../utils';
+import { Humanize, humanizeBinaryBytesWithoutB, humanizeDecimalBytesPerSec, humanizeSeconds } from '../../utils';
 import { MetricType } from './metric-type';
 
 export const metricTypeMap: MetricTypeMap = {
   [MetricType.CPU]: {
     description: CPU_DESC,
-    humanize: humanizeNumber,
+    humanize: humanizeSeconds,
   },
   [MetricType.MEMORY]: {
     description: MEMORY_DESC,
@@ -15,7 +15,7 @@ export const metricTypeMap: MetricTypeMap = {
   },
   [MetricType.STORAGE]: {
     description: STORAGE_DESC,
-    humanize: humanizeNumber,
+    humanize: humanizeSeconds,
   },
   [MetricType.NETWORK]: {
     description: NETWORK_DESC,
