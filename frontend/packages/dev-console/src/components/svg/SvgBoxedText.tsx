@@ -67,7 +67,7 @@ export default class SvgBoxedText extends React.Component<SvgBoxedTextProps, Sta
       kind && this.iconRef.current ? this.iconRef.current.getBBox().width + paddingX : 0;
 
     return (
-      <g className={className}>
+      <g className={className} onClick={(e) => e.stopPropagation()}>
         <SvgDropShadowFilter id={FILTER_ID} />
         {bb && (
           <rect
