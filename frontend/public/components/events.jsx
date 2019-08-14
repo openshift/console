@@ -234,7 +234,6 @@ class EventStream extends React.Component {
           }
         });
         this.flushMessages();
-        this.resizeEvents();
       })
       .onopen(() => {
         this.messages = {};
