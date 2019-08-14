@@ -42,6 +42,7 @@ import {
   getHostVendorInfo,
   getHostMachine,
   findNodeMaintenance,
+  getHostBios,
 } from '../selectors';
 import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
@@ -85,6 +86,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   const hostPoweredOn = isHostPoweredOn(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
+  const bios = getHostBios(host);
 
   const nodeMaintenance = findNodeMaintenance(nodeMaintenances, nodeName);
   const status = getHostStatus({ host, machine, node, nodeMaintenance });
@@ -159,6 +161,18 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
               <>
                 <dt>Model</dt>
                 <dd>{_.filter([manufacturer, productName]).join(', ')}</dd>
+              </>
+            )}
+            {bios && (
+              <>
+                <dt>Bios</dt>
+                <dd>
+                  Version: {bios.version}
+                  <br />
+                  Vendor: {bios.vendor}
+                  <br />
+                  Date: {bios.date}
+                </dd>
               </>
             )}
             {serialNumber && (
