@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { ChartDonut, ChartThemeVariant, ChartThemeColor } from '@patternfly/react-charts';
 import { ChartPieIcon } from '@patternfly/react-icons';
 import { DataPoint } from '@console/internal/components/graphs';
-import { EmptyState, EmptyStateVariant, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { LoadingInline, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 
 type MetricDataType = {
   x: string;
@@ -68,12 +68,7 @@ export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({ isLoading, m
   // trying to avoid redundant code
   const { metricData, metricLegend, total } = getMetricDataAndLegend(metricsData);
   if (!metricData.length) {
-    return (
-      <EmptyState className="chart-empty-state" variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartPieIcon} />
-        <Title size="sm">No Prometheus datapoints found</Title>
-      </EmptyState>
-    );
+    return <GraphEmpty icon={ChartPieIcon} />;
   }
   return (
     <div>

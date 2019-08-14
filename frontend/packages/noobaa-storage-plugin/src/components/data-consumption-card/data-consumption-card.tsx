@@ -9,7 +9,6 @@ import {
   ChartThemeColor,
 } from '@patternfly/react-charts';
 import { ChartBarIcon } from '@patternfly/react-icons';
-import { EmptyState, EmptyStateVariant, EmptyStateIcon, Title } from '@patternfly/react-core';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -24,6 +23,7 @@ import {
   humanizeDecimalBytes,
   humanizeBinaryBytesWithoutB,
 } from '@console/internal/components/utils';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../constants/queries';
 import {
   ACCOUNTS,
@@ -162,10 +162,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
             />
           </div>
         ) : (
-          <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-            <EmptyStateIcon size="sm" icon={ChartBarIcon} />
-            <Title size="sm">No Prometheus datapoints found.</Title>
-          </EmptyState>
+          <GraphEmpty icon={ChartBarIcon} />
         )}
       </DashboardCardBody>
     </DashboardCard>

@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
 .nb-data-resiliency__dashboard-body {
   display: flex;
   flex-direction: column;
@@ -11,7 +13,8 @@
 }
 
 .nb-data-resiliency__icon--error {
-  font-size: 60px;
+  color: $pf-color-black-600;
+  font-size: 5rem;
 }
 
 .nb-data-resiliency__icon--ok {

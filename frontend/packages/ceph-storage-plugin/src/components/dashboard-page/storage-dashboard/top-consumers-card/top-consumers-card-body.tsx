@@ -12,9 +12,9 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
-import { EmptyState, EmptyStateIcon, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { getGraphVectorStats, getMetricType } from './utils';
 
 const chartPropsValue = {
@@ -103,12 +103,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
         </>
       );
     }
-    return (
-      <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-        <Title size="sm">No Prometheus datapoints found.</Title>
-      </EmptyState>
-    );
+    return <GraphEmpty icon={ChartLineIcon} />;
   },
 );
 
