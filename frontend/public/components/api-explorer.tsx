@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Map as ImmutableMap } from 'immutable';
@@ -36,8 +37,10 @@ import {
   LinkifyExternal,
   LoadError,
   Loading,
+  removeQueryArgument,
   ResourceIcon,
   ScrollToTopOnMount,
+  setQueryArgument,
   SimpleTabNav,
 } from './utils';
 
@@ -136,11 +139,16 @@ const stateToProps = ({k8s}) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
-const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)(({models}) => {
+const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromState>(stateToProps))(({models, location}) => {
   const ALL = '#all#';
+  const GROUP_PARAM = 'g';
+  const VERSION_PARAM = 'v';
+  const search = new URLSearchParams(location.search);
+  // Differentiate between an empty group and an unspecified param.
+  const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
+  const versionFilter = search.get(VERSION_PARAM) || ALL;
+
   const [textFilter, setTextFilter] = React.useState('');
-  const [groupFilter, setGroupFilter] = React.useState(ALL);
-  const [versionFilter, setVersionFilter] = React.useState(ALL);
 
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, {apiGroup}) => {
@@ -196,20 +204,30 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
   // Put models with no API group (core k8s resources) at the top.
   const sortedResources = _.sortBy(filteredResources.toArray(), [({apiGroup}) => apiGroup || '1', 'apiVersion', 'kind']);
 
+  const updateURL = (k: string, v: string) => {
+    if (v === ALL) {
+      removeQueryArgument(k);
+    } else {
+      setQueryArgument(k, v);
+    }
+  };
+  const onGroupSelected = (group: string) => updateURL(GROUP_PARAM, group);
+  const onVersionSelected = (version: string) => updateURL(VERSION_PARAM, version);
+
   return <>
     <div className="co-m-pane__filter-bar">
       <div className="co-m-pane__filter-bar-group">
         <Dropdown
           autocompleteFilter={autocompleteGroups}
           items={groupOptions}
-          onChange={(group: string) => setGroupFilter(group)}
+          onChange={onGroupSelected}
           selectedKey={groupFilter}
           spacerBefore={groupSpacer}
           title={groupOptions[groupFilter]}
         />
         <Dropdown
           items={versionOptions}
-          onChange={(version: string) => setVersionFilter(version)}
+          onChange={onVersionSelected}
           selectedKey={versionFilter}
           spacerBefore={versionSpacer}
           title={versionOptions[versionFilter]}
@@ -448,7 +466,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
           aria-label="API Resources"
           data={sortedData}
           loaded
-          virtualize={false}
+          virtualize
         />
       </div>
     </>
