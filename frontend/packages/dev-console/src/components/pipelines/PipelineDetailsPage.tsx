@@ -4,7 +4,7 @@ import { Kebab, navFactory } from '@console/internal/components/utils';
 import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { triggerPipeline, rerunPipeline } from '../../utils/pipeline-actions';
+import { rerunPipeline } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import PipelinEnvironmentComponent from './PipelineEnvironment';
@@ -33,11 +33,6 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             this.setState({
               menuActions: [
                 rerunPipeline(
-                  res,
-                  getLatestRun({ data: listres }, 'creationTimestamp'),
-                  'pipelines',
-                ),
-                triggerPipeline(
                   res,
                   getLatestRun({ data: listres }, 'creationTimestamp'),
                   'pipelines',
