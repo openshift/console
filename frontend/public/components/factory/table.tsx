@@ -421,7 +421,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
     }
 
     render() {
-      const {Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData} = this.props;
+      const {Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData, gridBreakPoint = TableGridBreakpoint.none} = this.props;
       const {sortBy, columns} = this.state;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const ariaRowCount = componentProps.data && componentProps.data.length;
@@ -431,7 +431,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
           <PfTable
             cells={columns}
             rows={virtualize ? [] : Rows({componentProps, selectedResourcesForKind, customData})}
-            gridBreakPoint={virtualize ? TableGridBreakpoint.none : TableGridBreakpoint.gridMd}
+            gridBreakPoint={gridBreakPoint}
             onSort={this._onSort}
             onSelect={onSelect}
             sortBy={sortBy}
@@ -514,6 +514,7 @@ export type TableInnerProps = {
   staticFilters?: any[];
   rowFilters?: any[];
   virtualize?: boolean;
+  gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
 };
 
 export type TableInnerState = {
