@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Row, Col } from 'patternfly-react';
-import { OffIcon, OnRunningIcon } from '@patternfly/react-icons';
 import {
   referenceForModel,
   K8sResourceKind,
@@ -38,7 +37,7 @@ import {
   getHostRAMMiB,
   getHostTotalStorageCapacity,
   getHostMachineName,
-  isHostPoweredOn,
+  getHostPowerStatus,
   getHostVendorInfo,
   getHostMachine,
   findNodeMaintenance,
@@ -50,6 +49,7 @@ import BaremetalHostNICList from './host-nics';
 import BaremetalHostDiskList from './host-disks';
 import { HostDashboard } from './dashboard';
 import { menuActionsCreator } from './host-menu-actions';
+import HostPowerStatusIcon from './HostPowerStatusIcon';
 
 type BaremetalHostDetailPageProps = {
   namespace: string;
@@ -83,7 +83,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   const RAMGB = humanizeDecimalBytes(getHostRAMMiB(host) * 2 ** 20).string;
   const totalStorageCapacity = humanizeDecimalBytes(getHostTotalStorageCapacity(host)).string;
   const description = getHostDescription(host);
-  const hostPoweredOn = isHostPoweredOn(host);
+  const powerStatus = getHostPowerStatus(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
   const bios = getHostBios(host);
@@ -147,8 +147,8 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
             <dt>Power Status</dt>
             <dd>
               <StatusIconAndText
-                title={hostPoweredOn ? 'Running' : 'Powered Off'}
-                icon={hostPoweredOn ? <OnRunningIcon /> : <OffIcon />}
+                title={powerStatus}
+                icon={<HostPowerStatusIcon powerStatus={powerStatus} />}
               />
             </dd>
             {role && (

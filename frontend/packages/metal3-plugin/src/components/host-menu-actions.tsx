@@ -14,10 +14,16 @@ import {
   findNodeMaintenance,
   getHostMachine,
   getNodeMaintenanceReason,
-  isHostPoweredOn,
+  getHostPowerStatus,
 } from '../selectors';
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { getHostStatus } from '../utils/host-status';
+import {
+  HOST_POWER_STATUS_POWERING_OFF,
+  HOST_POWER_STATUS_POWERED_ON,
+  HOST_POWER_STATUS_POWERING_ON,
+  HOST_POWER_STATUS_POWERED_OFF,
+} from '../constants';
 import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
 import { powerOffHostModal } from './modals/power-off-host-modal';
 
@@ -74,7 +80,9 @@ export const RemoveNodeMaintanance = (
 export const PowerOn = (kindObj: K8sKind, host: K8sResourceKind): KebabOption => {
   const title = 'Power on';
   return {
-    hidden: isHostPoweredOn(host),
+    hidden: [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
+      getHostPowerStatus(host),
+    ),
     label: title,
     callback: () => {
       k8sPatch(BaremetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
@@ -89,7 +97,9 @@ export const PowerOff = (
   resources: null,
   { hasNodeMaintenanceCapability, nodeName, status }: ActionArgs,
 ) => ({
-  hidden: !isHostPoweredOn(host),
+  hidden: [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
+    getHostPowerStatus(host),
+  ),
   label: 'Shut down',
   callback: () => powerOffHostModal({ hasNodeMaintenanceCapability, host, nodeName, status }),
   accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),

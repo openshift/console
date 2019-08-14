@@ -20,6 +20,11 @@ export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
 export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
 export const HOST_STATUS_POWER_MANAGEMENT_ERROR = 'power management error';
 
+export const HOST_POWER_STATUS_POWERED_ON = 'Running';
+export const HOST_POWER_STATUS_POWERED_OFF = 'Powered off';
+export const HOST_POWER_STATUS_POWERING_OFF = 'Shutting down';
+export const HOST_POWER_STATUS_POWERING_ON = 'Powering on';
+
 export const HOST_STATUS_TITLES = {
   [HOST_STATUS_READY]: 'Ready',
   [HOST_STATUS_DISCOVERED]: 'Discovered',
