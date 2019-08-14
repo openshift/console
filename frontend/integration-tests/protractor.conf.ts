@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
-import { createWriteStream } from 'fs';
+import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
 
 const tap = !!process.env.TAP;
@@ -13,9 +13,10 @@ const tap = !!process.env.TAP;
 export const BROWSER_TIMEOUT = 15000;
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
+export const screenshotsDir = 'gui_test_screenshots';
 
-const htmlReporter = new HtmlScreenshotReporter({ dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html' });
-const junitReporter = new JUnitXmlReporter({ savePath: './gui_test_screenshots', consolidateAll: true });
+const htmlReporter = new HtmlScreenshotReporter({ dest: `./${screenshotsDir}`, inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html' });
+const junitReporter = new JUnitXmlReporter({ savePath: `./${screenshotsDir}`, consolidateAll: true });
 const browserLogs: logging.Entry[] = [];
 
 const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
@@ -68,7 +69,7 @@ export const config: Config = {
     }
   },
   onComplete: async() => {
-    const consoleLogStream = createWriteStream('gui_test_screenshots/browser.log', { flags: 'a' });
+    const consoleLogStream = createWriteStream(`${screenshotsDir}/browser.log`, { flags: 'a' });
     browserLogs.forEach(log => {
       const { level, message } = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
@@ -224,4 +225,11 @@ export const waitForNone = (elementArrayFinder) => {
     const count = await elementArrayFinder.count();
     return count === 0;
   };
+};
+
+export const create = (obj) => {
+  const filename = [screenshotsDir, `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`].join('/');
+  writeFileSync(filename, JSON.stringify(obj));
+  execSync(`kubectl create -f ${filename}`);
+  execSync(`rm ${filename}`);
 };

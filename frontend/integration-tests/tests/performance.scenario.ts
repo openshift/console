@@ -3,7 +3,7 @@ import { writeFileSync } from 'fs';
 import * as path from 'path';
 import { OrderedMap } from 'immutable';
 
-import { appHost } from '../protractor.conf';
+import { appHost, screenshotsDir } from '../protractor.conf';
 import * as sidenavView from '../views/sidenav.view';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
@@ -40,7 +40,7 @@ describe('Performance test', () => {
       .reduce((acc, val) => acc.concat(`${val.name.split('-')[0]}: ${val.size} KB, `), '')
     );
 
-    writeFileSync(path.resolve(__dirname, '../../gui_test_screenshots/bundle-analysis.txt'), resources);
+    writeFileSync(path.resolve(__dirname, `../../${screenshotsDir}/bundle-analysis.txt`), resources);
 
     expect(resources.length).not.toEqual(0);
   });

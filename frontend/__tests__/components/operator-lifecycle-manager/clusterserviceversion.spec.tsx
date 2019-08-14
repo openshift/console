@@ -26,10 +26,10 @@ import {
   ClusterServiceVersionLogoProps,
   referenceForProvidedAPI,
   CSVConditionReason,
-  copiedLabelKey,
 } from '../../../public/components/operator-lifecycle-manager';
+import { SubscriptionDetails } from '../../../public/components/operator-lifecycle-manager/subscription';
 import { DetailsPage, TableInnerProps, Table, TableRow, MultiListPage } from '../../../public/components/factory';
-import { testClusterServiceVersion, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
+import { testClusterServiceVersion, testSubscription, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
 import {
   Timestamp,
   ResourceLink,
@@ -37,11 +37,11 @@ import {
   ErrorBoundary,
   ScrollToTopOnMount,
   SectionHeading,
-  Firehose,
   resourceObjPath,
+  StatusBox,
 } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
-import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../../public/models';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
 import * as operatorLogo from '../../../public/imgs/operator.svg';
 
@@ -267,22 +267,24 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 describe(CSVSubscription.displayName, () => {
   let wrapper: ShallowWrapper<CSVSubscriptionProps>;
 
-  it('renders `Firehose` for PackageManifest and Subscription', () => {
-    let obj = _.cloneDeep(testClusterServiceVersion);
-    obj = _.set(obj, 'metadata.annotations', {[copiedLabelKey]: 'operators'});
-    wrapper = shallow(<CSVSubscription obj={obj} />);
+  it('renders `StatusBox` with correct props when Operator subscription does not exist', () => {
+    wrapper = shallow(<CSVSubscription obj={testClusterServiceVersion} packageManifest={[]} subscription={[]} />);
 
-    expect(wrapper.find(Firehose).props().resources).toEqual([{
-      kind: referenceForModel(SubscriptionModel),
-      namespace: obj.metadata.annotations[copiedLabelKey],
-      isList: true,
-      prop: 'subscription',
-    }, {
-      kind: referenceForModel(PackageManifestModel),
-      namespace: obj.metadata.namespace,
-      isList: true,
-      prop: 'packageManifest',
-    }]);
+    expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
+    expect(wrapper.find(StatusBox).props().loaded).toBe(true);
+    expect(wrapper.find(StatusBox).props().data).toBeUndefined();
+  });
+
+  it('renders `SubscriptionDetails` with correct props when Operator subscription exists', () => {
+    const obj = _.set(_.cloneDeep(testClusterServiceVersion), 'metadata.annotations', {'olm.operatorNamespace': 'default'});
+    const subscription = _.set(_.cloneDeep(testSubscription), 'status', {installedCSV: obj.metadata.name});
+
+    wrapper = shallow(<CSVSubscription obj={obj} packageManifest={[testPackageManifest]} subscription={[testSubscription, subscription]} />);
+
+    expect(wrapper.find(StatusBox).props().data).toEqual(subscription);
+    expect(wrapper.find(SubscriptionDetails).props().obj).toEqual(subscription);
+    expect(wrapper.find(SubscriptionDetails).props().installedCSV).toEqual(obj);
+    expect(wrapper.find(SubscriptionDetails).props().pkg).toEqual(testPackageManifest);
   });
 });
 

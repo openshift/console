@@ -157,7 +157,7 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders spec descriptor fields if the custom resource is `owned`', () => {
-    expect(wrapper.find(SpecDescriptor).length).toEqual(1);
+    expect(wrapper.find(SpecDescriptor).length).toEqual(testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.length);
   });
 
   it('renders spec descriptor fields if the custom resource is `required`', () => {
@@ -166,7 +166,7 @@ describe(OperandDetails.displayName, () => {
     clusterServiceVersion.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({clusterServiceVersion});
 
-    expect(wrapper.find(SpecDescriptor).length).toEqual(1);
+    expect(wrapper.find(SpecDescriptor).length).toEqual(clusterServiceVersion.spec.customresourcedefinitions.required[0].specDescriptors.length);
   });
 });
 

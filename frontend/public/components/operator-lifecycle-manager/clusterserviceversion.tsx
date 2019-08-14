@@ -29,7 +29,6 @@ import {
   providedAPIsFor,
   SubscriptionKind,
   PackageManifestKind,
-  copiedLabelKey,
   SubscriptionState,
 } from './index';
 import {
@@ -45,7 +44,6 @@ import {
   ScrollToTopOnMount,
   AsyncComponent,
   ExternalLink,
-  Firehose,
   FirehoseResult,
   StatusBox,
   Page,
@@ -201,7 +199,7 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
 };
 
 const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionKind[]) => subs.find(sub => {
-  return sub.metadata.namespace === csv.metadata.annotations['olm.operatorNamespace'] && _.get(sub.status, 'installedCSV') === csv.metadata.name;
+  return sub.metadata.namespace === (csv.metadata.annotations || {})['olm.operatorNamespace'] && _.get(sub.status, 'installedCSV') === csv.metadata.name;
 });
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
@@ -370,36 +368,17 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
 };
 
 export const CSVSubscription: React.FC<CSVSubscriptionProps> = (props) => {
-  type SubscriptionProps = {
-    subscription: FirehoseResult<SubscriptionKind[]>;
-    packageManifest: FirehoseResult<PackageManifestKind[]>;
-    loaded: boolean;
-  };
+  const EmptyMsg = () => <MsgBox title="No Operator Subscription" detail="This Operator will not receive updates." />;
+  const subscription = props.subscription
+    .filter(sub => sub.metadata.namespace === (props.obj.metadata.annotations || {})['olm.operatorNamespace'])
+    .find(sub => _.get(sub.status, 'installedCSV') === props.obj.metadata.name);
 
-  const Subscription: React.FC<SubscriptionProps> = (subscriptionProps) => {
-    const subscription = subscriptionProps.subscription.data.find(sub => _.get(sub.status, 'installedCSV') === props.obj.metadata.name);
-
-    return <StatusBox {...subscriptionProps.subscription}>
-      <SubscriptionDetails
-        obj={subscription}
-        installedCSV={props.obj}
-        pkg={subscriptionProps.packageManifest.data.find(pkg => pkg.status.packageName === subscription.spec.name)} />
-    </StatusBox>;
-  };
-
-  return <Firehose resources={[{
-    kind: referenceForModel(SubscriptionModel),
-    namespace: props.obj.metadata.annotations[copiedLabelKey],
-    isList: true,
-    prop: 'subscription',
-  }, {
-    kind: referenceForModel(PackageManifestModel),
-    namespace: props.obj.metadata.namespace,
-    isList: true,
-    prop: 'packageManifest',
-  }]}>
-    <Subscription {...props as any} />
-  </Firehose>;
+  return <StatusBox EmptyMsg={EmptyMsg} loaded={true} data={subscription}>
+    <SubscriptionDetails
+      obj={subscription}
+      installedCSV={props.obj}
+      pkg={!_.isNil(subscription) ? props.packageManifest.find(pkg => pkg.status.packageName === subscription.spec.name) : null} />
+  </StatusBox>;
 };
 
 export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (props) => {
@@ -434,7 +413,10 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       {name: 'Installed Operators', path: `/k8s/ns/${props.match.params.ns}/${props.match.params.plural}`},
       {name: 'Operator Details', path: props.match.url},
     ]}
-    resources={[{kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription'}]}
+    resources={[
+      {kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription'},
+      {kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifest'},
+    ]}
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
@@ -496,6 +478,8 @@ export type FailedSubscriptionTableRowProps = {
 
 export type CSVSubscriptionProps = {
   obj: ClusterServiceVersionKind;
+  subscription: SubscriptionKind[];
+  packageManifest: PackageManifestKind[];
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

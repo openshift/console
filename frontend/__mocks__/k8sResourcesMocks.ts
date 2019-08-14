@@ -12,6 +12,8 @@ import {
 import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
 import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
 
+const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, SpecCapability.fieldGroup, SpecCapability.arrayFieldGroup, StatusCapability.k8sResourcePrefix]);
+
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
   kind: 'Namespace',
@@ -74,12 +76,12 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           kind: 'Pod',
           version: 'v1',
         }],
-        specDescriptors: [{
-          path: 'size',
-          displayName: 'Size',
-          description: 'The desired number of Pods for the cluster',
-          'x-descriptors': [SpecCapability.podCount],
-        }],
+        specDescriptors: Object.keys(SpecCapability).filter(c => !prefixedCapabilities.has(SpecCapability[c])).map(capability => ({
+          description: `Spec descriptor for ${capability}`,
+          displayName: capability.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+          path: capability,
+          'x-descriptors': [SpecCapability[capability]],
+        })),
         statusDescriptors: [{
           path: 'podStatusus',
           displayName: 'Member Status',

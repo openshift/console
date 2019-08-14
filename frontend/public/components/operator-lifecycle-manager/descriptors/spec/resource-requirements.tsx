@@ -8,16 +8,16 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { RootState } from '../../../../redux';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
-  const {cpu, memory, onChangeCPU, onChangeMemory} = props;
+  const {cpu, memory, onChangeCPU, onChangeMemory, path = ''} = props;
 
   return <div className="row co-m-form-row">
     <div className="col-xs-5">
-      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
-      <input value={cpu} onChange={e => onChangeCPU(e.target.value)} name="cpu" type="text" className="pf-c-form-control" autoFocus placeholder="500m" />
+      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor={`${path}.cpu`}>CPU cores</label>
+      <input value={cpu} onChange={e => onChangeCPU(e.target.value)} id={`${path}.cpu`} name="cpu" type="text" className="pf-c-form-control" placeholder="500m" />
     </div>
     <div className="col-xs-5">
-      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
-      <input value={memory} onChange={e => onChangeMemory(e.target.value)} name="memory" type="text" className="pf-c-form-control" placeholder="50Mi" />
+      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor={`${path}.memory`}>Memory</label>
+      <input value={memory} onChange={e => onChangeMemory(e.target.value)} id={`${path}.memory`} name="memory" type="text" className="pf-c-form-control" placeholder="50Mi" />
     </div>
   </div>;
 };
@@ -44,7 +44,7 @@ export const ResourceRequirementsModal = withHandlePromise((props: ResourceRequi
       <div className="row co-m-form-row">
         <div className="col-sm-12">{props.description}</div>
       </div>
-      <ResourceRequirements cpu={cpu} memory={memory} onChangeCPU={setCPU} onChangeMemory={setMemory} />
+      <ResourceRequirements cpu={cpu} memory={memory} onChangeCPU={setCPU} onChangeMemory={setMemory} path={path} />
     </ModalBody>
     <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText="Save" cancel={props.cancel} />
   </form>;
@@ -88,6 +88,7 @@ export type ResourceRequirementsProps = {
   memory: string;
   onChangeCPU: (value: string) => void;
   onChangeMemory: (value: string) => void;
+  path?: string;
 };
 
 export type ResourceRequirementsModalLinkProps = {

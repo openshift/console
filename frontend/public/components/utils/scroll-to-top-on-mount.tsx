@@ -13,3 +13,5 @@ export class ScrollToTopOnMount extends React.Component {
     return null;
   }
 }
+
+export const useScrollToTopOnMount = () => React.useEffect(() => document.getElementById('content-scrollable').scrollTo(0, 0), []);

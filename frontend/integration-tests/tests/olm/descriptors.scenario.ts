@@ -1,9 +1,10 @@
 import { execSync } from 'child_process';
-import { browser, element, by, $, $$, ExpectedConditions as until } from 'protractor';
+import { browser, element, by, $, $$, ExpectedConditions as until, ElementFinder } from 'protractor';
 import { safeDump } from 'js-yaml';
+import * as _ from 'lodash';
 
-import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
-import { SpecCapability, StatusCapability } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
+import { appHost, testName, checkLogs, checkErrors, create } from '../../protractor.conf';
+import { SpecCapability, StatusCapability, Descriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
 import * as crudView from '../../views/crud.view';
 import * as yamlView from '../../views/yaml.view';
 
@@ -16,6 +17,11 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case SpecCapability.namespaceSelector: return {matchNames: ['default']};
     case SpecCapability.booleanSwitch: return true;
     case SpecCapability.password: return 'password123';
+    case SpecCapability.checkbox: return true;
+    case SpecCapability.imagePullPolicy: return 'Never';
+    case SpecCapability.updateStrategy: return {type: 'Recreate'};
+    case SpecCapability.text: return 'Some text';
+    case SpecCapability.number: return 2;
 
     case StatusCapability.podStatuses: return {ready: ['pod-0', 'pod-1'], unhealthy: ['pod-2'], stopped: ['pod-3']};
     case StatusCapability.podCount: return 3;
@@ -32,9 +38,34 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
   }
 };
 
+const inputValueFor = (descriptor: Descriptor) => async(el: ElementFinder) => {
+  switch (descriptor['x-descriptors'][0]) {
+    case SpecCapability.podCount: return parseInt(await el.$('input').getAttribute('value'), 10);
+    case SpecCapability.label: return el.$('input').getAttribute('value');
+    case SpecCapability.resourceRequirements: return {
+      limits: {cpu: await el.$$('input').get(0).getAttribute('value'), memory: await el.$$('input').get(1).getAttribute('value')},
+      requests: {cpu: await el.$$('input').get(2).getAttribute('value'), memory: await el.$$('input').get(3).getAttribute('value')},
+    };
+    case SpecCapability.booleanSwitch: return (await el.$('.bootstrap-switch').getAttribute('class')).includes('bootstrap-switch-on');
+    case SpecCapability.password: return el.$('input').getAttribute('value');
+    case SpecCapability.checkbox: return (await el.$('input').getAttribute('checked')) !== 'false';
+    case SpecCapability.imagePullPolicy: return el.$('input[type=\'radio\']:checked').getAttribute('value');
+    case SpecCapability.updateStrategy: return {type: await el.$('input[type=\'radio\']:checked').getAttribute('value')};
+    case SpecCapability.text: return el.$('input').getAttribute('value');
+    case SpecCapability.number: return parseInt(await el.$('input').getAttribute('value'), 10);
+    case SpecCapability.endpointList:
+    case SpecCapability.namespaceSelector:
+    case SpecCapability.nodeAffinity:
+    case SpecCapability.podAffinity:
+    case SpecCapability.podAntiAffinity:
+    default:
+      return null;
+  }
+};
+
 describe('Using OLM descriptor components', () => {
   const testLabel = 'automatedTestName';
-  const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, StatusCapability.k8sResourcePrefix]);
+  const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, SpecCapability.fieldGroup, SpecCapability.arrayFieldGroup, StatusCapability.k8sResourcePrefix]);
   const testCRD = {
     apiVersion: 'apiextensions.k8s.io/v1beta1',
     kind: 'CustomResourceDefinition',
@@ -51,6 +82,28 @@ describe('Using OLM descriptor components', () => {
         singular: 'app',
         kind: 'App',
         listKind: 'Apps',
+      },
+      validation: {
+        openAPIV3Schema: {
+          properties: {
+            spec: {
+              required: ['password'],
+              properties: {
+                password: {
+                  type: 'string',
+                  minLength: 1,
+                  maxLength: 25,
+                  pattern: '^[a-zA-Z0-9._\\-%]*$',
+                },
+                number: {
+                  type: 'integer',
+                  minimum: 2,
+                  maximum: 4,
+                },
+              },
+            },
+          },
+        },
       },
     },
   };
@@ -80,6 +133,7 @@ describe('Using OLM descriptor components', () => {
       name: 'olm-descriptors-test',
       namespace: testName,
       labels: {[testLabel]: testName},
+      annotations: {'alm-examples': JSON.stringify([testCR])},
     },
     spec: {
       displayName: 'Test Operator',
@@ -115,7 +169,7 @@ describe('Using OLM descriptor components', () => {
           }],
         },
       },
-      // TODO(alecmerdler): Test `apiservicedefinitions` as well...
+      // TODO: Test `apiservicedefinitions` as well...
       customresourcedefinitions: {
         owned: [
           {
@@ -149,9 +203,9 @@ describe('Using OLM descriptor components', () => {
     console.log('\nUsing custom resource:');
     console.log(safeDump(testCR));
 
-    execSync(`echo '${JSON.stringify(testCRD)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(testCSV)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(testCR)}' | kubectl create -f -`);
+    create(testCRD);
+    create(testCSV);
+    create(testCR);
 
     await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`);
     await crudView.isLoaded();
@@ -202,7 +256,39 @@ describe('Using OLM descriptor components', () => {
     await element(by.buttonText('Create App')).click();
     await yamlView.isLoaded();
     await element(by.buttonText('Edit Form')).click();
+    await browser.wait(until.presenceOf($('#metadata\\.name')));
 
-    expect($('#name').isDisplayed()).toBe(true);
+    expect($$('.co-create-operand__form-group').count()).not.toEqual(0);
+  });
+
+  it('pre-populates form values using sample operand from ClusterServiceVersion', async() => {
+    $$('.co-create-operand__form-group').each(async(input) => {
+      await browser.actions().mouseMove(input).perform();
+
+      const label = await input.$('.form-label').getText();
+      const descriptor = testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.find(d => d.displayName === label);
+      const helpText = await input.$(`#${descriptor.path}__description`).getText();
+
+      expect(descriptor).toBeDefined();
+      expect(label).toEqual(descriptor.displayName);
+      expect(helpText).toEqual(descriptor.description);
+
+      if (await inputValueFor(descriptor)(input) !== null) {
+        const value = await inputValueFor(descriptor)(input);
+
+        expect(value).toEqual(_.get(testCR, ['spec', descriptor.path]));
+      }
+    });
+  });
+
+  it('prevents creation and displays validation errors', () => {
+    // TODO(alecmerdler)
+  });
+
+  it('successfully creates operand using form', async() => {
+    await element(by.buttonText('Create')).click();
+    await crudView.isLoaded();
+
+    expect(crudView.resourceTitle.isPresent()).toBe(true);
   });
 });
