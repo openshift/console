@@ -351,7 +351,12 @@ export class TransformTopologyData {
         _.map(edges, (edge) => {
           // handles multiple edges
           const targetNode = _.get(
-            _.find(totalDeployments, ['metadata.labels["app.kubernetes.io/instance"]', edge]),
+            _.find(totalDeployments, (deployment) => {
+              const name =
+                _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
+                deployment.metadata.name;
+              return name === edge;
+            }),
             'metadata.uid',
           );
           if (targetNode) {
