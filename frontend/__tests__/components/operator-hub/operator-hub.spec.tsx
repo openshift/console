@@ -39,10 +39,9 @@ describe('OperatorHubList', () => {
     const tiles = wrapper.find<any>(CatalogTile);
     const amqTileProps = tiles.at(0).props();
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
-    const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
 
     expect(amqTileProps.title).toEqual(amqPackageManifest.status.channels[0].currentCSVDesc.displayName);
-    expect(amqTileProps.iconImg).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
+    expect(amqTileProps.iconImg).toEqual('/api/kubernetes/apis/packages.operators.coreos.com/v1/packagemanifests/amq-streams/icon?resourceVersion=amq-streams.preview.amqstreams.v1.0.0.beta');
     expect(amqTileProps.iconClass).toBe(null);
     expect(amqTileProps.vendor).toEqual(`provided by ${amqPackageManifest.metadata.labels.provider}`);
     expect(amqTileProps.description.startsWith('**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.')).toBe(true);
@@ -52,10 +51,9 @@ describe('OperatorHubList', () => {
     const tiles = wrapper.find<any>(CatalogTile);
     const prometheusTileProps = tiles.at(3).props(); // Sorting makes this 3
     const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
-    const prometheusIcon = (prometheusPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
 
     expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.status.channels[0].currentCSVDesc.displayName);
-    expect(prometheusTileProps.iconImg).toEqual(`data:${prometheusIcon.mediatype};base64,${prometheusIcon.base64data}`);
+    expect(prometheusTileProps.iconImg).toEqual('/api/kubernetes/apis/packages.operators.coreos.com/v1/packagemanifests/prometheus/icon?resourceVersion=prometheus.preview.prometheusoperator.0.22.2');
     expect(prometheusTileProps.iconClass).toBe(null);
     expect(prometheusTileProps.vendor).toEqual(`provided by ${prometheusPackageManifest.metadata.labels.provider}`);
     expect(prometheusTileProps.description.startsWith('The Prometheus Operator for Kubernetes provides easy monitoring definitions for Kubernetes services and deployment and management of Prometheus instances.')).toBe(true);
@@ -70,10 +68,9 @@ describe('OperatorHubList', () => {
 
     const modalItem = details.at(0).props().item;
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
-    const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
 
     expect(modalItem.name).toEqual(amqPackageManifest.status.channels[0].currentCSVDesc.displayName);
-    expect(modalItem.imgUrl).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
+    expect(modalItem.imgUrl).toEqual('/api/kubernetes/apis/packages.operators.coreos.com/v1/packagemanifests/amq-streams/icon?resourceVersion=amq-streams.preview.amqstreams.v1.0.0.beta');
     expect(modalItem.provider).toEqual(amqPackageManifest.metadata.labels.provider);
     expect(modalItem.description.startsWith('**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.')).toBe(true);
 
