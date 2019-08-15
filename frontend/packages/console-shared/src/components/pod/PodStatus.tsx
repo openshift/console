@@ -92,7 +92,7 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
         width={size}
         title={title}
         subTitle={subTitle}
-        labelComponent={<Tooltip x={size / 2} y={size * -0.2} />}
+        labelComponent={<Tooltip x={0} y={0} width={size} height={size * -0.2} />}
         /*
           // @ts-ignore */
         padAngle={(d: PodData) => (d.y > 0 ? 2 : 0)}

@@ -16,6 +16,8 @@ export interface SvgBoxedTextProps {
   y?: number;
   cornerRadius?: number;
   kind?: string;
+  onMouseEnter?: React.MouseEventHandler<SVGGElement>;
+  onMouseLeave?: React.MouseEventHandler<SVGGElement>;
 }
 
 const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
@@ -60,6 +62,8 @@ export default class SvgBoxedText extends React.Component<SvgBoxedTextProps, Sta
       x = 0,
       y = 0,
       kind,
+      onMouseEnter,
+      onMouseLeave,
       ...other
     } = this.props;
     const { bb } = this.state;
@@ -95,6 +99,8 @@ export default class SvgBoxedText extends React.Component<SvgBoxedTextProps, Sta
           y={y}
           textAnchor="middle"
           dy="0.35em"
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         >
           {children}
         </text>

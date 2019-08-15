@@ -323,6 +323,11 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   private onNodeDragStart = (d: ViewNode) => {
     d3.event.sourceEvent.stopPropagation();
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
     if (this.dragCount) {
       this.dragCount++;
     }
@@ -331,7 +336,11 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onNodeDragged = (d: ViewNode) => {
-    if (!this.dragCount && (Math.abs(d.fx - d3.event.x) > 5 || Math.abs(d.fy - d3.event.y) > 5)) {
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (!this.dragCount && (Math.abs(d.x - d3.event.x) > 5 || Math.abs(d.y - d3.event.y) > 5)) {
       this.dragCount++;
       this.simulation.alphaTarget(0.1).restart();
     }
@@ -342,6 +351,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onNodeDragEnd = (d: ViewNode) => {
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
     if (this.dragCount) {
       --this.dragCount;
       if (!this.dragCount && !d3.event.active) {
@@ -368,6 +381,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onGroupDragStart = (d: ViewGroup) => {
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
     if (!d3.event.active) {
       this.simulation.alphaTarget(0.1).restart();
     }
@@ -378,6 +395,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onGroupDragged = (d: ViewGroup) => {
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
     d.nodes.forEach((gd) => {
       gd.fx += d3.event.dx;
       gd.fy += d3.event.dy;
@@ -385,6 +406,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onGroupDragEnd = (d: ViewGroup) => {
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
     if (!d3.event.active) {
       this.simulation.alphaTarget(0);
     }

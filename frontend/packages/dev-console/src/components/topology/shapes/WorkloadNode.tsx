@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternfly/react-icons';
 import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
 import { Status, calculateRadius, PodStatus } from '@console/shared';
+import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildConfigModel } from '@console/internal/models';
@@ -48,9 +49,10 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             href={workload.data.editUrl}
             external
             title="Edit Source Code"
+            position={TooltipPosition.right}
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <PenIcon style={{ fontSize: decoratorRadius }} />
+              <PenIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />
             </g>
           </Decorator>
         ),
@@ -63,9 +65,10 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             href={workload.data.url}
             external
             title="Open URL"
+            position={TooltipPosition.right}
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} />
+              <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
             </g>
           </Decorator>
         ),
@@ -77,16 +80,21 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
               build.metadata.ownerReferences[0].name,
               build.metadata.namespace,
             )}
+            className="odc-decorator__link"
           >
             <Decorator
               x={-radius + decoratorRadius * 0.7}
               y={radius - decoratorRadius * 0.7}
               radius={decoratorRadius}
               title={`${build.metadata.name} ${build.status && build.status.phase}`}
+              position={TooltipPosition.left}
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 {build.status.phase === 'Complete' ? (
-                  <OutlinedCheckCircleIcon color={successColor.value} />
+                  <OutlinedCheckCircleIcon
+                    color={successColor.value}
+                    alt={`${build.metadata.name} ${build.status && build.status.phase}`}
+                  />
                 ) : (
                   <foreignObject
                     width={decoratorRadius}

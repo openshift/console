@@ -2,6 +2,10 @@
   color: var(--pf-global--Color--200);
   transition: color 0.2s ease;
 
+  &__link:hover {
+    text-decoration: none;
+  }
+
   &__bg {
     fill: var(--pf-global--BackgroundColor--light-100);
   }
