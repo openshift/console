@@ -103,6 +103,7 @@ const sorts = {
   serviceClassDisplayName,
   silenceStateOrder,
   string: val => JSON.stringify(val),
+  number: val => _.toNumber(val),
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getTemplateInstanceStatus,
@@ -116,6 +117,7 @@ const stateToProps = ({UI}, {
   data = [],
   defaultSortField = 'metadata.name',
   defaultSortFunc = undefined,
+  defaultSortAsNumber = false,
   filters = {},
   loaded = false,
   reduxID = null,
@@ -129,13 +131,17 @@ const stateToProps = ({UI}, {
   // Only default to 'metadata.name' if no `defaultSortFunc`
   const currentSortField = UI.getIn(['listSorts', listId, 'field'], defaultSortFunc ? undefined : defaultSortField);
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
+  const currentSortAsNumber = UI.getIn(['listSorts', listId, 'sortAsNumber'], defaultSortAsNumber);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], SortByDirection.asc);
 
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
-      // Sort resources by one of their fields as a string
-      sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
+      if (currentSortAsNumber) {
+        sortBy = resource => sorts.number(_.get(resource, currentSortField, ''));
+      } else {
+        sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
+      }
     } else if (currentSortFunc && sorts[currentSortFunc]) {
       // Sort resources by a function in the 'sorts' object
       sortBy = sorts[currentSortFunc];
@@ -337,7 +343,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
           sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
         }
       } else if (currentSortFunc && currentSortOrder) {
-        const columnIndex = _.findIndex(columns, { sortFunc: currentSortField });
+        const columnIndex = _.findIndex(columns, { sortFunc: currentSortFunc });
         if (columnIndex > -1){
           sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
         }
@@ -362,7 +368,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       if (columnIndex > -1){
         const sortOrder = sp.get('orderBy') || SortByDirection.asc;
         const column = columns[columnIndex];
-        this._applySort(column.sortField, column.sortFunc, sortOrder, column.title);
+        this._applySort(column.sortField, column.sortFunc, column.sortAsNumber, sortOrder, column.title);
         this.setState({
           sortBy: {
             index: columnIndex + this._columnShift,
@@ -403,15 +409,15 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       this._bodyRef = ref;
     }
 
-    _applySort(sortField, sortFunc, direction, columnTitle){
+    _applySort(sortField, sortFunc, sortAsNumber, direction, columnTitle){
       const {sortList, listId, currentSortFunc} = this.props;
       const applySort = _.partial(sortList, listId);
-      applySort(sortField, sortFunc || currentSortFunc, direction, columnTitle);
+      applySort(sortField, sortFunc || currentSortFunc, sortAsNumber, direction, columnTitle);
     }
 
     _onSort(_event, index, direction){
       const sortColumn = this.state.columns[index - this._columnShift];
-      this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
+      this._applySort(sortColumn.sortField, sortColumn.sortFunc, sortColumn.sortAsNumber, direction, sortColumn.title);
       this.setState({
         sortBy: {
           index,
@@ -508,7 +514,7 @@ export type TableInnerProps = {
   Row?: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
   Rows?: (...args)=> any[];
   selector?: Object;
-  sortList?: (listId: string, field: string, func: any, orderBy: string, column: string) => any;
+  sortList?: (listId: string, field: string, func: any, sortAsNumber: boolean, orderBy: string, column: string) => any;
   selectedResourcesForKind?: string[];
   onSelect?: (event: React.MouseEvent, isSelected: boolean, rowIndex: number, rowData: IRowData, extraData: IExtraData) => void;
   staticFilters?: any[];

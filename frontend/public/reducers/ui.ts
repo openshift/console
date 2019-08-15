@@ -99,7 +99,7 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.delete('impersonate');
 
     case ActionType.SortList:
-      return state.mergeIn(['listSorts', action.payload.listId], _.pick(action.payload, ['field', 'func', 'orderBy']));
+      return state.mergeIn(['listSorts', action.payload.listId], _.pick(action.payload, ['field', 'func', 'sortAsNumber', 'orderBy']));
 
     case ActionType.SetCreateProjectMessage:
       return state.set('createProjectMessage', action.payload.message);

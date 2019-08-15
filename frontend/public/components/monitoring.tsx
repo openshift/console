@@ -632,7 +632,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
 
     if (!params.get('sortBy')) {
       // Sort by rule name by default
-      store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
+      store.dispatch(UIActions.sortList(reduxID, 'name', undefined, false, 'asc', 'Name'));
     }
   }
 
