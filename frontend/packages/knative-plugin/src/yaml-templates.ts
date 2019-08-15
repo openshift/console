@@ -10,11 +10,9 @@ metadata:
   name: sample
   namespace: default
 spec:
-  runLatest:
-    configuration:
-      revisionTemplate:
-        spec:
-          container:
-            image: openshift/hello-openshift
+  template:
+    spec:
+      containers:
+      - image: openshift/hello-openshift
 `,
 );

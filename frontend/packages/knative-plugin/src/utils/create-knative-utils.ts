@@ -83,30 +83,32 @@ export const createKnativeService = (
         },
         spec: {
           ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
-          container: {
-            image: `${imageStreamUrl}`,
-            ...(contTargetPort && {
-              ports: [
-                {
-                  containerPort: contTargetPort,
-                },
-              ],
-            }),
-            resources: {
-              ...((cpuLimit || memoryLimit) && {
-                limits: {
-                  ...(cpuLimit && { cpu: `${cpuLimit}${cpuLimitUnit}` }),
-                  ...(memoryLimit && { memory: `${memoryLimit}${memoryLimitUnit}` }),
-                },
+          containers: [
+            {
+              image: `${imageStreamUrl}`,
+              ...(contTargetPort && {
+                ports: [
+                  {
+                    containerPort: contTargetPort,
+                  },
+                ],
               }),
-              ...((cpuRequest || memoryRequest) && {
-                requests: {
-                  ...(cpuRequest && { cpu: `${cpuRequest}${cpuRequestUnit}` }),
-                  ...(memoryRequest && { memory: `${memoryRequest}${memoryRequestUnit}` }),
-                },
-              }),
+              resources: {
+                ...((cpuLimit || memoryLimit) && {
+                  limits: {
+                    ...(cpuLimit && { cpu: `${cpuLimit}${cpuLimitUnit}` }),
+                    ...(memoryLimit && { memory: `${memoryLimit}${memoryLimitUnit}` }),
+                  },
+                }),
+                ...((cpuRequest || memoryRequest) && {
+                  requests: {
+                    ...(cpuRequest && { cpu: `${cpuRequest}${cpuRequestUnit}` }),
+                    ...(memoryRequest && { memory: `${memoryRequest}${memoryRequestUnit}` }),
+                  },
+                }),
+              },
             },
-          },
+          ],
         },
       },
     },
