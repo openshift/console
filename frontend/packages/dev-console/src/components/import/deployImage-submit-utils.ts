@@ -73,6 +73,7 @@ export const createDeploymentConfig = (
 
   const defaultLabels = getAppLabels(name, application);
   const labels = { ...defaultLabels, ...userLabels };
+  const podLabels = getPodLabels(name);
 
   const volumes = [];
   const volumeMounts = [];
@@ -101,10 +102,10 @@ export const createDeploymentConfig = (
     },
     spec: {
       replicas,
-      selector: labels,
+      selector: podLabels,
       template: {
         metadata: {
-          labels,
+          labels: podLabels,
           annotations,
         },
         spec: {
