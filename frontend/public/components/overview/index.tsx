@@ -334,8 +334,8 @@ const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired =
 };
 
 const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
-  const {selectedGroup, groupOptions, filterValue} = UI.get('overview').toJS();
-  return {groupOptions, selectedGroup, filterValue};
+  const {selectedGroup, labels, filterValue} = UI.get('overview').toJS();
+  return {labels, selectedGroup, filterValue};
 };
 
 const headingDispatchToProps = (dispatch): OverviewHeadingPropsFromDispatch => ({
@@ -350,16 +350,23 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
   }
 
   render() {
-    const {changeFilter, filterValue, firstLabel = '', groupOptions, selectGroup, selectedGroup} = this.props;
+    const {changeFilter, filterValue, labels, selectGroup, selectedGroup} = this.props;
+    const firstLabel = _.first(labels) || '';
+    const dropdownItems = {
+      [OverviewSpecialGroup.GROUP_BY_APPLICATION]: 'Application',
+      [OverviewSpecialGroup.GROUP_BY_RESOURCE]: 'Resource',
+      ..._.zipObject(labels, labels),
+    };
+
     return <div className="co-m-pane__filter-bar">
       <div className="co-m-pane__filter-bar-group">
         <Dropdown
           className="btn-group"
           menuClassName="dropdown-menu--text-wrap"
-          items={groupOptions}
+          items={dropdownItems}
           onChange={selectGroup}
           titlePrefix="Group by"
-          title={groupOptions[selectedGroup] || 'Select Category'}
+          title={dropdownItems[selectedGroup] || 'Select Category'}
           spacerBefore={new Set([firstLabel])}
           headerBefore={{[firstLabel]: 'Label'}}
         />
@@ -378,12 +385,12 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
 const OverviewHeading = connect<OverviewHeadingPropsFromState, OverviewHeadingPropsFromDispatch, OverviewHeadingOwnProps>(headingStateToProps, headingDispatchToProps)(OverviewHeading_);
 
 const mainContentStateToProps = ({UI}): OverviewMainContentPropsFromState => {
-  const {filterValue, metrics, selectedGroup, groupOptions} = UI.get('overview').toJS();
-  return {filterValue, groupOptions, metrics, selectedGroup};
+  const {filterValue, metrics, selectedGroup, labels} = UI.get('overview').toJS();
+  return {filterValue, labels, metrics, selectedGroup};
 };
 
 const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispatch => ({
-  updateGroupOptions: (groups: { [key: string]: string }) => dispatch(UIActions.updateOverviewGroupOptions(groups)),
+  updateOverviewLabels: (labels: string[]) => dispatch(UIActions.updateOverviewLabels(labels)),
   updateMetrics: (metrics: OverviewMetrics) => dispatch(UIActions.updateOverviewMetrics(metrics)),
   updateResources: (items: OverviewItem[]) => dispatch(UIActions.updateOverviewResources(items)),
   updateSelectedGroup: (group: OverviewSpecialGroup) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
@@ -396,7 +403,6 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     items: [],
     filteredItems: [],
     groupedItems: [],
-    firstLabel: '',
     ...this.createOverviewData(),
   }
 
@@ -511,23 +517,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     });
   }
 
-  getGroupOptionsFromLabels(items: OverviewItem[]): any {
-    const specialGroups = {
-      [OverviewSpecialGroup.GROUP_BY_APPLICATION]: 'Application',
-      [OverviewSpecialGroup.GROUP_BY_RESOURCE]: 'Resource',
-    };
-
-    const labelKeys = _.flatMap(items, item => _.keys(_.get(item, 'obj.metadata.labels'))).sort();
-    if (_.isEmpty(labelKeys)) {
-      return { firstLabel: '', groupOptions: specialGroups };
-    }
-
-    const firstLabel = _.first(labelKeys);
-    const groupOptions = _.reduce(labelKeys, (accumulator, key) => ({
-      ...accumulator,
-      [key]: key,
-    }), specialGroups);
-    return { firstLabel, groupOptions };
+  getOverviewLabels(items: OverviewItem[]): string[] {
+    return _.flatMap(items, item => _.keys(_.get(item, 'obj.metadata.labels'))).sort();
   }
 
   getPodsForResource(resource: K8sResourceKind): PodKind[] {
@@ -858,7 +849,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   createOverviewData(): OverviewMainContentState {
-    const {loaded, mock, selectedGroup, updateGroupOptions, updateSelectedGroup, updateResources} = this.props;
+    const {loaded, mock, selectedGroup, updateOverviewLabels, updateSelectedGroup, updateResources} = this.props;
 
     if (!loaded) {
       return;
@@ -879,24 +870,23 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     updateResources(items);
 
     const filteredItems = this.filterItems(items);
-    const { firstLabel, groupOptions } = this.getGroupOptionsFromLabels(filteredItems);
-    if (!_.has(groupOptions, selectedGroup)) {
+    const labels = this.getOverviewLabels(filteredItems);
+    if (selectedGroup !== OverviewSpecialGroup.GROUP_BY_APPLICATION && selectedGroup !== OverviewSpecialGroup.GROUP_BY_RESOURCE && !_.includes(labels, selectedGroup)) {
       updateSelectedGroup(OverviewSpecialGroup.GROUP_BY_APPLICATION);
     }
 
-    updateGroupOptions(groupOptions);
+    updateOverviewLabels(labels);
     const groupedItems = groupItems(filteredItems, selectedGroup);
     return {
       filteredItems,
       groupedItems,
-      firstLabel,
       items,
     };
   }
 
   render() {
     const {loaded, loadError, project, namespace} = this.props;
-    const {filteredItems, groupedItems, firstLabel} = this.state;
+    const {filteredItems, groupedItems} = this.state;
     const OverviewEmptyState = () => <MsgBox
       title="No Workloads Found."
       detail={<div>
@@ -912,10 +902,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     </div>;
 
     return <div className="co-m-pane">
-      <OverviewHeading
-        firstLabel={firstLabel}
-        project={_.get(project, 'data')}
-      />
+      <OverviewHeading project={_.get(project, 'data')} />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <StatusBox
           skeleton={skeletonOverview}
@@ -1143,7 +1130,7 @@ type OverviewItemReadinessProps = {
 
 type OverviewHeadingPropsFromState = {
   filterValue: string;
-  groupOptions: {[key: string]: string};
+  labels: string[];
   selectedGroup: string;
 };
 
@@ -1153,7 +1140,6 @@ type OverviewHeadingPropsFromDispatch = {
 };
 
 type OverviewHeadingOwnProps = {
-  firstLabel?: string;
   project: K8sResourceKind;
 };
 
@@ -1161,13 +1147,13 @@ type OverviewHeadingProps = OverviewHeadingPropsFromState & OverviewHeadingProps
 
 type OverviewMainContentPropsFromState = {
   filterValue: string;
-  groupOptions: {[key: string]: string};
+  labels: string[];
   metrics: OverviewMetrics;
   selectedGroup: string;
 };
 
 type OverviewMainContentPropsFromDispatch = {
-  updateGroupOptions: (groups: {[key: string]:string}) => void;
+  updateOverviewLabels: (labels: string[]) => void;
   updateMetrics: (metrics: OverviewMetrics) => void;
   updateResources: (items: OverviewItem[]) => void;
   updateSelectedGroup: (group: OverviewSpecialGroup) => void;
@@ -1201,7 +1187,6 @@ type OverviewMainContentState = {
   readonly items: any[];
   readonly filteredItems: any[];
   readonly groupedItems: any[];
-  readonly firstLabel: string;
 };
 
 type OverviewPropsFromState = {
