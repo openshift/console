@@ -24,7 +24,13 @@
   "prettier.eslintIntegration": true,
   "javascript.validate.enable": false,
   "debug.node.autoAttach": "on",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.cache-loader": true,
+    "**/public/dist": true,
+  }
 
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
