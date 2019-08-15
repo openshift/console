@@ -112,15 +112,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   return { value, unit };
 };
 
-const getDefaultFractionDigits = value => {
-  if (value < 1) {
-    return 3;
-  }
-  if (value < 100) {
-    return 2;
-  }
-  return 1;
-};
+const getDefaultFractionDigits = value => value < 100 ? 1 : 0;
 
 const round = units.round = (value, options) => {
   const fractionDigits = getDefaultFractionDigits(value);
