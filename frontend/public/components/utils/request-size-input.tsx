@@ -33,6 +33,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
             aria-describedby={describedBy}
             name={inputName}
             required={this.props.required}
+            value={this.props.defaultRequestSizeValue}
           />
           <Dropdown
             title={this.props.defaultRequestSizeUnit}
