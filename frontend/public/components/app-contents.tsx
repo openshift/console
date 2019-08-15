@@ -9,7 +9,7 @@ import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { AsyncComponent, Loading } from './utils';
+import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -56,7 +56,7 @@ type DefaultPageProps = {
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
   if (Object.keys(flags).some(key => flagPending(flags[key]))) {
-    return <Loading />;
+    return <LoadingBox />;
   }
   // support redirecting to perspective landing page
   return flags[FLAGS.OPENSHIFT] ? (
