@@ -151,7 +151,7 @@ const AlertTooltip = ({alerts, severity, noSeverityLabel=false}) => {
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
   return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>
-    <TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} />
+    <span className="project-overview__status"><TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} /></span>
   </Tooltip>;
 };
 
@@ -173,7 +173,7 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
     {error && <AlertTooltip severity="Error" alerts={error} />}
     {warning && <AlertTooltip severity="Warning" alerts={warning} />}
     {info && <AlertTooltip severity="Info" alerts={info} />}
-    {(buildNew || buildPending || buildRunning || buildFailed || buildError) && <div>
+    {(buildNew || buildPending || buildRunning || buildFailed || buildError) && <div className="project-overview__builds">
       Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />} {buildPending && <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />} {buildRunning && <AlertTooltip severity="Running" alerts={buildRunning} noSeverityLabel />} {buildFailed && <AlertTooltip severity="Failed" alerts={buildFailed} noSeverityLabel />} {buildError && <AlertTooltip severity="Error" alerts={buildError} noSeverityLabel />}
     </div>}
   </div>;

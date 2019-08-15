@@ -160,6 +160,14 @@
   }
 }
 
+.project-overview__status .co-icon-and-text {
+  margin-right: 12px;
+
+  .project-overview__builds & {
+    margin-right: 4px;
+  }
+}
+
 @media (min-width: $screen-md-min) {
   // Metrics are hidden when the sidebar is open. Adjust list row styles.
   .overview--sidebar-shown .project-overview {
