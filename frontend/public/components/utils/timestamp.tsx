@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Tooltip } from './tooltip';
+import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
 
@@ -57,7 +57,7 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
   return <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
     <GlobeAmericasIcon className="co-icon-and-text__icon" />
     <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{ mdate.toISOString() }</span>]}>
-      { timestamp }
+      <span>{ timestamp }</span>
     </Tooltip>
   </div>;
 });
