@@ -170,6 +170,8 @@ const NodeGraphs = requirePrometheus(({node}) => {
           query={ipQuery && `kubelet_running_pod_count${ipQuery}`}
         />
       </div>
+    </div>
+    <div className="row">
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network In"
@@ -192,7 +194,6 @@ const NodeGraphs = requirePrometheus(({node}) => {
         />
       </div>
     </div>
-    <br />
   </React.Fragment>;
 });
 
