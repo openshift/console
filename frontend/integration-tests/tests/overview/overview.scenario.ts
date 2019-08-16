@@ -5,7 +5,6 @@ import { appHost, testName, checkErrors, checkLogs, BROWSER_TIMEOUT } from '../.
 import * as overviewView from '../../views/overview.view';
 import * as crudView from '../../views/crud.view';
 import { DeploymentModel, StatefulSetModel, DeploymentConfigModel, DaemonSetModel } from '../../../public/models';
-import { execSync } from 'child_process';
 
 const overviewResources = ImmutableSet([
   DaemonSetModel,
@@ -40,19 +39,8 @@ describe('Visiting Overview page', () => {
       });
 
       it('clicking on N of N pods takes you to Pods page', async() => {
-        await overviewView.ClickOverviewItemsDetailsPodsLink(kindModel);
-        if ( kindModel.kind === 'DaemonSet' || kindModel.kind === 'StatefulSet') {
-          const resourceKind = kindModel.kind.toLowerCase().concat('s');
-          expect(browser.wait(until.urlContains(`${appHost}/k8s/ns/${testName}/${resourceKind}/${resourceName}/pods`), BROWSER_TIMEOUT));
-        } else if ( kindModel.kind === 'DeploymentConfig' ) {
-          const replicationcontrollername = resourceName.concat('-1');
-          expect(browser.wait(until.urlContains(`${appHost}/k8s/ns/${testName}/replicationcontrollers/${replicationcontrollername}/pods`), BROWSER_TIMEOUT));
-        } else {
-          const rsoutput = execSync(`kubectl get replicasets -n ${testName} -o json`);
-          const replicasetname = JSON.parse(rsoutput.toString('utf-8')).items[0].metadata.name;
-          console.log(replicasetname);
-          expect(browser.wait(until.urlContains(`${appHost}/k8s/ns/${testName}/replicasets/${replicasetname}/pods`), BROWSER_TIMEOUT));
-        }
+        await overviewView.clickOverviewItemsDetailsPodsLink(kindModel);
+        expect(browser.wait(until.urlContains('/pods'), BROWSER_TIMEOUT));
       });
 
       // Disabling for now due to flake https://jira.coreos.com/browse/CONSOLE-1298

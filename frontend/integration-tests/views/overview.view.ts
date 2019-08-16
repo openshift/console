@@ -1,4 +1,5 @@
 import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
+import { K8sKind } from '../../public/module/k8s';
 
 export const projectOverview = $('.project-overview');
 const projectOverviewItemSelector = '.project-overview__item';
@@ -24,7 +25,6 @@ export const sidebarIsLoaded = () => {
   return browser.wait(until.presenceOf($('.resource-overview')));
 };
 
-export const ClickOverviewItemsDetailsPodsLink = async(kindModel) => {
-  const OverviewListItemsPodsLink = $$(`.project-overview__item--${kindModel.kind} .project-overview__detail--status a`);
-  await OverviewListItemsPodsLink.get(0).click();
+export const clickOverviewItemsDetailsPodsLink = async(kindModel: K8sKind) => {
+  await $$(`.project-overview__item--${kindModel.kind} .project-overview__detail--status a`).get(0).click();
 };
