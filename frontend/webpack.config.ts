@@ -4,9 +4,6 @@ import * as path from 'path';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as VirtualModulesPlugin from 'webpack-virtual-modules';
-
-import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
@@ -112,7 +109,7 @@ const config: webpack.Configuration = {
     runtimeChunk: true,
   },
   plugins: [
-    new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
+    new webpack.NormalModuleReplacementPlugin(/^lodash-es$/, 'lodash'),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
@@ -145,12 +142,5 @@ if (NODE_ENV === 'production') {
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
-
-/* Console plugin support */
-config.plugins.push(
-  new VirtualModulesPlugin({
-    'node_modules/@console/active-plugins.js': getActivePluginsModule(resolvePluginPackages()),
-  }),
-);
 
 export default config;
