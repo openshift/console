@@ -13,11 +13,12 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
     return '-';
   }
 
-  const timeAgo = now.getTime() - mdate.getTime();
+  const timeDifference = now.getTime() - mdate.getTime();
   if (omitSuffix) {
     return dateTime.fromNow(mdate, undefined, {omitSuffix: true});
   }
-  if (timeAgo < 630000) { // 10.5 minutes
+  if (Math.sign(timeDifference) !== -1 && timeDifference < 630000) { // 10.5 minutes
+    // Show a relative time if within 10.5 minutes in the past from the current time.
     return dateTime.fromNow(mdate);
   }
 
