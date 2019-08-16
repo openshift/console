@@ -89,8 +89,10 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>Buckets</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <BucketsItem title="ObjectBucket" {...bucketProps} link={link} />
-        <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={link} />
+        <div className="co-dashboard-card__body--no-padding">
+          <BucketsItem title="ObjectBucket" {...bucketProps} link={link} />
+          <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={link} />
+        </div>
       </DashboardCardBody>
     </DashboardCard>
   );

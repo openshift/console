@@ -24,7 +24,7 @@ export const metricTypeMap: MetricTypeMap = {
 };
 
 export const ConsumersFilter: React.FC<ConsumersFilterProps> = ({ children }) =>
-  <div className="co-consumers-card__filters">{children}</div>;
+  <div className="co-dashboard-card__body--top-margin co-consumers-card__filters">{children}</div>;
 
 type ConsumersFilterProps = {
   children: React.ReactNode;

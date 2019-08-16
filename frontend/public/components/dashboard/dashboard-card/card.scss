@@ -2,8 +2,14 @@
   margin: 0;
 }
 
-.co-dashboard-card__body {
-  margin-top: 1.5em;
+.co-dashboard-card__body--no-padding {
+  margin-bottom: calc(-1 * var(--pf-c-card--child--PaddingBottom));
+  margin-left: calc(-1 * var(--pf-c-card--child--PaddingLeft));
+  margin-right: calc(-1 * var(--pf-c-card--child--PaddingRight));
+}
+
+.co-dashboard-card__body--top-margin {
+  margin-top: 1.5rem;
 }
 
 .co-dashboard-card__button-link {
@@ -30,6 +36,14 @@
 }
 
 .co-dashboard-header__icon {
-  font-size: 1.125rem;
   margin-right: -10px;
+}
+
+.co-dashboard-icon {
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+}
+
+.co-dashboard-text--small {
+  font-size: 0.875rem;
 }

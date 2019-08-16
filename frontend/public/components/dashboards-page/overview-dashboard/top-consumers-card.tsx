@@ -170,6 +170,7 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
         <ConsumersBody>
           <BarChart
             data={top5Data}
+            titleClassName="co-overview-consumers__chart"
             title={`${type} by ${metricTypeSort.description}`}
             loading={!consumersLoadError && !(topConsumersResult && consumersLoaded)}
             LabelComponent={({ title, metric }) => (

@@ -18,16 +18,17 @@ export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, us
   };
   const description = error ? NOT_AVAILABLE : (
     <>
-      <span className="co-capacity-card__item-description-value">{available.string}</span>
+      <span className="co-dashboard-text--small co-capacity-card__item-description-value">{available.string}</span>
       {' available out of '}
-      <span className="co-capacity-card__item-description-value">{totalFormatted.string}</span>
+      <span className="co-dashboard-text--small co-capacity-card__item-description-value">{totalFormatted.string}</span>
     </>
   );
   return (
     <div className="co-capacity-card__item">
       <div className="co-capacity-card__item-title">{title}</div>
-      <h6 className="co-capacity-card__item-description">{isLoading ? <LoadingInline /> : description}</h6>
+      <h6 className="co-dashboard-text--small co-capacity-card__item-description">{isLoading ? <LoadingInline /> : description}</h6>
       <GaugeChart
+        className="co-capacity-card__item-chart"
         data={data}
         label={`${percentageUsed.toString()}%`}
         loading={isLoading}

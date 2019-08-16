@@ -1,3 +1,12 @@
+.co-utilization-card__area-chart {
+  margin: 0;
+  padding: 0;
+}
+
+.co-utilization-card__axis {
+  padding: 0 0.5rem;
+}
+
 .co-utilization-card__item {
   border-bottom: 1px solid $pf-color-black-300;
   font-size: 1.333em;
@@ -6,11 +15,8 @@
 }
 
 .co-utilization-card__item-chart {
+  padding: 0 0.5rem;
   text-align: center;
-
-  svg {
-    overflow: visible;
-  }
 }
 
 .co-utilization-card__item-chart--narrow {
@@ -22,11 +28,8 @@
 }
 
 .co-utilization-card__item-current {
+  padding-right: var(--pf-c-card--child--PaddingRight);
   text-align: right;
-}
-
-.co-utilization-card__item-current--narrow {
-  font-size: 0.875rem;
 }
 
 .co-utilization-card__item-row--narrow {
@@ -35,12 +38,11 @@
 }
 
 .co-utilization-card__item-title-row--narrow {
-  margin-bottom: 0.5em;
   margin-top: 1em;
 }
 
-.co-utilization-card__item-title--narrow {
-  font-size: 0.875rem;
+.co-utilization-card__item-title {
+  padding-left: var(--pf-c-card--child--PaddingLeft);
 }
 
 .co-utilization-card__item--wide {

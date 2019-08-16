@@ -21,7 +21,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
         orientation="top"
         height={15}
         width={width}
-        padding={{ top: 30, bottom: 0, left: 70, right: 30 }}
+        padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
         style={{
           axis: {visibility: 'hidden'},
         }}
@@ -37,20 +37,23 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
   const axis = width < parseInt(breakpointSM.value, 10) ?
     timestamps.length === 0 ? null : (
       <Row className="co-utilization-card__item">
-        <Col>
+        <Col className="co-utilization-card__axis">
           <UtilizationAxis timestamps={timestamps} />
         </Col>
       </Row>
     ) : (
       <Row className="co-utilization-card__item">
         <Col lg={5} md={5} sm={5} xs={5} />
-        <Col lg={7} md={7} sm={7} xs={7}>
+        <Col lg={7} md={7} sm={7} xs={7} className="co-utilization-card__axis">
           {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
         </Col>
       </Row>
     );
   return (
-    <div ref={containerRef}>
+    <div
+      className="co-dashboard-card__body--top-margin co-dashboard-card__body--no-padding co-utilization-card__body"
+      ref={containerRef}
+    >
       {axis}
       <div>{children}</div>
     </div>

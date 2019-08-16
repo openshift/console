@@ -14,7 +14,7 @@ const getSeverityIcon = (severity: string) => {
     default:
       icon = <YellowExclamationTriangleIcon />;
   }
-  return <div className="co-health-card__alerts-icon">{icon}</div>;
+  return <div className="co-dashboard-icon co-health-card__icon">{icon}</div>;
 };
 
 export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ChartLineIcon } from '@patternfly/react-icons';
 import {
   Chart,
   ChartAxis,
@@ -96,7 +95,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
         </>
       );
     }
-    return <GraphEmpty icon={ChartLineIcon} />;
+    return <GraphEmpty />;
   },
 );
 

@@ -17,6 +17,7 @@ import { FirehoseResource } from '../../utils';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
 import { getFlagsForExtensions } from '../utils';
 import { uniqueResource } from './utils';
+import { InventoryBody } from '../../dashboard/inventory-card/inventory-body';
 
 const k8sResources: FirehoseResource[] = [
   {
@@ -87,41 +88,43 @@ const InventoryCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <ResourceInventoryItem isLoading={!nodesLoaded} error={!!nodesLoadError} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
-        <ResourceInventoryItem isLoading={!podsLoaded} error={!!podsLoadError} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
-        <ResourceInventoryItem isLoading={!pvcsLoaded} error={!!pvcsLoadError} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
-        {pluginItems.map((item, index) => {
-          const resource = _.get(resources, uniqueResource(item.properties.resource, index).prop);
-          const resourceLoaded = _.get(resource, 'loaded');
-          const resourceLoadError = _.get(resource, 'loadError');
-          const resourceData = _.get(resource, 'data', []) as K8sResourceKind[];
+        <InventoryBody>
+          <ResourceInventoryItem isLoading={!nodesLoaded} error={!!nodesLoadError} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
+          <ResourceInventoryItem isLoading={!podsLoaded} error={!!podsLoadError} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
+          <ResourceInventoryItem isLoading={!pvcsLoaded} error={!!pvcsLoadError} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
+          {pluginItems.map((item, index) => {
+            const resource = _.get(resources, uniqueResource(item.properties.resource, index).prop);
+            const resourceLoaded = _.get(resource, 'loaded');
+            const resourceLoadError = _.get(resource, 'loadError');
+            const resourceData = _.get(resource, 'data', []) as K8sResourceKind[];
 
-          const additionalResources = {};
-          if (item.properties.additionalResources) {
-            item.properties.additionalResources.forEach(ar => {
-              additionalResources[ar.prop] = _.get(resources, uniqueResource(ar, index).prop);
-            });
-          }
-          const additionalResourcesLoaded = Object.keys(additionalResources).every(key =>
-            !additionalResources[key] || additionalResources[key].loaded || additionalResources[key].loadError
-          );
-          const additionalResourcesData = {};
+            const additionalResources = {};
+            if (item.properties.additionalResources) {
+              item.properties.additionalResources.forEach(ar => {
+                additionalResources[ar.prop] = _.get(resources, uniqueResource(ar, index).prop);
+              });
+            }
+            const additionalResourcesLoaded = Object.keys(additionalResources).every(key =>
+              !additionalResources[key] || additionalResources[key].loaded || additionalResources[key].loadError
+            );
+            const additionalResourcesData = {};
 
-          Object.keys(additionalResources).forEach(key => additionalResourcesData[key] = _.get(additionalResources[key], 'data', []));
+            Object.keys(additionalResources).forEach(key => additionalResourcesData[key] = _.get(additionalResources[key], 'data', []));
 
-          return (
-            <ResourceInventoryItem
-              key={index}
-              isLoading={!resourceLoaded || !additionalResourcesLoaded}
-              error={!!resourceLoadError}
-              kind={item.properties.model}
-              resources={resourceData}
-              additionalResources={additionalResourcesData}
-              mapper={item.properties.mapper}
-              useAbbr={item.properties.useAbbr}
-            />
-          );
-        })}
+            return (
+              <ResourceInventoryItem
+                key={index}
+                isLoading={!resourceLoaded || !additionalResourcesLoaded}
+                error={!!resourceLoadError}
+                kind={item.properties.model}
+                resources={resourceData}
+                additionalResources={additionalResourcesData}
+                mapper={item.properties.mapper}
+                useAbbr={item.properties.useAbbr}
+              />
+            );
+          })}
+        </InventoryBody>
       </DashboardCardBody>
     </DashboardCard>
   );

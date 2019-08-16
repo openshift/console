@@ -15,6 +15,8 @@ import { getInstantVectorStats } from '@console/internal/components/graphs/utils
 import { ObjectDashboardQuery, ObjectCapacityQueries } from '../../queries';
 import { CapacityCardBody } from './capacity-card-body';
 
+import './capacity-card.scss';
+
 const CapacityDropdownType = {
   [ObjectDashboardQuery.CAPACITY_USAGE_PROJECT_QUERY]: 'Projects',
   [ObjectDashboardQuery.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: 'Bucket Class',
@@ -70,13 +72,12 @@ const ObjectDashboardCapacityCard: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity Breakdown</DashboardCardTitle>
         <Dropdown
-          className="nb-capacity-card__dropdown-item"
           items={CapacityDropdownType}
           onChange={setCapacityUsageType}
           selectedKey={[capacityUsageType]}
         />
       </DashboardCardHeader>
-      <DashboardCardBody>
+      <DashboardCardBody className="co-dashboard-card__body--top-margin">
         <CapacityCardBody
           isLoading={!capacityUsageTop6AndOthers || !capacityUsageTotalResult}
           metricsData={capacityUsageVectorStats}

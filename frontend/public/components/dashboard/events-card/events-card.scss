@@ -1,5 +1,4 @@
 .co-events-card__body {
-  margin: -1.5em;
   max-height: 30em;
   min-height: 10em;
   overflow-x: hidden;
@@ -27,7 +26,6 @@
 }
 
 .co-events-card__item-message {
-  font-size: 0.875rem;
   margin-top: 0.5em;
   @include co-line-clamp(5);
 }

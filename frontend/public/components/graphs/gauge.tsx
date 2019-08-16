@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChartDonutThreshold, ChartDonutUtilization, ChartThemeColor } from '@patternfly/react-charts';
+import classNames from 'classnames';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
@@ -22,36 +23,42 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   thresholds = DEFAULT_THRESHOLDS,
   title,
   usedLabel = 'used',
-
   // Don't sort, Uses previously declared props
   label = data ? humanize(data.y).string : 'No Data',
   secondaryTitle = usedLabel,
+  className,
 }) => {
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
   const status = loading ? 'Loading' : error;
   const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${d.y} ${remainderLabel}`;
-  return <PrometheusGraph className="graph-wrapper--title-center graph-wrapper--gauge" ref={ref} title={title}>
-    <PrometheusGraphLink query={query}>
-      <ChartDonutThreshold
-        data={thresholds}
-        height={width} // Changes the scale of the graph, not actual width and height
-        y="value"
-        width={width}
-      >
-        <ChartDonutUtilization
-          labels={labels}
-          data={ready ? data : { y: 0 }}
-          invert={invert}
-          subTitle={ready ? secondaryTitle : ''}
-          themeColor={ChartThemeColor.green}
-          thresholds={thresholds}
-          title={status || label}
-          theme={theme}
-        />
-      </ChartDonutThreshold>
-    </PrometheusGraphLink>
-  </PrometheusGraph>;
+  return (
+    <PrometheusGraph
+      className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
+      ref={ref}
+      title={title}
+    >
+      <PrometheusGraphLink query={query}>
+        <ChartDonutThreshold
+          data={thresholds}
+          height={width} // Changes the scale of the graph, not actual width and height
+          y="value"
+          width={width}
+        >
+          <ChartDonutUtilization
+            labels={labels}
+            data={ready ? data : { y: 0 }}
+            invert={invert}
+            subTitle={ready ? secondaryTitle : ''}
+            themeColor={ChartThemeColor.green}
+            thresholds={thresholds}
+            title={status || label}
+            theme={theme}
+          />
+        </ChartDonutThreshold>
+      </PrometheusGraphLink>
+    </PrometheusGraph>
+  );
 };
 
 export const Gauge: React.FC<GaugeProps> = ({
@@ -112,6 +119,7 @@ type GaugeChartProps = {
   }[];
   title?: string;
   usedLabel?: string;
+  className?: string;
 }
 
 type GaugeProps = {

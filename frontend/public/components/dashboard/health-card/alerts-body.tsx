@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export const AlertsBody: React.FC<AlertsBodyProps> = ({ children }) => (
-  <div className="co-health-card__alerts-body">{children}</div>
+  <div className="co-dashboard-card__body--no-padding co-health-card__alerts-body">{children}</div>
 );
 
 type AlertsBodyProps = {

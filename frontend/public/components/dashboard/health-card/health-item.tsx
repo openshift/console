@@ -22,7 +22,7 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
     default:
       icon = <YellowExclamationTriangleIcon />;
   }
-  return <div className="co-health-card__icon">{icon}</div>;
+  return <div className="co-dashboard-icon">{icon}</div>;
 };
 
 export const HealthItem: React.FC<HealthItemProps> = React.memo(
@@ -30,8 +30,8 @@ export const HealthItem: React.FC<HealthItemProps> = React.memo(
     <div className={classNames('co-health-card__item', className)}>
       {state === HealthState.LOADING ? <LoadingInline /> : <HealthItemIcon state={state} />}
       <div>
-        {message && <span className="co-health-card__text">{message}</span>}
-        {details && <div className="co-health-card__text co-health-card__subtitle">{details}</div>}
+        {message && <span className="co-dashboard-text--small co-health-card__text">{message}</span>}
+        {details && <div className="co-dashboard-text--small co-health-card__text co-health-card__subtitle">{details}</div>}
       </div>
     </div>
   ),
