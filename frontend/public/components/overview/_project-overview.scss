@@ -112,23 +112,6 @@
     font-size: 18px;
   }
 
-  .project-overview__metric-tooltip {
-    display: flex;
-  }
-
-  .project-overview__metric-tooltip-name {
-    flex: 2;
-    overflow: hidden;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .project-overview__metric-tooltip-value {
-    flex: 1;
-    text-align: right;
-  }
-
   .project-overview__metric-unit {
     color: $color-text-muted;
     font-size: ($font-size-base - 1);
@@ -160,7 +143,30 @@
   }
 }
 
+.project-overview__metric-tooltip {
+  display: flex;
+  min-width: 225px;
+}
+
+.project-overview__metric-tooltip-name {
+  flex: 2;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-overview__metric-tooltip-title {
+  margin-bottom: 5px;
+}
+
+.project-overview__metric-tooltip-value {
+  flex: 1;
+  text-align: right;
+}
+
 .project-overview__status .co-icon-and-text {
+  display: inline-flex;
   margin-right: 12px;
 
   .project-overview__builds & {

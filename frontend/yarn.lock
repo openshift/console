@@ -161,7 +161,20 @@
     file-saver "^1.3.8"
     xterm "^3.3.0"
 
-"@patternfly/react-core@3.75.2", "@patternfly/react-core@^3.75.2":
+"@patternfly/react-core@3.87.2":
+  version "3.87.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.87.2.tgz#f1df66cc46e6f13670609cb7b422ae6e95ba13bd"
+  integrity sha512-DPNQGniilvoEqtKWNbxeBGABRsG/flfwLCCMMfIsGQIcJrzYPM4LFqigpfkaJEhUiM7OSZb4bQosGNRyJfFPvw==
+  dependencies:
+    "@patternfly/react-icons" "^3.10.17"
+    "@patternfly/react-styles" "^3.5.12"
+    "@patternfly/react-tokens" "^2.6.16"
+    emotion "^9.2.9"
+    exenv "^1.2.2"
+    focus-trap-react "^4.0.1"
+    tippy.js "^3.2.0"
+
+"@patternfly/react-core@^3.75.2":
   version "3.75.2"
   resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.75.2.tgz#9a090d2cec752e037cde296890db0fb7c2bfeb96"
   integrity sha512-eKL1yfkmjX7SIPn5eYEBdSfxc7oso4SDJ8BXPEN36pvCeq9X+9pJMiMPDDzFQ9s7g3oCz1OQmyjMzEjjqq4uDg==
@@ -180,6 +193,32 @@
   integrity sha512-LJIeaP6tv54Yr5/h4BMUem//tQADXhKJiV46Qhx2M+/k89Kr5cXYxRpXh7b2KBBqORybX/Wb/6EHixT7KI5ZaA==
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
+
+"@patternfly/react-icons@^3.10.17":
+  version "3.10.17"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.17.tgz#4e3e104ea86bc47fe3c528e13d1fa6c7c8ec216a"
+  integrity sha512-UVmmH6gQSMcJg0EB2b0dMvC+SQEGhdSxhRkEyn7OVN1tJFYBZrcCRBeJxxFIQwY7PExIZ1ZinleRmVPD/ZI+jQ==
+  dependencies:
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
+
+"@patternfly/react-styles@^3.5.12":
+  version "3.5.12"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.5.12.tgz#f8852750880523fee0d53014829520c1c01bf2b1"
+  integrity sha512-PgKyJAUInfEP8zfZTFP9vvYFFstoK5dNoylY9Low7o5M879lcwfxvd002XzdbcSv5lNtrT8E7UZDNxp4GQ+oiA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
+    camel-case "^3.0.0"
+    css "^2.2.3"
+    cssom "^0.3.4"
+    cssstyle "^0.3.1"
+    emotion "^9.2.9"
+    emotion-server "^9.2.9"
+    fbjs-scripts "^0.8.3"
+    fs-extra "^6.0.1"
+    jsdom "^15.1.0"
+    relative "^3.0.2"
+    resolve-from "^4.0.0"
+    typescript "3.4.5"
 
 "@patternfly/react-styles@^3.5.7":
   version "3.5.7"
@@ -218,6 +257,11 @@
   version "2.6.13"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.13.tgz#68c4c7ba2cde6b5a99ea3a9a85a8cbffce118695"
   integrity sha512-rUvXeIIxeod/RrNncSrPFM9VloEKvauiZjDjrFNrXw119JX+DqJy7Di/DQR0LE0HVHY4H5n1tfVu7NrYIsqFPg==
+
+"@patternfly/react-tokens@^2.6.16":
+  version "2.6.16"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.16.tgz#c177a3960761d509b09a45b9a02a58a52d5f0ed1"
+  integrity sha512-dhr4ne4thSmSKBr4anV07KSzUXEs6KpCMDxxNiwrgFdZwNHtyNcaPc+F9pQZ5A0n4qYmMLpCrprb7m5o/83riQ==
 
 "@patternfly/react-topology@2.6.20":
   version "2.6.20"
