@@ -3,10 +3,11 @@ import { getResource } from 'kubevirt-web-ui-components';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { PodModel } from '@console/internal/models';
+import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
+import { NAMESPACE_OPENSHIFT, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_BASE } from '../../constants';
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
@@ -25,6 +26,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     }),
     getResource(PodModel, { namespace, prop: 'pods' }),
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+    getResource(TemplateModel, {
+      namespace: NAMESPACE_OPENSHIFT,
+      prop: 'templates',
+      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+    }),
   ];
 
   const consolePage = {

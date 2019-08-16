@@ -13,6 +13,7 @@ import { VMLikeEntityKind } from '../../../types';
 import { getDescription, getVMLikeModel } from '../../../selectors/selectors';
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
 
+// TODO: should be moved under kubevirt-plugin/src/style.scss
 import './_vm-description-modal.scss';
 
 export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalProps) => {

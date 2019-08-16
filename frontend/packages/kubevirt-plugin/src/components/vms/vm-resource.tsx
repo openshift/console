@@ -13,13 +13,13 @@ import {
   getBootableDevicesInOrder,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
-import { PodKind } from '@console/internal/module/k8s';
+import { PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
-import { vmDescriptionModal } from '../modals/vm-description-modal';
+import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 
@@ -58,7 +58,14 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
   );
 };
 
-export const VMDetailsList: React.FC<VMResourceListProps> = ({ vm, vmi, pods, migrations }) => {
+export const VMDetailsList: React.FC<VMResourceListProps> = ({
+  vm,
+  vmi,
+  pods,
+  migrations,
+  templates,
+  canUpdateVM,
+}) => {
   const id = getBasicID(vm);
   const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
@@ -99,7 +106,16 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({ vm, vmi, pods, mi
       </dd>
       <dt>Node</dt>
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
-      <dt>Flavor</dt>
+      <dt>
+        Flavor
+        {canUpdateVM && (
+          <button
+            type="button"
+            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
+            onClick={() => vmFlavorModal({ vm, templates })}
+          />
+        )}
+      </dt>
       <dd id={prefixedID(id, 'flavor')}>{getFlavor(vm) || DASH}</dd>
       <dt>Workload Profile</dt>
       <dd id={prefixedID(id, 'workload-profile')}>{getWorkloadProfile(vm) || DASH}</dd>
@@ -117,4 +133,6 @@ type VMResourceListProps = {
   pods?: PodKind[];
   migrations?: any[];
   vmi?: VMIKind;
+  templates?: TemplateKind[];
+  canUpdateVM: boolean;
 };

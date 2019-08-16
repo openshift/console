@@ -1,0 +1,18 @@
+.kubevirt-vm-flavor-modal__content {
+    min-height: 13em;
+}
+
+.kubevirt-vm-flavor-modal__form {
+    min-height: 10em;
+    resize: vertical;  
+}
+
+.kubevirt-vm-flavor-modal__dropdown {
+    .dropdown {
+        width: 100%;
+    }
+}
+
+.kubevirt-vm-flavor-modal__dropdown-button {
+    width: 100%;
+}
