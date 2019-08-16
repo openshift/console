@@ -29,7 +29,7 @@ const OverviewResourceUsage = requirePrometheus(({ns}) => <div className="group"
   <div className="group__title">
     <h2 className="h3">Resource Usage</h2>
   </div>
-  <div className="container-fluid group__body group__graphs">
+  <div className="container-fluid group__body">
     <NamespaceLineCharts ns={ns} />
     <TopPodsBarChart ns={ns} />
   </div>
@@ -54,7 +54,7 @@ const ResourceQuotaCharts = ({quota, resourceTypes}) => {
         {scopes && <QuotaScopesInline className="co-resource-quota-dashboard-scopes" scopes={scopes} />}
       </h2>
     </div>
-    <div className="group__body group__graphs">
+    <div className="group__body">
       <QuotaGaugeCharts quota={quota} resourceTypes={resourceTypes} />
     </div>
   </div>;

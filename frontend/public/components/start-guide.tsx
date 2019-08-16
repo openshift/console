@@ -6,7 +6,7 @@ import { Button } from 'patternfly-react';
 import { CloseIcon } from '@patternfly/react-icons';
 
 import { createProjectMessageStateToProps } from '../reducers/ui';
-import { DocumentationSidebar, Disabled } from './utils';
+import { Disabled } from './utils';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
 import { ProjectModel, RoleModel, StorageClassModel } from '../models';
@@ -35,13 +35,6 @@ export const StartGuide: React.FC<StartGuideProps> = (props) => {
     </div>
     : null;
 };
-
-export const StartGuidePage = () => <div className="co-p-has-sidebar">
-  <div className="co-p-has-sidebar__body">
-    <StartGuide startGuide={<OpenShiftGettingStarted />} />
-  </div>
-  <DocumentationSidebar />
-</div>;
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
   ({createProjectMessage}) =>
