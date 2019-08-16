@@ -157,8 +157,8 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['overview', 'selectedGroup'], action.payload.group);
     }
 
-    case ActionType.UpdateOverviewGroupOptions: {
-      return state.setIn(['overview', 'groupOptions'], ImmutableMap(action.payload.groups));
+    case ActionType.UpdateOverviewLabels: {
+      return state.setIn(['overview', 'labels'], action.payload.labels);
     }
 
     case ActionType.UpdateOverviewFilterValue: {

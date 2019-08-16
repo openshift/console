@@ -32,7 +32,7 @@ export enum ActionType {
   UpdateOverviewMetrics = 'updateOverviewMetrics',
   UpdateOverviewResources = 'updateOverviewResources',
   UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
-  UpdateOverviewGroupOptions = 'updateOverviewGroupOptions',
+  UpdateOverviewLabels = 'updateOverviewLabels',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
   UpdateTimestamps = 'updateTimestamps',
   SetConsoleLinks = 'setConsoleLinks',
@@ -195,8 +195,8 @@ export const updateOverviewMetrics = (metrics: any) => action(ActionType.UpdateO
 export const updateOverviewResources = (resources: OverviewItem[]) => action(ActionType.UpdateOverviewResources, {resources});
 export const updateTimestamps = (lastTick: number) => action(ActionType.UpdateTimestamps, {lastTick});
 export const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
-export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup) => action(ActionType.UpdateOverviewSelectedGroup, {group});
-export const updateOverviewGroupOptions = (groups: {[label: string]: string}) => action(ActionType.UpdateOverviewGroupOptions, {groups});
+export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) => action(ActionType.UpdateOverviewSelectedGroup, {group});
+export const updateOverviewLabels = (labels: string[]) => action(ActionType.UpdateOverviewLabels, {labels});
 export const updateOverviewFilterValue = (value: string) => action(ActionType.UpdateOverviewFilterValue, {value});
 export const monitoringLoading = (key: 'alerts' | 'silences') => action(ActionType.SetMonitoringData, {key, data: {loaded: false, loadError: null, data: null}});
 export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError: null, data}});
@@ -222,7 +222,7 @@ const uiActions = {
   updateTimestamps,
   dismissOverviewDetails,
   updateOverviewSelectedGroup,
-  updateOverviewGroupOptions,
+  updateOverviewLabels,
   updateOverviewFilterValue,
   monitoringLoading,
   monitoringLoaded,
