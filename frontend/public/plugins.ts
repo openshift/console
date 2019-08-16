@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { ActivePlugin, ExtensionRegistry } from '@console/plugin-sdk';
-import AppPlugin from '../packages/console-app/src/plugin';
-import CephPlugin from '../packages/ceph-storage-plugin/src/plugin';
-import DevConsolePlugin from '../packages/dev-console/src/plugin';
-import KnativePlugin from '../packages/knative-plugin/src/plugin';
-import KubeVirtPlugin from '../packages/kubevirt-plugin/src/plugin';
-import Metal3Plugin from '../packages/metal3-plugin/src/plugin';
-import NoobaStoragePlugin from '../packages/noobaa-storage-plugin/src/plugin';
+import AppPlugin from '@console/app/src/plugin';
+import CephPlugin from '@console/ceph-storage-plugin/src/plugin';
+import DevConsolePlugin from '@console/dev-console/src/plugin';
+import KnativePlugin from '@console/knative-plugin/src/plugin';
+import KubeVirtPlugin from '@console/kubevirt-plugin/src/plugin';
+import Metal3Plugin from '@console/metal3-plugin/src/plugin';
+import NoobaStoragePlugin from '@console/noobaa-storage-plugin/src/plugin';
 
 export * from '@console/plugin-sdk';
 
