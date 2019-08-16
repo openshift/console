@@ -226,7 +226,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       return _.map(result, ({metric, values}) => {
         // If filterLabels is specified, ignore all series that don't match
         const isIgnored = filterLabels
-          ? _.some(metric, (v, k) => filterLabels[k] !== v)
+          // Ignore internal labels (start with "__")
+          ? _.some(metric, (v, k) => filterLabels[k] !== v && !_.startsWith(k, '__'))
           : _.some(disabledSeries[responseIndex], s => _.isEqual(s, metric));
 
         return isIgnored ? [{x: null, y: null}] : formatSeriesValues(values, samples, span);
