@@ -239,7 +239,7 @@ $ ./test-gui.sh e2e
 If you don't want to run the entire e2e tests, you can use a different suite from [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts). For instance,
 
 ```
-$ ./test-gui.sh olm
+$ ./test-gui.sh <suite>
 ```
 
 #### Hacking Integration Tests
@@ -247,13 +247,13 @@ $ ./test-gui.sh olm
 To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` enviorment variable:
 
 ```
-$ NO_HEADLESS=true ./test-gui.sh olm
+$ NO_HEADLESS=true ./test-gui.sh <suite>
 ```
 
 To use a specific binary version of chrome, it is posible to set the `CHROME_BINARY_PATH` enviorment variable:
 
 ```
-$ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-gui.sh olm
+$ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-gui.sh <suite>
 ```
 
 ##### Debugging Integration Tests
