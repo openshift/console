@@ -39,7 +39,7 @@ const config: webpack.Configuration = {
       { test: /\.glsl$/, loader: 'raw!glslify' },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(@console)\/)/,
         use: [
           { loader: 'cache-loader' },
           {
