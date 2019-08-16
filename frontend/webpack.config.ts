@@ -109,7 +109,7 @@ const config: webpack.Configuration = {
     runtimeChunk: true,
   },
   plugins: [
-    new webpack.NormalModuleReplacementPlugin(/^lodash-es$/, 'lodash'),
+    new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',

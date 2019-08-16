@@ -13,19 +13,19 @@ import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
-import * as plugins from '../plugins';
+import { registry } from '../plugins';
 
 export type UIState = ImmutableMap<string, any>;
 
 export function getDefaultPerspective() {
   let activePerspective = localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY);
-  if (activePerspective && !plugins.registry.getPerspectives().some(p => p.properties.id === activePerspective)) {
+  if (activePerspective && !registry.getPerspectives().some(p => p.properties.id === activePerspective)) {
     // invalid saved perspective
     activePerspective = undefined;
   }
   if (!activePerspective) {
     // assign default perspective
-    const defaultPerspective = plugins.registry.getPerspectives().find(p => p.properties.default);
+    const defaultPerspective = registry.getPerspectives().find(p => p.properties.default);
     if (defaultPerspective) {
       activePerspective = defaultPerspective.properties.id;
     }

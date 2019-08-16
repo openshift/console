@@ -131,6 +131,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/k8s/ns/:ns/vmtemplates/~new'],
       loader: () =>
+        /* eslint-disable-next-line import/no-cycle */
         import(
           './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt-vmtemplates-create-yaml" */
         ).then((m) => m.CreateVMTemplateYAML),
