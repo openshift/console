@@ -238,10 +238,11 @@ class EventStream extends SafetyFirst {
   }
 
   wsInit(ns) {
-    const params = {
-      ns,
-      fieldSelector: this.props.fieldSelector,
-    };
+    const { fieldSelector } = this.props;
+    const params = { ns };
+    if (fieldSelector) {
+      params.queryParams = { fieldSelector: encodeURIComponent(fieldSelector) };
+    }
 
     this.ws = new WSFactory(`${ns || 'all'}-sysevents`, {
       host: 'auto',
@@ -531,4 +532,5 @@ EventStream.propTypes = {
 };
 
 
-export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} resourceEventStream />;
+export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace, uid}}}) =>
+  <EventStream fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
