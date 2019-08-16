@@ -1,6 +1,5 @@
 import { Plugin, HrefNavItem } from '../../typings';
-import { loadActivePlugins, getActivePluginsModule } from '../active-plugins';
-import { PluginPackage } from '../plugin-resolver';
+import { loadActivePlugins } from '../active-plugins';
 import { templatePackage } from './plugin-resolver.spec';
 
 describe('active-plugins', () => {
@@ -59,37 +58,6 @@ describe('active-plugins', () => {
           extensions: barPlugin,
         },
       ]);
-    });
-  });
-
-  describe('getActivePluginsModule', () => {
-    it('returns module source that exports the list of active plugins', () => {
-      const pluginPackages: PluginPackage[] = [
-        {
-          ...templatePackage,
-          name: 'foo',
-          consolePlugin: { entry: 'src/plugin.ts' },
-        },
-        {
-          ...templatePackage,
-          name: 'bar-plugin',
-          consolePlugin: { entry: 'index.ts' },
-        },
-      ];
-
-      expect(getActivePluginsModule(pluginPackages)).toBe(
-        `
-        const activePlugins = [];
-
-        const plugin_0 = require('foo/src/plugin.ts').default;
-        activePlugins.push({ name: 'foo', extensions: plugin_0 });
-
-        const plugin_1 = require('bar-plugin/index.ts').default;
-        activePlugins.push({ name: 'bar-plugin', extensions: plugin_1 });
-
-        export default activePlugins;
-        `.replace(/^\s+/gm, ''),
-      );
     });
   });
 });
