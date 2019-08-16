@@ -97,7 +97,7 @@ export default (state: K8sState, action: K8sAction): K8sState => {
         })
         .reduce((prevState, newModel) => {
           // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
-          const [modelRef, model] = allModels().findEntry(staticModel => !staticModel.crd && referenceForModel(staticModel) === referenceForModel(newModel))
+          const [modelRef, model] = allModels().findEntry(staticModel => referenceForModel(staticModel) === referenceForModel(newModel))
             || [referenceForModel(newModel), newModel];
           // Verbs and short names are not part of the static model definitions, so use the values found during discovery.
           return prevState.updateIn(['RESOURCES', 'models'], models => models.set(modelRef, {...model, verbs: newModel.verbs, shortNames: newModel.shortNames}));
