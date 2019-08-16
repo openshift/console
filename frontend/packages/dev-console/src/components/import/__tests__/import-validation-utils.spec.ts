@@ -119,16 +119,6 @@ describe('ValidationUtils', () => {
       });
     });
 
-    it('should throw an error if dockerfilePath is invalid', async () => {
-      const mockData = cloneDeep(mockFormData);
-      mockData.build.strategy = 'Docker';
-      mockData.docker.dockerfilePath = '/Dockerfile';
-      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
-      await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('DockerfilePath must be a relative path');
-      });
-    });
-
     it('should throw an error if containerPort is not an integer', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.build.strategy = 'Docker';

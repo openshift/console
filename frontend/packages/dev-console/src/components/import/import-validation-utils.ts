@@ -6,7 +6,6 @@ import { isInteger } from '../../utils/yup-validation-util';
 const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
-const relativePathRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/;
 const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 
 export const validationSchema = yup.object().shape({
@@ -48,9 +47,6 @@ export const validationSchema = yup.object().shape({
   docker: yup.object().when('build', {
     is: (build) => build.strategy === 'Docker',
     then: yup.object().shape({
-      dockerfilePath: yup
-        .string()
-        .matches(relativePathRegex, 'DockerfilePath must be a relative path'),
       containerPort: yup.number().test(isInteger('Container port should be an Integer')),
     }),
   }),
