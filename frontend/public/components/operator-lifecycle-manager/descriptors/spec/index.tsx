@@ -10,6 +10,7 @@ import { Selector, ResourceLink, LoadingInline, AsyncComponent } from '../../../
 import { Tooltip } from '../../../utils/tooltip';
 import { k8sPatch } from '../../../../module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { Switch } from 'patternfly-react';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
   if (_.isEmpty(value) && !_.isNumber(value)) {
@@ -56,7 +57,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
 
   return <div className="co-spec-descriptor--switch">
     <AsyncComponent
-      loader={() => import('patternfly-react').then(m => m.Switch)}
+      loader={() => Switch}
       value={value}
       onChange={(el, val) => {
         setValue(val);

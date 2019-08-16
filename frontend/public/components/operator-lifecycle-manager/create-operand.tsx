@@ -8,6 +8,7 @@ import { PropertyPath } from 'lodash';
 import * as classNames from 'classnames';
 import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { JSONSchema6TypeName } from 'json-schema';
+import { Switch } from 'patternfly-react';
 
 import {
   apiVersionForModel,
@@ -331,7 +332,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     }
     if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
       return <AsyncComponent
-        loader={() => import('patternfly-react').then(m => m.Switch)}
+        loader={() => Switch}
         value={formValues[field.path]}
         onChange={(el, val) => setFormValues(values => ({...values, [field.path]: val}))}
         onText="True"
