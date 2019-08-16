@@ -22,7 +22,7 @@
     "test-gui": "yarn run test-suite --suite all",
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
-    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "plugin-stats": "node ./plugin-stats.js"
   },
   "jest": {
@@ -183,9 +183,9 @@
     "ts-loader": "5.3.3",
     "ts-node": "5.x",
     "typescript": "3.4.4",
-    "webpack": "4.29.6",
-    "webpack-bundle-analyzer": "2.x",
-    "webpack-cli": "^2.0.12",
+    "webpack": "4.39.1",
+    "webpack-bundle-analyzer": "3.4.1",
+    "webpack-cli": "3.3.6",
     "webpack-virtual-modules": "^0.1.10"
   },
   "engines": {
