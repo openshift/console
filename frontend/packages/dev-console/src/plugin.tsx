@@ -221,7 +221,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
       loader: async () =>
-        /* eslint-disable-next-line import/no-cycle */
         (await import(
           './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
         )).default,

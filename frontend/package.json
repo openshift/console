@@ -184,9 +184,8 @@
     "ts-node": "5.x",
     "typescript": "3.4.4",
     "webpack": "4.39.1",
-    "webpack-bundle-analyzer": "3.4.1",
-    "webpack-cli": "3.3.6",
-    "webpack-virtual-modules": "^0.1.10"
+    "webpack-bundle-analyzer": "3.x",
+    "webpack-cli": "3.x"
   },
   "engines": {
     "node": ">=8.x"
