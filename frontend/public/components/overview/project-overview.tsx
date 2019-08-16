@@ -4,10 +4,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
+import { Tooltip } from '@patternfly/react-core';
 
 import { Status as TooltipStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { KEYBOARD_SHORTCUTS } from '../../const';
-import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
 import {
@@ -33,14 +33,8 @@ const formatBytesAsMiB = (bytes: number): string => {
 
 const formatCores = (cores: number): string => formatToFractionalDigits(cores, 3);
 
-const overviewTooltipStyles = Object.freeze({
-  content: {
-    maxWidth: '225px',
-  },
-  tooltip: {
-    minWidth: '225px',
-  },
-});
+// Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
+const isMobile = window.screen.width < 768;
 
 const ControllerLink: React.SFC<ControllerLinkProps> = ({controller}) => {
   const { obj, revision } = controller;
@@ -55,7 +49,7 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
-    : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
+    : _.concat(<div className="project-overview__metric-tooltip-title" key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
       <div key={name} className="project-overview__metric-tooltip">
         <div className="project-overview__metric-tooltip-name">
           <span className="no-wrap">{truncateMiddle(name)}</span>
@@ -74,9 +68,12 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
-  return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>{children}</Tooltip>;
-};
+  if (isMobile) {
+    return <>{children}</>;
+  }
+  return <Tooltip content={content} distance={15}><>{children}</></Tooltip>;
 
+};
 
 const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
   const getPods = () => {
@@ -120,16 +117,20 @@ const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
   return <React.Fragment>
     <div className="project-overview__detail project-overview__detail--memory">
       <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
-        <span className="project-overview__metric-value">{formattedMiB}</span>
-        &nbsp;
-        <span className="project-overview__metric-unit">MiB</span>
+        <span>
+          <span className="project-overview__metric-value">{formattedMiB}</span>
+          &nbsp;
+          <span className="project-overview__metric-unit">MiB</span>
+        </span>
       </MetricsTooltip>
     </div>
     <div className="project-overview__detail project-overview__detail--cpu">
       <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
-        <span className="project-overview__metric-value">{formattedCores}</span>
-        &nbsp;
-        <span className="project-overview__metric-unit">cores</span>
+        <span>
+          <span className="project-overview__metric-value">{formattedCores}</span>
+          &nbsp;
+          <span className="project-overview__metric-unit">cores</span>
+        </span>
       </MetricsTooltip>
     </div>
   </React.Fragment>;
@@ -150,7 +151,10 @@ const AlertTooltip = ({alerts, severity, noSeverityLabel=false}) => {
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
-  return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>
+  if (isMobile) {
+    return <span className="project-overview__status"><TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} /></span>;
+  }
+  return <Tooltip content={content} distance={10}>
     <span className="project-overview__status"><TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} /></span>
   </Tooltip>;
 };
