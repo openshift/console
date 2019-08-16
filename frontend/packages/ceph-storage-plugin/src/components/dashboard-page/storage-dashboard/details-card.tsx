@@ -70,8 +70,14 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
       <DashboardCardBody>
         <DetailsBody>
           <DetailItem
-            key="name"
-            title="Name"
+            key="service_name"
+            title="Service Name"
+            value={"OpenShift Container Storage"}
+            isLoading={!cephClusterLoaded}
+          />
+          <DetailItem
+            key="cluster_name"
+            title="Cluster Name"
             value={getName(_.get(cephClusterData, 0))}
             isLoading={!cephClusterLoaded}
           />
