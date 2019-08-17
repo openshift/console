@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { Tooltip } from '@patternfly/react-core';
+import { Switch } from 'patternfly-react';
 
 import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
-import { Selector, ResourceLink, LoadingInline, AsyncComponent } from '../../../utils';
+import { Selector, ResourceLink, LoadingInline } from '../../../utils';
 import { k8sPatch } from '../../../../module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -55,8 +56,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
   };
 
   return <div className="co-spec-descriptor--switch">
-    <AsyncComponent
-      loader={() => import('patternfly-react').then(m => m.Switch)}
+    <Switch
       value={value}
       onChange={(el, val) => {
         setValue(val);
