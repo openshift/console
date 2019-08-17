@@ -224,6 +224,7 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
           selectedKey={groupFilter}
           spacerBefore={groupSpacer}
           title={groupOptions[groupFilter]}
+          className="btn-group"
         />
         <Dropdown
           items={versionOptions}
@@ -231,6 +232,7 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
           selectedKey={versionFilter}
           spacerBefore={versionSpacer}
           title={versionOptions[versionFilter]}
+          className="btn-group"
         />
       </div>
       <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
