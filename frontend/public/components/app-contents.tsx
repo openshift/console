@@ -116,8 +116,7 @@ const AppContents = connect((state: RootState) => ({
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
           <LazyRoute path="/dashboards" loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
-          <LazyRoute path="/cluster-status" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <Redirect from="/overview/all-namespaces" to="/cluster-status" />
+          <Redirect from="/overview/all-namespaces" to="/dashboards" />
           <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
           <Route path="/overview" exact component={NamespaceRedirect} />
           <LazyRoute path="/api-explorer" exact loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIExplorerPage)} />
@@ -125,7 +124,6 @@ const AppContents = connect((state: RootState) => ({
           <LazyRoute path="/api-resource/all-namespaces/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => NamespaceFromURL(m.APIResourcePage))} />
           <LazyRoute path="/api-resource/ns/:ns/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => NamespaceFromURL(m.APIResourcePage))} />
 
-          <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
           <LazyRoute path="/command-line-tools" exact loader={() => import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(m => m.CommandLineToolsPage)} />
 
           <LazyRoute path="/operatorhub/all-namespaces" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
