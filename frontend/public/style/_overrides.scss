@@ -397,6 +397,10 @@ kbd {
   vertical-align: top;
 }
 
+.pf-c-table.pf-m-compact tr > td {
+  vertical-align: top;
+}
+
 .pf-c-table.pf-c-virtualized tr.vertical-align-middle > td {
   vertical-align: middle;
 }
