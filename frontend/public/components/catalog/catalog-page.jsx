@@ -249,7 +249,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
       return;
     }
     // Don't load templates from the `openshift` namespace twice if it's the current namespace
-    if (namespace === 'openshift') {
+    if (!namespace || namespace === 'openshift') {
       setProjectTemplateMetadata([]);
       setProjectTemplateError(null);
     } else {
