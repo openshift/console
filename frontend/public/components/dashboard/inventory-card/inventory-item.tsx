@@ -96,7 +96,7 @@ const StatusLink: React.FC<StatusLinkProps> = React.memo(
 export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
   ...getFlagsForExtensions(plugins.registry.getDashboardsInventoryItemGroups()),
 )(React.memo(
-  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error, flags = {}}) => {
+  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error, showLink = true, flags = {}}) => {
     const groups = mapper(resources, additionalResources);
     const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
     return (
@@ -107,18 +107,26 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
         count={resources.length}
         error={error}
       >
-        {Object.keys(groups).filter(key => groups[key].count > 0).map(key => (
-          <StatusLink
-            key={key}
-            kind={kind}
-            namespace={namespace}
-            groupID={key}
-            count={groups[key].count}
-            statusIDs={groups[key].statusIDs}
-            filterType={groups[key].filterType}
-            flags={flags}
-          />
-        ))}
+        {Object.keys(groups).filter(key => groups[key].count > 0).map(key => showLink ?
+          (
+            <StatusLink
+              key={key}
+              kind={kind}
+              namespace={namespace}
+              groupID={key}
+              count={groups[key].count}
+              statusIDs={groups[key].statusIDs}
+              filterType={groups[key].filterType}
+              flags={flags}
+            />
+          ) : (
+            <Status
+              groupID={key}
+              count={groups[key].count}
+              flags={flags}
+            />
+          )
+        )}
       </InventoryItem>
     );
   }
@@ -156,4 +164,5 @@ type ResourceInventoryItemProps = WithFlagsProps & {
   isLoading: boolean;
   namespace?: string;
   error: boolean;
+  showLink?: boolean;
 }

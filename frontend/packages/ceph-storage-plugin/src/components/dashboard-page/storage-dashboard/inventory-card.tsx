@@ -77,6 +77,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           kind={NodeModel}
           resources={getCephNodes(nodesData)}
           mapper={getNodeStatusGroups}
+          showLink={false}
         />
         <ResourceInventoryItem
           isLoading={!pvcsLoaded}
@@ -85,6 +86,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           useAbbr
           resources={getCephPVCs(pvcsData)}
           mapper={getPVCStatusGroups}
+          showLink={false}
         />
         <ResourceInventoryItem
           isLoading={!pvsLoaded}
@@ -93,6 +95,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           useAbbr
           resources={getCephPVs(pvsData)}
           mapper={getPVStatusGroups}
+          showLink={false}
         />
       </DashboardCardBody>
     </DashboardCard>
