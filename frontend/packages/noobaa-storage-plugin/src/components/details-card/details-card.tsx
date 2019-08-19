@@ -79,7 +79,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem key="name" title="Name" value={systemName} isLoading={!queryResult} />
+          <DetailItem key="service_name" title="Service Name" value="OpenShift Container Storage" isLoading={false} />
+          <DetailItem key="system_name" title="System Name" value={systemName} isLoading={!queryResult} />
           <DetailItem
             key="provider"
             title="Provider"

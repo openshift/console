@@ -73,7 +73,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             key="service_name"
             title="Service Name"
             value="OpenShift Container Storage"
-            isLoading={!cephClusterLoaded}
+            isLoading={false}
           />
           <DetailItem
             key="cluster_name"
