@@ -1,9 +1,9 @@
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { VMIKind } from '../../types/vm';
+import { VMIKind, VMKind } from '../../types/vm';
 import { getMigrationVMIName, isMigrating } from './selectors';
 
-export const findVMIMigration = (migrations: K8sResourceKind[], vmi: VMIKind) => {
+export const findVMIMigration = (migrations: K8sResourceKind[], vmi: VMIKind | VMKind) => {
   if (!migrations) {
     return null;
   }

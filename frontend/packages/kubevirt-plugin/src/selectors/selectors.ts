@@ -30,3 +30,22 @@ export const asVM = (vmLikeEntity: VMLikeEntityKind): VMKind => {
   }
   return selectVM(vmLikeEntity as TemplateKind);
 };
+
+export const getValueByPrefix = (obj = {}, keyPrefix: string): string => {
+  const objectKey = Object.keys(obj).find((key) => key.startsWith(keyPrefix));
+  return objectKey ? obj[objectKey] : null;
+};
+
+export const getAnnotationKeySuffix = (
+  entity: K8sResourceKind,
+  annotationPrefix: string,
+): string => {
+  const annotations = _.get(
+    entity,
+    'metadata.annotations',
+  ) as K8sResourceKind['metadata']['annotations'];
+  return getValueByPrefix(annotations, annotationPrefix);
+};
+
+export const getLabelValue = (entity: K8sResourceKind, label: string): string =>
+  _.get(entity, ['metadata', 'labels', label]);

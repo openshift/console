@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   getOperatingSystemName,
   getOperatingSystem,
-  getVmStatus,
   getVmiIpAddresses,
   getWorkloadProfile,
   getVmTemplate,
@@ -22,6 +21,7 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
+import { getVMStatus } from '../../statuses/vm/vm';
 
 import './_vm-resource.scss';
 
@@ -60,7 +60,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
 
 export const VMDetailsList: React.FC<VMResourceListProps> = ({ vm, vmi, pods, migrations }) => {
   const id = getBasicID(vm);
-  const vmStatus = getVmStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
   const nodeName = getNodeName(launcherPod);

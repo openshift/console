@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { getVmStatus } from 'kubevirt-web-ui-components';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -14,6 +13,7 @@ import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm'
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
+import { getVMStatus } from '../../statuses/vm/vm';
 
 type ActionArgs = {
   migration?: K8sResourceKind;
@@ -154,14 +154,14 @@ export const menuActions = [
   Kebab.factory.Delete,
 ];
 
-type ExtraResources = { vmi: VMIKind; pods: K8sResourceKind[]; migrations: K8sResourceKind[] };
+type ExtraResources = { vmi: VMIKind; pods: PodKind[]; migrations: K8sResourceKind[] };
 
 export const menuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
   { vmi, pods, migrations }: ExtraResources,
 ) => {
-  const vmStatus = getVmStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus(vm, pods, migrations);
   const migration = findVMIMigration(migrations, vmi);
 
   return menuActions.map((action) => {

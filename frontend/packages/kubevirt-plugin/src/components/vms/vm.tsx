@@ -3,7 +3,6 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   getResource,
-  getVmStatus,
   VmStatus,
   // getSimpleVmStatus,
   // VM_SIMPLE_STATUS_ALL,
@@ -25,6 +24,7 @@ import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration'
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { getBasicID, getLoadedData } from '../../utils';
 import { openCreateVmWizard } from '../modals';
+import { getVMStatus } from '../../statuses/vm/vm';
 import { vmStatusFilter } from './table-filters';
 import { menuActions } from './menu-actions';
 
@@ -71,7 +71,7 @@ const VMRow: React.FC<VMRowProps> = ({
   const name = getName(vm);
   const namespace = getNamespace(vm);
   const uid = getUID(vm);
-  const vmStatus = getVmStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus(vm, pods, migrations);
   const lookupID = getBasicID(vm);
 
   const migration = migrationLookup[lookupID];
