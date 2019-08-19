@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
+import { Tooltip } from '@patternfly/react-core';
 
 import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { ResourceLink } from '../../../utils';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
-import { Tooltip } from '../../../utils/tooltip';
 import { Conditions } from '../../../conditions';
 
 const Invalid: React.SFC<StatusCapabilityProps> = (props) => <span className="text-muted">

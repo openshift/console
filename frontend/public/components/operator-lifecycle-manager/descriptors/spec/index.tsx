@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
+import { Tooltip } from '@patternfly/react-core';
 
 import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
 import { Selector, ResourceLink, LoadingInline, AsyncComponent } from '../../../utils';
-import { Tooltip } from '../../../utils/tooltip';
 import { k8sPatch } from '../../../../module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
