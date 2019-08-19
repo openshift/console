@@ -2,9 +2,10 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { Tooltip } from '@patternfly/react-core';
+
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
-import { Tooltip } from './utils/tooltip';
 import { MachineConfigPoolModel, NodeModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
 import {
@@ -96,7 +97,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Total Machine Count</dt>
             <dd>
               <Tooltip content="Total number of machines in the machine pool.">
-                {pluralize(_.get(obj, 'status.machineCount', 0), 'machine')}
+                <span>{pluralize(_.get(obj, 'status.machineCount', 0), 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
@@ -106,7 +107,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Ready Machines</dt>
             <dd>
               <Tooltip content="Total number of ready machines targeted by the pool.">
-                {pluralize(_.get(obj, 'status.readyMachineCount', 0), 'machine')}
+                <span>{pluralize(_.get(obj, 'status.readyMachineCount', 0), 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
@@ -116,7 +117,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Updated Count</dt>
             <dd>
               <Tooltip content="Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.">
-                {pluralize(_.get(obj, 'status.updatedMachineCount', 0), 'machine')}
+                <span>{pluralize(_.get(obj, 'status.updatedMachineCount', 0), 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
@@ -126,7 +127,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Unavailable Count</dt>
             <dd>
               <Tooltip content="Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.">
-                {pluralize(_.get(obj, 'status.unavailableMachineCount', 0), 'machine')}
+                <span>{pluralize(_.get(obj, 'status.unavailableMachineCount', 0), 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
