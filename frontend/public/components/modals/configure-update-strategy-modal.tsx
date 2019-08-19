@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Tooltip } from '../utils/tooltip';
+import { Tooltip } from '@patternfly/react-core';
 
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
@@ -56,7 +56,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       defaultValue={props.maxUnavailable as string}
                       aria-describedby="input-max-unavailable-help" />
                     { props.replicas && <span className="pf-c-input-group__text">
-                      <Tooltip content="Current desired pod count">of { pluralize(props.replicas, 'pod')}</Tooltip>
+                      <Tooltip content="Current desired pod count"><span>of { pluralize(props.replicas, 'pod')}</span></Tooltip>
                     </span> }
                   </div>
                 </div>
@@ -80,7 +80,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       defaultValue={props.maxSurge as string}
                       aria-describedby="input-max-surge-help" />
                     <span className="pf-c-input-group__text">
-                      <Tooltip content="Current desired pod count">greater than { pluralize(props.replicas, 'pod')}</Tooltip>
+                      <Tooltip content="Current desired pod count"><span>greater than { pluralize(props.replicas, 'pod')}</span></Tooltip>
                     </span>
                   </div>
                 </div>
