@@ -78,11 +78,6 @@
   }
 }
 
-.query-browser__no-data-warning {
-  border-bottom: solid 1px $color-grey-background-border;
-  padding: 10px 20px;
-}
-
 .query-browser__query {
   line-height: 1;
   margin: 0 15px;
@@ -151,6 +146,11 @@
 .query-browser__table-cell {
   @include co-break-word;
   padding-right: 0 !important;
+}
+
+.query-browser__table-message {
+  border-bottom: solid 1px $color-grey-background-border;
+  padding: 10px 20px;
 }
 
 $tooltip-background-color: #151515;

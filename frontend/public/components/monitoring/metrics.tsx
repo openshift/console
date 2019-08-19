@@ -34,6 +34,7 @@ import { connect } from 'react-redux';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
+import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
@@ -50,7 +51,7 @@ import {
 } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
-import { chartTheme, Labels, PrometheusSeries, QueryBrowser } from './query-browser';
+import { chartTheme, Labels, QueryObj, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
   'avg',
@@ -118,17 +119,56 @@ const prometheusFunctions = [
 // Stores information about the currently focused query input
 let focusedQuery;
 
-const HeaderPrometheusLink_ = ({queries, urls}) => {
-  const url = getPrometheusExpressionBrowserURL(urls, queries);
-  return _.isEmpty(url)
-    ? null
-    : <span className="monitoring-header-link">
-      <ExternalLink href={url} text="Prometheus UI" />
-    </span>;
-};
-const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(HeaderPrometheusLink_);
+const queryDispatchToProps = (dispatch, {index}) => ({
+  deleteQuery: () => dispatch(UIActions.queryBrowserDeleteQuery(index)),
+  patchQuery: v => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
+  toggleIsEnabled: () => dispatch(UIActions.queryBrowserToggleIsEnabled(index)),
+});
 
-export const graphStateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
+const MetricsActionsMenu_: React.FC<MetricsActionsMenuProps> = ({
+  addQuery,
+  deleteAll,
+  isAllExpanded,
+  setAllExpanded,
+}) => {
+  const doDelete = () => {
+    deleteAll();
+    focusedQuery = undefined;
+  };
+
+  const actionsMenuActions = [
+    {label: 'Add query', callback: addQuery},
+    {label: `${isAllExpanded ? 'Collapse' : 'Expand'} all query tables`, callback: () => setAllExpanded(!isAllExpanded)},
+    {label: 'Delete all queries', callback: doDelete},
+  ];
+
+  return <div className="co-actions">
+    <ActionsMenu actions={actionsMenuActions} />
+  </div>;
+};
+const MetricsActionsMenu = connect(
+  ({UI}: RootState) => ({isAllExpanded: UI.getIn(['queryBrowser', 'queries']).every(q => q.get('isExpanded'))}),
+  {
+    addQuery: UIActions.queryBrowserAddQuery,
+    deleteAll: UIActions.queryBrowserDeleteAllQueries,
+    setAllExpanded: UIActions.queryBrowserSetAllExpanded,
+  }
+)(MetricsActionsMenu_);
+
+const headerPrometheusLinkStateToProps = ({UI}: RootState, {urls}) => {
+  const liveQueries = UI.getIn(['queryBrowser', 'queries']).filter(q => q.get('isEnabled') && q.get('query'));
+  const queryStrings = _.map(liveQueries.toJS(), 'query');
+  return {url: getPrometheusExpressionBrowserURL(urls, queryStrings) || urls[MonitoringRoutes.Prometheus]};
+};
+
+const HeaderPrometheusLink_ = ({url}) => <span className="monitoring-header-link">
+  <ExternalLink href={url} text="Prometheus UI" />
+</span>;
+const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(
+  connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_)
+);
+
+export const graphStateToProps = ({UI}: RootState) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
 
 const ToggleGraph_ = ({hideGraphs, toggle}) => {
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
@@ -139,7 +179,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 export const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-const MetricsDropdown = ({onChange, onLoad}) => {
+const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({insertText, setMetrics}) => {
   const [items, setItems] = React.useState({});
   const [isError, setIsError] = React.useState(false);
 
@@ -149,12 +189,23 @@ const MetricsDropdown = ({onChange, onLoad}) => {
     safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
       .then(({data}) => {
         setItems(_.zipObject(data, data));
-        if (onLoad) {
-          onLoad(data);
-        }
+        setMetrics(data);
       })
       .catch(() => setIsError(true));
-  }, [onLoad, safeFetch]);
+  }, [safeFetch, setMetrics]);
+
+  const onChange = (metric: string) => {
+    // Replace the currently selected text with the metric
+    const {index = 0, selection = {}, target = undefined} = focusedQuery || {};
+    insertText(index, metric, selection.start, selection.end);
+
+    if (target) {
+      target.focus();
+
+      // Restore cursor position / currently selected text (use _.defer() to delay until after the input value is set)
+      _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
+    }
+  };
 
   let title: React.ReactNode = 'Insert Metric at Cursor';
   if (isError) {
@@ -173,31 +224,52 @@ const MetricsDropdown = ({onChange, onLoad}) => {
     title={title}
   />;
 };
+const MetricsDropdown = connect(
+  null,
+  {
+    insertText: UIActions.queryBrowserInsertText,
+    setMetrics: UIActions.queryBrowserSetMetrics,
+  }
+)(MetricsDropdown_);
 
 const ExpandButton = ({isExpanded, onClick}) => {
   const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
   return <button aria-label={title} className="btn btn-link query-browser__expand-button" onClick={onClick} title={title}>
-    {isExpanded ? <AngleDownIcon className="query-browser__expand-icon" /> : <AngleRightIcon className="query-browser__expand-icon" />}
+    {isExpanded
+      ? <AngleDownIcon className="query-browser__expand-icon" />
+      : <AngleRightIcon className="query-browser__expand-icon" />}
   </button>;
 };
 
-const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
+const SeriesButton_: React.FC<SeriesButtonProps> = ({colorIndex, disabledSeries, labels, patchQuery}) => {
+  const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
   const colors = chartTheme.line.colorScale;
+
+  const toggleSeries = () => patchQuery({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)});
 
   return <div className="query-browser__series-btn-wrap">
     <button
       aria-label={title}
       className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
-      onClick={onClick}
+      onClick={toggleSeries}
       style={isDisabled ? undefined : {backgroundColor: colors[colorIndex % colors.length]}}
       title={title}
       type="button"
     ></button>
   </div>;
 };
+const SeriesButton = connect(
+  ({UI}: RootState, {index}) => ({disabledSeries: UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])}),
+  queryDispatchToProps
+)(SeriesButton_);
 
-const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, onUpdate, value = ''}) => {
+const queryInputStateToProps = ({UI}: RootState, {index}) => ({
+  metrics: UI.getIn(['queryBrowser', 'metrics']),
+  text: UI.getIn(['queryBrowser', 'queries', index, 'text']),
+});
+
+const QueryInput_: React.FC<QueryInputProps> = (({index, metrics, patchQuery, runQueries, text = ''}) => {
   const [token, setToken] = React.useState('');
 
   const inputRef = React.useRef(null);
@@ -205,7 +277,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
   const getTextBeforeCursor = () => inputRef.current.value.substring(0, inputRef.current.selectionEnd);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onUpdate(e.target.value);
+    patchQuery({text: e.target.value});
 
     // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':'
     const allTokens = getTextBeforeCursor().split(/[^a-zA-Z0-9_:]+/);
@@ -218,7 +290,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
     // Enter+Shift inserts newlines, Enter alone runs the query
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onSubmit();
+      runQueries();
       setToken('');
     }
   };
@@ -240,7 +312,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
     // Replace the autocomplete token with the selected autocomplete option
     const re = new RegExp(`${_.escapeRegExp(token)}$`);
     const newTextBeforeCursor = getTextBeforeCursor().replace(re, e.currentTarget.dataset.autocomplete);
-    onUpdate(newTextBeforeCursor + value.substring(inputRef.current.selectionEnd));
+    patchQuery({text: newTextBeforeCursor + text.substring(inputRef.current.selectionEnd)});
 
     // Move cursor to just after the text we inserted (use _.defer() so this is called after the textarea value is set)
     const cursorPosition = newTextBeforeCursor.length;
@@ -251,7 +323,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
   };
 
   const onClear = () => {
-    onUpdate('');
+    patchQuery({text: ''});
     inputRef.current.focus();
   };
 
@@ -274,7 +346,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
     }, _.isEmpty);
 
   // Set the default textarea height to the number of lines in the query text
-  const rows = Math.min((value.match(/\n/g) || []).length + 1, 10);
+  const rows = Math.min((text.match(/\n/g) || []).length + 1, 10);
 
   return <div className="query-browser__query pf-c-dropdown">
     <textarea
@@ -287,7 +359,7 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
       ref={inputRef}
       rows={rows}
       spellCheck={false}
-      value={value}
+      value={text}
     />
     <button className="btn btn-link query-browser__clear-icon" aria-label="Clear Query" onClick={onClear} type="button">
       <TimesIcon />
@@ -303,36 +375,94 @@ const QueryInput: React.FC<QueryInputProps> = ({index, metrics = [], onSubmit, o
       </React.Fragment>)}
     </ul>}
   </div>;
+});
+const QueryInput = connect(queryInputStateToProps, queryDispatchToProps)(
+  connect(null, {runQueries: UIActions.queryBrowserRunQueries})(QueryInput_)
+);
+
+const QueryKebab_: React.FC<QueryKebabProps> = ({
+  deleteQuery,
+  disabledSeries,
+  isEnabled,
+  patchQuery,
+  series,
+  toggleIsEnabled,
+}) => {
+  const toggleAllSeries = () => patchQuery({disabledSeries: _.isEmpty(disabledSeries) ? series : []});
+
+  const doDelete = () => {
+    deleteQuery();
+    focusedQuery = undefined;
+  };
+
+  return <Kebab options={[
+    {label: `${isEnabled ? 'Disable' : 'Enable'} query`, callback: toggleIsEnabled},
+    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
+    {label: 'Delete query', callback: doDelete},
+  ]} />;
+};
+const QueryKebab = connect(
+  ({UI}: RootState, {index}) => ({
+    disabledSeries: UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']),
+    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+    series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  }),
+  queryDispatchToProps
+)(QueryKebab_);
+
+const queryTableStateToProps = ({UI}: RootState, {index}) => {
+  const enabledQueries = UI.getIn(['queryBrowser', 'queries']).take(index).filter(q => q.get('isEnabled'));
+  return {
+    colorOffset: _.sumBy(enabledQueries.toJS(), 'series.length'),
+    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+    isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+    query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
+    series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  };
 };
 
-const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabledSeries, query, toggleSeries}) => {
-  const [data, setData] = React.useState({});
+const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, isExpanded, query, series}) => {
+  const [data, setData] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [sortBy, setSortBy] = React.useState<ISortBy>({index: 0, direction: 'asc'});
 
-  const safeFetch = React.useCallback(useSafeFetch(), [query]);
+  const safeFetch = React.useCallback(useSafeFetch(), []);
 
-  const tick = () => safeFetch(getPrometheusURL({endpoint: PrometheusEndpoint.QUERY, query}))
-    .then(response => {
-      setData(_.get(response, 'data.result'));
-      setIsError(false);
-    })
-    .catch(() => setIsError(true));
+  const tick = () => {
+    if (query) {
+      safeFetch(getPrometheusURL({endpoint: PrometheusEndpoint.QUERY, query}))
+        .then(response => {
+          setData(_.get(response, 'data.result'));
+          setIsError(false);
+        })
+        .catch(() => setIsError(true));
+    }
+  };
 
   usePoll(tick, 15 * 1000, query);
 
-  if (allSeries && allSeries.length === 0) {
-    return <div className="query-browser__no-data-warning">
+  if (!isEnabled || !isExpanded || !query) {
+    return null;
+  }
+
+  if (!series) {
+    return <div className="query-browser__table-message">
+      <LoadingInline />
+    </div>;
+  }
+
+  if (series.length === 0) {
+    return <div className="query-browser__table-message">
       <YellowExclamationTriangleIcon /> No datapoints found.
     </div>;
   }
 
   const cellProps = {
     props: {className: 'query-browser__table-cell'},
-    transforms: [sortable as (v: any) => IDecorator],
+    transforms: [sortable as (v: unknown) => IDecorator],
   };
 
-  const allLabelKeys = _.uniq(_.flatMap(allSeries, s => _.keys(s))).sort();
+  const allLabelKeys = _.uniq(_.flatMap(series, Object.keys)).sort();
   const columns = [
     '',
     ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
@@ -341,20 +471,18 @@ const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabled
 
   const getValue = labels => {
     if (isError) {
-      return <div><span className="text-muted"><RedExclamationCircleIcon /> Error loading value</span></div>;
+      return <React.Fragment>
+        <span className="text-muted"><RedExclamationCircleIcon key="icon" /> Error loading value</span>
+      </React.Fragment>;
     }
-    const series = _.find(data, ({metric}) => _.isEqual(metric, labels));
-    return _.get(series, 'value[1]', <div><span className="text-muted">None</span></div>);
+    const dataSeries = _.find(data, ({metric}) => _.isEqual(metric, labels));
+    return _.get(dataSeries, 'value[1]', <React.Fragment><span className="text-muted">None</span></React.Fragment>);
   };
 
-  const unsortedRows = _.map(allSeries, (labels, i) => [
-    <div key="series-button">
-      <SeriesButton
-        colorIndex={colorOffset + i}
-        isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
-        onClick={() => toggleSeries(labels)}
-      />
-    </div>,
+  const unsortedRows = _.map(series, (labels, i) => [
+    <React.Fragment key="series-button">
+      <SeriesButton colorIndex={colorOffset + i} index={index} labels={labels} />
+    </React.Fragment>,
     ..._.map(allLabelKeys, k => labels[k]),
     getValue(labels),
   ]);
@@ -375,7 +503,7 @@ const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabled
     breakPoint = 'grid2xl';
   }
 
-  const onSort = (e, index, direction) => setSortBy({index, direction});
+  const onSort = (e, i, direction) => setSortBy({index: i, direction});
 
   return <Table
     cells={columns}
@@ -386,135 +514,51 @@ const QueryTable: React.FC<QueryTableProps> = ({allSeries, colorOffset, disabled
     variant={TableVariant.compact}
   >
     <TableHeader />
-    <TableBody />
+    {/* Set key to something unique to force TableBody to always re-render */}
+    <TableBody key={_.uniqueId()} />
   </Table>;
 };
+const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
 
-const Query: React.FC<QueryProps> = ({colorOffset, index, metrics, onDelete, onSubmit, onUpdate, queryObj}) => {
-  const {allSeries, disabledSeries, enabled, expanded, text, query} = queryObj;
+const Query_: React.FC<QueryProps> = ({index, isExpanded, isEnabled, patchQuery, toggleIsEnabled}) => {
+  const switchLabel = `${isEnabled ? 'Disable' : 'Enable'} query`;
 
-  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+  const toggleIsExpanded = () => patchQuery({isExpanded: !isExpanded});
 
-  const toggleSeries = (labels: Labels) => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)});
-
-  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? allSeries : []});
-
-  const kebabOptions = [
-    {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
-    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
-    {label: 'Delete query', callback: onDelete},
-  ];
-
-  const switchLabel = `${enabled ? 'Disable' : 'Enable'} query`;
-
-  return <div className={classNames('query-browser__table', {'query-browser__table--expanded': expanded})}>
+  return <div className={classNames('query-browser__table', {'query-browser__table--expanded': isExpanded})}>
     <div className="query-browser__query-controls">
-      <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
-      <QueryInput
-        index={index}
-        metrics={metrics}
-        onSubmit={onSubmit}
-        onUpdate={v => onUpdate({text: v})}
-        value={text}
-      />
+      <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
+      <QueryInput index={index} />
       <div title={switchLabel}>
-        <Switch aria-label={switchLabel} isChecked={enabled} onChange={toggleEnabled} />
+        <Switch aria-label={switchLabel} isChecked={isEnabled} onChange={toggleIsEnabled} />
       </div>
       <div className="dropdown-kebab-pf">
-        <Kebab options={kebabOptions} />
+        <QueryKebab index={index} />
       </div>
     </div>
-    {query && expanded && allSeries && <QueryTable
-      allSeries={allSeries}
-      colorOffset={colorOffset}
-      disabledSeries={disabledSeries}
-      query={query}
-      toggleSeries={toggleSeries}
-    />}
+    <QueryTable index={index} />
   </div>;
 };
+const Query = connect(
+  ({UI}: RootState, {index}) => ({
+    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+    isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  }),
+  queryDispatchToProps
+)(Query_);
 
-const getParamsQueries = () => {
-  const queries = [];
-  const searchParams = getURLSearchParams();
-  for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
-    const query = searchParams[`query${i}`];
-    queries.push({disabledSeries: [], enabled: true, expanded: true, query, text: query});
-  }
-  return _.isEmpty(queries) ? undefined : queries;
-};
+const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({patchQuery, queries}) => {
+  const isInitRef = React.useRef(true);
 
-export const QueryBrowserPage = withFallback(() => {
-  // `text` is the current string in the text input and `query` is the value displayed in the graph
-  const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
-
-  const [metrics, setMetrics] = React.useState();
-  const [queries, setQueries] = React.useState(getParamsQueries() || [defaultQueryObj]);
-
-  const updateURLParams = () => {
-    const newParams = {};
-    _.each(queries, (q, i) => newParams[`query${i}`] = q.text);
-    setAllQueryArguments(newParams);
-  };
-
-  const updateQuery = (i: number, patch: PrometheusQuery) => {
-    setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, patch) : q));
-  };
-
-  const addQuery = () => setQueries([...queries, defaultQueryObj]);
-
-  const deleteAllQueries = () => setQueries([defaultQueryObj]);
-
-  const runQueries = () => {
-    setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: _.trim(q.text)}) : q));
-    updateURLParams();
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    runQueries();
-  };
-
-  const isAllExpanded = _.every(queries, 'expanded');
-  const toggleAllExpanded = () => setQueries(_.map(queries, q => Object.assign({}, q, {expanded: !isAllExpanded})));
-
-  const actionsMenuActions = [
-    {label: 'Add query', callback: addQuery},
-    {label: `${isAllExpanded ? 'Collapse' : 'Expand'} all query tables`, callback: toggleAllExpanded},
-    {label: 'Delete all queries', callback: deleteAllQueries},
-  ];
-
-  const onDataUpdate = React.useCallback((allQueries: PrometheusSeries[][]) => {
-    const newQueries = _.map(allQueries, (querySeries, i) => {
-      const allSeries = _.map(querySeries, 'metric');
-      return Object.assign({}, queries[i], {allSeries});
-    });
-    setQueries(newQueries);
-  }, [queries]);
-
-  const onMetricChange = (metric: string) => {
-    if (focusedQuery) {
-      // Replace the currently selected text with the metric
-      const {index, selection, target} = focusedQuery;
-      const oldText = _.get(queries, [index, 'text']);
-      const text = oldText.substring(0, selection.start) + metric + oldText.substring(selection.end);
-      updateQuery(index, {text});
-      target.focus();
-
-      // Restore the cursor position / currently selected text (use _.defer() to delay until after the input value is set)
-      _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
-    } else {
-      // No focused query, so add the metric to the end of the first query input
-      updateQuery(0, {text: _.get(queries, [0, 'text']) + metric});
+  // Initialize queries from URL parameters
+  if (isInitRef.current) {
+    const searchParams = getURLSearchParams();
+    for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
+      const query = searchParams[`query${i}`];
+      patchQuery(i, {isEnabled: true, isExpanded: true, query, text: query});
     }
-  };
-
-  const insertExampleQuery = () => updateQuery(0, {
-    text: 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)',
-    enabled: true,
-  });
-
-  let colorOffset = 0;
+    isInitRef.current = false;
+  }
 
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
@@ -525,15 +569,67 @@ export const QueryBrowserPage = withFallback(() => {
   const disabledSeries = React.useMemo(() => _.map(queries, 'disabledSeries'), [disabledSeriesMemoKey]);
   /* eslint-enable react-hooks/exhaustive-deps */
 
+  // Update the URL parameters when the queries shown in the graph change
+  React.useEffect(() => {
+    const newParams = {};
+    _.each(queryStrings, (q, i) => newParams[`query${i}`] = q || '');
+    setAllQueryArguments(newParams);
+  }, [queryStrings]);
+
+  const insertExampleQuery = () => {
+    const index = 0;
+    const text = 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)';
+    patchQuery(index, {isEnabled: true, query: '', text});
+  };
+
+  return queryStrings.join('') === ''
+    ? <div className="query-browser__wrapper graph-empty-state">
+      <EmptyState variant={EmptyStateVariant.full}>
+        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+        <Title size="sm">No Query Entered</Title>
+        <EmptyStateBody>Enter a query in the box below to explore metrics for this cluster.</EmptyStateBody>
+        <Button onClick={insertExampleQuery} variant="primary">Insert Example Query</Button>
+      </EmptyState>
+    </div>
+    : <QueryBrowser defaultTimespan={30 * 60 * 1000} disabledSeries={disabledSeries} queries={queryStrings} />;
+};
+const QueryBrowserWrapper = connect(
+  ({UI}: RootState) => ({queries: UI.getIn(['queryBrowser', 'queries']).toJS()}),
+  {patchQuery: UIActions.queryBrowserPatchQuery}
+)(QueryBrowserWrapper_);
+
+const AddQueryButton_ = ({addQuery}) =>
+  <Button className="query-browser__inline-control" onClick={addQuery} type="button" variant="secondary">
+    Add Query
+  </Button>;
+const AddQueryButton = connect(null, {addQuery: UIActions.queryBrowserAddQuery})(AddQueryButton_);
+
+const RunQueriesButton_ = ({runQueries}) =>
+  <Button onClick={runQueries} type="submit" variant="primary">
+    Run Queries
+  </Button>;
+const RunQueriesButton = connect(null, {runQueries: UIActions.queryBrowserRunQueries})(RunQueriesButton_);
+
+const QueriesList_ = ({count}) => <React.Fragment>
+  {_.map(_.range(count), i => <Query index={i} key={i} />)}
+</React.Fragment>;
+const QueriesList = connect(
+  ({UI}: RootState) => ({count: UI.getIn(['queryBrowser', 'queries']).size}),
+)(QueriesList_);
+
+const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({deleteAll}) => {
+  // Clear queries on unmount
+  React.useEffect(() => deleteAll, [deleteAll]);
+
   return <React.Fragment>
     <Helmet>
       <title>Metrics</title>
     </Helmet>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink queries={queryStrings} /></span>
+        <span>Metrics<HeaderPrometheusLink /></span>
         <div className="co-actions">
-          <ActionsMenu actions={actionsMenuActions} />
+          <MetricsActionsMenu />
         </div>
       </h1>
     </div>
@@ -545,86 +641,87 @@ export const QueryBrowserPage = withFallback(() => {
       </div>
       <div className="row">
         <div className="col-xs-12">
-          {queryStrings.join('') === ''
-            ? <div className="query-browser__wrapper graph-empty-state">
-              <EmptyState variant={EmptyStateVariant.full}>
-                <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-                <Title size="sm">No Query Entered</Title>
-                <EmptyStateBody>Enter a query in the box below to explore metrics for this cluster.</EmptyStateBody>
-                <Button onClick={insertExampleQuery} variant="primary">Insert Example Query</Button>
-              </EmptyState>
+          <QueryBrowserWrapper />
+          <div className="query-browser__controls">
+            <div className="query-browser__controls--left">
+              <MetricsDropdown />
             </div>
-            : <QueryBrowser
-              defaultTimespan={30 * 60 * 1000}
-              disabledSeries={disabledSeries}
-              onDataUpdate={onDataUpdate}
-              queries={queryStrings}
-            />}
-          <form onSubmit={onSubmit}>
-            <div className="query-browser__controls">
-              <div className="query-browser__controls--left">
-                <MetricsDropdown onChange={onMetricChange} onLoad={setMetrics} />
-              </div>
-              <div className="query-browser__controls--right">
-                <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-                  <Button type="button" className="query-browser__inline-control" onClick={addQuery} variant="secondary">Add Query</Button>
-                  <Button type="submit" variant="primary">Run Queries</Button>
-                </ActionGroup>
-              </div>
+            <div className="query-browser__controls--right">
+              <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+                <AddQueryButton />
+                <RunQueriesButton />
+              </ActionGroup>
             </div>
-            {_.map(queries, (q, i) => {
-              const deleteQuery = () => setQueries(queries.length <= 1
-                ? [defaultQueryObj]
-                : queries.filter((v, k) => k !== i));
-
-              colorOffset += _.get(queries, [i - 1, 'allSeries', 'length'], 0);
-
-              return <Query
-                colorOffset={colorOffset}
-                index={i}
-                key={i}
-                metrics={metrics}
-                onDelete={deleteQuery}
-                onSubmit={runQueries}
-                onUpdate={patch => updateQuery(i, patch)}
-                queryObj={q}
-              />;
-            })}
-          </form>
+          </div>
+          <QueriesList />
         </div>
       </div>
     </div>
   </React.Fragment>;
-});
+};
+export const QueryBrowserPage = withFallback(connect(
+  null,
+  {deleteAll: UIActions.queryBrowserDeleteAllQueries}
+)(QueryBrowserPage_));
 
-type PrometheusQuery = {
-  allSeries?: Labels[];
-  disabledSeries?: Labels[];
-  enabled?: boolean;
-  expanded?: boolean;
-  query?: string;
-  text?: string;
+type MetricsActionsMenuProps = {
+  addQuery: () => never;
+  deleteAll: () => never;
+  isAllExpanded: boolean;
+  setAllExpanded: (isExpanded: boolean) => never;
 };
-type QueryProps = {
-  colorOffset: number;
-  index: number;
-  metrics: string[],
-  onDelete: () => void;
-  onSubmit: () => void;
-  onUpdate: (patch: PrometheusQuery) => void;
-  queryObj: PrometheusQuery;
+
+type MetricsDropdownProps = {
+  insertText: (index: number, newText: string, replaceFrom: number, replaceTo: number) => never,
+  setMetrics: (metrics: string[]) => never,
 };
+
+type QueryBrowserPageProps = {
+  deleteAll: () => never;
+};
+
+type QueryBrowserWrapperProps = {
+  patchQuery: (index: number, patch: QueryObj) => any;
+  queries: QueryObj[];
+};
+
 type QueryInputProps = {
   index: number;
-  metrics: string[],
-  onSubmit: () => void;
-  onUpdate: (text: string) => void;
-  value: string,
+  metrics: string[];
+  patchQuery: (patch: QueryObj) => void;
+  runQueries: () => never;
+  text?: string;
 };
+
+type QueryKebabProps = {
+  deleteQuery: () => never;
+  disabledSeries?: Labels[];
+  isEnabled: boolean;
+  patchQuery: (patch: QueryObj) => void;
+  series: Labels[];
+  toggleIsEnabled: () => never;
+};
+
+type QueryProps = {
+  index: number;
+  isEnabled: boolean;
+  isExpanded: boolean;
+  patchQuery: (patch: QueryObj) => void;
+  toggleIsEnabled: () => never;
+};
+
 type QueryTableProps = {
-  allSeries?: Labels[];
   colorOffset: number;
-  disabledSeries: Labels[];
+  index: number;
+  isEnabled: boolean;
+  isExpanded: boolean;
   query: string;
-  toggleSeries: (labels: Labels) => void;
+  series: Labels[];
+};
+
+type SeriesButtonProps = {
+  colorIndex: number;
+  disabledSeries?: Labels[];
+  labels: Labels;
+  patchQuery: (patch: QueryObj) => void;
 };
