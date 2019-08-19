@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { Tooltip } from '@patternfly/react-core';
 
 import { MatchExpressions } from './match-expressions';
 import { NodeAffinity as NodeAffinityType, MatchExpression, PodAffinity as PodAffinityType } from '../../../../module/k8s';
-import { Tooltip } from '../../../utils/tooltip';
 
 const requiredTooltip = 'Required rules must be met before a pod can be scheduled on a node.';
 const preferredTooltip = 'Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.';
