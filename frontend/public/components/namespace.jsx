@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { connect } from 'react-redux';
-import { Tooltip } from './utils/tooltip';
+import { Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import { Status } from '@console/shared';
@@ -43,7 +43,7 @@ export const deleteModal = (kind, ns) => {
   }
   if (tooltip) {
     label = <div className="dropdown__disabled">
-      <Tooltip content={tooltip}>{label}</Tooltip>
+      <Tooltip content={tooltip}><span>{label}</span></Tooltip>
     </div>;
   }
   return {label, weight, callback, accessReview};
