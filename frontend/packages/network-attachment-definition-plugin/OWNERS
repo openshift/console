@@ -1,0 +1,10 @@
+reviewers:
+  - pcbailey
+  - mareklibra
+  - rawagner
+approvers:
+  - pcbailey
+  - mareklibra
+  - rawagner
+labels:
+  - component/network-attachment-definition
