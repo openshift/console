@@ -3,7 +3,7 @@ import { ChartAreaIcon } from '@patternfly/react-icons';
 import { EmptyStateIcon, EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { LoadingBox } from '../utils';
 
-export const GraphEmpty: React.FC<GraphEmptyProps> = ({height = 180, icon = ChartAreaIcon, loading = false}) => <div style={{height, width: '100%'}} >
+export const GraphEmpty: React.FC<GraphEmptyProps> = ({height = 180, icon = ChartAreaIcon, loading = false}) => <div style={{minHeight:height, width: '100%'}} >
   {
     loading ? <LoadingBox /> : (
       <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
