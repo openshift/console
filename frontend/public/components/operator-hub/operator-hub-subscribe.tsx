@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
-import { ActionGroup, Alert, Button } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 
 import { Firehose, history, NsDropdown, BreadCrumbs, StatusBox, resourceListPathFromModel } from '../utils';
 import { referenceForModel, k8sCreate, apiVersionForModel, kindForReference, apiVersionForReference, k8sListPartialMetadata } from '../../module/k8s';
@@ -20,7 +20,6 @@ import {
 } from '../operator-lifecycle-manager';
 import { InstallModeType, installedFor, supports, providedAPIsFor, isGlobal } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup, RadioInput } from '../radio';
-import { Tooltip } from '../utils/tooltip';
 import { CRDCard } from '../operator-lifecycle-manager/clusterserviceversion';
 import { fromRequirements } from '../../module/k8s/selector';
 
@@ -155,50 +154,46 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <div className="form-group">
           <label className="co-required">Installation Mode</label>
           <div>
-            <Tooltip content={descFor(InstallModeType.InstallModeTypeAllNamespaces)} hidden={!supportsGlobal}>
-              <RadioInput
-                onChange={e => {
-                  setInstallMode(e.target.value);
-                  setTargetNamespace(null);
-                  setCannotResolve(false);
-                }}
-                value={InstallModeType.InstallModeTypeAllNamespaces}
-                checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
-                disabled={!supportsGlobal}
-                title="All namespaces on the cluster"
-                subTitle="(default)">
-                <div className="co-m-radio-desc">
-                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeAllNamespaces)}</p>
-                </div>
-              </RadioInput>
-            </Tooltip>
+            <RadioInput
+              onChange={e => {
+                setInstallMode(e.target.value);
+                setTargetNamespace(null);
+                setCannotResolve(false);
+              }}
+              value={InstallModeType.InstallModeTypeAllNamespaces}
+              checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
+              disabled={!supportsGlobal}
+              title="All namespaces on the cluster"
+              subTitle="(default)">
+              <div className="co-m-radio-desc">
+                <p className="text-muted">{descFor(InstallModeType.InstallModeTypeAllNamespaces)}</p>
+              </div>
+            </RadioInput>
           </div>
           <div>
-            <Tooltip content={descFor(InstallModeType.InstallModeTypeOwnNamespace)} hidden={!supportsSingle}>
-              <RadioInput
-                onChange={e => {
-                  setInstallMode(e.target.value);
-                  setTargetNamespace(null);
-                  setCannotResolve(false);
-                }}
-                value={InstallModeType.InstallModeTypeOwnNamespace}
-                checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
-                disabled={!supportsSingle}
-                title="A specific namespace on the cluster">
-                <div className="co-m-radio-desc">
-                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeOwnNamespace)}</p>
-                </div>
-                { selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace && <div style={{marginLeft: '20px'}}>
-                  <NsDropdown
-                    id="dropdown-selectbox"
-                    selectedKey={selectedTargetNamespace}
-                    onChange={(ns: string) => {
-                      setTargetNamespace(ns);
-                      setCannotResolve(false);
-                    }} />
-                </div> }
-              </RadioInput>
-            </Tooltip>
+            <RadioInput
+              onChange={e => {
+                setInstallMode(e.target.value);
+                setTargetNamespace(null);
+                setCannotResolve(false);
+              }}
+              value={InstallModeType.InstallModeTypeOwnNamespace}
+              checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
+              disabled={!supportsSingle}
+              title="A specific namespace on the cluster">
+              <div className="co-m-radio-desc">
+                <p className="text-muted">{descFor(InstallModeType.InstallModeTypeOwnNamespace)}</p>
+              </div>
+              { selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace && <div style={{marginLeft: '20px'}}>
+                <NsDropdown
+                  id="dropdown-selectbox"
+                  selectedKey={selectedTargetNamespace}
+                  onChange={(ns: string) => {
+                    setTargetNamespace(ns);
+                    setCannotResolve(false);
+                  }} />
+              </div> }
+            </RadioInput>
           </div>
         </div>
         <div className="form-group">
