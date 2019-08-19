@@ -1,3 +1,8 @@
+export enum ObjectDashboardQuery {
+  CAPACITY_USAGE_PROJECT_QUERY = 'CAPACITY_USAGE_PROJECT_QUERY',
+  CAPACITY_USAGE_BUCKET_CLASS_QUERY = 'CAPACITY_USAGE_BUCKET_CLASS_QUERY',
+}
+
 export enum DATA_RESILIENCE_QUERIES {
   REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress',
   REBUILD_TIME_QUERY = 'NooBaa_rebuild_time',
@@ -16,7 +21,18 @@ export enum HealthCardQueries {
   UNHEALTHY_POOLS = 'NooBaa_num_unhealthy_pools',
 }
 
-export const ObjectCapacityQueries = {
-  PROJECT_QUERY: 'NooBaa_projects_capacity_usage',
-  BUCKET_CLASS_QUERY: 'NooBaa_bucket_class_capacity_usage',
+const PROJECT_CAPACITY_USAGE_QUERY = 'NooBaa_projects_capacity_usage';
+const BUCKET_CLASS_CAPACITY_USAGE_QUERY = 'NooBaa_bucket_class_capacity_usage';
+type ObjectCapacityQueryType = {
+  [queryType: string]: [string, string];
+};
+export const ObjectCapacityQueries: ObjectCapacityQueryType = {
+  [ObjectDashboardQuery.CAPACITY_USAGE_PROJECT_QUERY]: [
+    `sort(topk(6, ${PROJECT_CAPACITY_USAGE_QUERY}{project!='Others'})) or ${PROJECT_CAPACITY_USAGE_QUERY}{project='Others'}`,
+    `sum(${PROJECT_CAPACITY_USAGE_QUERY})`,
+  ],
+  [ObjectDashboardQuery.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: [
+    `sort(topk(6, ${BUCKET_CLASS_CAPACITY_USAGE_QUERY}{bucket_class!='Others'})) or ${BUCKET_CLASS_CAPACITY_USAGE_QUERY}{bucket_class='Others'}`,
+    `sum(${BUCKET_CLASS_CAPACITY_USAGE_QUERY})`,
+  ],
 };
