@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { getMachineRole } from '@console/shared';
+import { Tooltip } from '@patternfly/react-core';
+
 import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { MachinePage } from './machine';
@@ -22,7 +24,6 @@ import {
   resourcePath,
   useAccessReview,
 } from './utils';
-import { Tooltip } from './utils/tooltip';
 import { ResourceEventStream } from './events';
 
 const machineReplicasModal = (resourceKind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => configureReplicaCountModal({
@@ -164,7 +165,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
             <dt className="co-detail-table__section-header">Current Count</dt>
             <dd>
               <Tooltip content="The most recently observed number of replicas.">
-                {pluralize(replicas, 'machine')}
+                <span>{pluralize(replicas, 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
@@ -174,7 +175,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
             <dt className="co-detail-table__section-header">Ready Count</dt>
             <dd>
               <Tooltip content="The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.">
-                {pluralize(readyReplicas, 'machine')}
+                <span>{pluralize(readyReplicas, 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
@@ -184,7 +185,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
             <dt className="co-detail-table__section-header">Available Count</dt>
             <dd>
               <Tooltip content="The number of available replicas (ready for at least minReadySeconds) for this MachineSet.">
-                {pluralize(availableReplicas, 'machine')}
+                <span>{pluralize(availableReplicas, 'machine')}</span>
               </Tooltip>
             </dd>
           </dl>
