@@ -712,14 +712,14 @@ metadata:
 spec:
   hard:
     requests.storage: 100Gi
-    persistentvolumeclaims: 100
+    persistentvolumeclaims: '100'
     # For quota specific to a storage class, the storage class must have the same name
     gold.storage-class.kubernetes.io/requests.storage: 3Gi
-    gold.storage-class.kubernetes.io/persistentvolumeclaims: 5
+    gold.storage-class.kubernetes.io/persistentvolumeclaims: '5'
     silver.storage-class.kubernetes.io/requests.storage: 2Gi
-    silver.storage-class.kubernetes.io/persistentvolumeclaims: 3
+    silver.storage-class.kubernetes.io/persistentvolumeclaims: '3'
     bronze.storage-class.kubernetes.io/requests.storage: 1Gi
-    bronze.storage-class.kubernetes.io/persistentvolumeclaims: 1
+    bronze.storage-class.kubernetes.io/persistentvolumeclaims: '1'
 `).setIn([referenceForModel(k8sModels.ResourceQuotaModel), 'rq-counts'], `
 apiVersion: v1
 kind: ResourceQuota
