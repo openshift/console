@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert , ActionGroup, Button } from '@patternfly/react-core';
+import { Alert , ActionGroup, Button, Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -29,7 +29,6 @@ import { Labels, QueryBrowser } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
-import { Tooltip } from './utils/tooltip';
 import { AlertManagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import {
   ActionsMenu,
