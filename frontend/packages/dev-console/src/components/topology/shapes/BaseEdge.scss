@@ -1,13 +1,39 @@
 .odc-base-edge {
   stroke: var(--pf-global--BackgroundColor--dark-200);
   stroke-width: 2px;
+
+  &.odc-m-is-hover {
+    stroke: var(--pf-global--active-color--400);
+  }
+
+  &.odc-creator-edge {
+    stroke: var(--pf-global--active-color--400);
+    stroke-dasharray: 5px, 5px;
+  }
+
+  &.odc-move-edge {
+    stroke: var(--pf-global--active-color--400);
+  }
+}
+
+.odc-creator-edge__hover-box {
+  cursor: pointer;
 }
 
 .odc-m-drag-active {
   .odc-base-edge {
     opacity: 0.3;
+
     &.odc-m-is-highlight {
       opacity: 0.5;
     }
+
+    &.odc-creator-edge, &.odc-move-edge {
+      opacity: 1;
+    }
   }
+}
+
+.odc-creator-edge-marker {
+  fill: var(--pf-global--active-color--400);
 }

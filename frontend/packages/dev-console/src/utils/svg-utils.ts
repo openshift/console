@@ -32,21 +32,34 @@ function roundedHull1(polyPoints: Point[], hp: HullPaddingGetter): string {
 }
 
 // Returns the path for a rounded hull around two points (a "capsule" shape).
-function roundedHull2(polyPoints: Point[], hp: HullPaddingGetter): string {
-  const offsetVector1 = vecScale(hp(polyPoints[0]), unitNormal(polyPoints[0], polyPoints[1]));
+export function boundingBoxForLine(
+  startPoint: Point,
+  endPoint: Point,
+  padding: number | HullPaddingGetter = 0,
+): [Point, Point, Point, Point] {
+  const hp = typeof padding === 'number' ? () => padding : padding;
+  const offsetVector1 = vecScale(hp(startPoint), unitNormal(startPoint, endPoint));
   const invOffsetVector1 = vecScale(-1, offsetVector1);
 
-  const offsetVector2 = vecScale(hp(polyPoints[1]), unitNormal(polyPoints[0], polyPoints[1]));
+  const offsetVector2 = vecScale(hp(endPoint), unitNormal(startPoint, endPoint));
   const invOffsetVector2 = vecScale(-1, offsetVector2);
 
-  const p0 = vecSum(polyPoints[0], offsetVector1);
-  const p1 = vecSum(polyPoints[1], offsetVector2);
-  const p2 = vecSum(polyPoints[1], invOffsetVector2);
-  const p3 = vecSum(polyPoints[0], invOffsetVector1);
+  const p0 = vecSum(startPoint, offsetVector1);
+  const p1 = vecSum(endPoint, offsetVector2);
+  const p2 = vecSum(endPoint, invOffsetVector2);
+  const p3 = vecSum(startPoint, invOffsetVector1);
 
-  return `M ${p0} L ${p1} A ${hp(polyPoints[1])},${hp(polyPoints[1])},0,0,0,${p2} L ${p3} A ${hp(
-    polyPoints[0],
-  )},${hp(polyPoints[0])},0,0,0,${p0}`;
+  return [p0, p1, p2, p3];
+}
+
+// Returns the path for a rounded hull around two points (a "capsule" shape).
+function roundedHull2(polyPoints: Point[], hp: HullPaddingGetter): string {
+  const points = boundingBoxForLine(polyPoints[0], polyPoints[1], hp);
+
+  return `M ${points[0]} L ${points[1]} A ${hp(polyPoints[1])},${hp(polyPoints[1])},0,0,0,${
+    points[2]
+  } ${' '}
+   L ${points[3]} A ${hp(polyPoints[0])},${hp(polyPoints[0])},0,0,0,${points[0]}`;
 }
 
 // Returns the SVG path data string representing the polygon, expanded and rounded.

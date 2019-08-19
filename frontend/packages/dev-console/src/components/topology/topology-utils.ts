@@ -3,7 +3,12 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import { ResourceProps, TransformPodData, updateResourceApplication } from '@console/shared';
+import {
+  ResourceProps,
+  TransformPodData,
+  updateResourceApplication,
+  createResourceConnection,
+} from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
@@ -352,7 +357,12 @@ export class TransformTopologyData {
       const annotations = _.get(deploymentConfig, 'metadata.annotations');
       let edges = [];
       const totalDeployments = _.cloneDeep(
-        _.concat(this.resources.deploymentConfigs.data, this.resources.deployments.data),
+        _.concat(
+          this.resources.deploymentConfigs && this.resources.deploymentConfigs.data,
+          this.resources.deployments && this.resources.deployments.data,
+          this.resources.statefulSets && this.resources.statefulSets.data,
+          this.resources.daemonSets && this.resources.daemonSets.data,
+        ),
       );
       // find and add the edges for a node
       if (_.has(annotations, ['app.openshift.io/connects-to'])) {
@@ -433,4 +443,20 @@ export const updateTopologyResourceApplication = (
 
   const resource = getResourceDeploymentObject(item);
   return updateResourceApplication(resource, application);
+};
+
+export const createTopologyResourceConnection = (
+  source: TopologyDataObject,
+  target: TopologyDataObject,
+  replaceTarget: TopologyDataObject = null,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+
+  const sourceObj = getResourceDeploymentObject(source);
+  const targetObj = getResourceDeploymentObject(target);
+  const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
+
+  return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
 };
