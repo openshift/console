@@ -24,15 +24,15 @@ const overviewQueries = {
   [OverviewQuery.CPU_UTILIZATION]: '((sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100)[60m:5m]',
   [OverviewQuery.STORAGE_UTILIZATION]: '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
-  [OverviewQuery.PODS_BY_CPU]: 'sort(topk(5, pod_name:container_cpu_usage:sum))',
-  [OverviewQuery.PODS_BY_MEMORY]: 'sort(topk(5, pod_name:container_memory_usage_bytes:sum))',
-  [OverviewQuery.PODS_BY_STORAGE]: 'sort(topk(5, avg by (pod_name)(irate(container_fs_io_time_seconds_total{container_name="POD", pod_name!=""}[1m]))))',
-  [OverviewQuery.PODS_BY_NETWORK]: `sort(topk(5, sum by (pod_name)(irate(container_network_receive_bytes_total{container_name="POD", pod_name!=""}[1m]) + 
-irate(container_network_transmit_bytes_total{container_name="POD", pod_name!=""}[1m]))))`,
-  [OverviewQuery.NODES_BY_CPU]: 'sort(topk(5, node:node_cpu_utilisation:avg1m))',
-  [OverviewQuery.NODES_BY_MEMORY]: 'sort(topk(5, node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum))',
-  [OverviewQuery.NODES_BY_STORAGE]: 'sort(topk(5, node:node_disk_utilisation:avg_irate{cluster=""}))',
-  [OverviewQuery.NODES_BY_NETWORK]: 'sort(topk(5, node:node_net_utilisation:sum_irate{cluster=""}))',
+  [OverviewQuery.PODS_BY_CPU]: 'sort_desc(pod_name:container_cpu_usage:sum)',
+  [OverviewQuery.PODS_BY_MEMORY]: 'sort_desc(pod_name:container_memory_usage_bytes:sum)',
+  [OverviewQuery.PODS_BY_STORAGE]: 'sort_desc(avg by (pod_name)(irate(container_fs_io_time_seconds_total{container_name="POD", pod_name!=""}[1m])))',
+  [OverviewQuery.PODS_BY_NETWORK]: `sort_desc(sum by (pod_name)(irate(container_network_receive_bytes_total{container_name="POD", pod_name!=""}[1m]) + 
+irate(container_network_transmit_bytes_total{container_name="POD", pod_name!=""}[1m])))`,
+  [OverviewQuery.NODES_BY_CPU]: 'sort_desc(node:node_cpu_utilisation:avg1m)',
+  [OverviewQuery.NODES_BY_MEMORY]: 'sort_desc(node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)',
+  [OverviewQuery.NODES_BY_STORAGE]: 'sort_desc(node:node_disk_utilisation:avg_irate{cluster=""})',
+  [OverviewQuery.NODES_BY_NETWORK]: 'sort_desc(node:node_net_utilisation:sum_irate{cluster=""})',
 };
 
 export const capacityQueries = {

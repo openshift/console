@@ -18,6 +18,7 @@ export type DataPoint = {
   x?: Date | string | number;
   y?: number;
   label?: string;
+  metric?: {[key: string]: string};
 }
 
 // Only covers range and instant vector responses for now.
