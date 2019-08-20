@@ -7,21 +7,33 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
+import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+
+interface Configuration extends webpack.Configuration {
+  devServer?: WebpackDevServerConfiguration;
+}
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV;
+const HOT_RELOAD = process.env.HOT_RELOAD;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 
-const config: webpack.Configuration = {
+const config: Configuration = {
   entry: ['./polyfills.js', '@console/app', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
+  },
+  devServer: {
+    writeToDisk: true,
+    progress: true,
+    hot: HOT_RELOAD === 'true',
+    inline: HOT_RELOAD === 'true',
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
