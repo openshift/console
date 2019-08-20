@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from '@patternfly/react-core';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 
 import { CopyToClipboard, CopyToClipboardProps } from '../../../public/components/utils/copy-to-clipboard';
