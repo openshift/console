@@ -9,7 +9,6 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
-import RouteCheckbox from './route/RouteCheckbox';
 import DockerSection from './git/DockerSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
@@ -28,7 +27,6 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     <DockerSection buildStrategy={values.build.strategy} />
     <AppSection project={values.project} />
     <ServerlessSection />
-    <RouteCheckbox />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
       <ActionGroup className="pf-c-form">

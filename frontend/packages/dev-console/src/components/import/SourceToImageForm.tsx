@@ -9,7 +9,6 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
-import RouteCheckbox from './route/RouteCheckbox';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
   values,
@@ -26,7 +25,6 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
     <GitSection showSample />
     <AppSection project={values.project} />
     <ServerlessSection />
-    <RouteCheckbox />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
       <ActionGroup className="pf-c-form">

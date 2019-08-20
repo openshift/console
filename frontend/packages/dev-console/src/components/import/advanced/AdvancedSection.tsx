@@ -4,6 +4,8 @@ import ProgressiveList from '../../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import RouteSection from '../route/RouteSection';
 import ServerlessRouteSection from '../serverless/ServerlessRouteSection';
+import FormSection from '../section/FormSection';
+import RouteCheckbox from '../route/RouteCheckbox';
 import LabelSection from './LabelSection';
 import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
@@ -22,40 +24,43 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
   };
 
   return (
-    <ProgressiveList
-      text="Go to Advanced Options for"
-      visibleItems={visibleItems}
-      onVisibleItemChange={handleVisibleItemChange}
-    >
-      <ProgressiveListItem name="Routing">
-        {values.serverless.enabled ? (
-          <ServerlessRouteSection route={values.route} />
-        ) : (
-          <RouteSection route={values.route} />
+    <FormSection title="Advanced Options" fullWidth>
+      <RouteCheckbox />
+      <ProgressiveList
+        text="Click on the names to access advanced options for"
+        visibleItems={visibleItems}
+        onVisibleItemChange={handleVisibleItemChange}
+      >
+        <ProgressiveListItem name="Routing">
+          {values.serverless.enabled ? (
+            <ServerlessRouteSection route={values.route} />
+          ) : (
+            <RouteSection route={values.route} />
+          )}
+        </ProgressiveListItem>
+        {/* Hide Build for Deploy Image */}
+        {values.isi ? null : (
+          <ProgressiveListItem name="Build Configuration">
+            <BuildConfigSection namespace={values.project.name} />
+          </ProgressiveListItem>
         )}
-      </ProgressiveListItem>
-      {/* Hide Build for Deploy Image */}
-      {values.isi ? null : (
-        <ProgressiveListItem name="Build Configuration">
-          <BuildConfigSection namespace={values.project.name} />
+        {/* Hide Deployment for Serverless */}
+        {values.serverless.enabled ? null : (
+          <ProgressiveListItem name="Deployment Configuration">
+            <DeploymentConfigSection namespace={values.project.name} />
+          </ProgressiveListItem>
+        )}
+        <ProgressiveListItem name="Scaling">
+          {values.serverless.enabled ? <ServerlessScalingSection /> : <ScalingSection />}
         </ProgressiveListItem>
-      )}
-      {/* Hide Deployment for Serverless */}
-      {values.serverless.enabled ? null : (
-        <ProgressiveListItem name="Deployment Configuration">
-          <DeploymentConfigSection namespace={values.project.name} />
+        <ProgressiveListItem name="Resource Limits">
+          <ResourceLimitSection />
         </ProgressiveListItem>
-      )}
-      <ProgressiveListItem name="Scaling">
-        {values.serverless.enabled ? <ServerlessScalingSection /> : <ScalingSection />}
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Resource Limits">
-        <ResourceLimitSection />
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Labels">
-        <LabelSection />
-      </ProgressiveListItem>
-    </ProgressiveList>
+        <ProgressiveListItem name="Labels">
+          <LabelSection />
+        </ProgressiveListItem>
+      </ProgressiveList>
+    </FormSection>
   );
 };
 
