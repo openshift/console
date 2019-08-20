@@ -1,18 +1,13 @@
 import { k8sList, k8sPatch, K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
 
-const updateItemAppLabel = (item: K8sResourceKind, application) => {
-  const labels = _.cloneDeep(item.metadata.labels || {});
+// Updates the resource's labels to set its application grouping
+const updateItemAppLabel = (item: K8sResourceKind, application: string): Promise<any> => {
+  const labels = { ...item.metadata.labels, 'app.kubernetes.io/part-of': application || undefined };
   const model = modelFor(item.kind);
 
   if (!model) {
     return Promise.reject();
-  }
-
-  if (application) {
-    labels['app.kubernetes.io/part-of'] = application;
-  } else {
-    labels['app.kubernetes.io/part-of'] = undefined;
   }
 
   const patch = [
@@ -26,6 +21,7 @@ const updateItemAppLabel = (item: K8sResourceKind, application) => {
   return k8sPatch(model, item, patch);
 };
 
+// Updates the given resource and its associated resources to the given application grouping
 export const updateResourceApplication = (
   resource: K8sResourceKind,
   application: string,
@@ -51,7 +47,10 @@ export const updateResourceApplication = (
     lists.push(
       k8sList(modelFor(kind), {
         ns: resource.metadata.namespace,
-        labelSelector: { 'app.kubernetes.io/instance': instanceName },
+        labelSelector: {
+          'app.kubernetes.io/instance': instanceName,
+          'app.kubernetes.io/part-of': prevApplication,
+        },
       }).then((values) => {
         return _.map(values, (value) => {
           value.kind = kind;
@@ -65,10 +64,7 @@ export const updateResourceApplication = (
   return Promise.all(lists).then((listsValue) => {
     _.forEach(listsValue, (list) => {
       _.forEach(list, (item) => {
-        const itemApplication = _.get(item, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
-        if (itemApplication === prevApplication) {
-          patches.push(updateItemAppLabel(item, application));
-        }
+        patches.push(updateItemAppLabel(item, application));
       });
     });
 
