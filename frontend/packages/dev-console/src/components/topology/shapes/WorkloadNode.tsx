@@ -1,11 +1,19 @@
 import * as React from 'react';
-import { PenIcon, ExternalLinkAltIcon, OutlinedCheckCircleIcon } from '@patternfly/react-icons';
+import {
+  ExternalLinkAltIcon,
+  OutlinedCheckCircleIcon,
+  GitAltIcon,
+  GitlabIcon,
+  GithubIcon,
+  BitbucketIcon,
+} from '@patternfly/react-icons';
 import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
 import { Status, calculateRadius, PodStatus } from '@console/shared';
 import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildConfigModel } from '@console/internal/models';
+import { detectGitType } from '../../import/import-validation-utils';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -27,6 +35,19 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       donutStatus: { build },
     },
   } = workload;
+
+  const routeDecoratorIcon = (editUrl: string): React.ReactElement => {
+    switch (detectGitType(editUrl)) {
+      case 'github':
+        return <GithubIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
+      case 'bitbucket':
+        return <BitbucketIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
+      case 'gitlab':
+        return <GitlabIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
+      default:
+        return <GitAltIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
+    }
+  };
 
   return (
     <BaseNode
@@ -52,7 +73,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             position={TooltipPosition.right}
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <PenIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />
+              {routeDecoratorIcon(workload.data.editUrl)}
             </g>
           </Decorator>
         ),
