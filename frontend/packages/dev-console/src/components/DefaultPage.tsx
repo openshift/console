@@ -7,10 +7,13 @@ import './DefaultPage.scss';
 export interface DefaultPageProps {
   title: string;
   children?: React.ReactNode;
+  badge?: React.ReactNode;
 }
 const DefaultPage: React.FC<DefaultPageProps> = (props) => (
   <div className="odc-default-page">
-    <PageHeading title={props.title}>{props.children}</PageHeading>
+    <PageHeading title={props.title} badge={props.badge}>
+      {props.children}
+    </PageHeading>
     <hr className="odc-default-page__section-border" />
     <ListPage
       {...props}

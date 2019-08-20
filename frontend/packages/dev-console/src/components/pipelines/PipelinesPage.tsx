@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
+import { DevPreviewBadge } from '@console/shared';
 import { PipelineModel } from '../../models';
 import DefaultPage from '../DefaultPage';
 import { filters } from './PipelineAugmentRuns';
@@ -28,13 +29,16 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       textFilter="name"
       resources={resources}
       title={PipelineModel.labelPlural}
+      badge={<DevPreviewBadge />}
     >
       <Firehose resources={resources}>
         <PipelineAugmentRunsWrapper />
       </Firehose>
     </FireMan>
   ) : (
-    <DefaultPage title="Pipelines">Select a project to view the list of pipelines</DefaultPage>
+    <DefaultPage title="Pipelines" badge={<DevPreviewBadge />}>
+      Select a project to view the list of pipelines
+    </DefaultPage>
   );
 };
 

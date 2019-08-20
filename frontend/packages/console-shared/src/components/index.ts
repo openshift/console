@@ -1,3 +1,3 @@
-export { default as TechPreviewBadge } from './TechPreviewBadge';
+export * from './badges';
 export * from './status';
 export * from './pod';
