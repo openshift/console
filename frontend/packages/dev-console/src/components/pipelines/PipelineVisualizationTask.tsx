@@ -5,8 +5,10 @@ import { Tooltip } from '@patternfly/react-core';
 import {
   SyncAltIcon,
   CheckCircleIcon,
-  ErrorCircleOIcon,
   CircleIcon,
+  ExclamationCircleIcon,
+  BanIcon,
+  PendingIcon,
 } from '@patternfly/react-icons';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
@@ -26,6 +28,7 @@ interface TaskProps {
     duration: string;
   };
   namespace: string;
+  isPipelineRun: boolean;
 }
 
 interface PipelineVisualizationTaskProp {
@@ -41,31 +44,57 @@ interface PipelineVisualizationTaskProp {
     };
   };
   taskRun?: string;
+  pipelineRunStatus?: string;
 }
 
 interface StatusIconProps {
   status: string;
+  height?: number;
+  width?: number;
 }
-export const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
+
+export const SkippedIcon: React.FC<StatusIconProps> = ({ height, width }) => {
+  return <div style={{ height, width }} className="fa fa-angle-double-right" />;
+};
+export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
   switch (status) {
-    case 'In Progress':
-      return <SyncAltIcon className="fa-spin" />;
+    case runStatus['In Progress']:
+      return <SyncAltIcon {...props} className="fa-spin" />;
 
-    case 'Succeeded':
-      return <CheckCircleIcon className="is-done" />;
+    case runStatus.Succeeded:
+      return <CheckCircleIcon {...props} />;
 
-    case 'Failed':
-      return <ErrorCircleOIcon className="is-done" />;
+    case runStatus.Failed:
+      return <ExclamationCircleIcon {...props} />;
+
+    case runStatus.Pending:
+      return <PendingIcon {...props} />;
+
+    case runStatus.Cancelled:
+      return <BanIcon {...props} />;
+
+    case runStatus.Skipped:
+      return <SkippedIcon {...props} status={status} />;
 
     default:
-      return <CircleIcon className="is-idle" />;
+      return <CircleIcon {...props} />;
   }
 };
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
   task,
   namespace,
+  pipelineRunStatus,
 }) => {
+  const taskStatus = task.status || {
+    duration: '',
+    reason: runStatus.Idle,
+  };
+  if (pipelineRunStatus === runStatus.Failed) {
+    if (task.status && !['Succeeded', 'Failed'].includes(task.status.reason)) {
+      taskStatus.reason = runStatus.Cancelled;
+    }
+  }
   return (
     <Firehose
       resources={[
@@ -80,23 +109,17 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       <TaskComponent
         name={task.name || ''}
         namespace={namespace}
-        status={task.status || { duration: '', reason: 'pending' }}
+        status={taskStatus}
+        isPipelineRun={!!pipelineRunStatus}
       />
     </Firehose>
   );
 };
-const TaskComponent: React.FC<TaskProps> = ({ task, status, name }) => {
+const TaskComponent: React.FC<TaskProps> = ({ task, status, name, isPipelineRun }) => {
   const taskData = task.data;
   return (
-    <li
-      className={cx('odc-pipeline-vis-task')}
-      style={{
-        color:
-          status && status.reason
-            ? getRunStatusColor(status.reason).pftoken.value
-            : getRunStatusColor(runStatus.Cancelled).pftoken.value,
-      }}
-    >
+    <li className={cx('odc-pipeline-vis-task')}>
+      <div className="odc-pipeline-vis-task__connector" />
       <Tooltip
         position="bottom"
         enableFlip={false}
@@ -105,16 +128,21 @@ const TaskComponent: React.FC<TaskProps> = ({ task, status, name }) => {
         }
       >
         <div className="odc-pipeline-vis-task__content">
-          <div className={cx('odc-pipeline-vis-task__title', { 'is-text-center': !status })}>
+          <div className={cx('odc-pipeline-vis-task__title', { 'is-text-center': !isPipelineRun })}>
             {name || _.get(task, ['metadata', 'name'], '')}
           </div>
-          {status && status.reason && (
-            <div className="odc-pipeline-vis-task__status">
-              <StatusIcon status={status.reason} />
+          {isPipelineRun && status && status.reason && (
+            <div
+              className="odc-pipeline-vis-task__status"
+              style={{
+                color:
+                  status && status.reason
+                    ? getRunStatusColor(status.reason).pftoken.value
+                    : getRunStatusColor(runStatus.Cancelled).pftoken.value,
+              }}
+            >
+              <StatusIcon status={status.reason} height={18} width={18} />
             </div>
-          )}
-          {status && status.duration && (
-            <div className="odc-pipeline-vis-task__stepcount">({status.duration})</div>
           )}
         </div>
       </Tooltip>

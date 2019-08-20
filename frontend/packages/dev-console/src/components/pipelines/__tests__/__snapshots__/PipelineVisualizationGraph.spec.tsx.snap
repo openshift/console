@@ -10,33 +10,6 @@ exports[`PipelineVisualizationGraph should match the previous pipeline snapshot 
     <div
       className="odc-pipeline-vis-graph__stage"
     >
-      <div
-        className="odc-pipeline-vis-task is-input-node"
-      >
-        <svg
-          aria-hidden={true}
-          aria-labelledby={null}
-          fill="currentColor"
-          height="1em"
-          role="img"
-          style={
-            Object {
-              "verticalAlign": "-0.125em",
-            }
-          }
-          viewBox="0 0 512 512"
-          width="1em"
-        >
-          <path
-            d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
-            transform=""
-          />
-        </svg>
-      </div>
-    </div>
-    <div
-      className="odc-pipeline-vis-graph__stage"
-    >
       <ul
         className="odc-pipeline-vis-graph__stage-column"
       >
@@ -119,33 +92,6 @@ exports[`PipelineVisualizationGraph should match the previous pipelineRun snapsh
   <div
     className="odc-pipeline-vis-graph__stages"
   >
-    <div
-      className="odc-pipeline-vis-graph__stage"
-    >
-      <div
-        className="odc-pipeline-vis-task is-input-node"
-      >
-        <svg
-          aria-hidden={true}
-          aria-labelledby={null}
-          fill="currentColor"
-          height="1em"
-          role="img"
-          style={
-            Object {
-              "verticalAlign": "-0.125em",
-            }
-          }
-          viewBox="0 0 512 512"
-          width="1em"
-        >
-          <path
-            d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
-            transform=""
-          />
-        </svg>
-      </div>
-    </div>
     <div
       className="odc-pipeline-vis-graph__stage"
     >
