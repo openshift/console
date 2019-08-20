@@ -664,26 +664,6 @@ spec:
   - type: ImageChange
     imageChange: {}
   - type: ConfigChange
-`).setIn([referenceForModel(k8sModels.BuildConfigModel), 'pipeline-build'], `
-apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  labels:
-    name: pipeline-build
-  name: pipeline-build
-  namespace: default
-spec:
-  strategy:
-    jenkinsPipelineStrategy:
-      jenkinsfile: |-
-        node('nodejs') {
-          stage('build') {
-            sh 'npm --version'
-          }
-        }
-    type: JenkinsPipeline
-  triggers:
-  - type: ConfigChange
 `).setIn([referenceForModel(k8sModels.ClusterServiceBrokerModel), 'default'], `
 apiVersion: servicecatalog.k8s.io/v1beta1
 kind: ClusterServiceBroker
