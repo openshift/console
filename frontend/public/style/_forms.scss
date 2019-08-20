@@ -12,6 +12,20 @@
   white-space: nowrap;
 }
 
+.co-add-remove-form__entry {
+  position: relative;
+}
+
+.co-add-remove-form__entry + .co-add-remove-form__entry {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.co-add-remove-form__link--remove-entry {
+  display: flex;
+  flex-flow: row-reverse;
+}
+
 .co-required:after {
   color: $color-pf-red-200;
   content: '*';

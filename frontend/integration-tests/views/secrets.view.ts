@@ -36,9 +36,9 @@ export const createGenericSecretLink = $('#generic-link');
 
 export const addSecretEntryLink = $('.co-create-secret-form__link--add-entry');
 export const removeSecretEntryLink = $$(
-  '.co-create-secret-form__link--remove-entry .pf-m-link',
+  '.co-add-remove-form__link--remove-entry .pf-m-link',
 ).first();
-export const imageSecretForm = $$('.co-create-image-secret__form');
+export const imageSecretForm = $$('[data-test-id="create-image-secret-form"]');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
 const revealValuesButton = element(by.partialButtonText('Reveal Values'));

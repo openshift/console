@@ -437,7 +437,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
 
   render() {
     return (
-      <div className="co-create-image-secret__form">
+      <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
         <div className="form-group">
           <label className="control-label co-required" htmlFor={`${this.props.id}-address`}>
             Registry Server Address
@@ -628,9 +628,9 @@ class CreateConfigSubform extends React.Component<
   render() {
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
       return (
-        <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
+        <div className="co-add-remove-form__entry" key={entryData.uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
-            <div className="co-create-secret-form__link--remove-entry">
+            <div className="co-add-remove-form__link--remove-entry">
               <Button onClick={() => this.removeEntry(index)} type="button" variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
                 Remove Credentials
@@ -1057,9 +1057,9 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
   render() {
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
       return (
-        <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
+        <div className="co-add-remove-form__entry" key={entryData.uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
-            <div className="co-create-secret-form__link--remove-entry">
+            <div className="co-add-remove-form__link--remove-entry">
               <Button type="button" onClick={() => this.removeEntry(index)} variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
                 Remove Key/Value
