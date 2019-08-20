@@ -386,19 +386,37 @@ spec:
         - echo
       args:
         - "hello world"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: hello-world-2
-spec:
-  steps:
-    - name: echo
+    - name: echo2
       image: ubuntu
       command:
         - echo
       args:
-        - "hello world"
+        - "step no 2"
+    - name: echo3
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "step no 3"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: hello-world-truncate-more-than-20-char
+spec:
+  steps:
+    - name: echo1
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "My name is Tom Cruise"
+    - name: echo2
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "My name is Scarlett Johansson"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task

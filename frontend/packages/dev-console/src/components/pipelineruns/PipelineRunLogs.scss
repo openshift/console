@@ -1,0 +1,23 @@
+.odc-pipeline-run-logs {
+  &__nav {
+    list-style-type: 'none';
+  }
+  &__name__span {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+  &__log {
+    margin-top: var(--pf-global--spacer--lg);
+    background: #030303; // pod log background color
+    color: var(--pf-global--BackgroundColor--100);
+    padding: var(--pf-global--spacer--md);
+  }
+  &__task__list {
+    margin-top: var(--pf-global--spacer--lg);
+  }
+  &__container {
+    padding-left: var(--pf-global--spacer--sm);
+  }
+  &__container .co-m-pane__body {
+    padding: 0px;
+  }
+}

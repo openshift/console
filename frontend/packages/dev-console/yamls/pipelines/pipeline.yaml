@@ -13,9 +13,9 @@ spec:
     - name: hello-world-1
       taskRef:
         name: hello-world-1
-    - name: hello-world-2
+    - name: hello-world-truncate-more-than-20-char
       taskRef:
-        name: hello-world-2
+        name: hello-world-truncate-more-than-20-char
   serviceAccount: pipeline
 ---
 apiVersion: tekton.dev/v1alpha1
@@ -27,9 +27,9 @@ spec:
     - name: hello-world-1
       taskRef:
         name: hello-world-1
-    - name: hello-world-2
+    - name: hello-world-truncate-more-than-20-char
       taskRef:
-        name: hello-world-2
+        name: hello-world-truncate-more-than-20-char
     - name: hello-world-3
       taskRef:
         name: hello-world-3
@@ -136,4 +136,129 @@ spec:
       outputs:
       - name: image
         resource: mapit-image
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: mapit-git
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/siamaksade/mapit-spring.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: mapit-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: image-registry.openshift-image-registry.svc:5000/pipeline-demo/mapit-spring:latest
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: noop-task
+spec:
+  steps:
+  - name: wait
+    image: busybox
+    command:
+    - sleep
+    args:
+    - "5"
+  - name: work
+    image: busybox
+    command:
+    - /bin/sh
+    args:
+    - '-c'
+    - echo 'working hard...'
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: complex-pipeline
+spec:
+  resources:
+  - name: app-git
+    type: git
+  - name: app-image
+    type: image
+  params:
+  - name: APP_NAME
+    default: myapp
+  tasks:
+  - name: build-app
+    taskRef:
+      name: noop-task
+  - name: analyse-code
+    taskRef:
+      name: noop-task
+    runAfter:
+      - build-app
+  - name: style-checks
+    taskRef:
+      name: noop-task
+    runAfter:
+      - build-app
+  - name: find-bugs
+    taskRef:
+      name: noop-task
+    runAfter:
+      - build-app
+  - name: build-image
+    taskRef:
+      name: noop-task
+    runAfter:
+      - find-bugs
+      - style-checks
+      - analyse-code
+  - name: deploy-image
+    taskRef:
+      name: noop-task
+    runAfter:
+      - build-image
+  - name: test-suite-1
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: test-suite-2
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: test-suite-3
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: test-suite-4
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: test-suite-5
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: test-suite-6
+    taskRef:
+      name: noop-task
+    runAfter:
+      - deploy-image
+  - name: verify
+    taskRef:
+      name: noop-task
+    runAfter:
+      - test-suite-1
+      - test-suite-2
+      - test-suite-3
+      - test-suite-4
+      - test-suite-5
+      - test-suite-6
 ---
