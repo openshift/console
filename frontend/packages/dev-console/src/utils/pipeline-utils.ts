@@ -1,6 +1,12 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  LOG_SOURCE_RESTARTING,
+  LOG_SOURCE_WAITING,
+  LOG_SOURCE_RUNNING,
+  LOG_SOURCE_TERMINATED,
+} from '@console/internal/components/utils';
 
 interface Resources {
   inputs?: Resource[];
@@ -11,6 +17,14 @@ interface Resource {
   name: string;
   resource?: string;
   from?: string[];
+}
+
+export interface ContainerStatus {
+  lastState?: string;
+  state?: {
+    waiting: Record<string, any>;
+    terminated: Record<string, any>;
+  };
 }
 
 export interface PipelineVisualizationTaskItem {
@@ -196,4 +210,21 @@ export const getPipelineTasks = (
     }
   });
   return out;
+};
+
+export const containerToLogSourceStatus = (container: ContainerStatus): string => {
+  if (!container) {
+    return LOG_SOURCE_WAITING;
+  }
+  const { state, lastState } = container;
+  if (state.waiting && !_.isEmpty(lastState)) {
+    return LOG_SOURCE_RESTARTING;
+  }
+  if (state.waiting) {
+    return LOG_SOURCE_WAITING;
+  }
+  if (state.terminated) {
+    return LOG_SOURCE_TERMINATED;
+  }
+  return LOG_SOURCE_RUNNING;
 };
