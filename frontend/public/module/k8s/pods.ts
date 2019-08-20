@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { ContainerSpec, PodKind, Volume, VolumeMount } from './';
+import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './';
 
 const getRestartPolicy = (pod: PodKind) => _.find({
   Always: {
@@ -171,8 +171,8 @@ export const getVolumeMountsByPermissions = (pod: PodKind) => {
   return _.values(m);
 };
 
-// This logic is replicated from k8s (at this writing, Kubernetes 1.12)
-// (See https://github.com/kubernetes/kubernetes/blob/v1.12.0-alpha.0/pkg/printers/internalversion/printers.go#L527-L629 )
+// This logic is replicated from k8s (at this writing, Kubernetes 1.15)
+// (See https://github.com/kubernetes/kubernetes/blob/release-1.15/pkg/printers/internalversion/printers.go)
 export const podPhase = (pod: PodKind): PodPhase => {
   if (!pod || !pod.status) {
     return '';
@@ -189,33 +189,47 @@ export const podPhase = (pod: PodKind): PodPhase => {
   let initializing = false;
   let phase = pod.status.phase || pod.status.reason;
 
-  _.each(pod.status.initContainerStatuses, (container) => {
+  _.each(pod.status.initContainerStatuses, (container: ContainerStatus, i: number) => {
     const {terminated, waiting} = container.state;
     if (terminated && terminated.exitCode === 0) {
-      return;
+      return true;
     }
+
+    initializing = true;
     if (terminated && terminated.reason) {
-      phase = `Init${terminated.reason}`;
+      phase = `Init:${terminated.reason}`;
+    } else if (terminated && !terminated.reason) {
+      phase = terminated.signal ? `Init:Signal:${terminated.signal}` : `Init:ExitCode:${terminated.exitCode}`;
     } else if (waiting && waiting.reason && waiting.reason !== 'PodInitializing') {
-      phase = `Init${waiting.reason}`;
+      phase = `Init:${waiting.reason}`;
+    } else {
+      phase = `Init:${i}/${pod.status.initContainerStatuses.length}`;
     }
-    initializing=true;
+    return false;
   });
 
   if (!initializing) {
-    _.each(pod.status.containerStatuses, (container) => {
-      const {terminated, waiting} = container.state;
+    let hasRunning = false;
+    _.each(pod.status.containerStatuses, (container: ContainerStatus) => {
+      const {running, terminated, waiting} = container.state;
       if (terminated && terminated.reason) {
         phase = terminated.reason;
       } else if (waiting && waiting.reason) {
         phase = waiting.reason;
+      } else if (waiting && !waiting.reason) {
+        phase = terminated.signal ? `Signal:${terminated.signal}` : `ExitCode:${terminated.exitCode}`;
+      } else if (running && container.ready) {
+        hasRunning = true;
       }
-      // kubectl has code here that populates the field if
-      // terminated && !reason, but at this writing there appears to
-      // be no codepath that will produce that sort of output inside
-      // of the kubelet.
     });
+
+    // Change pod status back to "Running" if there is at least one container
+    // still reporting as "Running" status.
+    if (phase === 'Completed' && hasRunning) {
+      phase = 'Running';
+    }
   }
+
   return phase;
 };
 

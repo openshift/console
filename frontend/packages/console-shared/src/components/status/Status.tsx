@@ -75,7 +75,7 @@ const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly }) =>
       return <StatusIconAndText {...statusProps} icon={<UnknownIcon />} />;
 
     default:
-      return <>{DASH}</>;
+      return <>{status || DASH}</>;
   }
 };
 
