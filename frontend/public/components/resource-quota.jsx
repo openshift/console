@@ -272,7 +272,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
     return <LoadingBox />;
   }
   if (flags[FLAGS.OPENSHIFT]) {
-    resources.push({kind: 'ClusterResourceQuota', namespaced: false, optional: true});
+    resources.push({kind: referenceForModel(ClusterResourceQuotaModel), namespaced: false, optional: true});
     rowFilters = [{
       type: 'role-kind',
       selected: ['cluster', 'namespace'],

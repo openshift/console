@@ -626,6 +626,7 @@ export const ClusterResourceQuotaModel: K8sKind = {
   kind: 'ClusterResourceQuota',
   id: 'clusterresourcequota',
   labelPlural: 'Cluster Resource Quotas',
+  crd: true,
 };
 
 export const NetworkPolicyModel: K8sKind = {
