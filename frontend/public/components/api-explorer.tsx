@@ -468,7 +468,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
           aria-label="API Resources"
           data={sortedData}
           loaded
-          virtualize
+          virtualize={false}
         />
       </div>
     </>
