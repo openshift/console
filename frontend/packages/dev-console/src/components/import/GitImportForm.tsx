@@ -11,7 +11,6 @@ import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
 import RouteCheckbox from './route/RouteCheckbox';
 import DockerSection from './git/DockerSection';
-import FormSectionDivider from './section/FormSectionDivider';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -25,12 +24,10 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
 }) => (
   <Form onSubmit={handleSubmit}>
     <GitSection />
-    <DockerSection buildStrategy={values.build.strategy} />
-    <FormSectionDivider />
-    <AppSection project={values.project} />
-    <FormSectionDivider />
-    <ServerlessSection />
     <BuilderSection image={values.image} builderImages={builderImages} />
+    <DockerSection buildStrategy={values.build.strategy} />
+    <AppSection project={values.project} />
+    <ServerlessSection />
     <RouteCheckbox />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
