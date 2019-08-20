@@ -153,11 +153,11 @@ export const StorageClassDropdown = props => {
 };
 
 const StorageClassDropdownEntry = props => {
-  const storageClassProperties = [props.default ? ' (default)' : '', props.description, props.accessMode, props.provisioner, props.type, props.zone];
+  const storageClassProperties = [props.description, props.accessMode, props.provisioner, props.type, props.zone];
   const storageClassDescriptionLine = _.compact(storageClassProperties).join(' | ');
   return <div className="form__storage-class-dropdown__flex-column">
     <div className="form__storage-class-dropdown__flex-row">
-      <span className="form__storage-class-dropdown__icon-column"><ResourceIcon kind={props.kindLabel} /></span> <span>{props.name}</span>
+      <span className="form__storage-class-dropdown__icon-column"><ResourceIcon kind={props.kindLabel} /></span> <span>{props.name}{props.default && ' (default)'}</span>
     </div>
     <div className="form__storage-class-dropdown__flex-row">
       <div className="form__storage-class-dropdown__icon-column"> &nbsp;</div><div className="text-muted"> {storageClassDescriptionLine}</div>

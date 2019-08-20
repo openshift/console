@@ -69,8 +69,7 @@
 }
 
 .form__storage-class-dropdown__icon-column {
-  flex-basis: 30px;
-  max-width: 30px;
+  min-width: 30px;
 }
 
 .has-feedback .pf-c-form-control {
