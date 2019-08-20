@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardFooter, Grid, GridItem } from '@patternfly/react-core';
+import { CatalogTile } from 'patternfly-react-extensions';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { history, PageHeading } from '@console/internal/components/utils';
 import { formatNamespacedRouteForResource } from '@console/internal/actions/ui';
-import { PageHeading } from '@console/internal/components/utils';
+import * as importGitIcon from '../images/from-git.svg';
+import * as yamlIcon from '../images/yaml.svg';
+import * as dockerfileIcon from '../images/dockerfile.svg';
 import './EmptyState.scss';
 
 interface StateProps {
@@ -16,95 +18,70 @@ export interface EmptySProps {
 
 type Props = EmptySProps & StateProps;
 
-const ODCEmptyState: React.FunctionComponent<Props> = ({ title, activeNamespace }) => (
-  <React.Fragment>
-    <div className="odc-empty-state__title">
-      <PageHeading title={title} />
-    </div>
-    <div className="odc-empty-state__content">
-      <Grid gutter="md">
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Import from Git</CardHeader>
-            <CardBody>Import code from your git repository to be built and deployed </CardBody>
-            <CardFooter>
-              <Link
-                data-test-id="import-from-git"
-                className="pf-c-button pf-m-secondary"
-                to="/import?importType=git"
-              >
-                Import from Git
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Deploy Image</CardHeader>
-            <CardBody>Deploy an existing image from an image registry or image stream tag</CardBody>
-            <CardFooter>
-              <Link
-                className="pf-c-button pf-m-secondary"
-                to={`/deploy-image?preselected-ns=${activeNamespace}`}
-              >
-                Deploy Image
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Browse Catalog</CardHeader>
-            <CardBody>Browse the catalog to discover, deploy and connect to services</CardBody>
-            <CardFooter>
-              <Link className="pf-c-button pf-m-secondary" to="/catalog">
-                Browse Catalog
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Import from Dockerfile</CardHeader>
-            <CardBody>Import your Dockerfile from your git repo to be built & deployed</CardBody>
-            <CardFooter>
-              <Link className="pf-c-button pf-m-secondary" to="/import?importType=docker">
-                Import from Dockerfile
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Import YAML</CardHeader>
-            <CardBody>Create or replace resources from their YAML or JSON definitions.</CardBody>
-            <CardFooter>
-              <Link
-                className="pf-c-button pf-m-secondary"
-                to={formatNamespacedRouteForResource('import', activeNamespace)}
-              >
-                Import YAML
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem sm={6} md={6} lg={4}>
-          <Card className="odc-empty-state__card">
-            <CardHeader>Add Database</CardHeader>
-            <CardBody>
-              Browse the catalog to discover database services to add to your application
-            </CardBody>
-            <CardFooter>
-              <Link className="pf-c-button pf-m-secondary" to="/catalog?category=databases">
-                Add Database
-              </Link>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </Grid>
-    </div>
-  </React.Fragment>
-);
+const navigateTo = (e: Event, url: string) => {
+  history.push(url);
+  e.preventDefault();
+};
+
+const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace }) => {
+  return (
+    <React.Fragment>
+      <div className="odc-empty-state__title">
+        <PageHeading title={title} />
+        <p className="co-catalog-page__description">
+          Select a way to create an application, component or service from one of the options.
+        </p>
+      </div>
+      <div className="odc-empty-state__content">
+        <CatalogTile
+          onClick={(e: Event) => navigateTo(e, '/import?importType=git')}
+          href="/import?importType=git"
+          title="From Git"
+          iconImg={importGitIcon}
+          description="Import code from your git repository to be built and deployed"
+          data-test-id="import-from-git"
+        />
+        <CatalogTile
+          onClick={(e: Event) => navigateTo(e, `/deploy-image?preselected-ns=${activeNamespace}`)}
+          href={`/deploy-image?preselected-ns=${activeNamespace}`}
+          title="Container Image"
+          iconClass="pficon-image"
+          description="Deploy an existing image from an image registry or image stream tag"
+        />
+        <CatalogTile
+          onClick={(e: Event) => navigateTo(e, '/catalog')}
+          href="/catalog"
+          title="From Catalog"
+          iconClass="pficon-catalog"
+          description="Browse the catalog to discover, deploy and connect to services"
+        />
+        <CatalogTile
+          onClick={(e: Event) => navigateTo(e, '/import?importType=docker')}
+          href="/import?importType=docker"
+          title="From Dockerfile"
+          iconImg={dockerfileIcon}
+          description="Import your Dockerfile from your git repo to be built & deployed"
+        />
+        <CatalogTile
+          onClick={(e: Event) =>
+            navigateTo(e, formatNamespacedRouteForResource('import', activeNamespace))
+          }
+          href={formatNamespacedRouteForResource('import', activeNamespace)}
+          title="YAML"
+          iconImg={yamlIcon}
+          description="Create or replace resources from their YAML or JSON definitions."
+        />
+        <CatalogTile
+          onClick={(e: Event) => navigateTo(e, '/catalog?category=databases')}
+          href="/catalog?category=databases"
+          title="Database"
+          iconClass="fas fa-database"
+          description="Browse the catalog to discover database services to add to your application"
+        />
+      </div>
+    </React.Fragment>
+  );
+};
 
 const mapStateToProps = (state): StateProps => {
   return {
