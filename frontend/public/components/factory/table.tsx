@@ -332,7 +332,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
       this._applySort = this._applySort.bind(this);
       this._onSort = this._onSort.bind(this);
-      this._handleResize = this._handleResize.bind(this);
+      this._handleResize = _.debounce(this._handleResize.bind(this), 100);
       this._bindBodyRef = this._bindBodyRef.bind(this);
       this._refreshGrid = this._refreshGrid.bind(this);
 
