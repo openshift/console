@@ -64,7 +64,7 @@ const subscriptionState = (state: SubscriptionState) => {
 const menuActions = [
   Kebab.factory.Edit,
   (kind, obj) => ({
-    label: 'Remove Subscription...',
+    label: 'Remove Subscription',
     callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
     accessReview: {
       group: kind.apiGroup,

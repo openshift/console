@@ -19,11 +19,11 @@ export const roleKind = role => role.metadata.namespace ? 'Role' : 'ClusterRole'
 const menuActions = [
   // This page is temporarily disabled until we update the safe resources list.
   // (kind, role) => ({
-  //   label: 'Add Rule...',
+  //   label: 'Add Rule',
   //   href: addHref(role.metadata.name, role.metadata.namespace),
   // }),
   (kind, role) => ({
-    label: 'Add Role Binding...',
+    label: 'Add Role Binding',
     href: `/k8s/cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
   }),
   Kebab.factory.Edit,
