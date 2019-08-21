@@ -1,4 +1,8 @@
+import * as _ from 'lodash';
 import * as React from 'react';
+/* eslint-disable-next-line camelcase */
+import { chart_color_blue_300 as chartColorBlue300 } from '@patternfly/react-tokens';
+import { VictoryScatter } from 'victory';
 import {
   Chart,
   ChartArea,
@@ -15,7 +19,7 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { DataPoint } from './';
+import { DataPoint, DomainPropType } from './';
 import { getRangeVectorStats } from './utils';
 import { GraphEmpty } from './graph-empty';
 
@@ -35,13 +39,35 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   query,
   theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, areaTheme),
   tickCount = DEFAULT_TICK_COUNT,
+  timespan,
   title,
   xAxis = true,
   yAxis = true,
 }) => {
   const [containerRef, width] = useRefWidth();
+  const [timestamp, setTimestamp] = React.useState(null);
+  React.useEffect(() => {
+    setTimestamp(Date.now());
+  }, [data])
+
   const getLabel = ({x, y}) => `${humanize(y).string} at ${formatDate(x)}`;
-  const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
+  const container = <ChartVoronoiContainer labels={getLabel} voronoiDimension="x" />;
+  const max = data.length ? _.maxBy(data, 'y') : {};
+
+  // Force x-domain to show entire timespan
+  // Force y-domain to be a reasonable range for a single data point or if all data values are 0
+  const domain: DomainPropType = timestamp && {
+    ...timespan && { x: [
+      timestamp - timespan,
+      timestamp,
+    ]},
+    ...(data.length === 1 || max.y === 0) && {
+      y: [
+        0,
+        max.y * 2 || 1, // If max data point has a value of 0, y-domain max is 1
+      ],
+    },
+  };
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {data.length ? (
@@ -57,7 +83,12 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tick => humanize(tick).string} />}
-            <ChartArea data={data} />
+            {
+              // Show a scatter plot if only one data point
+              data.length > 1
+                ? <ChartArea data={data} domain={domain} />
+                : <VictoryScatter data={data} domain={domain} style={{data:{fill: chartColorBlue300.value }}} />
+            }
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -84,23 +115,31 @@ export const Area: React.FC<AreaProps> = ({
     timespan,
   });
   const data = getRangeVectorStats(response);
-  return <AreaChart data={data} loading={loading} query={query} {...rest} />;
+
+  return <AreaChart
+    data={data}
+    loading={loading}
+    query={query}
+    timespan={timespan}
+    {...rest}
+  />;
 };
 
 type AreaChartProps = {
   className?: string;
+  data?: DataPoint[];
   formatDate?: (date: Date) => string;
-  humanize?: Humanize;
   height?: number,
+  humanize?: Humanize;
   loading?: boolean;
+  padding?: object;
   query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
+  timespan?: number;
   title?: string;
-  data?: DataPoint[];
   xAxis?: boolean;
   yAxis?: boolean;
-  padding?: object;
 }
 
 type AreaProps = AreaChartProps & {

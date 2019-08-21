@@ -41,3 +41,8 @@ export type DomainPadding = number | {
   x?: number | [number, number];
   y?: number | [number, number];
 }
+
+export type DomainPropType = {
+  x: [number, number];
+  y?: [number, number];
+};
