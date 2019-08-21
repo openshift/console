@@ -51,7 +51,7 @@ import {
 } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
-import { chartTheme, Labels, QueryObj, QueryBrowser } from './query-browser';
+import { colors, Error, Labels, QueryObj, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
   'avg',
@@ -241,27 +241,41 @@ const ExpandButton = ({isExpanded, onClick}) => {
   </button>;
 };
 
-const SeriesButton_: React.FC<SeriesButtonProps> = ({colorIndex, disabledSeries, labels, patchQuery}) => {
+const seriesButtonStateToProps = ({UI}: RootState, {index, labels}) => {
+  const disabledSeries = UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
   const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
-  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
-  const colors = chartTheme.line.colorScale;
+  if (!isDisabled) {
+    const series = UI.getIn(['queryBrowser', 'queries', index, 'series']);
+    if (!_.isEmpty(series)) {
+      const colorOffset = UI.getIn(['queryBrowser', 'queries'])
+        .take(index)
+        .filter(q => q.get('isEnabled'))
+        .reduce((sum, q) => sum + _.size(q.get('series')), 0);
+      const seriesIndex = _.findIndex(series, s => _.isEqual(s, labels));
+      const colorIndex = (colorOffset + seriesIndex) % colors.length;
+      return {colorIndex, isDisabled};
+    }
+  }
+  return {colorIndex: null, isDisabled};
+};
 
-  const toggleSeries = () => patchQuery({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)});
+const SeriesButton_: React.FC<SeriesButtonProps> = ({colorIndex, isDisabled, toggleSeries}) => {
+  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
 
   return <div className="query-browser__series-btn-wrap">
     <button
       aria-label={title}
       className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
       onClick={toggleSeries}
-      style={isDisabled ? undefined : {backgroundColor: colors[colorIndex % colors.length]}}
+      style={colorIndex === null ? undefined : {backgroundColor: colors[colorIndex]}}
       title={title}
       type="button"
     ></button>
   </div>;
 };
 const SeriesButton = connect(
-  ({UI}: RootState, {index}) => ({disabledSeries: UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])}),
-  queryDispatchToProps
+  seriesButtonStateToProps,
+  (dispatch, {index, labels}) => ({toggleSeries: () => dispatch(UIActions.queryBrowserToggleSeries(index, labels))})
 )(SeriesButton_);
 
 const queryInputStateToProps = ({UI}: RootState, {index}) => ({
@@ -382,13 +396,13 @@ const QueryInput = connect(queryInputStateToProps, queryDispatchToProps)(
 
 const QueryKebab_: React.FC<QueryKebabProps> = ({
   deleteQuery,
-  disabledSeries,
+  isDisabledSeriesEmpty,
   isEnabled,
   patchQuery,
   series,
   toggleIsEnabled,
 }) => {
-  const toggleAllSeries = () => patchQuery({disabledSeries: _.isEmpty(disabledSeries) ? series : []});
+  const toggleAllSeries = () => patchQuery({disabledSeries: isDisabledSeriesEmpty ? series : []});
 
   const doDelete = () => {
     deleteQuery();
@@ -397,34 +411,30 @@ const QueryKebab_: React.FC<QueryKebabProps> = ({
 
   return <Kebab options={[
     {label: `${isEnabled ? 'Disable' : 'Enable'} query`, callback: toggleIsEnabled},
-    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
+    {label: `${isDisabledSeriesEmpty ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
     {label: 'Delete query', callback: doDelete},
   ]} />;
 };
 const QueryKebab = connect(
   ({UI}: RootState, {index}) => ({
-    disabledSeries: UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']),
+    isDisabledSeriesEmpty: _.isEmpty(UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
     isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
     series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
   }),
   queryDispatchToProps
 )(QueryKebab_);
 
-const queryTableStateToProps = ({UI}: RootState, {index}) => {
-  const enabledQueries = UI.getIn(['queryBrowser', 'queries']).take(index).filter(q => q.get('isEnabled'));
-  return {
-    colorOffset: _.sumBy(enabledQueries.toJS(), 'series.length'),
-    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-    isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
-    query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
-    series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
-  };
-};
+const queryTableStateToProps = ({UI}: RootState, {index}) => ({
+  isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
+  series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
+});
 
-const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, isExpanded, query, series}) => {
+const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, query, series}) => {
   const [data, setData] = React.useState();
-  const [isError, setIsError] = React.useState(false);
-  const [sortBy, setSortBy] = React.useState<ISortBy>({index: 0, direction: 'asc'});
+  const [error, setError] = React.useState();
+  const [sortBy, setSortBy] = React.useState<ISortBy>({index: 1, direction: 'asc'});
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
@@ -432,26 +442,53 @@ const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, 
     if (query) {
       safeFetch(getPrometheusURL({endpoint: PrometheusEndpoint.QUERY, query}))
         .then(response => {
-          setData(_.get(response, 'data.result'));
-          setIsError(false);
+          setData(_.get(response, 'data'));
+          setError(undefined);
         })
-        .catch(() => setIsError(true));
+        .catch(err => {
+          if (err.name !== 'AbortError') {
+            setData(undefined);
+            setError(err);
+          }
+        });
     }
   };
 
   usePoll(tick, 15 * 1000, query);
 
+  React.useEffect(() => {
+    setData(undefined);
+    setError(undefined);
+  }, [query]);
+
   if (!isEnabled || !isExpanded || !query) {
     return null;
   }
 
-  if (!series) {
+  if (error) {
+    return <div className="query-browser__table-message">
+      <Error error={error} title="Error loading values" />
+    </div>;
+  }
+
+  if (!data) {
     return <div className="query-browser__table-message">
       <LoadingInline />
     </div>;
   }
 
-  if (series.length === 0) {
+  const {result, resultType} = data;
+
+  // Add any data series from `series` (those displayed in the graph) that are not already in `result`. This happens
+  // for filtering PromQL queries that exclude a series currently, but did not exclude that same series at some point
+  // during that graph's range.
+  _.each(series, labels => {
+    if (_.every(result, r => !_.isEqual(labels, r.metric))) {
+      result.push({metric: labels});
+    }
+  });
+
+  if (!result || result.length === 0) {
     return <div className="query-browser__table-message">
       <YellowExclamationTriangleIcon /> No datapoints found.
     </div>;
@@ -462,31 +499,32 @@ const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, 
     transforms: [sortable as (v: unknown) => IDecorator],
   };
 
-  const allLabelKeys = _.uniq(_.flatMap(series, Object.keys)).sort();
+  const allLabelKeys = _.uniq(_.flatMap(result, ({metric}) => Object.keys(metric))).sort();
+
   const columns = [
     '',
     ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
     {title: 'Value', ...cellProps},
   ];
 
-  const getValue = labels => {
-    if (isError) {
-      return <React.Fragment>
-        <span className="text-muted"><RedExclamationCircleIcon key="icon" /> Error loading value</span>
-      </React.Fragment>;
-    }
-    const dataSeries = _.find(data, ({metric}) => _.isEqual(metric, labels));
-    return _.get(dataSeries, 'value[1]', <React.Fragment><span className="text-muted">None</span></React.Fragment>);
-  };
+  let rowMapper;
+  if (resultType === 'matrix') {
+    rowMapper = ({metric, values}) => [
+      '',
+      ..._.map(allLabelKeys, k => metric[k]),
+      {title: <React.Fragment>{_.map(values, ([time, v]) => <div key={time}>{v}&nbsp;@{time}</div>)}</React.Fragment>},
+    ];
+  } else {
+    rowMapper = ({metric, value}) => [
+      // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
+      // determine when it should update
+      {title: <SeriesButton index={index} key={JSON.stringify([index, metric])} labels={metric} />},
+      ..._.map(allLabelKeys, k => metric[k]),
+      _.get(value, '[1]', {title: <span className="text-muted">None</span>}),
+    ];
+  }
 
-  const unsortedRows = _.map(series, (labels, i) => [
-    <React.Fragment key="series-button">
-      <SeriesButton colorIndex={colorOffset + i} index={index} labels={labels} />
-    </React.Fragment>,
-    ..._.map(allLabelKeys, k => labels[k]),
-    getValue(labels),
-  ]);
-
+  const unsortedRows = _.map(result, rowMapper);
   const rows = _.orderBy(unsortedRows, [sortBy.index], [sortBy.direction]) as string[][];
 
   // Set the result table's break point based on the number of columns
@@ -506,6 +544,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, 
   const onSort = (e, i, direction) => setSortBy({index: i, direction});
 
   return <Table
+    aria-label="query results table"
     cells={columns}
     gridBreakPoint={TableGridBreakpoint[breakPoint]}
     onSort={onSort}
@@ -514,8 +553,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({colorOffset, index, isEnabled, 
     variant={TableVariant.compact}
   >
     <TableHeader />
-    {/* Set key to something unique to force TableBody to always re-render */}
-    <TableBody key={_.uniqueId()} />
+    <TableBody />
   </Table>;
 };
 const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
@@ -695,7 +733,7 @@ type QueryInputProps = {
 
 type QueryKebabProps = {
   deleteQuery: () => never;
-  disabledSeries?: Labels[];
+  isDisabledSeriesEmpty: boolean;
   isEnabled: boolean;
   patchQuery: (patch: QueryObj) => void;
   series: Labels[];
@@ -711,7 +749,6 @@ type QueryProps = {
 };
 
 type QueryTableProps = {
-  colorOffset: number;
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;
@@ -721,7 +758,6 @@ type QueryTableProps = {
 
 type SeriesButtonProps = {
   colorIndex: number;
-  disabledSeries?: Labels[];
-  labels: Labels;
-  patchQuery: (patch: QueryObj) => void;
+  isDisabled: boolean;
+  toggleSeries: () => never;
 };

@@ -195,6 +195,12 @@ export default (state: UIState, action: UIAction): UIState => {
         query.merge({isEnabled, isExpanded: isEnabled, query: isEnabled ? query.get('text') : ''})
       );
     }
+    case ActionType.QueryBrowserToggleSeries:
+      return state.updateIn(
+        ['queryBrowser', 'queries', action.payload.index, 'disabledSeries'],
+        v => _.xorWith(v, [action.payload.labels], _.isEqual)
+      );
+
     case ActionType.SelectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.payload.uid);
 
