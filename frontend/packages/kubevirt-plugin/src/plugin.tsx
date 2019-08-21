@@ -150,7 +150,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Health/URL',
     properties: {
       title: 'Virtualization',
-      url: `/apis/subresources.${models.VirtualMachineModel.apiGroup}/${
+      url: `apis/subresources.${models.VirtualMachineModel.apiGroup}/${
         models.VirtualMachineModel.apiVersion
       }/healthz`,
       healthHandler: getKubevirtHealthState,
