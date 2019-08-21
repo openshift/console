@@ -33,6 +33,7 @@ const infrastructureResource: FirehoseResource = {
 
 const cephClusterResource: FirehoseResource = {
   kind: referenceForModel(CephClusterModel),
+  namespaced: false,
   isList: true,
   prop: 'ceph',
 };
