@@ -65,6 +65,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
         kind: ImageStreamModel.kind,
         prop: 'imageStreams',
         isList: true,
+        namespace: 'openshift',
       },
     ];
   }
