@@ -13,7 +13,6 @@ import {
 } from '@console/internal/models';
 import { ResourceProps } from '@console/shared';
 import { TopologyDataObject } from './topology-types';
-import './TopologySideBar.scss';
 
 export type TopologySideBarProps = {
   item: TopologyDataObject;
@@ -91,7 +90,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
 
   return (
     <PFTopologySideBar show={show}>
-      <div className="odc-topology-sidebar__dismiss clearfix">
+      <div className="co-sidebar-dismiss clearfix">
         <CloseButton onClick={onClose} data-test-id="sidebar-close-button" />
       </div>
       {itemtoShowOnSideBar ? (
