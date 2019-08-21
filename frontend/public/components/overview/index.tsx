@@ -390,7 +390,7 @@ const mainContentStateToProps = ({UI}): OverviewMainContentPropsFromState => {
 };
 
 const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispatch => ({
-  updateOverviewLabels: (labels: string[]) => dispatch(UIActions.updateOverviewLabels(labels)),
+  updateLabels: (labels: string[]) => dispatch(UIActions.updateOverviewLabels(labels)),
   updateMetrics: (metrics: OverviewMetrics) => dispatch(UIActions.updateOverviewMetrics(metrics)),
   updateResources: (items: OverviewItem[]) => dispatch(UIActions.updateOverviewResources(items)),
   updateSelectedGroup: (group: OverviewSpecialGroup) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
@@ -517,8 +517,13 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     });
   }
 
-  getOverviewLabels(items: OverviewItem[]): string[] {
-    return _.flatMap(items, item => _.keys(_.get(item, 'obj.metadata.labels'))).sort();
+  getLabels(items: OverviewItem[]): string[] {
+    const labelSet = new Set<string>();
+    _.each(items, (i: OverviewItem) => {
+      const itemLabels = _.get(i, 'obj.metadata.labels') as K8sResourceKind['metadata']['labels'];
+      _.each(itemLabels, (v: string, k: string) => labelSet.add(k));
+    });
+    return [...labelSet].sort();
   }
 
   getPodsForResource(resource: K8sResourceKind): PodKind[] {
@@ -849,7 +854,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   createOverviewData(): OverviewMainContentState {
-    const {loaded, mock, selectedGroup, updateOverviewLabels, updateSelectedGroup, updateResources} = this.props;
+    const {loaded, mock, selectedGroup, updateLabels, updateSelectedGroup, updateResources} = this.props;
 
     if (!loaded) {
       return;
@@ -870,12 +875,12 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     updateResources(items);
 
     const filteredItems = this.filterItems(items);
-    const labels = this.getOverviewLabels(filteredItems);
+    const labels = this.getLabels(filteredItems);
     if (selectedGroup !== OverviewSpecialGroup.GROUP_BY_APPLICATION && selectedGroup !== OverviewSpecialGroup.GROUP_BY_RESOURCE && !_.includes(labels, selectedGroup)) {
       updateSelectedGroup(OverviewSpecialGroup.GROUP_BY_APPLICATION);
     }
 
-    updateOverviewLabels(labels);
+    updateLabels(labels);
     const groupedItems = groupItems(filteredItems, selectedGroup);
     return {
       filteredItems,
@@ -1153,7 +1158,7 @@ type OverviewMainContentPropsFromState = {
 };
 
 type OverviewMainContentPropsFromDispatch = {
-  updateOverviewLabels: (labels: string[]) => void;
+  updateLabels: (labels: string[]) => void;
   updateMetrics: (metrics: OverviewMetrics) => void;
   updateResources: (items: OverviewItem[]) => void;
   updateSelectedGroup: (group: OverviewSpecialGroup) => void;
