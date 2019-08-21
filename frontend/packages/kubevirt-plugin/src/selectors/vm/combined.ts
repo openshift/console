@@ -1,12 +1,14 @@
 import * as _ from 'lodash';
+import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { buildOwnerReference, compareOwnerReference } from '../../utils';
+import { VMIKind, VMKind } from '../../types/vm';
+import { VMMultiStatus } from '../../types';
 import {
   VM_STATUS_IMPORTING,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-} from 'kubevirt-web-ui-components';
-import { getName, createBasicLookup } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { VMIKind, VMKind } from '../../types/vm';
-import { VMMultiStatus } from '../../types';
+} from '../../statuses/vm/constants';
 import { NetworkType, POD_NETWORK } from '../../constants/vm';
 import { getUsedNetworks, isVMRunning } from './selectors';
 import { Network } from './types';
@@ -41,4 +43,24 @@ export const getNetworkChoices = (vm: VMKind, nads: K8sResourceKind[]): Network[
     });
   }
   return networkChoices;
+};
+
+export const findConversionPod = (vm: VMKind, pods: PodKind[]) => {
+  if (!pods) {
+    return null;
+  }
+
+  const vmOwnerReference = buildOwnerReference(vm);
+
+  return pods.find((pod) => {
+    const podOwnerReferences = getOwnerReferences(pod);
+    return (
+      getNamespace(pod) === getNamespace(vm) &&
+      getName(pod).startsWith('kubevirt-v2v-conversion') &&
+      podOwnerReferences &&
+      podOwnerReferences.some((podOwnerReference) =>
+        compareOwnerReference(podOwnerReference, vmOwnerReference),
+      )
+    );
+  });
 };

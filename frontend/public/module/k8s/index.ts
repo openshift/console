@@ -247,15 +247,22 @@ export type PodSpec = {
   serviceAccountName?: string;
   priorityClassName?: string;
   tolerations?: Toleration[];
+  nodeName?: string;
+  hostname?: string;
   [key: string]: any;
 };
 
 type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
 
+type ContainerStateValue = {
+  reason?: string;
+  [key: string]: any;
+};
+
 export type ContainerState = {
-  waiting?: any;
-  running?: any;
-  terminated?: any;
+  waiting?: ContainerStateValue;
+  running?: ContainerStateValue;
+  terminated?: ContainerStateValue;
 };
 
 export type ContainerStatus = {
@@ -269,9 +276,18 @@ export type ContainerStatus = {
   containerID?: string;
 };
 
+export type PodCondition = {
+  type?: string;
+  status?: string;
+  reason?: string;
+  message?: string;
+  lastTransitionTime?: string;
+  lastProbeTime?: string;
+}
+
 export type PodStatus = {
   phase: PodPhase;
-  conditions?: any[];
+  conditions?: PodCondition[];
   message?: string;
   reason?: string;
   startTime?: string;

@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import {
-  VmConsoles,
-  isWindows,
-  getResource,
-  findVmPod,
-  getVmStatus,
-} from 'kubevirt-web-ui-components';
+import { VmConsoles, isWindows, getResource } from 'kubevirt-web-ui-components';
 import { getName, getNamespace } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -23,8 +17,10 @@ import {
   getSerialConsoleConnectionDetails,
   getVncConnectionDetails,
 } from '../../selectors/vmi';
+import { findVMPod } from '../../selectors/pod/selectors';
 import { VMIKind, VMKind } from '../../types/vm';
 import { getLoadedData } from '../../utils';
+import { getVMStatus } from '../../statuses/vm/vm';
 import { menuActionStart } from './menu-actions';
 import { VMTabProps } from './types';
 
@@ -36,14 +32,14 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   const migrations = getLoadedData(props.migrations);
 
   const onStartVm = () => {
-    const vmStatus = getVmStatus(vm, pods, migrations);
+    const vmStatus = getVMStatus(vm, pods, migrations);
     menuActionStart(VirtualMachineModel, vm, { vmStatus }).callback();
   };
 
   let rdp;
   if (isWindows(vm)) {
     const rdpService = findRDPService(vmi, services);
-    const launcherPod = findVmPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
+    const launcherPod = findVMPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
     rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
   }
 

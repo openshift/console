@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { createBasicLookup } from '@console/shared';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
   BUS_VIRTIO,
   NetworkType,
@@ -84,3 +84,6 @@ export const getFlavorDescription = (vm) => {
   const resourceStr = cpuStr && memoryStr ? `${cpuStr}, ${memoryStr}` : `${cpuStr}${memoryStr}`;
   return resourceStr || undefined;
 };
+
+export const getVMStatusConditions = (vm: VMKind) =>
+  _.get(vm, 'status.conditions', []) as VMKind['status']['conditions'];

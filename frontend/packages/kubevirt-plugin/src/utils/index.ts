@@ -1,7 +1,18 @@
 import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { K8sKind, K8sResourceKind, OwnerReference } from '@console/internal/module/k8s';
+import {
+  getName,
+  getNamespace,
+  getAPIVersion,
+  getKind,
+  getUID,
+} from '@console/shared/src/selectors';
+import {
+  getAPIVersion as getOwnerReferenceAPIVersion,
+  getKind as getOwnerReferenceKind,
+  getName as getOwnerReferenceName,
+} from '../selectors/owner-reference/selectors';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;
@@ -40,3 +51,22 @@ export const getLoadError = (
 
   return null;
 };
+
+export const parseNumber = (value, defaultValue = null) =>
+  _.isFinite(value) ? Number(value) : defaultValue;
+
+export const buildOwnerReference = (
+  owner: K8sResourceKind,
+  blockOwnerDeletion = true,
+): OwnerReference => ({
+  apiVersion: getAPIVersion(owner),
+  kind: getKind(owner),
+  name: getName(owner),
+  uid: getUID(owner),
+  blockOwnerDeletion,
+});
+
+export const compareOwnerReference = (obj: OwnerReference, otherObj: OwnerReference) =>
+  getOwnerReferenceAPIVersion(obj) === getOwnerReferenceAPIVersion(otherObj) &&
+  getOwnerReferenceKind(obj) === getOwnerReferenceKind(otherObj) &&
+  getOwnerReferenceName(obj) === getOwnerReferenceName(otherObj);
