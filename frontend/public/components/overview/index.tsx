@@ -1054,7 +1054,7 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourc
       <CSSTransition
         appear={true} in timeout={225} classNames="overview__sidebar">
         <div className="overview__sidebar">
-          <div className="overview__sidebar-dismiss clearfix">
+          <div className="co-sidebar-dismiss clearfix">
             <CloseButton onClick={dismissDetails} />
           </div>
           <ResourceOverviewPage
