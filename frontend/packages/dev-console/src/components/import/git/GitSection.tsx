@@ -25,10 +25,20 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     setFieldValue('git.type', gitType);
     setFieldValue('git.showGitType', showGitType);
     gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+    gitRepoName &&
+      !values.application.name &&
+      setFieldValue('application.name', `${gitRepoName}-app`);
     setFieldTouched('git.url', true);
     setFieldTouched('git.type', showGitType);
     validateForm();
-  }, [setFieldTouched, setFieldValue, validateForm, values.git.url, values.name]);
+  }, [
+    setFieldTouched,
+    setFieldValue,
+    validateForm,
+    values.application.name,
+    values.git.url,
+    values.name,
+  ]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
     const url = sampleRepo;
@@ -36,11 +46,20 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     const dir = getSampleContextDir(tag);
     const name = values.name || values.image.selected;
     values.name !== name && setFieldValue('name', name);
+    !values.application.name && setFieldValue('application.name', `${name}-app`);
     setFieldValue('git.url', url);
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
     validateForm();
-  }, [sampleRepo, setFieldValue, tag, validateForm, values.image.selected, values.name]);
+  }, [
+    sampleRepo,
+    setFieldValue,
+    tag,
+    validateForm,
+    values.application.name,
+    values.image.selected,
+    values.name,
+  ]);
 
   return (
     <FormSection title="Git">
