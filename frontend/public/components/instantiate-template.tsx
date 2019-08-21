@@ -191,7 +191,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
         <TemplateInfo template={template} />
       </div>
       <div className="col-md-5 col-md-pull-7">
-        <form className="co-source-to-image-form" onSubmit={this.save}>
+        <form className="co-instantiate-template-form" onSubmit={this.save}>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="namespace">Namespace</label>
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
@@ -219,7 +219,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
               {description && <div className="help-block" id={helpID}>{description}</div>}
             </div>;
           })}
-          <ButtonBar className="co-source-to-image-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
+          <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary">Create</Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>Cancel</Button>

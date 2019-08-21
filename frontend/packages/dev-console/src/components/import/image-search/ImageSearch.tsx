@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
-import { getPorts } from '@console/internal/components/source-to-image';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes, Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { getPorts } from '../../../utils/imagestream-utils';
 import { InputSearchField } from '../../formik-fields';
 import { secretModalLauncher } from '../CreateSecretModal';
 
