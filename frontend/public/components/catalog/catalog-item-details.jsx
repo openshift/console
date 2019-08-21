@@ -7,7 +7,6 @@ import {CatalogItemHeader, PropertiesSidePanel, PropertyItem} from 'patternfly-r
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {ClusterServicePlanModel} from '../../models';
-import {SourceToImageResourceDetails} from '../source-to-image';
 import {k8sGet} from '../../module/k8s';
 import {Timestamp, ExternalLink} from '../utils';
 
@@ -91,7 +90,19 @@ export class CatalogTileDetails extends React.Component {
                       {planItems}
                     </ul>
                   </React.Fragment>}
-                  {kind === 'ImageStream' && <SourceToImageResourceDetails />}
+                  {kind === 'ImageStream' && <React.Fragment>
+                    <hr />
+                    <p>
+                      The following resources will be created:
+                    </p>
+                    <ul>
+                      <li>A <span className="co-catalog-item-details__kind-label">build config</span> to build source from a Git repository.</li>
+                      <li>An <span className="co-catalog-item-details__kind-label">image stream</span> to track built images.</li>
+                      <li>A <span className="co-catalog-item-details__kind-label">deployment config</span> to rollout new revisions when the image changes.</li>
+                      <li>A <span className="co-catalog-item-details__kind-label">service</span> to expose your workload inside the cluster.</li>
+                      <li>An optional <span className="co-catalog-item-details__kind-label">route</span> to expose your workload outside the cluster.</li>
+                    </ul>
+                  </React.Fragment>}
                 </div>
               </div>
             </div>
