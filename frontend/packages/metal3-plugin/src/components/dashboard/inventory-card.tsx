@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  DashboardItemProps,
+  withDashboardResources,
+} from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -24,7 +27,7 @@ const getResources = (namespace: string, machineName: string): FirehoseResource[
   },
 ];
 
-export const InventoryCard: React.FC<InventoryCardProps> = ({
+const InventoryCard: React.FC<InventoryCardProps> = ({
   obj,
   watchPrometheus,
   stopWatchPrometheusQuery,
@@ -81,6 +84,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
     </DashboardCard>
   );
 };
+
+export default withDashboardResources(InventoryCard);
 
 type InventoryCardProps = DashboardItemProps & {
   obj: K8sResourceKind;

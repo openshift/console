@@ -146,6 +146,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Foo system',
       url: 'fooUrl',
       healthHandler: getFooHealthState,
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -154,6 +155,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Bar system',
       query: 'barQuery',
       healthHandler: getBarHealthState,
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -190,6 +192,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'foo-tab',
       title: 'Foo',
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -199,6 +202,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import('./dashboards/foo-card' /* webpackChunkName: "demo-card" */).then((m) => m.FooCard),
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -206,6 +210,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: OverviewQuery.STORAGE_TOTAL,
       query: 'fooQuery',
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -213,6 +218,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: OverviewQuery.STORAGE_UTILIZATION,
       query: 'barQuery',
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -225,6 +231,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       model: RouteModel,
       mapper: getRouteStatusGroups,
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -232,6 +239,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'demo-inventory-group',
       icon: <DemoGroupIcon />,
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -240,6 +248,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Foo',
       query: 'barQuery',
       humanizeValue: humanizeBinaryBytesWithoutB,
+      required: 'TEST_MODEL_FLAG',
     },
   },
   {
@@ -254,6 +263,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       mutator: (data) =>
         data.map((datum) => ({ ...datum, x: (datum.x as string).replace('prometheus-', '') })),
+      required: 'TEST_MODEL_FLAG',
     },
   },
 ];

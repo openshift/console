@@ -107,6 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       model: BaremetalHostModel,
       mapper: getBMHStatusGroups,
+      required: METAL3_FLAG,
     },
   },
 ];

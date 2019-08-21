@@ -13,15 +13,17 @@ import { withDashboardResources, DashboardItemProps } from '../with-dashboard-re
 import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB } from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
 import { OverviewQuery, capacityQueries } from './queries';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
+import { getFlagsForExtensions } from '../utils';
 
 const getLastStats = (response, getStats: GetStats): React.ReactText => {
   const stats = getStats(response);
   return stats.length > 0 ? stats[stats.length - 1].y : null;
 };
 
-const getQueries = () => {
+const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().forEach(pluginQuery => {
+  plugins.registry.getDashboardsOverviewQueries().filter(e => flags[e.properties.required]).forEach(pluginQuery => {
     const queryKey = pluginQuery.properties.queryKey;
     if (!pluginQueries[queryKey]) {
       pluginQueries[queryKey] = pluginQuery.properties.query;
@@ -30,18 +32,21 @@ const getQueries = () => {
   return _.defaults(pluginQueries, capacityQueries);
 };
 
-export const CapacityCard_: React.FC<DashboardItemProps> = ({
+export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
+  flags = {},
 }) => {
   React.useEffect(() => {
-    const queries = getQueries();
+    const queries = getQueries(flags);
     Object.keys(queries).forEach(key => watchPrometheus(queries[key]));
     return () => Object.keys(queries).forEach(key => stopWatchPrometheusQuery(queries[key]));
-  }, [watchPrometheus, stopWatchPrometheusQuery]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags)]);
 
-  const queries = getQueries();
+  const queries = getQueries(flags);
   const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
   const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
   const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'result']);
@@ -91,4 +96,6 @@ export const CapacityCard_: React.FC<DashboardItemProps> = ({
   );
 };
 
-export const CapacityCard = withDashboardResources(CapacityCard_);
+export const CapacityCard = connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewQueries()),
+)(withDashboardResources(CapacityCard_));

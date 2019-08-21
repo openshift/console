@@ -14,6 +14,8 @@ import { PodModel, NodeModel, PersistentVolumeClaimModel } from '../../../models
 import { K8sResourceKind, PodKind } from '../../../module/k8s';
 import { getPodStatusGroups, getNodeStatusGroups, getPVCStatusGroups } from '../../dashboard/inventory-card/utils';
 import { FirehoseResource } from '../../utils';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
+import { getFlagsForExtensions } from '../utils';
 
 const k8sResources: FirehoseResource[] = [
   {
@@ -38,10 +40,12 @@ const uniqueResource = (resource: FirehoseResource, index: number): FirehoseReso
   prop: `${index}-${resource.prop}`,
 });
 
-const getResourcesToWatch = (): FirehoseResource[] => {
+const getItems = (flags: FlagsObject) =>
+  plugins.registry.getDashboardsOverviewInventoryItems().filter(e => flags[e.properties.required]);
+
+const getResourcesToWatch = (flags: FlagsObject): FirehoseResource[] => {
   const allResources = [...k8sResources];
-  const pluginItems = plugins.registry.getDashboardsOverviewInventoryItems();
-  pluginItems.forEach((item, index) => {
+  getItems(flags).forEach((item, index) => {
     allResources.push(uniqueResource(item.properties.resource, index));
     if (item.properties.additionalResources) {
       item.properties.additionalResources.forEach(ar => allResources.push(uniqueResource(ar, index)));
@@ -50,14 +54,22 @@ const getResourcesToWatch = (): FirehoseResource[] => {
   return allResources;
 };
 
-const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWatchK8sResource, resources }) => {
+const InventoryCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
+  watchK8sResource,
+  stopWatchK8sResource,
+  resources,
+  flags = {},
+}) => {
   React.useEffect(() => {
-    const resourcesToWatch = getResourcesToWatch();
+    const resourcesToWatch = getResourcesToWatch(flags);
     resourcesToWatch.forEach(r => watchK8sResource(r));
+
     return () => {
       resourcesToWatch.forEach(r => stopWatchK8sResource(r));
     };
-  }, [watchK8sResource, stopWatchK8sResource]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchK8sResource, stopWatchK8sResource, JSON.stringify(flags)]);
 
   const nodesLoaded = _.get(resources.nodes, 'loaded');
   const nodesLoadError = _.get(resources.nodes, 'loadError');
@@ -71,7 +83,8 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
   const pvcsLoadError = _.get(resources.pvcs, 'loadError');
   const pvcsData = _.get(resources.pvcs, 'data', []) as K8sResourceKind[];
 
-  const pluginItems = plugins.registry.getDashboardsOverviewInventoryItems();
+  const pluginItems = getItems(flags);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -118,4 +131,6 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
   );
 };
 
-export const InventoryCard = withDashboardResources(InventoryCard_);
+export const InventoryCard = connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewInventoryItems()),
+)(withDashboardResources(InventoryCard_));

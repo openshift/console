@@ -47,6 +47,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'persistent-storage',
       title: 'Persistent Storage',
+      required: CEPH_FLAG,
     },
   },
   // Ceph Storage Dashboard Left cards
@@ -59,6 +60,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/details-card' /* webpackChunkName: "ceph-storage-details-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -70,6 +72,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   // Ceph Storage Dashboard Main Cards
@@ -82,6 +85,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/health-card/health-card' /* webpackChunkName: "ceph-storage-health-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -94,6 +98,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/capacity-card/capacity-card' /* webpackChunkName: "ceph-storage-capacity-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -106,6 +111,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-storage-data-resiliency-card" */
         ).then((m) => m.DataResiliencyWithResources),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -117,6 +123,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/top-consumers-card/top-consumers-card' /* webpackChunkName: "ceph-storage-top-consumers-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   // Ceph Storage Dashboard Right Cards
@@ -129,6 +136,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-storage-events-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -140,6 +148,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
         ).then((m) => m.default),
+      required: CEPH_FLAG,
     },
   },
   {
@@ -148,6 +157,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Storage',
       query: STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
       healthHandler: getCephHealthState,
+      required: CEPH_FLAG,
     },
   },
   {
@@ -155,6 +165,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: OverviewQuery.STORAGE_TOTAL,
       query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
+      required: CEPH_FLAG,
     },
   },
   {
@@ -162,6 +173,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: OverviewQuery.STORAGE_UTILIZATION,
       query: `${CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED]}[60m:5m]`,
+      required: CEPH_FLAG,
     },
   },
 ];

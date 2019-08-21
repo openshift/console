@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash-es';
 
 import { RESULTS_TYPE } from '../../reducers/dashboards';
 import {
@@ -38,8 +39,11 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS),
 });
 
-export const withDashboardResources = <P extends DashboardItemProps>(WrappedComponent: React.ComponentType<P>, additionalProps: any = {}) =>
-  connect(mapStateToProps, mapDispatchToProps)(
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+
+export const withDashboardResources = <P extends DashboardItemProps>(WrappedComponent: React.ComponentType<P>) =>
+  connect<StateProps, DispatchProps, Diff<P, DashboardItemProps>>(mapStateToProps, mapDispatchToProps)(
     class WithDashboardResources extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
       private urls: Array<string> = [];
       private queries: Array<string> = [];
@@ -62,7 +66,13 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         const alertsResultChanged = this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'result']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
-        return urlResultChanged || queryResultChanged || k8sResourcesChanged || (this.watchingAlerts && alertsResultChanged);
+        return (
+          urlResultChanged ||
+          queryResultChanged ||
+          k8sResourcesChanged ||
+          (this.watchingAlerts && alertsResultChanged) ||
+          !_.isEqual(this.getExternalProps(nextProps), this.getExternalProps(this.props))
+        );
       }
 
       watchURL: WatchURL = (url, fetch) => {
@@ -97,6 +107,20 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         }));
       };
 
+      getExternalProps = (props) => {
+        return _.omit(props,
+          'watchURL',
+          'stopWatchURL',
+          'watchPrometheusQuery',
+          'stopWatchPrometheusQuery',
+          'watchAlerts',
+          'stopWatchAlerts',
+          RESULTS_TYPE.URL,
+          RESULTS_TYPE.PROMETHEUS,
+          RESULTS_TYPE.ALERTS,
+        );
+      }
+
       render() {
         return (
           <Firehose resources={this.state.k8sResources}>
@@ -112,7 +136,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
               alertsResults={this.props[RESULTS_TYPE.ALERTS]}
               watchK8sResource={this.watchK8sResource}
               stopWatchK8sResource={this.stopWatchK8sResource}
-              {...additionalProps}
+              {...this.getExternalProps(this.props)}
             />
           </Firehose>
         );

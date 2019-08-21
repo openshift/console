@@ -27,6 +27,8 @@ import { K8sKind, referenceForModel, K8sResourceKind } from '../../../module/k8s
 import { MonitoringRoutes, connectToURLs } from '../../../reducers/monitoring';
 import { getPrometheusExpressionBrowserURL } from '../../graphs/prometheus-graph';
 import { getName, getNamespace } from '@console/shared';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
+import { getFlagsForExtensions } from '../utils';
 
 const topConsumersQueryMap: TopConsumersMap = {
   [PODS]: {
@@ -50,10 +52,9 @@ const topConsumersQueryMap: TopConsumersMap = {
   },
 };
 
-const getTopConsumersQueries = (): TopConsumersMap => {
+const getTopConsumersQueries = (flags: FlagsObject): TopConsumersMap => {
   const topConsumers = {...topConsumersQueryMap};
-
-  plugins.registry.getDashboardsOverviewTopConsumerItems().forEach(pluginItem => {
+  plugins.registry.getDashboardsOverviewTopConsumerItems().filter(e => flags[e.properties.required]).forEach(pluginItem => {
     if (!topConsumers[pluginItem.properties.name]) {
       topConsumers[pluginItem.properties.name] = {
         model: pluginItem.properties.model,
@@ -84,23 +85,28 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
   stopWatchK8sResource,
   resources,
   urls,
+  flags = {},
 }: TopConsumersCardProps) => {
   const [type, setType] = React.useState(PODS);
   const [sortOption, setSortOption] = React.useState(MetricType.CPU);
 
   React.useEffect(() => {
-    const topConsumersMap = getTopConsumersQueries();
+    const topConsumersMap = getTopConsumersQueries(flags);
     const currentQuery = topConsumersMap[type].queries[sortOption];
     watchPrometheus(currentQuery);
+
     const k8sResource = getResourceToWatch(topConsumersMap[type].model);
     watchK8sResource(k8sResource);
+
     return () => {
       stopWatchPrometheusQuery(currentQuery);
       stopWatchK8sResource(k8sResource);
     };
-  }, [watchPrometheus, stopWatchPrometheusQuery, watchK8sResource, stopWatchK8sResource, type, sortOption]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchPrometheus, stopWatchPrometheusQuery, watchK8sResource, stopWatchK8sResource, type, sortOption, JSON.stringify(flags)]);
 
-  const topConsumersMap = getTopConsumersQueries();
+  const topConsumersMap = getTopConsumersQueries(flags);
   const topConsumersType = topConsumersMap[type];
   const metricTypeSort = metricTypeMap[sortOption];
   const currentQuery = topConsumersType.queries[sortOption];
@@ -113,6 +119,7 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
   const consumersLoaded = _.get(resources, ['consumers', 'loaded']);
   const consumersLoadError = _.get(resources, ['consumers', 'loadError']);
   const consumersData = _.get(resources, ['consumers', 'data']) as K8sResourceKind[];
+
   if (consumersLoaded && !consumersLoadError) {
     for (const d of data) {
       const consumerExists = consumersData.some(consumer =>
@@ -185,9 +192,11 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
   );
 });
 
-export const TopConsumersCard = withDashboardResources(TopConsumersCard_);
+export const TopConsumersCard = connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewTopConsumerItems()),
+)(withDashboardResources(TopConsumersCard_));
 
-type TopConsumersCardProps = DashboardItemProps & {
+type TopConsumersCardProps = DashboardItemProps & WithFlagsProps & {
   urls?: string[];
 };
 

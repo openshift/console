@@ -87,8 +87,10 @@ export const stateToProps = (desiredFlags: string[], state) => {
   return {flags};
 };
 
-type WithFlagsProps = {
-  flags: {[key: string]: boolean};
+export type FlagsObject = {[key: string]: boolean};
+
+export type WithFlagsProps = {
+  flags: FlagsObject;
 };
 
 export type ConnectToFlags = <P extends WithFlagsProps>(...flags: (FLAGS | string)[]) => (C: React.ComponentType<P>) =>

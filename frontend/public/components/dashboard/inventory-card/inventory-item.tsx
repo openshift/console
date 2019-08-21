@@ -13,6 +13,8 @@ import {
 } from '../../utils';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
+import { getFlagsForExtensions } from '../../dashboards-page/utils';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
@@ -32,9 +34,9 @@ const defaultStatusGroupIcons = {
   ),
 };
 
-const getStatusGroupIcons = () => {
+const getStatusGroupIcons = (flags: FlagsObject) => {
   const groupStatusIcons = {...defaultStatusGroupIcons};
-  plugins.registry.getDashboardsInventoryItemGroups().forEach(group => {
+  plugins.registry.getDashboardsInventoryItemGroups().filter(e => flags[e.properties.required]).forEach(group => {
     if (!groupStatusIcons[group.properties.id]) {
       groupStatusIcons[group.properties.id] = group.properties.icon;
     }
@@ -62,8 +64,8 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   }
 );
 
-export const Status: React.FC<StatusProps> = React.memo(({ groupID, count }) => {
-  const statusGroupIcons = getStatusGroupIcons();
+export const Status: React.FC<StatusProps> = React.memo(({ groupID, count, flags }) => {
+  const statusGroupIcons = getStatusGroupIcons(flags);
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   return (
     <div className="co-inventory-card__status">
@@ -73,24 +75,28 @@ export const Status: React.FC<StatusProps> = React.memo(({ groupID, count }) => 
   );
 });
 
-const StatusLink: React.FC<StatusLinkProps> = React.memo(({groupID, count, statusIDs, kind, namespace, filterType}) => {
-  const statusItems = encodeURIComponent(statusIDs.join(','));
-  const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
-  const to = filterType && statusItems.length > 0 ? `/k8s/${namespacePath}/${kind.plural}?rowFilter-${filterType}=${statusItems}` : `/k8s/${namespacePath}/${kind.plural}`;
-  const statusGroupIcons = getStatusGroupIcons();
-  const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
-  return (
-    <div className="co-inventory-card__status">
-      <Link to={to} style={{textDecoration: 'none'}}>
-        <span className="co-inventory-card__status-icon">{groupIcon}</span>
-        <span className="co-inventory-card__status-text">{count}</span>
-      </Link>
-    </div>
-  );
-});
+const StatusLink: React.FC<StatusLinkProps> = React.memo(
+  ({ groupID, count, statusIDs, kind, namespace, filterType, flags }) => {
+    const statusItems = encodeURIComponent(statusIDs.join(','));
+    const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
+    const to = filterType && statusItems.length > 0 ? `/k8s/${namespacePath}/${kind.plural}?rowFilter-${filterType}=${statusItems}` : `/k8s/${namespacePath}/${kind.plural}`;
+    const statusGroupIcons = getStatusGroupIcons(flags);
+    const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
+    return (
+      <div className="co-inventory-card__status">
+        <Link to={to} style={{textDecoration: 'none'}}>
+          <span className="co-inventory-card__status-icon">{groupIcon}</span>
+          <span className="co-inventory-card__status-text">{count}</span>
+        </Link>
+      </div>
+    );
+  }
+);
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React.memo(
-  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error }) => {
+export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsInventoryItemGroups()),
+)(React.memo(
+  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error, flags = {}}) => {
     const groups = mapper(resources, additionalResources);
     const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
     return (
@@ -110,12 +116,13 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React
             count={groups[key].count}
             statusIDs={groups[key].statusIDs}
             filterType={groups[key].filterType}
+            flags={flags}
           />
         ))}
       </InventoryItem>
     );
   }
-);
+));
 
 export type StatusGroupMapper = (resources: K8sResourceKind[], additionalResources?: {[key: string]: K8sResourceKind[]}) => {[key in InventoryStatusGroup | string]: {filterType?: string, statusIDs: string[], count: number}};
 
@@ -128,7 +135,7 @@ type InventoryItemProps = {
   error: boolean;
 };
 
-type StatusProps = {
+type StatusProps = WithFlagsProps & {
   groupID: InventoryStatusGroup | string;
   count: number;
 }
@@ -140,7 +147,7 @@ type StatusLinkProps = StatusProps & {
   filterType?: string;
 }
 
-type ResourceInventoryItemProps = {
+type ResourceInventoryItemProps = WithFlagsProps & {
   resources: K8sResourceKind[];
   additionalResources?: {[key: string]: K8sResourceKind[]};
   mapper: StatusGroupMapper;
