@@ -25,6 +25,15 @@ export enum ActionType {
   SetCurrentLocation = 'setCurrentLocation',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
+  QueryBrowserAddQuery = 'queryBrowserAddQuery',
+  QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
+  QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
+  QueryBrowserInsertText = 'queryBrowserInsertText',
+  QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
+  QueryBrowserRunQueries = 'queryBrowserRunQueries',
+  QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
+  QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
+  QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
   SetUser = 'setUser',
   SortList = 'sortList',
   BeginImpersonate = 'beginImpersonate',
@@ -202,6 +211,21 @@ export const monitoringLoading = (key: 'alerts' | 'silences') => action(ActionTy
 export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError: null, data}});
 export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError, data: null}});
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
+export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
+export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
+export const queryBrowserDeleteQuery = (index: number) => action(ActionType.QueryBrowserDeleteQuery, {index});
+export const queryBrowserInsertText = (index: number, newText: string, replaceFrom: number, replaceTo: number) => {
+  return action(ActionType.QueryBrowserInsertText, {index, newText, replaceFrom, replaceTo});
+};
+export const queryBrowserPatchQuery = (index: number, patch: {[key: string]: unknown}) => {
+  return action(ActionType.QueryBrowserPatchQuery, {index, patch});
+};
+export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
+export const queryBrowserSetAllExpanded = (isExpanded: boolean) => {
+  return action(ActionType.QueryBrowserSetAllExpanded, {isExpanded});
+};
+export const queryBrowserSetMetrics = (metrics: string[]) => action(ActionType.QueryBrowserSetMetrics, {metrics});
+export const queryBrowserToggleIsEnabled = (index: number) => action(ActionType.QueryBrowserToggleIsEnabled, {index});
 export const setConsoleLinks = (consoleLinks: string[]) => action(ActionType.SetConsoleLinks, {consoleLinks});
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
@@ -228,6 +252,15 @@ const uiActions = {
   monitoringLoaded,
   monitoringErrored,
   monitoringToggleGraphs,
+  queryBrowserAddQuery,
+  queryBrowserDeleteAllQueries,
+  queryBrowserDeleteQuery,
+  queryBrowserInsertText,
+  queryBrowserPatchQuery,
+  queryBrowserRunQueries,
+  queryBrowserSetAllExpanded,
+  queryBrowserSetMetrics,
+  queryBrowserToggleIsEnabled,
   setConsoleLinks,
 };
 

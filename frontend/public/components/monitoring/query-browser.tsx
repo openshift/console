@@ -16,6 +16,8 @@ import { Alert, Button, TextInput } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
+import * as UIActions from '../../actions/ui';
+import { RootState } from '../../redux';
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
@@ -160,7 +162,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   filterLabels,
   GraphLink,
   hideGraphs,
-  onDataUpdate,
+  patchQuery,
   queries,
 }) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
@@ -183,7 +185,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const safeFetchQuery = (query: string) => {
     if (_.isEmpty(query)) {
-      return undefined;
+      return Promise.resolve();
     }
     const url = getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
@@ -200,9 +202,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     .then((responses: PrometheusResponse[]) => {
       const newResults = _.map(responses, 'data.result');
       setResults(newResults);
-      if (onDataUpdate) {
-        onDataUpdate(newResults);
-      }
+      _.each(newResults, (r, i) => patchQuery(i, {series: r ? _.map(r, 'metric') : undefined}));
       setUpdating(false);
       setError(undefined);
     })
@@ -324,8 +324,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>}
   </div>;
 };
-const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
-export const QueryBrowser = withFallback(connect(stateToProps)(QueryBrowser_));
+export const QueryBrowser = withFallback(connect(
+  ({UI}: RootState) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])}),
+  {patchQuery: UIActions.queryBrowserPatchQuery}
+)(QueryBrowser_));
 
 type Domain = {
   x: [number, number];
@@ -339,12 +341,16 @@ type GraphDataPoint = {
 
 export type Labels = {[key: string]: string};
 
-type PrometheusValue = [number, string];
+export type QueryObj = {
+  disabledSeries?: Labels[];
+  isEnabled?: boolean;
+  isExpanded?: boolean;
+  query?: string;
+  series?: Labels[];
+  text?: string;
+}
 
-export type PrometheusSeries = {
-  metric: Labels;
-  values: PrometheusValue[];
-};
+type PrometheusValue = [number, string];
 
 type GraphProps = {
   containerComponent: React.ReactElement;
@@ -359,7 +365,7 @@ type QueryBrowserProps = {
   filterLabels?: Labels;
   GraphLink?: React.ComponentType<{}>;
   hideGraphs: boolean;
-  onDataUpdate?: (allSeries: PrometheusSeries[][]) => void;
+  patchQuery: (index: number, patch: QueryObj) => any;
   queries: string[];
 };
 

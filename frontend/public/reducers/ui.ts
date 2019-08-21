@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Map as ImmutableMap } from 'immutable';
+import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 import { ActionType, UIAction } from '../actions/ui';
 import {
@@ -33,6 +33,8 @@ export function getDefaultPerspective() {
   return activePerspective || undefined;
 }
 
+const defaultQueryBrowserQuery = ImmutableMap({isEnabled: true, isExpanded: true});
+
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
     const { pathname } = window.location;
@@ -65,6 +67,10 @@ export default (state: UIState, action: UIAction): UIState => {
       }),
       user: {},
       consoleLinks: [],
+      queryBrowser: ImmutableMap({
+        metrics: [],
+        queries: ImmutableList([defaultQueryBrowserQuery]),
+      }),
     });
   }
 
@@ -136,6 +142,59 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.ToggleMonitoringGraphs:
       return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
 
+    case ActionType.QueryBrowserAddQuery:
+      return state.setIn(
+        ['queryBrowser', 'queries'],
+        state.getIn(['queryBrowser', 'queries']).push(defaultQueryBrowserQuery)
+      );
+
+    case ActionType.QueryBrowserDeleteAllQueries:
+      return state.setIn(['queryBrowser', 'queries'], ImmutableList([defaultQueryBrowserQuery]));
+
+    case ActionType.QueryBrowserDeleteQuery: {
+      let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
+      if (queries.size === 0) {
+        queries = queries.push(defaultQueryBrowserQuery);
+      }
+      return state.setIn(['queryBrowser', 'queries'], queries);
+    }
+    case ActionType.QueryBrowserInsertText: {
+      const {index, newText, replaceFrom, replaceTo} = action.payload;
+      const oldText = state.getIn(['queryBrowser', 'queries', index, 'text'], '');
+      const text = _.isInteger(replaceFrom) && _.isInteger(replaceTo)
+        ? oldText.substring(0, replaceFrom) + newText + oldText.substring(replaceTo)
+        : oldText + newText;
+      return state.setIn(['queryBrowser', 'queries', index, 'text'], text);
+    }
+    case ActionType.QueryBrowserPatchQuery:
+      return state.mergeIn(['queryBrowser', 'queries', action.payload.index], ImmutableMap(action.payload.patch));
+
+    case ActionType.QueryBrowserRunQueries: {
+      const queries = state.getIn(['queryBrowser', 'queries']).map(q => {
+        const isEnabled = q.get('isEnabled');
+        const query = q.get('query');
+        const text = _.trim(q.get('text'));
+        return isEnabled && text && query !== text ? q.merge({query: text, series: undefined}) : q;
+      });
+      return state.setIn(['queryBrowser', 'queries'], queries);
+    }
+    case ActionType.QueryBrowserSetAllExpanded: {
+      const queries = state.getIn(['queryBrowser', 'queries']).map(q => {
+        return q.set('isExpanded', action.payload.isExpanded);
+      });
+      return state.setIn(['queryBrowser', 'queries'], queries);
+    }
+    case ActionType.QueryBrowserSetMetrics:
+      return state.setIn(['queryBrowser', 'metrics'], action.payload.metrics);
+
+    case ActionType.QueryBrowserToggleIsEnabled: {
+      const query = state.getIn(['queryBrowser', 'queries', action.payload.index]);
+      const isEnabled = !query.get('isEnabled');
+      return state.setIn(
+        ['queryBrowser', 'queries', action.payload.index],
+        query.merge({isEnabled, isExpanded: isEnabled, query: isEnabled ? query.get('text') : ''})
+      );
+    }
     case ActionType.SelectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.payload.uid);
 
