@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {
   ExternalLinkAltIcon,
-  OutlinedCheckCircleIcon,
   GitAltIcon,
   GitlabIcon,
   GithubIcon,
   BitbucketIcon,
 } from '@patternfly/react-icons';
-import { global_success_color_100 as successColor } from '@patternfly/react-tokens';
-import { Status, calculateRadius, PodStatus } from '@console/shared';
+import { Status, calculateRadius, PodStatus, GreenCheckCircleIcon } from '@console/shared';
 import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -112,8 +110,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 {build.status.phase === 'Complete' ? (
-                  <OutlinedCheckCircleIcon
-                    color={successColor.value}
+                  <GreenCheckCircleIcon
                     alt={`${build.metadata.name} ${build.status && build.status.phase}`}
                   />
                 ) : (

@@ -5,7 +5,7 @@ $pipeline-font-base: 13px;
 $pipeline-in-progress-color: $color-pf-blue-400;
 $pipeline-new-color: $color-pf-blue-100;
 $pipeline-pending-color: $color-pf-black-300;
-$pipeline-success-color: $pf-color-light-green-400;
+$pipeline-success-color: var(--pf-chart-color-green-400);
 $pipeline-require-attention-color: $color-pf-gold-400;
 $pipeline-circle-animation-time: 0.35s;
 $pipeline-circle-diameter: 18px;
