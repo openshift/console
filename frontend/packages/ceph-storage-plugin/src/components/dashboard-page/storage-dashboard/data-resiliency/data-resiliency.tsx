@@ -19,8 +19,8 @@ const getCapacityStats = (response) => {
   return _.get(response, 'data.result[0].value[1]');
 };
 
-const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResilient }) =>
-  isResilient ? (
+const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ error }) =>
+  !error ? (
     <>
       <div className="ceph-data-resiliency__status-title-ok">Your data is resilient</div>
       <div className="ceph-data-resiliency__icon-ok">
@@ -76,10 +76,14 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     'Data Resiliency presents status of data replication and rebalancing operations.';
   const totalPg = getCapacityStats(totalPGRaw);
   const cleanAndActivePg = getCapacityStats(cleanAndActivePGRaw);
+  const error = !(totalPg && cleanAndActivePg);
 
   let progressPercentage;
-  if (totalPg && cleanAndActivePg) {
+  if (!error) {
     progressPercentage = ((Number(cleanAndActivePg) / Number(totalPg)) * 100).toFixed(1);
+    if (!Number.isFinite(Number(progressPercentage))) {
+      progressPercentage = 0;
+    }
   }
   return (
     <DashboardCard className="ceph-data-resiliency__dashboard-card">
@@ -92,7 +96,7 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
         isLoading={!(totalPGRaw && cleanAndActivePGRaw)}
       >
         {progressPercentage >= 100 || !progressPercentage ? (
-          <DataResiliencyStatusBody isResilient={progressPercentage} />
+          <DataResiliencyStatusBody error={error} />
         ) : (
           <DataResiliencyBuildBody progressPercentage={progressPercentage} />
         )}
@@ -108,5 +112,5 @@ type DataResiliencyBuildBody = {
 };
 
 type DataResiliencyStatusBody = {
-  isResilient: number;
+  error: any;
 };
