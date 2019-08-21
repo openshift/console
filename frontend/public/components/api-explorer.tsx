@@ -36,7 +36,7 @@ import {
   EmptyBox,
   LinkifyExternal,
   LoadError,
-  Loading,
+  LoadingBox,
   removeQueryArgument,
   ResourceIcon,
   ScrollToTopOnMount,
@@ -375,7 +375,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
   }
 
   if (!accessResponse) {
-    return <Loading />;
+    return <LoadingBox />;
   }
 
   // break into users, groups, and service accounts
@@ -479,7 +479,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
   const [selectedTab, onClickTab] = React.useState('Overview');
   if (!kindObj) {
     return kindsInFlight
-      ? <Loading />
+      ? <LoadingBox />
       : <div className="co-m-pane__body">
         <h1 className="co-m-pane__heading co-m-pane__heading--center">404: Not Found</h1>
       </div>;
