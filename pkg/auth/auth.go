@@ -43,6 +43,9 @@ const (
 var (
 	log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
 
+	// Default PEM certificate used for getting HTTP client.
+	defaultIssuerCA = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
 	// Cache HTTP clients to avoid recreating them for each request to the
 	// OAuth server. The key is the ca.crt bytes cast to a string and the
 	// value is a pointer to the http.Client. Keep two maps: one that
@@ -120,12 +123,17 @@ type Config struct {
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
-	if issuerCA == "" {
-		return http.DefaultClient, nil
-	}
-	data, err := ioutil.ReadFile(issuerCA)
+	data, err := ioutil.ReadFile(defaultIssuerCA)
 	if err != nil {
-		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
+		return nil, fmt.Errorf("load default issuer CA file %s: %v", issuerCA, err)
+	}
+
+	if issuerCA != "" {
+		issuerData, err := ioutil.ReadFile(issuerCA)
+		if err != nil {
+			return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
+		}
+		data = append(data, issuerData...)
 	}
 
 	caKey := string(data)

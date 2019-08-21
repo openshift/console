@@ -118,10 +118,6 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 		fs.Set("user-auth-oidc-client-secret-file", auth.ClientSecretFile)
 	}
 
-	if auth.OAuthEndpointCAFile != "" {
-		fs.Set("user-auth-oidc-ca-file", auth.OAuthEndpointCAFile)
-	}
-
 	if auth.LogoutRedirect != "" {
 		fs.Set("user-auth-logout-redirect", auth.LogoutRedirect)
 	}
