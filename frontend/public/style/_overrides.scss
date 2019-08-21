@@ -393,8 +393,11 @@ kbd {
 }
 
 // override .co-m-table-grid [class*='col-'], .co-m-table-grid .row
-.pf-c-table.pf-c-virtualized tr > td {
-  vertical-align: top;
+.pf-c-table.pf-m-compact,
+.pf-c-table.pf-c-virtualized {
+  tr > td {
+    vertical-align: top;
+  }
 }
 
 .pf-c-table.pf-c-virtualized tr.vertical-align-middle > td {
