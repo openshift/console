@@ -14,7 +14,7 @@ const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
   if (flags[FLAG_KNATIVE_SERVING]) {
     const title = (
       <Split gutter="md">
-        <SplitItem>Serverless Options</SplitItem>
+        <SplitItem className="odc-form-section__heading">Serverless</SplitItem>
         <SplitItem>
           <TechPreviewBadge />
         </SplitItem>

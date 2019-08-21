@@ -9,7 +9,7 @@ export interface DockerSectionProps {
 
 const DockerSection: React.FC<DockerSectionProps> = ({ buildStrategy }) =>
   buildStrategy === 'Docker' && (
-    <FormSection title="Docker">
+    <FormSection title="Dockerfile">
       <InputField
         type={TextInputTypes.text}
         name="docker.dockerfilePath"

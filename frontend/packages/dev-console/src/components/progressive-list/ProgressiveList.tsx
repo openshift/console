@@ -1,5 +1,4 @@
 import * as React from 'react';
-import FormSectionDivider from '../import/section/FormSectionDivider';
 import ProgressiveListFooter from './ProgressiveListFooter';
 import ProgressiveListItem from './ProgressiveListItem';
 import './ProgressiveList.scss';
@@ -28,10 +27,9 @@ const ProgressiveList: React.FC<ProgressiveListProps> = ({
   );
   return (
     <React.Fragment>
-      {visibleItems.map((item: string, index: number) => (
+      {visibleItems.map((item: string) => (
         <React.Fragment key={item}>
           {validChildren.find(({ props }: React.ReactElement) => item === props.name)}
-          {index !== validChildren.length - 1 && <FormSectionDivider />}
         </React.Fragment>
       ))}
       <ProgressiveListFooter text={text} items={items} onShowItem={onVisibleItemChange} />

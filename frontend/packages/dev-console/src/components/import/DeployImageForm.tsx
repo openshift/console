@@ -8,8 +8,6 @@ import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
-import RouteCheckbox from './route/RouteCheckbox';
-import FormSectionDivider from './section/FormSectionDivider';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -25,12 +23,9 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   dirty,
 }) => (
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
-    <AppSection project={values.project} />
-    <FormSectionDivider />
     <ImageSearchSection />
-    <FormSectionDivider />
+    <AppSection project={values.project} />
     <ServerlessSection />
-    <RouteCheckbox />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
       <ActionGroup className="pf-c-form">
