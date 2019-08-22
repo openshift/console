@@ -535,7 +535,7 @@ export const EditYAML = connect(stateToProps)(
           <div className="pf-c-form">
             <div className="co-p-has-sidebar">
               <div className="co-p-has-sidebar__body">
-                <div className={classNames('yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r}>
+                <div className="yaml-editor" ref={r => this.editor = r}>
                   <MonacoEditor
                     ref={this.monacoRef}
                     language="yaml"
