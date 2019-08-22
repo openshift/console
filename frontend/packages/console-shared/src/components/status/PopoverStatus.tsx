@@ -2,16 +2,41 @@ import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import StatusIconAndText from './StatusIconAndText';
 
-const PopoverStatus: React.FC<React.ComponentProps<typeof StatusIconAndText>> = ({
+type PopoverStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
+  activeIcon?: React.ReactElement;
+  hideHeader?: boolean;
+};
+
+const PopoverStatus: React.FC<PopoverStatusProps> = ({
   title,
+  hideHeader,
+  icon,
+  activeIcon,
   children,
   ...other
-}) => (
-  <Popover position={PopoverPosition.right} headerContent={title} bodyContent={children}>
-    <Button variant="link" isInline>
-      <StatusIconAndText {...other} title={title} />
-    </Button>
-  </Popover>
-);
+}) => {
+  const [isActive, setActive] = React.useState(false);
+  const onHide = React.useCallback(() => setActive(false), [setActive]);
+  const onShow = React.useCallback(() => setActive(true), [setActive]);
+
+  return (
+    <Popover
+      position={PopoverPosition.right}
+      headerContent={hideHeader ? null : title}
+      bodyContent={children}
+      aria-label={title}
+      onHide={onHide}
+      onShow={onShow}
+    >
+      <Button variant="link" isInline>
+        <StatusIconAndText
+          {...other}
+          title={title}
+          icon={isActive && activeIcon ? activeIcon : icon}
+        />
+      </Button>
+    </Popover>
+  );
+};
 
 export default PopoverStatus;
