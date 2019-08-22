@@ -41,16 +41,21 @@ export const updateResourceApplication = (
     return Promise.all(patches);
   }
 
+  // selector is for the instance name and current application if there is one
+  const labelSelector = {
+    'app.kubernetes.io/instance': instanceName,
+  };
+  if (prevApplication) {
+    labelSelector['app.kubernetes.io/part-of'] = prevApplication;
+  }
+
   // Retrieve all resources with the same instance label
   const kinds = ['ReplicationController', 'Route', 'Service', 'ReplicaSet', 'BuildConfig', 'Build'];
   _.forEach(kinds, (kind) => {
     lists.push(
       k8sList(modelFor(kind), {
         ns: resource.metadata.namespace,
-        labelSelector: {
-          'app.kubernetes.io/instance': instanceName,
-          'app.kubernetes.io/part-of': prevApplication,
-        },
+        labelSelector,
       }).then((values) => {
         return _.map(values, (value) => {
           value.kind = kind;
@@ -64,7 +69,10 @@ export const updateResourceApplication = (
   return Promise.all(lists).then((listsValue) => {
     _.forEach(listsValue, (list) => {
       _.forEach(list, (item) => {
-        patches.push(updateItemAppLabel(item, application));
+        // verify the case of no previous application
+        if (prevApplication || !_.get(item, ['metadata', 'labels', 'app.kubernetes.io/part-of'])) {
+          patches.push(updateItemAppLabel(item, application));
+        }
       });
     });
 
