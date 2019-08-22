@@ -11,14 +11,12 @@ import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table } from './factory';
 import {
   AsyncComponent,
-  history,
   Kebab,
   KebabAction,
   ContainerTable,
   navFactory,
   pluralize,
   ResourceSummary,
-  resourcePath,
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
@@ -47,27 +45,12 @@ const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
   return k8sCreate(DeploymentConfigModel, req, opts);
 };
 
-const determineReplicationControllerName = (dc: K8sResourceKind): string => {
-  return `${dc.metadata.name}-${dc.status.latestVersion}`;
-};
-
 const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: 'Start Rollout',
-  callback: () =>
-    rollout(obj)
-      .then((deployment) => {
-        history.push(
-          resourcePath(
-            'ReplicationController',
-            determineReplicationControllerName(deployment),
-            deployment.metadata.namespace,
-          ),
-        );
-      })
-      .catch((err) => {
-        const error = err.message;
-        errorModal({ error });
-      }),
+  callback: () => rollout(obj).catch(err => {
+    const error = err.message;
+    errorModal({error});
+  }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,

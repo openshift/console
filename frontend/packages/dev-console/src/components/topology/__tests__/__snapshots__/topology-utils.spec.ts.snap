@@ -45,6 +45,85 @@ Object {
         "builderImage": "test-file-stub",
         "donutStatus": Object {
           "build": undefined,
+          "current": Object {
+            "kind": "ReplicationController",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/deployer-pod.completed-at": "2019-04-26 10:36:10 +0000 UTC",
+                "openshift.io/deployment-config.name": "nodejs",
+                "openshift.io/deployment.phase": "Complete",
+              },
+              "creationTimestamp": "2019-04-26T10:36:06Z",
+              "generation": 2,
+              "labels": Object {
+                "app": "nodejs",
+                "openshift.io/deployment-config.name": "nodejs",
+              },
+              "name": "nodejs-1",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps.openshift.io/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "DeploymentConfig",
+                  "name": "nodejs",
+                  "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1161189",
+              "selfLink": "/api/v1/namespaces/testproject3/replicationcontrollers/nodejs-1",
+              "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "availableReplicas": 1,
+              "fullyLabeledReplicas": 1,
+              "observedGeneration": 2,
+              "readyReplicas": 1,
+              "replicas": 1,
+            },
+          },
+          "dc": Object {
+            "apiVersion": "apps/v1",
+            "kind": "DeploymentConfig",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/vcs-ref": "master",
+                "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+              },
+              "creationTimestamp": "2019-04-22T11:58:33Z",
+              "generation": 2,
+              "labels": Object {
+                "app": "nodejs",
+              },
+              "name": "nodejs",
+              "namespace": "testproject1",
+              "resourceVersion": "732186",
+              "selfLink": "/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs",
+              "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "template": Object {
+                "metadata": Object {
+                  "creationTimestamp": null,
+                  "labels": Object {
+                    "app": "nodejs",
+                    "deploymentconfig": "nodejs",
+                  },
+                },
+                "spec": Object {},
+              },
+            },
+            "status": Object {
+              "availableReplicas": 1,
+              "latestVersion": 1,
+              "readyReplicas": 1,
+              "replicas": 1,
+              "unavailableReplicas": 0,
+              "updatedReplicas": 1,
+            },
+          },
           "pods": Array [
             Object {
               "kind": "Pod",
@@ -86,6 +165,7 @@ Object {
               },
             },
           ],
+          "previous": undefined,
         },
         "editUrl": "https://github.com/redhat-developer/topology-example",
         "isKnativeResource": false,
@@ -414,6 +494,109 @@ Object {
         "builderImage": "test-file-stub",
         "donutStatus": Object {
           "build": undefined,
+          "current": Object {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/connects-to": "[\\"wit\\"]",
+                "deployment.kubernetes.io/desired-replicas": "3",
+                "deployment.kubernetes.io/max-replicas": "4",
+                "deployment.kubernetes.io/revision": "1",
+                "deployment.kubernetes.io/revision-history": "1,1,1",
+              },
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "generation": 3,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "1588370380",
+              },
+              "name": "analytics-deployment-59dd7c47d4",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "Deployment",
+                  "name": "analytics-deployment",
+                  "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1398999",
+              "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/analytics-deployment-59dd7c47d4",
+              "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "fullyLabeledReplicas": 3,
+              "observedGeneration": 3,
+              "replicas": 3,
+            },
+          },
+          "dc": Object {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/connects-to": "[\\"wit\\"]",
+              },
+              "creationTimestamp": "2019-04-22T11:35:37Z",
+              "generation": 5,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+              "name": "analytics-deployment",
+              "namespace": "testproject1",
+              "resourceVersion": "753748",
+              "selfLink": "/apis/apps/v1/namespaces/testproject1/deployments/analytics-deployment",
+              "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
+            },
+            "name": "analytics-deployment",
+            "spec": Object {
+              "progressDeadlineSeconds": 600,
+              "replicas": 3,
+              "revisionHistoryLimit": 10,
+              "selector": Object {
+                "matchLabels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "analytics",
+                  "app.kubernetes.io/name": "python",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                },
+              },
+              "strategy": Object {
+                "rollingUpdate": Object {
+                  "maxSurge": "25%",
+                  "maxUnavailable": "25%",
+                },
+                "type": "RollingUpdate",
+              },
+              "template": Object {
+                "metadata": Object {
+                  "creationTimestamp": null,
+                  "labels": Object {
+                    "app.kubernetes.io/component": "backend",
+                    "app.kubernetes.io/instance": "analytics",
+                    "app.kubernetes.io/name": "python",
+                    "app.kubernetes.io/part-of": "application-1",
+                    "app.kubernetes.io/version": "1.0",
+                  },
+                },
+                "spec": Object {},
+              },
+            },
+            "status": Object {},
+          },
           "pods": Array [
             Object {
               "kind": "Pod",
@@ -533,6 +716,7 @@ Object {
               },
             },
           ],
+          "previous": undefined,
         },
         "editUrl": undefined,
         "isKnativeResource": false,
@@ -1137,6 +1321,105 @@ Object {
         "builderImage": "test-file-stub",
         "donutStatus": Object {
           "build": undefined,
+          "current": Object {
+            "kind": "ReplicaSet",
+            "metadata": Object {
+              "annotations": Object {
+                "deployment.kubernetes.io/desired-replicas": "3",
+                "deployment.kubernetes.io/max-replicas": "4",
+                "deployment.kubernetes.io/revision": "1",
+              },
+              "creationTimestamp": "2019-04-26T10:23:47Z",
+              "generation": 1,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "2127746025",
+              },
+              "name": "wit-deployment-656cc8b469",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "Deployment",
+                  "name": "wit-deployment",
+                  "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1389053",
+              "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/wit-deployment-656cc8b469",
+              "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "fullyLabeledReplicas": 3,
+              "observedGeneration": 1,
+              "replicas": 3,
+            },
+          },
+          "dc": Object {
+            "kind": "Deployment",
+            "metadata": Object {
+              "annotations": Object {
+                "deployment.kubernetes.io/revision": "1",
+              },
+              "creationTimestamp": "2019-04-22T11:35:43Z",
+              "generation": 2,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+              "name": "wit-deployment",
+              "namespace": "testproject1",
+              "resourceVersion": "726179",
+              "selfLink": "/apis/apps/v1/namespaces/testproject1/deployments/wit-deployment",
+              "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+            },
+            "name": "wit-deployment",
+            "spec": Object {
+              "progressDeadlineSeconds": 600,
+              "replicas": 3,
+              "revisionHistoryLimit": 10,
+              "selector": Object {
+                "matchLabels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "wit",
+                  "app.kubernetes.io/name": "nodejs",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                },
+              },
+              "strategy": Object {
+                "rollingUpdate": Object {
+                  "maxSurge": "25%",
+                  "maxUnavailable": "25%",
+                },
+                "type": "RollingUpdate",
+              },
+              "template": Object {
+                "metadata": Object {
+                  "creationTimestamp": null,
+                  "labels": Object {
+                    "app.kubernetes.io/component": "backend",
+                    "app.kubernetes.io/instance": "wit",
+                    "app.kubernetes.io/name": "nodejs",
+                    "app.kubernetes.io/part-of": "application-1",
+                    "app.kubernetes.io/version": "1.0",
+                  },
+                },
+                "spec": Object {},
+              },
+            },
+            "status": Object {},
+          },
           "pods": Array [
             Object {
               "kind": "Pod",
@@ -1250,6 +1533,7 @@ Object {
               },
             },
           ],
+          "previous": undefined,
         },
         "editUrl": undefined,
         "isKnativeResource": false,

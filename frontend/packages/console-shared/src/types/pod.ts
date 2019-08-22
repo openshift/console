@@ -50,3 +50,13 @@ export interface PodRingData {
     pods: Pod[];
   };
 }
+
+export interface PodData {
+  current: Pod[];
+  previous: Pod[];
+  strategy: string;
+  totalReplicas: number;
+  currentRCPhase: string;
+  currentReplicas: number;
+  currentAvailableReplicas: number;
+}

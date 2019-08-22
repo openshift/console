@@ -78,10 +78,15 @@ export interface WorkloadData {
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
-  donutStatus: {
-    pods: Pod[];
-    build: K8sResourceKind;
-  };
+  donutStatus: DonutStatusData;
+}
+
+export interface DonutStatusData {
+  pods: Pod[];
+  current: ResourceProps;
+  previous: ResourceProps;
+  dc: ResourceProps;
+  build: ResourceProps;
 }
 
 export interface GraphApi {

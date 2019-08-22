@@ -7,6 +7,7 @@ import {
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
 import { podColor } from '../constants/pod';
+import { Pod, PodData } from '../types/pod';
 
 export const podStatus = Object.keys(podColor);
 
@@ -99,6 +100,7 @@ export const calculateRadius = (size: number) => {
     podStatusInnerRadius,
     podStatusOuterRadius,
     decoratorRadius,
+    podStatusStrokeWidth,
   };
 };
 
@@ -141,4 +143,67 @@ export const isIdled = (deploymentConfig: K8sResourceKind): boolean => {
     'metadata.annotations["idling.alpha.openshift.io/idled-at"]',
     false,
   );
+};
+
+const getOwnedResources = <T extends K8sResourceKind>(
+  owner: K8sResourceKind,
+  resources: T[],
+): T[] => {
+  if (owner && owner.metadata) {
+    const {
+      metadata: { uid },
+    } = owner;
+    return _.filter(resources, ({ metadata: { ownerReferences } }) => {
+      return _.some(ownerReferences, {
+        uid,
+        controller: true,
+      });
+    });
+  }
+  return [];
+};
+
+const getPodData = (
+  data: PodData,
+): { inProgressDeploymentData: Pod[] | null; completedDeploymentData: Pod[] | null } => {
+  // Scaling no. of pods
+  if (data.currentRCPhase === 'Complete' && data.currentAvailableReplicas !== data.totalReplicas) {
+    return { inProgressDeploymentData: null, completedDeploymentData: data.current };
+  }
+
+  // Deploy
+  if (data.strategy === 'Recreate') {
+    if (
+      data.previous.length === 0 &&
+      data.currentReplicas === data.totalReplicas &&
+      data.currentAvailableReplicas === data.totalReplicas
+    ) {
+      return { inProgressDeploymentData: null, completedDeploymentData: data.current };
+    }
+    return { inProgressDeploymentData: data.current, completedDeploymentData: data.previous };
+  }
+  // Rolling
+  if (data.previous.length > 0) {
+    return { inProgressDeploymentData: data.current, completedDeploymentData: data.previous };
+  }
+  return { inProgressDeploymentData: null, completedDeploymentData: data.current };
+};
+
+export const getDataBasedOnCurrentAndPreviousRC = (
+  d: K8sResourceKind,
+  current,
+  previous,
+  pods: Pod[],
+) => {
+  const currentPods = getOwnedResources(current, pods);
+  const previousPods = getOwnedResources(previous, pods);
+  return getPodData({
+    current: currentPods,
+    previous: previousPods,
+    strategy: _.get(d, 'spec.strategy'),
+    totalReplicas: _.get(d, 'spec.replicas'),
+    currentRCPhase: _.get(current, ['metadata', 'annotations', 'openshift.io/deployment.phase']),
+    currentReplicas: _.get(current, 'spec.replicas'),
+    currentAvailableReplicas: _.get(current, 'status.availableReplicas'),
+  });
 };
