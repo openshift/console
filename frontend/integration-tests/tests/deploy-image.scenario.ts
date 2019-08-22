@@ -8,7 +8,6 @@ describe('Deploy Image', () => {
     checkErrors();
   });
 
-  const appName = 'myapp';
   const imageName = 'mysql';
 
   describe('Deploy Image page', () => {
@@ -49,25 +48,11 @@ describe('Deploy Image', () => {
       ).toBe(true);
     });
 
-    it('should fill in the application', async() => {
-      // Set the application name
-      // Wait for the Application Dropdown field to appear
-      await browser.wait(
-        until.elementToBeClickable(element(by.id('form-dropdown-application-name-field'))),
-      );
-      // Click on the dropdown
-      await element(by.id('form-dropdown-application-name-field')).click();
-      // Wait for the Create Application button to appear
-      await browser.wait(until.presenceOf(element(by.id('#CREATE_APPLICATION_KEY#-link'))));
-      // Click on the Create New Application button
-      await element(by.id('#CREATE_APPLICATION_KEY#-link')).click();
-      // Wait for the Application Name field to appear
+    it('should auto fill in the application', async() => {
       await browser.wait(until.presenceOf(element(by.id('form-input-application-name-field'))));
-      // Enter the new Application name
-      await element(by.id('form-input-application-name-field')).sendKeys(appName);
       // Confirm that a node is present in the topology
       expect(element(by.id('form-input-application-name-field')).getAttribute('value')).toEqual(
-        appName,
+        `${imageName}-app`,
       );
     });
 
