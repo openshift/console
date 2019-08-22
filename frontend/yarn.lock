@@ -10244,10 +10244,6 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-react-lightweight-tooltip@1.x:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-lightweight-tooltip/-/react-lightweight-tooltip-1.0.0.tgz#1fb96831b88de21a4d73d02148aae3d8d0aea9bc"
-
 react-linkify@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-linkify/-/react-linkify-0.2.2.tgz#55b99b1cc7244446a0f9bdebbe13b2c30f789e65"
