@@ -7,7 +7,7 @@ import {
   BitbucketIcon,
 } from '@patternfly/react-icons';
 import { Status, calculateRadius, PodStatus, GreenCheckCircleIcon } from '@console/shared';
-import { TooltipPosition } from '@patternfly/react-core';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
@@ -62,36 +62,34 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       isDragging={isDragging}
       attachments={[
         workload.data.editUrl && (
-          <Decorator
-            key="edit"
-            x={radius - decoratorRadius * 0.7}
-            y={radius - decoratorRadius * 0.7}
-            radius={decoratorRadius}
-            href={workload.data.editUrl}
-            external
-            title="Edit Source Code"
-            position={TooltipPosition.right}
-          >
-            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              {routeDecoratorIcon(workload.data.editUrl)}
-            </g>
-          </Decorator>
+          <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+            <Decorator
+              x={radius - decoratorRadius * 0.7}
+              y={radius - decoratorRadius * 0.7}
+              radius={decoratorRadius}
+              href={workload.data.editUrl}
+              external
+            >
+              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                {routeDecoratorIcon(workload.data.editUrl)}
+              </g>
+            </Decorator>
+          </Tooltip>
         ),
         workload.data.url && (
-          <Decorator
-            key="route"
-            x={radius - decoratorRadius * 0.7}
-            y={-radius + decoratorRadius * 0.7}
-            radius={decoratorRadius}
-            href={workload.data.url}
-            external
-            title="Open URL"
-            position={TooltipPosition.right}
-          >
-            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
-            </g>
-          </Decorator>
+          <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+            <Decorator
+              x={radius - decoratorRadius * 0.7}
+              y={-radius + decoratorRadius * 0.7}
+              radius={decoratorRadius}
+              href={workload.data.url}
+              external
+            >
+              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
+              </g>
+            </Decorator>
+          </Tooltip>
         ),
         build && (
           <Link
@@ -99,33 +97,36 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             to={resourcePathFromModel(BuildModel, build.metadata.name, build.metadata.namespace)}
             className="odc-decorator__link"
           >
-            <Decorator
-              x={-radius + decoratorRadius * 0.7}
-              y={radius - decoratorRadius * 0.7}
-              radius={decoratorRadius}
-              title={`${build.metadata.name} ${build.status && build.status.phase}`}
+            <Tooltip
+              content={`${build.metadata.name} ${build.status && build.status.phase}`}
               position={TooltipPosition.left}
             >
-              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                {build.status.phase === 'Complete' ? (
-                  <GreenCheckCircleIcon
-                    alt={`${build.metadata.name} ${build.status && build.status.phase}`}
-                  />
-                ) : (
-                  <foreignObject
-                    width={decoratorRadius}
-                    height={decoratorRadius}
-                    style={{ fontSize: decoratorRadius }}
-                  >
-                    <Status
-                      title={`${build.metadata.name} ${build.status && build.status.phase}`}
-                      status={build.status.phase}
-                      iconOnly
+              <Decorator
+                x={-radius + decoratorRadius * 0.7}
+                y={radius - decoratorRadius * 0.7}
+                radius={decoratorRadius}
+              >
+                <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                  {build.status.phase === 'Complete' ? (
+                    <GreenCheckCircleIcon
+                      alt={`${build.metadata.name} ${build.status && build.status.phase}`}
                     />
-                  </foreignObject>
-                )}
-              </g>
-            </Decorator>
+                  ) : (
+                    <foreignObject
+                      width={decoratorRadius}
+                      height={decoratorRadius}
+                      style={{ fontSize: decoratorRadius }}
+                    >
+                      <Status
+                        title={`${build.metadata.name} ${build.status && build.status.phase}`}
+                        status={build.status.phase}
+                        iconOnly
+                      />
+                    </foreignObject>
+                  )}
+                </g>
+              </Decorator>
+            </Tooltip>
           </Link>
         ),
       ]}
