@@ -9,6 +9,7 @@ import {
   edgesFromAnnotations,
   createResourceConnection,
   updateResourceApplication,
+  removeResourceConnection,
 } from '../../utils/application-utils';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
@@ -457,4 +458,18 @@ export const createTopologyResourceConnection = (
   const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
 
   return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
+};
+
+export const removeTopologyResourceConnection = (
+  source: TopologyDataObject,
+  target: TopologyDataObject,
+): Promise<any> => {
+  if (!source || !target) {
+    return Promise.reject();
+  }
+
+  const sourceObj = getResourceDeploymentObject(source);
+  const targetObj = getResourceDeploymentObject(target);
+
+  return removeResourceConnection(sourceObj, targetObj);
 };

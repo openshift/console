@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { TopologyView } from '@patternfly/react-topology';
+import { confirmModal, errorModal } from '@console/internal/components/modals';
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
 import { GraphApi, TopologyDataModel, TopologyDataObject } from './topology-types';
 import {
   createTopologyResourceConnection,
+  removeTopologyResourceConnection,
   updateTopologyResourceApplication,
 } from './topology-utils';
 import TopologyControlBar from './TopologyControlBar';
@@ -64,6 +66,33 @@ export default class Topology extends React.Component<TopologyProps, State> {
     return createTopologyResourceConnection(sourceItem, targetItem, replaceTargetItem);
   };
 
+  onRemoveConnection = (sourceNodeId: string, targetNodeId: string): void => {
+    const {
+      data: { topology },
+    } = this.props;
+    const sourceItem: TopologyDataObject = topology[sourceNodeId];
+    const targetItem: TopologyDataObject = topology[targetNodeId];
+
+    const message = (
+      <React.Fragment>
+        Are you sure you want to remove the connection from <strong>{sourceItem.name}</strong> to{' '}
+        <strong>{targetItem.name}</strong>?
+      </React.Fragment>
+    );
+
+    confirmModal({
+      title: 'Delete Connection',
+      message,
+      btnText: 'Remove',
+      executeFn: () => {
+        return removeTopologyResourceConnection(sourceItem, targetItem).catch((err) => {
+          const error = err.message;
+          errorModal({ error });
+        });
+      },
+    });
+  };
+
   onSidebarClose = () => {
     this.setState({ selected: null });
   };
@@ -102,6 +131,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
           onSelect={this.onSelect}
           onUpdateNodeGroup={this.onUpdateNodeGroup}
           onCreateConnection={this.onCreateConnection}
+          onRemoveConnection={this.onRemoveConnection}
           graphApiRef={this.graphApiRef}
         />
       </TopologyView>

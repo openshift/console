@@ -80,6 +80,7 @@ export interface D3ForceDirectedRendererProps {
     targetNodeId: string,
     replaceTargetNodeId?: string,
   ): Promise<any>;
+  onRemoveConnection?(sourceNodeId: string, targetNodeId: string): void;
 }
 
 function getEdgeId(d: Edge): string {
@@ -982,7 +983,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
   }
 
   renderEdge(edgeId: string) {
-    const { topology, edgeProvider } = this.props;
+    const { topology, edgeProvider, onRemoveConnection } = this.props;
     const { edgesById, dragNodeId, moveConnection } = this.state;
 
     if (moveConnection && moveConnection.edgeId === edgeId) {
@@ -1001,6 +1002,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         data={data}
         isDragging={viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId}
         onTargetArrowEnter={this.onMoveConnectionEnter}
+        onRemove={() => onRemoveConnection(viewEdge.source.id, viewEdge.target.id)}
       />
     );
   }

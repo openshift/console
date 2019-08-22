@@ -139,6 +139,7 @@ export type EdgeProps<D = {}> = ViewEdge & {
   data?: TopologyDataObject<D>;
   isDragging?: boolean;
   targetArrowRef?(ref: SVGPathElement): void;
+  onRemove?: () => void;
 };
 
 export type GroupProps = ViewGroup & {

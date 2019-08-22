@@ -132,7 +132,7 @@ const updateItemAppConnectTo = (
   }
 
   const tags = _.toPairs(item.metadata.annotations);
-  const op = _.size(tags) ? 'replace' : 'add';
+  let op = _.size(tags) ? 'replace' : 'add';
 
   const existingTag = _.find(tags, (tag) => tag[0] === 'app.openshift.io/connects-to');
   if (existingTag) {
@@ -142,13 +142,27 @@ const updateItemAppConnectTo = (
     }
 
     const index = connections.indexOf(oldValue);
-    if (index >= 0) {
+    if (!connectValue) {
+      _.remove(connections, (connection) => connection === oldValue);
+    } else if (index >= 0) {
       connections[index] = connectValue;
     } else {
       connections.push(connectValue);
     }
     existingTag[1] = connections.join(',');
+
+    if (!existingTag[1]) {
+      _.remove(tags, (tag) => tag === existingTag);
+      if (!_.size(tags)) {
+        op = 'remove';
+      }
+    }
   } else {
+    if (!connectValue) {
+      // Removed connection not found, no need to remove
+      return Promise.resolve();
+    }
+
     const connectionTag: [string, string] = ['app.openshift.io/connects-to', connectValue];
     tags.push(connectionTag);
   }
@@ -192,6 +206,39 @@ export const createResourceConnection = (
     _.forEach(listsValue, (list) => {
       _.forEach(list, (item) => {
         patches.push(updateItemAppConnectTo(item, connectValue, replaceValue));
+      });
+    });
+
+    return Promise.all(patches);
+  });
+};
+
+// Remove the connection from the source to the target
+export const removeResourceConnection = (
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+
+  const replaceValue =
+    _.get(target, ['metadata', 'labels', 'app.kubernetes.io/instance']) || target.metadata.name;
+
+  const instanceName = _.get(source, ['metadata', 'labels', 'app.kubernetes.io/instance']);
+
+  const patches: Promise<any>[] = [updateItemAppConnectTo(source, '', replaceValue)];
+
+  // If there is no instance label, only update this item
+  if (!instanceName) {
+    return Promise.all(patches);
+  }
+
+  // Update all the instance's resources that were part of the previous application
+  return listInstanceResources(source.metadata.namespace, instanceName).then((listsValue) => {
+    _.forEach(listsValue, (list) => {
+      _.forEach(list, (item) => {
+        patches.push(updateItemAppConnectTo(item, '', replaceValue));
       });
     });
 

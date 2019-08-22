@@ -1,7 +1,14 @@
-.odc-connects-to__target-box {
+.odc-connects-to {
+  &__target-box {
     cursor: pointer;
-}
-
-.odc-hover-arrow {
-  fill: var(--pf-global--active-color--400);
+  }
+  &__remove-bg {
+    fill: var(--pf-global--active-color--400);
+  }
+  &__remove-icon {
+    color: var(--pf-global--Color--light-100);
+  }
+  &__hover-arrow {
+    fill: var(--pf-global--active-color--400);
+  }
 }
