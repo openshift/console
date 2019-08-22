@@ -60,11 +60,9 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
                 required={missingValues && i === 0}
                 aria-describedby={helpText ? this.helpID : undefined} />
             </div>
-            <div className="co-list-input__remove-btn">
-              <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeValue(i)} aria-label="Remove">
-                <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-              </button>
-            </div>
+            <button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__span-btns" onClick={() => this.removeValue(i)} aria-label="Remove">
+              <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+            </button>
           </div>
         ))}
         {helpText && <div className="co-list-input__help-block help-block" id={this.helpID}>{helpText}</div>}
