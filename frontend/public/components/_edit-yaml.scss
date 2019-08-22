@@ -1,14 +1,5 @@
 .yaml-editor {
   position: relative;
-  &--readonly .yaml-editor__acebox {
-    background: $input-bg-disabled !important;
-    color: $color-pf-black-700 !important;
-    filter: grayscale(.55);
-  }
-}
-
-.yaml-editor__acebox {
-  flex: 1;
 }
 
 .yaml-editor__buttons {
@@ -21,11 +12,6 @@
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
-}
-
-.yaml-editor__flexbox {
-  display: flex;
-  flex-direction: column;
 }
 
 .yaml-editor__header {
