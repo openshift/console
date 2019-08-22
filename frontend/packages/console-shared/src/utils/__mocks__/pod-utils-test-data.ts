@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 
 export const deploymentConfig: K8sResourceKind = {
   kind: 'DeploymentConfig',
@@ -14,6 +14,25 @@ export const deploymentConfig: K8sResourceKind = {
       'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
       'app.openshift.io/vcs-ref': 'master',
       'idling.alpha.openshift.io/idled-at': 'mock-data',
+      'openshift.io/deployment.phase': 'Complete',
+    },
+  },
+  spec: {
+    strategy: {
+      type: 'Rolling',
+    },
+  },
+};
+
+export const statefulSets: K8sResourceKind = {
+  kind: 'StatefulSet',
+  apiVersion: 'apps/v1',
+  metadata: {
+    name: 'ss-1',
+    namespace: 'testproject1',
+    uid: '02f680df-680f-11e9-b69e-5254003f9382',
+    labels: {
+      app: 'ss-1',
     },
   },
 };
@@ -91,3 +110,5 @@ export const mockPod: K8sResourceKind = {
     phase: 'Running',
   },
 };
+
+export const allpods: PodKind[] = [mockPod as PodKind];

@@ -16,15 +16,24 @@ import './PodRing.scss';
 interface PodRingProps {
   pods: Pod[];
   obj: K8sResourceKind;
+  rc?: K8sResourceKind;
   resourceKind: K8sKind;
   path: string;
   impersonate?: string;
+  enableScaling?: boolean;
 }
 
-const PodRing: React.FC<PodRingProps> = ({ pods, obj, resourceKind, path, impersonate }) => {
+const PodRing: React.FC<PodRingProps> = ({
+  pods,
+  obj,
+  resourceKind,
+  path,
+  impersonate,
+  rc,
+  enableScaling = true,
+}) => {
   const [editable, setEditable] = React.useState(false);
   const [clickCount, setClickCount] = React.useState(obj.spec.replicas);
-
   React.useEffect(() => {
     checkPodEditAccess(obj, resourceKind, impersonate)
       .then((resp: SelfSubjectAccessReviewKind) => setEditable(resp.status.allowed))
@@ -54,6 +63,8 @@ const PodRing: React.FC<PodRingProps> = ({ pods, obj, resourceKind, path, impers
   };
 
   const isKnative = _.get(obj, 'metadata.ownerReferences[0].kind') === 'Revision';
+  const isScalingAllowed = !isKnative && editable && enableScaling;
+  const resourceObj = rc || obj;
 
   return (
     <Split>
@@ -63,48 +74,47 @@ const PodRing: React.FC<PodRingProps> = ({ pods, obj, resourceKind, path, impers
             standalone
             data={pods}
             subTitle={
-              obj.spec.replicas !== obj.status.availableReplicas
-                ? !obj.spec.replicas
+              resourceObj.spec.replicas !== resourceObj.status.availableReplicas
+                ? !resourceObj.spec.replicas
                   ? `pods`
-                  : `scaling to ${obj.spec.replicas}`
-                : obj.spec.replicas > 1 || obj.spec.replicas === 0
+                  : `scaling to ${resourceObj.spec.replicas}`
+                : resourceObj.spec.replicas > 1 || resourceObj.spec.replicas === 0
                 ? 'pods'
                 : 'pod'
             }
-            title={obj.status.availableReplicas || '0'}
+            title={resourceObj.status.availableReplicas || '0'}
           />
         </div>
       </SplitItem>
-      {!isKnative &&
-        (editable && (
-          <SplitItem>
-            <Bullseye>
-              <div>
-                <Button
-                  type="button"
-                  variant="plain"
-                  aria-label="Increase the pod count"
-                  title="Increase the pod count"
-                  onClick={() => handleClick(1)}
-                  isBlock
-                >
-                  <AngleUpIcon style={{ fontSize: '20' }} />
-                </Button>
-                <Button
-                  type="button"
-                  variant="plain"
-                  aria-label="Decrease the pod count"
-                  title="Decrease the pod count"
-                  onClick={() => handleClick(-1)}
-                  isBlock
-                  isDisabled={clickCount <= 0}
-                >
-                  <AngleDownIcon style={{ fontSize: '20' }} />
-                </Button>
-              </div>
-            </Bullseye>
-          </SplitItem>
-        ))}
+      {isScalingAllowed && (
+        <SplitItem>
+          <Bullseye>
+            <div>
+              <Button
+                type="button"
+                variant="plain"
+                aria-label="Increase the pod count"
+                title="Increase the pod count"
+                onClick={() => handleClick(1)}
+                isBlock
+              >
+                <AngleUpIcon style={{ fontSize: '20' }} />
+              </Button>
+              <Button
+                type="button"
+                variant="plain"
+                aria-label="Decrease the pod count"
+                title="Decrease the pod count"
+                onClick={() => handleClick(-1)}
+                isBlock
+                isDisabled={clickCount <= 0}
+              >
+                <AngleDownIcon style={{ fontSize: '20' }} />
+              </Button>
+            </div>
+          </Bullseye>
+        </SplitItem>
+      )}
     </Split>
   );
 };

@@ -7,6 +7,9 @@ import {
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
 import { podColor } from '../constants/pod';
+import { Pod } from '../types/pod';
+import { DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
+import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
 
 export const podStatus = Object.keys(podColor);
 
@@ -99,6 +102,7 @@ export const calculateRadius = (size: number) => {
     podStatusInnerRadius,
     podStatusOuterRadius,
     decoratorRadius,
+    podStatusStrokeWidth,
   };
 };
 
@@ -141,4 +145,36 @@ export const isIdled = (deploymentConfig: K8sResourceKind): boolean => {
     'metadata.annotations["idling.alpha.openshift.io/idled-at"]',
     false,
   );
+};
+
+export const getPodData = (
+  dc: K8sResourceKind,
+  pods: Pod[],
+  current: PodControllerOverviewItem,
+  previous: PodControllerOverviewItem,
+  isRollingOut: boolean,
+): { inProgressDeploymentData: Pod[] | null; completedDeploymentData: Pod[] } => {
+  const strategy: DeploymentStrategy = _.get(dc, ['spec', 'strategy', 'type'], null);
+  const currentDeploymentphase = current && current.phase;
+  const currentPods = current && current.pods;
+  const previousPods = previous && previous.pods;
+  // DaemonSets and StatefulSets
+  if (!strategy) return { inProgressDeploymentData: null, completedDeploymentData: pods };
+
+  // Scaling no. of pods
+  if (currentDeploymentphase === DEPLOYMENT_PHASE.complete) {
+    return { inProgressDeploymentData: null, completedDeploymentData: currentPods };
+  }
+
+  // Deploy - Rolling - Recreate
+  if (
+    (strategy === DEPLOYMENT_STRATEGY.recreate || strategy === DEPLOYMENT_STRATEGY.rolling) &&
+    isRollingOut
+  ) {
+    return {
+      inProgressDeploymentData: currentPods,
+      completedDeploymentData: previousPods,
+    };
+  }
+  return { inProgressDeploymentData: null, completedDeploymentData: currentPods };
 };

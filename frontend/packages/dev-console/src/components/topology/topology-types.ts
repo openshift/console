@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 import { KebabOption } from '@console/internal/components/utils';
-import { Pod, Resource, OverviewItem } from '@console/shared';
+import { Pod, Resource, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
 
@@ -78,10 +78,16 @@ export interface WorkloadData {
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
-  donutStatus: {
-    pods: Pod[];
-    build: K8sResourceKind;
-  };
+  build: K8sResourceKind;
+  donutStatus: DonutStatusData;
+}
+
+export interface DonutStatusData {
+  pods: Pod[];
+  current: PodControllerOverviewItem;
+  previous: PodControllerOverviewItem;
+  dc: K8sResourceKind;
+  isRollingOut: boolean;
 }
 
 export interface GraphApi {

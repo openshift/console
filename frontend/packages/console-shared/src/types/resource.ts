@@ -1,4 +1,5 @@
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { DEPLOYMENT_STRATEGY } from '../constants';
 
 export type OverviewItemAlerts = {
   [key: string]: {
@@ -34,3 +35,5 @@ export type OverviewItem = {
   configurations?: K8sResourceKind[];
   revisions?: K8sResourceKind[];
 };
+
+export type DeploymentStrategy = DEPLOYMENT_STRATEGY.recreate | DEPLOYMENT_STRATEGY.rolling;

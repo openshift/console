@@ -30,6 +30,8 @@ import {
   TRIGGERS_ANNOTATION,
   DEPLOYMENT_PHASE_ANNOTATION,
   CONTAINER_WAITING_STATE_ERROR_REASONS,
+  DEPLOYMENT_STRATEGY,
+  DEPLOYMENT_PHASE,
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
@@ -370,6 +372,30 @@ const getIdledStatus = (
   return rc;
 };
 
+const getRolloutStatus = (
+  dc: K8sResourceKind,
+  current: PodControllerOverviewItem,
+  previous: PodControllerOverviewItem,
+): boolean => {
+  const {
+    spec: {
+      strategy: { type: strategy },
+    },
+  } = dc;
+  const phase = current && current.phase;
+  const currentRC = current && current.obj;
+  const notFailedOrCancelled =
+    phase !== DEPLOYMENT_PHASE.cancelled && phase !== DEPLOYMENT_PHASE.failed;
+  if (strategy === DEPLOYMENT_STRATEGY.recreate) {
+    return (
+      notFailedOrCancelled &&
+      getDeploymentConfigVersion(currentRC) > 1 &&
+      phase !== DEPLOYMENT_PHASE.complete
+    );
+  }
+  return notFailedOrCancelled && previous && previous.pods.length > 0;
+};
+
 export class TransformResourceData {
   private resources: any;
 
@@ -410,7 +436,7 @@ export class TransformResourceData {
     const ownedRC = getOwnedResources(resource, replicationControllers.data);
     return _.filter(
       ownedRC,
-      (rc) => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) === currentVersion,
+      (rc) => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) >= currentVersion - 1,
     );
   };
 
@@ -553,8 +579,7 @@ export class TransformResourceData {
       };
       const replicationControllers = this.getReplicationControllersForResource(obj);
       const [current, previous] = replicationControllers;
-      const isRollingOut =
-        current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
+      const isRollingOut = getRolloutStatus(obj, current, previous);
       const buildConfigs = this.getBuildConfigsForResource(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
@@ -720,8 +745,7 @@ export class TransformResourceData {
       };
       const replicationControllers = this.getReplicationControllersForResource(obj);
       const [current, previous] = replicationControllers;
-      const isRollingOut =
-        current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
+      const isRollingOut = getRolloutStatus(obj, current, previous);
       return {
         obj,
         current,

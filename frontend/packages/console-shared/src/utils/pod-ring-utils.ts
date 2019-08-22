@@ -7,12 +7,18 @@ import { TransformResourceData } from './resource-utils';
 const applyPods = (podsData: PodRingData, dc: PodRCData) => {
   const {
     pods,
+    current,
+    previous,
+    isRollingOut,
     obj: {
       metadata: { uid },
     },
   } = dc;
   podsData[uid] = {
     pods,
+    current,
+    previous,
+    isRollingOut,
   };
   return podsData;
 };

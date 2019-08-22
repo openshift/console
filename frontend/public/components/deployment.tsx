@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Status, PodRingController, PodRing } from '@console/shared';
+import { Status, PodRingController } from '@console/shared';
 import { DeploymentModel } from '../models';
 import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
@@ -24,8 +24,8 @@ import {
   LoadingInline,
 } from './utils';
 import { ReplicaSetsPage } from './replicaset';
-
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -112,9 +112,9 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
           kind={deployment.kind}
           render={(d) => {
             return d.loaded ? (
-              <PodRing
+              <PodRingSet
                 key={deployment.metadata.uid}
-                pods={d.data[deployment.metadata.uid].pods}
+                podData={d.data[deployment.metadata.uid]}
                 obj={deployment}
                 resourceKind={DeploymentModel}
                 path="/spec/replicas"
