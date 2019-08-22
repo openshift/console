@@ -8,7 +8,7 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
 import { YellowExclamationTriangleIcon } from '@console/shared';
@@ -63,25 +63,6 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a spec tag annotated with `builder` and not `hidden`
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
-
-const createApplication = (kindObj, imageStream) => {
-  if (!isBuilder(imageStream)) {
-    return null;
-  }
-
-  const { name, namespace } = imageStream.metadata;
-  return {
-    btnClass: 'btn-primary',
-    callback: () => {
-      history.push(`/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}`);
-    },
-    label: 'Create Application',
-  };
-};
-
-const actionButtons = [
-  createApplication,
-];
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -215,7 +196,6 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
   <DetailsPage
     {...props}
     kind={ImageStreamsReference}
-    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
