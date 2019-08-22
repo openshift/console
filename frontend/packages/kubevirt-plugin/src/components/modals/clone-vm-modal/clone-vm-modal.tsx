@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { getResource } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
 import {
   Form,
@@ -30,17 +28,20 @@ import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@conso
 import { getName, getNamespace } from '@console/shared';
 import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
-import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
+import { getLoadedData, getLoadError, getResource, prefixedID } from '../../../utils';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
-import { validateVmName } from '../../../utils/validations/vm';
+import { validateVmLikeEntityName } from '../../../utils/validations/vm';
 import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
   getVolumes,
   isVMRunning,
 } from '../../../selectors/vm';
-import { ValidationErrorType } from '../../../utils/validations/common';
+import { ValidationErrorType } from '../../../utils/validations/types';
+import { VIRTUAL_MACHINE_EXISTS } from '../../../utils/validations/strings';
+import { Errors } from '../../errors/errors';
+import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
 import { ConfigurationSummary } from './configuration-summary';
 
 import './_clone-vm-modal.scss';
@@ -77,7 +78,10 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
   const persistentVolumeClaimsData = getLoadedData(persistentVolumeClaims, []);
   const dataVolumesData = getLoadedData(dataVolumes, []);
 
-  const nameError = validateVmName(name, namespace, getLoadedData(virtualMachines, []));
+  const nameError = validateVmLikeEntityName(name, namespace, getLoadedData(virtualMachines, []), {
+    existsErrorMessage: VIRTUAL_MACHINE_EXISTS,
+    subject: 'Name',
+  });
 
   const dataVolumesValid = !(dataVolumesError || (requestsDataVolumes && !dataVolumes.loaded));
   const pvcsValid = !(pvcsError || (requestsPVCs && !persistentVolumeClaims.loaded));
@@ -108,25 +112,25 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
     <div className="modal-content">
       <ModalTitle>Clone Virtual Machine</ModalTitle>
       <ModalBody>
-        {[
-          { error: namespacesError, key: 'namespacesError' },
-          { error: pvcsError, key: 'pvcsError' },
-          { error: dataVolumesError, key: 'dataVolumesError' },
-        ]
-          .filter((e) => e.error)
-          .map(({ error, key }, idx, arr) => (
-            <Alert
-              key={key}
-              variant="danger"
-              title="Could not load data"
-              className={classNames({
-                'kubevirt-clone-vm-modal__error-group--item': idx !== arr.length - 1,
-                'kubevirt-clone-vm-modal__error-group--end ': idx === arr.length - 1,
-              })}
-            >
-              {error}
-            </Alert>
-          ))}
+        <Errors
+          errors={[
+            {
+              key: 'namespacesError',
+              message: namespacesError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+            {
+              key: 'pvcsError',
+              message: pvcsError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+            {
+              key: 'dataVolumesError',
+              message: dataVolumesError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+          ]}
+        />
         {isVMRunning(vm) && (
           <Alert
             variant="warning"

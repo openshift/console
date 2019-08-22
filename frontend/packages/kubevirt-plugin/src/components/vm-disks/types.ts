@@ -1,7 +1,7 @@
 import { EntityMap } from '@console/shared';
 import { VMLikeEntityKind, VMKind } from '../../types';
 
-export enum StorageType {
+export enum StorageRowType {
   STORAGE_TYPE_VM = 'storage-type-vm',
   STORAGE_TYPE_CREATE = 'storage-type-create',
 }
@@ -10,7 +10,7 @@ export type StorageBundle = {
   name: string;
   size: string;
   storageClass: string;
-  storageType: StorageType;
+  storageType: StorageRowType;
   disk: any;
 };
 

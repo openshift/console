@@ -14,17 +14,19 @@ import { getAnnotations, getLabels } from '../selectors';
 import { getDiskBus } from './disk';
 import { getNicBus } from './nic';
 import { Network } from './types';
+import { getVolumeCloudInitUserData } from './volume';
+import { vCPUCount } from './cpu';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
 export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
 export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
 export const getInterfaces = (vm: VMKind) =>
-  _.get(vm, 'spec.template.spec.domain.devices.interfaces', []);
+  _.get(vm, 'spec.template.spec.domain.devices.interfaces') || [];
 
-export const getNetworks = (vm: VMKind) => _.get(vm, 'spec.template.spec.networks', []);
-export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes', []);
-export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates', []);
+export const getNetworks = (vm: VMKind) => _.get(vm, 'spec.template.spec.networks') || [];
+export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes') || [];
+export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates') || [];
 
 export const getOperatingSystem = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
@@ -77,8 +79,8 @@ export const getUsedNetworks = (vm: VMKind): Network[] => {
     .filter((i) => i);
 };
 
-export const getFlavorDescription = (vm) => {
-  const cpu = getCPU(vm);
+export const getFlavorDescription = (vm: VMKind) => {
+  const cpu = vCPUCount(getCPU(vm));
   const memory = getMemory(vm);
   const cpuStr = cpu ? `${cpu} CPU` : '';
   const memoryStr = memory ? `${memory} Memory` : '';
@@ -88,3 +90,22 @@ export const getFlavorDescription = (vm) => {
 
 export const getVMStatusConditions = (vm: VMKind) =>
   _.get(vm, 'status.conditions', []) as VMKind['status']['conditions'];
+
+export const getCloudInitVolume = (vm: VMKind) => {
+  const cloudInitVolume = getVolumes(vm).find(getVolumeCloudInitUserData);
+
+  if (cloudInitVolume) {
+    // make sure volume is used by disk
+    const disks = getDisks(vm);
+    if (disks.find((disk) => disk.name === cloudInitVolume.name)) {
+      return cloudInitVolume;
+    }
+  }
+  return null;
+};
+
+export const getCloudInitUserData = (vm: VMKind) =>
+  getVolumeCloudInitUserData(getCloudInitVolume(vm));
+
+export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
+  _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);

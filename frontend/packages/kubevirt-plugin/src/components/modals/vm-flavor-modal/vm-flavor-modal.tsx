@@ -19,11 +19,17 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { VMKind, VMLikeEntityKind } from '../../../types';
-import { getFlavor, getMemory, getCPU, isVM, vCPUCount } from '../../../selectors/vm';
-import { selectVM, getFlavors } from '../../../selectors/vm-template/selectors';
+import { VMLikeEntityKind } from '../../../types';
+import {
+  getFlavor,
+  getMemory,
+  getCPU,
+  vCPUCount,
+  asVM,
+  getVMLikeModel,
+} from '../../../selectors/vm';
+import { getFlavors } from '../../../selectors/vm-template/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
-import { VirtualMachineModel } from '../../../models';
 import {
   CUSTOM_FLAVOR,
   NAMESPACE_OPENSHIFT,
@@ -55,19 +61,15 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     loadError,
     loaded,
   } = props;
-
+  const vm = asVM(vmLike);
   const flattenTemplates = _.get(templates, 'data', []) as TemplateKind[];
 
   const vmFlavor = getFlavor(vmLike);
   const flavors = getFlavors(vmLike, flattenTemplates);
 
-  const sourceMemory = isVM(vmLike)
-    ? getMemory(vmLike as VMKind)
-    : getMemory(selectVM(vmLike as TemplateKind));
+  const sourceMemory = getMemory(vm);
 
-  const sourceCPURaw = isVM(vmLike)
-    ? getCPU(vmLike as VMKind)
-    : getCPU(selectVM(vmLike as TemplateKind));
+  const sourceCPURaw = getCPU(vm);
   const sourceCPU = vCPUCount(sourceCPURaw);
 
   const [flavor, setFlavor] = React.useState(vmFlavor);
@@ -83,8 +85,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     if (patches.length === 0) {
       close();
     } else {
-      const model = isVM(vmLike) ? VirtualMachineModel : TemplateModel;
-      const promise = k8sPatch(model, vmLike, patches);
+      const promise = k8sPatch(getVMLikeModel(vmLike), vmLike, patches);
       handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
     }
   };

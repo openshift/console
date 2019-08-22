@@ -5,7 +5,6 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
-import { getResource } from 'kubevirt-web-ui-components';
 import { getNamespace, getName, createBasicLookup, createLookup } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -26,16 +25,17 @@ import {
   getDataVolumeStorageSize,
 } from '../../selectors/dv/selectors';
 import { VMLikeEntityTabProps } from '../vms/types';
+import { getResource } from '../../utils';
 import { DiskRow } from './disk-row';
-import { StorageBundle, StorageType, VMDiskRowProps } from './types';
+import { StorageBundle, StorageRowType, VMDiskRowProps } from './types';
 import { CreateDiskRowFirehose } from './create-disk-row';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
   switch (props.obj.storageType) {
-    case StorageType.STORAGE_TYPE_VM:
-      return <DiskRow {...props} key={StorageType.STORAGE_TYPE_VM} />;
-    case StorageType.STORAGE_TYPE_CREATE:
-      return <CreateDiskRowFirehose {...props} key={StorageType.STORAGE_TYPE_CREATE} />;
+    case StorageRowType.STORAGE_TYPE_VM:
+      return <DiskRow {...props} key={StorageRowType.STORAGE_TYPE_VM} />;
+    case StorageRowType.STORAGE_TYPE_CREATE:
+      return <CreateDiskRowFirehose {...props} key={StorageRowType.STORAGE_TYPE_CREATE} />;
     default:
       return null;
   }
@@ -96,13 +96,13 @@ const getStoragesData = (
       ...disk, // for sorting
       size,
       storageClass,
-      storageType: StorageType.STORAGE_TYPE_VM,
+      storageType: StorageRowType.STORAGE_TYPE_VM,
       disk,
     };
   });
 
   return addNewDisk
-    ? [{ storageType: StorageType.STORAGE_TYPE_CREATE, rerenderFlag }, ...disksWithType]
+    ? [{ storageType: StorageRowType.STORAGE_TYPE_CREATE, rerenderFlag }, ...disksWithType]
     : disksWithType;
 };
 

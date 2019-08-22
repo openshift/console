@@ -1,0 +1,20 @@
+.kubevirt-create-vm-modal__description {
+  min-height: 3em;
+  resize: vertical;
+}
+
+.kubevirt-create-vm-modal__memory-row {
+  margin-right: 0.5em;
+}
+
+.kubevirt-create-vm-modal__memory-input {
+  max-width:  100% !important;
+}
+
+.kubevirt-create-vm-modal__cpu-input {
+  max-width:  100% !important;
+}
+
+.kubevirt-create-vm-modal__start_vm_checkbox > input[type="checkbox"] {
+  margin: -0.25em 0 0 !important;
+}

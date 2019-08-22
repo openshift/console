@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import {
   CreateVmWizard,
-  getResource,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_TYPE_BASE,
@@ -22,6 +21,7 @@ import {
   DataVolumeModel,
   V2VVMwareModel,
 } from '../../models';
+import { getResource } from '../../utils';
 import { createModalResourceLauncher } from './modal-resource-launcher';
 
 const mapStateToProps = ({ k8s }) => {

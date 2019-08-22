@@ -1,25 +1,3 @@
-import { getName, getNamespace } from '@console/shared';
-import { VIRTUAL_MACHINE_EXISTS } from '../strings';
-import {
-  getValidationObject,
-  validateDNS1123SubdomainValue,
-  ValidationErrorType,
-  ValidationObject,
-} from '../common';
-import { addMissingSubject } from '../../grammar';
-
-export const vmAlreadyExists = (name, namespace, vms): ValidationObject => {
-  const exists = vms && vms.some((vm) => getNamespace(vm) === namespace && getName(vm) === name);
-  return exists ? getValidationObject(addMissingSubject(VIRTUAL_MACHINE_EXISTS, 'Name')) : null;
-};
-
-export const validateVmName = (value, namespace, vms): ValidationObject => {
-  const dnsValidation = validateDNS1123SubdomainValue(value);
-  return dnsValidation && dnsValidation.type === ValidationErrorType.Error
-    ? getValidationObject(addMissingSubject(dnsValidation.message, 'Name'), dnsValidation.type)
-    : vmAlreadyExists(value, namespace, vms);
-};
-
 const HEXCH_REGEX = '[0-9A-Fa-f]';
 const MAC_REGEX_COLON_DELIMITER = new RegExp(
   `^((${HEXCH_REGEX}{2}[:]){19}${HEXCH_REGEX}{2})$|` + // 01:23:45:67:89:ab:cd:ef:00:00:01:23:45:67:89:ab:cd:ef:00:00

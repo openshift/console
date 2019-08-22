@@ -1,6 +1,12 @@
 import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, OwnerReference } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  OwnerReference,
+  MatchExpression,
+} from '@console/internal/module/k8s';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
   getName,
   getNamespace,
@@ -74,3 +80,60 @@ export const compareOwnerReference = (obj: OwnerReference, otherObj: OwnerRefere
 
 export const isCPUEqual = (a: CPU, b: CPU) =>
   a.sockets === b.sockets && a.cores === b.cores && a.threads === b.threads;
+
+export const getResource = (
+  model: K8sResourceKind,
+  {
+    name,
+    namespaced = true,
+    namespace,
+    isList = true,
+    matchLabels,
+    matchExpressions,
+    prop,
+    fieldSelector,
+    optional,
+  }: {
+    name?: string;
+    namespace?: string;
+    namespaced?: boolean;
+    isList?: boolean;
+    matchLabels?: { [key: string]: string };
+    matchExpressions?: MatchExpression[];
+    prop?: string;
+    fieldSelector?: string;
+    isImmutable?: boolean;
+    optional?: boolean;
+  } = {
+    namespaced: true,
+    isList: true,
+  },
+) => {
+  const m = model.kind === NamespaceModel.kind ? ProjectModel : model;
+  const res: any = {
+    // non-admin user cannot list namespaces (k8s wont return only namespaces available to user but 403 forbidden, ).
+    // Instead we need to use ProjectModel which will return available projects (namespaces)
+    kind: m.kind,
+    model: m,
+    namespaced,
+    namespace,
+    isList,
+    prop: prop || model.kind,
+    optional,
+  };
+
+  if (name) {
+    res.name = name;
+  }
+  if (matchLabels) {
+    res.selector = { matchLabels };
+  }
+  if (matchExpressions) {
+    res.selector = { matchExpressions };
+  }
+  if (fieldSelector) {
+    res.fieldSelector = fieldSelector;
+  }
+
+  return res;
+};

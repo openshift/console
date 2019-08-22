@@ -1,7 +1,8 @@
 import { EntityMap } from '@console/shared';
-import { getValidationObject, validateDNS1123SubdomainValue, ValidationObject } from '../common';
+import { getValidationObject, validateDNS1123SubdomainValue } from '../common';
 import { addMissingSubject, makeSentence } from '../../grammar';
 import { MAC_ADDRESS_INVALID_ERROR, NIC_NAME_EXISTS } from '../strings';
+import { ValidationObject } from '../types';
 import { isValidMAC } from './validations';
 
 export const validateNicName = (
