@@ -114,7 +114,6 @@ export const config: Config = {
     ]),
     newApp: suite([
       'tests/overview/overview.scenario.ts',
-      'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
     ]),
     // TODO(alecmerdler): Rename this to `olm` (being used by ci-operator)
@@ -147,7 +146,6 @@ export const config: Config = {
       'tests/modal-annotations.scenario.ts',
       'tests/environment.scenario.ts',
       'tests/overview/overview.scenario.ts',
-      'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
@@ -159,7 +157,6 @@ export const config: Config = {
       'tests/filter.scenario.ts',
       'tests/environment.scenario.ts',
       'tests/overview/overview.scenario.ts',
-      'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
@@ -173,7 +170,6 @@ export const config: Config = {
       'tests/service-catalog/**/*.scenario.ts',
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
-      'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
