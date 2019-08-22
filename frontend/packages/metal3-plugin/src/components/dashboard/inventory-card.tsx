@@ -10,6 +10,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
 import { getNamespace } from '@console/shared';
+import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { getHostStorage, getHostNICs, getHostCPU, getHostMachineName } from '../../selectors';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
 
@@ -64,7 +65,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
 
   const podResult = prometheusResults.getIn([queries[HostQuery.NUMBER_OF_PODS], 'result']);
   const podError = getHostQueryResultError(podResult);
-  const podCount = _.get(podResult, 'data.result', []).length;
+  const podStats = getInstantVectorStats(podResult);
+  const podCount = _.get(podStats, '[0].y');
 
   return (
     <DashboardCard>
@@ -77,7 +79,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           singularTitle="Pod"
           pluralTitle="Pods"
           count={podCount}
-          error={podError}
+          error={podError || !podStats.length}
         />
 
         <InventoryItem
