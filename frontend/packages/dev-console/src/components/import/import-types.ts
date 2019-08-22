@@ -169,14 +169,14 @@ export enum TerminationTypes {
 }
 
 export enum InsecureTrafficTypes {
-  none = 'None',
-  allow = 'Allow',
-  redirect = 'Redirect',
+  None = 'None',
+  Allow = 'Allow',
+  Redirect = 'Redirect',
 }
 
 export enum PassthroughInsecureTrafficTypes {
-  none = 'None',
-  redirect = 'Redirect',
+  None = 'None',
+  Redirect = 'Redirect',
 }
 
 export interface LimitsData {
