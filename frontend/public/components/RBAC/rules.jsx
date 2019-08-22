@@ -90,7 +90,7 @@ const Resources = connect(({k8s}) => ({allModels: k8s.getIn(['RESOURCES', 'model
   });
 
 const DeleteRule = (name, namespace, i) => ({
-  label: 'Delete Rule...',
+  label: 'Delete Rule',
   callback: () => confirmModal({
     title: 'Delete Rule',
     message: `Are you sure you want to delete Rule #${i}?`,
@@ -106,7 +106,7 @@ const DeleteRule = (name, namespace, i) => ({
 
 // This page is temporarily disabled until we update the safe resources list.
 // const EditRule = (name, namespace, i) => ({
-//   label: 'Edit Rule...',
+//   label: 'Edit Rule',
 //   href: namespace ? `/k8s/ns/${namespace}/roles/${name}/${i}/edit` : `/k8s/cluster/clusterroles/${name}/${i}/edit`,
 // });
 
