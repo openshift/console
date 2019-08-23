@@ -11,7 +11,7 @@ import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
 import { getNamespace } from '@console/shared';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { getHostStorage, getHostNICs, getHostCPU, getHostMachineName } from '../../selectors';
+import { getHostMachineName } from '../../selectors';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
 
 const getResources = (namespace: string, machineName: string): FirehoseResource[] => [
@@ -57,10 +57,6 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
     return undefined;
   }, [watchPrometheus, stopWatchPrometheusQuery, machineIP]);
 
-  const diskCount = getHostStorage(obj).length;
-  const nicCount = getHostNICs(obj).length;
-  const cpuCount = getHostCPU(obj).count || 0;
-
   const queries = getInventoryQueries(machineIP);
 
   const podResult = prometheusResults.getIn([queries[HostQuery.NUMBER_OF_PODS], 'result']);
@@ -80,29 +76,6 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
           pluralTitle="Pods"
           count={podCount}
           error={podError || !podStats.length}
-        />
-
-        <InventoryItem
-          isLoading={false}
-          singularTitle="Disk"
-          pluralTitle="Disks"
-          count={diskCount}
-          error={null}
-        />
-
-        <InventoryItem
-          isLoading={false}
-          singularTitle="NIC"
-          pluralTitle="NICs"
-          count={nicCount}
-          error={null}
-        />
-        <InventoryItem
-          isLoading={false}
-          singularTitle="CPU"
-          pluralTitle="CPUs"
-          count={cpuCount}
-          error={null}
         />
       </DashboardCardBody>
     </DashboardCard>
