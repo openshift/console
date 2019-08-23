@@ -8,11 +8,7 @@
 
   &__content {
     padding: var(--pf-global--spacer--lg);
-    flex: 1;
-  }
-
-  &__card {
-    height: 100%;
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
   }
 }
