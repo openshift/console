@@ -1,7 +1,6 @@
 import * as React from 'react';
 import ProgressiveListFooter from './ProgressiveListFooter';
 import ProgressiveListItem from './ProgressiveListItem';
-import './ProgressiveList.scss';
 
 export interface ProgressiveListProps {
   visibleItems: string[];

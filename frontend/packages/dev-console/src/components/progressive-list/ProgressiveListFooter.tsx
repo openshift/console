@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 
 export interface ProgressiveListFooterProps {
   items: string[];
@@ -29,13 +30,9 @@ const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
         return (
           <React.Fragment key={opt}>
             {preText}
-            <button
-              className="btn btn-link odc-progressive-list__button"
-              type="button"
-              onClick={() => onShowItem(opt)}
-            >
+            <Button variant="link" isInline onClick={() => onShowItem(opt)}>
               {opt}
-            </button>
+            </Button>
             {postText}
           </React.Fragment>
         );

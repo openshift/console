@@ -59,21 +59,22 @@ describe(ProgressiveList.displayName, () => {
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
-        .find('button')
+        .find('Button')
+        .render()
         .text(),
     ).toEqual('Dummy');
     expect(
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
-        .find('button'),
+        .find('Button'),
     ).toHaveLength(1);
     expect(wrapper.find(DummyComponent).exists()).toBe(false);
     expect(visibleItems).toHaveLength(0);
     wrapper
       .find(ProgressiveListFooter)
       .shallow()
-      .find('button')
+      .find('Button')
       .simulate('click', { target: { innerText: 'Dummy' } });
     expect(visibleItems).toHaveLength(1);
     expect(visibleItems.includes('Dummy')).toBe(true);
@@ -83,7 +84,7 @@ describe(ProgressiveList.displayName, () => {
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
-        .find('button'),
+        .find('Button'),
     ).toHaveLength(0);
   });
 });
