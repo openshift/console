@@ -1,5 +1,10 @@
 .odc-pod-ring {
   & svg {
-    overflow: visible!important;
+    overflow: visible !important;
+  }
+  .VictoryContainer {
+    &:focus {
+      outline: none;
+    }
   }
 }

@@ -18,6 +18,11 @@
       fill: var(--pf-global--Color--300);
     }
   }
+  g {
+    &:focus {
+      outline: none;
+    }
+  }
 }
 
 .odc-m-drag-active {

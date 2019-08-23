@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
-import Tooltip from '../SvgPodTooltip';
+import { Tooltip } from '@patternfly/react-core';
 import { Pod } from '../../types';
 import { calculateRadius, podStatus, getPodStatus, podColor } from '../../utils';
+import './PodStatus.scss';
 
 type PodData = {
   x: string;
@@ -25,59 +26,77 @@ type PodStatusProps = {
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
 
-class PodStatus extends React.PureComponent<PodStatusProps> {
-  render() {
-    const {
-      innerRadius = podStatusInnerRadius,
-      outerRadius = podStatusOuterRadius,
-      x,
-      y,
-      data,
-      size = 130,
-      standalone = false,
-      showTooltip = true,
-      title = '',
-      subTitle = '',
-    } = this.props;
-    const vData: PodData[] = podStatus.map((pod) => ({
-      x: pod,
-      y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
-    }));
+const PodStatus: React.FC<PodStatusProps> = ({
+  innerRadius = podStatusInnerRadius,
+  outerRadius = podStatusOuterRadius,
+  x,
+  y,
+  data,
+  size = 130,
+  standalone = false,
+  showTooltip = true,
+  title = '',
+  subTitle = '',
+}) => {
+  const [tipContent, setTipContent] = React.useState(<span />);
+  const [hover, setHover] = React.useState(false);
+  const [hoverTimeout, setHoverTimeout] = React.useState(null);
 
-    if (_.isEmpty(data)) {
-      _.update(vData, `[${_.findKey(vData, { x: 'Scaled to 0' })}]['y']`, () => 1);
-    }
+  const vData: PodData[] = podStatus.map((pod) => ({
+    x: pod,
+    y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
+  }));
 
-    const tooltipEvent: any = showTooltip
-      ? [
-          {
-            target: 'data',
-            eventHandlers: {
-              onMouseOver: () => {
-                return [
-                  {
-                    target: 'labels',
-                    mutation: () => {
-                      return { active: true };
-                    },
-                  },
-                ];
-              },
-              onMouseOut: () => {
-                return [
-                  {
-                    target: 'labels',
-                    mutation: () => {
-                      return { active: false };
-                    },
-                  },
-                ];
-              },
+  if (_.isEmpty(data)) {
+    _.update(vData, `[${_.findKey(vData, { x: 'Scaled to 0' })}]['y']`, () => 1);
+  }
+
+  const tooltipEvent: any = showTooltip
+    ? [
+        {
+          target: 'data',
+          eventHandlers: {
+            onMouseOver: (e: Event, segmentData: any) => {
+              const { datum } = segmentData;
+              const content = datum ? (
+                <span className="odc-pod-status-tip">
+                  <span
+                    className="odc-pod-status-tip__status-box"
+                    style={{ background: podColor[datum.x] }}
+                  />
+                  <span className="odc-pod-status-tip__status-text">{datum.x}</span>
+                  {datum.x !== 'Scaled to 0' &&
+                    datum.x !== 'Autoscaled to 0' &&
+                    datum.x !== 'Idle' && <span>{Math.round(datum.y)}</span>}
+                </span>
+              ) : (
+                <span />
+              );
+              setTipContent(content);
+
+              if (!hover) {
+                setHoverTimeout(
+                  setTimeout(() => {
+                    setHover(true);
+                    setHoverTimeout(null);
+                  }, 200),
+                );
+              }
+            },
+            onMouseOut: () => {
+              if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                setHoverTimeout(null);
+              }
+              setHover(false);
             },
           },
-        ]
-      : undefined;
-    return (
+        },
+      ]
+    : undefined;
+
+  return (
+    <Tooltip content={tipContent} tippyProps={{ duration: 0 }} trigger="manual" isVisible={hover}>
       <ChartDonut
         events={tooltipEvent}
         animate={{
@@ -92,7 +111,6 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
         width={size}
         title={title}
         subTitle={subTitle}
-        labelComponent={<Tooltip x={0} y={0} width={size} height={size * -0.2} />}
         /*
           // @ts-ignore */
         padAngle={(d: PodData) => (d.y > 0 ? 2 : 0)}
@@ -107,8 +125,8 @@ class PodStatus extends React.PureComponent<PodStatusProps> {
           },
         }}
       />
-    );
-  }
-}
+    </Tooltip>
+  );
+};
 
 export default PodStatus;

@@ -34,6 +34,8 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       donutStatus: { build },
     },
   } = workload;
+  const [hoverDecorator, setHoverDecorator] = React.useState(null);
+  const [hoverTimeout, setHoverTimeout] = React.useState(null);
 
   const routeDecoratorIcon = (editUrl: string): React.ReactElement => {
     switch (detectGitType(editUrl)) {
@@ -45,6 +47,25 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
         return <GitlabIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
       default:
         return <GitAltIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
+    }
+  };
+
+  const updateHover = (isHover: boolean, decorator: string) => {
+    if (!isHover) {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        setHoverTimeout(null);
+      }
+      setHoverDecorator(null);
+      return;
+    }
+
+    if (!hoverTimeout) {
+      setHoverTimeout(
+        setTimeout(() => {
+          setHoverDecorator(decorator);
+        }, 200),
+      );
     }
   };
 
@@ -62,13 +83,21 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       isDragging={isDragging}
       attachments={[
         workload.data.editUrl && (
-          <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+          <Tooltip
+            key="edit"
+            content="Edit Source Code"
+            position={TooltipPosition.right}
+            tippyProps={{ duration: 0 }}
+            trigger="manual"
+            isVisible={hoverDecorator === 'edit source'}
+          >
             <Decorator
               x={radius - decoratorRadius * 0.7}
               y={radius - decoratorRadius * 0.7}
               radius={decoratorRadius}
               href={workload.data.editUrl}
               external
+              onHoverChange={(isHover: boolean) => updateHover(isHover, 'edit source')}
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 {routeDecoratorIcon(workload.data.editUrl)}
@@ -77,13 +106,21 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
           </Tooltip>
         ),
         workload.data.url && (
-          <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+          <Tooltip
+            key="route"
+            content="Open URL"
+            position={TooltipPosition.right}
+            tippyProps={{ duration: 0 }}
+            trigger="manual"
+            isVisible={hoverDecorator === 'open url'}
+          >
             <Decorator
               x={radius - decoratorRadius * 0.7}
               y={-radius + decoratorRadius * 0.7}
               radius={decoratorRadius}
               href={workload.data.url}
               external
+              onHoverChange={(isHover: boolean) => updateHover(isHover, 'open url')}
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                 <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
@@ -100,11 +137,15 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             <Tooltip
               content={`${build.metadata.name} ${build.status && build.status.phase}`}
               position={TooltipPosition.left}
+              tippyProps={{ duration: 0 }}
+              trigger="manual"
+              isVisible={hoverDecorator === 'build status'}
             >
               <Decorator
                 x={-radius + decoratorRadius * 0.7}
                 y={radius - decoratorRadius * 0.7}
                 radius={decoratorRadius}
+                onHoverChange={(isHover: boolean) => updateHover(isHover, 'build status')}
               >
                 <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                   {build.status.phase === 'Complete' ? (

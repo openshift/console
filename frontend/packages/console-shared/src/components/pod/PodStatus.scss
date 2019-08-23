@@ -1,0 +1,11 @@
+.odc-pod-status-tip {
+  &__status-box {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    margin: 4px var(--pf-global--spacer--sm	) 0 0;
+  }
+  &__status-text {
+    margin-right: var(--pf-global--spacer--md	);
+  }
+}

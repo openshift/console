@@ -11,6 +11,7 @@ type DecoratorTypes = {
   onClick?(): void;
   href?: string;
   external?: boolean;
+  onHoverChange?(isHover: boolean): void;
 };
 
 const FILTER_ID = 'DecoratorDropShadowFilterId';
@@ -23,6 +24,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   children,
   href,
   external,
+  onHoverChange,
 }) => {
   const decorator = (
     <g
@@ -32,6 +34,8 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
         e.stopPropagation();
         onClick && onClick();
       }}
+      onMouseEnter={() => onHoverChange && onHoverChange(true)}
+      onMouseLeave={() => onHoverChange && onHoverChange(false)}
     >
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
       <circle
