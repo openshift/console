@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { safeDump, safeLoad } from 'js-yaml';
-import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, by, ExpectedConditions as until, element } from 'protractor';
 
 import * as yamlView from './yaml.view';
 import { appHost, testName, waitForNone } from '../protractor.conf';
@@ -166,3 +166,23 @@ export const emptyState = $('.cos-status-box').$('.text-center');
 
 export const errorMessage = $('.pf-c-alert.pf-m-inline.pf-m-danger');
 export const successMessage = $('.pf-c-alert.pf-m-inline.pf-m-success');
+
+export const clickListPageCreateYAMLButton = async() => {
+  const createDropdownIsPresent = await createItemButton.isPresent();
+  if (createDropdownIsPresent) {
+    await createItemButton.click();
+    await createYAMLLink.click();
+  } else {
+    await browser.wait(until.presenceOf(createYAMLButton));
+    await createYAMLButton.click();
+  }
+  browser.wait(until.and(untilNoLoadersPresent, until.presenceOf(element(by.cssContainingText('h1', 'Create')))));
+};
+
+export const createNamespacedResourceWithDefaultYAML = async function(resourceType: string) {
+  await browser.get(`${appHost}/k8s/ns/${testName}/${resourceType}`);
+  await isLoaded();
+  await clickListPageCreateYAMLButton();
+  await browser.wait(until.presenceOf(yamlView.saveButton));
+  await yamlView.saveButton.click();
+};

@@ -5,11 +5,11 @@ import { Timestamp } from './utils';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
-  const rows = _.map(conditions, (condition, i) => <div className="row" key={i}>
+  const rows = _.map(conditions, (condition, i) => <div className="row" data-test-id={condition.type} key={i}>
     <div className="col-xs-4 col-sm-2 col-md-2">
       <CamelCaseWrap value={condition.type} />
     </div>
-    <div className="col-xs-4 col-sm-2 col-md-2">
+    <div className="col-xs-4 col-sm-2 col-md-2" data-test-id="status">
       {condition.status}
     </div>
     <div className="hidden-xs hidden-sm col-md-2">
