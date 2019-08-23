@@ -10,7 +10,7 @@ import { addMissingSubject } from '../../grammar';
 
 export const vmAlreadyExists = (name, namespace, vms): ValidationObject => {
   const exists = vms && vms.some((vm) => getNamespace(vm) === namespace && getName(vm) === name);
-  return exists ? getValidationObject(VIRTUAL_MACHINE_EXISTS) : null;
+  return exists ? getValidationObject(addMissingSubject(VIRTUAL_MACHINE_EXISTS, 'Name')) : null;
 };
 
 export const validateVmName = (value, namespace, vms): ValidationObject => {
