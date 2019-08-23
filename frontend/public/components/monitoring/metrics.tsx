@@ -54,17 +54,17 @@ import { setAllQueryArguments } from '../utils/router';
 import { chartTheme, Labels, QueryObj, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
-  'avg',
-  'bottomk',
-  'count',
-  'count_values',
-  'max',
-  'min',
-  'quantile',
-  'stddev',
-  'stdvar',
-  'sum',
-  'topk',
+  'avg()',
+  'bottomk()',
+  'count()',
+  'count_values()',
+  'max()',
+  'min()',
+  'quantile()',
+  'stddev()',
+  'stdvar()',
+  'sum()',
+  'topk()',
 ];
 
 const prometheusFunctions = [
