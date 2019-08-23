@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 import { OrderedMap } from 'immutable';
 import * as _ from 'lodash';
 import { testName } from '../../../../integration-tests/protractor.conf';
@@ -10,7 +9,6 @@ import {
 } from '../../../console-shared/src/test-utils/utils';
 import { statusIcons } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
-// eslint-disable-next-line no-unused-vars
 import { getResourceObject } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS } from './utils/consts';
 import {

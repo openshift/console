@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import { Extension, Plugin, ActivePlugin } from '../typings';
 import { PluginPackage } from './plugin-resolver';
 
