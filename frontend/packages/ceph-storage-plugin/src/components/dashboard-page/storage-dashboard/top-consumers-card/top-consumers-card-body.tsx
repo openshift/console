@@ -30,12 +30,12 @@ const chartLegendPropsValue = {
 };
 
 const getYTickValues = (value: number): number[] => [
-  Math.floor(value / 4),
-  Math.floor(value / 2),
-  Math.floor((3 * value) / 4),
-  Math.floor(value),
-  Math.floor((5 * value) / 4),
-  Math.floor((6 * value) / 4),
+  _.round(value / 4, 1),
+  _.round(value / 2, 1),
+  _.round((3 * value) / 4, 1),
+  _.round(value, 1),
+  _.round((5 * value) / 4, 1),
+  _.round((6 * value) / 4, 1),
 ];
 
 const sortResources: SortResourcesProps = (a, b) => {
