@@ -3,8 +3,8 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import { ResourceProps, TransformPodData } from '@console/shared';
-import { TopologyDataModel, TopologyDataResources } from './topology-types';
+import { ResourceProps, TransformPodData, updateResourceApplication } from '@console/shared';
+import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
 const isKnativeDeployment = (dc: ResourceProps): boolean => {
   return !!(dc.metadata && dc.metadata.labels && dc.metadata.labels[KNATIVE_SERVING_LABEL]);
@@ -392,3 +392,30 @@ export class TransformTopologyData {
     }
   }
 }
+
+const getResourceDeploymentObject = (topologyObject: TopologyDataObject): ResourceProps => {
+  if (!topologyObject) {
+    return null;
+  }
+
+  return _.find(topologyObject.resources, (resource) => {
+    return (
+      resource.kind === 'Deployment' ||
+      resource.kind === 'DeploymentConfig' ||
+      resource.kind === 'DaemonSet' ||
+      resource.kind === 'StatefulSet'
+    );
+  });
+};
+
+export const updateTopologyResourceApplication = (
+  item: TopologyDataObject,
+  application: string,
+): Promise<any> => {
+  if (!item || !_.size(item.resources)) {
+    return Promise.reject();
+  }
+
+  const resource = getResourceDeploymentObject(item);
+  return updateResourceApplication(resource, application);
+};

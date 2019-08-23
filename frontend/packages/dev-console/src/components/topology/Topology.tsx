@@ -2,7 +2,8 @@ import * as React from 'react';
 import { TopologyView } from '@patternfly/react-topology';
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
-import { GraphApi, TopologyDataModel } from './topology-types';
+import { GraphApi, TopologyDataModel, TopologyDataObject } from './topology-types';
+import { updateTopologyResourceApplication } from './topology-utils';
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 
@@ -33,6 +34,15 @@ export default class Topology extends React.Component<TopologyProps, State> {
     this.setState(({ selected }) => {
       return { selected: !nodeId || selected === nodeId ? null : nodeId };
     });
+  };
+
+  onUpdateNodeGroup = (nodeId: string, targetGroup: string): Promise<any> => {
+    const {
+      data: { topology },
+    } = this.props;
+    const item: TopologyDataObject = topology[nodeId];
+
+    return updateTopologyResourceApplication(item, targetGroup);
   };
 
   onSidebarClose = () => {
@@ -71,6 +81,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
           groupProvider={groupProvider}
           selected={selected}
           onSelect={this.onSelect}
+          onUpdateNodeGroup={this.onUpdateNodeGroup}
           graphApiRef={this.graphApiRef}
         />
       </TopologyView>

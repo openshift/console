@@ -1,5 +1,8 @@
 .odc-default-group {
   fill: var(--pf-global--BackgroundColor--200);
+  &.odc-m-is-highlight {
+    fill: var(--pf-global--active-color--200);
+  }
 
   &__label {
     pointer-events: none;

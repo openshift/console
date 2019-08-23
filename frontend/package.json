@@ -94,6 +94,7 @@
     "patternfly": "^3.59.1",
     "patternfly-react": "2.32.3",
     "patternfly-react-extensions": "2.18.4",
+    "point-in-svg-path": "1.0.1",
     "prop-types": "15.6.x",
     "react": "16.8.6",
     "react-copy-to-clipboard": "5.x",

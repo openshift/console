@@ -1,5 +1,21 @@
 import { ComponentType } from 'react';
 import { Pod, ResourceProps, Resource } from '@console/shared';
+import { ObjectMetadata } from '@console/internal/module/k8s';
+import { Point } from '../../utils/svg-utils';
+
+export interface ResourceProps {
+  kind: string;
+  apiVersion?: string;
+  metadata: ObjectMetadata;
+  status: {};
+  spec: {
+    [key: string]: any;
+  };
+}
+
+export interface Resource {
+  data: ResourceProps[];
+}
 
 export interface TopologyDataResources {
   replicationControllers: Resource;
@@ -88,6 +104,10 @@ export interface Selectable {
   onSelect?(): void;
 }
 
+export interface GroupElementInterface {
+  isPointInGroup: (p: Point) => boolean;
+}
+
 export type ViewNode = {
   id: string;
   type?: string;
@@ -112,18 +132,25 @@ export type ViewGroup = {
   type?: string;
   name: string;
   nodes: ViewNode[];
+  element?: GroupElementInterface;
 };
 
 export type NodeProps<D = {}> = ViewNode &
   Selectable & {
     data?: TopologyDataObject<D>;
+    isDragging?: boolean;
   };
 
 export type EdgeProps<D = {}> = ViewEdge & {
   data?: TopologyDataObject<D>;
+  isDragging?: boolean;
 };
 
-export type GroupProps = ViewGroup;
+export type GroupProps = ViewGroup & {
+  dropSource?: boolean;
+  dropTarget?: boolean;
+  groupRef(element: GroupElementInterface): void;
+};
 
 export type NodeProvider = (string) => ComponentType<NodeProps>;
 
