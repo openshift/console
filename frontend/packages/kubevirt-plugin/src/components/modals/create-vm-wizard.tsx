@@ -16,12 +16,8 @@ import {
 import { getName } from '@console/shared';
 import { units, Firehose } from '@console/internal/components/utils';
 import { k8sCreate, k8sGet, k8sPatch, k8sKill } from '@console/internal/module/k8s';
-import {
-  VirtualMachineModel,
-  NetworkAttachmentDefinitionModel,
-  DataVolumeModel,
-  V2VVMwareModel,
-} from '../../models';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin/src/models';
+import { VirtualMachineModel, DataVolumeModel, V2VVMwareModel } from '../../models';
 import { createModalResourceLauncher } from './modal-resource-launcher';
 
 const mapStateToProps = ({ k8s }) => {
