@@ -48,18 +48,6 @@ export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   id: 'virtualmachineinstancereplicaset',
 };
 
-export const NetworkAttachmentDefinitionModel: K8sKind = {
-  label: 'Network Attachment Definition',
-  labelPlural: 'Network Attachment Definitions',
-  apiVersion: 'v1',
-  apiGroup: 'k8s.cni.cncf.io',
-  plural: 'network-attachment-definitions',
-  namespaced: true,
-  abbr: 'NAD',
-  kind: 'NetworkAttachmentDefinition',
-  id: 'network-attachment-definition',
-};
-
 export const VirtualMachineInstanceMigrationModel: K8sKind = {
   label: 'Virtual Machine Instance Migration',
   labelPlural: 'Virtual Machine Instance Migrations',
