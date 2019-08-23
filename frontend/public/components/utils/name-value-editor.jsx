@@ -337,7 +337,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
             </div>
           }
           <div className="col-xs-5 pairs-list__name-field">
-            <input type="text" className="pf-c-form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
+            <input type="text" className="pf-c-form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} data-test-id="nameValueEditorName" />
           </div>
           {
             _.isPlainObject(pair[NameValueEditorPair.Value]) ?
@@ -346,7 +346,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
               </div>
               :
               <div className="col-xs-5 pairs-list__value-field">
-                <input type="text" className="pf-c-form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
+                <input type="text" className="pf-c-form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} data-test-id="nameValueEditorValue" />
               </div>
           }
           {

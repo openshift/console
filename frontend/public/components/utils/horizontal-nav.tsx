@@ -131,7 +131,7 @@ export const NavBar = withRouter<NavBarProps>(({pages, basePath, hideDivider}) =
   const secondaryTabs = <ul className="co-m-horizontal-nav__menu-secondary">{
     pages.slice(React.Children.count(primaryTabs.props.children) - 1).map(({name, href}) => {
       const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
-      return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
+      return <li className={klass} key={name} data-test-id={`horizontal-${name.toLowerCase()}-tab`}><Link to={`${basePath}/${href}`} >{name}</Link></li>;
     })}</ul>;
 
   return <div className="co-m-horizontal-nav__menu">

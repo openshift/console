@@ -103,7 +103,7 @@ export class SelectorInput extends React.Component {
     };
 
     return <div className="co-search-input pf-c-form-control">
-      <tags-input>
+      <tags-input data-test-id="selector-input">
         <TagsInput ref={this.setRef} className="tags" value={tags} addKeys={addKeys} removeKeys={removeKeys} inputProps={inputProps} renderTag={renderTag} onChange={this.handleChange.bind(this)} addOnPaste addOnBlur />
       </tags-input>
     </div>;
