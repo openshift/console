@@ -18,6 +18,12 @@ describe('Application Launcher Menu', () => {
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     expect(pageSidebar.getText()).toContain('Topology');
+    expect(pageSidebar.getText()).toContain('+Add');
+    expect(pageSidebar.getText()).toContain('Builds');
+    expect(pageSidebar.getText()).toContain('Advanced');
+    expect(pageSidebar.getText()).toContain('Projects');
+    expect(pageSidebar.getText()).toContain('Events');
+    expect(pageSidebar.getText()).toContain('Search');
   });
 
   it('Switch to dev to admin perspective', async() => {
