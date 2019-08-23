@@ -38,7 +38,7 @@ const CreateVmWizardDecorated = connect(mapStateToProps)(CreateVmWizard);
 export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
   const resources = [
     getResource(NamespaceModel, { prop: 'namespaces', optional: true }),
-    getResource(VirtualMachineModel, { prop: 'virtualMachines' }),
+    getResource(VirtualMachineModel, { namespace: activeNamespace, prop: 'virtualMachines' }),
     getResource(TemplateModel, {
       namespace: activeNamespace,
       prop: 'userTemplates',
