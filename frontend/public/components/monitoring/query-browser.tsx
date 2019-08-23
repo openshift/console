@@ -109,22 +109,39 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
   </foreignObject>;
 };
 
-const Graph: React.FC<GraphProps> = React.memo(({containerComponent, domain, data, span}) => {
+const Graph: React.FC<GraphProps> = React.memo(({containerComponent, data, span, xDomain}) => {
   const [containerRef, width] = useRefWidth();
+
+  // Set a reasonable Y-axis range based on the min and max values in the data
+  const findMin = series => _.minBy(series, 'y');
+  const findMax = series => _.maxBy(series, 'y');
+  let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
+  let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
+  if (minY === 0 && maxY === 0) {
+    minY = -1;
+    maxY = 1;
+  } else if (minY > 0 && maxY > 0) {
+    minY = 0;
+  } else if (minY < 0 && maxY < 0) {
+    maxY = 0;
+  }
+
+  const tickFormat = Math.abs(maxY - minY) < 0.005
+    ? v => (v === 0 ? '0' : v.toExponential(1))
+    : v => humanizeNumber(v).string;
 
   return <div ref={containerRef} style={{width: '100%'}}>
     {width > 0 && <Chart
       containerComponent={containerComponent}
-      domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
+      domain={{x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY]}}
       domainPadding={{y: 1}}
       height={200}
-      minDomain={{y: 0}}
       scale={{x: 'time', y: 'linear'}}
       theme={chartTheme}
       width={width}
     >
       <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-      <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={value => humanizeNumber(value).string} />
+      <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
       <ChartGroup>
         {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
       </ChartGroup>
@@ -168,7 +185,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
 
-  const [domain, setDomain] = React.useState();
+  const [xDomain, setXDomain] = React.useState();
   const [error, setError] = React.useState();
   const [isZooming, setIsZooming] = React.useState(false);
   const [results, setResults] = React.useState();
@@ -177,7 +194,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [x1, setX1] = React.useState(0);
   const [x2, setX2] = React.useState(0);
 
-  const endTime = _.get(domain, 'x[1]');
+  const endTime = _.get(xDomain, '[1]');
 
   const samples = 300;
 
@@ -239,7 +256,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   ), [disabledSeries, filterLabels, results]);
 
   const onSpanChange = React.useCallback((newSpan: number) => {
-    setDomain(undefined);
+    setXDomain(undefined);
     setSpan(newSpan);
   }, []);
 
@@ -278,7 +295,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setIsZooming(false);
 
       const {width} = e.currentTarget.getBoundingClientRect();
-      const oldFrom = _.get(domain, 'x[0]', Date.now() - span);
+      const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
       let from = oldFrom + (span * Math.min(x1, x2) / width);
       let to = oldFrom + (span * Math.max(x1, x2) / width);
       let newSpan = to - from;
@@ -292,7 +309,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         to = middle + (newSpan / 2);
       }
 
-      setDomain({x: [from, to], y: undefined});
+      setXDomain([from, to]);
       setSpan(newSpan);
     }
   };
@@ -317,7 +334,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         <Graph
           containerComponent={isZooming ? undefined : containerComponent}
           data={graphData}
-          domain={domain}
+          xDomain={xDomain}
           span={span}
         />
       </div>
@@ -329,10 +346,7 @@ export const QueryBrowser = withFallback(connect(
   {patchQuery: UIActions.queryBrowserPatchQuery}
 )(QueryBrowser_));
 
-type Domain = {
-  x: [number, number];
-  y: [number, number];
-};
+type AxisDomain = [number, number];
 
 type GraphDataPoint = {
   x: Date;
@@ -355,8 +369,8 @@ type PrometheusValue = [number, string];
 type GraphProps = {
   containerComponent: React.ReactElement;
   data: GraphDataPoint[][];
-  domain: Domain;
   span: number;
+  xDomain: AxisDomain;
 };
 
 type QueryBrowserProps = {
