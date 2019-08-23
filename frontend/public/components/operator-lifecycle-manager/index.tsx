@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector, referenceForGroupVersionKind } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector, referenceForGroupVersionKind, resourceURL } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
 import { InstallModeType } from './operator-group';
+import { PackageManifestModel } from '../../models';
 
 import * as operatorLogo from '../../imgs/operator.svg';
 
@@ -98,6 +99,8 @@ export type RequirementStatus = {
   uuid?: string;
 };
 
+export type ClusterServiceVersionIcon = {base64data: string, mediatype: string};
+
 export type ClusterServiceVersionKind = {
   apiVersion: 'operators.coreos.com/v1alpha1';
   kind: 'ClusterServiceVersion';
@@ -120,7 +123,7 @@ export type ClusterServiceVersionKind = {
     description?: string;
     provider?: {name: string};
     version?: string;
-    icon?: {base64data: string, mediatype: string}[];
+    icon?: ClusterServiceVersionIcon[];
   };
   status?: {
     phase: ClusterServiceVersionPhase;
@@ -265,9 +268,18 @@ export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: st
   pkg.status.channels.find(ch => ch.name === channel).currentCSVDesc.apiservicedefinitions.owned,
 ]));
 
+export const iconFor = (pkg: PackageManifestKind) => resourceURL(PackageManifestModel, {
+  ns: _.get(pkg.status, 'catalogSourceNamespace'),
+  name: pkg.metadata.name,
+  path: 'icon',
+  queryParams: {resourceVersion: [pkg.metadata.name, _.get(pkg.status, 'channels[0].name'), _.get(pkg.status, 'channels[0].currentCSV')].join('.')},
+});
+
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
-  const imgSrc = _.isEmpty(icon) ? operatorLogo : `data:${icon.mediatype};base64,${icon.base64data}`;
+  const imgSrc: string = _.isString(icon)
+    ? icon
+    : _.isEmpty(icon) ? operatorLogo : `data:${icon.mediatype};base64,${icon.base64data}`;
 
   return <div className="co-clusterserviceversion-logo">
     <div className="co-clusterserviceversion-logo__icon">
@@ -282,7 +294,7 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
 
 export type ClusterServiceVersionLogoProps = {
   displayName: string;
-  icon: {base64data: string, mediatype: string};
+  icon: ClusterServiceVersionIcon | string;
   provider: {name: string} | string;
   version?: string;
 };

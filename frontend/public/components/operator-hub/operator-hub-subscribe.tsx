@@ -17,6 +17,7 @@ import {
   supportedInstallModesFor,
   providedAPIsForChannel,
   referenceForProvidedAPI,
+  iconFor,
 } from '../operator-lifecycle-manager';
 import { InstallModeType, installedFor, supports, providedAPIsFor, isGlobal } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup, RadioInput } from '../radio';
@@ -238,7 +239,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       </ActionGroup>
     </div>
     <div className="col-xs-6">
-      <ClusterServiceVersionLogo displayName={_.get(channels, '[0].currentCSVDesc.displayName')} icon={_.get(channels, '[0].currentCSVDesc.icon[0]')} provider={provider} />
+      <ClusterServiceVersionLogo
+        displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
+        icon={iconFor(props.packageManifest.data[0])}
+        provider={provider} />
       <h4>Provided APIs</h4>
       <div className="co-crd-card-row">
         { _.isEmpty(providedAPIsForChannel(props.packageManifest.data[0])(selectedUpdateChannel))
