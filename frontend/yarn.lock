@@ -7555,10 +7555,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
-kubevirt-web-ui-components@~0.1.41:
-  version "0.1.41"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.41.tgz#b4fc4c069b6098adc627287db1bb87abe92322be"
-  integrity sha512-bW4Inov+s+hwefGW0G3IR3+F/OqG+LyiKd1hat6ga/09XTIEGnECtI19V+vX3nKEsZUPSz7O/8BwOH1b2h860g==
+kubevirt-web-ui-components@~0.1.42:
+  version "0.1.42"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.42.tgz#dc9820424208fe9c345eb95b5330edebcba7bf8f"
+  integrity sha512-zBZMnKm7j9HDjMeaTXXVugGliMvLzYRlt9hN2osmHchosUkf87HOBxn/4hSL6QWsAO7sOHTU7RzevnQTmXycDw==
   dependencies:
     "@patternfly/react-console" "1.x"
     babel-plugin-transform-es2015-modules-umd "6.24.1"
