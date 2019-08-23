@@ -10,7 +10,7 @@ import { Status, calculateRadius, PodStatus, GreenCheckCircleIcon } from '@conso
 import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BuildConfigModel } from '@console/internal/models';
+import { BuildModel } from '@console/internal/models';
 import { detectGitType } from '../../import/import-validation-utils';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
@@ -96,11 +96,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
         build && (
           <Link
             key="build"
-            to={resourcePathFromModel(
-              BuildConfigModel,
-              build.metadata.ownerReferences[0].name,
-              build.metadata.namespace,
-            )}
+            to={resourcePathFromModel(BuildModel, build.metadata.name, build.metadata.namespace)}
             className="odc-decorator__link"
           >
             <Decorator
