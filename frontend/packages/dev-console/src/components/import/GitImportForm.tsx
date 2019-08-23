@@ -34,6 +34,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
           type="submit"
           variant={ButtonVariant.primary}
           isDisabled={!dirty || !_.isEmpty(errors)}
+          data-test-id="import-git-create-button"
         >
           Create
         </Button>
