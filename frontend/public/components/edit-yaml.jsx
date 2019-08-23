@@ -58,6 +58,9 @@ const stateToProps = ({k8s, UI}) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
+const isDesktop = () => window.innerWidth > 767;
+const desktopGutter = 30;
+
 /**
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
@@ -159,7 +162,11 @@ export const EditYAML = connect(stateToProps)(
     }
 
     get editorHeight() {
-      return Math.floor(this.height - this.buttons.getBoundingClientRect().height);
+      const buttonsHeight = this.buttons.getBoundingClientRect().height;
+      // if viewport width is > 767, also subtract top padding on .yaml-editor
+      return isDesktop()
+        ? Math.floor(this.height - buttonsHeight - desktopGutter)
+        : Math.floor(this.height - buttonsHeight);
     }
 
     get height() {
@@ -170,11 +177,15 @@ export const EditYAML = connect(stateToProps)(
     }
 
     get width() {
-      const sidebar = _.first(document.getElementsByClassName('co-p-has-sidebar__sidebar'));
-      const pageWidth = document.getElementById('content-scrollable').getBoundingClientRect().width;
-      return sidebar
-        ? pageWidth - sidebar.getBoundingClientRect().width
-        : pageWidth;
+      const hasSidebarSidebar = _.first(document.getElementsByClassName('co-p-has-sidebar__sidebar'));
+      const contentScrollableWidth = document.getElementById('content-scrollable').getBoundingClientRect().width;
+      // if viewport width is > 767, also subtract left and right margins on .yaml-editor
+      const hasSidebarBodyWidth = isDesktop()
+        ? contentScrollableWidth - (desktopGutter * 2)
+        : contentScrollableWidth;
+      return hasSidebarSidebar
+        ? hasSidebarBodyWidth - hasSidebarSidebar.getBoundingClientRect().width
+        : hasSidebarBodyWidth;
     }
 
     reload() {

@@ -1,5 +1,11 @@
 .yaml-editor {
   position: relative;
+  @media (min-width: $grid-float-breakpoint) {
+    // changing these values requires changes to the editorHeight() and width() calculations in edit-yaml.jsx
+    margin-left: $grid-gutter-width;
+    margin-right: $grid-gutter-width;
+    padding-top: $grid-gutter-width;
+  }
 }
 
 .yaml-editor__buttons {
@@ -9,8 +15,8 @@
   margin-top: auto;
   z-index: 10;
   @media (min-width: $grid-float-breakpoint) {
-    padding-left: $grid-gutter-width;
-    padding-right: $grid-gutter-width;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
