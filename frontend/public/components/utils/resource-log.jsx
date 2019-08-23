@@ -291,7 +291,7 @@ class ResourceLog_ extends React.Component {
         isInline
         className="co-alert"
         variant="danger"
-        title="An error occured while retrieving the requested logs."
+        title="An error occurred while retrieving the requested logs."
         action={<AlertActionLink onClick={this._restartStream}>Retry</AlertActionLink>}
       />}
       {stale && <Alert
