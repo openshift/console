@@ -1,0 +1,50 @@
+import { browser } from 'protractor';
+import { appHost, testName } from '../../../../../integration-tests/protractor.conf';
+import { clickHorizontalTab } from '../../../../../integration-tests/views/horizontal-nav.view';
+import { isLoaded, resourceTitle } from '../../../../../integration-tests/views/crud.view';
+
+export class DetailView {
+  readonly name: string;
+
+  readonly namespace: string;
+
+  readonly kind: string;
+
+  constructor(instance) {
+    this.name = instance.name;
+    this.namespace = instance.namespace;
+    this.kind = instance.kind;
+  }
+
+  static async getResourceTitle() {
+    return resourceTitle.getText();
+  }
+
+  async navigateToTab(tabName: string) {
+    if (!(await resourceTitle.isPresent()) || (await resourceTitle.getText()) !== this.name) {
+      await browser.get(`${appHost}/k8s/ns/${this.namespace}/${this.kind}/${this.name}`);
+      await isLoaded();
+    }
+    await clickHorizontalTab(tabName);
+    await isLoaded();
+  }
+
+  async navigateToListView() {
+    const vmsListUrl = (namespace) => `${appHost}/k8s/ns/${namespace}/${this.kind}`;
+    const currentUrl = await browser.getCurrentUrl();
+    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
+      await browser.get(vmsListUrl(this.namespace));
+      await isLoaded();
+    }
+  }
+
+  asResource() {
+    return {
+      kind: this.kind,
+      metadata: {
+        namespace: this.namespace,
+        name: this.name,
+      },
+    };
+  }
+}
