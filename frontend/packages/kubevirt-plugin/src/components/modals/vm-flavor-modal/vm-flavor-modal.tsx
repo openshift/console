@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { getVmTemplate } from 'kubevirt-web-ui-components';
+import * as _ from 'lodash';
+import { getVmTemplate, getResource } from 'kubevirt-web-ui-components';
 import {
   HandlePromiseProps,
   withHandlePromise,
   Dropdown,
   convertToBaseValue,
+  Firehose,
 } from '@console/internal/components/utils';
+import { TemplateModel } from '@console/internal/models';
 import {
   createModalLauncher,
   ModalTitle,
@@ -15,7 +18,7 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { VMKind } from '../../../types';
+import { VMKind, VMLikeEntityKind } from '../../../types';
 import {
   getFlavor,
   getMemory,
@@ -23,11 +26,20 @@ import {
   getOperatingSystem,
   getWorkloadProfile,
 } from '../../../selectors/vm';
+import { isVM } from '../../../selectors/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { VirtualMachineModel } from '../../../models';
-import { CUSTOM_FLAVOR } from '../../../constants';
-import { getTemplateFlavors, getTemplates } from '../../../selectors/vm-template/selectors';
-
+import {
+  CUSTOM_FLAVOR,
+  NAMESPACE_OPENSHIFT,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_BASE,
+} from '../../../constants';
+import {
+  getTemplateFlavors,
+  getTemplates,
+  selectVM,
+} from '../../../selectors/vm-template/selectors';
 import './_vm-flavor-modal.scss';
 
 const MB = 1000 ** 2;
@@ -41,7 +53,7 @@ const dehumanizeMemory = (memory?: string) => {
   return convertToBaseValue(memory) / MB;
 };
 
-const getFlavors = (vm: VMKind, templates: TemplateKind[]) => {
+const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
   const vmTemplate = getVmTemplate(vm);
 
   const flavors = {
@@ -65,41 +77,44 @@ const getFlavors = (vm: VMKind, templates: TemplateKind[]) => {
   return flavors;
 };
 
-const getTemplate = (templates: TemplateKind[], vm: VMKind, flavor: string) => {
-  const vmOS = getOperatingSystem(vm);
-  const vmWorkload = getWorkloadProfile(vm);
-  const matchingTemplates = getTemplates(templates, vmOS, vmWorkload, flavor);
+const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
+  const { vmLike, templates, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
-  // Take first matching. If OS/Workloads changes in the future, there will be another patch sent
-  return matchingTemplates.length > 0 ? matchingTemplates[0] : undefined;
-};
+  const flattenTemplates = _.get(templates, 'data', []) as TemplateKind[];
 
-export const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
-  const { vm, templates, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const vmFlavor = getFlavor(vmLike);
+  const flavors = getFlavors(vmLike, flattenTemplates);
 
-  const vmFlavor = getFlavor(vm);
+  const sourceMemory = isVM(vmLike)
+    ? getMemory(vmLike as VMKind)
+    : getMemory(selectVM(vmLike as TemplateKind));
+
+  const sourceCPURaw = isVM(vmLike)
+    ? getCPU(vmLike as VMKind)
+    : getCPU(selectVM(vmLike as TemplateKind));
+  let sourceCPU = parseInt(sourceCPURaw, 10);
+  if (!sourceCPU) {
+    sourceCPU =
+      (parseInt(sourceCPURaw.sockets, 10) || 1) *
+      (parseInt(sourceCPURaw.cores, 10) || 1) *
+      (parseInt(sourceCPURaw.threads, 10) || 1);
+  }
+
   const [flavor, setFlavor] = React.useState(vmFlavor);
   const [mem, setMem] = React.useState(
-    vmFlavor === CUSTOM_FLAVOR ? dehumanizeMemory(getMemory(vm)) : 1,
+    vmFlavor === CUSTOM_FLAVOR ? dehumanizeMemory(sourceMemory) : 1,
   );
-  const [cpu, setCpu] = React.useState(vmFlavor === CUSTOM_FLAVOR ? getCPU(vm) : 1);
-
-  const flavors = getFlavors(vm, templates);
+  const [cpu, setCpu] = React.useState(vmFlavor === CUSTOM_FLAVOR ? sourceCPU : 1);
 
   const submit = (e) => {
     e.preventDefault();
 
-    const patches = getUpdateFlavorPatches(
-      vm,
-      getTemplate(templates, vm, flavor),
-      flavor,
-      cpu,
-      `${mem}M`,
-    );
+    const patches = getUpdateFlavorPatches(vmLike, flattenTemplates, flavor, cpu, `${mem}M`);
     if (patches.length === 0) {
       close();
     } else {
-      const promise = k8sPatch(VirtualMachineModel, vm, patches);
+      const model = isVM(vmLike) ? VirtualMachineModel : TemplateModel;
+      const promise = k8sPatch(model, vmLike, patches);
       handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
     }
   };
@@ -158,10 +173,26 @@ export const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   );
 });
 
+const VMFlavorModalFirehose = (props) => {
+  const resources = [
+    getResource(TemplateModel, {
+      namespace: NAMESPACE_OPENSHIFT,
+      prop: 'templates',
+      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+    }),
+  ];
+
+  return (
+    <Firehose resources={resources}>
+      <VMFlavorModal {...props} />
+    </Firehose>
+  );
+};
+
 export type VMFlavornModalProps = HandlePromiseProps &
   ModalComponentProps & {
-    vm: VMKind;
-    templates: TemplateKind[];
+    vmLike: VMLikeEntityKind;
+    templates?: any;
   };
 
-export const vmFlavorModal = createModalLauncher(VMFlavorModal);
+export const vmFlavorModal = createModalLauncher(VMFlavorModalFirehose);

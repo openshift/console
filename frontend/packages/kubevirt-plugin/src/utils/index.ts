@@ -13,6 +13,7 @@ import {
   getKind as getOwnerReferenceKind,
   getName as getOwnerReferenceName,
 } from '../selectors/owner-reference/selectors';
+import { CPU } from '../types';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;
@@ -70,3 +71,6 @@ export const compareOwnerReference = (obj: OwnerReference, otherObj: OwnerRefere
   getOwnerReferenceAPIVersion(obj) === getOwnerReferenceAPIVersion(otherObj) &&
   getOwnerReferenceKind(obj) === getOwnerReferenceKind(otherObj) &&
   getOwnerReferenceName(obj) === getOwnerReferenceName(otherObj);
+
+export const isCPUEqual = (a: CPU, b: CPU) =>
+  a.sockets === b.sockets && a.cores === b.cores && a.threads === b.threads;

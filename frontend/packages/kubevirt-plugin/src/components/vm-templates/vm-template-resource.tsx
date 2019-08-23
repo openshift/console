@@ -15,8 +15,8 @@ import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
+import { vmFlavorModal } from '../modals';
 import { VMTemplateLink } from './vm-template-link';
-
 import './_vm-template-resource.scss';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
@@ -60,6 +60,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   dataVolumes,
+  canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
   const sortedBootableDevices = getBootableDevicesInOrder(template);
@@ -74,7 +75,16 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
           DASH
         )}
       </dd>
-      <dt>Flavor</dt>
+      <dt>
+        Flavor
+        {canUpdateTemplate && (
+          <button
+            type="button"
+            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
+            onClick={() => vmFlavorModal({ vmLike: template })}
+          />
+        )}
+      </dt>
       <dd id={prefixedID(id, 'flavor')}>{getFlavor(template) || DASH}</dd>
       <dt>Provision Source</dt>
       <dd id={prefixedID(id, 'provisioning-source')}>
@@ -91,6 +101,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 type VMTemplateResourceListProps = {
   template: TemplateKind;
   dataVolumes: K8sResourceKind[];
+  canUpdateTemplate: boolean;
 };
 
 type VMTemplateResourceSummaryProps = {

@@ -13,7 +13,7 @@ import {
   getBootableDevicesInOrder,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
-import { PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
@@ -63,7 +63,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   vmi,
   pods,
   migrations,
-  templates,
   canUpdateVM,
 }) => {
   const id = getBasicID(vm);
@@ -112,7 +111,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           <button
             type="button"
             className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmFlavorModal({ vm, templates })}
+            onClick={() => vmFlavorModal({ vmLike: vm })}
           />
         )}
       </dt>
@@ -133,6 +132,5 @@ type VMResourceListProps = {
   pods?: PodKind[];
   migrations?: any[];
   vmi?: VMIKind;
-  templates?: TemplateKind[];
   canUpdateVM: boolean;
 };

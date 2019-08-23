@@ -58,3 +58,9 @@ export type VMKind = {
   spec: VMSpec;
   status: VMStatus;
 } & K8sResourceKind;
+
+export type CPU = {
+  sockets: number;
+  cores: number;
+  threads: number;
+};
