@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { history } from '@console/internal/components/utils';
 import { getNamespace } from '@console/internal/components/utils/link';
@@ -105,10 +106,7 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
       trigger: {
         type: 'manual',
       },
-      serviceAccount:
-        latestRun && latestRun.spec && latestRun.spec.serviceAccount
-          ? latestRun.spec.serviceAccount
-          : 'pipeline',
+      serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
     },
   };
 };
