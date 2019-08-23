@@ -34,6 +34,7 @@ export enum ActionType {
   QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
   QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
+  QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetUser = 'setUser',
   SortList = 'sortList',
   BeginImpersonate = 'beginImpersonate',
@@ -226,6 +227,9 @@ export const queryBrowserSetAllExpanded = (isExpanded: boolean) => {
 };
 export const queryBrowserSetMetrics = (metrics: string[]) => action(ActionType.QueryBrowserSetMetrics, {metrics});
 export const queryBrowserToggleIsEnabled = (index: number) => action(ActionType.QueryBrowserToggleIsEnabled, {index});
+export const queryBrowserToggleSeries = (index: number, labels: {[key: string]: unknown}) => {
+  return action(ActionType.QueryBrowserToggleSeries, {index, labels});
+};
 export const setConsoleLinks = (consoleLinks: string[]) => action(ActionType.SetConsoleLinks, {consoleLinks});
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
@@ -261,6 +265,7 @@ const uiActions = {
   queryBrowserSetAllExpanded,
   queryBrowserSetMetrics,
   queryBrowserToggleIsEnabled,
+  queryBrowserToggleSeries,
   setConsoleLinks,
 };
 

@@ -12,7 +12,16 @@ import {
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
-import { Alert, Button, TextInput } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  TextInput,
+  Title,
+} from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
@@ -28,9 +37,13 @@ import { queryBrowserTheme } from '../graphs/themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-export const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+export const colors = chartTheme.line.colorScale;
 
-const Error = ({error}) => <Alert isInline className="co-alert" variant="danger" title="An error occurred">{_.get(error, 'json.error', error.message)}</Alert>;
+export const Error = ({error, title = 'An error occurred'}) =>
+  <Alert isInline className="co-alert" title={title} variant="danger">
+    {_.get(error, 'json.error', error.message)}
+  </Alert>;
 
 const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
@@ -83,7 +96,6 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
   if (!datum) {
     return null;
   }
-  const colors = chartTheme.line.colorScale;
   const i = datum._stack - 1;
   const {labels, query} = metadata[i];
   const width = 240;
@@ -254,8 +266,20 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     return <ChartVoronoiContainer labels={() => ''} labelComponent={labelComponent} />;
   }, [queries, results]);
 
+  const isRangeVector = _.get(error, 'json.error', '').match(/invalid expression type "range vector"/);
+
   if (hideGraphs) {
-    return error ? <Error error={error} /> : null;
+    return (error && !isRangeVector) ? <Error error={error} /> : null;
+  }
+
+  if (isRangeVector) {
+    return <div className="query-browser__wrapper graph-empty-state">
+      <EmptyState variant={EmptyStateVariant.full}>
+        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+        <Title size="sm">Ungraphable results</Title>
+        <EmptyStateBody>Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.</EmptyStateBody>
+      </EmptyState>
+    </div>;
   }
 
   const onMouseDown = (e) => {
