@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as plugins from '@console/internal/plugins';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -9,8 +10,11 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES, VMS } from '../../../../constants';
-import { StorageDashboardQuery, TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
+import { DashboardStorageExtension } from '@console/plugin-sdk';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
+import { getFlagsForExtensions } from '@console/internal/components/dashboards-page/utils';
+import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants';
+import { TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
 import { TopConsumersBody } from './top-consumers-card-body';
 import './top-consumers-card.scss';
 
@@ -18,7 +22,6 @@ const TopConsumerResourceValue = {
   [PROJECTS]: 'PROJECTS_',
   [STORAGE_CLASSES]: 'STORAGE_CLASSES_',
   [PODS]: 'PODS_',
-  [VMS]: 'VMS_',
 };
 const TopConsumerSortByValue = {
   [BY_USED]: 'BY_USED',
@@ -30,32 +33,71 @@ const TopConsumerResourceValueMapping = {
   Pods: 'pod',
 };
 
-const metricTypes = _.keys(TopConsumerResourceValue);
-const sortByTypes = _.keys(TopConsumerSortByValue);
+const getTopConsumersQueriesMap = (
+  pluginItem: DashboardStorageExtension,
+  topConsumers: TopConsumersQueries,
+  category: string,
+): TopConsumersQueries => {
+  const { name } = pluginItem.properties;
+  const queryName = `${name}_${category}`;
+  if (!topConsumers[queryName]) {
+    TopConsumerResourceValue[name] = _.replace(queryName, category, '');
+    TopConsumerResourceValueMapping[name] = pluginItem.properties.metricType;
+    topConsumers[queryName] = pluginItem.properties.query;
+  }
+  return topConsumers;
+};
 
-const metricTypesOptions = _.zipObject(metricTypes, metricTypes);
-const sortByOptions = _.zipObject(sortByTypes, sortByTypes);
+const getItems = (plugin: DashboardStorageExtension[], flags: FlagsObject) =>
+  plugin.filter((e) => flags[e.properties.required]);
 
-const TopConsumerCard: React.FC<DashboardItemProps> = ({
-  prometheusResults,
-  stopWatchPrometheusQuery,
+const getTopConsumersQueries = (flags: FlagsObject) => {
+  let topConsumers: TopConsumersQueries = { ...TOP_CONSUMER_QUERIES };
+  getItems(plugins.registry.getDashboardsStorageTopConsumerUsed(), flags).forEach((pluginItem) => {
+    topConsumers = getTopConsumersQueriesMap(
+      pluginItem,
+      topConsumers,
+      TopConsumerSortByValue[BY_USED],
+    );
+  });
+  getItems(plugins.registry.getDashboardsStorageTopConsumerRequested(), flags).forEach(
+    (pluginItem) => {
+      topConsumers = getTopConsumersQueriesMap(
+        pluginItem,
+        topConsumers,
+        TopConsumerSortByValue[BY_REQUESTED],
+      );
+    },
+  );
+  return topConsumers;
+};
+
+const TopConsumerCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
+  stopWatchPrometheusQuery,
+  prometheusResults,
+  flags = {},
 }) => {
+  const metricTypes = _.keys(TopConsumerResourceValue);
+  const sortByTypes = _.keys(TopConsumerSortByValue);
+  const metricTypesOptions = _.zipObject(metricTypes, metricTypes);
+  const sortByOptions = _.zipObject(sortByTypes, sortByTypes);
+
   const [metricType, setMetricType] = React.useState(metricTypes[0]);
   const [sortBy, setSortBy] = React.useState(sortByTypes[0]);
   React.useEffect(() => {
+    const topConsumers = getTopConsumersQueries(flags);
     const query =
-      TOP_CONSUMER_QUERIES[
-        StorageDashboardQuery[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]]
-      ];
+      topConsumers[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]];
     watchPrometheus(query);
     return () => stopWatchPrometheusQuery(query);
-  }, [watchPrometheus, stopWatchPrometheusQuery, metricType, sortBy]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchPrometheus, stopWatchPrometheusQuery, metricType, sortBy, JSON.stringify(flags)]);
 
+  const topConsumers = getTopConsumersQueries(flags);
   const topConsumerStats = prometheusResults.getIn([
-    TOP_CONSUMER_QUERIES[
-      StorageDashboardQuery[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]]
-    ],
+    topConsumers[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]],
     'result',
   ]);
 
@@ -93,4 +135,10 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
   );
 };
 
-export default withDashboardResources(TopConsumerCard);
+export default connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsStorageTopConsumerUsed()),
+)(withDashboardResources(TopConsumerCard));
+
+type TopConsumersQueries = {
+  [queryType: string]: string;
+};

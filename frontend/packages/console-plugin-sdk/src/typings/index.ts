@@ -12,3 +12,4 @@ export * from './perspectives';
 export * from './yaml-templates';
 export * from './global-configs';
 export * from './clusterserviceversions';
+export * from './plugins/ceph-storage-plugin';

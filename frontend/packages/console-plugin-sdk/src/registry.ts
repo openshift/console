@@ -18,6 +18,8 @@ import {
   isDashboardsOverviewQuery,
   isDashboardsOverviewUtilizationItem,
   isDashboardsOverviewTopConsumerItem,
+  isDashboardsStorageTopConsumerUsed,
+  isDashboardsStorageTopConsumerRequested,
   isOverviewResourceTab,
   isOverviewCRD,
   isGlobalConfig,
@@ -96,6 +98,14 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewTopConsumerItems() {
     return this.extensions.filter(isDashboardsOverviewTopConsumerItem);
+  }
+
+  public getDashboardsStorageTopConsumerUsed() {
+    return this.extensions.filter(isDashboardsStorageTopConsumerUsed);
+  }
+
+  public getDashboardsStorageTopConsumerRequested() {
+    return this.extensions.filter(isDashboardsStorageTopConsumerRequested);
   }
 
   public getOverviewResourceTabs() {

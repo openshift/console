@@ -16,8 +16,6 @@ export enum StorageDashboardQuery {
   PROJECTS_BY_USED = 'PROJECTS_BY_USED',
   STORAGE_CLASSES_BY_REQUESTED = 'STORAGE_CLASSES_BY_REQUESTED',
   STORAGE_CLASSES_BY_USED = 'STORAGE_CLASSES_BY_USED',
-  VMS_BY_REQUESTED = 'VMS_BY_REQUESTED',
-  VMS_BY_USED = 'VMS_BY_USED',
   STORAGE_CEPH_CAPACITY_VMS_QUERY = 'STORAGE_CEPH_CAPACITY_VMS_QUERY',
   STORAGE_CEPH_CAPACITY_PODS_QUERY = 'STORAGE_CEPH_CAPACITY_PODS_QUERY',
   STORAGE_CEPH_CAPACITY_REQUESTED_QUERY = 'STORAGE_CEPH_CAPACITY_REQUESTED_QUERY',
@@ -76,8 +74,4 @@ export const TOP_CONSUMER_QUERIES = {
     '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (storageclass, provisioner))))[60m:10m]',
   [StorageDashboardQuery.STORAGE_CLASSES_BY_USED]:
     '(sort(topk(5, sum(avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (storageclass, provisioner))))[60m:10m]',
-  [StorageDashboardQuery.VMS_BY_REQUESTED]:
-    '(sort(topk(5, (sum((avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (pod,namespace)))))[60m:10m]',
-  [StorageDashboardQuery.VMS_BY_USED]:
-    '(sort(topk(5, (sum((avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (pod,namespace))))[60m:10m]',
 };
