@@ -524,8 +524,16 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
     ];
   }
 
+  // Sort Values column numerically and sort all the other columns alphabetically
+  const valuesColIndex = allLabelKeys.length + 1;
+  const sort = sortBy.index === valuesColIndex
+    ? cells => {
+      const v = Number(cells[valuesColIndex]);
+      return Number.isNaN(v) ? 0 : v;
+    }
+    : sortBy.index;
   const unsortedRows = _.map(result, rowMapper);
-  const rows = _.orderBy(unsortedRows, [sortBy.index], [sortBy.direction]) as string[][];
+  const rows = _.orderBy(unsortedRows, [sort], [sortBy.direction]) as string[][];
 
   // Set the result table's break point based on the number of columns
   let breakPoint: keyof typeof TableGridBreakpoint = 'grid';
