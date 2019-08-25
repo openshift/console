@@ -14,6 +14,7 @@ import {
   DashboardsInventoryItemGroup,
   DashboardsStorageTopConsumerRequested,
   DashboardsStorageTopConsumerUsed,
+  DashboardsStorageCapacityDropdownItem,
 } from '@console/plugin-sdk';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import * as models from './models';
@@ -38,7 +39,8 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsStorageTopConsumerRequested
-  | DashboardsStorageTopConsumerUsed;
+  | DashboardsStorageTopConsumerUsed
+  | DashboardsStorageCapacityDropdownItem;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -212,6 +214,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       metricType: 'pod',
       query:
         '(sort(topk(5, sum((avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (pod,namespace))))[60m:10m]',
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Dashboards/Storage/Capacity/Dropdown/Item',
+    properties: {
+      metric: 'VMs vs Pods',
+      queries: [
+        'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
+        'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod !~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
+      ],
       required: FLAG_KUBEVIRT,
     },
   },

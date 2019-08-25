@@ -1,4 +1,7 @@
 import * as React from 'react';
+import * as plugins from '@console/internal/plugins';
+import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
+import { getFlagsForExtensions } from '@console/internal/components/dashboards-page/utils';
 import { CapacityBody, CapacityItem } from '@console/internal/components/dashboard/capacity-card';
 import {
   DashboardCard,
@@ -10,6 +13,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { DashboardsStorageCapacityDropdownItem } from '@console/plugin-sdk';
 import { Dropdown, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
 import { getInstantVectorStats, GetStats } from '@console/internal/components/graphs/utils';
 import { StorageDashboardQuery, CAPACITY_USAGE_QUERIES } from '../../../../constants/queries';
@@ -20,17 +24,12 @@ const getLastStats = (response, getStats: GetStats): React.ReactText => {
   return stats.length > 0 ? stats[stats.length - 1].y : null;
 };
 
-enum CapacityViewType {
-  CAPACITY_TOTAL_USAGE = 'Total Capacity',
-  CAPACITY_REQUESTED_VS_USED = 'Requested vs Used',
-  CAPACITY_VMS_VS_PODS = 'VMs vs Pods',
-}
+const CapacityViewType = {
+  CAPACITY_TOTAL_USAGE: 'Total Capacity',
+  CAPACITY_REQUESTED_VS_USED: 'Requested vs Used',
+};
 
 const cvtFirstKey = Object.keys(CapacityViewType)[0];
-
-type QueryMapType = {
-  [queryType: string]: [string, string];
-};
 
 // maps the TOTAL and USED queries to a single 'CapacityViewType'
 const QueriesMatchingCapacityView: QueryMapType = {
@@ -42,22 +41,36 @@ const QueriesMatchingCapacityView: QueryMapType = {
     CAPACITY_USAGE_QUERIES[StorageDashboardQuery.STORAGE_CEPH_CAPACITY_REQUESTED_QUERY],
     CAPACITY_USAGE_QUERIES[StorageDashboardQuery.STORAGE_CEPH_CAPACITY_USED_QUERY],
   ],
-  [CapacityViewType.CAPACITY_VMS_VS_PODS]: [
-    CAPACITY_USAGE_QUERIES[StorageDashboardQuery.STORAGE_CEPH_CAPACITY_PODS_QUERY],
-    CAPACITY_USAGE_QUERIES[StorageDashboardQuery.STORAGE_CEPH_CAPACITY_VMS_QUERY],
-  ],
 };
 
-export const CapacityCard: React.FC<DashboardItemProps> = ({
+const getItems = (plugin: DashboardsStorageCapacityDropdownItem[], flags: FlagsObject) =>
+  plugin.filter((e) => flags[e.properties.required]);
+
+const getCapacityQueries = (flags: FlagsObject) => {
+  const capacityQueries = { ...QueriesMatchingCapacityView };
+  getItems(plugins.registry.getDashboardsStorageCapacityDropdownItem(), flags).forEach(
+    (pluginItem) => {
+      if (!capacityQueries[pluginItem.properties.metric]) {
+        capacityQueries[pluginItem.properties.metric] = pluginItem.properties.queries;
+        CapacityViewType[pluginItem.properties.metric] = pluginItem.properties.metric;
+      }
+    },
+  );
+  return capacityQueries;
+};
+
+export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
+  flags = {},
 }) => {
   const [cvTypeSelected, setCapacityViewType] = React.useState(cvtFirstKey);
 
   React.useEffect(() => {
+    const capacityQueries = getCapacityQueries(flags);
     // 'matchingQueries' variable will contain both [TOTAL, USED] queries
-    const matchingQueries = QueriesMatchingCapacityView[CapacityViewType[cvTypeSelected]];
+    const matchingQueries = capacityQueries[CapacityViewType[cvTypeSelected]];
     // watch both the variables
     matchingQueries.forEach((mq) => {
       watchPrometheus(mq);
@@ -66,9 +79,12 @@ export const CapacityCard: React.FC<DashboardItemProps> = ({
       matchingQueries.forEach((mq) => {
         stopWatchPrometheusQuery(mq);
       });
-  }, [watchPrometheus, stopWatchPrometheusQuery, cvTypeSelected]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchPrometheus, stopWatchPrometheusQuery, cvTypeSelected, JSON.stringify(flags)]);
 
-  const matchingQueries = QueriesMatchingCapacityView[CapacityViewType[cvTypeSelected]];
+  const capacityQueries = getCapacityQueries(flags);
+  const matchingQueries = capacityQueries[CapacityViewType[cvTypeSelected]];
   // 'matchingQueries[0] => TOTAL query
   // 'matchingQueries[1] => USED query
   const storageTotal = prometheusResults.getIn([matchingQueries[0], 'result']);
@@ -103,4 +119,10 @@ export const CapacityCard: React.FC<DashboardItemProps> = ({
   );
 };
 
-export default withDashboardResources(CapacityCard);
+export default connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsStorageCapacityDropdownItem()),
+)(withDashboardResources(CapacityCard));
+
+export type QueryMapType = {
+  [queryType: string]: [string, string];
+};

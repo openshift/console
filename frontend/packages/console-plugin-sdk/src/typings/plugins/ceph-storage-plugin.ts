@@ -27,6 +27,14 @@ namespace ExtensionProperties {
     /** The query which will be used to query prometheus */
     query: string;
   }
+
+  export interface DashboardsStorageCapacityDropdownItem extends DashboardExtension {
+    /** The name of the metric */
+    metric: string;
+
+    /** The queries which will be used to query prometheus */
+    queries: [string, string];
+  }
 }
 
 export interface DashboardsStorageTopConsumerUsed
@@ -39,6 +47,11 @@ export interface DashboardsStorageTopConsumerRequested
   type: 'Dashboards/Storage/TopConsumers/Requested';
 }
 
+export interface DashboardsStorageCapacityDropdownItem
+  extends Extension<ExtensionProperties.DashboardsStorageCapacityDropdownItem> {
+  type: 'Dashboards/Storage/Capacity/Dropdown/Item';
+}
+
 export const isDashboardsStorageTopConsumerUsed = (
   e: Extension<any>,
 ): e is DashboardsStorageTopConsumerUsed => e.type === 'Dashboards/Storage/TopConsumers/Used';
@@ -47,6 +60,11 @@ export const isDashboardsStorageTopConsumerRequested = (
   e: Extension<any>,
 ): e is DashboardsStorageTopConsumerRequested =>
   e.type === 'Dashboards/Storage/TopConsumers/Requested';
+
+export const isDashboardsStorageCapacityDropdownItem = (
+  e: Extension<any>,
+): e is DashboardsStorageCapacityDropdownItem =>
+  e.type === 'Dashboards/Storage/Capacity/Dropdown/Item';
 
 export type DashboardStorageExtension =
   | DashboardsStorageTopConsumerRequested
