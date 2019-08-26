@@ -7,7 +7,7 @@ export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
 export const getPropsData = (data) => _.get(data, 'data.result[0].value[1]', null);
 
 export const getMetric = (result: PrometheusMetricResult, metric: string): string =>
-  _.get(result, ['metric', metric], null);
+  _.get(result, ['data', 'result', '0', 'metric', metric], null);
 
 export const getValue = (result: PrometheusMetricResult): number => _.get(result, 'value[1]', null);
 

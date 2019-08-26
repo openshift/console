@@ -73,7 +73,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
   const noobaaSystemName = getMetric(resourcesLinksResponse, 'system_name');
   let link = null;
   if (noobaaSystemAddress && noobaaSystemName)
-    link = `${noobaaSystemAddress}/fe/systems/${noobaaSystemName}/resources/cloud/`;
+    link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/resources/cloud/`;
 
   const allProviders = createProvidersList(providersTypesQueryResult);
   const unhealthyProviders = createProvidersList(unhealthyProvidersTypesQueryResult);

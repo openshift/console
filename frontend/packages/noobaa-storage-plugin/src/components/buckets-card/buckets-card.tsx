@@ -69,7 +69,7 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   const noobaaSystemName = getMetric(bucketsLinksResponse, 'system_name');
   let link = null;
   if (noobaaSystemAddress && noobaaSystemName)
-    link = `${noobaaSystemAddress}/fe/systems/${noobaaSystemName}/buckets/data-buckets`;
+    link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/buckets/data-buckets`;
 
   const bucketProps: BucketsType = {
     bucketsCount: getPropsData(objectBucketsCount),
