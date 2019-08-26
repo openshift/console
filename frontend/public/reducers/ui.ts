@@ -59,7 +59,7 @@ export default (state: UIState, action: UIAction): UIState => {
       overview: ImmutableMap({
         metrics: {},
         resources: ImmutableMap({}),
-        selectedDetailsTab: '',
+        selectedDetailsTab: 'Resources',
         selectedUID: '',
         selectedGroup: OverviewSpecialGroup.GROUP_BY_APPLICATION,
         groupOptions: ImmutableMap(),
