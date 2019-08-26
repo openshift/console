@@ -32,7 +32,7 @@ import { getFlagsForExtensions } from '../utils';
 const topConsumersQueryMap: TopConsumersMap = {
   [PODS]: {
     model: PodModel,
-    metric: 'pod_name',
+    metric: 'pod',
     queries: {
       [MetricType.CPU]: topConsumersQueries[OverviewQuery.PODS_BY_CPU],
       [MetricType.MEMORY]: topConsumersQueries[OverviewQuery.PODS_BY_MEMORY],

@@ -261,7 +261,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
       title="Memory Usage"
       humanize={humanizeDecimalBytes}
       namespace={ns.metadata.name}
-      query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`}
+      query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`}
     />
   </div>
 </div>;
@@ -270,9 +270,9 @@ export const TopPodsBarChart = ({ns}) => (
   <Bar
     title="Memory Usage by Pod (Top 10)"
     namespace={ns.metadata.name}
-    query={`sort_desc(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
+    query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`}
     humanize={humanizeDecimalBytes}
-    metric="pod_name"
+    metric="pod"
   />
 );
 
