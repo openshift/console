@@ -1,0 +1,13 @@
+.odc-horizontal-stacked-bars {
+  display: inline-flex;
+  flex-direction: row;
+  height: 100%;
+  outline: none;
+  vertical-align: middle;
+  width: 100%;
+
+  &__data-bar {
+    height: 100%;
+    transition: flex-grow 300ms linear;
+  }
+}
