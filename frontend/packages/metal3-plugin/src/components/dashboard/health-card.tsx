@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  DashboardItemProps,
+  withDashboardResources,
+} from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -49,7 +52,7 @@ const getHostHealthState = (obj): HostHealthState => {
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
-export const HealthCard: React.FC<HealthCardProps> = ({
+const HealthCard: React.FC<HealthCardProps> = ({
   obj,
   watchAlerts,
   stopWatchAlerts,
@@ -90,6 +93,8 @@ export const HealthCard: React.FC<HealthCardProps> = ({
     </DashboardCard>
   );
 };
+
+export default withDashboardResources(HealthCard);
 
 type HostHealthState = {
   state: HealthState;

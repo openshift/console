@@ -12,11 +12,12 @@ import {
 import { AlertsBody, AlertItem, getAlerts, HealthBody, HealthItem } from '../../dashboard/health-card';
 import { HealthState } from '../../dashboard/health-card/states';
 import { coFetch } from '../../../co-fetch';
-import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FLAGS } from '../../../const';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { getBrandingDetails } from '../../masthead';
 import { RootState } from '../../../redux';
+import { connectToFlags, flagPending, featureReducerName, FlagsObject, WithFlagsProps } from '../../../reducers/features';
+import { getFlagsForExtensions } from '../utils';
 
 export const HEALTHY = 'is healthy';
 export const ERROR = 'is in an error state';
@@ -66,6 +67,9 @@ const mapStateToProps = (state: RootState) => ({
   openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
 });
 
+const getSubsystems = (flags: FlagsObject) =>
+  plugins.registry.getDashboardsOverviewHealthSubsystems().filter(e => flags[e.properties.required]);
+
 const HealthCard_ = connect(mapStateToProps)(({
   watchURL,
   stopWatchURL,
@@ -77,11 +81,11 @@ const HealthCard_ = connect(mapStateToProps)(({
   prometheusResults,
   alertsResults,
   openshiftFlag,
+  flags = {},
 }: HealthProps) => {
   React.useEffect(() => {
-    const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
+    const subsystems = getSubsystems(flags);
     watchURL('healthz', fetchK8sHealth);
-
     watchAlerts();
 
     subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem => {
@@ -92,9 +96,9 @@ const HealthCard_ = connect(mapStateToProps)(({
       const { query } = subsystem.properties;
       watchPrometheus(query);
     });
+
     return () => {
       stopWatchURL('healthz');
-
       stopWatchAlerts();
 
       subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem =>
@@ -104,9 +108,11 @@ const HealthCard_ = connect(mapStateToProps)(({
         stopWatchPrometheusQuery(subsystem.properties.query)
       );
     };
-  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts]);
+    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts, JSON.stringify(flags)]);
 
-  const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
+  const subsystems = getSubsystems(flags);
   const k8sHealth = urlResults.getIn(['healthz', 'result']);
   const k8sHealthState = getK8sHealthState(openshiftFlag, k8sHealth);
 
@@ -121,7 +127,6 @@ const HealthCard_ = connect(mapStateToProps)(({
   });
 
   const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);
-
   const alerts = getAlerts(alertsResults);
 
   return (
@@ -176,7 +181,9 @@ const HealthCard_ = connect(mapStateToProps)(({
   );
 });
 
-export const HealthCard = withDashboardResources(HealthCard_);
+export const HealthCard = connectToFlags(
+  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewHealthSubsystems())
+)(withDashboardResources(HealthCard_));
 
 type ClusterHealth = {
   state: HealthState;
@@ -189,6 +196,6 @@ export type SubsystemHealth = {
   state: HealthState;
 };
 
-type HealthProps = DashboardItemProps & {
+type HealthProps = DashboardItemProps & WithFlagsProps & {
   openshiftFlag: boolean;
 }

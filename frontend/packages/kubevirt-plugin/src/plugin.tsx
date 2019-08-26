@@ -154,6 +154,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         models.VirtualMachineModel.apiVersion
       }/healthz`,
       healthHandler: getKubevirtHealthState,
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -179,6 +180,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -186,6 +188,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'vm-off',
       icon: <VMOffGroupIcon />,
+      required: FLAG_KUBEVIRT,
     },
   },
 ];

@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  DashboardItemProps,
+  withDashboardResources,
+} from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -31,7 +34,7 @@ const getMachineResource = (namespace: string, name: string): FirehoseResource =
   prop: 'machine',
 });
 
-export const UtilizationCard: React.FC<UtilizationCardProps> = ({
+const UtilizationCard: React.FC<UtilizationCardProps> = ({
   obj,
   watchPrometheus,
   stopWatchPrometheusQuery,
@@ -149,6 +152,8 @@ export const UtilizationCard: React.FC<UtilizationCardProps> = ({
     </DashboardCard>
   );
 };
+
+export default withDashboardResources(UtilizationCard);
 
 type UtilizationCardProps = DashboardItemProps & {
   obj: K8sResourceKind;

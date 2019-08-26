@@ -15,7 +15,10 @@ import {
   MachineKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  DashboardItemProps,
+  withDashboardResources,
+} from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import { getHostMachineName } from '../../selectors';
 import { BaremetalHostModel } from '../../models';
@@ -47,7 +50,7 @@ const hostEventsFilter = (host: K8sResourceKind, machine: MachineKind, event: Ev
   machesInvolvedObject(MachineModel.kind, getName(machine), getNamespace(machine), event) ||
   machesInvolvedObject(NodeModel.kind, getMachineNodeName(machine), null, event);
 
-export const EventsCard: React.FC<EventsCardProps> = ({
+const EventsCard: React.FC<EventsCardProps> = ({
   obj,
   watchK8sResource,
   stopWatchK8sResource,
@@ -85,6 +88,8 @@ export const EventsCard: React.FC<EventsCardProps> = ({
     </DashboardCard>
   );
 };
+
+export default withDashboardResources(EventsCard);
 
 type EventsCardProps = DashboardItemProps & {
   obj: K8sResourceKind;

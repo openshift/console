@@ -10,7 +10,12 @@ import { Extension } from './extension';
 import { LazyLoader } from './types';
 
 namespace ExtensionProperties {
-  interface DashboardsOverviewHealthSubsystem<R> {
+  interface DashboardExtension {
+    /** Name of feature flag for this item. */
+    required: string;
+  }
+
+  interface DashboardsOverviewHealthSubsystem<R> extends DashboardExtension {
     /** The subsystem's display name */
     title: string;
 
@@ -40,7 +45,7 @@ namespace ExtensionProperties {
     query: string;
   }
 
-  export interface DashboardsTab {
+  export interface DashboardsTab extends DashboardExtension {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
@@ -48,7 +53,7 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsCard {
+  export interface DashboardsCard extends DashboardExtension {
     /** The tab's ID where this card should be rendered */
     tab: string;
 
@@ -62,7 +67,7 @@ namespace ExtensionProperties {
     span?: DashboardCardSpan;
   }
 
-  export interface DashboardsOverviewQuery {
+  export interface DashboardsOverviewQuery extends DashboardExtension {
     /** The original Prometheus query key to replace */
     queryKey: OverviewQuery;
 
@@ -70,7 +75,7 @@ namespace ExtensionProperties {
     query: string;
   }
 
-  export interface DashboardsOverviewTopConsumerItem {
+  export interface DashboardsOverviewTopConsumerItem extends DashboardExtension {
     /** The k8s model of top consumer item */
     model: K8sKind;
 
@@ -87,7 +92,7 @@ namespace ExtensionProperties {
     mutator?: ConsumerMutator;
   }
 
-  export interface DashboardsOverviewInventoryItem {
+  export interface DashboardsOverviewInventoryItem extends DashboardExtension {
     /** Resource which will be fetched and grouped by `mapper` function. */
     resource: FirehoseResource;
 
@@ -104,7 +109,7 @@ namespace ExtensionProperties {
     mapper: StatusGroupMapper;
   }
 
-  export interface DashboardsInventoryItemGroup {
+  export interface DashboardsInventoryItemGroup extends DashboardExtension {
     /** The ID of status group. */
     id: string;
 
@@ -112,7 +117,7 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
   }
 
-  export interface DashboardsOverviewUtilizationItem {
+  export interface DashboardsOverviewUtilizationItem extends DashboardExtension {
     /** The utilization item title */
     title: string;
 
