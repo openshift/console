@@ -39,7 +39,7 @@ type Result = {
 };
 
 type ResultsWrapper = {
-  valid: boolean;
+  isValid: boolean;
   results: Result[];
 };
 
@@ -100,13 +100,13 @@ export const cleanupAndGetResults = async (
   }
 
   return {
-    valid: false,
+    isValid: false,
     results: [...errorResults, ...cleanupArray],
   };
 };
 
 export const getResults = (enhancedK8sMethods: EnhancedK8sMethods): ResultsWrapper => ({
-  valid: true,
+  isValid: true,
   results: enhancedK8sMethods
     .getActualState()
     .map((obj) => k8sObjectToResult({ obj, content: obj, message: CREATED }))

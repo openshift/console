@@ -29,5 +29,6 @@ export const getInitialDisk = (provisionSource: ProvisionSource) => {
 
 export const getStorageInitialState = () => ({
   value: [],
-  valid: true, // empty Storages are valid
+  isValid: true, // empty Storages are valid
+  hasAllRequiredFilled: true,
 });

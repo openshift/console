@@ -1,4 +1,4 @@
 export const getResultInitialState = () => ({
   value: {},
-  valid: null, // result of the request
+  isValid: null, // result of the request
 });

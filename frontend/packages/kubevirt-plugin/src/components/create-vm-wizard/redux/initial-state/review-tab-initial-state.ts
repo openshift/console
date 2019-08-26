@@ -1,4 +1,5 @@
 export const getReviewInitialState = () => ({
   value: {},
-  valid: true,
+  isValid: true,
+  hasAllRequiredFilled: true,
 });

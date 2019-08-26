@@ -45,18 +45,14 @@ import {
   VMWizardProps,
   VMWizardTab,
 } from './types';
-import {
-  CREATE_VM,
-  CREATE_VM_TEMPLATE,
-  REVIEW_AND_CREATE,
-  TabTitleResolver,
-} from './strings/strings';
+import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
 import { isStepLocked, isStepValid } from './selectors/immutable/wizard-selectors';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { ResourceLoadErrors } from './resource-load-errors';
+import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 
 import './create-vm-wizard.scss';
 
@@ -93,6 +89,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
   };
 
   finish() {
+    this.props.lockTab(VMWizardTab.RESULT);
     const create = this.props.isCreateTemplate ? createVmTemplate : createVm;
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
@@ -128,13 +125,15 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     )
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ results, valid }) => this.props.onResultsChanged(errorsFirstSort(results), valid)) // TODO should distinguish between errors and objects in redux
+      .then(({ results, isValid }) =>
+        this.props.onResultsChanged(errorsFirstSort(results), isValid),
+      ) // TODO should distinguish between errors and objects in redux
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   }
 
   render() {
-    const { isCreateTemplate, stepData } = this.props;
-    const createVmText = isCreateTemplate ? CREATE_VM_TEMPLATE : CREATE_VM;
+    const { isCreateTemplate, reduxID, stepData } = this.props;
+    const createVMText = isCreateTemplate ? CREATE_VM_TEMPLATE : CREATE_VM;
 
     if (this.isClosed) {
       return null;
@@ -145,11 +144,10 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         id: VMWizardTab.VM_SETTINGS,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={this.props.reduxID} />
-            <VMSettingsTab wizardReduxID={this.props.reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} />
+            <VMSettingsTab wizardReduxID={reduxID} />
           </>
         ),
-        nextButtonText: REVIEW_AND_CREATE,
       },
       // {
       //   id: VMWizardTab.NETWORKS,
@@ -159,7 +157,6 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       // },
       {
         id: VMWizardTab.REVIEW,
-        nextButtonText: createVmText,
         component: <>VM review</>,
       },
       {
@@ -179,31 +176,38 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       <div className="kubevirt-create-vm-modal__container">
         {!isStepValid(stepData, VMWizardTab.RESULT) && (
           <div className="yaml-editor__header">
-            <h1 className="yaml-editor__header-text">{createVmText}</h1>
+            <h1 className="yaml-editor__header-text">{createVMText}</h1>
           </div>
         )}
         <Wizard
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
-          title={createVmText}
+          title={createVMText}
           onClose={this.onClose}
           onNext={({ id }) => {
             if (id === VMWizardTab.RESULT) {
               this.finish();
             }
           }}
-          steps={steps.map((step, idx) => {
-            const valid = isStepValid(stepData, step.id);
-            const prevStepValid = idx === 0 ? true : isStepValid(stepData, steps[idx - 1].id);
-            return {
+          steps={steps.reduce((stepAcc, step, idx) => {
+            const prevStep = stepAcc[idx - 1];
+            const isPrevStepValid = idx === 0 ? true : isStepValid(stepData, prevStep.id);
+            const canJumpToPrevStep = idx === 0 ? true : prevStep.canJumpTo;
+
+            stepAcc.push({
               ...step,
               name: TabTitleResolver[step.id],
-              enableNext: !isLocked && valid,
-              canJumpTo: !isLocked && prevStepValid && step.id !== VMWizardTab.RESULT,
-              hideBackButton: isLocked,
+              canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
+                ? step.id === VMWizardTab.RESULT
+                : !isLocked &&
+                  isPrevStepValid &&
+                  canJumpToPrevStep &&
+                  step.id !== VMWizardTab.RESULT,
               component: step.component,
-            };
-          })}
+            });
+            return stepAcc;
+          }, [])}
+          footer={<CreateVMWizardFooter createVMText={createVMText} wizardReduxId={reduxID} />}
         />
       </div>
     );
@@ -229,6 +233,9 @@ const wizardDispatchToProps = (dispatch, props) => ({
         dataIDReferences: props.dataIDReferences,
       }),
     );
+  },
+  lockTab: (tabID) => {
+    dispatch(vmWizardActions[ActionType.SetTabLocked](props.reduxId, tabID, true));
   },
   onCommonDataChanged: (commonData: CommonData, changedCommonData: ChangedCommonData) => {
     dispatch(

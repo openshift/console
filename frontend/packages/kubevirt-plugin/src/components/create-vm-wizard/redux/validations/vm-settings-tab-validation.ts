@@ -151,18 +151,24 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
   const vmSettings = iGetVmSettings(state, id);
 
   // check if all required fields are defined
-  let valid = vmSettings
+  const hasAllRequiredFilled = vmSettings
     .filter((field) => isFieldRequired(field))
     .every((field) => field.get('value'));
+  let isValid = hasAllRequiredFilled;
 
-  if (valid) {
+  if (isValid) {
     // check if all fields are valid
-    valid = vmSettings.every(
+    isValid = vmSettings.every(
       (field) => field.getIn(['validation', 'type']) !== ValidationErrorType.Error,
     );
   }
 
   dispatch(
-    vmWizardInternalActions[InternalActionType.SetTabValidity](id, VMWizardTab.VM_SETTINGS, valid),
+    vmWizardInternalActions[InternalActionType.SetTabValidity](
+      id,
+      VMWizardTab.VM_SETTINGS,
+      isValid,
+      hasAllRequiredFilled,
+    ),
   );
 };

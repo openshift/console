@@ -14,5 +14,6 @@ export const podNetwork = {
 
 export const getNetworksInitialState = () => ({
   value: [podNetwork],
-  valid: true,
+  isValid: true,
+  hasAllRequiredFilled: true,
 });
