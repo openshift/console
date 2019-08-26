@@ -1,3 +1,5 @@
+import * as _ from 'lodash-es';
+
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
@@ -46,7 +48,8 @@ export const authSvc = {
   name: () => loginStateItem(name),
   email: () => loginStateItem(email),
 
-  logout: (next) => {
+  // Avoid logging out multiple times if concurrent requests return unauthorized.
+  logout: _.once((next) => {
     setNext(next);
     clearLocalStorage();
     coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
@@ -59,7 +62,7 @@ export const authSvc = {
           authSvc.login();
         }
       });
-  },
+  }),
 
   // Extra steps are needed if this is OpenShift to delete the user's access
   // token and logout the kube:admin user.
