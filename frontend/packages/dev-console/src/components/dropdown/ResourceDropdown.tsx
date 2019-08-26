@@ -34,6 +34,7 @@ interface ResourceDropdownProps {
     actionKey: string;
   };
   dataSelector: string[] | number[] | symbol[];
+  transformLabel?: Function;
   loaded?: boolean;
   loadError?: string;
   placeholder?: string;
@@ -66,6 +67,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       allSelectorItem,
       resourceFilter,
       dataSelector,
+      transformLabel,
       selectedKey,
       autoSelect,
     } = nextProps;
@@ -107,7 +109,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
             dataValue = _.get(resource, dataSelector);
           }
           if (dataValue) {
-            acc[dataValue] = dataValue;
+              acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
           }
           return acc;
         },

@@ -6,6 +6,7 @@ import { getNamespace } from '@console/internal/components/utils/link';
 import { k8sCreate, K8sKind, K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
+import { startPipelineModalForm } from '../components/pipelines/pipeline-form/startPipelineModal';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
@@ -164,7 +165,15 @@ export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
     },
   });
 };
-
+export const startPipeline = (
+  pipeline: Pipeline,
+  ...others
+) => (): Action => ({
+  label: 'Start',
+  callback: () => {
+    startPipelineModalForm({ pipeline });
+  },
+});
 export const rerunPipeline = (
   pipeline: Pipeline,
   latestRun: PipelineRun,
