@@ -9,7 +9,7 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { getDescription } from 'packages/kubevirt-plugin/src/selectors/selectors';
+import { getDescription } from '../../../selectors/selectors';
 import { VMLikeEntityKind } from '../../../types';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';

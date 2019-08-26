@@ -119,8 +119,14 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     }
   };
 
+  let topClass = 'modal-content ';
+  topClass +=
+    flavor === CUSTOM_FLAVOR
+      ? 'kubevirt-vm-flavor-modal__content-custom'
+      : 'kubevirt-vm-flavor-modal__content-generic';
+
   return (
-    <div className="modal-content kubevirt-vm-flavor-modal__content">
+    <div className={topClass}>
       <ModalTitle>Edit Flavor</ModalTitle>
       <ModalBody>
         <Form onSubmit={submit} className="kubevirt-vm-flavor-modal__form" isHorizontal>

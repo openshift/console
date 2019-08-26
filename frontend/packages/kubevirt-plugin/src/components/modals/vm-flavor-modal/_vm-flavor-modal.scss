@@ -1,9 +1,12 @@
-.kubevirt-vm-flavor-modal__content {
+.kubevirt-vm-flavor-modal__content-custom {
+    height: 20em;
+}
+
+.kubevirt-vm-flavor-modal__content-generic {
     min-height: 13em;
 }
 
 .kubevirt-vm-flavor-modal__form {
-    min-height: 10em;
     resize: vertical;  
 }
 
