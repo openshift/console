@@ -4,3 +4,4 @@ export * from './disk';
 export * from './nic';
 export * from './selectors';
 export * from './volume';
+export * from './vmlike';

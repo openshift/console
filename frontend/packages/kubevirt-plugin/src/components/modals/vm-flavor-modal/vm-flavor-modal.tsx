@@ -25,8 +25,13 @@ import {
   getCPU,
   getOperatingSystem,
   getWorkloadProfile,
+  isVM,
 } from '../../../selectors/vm';
-import { isVM } from '../../../selectors/selectors';
+import {
+  getTemplateFlavors,
+  getTemplates,
+  selectVM,
+} from '../../../selectors/vm-template/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { VirtualMachineModel } from '../../../models';
 import {
@@ -35,11 +40,6 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_BASE,
 } from '../../../constants';
-import {
-  getTemplateFlavors,
-  getTemplates,
-  selectVM,
-} from '../../../selectors/vm-template/selectors';
 import './_vm-flavor-modal.scss';
 
 const MB = 1000 ** 2;
