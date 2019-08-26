@@ -133,8 +133,8 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   );
 };
 
-const stateToProps = (state, { wizardReduxId }) => ({
-  stepData: iGetCreateVMWizardTabs(state, wizardReduxId),
+const stateToProps = (state, { wizardReduxID }) => ({
+  stepData: iGetCreateVMWizardTabs(state, wizardReduxID),
 });
 
 export const CreateVMWizardFooter = connect(stateToProps)(CreateVMWizardFooterComponent);

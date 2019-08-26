@@ -53,6 +53,7 @@ import { isStepLocked, isStepValid } from './selectors/immutable/wizard-selector
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
+import { ReviewTab } from './tabs/review-tab/review-tab';
 
 import './create-vm-wizard.scss';
 
@@ -157,7 +158,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       // },
       {
         id: VMWizardTab.REVIEW,
-        component: <>VM review</>,
+        component: <ReviewTab wizardReduxID={reduxID} />,
       },
       {
         id: VMWizardTab.RESULT,
@@ -207,7 +208,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
             });
             return stepAcc;
           }, [])}
-          footer={<CreateVMWizardFooter createVMText={createVMText} wizardReduxId={reduxID} />}
+          footer={<CreateVMWizardFooter createVMText={createVMText} wizardReduxID={reduxID} />}
         />
       </div>
     );
@@ -235,7 +236,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
     );
   },
   lockTab: (tabID) => {
-    dispatch(vmWizardActions[ActionType.SetTabLocked](props.reduxId, tabID, true));
+    dispatch(vmWizardActions[ActionType.SetTabLocked](props.reduxID, tabID, true));
   },
   onCommonDataChanged: (commonData: CommonData, changedCommonData: ChangedCommonData) => {
     dispatch(

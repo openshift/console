@@ -39,24 +39,26 @@ const getDisksDescription = (
     const description = [disk.name];
 
     const volume = volumes.find((v) => v.name === disk.name);
-    if (volume.dataVolume) {
-      let dataVolume = dataVolumeTemplates.find((dv) => getName(dv) === volume.dataVolume.name);
-      if (!dataVolume) {
-        dataVolume = dataVolumes.find(
-          (dv) => getName(dv) === volume.dataVolume.name && getNamespace(dv) === getNamespace(vm),
+    if (volume) {
+      if (volume.dataVolume) {
+        let dataVolume = dataVolumeTemplates.find((dv) => getName(dv) === volume.dataVolume.name);
+        if (!dataVolume) {
+          dataVolume = dataVolumes.find(
+            (dv) => getName(dv) === volume.dataVolume.name && getNamespace(dv) === getNamespace(vm),
+          );
+        }
+        description.push(
+          getStorageSize(getDataVolumeResources(dataVolume)),
+          getDataVolumeStorageClassName(dataVolume),
         );
+      } else if (volume.persistentVolumeClaim) {
+        const pvc = pvcs.find((p) => getName(p) === volume.persistentVolumeClaim.claimName);
+        description.push(getStorageSize(getPvcResources(pvc)), getPvcStorageClassName(pvc));
+      } else if (volume.containerDisk) {
+        description.push('container disk');
+      } else if (volume.cloudInitNoCloud) {
+        description.push('cloud-init disk');
       }
-      description.push(
-        getStorageSize(getDataVolumeResources(dataVolume)),
-        getDataVolumeStorageClassName(dataVolume),
-      );
-    } else if (volume.persistentVolumeClaim) {
-      const pvc = pvcs.find((p) => getName(p) === volume.persistentVolumeClaim.claimName);
-      description.push(getStorageSize(getPvcResources(pvc)), getPvcStorageClassName(pvc));
-    } else if (volume.containerDisk) {
-      description.push('container disk');
-    } else if (volume.cloudInitNoCloud) {
-      description.push('cloud-init disk');
     }
     return <div key={disk.name}>{description.join(' - ')}</div>;
   });

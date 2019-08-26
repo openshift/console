@@ -9,41 +9,56 @@ import { isFieldHidden } from '../../selectors/immutable/vm-settings';
 import './vm-settings-tab.scss';
 
 export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
-  ({ memoryField, cpuField, onChange }) => {
+  ({ memoryField, cpuField, onChange, isReview }) => {
     if (isFieldHidden(memoryField) && isFieldHidden(cpuField)) {
       return null;
+    }
+    const memory = (
+      <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>
+        <FormField>
+          <Integer
+            className="kubevirt-create-vm-modal__memory-input"
+            isPositive
+            onChange={(value) => onChange(VMSettingsField.MEMORY, value)}
+          />
+        </FormField>
+      </FormFieldMemoRow>
+    );
+
+    const cpu = (
+      <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
+        <FormField>
+          <Integer
+            className="kubevirt-create-vm-modal__cpu-input"
+            isPositive
+            onChange={(value) => onChange(VMSettingsField.CPU, value)}
+          />
+        </FormField>
+      </FormFieldMemoRow>
+    );
+
+    if (isReview) {
+      return (
+        <>
+          {memory}
+          {cpu}
+        </>
+      );
     }
 
     return (
       <Grid>
         <GridItem span={6} className="kubevirt-create-vm-modal__memory-row">
-          <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>
-            <FormField>
-              <Integer
-                className="kubevirt-create-vm-modal__memory-input"
-                isPositive
-                onChange={(value) => onChange(VMSettingsField.MEMORY, value)}
-              />
-            </FormField>
-          </FormFieldMemoRow>
+          {memory}
         </GridItem>
-        <GridItem span={6}>
-          <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
-            <FormField>
-              <Integer
-                className="kubevirt-create-vm-modal__cpu-input"
-                isPositive
-                onChange={(value) => onChange(VMSettingsField.CPU, value)}
-              />
-            </FormField>
-          </FormFieldMemoRow>
-        </GridItem>
+        <GridItem span={6}>{cpu}</GridItem>
       </Grid>
     );
   },
 );
 
 type MemoryCPUProps = {
+  isReview: boolean;
   memoryField: any;
   cpuField: any;
   onChange: (key: string, value: string) => void;
