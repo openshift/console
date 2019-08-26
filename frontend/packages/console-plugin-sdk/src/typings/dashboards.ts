@@ -1,11 +1,12 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
-import { FirehoseResource, Humanize } from '@console/internal/components/utils';
-import { K8sKind } from '@console/internal/module/k8s';
+import { FirehoseResource, Humanize, FirehoseResult } from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 import { ConsumerMutator } from '@console/internal/components/dashboards-page/overview-dashboard/top-consumers-card';
 import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Extension } from './extension';
 import { LazyLoader } from './types';
 
@@ -15,16 +16,13 @@ namespace ExtensionProperties {
     required: string;
   }
 
-  interface DashboardsOverviewHealthSubsystem<R> extends DashboardExtension {
+  interface DashboardsOverviewHealthSubsystem extends DashboardExtension {
     /** The subsystem's display name */
     title: string;
-
-    /** Resolve the subsystem's health */
-    healthHandler: (response: R) => SubsystemHealth;
   }
 
   export interface DashboardsOverviewHealthURLSubsystem<R>
-    extends DashboardsOverviewHealthSubsystem<R> {
+    extends DashboardsOverviewHealthSubsystem {
     /**
      * The URL to fetch data from. It will be prefixed with base k8s URL.
      * For example: `healthz` will result in `<k8sBasePath>/healthz`
@@ -37,12 +35,24 @@ namespace ExtensionProperties {
      * Response is then parsed by `healthHandler`.
      */
     fetch?: (url: string) => Promise<R>;
+
+    /** Resolve the subsystem's health */
+    healthHandler: (response: R) => SubsystemHealth;
   }
 
   export interface DashboardsOverviewHealthPrometheusSubsystem
-    extends DashboardsOverviewHealthSubsystem<any> {
+    extends DashboardsOverviewHealthSubsystem {
     /** The Prometheus query */
     query: string;
+
+    /** Resource which will be fetched and passed to healthHandler  */
+    resource?: FirehoseResource;
+
+    /** Resolve the subsystem's health */
+    healthHandler: (
+      response: PrometheusResponse,
+      resource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+    ) => SubsystemHealth;
   }
 
   export interface DashboardsTab extends DashboardExtension {
