@@ -45,48 +45,46 @@ export interface SvgDefsProviderProps {
  * This helps decouple the parent implementation from the children and ensures that duplicate defs entries,
  * such as filters, are eliminated.
  */
-class SvgDefsProvider extends React.Component<SvgDefsProviderProps> {
-  private readonly defsRef = React.createRef<Defs>();
+const SvgDefsProvider: React.FC<SvgDefsProviderProps> = (props) => {
+  const defsRef = React.useRef<Defs>();
 
-  private readonly defs: DefsMap = {};
+  const defs = React.useRef<DefsMap>({});
 
-  private contextValue: SvgDefsContextProps = {
+  const updateDefs = () => {
+    // Set the defs directly on the child component so that only it will re-render.
+    // Does not use `setState` because otherwise all child components would be re-renders again
+    // when only the `Defs` component needs to be rendered.
+    defsRef.current && defsRef.current.setDefs(defs.current);
+  };
+
+  const contextValue: SvgDefsContextProps = {
     addDef: (id, node) => {
-      const defObj = this.defs[id];
+      const defObj = defs.current[id];
       if (defObj) {
         defObj.count++;
       } else {
-        this.defs[id] = {
+        defs.current[id] = {
           count: 1,
           node,
         };
-        this.updateDefs();
+        updateDefs();
       }
     },
     removeDef: (id) => {
-      const defObj = this.defs[id];
+      const defObj = defs.current[id];
       if (--defObj.count === 0) {
-        delete this.defs[id];
-        this.updateDefs();
+        delete defs.current[id];
+        updateDefs();
       }
     },
   };
 
-  private updateDefs() {
-    // Set the defs directly on the child component so that only it will re-render.
-    // Does not use `setState` because otherwise all child components would be re-renders again
-    // when only the `Defs` component needs to be rendered.
-    this.defsRef.current && this.defsRef.current.setDefs(this.defs);
-  }
-
-  render() {
-    return (
-      <SvgDefsContext.Provider value={this.contextValue}>
-        <Defs ref={this.defsRef} />
-        {this.props.children}
-      </SvgDefsContext.Provider>
-    );
-  }
-}
+  return (
+    <SvgDefsContext.Provider value={contextValue}>
+      <Defs ref={defsRef} />
+      {props.children}
+    </SvgDefsContext.Provider>
+  );
+};
 
 export default SvgDefsProvider;

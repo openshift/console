@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../../utils/svg-utils';
 import SvgBoxedText from '../../svg/SvgBoxedText';
@@ -39,121 +40,110 @@ const truncateEnd = (text: string = ''): string => {
   return `${text.substr(0, MAX_LABEL_LENGTH - 1)}…`;
 };
 
-export default class BaseNode extends React.Component<BaseNodeProps, State> {
-  hoverTimer = null;
+const BaseNode: React.FC<BaseNodeProps> = (props) => {
+  const hoverTimer = React.useRef(null);
 
-  unmounted: boolean = false;
+  const {
+    x = 0,
+    y = 0,
+    outerRadius,
+    innerRadius = outerRadius / 1.4,
+    selected,
+    icon,
+    label,
+    kind,
+    onSelect,
+    children,
+    attachments,
+    isDragging,
+  } = props;
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+  const [labelHover, setLabelHover] = useSafetyFirst(false);
+  const [hover, setHover] = useSafetyFirst(false);
 
-  componentWillUnmount() {
-    this.unmounted = true;
-  }
-
-  onLabelEnter = () => {
-    if (!this.hoverTimer) {
-      this.hoverTimer = setTimeout(() => {
-        if (!this.unmounted) {
-          this.setState({ labelHover: true });
-        }
+  const onLabelEnter = () => {
+    if (!hoverTimer.current) {
+      hoverTimer.current = setTimeout(() => {
+        setLabelHover(true);
       }, 200);
     }
   };
 
-  onLabelLeave = () => {
-    this.setState({ labelHover: false });
+  const onLabelLeave = () => {
+    setLabelHover(false);
 
-    if (this.hoverTimer) {
-      clearTimeout(this.hoverTimer);
-      this.hoverTimer = null;
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
     }
   };
 
-  render() {
-    const {
-      x = 0,
-      y = 0,
-      outerRadius,
-      innerRadius = outerRadius / 1.4,
-      selected,
-      icon,
-      label,
-      kind,
-      onSelect,
-      children,
-      attachments,
-      isDragging,
-    } = this.props;
-    const { hover, labelHover } = this.state;
+  const contentsClasses = classNames('odc-base-node__contents', {
+    'odc-m-is-highlight': isDragging,
+  });
 
-    const contentsClasses = classNames('odc-base-node__contents', {
-      'odc-m-is-highlight': isDragging,
-    });
-
-    return (
-      <g transform={`translate(${x}, ${y})`} className="odc-base-node">
-        <g
-          onClick={
-            onSelect
-              ? (e) => {
-                  e.stopPropagation();
-                  onSelect();
-                }
-              : null
-          }
-          onMouseEnter={() => this.setState({ hover: true })}
-          onMouseLeave={() => this.setState({ hover: false })}
-        >
-          <SvgDropShadowFilter id={FILTER_ID} />
-          <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
-          <circle
-            className="odc-base-node__bg"
-            cx={0}
-            cy={0}
-            r={outerRadius}
-            filter={hover ? createSvgIdUrl(FILTER_ID_HOVER) : createSvgIdUrl(FILTER_ID)}
-          />
-          <g className={contentsClasses}>
-            <image
-              x={-innerRadius}
-              y={-innerRadius}
-              width={innerRadius * 2}
-              height={innerRadius * 2}
-              xlinkHref={
-                getImageForIconClass(`icon-${icon}`) || getImageForIconClass('icon-openshift')
+  return (
+    <g transform={`translate(${x}, ${y})`} className="odc-base-node">
+      <g
+        onClick={
+          onSelect
+            ? (e) => {
+                e.stopPropagation();
+                onSelect();
               }
+            : null
+        }
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <SvgDropShadowFilter id={FILTER_ID} />
+        <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
+        <circle
+          className="odc-base-node__bg"
+          cx={0}
+          cy={0}
+          r={outerRadius}
+          filter={hover ? createSvgIdUrl(FILTER_ID_HOVER) : createSvgIdUrl(FILTER_ID)}
+        />
+        <g className={contentsClasses}>
+          <image
+            x={-innerRadius}
+            y={-innerRadius}
+            width={innerRadius * 2}
+            height={innerRadius * 2}
+            xlinkHref={
+              getImageForIconClass(`icon-${icon}`) || getImageForIconClass('icon-openshift')
+            }
+          />
+          {label != null && (
+            <SvgBoxedText
+              className="odc-base-node__label"
+              y={outerRadius + 20}
+              x={0}
+              paddingX={8}
+              paddingY={4}
+              kind={kind}
+              onMouseEnter={onLabelEnter}
+              onMouseLeave={onLabelLeave}
+            >
+              {labelHover ? label : truncateEnd(label)}
+            </SvgBoxedText>
+          )}
+          {selected && (
+            <circle
+              className="odc-base-node__selection"
+              cx={0}
+              cy={0}
+              r={outerRadius + 1}
+              strokeWidth={2}
             />
-            {label != null && (
-              <SvgBoxedText
-                className="odc-base-node__label"
-                y={outerRadius + 20}
-                x={0}
-                paddingX={8}
-                paddingY={4}
-                kind={kind}
-                onMouseEnter={this.onLabelEnter}
-                onMouseLeave={this.onLabelLeave}
-              >
-                {labelHover ? label : truncateEnd(label)}
-              </SvgBoxedText>
-            )}
-            {selected && (
-              <circle
-                className="odc-base-node__selection"
-                cx={0}
-                cy={0}
-                r={outerRadius + 1}
-                strokeWidth={2}
-              />
-            )}
-            {children}
-          </g>
+          )}
+          {children}
         </g>
-        <g className={contentsClasses}>{attachments}</g>
       </g>
-    );
-  }
-}
+      <g className={contentsClasses}>{attachments}</g>
+    </g>
+  );
+};
+
+export default BaseNode;

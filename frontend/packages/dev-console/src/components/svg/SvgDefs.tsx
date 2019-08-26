@@ -8,28 +8,21 @@ export interface SvgDefsProps {
 
 export type SvgDefsSetterProps = SvgDefsContextProps & SvgDefsProps;
 
-export class SvgDefsSetter extends React.Component<SvgDefsSetterProps> {
-  static contextType = SvgDefsContext;
+export const SvgDefsSetter: React.FC<SvgDefsSetterProps> = (props) => {
+  const { id, children } = props;
 
-  componentDidMount() {
-    const { addDef, id, children } = this.props;
+  const { addDef, removeDef } = React.useContext(SvgDefsContext);
+
+  React.useEffect(() => {
     addDef(id, children);
-  }
 
-  componentDidUpdate() {
-    const { addDef, id, children } = this.props;
-    addDef(id, children);
-  }
+    return () => {
+      removeDef(id);
+    };
+  }, [id, children, addDef, removeDef]);
 
-  componentWillUnmount() {
-    const { removeDef, id } = this.props;
-    removeDef(id);
-  }
-
-  render() {
-    return null;
-  }
-}
+  return null;
+};
 
 /**
  * Contributes `children` to the parent SVG `<defs>` element.
@@ -38,18 +31,19 @@ export class SvgDefsSetter extends React.Component<SvgDefsSetterProps> {
  * The assumption must be that there is not a single owner but many owners and therefore each
  * owner must be contributing the same def.
  */
-export default class SvgDefs extends React.Component<SvgDefsProps> {
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  render() {
+const SvgDefs: React.FC<SvgDefsProps> = React.memo(
+  (props) => {
     return (
       <SvgDefsContext.Consumer>
         {({ addDef, removeDef }) => (
-          <SvgDefsSetter {...this.props} addDef={addDef} removeDef={removeDef} />
+          <SvgDefsSetter {...props} addDef={addDef} removeDef={removeDef} />
         )}
       </SvgDefsContext.Consumer>
     );
-  }
-}
+  },
+  () => true,
+);
+
+SvgDefs.displayName = 'SvgDefs';
+
+export default SvgDefs;

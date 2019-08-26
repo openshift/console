@@ -2,6 +2,12 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import SvgBoxedText, { SvgBoxedTextProps, State } from '../SvgBoxedText';
 import SvgResourceIcon from '../../topology/shapes/ResourceIcon';
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
+const reactMock = require('react');
+/* eslint-enable @typescript-eslint/no-require-imports */
+/* eslint-enable @typescript-eslint/no-var-requires */
+const mockUseState = (initial: {}) => jest.fn().mockImplementation(() => [initial, () => {}]);
 
 describe('SvgBoxedText', () => {
   it('should initially render without a backdrop', () => {
@@ -10,16 +16,16 @@ describe('SvgBoxedText', () => {
   });
 
   it('should render backdrop around text', () => {
+    reactMock.useState = mockUseState({ width: 20, height: 10 });
     const wrapper = shallow(<SvgBoxedText />);
-    wrapper.setState({ bb: { width: 20, height: 10 } });
     expect(wrapper.find('rect').exists()).toBeTruthy();
   });
 
   it('should position backdrop around text', () => {
+    reactMock.useState = mockUseState({ width: 50, height: 20 });
     const wrapper = shallow<SvgBoxedTextProps, State>(
       <SvgBoxedText cornerRadius={5} x={100} y={200} paddingX={10} paddingY={5} />,
     );
-    wrapper.setState({ bb: { width: 50, height: 20 } });
     const rectWrapper = wrapper.find('rect').first();
     const { filter, ...otherProps } = rectWrapper.props();
     expect(otherProps).toEqual({
@@ -33,8 +39,8 @@ describe('SvgBoxedText', () => {
   });
 
   it('should render a text with backdrop around it if kind is given', () => {
+    reactMock.useState = mockUseState({ width: 50, height: 20 });
     const wrapper = shallow(<SvgBoxedText x={100} y={200} kind="Deployment" />);
-    wrapper.setState({ bb: { width: 50, height: 20 } });
     expect(wrapper.find('rect')).toHaveLength(1);
     expect(wrapper.find(SvgResourceIcon)).toHaveLength(1);
     const badge = wrapper.find(SvgResourceIcon).first();
@@ -47,8 +53,8 @@ describe('SvgBoxedText', () => {
   });
 
   it('should not render ResourceIcon if kind is not given', () => {
+    reactMock.useState = mockUseState({ width: 50, height: 20 });
     const wrapper = shallow(<SvgBoxedText x={100} y={200} />);
-    wrapper.setState({ bb: { width: 50, height: 20 } });
     expect(wrapper.find('rect')).toHaveLength(1);
     expect(wrapper.find(SvgResourceIcon)).toHaveLength(0);
   });

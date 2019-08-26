@@ -7,84 +7,69 @@ import { updateTopologyResourceApplication } from './topology-utils';
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 
-type State = {
-  selected?: string;
-  graphApi?: GraphApi;
-};
-
 export interface TopologyProps {
   data: TopologyDataModel;
 }
 
-export default class Topology extends React.Component<TopologyProps, State> {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+const Topology: React.FC<TopologyProps> = (props) => {
+  const {
+    data: { graph, topology },
+  } = props;
 
-  static getDerivedStateFromProps(nextProps: TopologyProps, prevState: State): State {
-    const { selected } = prevState;
-    if (selected && !nextProps.data.topology[selected]) {
-      return { selected: null };
+  const [selected, setSelected] = React.useState(null);
+  const [graphApi, setGraphApi] = React.useState(null);
+
+  React.useEffect(() => {
+    if (selected && !topology[selected]) {
+      setSelected(null);
     }
-    return prevState;
-  }
+  }, [selected, topology]);
 
-  onSelect = (nodeId: string) => {
-    this.setState(({ selected }) => {
-      return { selected: !nodeId || selected === nodeId ? null : nodeId };
-    });
+  const onSelect = (nodeId: string) => {
+    setSelected(!nodeId || selected === nodeId ? null : nodeId);
   };
 
-  onUpdateNodeGroup = (nodeId: string, targetGroup: string): Promise<any> => {
-    const {
-      data: { topology },
-    } = this.props;
+  const onUpdateNodeGroup = (nodeId: string, targetGroup: string): Promise<any> => {
     const item: TopologyDataObject = topology[nodeId];
 
     return updateTopologyResourceApplication(item, targetGroup);
   };
 
-  onSidebarClose = () => {
-    this.setState({ selected: null });
+  const onSidebarClose = () => {
+    setSelected(null);
   };
 
-  graphApiRef = (api: GraphApi) => {
-    this.setState({ graphApi: api });
+  const graphApiRef = (api: GraphApi) => {
+    setGraphApi(api);
   };
 
-  render() {
-    const {
-      data: { graph, topology },
-    } = this.props;
-    const { selected, graphApi } = this.state;
+  const topologySideBar = (
+    <TopologySideBar
+      item={selected ? topology[selected] : null}
+      show={!!selected}
+      onClose={onSidebarClose}
+    />
+  );
 
-    const topologySideBar = (
-      <TopologySideBar
-        item={selected ? topology[selected] : null}
-        show={!!selected}
-        onClose={this.onSidebarClose}
+  return (
+    <TopologyView
+      controlBar={<TopologyControlBar graphApi={graphApi} />}
+      sideBar={topologySideBar}
+      sideBarOpen={!!selected}
+    >
+      <Graph
+        graph={graph}
+        topology={topology}
+        nodeProvider={nodeProvider}
+        edgeProvider={edgeProvider}
+        groupProvider={groupProvider}
+        selected={selected}
+        onSelect={onSelect}
+        onUpdateNodeGroup={onUpdateNodeGroup}
+        graphApiRef={graphApiRef}
       />
-    );
+    </TopologyView>
+  );
+};
 
-    return (
-      <TopologyView
-        controlBar={<TopologyControlBar graphApi={graphApi} />}
-        sideBar={topologySideBar}
-        sideBarOpen={!!selected}
-      >
-        <Graph
-          graph={graph}
-          topology={topology}
-          nodeProvider={nodeProvider}
-          edgeProvider={edgeProvider}
-          groupProvider={groupProvider}
-          selected={selected}
-          onSelect={this.onSelect}
-          onUpdateNodeGroup={this.onUpdateNodeGroup}
-          graphApiRef={this.graphApiRef}
-        />
-      </TopologyView>
-    );
-  }
-}
+export default Topology;

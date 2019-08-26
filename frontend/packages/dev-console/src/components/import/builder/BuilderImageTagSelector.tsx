@@ -42,7 +42,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
     imageDisplayName,
   );
 
-  const k8sGet = useSafeK8s();
+  const { k8sGet } = useSafeK8s();
 
   React.useEffect(() => {
     setFieldValue('image.tagObj', imageTag);

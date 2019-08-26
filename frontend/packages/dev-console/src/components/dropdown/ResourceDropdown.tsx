@@ -9,11 +9,6 @@ type FirehoseList = {
   [key: string]: any;
 };
 
-interface State {
-  items: {};
-  title: React.ReactNode;
-}
-
 interface ResourceDropdownProps {
   id?: string;
   className?: string;
@@ -44,55 +39,67 @@ interface ResourceDropdownProps {
   onChange?: (key: string, name?: string) => void;
 }
 
-class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: {},
-      title: this.props.loaded ? (
-        <span className="btn-dropdown__item--placeholder">{this.props.placeholder}</span>
-      ) : (
-        <LoadingInline />
-      ),
-    };
-  }
+const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
+  const {
+    id,
+    className,
+    dropDownClassName,
+    menuClassName,
+    buttonClassName,
+    titlePrefix,
+    storageKey,
+    disabled,
+    resources,
+    loaded,
+    loadError,
+    placeholder,
+    allSelectorItem,
+    resourceFilter,
+    dataSelector,
+    selectedKey,
+    autoSelect,
+    actionItem,
+    onChange,
+  } = props;
+  const [items, setItems] = React.useState({});
+  const [title, setTitle] = React.useState(
+    loaded ? (
+      <span className="btn-dropdown__item--placeholder">{placeholder}</span>
+    ) : (
+      <LoadingInline />
+    ),
+  );
 
-  componentWillReceiveProps(nextProps: ResourceDropdownProps) {
-    const {
-      resources,
-      loaded,
-      loadError,
-      placeholder,
-      allSelectorItem,
-      resourceFilter,
-      dataSelector,
-      selectedKey,
-      autoSelect,
-    } = nextProps;
+  const handleChange = React.useCallback(
+    (key: string) => {
+      const name = items[key];
+      const newTitle = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
+      if (newTitle !== title) {
+        onChange && onChange(key, name);
+        setTitle(newTitle);
+      }
+    },
+    [actionItem, items, onChange, title],
+  );
 
+  React.useEffect(() => {
     if (!loaded) {
-      this.setState({ title: <LoadingInline /> });
+      setTitle(<LoadingInline />);
       return;
     }
 
     // If autoSelect is true only then have an item pre-selected based on selectedKey.
     if (autoSelect) {
       const dropdownItem =
-        this.props.loaded && _.isEmpty(this.state.items) && this.props.actionItem
-          ? this.props.actionItem.actionKey
-          : _.get(_.keys(this.state.items), 0);
+        loaded && _.isEmpty(items) && actionItem ? actionItem.actionKey : _.get(_.keys(items), 0);
       const selectedItemKey = selectedKey || dropdownItem;
-      this.onChange(selectedItemKey);
-    } else if (!this.props.loaded || !selectedKey) {
-      this.setState({
-        title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
-      });
+      handleChange(selectedItemKey);
+    } else if (!loaded || !selectedKey) {
+      setTitle(<span className="btn-dropdown__item--placeholder">{placeholder}</span>);
     }
 
     if (loadError) {
-      this.setState({
-        title: <span className="cos-error-title">Error Loading - {placeholder}</span>,
-      });
+      setTitle(<span className="cos-error-title">Error Loading - {placeholder}</span>);
     }
 
     const unsortedList = {};
@@ -127,54 +134,48 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         sortedList[key] = unsortedList[key];
       });
 
-    this.setState({ items: sortedList });
+    setItems(sortedList);
     if (
-      (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
+      (_.isEmpty(sortedList) || !sortedList[selectedKey]) &&
       allSelectorItem &&
-      allSelectorItem.allSelectorKey !== this.props.selectedKey
+      allSelectorItem.allSelectorKey !== selectedKey
     ) {
-      this.onChange(allSelectorItem.allSelectorKey);
+      handleChange(allSelectorItem.allSelectorKey);
     }
-  }
+  }, [
+    actionItem,
+    allSelectorItem,
+    autoSelect,
+    dataSelector,
+    items,
+    loadError,
+    loaded,
+    handleChange,
+    placeholder,
+    resourceFilter,
+    resources,
+    selectedKey,
+  ]);
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(this.state, nextState) && _.isEqual(this.props, nextProps)) {
-      return false;
-    }
-    return true;
-  }
-
-  private onChange = (key: string) => {
-    const name = this.state.items[key];
-    const { actionItem, onChange } = this.props;
-    const title = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
-    if (title !== this.state.title) {
-      onChange && this.props.onChange(key, name);
-      this.setState({ title });
-    }
-  };
-
-  render() {
-    return (
-      <Dropdown
-        id={this.props.id}
-        className={this.props.className}
-        dropDownClassName={this.props.dropDownClassName}
-        menuClassName={this.props.menuClassName}
-        buttonClassName={this.props.buttonClassName}
-        titlePrefix={this.props.titlePrefix}
-        autocompleteFilter={fuzzy}
-        actionItem={this.props.actionItem}
-        items={this.state.items}
-        onChange={this.onChange}
-        selectedKey={this.props.selectedKey}
-        title={this.props.title || this.state.title}
-        autocompletePlaceholder={this.props.placeholder}
-        storageKey={this.props.storageKey}
-        disabled={this.props.disabled}
-      />
-    );
-  }
-}
+  return (
+    <Dropdown
+      id={id}
+      className={className}
+      dropDownClassName={dropDownClassName}
+      menuClassName={menuClassName}
+      buttonClassName={buttonClassName}
+      titlePrefix={titlePrefix}
+      autocompleteFilter={fuzzy}
+      actionItem={actionItem}
+      items={items}
+      onChange={handleChange}
+      selectedKey={selectedKey}
+      title={props.title || title}
+      autocompletePlaceholder={placeholder}
+      storageKey={storageKey}
+      disabled={disabled}
+    />
+  );
+};
 
 export default ResourceDropdown;

@@ -36,21 +36,24 @@ describe('BaseNode', () => {
     ).toBe('1234567890abcde…');
   });
 
-  it('should show long labels on label hover', () => {
+  it('should show long labels on label hover', (done) => {
     const wrapper = shallow<BaseNodeProps, State>(
       <BaseNode outerRadius={100} label="1234567890abcdefgh" />,
     );
-    wrapper.setState({ labelHover: true });
-    expect(
-      wrapper
-        .find(SvgBoxedText)
-        .shallow()
-        .find('text')
-        .text(),
-    ).toBe('1234567890abcdefgh');
+    wrapper.find(SvgBoxedText).simulate('mouseEnter');
+    setTimeout(() => {
+      done();
+      expect(
+        wrapper
+          .find(SvgBoxedText)
+          .shallow()
+          .find('text')
+          .text(),
+      ).toBe('1234567890abcdefgh');
+    }, 200);
   });
 
-  it('should show different drop shadow on hover', () => {
+  it('should show different drop shadow on hover', (done) => {
     const wrapper = shallow<BaseNodeProps, State>(<BaseNode outerRadius={100} />);
     expect(
       wrapper
@@ -59,13 +62,16 @@ describe('BaseNode', () => {
         .props().filter,
     ).toBe('url(/#BaseNodeDropShadowFilterId)');
 
-    wrapper.setState({ hover: true });
-    expect(
-      wrapper
-        .find('.odc-base-node__bg')
-        .first()
-        .props().filter,
-    ).toBe('url(/#BaseNodeDropShadowFilterId--hover)');
+    wrapper.find('.odc-base-node').simulate('mouseEnter');
+    setTimeout(() => {
+      done();
+      expect(
+        wrapper
+          .find('.odc-base-node__bg')
+          .first()
+          .props().filter,
+      ).toBe('url(/#BaseNodeDropShadowFilterId--hover)');
+    }, 200);
   });
 
   it('should render selection', () => {
