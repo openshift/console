@@ -13,10 +13,10 @@ export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'ceph');
 
 export const getCephPVCs = (
-  cephScNames: string[] = [],
+  cephSCNames: string[] = [],
   pvcsData: K8sResourceKind[] = [],
 ): K8sResourceKind[] =>
-  pvcsData.filter((pvc) => cephScNames.includes(_.get(pvc, 'spec.storageClassName')));
+  pvcsData.filter((pvc) => cephSCNames.includes(_.get(pvc, 'spec.storageClassName')));
 
 export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =>
   pvsData.filter((pv) =>

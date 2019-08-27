@@ -72,8 +72,8 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   const pvsData = _.get(resources.pvs, 'data', []) as K8sResourceKind[];
 
   const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
-  const filteredCephSc = getCephSC(scData);
-  const filteredSCNames = filteredCephSc.map((sc) => _.get(sc, 'metadata.name'));
+  const filteredCephSC = getCephSC(scData);
+  const filteredSCNames = filteredCephSC.map((sc) => _.get(sc, 'metadata.name'));
 
   return (
     <DashboardCard>
