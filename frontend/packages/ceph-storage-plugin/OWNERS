@@ -1,9 +1,13 @@
 reviewers:
+  - afreen23
   - cloudbehl
+  - gnehapk
   - mareklibra
   - rawagner
 approvers:
+  - afreen23
   - cloudbehl
+  - gnehapk
   - mareklibra
   - rawagner
 labels:
