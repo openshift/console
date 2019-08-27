@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+import { getName } from '@console/shared/src/selectors/common';
 import { CEPH_HEALTHY, CEPH_DEGRADED, CEPH_ERROR, CEPH_UNKNOWN } from '../../../../constants';
 
 const CephHealthStatus = [
@@ -21,12 +23,18 @@ const CephHealthStatus = [
   },
 ];
 
-export const getCephHealthState = (ocsResponse): CephHealth => {
+export const getCephHealthState = (ocsResponse, cephCluster): CephHealth => {
   if (!ocsResponse) {
     return { state: HealthState.LOADING };
   }
   const value = _.get(ocsResponse, 'data.result[0].value[1]');
-  return CephHealthStatus[value] || CephHealthStatus[3];
+  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
+  const cephClusterName = getName(_.get(cephClusterData, 0));
+  const cephHealth = CephHealthStatus[value] || CephHealthStatus[3];
+  if (!cephClusterName) {
+    return { ...cephHealth, message: `Openshift Storage ${cephHealth.message}` };
+  }
+  return { ...cephHealth, message: `${cephClusterName} ${cephHealth.message}` };
 };
 
 type CephHealth = {
