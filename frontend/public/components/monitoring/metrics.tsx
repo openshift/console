@@ -518,7 +518,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
     rowMapper = ({metric, value}) => [
       // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
       // determine when it should update
-      {title: <SeriesButton index={index} key={JSON.stringify([index, metric])} labels={metric} />},
+      {title: <SeriesButton index={index} key={_.uniqueId()} labels={metric} />},
       ..._.map(allLabelKeys, k => metric[k]),
       _.get(value, '[1]', {title: <span className="text-muted">None</span>}),
     ];
