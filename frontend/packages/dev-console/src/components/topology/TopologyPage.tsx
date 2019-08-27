@@ -28,7 +28,13 @@ export interface TopologyPageProps {
 
 type Props = TopologyPageProps & StateProps;
 
-const EmptyMsg = () => <EmptyState title="Topology" />;
+const EmptyMsg = () => (
+  <EmptyState
+    title="Topology"
+    hintBlockTitle="No workloads found"
+    hintBlockDescription="To add content to your project, create an application, component or service using one of these options."
+  />
+);
 
 export function renderTopology({ loaded, loadError, data }: RenderProps) {
   return (

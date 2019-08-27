@@ -1,4 +1,8 @@
 .odc-empty-state {
+
+  &__hint-block {
+    margin: 0 30px 20px 30px;
+  }
   // work around status-box injecting intermediate node preventing pages from controling the height of their content
   &__title {
     background-color: var(--pf-global--BackgroundColor--light-100);
