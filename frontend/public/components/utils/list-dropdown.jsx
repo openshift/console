@@ -121,7 +121,7 @@ class ListDropdown_ extends React.Component {
 
     return <div>
       { Component }
-      { loaded && _.isEmpty(items) && <Alert isInline className="co-alert" variant="info" title={`No ${desc} found or defined`} />}
+      { loaded && _.isEmpty(items) && <Alert isInline className="co-alert pf-c-alert--top-margin" variant="info" title={`No ${desc} found or defined`} />}
     </div>;
   }
 }
