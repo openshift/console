@@ -63,14 +63,14 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
 
   const actions = [
     (kind, obj) => ({
-      label: `Duplicate ${kind.label}...`,
+      label: `Duplicate ${kind.label}`,
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
       // Only perform access checks when duplicating cluster role bindings.
       // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
       accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
     }),
     (kind, obj) => ({
-      label: `Edit ${kind.label} Subject...`,
+      label: `Edit ${kind.label} Subject`,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
       accessReview: {
         group: kind.apiGroup,
@@ -81,7 +81,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       },
     }),
     subjects.length === 1 ? Kebab.factory.Delete : (kind, binding) => ({
-      label: `Delete ${kind.label} Subject...`,
+      label: `Delete ${kind.label} Subject`,
       callback: () => confirmModal({
         title: `Delete ${kind.label} Subject`,
         message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
@@ -100,7 +100,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
 
   if (subject.kind === 'User' || subject.kind === 'Group') {
     actions.unshift(() => ({
-      label: `Impersonate ${subject.kind} "${subject.name}"...`,
+      label: `Impersonate ${subject.kind} "${subject.name}"`,
       callback: () => startImpersonate(subject.kind, subject.name),
     }));
   }
