@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import * as plugins from '../../../plugins';
 import {
@@ -16,7 +15,7 @@ import {
   PODS,
 } from '../../dashboard/top-consumers-card/strings';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import { Dropdown, resourcePathFromModel } from '../../utils';
+import { Dropdown, ExternalLink, resourcePathFromModel } from '../../utils';
 import { OverviewQuery, topConsumersQueries } from './queries';
 import { getInstantVectorStats } from '../../graphs/utils';
 import { BarChart } from '../../graphs/bar';
@@ -182,9 +181,7 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
             )}
           />
           {url && <div className="co-overview-consumers__view-more">
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              View more<ExternalLinkAltIcon className="co-overview-consumers__view-more-icon" />
-            </a>
+            <ExternalLink href={url} text="View more" />
           </div>}
         </ConsumersBody>
       </DashboardCardBody>
