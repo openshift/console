@@ -74,7 +74,6 @@ export const EditYAML = connect(stateToProps)(
         stale: false,
         sampleObj: props.sampleObj,
         fileUpload: props.fileUpload,
-        isHovering: false
       };
       this.monacoRef = React.createRef();
       this.resize = () => {
@@ -90,7 +89,6 @@ export const EditYAML = connect(stateToProps)(
       this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
       this.editorDidMount = this.editorDidMount.bind(this);
-      this.editorDidHover = this.editorDidHover.bind(this);
 
       if (this.props.error) {
         this.handleError(this.props.error);
@@ -115,7 +113,6 @@ export const EditYAML = connect(stateToProps)(
       if (!_.isEqual(prevState, this.state)) {
         this.resize();
       }
-      this.editorDidHover();
     }
 
     componentDidMount() {
@@ -129,21 +126,6 @@ export const EditYAML = connect(stateToProps)(
       window.removeEventListener('resize', this.resize);
       window.removeEventListener('nav_toggle', this.resize);
       window.removeEventListener('sidebar_toggle', this.resize);
-    }
-
-    editorDidHover() {
-      if (this.state.isHovering) {
-        for (const ele of document.getElementsByClassName('monaco-editor-hover')) {
-          ele.onclick = (event) => event.preventDefault();
-          ele.onauxclick = (event) => {
-            window.open(event.target.getAttribute('data-href'), '_blank');
-            event.preventDefault();
-          }
-        }
-        this.setState({
-          isHovering: false
-        })
-      }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -478,16 +460,19 @@ export const EditYAML = connect(stateToProps)(
     }
 
     registerYAMLHover(languageID, monaco, m2p, p2m, createDocument, yamlService) {
-      const that = this;
       monaco.languages.registerHoverProvider(languageID, {
         provideHover(model, position) {
-          const document = createDocument(model);
-          return yamlService.doHover(document, m2p.asPosition(position.lineNumber, position.column)).then((hover) => {
+          const doc = createDocument(model);
+          return yamlService.doHover(doc, m2p.asPosition(position.lineNumber, position.column)).then((hover) => {
             return p2m.asHover(hover);
           }).then(e => {
-            that.setState({
-              isHovering: true
-            })
+            for (const el of document.getElementsByClassName('monaco-editor-hover')) {
+              el.onclick = (event) => event.preventDefault();
+              el.onauxclick = (event) => {
+                window.open(event.target.getAttribute('data-href'), '_blank').opener = null;
+                event.preventDefault();
+              };
+            }
             return e;
           });
         },
