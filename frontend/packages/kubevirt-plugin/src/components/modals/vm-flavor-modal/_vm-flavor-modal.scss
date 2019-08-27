@@ -4,6 +4,9 @@
 
 .kubevirt-vm-flavor-modal__content-generic {
     min-height: 13em;
+    .modal-body {
+        overflow-y: unset; /* Hotfix for PF3 */
+    }
 }
 
 .kubevirt-vm-flavor-modal__form {
