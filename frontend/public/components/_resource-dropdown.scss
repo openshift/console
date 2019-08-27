@@ -15,7 +15,8 @@
   align-items: center;
   display: flex;
   height: auto; // allow tags to wrap
-  padding: 3px 0;
+  min-height: 34px; // Make consistent with pf-c-form-control
+  padding-bottom: 4px; // reduce 2px to offset for the co-m-label 2px margin-bottom
   width: 100%;
 }
 
