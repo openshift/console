@@ -6,6 +6,7 @@ import { safeDump } from 'js-yaml';
 import * as _ from 'lodash-es';
 import { PropertyPath } from 'lodash';
 import * as classNames from 'classnames';
+import { Switch } from 'patternfly-react';
 import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { JSONSchema6TypeName } from 'json-schema';
 
@@ -27,7 +28,7 @@ import {
 import { ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor, CRDDescription, ClusterServiceVersionLogo, APIServiceDefinition } from './index';
 import { ClusterServiceVersionModel, CustomResourceDefinitionModel } from '../../models';
 import { Firehose } from '../utils/firehose';
-import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput, ListDropdown, AsyncComponent, resourcePathFromModel, FirehoseResult, useScrollToTopOnMount } from '../utils';
+import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput, ListDropdown, resourcePathFromModel, FirehoseResult, useScrollToTopOnMount } from '../utils';
 import { SpecCapability, StatusCapability, Descriptor } from './descriptors/types';
 import { ResourceRequirements } from './descriptors/spec/resource-requirements';
 import { RootState } from '../../redux';
@@ -330,8 +331,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         onChange={({currentTarget}) => setFormValues(values => ({...values, [field.path]: currentTarget.checked}))} />;
     }
     if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
-      return <AsyncComponent
-        loader={() => import('patternfly-react').then(m => m.Switch)}
+      return <Switch
         value={formValues[field.path]}
         onChange={(el, val) => setFormValues(values => ({...values, [field.path]: val}))}
         onText="True"
