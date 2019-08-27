@@ -478,9 +478,18 @@ export const EditYAML = connect(stateToProps)(
     registerYAMLHover(languageID, monaco, m2p, p2m, createDocument, yamlService) {
       monaco.languages.registerHoverProvider(languageID, {
         provideHover(model, position) {
-          const document = createDocument(model);
-          return yamlService.doHover(document, m2p.asPosition(position.lineNumber, position.column)).then((hover) => {
+          const doc = createDocument(model);
+          return yamlService.doHover(doc, m2p.asPosition(position.lineNumber, position.column)).then((hover) => {
             return p2m.asHover(hover);
+          }).then(e => {
+            for (const el of document.getElementsByClassName('monaco-editor-hover')) {
+              el.onclick = (event) => event.preventDefault();
+              el.onauxclick = (event) => {
+                window.open(event.target.getAttribute('data-href'), '_blank').opener = null;
+                event.preventDefault();
+              };
+            }
+            return e;
           });
         },
       });
