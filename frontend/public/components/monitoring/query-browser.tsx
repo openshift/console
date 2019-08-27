@@ -45,6 +45,14 @@ export const Error = ({error, title = 'An error occurred'}) =>
     {_.get(error, 'json.error', error.message)}
   </Alert>;
 
+const GraphEmptyState = ({children, title}) => <div className="query-browser__wrapper graph-empty-state">
+  <EmptyState variant={EmptyStateVariant.full}>
+    <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+    <Title size="sm">{title}</Title>
+    <EmptyStateBody>{children}</EmptyStateBody>
+  </EmptyState>
+</div>;
+
 const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
   const [text, setText] = React.useState(formatPrometheusDuration(span));
@@ -92,12 +100,21 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
   </React.Fragment>;
 });
 
-const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
-  if (!datum) {
-    return null;
-  }
-  const i = datum._stack - 1;
-  const {labels, query} = metadata[i];
+const tooltipStateToProps = ({UI}: RootState, {seriesIndex}) => {
+  let remaining = seriesIndex;
+  let props = {};
+  UI.getIn(['queryBrowser', 'queries']).filter(q => q.get('isEnabled') && q.get('query')).forEach(q => {
+    const series = q.get('series') || [];
+    if (series.length > remaining) {
+      props = {labels: series[remaining], query: q.get('query')};
+      return false;
+    }
+    remaining -= series.length;
+  });
+  return props;
+};
+
+const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, seriesIndex, x, y}) => {
   const width = 240;
 
   // This is actually the max tooltip height, so set it to the available space above the cursor location
@@ -108,7 +125,7 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
       <div className="query-browser__tooltip-arrow"></div>
       <div className="query-browser__tooltip">
         <div className="query-browser__tooltip-group">
-          <div className="query-browser__series-btn" style={{backgroundColor: colors[i % colors.length]}}></div>
+          <div className="query-browser__series-btn" style={{backgroundColor: colors[seriesIndex % colors.length]}}></div>
           {datum.x && <div className="query-browser__tooltip-time">{twentyFourHourTime(datum.x)}</div>}
         </div>
         <div className="query-browser__tooltip-group">
@@ -120,8 +137,16 @@ const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
     </div>
   </foreignObject>;
 };
+const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
 
-const Graph: React.FC<GraphProps> = React.memo(({containerComponent, data, span, xDomain}) => {
+const Tooltip: React.FC<TooltipProps> = ({datum, x, y}) => datum && _.isFinite(x) && _.isFinite(y)
+  ? <TooltipInner datum={datum} seriesIndex={datum._stack - 1} x={x} y={y} />
+  : null;
+
+const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
+const graphContainer = <ChartVoronoiContainer labels={() => ''} labelComponent={graphLabelComponent} />;
+
+const Graph: React.FC<GraphProps> = React.memo(({data, disableTooltips, span, xDomain}) => {
   const [containerRef, width] = useRefWidth();
 
   // Set a reasonable Y-axis range based on the min and max values in the data
@@ -144,7 +169,7 @@ const Graph: React.FC<GraphProps> = React.memo(({containerComponent, data, span,
 
   return <div ref={containerRef} style={{width: '100%'}}>
     {width > 0 && <Chart
-      containerComponent={containerComponent}
+      containerComponent={disableTooltips ? undefined : graphContainer}
       domain={{x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY]}}
       domainPadding={{y: 1}}
       height={200}
@@ -185,6 +210,20 @@ const formatSeriesValues = (values: PrometheusValue[], samples: number, span: nu
   return newValues;
 };
 
+// Try to limit the graph to this number of data points
+const maxDataPointsSoft = 6000;
+
+// If we have more than this number of data points, do not render the graph
+const maxDataPointsHard = 10000;
+
+// Min and max number of data samples per data series
+const minSamples = 20;
+const maxSamples = 300;
+
+// We don't want to refresh all the graph data for just a small adjustment in the number of samples, so don't update
+// unless the number of samples would change by at least this proportion
+const samplesLeeway = 0.2;
+
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan,
   disabledSeries = [],
@@ -199,16 +238,16 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const [xDomain, setXDomain] = React.useState();
   const [error, setError] = React.useState();
+  const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const [results, setResults] = React.useState();
+  const [samples, setSamples] = React.useState(maxSamples);
   const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
   const [updating, setUpdating] = React.useState(true);
   const [x1, setX1] = React.useState(0);
   const [x2, setX2] = React.useState(0);
 
   const endTime = _.get(xDomain, '[1]');
-
-  const samples = 300;
 
   const safeFetch = useSafeFetch();
 
@@ -230,9 +269,27 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const tick = () => Promise.all(_.map(queries, safeFetchQuery))
     .then((responses: PrometheusResponse[]) => {
       const newResults = _.map(responses, 'data.result');
-      setResults(newResults);
-      _.each(newResults, (r, i) => patchQuery(i, {series: r ? _.map(r, 'metric') : undefined}));
-      setUpdating(false);
+      const numDataPoints = _.sumBy(newResults, r => _.sumBy(r, 'values.length'));
+
+      if (numDataPoints > maxDataPointsHard && samples === minSamples) {
+        setIsDatasetTooBig(true);
+        return;
+      }
+      setIsDatasetTooBig(false);
+
+      const newSamples = _.clamp(Math.floor(samples * maxDataPointsSoft / numDataPoints), minSamples, maxSamples);
+
+      // Change `samples` if either
+      //   - It will change by a proportion greater than `samplesLeeway`
+      //   - It will change to the upper or lower limit of its allowed range
+      if ((Math.abs(newSamples - samples) / samples > samplesLeeway) ||
+        (newSamples !== samples && (newSamples === maxSamples || newSamples === minSamples))) {
+        setSamples(newSamples);
+      } else {
+        setResults(newResults);
+        _.each(newResults, (r, i) => patchQuery(i, {series: r ? _.map(r, 'metric') : undefined}));
+        setUpdating(false);
+      }
       setError(undefined);
     })
     .catch(err => {
@@ -272,17 +329,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     setSpan(newSpan);
   }, []);
 
-  const containerComponent = React.useMemo(() => {
-    const metadata = _.flatMap(results, (r, i) => _.map(r, ({metric}) => ({
-      query: queries[i],
-      labels: metric,
-    })));
-
-    const flyoutComponent = <Tooltip metadata={metadata} />;
-    const labelComponent = <ChartTooltip flyoutComponent={flyoutComponent} />;
-    return <ChartVoronoiContainer labels={() => ''} labelComponent={labelComponent} />;
-  }, [queries, results]);
-
   const isRangeVector = _.get(error, 'json.error', '').match(/invalid expression type "range vector"/);
 
   if (hideGraphs) {
@@ -290,13 +336,15 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   if (isRangeVector) {
-    return <div className="query-browser__wrapper graph-empty-state">
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-        <Title size="sm">Ungraphable results</Title>
-        <EmptyStateBody>Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.</EmptyStateBody>
-      </EmptyState>
-    </div>;
+    return <GraphEmptyState title="Ungraphable results">
+      Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.
+    </GraphEmptyState>;
+  }
+
+  if (isDatasetTooBig) {
+    return <GraphEmptyState title="Ungraphable results">
+      The resulting dataset is too large to graph.
+    </GraphEmptyState>;
   }
 
   const onMouseDown = (e) => {
@@ -352,17 +400,20 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
     {error && <Error error={error} />}
     {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
-    {!_.isEmpty(graphData) && <div className="graph-wrapper graph-wrapper--query-browser">
-      <div className="query-browser__zoom" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-        {isZooming && <div className="query-browser__zoom-overlay" style={{left: Math.min(x1, x2), width: Math.abs(x1 - x2)}}></div>}
-        <Graph
-          containerComponent={isZooming ? undefined : containerComponent}
-          data={graphData}
-          xDomain={xDomain}
-          span={span}
-        />
+    {!_.isEmpty(graphData) && <React.Fragment>
+      {samples < maxSamples && <Alert
+        isInline
+        className="co-alert"
+        title="Displaying with reduced resolution due to large dataset."
+        variant="info"
+      />}
+      <div className="graph-wrapper graph-wrapper--query-browser">
+        <div className="query-browser__zoom" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+          {isZooming && <div className="query-browser__zoom-overlay" style={{left: Math.min(x1, x2), width: Math.abs(x1 - x2)}}></div>}
+          <Graph data={graphData} disableTooltips={isZooming} xDomain={xDomain} span={span} />
+        </div>
       </div>
-    </div>}
+    </React.Fragment>}
   </div>;
 };
 export const QueryBrowser = withFallback(connect(
@@ -391,8 +442,8 @@ export type QueryObj = {
 type PrometheusValue = [number, string];
 
 type GraphProps = {
-  containerComponent: React.ReactElement;
   data: GraphDataPoint[][];
+  disableTooltips: boolean;
   span: number;
   xDomain: AxisDomain;
 };
@@ -411,4 +462,21 @@ type SpanControlsProps = {
   defaultSpanText: string;
   onChange: (span: number) => void;
   span: number;
+};
+
+type TooltipDatum = {_stack: number, x: Date, y: number};
+
+type TooltipInnerProps = {
+  datum: TooltipDatum;
+  labels?: Labels;
+  query?: string;
+  seriesIndex: number;
+  x: number;
+  y: number;
+};
+
+type TooltipProps = {
+  datum?: TooltipDatum;
+  x?: number;
+  y?: number;
 };
