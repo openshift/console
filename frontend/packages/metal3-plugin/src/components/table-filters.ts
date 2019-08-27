@@ -7,6 +7,7 @@ import {
   HOST_ERROR_STATES,
   HOST_STATUS_TITLES,
   HOST_STATUS_PROVISIONED,
+  HOST_STATUS_EXTERNALLY_PROVISIONED,
 } from '../constants';
 import { HostRowBundle } from './types';
 
@@ -25,7 +26,7 @@ const hostStatesToFilterMap = Object.freeze({
   },
   provisioned: {
     title: 'Provisioned',
-    states: [HOST_STATUS_PROVISIONED],
+    states: [HOST_STATUS_PROVISIONED, HOST_STATUS_EXTERNALLY_PROVISIONED],
   },
   error: {
     title: 'Error',
