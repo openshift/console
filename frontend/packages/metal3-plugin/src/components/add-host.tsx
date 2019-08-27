@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { ActionGroup, Button, Switch } from '@patternfly/react-core';
+import { ActionGroup, Button, ButtonVariant, Switch } from '@patternfly/react-core';
 import { ButtonBar, history, resourcePathFromModel } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { SecretModel } from '@console/internal/models';
@@ -181,14 +181,14 @@ const AddHost: React.FC = () => {
             <ActionGroup className="pf-c-form">
               <Button
                 type="submit"
-                disabled={
+                isDisabled={
                   !formValue.name ||
                   !formValue.managementAddress ||
                   !formValue.username ||
                   !formValue.password
                 }
-                className="btn btn-primary"
                 id="save-changes"
+                variant={ButtonVariant.primary}
               >
                 Create
               </Button>
