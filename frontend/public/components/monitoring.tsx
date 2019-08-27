@@ -1011,6 +1011,7 @@ const AlertManagerYAML = () => {
 const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
   const alertPath = '/monitoring/alerts';
   const silencePath = '/monitoring/silences';
+  const configurationPath = '/monitoring/silences';
   const YAMLPath = '/monitoring/alertmanageryaml';
   return <React.Fragment>
     <div className="co-m-nav-title co-m-nav-title--detail">
@@ -1032,6 +1033,10 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
           <Link to={silencePath}>Silences</Link>
         </li>
         <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === configurationPath})}>
+          <Link to={configurationPath}>Configuration</Link>
+        </li>
+        <li
           className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === YAMLPath})}>
           <Link to={YAMLPath}>YAML</Link>
         </li>
@@ -1041,6 +1046,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
     <Switch>
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
+      <Route path="/monitoring/configuration" exact component={SilencesPage} />
       <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
     </Switch>
   </React.Fragment>;
