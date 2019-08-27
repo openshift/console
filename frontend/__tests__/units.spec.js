@@ -276,7 +276,7 @@ describe('units', () => {
     test_(Number.MIN_VALUE, Number.MIN_VALUE);
     test_('0', 0);
     test_(NaN, NaN);
-    test_('100K', 100000);
+    test_('100k', 100000);
     test_('1M', 1000000);
   });
 });
