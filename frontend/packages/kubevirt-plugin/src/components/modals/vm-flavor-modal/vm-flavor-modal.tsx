@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 import { getResource } from 'kubevirt-web-ui-components';
 import {
   HandlePromiseProps,
@@ -91,11 +92,10 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     }
   };
 
-  let topClass = 'modal-content ';
-  topClass +=
-    flavor === CUSTOM_FLAVOR
-      ? 'kubevirt-vm-flavor-modal__content-custom'
-      : 'kubevirt-vm-flavor-modal__content-generic';
+  const topClass = classNames('modal-content', {
+    'kubevirt-vm-flavor-modal__content-custom': flavor === CUSTOM_FLAVOR,
+    'kubevirt-vm-flavor-modal__content-generic': flavor !== CUSTOM_FLAVOR,
+  });
 
   return (
     <div className={topClass}>
