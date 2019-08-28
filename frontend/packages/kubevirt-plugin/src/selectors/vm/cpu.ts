@@ -1,4 +1,4 @@
-export const vCPUCount = (sourceCPURaw: CPUType) => {
+export const vCPUCount = (sourceCPURaw: CPURaw) => {
   return (
     (parseInt(sourceCPURaw.sockets, 10) || 1) *
     (parseInt(sourceCPURaw.cores, 10) || 1) *
@@ -6,7 +6,7 @@ export const vCPUCount = (sourceCPURaw: CPUType) => {
   );
 };
 
-type CPUType = {
+type CPURaw = {
   sockets: string;
   cores: string;
   threads: string;

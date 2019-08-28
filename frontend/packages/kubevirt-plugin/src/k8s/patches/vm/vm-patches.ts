@@ -61,7 +61,7 @@ const getDomainPatch = (vm: VMKind): Patch => {
   return patch;
 };
 
-const getUpdateFlavorPatch = (vmLike, flavor): Patch[] => {
+const getUpdateFlavorPatch = (vmLike: VMLikeEntityKind, flavor: string): Patch[] => {
   const patch = [];
   if (flavor !== getFlavor(vmLike)) {
     const labelKey = `${TEMPLATE_FLAVOR_LABEL}/${flavor}`.replace('~', '~0').replace('/', '~1');

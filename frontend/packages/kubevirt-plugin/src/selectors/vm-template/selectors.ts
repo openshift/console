@@ -40,12 +40,12 @@ export const getTemplateWorkloads = (vmTemplates: TemplateKind[]) =>
   getTemplatesLabelValues(vmTemplates, TEMPLATE_WORKLOAD_LABEL);
 
 export const getTemplates = (
-  templates: TemplateKind[],
+  templates: TemplateKind[] = [],
   os: string,
   workload: string,
   flavor: string,
 ) =>
-  (templates || []).filter((t) => {
+  templates.filter((t) => {
     if (os) {
       const templateOS = getTemplateOS([t]);
       if (!templateOS.includes(os)) {
