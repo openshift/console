@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
-import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
+import { Dropdown, humanizeNumberSI, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
 import { PrometheusResponse } from '../graphs';
@@ -39,6 +39,9 @@ const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2
 const dropdownItems = _.zipObject(spans, spans);
 const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 export const colors = chartTheme.line.colorScale;
+
+// Use exponential notation for small or very large numbers to avoid labels with too many characters
+const formatValue = v => v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
 
 export const Error = ({error, title = 'An error occurred'}) =>
   <Alert isInline className="co-alert" title={title} variant="danger">
@@ -130,7 +133,7 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, serie
         </div>
         <div className="query-browser__tooltip-group">
           <div className="co-nowrap co-truncate">{query}</div>
-          <div className="query-browser__tooltip-value">{humanizeNumber(datum.y).string}</div>
+          <div className="query-browser__tooltip-value">{formatValue(datum.y)}</div>
         </div>
         {_.map(labels, (v, k) => <div key={k}><span className="query-browser__tooltip-label-key">{k}</span> {v}</div>)}
       </div>
@@ -165,7 +168,7 @@ const Graph: React.FC<GraphProps> = React.memo(({data, disableTooltips, span, xD
 
   const tickFormat = Math.abs(maxY - minY) < 0.005
     ? v => (v === 0 ? '0' : v.toExponential(1))
-    : v => humanizeNumber(v).string;
+    : formatValue;
 
   return <div ref={containerRef} style={{width: '100%'}}>
     {width > 0 && <Chart

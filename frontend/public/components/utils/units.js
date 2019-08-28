@@ -30,7 +30,7 @@ const TYPES = {
     divisor: 1024,
   },
   SI: {
-    units: ['', 'K', 'M', 'G', 'T', 'P', 'E'],
+    units: ['', 'k', 'M', 'G', 'T', 'P', 'E'],
     space: false,
     divisor: 1000,
   },
@@ -186,6 +186,7 @@ export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) => humanize(v
 export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
 export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
 export const humanizeNumber = (v, initialUnit, preferredUnit) => humanize(v, 'numeric', true, initialUnit, preferredUnit);
+export const humanizeNumberSI = (v, initialUnit, preferredUnit) => humanize(v, 'SI', true, initialUnit, preferredUnit);
 export const humanizeSeconds = (v, initialUnit, preferredUnit) => humanize(v, 'seconds', true, initialUnit, preferredUnit);
 export const humanizeCpuCores = v => {
   const value = v < 1 ? round(v*1000) : v;
