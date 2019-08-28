@@ -366,10 +366,18 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     if (isZooming) {
       setIsZooming(false);
 
+      const xMin = Math.min(x1, x2);
+      const xMax = Math.max(x1, x2);
+
+      // Don't do anything if a range was not selected (don't zoom if you just click the graph)
+      if (xMax === xMin) {
+        return;
+      }
+
       const {width} = e.currentTarget.getBoundingClientRect();
       const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
-      let from = oldFrom + (span * Math.min(x1, x2) / width);
-      let to = oldFrom + (span * Math.max(x1, x2) / width);
+      let from = oldFrom + (span * xMin / width);
+      let to = oldFrom + (span * xMax / width);
       let newSpan = to - from;
 
       // Don't allow zooming to less than 10 seconds
