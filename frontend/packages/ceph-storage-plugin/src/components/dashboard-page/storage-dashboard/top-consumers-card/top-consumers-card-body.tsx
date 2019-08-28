@@ -15,7 +15,7 @@ import { DataPoint, PrometheusResponse } from '@console/internal/components/grap
 import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { getGraphVectorStats, getMetricType } from './utils';
+import { getGraphVectorStats, getMetricType, getYTickValues, sortResources } from './utils';
 
 const chartPropsValue = {
   chartHeight: 175,
@@ -29,14 +29,11 @@ const chartLegendPropsValue = {
   gutter: 10,
 };
 
-const getYTickValues = (value: number): number[] => [
-  Math.floor(value / 4),
-  Math.floor(value / 2),
-  Math.floor((3 * value) / 4),
-  Math.floor(value),
-  Math.floor((5 * value) / 4),
-  Math.floor((6 * value) / 4),
-];
+const getMaxCapacity = (topConsumerStatsResult: PrometheusResponse['data']['result']) => {
+  const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
+  const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
+  return humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
+};
 
 export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
   ({ topConsumerStats, metricType, sortByOption }) => {
@@ -45,17 +42,13 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     }
     const topConsumerStatsResult = _.get(topConsumerStats, 'data.result', []);
     if (topConsumerStatsResult.length) {
+      const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
+      const sortedResult = topConsumerStatsResult.sort(sortResources);
       const legends = topConsumerStatsResult.map((resource) => ({
         name: getMetricType(resource, metricType),
       }));
-      const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
-      const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
-      const maxCapacityConverted = humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
-      const chartData = getGraphVectorStats(
-        topConsumerStats,
-        metricType,
-        maxCapacityConverted.unit,
-      );
+
+      const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
       const chartLineList = chartData.map((data, i) => (
         <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key

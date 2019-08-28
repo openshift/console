@@ -5,8 +5,7 @@ import { PrometheusResponse, DataPoint } from '@console/internal/components/grap
 export const getMetricType = (resource, metricType) => _.get(resource, ['metric', metricType], '');
 
 export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
-  const result = _.get(response, 'data.result', []);
-  return result.map((r) => {
+  return response.map((r) => {
     return r.values.map((arr) => ({
       name: getMetricType(r, metricType),
       x: new Date(arr[0] * 1000),
@@ -15,4 +14,30 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
   });
 };
 
-type GetStats = (response: PrometheusResponse[], metric?: string, unit?: string) => DataPoint[];
+export const getYTickValues = (value: number): number[] => [
+  _.round(value / 4, 1),
+  _.round(value / 2, 1),
+  _.round((3 * value) / 4, 1),
+  _.round(value, 1),
+  _.round((5 * value) / 4, 1),
+  _.round((6 * value) / 4, 1),
+];
+
+export const sortResources: SortResourcesProps = (a, b) => {
+  const aVal = _.get(a, 'values');
+  const bVal = _.get(b, 'values');
+  const x = _.get(a, ['values', aVal.length - 1, 1]);
+  const y = _.get(b, ['values', bVal.length - 1, 1]);
+  return y - x;
+};
+
+type GetStats = (
+  response: PrometheusResponse['data']['result'],
+  metric?: string,
+  unit?: string,
+) => DataPoint[][];
+
+type SortResourcesProps = (
+  a: PrometheusResponse['data']['result'],
+  b: PrometheusResponse['data']['result'],
+) => number;
