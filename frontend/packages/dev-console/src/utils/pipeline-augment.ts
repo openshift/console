@@ -192,12 +192,12 @@ export enum runStatus {
 export const getRunStatusColor = (status: string): StatusMessage => {
   switch (status) {
     case runStatus.Succeeded:
-      return { message: 'Succeded', pftoken: successColor };
+      return { message: 'Succeeded', pftoken: successColor };
     case runStatus.Failed:
       return { message: 'Failed', pftoken: failureColor };
     case runStatus.FailedToStart:
       return {
-        message: 'PipelineRun Failed To Start',
+        message: 'PipelineRun failed to start',
         pftoken: failureColor,
       };
     case runStatus.Running:
@@ -211,9 +211,9 @@ export const getRunStatusColor = (status: string): StatusMessage => {
       return { message: 'Cancelled', pftoken: cancelledColor };
     case runStatus.Idle:
     case runStatus.Pending:
-      return { message: 'Not Started Yet', pftoken: pendingColor };
+      return { message: 'Pending', pftoken: pendingColor };
     default:
-      return { message: 'PipelineRun Not started Yet', pftoken: pendingColor };
+      return { message: 'PipelineRun not started yet', pftoken: pendingColor };
   }
 };
 
