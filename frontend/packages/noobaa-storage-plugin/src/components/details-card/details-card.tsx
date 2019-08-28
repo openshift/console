@@ -11,10 +11,11 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResource, ExternalLink } from '@console/internal/components/utils';
 import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getInfrastructurePlatform } from '@console/ceph-storage-plugin/src/selectors';
+import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
 
@@ -55,11 +56,15 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
 
   const queryResult = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'result']);
 
-  const systemName = _.get(queryResult, 'data.result[0].metric.system_name');
+  const systemName = getMetric(queryResult, 'system_name');
+  const systemAddress = getMetric(queryResult, 'system_address');
+  const systemLink =
+    systemName && systemAddress ? `${systemAddress}fe/systems/${systemName}` : undefined;
 
   const infrastructure = _.get(resources, 'infrastructure');
   const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
   const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
   const subscription = _.get(resources, 'subscription');
   const subscriptionLoaded = _.get(subscription, 'loaded');
@@ -72,30 +77,33 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem
-            key="service_name"
-            title="Service Name"
-            value="OpenShift Container Storage"
-            isLoading={false}
-          />
+          <DetailItem key="service_name" title="Service Name" error={false} isLoading={false}>
+            OpenShift Container Storage
+          </DetailItem>
           <DetailItem
             key="system_name"
             title="System Name"
-            value={systemName}
             isLoading={!queryResult}
-          />
+            error={!systemLink}
+          >
+            <ExternalLink href={systemLink} text={systemName} />
+          </DetailItem>
           <DetailItem
             key="provider"
             title="Provider"
-            value={getInfrastructurePlatform(infrastructureData)}
+            error={!infrastructurePlatform}
             isLoading={!infrastructureLoaded}
-          />
+          >
+            {infrastructurePlatform}
+          </DetailItem>
           <DetailItem
             key="version"
             title="Version"
-            value={ocsVersion}
             isLoading={!subscriptionLoaded}
-          />
+            error={!ocsVersion}
+          >
+            {ocsVersion}
+          </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>

@@ -60,10 +60,12 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const infrastructure = _.get(resources, 'infrastructure');
   const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
   const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
   const cephCluster = _.get(resources, 'ceph');
   const cephClusterLoaded = _.get(cephCluster, 'loaded', false);
   const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
+  const cephClusterName = getName(_.get(cephClusterData, 0));
 
   const subscription = _.get(resources, 'subscription');
   const subscriptionLoaded = _.get(subscription, 'loaded');
@@ -76,30 +78,33 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem
-            key="service_name"
-            title="Service Name"
-            value="OpenShift Container Storage"
-            isLoading={false}
-          />
+          <DetailItem key="service_name" title="Service Name" isLoading={false} error={false}>
+            OpenShift Container Storage
+          </DetailItem>
           <DetailItem
             key="cluster_name"
             title="Cluster Name"
-            value={getName(_.get(cephClusterData, 0))}
+            error={!cephClusterName}
             isLoading={!cephClusterLoaded}
-          />
+          >
+            {cephClusterName}
+          </DetailItem>
           <DetailItem
             key="provider"
             title="Provider"
-            value={getInfrastructurePlatform(infrastructureData)}
+            error={!infrastructurePlatform}
             isLoading={!infrastructureLoaded}
-          />
+          >
+            {infrastructurePlatform}
+          </DetailItem>
           <DetailItem
             key="version"
             title="Version"
-            value={ocsVersion}
             isLoading={!subscriptionLoaded}
-          />
+            error={!ocsVersion}
+          >
+            {ocsVersion}
+          </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>
