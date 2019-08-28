@@ -8,7 +8,7 @@ import { selectVM, getTemplateForFlavor } from '../../../selectors/vm-template/s
 import { getVMLikePatches } from '../vm-template';
 import { isCPUEqual } from '../../../utils';
 
-const getLabelsPatch = (vmLike: VMLikeEntityKind): Patch | null => {
+const getLabelsPatch = (vmLike: VMLikeEntityKind): Patch => {
   if (!_.has(vmLike.metadata, 'labels')) {
     return {
       op: 'add',
@@ -19,7 +19,7 @@ const getLabelsPatch = (vmLike: VMLikeEntityKind): Patch | null => {
   return null;
 };
 
-const getDomainPatch = (vm: VMKind): Patch | null => {
+const getDomainPatch = (vm: VMKind): Patch => {
   let patch: Patch = null;
   if (!_.has(vm, 'spec')) {
     patch = {
