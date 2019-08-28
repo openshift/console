@@ -158,7 +158,7 @@ $tooltip-background-color: #151515;
 .query-browser__tooltip-wrap {
   align-items: center;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 }
@@ -166,16 +166,16 @@ $tooltip-background-color: #151515;
 .query-browser__tooltip {
   background-color: $tooltip-background-color;
   color: #eee;
-  font-size: var(--pf-global--FontSize--sm);
+  font-size: 12px;
   overflow-y: auto;
   padding: 15px;
   width: 100%;
 }
 
 .query-browser__tooltip-arrow {
+  border-bottom: 12px solid $tooltip-background-color;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 12px solid $tooltip-background-color;
   height: 0;
   width: 0;
 }

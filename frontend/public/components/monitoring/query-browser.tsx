@@ -115,12 +115,16 @@ const tooltipStateToProps = ({UI}: RootState, {seriesIndex}) => {
 };
 
 const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, seriesIndex, x, y}) => {
+  if (!query && !labels) {
+    return null;
+  }
+
   const width = 240;
 
-  // This is actually the max tooltip height, so set it to the available space above the cursor location
-  const height = 180 + y;
+  // This is actually the max tooltip height
+  const height = 500;
 
-  return <foreignObject height={height} width={width} x={x - width/2} y={y - height}>
+  return <foreignObject height={height} width={width} x={x - width/2} y={y}>
     <div className="query-browser__tooltip-wrap">
       <div className="query-browser__tooltip-arrow"></div>
       <div className="query-browser__tooltip">
@@ -132,7 +136,9 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, serie
           <div className="co-nowrap co-truncate">{query}</div>
           <div className="query-browser__tooltip-value">{humanizeNumber(datum.y).string}</div>
         </div>
-        {_.map(labels, (v, k) => <div key={k}><span className="query-browser__tooltip-label-key">{k}</span> {v}</div>)}
+        {_.map(labels, (v, k) => <div className="co-nowrap co-truncate" key={k}>
+          <span className="query-browser__tooltip-label-key">{k === '__name__' ? 'name' : k}</span> {v}
+        </div>)}
       </div>
     </div>
   </foreignObject>;
@@ -144,7 +150,16 @@ const Tooltip: React.FC<TooltipProps> = ({datum, x, y}) => datum && _.isFinite(x
   : null;
 
 const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
-const graphContainer = <ChartVoronoiContainer labels={() => ''} labelComponent={graphLabelComponent} />;
+
+// Set activateData to false to work around VictoryVoronoiContainer crash (see
+// https://github.com/FormidableLabs/victory/issues/1314)
+// Use style because ChartVoronoiContainer does not accept a className prop
+const graphContainer: any = <ChartVoronoiContainer
+  activateData={false}
+  labelComponent={graphLabelComponent}
+  labels={() => ''}
+  style={{zIndex: 1}}
+/>;
 
 const Graph: React.FC<GraphProps> = React.memo(({data, disableTooltips, span, xDomain}) => {
   const [containerRef, width] = useRefWidth();
@@ -287,7 +302,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         setSamples(newSamples);
       } else {
         setResults(newResults);
-        _.each(newResults, (r, i) => patchQuery(i, {series: r ? _.map(r, 'metric') : undefined}));
+        _.each(newResults, (r, i) => patchQuery(i, {
+          query: queries[i],
+          series: r ? _.map(r, 'metric') : undefined,
+        }));
         setUpdating(false);
       }
       setError(undefined);
