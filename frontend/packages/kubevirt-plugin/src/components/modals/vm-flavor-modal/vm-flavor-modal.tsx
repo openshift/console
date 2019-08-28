@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { getVmTemplate, getResource } from 'kubevirt-web-ui-components';
+import { getResource } from 'kubevirt-web-ui-components';
 import {
   HandlePromiseProps,
   withHandlePromise,
@@ -19,20 +19,8 @@ import {
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import { VMKind, VMLikeEntityKind } from '../../../types';
-import {
-  getFlavor,
-  getMemory,
-  getCPU,
-  getOperatingSystem,
-  getWorkloadProfile,
-  isVM,
-  vCPUCount,
-} from '../../../selectors/vm';
-import {
-  getTemplateFlavors,
-  getTemplates,
-  selectVM,
-} from '../../../selectors/vm-template/selectors';
+import { getFlavor, getMemory, getCPU, isVM, vCPUCount } from '../../../selectors/vm';
+import { selectVM, getFlavors } from '../../../selectors/vm-template/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { VirtualMachineModel } from '../../../models';
 import {
@@ -52,30 +40,6 @@ const dehumanizeMemory = (memory?: string) => {
   }
 
   return convertToBaseValue(memory) / MB;
-};
-
-const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
-  const vmTemplate = getVmTemplate(vm);
-
-  const flavors = {
-    // always listed
-    [CUSTOM_FLAVOR]: CUSTOM_FLAVOR,
-  };
-
-  if (vmTemplate) {
-    // enforced by the vm
-    const templateFlavors = getTemplateFlavors([vmTemplate]);
-    templateFlavors.forEach((f) => (flavors[f] = f));
-  }
-
-  // if VM OS or Workload is set, add flavors of matching templates only. Otherwise list all flavors.
-  const vmOS = getOperatingSystem(vm);
-  const vmWorkload = getWorkloadProfile(vm);
-  const matchingTemplates = getTemplates(templates, vmOS, vmWorkload, undefined);
-  const templateFlavors = getTemplateFlavors(matchingTemplates);
-  templateFlavors.forEach((f) => (flavors[f] = f));
-
-  return flavors;
 };
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {

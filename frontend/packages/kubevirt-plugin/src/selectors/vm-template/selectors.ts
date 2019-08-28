@@ -1,8 +1,14 @@
 import * as _ from 'lodash';
+import { getVmTemplate } from 'kubevirt-web-ui-components';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../models';
-import { VMKind } from '../../types';
-import { TEMPLATE_FLAVOR_LABEL, TEMPLATE_OS_LABEL, TEMPLATE_WORKLOAD_LABEL } from '../../constants';
+import { VMKind, VMLikeEntityKind } from '../../types';
+import {
+  TEMPLATE_FLAVOR_LABEL,
+  TEMPLATE_OS_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
+  CUSTOM_FLAVOR,
+} from '../../constants';
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
 
@@ -71,4 +77,28 @@ export const getTemplateForFlavor = (templates: TemplateKind[], vm: VMKind, flav
 
   // Take first matching. If OS/Workloads changes in the future, there will be another patch sent
   return matchingTemplates.length > 0 ? matchingTemplates[0] : undefined;
+};
+
+export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
+  const vmTemplate = getVmTemplate(vm);
+
+  const flavors = {
+    // always listed
+    [CUSTOM_FLAVOR]: CUSTOM_FLAVOR,
+  };
+
+  if (vmTemplate) {
+    // enforced by the vm
+    const templateFlavors = getTemplateFlavors([vmTemplate]);
+    templateFlavors.forEach((f) => (flavors[f] = f));
+  }
+
+  // if VM OS or Workload is set, add flavors of matching templates only. Otherwise list all flavors.
+  const vmOS = getOperatingSystem(vm);
+  const vmWorkload = getWorkloadProfile(vm);
+  const matchingTemplates = getTemplates(templates, vmOS, vmWorkload, undefined);
+  const templateFlavors = getTemplateFlavors(matchingTemplates);
+  templateFlavors.forEach((f) => (flavors[f] = f));
+
+  return flavors;
 };
