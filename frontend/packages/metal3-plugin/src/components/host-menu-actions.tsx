@@ -1,7 +1,5 @@
-import * as React from 'react';
 import { asAccessReview, KebabOption } from '@console/internal/components/utils';
 import {
-  k8sKill,
   K8sKind,
   K8sResourceKind,
   k8sPatch,
@@ -9,13 +7,7 @@ import {
   NodeKind,
 } from '@console/internal/module/k8s';
 import { getMachineNode, getMachineNodeName, getName } from '@console/shared';
-import { confirmModal } from '@console/internal/components/modals';
-import {
-  findNodeMaintenance,
-  getHostMachine,
-  getNodeMaintenanceReason,
-  getHostPowerStatus,
-} from '../selectors';
+import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../selectors';
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { getHostStatus } from '../utils/host-status';
 import {
@@ -26,6 +18,7 @@ import {
 } from '../constants';
 import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
 import { powerOffHostModal } from './modals/power-off-host-modal';
+import stopNodeMaintenanceModal from './modals/stop-node-maintenance-modal';
 
 type ActionArgs = {
   nodeName?: string;
@@ -34,7 +27,7 @@ type ActionArgs = {
   status: string;
 };
 
-export const SetNodeMaintanance = (
+export const SetNodeMaintenance = (
   kindObj: K8sKind,
   host: K8sResourceKind,
   resources: {},
@@ -45,33 +38,17 @@ export const SetNodeMaintanance = (
   callback: () => startNodeMaintenanceModal({ nodeName }),
 });
 
-export const RemoveNodeMaintanance = (
+export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   host: K8sResourceKind,
   resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => {
-  const title = 'Stop maintenance';
-  const reason = getNodeMaintenanceReason(nodeMaintenance);
+  const hostName = getName(host);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-    label: title,
-    callback: () =>
-      confirmModal({
-        title,
-        message: (
-          <>
-            Are you sure you want to stop maintenance{' '}
-            <strong>
-              {getName(nodeMaintenance)}
-              {reason ? ` (${reason})` : ''}
-            </strong>{' '}
-            on node <strong>{nodeName}</strong>?
-          </>
-        ),
-        btnText: title,
-        executeFn: () => k8sKill(NodeMaintenanceModel, nodeMaintenance),
-      }),
+    label: 'Stop maintenance',
+    callback: () => stopNodeMaintenanceModal(nodeMaintenance, hostName),
     accessReview:
       nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
   };
@@ -105,7 +82,7 @@ export const PowerOff = (
   accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
 });
 
-export const menuActions = [SetNodeMaintanance, RemoveNodeMaintanance, PowerOn, PowerOff];
+export const menuActions = [SetNodeMaintenance, RemoveNodeMaintenance, PowerOn, PowerOff];
 
 type ExtraResources = {
   machines: MachineKind[];

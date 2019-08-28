@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
-import { AddCircleOIcon, MaintenanceIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons';
 import {
   ProgressStatus,
   SuccessStatus,
@@ -10,16 +10,18 @@ import {
 } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RequireCreatePermission } from '@console/internal/components/utils';
-import { HostMultiStatus } from '../utils/host-status';
 import {
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
   HOST_SUCCESS_STATES,
   HOST_STATUS_UNDER_MAINTENANCE,
+  HOST_STATUS_STARTING_MAINTENANCE,
 } from '../constants';
 import { BaremetalHostModel } from '../models';
 import { getHostErrorMessage } from '../selectors';
+import { HostMultiStatus } from './types';
+import MaintenancePopover from './maintenance/MaintenancePopover';
 
 // TODO(jtomasek): Update this with onClick handler once add discovered host functionality
 // is available
@@ -45,12 +47,13 @@ type BaremetalHostStatusProps = {
 
 const BaremetalHostStatus = ({ status: { status, title, ...props } }: BaremetalHostStatusProps) => {
   const statusTitle = title || status;
-
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
       return <AddDiscoveredHostButton host={props.host} />;
-    case status === HOST_STATUS_UNDER_MAINTENANCE:
-      return <StatusIconAndText icon={<MaintenanceIcon />} title={statusTitle} />;
+    case [HOST_STATUS_STARTING_MAINTENANCE, HOST_STATUS_UNDER_MAINTENANCE].includes(status):
+      return (
+        <MaintenancePopover title={statusTitle} maintenance={props.maintenance} host={props.host} />
+      );
     case HOST_PROGRESS_STATES.includes(status):
       return <ProgressStatus title={statusTitle} />;
     case HOST_ERROR_STATES.includes(status):
