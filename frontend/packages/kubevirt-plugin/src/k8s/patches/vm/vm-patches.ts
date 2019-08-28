@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Patch, TemplateKind } from '@console/internal/module/k8s';
 import { VMLikeEntityKind, VMKind, CPU } from '../../../types';
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
-import { getFlavor, getCPU, getMemory, isVM } from '../../../selectors/vm';
+import { getFlavor, getCPU, getMemory, isVM, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
 import { CUSTOM_FLAVOR, TEMPLATE_FLAVOR_LABEL } from '../../../constants';
 import { selectVM, getTemplateForFlavor } from '../../../selectors/vm-template/selectors';
 import { getVMLikePatches } from '../vm-template';
@@ -133,7 +133,7 @@ const getMemoryPatch = (vm: VMKind, memory: string): Patch => {
 
 const getUpdateCpuMemoryPatch = (vm: VMKind, cpu: CPU, memory: string): Patch[] => {
   const patch = [];
-  const vmCpu = getCPU(vm);
+  const vmCpu = parseCPU(getCPU(vm));
   const vmMemory = getMemory(vm);
 
   if (memory !== vmMemory || !isCPUEqual(cpu, vmCpu)) {
@@ -219,7 +219,7 @@ export const getUpdateFlavorPatches = (
   let customMem = mem;
   if (flavor !== CUSTOM_FLAVOR) {
     const templateVm = selectVM(template);
-    customCpu = getCPU(templateVm) as CPU;
+    customCpu = parseCPU(getCPU(templateVm), DEFAULT_CPU);
     customMem = getMemory(templateVm);
   }
 

@@ -8,7 +8,7 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { VMKind, VMLikeEntityKind } from '../../types';
+import { VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { getDiskBus } from './disk';
@@ -17,7 +17,7 @@ import { Network } from './types';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
-export const getCPU = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.cpu');
+export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
 export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
 export const getInterfaces = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.devices.interfaces', []);

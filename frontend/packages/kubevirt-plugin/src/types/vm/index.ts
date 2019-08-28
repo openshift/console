@@ -64,3 +64,11 @@ export type CPU = {
   cores: number;
   threads: number;
 };
+
+export type CPURaw =
+  | {
+      sockets: string;
+      cores: string;
+      threads: string;
+    }
+  | string;

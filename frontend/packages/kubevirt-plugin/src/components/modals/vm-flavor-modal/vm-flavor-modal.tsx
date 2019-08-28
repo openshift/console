@@ -68,10 +68,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const sourceCPURaw = isVM(vmLike)
     ? getCPU(vmLike as VMKind)
     : getCPU(selectVM(vmLike as TemplateKind));
-  let sourceCPU = parseInt(sourceCPURaw, 10);
-  if (!sourceCPU) {
-    sourceCPU = vCPUCount(sourceCPURaw);
-  }
+  const sourceCPU = vCPUCount(sourceCPURaw);
 
   const [flavor, setFlavor] = React.useState(vmFlavor);
   const [mem, setMem] = React.useState(
@@ -97,7 +94,6 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     'kubevirt-vm-flavor-modal__content-generic': flavor !== CUSTOM_FLAVOR,
   });
 
-  console.log('--- flavors: ', flavors);
   return (
     <div className={topClass}>
       <ModalTitle>Edit Flavor</ModalTitle>
