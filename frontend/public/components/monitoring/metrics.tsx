@@ -246,20 +246,24 @@ const seriesButtonStateToProps = ({UI}: RootState, {index, labels}) => {
   const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
   if (!isDisabled) {
     const series = UI.getIn(['queryBrowser', 'queries', index, 'series']);
-    if (!_.isEmpty(series)) {
-      const colorOffset = UI.getIn(['queryBrowser', 'queries'])
-        .take(index)
-        .filter(q => q.get('isEnabled'))
-        .reduce((sum, q) => sum + _.size(q.get('series')), 0);
-      const seriesIndex = _.findIndex(series, s => _.isEqual(s, labels));
-      const colorIndex = (colorOffset + seriesIndex) % colors.length;
-      return {colorIndex, isDisabled};
+    if (_.isEmpty(series)) {
+      return {colorIndex: null, isDisabled, isSeriesEmpty: true};
     }
+    const colorOffset = UI.getIn(['queryBrowser', 'queries'])
+      .take(index)
+      .filter(q => q.get('isEnabled'))
+      .reduce((sum, q) => sum + _.size(q.get('series')), 0);
+    const seriesIndex = _.findIndex(series, s => _.isEqual(s, labels));
+    const colorIndex = (colorOffset + seriesIndex) % colors.length;
+    return {colorIndex, isDisabled};
   }
   return {colorIndex: null, isDisabled};
 };
 
-const SeriesButton_: React.FC<SeriesButtonProps> = ({colorIndex, isDisabled, toggleSeries}) => {
+const SeriesButton_: React.FC<SeriesButtonProps> = ({colorIndex, isDisabled, isSeriesEmpty = false, toggleSeries}) => {
+  if (isSeriesEmpty) {
+    return null;
+  }
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
 
   return <div className="query-browser__series-btn-wrap">
@@ -766,6 +770,7 @@ type QueryTableProps = {
 
 type SeriesButtonProps = {
   colorIndex: number;
+  isSeriesEmpty?: boolean;
   isDisabled: boolean;
   toggleSeries: () => never;
 };
