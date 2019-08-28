@@ -323,8 +323,8 @@ const QueryInput_: React.FC<QueryInputProps> = (({index, metrics, patchQuery, ru
 
   // Use onMouseDown instead of onClick so that this is run before the onBlur handler
   const onMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Replace the autocomplete token with the selected autocomplete option
-    const re = new RegExp(`${_.escapeRegExp(token)}$`);
+    // Replace the autocomplete token with the selected autocomplete option (case insensitive)
+    const re = new RegExp(`${_.escapeRegExp(token)}$`, 'i');
     const newTextBeforeCursor = getTextBeforeCursor().replace(re, e.currentTarget.dataset.autocomplete);
     patchQuery({text: newTextBeforeCursor + text.substring(inputRef.current.selectionEnd)});
 
