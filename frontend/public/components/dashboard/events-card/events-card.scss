@@ -29,6 +29,7 @@
 .co-events-card__item-message {
   font-size: 0.875rem;
   margin-top: 0.5em;
+  @include co-line-clamp(5);
 }
 
 .co-events-card__item-resourcelink {
