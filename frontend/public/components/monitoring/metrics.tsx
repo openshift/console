@@ -623,9 +623,9 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({patchQuery, q
   }, [queryStrings]);
 
   const insertExampleQuery = () => {
-    const index = 0;
+    const index = _.get(focusedQuery, 'index', 0);
     const text = 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)';
-    patchQuery(index, {isEnabled: true, query: '', text});
+    patchQuery(index, {isEnabled: true, query: text, text});
   };
 
   return queryStrings.join('') === ''
