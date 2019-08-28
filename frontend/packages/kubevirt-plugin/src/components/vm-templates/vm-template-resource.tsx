@@ -16,6 +16,7 @@ import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
 import { vmFlavorModal } from '../modals';
 import { FlavorText } from '../flavor-text';
+import { EditButton } from '../edit-button';
 import { VMTemplateLink } from './vm-template-link';
 
 import './_vm-template-resource.scss';
@@ -78,13 +79,10 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </dd>
       <dt>
         Flavor
-        {canUpdateTemplate && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmFlavorModal({ vmLike: template })}
-          />
-        )}
+        <EditButton
+          canEdit={canUpdateTemplate}
+          onClick={() => vmFlavorModal({ vmLike: template })}
+        />
       </dt>
       <dd id={prefixedID(id, 'flavor')}>
         <FlavorText vmLike={template} />

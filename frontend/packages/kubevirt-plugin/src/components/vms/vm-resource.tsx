@@ -22,6 +22,7 @@ import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { FlavorText } from '../flavor-text';
+import { EditButton } from '../edit-button';
 
 import './_vm-resource.scss';
 
@@ -107,13 +108,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
       <dt>
         Flavor
-        {canUpdateVM && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmFlavorModal({ vmLike: vm })}
-          />
-        )}
+        <EditButton canEdit={canUpdateVM} onClick={() => vmFlavorModal({ vmLike: vm })} />
       </dt>
       <dd id={prefixedID(id, 'flavor')}>
         <FlavorText vmLike={vm} />
