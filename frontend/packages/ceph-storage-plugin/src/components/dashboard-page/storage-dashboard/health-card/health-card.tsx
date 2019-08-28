@@ -16,21 +16,10 @@ import {
 import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
 import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { FirehoseResource } from '@console/internal/components/utils';
-import { CephClusterModel } from '../../../../models';
-import { CEPH_STORAGE_NAMESPACE } from '../../../../constants/index';
 import { STORAGE_HEALTH_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
 import { filterCephAlerts } from '../../../../selectors';
+import { cephClusterResource } from '../../../../constants/resources';
 import { getCephHealthState } from './utils';
-
-const cephClusterResource: FirehoseResource = {
-  kind: referenceForModel(CephClusterModel),
-  namespaced: true,
-  namespace: CEPH_STORAGE_NAMESPACE,
-  isList: true,
-  prop: 'ceph',
-};
 
 const HealthCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,

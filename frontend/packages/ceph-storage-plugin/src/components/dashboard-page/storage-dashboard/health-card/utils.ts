@@ -24,7 +24,7 @@ const CephHealthStatus = [
 ];
 
 export const getCephHealthState = (ocsResponse, cephCluster): CephHealth => {
-  if (!ocsResponse) {
+  if (!ocsResponse || !_.get(cephCluster, 'loaded')) {
     return { state: HealthState.LOADING };
   }
   const value = _.get(ocsResponse, 'data.result[0].value[1]');
