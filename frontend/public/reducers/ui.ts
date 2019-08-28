@@ -174,7 +174,7 @@ export default (state: UIState, action: UIAction): UIState => {
         const isEnabled = q.get('isEnabled');
         const query = q.get('query');
         const text = _.trim(q.get('text'));
-        return isEnabled && text && query !== text ? q.merge({query: text, series: undefined}) : q;
+        return isEnabled && query !== text ? q.merge({query: text, series: undefined}) : q;
       });
       return state.setIn(['queryBrowser', 'queries'], queries);
     }
