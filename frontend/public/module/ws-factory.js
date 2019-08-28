@@ -5,19 +5,6 @@
  */
 /* eslint-disable no-console */
 
-import { getCSRFToken } from '../co-fetch';
-
-function addCSRFQueryParam(href) {
-  const csrfToken = getCSRFToken();
-  if (!csrfToken) {
-    return href;
-  }
-
-  const url = new URL(href);
-  url.searchParams.set('x-csrf-token', csrfToken);
-  return url.href;
-}
-
 function createURL(host, path) {
   let url;
 
@@ -36,7 +23,7 @@ function createURL(host, path) {
     url += path;
   }
 
-  return addCSRFQueryParam(url);
+  return url;
 }
 
 export function WSFactory(id, options) {

@@ -28,7 +28,6 @@ import (
 const (
 	CSRFCookieName    = "csrf-token"
 	CSRFHeader        = "X-CSRFToken"
-	CSRFQueryParam    = "x-csrf-token"
 	stateCookieName   = "state-token"
 	errorOAuth        = "oauth_error"
 	errorLoginState   = "login_state_error"
@@ -477,11 +476,6 @@ func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 
 func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	CSRFToken := r.Header.Get(CSRFHeader)
-	if CSRFToken == "" {
-		// Fallback to a query parameter, which is needed for websockets
-		CSRFToken = r.URL.Query().Get(CSRFQueryParam)
-	}
-
 	CRSCookie, err := r.Cookie(CSRFCookieName)
 	if err != nil {
 		return fmt.Errorf("No CSRF Cookie!")

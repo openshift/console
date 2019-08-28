@@ -6,7 +6,7 @@ import { VMIKind } from '../../types/vm';
 import { DEFAULT_RDP_PORT, TEMPLATE_VM_NAME_LABEL } from '../../constants/vm';
 import { getRdpAddressPort } from '../service/rdp';
 import { isConnectionEncrypted } from '../../utils/url';
-import { getVMIApiPath, getVMIApiQuery, getVMISubresourcePath } from './selectors';
+import { getVMIApiPath, getVMISubresourcePath } from './selectors';
 
 /*
  See web-ui-components, request.js:addMetadata() for automatic VM name label addition to match the selector
@@ -74,7 +74,7 @@ export const getVncConnectionDetails = (vmi: VMIKind) => {
     port: window.location.port || (isConnectionEncrypted() ? '443' : '80'),
 
     // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha3/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
-    path: `${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc${getVMIApiQuery()}`,
+    path: `${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc}`,
 
     manual: undefined, // so far unsupported
     /* TODO: Desktop viewer connection needs general agreement by the Kubevirt community how to expose the VNC port for clients without WS
