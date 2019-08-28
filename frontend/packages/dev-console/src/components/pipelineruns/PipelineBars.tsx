@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { VictoryStack, VictoryBar } from 'victory';
-import { Tooltip } from '@console/internal/components/utils/tooltip';
+import { Tooltip } from '@patternfly/react-core';
 import {
   getTaskStatus,
   runStatus,
