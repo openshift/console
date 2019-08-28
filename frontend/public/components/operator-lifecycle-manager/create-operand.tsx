@@ -156,7 +156,11 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
 
       return {...field, type, required, validation};
     })
-    .concat(fieldsForOpenAPI(props.customResourceDefinition).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)));
+    .concat(fieldsForOpenAPI(props.customResourceDefinition).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
+    // Associate `specDescriptors` with `fieldGroups` from OpenAPI
+    .map((field, i, allFields) => allFields.some(f => f.capabilities.includes(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup))
+      ? {...field, capabilities: [...new Set(field.capabilities).add(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup)]}
+      : field);
 
   const defaultValueFor = (field: OperandField) => {
     if (field.capabilities.includes(SpecCapability.podCount)) {
@@ -215,27 +219,30 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   const submit = (event) => {
     event.preventDefault();
 
-    const errors = fields.filter(f => !_.isNil(f.validation)).reduce((allErrors, field) => {
-      // NOTE: Can't use server-side error response due to missing info (https://github.com/kubernetes/kubernetes/issues/80718)
-      const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
-        switch (rule) {
-          case Validations.minimum:
-            return formValues[field.path] >= val ? null : `Must be greater than ${val}.`;
-          case Validations.maximum:
-            return formValues[field.path] <= val ? null : `Must be less than ${val}.`;
-          case Validations.minLength:
-            return formValues[field.path].length >= val ? null : `Must be at least ${val} characters.`;
-          case Validations.maxLength:
-            return formValues[field.path].length <= val ? null : `Must be greater than ${val} characters.`;
-          case Validations.pattern:
-            return new RegExp(val as string).test(formValues[field.path]) ? null : `Does not match required pattern ${val}`;
-          default:
-            return null;
-        }
-      });
-      // Just use first error
-      return {...allErrors, [field.path]: fieldErrors.find(e => !_.isNil(e))};
-    }, {} as FieldErrors);
+    const errors = fields
+      .filter(f => !_.isNil(f.validation))
+      .filter(f => f.required || !_.isEqual(formValues[f.path], defaultValueFor(f)))
+      .reduce((allErrors, field) => {
+        // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
+        const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
+          switch (rule) {
+            case Validations.minimum:
+              return formValues[field.path] >= val ? null : `Must be greater than ${val}.`;
+            case Validations.maximum:
+              return formValues[field.path] <= val ? null : `Must be less than ${val}.`;
+            case Validations.minLength:
+              return formValues[field.path].length >= val ? null : `Must be at least ${val} characters.`;
+            case Validations.maxLength:
+              return formValues[field.path].length <= val ? null : `Must be greater than ${val} characters.`;
+            case Validations.pattern:
+              return new RegExp(val as string).test(formValues[field.path]) ? null : `Does not match required pattern ${val}`;
+            default:
+              return null;
+          }
+        });
+        // Just use first error
+        return {...allErrors, [field.path]: fieldErrors.find(e => !_.isNil(e))};
+      }, {} as FieldErrors);
     setFormErrors(errors);
 
     if (_.isEmpty(_.compact(_.values(errors)))) {
@@ -388,14 +395,14 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   };
 
   const fieldGroups = fields.reduce((groups, field) => field.capabilities.find(c => c.startsWith(SpecCapability.fieldGroup))
-    ? groups.add(field.capabilities.find(c => c.startsWith(SpecCapability.fieldGroup)))
+    ? groups.add(field.capabilities.find(c => c.startsWith(SpecCapability.fieldGroup)) as SpecCapability.fieldGroup)
     : groups,
-  new Set());
+  new Set<SpecCapability.fieldGroup>());
 
   const arrayFieldGroups = fields.reduce((groups, field) => field.capabilities.find(c => c.startsWith(SpecCapability.arrayFieldGroup))
-    ? groups.add(field.capabilities.find(c => c.startsWith(SpecCapability.arrayFieldGroup)))
+    ? groups.add(field.capabilities.find(c => c.startsWith(SpecCapability.arrayFieldGroup)) as SpecCapability.arrayFieldGroup)
     : groups,
-  new Set());
+  new Set<SpecCapability.arrayFieldGroup>());
 
   useScrollToTopOnMount();
 
@@ -421,7 +428,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       </div>
       { [...arrayFieldGroups].map(group => <div key={group} className="row">
         <label className="form-label">{_.startCase(group.split(SpecCapability.arrayFieldGroup)[1])}</label>
-        <div style={{marginLeft: '15px'}}>
+        <div className="co-operand-field-group">
           { fields.filter(f => f.capabilities.includes(group))
             .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
               <div className="form-group co-create-operand__form-group">
@@ -435,7 +442,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       </div>) }
       { [...fieldGroups].map(group => <div key={group} className="row">
         <label className="form-label">{_.startCase(group.split(SpecCapability.fieldGroup)[1])}</label>
-        <div style={{marginLeft: '15px'}}>
+        <div className="co-operand-field-group">
           { fields.filter(f => f.capabilities.includes(group))
             .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
               <div className="form-group co-create-operand__form-group">

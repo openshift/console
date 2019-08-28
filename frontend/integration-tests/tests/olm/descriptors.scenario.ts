@@ -169,7 +169,6 @@ describe('Using OLM descriptor components', () => {
           }],
         },
       },
-      // TODO: Test `apiservicedefinitions` as well...
       customresourcedefinitions: {
         owned: [
           {
@@ -281,11 +280,25 @@ describe('Using OLM descriptor components', () => {
     });
   });
 
-  it('prevents creation and displays validation errors', () => {
-    // TODO(alecmerdler)
+  it('prevents creation and displays validation errors for required or non-empty fields', async() => {
+    await $('#number').sendKeys('4000');
+    await element(by.buttonText('Create')).click();
+
+    expect($('.co-error').getText()).toContain('Must be less than 4');
+    expect($('.pf-c-alert').isPresent()).toBe(true);
+
+    await $('#password').sendKeys('!@#$%^&*()');
+    await element(by.buttonText('Create')).click();
+
+    expect($('.co-error').getText()).toContain('Does not match required pattern');
+    expect($('.pf-c-alert').isPresent()).toBe(true);
   });
 
   it('successfully creates operand using form', async() => {
+    await browser.refresh();
+    await yamlView.isLoaded();
+    await element(by.buttonText('Edit Form')).click();
+    await browser.wait(until.presenceOf($('#metadata\\.name')));
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
 

@@ -60,8 +60,6 @@
   }
 }
 
-
-
 .co-operand-details__compact-expand {
   display: flex;
   justify-content: flex-end;
@@ -156,4 +154,13 @@
   flex-direction: column;
   padding-right: 15px;
   width: 50%;
+}
+
+.co-operand-field-group {
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  margin-left: 15px;
+  padding: 10px 0 5px 20px;
 }
