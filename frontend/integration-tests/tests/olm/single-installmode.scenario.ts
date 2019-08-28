@@ -11,6 +11,8 @@ import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
+  const prometheusResources = new Set(['StatefulSet', 'Pod']);
+  const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
   const deleteRecoveryTime = 60000;
   const prometheusOperatorName = 'prometheus-operator';
 
@@ -168,6 +170,15 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     expect(crudView.successMessage.getText()).toContain('example has been updated to version');
   });
 
+  it('displays Kubernetes objects associated with the `Prometheus` in its "Resources" section', async() => {
+    await element(by.linkText('Resources')).click();
+    await crudView.isLoaded();
+
+    prometheusResources.forEach(kind => {
+      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
+    });
+  });
+
   it('displays YAML editor for creating a new `Alertmanager` instance', async() => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await crudView.isLoaded();
@@ -203,6 +214,15 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
 
     expect(crudView.successMessage.getText()).toContain('alertmanager-main has been updated to version');
+  });
+
+  it('displays Kubernetes objects associated with the `Alertmanager` in its "Resources" section', async() => {
+    await element(by.linkText('Resources')).click();
+    await crudView.isLoaded();
+
+    alertmanagerResources.forEach(kind => {
+      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
+    });
   });
 
   it('displays YAML editor for creating a new `ServiceMonitor` instance', async() => {
