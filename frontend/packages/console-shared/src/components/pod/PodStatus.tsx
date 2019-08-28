@@ -5,7 +5,7 @@ import Tooltip from '../SvgPodTooltip';
 import { Pod } from '../../types';
 import { calculateRadius, podStatus, getPodStatus, podColor } from '../../utils';
 
-const ANIMATION_DURATION = 2000;
+const ANIMATION_DURATION = 350;
 
 type PodData = {
   x: string;
