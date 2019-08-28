@@ -227,11 +227,7 @@ func main() {
 	var k8sEndpoint *url.URL
 	switch *fK8sMode {
 	case "in-cluster":
-		host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
-		if len(host) == 0 || len(port) == 0 {
-			log.Fatalf("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined")
-		}
-		k8sEndpoint = &url.URL{Scheme: "https", Host: host + ":" + port}
+		k8sEndpoint = &url.URL{Scheme: "https", Host: "kubernetes.default.svc"}
 
 		var err error
 		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
