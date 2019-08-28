@@ -3,12 +3,28 @@ import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 import { NameValuePair, NameValueFromPair } from '../formik-fields/field-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 
+export interface DeployImageFormProps {
+  builderImages?: NormalizedBuilderImages;
+  projects?: {
+    data: [];
+    loaded: boolean;
+  };
+}
+
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
+  projects?: {
+    data: [];
+    loaded: boolean;
+  };
 }
 
 export interface GitImportFormProps {
   builderImages?: NormalizedBuilderImages;
+  projects?: {
+    data: [];
+    loaded: boolean;
+  };
 }
 
 export interface FirehoseList {
@@ -74,6 +90,8 @@ export interface ImageStreamImageData {
 
 export interface ProjectData {
   name: string;
+  displayName: string;
+  description: string;
 }
 
 export interface GitData {

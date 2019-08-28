@@ -4,6 +4,8 @@ export const mockFormData: GitImportFormData = {
   name: 'test-app',
   project: {
     name: 'mock-project',
+    displayName: '',
+    description: '',
   },
   application: {
     initial: 'mock-app',

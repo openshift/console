@@ -20,12 +20,16 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   status,
   isSubmitting,
   dirty,
+  projects,
 }) => (
   <Form onSubmit={handleSubmit}>
     <GitSection />
     <BuilderSection image={values.image} builderImages={builderImages} />
     <DockerSection buildStrategy={values.build.strategy} />
-    <AppSection project={values.project} />
+    <AppSection
+      project={values.project}
+      noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+    />
     <ServerlessSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>

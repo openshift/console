@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as plugins from '@console/internal/plugins';
 import { Formik } from 'formik';
+import * as _ from 'lodash';
 import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
@@ -15,6 +16,10 @@ export interface ImportFormProps {
   namespace: string;
   importData: ImportData;
   imageStreams?: FirehoseList;
+  projects?: {
+    loaded: boolean;
+    data: [];
+  };
 }
 
 export interface StateProps {
@@ -28,11 +33,14 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   importData,
   perspective,
   activeApplication,
+  projects,
 }) => {
   const initialValues: GitImportFormData = {
     name: '',
     project: {
       name: namespace || '',
+      displayName: '',
+      description: '',
     },
     application: {
       initial: activeApplication,
@@ -131,12 +139,12 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
   const handleSubmit = (values, actions) => {
     const imageStream = builderImages && builderImages[values.image.selected].obj;
-
+    const createNewProject = projects.loaded && _.isEmpty(projects.data);
     const {
       project: { name: projectName },
     } = values;
 
-    createResources(values, imageStream, true)
+    createResources(values, imageStream, createNewProject, true)
       .then(() => createResources(values, imageStream))
       .then(() => {
         actions.setSubmitting(false);
@@ -148,9 +156,16 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       });
   };
 
-  const renderForm = (props) => (
-    <AsyncComponent {...props} builderImages={builderImages} loader={importData.loader} />
-  );
+  const renderForm = (props) => {
+    return (
+      <AsyncComponent
+        {...props}
+        projects={projects}
+        builderImages={builderImages}
+        loader={importData.loader}
+      />
+    );
+  };
 
   return (
     <Formik

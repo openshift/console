@@ -8,6 +8,7 @@ const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
 const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
+const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -20,7 +21,13 @@ export const validationSchema = yup.object().shape({
     .max(253, 'Cannot be longer than 253 characters.')
     .required('Required'),
   project: yup.object().shape({
-    name: yup.string().required('Required'),
+    name: yup
+      .string()
+      .matches(
+        projectNameRegex,
+        "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
+      )
+      .required('Required'),
   }),
   application: yup.object().shape({
     name: yup.string(),

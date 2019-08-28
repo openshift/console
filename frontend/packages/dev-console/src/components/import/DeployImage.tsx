@@ -13,6 +13,10 @@ import DeployImageForm from './DeployImageForm';
 
 export interface DeployImageProps {
   namespace: string;
+  projects?: {
+    loaded: boolean;
+    data: [];
+  };
 }
 
 interface StateProps {
@@ -21,10 +25,12 @@ interface StateProps {
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: React.FC<Props> = ({ namespace, activeApplication }) => {
+const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
+      displayName: '',
+      description: '',
     },
     application: {
       initial: activeApplication,
@@ -137,7 +143,7 @@ const DeployImage: React.FC<Props> = ({ namespace, activeApplication }) => {
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={deployValidationSchema}
-      render={(props) => <DeployImageForm {...props} />}
+      render={(props) => <DeployImageForm {...props} projects={projects} />}
     />
   );
 };

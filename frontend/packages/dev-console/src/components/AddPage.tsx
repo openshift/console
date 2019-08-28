@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import * as _ from 'lodash';
+import { Helmet } from 'react-helmet';
+import { HintBlock } from 'patternfly-react';
 import { match as RMatch } from 'react-router';
 import { history, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import ODCEmptyState from './EmptyState';
 import NamespacedPage from './NamespacedPage';
+import ProjectsExistWrapper from './ProjectsExistWrapper';
 import DefaultPage from './DefaultPage';
 
 export interface AddPageProps {
@@ -55,15 +57,18 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
     resources.deployments.data,
     resources.statefulSets.data,
   ]);
-  return (
+  return noWorkloads ? (
     <ODCEmptyState
       title="Add"
-      {...noWorkloads && {
-        hintBlockTitle: 'No workloads found',
-        hintBlockDescription:
-          'To add content to your project, create an application, component or service using one of these options.',
-      }}
+      hintBlock={
+        <HintBlock
+          title="No workloads found"
+          body="To add content to your project, create an application, component or service using one of these options."
+        />
+      }
     />
+  ) : (
+    <ODCEmptyState title="Add" />
   );
 };
 
@@ -103,27 +108,34 @@ const RenderEmptyState = ({ namespace }) => {
 
 const AddPage: React.FC<AddPageProps> = ({ match }) => {
   const namespace = match.params.ns;
+
   return (
     <React.Fragment>
       <Helmet>
         <title>+Add</title>
       </Helmet>
       <NamespacedPage>
-        {namespace ? (
-          <RenderEmptyState namespace={namespace} />
-        ) : (
-          <DefaultPage title="Add">
-            Select a project to start adding to it or{' '}
-            <button
-              style={{ verticalAlign: 'baseline' }}
-              type="button"
-              className="btn btn-link btn-link--no-btn-default-values"
-              onClick={openProjectModal}
-            >
-              create a project
-            </button>
-          </DefaultPage>
-        )}
+        <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
+          <ProjectsExistWrapper title="Add">
+            {() =>
+              namespace ? (
+                <RenderEmptyState namespace={namespace} />
+              ) : (
+                <DefaultPage title="Add">
+                  Select a project to start adding to it or{' '}
+                  <button
+                    style={{ verticalAlign: 'baseline' }}
+                    type="button"
+                    className="btn btn-link btn-link--no-btn-default-values"
+                    onClick={openProjectModal}
+                  >
+                    create a project
+                  </button>
+                </DefaultPage>
+              )
+            }
+          </ProjectsExistWrapper>
+        </Firehose>
       </NamespacedPage>
     </React.Fragment>
   );

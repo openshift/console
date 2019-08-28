@@ -2,13 +2,15 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
+import { HintBlock } from 'patternfly-react';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
-import { StatusBox } from '@console/internal/components/utils';
+import { StatusBox, Firehose } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin/src/const';
 import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
+import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import DefaultPage from '../DefaultPage';
 import { getCheURL } from './topology-utils';
 import TopologyDataController, { RenderProps } from './TopologyDataController';
@@ -31,8 +33,12 @@ type Props = TopologyPageProps & StateProps;
 const EmptyMsg = () => (
   <EmptyState
     title="Topology"
-    hintBlockTitle="No workloads found"
-    hintBlockDescription="To add content to your project, create an application, component or service using one of these options."
+    hintBlock={
+      <HintBlock
+        title="No workloads found"
+        body="To add content to your project, create an application, component or service using one of these options."
+      />
+    }
   />
 );
 
@@ -71,17 +77,23 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
         <title>Topology</title>
       </Helmet>
       <NamespacedPage>
-        {namespace ? (
-          <TopologyDataController
-            application={application}
-            namespace={namespace}
-            render={renderTopology}
-            knative={knative}
-            cheURL={cheURL}
-          />
-        ) : (
-          <DefaultPage title="Topology">Select a project to view the topology</DefaultPage>
-        )}
+        <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
+          <ProjectsExistWrapper title="Topology">
+            {() => {
+              return namespace ? (
+                <TopologyDataController
+                  application={application}
+                  namespace={namespace}
+                  render={renderTopology}
+                  knative={knative}
+                  cheURL={cheURL}
+                />
+              ) : (
+                <DefaultPage title="Topology">Select a project to view the topology</DefaultPage>
+              );
+            }}
+          </ProjectsExistWrapper>
+        </Firehose>
       </NamespacedPage>
     </React.Fragment>
   );

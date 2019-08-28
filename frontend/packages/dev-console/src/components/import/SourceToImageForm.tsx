@@ -19,11 +19,15 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
   status,
   isSubmitting,
   dirty,
+  projects,
 }) => (
   <Form onSubmit={handleSubmit}>
     <BuilderSection image={values.image} builderImages={builderImages} />
     <GitSection showSample />
-    <AppSection project={values.project} />
+    <AppSection
+      project={values.project}
+      noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+    />
     <ServerlessSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>

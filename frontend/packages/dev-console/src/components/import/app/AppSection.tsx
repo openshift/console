@@ -1,20 +1,46 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '../../formik-fields';
+import { InputField, TextAreaField } from '../../formik-fields';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
 import ApplicationSelector from './ApplicationSelector';
 
 export interface AppSectionProps {
   project: ProjectData;
+  noProjectsAvailable?: boolean;
 }
 
-const AppSection: React.FC<AppSectionProps> = ({ project }) => {
+const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable }) => {
   const [initialApplication] = useField('application.initial');
   return (
     <FormSection title="General">
-      {!initialApplication.value && <ApplicationSelector namespace={project.name} />}
+      {noProjectsAvailable && (
+        <React.Fragment>
+          <InputField
+            type={TextInputTypes.text}
+            data-test-id="application-form-project-name"
+            name="project.name"
+            label="Project Name"
+            helpText="A unique name for the project."
+            required
+          />
+          <InputField
+            type={TextInputTypes.text}
+            data-test-id="application-form-project-display-name"
+            name="project.displayName"
+            label="Project Display Name"
+          />
+          <TextAreaField
+            data-test-id="application-form-project-description"
+            name="project.description"
+            label="Project Description"
+          />
+        </React.Fragment>
+      )}
+      {!initialApplication.value && (
+        <ApplicationSelector namespace={project.name} noProjectsAvailable={noProjectsAvailable} />
+      )}
       <InputField
         type={TextInputTypes.text}
         data-test-id="application-form-app-name"
