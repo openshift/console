@@ -97,6 +97,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     'kubevirt-vm-flavor-modal__content-generic': flavor !== CUSTOM_FLAVOR,
   });
 
+  console.log('--- flavors: ', flavors);
   return (
     <div className={topClass}>
       <ModalTitle>Edit Flavor</ModalTitle>
@@ -107,8 +108,8 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
               items={flavors}
               id={getId('flavor-dropdown')}
               onChange={(f) => setFlavor(f)}
-              selectedKey={flavor || CUSTOM_FLAVOR}
-              title={flavor}
+              selectedKey={_.capitalize(flavor) || CUSTOM_FLAVOR}
+              title={_.capitalize(flavor)}
               className="kubevirt-vm-flavor-modal__dropdown"
               buttonClassName="kubevirt-vm-flavor-modal__dropdown-button"
             />

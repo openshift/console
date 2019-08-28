@@ -90,7 +90,7 @@ export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
   if (vmTemplate) {
     // enforced by the vm
     const templateFlavors = getTemplateFlavors([vmTemplate]);
-    templateFlavors.forEach((f) => (flavors[f] = f));
+    templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
   }
 
   // if VM OS or Workload is set, add flavors of matching templates only. Otherwise list all flavors.
@@ -98,7 +98,7 @@ export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
   const vmWorkload = getWorkloadProfile(vm);
   const matchingTemplates = getTemplates(templates, vmOS, vmWorkload, undefined);
   const templateFlavors = getTemplateFlavors(matchingTemplates);
-  templateFlavors.forEach((f) => (flavors[f] = f));
+  templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
 
   return flavors;
 };
