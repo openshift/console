@@ -43,7 +43,17 @@ const dehumanizeMemory = (memory?: string) => {
 };
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
-  const { vmLike, templates, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const {
+    vmLike,
+    templates,
+    inProgress,
+    errorMessage,
+    handlePromise,
+    close,
+    cancel,
+    loadError,
+    loaded,
+  } = props;
 
   const flattenTemplates = _.get(templates, 'data', []) as TemplateKind[];
 
@@ -130,7 +140,10 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
           )}
         </Form>
       </ModalBody>
-      <ModalFooter inProgress={inProgress} errorMessage={errorMessage}>
+      <ModalFooter
+        inProgress={inProgress || !loaded}
+        errorMessage={errorMessage || _.get(loadError, 'message')}
+      >
         <button type="button" onClick={cancel} className="btn btn-default">
           Cancel
         </button>
@@ -162,6 +175,8 @@ export type VMFlavornModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLike: VMLikeEntityKind;
     templates?: any;
+    loadError?: any;
+    loaded: boolean;
   };
 
 export const vmFlavorModal = createModalLauncher(VMFlavorModalFirehose);
