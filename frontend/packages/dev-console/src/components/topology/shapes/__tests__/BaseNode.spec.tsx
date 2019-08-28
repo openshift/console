@@ -93,18 +93,6 @@ describe('BaseNode', () => {
     expect(wrapper.find('#second').exists()).toBeTruthy();
   });
 
-  it('should render icon', () => {
-    const wrapper = shallow(<BaseNode outerRadius={100} icon="testicon" />);
-    const imageWrapper = wrapper.find('image');
-    expect(imageWrapper.props().xlinkHref).toBe('icon-testicon');
-  });
-
-  it('should render fallback icon if icon cannot be found', () => {
-    const wrapper = shallow(<BaseNode outerRadius={100} icon="unknown" />);
-    const imageWrapper = wrapper.find('image');
-    expect(imageWrapper.props().xlinkHref).toBe('icon-openshift');
-  });
-
   it('should handle selection', () => {
     const onSelect = jest.fn();
     const fakeEvent = { stopPropagation: jest.fn() };

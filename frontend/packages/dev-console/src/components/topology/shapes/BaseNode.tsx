@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../../utils/svg-utils';
 import SvgBoxedText from '../../svg/SvgBoxedText';
@@ -122,9 +121,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
               y={-innerRadius}
               width={innerRadius * 2}
               height={innerRadius * 2}
-              xlinkHref={
-                getImageForIconClass(`icon-${icon}`) || getImageForIconClass('icon-openshift')
-              }
+              xlinkHref={icon}
             />
             {label != null && (
               <SvgBoxedText
