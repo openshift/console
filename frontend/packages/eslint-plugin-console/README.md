@@ -6,7 +6,7 @@ OpenShift Console's ESLint rules and configs.
 
 When extending multiple configurations, add to the list following the order outlined below:
 
-| Plugin           | Description                                                                                          | Type     |
+| Config           | Description                                                                                          | Type     |
 | ---------------- | ---------------------------------------------------------------------------------------------------- | -------- |
 | base             | JavaScript lint rule set                                                                             | core     |
 | react            | React lint rule set                                                                                  | core     |
@@ -20,6 +20,13 @@ When extending multiple configurations, add to the list following the order outl
 - Choose one `ts`.
 - Choose one or more `extra`.
 - Choose to include `prettier` or not. This must go last.
+
+Alternatively, use one of the pre-composed configurations representing common code archetypes (choose one):
+
+| Config                    | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+| react-typescript-prettier | Common web preset: React, TypeScript, Prettier |
+| node-typescript-prettier  | Common Node.js preset: TypeScript, Prettier    |
 
 ## Examples
 
