@@ -26,6 +26,7 @@ import {
   getOperatingSystem,
   getWorkloadProfile,
   isVM,
+  vCPUCount,
 } from '../../../selectors/vm';
 import {
   getTemplateFlavors,
@@ -94,10 +95,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     : getCPU(selectVM(vmLike as TemplateKind));
   let sourceCPU = parseInt(sourceCPURaw, 10);
   if (!sourceCPU) {
-    sourceCPU =
-      (parseInt(sourceCPURaw.sockets, 10) || 1) *
-      (parseInt(sourceCPURaw.cores, 10) || 1) *
-      (parseInt(sourceCPURaw.threads, 10) || 1);
+    sourceCPU = vCPUCount(sourceCPURaw);
   }
 
   const [flavor, setFlavor] = React.useState(vmFlavor);
@@ -133,6 +131,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
           <FormGroup label="Flavor" fieldId={getId('flavor')}>
             <Dropdown
               items={flavors}
+              id={getId('flavor-dropdown')}
               onChange={(f) => setFlavor(f)}
               selectedKey={flavor || CUSTOM_FLAVOR}
               title={flavor}
