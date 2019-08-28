@@ -6,7 +6,6 @@ import {
   getWorkloadProfile,
   getVmTemplate,
   getNodeName,
-  getFlavor,
   VmStatuses,
   BootOrder,
   isVmOff,
@@ -21,8 +20,8 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
-import { getCPU, getMemory, vCPUCount } from '../../selectors/vm';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { FlavorText } from '../flavor-text';
 
 import './_vm-resource.scss';
 
@@ -74,10 +73,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const vmIsOff = isVmOff(vmStatus);
   const ipAddresses = vmIsOff ? [] : getVmiIpAddresses(vmi);
 
-  const flavor = getFlavor(vm);
-  const vcpusCount = vCPUCount(getCPU(vm));
-  const vcpusText = `${vcpusCount} vCPU${vcpusCount > 1 ? 's' : ''}`;
-  const flavorText = `${flavor || ''}${flavor ? ', ' : ''}${vcpusText}, ${getMemory(vm)} Memory`;
   return (
     <dl className="co-m-pane__details">
       <dt>Status</dt>
@@ -120,7 +115,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           />
         )}
       </dt>
-      <dd id={prefixedID(id, 'flavor')}>{flavorText}</dd>
+      <dd id={prefixedID(id, 'flavor')}>
+        <FlavorText vmLike={vm} />
+      </dd>
       <dt>Workload Profile</dt>
       <dd id={prefixedID(id, 'workload-profile')}>{getWorkloadProfile(vm) || DASH}</dd>
     </dl>
