@@ -36,14 +36,14 @@ const ODCEmptyState: React.FC<Props> = ({
     <React.Fragment>
       <div className="odc-empty-state__title">
         <PageHeading title={title} />
-        {hintBlockTitle ? (
+        {hintBlockTitle || hintBlockDescription ? (
           <HintBlock
             className="odc-empty-state__hint-block"
             title={hintBlockTitle}
             body={hintBlockDescription}
           />
         ) : (
-          <p className="co-catalog-page__description">
+          <p className="odc-empty-state__hint-block">
             Select a way to create an application, component or service from one of the options.
           </p>
         )}
