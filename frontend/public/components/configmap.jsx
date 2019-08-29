@@ -54,7 +54,7 @@ const ConfigMapTableRow = ({obj: configMap, index, key, style}) => {
         <ResourceLink kind="Namespace" name={configMap.metadata.namespace} title={configMap.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {_.size(configMap.data)}
+        {_.size(configMap.data) + _.size(configMap.binaryData)}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {fromNow(configMap.metadata.creationTimestamp)}

@@ -86,7 +86,7 @@ const filterPropType = (props, propName, componentName) => {
 const sorts = {
   alertStateOrder,
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
-  dataSize: resource => _.size(_.get(resource, 'data')),
+  dataSize: resource => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
   ingressValidHosts,
   serviceCatalogStatus,
   jobCompletions: job => getJobTypeAndCompletions(job).completions,
