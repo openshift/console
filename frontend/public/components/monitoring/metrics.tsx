@@ -503,41 +503,49 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
     transforms: [sortable as (v: unknown) => IDecorator],
   };
 
-  const allLabelKeys = _.uniq(_.flatMap(result, ({metric}) => Object.keys(metric))).sort();
+  // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
+  // determine when it should update
+  const buttonCell = labels => ({title: <SeriesButton index={index} key={_.uniqueId()} labels={labels} />});
 
-  const columns = [
-    '',
-    ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
-    {title: 'Value', ...cellProps},
-  ];
-
-  let rowMapper;
-  if (resultType === 'matrix') {
-    rowMapper = ({metric, values}) => [
-      '',
-      ..._.map(allLabelKeys, k => metric[k]),
-      {title: <React.Fragment>{_.map(values, ([time, v]) => <div key={time}>{v}&nbsp;@{time}</div>)}</React.Fragment>},
-    ];
+  let columns, rows;
+  if (resultType === 'scalar') {
+    columns = ['', {title: 'Value', ...cellProps}];
+    rows = [[buttonCell({}), _.get(result, '[1]')]];
   } else {
-    rowMapper = ({metric, value}) => [
-      // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
-      // determine when it should update
-      {title: <SeriesButton index={index} key={_.uniqueId()} labels={metric} />},
-      ..._.map(allLabelKeys, k => metric[k]),
-      _.get(value, '[1]', {title: <span className="text-muted">None</span>}),
-    ];
-  }
+    const allLabelKeys = _.uniq(_.flatMap(result, ({metric}) => Object.keys(metric))).sort();
 
-  // Sort Values column numerically and sort all the other columns alphabetically
-  const valuesColIndex = allLabelKeys.length + 1;
-  const sort = sortBy.index === valuesColIndex
-    ? cells => {
-      const v = Number(cells[valuesColIndex]);
-      return Number.isNaN(v) ? 0 : v;
+    columns = [
+      '',
+      ...allLabelKeys.map(k => ({title: k === '__name__' ? 'Name' : k, ...cellProps})),
+      {title: 'Value', ...cellProps},
+    ];
+
+    let rowMapper;
+    if (resultType === 'matrix') {
+      rowMapper = ({metric, values}) => [
+        '',
+        ..._.map(allLabelKeys, k => metric[k]),
+        {title: <React.Fragment>{_.map(values, ([time, v]) => <div key={time}>{v}&nbsp;@{time}</div>)}</React.Fragment>},
+      ];
+    } else {
+      rowMapper = ({metric, value}) => [
+        buttonCell(metric),
+        ..._.map(allLabelKeys, k => metric[k]),
+        _.get(value, '[1]', {title: <span className="text-muted">None</span>}),
+      ];
     }
-    : sortBy.index;
-  const unsortedRows = _.map(result, rowMapper);
-  const rows = _.orderBy(unsortedRows, [sort], [sortBy.direction]) as string[][];
+
+    // Sort Values column numerically and sort all the other columns alphabetically
+    const valuesColIndex = allLabelKeys.length + 1;
+    const sort = sortBy.index === valuesColIndex
+      ? cells => {
+        const v = Number(cells[valuesColIndex]);
+        return Number.isNaN(v) ? 0 : v;
+      }
+      : sortBy.index;
+    const unsortedRows = _.map(result, rowMapper);
+    rows = _.orderBy(unsortedRows, [sort], [sortBy.direction]) as string[][];
+  }
 
   // Set the result table's break point based on the number of columns
   let breakPoint: keyof typeof TableGridBreakpoint = 'grid';
