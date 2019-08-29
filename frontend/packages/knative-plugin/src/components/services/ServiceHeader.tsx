@@ -16,8 +16,8 @@ const ServiceHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Domain',
-      sortField: 'domain',
+      title: 'URL',
+      sortField: 'status.url',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },

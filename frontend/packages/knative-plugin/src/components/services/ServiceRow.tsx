@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { TableRow, TableData } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
+import {
+  Kebab,
+  ResourceLink,
+  ResourceKebab,
+  Timestamp,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
@@ -35,7 +41,10 @@ const ServiceRow: React.FC<ServiceRowProps> = ({ obj, index, key, style }) => {
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
-        {obj.metadata.domain || '-'}
+        {(obj.status && obj.status.url && (
+          <ExternalLink href={obj.status.url} text={obj.status.url} />
+        )) ||
+          '-'}
       </TableData>
       <TableData className={tableColumnClasses[3]}>{obj.metadata.generation || '-'}</TableData>
       <TableData className={tableColumnClasses[4]}>
