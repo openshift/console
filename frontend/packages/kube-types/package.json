@@ -1,0 +1,22 @@
+{
+  "name": "@console/kube-types",
+  "version": "0.0.0-fixed",
+  "description": "Kubernetes, OpenShift and KubeVirt TC types",
+  "private": true,
+  "devDependencies":  {
+    "@types/node": "^12.0.8",
+    "@openapitools/openapi-generator-cli": "^0.0.14-4.0.2",
+    "typescript": "^3.4.4",
+    "ts-node": "^8.3.0",
+    "fs-extra": "^8.0.1"
+  },
+  "scripts": {
+    "lint": "eslint --config ../../.eslintrc --ext .js,.jsx,.ts,.tsx --color . --fix",
+    "generate-types-openshift": "ts-node .tools/generate-types.ts openshift",
+    "generate-types-kubevirt": "ts-node .tools/generate-types.ts kubevirt",
+    "generate": "ts-node .tools/generate-types.ts all && yarn run lint"
+  },
+  "engines": {
+    "node": ">=8.x"
+  }
+}
