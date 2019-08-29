@@ -3,14 +3,14 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
 .co-m-horizontal-nav__menu {
   border-bottom: 1px solid $color-grey-background-border;
   display: flex;
-  white-space: nowrap;
   @media (min-width: $grid-float-breakpoint) {
     margin-left: (-$co-m-horizontal-nav__menu-item-link-padding-lr);
     padding: 0 30px;
   }
 }
 
-.co-m-horizontal-nav__menu-primary {
+.co-m-horizontal-nav__menu-primary,
+.co-m-horizontal-nav__menu-secondary {
   display: flex;
   list-style: none;
   margin: 0;
@@ -18,13 +18,16 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
 }
 
 .co-m-horizontal-nav__menu-secondary {
-  display: flex;
-  list-style: none;
-  margin: 0 0 -1px; // -1px bottom so co-m-horizontal-nav__menu-item *::after are fully visible
+  flex-wrap: wrap;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0;
   -webkit-overflow-scrolling: touch;
+  // hide tabs 4 - n on operator pages
+  .co-m-horizontal-nav__menu-item:nth-child(n + 4) {
+    [href*="~ClusterServiceVersion"], [href*="clusterserviceversions/"] {
+      display: none;
+    }
+  }
 }
 
 .co-m-horizontal-nav__menu-item {
@@ -47,7 +50,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
       }
     }
     &::after {
-      bottom: -1px;
+      bottom: 0;
       content: "";
       display: block;
       height: 2px;
