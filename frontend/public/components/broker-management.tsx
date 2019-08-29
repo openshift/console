@@ -19,7 +19,7 @@ const pages = [
 export const BrokerManagementPage: React.SFC<BrokerManagementPageProps> = ({ match }) => (
   <>
     <PageHeading detail={true} title="Broker Management" />
-    <HorizontalNav pages={pages} match={match} hideDivider noStatusBox={true} />
+    <HorizontalNav pages={pages} match={match} noStatusBox={true} />
   </>
 );
 

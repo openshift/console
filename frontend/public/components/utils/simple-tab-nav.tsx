@@ -51,7 +51,7 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
     return (
       <>
         <div className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
-          <ul className="co-m-horizontal-nav__menu-primary">
+          <ul className="co-m-horizontal-nav__menu-list">
             {_.map(tabs, (tab) => (
               <SimpleTab
                 active={selectedTab.name === tab.name}

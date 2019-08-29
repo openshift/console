@@ -1409,7 +1409,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
         </h1>
       </div>
       <div className="co-m-horizontal-nav__menu">
-        <ul className="co-m-horizontal-nav__menu-primary">
+        <ul className="co-m-horizontal-nav__menu-list">
           <li
             className={classNames('co-m-horizontal-nav__menu-item', {
               'co-m-horizontal-nav-item--active': match.url === alertPath,

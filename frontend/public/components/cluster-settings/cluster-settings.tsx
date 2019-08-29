@@ -411,7 +411,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({ match
         </h1>
       </div>
       <Firehose resources={resources}>
-        <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} hideDivider />
+        <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} />
       </Firehose>
     </>
   );

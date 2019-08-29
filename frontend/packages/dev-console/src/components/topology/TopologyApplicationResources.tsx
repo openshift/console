@@ -33,7 +33,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
           'odc-application-resource-tab',
         )}
       >
-        <ul className="co-m-horizontal-nav__menu-primary">
+        <ul className="co-m-horizontal-nav__menu-list">
           <li className="co-m-horizontal-nav__menu-item">
             <button type="button">Resources</button>
           </li>
