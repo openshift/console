@@ -7,8 +7,8 @@ import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { reRunPipelineRun, stopPipelineRun } from '../../utils/pipeline-actions';
 import { PipelineRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../models';
-import { PipelineTaskStatus } from './PipelineTaskStatus';
 import { tableColumnClasses } from './pipelinerun-table';
+import LinkedPipelineRunTaskStatus from './LinkedPipelineRunTaskStatus';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
@@ -38,7 +38,7 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
         <Status status={pipelineRunFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <PipelineTaskStatus pipelinerun={obj} />
+        <LinkedPipelineRunTaskStatus pipelineRun={obj} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>-</TableData>
       <TableData className={tableColumnClasses[5]}>
