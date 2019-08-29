@@ -1,7 +1,7 @@
-export const CEPH_HEALTHY = 'Ceph is healthy';
-export const CEPH_DEGRADED = 'Ceph health is degraded';
-export const CEPH_ERROR = 'Ceph health is in error state';
-export const CEPH_UNKNOWN = 'Ceph is not available';
+export const CEPH_HEALTHY = 'is healthy';
+export const CEPH_DEGRADED = 'health is degraded';
+export const CEPH_ERROR = 'health is in error state';
+export const CEPH_UNKNOWN = 'is not available';
 export const CEPH_STORAGE_NAMESPACE = 'openshift-storage';
 export const ONE_HR = '1 Hour';
 export const SIX_HR = '6 Hours';

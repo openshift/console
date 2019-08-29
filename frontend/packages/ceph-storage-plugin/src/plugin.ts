@@ -16,6 +16,7 @@ import {
   StorageDashboardQuery,
   STORAGE_HEALTH_QUERIES,
 } from './constants/queries';
+import { STORAGE_HEALTH_RESOURCES, StorageDashboardResource } from './constants/resources';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/health-card/utils';
 
 type ConsumedExtensions =
@@ -156,6 +157,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       title: 'Storage',
       query: STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
+      resource: STORAGE_HEALTH_RESOURCES[StorageDashboardResource.CEPH_CLUSTER_RESOURCE],
       healthHandler: getCephHealthState,
       required: CEPH_FLAG,
     },
