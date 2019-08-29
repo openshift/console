@@ -11,7 +11,9 @@ export type RevisionKind = {
 export type ServiceKind = K8sResourceKind & {
   metadata?: {
     generation?: number;
-    domain?: string;
+  };
+  status?: {
+    url?: string;
   };
 };
 

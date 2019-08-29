@@ -220,8 +220,6 @@ export const sampleKnativeRoutes = {
       spec: {},
       status: {
         observedGeneration: 1,
-        domain: 'overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-        domainInternal: 'overlayimage.knativeapps.svc.cluster.local',
         url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
       },
     },
@@ -243,8 +241,7 @@ export const sampleKnativeServices: Resource = {
       spec: {},
       status: {
         observedGeneration: 1,
-        domain: 'overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-        domainInternal: 'overlayimage.knativeapps.svc.cluster.local',
+        url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
         latestCreatedRevisionName: 'overlayimage-fdqsf',
         latestReadyRevisionName: 'overlayimage-fdqsf',
       },
