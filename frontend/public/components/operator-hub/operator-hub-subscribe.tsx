@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
 import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 
-import { Firehose, history, NsDropdown, BreadCrumbs, StatusBox, resourceListPathFromModel } from '../utils';
+import { Firehose, history, NsDropdown, BreadCrumbs, MsgBox, StatusBox, resourceListPathFromModel } from '../utils';
 import { referenceForModel, k8sCreate, apiVersionForModel, kindForReference, apiVersionForReference, k8sListPartialMetadata } from '../../module/k8s';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel, ClusterServiceVersionModel } from '../../models';
 import {
@@ -60,8 +60,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   }, [catalogSource, catalogSourceNamespace, pkgName, props.packageManifest.data, selectedTargetNamespace]);
 
   const installModes = channels.find(ch => ch.name === selectedUpdateChannel).currentCSVDesc.installModes;
-  const supportsSingle = installModes.find(m => m.type === InstallModeType.InstallModeTypeOwnNamespace).supported;
-  const supportsGlobal = installModes.find(m => m.type === InstallModeType.InstallModeTypeAllNamespaces).supported;
+  const singleInstallMode = installModes.find(m => m.type === InstallModeType.InstallModeTypeOwnNamespace);
+  const supportsSingle = singleInstallMode && singleInstallMode.supported;
+  const globalInstallMode = installModes.find(m => m.type === InstallModeType.InstallModeTypeAllNamespaces);
+  const supportsGlobal = globalInstallMode && globalInstallMode.supported;
+
+  if (!supportsSingle && !supportsGlobal) {
+    return <MsgBox title={`${_.get(channels, '[0].currentCSVDesc.displayName')} can't be installed`} detail="The operator does not support single namespace or global installation modes." />;
+  }
+
   const descFor = (mode: InstallModeType) => {
     if (mode === InstallModeType.InstallModeTypeAllNamespaces && supportsGlobal) {
       return 'Operator will be available in all namespaces.';
