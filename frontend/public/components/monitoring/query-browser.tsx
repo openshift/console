@@ -28,7 +28,12 @@ import { connect } from 'react-redux';
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
 import { Dropdown, humanizeNumberSI, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
-import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+  twentyFourHourTime,
+  twentyFourHourTimeWithSeconds,
+} from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
 import { PrometheusResponse } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -133,7 +138,7 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, serie
       <div className="query-browser__tooltip">
         <div className="query-browser__tooltip-group">
           <div className="query-browser__series-btn" style={{backgroundColor: colors[seriesIndex % colors.length]}}></div>
-          {datum.x && <div className="query-browser__tooltip-time">{twentyFourHourTime(datum.x)}</div>}
+          {datum.x && <div className="query-browser__tooltip-time">{twentyFourHourTimeWithSeconds(datum.x)}</div>}
         </div>
         <div className="query-browser__tooltip-group">
           <div className="co-nowrap co-truncate">{query}</div>

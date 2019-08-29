@@ -158,3 +158,10 @@ export const twentyFourHourTime = (date: Date): string => {
   const minutes = zeroPad(date.getMinutes());
   return `${hours}:${minutes}`;
 };
+
+export const twentyFourHourTimeWithSeconds = (date: Date): string => {
+  const hours = zeroPad(date.getHours());
+  const minutes = zeroPad(date.getMinutes());
+  const seconds = zeroPad(date.getSeconds());
+  return `${hours}:${minutes}:${seconds}`;
+};
