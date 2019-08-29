@@ -7,7 +7,12 @@
   &__content {
     flex-grow: 1;
     position: relative;
+    overflow: auto;
     background-color: var(--pf-global--Color--light-200);
+
+    &.is-light {
+      background-color: var(--pf-global--Color--light-100);
+    }
   }
 
   // Override styles of namespace bar to support the addition of the application selector on mobile

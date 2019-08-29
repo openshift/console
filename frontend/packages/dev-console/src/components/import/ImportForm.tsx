@@ -35,6 +35,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       name: namespace || '',
     },
     application: {
+      initial: activeApplication,
       name: activeApplication,
       selectedKey: activeApplication,
     },

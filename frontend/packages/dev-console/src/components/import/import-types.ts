@@ -51,6 +51,7 @@ export interface GitImportFormData {
 }
 
 export interface ApplicationData {
+  initial: string;
   name: string;
   selectedKey: string;
 }
