@@ -26,7 +26,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project }) => {
         data-test-id="application-form-app-name"
         name="name"
         label="Name"
-        helpText="Identifies the resources created for this application."
+        helpText="A unique name given to the component that will be used to name associated resources."
         required
       />
     </FormSection>
