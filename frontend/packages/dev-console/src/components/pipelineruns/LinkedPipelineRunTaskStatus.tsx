@@ -6,7 +6,7 @@ import { PipelineRunModel } from '../../models';
 import { PipelineTaskStatus } from './PipelineTaskStatus';
 
 export interface LinkedPipelineRunTaskStatusProps {
-  pipeline: Pipeline;
+  pipeline?: Pipeline;
   pipelineRun: PipelineRun;
 }
 
