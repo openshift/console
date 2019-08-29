@@ -407,8 +407,8 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   useScrollToTopOnMount();
 
   return <div className="co-m-pane__body">
-    <form className="col-md-6" onSubmit={submit}>
-      <div className="row">
+    <div className="row">
+      <form className="col-md-6" onSubmit={submit}>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="name">Name</label>
           <input
@@ -419,78 +419,76 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             id="metadata.name"
             required />
         </div>
-      </div>
-      <div className="row">
         <div className="form-group">
           <label className="control-label" htmlFor="tags-input">Labels</label>
           <SelectorInput onChange={labels => setFormValues(values => ({...values, 'metadata.labels': labels}))} tags={formValues['metadata.labels']} />
         </div>
-      </div>
-      { [...arrayFieldGroups].map(group => <div key={group} className="row">
-        <label className="form-label">{_.startCase(group.split(SpecCapability.arrayFieldGroup)[1])}</label>
-        <div className="co-operand-field-group">
-          { fields.filter(f => f.capabilities.includes(group))
-            .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
-              <div className="form-group co-create-operand__form-group">
-                <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
-                { inputFor(field) }
-                { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
-                { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
-              </div>
-            </div>) }
-        </div>
-      </div>) }
-      { [...fieldGroups].map(group => <div key={group} className="row">
-        <label className="form-label">{_.startCase(group.split(SpecCapability.fieldGroup)[1])}</label>
-        <div className="co-operand-field-group">
-          { fields.filter(f => f.capabilities.includes(group))
-            .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
-              <div className="form-group co-create-operand__form-group">
-                <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
-                { inputFor(field) }
-                { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
-                { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
-              </div>
-            </div>) }
-        </div>
-      </div>) }
-      { fields.filter(f => !f.capabilities.some(c => c.startsWith(SpecCapability.fieldGroup) || c.startsWith(SpecCapability.arrayFieldGroup)))
-        .filter(f => !_.isNil(inputFor(f))).map(field => <div className="row" key={field.path}>
-          <div className="form-group co-create-operand__form-group">
-            <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
-            { inputFor(field) }
-            { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
-            { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+        { [...arrayFieldGroups].map(group => <div key={group}>
+          <label className="form-label">{_.startCase(group.split(SpecCapability.arrayFieldGroup)[1])}</label>
+          <div className="co-operand-field-group">
+            { fields.filter(f => f.capabilities.includes(group))
+              .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
+                <div className="form-group co-create-operand__form-group">
+                  <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
+                  { inputFor(field) }
+                  { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
+                  { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+                </div>
+              </div>) }
           </div>
         </div>) }
-      {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) && <div className="row">
-        <Alert isInline className="co-alert co-break-word" variant="danger" title={error || 'Fix above errors'} />
-      </div>}
-      <div className="row" style={{paddingBottom: '30px'}}>
-        <ActionGroup className="pf-c-form">
-          <Button
-            onClick={submit}
-            type="submit"
-            variant="primary">
-            Create
-          </Button>
-          <Button
-            onClick={history.goBack}
-            variant="secondary">
-            Cancel
-          </Button>
-        </ActionGroup>
+        { [...fieldGroups].map(group => <div key={group}>
+          <label className="form-label">{_.startCase(group.split(SpecCapability.fieldGroup)[1])}</label>
+          <div className="co-operand-field-group">
+            { fields.filter(f => f.capabilities.includes(group))
+              .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
+                <div className="form-group co-create-operand__form-group">
+                  <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
+                  { inputFor(field) }
+                  { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
+                  { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+                </div>
+              </div>) }
+          </div>
+        </div>) }
+        { fields.filter(f => !f.capabilities.some(c => c.startsWith(SpecCapability.fieldGroup) || c.startsWith(SpecCapability.arrayFieldGroup)))
+          .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
+            <div className="form-group co-create-operand__form-group">
+              <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
+              { inputFor(field) }
+              { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
+              { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+            </div>
+          </div>) }
+        {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) &&
+          <Alert isInline className="co-alert co-break-word" variant="danger" title={error || 'Fix above errors'} />
+        }
+        <div style={{paddingBottom: '30px'}}>
+          <ActionGroup className="pf-c-form">
+            <Button
+              onClick={submit}
+              type="submit"
+              variant="primary">
+              Create
+            </Button>
+            <Button
+              onClick={history.goBack}
+              variant="secondary">
+              Cancel
+            </Button>
+          </ActionGroup>
+        </div>
+      </form>
+      <div className="col-md-6">
+        { props.clusterServiceVersion && props.providedAPI && <div style={{marginBottom: '30px'}}>
+          <ClusterServiceVersionLogo
+            displayName={props.providedAPI.displayName}
+            icon={_.get(props.clusterServiceVersion, 'spec.icon[0]')}
+            provider={_.get(props.clusterServiceVersion, 'spec.provider')} />
+          { props.providedAPI.description }
+        </div> }
+        <Alert isInline className="co-alert co-break-word" variant="info" title={'Note: Some fields may not be represented in this form. Please select "Edit YAML" for full control of object creation.'} />
       </div>
-    </form>
-    <div className="col-md-6">
-      { props.clusterServiceVersion && props.providedAPI && <div style={{marginBottom: '30px'}}>
-        <ClusterServiceVersionLogo
-          displayName={props.providedAPI.displayName}
-          icon={_.get(props.clusterServiceVersion, 'spec.icon[0]')}
-          provider={_.get(props.clusterServiceVersion, 'spec.provider')} />
-        { props.providedAPI.description }
-      </div> }
-      <Alert isInline className="co-alert co-break-word" variant="info" title={'Note: Some fields may not be represented in this form. Please select "Edit YAML" for full control of object creation.'} />
     </div>
   </div>;
 };
