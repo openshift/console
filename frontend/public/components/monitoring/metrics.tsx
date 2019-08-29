@@ -364,7 +364,7 @@ const QueryInput_: React.FC<QueryInputProps> = (({index, metrics, patchQuery, ru
     }, _.isEmpty);
 
   // Set the default textarea height to the number of lines in the query text
-  const rows = Math.min((text.match(/\n/g) || []).length + 1, 10);
+  const rows = _.clamp((text.match(/\n/g) || []).length + 1, 2, 10);
 
   return <div className="query-browser__query pf-c-dropdown">
     <textarea

@@ -10,12 +10,16 @@
 }
 
 .query-browser__clear-icon {
+  border: none;
   color: $color-pf-black-600;
   font-size: 18px;
+  height: 18px;
+  line-height: 18px;
   padding: 0;
   position: absolute;
-  right: 4px;
-  top: 2px;
+  right: 6px;
+  top: 6px;
+  width: 18px;
 }
 
 .query-browser__dropdown--subtitle {
@@ -93,6 +97,7 @@
 }
 
 .query-browser__query-input {
+  padding-right: 24px !important;
   resize: vertical;
 }
 
