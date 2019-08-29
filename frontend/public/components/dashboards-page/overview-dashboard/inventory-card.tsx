@@ -16,6 +16,7 @@ import { getPodStatusGroups, getNodeStatusGroups, getPVCStatusGroups } from '../
 import { FirehoseResource } from '../../utils';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
 import { getFlagsForExtensions } from '../utils';
+import { uniqueResource } from './utils';
 
 const k8sResources: FirehoseResource[] = [
   {
@@ -34,11 +35,6 @@ const k8sResources: FirehoseResource[] = [
     prop: 'pvcs',
   },
 ];
-
-const uniqueResource = (resource: FirehoseResource, index: number): FirehoseResource => ({
-  ...resource,
-  prop: `${index}-${resource.prop}`,
-});
 
 const getItems = (flags: FlagsObject) =>
   plugins.registry.getDashboardsOverviewInventoryItems().filter(e => flags[e.properties.required]);

@@ -18,6 +18,8 @@ import { getBrandingDetails } from '../../masthead';
 import { RootState } from '../../../redux';
 import { connectToFlags, flagPending, featureReducerName, FlagsObject, WithFlagsProps } from '../../../reducers/features';
 import { getFlagsForExtensions } from '../utils';
+import { uniqueResource } from './utils';
+import { isDashboardsOverviewHealthURLSubsystem, isDashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
 
 export const HEALTHY = 'is healthy';
 export const ERROR = 'is in an error state';
@@ -77,6 +79,9 @@ const HealthCard_ = connect(mapStateToProps)(({
   stopWatchPrometheusQuery,
   watchAlerts,
   stopWatchAlerts,
+  watchK8sResource,
+  stopWatchK8sResource,
+  resources,
   urlResults,
   prometheusResults,
   alertsResults,
@@ -88,42 +93,65 @@ const HealthCard_ = connect(mapStateToProps)(({
     watchURL('healthz', fetchK8sHealth);
     watchAlerts();
 
-    subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem => {
-      const { url, fetch } = subsystem.properties;
-      watchURL(url, fetch);
-    });
-    subsystems.filter(plugins.isDashboardsOverviewHealthPrometheusSubsystem).forEach(subsystem => {
-      const { query } = subsystem.properties;
-      watchPrometheus(query);
+    subsystems.forEach((subsystem, index) => {
+      if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+        const { url, fetch } = subsystem.properties;
+        watchURL(url, fetch);
+      } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+        const { query, resource } = subsystem.properties;
+        watchPrometheus(query);
+        if (resource) {
+          watchK8sResource(uniqueResource(resource, index));
+        }
+      }
     });
 
     return () => {
       stopWatchURL('healthz');
       stopWatchAlerts();
 
-      subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem =>
-        stopWatchURL(subsystem.properties.url)
-      );
-      subsystems.filter(plugins.isDashboardsOverviewHealthPrometheusSubsystem).forEach(subsystem =>
-        stopWatchPrometheusQuery(subsystem.properties.query)
-      );
+      subsystems.forEach((subsystem, index) => {
+        if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+          stopWatchURL(subsystem.properties.url);
+        } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+          const { query, resource } = subsystem.properties;
+          stopWatchPrometheusQuery(query);
+          if (resource) {
+            stopWatchK8sResource(uniqueResource(resource, index));
+          }
+        }
+      });
     };
-    // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts, JSON.stringify(flags)]);
+  },
+  // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
+  /* eslint-disable react-hooks/exhaustive-deps */
+  [
+    watchURL,
+    stopWatchURL,
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    watchAlerts,
+    stopWatchAlerts,
+    watchK8sResource,
+    stopWatchK8sResource,
+    stopWatchAlerts,
+    JSON.stringify(flags),
+  ]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const subsystems = getSubsystems(flags);
   const k8sHealth = urlResults.getIn(['healthz', 'result']);
   const k8sHealthState = getK8sHealthState(openshiftFlag, k8sHealth);
 
-  const subsystemsHealths = subsystems.map(subsystem => {
-    let result;
-    if (plugins.isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
-      result = prometheusResults.getIn([subsystem.properties.query, 'result']);
-    } else {
-      result = urlResults.getIn([subsystem.properties.url, 'result']);
+  const subsystemsHealths = subsystems.map((subsystem, index) => {
+    if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+      return subsystem.properties.healthHandler(urlResults.getIn([subsystem.properties.url, 'result']));
     }
-    return subsystem.properties.healthHandler(result);
+    const result = prometheusResults.getIn([subsystem.properties.query, 'result']);
+    const resource = subsystem.properties.resource
+      ? resources[uniqueResource(subsystem.properties.resource, index).prop]
+      : null;
+    return subsystem.properties.healthHandler(result, resource);
   });
 
   const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);

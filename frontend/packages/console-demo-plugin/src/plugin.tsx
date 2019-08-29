@@ -22,7 +22,7 @@ import {
   DashboardsOverviewTopConsumerItem,
 } from '@console/plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
-import { PodModel, RouteModel } from '@console/internal/models';
+import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
@@ -155,6 +155,12 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Bar system',
       query: 'barQuery',
       healthHandler: getBarHealthState,
+      resource: {
+        kind: NodeModel.kind,
+        isList: true,
+        namespaced: false,
+        prop: 'nodes',
+      },
       required: 'TEST_MODEL_FLAG',
     },
   },
