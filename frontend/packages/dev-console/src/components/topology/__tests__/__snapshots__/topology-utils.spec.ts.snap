@@ -89,7 +89,7 @@ Object {
             },
           ],
         },
-        "editUrl": undefined,
+        "editUrl": "https://github.com/redhat-developer/topology-example",
         "isKnativeResource": false,
         "kind": "DeploymentConfig",
         "url": "http://nodejs-testproject3.192.168.42.60.nip.io",
@@ -144,6 +144,10 @@ Object {
           "apiVersion": "apps/v1",
           "kind": "DeploymentConfig",
           "metadata": Object {
+            "annotations": Object {
+              "app.openshift.io/vcs-ref": "master",
+              "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+            },
             "creationTimestamp": "2019-04-22T11:58:33Z",
             "generation": 2,
             "labels": Object {

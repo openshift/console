@@ -10,6 +10,13 @@ const isKnativeDeployment = (dc: ResourceProps): boolean => {
   return !!(dc.metadata && dc.metadata.labels && dc.metadata.labels[KNATIVE_SERVING_LABEL]);
 };
 
+export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
+  _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
+
+export const getEditURL = (gitURL: string, cheURL: string) => {
+  return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
+};
+
 export class TransformTopologyData {
   private topologyData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },
@@ -22,7 +29,11 @@ export class TransformTopologyData {
 
   private transformPodData;
 
-  constructor(public resources: TopologyDataResources, public application?: string) {
+  constructor(
+    public resources: TopologyDataResources,
+    public application?: string,
+    public cheURL?: string,
+  ) {
     if (this.resources.ksservices && this.resources.ksservices.data) {
       this.allServices = _.keyBy(
         [...this.resources.services.data, ...this.resources.ksservices.data],
@@ -128,7 +139,7 @@ export class TransformTopologyData {
           kind: targetDeploymentsKind,
           editUrl:
             deploymentsAnnotations['app.openshift.io/edit-url'] ||
-            deploymentsAnnotations['app.openshift.io/vcs-uri'],
+            getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], this.cheURL),
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
           isKnativeResource: this.transformPodData.isKnativeServing(
             deploymentConfig,

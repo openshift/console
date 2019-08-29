@@ -1,11 +1,16 @@
+import * as _ from 'lodash';
 import { getPodStatus, podStatus } from '@console/shared';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
-import { TransformTopologyData } from '../topology-utils';
+import { TransformTopologyData, getEditURL } from '../topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 
-function getTranformedTopologyData(mockData: TopologyDataResources, transformByProp: string[]) {
-  const transformTopologyData = new TransformTopologyData(mockData);
+function getTranformedTopologyData(
+  mockData: TopologyDataResources,
+  transformByProp: string[],
+  mockCheURL?: string,
+) {
+  const transformTopologyData = new TransformTopologyData(mockData, undefined, mockCheURL);
   transformByProp.forEach((t) => transformTopologyData.transformDataBy(t));
   const result = transformTopologyData.getTopologyData();
   const topologyTransformedData = result.topology;
@@ -101,7 +106,7 @@ describe('TopologyUtils ', () => {
 
   it('should return a Idle pod status in a non-serverless application', () => {
     // simulate pod are scaled to zero in nodejs deployment.
-    const mockResources = { ...MockResources, pods: { data: [] } };
+    const mockResources = { ..._.cloneDeep(MockResources), pods: { data: [] } };
     mockResources.deploymentConfigs.data[0].metadata.annotations = {
       'idling.alpha.openshift.io/idled-at': '2019-04-22T11:58:33Z',
     };
@@ -216,5 +221,27 @@ describe('TopologyUtils ', () => {
     expect((topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods).toHaveLength(
       1,
     );
+  });
+
+  it('should return a valid che workspace factory URL if cheURL is there', () => {
+    const mockCheURL = 'https://mock-che.test-cluster.com';
+    const mockGitURL =
+      MockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
+    const { topologyTransformedData, keys } = getTranformedTopologyData(
+      MockResources,
+      ['deploymentConfigs'],
+      mockCheURL,
+    );
+    const generatedEditURL = getEditURL(mockGitURL, mockCheURL);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).editUrl).toBe(generatedEditURL);
+  });
+
+  it('should return the git repo URL if cheURL is not there', () => {
+    const mockGitURL =
+      MockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
+    const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
+      'deploymentConfigs',
+    ]);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).editUrl).toBe(mockGitURL);
   });
 });
