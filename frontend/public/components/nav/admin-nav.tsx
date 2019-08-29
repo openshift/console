@@ -84,7 +84,6 @@ const AdminNav = () => (
       <ResourceNSLink
         model={ClusterServiceVersionModel}
         resource={ClusterServiceVersionModel.plural}
-        required={FLAGS.CAN_LIST_PACKAGE_MANIFEST}
         name="Installed Operators"
       />
     </NavSection>

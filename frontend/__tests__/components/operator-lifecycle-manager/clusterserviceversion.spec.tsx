@@ -40,6 +40,7 @@ import {
   resourceObjPath,
   StatusBox,
 } from '../../../public/components/utils';
+import * as rbac from '../../../public/components/utils/rbac';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
@@ -157,6 +158,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
+    spyOn(rbac, 'useAccessReview').and.returnValue(true);
     wrapper = shallow(<ClusterServiceVersionsPage kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
   });
 
@@ -165,7 +167,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
 
     expect(listPage.props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'foo', prop: 'clusterServiceVersion'},
-      {kind: referenceForModel(SubscriptionModel), prop: 'subscription'},
+      {kind: referenceForModel(SubscriptionModel), optional: true, prop: 'subscription'},
     ]);
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().showTitle).toBe(false);
@@ -294,6 +296,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   const ns = 'default';
 
   beforeEach(() => {
+    spyOn(rbac, 'useAccessReview').and.returnValue(true);
     wrapper = shallow(<ClusterServiceVersionsDetailsPage match={{params: {ns, name}, isExact: true, url: '', path: ''}} />);
   });
 

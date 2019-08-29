@@ -51,6 +51,7 @@ import {
   KebabOption,
   resourceObjPath,
 } from '../utils';
+import { useAccessReview } from '../utils/rbac';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails } from './subscription';
 
@@ -239,7 +240,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       {...props}
       resources={[
         {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, prop: 'clusterServiceVersion'},
-        {kind: referenceForModel(SubscriptionModel), prop: 'subscription'},
+        {kind: referenceForModel(SubscriptionModel), prop: 'subscription', optional: true},
       ]}
       flatten={({clusterServiceVersion, subscription}) => _.get(clusterServiceVersion, 'data', [] as ClusterServiceVersionKind[])
         .concat(_.get(subscription, 'data', [] as SubscriptionKind[])
@@ -395,17 +396,19 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
     ? [editSubscription(subscriptionFor(obj)(subscription)), uninstall(subscriptionFor(obj)(subscription))]
     : []);
 
+  const canListSubscriptions = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    verb: 'list',
+  });
+
   const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => _.compact([
     navFactory.details(ClusterServiceVersionDetails),
     navFactory.editYaml(),
-    {
-      href: 'subscription',
-      name: 'Subscription',
-      component: CSVSubscription,
-    },
+    canListSubscriptions ? { href: 'subscription', name: 'Subscription', component: CSVSubscription } : null,
     navFactory.events(ResourceEventStream),
     ...instancePagesFor(obj),
-  ]), []);
+  ]), [canListSubscriptions]);
 
   return <DetailsPage
     {...props}
