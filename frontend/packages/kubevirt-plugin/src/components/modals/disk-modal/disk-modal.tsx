@@ -33,7 +33,7 @@ import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { DiskBus, DiskType } from '../../../constants/vm/storage';
+import { DiskBus } from '../../../constants/vm/storage';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow, BinaryUnit } from '../../form/size-unit-form-row';
@@ -106,7 +106,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
     bus,
-    type: DiskType.DISK,
+    type: disk.getType(),
   });
 
   const resultDataVolumeName = prefixedID(vmName, name);
@@ -376,6 +376,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         submitButtonText={isEditing ? 'Save' : 'Add'}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
+        inProgress={inProgress}
         isSimpleError={showUIError}
         onSubmit={submit}
         onCancel={(e) => {

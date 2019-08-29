@@ -8,18 +8,24 @@ import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
+import { getCDRoms } from '../../selectors/vm/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
+import { DiskSummary } from '../vm-disks/disk-summary';
 import { getOperatingSystemName, getOperatingSystem, getWorkloadProfile } from '../../selectors/vm';
 
 import './vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
+  canEdit = false,
+  editButtonId,
+  onEditClick,
   idValue,
   isNotAvail = false,
   valueClassName,
@@ -27,7 +33,9 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
 }) => {
   return (
     <>
-      <dt>{title}</dt>
+      <dt>
+        {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
+      </dt>
       <dd id={idValue} className={valueClassName}>
         {isNotAvail ? <span className="text-secondary">Not available</span> : children}
       </dd>
@@ -76,6 +84,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const id = getBasicID(vm);
   const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
+  const cds = getCDRoms(vm);
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
   const nodeName = getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
@@ -104,6 +113,17 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         isNotAvail={sortedBootableDevices.length === 0}
       >
         <BootOrder bootableDevices={sortedBootableDevices} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="CD-ROMs"
+        canEdit={canUpdateVM}
+        editButtonId={prefixedID(id, 'cdrom-edit')}
+        onEditClick={() => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
+        idValue={prefixedID(id, 'cdrom')}
+        isNotAvail={cds.length === 0}
+      >
+        <DiskSummary disks={cds} vm={vm} />
       </VMDetailsItem>
 
       <VMDetailsItem
@@ -141,6 +161,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
 type VMDetailsItemProps = {
   title: string;
+  canEdit?: boolean;
+  editButtonId?: string;
+  onEditClick?: () => void;
   idValue?: string;
   isNotAvail?: boolean;
   valueClassName?: string;

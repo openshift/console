@@ -6,7 +6,7 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getSimpleName } from '../../../selectors/utils';
-import { DiskType, VolumeType } from '../../../constants/vm/storage';
+import { VolumeType } from '../../../constants/vm/storage';
 import { VMLikeEntityKind } from '../../../types';
 import { asVM, getDataVolumeTemplates, getDisks, getVolumes } from '../../../selectors/vm';
 import { getLoadedData, isLoaded } from '../../../utils';
@@ -65,10 +65,11 @@ export class CombinedDisk {
 
   getName = () => this.diskWrapper.getName();
 
-  getDiskInterface = () =>
-    this.diskWrapper.getType() === DiskType.DISK
-      ? this.diskWrapper.getReadableDiskBus()
-      : undefined;
+  getType = () => this.diskWrapper.getType();
+
+  getTypeValue = () => this.diskWrapper.getTypeValue();
+
+  getDiskInterface = () => this.diskWrapper.getReadableDiskBus();
 
   getReadableSize = (): string =>
     this.volumeTypeOperation(

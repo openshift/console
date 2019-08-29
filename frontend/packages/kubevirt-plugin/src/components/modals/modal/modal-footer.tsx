@@ -35,6 +35,7 @@ type ModalFooterProps = {
   onSubmit: (e) => void;
   onCancel: (e) => void;
   isDisabled?: boolean;
+  inProgress?: boolean;
   submitButtonText?: string;
   cancelButtonText?: string;
 };
@@ -43,6 +44,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   id,
   errorMessage = null,
   isDisabled = false,
+  inProgress = false,
   isSimpleError = false,
   onSubmit,
   onCancel,
@@ -56,7 +58,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       variant={ButtonVariant.primary}
       onClick={onSubmit}
       id={prefixedID(id, 'submit')}
-      disabled={isDisabled}
+      isDisabled={isDisabled}
     >
       {submitButtonText}
     </Button>
@@ -64,10 +66,10 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       variant={ButtonVariant.plain}
       onClick={onCancel}
       id={prefixedID(id, 'cancel')}
-      disabled={isDisabled}
+      isDisabled={isDisabled}
     >
       {cancelButtonText}
     </Button>
-    {isDisabled && <LoadingInline />}
+    {inProgress && <LoadingInline />}
   </footer>
 );
