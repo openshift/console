@@ -41,7 +41,10 @@ const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light
 export const colors = chartTheme.line.colorScale;
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
-const formatValue = v => v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
+const formatPositiveValue = (v: number): string => v === 0 || (0.001 <= v && v < 1e23)
+  ? humanizeNumberSI(v).string
+  : v.toExponential(1);
+const formatValue = (v: number): string => (v < 0 ? '-' : '') + formatPositiveValue(Math.abs(v));
 
 export const Error = ({error, title = 'An error occurred'}) =>
   <Alert isInline className="co-alert" title={title} variant="danger">
