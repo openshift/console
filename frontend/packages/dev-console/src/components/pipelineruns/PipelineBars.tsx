@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { VictoryStack, VictoryBar } from 'victory';
 import { Tooltip } from '@patternfly/react-core';
+import HorizontalStackedBars from '../charts/HorizontalStackedBars';
 import {
   getTaskStatus,
   runStatus,
@@ -16,22 +16,27 @@ export interface PipelineBarProps {
 }
 
 export const PipelineBars: React.FC<PipelineBarProps> = ({ pipelinerun, pipeline }) => {
+  const pipelineIdentifier =
+    pipelinerun.metadata && pipelinerun.metadata.name ? pipelinerun.metadata.name : undefined;
   const data = pipeline && pipeline.data ? pipeline.data : undefined;
   const taskStatus = getTaskStatus(pipelinerun, data);
+
+  // Tooltip key is necessary to disable the animations between two different Pipeline runs that
+  // have different names. Typically this should be able to go on HorizontalStackedBars but there
+  // is an issue with Tooltip and losing its mounted child node that breaks the popup.
   return (
-    <Tooltip content={<TaskStatusToolTip taskStatus={taskStatus} />}>
-      <VictoryStack horizontal height={32}>
-        {Object.keys(runStatus).map((status) => {
-          return taskStatus[runStatus[status]] && taskStatus[runStatus[status]] > 0 ? (
-            <VictoryBar
-              key={status}
-              barWidth={32}
-              data={[{ x: 2, y: taskStatus[runStatus[status]] }]}
-              style={{ data: { fill: getRunStatusColor(runStatus[status]).pftoken.value } }}
-            />
-          ) : null;
-        })}
-      </VictoryStack>
+    <Tooltip key={pipelineIdentifier} content={<TaskStatusToolTip taskStatus={taskStatus} />}>
+      <HorizontalStackedBars
+        // Note: disableAnimation is used here to prevent a no-key situation where React will try to
+        // reuse elements and inadvertently cause animations BETWEEN different pipeline status'
+        disableAnimation={!pipelineIdentifier}
+        height="1em"
+        values={Object.keys(runStatus).map((status) => ({
+          color: getRunStatusColor(runStatus[status]).pftoken.value,
+          name: status,
+          size: taskStatus[runStatus[status]],
+        }))}
+      />
     </Tooltip>
   );
 };
