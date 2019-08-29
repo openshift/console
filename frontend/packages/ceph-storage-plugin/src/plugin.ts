@@ -8,6 +8,7 @@ import {
   Plugin,
   DashboardsOverviewQuery,
   RoutePage,
+  ClusterServiceVersionAction,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
@@ -29,7 +30,8 @@ type ConsumedExtensions =
   | DashboardsCard
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewQuery
-  | RoutePage;
+  | RoutePage
+  | ClusterServiceVersionAction;
 
 const CEPH_FLAG = 'CEPH';
 // keeping this for testing, will be removed once ocs operator available
@@ -194,6 +196,23 @@ const plugin: Plugin<ConsumedExtensions> = [
       queryKey: OverviewQuery.STORAGE_UTILIZATION,
       query: `${CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED]}[60m:5m]`,
       required: CEPH_FLAG,
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      kind: 'StorageCluster',
+      label: 'Add Capacity',
+      callback: (kind, ocsConfig) => () => {
+        const clusterObject = { ocsConfig };
+        import(
+          './components/modals/add-capacity-modal/add-capacity-modal' /* webpackChunkName: "ceph-storage-add-capacity-modal" */
+        )
+          .then((m) => m.addCapacityModal(clusterObject))
+          .catch((e) => {
+            throw e;
+          });
+      },
     },
   },
 ];

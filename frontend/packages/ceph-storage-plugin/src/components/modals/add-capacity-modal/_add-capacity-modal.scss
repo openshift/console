@@ -1,0 +1,30 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.add-capacity-modal--padding {
+  .co-storage-class-dropdown {
+    .dropdown {
+      width: 20.25rem;
+        button {
+          width: 100%;
+        }
+    }
+  }
+  .form-group input {
+    max-width: 15rem;
+    margin-right: 5px;
+  }
+  .toolTip_dropdown {
+    button {
+      position: absolute;
+      left: 7rem;
+      top: 8.5rem;
+    }
+  }
+  padding-top: 2em;
+}
+
+.add-capacity-modal__span {
+  margin-left: 3em;
+  color: $pf-color-black-500;
+}
+

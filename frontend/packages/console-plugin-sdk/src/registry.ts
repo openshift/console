@@ -21,6 +21,7 @@ import {
   isOverviewResourceTab,
   isOverviewCRD,
   isGlobalConfig,
+  isClusterServiceVersionAction,
 } from './typings';
 
 /**
@@ -107,5 +108,9 @@ export class ExtensionRegistry {
 
   public getGlobalConfigs() {
     return this.extensions.filter(isGlobalConfig);
+  }
+
+  public getClusterServiceVersionActions() {
+    return this.extensions.filter(isClusterServiceVersionAction);
   }
 }

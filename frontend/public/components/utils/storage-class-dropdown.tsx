@@ -8,13 +8,13 @@ import { isDefaultClass } from '../storage-class';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
-class StorageClassDropdown_ extends React.Component<StorageClassDropdownProps, StorageClassDropdownState> {
-  readonly state: StorageClassDropdownState = {
+export class StorageClassDropdownInner extends React.Component<StorageClassDropdownInnerProps, StorageClassDropdownInnerState> {
+  readonly state: StorageClassDropdownInnerState = {
     items: {},
     name: this.props.name,
     selectedKey: null,
     title: <LoadingInline />,
-    defaultClass: null,
+    defaultClass: this.props.defaultClass,
   };
 
   componentWillMount() {
@@ -137,9 +137,9 @@ class StorageClassDropdown_ extends React.Component<StorageClassDropdownProps, S
             id={id}
             menuClassName="dropdown-menu--text-wrap"
           />
-          <p className="help-block" id={describedBy}>
+          {describedBy && <p className="help-block" id={describedBy}>
             Storage class for the new claim.
-          </p>
+          </p>}
         </div>
       }
     </React.Fragment>;
@@ -148,7 +148,7 @@ class StorageClassDropdown_ extends React.Component<StorageClassDropdownProps, S
 
 export const StorageClassDropdown = props => {
   return <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
-    <StorageClassDropdown_ {...props} />
+    <StorageClassDropdownInner {...props} />
   </Firehose>;
 };
 
@@ -173,7 +173,7 @@ const StorageClassDropdownNoStorageClassOption = props => {
   </div>;
 };
 
-export type StorageClassDropdownState = {
+export type StorageClassDropdownInnerState = {
   items: any;
   name: string;
   selectedKey: string;
@@ -181,11 +181,13 @@ export type StorageClassDropdownState = {
   defaultClass: string;
 };
 
-export type StorageClassDropdownProps = {
+export type StorageClassDropdownInnerProps = {
   id?: string;
   loaded?: boolean;
   resources?: any;
   name: string;
   onChange: (object) => void;
   describedBy: string;
+  defaultClass: string;
+  required?: boolean;
 };
