@@ -103,6 +103,6 @@ export type CreateVMWizardComponentProps = {
   onInitialize: () => void;
   onClose: () => void;
   onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
-  onResultsChanged: (results, isValid) => void;
+  onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
   lockTab: (tabID: VMWizardTab) => void;
 };

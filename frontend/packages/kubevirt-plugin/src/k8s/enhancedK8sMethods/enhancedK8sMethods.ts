@@ -1,11 +1,11 @@
 import { get } from 'lodash';
 import {
-  k8sGet as _k8sGet,
   k8sCreate as _k8sCreate,
-  k8sPatch as _k8sPatch,
+  k8sGet as _k8sGet,
   k8sKill as _k8sKill,
-  K8sResourceKind,
   K8sKind,
+  k8sPatch as _k8sPatch,
+  K8sResourceKind,
   Patch,
   referenceForModel,
 } from '@console/internal/module/k8s';
@@ -17,25 +17,7 @@ import {
   K8sMultipleErrors,
   K8sPatchError,
 } from './errors';
-
-export enum HistoryType {
-  GET = 'GET',
-  CREATE = 'CREATE',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-  NOT_FOUND = 'NOT_FOUND',
-}
-
-export class HistoryItem {
-  readonly type: HistoryType;
-
-  readonly object: K8sResourceKind;
-
-  constructor(type: HistoryType, object: K8sResourceKind) {
-    this.type = type;
-    this.object = object;
-  }
-}
+import { HistoryItem, HistoryType } from './types';
 
 export type EnhancedOpts = {
   disableHistory: boolean;
@@ -122,7 +104,7 @@ export class EnhancedK8sMethods {
   // replay history and resolve actual state
   getActualState = () => {
     const currentIndexes = {};
-    const currentUnfilteredState = [];
+    const currentUnfilteredState: K8sResourceKind[] = [];
 
     this.history.forEach(({ type, object }) => {
       const id = getFullResourceId(object);

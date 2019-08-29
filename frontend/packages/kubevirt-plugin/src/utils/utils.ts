@@ -1,5 +1,6 @@
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src';
+import { VirtualMachineModel } from '../models';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);
 
@@ -17,3 +18,17 @@ export const setNativeValue = (element, value) => {
 
 export const getFullResourceId = (obj) =>
   `${referenceForModel(obj)}~${getNamespace(obj)}~${getName(obj)}`;
+
+export const getVMLikeModelName = (isCreateTemplate: boolean) =>
+  isCreateTemplate ? 'virtual machine template' : VirtualMachineModel.label.toLowerCase();
+
+export const getVMLikeModelListPath = (isCreateTemplate: boolean, namespace: string) =>
+  isCreateTemplate
+    ? `/k8s/ns/${namespace}/vmtemplates`
+    : `/k8s/ns/${namespace}/${VirtualMachineModel.plural}`;
+
+export const getVMLikeModelDetailPath = (
+  isCreateTemplate: boolean,
+  namespace: string,
+  name: string,
+) => `${getVMLikeModelListPath(isCreateTemplate, namespace)}/${name}`;

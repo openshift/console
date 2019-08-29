@@ -4,44 +4,34 @@ import {
   CREATED,
   CREATED_WITH_CLEANUP,
   CREATED_WITH_FAILED_CLEANUP,
-  ERROR,
   FAILED_TO_CREATE,
   FAILED_TO_PATCH,
 } from '../../utils/strings';
 import { getGeneratedName, getKind } from '../../selectors/selectors';
 import { getFullResourceId } from '../../utils/utils';
 import { EnhancedK8sMethods } from './enhancedK8sMethods';
+import { Result, ResultContentType, ResultsWrapper } from './types';
 
-const k8sObjectToResult = ({
+const asResult = ({
   obj,
-  content,
+  data,
+  type,
   message,
-  isExpanded,
   isError,
 }: {
   obj?: K8sResourceKind;
-  content: any;
+  data: any;
+  type: ResultContentType;
   message: string;
-  isExpanded?: boolean;
   isError?: boolean;
-}) => ({
+}): Result => ({
   title: [getKind(obj), getName(obj) || getGeneratedName(obj), message].filter((a) => a).join(' '),
-  content,
-  isExpanded,
+  content: {
+    data,
+    type,
+  },
   isError,
 });
-
-type Result = {
-  title: string;
-  content: any;
-  isExpanded: boolean;
-  isError: boolean;
-};
-
-type ResultsWrapper = {
-  isValid: boolean;
-  results: Result[];
-};
 
 export const cleanupAndGetResults = async (
   enhancedK8sMethods,
@@ -49,50 +39,43 @@ export const cleanupAndGetResults = async (
 ): Promise<ResultsWrapper> => {
   const actualState = enhancedK8sMethods.getActualState(); // actual state will differ after cleanup
 
-  let errors;
+  let cleanupErrors;
   try {
     await enhancedK8sMethods.rollback();
   } catch (e) {
     // eslint-disable-next-line prefer-destructuring
-    errors = e.errors;
+    cleanupErrors = e.errors;
   }
 
   const failedObjectsMap = {};
 
-  if (errors) {
-    errors.forEach((error) => {
+  if (cleanupErrors) {
+    cleanupErrors.forEach((error) => {
       failedObjectsMap[getFullResourceId(error.failedObject)] = error.failedObject;
     });
   }
 
-  const cleanupArray = actualState
+  const cleanupResults = actualState
     .map((resource) => {
       const failedToCleanup = !!failedObjectsMap[getFullResourceId(resource)];
 
-      return k8sObjectToResult({
+      return asResult({
         obj: resource,
-        content: resource,
+        data: resource,
+        type: ResultContentType.YAML,
         message: failedToCleanup ? CREATED_WITH_FAILED_CLEANUP : CREATED_WITH_CLEANUP,
-        isExpanded: failedToCleanup,
         isError: failedToCleanup,
       });
     })
     .reverse();
 
-  const errorResults = [
-    k8sObjectToResult({
-      content: message,
-      message: ERROR,
-      isExpanded: true,
-      isError: true,
-    }),
-  ];
-
+  const failureResults = [];
   if (failedPatches || failedObject) {
-    errorResults.push(
-      k8sObjectToResult({
+    failureResults.push(
+      asResult({
         obj: failedObject,
-        content: failedPatches || failedObject,
+        data: failedPatches || failedObject,
+        type: failedPatches ? ResultContentType.JSON : ResultContentType.YAML,
         message: failedPatches ? FAILED_TO_PATCH : FAILED_TO_CREATE,
         isError: true,
       }),
@@ -101,15 +84,26 @@ export const cleanupAndGetResults = async (
 
   return {
     isValid: false,
-    results: [...errorResults, ...cleanupArray],
+    mainError: message,
+    errors: [],
+    requestResults: [...failureResults, ...cleanupResults],
   };
 };
 
 export const getResults = (enhancedK8sMethods: EnhancedK8sMethods): ResultsWrapper => ({
   isValid: true,
-  results: enhancedK8sMethods
+  mainError: null,
+  errors: [],
+  requestResults: enhancedK8sMethods
     .getActualState()
-    .map((obj) => k8sObjectToResult({ obj, content: obj, message: CREATED }))
+    .map((obj, idx, actualState) =>
+      asResult({
+        obj,
+        data: obj,
+        type: ResultContentType.YAML,
+        message: actualState.length === 1 ? '' : CREATED,
+      }),
+    )
     .reverse(),
 });
 

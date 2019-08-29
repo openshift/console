@@ -24,11 +24,7 @@ import {
 import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
-import {
-  cleanupAndGetResults,
-  errorsFirstSort,
-  getResults,
-} from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
+import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
 import {
   concatImmutableLists,
   iGetIn,
@@ -36,6 +32,7 @@ import {
   immutableListToShallowJS,
 } from '../../utils/immutable';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
+import { ResultsWrapper } from '../../k8s/enhancedK8sMethods/types';
 import {
   ChangedCommonData,
   CommonData,
@@ -49,11 +46,12 @@ import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver } from './strings/strin
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { isStepLocked, isStepValid } from './selectors/immutable/wizard-selectors';
+import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { ReviewTab } from './tabs/review-tab/review-tab';
+import { ResultTab } from './tabs/result-tab/result-tab';
 
 import './create-vm-wizard.scss';
 
@@ -90,7 +88,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
   };
 
   finish() {
-    this.props.lockTab(VMWizardTab.RESULT);
+    this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
     const create = this.props.isCreateTemplate ? createVmTemplate : createVm;
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
@@ -126,9 +124,9 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     )
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ results, isValid }) =>
-        this.props.onResultsChanged(errorsFirstSort(results), isValid),
-      ) // TODO should distinguish between errors and objects in redux
+      .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>
+        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
+      )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   }
 
@@ -162,12 +160,9 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       },
       {
         id: VMWizardTab.RESULT,
-        component: (
-          <>
-            {isStepValid(stepData, VMWizardTab.RESULT) ? 'Created Successfully' : 'Creation Failed'}
-          </>
-        ),
-        isFinishedStep: isStepValid(stepData, VMWizardTab.RESULT),
+        component: <ResultTab wizardReduxID={reduxID} />,
+        isFinishedStep:
+          isStepPending(stepData, VMWizardTab.RESULT) || isStepValid(stepData, VMWizardTab.RESULT),
       },
     ];
 
@@ -183,7 +178,6 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         <Wizard
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
-          title={createVMText}
           onClose={this.onClose}
           onNext={({ id }) => {
             if (id === VMWizardTab.RESULT) {
@@ -208,7 +202,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
             });
             return stepAcc;
           }, [])}
-          footer={<CreateVMWizardFooter createVMText={createVMText} wizardReduxID={reduxID} />}
+          footer={<CreateVMWizardFooter wizardReduxID={reduxID} />}
         />
       </div>
     );
@@ -235,16 +229,15 @@ const wizardDispatchToProps = (dispatch, props) => ({
       }),
     );
   },
-  lockTab: (tabID) => {
-    dispatch(vmWizardActions[ActionType.SetTabLocked](props.reduxID, tabID, true));
-  },
   onCommonDataChanged: (commonData: CommonData, changedCommonData: ChangedCommonData) => {
     dispatch(
       vmWizardActions[ActionType.UpdateCommonData](props.reduxID, commonData, changedCommonData),
     );
   },
-  onResultsChanged: (results, isValid) => {
-    dispatch(vmWizardActions[ActionType.SetResults](props.reduxID, results, isValid));
+  onResultsChanged: (results, isValid, isLocked, isPending) => {
+    dispatch(
+      vmWizardActions[ActionType.SetResults](props.reduxID, results, isValid, isLocked, isPending),
+    );
   },
   onClose: () => {
     if (props.onClose) {

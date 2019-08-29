@@ -47,14 +47,6 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabValidity,
   }),
-  [InternalActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => ({
-    payload: {
-      id,
-      tab,
-      isLocked,
-    },
-    type: InternalActionType.SetTabLocked,
-  }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => ({
     payload: {
       id,
@@ -111,11 +103,19 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetStorages,
   }),
-  [InternalActionType.SetResults]: (id, value, isValid: boolean) => ({
+  [InternalActionType.SetResults]: (
+    id,
+    value,
+    isValid: boolean,
+    isLocked: boolean,
+    isPending: boolean,
+  ) => ({
     payload: {
       id,
       value,
       isValid,
+      isLocked,
+      isPending,
     },
     type: InternalActionType.SetResults,
   }),

@@ -10,14 +10,14 @@ import {
   WizardStep,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { ALL_VM_WIZARD_TABS, VMWizardTab } from './types';
+import { ALL_VM_WIZARD_TABS, VMWizardProps, VMWizardTab } from './types';
 import {
   hasStepAllRequiredFilled,
   isStepLocked,
   isStepValid,
 } from './selectors/immutable/wizard-selectors';
-import { iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { REVIEW_AND_CREATE } from './strings/strings';
+import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
+import { getCreateVMLikeEntityLabel, REVIEW_AND_CREATE } from './strings/strings';
 
 import './create-vm-wizard-footer.scss';
 
@@ -30,12 +30,12 @@ type WizardContext = {
 };
 type CreateVMWizardFooterComponentProps = {
   stepData: any;
-  createVMText: string;
+  isCreateTemplate: boolean;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
   stepData,
-  createVMText,
+  isCreateTemplate,
 }) => {
   const [showError, setShowError] = React.useState(false);
   const [prevIsValid, setPrevIsValid] = React.useState(false);
@@ -87,7 +87,9 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 }}
                 isDisabled={isNextButtonDisabled}
               >
-                {activeStepID === VMWizardTab.REVIEW ? createVMText : 'Next'}
+                {activeStepID === VMWizardTab.REVIEW
+                  ? getCreateVMLikeEntityLabel(isCreateTemplate)
+                  : 'Next'}
               </Button>
             )}
             {!isFinishingStep && (
@@ -135,6 +137,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 
 const stateToProps = (state, { wizardReduxID }) => ({
   stepData: iGetCreateVMWizardTabs(state, wizardReduxID),
+  isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
 });
 
 export const CreateVMWizardFooter = connect(stateToProps)(CreateVMWizardFooterComponent);
