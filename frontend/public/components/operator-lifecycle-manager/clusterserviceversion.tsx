@@ -50,8 +50,8 @@ import {
   resourcePathFromModel,
   KebabOption,
   resourceObjPath,
-  useAccessReview,
 } from '../utils';
+import { useAccessReview } from '../utils/rbac';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails } from './subscription';
 
