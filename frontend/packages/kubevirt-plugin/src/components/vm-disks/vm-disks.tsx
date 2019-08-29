@@ -164,6 +164,11 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               transforms: [sortable],
             },
             {
+              title: 'Type',
+              sortField: 'disk.cdrom',
+              transforms: [sortable],
+            },
+            {
               title: 'Storage Class',
               sortField: 'storageClass',
               transforms: [sortable],

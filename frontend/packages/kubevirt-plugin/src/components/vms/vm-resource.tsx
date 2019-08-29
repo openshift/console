@@ -17,10 +17,12 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
+import { getCDRoms } from '../../selectors/vm/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
+import { DiskSummary } from '../vm-disks/disk-summary';
 
 import './_vm-resource.scss';
 
@@ -82,6 +84,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const id = getBasicID(vm);
   const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
+  const cds = getCDRoms(vm);
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
   const nodeName = getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
@@ -110,6 +113,14 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         isNotAvail={sortedBootableDevices.length === 0}
       >
         <BootOrder bootableDevices={sortedBootableDevices} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="CD-ROMs"
+        idValue={prefixedID(id, 'cd-rom')}
+        isNotAvail={cds.length === 0}
+      >
+        <DiskSummary disks={cds} vm={vm} />
       </VMDetailsItem>
 
       <VMDetailsItem

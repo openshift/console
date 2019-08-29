@@ -50,6 +50,7 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
       <TableData>{diskName}</TableData>
       <TableData>{sizeColumn || DASH}</TableData>
       <TableData>{getDiskBus(disk, BUS_VIRTIO)}</TableData>
+      <TableData>{disk.cdrom ? 'CD-ROM' : 'Disk'}</TableData>
       <TableData>{storageColumn || DASH}</TableData>
       <TableData className={Kebab.columnClass}>
         <Kebab

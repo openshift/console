@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { isWindows } from 'kubevirt-web-ui-components';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
   BUS_VIRTIO,
@@ -11,10 +12,14 @@ import {
 import { VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
+import {
+  getVolumeContainerImageName,
+  getVolumePersistentVolumeClaimName,
+  getVolumeCloudInitUserData,
+} from './volume';
 import { getDiskBus } from './disk';
 import { getNicBus } from './nic';
 import { Network } from './types';
-import { getVolumeCloudInitUserData } from './volume';
 import { vCPUCount } from './cpu';
 
 export const getMemory = (vm: VMKind) =>
@@ -109,3 +114,19 @@ export const getCloudInitUserData = (vm: VMKind) =>
 
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
+export const getCDRoms = (vm: VMKind) => getDisks(vm).filter((device) => !!device.cdrom);
+
+export const getContainerImageByDisk = (vm: VMKind, name: string) =>
+  getVolumeContainerImageName(getVolumes(vm).find((vol) => name === vol.name));
+
+export const getURLSourceByDisk = (vm: VMKind, name: string) =>
+  _.get(
+    getDataVolumeTemplates(vm).find((vol) => vol.metadata.name.includes(name)),
+    'spec.source.http.url',
+  );
+
+export const getWindowsToolsURLByDisk = (vm: VMKind, name: string) =>
+  isWindows(vm) ? getURLSourceByDisk(vm, name) : null;
+
+export const getPVCSourceByDisk = (vm: VMKind, cdName: string) =>
+  getVolumePersistentVolumeClaimName(getVolumes(vm).find((vol) => vol.name === cdName));

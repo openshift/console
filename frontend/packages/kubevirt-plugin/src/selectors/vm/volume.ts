@@ -5,3 +5,5 @@ export const getVolumePersistentVolumeClaimName = (volume) =>
 export const getVolumeDataVolumeName = (volume) => _.get(volume, 'dataVolume.name');
 
 export const getVolumeCloudInitUserData = (volume) => _.get(volume, 'cloudInitNoCloud.userData');
+
+export const getVolumeContainerImageName = (volume) => _.get(volume, 'containerDisk.image');
