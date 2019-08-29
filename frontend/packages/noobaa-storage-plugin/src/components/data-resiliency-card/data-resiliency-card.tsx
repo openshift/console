@@ -13,7 +13,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import { getPropsData } from '../../utils';
 import './data-resiliency-card.scss';
@@ -37,12 +37,7 @@ const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResili
       </div>
     </>
   ) : (
-    <>
-      <div className="nb-data-resiliency__icon--error">
-        <ExclamationTriangleIcon />
-      </div>
-      <div>Not available</div>
-    </>
+    <GraphEmpty height="100%" />
   );
 
 const DataResiliencyBuildBody: React.FC<DataResiliencyBuildBody> = React.memo(

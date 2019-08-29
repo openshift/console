@@ -23,7 +23,7 @@ export const EventItem: React.FC<EventComponentProps> = React.memo(({ event }) =
           title={obj.uid}
         />
       </div>
-      <div className="co-events-card__item-message text-secondary">
+      <div className="co-dashboard-text--small co-events-card__item-message text-secondary">
         {message}
       </div>
     </div>

@@ -82,7 +82,7 @@ const TopConsumerCard: React.FC<DashboardItemProps> = ({
           />
         </div>
       </DashboardCardHeader>
-      <DashboardCardBody>
+      <DashboardCardBody className="co-dashboard-card__body--top-margin">
         <TopConsumersBody
           topConsumerStats={topConsumerStats}
           metricType={TopConsumerResourceValueMapping[metricType]}

@@ -10,7 +10,7 @@ export const DashboardCardHelp: React.FC<DashboardCardTitleHelpProps> = React.me
   return (
     <OverlayTrigger overlay={overlay} placement="top" trigger={['click']} rootClose>
       <Button bsStyle="link">
-        <InfoCircleIcon className="co-dashboard-header__icon" />
+        <InfoCircleIcon className="co-dashboard-icon co-dashboard-header__icon" />
       </Button>
     </OverlayTrigger>
   );

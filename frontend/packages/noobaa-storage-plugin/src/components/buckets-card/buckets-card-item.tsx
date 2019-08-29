@@ -11,11 +11,11 @@ const formatCount = (count: number) => {
 const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, link }) => (
   <div className="nb-buckets-card__row-status-item">
     {_.isNil(status) ? (
-      <span className="nb-buckets-card__row-subtitle">Unavailable</span>
+      <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Unavailable</span>
     ) : Number(status) > 0 ? (
       <React.Fragment>
         <a href={link} style={{ textDecoration: 'none' }}>
-          <RedExclamationCircleIcon className="nb-bucket-card__status-icon" />
+          <RedExclamationCircleIcon className="co-dashboard-icon nb-bucket-card__status-icon" />
           <span className="nb-buckets-card__row-status-item-text">{status}</span>
         </a>
       </React.Fragment>
@@ -29,7 +29,7 @@ const BucketsRow: React.FC<BucketsRowProps> = React.memo(
     return (
       <div className="nb-buckets-card__row-title">
         <div>{_.isNil(bucketsCount) ? title : pluralize(Number(bucketsCount), title)}</div>
-        <div className="nb-buckets-card__row-subtitle">{subtitle}</div>
+        <div className="co-dashboard-text--small nb-buckets-card__row-subtitle">{subtitle}</div>
       </div>
     );
   },
@@ -40,7 +40,7 @@ export const BucketsItem: React.FC<BucketsItemProps> = React.memo(
     isLoading ? (
       <LoadingInline />
     ) : (
-      <div className="nb-buckets-card__row">
+      <div className="co-inventory-card__item">
         <BucketsRow title={title} bucketsCount={bucketsCount} objectsCount={objectsCount} />
         <BucketsRowStatus status={unhealthyCount} link={link} />
       </div>

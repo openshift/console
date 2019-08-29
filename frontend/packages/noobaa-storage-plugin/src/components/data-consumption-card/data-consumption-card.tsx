@@ -8,7 +8,6 @@ import {
   ChartLegend,
   ChartThemeColor,
 } from '@patternfly/react-charts';
-import { ChartBarIcon } from '@patternfly/react-icons';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -127,7 +126,10 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
           setKpi={setsortByKpi}
         />
       </DashboardCardHeader>
-      <DashboardCardBody isLoading={!dataConsumptionQueryResult}>
+      <DashboardCardBody
+        className="co-dashboard-card__body--top-margin"
+        isLoading={!dataConsumptionQueryResult}
+      >
         {chartData.length > 0 ? (
           <div>
             <Chart
@@ -162,7 +164,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
             />
           </div>
         ) : (
-          <GraphEmpty icon={ChartBarIcon} />
+          <GraphEmpty />
         )}
       </DashboardCardBody>
     </DashboardCard>

@@ -428,7 +428,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       </div>}
     </div>
     {error && <Error error={error} />}
-    {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
+    {(_.isEmpty(graphData) && !updating) && <GraphEmpty />}
     {!_.isEmpty(graphData) && <React.Fragment>
       {samples < maxSamples && <Alert
         isInline

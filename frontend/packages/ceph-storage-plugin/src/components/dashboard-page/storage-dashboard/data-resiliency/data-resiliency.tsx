@@ -11,7 +11,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 import './data-resiliency.scss';
 
@@ -28,12 +28,7 @@ const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ error })
       </div>
     </>
   ) : (
-    <>
-      <div className="ceph-data-resiliency__icon-error">
-        <ExclamationTriangleIcon />
-      </div>
-      <div>Not available</div>
-    </>
+    <GraphEmpty height="100%" />
   );
 
 const DataResiliencyBuildBody: React.FC<DataResiliencyBuildBody> = ({ progressPercentage }) => (

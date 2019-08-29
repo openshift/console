@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ChartDonut, ChartThemeVariant, ChartThemeColor } from '@patternfly/react-charts';
-import { ChartPieIcon } from '@patternfly/react-icons';
 import { DataPoint } from '@console/internal/components/graphs';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import {
@@ -8,7 +7,7 @@ import {
   humanizePercentage,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
-import './capacity-card-body.scss';
+import './capacity-card.scss';
 
 type LegendDataType = {
   name: string;
@@ -50,11 +49,11 @@ export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({
   }
   const { metricData, metricLegend } = getLegendAndChartData(metricsData, totalUsage);
   if (!metricData.length) {
-    return <GraphEmpty icon={ChartPieIcon} />;
+    return <GraphEmpty />;
   }
   const totalHumanized = humanizeBinaryBytes(totalUsage, null, totalUsage ? null : 'MiB');
   return (
-    <div className="nb-capacity-card__chart-body">
+    <div className="nb-capacity-card__body-chart">
       <div className="noobaa-capacity-card__item">
         <ChartDonut
           width={275}

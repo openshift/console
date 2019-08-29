@@ -49,7 +49,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     const title = count !== 1 ? pluralTitle : singularTitle;
     let status: React.ReactNode;
     if (error) {
-      status = <div className="text-secondary">Unavailable</div>;
+      status = <div className="co-dashboard-text--small text-secondary">Unavailable</div>;
     } else if (isLoading) {
       status = <LoadingInline />;
     } else {
@@ -69,7 +69,7 @@ export const Status: React.FC<StatusProps> = React.memo(({ groupID, count, flags
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   return (
     <div className="co-inventory-card__status">
-      <span className="co-inventory-card__status-icon">{groupIcon}</span>
+      <span className="co-dashboard-icon">{groupIcon}</span>
       <span className="co-inventory-card__status-text">{count}</span>
     </div>
   );
@@ -85,7 +85,7 @@ const StatusLink: React.FC<StatusLinkProps> = React.memo(
     return (
       <div className="co-inventory-card__status">
         <Link to={to} style={{textDecoration: 'none'}}>
-          <span className="co-inventory-card__status-icon">{groupIcon}</span>
+          <span className="co-dashboard-icon">{groupIcon}</span>
           <span className="co-inventory-card__status-text">{count}</span>
         </Link>
       </div>

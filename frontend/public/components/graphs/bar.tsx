@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ChartBarIcon } from '@patternfly/react-icons';
 import {
   ChartBar,
   ChartLabel,
@@ -70,7 +69,7 @@ export const BarChart: React.FC<BarChartProps> = ({
             ))}
           </PrometheusGraphLink>
         ) : (
-          <GraphEmpty icon={ChartBarIcon} loading={loading} height={100} />
+          <GraphEmpty loading={loading} />
         )
       }
     </PrometheusGraph>

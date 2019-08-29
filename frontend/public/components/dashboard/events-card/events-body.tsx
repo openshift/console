@@ -23,7 +23,7 @@ export const EventsBody: React.FC<EventsBodyProps> = ({ events, filter }) => {
     );
   }
   return (
-    <div className="co-events-card__body" id="events-body">
+    <div className="co-dashboard-card__body--no-padding co-events-card__body" id="events-body">
       <div className="co-events-card__body-stream">
         {eventsBody}
       </div>

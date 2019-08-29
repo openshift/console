@@ -9,11 +9,15 @@
   flex: 0 1 120px;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 1.5em;
   text-align: center;
 }
 
+.co-capacity-card__item-chart {
+  margin-bottom: 0;
+}
+
 .co-capacity-card__item-description {
-  font-size: 0.875rem;
   font-weight: normal;
   line-height: 1.5;
   margin-bottom: 0;

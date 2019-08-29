@@ -4,7 +4,7 @@
   display: flex;
   font-size: 1rem;
   justify-content: space-between;
-  padding: 1em 0;
+  padding: 1em var(--pf-c-card--child--PaddingRight) 1em var(--pf-c-card--child--PaddingLeft);
 }
 
 .co-inventory-card__item-status {
@@ -26,10 +26,6 @@
   display: flex;
   flex-shrink: 0;
   margin-right: 0.5em;
-}
-
-.co-inventory-card__status-icon {
-  font-size: 1.125rem;
 }
 
 .co-inventory-card__status-icon--question {

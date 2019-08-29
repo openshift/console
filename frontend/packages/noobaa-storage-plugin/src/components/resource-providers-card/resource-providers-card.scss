@@ -1,12 +1,10 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-.nb-resource-providers-card__row {
-  align-items: center;
-  border-bottom: 1px solid $pf-color-black-300;
+.nb-resource-providers-card__not-available {
   display: flex;
-  font-size: 1rem;
-  justify-content: space-between;
-  padding: 1em 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .nb-resource-providers-card__row-status {
@@ -16,10 +14,6 @@
   :last-child {
     margin-right: 0;
   }
-}
-
-.nb-resource-provider-card__status-icon {
-  color: $pf-color-black-700;
 }
 
 .nb-resource-providers-card__row-status-item {
@@ -36,4 +30,8 @@
 
 .nb-resource-providers-card__row-title {
   margin-right: 0.5em;
+}
+
+.nb-resource-providers-card__status-icon {
+  color: $pf-color-black-700;
 }
