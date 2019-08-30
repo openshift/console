@@ -10,12 +10,14 @@ import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin/src/const';
 import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
 import DefaultPage from '../DefaultPage';
+import { getCheURL } from './topology-utils';
 import TopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 
 interface StateProps {
   activeApplication: string;
   knative: boolean;
+  cheURL: string;
 }
 
 export interface TopologyPageProps {
@@ -54,7 +56,7 @@ export function renderTopology({ loaded, loadError, data }: RenderProps) {
   );
 }
 
-const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative }) => {
+const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheURL }) => {
   const namespace = match.params.ns;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
   return (
@@ -69,6 +71,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative }) =>
             namespace={namespace}
             render={renderTopology}
             knative={knative}
+            cheURL={cheURL}
           />
         ) : (
           <DefaultPage title="Topology">Select a project to view the topology</DefaultPage>
@@ -81,9 +84,11 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative }) =>
 const getKnativeStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(FLAG_KNATIVE_SERVING);
 
 const mapStateToProps = (state: RootState): StateProps => {
+  const consoleLinks = state.UI.get('consoleLinks');
   return {
     activeApplication: getActiveApplication(state),
     knative: getKnativeStatus(state),
+    cheURL: getCheURL(consoleLinks),
   };
 };
 

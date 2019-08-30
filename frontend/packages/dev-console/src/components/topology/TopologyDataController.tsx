@@ -16,6 +16,7 @@ export interface ControllerProps {
   resources?: TopologyDataResources;
   render(RenderProps): React.ReactElement;
   application: string;
+  cheURL: string;
 }
 
 export interface TopologyDataControllerProps {
@@ -23,15 +24,16 @@ export interface TopologyDataControllerProps {
   render(RenderProps): React.ReactElement;
   application: string;
   knative: boolean;
+  cheURL: string;
 }
 
 const Controller: React.FC<ControllerProps> = React.memo(
-  ({ render, application, resources, loaded, loadError }) =>
+  ({ render, application, cheURL, resources, loaded, loadError }) =>
     render({
       loaded,
       loadError,
       data: loaded
-        ? new TransformTopologyData(resources, application)
+        ? new TransformTopologyData(resources, application, cheURL)
             .transformDataBy('deployments')
             .transformDataBy('deploymentConfigs')
             .transformDataBy('daemonSets')
@@ -46,6 +48,7 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   render,
   application,
   knative,
+  cheURL,
 }) => {
   let resources: FirehoseResource[] = [
     {
@@ -122,7 +125,7 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   }
   return (
     <Firehose resources={resources} forceUpdate>
-      <Controller application={application} render={render} />
+      <Controller application={application} cheURL={cheURL} render={render} />
     </Firehose>
   );
 };

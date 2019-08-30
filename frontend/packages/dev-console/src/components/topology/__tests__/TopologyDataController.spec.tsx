@@ -10,6 +10,7 @@ describe('TopologyDataController', () => {
     namespace: 'test',
     resources,
     knative: false,
+    cheURL: 'https://test-che.test-cluster.com',
     render: () => <TestInner />,
   };
   let wrapper: ShallowWrapper<TopologyDataControllerProps>;

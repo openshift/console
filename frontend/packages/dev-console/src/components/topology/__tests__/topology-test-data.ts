@@ -36,6 +36,10 @@ export const sampleDeploymentConfigs: Resource = {
         labels: {
           app: 'nodejs',
         },
+        annotations: {
+          'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
+          'app.openshift.io/vcs-ref': 'master',
+        },
       },
       spec: {
         template: {
