@@ -17,7 +17,7 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import { getBrandingDetails } from '../../masthead';
 import { RootState } from '../../../redux';
 import { connectToFlags, flagPending, featureReducerName, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 import { uniqueResource } from './utils';
 import { isDashboardsOverviewHealthURLSubsystem, isDashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
 
@@ -70,7 +70,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const getSubsystems = (flags: FlagsObject) =>
-  plugins.registry.getDashboardsOverviewHealthSubsystems().filter(e => flags[e.properties.required]);
+  plugins.registry.getDashboardsOverviewHealthSubsystems().filter(e => isDashboardExtensionInUse(e, flags));
 
 const HealthCard_ = connect(mapStateToProps)(({
   watchURL,

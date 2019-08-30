@@ -27,7 +27,7 @@ import { MonitoringRoutes, connectToURLs } from '../../../reducers/monitoring';
 import { getPrometheusExpressionBrowserURL } from '../../graphs/prometheus-graph';
 import { getName, getNamespace } from '@console/shared';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 
 const topConsumersQueryMap: TopConsumersMap = {
   [PODS]: {
@@ -53,7 +53,7 @@ const topConsumersQueryMap: TopConsumersMap = {
 
 const getTopConsumersQueries = (flags: FlagsObject): TopConsumersMap => {
   const topConsumers = {...topConsumersQueryMap};
-  plugins.registry.getDashboardsOverviewTopConsumerItems().filter(e => flags[e.properties.required]).forEach(pluginItem => {
+  plugins.registry.getDashboardsOverviewTopConsumerItems().filter(e => isDashboardExtensionInUse(e, flags)).forEach(pluginItem => {
     if (!topConsumers[pluginItem.properties.name]) {
       topConsumers[pluginItem.properties.name] = {
         model: pluginItem.properties.model,

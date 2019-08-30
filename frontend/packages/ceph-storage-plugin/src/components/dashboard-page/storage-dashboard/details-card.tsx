@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { getInfrastructurePlatform } from '@console/shared';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -16,7 +17,6 @@ import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { CephClusterModel } from '../../../models';
-import { getInfrastructurePlatform } from '../../../selectors';
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),

@@ -11,7 +11,7 @@ import { DashboardGrid, GridPosition, GridDashboardCard } from '../dashboard/gri
 import { DashboardsCard } from '@console/plugin-sdk';
 import { featureReducerName, connectToFlags, FlagsObject, WithFlagsProps } from '../../reducers/features';
 import { RootState } from '../../redux';
-import { getFlagsForExtensions } from './utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from './utils';
 
 const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
   cards.filter(c => c.properties.position === position).map(c => ({
@@ -20,8 +20,8 @@ const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): Gr
   }));
 
 const getPluginTabPages = (flags: FlagsObject): Page[] => {
-  const cards = plugins.registry.getDashboardsCards().filter(e => flags[e.properties.required]);
-  return plugins.registry.getDashboardsTabs().filter(e => flags[e.properties.required]).map(tab => {
+  const cards = plugins.registry.getDashboardsCards().filter(e => isDashboardExtensionInUse(e, flags));
+  return plugins.registry.getDashboardsTabs().filter(e => isDashboardExtensionInUse(e, flags)).map(tab => {
     const tabCards = cards.filter(c => c.properties.tab === tab.properties.id);
     return {
       href: tab.properties.id,

@@ -9,6 +9,7 @@ import {
   TableVariant,
   TableGridBreakpoint,
 } from '@patternfly/react-table';
+import { getInfrastructurePlatform } from '@console/shared';
 import { tableFilters } from '@console/internal/components/factory/table-filters';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
@@ -263,7 +264,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     k8sGet(InfrastructureModel, 'cluster')
       .then((infra: K8sResourceKind) => {
         // find infra supported provisioner
-        provisioner = infraProvisionerMap[_.lowerCase(_.get(infra, 'status.platform'))];
+        provisioner = infraProvisionerMap[_.lowerCase(getInfrastructurePlatform(infra))];
         return k8sList(StorageClassModel);
       })
       .then((storageClasses: StorageClassResourceKind[]) => {

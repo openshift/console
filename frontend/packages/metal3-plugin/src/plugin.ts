@@ -10,6 +10,7 @@ import {
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
+import { FLAGS } from '@console/internal/const';
 import { BaremetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/dashboard/utils';
 
@@ -46,7 +47,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Bare Metal Hosts',
         resource: referenceForModel(BaremetalHostModel),
-        required: METAL3_FLAG,
+        required: [FLAGS.BAREMETAL, METAL3_FLAG],
       },
     },
   },
@@ -107,7 +108,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       model: BaremetalHostModel,
       mapper: getBMHStatusGroups,
-      required: METAL3_FLAG,
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },
 ];

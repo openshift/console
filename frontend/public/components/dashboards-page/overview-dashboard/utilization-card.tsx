@@ -14,11 +14,11 @@ import { getRangeVectorStats } from '../../graphs/utils';
 import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../utils';
 import { OverviewQuery, utilizationQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().filter(e => flags[e.properties.required]).forEach(pluginQuery => {
+  plugins.registry.getDashboardsOverviewQueries().filter(e => isDashboardExtensionInUse(e, flags)).forEach(pluginQuery => {
     const queryKey = pluginQuery.properties.queryKey;
     if (!pluginQueries[queryKey]) {
       pluginQueries[queryKey] = pluginQuery.properties.query;
@@ -28,7 +28,7 @@ const getQueries = (flags: FlagsObject) => {
 };
 
 const getItems = (flags: FlagsObject) =>
-  plugins.registry.getDashboardsOverviewUtilizationItems().filter(e => flags[e.properties.required]);
+  plugins.registry.getDashboardsOverviewUtilizationItems().filter(e => isDashboardExtensionInUse(e, flags));
 
 const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,

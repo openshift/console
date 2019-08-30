@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { getInfrastructurePlatform } from '@console/shared';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -14,7 +15,6 @@ import {
 import { FirehoseResource, ExternalLink } from '@console/internal/components/utils';
 import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { getInfrastructurePlatform } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
