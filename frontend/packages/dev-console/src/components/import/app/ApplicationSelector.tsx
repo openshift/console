@@ -60,7 +60,6 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
           label="Application Name"
           data-test-id="application-form-app-input"
           helpText="A unique name given to the application grouping to label your resources."
-          required
         />
       )}
     </React.Fragment>
