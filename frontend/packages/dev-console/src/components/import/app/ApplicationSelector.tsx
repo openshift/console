@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '../../formik-fields';
@@ -12,6 +13,7 @@ export interface ApplicationSelectorProps {
 }
 
 const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) => {
+  const [isZeroApplication, setIsZeroApplication] = React.useState(false);
   const [selectedKey, { touched, error }] = useField('application.selectedKey');
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const fieldId = getFieldId('application-name', 'dropdown');
@@ -30,29 +32,40 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
     validateForm();
   };
 
+  const handleOnLoad = (items: { [key: string]: string }) => {
+    setIsZeroApplication(_.isEmpty(items));
+    if (_.isEmpty(items)) {
+      setFieldValue('application.selectedKey', CREATE_APPLICATION_KEY);
+      setFieldValue('application.name', '');
+    }
+  };
+
   return (
     <React.Fragment>
-      <FormGroup
-        fieldId={fieldId}
-        label="Application"
-        helperTextInvalid={errorMessage}
-        isValid={isValid}
-        isRequired
-      >
-        <ApplicationDropdown
-          dropDownClassName="dropdown--full-width"
-          menuClassName="dropdown-menu--text-wrap"
-          id={fieldId}
-          namespace={namespace}
-          actionItem={{
-            actionTitle: 'Create New Application',
-            actionKey: CREATE_APPLICATION_KEY,
-          }}
-          autoSelect
-          selectedKey={selectedKey.value}
-          onChange={onDropdownChange}
-        />
-      </FormGroup>
+      {!isZeroApplication && (
+        <FormGroup
+          fieldId={fieldId}
+          label="Application"
+          helperTextInvalid={errorMessage}
+          isValid={isValid}
+          isRequired
+        >
+          <ApplicationDropdown
+            dropDownClassName="dropdown--full-width"
+            menuClassName="dropdown-menu--text-wrap"
+            id={fieldId}
+            namespace={namespace}
+            actionItem={{
+              actionTitle: 'Create New Application',
+              actionKey: CREATE_APPLICATION_KEY,
+            }}
+            autoSelect
+            selectedKey={selectedKey.value}
+            onChange={onDropdownChange}
+            onLoad={(items) => handleOnLoad(items)}
+          />
+        </FormGroup>
+      )}
       {selectedKey.value === CREATE_APPLICATION_KEY && (
         <InputField
           type={TextInputTypes.text}

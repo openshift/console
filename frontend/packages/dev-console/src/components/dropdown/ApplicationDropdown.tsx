@@ -25,6 +25,7 @@ interface ApplicationDropdownProps {
   selectedKey: string;
   autoSelect?: boolean;
   onChange?: (key: string, name?: string) => void;
+  onLoad?: (items: { [key: string]: string }) => void;
 }
 
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
@@ -40,6 +41,18 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
       namespace,
       kind: 'Deployment',
       prop: 'deployments',
+    },
+    {
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      prop: 'statefulSets',
+    },
+    {
+      isList: true,
+      kind: 'DaemonSet',
+      namespace,
+      prop: 'daemonSets',
     },
   ];
   return (
