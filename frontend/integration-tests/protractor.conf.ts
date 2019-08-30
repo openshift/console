@@ -154,6 +154,7 @@ export const config: Config = {
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
       'tests/crd-extensions.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
     ]),
     release: suite([
       'tests/crud.scenario.ts',

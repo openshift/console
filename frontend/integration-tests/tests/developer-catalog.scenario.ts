@@ -42,24 +42,26 @@ describe('Developer Catalog', () => {
 
   it('displays "Jenkins" catalog tile when filter by name: "jenkins"', async() => {
     await catalogPageView.filterByKeyword('jenkins');
+    await crudView.isLoaded();
     expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
   });
 
   it('displays "No Filter Results" page correctly', async() => {
     await catalogPageView.filterByKeyword('NoFilterResultsTest');
-    await catalogPageView.clickFilterCheckbox('kind-ImageStream');
+    await catalogPageView.clickFilterCheckbox('kind-image-stream');
     expect(catalogPageView.catalogTiles.count()).toBe(0);
-    expect(catalogPageView.filterCheckboxFor('kind-ImageStream').isSelected()).toBe(true);
+    expect(catalogPageView.filterCheckboxFor('kind-image-stream').isSelected()).toBe(true);
     expect(catalogPageView.clearFiltersText.isDisplayed()).toBe(true);
 
     await catalogPageView.clearFiltersText.click();
+    await crudView.isLoaded();
     expect(catalogPageView.filterTextbox.getAttribute('value')).toEqual('');
 
-    expect(catalogPageView.filterCheckboxFor('kind-ImageStream').isSelected()).toBe(false);
+    expect(catalogPageView.filterCheckboxFor('kind-image-stream').isSelected()).toBe(false);
     expect(catalogPageView.catalogTiles.count()).toBeGreaterThan(0);
   });
 
-  it('filters catalog tiles by \'Service Class\' Type correctly', async() => {
+  xit('filters catalog tiles by \'Service Class\' Type correctly', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ClusterServiceClass');
@@ -81,12 +83,12 @@ describe('Developer Catalog', () => {
   it('filters catalog tiles by \'Source-To-Image\' Type correctly', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
-    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ImageStream');
+    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-image-stream');
 
     // 'Jenkins' is service class and should be shown initially
     expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('kind-ImageStream');
+    await catalogPageView.clickFilterCheckbox('kind-image-stream');
     // 'Node.js' is s-2-i and should be shown
     expect(catalogPageView.catalogTileFor('Node.js').isPresent()).toBe(true);
     // 'Jenkins' is service-class and should not be shown
@@ -96,7 +98,42 @@ describe('Developer Catalog', () => {
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
   });
 
-  it('creates a service instance and binding', async() => {
+  it('filters catalog tiles by \'Template\' type correctly', async() => {
+    await catalogPageView.catalogTiles;
+    await catalogPageView.clickFilterCheckbox('kind-template');
+    expect(catalogPageView.catalogTileFor('CakePHP + MySQL (Ephemeral)').isPresent()).toBe(true);
+    expect(catalogPageView.catalogTileFor('Python').isPresent()).toBe(false);
+  });
+
+  it('create a template instance', async() => {
+    await catalogPageView.catalogTiles;
+    await catalogPageView.clickFilterCheckbox('kind-template');
+    await crudView.isLoaded();
+    expect(catalogPageView.catalogTileFor('Dancer + MySQL (Ephemeral)').isDisplayed()).toBe(true);
+
+    await catalogPageView.catalogTileFor('Dancer + MySQL (Ephemeral)').click();
+    await catalogView.catalogDetailsLoaded();
+    await catalogView.createResourceButton.click();
+    await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(catalogView.instantiateTemplateFrom)));
+    await srvCatalogView.createButton.click();
+    await crudView.isLoaded();
+
+    const templateInstanceItem = $('.co-resource-item .co-m-resource-templateinstance');
+    const templateInstanceName = $('.co-resource-item__resource-name');
+    expect(templateInstanceItem.isDisplayed()).toBe(true);
+    expect(templateInstanceName.getText()).toContain('dancer-mysql-example-');
+    await $('.co-m-table-grid');
+    expect(catalogView.resourceItem('Secret', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('Service', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('Service', 'database').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('Route', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('ImageStream', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('BuildConfig', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('DeploymentConfig', 'dancer-mysql-example').isPresent()).toBe(true);
+    expect(catalogView.resourceItem('DeploymentConfig', 'database').isPresent()).toBe(true);
+  });
+
+  xit('creates a service instance and binding', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     await catalogPageView.clickFilterCheckbox('kind-ClusterServiceClass');
@@ -106,8 +143,8 @@ describe('Developer Catalog', () => {
     await catalogPageView.catalogTileFor('MongoDB').click();
     await catalogView.catalogDetailsLoaded();
 
-    expect(catalogView.createServiceInstanceButton.isDisplayed()).toBe(true);
-    await catalogView.createServiceInstanceButton.click();
+    expect(catalogView.createResourceButton.isDisplayed()).toBe(true);
+    await catalogView.createResourceButton.click();
     await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(catalogView.createServiceInstanceForm)));
 
     await $('#dropdown-selectbox').click();
