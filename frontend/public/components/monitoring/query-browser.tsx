@@ -156,9 +156,10 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({datum, labels, query, serie
 };
 const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
 
-const Tooltip: React.FC<TooltipProps> = ({datum, x, y}) => datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y)
+const Tooltip_: React.FC<TooltipProps> = ({datum, x, y}) => datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y)
   ? <TooltipInner datum={datum} seriesIndex={datum._stack - 1} x={x} y={y} />
   : null;
+const Tooltip = withFallback(Tooltip_);
 
 const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
 
