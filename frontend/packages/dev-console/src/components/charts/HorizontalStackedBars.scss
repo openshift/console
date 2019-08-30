@@ -1,12 +1,22 @@
+$gapSize: 3px;
+
 .odc-horizontal-stacked-bars {
-  display: inline-flex;
-  flex-direction: row;
+  display: inline-block;
   height: 100%;
-  outline: none;
+  overflow: hidden;
   vertical-align: middle;
   width: 100%;
 
+  &__bars {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    outline: none;
+    width: calc(100% + #{$gapSize});
+  }
+
   &__data-bar {
+    box-shadow: inset -#{$gapSize} 0 0 #ffffff;
     height: 100%;
     transition: flex-grow 300ms linear;
   }

@@ -22,17 +22,19 @@ const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
 }) => {
   return (
     <div className="odc-horizontal-stacked-bars" style={{ height, width }}>
-      {values.map(({ color, name, size }) => (
-        <div
-          key={name}
-          className="odc-horizontal-stacked-bars__data-bar"
-          style={{
-            background: color,
-            flexGrow: size,
-            transition: disableAnimation ? 'initial' : undefined,
-          }}
-        />
-      ))}
+      <div className="odc-horizontal-stacked-bars__bars">
+        {values.map(({ color, name, size }) => (
+          <div
+            key={name}
+            className="odc-horizontal-stacked-bars__data-bar"
+            style={{
+              background: color,
+              flexGrow: size,
+              transition: disableAnimation ? 'initial' : undefined,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
