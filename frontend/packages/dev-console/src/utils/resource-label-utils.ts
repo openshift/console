@@ -10,6 +10,7 @@ export const getAppLabels = (
     'app.kubernetes.io/instance': name,
     'app.kubernetes.io/component': name,
     'app.kubernetes.io/name': imageStreamName,
+    'app.openshift.io/runtime': imageStreamName,
     ...(selectedTag && { 'app.openshift.io/runtime-version': selectedTag }),
   };
 };

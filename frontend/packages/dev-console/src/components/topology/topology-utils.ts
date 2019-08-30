@@ -4,6 +4,7 @@ import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
 import { ResourceProps, TransformPodData, updateResourceApplication } from '@console/shared';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
 const isKnativeDeployment = (dc: ResourceProps): boolean => {
@@ -140,7 +141,10 @@ export class TransformTopologyData {
           editUrl:
             deploymentsAnnotations['app.openshift.io/edit-url'] ||
             getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], this.cheURL),
-          builderImage: deploymentsLabels['app.kubernetes.io/name'],
+          builderImage:
+            getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+            getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
+            getImageForIconClass(`icon-openshift`),
           isKnativeResource: this.transformPodData.isKnativeServing(
             deploymentConfig,
             'metadata.labels',
