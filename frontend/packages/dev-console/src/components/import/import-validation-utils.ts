@@ -22,7 +22,7 @@ export const validationSchema = yup.object().shape({
     name: yup.string().required('Required'),
   }),
   application: yup.object().shape({
-    name: yup.string().required('Required'),
+    name: yup.string(),
     selectedKey: yup.string().required('Required'),
   }),
   image: yup.object().when('build', {
