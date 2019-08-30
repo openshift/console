@@ -7,6 +7,8 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
+  Pagination,
+  PaginationVariant,
   Switch,
   Title,
 } from '@patternfly/react-core';
@@ -435,9 +437,33 @@ const queryTableStateToProps = ({UI}: RootState, {index}) => ({
   series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
 });
 
+const paginationOptions = [10, 20, 50, 100, 200, 500].map(n => ({title: n.toString(), value: n}));
+
+const TablePagination = ({itemCount, page, perPage, setPage, setPerPage}) => {
+  const onPerPageSelect = (e, v) => {
+    // When changing the number of results per page, keep the start row approximately the same
+    const firstRow = (page - 1) * perPage;
+    setPage(Math.floor(firstRow / v) + 1);
+    setPerPage(v);
+  };
+
+  return <Pagination
+    className="query-browser__pagination"
+    itemCount={itemCount}
+    onPerPageSelect={onPerPageSelect}
+    onSetPage={(e, v) => setPage(v)}
+    page={page}
+    perPage={perPage}
+    perPageOptions={paginationOptions}
+    variant={PaginationVariant.bottom}
+  />;
+};
+
 const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, query, series}) => {
   const [data, setData] = React.useState();
   const [error, setError] = React.useState();
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(100);
   const [sortBy, setSortBy] = React.useState<ISortBy>({index: 1, direction: 'asc'});
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
@@ -463,6 +489,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
   React.useEffect(() => {
     setData(undefined);
     setError(undefined);
+    setPage(1);
   }, [query]);
 
   if (!isEnabled || !isExpanded || !query) {
@@ -563,18 +590,21 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
 
   const onSort = (e, i, direction) => setSortBy({index: i, direction});
 
-  return <Table
-    aria-label="query results table"
-    cells={columns}
-    gridBreakPoint={TableGridBreakpoint[breakPoint]}
-    onSort={onSort}
-    rows={rows}
-    sortBy={sortBy}
-    variant={TableVariant.compact}
-  >
-    <TableHeader />
-    <TableBody />
-  </Table>;
+  return <React.Fragment>
+    <Table
+      aria-label="query results table"
+      cells={columns}
+      gridBreakPoint={TableGridBreakpoint[breakPoint]}
+      onSort={onSort}
+      rows={rows.slice((page - 1) * perPage, page * perPage - 1)}
+      sortBy={sortBy}
+      variant={TableVariant.compact}
+    >
+      <TableHeader />
+      <TableBody />
+    </Table>
+    <TablePagination itemCount={rows.length} page={page} perPage={perPage} setPage={setPage} setPerPage={setPerPage} />
+  </React.Fragment>;
 };
 const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
 
