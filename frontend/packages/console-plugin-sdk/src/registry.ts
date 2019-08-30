@@ -27,6 +27,8 @@ import {
   isClusterServiceVersionAction,
   isKebabActions,
   isDevCatalogModel,
+  isDashboardsOverviewResourceActivity,
+  isDashboardsOverviewPrometheusActivity,
 } from './typings';
 
 /**
@@ -137,5 +139,13 @@ export class ExtensionRegistry {
 
   public getDevCatalogModels() {
     return this.extensions.filter(isDevCatalogModel);
+  }
+
+  public getDashboardsOverviewResourceActivities() {
+    return this.extensions.filter(isDashboardsOverviewResourceActivity);
+  }
+
+  public getDashboardsOverviewPrometheusActivities() {
+    return this.extensions.filter(isDashboardsOverviewPrometheusActivity);
   }
 }

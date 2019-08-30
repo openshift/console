@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   Plugin,
   ModelDefinition,
@@ -20,6 +21,8 @@ import {
   DashboardsOverviewQuery,
   DashboardsOverviewUtilizationItem,
   DashboardsOverviewTopConsumerItem,
+  DashboardsOverviewResourceActivity,
+  DashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
@@ -53,7 +56,9 @@ type ConsumedExtensions =
   | DashboardsInventoryItemGroup
   | DashboardsOverviewQuery
   | DashboardsOverviewUtilizationItem
-  | DashboardsOverviewTopConsumerItem;
+  | DashboardsOverviewTopConsumerItem
+  | DashboardsOverviewResourceActivity
+  | DashboardsOverviewPrometheusActivity;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -107,7 +112,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: FooBarModel,
       loader: () =>
-        import('./components/test-pages' /* webpackChunkName: "demo-foobars" */).then(
+        import('./components/test-pages' /* webpackChunkName: "demo" */).then(
           (m) => m.DummyResourceListPage,
         ),
     },
@@ -117,7 +122,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: FooBarModel,
       loader: () =>
-        import('./components/test-pages' /* webpackChunkName: "demo-foobars" */).then(
+        import('./components/test-pages' /* webpackChunkName: "demo" */).then(
           (m) => m.DummyResourceDetailsPage,
         ),
     },
@@ -207,7 +212,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       tab: 'foo-tab',
       position: GridPosition.MAIN,
       loader: () =>
-        import('./dashboards/foo-card' /* webpackChunkName: "demo-card" */).then((m) => m.FooCard),
+        import('./dashboards/foo-card' /* webpackChunkName: "demo" */).then((m) => m.FooCard),
       required: 'TEST_MODEL_FLAG',
     },
   },
@@ -269,6 +274,34 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       mutator: (data) =>
         data.map((datum) => ({ ...datum, x: (datum.x as string).replace('prometheus-', '') })),
+      required: 'TEST_MODEL_FLAG',
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: NodeModel.kind,
+        prop: 'nodes',
+      },
+      isActivity: (resource) =>
+        _.get(resource, ['metadata', 'labels', 'node-role.kubernetes.io/master']) === '',
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import('./dashboards/activity' /* webpackChunkName: "demo" */).then((m) => m.DemoActivity),
+      required: 'TEST_MODEL_FLAG',
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Prometheus',
+    properties: {
+      queries: ['barQuery'],
+      isActivity: () => true,
+      loader: () =>
+        import('./dashboards/activity' /* webpackChunkName: "demo" */).then(
+          (m) => m.DemoPrometheusActivity,
+        ),
       required: 'TEST_MODEL_FLAG',
     },
   },
