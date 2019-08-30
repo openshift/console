@@ -28,7 +28,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
     properties: {
-      models: [BaremetalHostModel],
+      models: [BaremetalHostModel, NodeMaintenanceModel],
     },
   },
   {
@@ -45,7 +45,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       mergeAfter: 'Machine Autoscalers',
       componentProps: {
         name: 'Bare Metal Hosts',
-        resource: 'baremetalhosts',
+        resource: referenceForModel(BaremetalHostModel),
         required: METAL3_FLAG,
       },
     },

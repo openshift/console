@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { ActionGroup, Button, ButtonVariant, Switch } from '@patternfly/react-core';
 import { ButtonBar, history, resourcePathFromModel } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -192,13 +191,9 @@ const AddHost: React.FC = () => {
               >
                 Create
               </Button>
-              <Link
-                to={`/k8s/ns/${getActiveNamespace()}/baremetalhosts`}
-                className="pf-c-button pf-m-secondary"
-                id="cancel"
-              >
+              <Button id="cancel" type="button" variant="secondary" onClick={history.goBack}>
                 Cancel
-              </Link>
+              </Button>
             </ActionGroup>
           </ButtonBar>
         </form>
