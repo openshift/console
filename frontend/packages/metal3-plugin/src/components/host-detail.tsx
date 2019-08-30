@@ -212,7 +212,7 @@ const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = ({
       prop: 'machines',
     },
     {
-      kind: referenceForModel(NodeModel),
+      kind: NodeModel.kind,
       namespaced: false,
       isList: true,
       prop: 'nodes',
