@@ -30,3 +30,6 @@ export const getCephNodes = (nodesData: K8sResourceKind[] = []): K8sResourceKind
 
 export const getCephSC = (scData: K8sResourceKind[]): K8sResourceKind[] =>
   scData.filter((sc) => cephStorageProvisioners.includes(_.get(sc, 'provisioner')));
+
+export const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
+  _.get(infrastructure, 'status.platform');

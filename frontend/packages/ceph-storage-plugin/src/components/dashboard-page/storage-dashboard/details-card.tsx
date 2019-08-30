@@ -11,17 +11,12 @@ import {
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DetailsBody } from '@console/internal/components/dashboard/details-card/details-body';
 import { FirehoseResource } from '@console/internal/components/utils/index';
-import { InfrastructureModel } from '@console/internal/models/index';
+import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { CephClusterModel } from '../../../models';
-
-const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
-  _.get(infrastructure, 'status.platform');
-
-const getCephVersion = (cephCluster: K8sResourceKind): string =>
-  _.get(cephCluster, 'spec.cephVersion.image');
+import { getInfrastructurePlatform } from '../../../selectors';
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),
@@ -38,6 +33,14 @@ const cephClusterResource: FirehoseResource = {
   prop: 'ceph',
 };
 
+const SubscriptionResource: FirehoseResource = {
+  kind: referenceForModel(SubscriptionModel),
+  namespaced: false,
+  prop: 'subscription',
+  name: 'ocs-subscription',
+  isList: false,
+};
+
 const DetailsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
   stopWatchK8sResource,
@@ -46,9 +49,11 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   React.useEffect(() => {
     watchK8sResource(cephClusterResource);
     watchK8sResource(infrastructureResource);
+    watchK8sResource(SubscriptionResource);
     return () => {
       stopWatchK8sResource(cephClusterResource);
       stopWatchK8sResource(infrastructureResource);
+      stopWatchK8sResource(SubscriptionResource);
     };
   }, [watchK8sResource, stopWatchK8sResource]);
 
@@ -59,6 +64,10 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const cephCluster = _.get(resources, 'ceph');
   const cephClusterLoaded = _.get(cephCluster, 'loaded', false);
   const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
+
+  const subscription = _.get(resources, 'subscription');
+  const subscriptionLoaded = _.get(subscription, 'loaded');
+  const ocsVersion = _.get(subscription, 'data.status.currentCSV');
 
   return (
     <DashboardCard>
@@ -88,8 +97,8 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="version"
             title="Version"
-            value={getCephVersion(_.get(cephClusterData, 0))}
-            isLoading={!cephClusterLoaded}
+            value={ocsVersion}
+            isLoading={!subscriptionLoaded}
           />
         </DetailsBody>
       </DashboardCardBody>

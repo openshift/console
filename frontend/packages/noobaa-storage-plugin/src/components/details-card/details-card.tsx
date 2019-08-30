@@ -12,26 +12,11 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { InfrastructureModel } from '@console/internal/models';
+import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { CephClusterModel } from '../../../../ceph-storage-plugin/src/models';
-
-const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
-  _.get(infrastructure, 'status.platform');
-
-const getCephVersion = (cephCluster: K8sResourceKind): string =>
-  _.get(cephCluster, 'spec.cephVersion.image');
+import { getInfrastructurePlatform } from '@console/ceph-storage-plugin/src/selectors';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
-
-const cephClusterResource: FirehoseResource = {
-  kind: referenceForModel(CephClusterModel),
-  namespaced: true,
-  namespace: 'openshift-storage',
-  name: 'rook-ceph',
-  isList: false,
-  prop: 'ceph',
-};
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),
@@ -39,6 +24,14 @@ const infrastructureResource: FirehoseResource = {
   name: 'cluster',
   isList: false,
   prop: 'infrastructure',
+};
+
+const SubscriptionResource: FirehoseResource = {
+  kind: referenceForModel(SubscriptionModel),
+  namespaced: false,
+  prop: 'subscription',
+  name: 'ocs-subscription',
+  isList: false,
 };
 
 export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
@@ -50,11 +43,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   resources,
 }) => {
   React.useEffect(() => {
-    watchK8sResource(cephClusterResource);
+    watchK8sResource(SubscriptionResource);
     watchK8sResource(infrastructureResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
     return () => {
-      stopWatchK8sResource(cephClusterResource);
+      stopWatchK8sResource(SubscriptionResource);
       stopWatchK8sResource(infrastructureResource);
       stopWatchPrometheusQuery(NOOBAA_SYSTEM_NAME_QUERY);
     };
@@ -68,9 +61,9 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
   const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
 
-  const cephCluster = _.get(resources, 'ceph');
-  const cephClusterLoaded = _.get(cephCluster, 'loaded', false);
-  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind;
+  const subscription = _.get(resources, 'subscription');
+  const subscriptionLoaded = _.get(subscription, 'loaded');
+  const ocsVersion = _.get(subscription, 'data.status.currentCSV');
 
   return (
     <DashboardCard>
@@ -100,8 +93,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="version"
             title="Version"
-            value={getCephVersion(cephClusterData)}
-            isLoading={!cephClusterLoaded}
+            value={ocsVersion}
+            isLoading={!subscriptionLoaded}
           />
         </DetailsBody>
       </DashboardCardBody>
