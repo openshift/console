@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
+    "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
     "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --color",
@@ -183,9 +183,10 @@
     "ts-loader": "5.3.3",
     "ts-node": "5.x",
     "typescript": "3.4.4",
-    "webpack": "4.29.6",
+    "webpack": "4.39.2",
     "webpack-bundle-analyzer": "2.x",
     "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.8.0",
     "webpack-virtual-modules": "^0.1.10"
   },
   "engines": {
