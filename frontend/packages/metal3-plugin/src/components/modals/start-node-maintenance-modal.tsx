@@ -1,16 +1,30 @@
 import * as React from 'react';
 import { FormControl } from 'patternfly-react';
-import { withHandlePromise } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { Alert } from '@patternfly/react-core';
 import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory';
+  withHandlePromise,
+  FirehoseResource,
+  FirehoseResult,
+} from '@console/internal/components/utils';
+import { ModalTitle, ModalBody, ModalSubmitFooter } from '@console/internal/components/factory';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { CephClusterModel } from '@console/ceph-storage-plugin/src/models';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
+import { NodeMaintenanceModel } from '../../models';
+import { createModalResourceLauncher } from './create-modal-resource-launcher';
 
 const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModalProps) => {
-  const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const {
+    nodeName,
+    nodeMaintenances,
+    cephClusterHealthy,
+    inProgress,
+    errorMessage,
+    handlePromise,
+    close,
+    cancel,
+  } = props;
 
   const [reason, setReason] = React.useState('');
 
@@ -42,6 +56,21 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
             onChange={(event) => setReason(event.target.value)}
           />
         </div>
+        {nodeMaintenances.length > 0 && (
+          <Alert variant="warning" title="Too many nodes are already under maintenance." isInline>
+            Putting this node into maintenance will reduce the number of available nodes to an
+            unsafe level. Stop maintenance on other nodes before proceeding.
+          </Alert>
+        )}
+        {!cephClusterHealthy && (
+          <Alert
+            variant="warning"
+            title="The Ceph storage cluster is not in a healthy state."
+            isInline
+          >
+            Maintenance cannot be started until the health of the storage cluster is restored.
+          </Alert>
+        )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
@@ -55,6 +84,8 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
 
 export type NodeMaintenanceModalProps = {
   nodeName: string;
+  nodeMaintenances: K8sResourceKind[];
+  cephClusterHealthy: boolean;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
@@ -62,4 +93,37 @@ export type NodeMaintenanceModalProps = {
   close?: () => void;
 };
 
-export const startNodeMaintenanceModal = createModalLauncher(StartNodeMaintenanceModal);
+const resourcesToProps = ({
+  nodeMaintenances,
+  cephClusters,
+}: {
+  [key: string]: FirehoseResult;
+}) => {
+  const cephCluster = _.get(cephClusters, 'data.0');
+  return {
+    nodeMaintenances: _.get(nodeMaintenances, 'data', []),
+    cephClusterHealthy: !cephCluster || _.get(cephCluster, 'status.health') === 'OK',
+  };
+};
+
+const resources: FirehoseResource[] = [
+  {
+    kind: referenceForModel(NodeMaintenanceModel),
+    namespaced: false,
+    isList: true,
+    prop: 'nodeMaintenances',
+  },
+  {
+    kind: referenceForModel(CephClusterModel),
+    namespaced: true,
+    namespace: 'openshift-storage',
+    isList: true,
+    prop: 'cephClusters',
+  },
+];
+
+export const startNodeMaintenanceModal = createModalResourceLauncher(
+  StartNodeMaintenanceModal,
+  resources,
+  resourcesToProps,
+);
