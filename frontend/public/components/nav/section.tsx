@@ -88,16 +88,15 @@ export const NavSection = connect(navSectionStateToProps)(
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (prevProps.location === this.props.location) {
-        return;
-      }
-
       const activeChild = this.getActiveChild();
-      const state: Partial<NavSectionState> = {activeChild};
-      if (activeChild && !prevState.activeChild) {
-        state.isOpen = true;
+
+      if (prevState.activeChild !== activeChild) {
+        const state: Partial<NavSectionState> = {activeChild};
+        if (activeChild && !prevState.activeChild) {
+          state.isOpen = true;
+        }
+        this.setState(state as NavSectionState);
       }
-      this.setState(state as NavSectionState);
     }
 
     toggle = (e, expandState) => {
