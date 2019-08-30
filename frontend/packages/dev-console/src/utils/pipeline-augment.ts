@@ -232,8 +232,6 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
   Object.keys(runStatus).forEach((key) => {
     taskStatus[key] = 0;
   });
-  taskStatus[runStatus.Pending] =
-    totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks;
   if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
     plrTasks.forEach((taskRun) => {
       const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
@@ -247,13 +245,18 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
         taskStatus[runStatus.Pending]++;
       }
     });
+    taskStatus[runStatus.Failed] > 0
+      ? (taskStatus[runStatus.Cancelled] =
+          totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks)
+      : (taskStatus[runStatus.Pending] +=
+          totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks);
   } else if (
     pipelinerun &&
     pipelinerun.status &&
     pipelinerun.status.conditions &&
     pipelinerun.status.conditions[0].status === 'False'
   ) {
-    taskStatus[runStatus.FailedToStart]++;
+    taskStatus[runStatus.Cancelled] = totalTasks;
   } else {
     taskStatus[runStatus.PipelineNotStarted]++;
   }
