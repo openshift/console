@@ -22,6 +22,7 @@ export const ocsRequestData: K8sResourceKind = {
         count: 3,
         resources: {},
         placement: {},
+        portable: true,
         dataPVCTemplate: {
           spec: {
             storageClassName: '',
