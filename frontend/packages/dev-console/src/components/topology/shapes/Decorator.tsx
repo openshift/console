@@ -10,7 +10,7 @@ type DecoratorTypes = {
   x: number;
   y: number;
   radius: number;
-  onClick?(): void;
+  onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
   href?: string;
   external?: boolean;
   title: string;
@@ -33,14 +33,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   const [hover, setHover] = React.useState(false);
 
   const decorator = (
-    <g
-      className="odc-decorator"
-      transform={`translate(${x}, ${y})`}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick && onClick();
-      }}
-    >
+    <g className="odc-decorator" transform={`translate(${x}, ${y})`} onClick={onClick}>
       <g onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
         <circle
