@@ -47,3 +47,14 @@ export const TaskRunModel: K8sKind = {
   id: 'taskrun',
   labelPlural: 'Task Runs',
 };
+
+export const PipelineResourceModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Pipeline Resource',
+  plural: 'pipelineresources',
+  abbr: 'PR',
+  kind: 'PipelineResource',
+  id: 'pipelineresource',
+  labelPlural: 'Pipeline Resources',
+};

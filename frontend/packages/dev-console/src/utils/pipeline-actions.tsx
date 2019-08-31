@@ -6,6 +6,7 @@ import { getNamespace } from '@console/internal/components/utils/link';
 import { k8sCreate, K8sKind, K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
+import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
@@ -115,20 +116,14 @@ export const triggerPipeline = (
   pipeline: Pipeline,
   latestRun: PipelineRun,
   redirectURL?: string,
-): ActionFunction => {
-  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
-  return (): Action => ({
-    label: 'Start',
-    callback: () => {
-      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
-        .then(() => {
-          if (redirectURL) {
-            redirectToResourceList(redirectURL);
-          }
-        })
-        .catch((err) => errorModal({ error: err.message }));
-    },
-  });
+) => {
+  k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
+    .then(() => {
+      if (redirectURL) {
+        redirectToResourceList(redirectURL);
+      }
+    })
+    .catch((err) => errorModal({ error: err.message }));
 };
 
 export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
@@ -164,7 +159,22 @@ export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
     },
   });
 };
-
+export const startPipeline = (pipeline: Pipeline, latestRun: PipelineRun) => (): Action => ({
+  label: 'Start',
+  callback: () => {
+    const params = _.get(pipeline, ['spec', 'params'], []);
+    const resources = _.get(pipeline, ['spec', 'resources'], []);
+    if (!_.isEmpty(params) || !_.isEmpty(resources)) {
+      startPipelineModal({
+        pipeline,
+        getNewPipelineRun: newPipelineRun,
+        modalClassName: 'modal-lg',
+      });
+    } else {
+      triggerPipeline(pipeline, latestRun);
+    }
+  },
+});
 export const rerunPipeline = (
   pipeline: Pipeline,
   latestRun: PipelineRun,

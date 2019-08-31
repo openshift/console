@@ -34,6 +34,7 @@ interface ResourceDropdownProps {
     actionKey: string;
   };
   dataSelector: string[] | number[] | symbol[];
+  transformLabel?: Function;
   loaded?: boolean;
   loadError?: string;
   placeholder?: string;
@@ -66,6 +67,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       allSelectorItem,
       resourceFilter,
       dataSelector,
+      transformLabel,
       selectedKey,
       autoSelect,
     } = nextProps;
@@ -76,14 +78,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     }
 
     // If autoSelect is true only then have an item pre-selected based on selectedKey.
-    if (autoSelect) {
-      const dropdownItem =
-        this.props.loaded && _.isEmpty(this.state.items) && this.props.actionItem
-          ? this.props.actionItem.actionKey
-          : _.get(_.keys(this.state.items), 0);
-      const selectedItemKey = selectedKey || dropdownItem;
-      this.onChange(selectedItemKey);
-    } else if (!this.props.loaded || !selectedKey) {
+    if (!autoSelect && (!this.props.loaded || !selectedKey)) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
@@ -107,7 +102,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
             dataValue = _.get(resource, dataSelector);
           }
           if (dataValue) {
-            acc[dataValue] = dataValue;
+            acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
           }
           return acc;
         },
@@ -128,13 +123,20 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       });
 
     this.setState({ items: sortedList });
+    let selectedItem = selectedKey;
     if (
       (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
       allSelectorItem &&
       allSelectorItem.allSelectorKey !== this.props.selectedKey
     ) {
-      this.onChange(allSelectorItem.allSelectorKey);
+      selectedItem = allSelectorItem.allSelectorKey;
+    } else if (autoSelect && !selectedKey) {
+      selectedItem =
+        this.props.loaded && _.isEmpty(sortedList) && this.props.actionItem
+          ? this.props.actionItem.actionKey
+          : _.get(_.keys(sortedList), 0);
     }
+    selectedItem && this.handleChange(selectedItem, sortedList);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -144,14 +146,20 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     return true;
   }
 
-  private onChange = (key: string) => {
-    const name = this.state.items[key];
-    const { actionItem, onChange } = this.props;
+  private handleChange = (key, items) => {
+    const name = items[key];
+    const { actionItem, onChange, selectedKey } = this.props;
     const title = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
     if (title !== this.state.title) {
-      onChange && this.props.onChange(key, name);
       this.setState({ title });
     }
+    if (key !== selectedKey) {
+      onChange && onChange(key, name);
+    }
+  };
+
+  private onChange = (key: string) => {
+    this.handleChange(key, this.state.items);
   };
 
   render() {
