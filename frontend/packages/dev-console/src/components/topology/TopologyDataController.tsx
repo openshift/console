@@ -23,7 +23,7 @@ export interface TopologyDataControllerProps {
   namespace: string;
   render(RenderProps): React.ReactElement;
   application: string;
-  knative?: boolean;
+  knative: boolean;
   cheURL: string;
 }
 

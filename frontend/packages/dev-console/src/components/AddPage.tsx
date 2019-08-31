@@ -2,27 +2,30 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash';
 import { match as RMatch } from 'react-router';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { history } from '@console/internal/components/utils';
+import { history, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { createProjectModal } from '@console/internal/components/modals';
-import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import ODCEmptyState from './EmptyState';
 import NamespacedPage from './NamespacedPage';
 import DefaultPage from './DefaultPage';
-import TopologyDataController, { RenderProps } from './topology/TopologyDataController';
 
 export interface AddPageProps {
   match: RMatch<{
     ns?: string;
   }>;
 }
-interface StateProps {
-  activeApplication: string;
-}
 
-type props = AddPageProps & StateProps;
+interface ResourcesType {
+  deploymentConfigs: K8sResourceKind;
+  deployments: K8sResourceKind;
+  daemonSets: K8sResourceKind;
+  statefulSets: K8sResourceKind;
+}
+interface EmptyStateLoaderProps {
+  resources?: ResourcesType;
+  loaded?: boolean;
+  loadError?: string;
+}
 
 const openProjectModal = () =>
   createProjectModal({
@@ -30,26 +33,76 @@ const openProjectModal = () =>
     onSubmit: (project) => history.push(`/add/ns/${project.metadata.name}`),
   });
 
-const renderEmptyState = ({ data, loaded }: RenderProps) => {
+const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
+  const [noWorkloads, setNoWorkLoads] = React.useState(false);
+
+  React.useEffect(() => {
+    if (loaded) {
+      setNoWorkLoads(
+        _.isEmpty(resources.deploymentConfigs.data) &&
+          _.isEmpty(resources.deployments.data) &&
+          _.isEmpty(resources.daemonSets.data) &&
+          _.isEmpty(resources.statefulSets.data),
+      );
+    } else if (loadError) {
+      setNoWorkLoads(false);
+    }
+  }, [
+    loadError,
+    loaded,
+    resources.daemonSets.data,
+    resources.deploymentConfigs.data,
+    resources.deployments.data,
+    resources.statefulSets.data,
+  ]);
   return (
     <ODCEmptyState
       title="Add"
-      {...(loaded
-        ? _.isEmpty(data.graph.nodes)
-          ? {
-              hintBlockTitle: 'No workloads found',
-              hintBlockDescription:
-                'To add content to your project, create an application, component or service using one of these options.',
-            }
-          : {}
-        : {})}
+      {...noWorkloads && {
+        hintBlockTitle: 'No workloads found',
+        hintBlockDescription:
+          'To add content to your project, create an application, component or service using one of these options.',
+      }}
     />
   );
 };
 
-const AddPage: React.FC<props> = ({ match, activeApplication }) => {
+const RenderEmptyState = ({ namespace }) => {
+  const resources: FirehoseResource[] = [
+    {
+      isList: true,
+      kind: 'DeploymentConfig',
+      namespace,
+      prop: 'deploymentConfigs',
+    },
+    {
+      isList: true,
+      kind: 'Deployment',
+      namespace,
+      prop: 'deployments',
+    },
+    {
+      isList: true,
+      kind: 'DaemonSet',
+      namespace,
+      prop: 'daemonSets',
+    },
+    {
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      prop: 'statefulSets',
+    },
+  ];
+  return (
+    <Firehose resources={resources}>
+      <EmptyStateLoader />
+    </Firehose>
+  );
+};
+
+const AddPage: React.FC<AddPageProps> = ({ match }) => {
   const namespace = match.params.ns;
-  const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
   return (
     <React.Fragment>
       <Helmet>
@@ -57,11 +110,7 @@ const AddPage: React.FC<props> = ({ match, activeApplication }) => {
       </Helmet>
       <NamespacedPage>
         {namespace ? (
-          <TopologyDataController
-            application={application}
-            namespace={namespace}
-            render={renderEmptyState}
-          />
+          <RenderEmptyState namespace={namespace} />
         ) : (
           <DefaultPage title="Add">
             Select a project to start adding to it or{' '}
@@ -80,10 +129,4 @@ const AddPage: React.FC<props> = ({ match, activeApplication }) => {
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    activeApplication: getActiveApplication(state),
-  };
-};
-
-export default connect(mapStateToProps)(AddPage);
+export default AddPage;
