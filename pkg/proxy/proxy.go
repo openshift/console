@@ -107,15 +107,16 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.Header.Del(h)
 	}
 
+	r.Host = p.config.Endpoint.Host
+	r.URL.Host = p.config.Endpoint.Host
+	r.URL.Scheme = p.config.Endpoint.Scheme
+
 	if !isWebsocket {
 		p.reverseProxy.ServeHTTP(w, r)
 		return
 	}
 
-	r.Host = p.config.Endpoint.Host
-	r.URL.Host = p.config.Endpoint.Host
 	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
-	r.URL.Scheme = p.config.Endpoint.Scheme
 
 	if r.URL.Scheme == "https" {
 		r.URL.Scheme = "wss"

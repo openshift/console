@@ -17,6 +17,8 @@ export BRIDGE_USER_AUTH="disabled"
 export BRIDGE_K8S_MODE="off-cluster"
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(oc whoami --show-server)
 export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
+export BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')
+export BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.alertmanagerURL}')
 export BRIDGE_K8S_AUTH="bearer-token"
 export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token)
 
