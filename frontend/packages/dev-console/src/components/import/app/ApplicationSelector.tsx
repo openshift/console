@@ -33,8 +33,9 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
   };
 
   const handleOnLoad = (items: { [key: string]: string }) => {
-    setIsZeroApplication(_.isEmpty(items));
-    if (_.isEmpty(items)) {
+    const isEmptyItems = _.isEmpty(items);
+    setIsZeroApplication(isEmptyItems);
+    if (isEmptyItems) {
       setFieldValue('application.selectedKey', CREATE_APPLICATION_KEY);
       setFieldValue('application.name', '');
     }
@@ -48,7 +49,6 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
           label="Application"
           helperTextInvalid={errorMessage}
           isValid={isValid}
-          isRequired
         >
           <ApplicationDropdown
             dropDownClassName="dropdown--full-width"
@@ -62,7 +62,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
             autoSelect
             selectedKey={selectedKey.value}
             onChange={onDropdownChange}
-            onLoad={(items) => handleOnLoad(items)}
+            onLoad={handleOnLoad}
           />
         </FormGroup>
       )}

@@ -71,6 +71,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       transformLabel,
       selectedKey,
       autoSelect,
+      onLoad,
     } = nextProps;
 
     if (!loaded) {
@@ -139,8 +140,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     }
     selectedItem && this.handleChange(selectedItem, sortedList);
 
-    if (_.isEmpty(sortedList) && this.props.onLoad) {
-      this.props.onLoad(sortedList);
+    if (nextProps.loaded && !this.props.loaded && onLoad) {
+      onLoad(sortedList);
     }
   }
 
