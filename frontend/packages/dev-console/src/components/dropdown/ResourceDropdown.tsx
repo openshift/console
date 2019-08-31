@@ -62,6 +62,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   componentWillReceiveProps(nextProps: ResourceDropdownProps) {
     const { loaded, loadError, autoSelect, selectedKey, placeholder, onLoad } = nextProps;
 
+    const { onLoad } = this.props;
+
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
       return;
