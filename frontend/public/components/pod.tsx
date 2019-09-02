@@ -181,7 +181,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
         title="Memory Usage"
         humanize={humanizeDecimalBytes}
         namespace={pod.metadata.namespace}
-        query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+        query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
       />
     </div>
     <div className="col-md-12 col-lg-4">

@@ -122,7 +122,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
           title="Memory Usage"
           humanize={humanizeDecimalBytes}
           namespace={namespace}
-          query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
+          query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
         />
       </div>
       <div className="col-md-12 col-lg-4">

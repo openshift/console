@@ -472,7 +472,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
     const { metrics: previousMetrics, namespace } = this.props;
     const queries = {
-      memory: `pod_name:container_memory_usage_bytes:sum{namespace="${namespace}"}`,
+      memory: `sum(container_memory_working_set_bytes{namespace='${namespace}',container='',pod!=''}) BY (pod, namespace)`,
       cpu: `pod_name:container_cpu_usage:sum{namespace="${namespace}"}`,
     };
 
