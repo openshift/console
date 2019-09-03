@@ -42,7 +42,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({obj, onC
       onSubmit={save}
     >
       <p className="co-alert-manager-yaml__explanation">
-        Update this YAML to configure Routes, Receivers, Groupings and other Alert Manager settings
+        Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings
       </p>
       {!_.isEmpty(yamlStringData) && <div className="co-alert-manager-yaml__form-entry-wrapper">
         <div className="co-alert-manager-yaml__form">
