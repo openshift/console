@@ -5,13 +5,14 @@ import { HealthCard } from './health-card';
 import { DetailsCard } from './details-card';
 import { CapacityCard } from './capacity-card';
 import { InventoryCard } from './inventory-card';
+import { LinksCard } from './links-card';
 import { EventsCard } from './events-card';
 import { UtilizationCard } from './utilization-card';
 import { TopConsumersCard } from './top-consumers-card';
 
 export const OverviewDashboard: React.FC<{}> = () => {
   const mainCards = [{Card: HealthCard}, {Card: CapacityCard}, {Card: UtilizationCard}];
-  const leftCards = [{Card: DetailsCard}, {Card: InventoryCard}];
+  const leftCards = [{Card: DetailsCard}, {Card: InventoryCard}, {Card: LinksCard}];
   const rightCards = [{Card: EventsCard}, {Card: TopConsumersCard}];
 
   return (
