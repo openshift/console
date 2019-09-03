@@ -4,6 +4,7 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
+  KebabActions,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
@@ -16,6 +17,7 @@ import { NamespaceRedirect } from '@console/internal/components/utils/namespace-
 import { CodeIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/internal/const';
 import * as models from './models';
+import { getKebabActionsForKind } from './utils/kebab-actions';
 
 const { PipelineModel, PipelineRunModel } = models;
 
@@ -28,7 +30,8 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
-  | RoutePage;
+  | RoutePage
+  | KebabActions;
 
 const SHOW_PIPELINE = 'SHOW_PIPELINE';
 
@@ -242,6 +245,12 @@ const plugin: Plugin<ConsumedExtensions> = [
         (await import(
           './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
         )).default,
+    },
+  },
+  {
+    type: 'KebabActions',
+    properties: {
+      getKebabActionsForKind,
     },
   },
 ];

@@ -1,21 +1,6 @@
 import { ComponentType } from 'react';
 import { Pod, ResourceProps, Resource } from '@console/shared';
-import { ObjectMetadata } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
-
-export interface ResourceProps {
-  kind: string;
-  apiVersion?: string;
-  metadata: ObjectMetadata;
-  status: {};
-  spec: {
-    [key: string]: any;
-  };
-}
-
-export interface Resource {
-  data: ResourceProps[];
-}
 
 export interface TopologyDataResources {
   replicationControllers: Resource;

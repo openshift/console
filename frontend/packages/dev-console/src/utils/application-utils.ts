@@ -1,5 +1,11 @@
-import { k8sList, k8sPatch, K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
+import {
+  K8sKind,
+  k8sList,
+  k8sPatch,
+  K8sResourceKind,
+  modelFor,
+} from '@console/internal/module/k8s';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -46,11 +52,14 @@ const listInstanceResources = (
 };
 
 // Updates the resource's labels to set its application grouping
-const updateItemAppLabel = (item: K8sResourceKind, application: string): Promise<any> => {
+const updateItemAppLabel = (
+  resourceKind: K8sKind,
+  item: K8sResourceKind,
+  application: string,
+): Promise<any> => {
   const labels = { ...item.metadata.labels, 'app.kubernetes.io/part-of': application || undefined };
-  const model = modelFor(item.kind);
 
-  if (!model) {
+  if (!resourceKind) {
     return Promise.reject();
   }
 
@@ -62,11 +71,12 @@ const updateItemAppLabel = (item: K8sResourceKind, application: string): Promise
     },
   ];
 
-  return k8sPatch(model, item, patch);
+  return k8sPatch(resourceKind, item, patch);
 };
 
 // Updates the given resource and its associated resources to the given application grouping
 export const updateResourceApplication = (
+  resourceKind: K8sKind,
   resource: K8sResourceKind,
   application: string,
 ): Promise<any> => {
@@ -77,7 +87,7 @@ export const updateResourceApplication = (
   const instanceName = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/instance']);
   const prevApplication = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
 
-  const patches: Promise<any>[] = [updateItemAppLabel(resource, application)];
+  const patches: Promise<any>[] = [updateItemAppLabel(resourceKind, resource, application)];
 
   // If there is no instance label, only update this item
   if (!instanceName) {
@@ -100,7 +110,7 @@ export const updateResourceApplication = (
       _.forEach(list, (item) => {
         // verify the case of no previous application
         if (prevApplication || !_.get(item, ['metadata', 'labels', 'app.kubernetes.io/part-of'])) {
-          patches.push(updateItemAppLabel(item, application));
+          patches.push(updateItemAppLabel(item.resourceKind, item, application));
         }
       });
     });

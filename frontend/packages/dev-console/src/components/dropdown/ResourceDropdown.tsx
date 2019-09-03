@@ -50,7 +50,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   constructor(props) {
     super(props);
     this.state = {
-      items: {},
+      items: this.getDropdownList(props, false),
       title: this.props.loaded ? (
         <span className="btn-dropdown__item--placeholder">{this.props.placeholder}</span>
       ) : (
@@ -60,19 +60,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   }
 
   componentWillReceiveProps(nextProps: ResourceDropdownProps) {
-    const {
-      resources,
-      loaded,
-      loadError,
-      placeholder,
-      allSelectorItem,
-      resourceFilter,
-      dataSelector,
-      transformLabel,
-      selectedKey,
-      autoSelect,
-      onLoad,
-    } = nextProps;
+    const { loaded, loadError, autoSelect, selectedKey, placeholder, onLoad } = nextProps;
 
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
@@ -92,6 +80,33 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       });
     }
 
+    const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
+    this.setState({ items: resourceList });
+    if (nextProps.loaded && !this.props.loaded && onLoad) {
+      onLoad(resourceList);
+    }
+
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (_.isEqual(this.state, nextState) && _.isEqual(this.props, nextProps)) {
+      return false;
+    }
+    return true;
+  }
+
+  private getDropdownList = (
+    {
+      autoSelect,
+      selectedKey,
+      resources,
+      resourceFilter,
+      dataSelector,
+      transformLabel,
+      allSelectorItem,
+    }: ResourceDropdownProps,
+    updateSelection: boolean,
+  ) => {
     const unsortedList = {};
     _.each(resources, ({ data }) => {
       _.reduce(
@@ -124,33 +139,24 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         sortedList[key] = unsortedList[key];
       });
 
-    this.setState({ items: sortedList });
-    let selectedItem = selectedKey;
-    if (
-      (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
-      allSelectorItem &&
-      allSelectorItem.allSelectorKey !== this.props.selectedKey
-    ) {
-      selectedItem = allSelectorItem.allSelectorKey;
-    } else if (autoSelect && !selectedKey) {
-      selectedItem =
-        this.props.loaded && _.isEmpty(sortedList) && this.props.actionItem
-          ? this.props.actionItem.actionKey
-          : _.get(_.keys(sortedList), 0);
+    if (updateSelection) {
+      let selectedItem = selectedKey;
+      if (
+        (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
+        allSelectorItem &&
+        allSelectorItem.allSelectorKey !== this.props.selectedKey
+      ) {
+        selectedItem = allSelectorItem.allSelectorKey;
+      } else if (autoSelect && !selectedKey) {
+        selectedItem =
+          this.props.loaded && _.isEmpty(sortedList) && this.props.actionItem
+            ? this.props.actionItem.actionKey
+            : _.get(_.keys(sortedList), 0);
+      }
+      selectedItem && this.handleChange(selectedItem, sortedList);
     }
-    selectedItem && this.handleChange(selectedItem, sortedList);
-
-    if (nextProps.loaded && !this.props.loaded && onLoad) {
-      onLoad(sortedList);
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(this.state, nextState) && _.isEqual(this.props, nextProps)) {
-      return false;
-    }
-    return true;
-  }
+    return sortedList;
+  };
 
   private handleChange = (key, items) => {
     const name = items[key];

@@ -56,7 +56,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
             id={fieldId}
             namespace={namespace}
             actionItem={{
-              actionTitle: 'Create New Application',
+              actionTitle: 'Create Application',
               actionKey: CREATE_APPLICATION_KEY,
             }}
             autoSelect
