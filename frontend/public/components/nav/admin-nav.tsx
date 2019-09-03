@@ -146,9 +146,15 @@ const AdminNav = () => (
 
     <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
       <ResourceClusterLink resource="nodes" name="Nodes" />
-      <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
-      <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
-      <ResourceNSLink resource={referenceForModel(MachineAutoscalerModel)} name="Machine Autoscalers" required={FLAGS.MACHINE_AUTOSCALER} />
+      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineModel), 'openshift-machine-api')}
+        name="Machines"
+        required={FLAGS.CLUSTER_API} />
+      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), 'openshift-machine-api')}
+        name="Machine Sets"
+        required={FLAGS.CLUSTER_API} />
+      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineAutoscalerModel), 'openshift-machine-api')}
+        name="Machine Autoscalers"
+        required={FLAGS.MACHINE_AUTOSCALER} />
       <Separator required={FLAGS.MACHINE_CONFIG} />
       <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
       <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
