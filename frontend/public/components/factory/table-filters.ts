@@ -10,6 +10,7 @@ import {
   podPhaseFilterReducer,
   serviceCatalogStatus,
   serviceClassDisplayName,
+  servicePlanDisplayName,
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
 } from '../../module/k8s';
@@ -140,6 +141,11 @@ export const tableFilters: TableFilterMap = {
   // Filter service classes by text match
   'service-class': (str, serviceClass) => {
     const displayName = serviceClassDisplayName(serviceClass);
+    return fuzzyCaseInsensitive(str, displayName);
+  },
+
+  'service-plan': (str, servicePlan) => {
+    const displayName = servicePlanDisplayName(servicePlan);
     return fuzzyCaseInsensitive(str, displayName);
   },
 
