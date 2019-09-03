@@ -25,6 +25,7 @@ import {
   nameForModel,
   CustomResourceDefinitionKind,
 } from '../../module/k8s';
+import { SwaggerDefinition, definitionFor } from '../../module/k8s/swagger';
 import { ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor, CRDDescription, ClusterServiceVersionLogo, APIServiceDefinition } from './index';
 import { ClusterServiceVersionModel, CustomResourceDefinitionModel } from '../../models';
 import { Firehose } from '../utils/firehose';
@@ -80,14 +81,12 @@ const fieldsFor = (providedAPI: CRDDescription) => _.get(providedAPI, 'specDescr
   capabilities: desc['x-descriptors'],
 })) as OperandField[];
 
-const fieldsForOpenAPI = (crd: CustomResourceDefinitionKind): OperandField[] => {
-  const openAPIV3Schema = _.get(crd, 'spec.validation.openAPIV3Schema', {});
-
-  if (_.isEmpty(openAPIV3Schema)) {
+const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
+  if (_.isEmpty(openAPI)) {
     return [];
   }
 
-  const fields: OperandField[] = _.flatten(_.map(_.get(openAPIV3Schema, 'properties.spec.properties', {}), (val, key: string) => {
+  const fields: OperandField[] = _.flatten(_.map(_.get(openAPI, 'properties.spec.properties', {}), (val, key: string) => {
     const capabilityFor = (type: string) => {
       switch (type) {
         case 'integer': return SpecCapability.number;
@@ -128,7 +127,7 @@ const fieldsForOpenAPI = (crd: CustomResourceDefinitionKind): OperandField[] => 
           path: key,
           displayName: _.startCase(key),
           type: val.type,
-          required: _.get(openAPIV3Schema.properties.spec, 'required', []).includes(key),
+          required: _.get(openAPI.properties.spec, 'required', []).includes(key),
           validation: _.pick(val, [...Object.keys(Validations)]),
           capabilities: [capabilityFor(val.type)],
         } as OperandField;
@@ -139,24 +138,22 @@ const fieldsForOpenAPI = (crd: CustomResourceDefinitionKind): OperandField[] => 
 };
 
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
-  const openAPIV3Schema = _.get(props.customResourceDefinition, 'spec.validation.openAPIV3Schema.properties', {});
-
   const fields: OperandField[] = (!_.isEmpty(props.clusterServiceVersion)
     ? fieldsFor(props.providedAPI)
     : [])
     .map(field => {
-      if (_.isEmpty(openAPIV3Schema)) {
+      if (_.isEmpty(props.openAPI)) {
         return field;
       }
       const schemaPath = field.path.split('.').join('.properties.');
-      const required = (_.get(openAPIV3Schema, _.dropRight(['spec', ...field.path.split('.')]).join('.properties.').concat('.required'), []) as string[])
+      const required = (_.get(props.openAPI, _.dropRight(['spec', ...field.path.split('.')]).join('.properties.').concat('.required'), []) as string[])
         .includes(_.last(field.path.split('.')));
-      const type = _.get(openAPIV3Schema.spec.properties, schemaPath.concat('.type'));
-      const validation = _.pick(_.get(openAPIV3Schema.spec.properties, schemaPath), [...Object.keys(Validations)]);
+      const type = _.get(props.openAPI.properties.spec.properties, schemaPath.concat('.type')) as JSONSchema6TypeName;
+      const validation = _.pick(_.get(props.openAPI.properties.spec.properties, schemaPath), [...Object.keys(Validations)]) as OperandField['validation'];
 
       return {...field, type, required, validation};
     })
-    .concat(fieldsForOpenAPI(props.customResourceDefinition).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
+    .concat(fieldsForOpenAPI(props.openAPI).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
     // Associate `specDescriptors` with `fieldGroups` from OpenAPI
     .map((field, i, allFields) => allFields.some(f => f.capabilities.includes(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup))
       ? {...field, capabilities: [...new Set(field.capabilities).add(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup)]}
@@ -220,7 +217,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     event.preventDefault();
 
     const errors = fields
-      .filter(f => !_.isNil(f.validation))
+      .filter(f => !_.isNil(f.validation) || !_.isEmpty(f.validation))
       .filter(f => f.required || !_.isEqual(formValues[f.path], defaultValueFor(f)))
       .reduce((allErrors, field) => {
         // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
@@ -512,6 +509,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
     .find((s: K8sResourceKind) => referenceFor(s) === referenceForModel(props.operandModel));
   const [method, setMethod] = React.useState<'yaml' | 'form'>('yaml');
 
+  const openAPI = definitionFor(props.operandModel) || _.get(props.customResourceDefinition, ['data', 'spec', 'validation', 'openAPIV3Schema']) as SwaggerDefinition;
+
   return <React.Fragment>
     { props.loaded && <div className="co-create-operand__header">
       <div className="co-create-operand__header-buttons">
@@ -537,7 +536,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
         providedAPI={providedAPI()}
         sample={props.loaded ? sample() : null}
         clusterServiceVersion={props.clusterServiceVersion.data}
-        customResourceDefinition={props.customResourceDefinition.data} /> ||
+        openAPI={openAPI} /> ||
       method === 'yaml' && <CreateOperandYAML
         match={props.match}
         sample={props.loaded ? sample() : null}
@@ -567,6 +566,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
     isList: false,
     name: nameForModel(props.operandModel),
     prop: 'customResourceDefinition',
+    optional: true,
   }]}>
     {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
     <CreateOperand {...props as any} operandModel={props.operandModel} match={props.match} />
@@ -579,14 +579,14 @@ export type CreateOperandProps = {
   loaded: boolean;
   loadError?: any;
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
-  customResourceDefinition: FirehoseResult<CustomResourceDefinitionKind>;
+  customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
 };
 
 export type CreateOperandFormProps = {
   operandModel: K8sKind;
   providedAPI: CRDDescription | APIServiceDefinition;
+  openAPI?: SwaggerDefinition;
   clusterServiceVersion: ClusterServiceVersionKind;
-  customResourceDefinition: CustomResourceDefinitionKind;
   sample?: K8sResourceKind;
   namespace: string;
 };
