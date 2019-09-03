@@ -99,8 +99,10 @@ class CurrentEnvVars {
   constructor(data, isContainerArray, path) {
     this.currentEnvVars = {};
     this.state = { allowed: true };
-    if (!_.isEmpty(data)) {
-      (arguments.length > 1) ? this.setResultObject(data, isContainerArray, path) : this.setRawData(data);
+    if (!_.isEmpty(data) && arguments.length > 1) {
+      this.setResultObject(data, isContainerArray, path);
+    } else {
+      this.setRawData(data);
     }
   }
 
