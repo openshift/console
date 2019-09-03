@@ -279,7 +279,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
         {name: 'OperatorHub', path: `/operatorhub?${search.toString()}`},
         {name: 'Operator Subscription', path: props.match.url},
       ]} />
-      <h1>Create Operator Subscription</h1>
+      <h1 className="co-m-pane__heading">Create Operator Subscription</h1>
       <p className="co-help-text">
         Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.
       </p>
