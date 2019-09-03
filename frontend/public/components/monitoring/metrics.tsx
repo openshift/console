@@ -463,7 +463,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
   const [data, setData] = React.useState();
   const [error, setError] = React.useState();
   const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(100);
+  const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>({index: 1, direction: 'asc'});
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
