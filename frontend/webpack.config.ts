@@ -32,8 +32,8 @@ const config: Configuration = {
   devServer: {
     writeToDisk: true,
     progress: true,
-    hot: HOT_RELOAD === 'true',
-    inline: HOT_RELOAD === 'true',
+    hot: HOT_RELOAD !== 'false',
+    inline: HOT_RELOAD !== 'false',
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
