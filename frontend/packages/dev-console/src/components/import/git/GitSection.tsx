@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useFormikContext, FormikValues } from 'formik';
-import { TextInputTypes } from '@patternfly/react-core';
+import { useFormikContext, FormikValues, useField } from 'formik';
+import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { InputField, DropdownField } from '../../formik-fields';
-import { GitTypes } from '../import-types';
+import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
@@ -15,13 +15,14 @@ export interface GitSectionProps {
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
   const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const [, { touched: gitTypeTouched }] = useField('git.type');
   const tag = values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
 
   const handleGitUrlBlur: React.ReactEventHandler<HTMLInputElement> = React.useCallback(() => {
     const gitType = detectGitType(values.git.url);
     const gitRepoName = detectGitRepoName(values.git.url);
-    const showGitType = gitType === '';
+    const showGitType = gitType === GitTypes.unsure;
     setFieldValue('git.type', gitType);
     setFieldValue('git.showGitType', showGitType);
     gitRepoName && !values.name && setFieldValue('name', gitRepoName);
@@ -29,7 +30,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
       !values.application.name &&
       setFieldValue('application.name', `${gitRepoName}-app`);
     setFieldTouched('git.url', true);
-    setFieldTouched('git.type', showGitType);
+    showGitType && setFieldTouched('git.type', false);
     validateForm();
   }, [
     setFieldTouched,
@@ -71,14 +72,21 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
         required
       />
       {values.git.showGitType && (
-        <DropdownField
-          name="git.type"
-          label="Git Type"
-          items={GitTypes}
-          title={GitTypes[values.git.type]}
-          fullWidth
-          required
-        />
+        <>
+          <DropdownField
+            name="git.type"
+            label="Git Type"
+            items={GitReadableTypes}
+            title={GitReadableTypes[values.git.type]}
+            fullWidth
+            required
+          />
+          {!gitTypeTouched && (
+            <Alert isInline variant="info" title="Defaulting Git Type to Other">
+              We failed to detect the git type.
+            </Alert>
+          )}
+        </>
       )}
       {sampleRepo && <SampleRepo onClick={fillSample} />}
       <AdvancedGitOptions />

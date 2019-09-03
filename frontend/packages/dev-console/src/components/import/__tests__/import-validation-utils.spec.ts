@@ -1,20 +1,21 @@
 import { cloneDeep } from 'lodash';
 import { validationSchema, detectGitType } from '../import-validation-utils';
 import { mockFormData } from '../__mocks__/import-validation-mock';
+import { GitTypes } from '../import-types';
 
 describe('ValidationUtils', () => {
   describe('Detect Git Type', () => {
-    it('should return undefined for invalid git url', () => {
+    it('should return the invalid enum key for invalid git url', () => {
       const gitType = detectGitType('test');
-      expect(gitType).toEqual(undefined);
+      expect(gitType).toEqual(GitTypes.invalid);
     });
-    it('should return empty string for valid but unknown git url ', () => {
+    it('should return the unsure enum key for valid but unknown git url ', () => {
       const gitType = detectGitType('https://svnsource.test.com');
-      expect(gitType).toEqual('');
+      expect(gitType).toEqual(GitTypes.unsure);
     });
     it('should return proper git type for valid known git url', () => {
       const gitType = detectGitType('https://github.com/test/repo');
-      expect(gitType).toEqual('github');
+      expect(gitType).toEqual(GitTypes.github);
     });
   });
 
