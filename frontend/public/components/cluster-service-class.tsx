@@ -78,7 +78,7 @@ type ClusterServiceClassTableRowProps = {
 };
 
 
-const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => <div className="co-m-pane__body">
+const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-md-7 col-md-push-5" style={{marginBottom: '20px'}}>
       <ClusterServiceClassInfo obj={serviceClass} />
@@ -97,20 +97,25 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
   </div>
 </div>;
 
-export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
+const ClusterServicePlanTab: React.FC<{obj: K8sResourceKind}> = ({obj}) => {
+  return <ClusterServicePlanPage showTitle={false} fieldSelector={`spec.clusterServiceClassRef.name=${obj.metadata.name}`} />;
+};
+
+export const ClusterServiceClassDetailsPage: React.FC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
   {...props}
   buttonActions={actionButtons}
   titleFunc={serviceClassDisplayName}
   kind={referenceForModel(ClusterServiceClassModel)}
-  pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)),
+  pages={[
+    navFactory.details(detailsPage(ClusterServiceClassDetails)),
     navFactory.editYaml(viewYamlComponent),
-    navFactory.clusterServicePlans(({obj}) => <ClusterServicePlanPage showTitle={false}
-      fieldSelector={`spec.clusterServiceClassRef.name=${obj.metadata.name}`} />)]}
+    navFactory.clusterServicePlans(ClusterServicePlanTab),
+  ]}
 />;
 
-export const ClusterServiceClassList: React.SFC = props => <Table {...props} aria-label="Cluster Service Classes" Header={ClusterServiceClassTableHeader} Row={ClusterServiceClassTableRow} defaultSortFunc="serviceClassDisplayName" virtualize />;
+export const ClusterServiceClassList: React.FC = props => <Table {...props} aria-label="Cluster Service Classes" Header={ClusterServiceClassTableHeader} Row={ClusterServiceClassTableRow} defaultSortFunc="serviceClassDisplayName" virtualize />;
 
-export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = props =>
+export const ClusterServiceClassPage: React.FC<ClusterServiceClassPageProps> = props =>
   <ListPage
     {...props}
     showTitle={false}

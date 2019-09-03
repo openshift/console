@@ -96,6 +96,7 @@ export const ClusterServicePlanPage: React.SFC<ClusterServicePlanPageProps> = pr
     {...props}
     ListComponent={ClusterServicePlanList}
     kind={referenceForModel(ClusterServicePlanModel)}
+    textFilter="service-plan"
     canCreate={false}
   />;
 
