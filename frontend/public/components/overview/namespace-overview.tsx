@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { connect } from 'react-redux';
 
 import { requirePrometheus } from '../graphs';
 import { Health } from '../graphs/health';
 import { deleteModal, NamespaceLineCharts, NamespaceSummary, TopPodsBarChart } from '../namespace';
-import { Firehose, ResourceLink, resourceListPathFromModel, StatusBox } from '../utils';
+import { ExternalLink, Firehose, ResourceLink, resourceListPathFromModel, StatusBox } from '../utils';
 import { RoleBindingModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { getQuotaResourceTypes, hasComputeResources, QuotaGaugeCharts, QuotaScopesInline } from '../resource-quota';
@@ -43,6 +44,38 @@ const OverviewNamespaceSummary = ({ns}) => <div className="group">
     <NamespaceSummary ns={ns} />
   </div>
 </div>;
+
+const getNamespaceDashboardConsoleLinks = (ns, consoleLinks) => {
+  return _.filter(consoleLinks, (link: K8sResourceKind) => {
+    if (link.spec.location !== 'NamespaceDashboard') {
+      return false;
+    }
+    const namespaces = _.get(link, ['spec', 'namespaceDashboard', 'namespaces']);
+    return !namespaces || _.includes(namespaces, ns.metadata.name);
+  });
+};
+
+const ConsoleLinks: React.FC<ConsoleLinksProps> = ({consoleLinks}) => {
+  return <ul>
+    {_.map(_.sortBy(consoleLinks, 'spec.text'), link => {
+      return <li key={link.metadata.uid}><ExternalLink href={link.spec.href} text={link.spec.text} /></li>;
+    })}
+  </ul>;
+};
+
+const OverviewLinks: React.FC<OverviewLinksProps> = ({ns, consoleLinks}) => {
+  const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
+  return (
+    !_.isEmpty(links) && <div className="group">
+      <div className="group__title">
+        <h2 className="h3">Links</h2>
+      </div>
+      <div className="container-fluid group__body group__namespace-details">
+        <ConsoleLinks consoleLinks={links} />
+      </div>
+    </div>
+  );
+};
 
 const ResourceQuotaCharts = ({quota, resourceTypes}) => {
   const scopes = _.get(quota, 'spec.scopes');
@@ -96,12 +129,28 @@ const OverviewResourceQuotas = ({ns}) => {
   </Firehose>;
 };
 
-export const OverviewNamespaceDashboard = ({obj: ns}) => <div className="co-m-pane__body">
+const OverviewNamespaceDashboard_ = ({obj: ns, consoleLinks}) => <div className="co-m-pane__body">
   <OverviewHealth ns={ns} />
   <OverviewResourceQuotas ns={ns} />
   <OverviewResourceUsage ns={ns} />
+  <OverviewLinks ns={ns} consoleLinks={consoleLinks} />
   <OverviewNamespaceSummary ns={ns} />
 </div>;
+
+const OverviewNamespaceDashboardStateToProps = ({UI}) => ({
+  consoleLinks: UI.get('consoleLinks'),
+});
+
+export const OverviewNamespaceDashboard = connect(OverviewNamespaceDashboardStateToProps)(OverviewNamespaceDashboard_);
+
+export type ConsoleLinksProps = {
+  consoleLinks: K8sResourceKind[];
+}
+
+export type OverviewLinksProps = {
+  ns: K8sResourceKind;
+  consoleLinks: K8sResourceKind[];
+}
 
 export type QuotaBoxesProps = {
   resourceQuotas?: {loaded: boolean, loadError: string, data: K8sResourceKind};
