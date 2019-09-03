@@ -151,7 +151,7 @@ You must run this command once, and every time the dependencies change. `node_mo
 #### Interactive Development
 
 The following build task will watch the source code for changes and compile automatically.  
-Hot Reloading is disabled by default. To enable it add `HOT_RELOAD='true'` to your environment variables.
+If you would like to disable hot reloading, set the environment variable `HOT_RELOAD` to `false`.
 ```
 yarn run dev
 ```
