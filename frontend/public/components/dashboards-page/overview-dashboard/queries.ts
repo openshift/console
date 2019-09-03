@@ -20,8 +20,8 @@ const overviewQueries = {
   [OverviewQuery.MEMORY_TOTAL]: 'sum(kube_node_status_capacity_memory_bytes)',
   [OverviewQuery.MEMORY_UTILIZATION]: '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))[60m:5m]',
   [OverviewQuery.NETWORK_TOTAL]: 'sum(avg by(instance)(node_network_speed_bytes))',
-  [OverviewQuery.NETWORK_UTILIZATION]: 'sum(node:node_net_utilisation:sum_irate)',
-  [OverviewQuery.CPU_UTILIZATION]: '((sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100)[60m:5m]',
+  [OverviewQuery.NETWORK_UTILIZATION]: 'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
+  [OverviewQuery.CPU_UTILIZATION]: '(avg(instance:node_cpu_utilisation:rate1m{job="node-exporter"}) * 100)[60m:5m]',
   [OverviewQuery.STORAGE_UTILIZATION]: '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
   [OverviewQuery.PODS_BY_CPU]: 'sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (pod, namespace))',
@@ -29,10 +29,10 @@ const overviewQueries = {
   [OverviewQuery.PODS_BY_STORAGE]: 'sort_desc(avg by (pod, namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m])))',
   [OverviewQuery.PODS_BY_NETWORK]: 'sort_desc(sum by (pod, namespace)(irate(container_network_receive_bytes_total{container="POD", pod!=""}[1m])' +
     ' + irate(container_network_transmit_bytes_total{container="POD", pod!=""}[1m])))',
-  [OverviewQuery.NODES_BY_CPU]: 'sort_desc(node:node_cpu_utilisation:avg1m)',
-  [OverviewQuery.NODES_BY_MEMORY]: 'sort_desc(node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)',
-  [OverviewQuery.NODES_BY_STORAGE]: 'sort_desc(node:node_disk_utilisation:avg_irate{cluster=""})',
-  [OverviewQuery.NODES_BY_NETWORK]: 'sort_desc(node:node_net_utilisation:sum_irate{cluster=""})',
+  [OverviewQuery.NODES_BY_CPU]: 'sort_desc(instance:node_cpu_utilisation:rate1m)',
+  [OverviewQuery.NODES_BY_MEMORY]: 'sort_desc(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"})',
+  [OverviewQuery.NODES_BY_STORAGE]: 'sort_desc(avg by (instance) (instance_device:node_disk_io_time_seconds:rate1m))',
+  [OverviewQuery.NODES_BY_NETWORK]: 'sort_desc(sum by (instance) (instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m))',
 };
 
 export const capacityQueries = {
