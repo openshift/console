@@ -71,9 +71,20 @@ const worstError = errors => {
   return worst;
 };
 
+const mapStateToProps = ({k8s}) => ({
+  k8s,
+});
+
+const propsAreEqual = (prevProps, nextProps) => {
+  if (nextProps.children === prevProps.children && nextProps.reduxes === prevProps.reduxes) {
+    return nextProps.reduxes.every(({ reduxID }) => prevProps.k8s.get(reduxID) === nextProps.k8s.get(reduxID));
+  }
+  return false;
+};
+
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
-const ConnectToState = connect(({k8s}, {reduxes}) => {
+const ConnectToState = connect(mapStateToProps)(React.memo(({ k8s, reduxes, children }) => {
   const resources = {};
 
   reduxes.forEach(redux => {
@@ -84,18 +95,16 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   const loaded = _.every(resources, resource => (resource.optional ? resource.loaded || !_.isEmpty(resource.loadError) : resource.loaded));
   const loadError = worstError(_.map(required, 'loadError').filter(Boolean));
 
-  return Object.assign({}, resources, {
+  const k8sResults = Object.assign({}, resources, {
     filters: Object.assign({}, ..._.map(resources, 'filters')),
     loaded,
     loadError,
     reduxIDs: _.map(reduxes, 'reduxID'),
     resources,
   });
-}, null, null, {
-  areStatesEqual: (next, prev) => (next.k8s === prev.k8s),
-})(props =>
-  inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))
-);
+
+  return inject(children, k8sResults);
+}, propsAreEqual));
 
 const stateToProps = ({k8s}, {resources}) => {
   const k8sModels = resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap());
