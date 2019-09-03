@@ -8,15 +8,22 @@ type StatusIconAndTextProps = {
   title?: string;
   spin?: boolean;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({ icon, title, spin, iconOnly }) => {
+const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
+  icon,
+  title,
+  spin,
+  iconOnly,
+  noTooltip = false,
+}) => {
   if (!title) {
     return <>{DASH}</>;
   }
 
   return (
-    <span className="co-icon-and-text" title={title}>
+    <span className="co-icon-and-text" title={noTooltip ? '' : title}>
       {icon &&
         React.cloneElement(icon, {
           className: classNames(

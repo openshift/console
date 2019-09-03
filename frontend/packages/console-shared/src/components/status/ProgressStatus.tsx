@@ -5,10 +5,16 @@ import StatusIconAndText from './StatusIconAndText';
 type ProgressStatusProps = {
   title?: string;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const ProgressStatus: React.FC<ProgressStatusProps> = ({ title, iconOnly }) => (
-  <StatusIconAndText icon={<InProgressIcon />} title={title} iconOnly={iconOnly} />
+const ProgressStatus: React.FC<ProgressStatusProps> = ({ title, iconOnly, noTooltip = false }) => (
+  <StatusIconAndText
+    icon={<InProgressIcon />}
+    title={title}
+    iconOnly={iconOnly}
+    noTooltip={noTooltip}
+  />
 );
 
 export default ProgressStatus;

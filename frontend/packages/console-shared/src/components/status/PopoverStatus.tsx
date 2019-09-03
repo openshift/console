@@ -8,10 +8,17 @@ const PopoverStatus: React.FC<React.ComponentProps<typeof StatusIconAndText>> = 
   spin,
   children,
   iconOnly,
+  noTooltip = false,
 }) => (
   <Popover position={PopoverPosition.right} headerContent={title} bodyContent={children}>
     <Button variant="link" isInline>
-      <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
+      <StatusIconAndText
+        icon={icon}
+        title={title}
+        spin={spin}
+        iconOnly={iconOnly}
+        noTooltip={noTooltip}
+      />
     </Button>
   </Popover>
 );

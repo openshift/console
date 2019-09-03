@@ -15,13 +15,20 @@ const LinkStatus: React.FC<LinkStatusProps> = ({
   linkTitle,
   linkTo,
   iconOnly,
+  noTooltip = false,
 }) =>
   linkTo ? (
     <Link to={linkTo} title={linkTitle}>
       <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
     </Link>
   ) : (
-    <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
+    <StatusIconAndText
+      icon={icon}
+      title={title}
+      spin={spin}
+      iconOnly={iconOnly}
+      noTooltip={noTooltip}
+    />
   );
 
 export default LinkStatus;

@@ -6,16 +6,22 @@ import StatusIconAndText from './StatusIconAndText';
 type InfoStatusProps = {
   title?: string;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const InfoStatus: React.FC<InfoStatusProps> = ({ title, iconOnly, children }) => {
+const InfoStatus: React.FC<InfoStatusProps> = ({
+  title,
+  iconOnly,
+  noTooltip = false,
+  children,
+}) => {
   const icon = <InfoCircleIcon />;
   return children ? (
     <PopoverStatus icon={icon} title={title} iconOnly={iconOnly}>
       {children}
     </PopoverStatus>
   ) : (
-    <StatusIconAndText icon={icon} title={title} iconOnly={iconOnly} />
+    <StatusIconAndText icon={icon} title={title} iconOnly={iconOnly} noTooltip={noTooltip} />
   );
 };
 
