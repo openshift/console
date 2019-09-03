@@ -41,7 +41,7 @@ const topConsumersQueryMap: TopConsumersMap = {
   },
   [NODES]: {
     model: NodeModel,
-    metric: 'node',
+    metric: 'instance',
     queries: {
       [MetricType.CPU]: topConsumersQueries[OverviewQuery.NODES_BY_CPU],
       [MetricType.MEMORY]: topConsumersQueries[OverviewQuery.NODES_BY_MEMORY],
