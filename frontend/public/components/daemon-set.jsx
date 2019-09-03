@@ -24,8 +24,13 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
+import { DaemonSetModel } from '../models';
 
-export const menuActions = [Kebab.factory.AddStorage, ...Kebab.factory.common];
+export const menuActions = [
+  Kebab.factory.AddStorage,
+  ...Kebab.getExtensionsActionsForKind(DaemonSetModel),
+  ...Kebab.factory.common,
+];
 
 const kind = 'DaemonSet';
 

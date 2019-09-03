@@ -21,9 +21,14 @@ import {
   navFactory,
 } from './utils';
 import { VolumesTable } from './volumes-table';
+import { StatefulSetModel } from '../models';
 
 const { AddStorage, common } = Kebab.factory;
-export const menuActions = [AddStorage, ...common];
+export const menuActions = [
+  AddStorage,
+  ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
+  ...common,
+];
 
 const kind = 'StatefulSet';
 

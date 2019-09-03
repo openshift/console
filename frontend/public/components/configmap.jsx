@@ -6,8 +6,12 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
+import { ConfigMapModel } from '../models';
 
-const menuActions = Kebab.factory.common;
+const menuActions = [
+  ...Kebab.getExtensionsActionsForKind(ConfigMapModel),
+  ...Kebab.factory.common,
+];
 
 const kind = 'ConfigMap';
 

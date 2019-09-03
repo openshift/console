@@ -7,6 +7,7 @@ import { BanIcon } from '@patternfly/react-icons';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
+import { CustomResourceDefinitionModel } from '../models';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
@@ -22,7 +23,7 @@ const instances = (kind, obj) => ({
   href: crdInstancesPath(obj),
 });
 
-const menuActions = [instances, ...common];
+const menuActions = [instances, ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel), ...common];
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),

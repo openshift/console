@@ -21,10 +21,16 @@ import {
 
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
+import { ReplicaSetModel } from '../models';
 
 const {ModifyCount, AddStorage, common} = Kebab.factory;
 
-export const replicaSetMenuActions = [ModifyCount, AddStorage, ...common];
+export const replicaSetMenuActions = [
+  ModifyCount,
+  AddStorage,
+  ...Kebab.getExtensionsActionsForKind(ReplicaSetModel),
+  ...common,
+];
 
 const Details = ({obj: replicaSet}) => {
   const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);

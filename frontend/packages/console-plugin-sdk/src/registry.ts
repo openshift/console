@@ -25,6 +25,7 @@ import {
   isOverviewCRD,
   isGlobalConfig,
   isClusterServiceVersionAction,
+  isKebabActions,
 } from './typings';
 
 /**
@@ -127,5 +128,9 @@ export class ExtensionRegistry {
 
   public getClusterServiceVersionActions() {
     return this.extensions.filter(isClusterServiceVersionAction);
+  }
+
+  public getKebabActions() {
+    return this.extensions.filter(isKebabActions);
   }
 }

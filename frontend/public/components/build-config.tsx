@@ -24,6 +24,7 @@ import {
 import { BuildsPage, BuildEnvironmentComponent, BuildStrategyType } from './build';
 import { fromNow } from './utils/datetime';
 import { ResourceEventStream } from './events';
+import { BuildConfigModel } from '../models';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
@@ -47,6 +48,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
 
 const menuActions = [
   startBuildAction,
+  ...Kebab.getExtensionsActionsForKind(BuildConfigModel),
   ...Kebab.factory.common,
 ];
 

@@ -9,6 +9,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { ResourceEventStream } from './events';
+import {JobModel} from '../models';
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Edit Parallelism',
@@ -24,7 +25,7 @@ const ModifyJobParallelism = (kind, obj) => ({
     verb: 'patch',
   },
 });
-const menuActions = [ModifyJobParallelism, ...Kebab.factory.common];
+const menuActions = [ModifyJobParallelism, ...Kebab.getExtensionsActionsForKind(JobModel), ...Kebab.factory.common];
 
 const kind = 'Job';
 

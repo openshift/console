@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {ImageStreamTagModel} from '../models';
 import { DetailsPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
@@ -12,7 +13,7 @@ const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamTagModel), ...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {

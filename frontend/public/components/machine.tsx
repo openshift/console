@@ -20,7 +20,7 @@ import {
 import { ResourceEventStream } from './events';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnClasses = [

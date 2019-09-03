@@ -26,7 +26,7 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
-  LoadingInline,
+  LoadingInline, getExtensionsKebabActionsForKind,
 } from './utils';
 
 import {
@@ -93,6 +93,7 @@ export const menuActions: KebabAction[] = [
   PauseAction,
   ModifyCount,
   AddStorage,
+  ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
   ...common,
 ];
 

@@ -15,7 +15,7 @@ import {
 } from './utils';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({obj}) => {

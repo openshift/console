@@ -56,7 +56,12 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
 });
 
 const { common } = Kebab.factory;
-const menuActions = [editCountAction, configureMachineAutoscaler, ...common];
+const menuActions = [
+  editCountAction,
+  configureMachineAutoscaler,
+  ...Kebab.getExtensionsActionsForKind(MachineSetModel),
+  ...common,
+];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 export const getAWSPlacement = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'spec.template.spec.providerSpec.value.placement') || {};

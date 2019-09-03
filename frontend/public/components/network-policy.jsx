@@ -7,9 +7,10 @@ import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, ExternalLink } from './utils';
+import { NetworkPolicyModel } from '../models';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
 
 const tableColumnClasses = [
   classNames('col-sm-4', 'col-xs-6'),

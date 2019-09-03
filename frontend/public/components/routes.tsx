@@ -10,10 +10,11 @@ import { DetailsPage,ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {RouteModel} from '../models';
 import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
-const menuActions = Kebab.factory.common;
+const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
 
 export type IngressStatusProps = {
   host: string;
