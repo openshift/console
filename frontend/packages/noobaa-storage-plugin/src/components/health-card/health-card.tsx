@@ -154,7 +154,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
       </DashboardCardBody>
       {alerts.length > 0 && (
         <React.Fragment>
-          <DashboardCardHeader className="co-alerts-card__border">
+          <DashboardCardHeader className="co-health-card__alerts-border">
             <DashboardCardTitle>Alerts</DashboardCardTitle>
           </DashboardCardHeader>
           <DashboardCardBody>
