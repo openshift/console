@@ -11,20 +11,28 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   }
   const params = new URLSearchParams();
   _.each(queries, (query, i) => {
+    const queryWithoutRange = query.endsWith(']') ? query.substring(0, query.lastIndexOf('[')) : query;
     params.set(`g${i}.range_input`, '1h');
-    params.set(`g${i}.expr`, query);
+    params.set(`g${i}.expr`, queryWithoutRange);
     params.set(`g${i}.tab`, '0');
   });
   return `${base}/graph?${params.toString()}`;
 };
 
 export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
-  ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
-    const url = getPrometheusExpressionBrowserURL(urls, [query]);
-    return query
-      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>{children}</a>
-      : <React.Fragment>{children}</React.Fragment>;
-  }
+  ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) =>
+    query ? (
+      <a
+        href={getPrometheusExpressionBrowserURL(urls, [query])}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: 'inherit', textDecoration: 'none' }}
+      >
+        {children}
+      </a>
+    ) : (
+      <React.Fragment>{children}</React.Fragment>
+    )
 );
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
