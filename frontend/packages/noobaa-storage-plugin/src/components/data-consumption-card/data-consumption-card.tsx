@@ -7,6 +7,8 @@ import {
   ChartGroup,
   ChartLegend,
   ChartThemeColor,
+  ChartTooltip,
+  ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import {
   DashboardCard,
@@ -18,37 +20,19 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../constants/queries';
+import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
+import { PrometheusResponse } from '@console/internal/components/graphs';
+import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';
 import {
-  ACCOUNTS,
-  BY_IOPS,
-  BY_LOGICAL_USAGE,
-  BY_PHYSICAL_VS_LOGICAL_USAGE,
-  BY_EGRESS,
-  PROVIDERS,
-  CHART_LABELS,
-} from '../../constants';
-import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
-import {
-  BarChartData,
-  metricsChartDataMap,
-  metricsChartLegendDataMap,
+  DataConsumersValue,
+  DataConsumersSortByValue,
+  getDataConsumptionChartData,
+  getQueries,
   numberInWords,
 } from './data-consumption-card-utils';
+import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import './data-consumption-card.scss';
-
-const DataConsumersValue = {
-  [PROVIDERS]: 'PROVIDERS_',
-  [ACCOUNTS]: 'ACCOUNTS_',
-};
-const DataConsumersSortByValue = {
-  [BY_IOPS]: 'BY_IOPS',
-  [BY_LOGICAL_USAGE]: 'BY_LOGICAL_USAGE',
-  [BY_PHYSICAL_VS_LOGICAL_USAGE]: 'BY_PHYSICAL_VS_LOGICAL_USAGE',
-  [BY_EGRESS]: 'BY_EGRESS',
-};
 
 const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
@@ -59,67 +43,39 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   const [sortByKpi, setsortByKpi] = React.useState(BY_IOPS);
 
   React.useEffect(() => {
-    const query =
-      DATA_CONSUMPTION_QUERIES[
-        ObjectServiceDashboardQuery[
-          DataConsumersValue[metricType] + DataConsumersSortByValue[sortByKpi]
-        ]
-      ];
-    watchPrometheus(query);
-    return () => stopWatchPrometheusQuery(query);
+    const { queries, keys } = getQueries(metricType, sortByKpi);
+    keys.forEach((key) => watchPrometheus(queries[key]));
+    return () => keys.forEach((key) => stopWatchPrometheusQuery(queries[key]));
   }, [watchPrometheus, stopWatchPrometheusQuery, metricType, sortByKpi]);
 
-  const dataConsumptionQueryResult = prometheusResults.getIn([
-    DATA_CONSUMPTION_QUERIES[
-      ObjectServiceDashboardQuery[
-        DataConsumersValue[metricType] + DataConsumersSortByValue[sortByKpi]
-      ]
-    ],
-    'result',
-  ]);
+  const { queries, keys } = getQueries(metricType, sortByKpi);
+  const result: { [key: string]: PrometheusResponse } = {};
+  keys.forEach((key) => {
+    result[key] = prometheusResults.getIn([queries[key], 'result']); // building an object having 'key'from the queries object and 'value' as the Prometheus response
+  });
 
+  let maxUnit = '';
   let maxVal: number;
-  let chartData = [];
-  let legendData = [];
   let suffixLabel = '';
-  const result = _.get(dataConsumptionQueryResult, 'data.result', []);
-  if (result.length) {
-    let maxData: BarChartData | any = {
-      x: '',
-      y: 0,
-      name: '',
-      yOriginal: 0,
-      unit: '',
-    };
-    chartData = metricsChartDataMap[metricType][sortByKpi](result);
-    legendData = metricsChartLegendDataMap[metricType][sortByKpi](chartData);
-    maxData = _.maxBy(chartData.map((data) => _.maxBy(data, 'yOriginal')), 'yOriginal');
-    const maxDataV = Number(maxData.yOriginal);
-    const maxDataVStr = maxDataV.toFixed(1);
-    let maxDataH = humanizeBinaryBytes(maxDataVStr);
-    suffixLabel = maxDataH.unit;
+
+  const isLoading = _.values(result).includes(undefined);
+
+  const metric = metricType === PROVIDERS ? 'type' : 'account';
+  const curentDropdown = DataConsumersValue[metricType] + DataConsumersSortByValue[sortByKpi];
+  const { chartData, legendData } = getDataConsumptionChartData(result, metric, curentDropdown);
+
+  // chartData = [[]] or [[],[]]
+  if (!chartData.some(_.isEmpty)) {
+    maxVal = _.maxBy(chartData.map((data) => _.maxBy(data, 'y')), 'y').y;
+    maxUnit = humanizeBinaryBytes(maxVal).unit;
+    suffixLabel = maxUnit;
     if (sortByKpi === BY_IOPS) {
-      suffixLabel = numberInWords(maxDataV);
-      maxDataH = humanizeNumber(maxDataVStr);
+      suffixLabel = numberInWords(maxVal);
+      maxUnit = humanizeNumber(maxVal).unit;
     }
     // if suffixLabel is a non-empty string, show it in expected form
     if (suffixLabel) suffixLabel = `(in ${suffixLabel})`;
-    maxVal = Number(maxDataH.value);
   }
-
-  const yTickValues = [
-    Number((maxVal / 10).toFixed(1)),
-    Number((maxVal / 5).toFixed(1)),
-    Number(((3 * maxVal) / 10).toFixed(1)),
-    maxVal,
-    Number(((4 * maxVal) / 10).toFixed(1)),
-    Number(((5 * maxVal) / 10).toFixed(1)),
-    Number(((6 * maxVal) / 10).toFixed(1)),
-    Number(((7 * maxVal) / 10).toFixed(1)),
-    Number(((8 * maxVal) / 10).toFixed(1)),
-    Number(((9 * maxVal) / 10).toFixed(1)),
-    Number(Number(maxVal).toFixed(1)),
-  ];
 
   return (
     <DashboardCard>
@@ -132,46 +88,60 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
           setKpi={setsortByKpi}
         />
       </DashboardCardHeader>
-      <DashboardCardBody
-        className="co-dashboard-card__body--top-margin"
-        isLoading={!dataConsumptionQueryResult}
-      >
-        {chartData.length > 0 ? (
-          <div>
+      <DashboardCardBody className="co-dashboard-card__body--top-margin" isLoading={isLoading}>
+        {!chartData.some(_.isEmpty) ? (
+          <>
             <span className="text-secondary">
               {CHART_LABELS[sortByKpi]} {suffixLabel}
             </span>
             <Chart
+              containerComponent={
+                <ChartVoronoiContainer
+                  labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
+                  labels={(datum) => `${datum.y} ${maxUnit}`}
+                  voronoiDimension="x"
+                />
+              }
+              domain={{ y: [0, maxVal + 10] }}
+              minDomain={{ y: 0 }}
+              maxDomain={{ y: maxVal + 10 }}
+              domainPadding={{ x: [50, 50] }}
+              legendComponent={
+                <ChartLegend
+                  themeColor={ChartThemeColor.purple}
+                  data={legendData}
+                  orientation="horizontal"
+                  symbolSpacer={7}
+                  height={30}
+                  gutter={10}
+                  style={{ labels: { fontSize: 8, padding: '5 0 0 0' } }}
+                />
+              }
+              legendPosition="bottom-left"
+              padding={{
+                bottom: 50,
+                left: 30,
+                right: 30,
+                top: 30,
+              }}
               themeColor={ChartThemeColor.purple}
-              domain={{ y: [0, maxVal] }}
-              domainPadding={{ x: [15, 20], y: [10, 10] }}
-              padding={{ top: 20, bottom: 40, left: 50, right: 17 }}
-              height={280}
             >
-              <ChartAxis style={{ tickLabels: { padding: 5, fontSize: 10 } }} />
+              <ChartAxis style={{ tickLabels: { fontSize: 8 } }} />
               <ChartAxis
                 dependentAxis
-                tickValues={yTickValues}
+                showGrid
+                tickCount={10}
                 style={{
-                  tickLabels: { padding: 5, fontSize: 8, fontWeight: 500 },
-                  grid: { stroke: '#4d525840' },
+                  tickLabels: { fontSize: 8, padding: 0 },
                 }}
               />
               <ChartGroup offset={11}>
-                {chartData.map((data) => (
-                  <ChartBar key={data.name} data={data} />
+                {chartData.map((data, i) => (
+                  <ChartBar key={i} data={data} /> // eslint-disable-line react/no-array-index-key
                 ))}
               </ChartGroup>
             </Chart>
-            <ChartLegend
-              themeColor={ChartThemeColor.purple}
-              data={legendData}
-              orientation="horizontal"
-              height={40}
-              width={500}
-              style={{ labels: { fontSize: 10 } }}
-            />
-          </div>
+          </>
         ) : (
           <GraphEmpty />
         )}
