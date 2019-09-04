@@ -656,6 +656,7 @@ export type K8sKind = {
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: K8sVerb[];
+  shortNames?: string[];
 };
 
 export type Cause = {

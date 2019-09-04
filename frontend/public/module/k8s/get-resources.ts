@@ -90,12 +90,12 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
         const adminResources = [];
 
         const defineModels = (list: APIResourceList): K8sKind[] => list.resources.filter(({name}) => !name.includes('/'))
-          .map(({name, singularName, namespaced, kind, verbs}) => {
+          .map(({name, singularName, namespaced, kind, verbs, shortNames}) => {
             const label = kind.replace(/([A-Z]+)/g, ' $1').slice(1);
             const groupVersion = list.groupVersion.split('/').length === 2 ? list.groupVersion : `core/${list.groupVersion}`;
 
             return {
-              kind, namespaced, label, verbs,
+              kind, namespaced, label, verbs, shortNames,
               plural: name,
               apiVersion: groupVersion.split('/')[1],
               abbr: kindToAbbr(kind),
@@ -130,5 +130,6 @@ export type APIResourceList = {
     namespaced?: boolean;
     kind: string;
     verbs: K8sVerb[];
+    shortNames?: string[];
   }[];
 };
