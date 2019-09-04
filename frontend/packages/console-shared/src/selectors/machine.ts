@@ -7,11 +7,16 @@ import {
 } from '@console/internal/module/k8s';
 import { getName } from './common';
 
-export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind) =>
+export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string =>
   _.get(obj, ['metadata', 'labels', 'machine.openshift.io/cluster-api-machine-role']);
-export const getMachineNodeName = (obj: MachineKind) => _.get(obj, 'status.nodeRef.name');
-export const getMachineAWSPlacement = (machine: MachineKind) =>
-  _.get(machine, 'spec.providerSpec.value.placement') || {};
 
-export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []) =>
+export const getMachineRegion = (obj: MachineKind): string =>
+  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/region']);
+
+export const getMachineZone = (obj: MachineKind): string =>
+  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/zone']);
+
+export const getMachineNodeName = (obj: MachineKind) => _.get(obj, 'status.nodeRef.name');
+
+export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): NodeKind =>
   nodes.find((node) => getMachineNodeName(machine) === getName(node));

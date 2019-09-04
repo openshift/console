@@ -114,11 +114,11 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({obj
               <dd>{machineRole}</dd>
             </React.Fragment>}
             {region && <React.Fragment>
-              <dt>AWS Region</dt>
+              <dt>Region</dt>
               <dd>{region}</dd>
             </React.Fragment>}
             {availabilityZone && <React.Fragment>
-              <dt>AWS Availability Zone</dt>
+              <dt>Availability Zone</dt>
               <dd>{availabilityZone}</dd>
             </React.Fragment>}
           </ResourceSummary>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineRole, getMachineNodeName, getMachineAWSPlacement } from '@console/shared';
+import { getMachineNodeName, getMachineRegion, getMachineRole, getMachineZone } from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
@@ -47,11 +47,11 @@ const MachineTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Region', sortField: 'spec.providerSpec.value.placement.region',
+      title: 'Region', sortField: 'metadata.labels[\'machine.openshift.io/region\']',
       transforms: [sortable], props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Availability Zone', sortField: 'spec.providerSpec.value.placement.availabilityZone',
+      title: 'Availability Zone', sortField: 'metadata.labels[\'machine.openshift.io/zone\']',
       transforms: [sortable], props: { className: tableColumnClasses[4] },
     },
     {
@@ -62,8 +62,9 @@ const MachineTableHeader = () => {
 MachineTableHeader.displayName = 'MachineTableHeader';
 
 const MachineTableRow: React.FC<MachineTableRowProps> = ({obj, index, key, style}) => {
-  const { availabilityZone, region } = getMachineAWSPlacement(obj);
   const nodeName = getMachineNodeName(obj);
+  const region = getMachineRegion(obj);
+  const zone = getMachineZone(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
@@ -79,7 +80,7 @@ const MachineTableRow: React.FC<MachineTableRowProps> = ({obj, index, key, style
         {region || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {availabilityZone || '-'}
+        {zone || '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
@@ -98,7 +99,8 @@ type MachineTableRowProps = {
 const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind}) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
-  const { availabilityZone, region } = getMachineAWSPlacement(obj);
+  const region = getMachineRegion(obj);
+  const zone = getMachineZone(obj);
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Machine Overview" />
@@ -112,12 +114,12 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind
           <dd>{machineRole}</dd>
         </React.Fragment>}
         {region && <React.Fragment>
-          <dt>AWS Region</dt>
+          <dt>Region</dt>
           <dd>{region}</dd>
         </React.Fragment>}
-        {availabilityZone && <React.Fragment>
-          <dt>AWS Availability Zone</dt>
-          <dd>{availabilityZone}</dd>
+        {zone && <React.Fragment>
+          <dt>Availability Zone</dt>
+          <dd>{zone}</dd>
         </React.Fragment>}
         <dt>Machine Addresses</dt>
         <dd><NodeIPList ips={_.get(obj, 'status.addresses')} expand={true} /></dd>
