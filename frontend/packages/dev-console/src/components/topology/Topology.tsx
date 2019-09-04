@@ -3,7 +3,10 @@ import { TopologyView } from '@patternfly/react-topology';
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
 import { GraphApi, TopologyDataModel, TopologyDataObject } from './topology-types';
-import { updateTopologyResourceApplication } from './topology-utils';
+import {
+  createTopologyResourceConnection,
+  updateTopologyResourceApplication,
+} from './topology-utils';
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 
@@ -45,6 +48,22 @@ export default class Topology extends React.Component<TopologyProps, State> {
     return updateTopologyResourceApplication(item, targetGroup);
   };
 
+  onCreateConnection = (
+    sourceNodeId: string,
+    targetNodeId: string,
+    replaceTargetNodeId: string = null,
+  ): Promise<any> => {
+    const {
+      data: { topology },
+    } = this.props;
+    const sourceItem: TopologyDataObject = topology[sourceNodeId];
+    const targetItem: TopologyDataObject = topology[targetNodeId];
+    const replaceTargetItem: TopologyDataObject =
+      replaceTargetNodeId && topology[replaceTargetNodeId];
+
+    return createTopologyResourceConnection(sourceItem, targetItem, replaceTargetItem);
+  };
+
   onSidebarClose = () => {
     this.setState({ selected: null });
   };
@@ -82,6 +101,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
           selected={selected}
           onSelect={this.onSelect}
           onUpdateNodeGroup={this.onUpdateNodeGroup}
+          onCreateConnection={this.onCreateConnection}
           graphApiRef={this.graphApiRef}
         />
       </TopologyView>

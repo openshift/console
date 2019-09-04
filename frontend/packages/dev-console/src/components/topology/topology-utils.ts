@@ -3,7 +3,13 @@ import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import { ResourceProps, TransformPodData, updateResourceApplication } from '@console/shared';
+import {
+  ResourceProps,
+  TransformPodData,
+  edgesFromAnnotations,
+  updateResourceApplication,
+  createResourceConnection,
+} from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
@@ -350,40 +356,35 @@ export class TransformTopologyData {
       this.topologyData.graph.nodes.push(currentNode);
       const labels = _.get(deploymentConfig, 'metadata.labels');
       const annotations = _.get(deploymentConfig, 'metadata.annotations');
-      let edges = [];
       const totalDeployments = _.cloneDeep(
-        _.concat(this.resources.deploymentConfigs.data, this.resources.deployments.data),
+        _.concat(
+          this.resources.deploymentConfigs && this.resources.deploymentConfigs.data,
+          this.resources.deployments && this.resources.deployments.data,
+          this.resources.statefulSets && this.resources.statefulSets.data,
+          this.resources.daemonSets && this.resources.daemonSets.data,
+        ),
       );
       // find and add the edges for a node
-      if (_.has(annotations, ['app.openshift.io/connects-to'])) {
-        try {
-          edges = JSON.parse(annotations['app.openshift.io/connects-to']);
-        } catch (e) {
-          // connects-to annotation should hold a JSON string value but failed to parse
-          // treat value as a comma separated list of strings
-          edges = annotations['app.openshift.io/connects-to'].split(',').map((v) => v.trim());
+      _.map(edgesFromAnnotations(annotations), (edge) => {
+        // handles multiple edges
+        const targetNode = _.get(
+          _.find(totalDeployments, (deployment) => {
+            const name =
+              _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
+              deployment.metadata.name;
+            return name === edge;
+          }),
+          'metadata.uid',
+        );
+        if (targetNode) {
+          this.topologyData.graph.edges.push({
+            id: `${currentNode.id}_${targetNode}`,
+            type: 'connects-to',
+            source: currentNode.id,
+            target: targetNode,
+          });
         }
-        _.map(edges, (edge) => {
-          // handles multiple edges
-          const targetNode = _.get(
-            _.find(totalDeployments, (deployment) => {
-              const name =
-                _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
-                deployment.metadata.name;
-              return name === edge;
-            }),
-            'metadata.uid',
-          );
-          if (targetNode) {
-            this.topologyData.graph.edges.push({
-              id: `${currentNode.id}_${targetNode}`,
-              type: 'connects-to',
-              source: currentNode.id,
-              target: targetNode,
-            });
-          }
-        });
-      }
+      });
 
       _.forEach(labels, (label, key) => {
         if (key !== 'app.kubernetes.io/part-of') {
@@ -433,4 +434,20 @@ export const updateTopologyResourceApplication = (
 
   const resource = getResourceDeploymentObject(item);
   return updateResourceApplication(resource, application);
+};
+
+export const createTopologyResourceConnection = (
+  source: TopologyDataObject,
+  target: TopologyDataObject,
+  replaceTarget: TopologyDataObject = null,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+
+  const sourceObj = getResourceDeploymentObject(source);
+  const targetObj = getResourceDeploymentObject(target);
+  const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
+
+  return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
 };

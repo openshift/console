@@ -19,9 +19,22 @@ import {
   GroupProvider,
   GroupProps,
   GroupElementInterface,
+  DragConnectionProps,
+  EdgeProps,
 } from './topology-types';
+import { DraggingCreateConnector, dragConnectorEndPoint } from './shapes/DraggingCreateConnector';
+import { DraggingMoveConnector } from './shapes/DraggingMoveConnector';
 
 const ZOOM_EXTENT: [number, number] = [0.25, 4];
+
+type DragConnection = {
+  viewNode: ViewNode;
+  connectedNodes?: string[];
+  dragX?: number;
+  dragY?: number;
+  dragging: boolean;
+  edgeId?: string;
+};
 
 interface State {
   zoomTransform?: {
@@ -45,6 +58,9 @@ interface State {
   dragNodeId: string;
   sourceGroup: string;
   targetGroup: string;
+  createConnection: DragConnection;
+  moveConnection: DragConnection;
+  connectionTarget: string;
 }
 
 export interface D3ForceDirectedRendererProps {
@@ -59,6 +75,11 @@ export interface D3ForceDirectedRendererProps {
   selected?: string;
   onSelect?(string): void;
   onUpdateNodeGroup?(nodeId: string, targetGroup: string): Promise<any>;
+  onCreateConnection?(
+    sourceNodeId: string,
+    targetNodeId: string,
+    replaceTargetNodeId?: string,
+  ): Promise<any>;
 }
 
 function getEdgeId(d: Edge): string {
@@ -93,6 +114,9 @@ export default class D3ForceDirectedRenderer extends React.Component<
       dragNodeId: '',
       sourceGroup: '',
       targetGroup: '',
+      createConnection: null,
+      moveConnection: null,
+      connectionTarget: '',
     };
 
     this.simulation = d3
@@ -377,7 +401,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onNodeDragged = (d: ViewNode) => {
-    const { groups, groupsById, targetGroup } = this.state;
+    const { groups, groupsById } = this.state;
 
     if (d3.event.sourceEvent.which !== 1) {
       return;
@@ -404,9 +428,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         return groupElement && groupElement.isPointInGroup(point);
       });
 
-      if (newTargetGroup !== targetGroup) {
-        this.setState({ targetGroup: newTargetGroup });
-      }
+      this.setState({ targetGroup: newTargetGroup, createConnection: null });
     }
   };
 
@@ -487,6 +509,8 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onGroupDragStart = (d: ViewGroup) => {
+    d3.event.sourceEvent.stopPropagation();
+
     if (d3.event.sourceEvent.which !== 1) {
       return;
     }
@@ -523,6 +547,256 @@ export default class D3ForceDirectedRenderer extends React.Component<
       gd.fx = null;
       gd.fy = null;
     });
+  };
+
+  private onNodeHover = (node: ViewNode, hovered: boolean) => {
+    const { createConnection, moveConnection } = this.state;
+    if (moveConnection || (createConnection && createConnection.dragging)) {
+      return;
+    }
+
+    const newCreateConnection: DragConnection = {
+      viewNode: node,
+      dragging: false,
+    };
+
+    this.setState({ createConnection: hovered ? newCreateConnection : null });
+  };
+
+  private onCreateConnectionEnter = ($node: NodeSelection) => {
+    $node.call(
+      d3
+        .drag<SVGGElement, ViewNode>()
+        .on('start', (d) => this.onCreateConnectionStart(d))
+        .on('drag', (d) => this.onCreateConnectionDragged(d))
+        .on('end', (d) => this.onCreateConnectionEnd(d))
+        .filter(() => this.state.nodes.length > 1),
+    );
+  };
+
+  private onCreateConnectionStart = (d: ViewNode) => {
+    d3.event.sourceEvent.stopPropagation();
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (d && this.dragCount) {
+      this.dragCount++;
+    }
+  };
+
+  private initializeCreateConnection = (d: ViewNode) => {
+    const { edgesById } = this.state;
+    const outwardEdges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === d.id;
+    });
+    const connectedNodes = _.map(outwardEdges, 'target.id');
+    const createConnection: DragConnection = {
+      viewNode: d,
+      connectedNodes,
+      dragX: d3.event.x,
+      dragY: d3.event.y,
+      dragging: true,
+    };
+
+    this.lockNodes();
+
+    this.setState({ createConnection });
+  };
+
+  private onCreateConnectionDragged = (d: ViewNode) => {
+    const { nodes, nodesById, createConnection } = this.state;
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (!this.dragCount && (Math.abs(d.x - d3.event.x) > 5 || Math.abs(d.y - d3.event.y) > 5)) {
+      this.dragCount++;
+      this.initializeCreateConnection(d);
+      return;
+    }
+
+    if (d3.event.dx === 0 && d3.event.dy === 0) {
+      return;
+    }
+
+    if (this.dragCount) {
+      const newCreateConnection: DragConnection = {
+        viewNode: d,
+        connectedNodes: createConnection.connectedNodes,
+        dragX: d3.event.x,
+        dragY: d3.event.y,
+        dragging: true,
+      };
+
+      const newTargetNode: string = _.find(nodes, (nodeId) => {
+        if (nodeId === d.id || _.includes(createConnection.connectedNodes, nodeId)) {
+          return false;
+        }
+        const node: any = nodesById[nodeId];
+        const endPoint = dragConnectorEndPoint(d.x, d.y, d.size, d3.event.x, d3.event.y, true);
+        const a = node.x - (endPoint[0] + d.x);
+        const b = node.y - (endPoint[1] + d.y);
+        const c = Math.sqrt(a * a + b * b);
+
+        return c <= node.size / 2;
+      });
+
+      this.setState({ createConnection: newCreateConnection, connectionTarget: newTargetNode });
+    }
+  };
+
+  private onCreateConnectionEnd = (d: ViewNode) => {
+    const { onCreateConnection } = this.props;
+    const { connectionTarget } = this.state;
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (this.dragCount) {
+      --this.dragCount;
+    }
+
+    const onComplete = () => {
+      this.unlockNodes();
+      this.setState({ createConnection: null });
+    };
+
+    if (!connectionTarget || d.id === connectionTarget) {
+      onComplete();
+      return;
+    }
+
+    onCreateConnection(d.id, connectionTarget)
+      .then(onComplete)
+      .catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+        onComplete();
+      });
+  };
+
+  private onMoveConnectionEnter = ($targetArrow: EdgeTargetArrowSelection) => {
+    $targetArrow.call(
+      d3
+        .drag<SVGGElement, ViewEdge>()
+        .on('start', (edge) => this.onMoveConnectionStart(edge))
+        .on('drag', (edge) => this.onMoveConnectionDragged(edge))
+        .on('end', (edge) => this.onMoveConnectionEnd(edge))
+        .filter(() => this.state.nodes.length > 2),
+    );
+  };
+
+  private onMoveConnectionStart = (edge: ViewEdge) => {
+    d3.event.sourceEvent.stopPropagation();
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (edge && this.dragCount) {
+      this.dragCount++;
+    }
+  };
+
+  private initializeMoveConnection = (edge: ViewEdge) => {
+    const { edgesById } = this.state;
+
+    const outwardEdges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === edge.source.id;
+    });
+    const connectedNodes = _.map(outwardEdges, 'target.id');
+    const moveConnection: DragConnection = {
+      viewNode: edge.source,
+      connectedNodes,
+      dragX: d3.event.x,
+      dragY: d3.event.y,
+      dragging: true,
+      edgeId: edge.id,
+    };
+
+    this.lockNodes();
+
+    this.setState({ moveConnection, createConnection: null });
+  };
+
+  private onMoveConnectionDragged = (edge: ViewEdge) => {
+    const { nodes, nodesById, moveConnection } = this.state;
+    const d = edge.source;
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (!this.dragCount && (Math.abs(d.x - d3.event.x) > 5 || Math.abs(d.y - d3.event.y) > 5)) {
+      this.dragCount++;
+      this.initializeMoveConnection(edge);
+      return;
+    }
+
+    if (d3.event.dx === 0 && d3.event.dy === 0) {
+      return;
+    }
+
+    if (this.dragCount) {
+      const newMoveConnection: DragConnection = {
+        viewNode: d,
+        connectedNodes: moveConnection.connectedNodes,
+        dragX: d3.event.x,
+        dragY: d3.event.y,
+        dragging: true,
+        edgeId: edge.id,
+      };
+
+      const newTargetNode: string = _.find(nodes, (nodeId) => {
+        if (nodeId === d.id || _.includes(moveConnection.connectedNodes, nodeId)) {
+          return false;
+        }
+        const node: any = nodesById[nodeId];
+        const a = node.x - d3.event.x;
+        const b = node.y - d3.event.y;
+        const c = Math.sqrt(a * a + b * b);
+
+        return c <= node.size / 2;
+      });
+
+      this.setState({ moveConnection: newMoveConnection, connectionTarget: newTargetNode });
+    }
+  };
+
+  private onMoveConnectionEnd = (edge: ViewEdge) => {
+    const { onCreateConnection } = this.props;
+    const { connectionTarget } = this.state;
+    const d = edge.source;
+
+    if (d3.event.sourceEvent.which !== 1) {
+      return;
+    }
+
+    if (this.dragCount) {
+      --this.dragCount;
+    }
+
+    const onComplete = () => {
+      this.unlockNodes();
+      this.setState({ moveConnection: null });
+    };
+
+    if (!connectionTarget || d.id === connectionTarget) {
+      onComplete();
+      return;
+    }
+
+    onCreateConnection(d.id, connectionTarget, edge.target.id)
+      .then(onComplete)
+      .catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+        onComplete();
+      });
   };
 
   private deselect = (e: React.MouseEvent) => {
@@ -637,7 +911,13 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   renderNode(nodeId: string) {
     const { nodeProvider, selected, onSelect, topology } = this.props;
-    const { nodesById, dragNodeId } = this.state;
+    const {
+      nodesById,
+      dragNodeId,
+      moveConnection,
+      createConnection,
+      connectionTarget,
+    } = this.state;
 
     const data = topology[nodeId];
     const viewNode = nodesById[nodeId];
@@ -652,24 +932,75 @@ export default class D3ForceDirectedRenderer extends React.Component<
         selected={nodeId === selected}
         onSelect={onSelect ? () => onSelect(nodeId) : null}
         onEnter={this.onNodeEnter}
-        isDragging={nodeId === dragNodeId}
+        onHover={(hovered: boolean) => this.onNodeHover(viewNode, hovered)}
+        isDragging={
+          dragNodeId === nodeId ||
+          (moveConnection && moveConnection.viewNode.id === nodeId) ||
+          (createConnection && createConnection.viewNode.id === nodeId)
+        }
+        isTarget={connectionTarget === nodeId}
+      />
+    );
+  }
+
+  renderCreateConnection() {
+    const { topology } = this.props;
+    const { createConnection, moveConnection, dragNodeId } = this.state;
+
+    if (!createConnection || dragNodeId || moveConnection) {
+      return null;
+    }
+
+    return (
+      <DragConnectionWrapper
+        {...createConnection.viewNode}
+        view={createConnection.viewNode}
+        data={topology[createConnection.viewNode.id]}
+        isDragging={createConnection.dragging}
+        dragX={createConnection.dragX}
+        dragY={createConnection.dragY}
+        onEnter={this.onCreateConnectionEnter}
+        onHover={(hovered: boolean) => this.onNodeHover(createConnection.viewNode, hovered)}
+      />
+    );
+  }
+
+  renderMoveConnection() {
+    const { moveConnection, dragNodeId } = this.state;
+
+    if (!moveConnection || dragNodeId) {
+      return null;
+    }
+
+    return (
+      <DraggingMoveConnector
+        {...moveConnection.viewNode}
+        dragX={moveConnection.dragX}
+        dragY={moveConnection.dragY}
       />
     );
   }
 
   renderEdge(edgeId: string) {
     const { topology, edgeProvider } = this.props;
-    const { edgesById, dragNodeId } = this.state;
+    const { edgesById, dragNodeId, moveConnection } = this.state;
+
+    if (moveConnection && moveConnection.edgeId === edgeId) {
+      return null;
+    }
 
     const data = topology[edgeId];
     const viewEdge = edgesById[edgeId];
     const Component = edgeProvider(viewEdge.type);
     return (
-      <Component
+      <EdgeWrapper
+        component={Component}
+        view={viewEdge}
         {...viewEdge}
         key={edgeId}
         data={data}
         isDragging={viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId}
+        onTargetArrowEnter={this.onMoveConnectionEnter}
       />
     );
   }
@@ -694,16 +1025,20 @@ export default class D3ForceDirectedRenderer extends React.Component<
       dragNodeId,
       sourceGroup,
       targetGroup,
+      createConnection,
+      moveConnection,
     } = this.state;
     const draggedEdges = this.draggedEdges();
     const draggedNodes = this.draggedNodes();
+    const dragActive =
+      dragNodeId || !!moveConnection || (createConnection && createConnection.dragging);
     return (
       <svg
         height={height}
         width={width}
         ref={this.refSvg}
         onClick={this.deselect}
-        className={dragNodeId ? 'odc-m-drag-active' : ''}
+        className={dragActive ? 'odc-m-drag-active' : ''}
       >
         <SvgDefsProvider>
           <g transform={zoomTransform && zoomTransform.toString()} ref={this.zoomGroup}>
@@ -736,11 +1071,41 @@ export default class D3ForceDirectedRenderer extends React.Component<
                 _.includes(draggedNodes, nodeId) ? null : this.renderNode(nodeId),
               )}
               {dragNodeId && this.renderDragItems(draggedEdges, draggedNodes)}
+              {this.renderCreateConnection()}
+              {this.renderMoveConnection()}
             </g>
           </g>
         </SvgDefsProvider>
       </svg>
     );
+  }
+}
+
+type DragConnectionWrapperProps = DragConnectionProps & {
+  view: ViewNode;
+  data: TopologyDataObject;
+  onEnter(NodeSelection): void;
+};
+
+class DragConnectionWrapper extends React.Component<DragConnectionWrapperProps> {
+  private $node: NodeSelection;
+
+  componentDidMount() {
+    // eslint-disable-next-line react/no-find-dom-node
+    this.$node = d3.select(ReactDOM.findDOMNode(this) as Element).datum(this.props.view);
+    this.props.onEnter && this.props.onEnter(this.$node);
+  }
+
+  componentDidUpdate(prevProps: DragConnectionWrapperProps) {
+    if (prevProps.view !== this.props.view) {
+      // we need to update the data so that d3 apis get the correct new node
+      this.$node.datum(this.props.view);
+    }
+  }
+
+  render() {
+    const { onEnter, view, ...other } = this.props;
+    return <DraggingCreateConnector {...other} />;
   }
 }
 
@@ -773,6 +1138,34 @@ class ViewWrapper extends React.Component<ViewWrapperProps> {
   render() {
     const { component: Component, onEnter, view, ...other } = this.props;
     return <Component {...other} />;
+  }
+}
+
+type EdgeTargetArrowSelection = d3.Selection<Element, ViewEdge, null, undefined>;
+type EdgeWrapperProps = EdgeProps & {
+  component: React.ComponentType<EdgeProps>;
+  view: ViewEdge;
+  onTargetArrowEnter(EdgeTargetArrowSelection): void;
+};
+
+class EdgeWrapper extends React.Component<EdgeWrapperProps> {
+  private $targetArrow: EdgeTargetArrowSelection;
+
+  componentDidUpdate(prevProps: EdgeWrapperProps) {
+    if (prevProps.view !== this.props.view) {
+      // we need to update the data so that d3 apis get the correct new edge
+      this.$targetArrow.datum(this.props.view);
+    }
+  }
+
+  setTargetArrowRef = (ref: SVGPathElement) => {
+    this.$targetArrow = d3.select(ref).datum(this.props.view);
+    this.props.onTargetArrowEnter && this.props.onTargetArrowEnter(this.$targetArrow);
+  };
+
+  render() {
+    const { component: Component, ...other } = this.props;
+    return <Component targetArrowRef={this.setTargetArrowRef} {...other} />;
   }
 }
 

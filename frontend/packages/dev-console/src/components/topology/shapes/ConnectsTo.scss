@@ -1,3 +1,7 @@
-odc-connects-to-marker {
-  fill: var(--pf-global--BackgroundColor--dark-200)
+.odc-connects-to__target-box {
+    cursor: pointer;
+}
+
+.odc-hover-arrow {
+  fill: var(--pf-global--active-color--400);
 }

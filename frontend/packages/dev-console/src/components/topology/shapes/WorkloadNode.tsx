@@ -22,9 +22,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   x,
   y,
   size,
-  selected,
-  onSelect,
-  isDragging,
+  ...others
 }) => {
   const { radius, podStatusOuterRadius, podStatusInnerRadius, decoratorRadius } = calculateRadius(
     size,
@@ -57,9 +55,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       icon={workload.data.builderImage}
       label={workload.name}
       kind={workload.data.kind}
-      selected={selected}
-      onSelect={onSelect}
-      isDragging={isDragging}
+      {...others}
       attachments={[
         workload.data.editUrl && (
           <Decorator

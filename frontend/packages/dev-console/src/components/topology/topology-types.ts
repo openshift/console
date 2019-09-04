@@ -139,11 +139,21 @@ export type NodeProps<D = {}> = ViewNode &
   Selectable & {
     data?: TopologyDataObject<D>;
     isDragging?: boolean;
+    isTarget?: boolean;
+    onHover?(hovered: boolean): void;
   };
+
+export type DragConnectionProps = NodeProps & {
+  dragX: number;
+  dragY: number;
+  isDragging?: boolean;
+  onHover?(hovered: boolean): void;
+};
 
 export type EdgeProps<D = {}> = ViewEdge & {
   data?: TopologyDataObject<D>;
   isDragging?: boolean;
+  targetArrowRef?(ref: SVGPathElement): void;
 };
 
 export type GroupProps = ViewGroup & {

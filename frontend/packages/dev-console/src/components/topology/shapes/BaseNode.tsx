@@ -24,6 +24,8 @@ export interface BaseNodeProps {
   children?: React.ReactNode;
   attachments?: React.ReactNode;
   isDragging?: boolean;
+  isTarget?: boolean;
+  onHover?(hovered: boolean): void;
 }
 
 const FILTER_ID = 'BaseNodeDropShadowFilterId';
@@ -82,15 +84,21 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
       label,
       kind,
       onSelect,
+      onHover,
       children,
       attachments,
       isDragging,
+      isTarget,
     } = this.props;
     const { hover, labelHover } = this.state;
 
     const contentsClasses = classNames('odc-base-node__contents', {
-      'odc-m-is-highlight': isDragging,
+      'is-highlight': isDragging || isTarget,
     });
+    const isHover = (hovered: boolean) => {
+      onHover && onHover(hovered);
+      this.setState({ hover: hovered });
+    };
 
     return (
       <g transform={`translate(${x}, ${y})`} className="odc-base-node">
@@ -103,8 +111,8 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
                 }
               : null
           }
-          onMouseEnter={() => this.setState({ hover: true })}
-          onMouseLeave={() => this.setState({ hover: false })}
+          onMouseEnter={() => isHover(true)}
+          onMouseLeave={() => isHover(false)}
         >
           <SvgDropShadowFilter id={FILTER_ID} />
           <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />

@@ -11,6 +11,7 @@ type BaseEdgeProps = {
   sourceMarkerId?: string;
   targetMarkerId?: string;
   isDragging?: boolean;
+  isHover?: boolean;
 };
 
 const BaseEdge: React.SFC<BaseEdgeProps> = ({
@@ -19,9 +20,13 @@ const BaseEdge: React.SFC<BaseEdgeProps> = ({
   sourceMarkerId,
   targetMarkerId,
   isDragging,
+  isHover,
 }) => (
   <line
-    className={classNames('odc-base-edge', { 'odc-m-is-highlight': isDragging })}
+    className={classNames('odc-base-edge', {
+      'is-highlight': isDragging,
+      'is-hover': isHover,
+    })}
     x1={source.x}
     y1={source.y}
     x2={target.x}

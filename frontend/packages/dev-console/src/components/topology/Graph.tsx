@@ -27,6 +27,11 @@ export interface GraphProps {
   selected?: string;
   onSelect?(string): void;
   onUpdateNodeGroup?(nodeId: string, targetGroup: string): Promise<any>;
+  onCreateConnection?(
+    sourceNodeId: string,
+    targetNodeId: string,
+    replaceTargetNodeId?: string,
+  ): Promise<any>;
   graphApiRef?(GraphApi): void;
 }
 
@@ -62,6 +67,7 @@ export default class Graph extends React.Component<GraphProps, State> {
       groupProvider,
       onSelect,
       onUpdateNodeGroup,
+      onCreateConnection,
       selected,
       topology,
     } = this.props;
@@ -81,6 +87,7 @@ export default class Graph extends React.Component<GraphProps, State> {
             ref={this.captureApiRef}
             onSelect={onSelect}
             onUpdateNodeGroup={onUpdateNodeGroup}
+            onCreateConnection={onCreateConnection}
             selected={selected}
           />
         )}
