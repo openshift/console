@@ -23,7 +23,7 @@ export const validationSchema = yup.object().shape({
   }),
   application: yup.object().shape({
     name: yup.string(),
-    selectedKey: yup.string().required('Required'),
+    selectedKey: yup.string(),
   }),
   image: yup.object().when('build', {
     is: (build) => build.strategy !== 'Docker',

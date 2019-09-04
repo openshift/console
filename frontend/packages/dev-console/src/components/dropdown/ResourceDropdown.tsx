@@ -43,6 +43,7 @@ interface ResourceDropdownProps {
   autoSelect?: boolean;
   resourceFilter?: (resource: any) => boolean;
   onChange?: (key: string, name?: string) => void;
+  onLoad?: (items: { [key: string]: string }) => void;
 }
 
 class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
@@ -70,6 +71,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       transformLabel,
       selectedKey,
       autoSelect,
+      onLoad,
     } = nextProps;
 
     if (!loaded) {
@@ -137,6 +139,10 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           : _.get(_.keys(sortedList), 0);
     }
     selectedItem && this.handleChange(selectedItem, sortedList);
+
+    if (nextProps.loaded && !this.props.loaded && onLoad) {
+      onLoad(sortedList);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
