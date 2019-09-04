@@ -92,12 +92,18 @@ export const withDashboardResources = <P extends DashboardItemProps>(
             nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'loadError']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
+        const nextExternalProps = this.getExternalProps(nextProps);
+        const externalProps = this.getExternalProps(this.props);
+
         return (
           urlResultChanged ||
           queryResultChanged ||
           k8sResourcesChanged ||
           (this.watchingAlerts && alertsResultChanged) ||
-          !_.isEqual(this.getExternalProps(nextProps), this.getExternalProps(this.props))
+          Object.keys(nextExternalProps).length !== Object.keys(externalProps).length ||
+          Object.keys(nextExternalProps).some(
+            (key) => nextExternalProps[key] !== externalProps[key],
+          )
         );
       }
 

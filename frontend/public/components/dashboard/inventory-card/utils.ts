@@ -4,32 +4,32 @@ import { StatusGroupMapper } from './inventory-item';
 import { InventoryStatusGroup } from './status-group';
 
 const POD_PHASE_GROUP_MAPPING = {
-  [InventoryStatusGroup.OK]: ['Running', 'Succeeded'],
+  [InventoryStatusGroup.NOT_MAPPED]: ['Running', 'Succeeded'],
   [InventoryStatusGroup.ERROR]: ['CrashLoopBackOff', 'Failed'],
   [InventoryStatusGroup.PROGRESS]: ['Terminating', 'Pending'],
   [InventoryStatusGroup.WARN]: ['Unknown'],
 };
 
 const PVC_STATUS_GROUP_MAPPING = {
-  [InventoryStatusGroup.OK]: ['Bound'],
+  [InventoryStatusGroup.NOT_MAPPED]: ['Bound'],
   [InventoryStatusGroup.ERROR]: ['Lost'],
   [InventoryStatusGroup.PROGRESS]: ['Pending'],
 };
 
 const PV_STATUS_GROUP_MAPPING = {
-  [InventoryStatusGroup.OK]: ['Available', 'Bound'],
+  [InventoryStatusGroup.NOT_MAPPED]: ['Available', 'Bound'],
   [InventoryStatusGroup.PROGRESS]: ['Released'],
   [InventoryStatusGroup.ERROR]: ['Failed'],
 };
 
 const NODE_STATUS_GROUP_MAPPING = {
-  [InventoryStatusGroup.OK]: ['Ready'],
+  [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
   [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
 };
 
 const getStatusGroups = (resources, mapping, mapper, filterType) => {
   const groups = {
-    [InventoryStatusGroup.NOT_MAPPED]: {
+    [InventoryStatusGroup.UNKNOWN]: {
       statusIDs: [],
       count: 0,
     },
@@ -46,7 +46,7 @@ const getStatusGroups = (resources, mapping, mapper, filterType) => {
     const status = mapper(resource);
     const group =
       Object.keys(mapping).find((key) => mapping[key].includes(status)) ||
-      InventoryStatusGroup.NOT_MAPPED;
+      InventoryStatusGroup.UNKNOWN;
     groups[group].count++;
   });
 

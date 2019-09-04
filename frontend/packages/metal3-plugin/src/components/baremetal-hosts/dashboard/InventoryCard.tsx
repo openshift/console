@@ -82,8 +82,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
         <InventoryBody>
           <InventoryItem
             isLoading={!podData}
-            singularTitle="Pod"
-            pluralTitle="Pods"
+            title="Pod"
             count={podCount}
             error={podQueryError || podError || !podStats.length}
           />

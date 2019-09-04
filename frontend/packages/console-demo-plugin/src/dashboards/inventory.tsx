@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { AddressBookIcon } from '@patternfly/react-icons';
-import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+import {
+  StatusGroupMapper,
+  ExpandedComponentProps,
+} from '@console/internal/components/dashboard/inventory-card/inventory-item';
 
 export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
   'demo-inventory-group': {
@@ -12,4 +15,8 @@ export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
 
 export const DemoGroupIcon: React.FC<{}> = () => (
   <AddressBookIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--warn" />
+);
+
+export const ExpandedRoutes: React.FC<ExpandedComponentProps> = ({ resource }) => (
+  <div>Additional content for {resource.length} routes</div>
 );

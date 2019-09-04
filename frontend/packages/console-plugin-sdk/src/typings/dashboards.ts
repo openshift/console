@@ -2,7 +2,10 @@ import { SubsystemHealth } from '@console/internal/components/dashboards-page/ov
 import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { FirehoseResource, Humanize, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+import {
+  StatusGroupMapper,
+  ExpandedComponentProps,
+} from '@console/internal/components/dashboard/inventory-card/inventory-item';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 import { ConsumerMutator } from '@console/internal/components/dashboards-page/overview-dashboard/top-consumers-card';
 import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
@@ -118,6 +121,9 @@ namespace ExtensionProperties {
 
     /** Function which will map various statuses to groups. */
     mapper: StatusGroupMapper;
+
+    /** Loader for the component which will be used when item is expanded. */
+    expandedComponent?: LazyLoader<ExpandedComponentProps>;
   }
 
   export interface DashboardsInventoryItemGroup extends DashboardExtension {
