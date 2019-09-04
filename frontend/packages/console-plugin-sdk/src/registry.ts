@@ -20,6 +20,7 @@ import {
   isDashboardsOverviewTopConsumerItem,
   isDashboardsStorageTopConsumerUsed,
   isDashboardsStorageTopConsumerRequested,
+  isDashboardsStorageCapacityDropdownItem,
   isOverviewResourceTab,
   isOverviewCRD,
   isGlobalConfig,
@@ -106,6 +107,10 @@ export class ExtensionRegistry {
 
   public getDashboardsStorageTopConsumerRequested() {
     return this.extensions.filter(isDashboardsStorageTopConsumerRequested);
+  }
+
+  public getDashboardsStorageCapacityDropdownItem() {
+    return this.extensions.filter(isDashboardsStorageCapacityDropdownItem);
   }
 
   public getOverviewResourceTabs() {
