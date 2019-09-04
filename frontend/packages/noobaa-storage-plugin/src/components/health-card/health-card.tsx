@@ -26,9 +26,7 @@ import { NooBaaSystemModel } from '../../models';
 
 const noobaaSystemResource: FirehoseResource = {
   kind: referenceForModel(NooBaaSystemModel),
-  namespaced: true,
-  namespace: 'openshift-storage',
-  name: 'noobaa-system',
+  namespaced: false,
   isList: false,
   prop: 'noobaa',
 };
