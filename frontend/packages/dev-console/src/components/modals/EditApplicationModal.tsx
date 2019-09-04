@@ -13,7 +13,6 @@ import { Formik, FormikProps, FormikValues } from 'formik';
 import FormSection from '../import/section/FormSection';
 import ApplicationSelector from '../import/app/ApplicationSelector';
 import { updateResourceApplication } from '../../utils/application-utils';
-import './EditApplicationModal.scss';
 
 type EditApplicationModalProps = {
   resourceKind: K8sKind;
@@ -39,15 +38,15 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationM
 }) => {
   const dirty = _.get(values, 'application.selectedKey') !== initialApplication;
   return (
-    <form onSubmit={handleSubmit} className="modal-content odc-edit-application-modal">
+    <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Edit Application Grouping</ModalTitle>
       <ModalBody>
-        <Title size="sm">
+        <Title size="sm" className="co-m-form-row">
           Select an application group to add the component
           <strong>{` ${resource.metadata.name} `}</strong>
           to
         </Title>
-        <FormSection>
+        <FormSection fullWidth>
           <ApplicationSelector namespace={resource.metadata.namespace} />
         </FormSection>
       </ModalBody>

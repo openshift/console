@@ -85,7 +85,6 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     if (nextProps.loaded && !this.props.loaded && onLoad) {
       onLoad(resourceList);
     }
-
   }
 
   shouldComponentUpdate(nextProps, nextState) {

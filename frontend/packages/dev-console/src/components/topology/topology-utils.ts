@@ -8,7 +8,7 @@ import { getImageForIconClass } from '@console/internal/components/catalog/catal
 import {
   edgesFromAnnotations,
   createResourceConnection,
-  updateResourceApplication
+  updateResourceApplication,
 } from '../../utils/application-utils';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
