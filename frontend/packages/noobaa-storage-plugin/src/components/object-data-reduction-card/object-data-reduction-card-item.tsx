@@ -7,80 +7,57 @@ import {
   LoadingInline,
 } from '@console/internal/components/utils';
 
-const ItemBody: React.FC<ItemBodyProps> = React.memo(({ title, children }) => (
-  <div className="co-inventory-card__item">
-    <div className="nb-object-data-reduction-card__row-title">{title}</div>
-    {children}
-  </div>
-));
+const ItemBody: React.FC<ItemBodyProps> = React.memo(({ title, stats, infoText, isLoading }) => {
+  let status: React.ReactElement;
+  if (isLoading) {
+    status = <LoadingInline />;
+  } else if (!stats) {
+    status = <span className="co-dashboard-text--small text-muted">Unavailable</span>;
+  } else {
+    status = <span className="nb-object-data-reduction-card__row-status-item-text">{stats}</span>;
+  }
+  return (
+    <div className="co-inventory-card__item">
+      <div className="nb-object-data-reduction-card__row-title">{title}</div>
+      <div className="nb-object-data-reduction-card__row-status-item">
+        {status}
+        <DashboardCardHelp>{infoText}</DashboardCardHelp>
+      </div>
+    </div>
+  );
+});
 
 export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
   ({ efficiency, isLoading }) => {
-    let text = (
-      <span className="co-dashboard-text--small nb-object-data-reduction-card__row-subtitle">
-        Unavailable
-      </span>
-    );
     const infoText =
       'Efficiency ratio refers to the deduplication and compression process effectiveness.';
-
-    if (isLoading) {
-      text = <LoadingInline />;
-    } else if (!_.isNil(efficiency)) {
-      text = (
-        <span className="nb-object-data-reduction-card__row-status-item-text">
-          {Number(efficiency).toFixed(1)}:1
-        </span>
-      );
-    }
+    const stats: string = !_.isNil(efficiency) ? `${Number(efficiency).toFixed(1)}:1` : null;
     return (
-      <ItemBody title="Efficiency Ratio">
-        <div className="nb-object-data-reduction-card__row-status-item">
-          {text}
-          <DashboardCardHelp>{infoText}</DashboardCardHelp>
-        </div>
-      </ItemBody>
+      <ItemBody title="Efficiency Ratio" stats={stats} infoText={infoText} isLoading={isLoading} />
     );
   },
 );
 
 export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
   ({ savings, logicalSize, isLoading }) => {
-    let text = (
-      <span className="co-dashboard-text--small nb-object-data-reduction-card__row-subtitle">
-        Unavailable
-      </span>
-    );
     const infoText =
       'Savings shows the uncompressed and non-deduped data that would have been stored without those techniques';
-
-    if (isLoading) {
-      text = <LoadingInline />;
-    } else if (!_.isNil(savings)) {
+    let stats: string = null;
+    if (!_.isNil(savings)) {
       const savingsPercentage = logicalSize
         ? `(${humanizePercentage((100 * Number(savings)) / logicalSize).string})`
-        : null;
-      const savingsFormattted = humanizeBinaryBytesWithoutB(Number(savings));
-      text = (
-        <span className="nb-object-data-reduction-card__row-status-item-text">
-          {`${savingsFormattted.string} ${savingsPercentage}`}
-        </span>
-      );
+        : '';
+      stats = `${humanizeBinaryBytesWithoutB(savings).string} ${savingsPercentage}`;
     }
-    return (
-      <ItemBody title="Savings">
-        <div className="nb-object-data-reduction-card__row-status-item">
-          {text}
-          <DashboardCardHelp>{infoText}</DashboardCardHelp>
-        </div>
-      </ItemBody>
-    );
+    return <ItemBody title="Savings" stats={stats} infoText={infoText} isLoading={isLoading} />;
   },
 );
 
 type ItemBodyProps = {
   title: string;
-  children: React.ReactNode;
+  stats: string;
+  infoText: string;
+  isLoading: boolean;
 };
 
 type EfficiencyItemProps = {

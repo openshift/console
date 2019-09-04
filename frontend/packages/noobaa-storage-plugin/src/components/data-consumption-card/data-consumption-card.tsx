@@ -21,7 +21,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
+import { humanizeBinaryBytesWithoutB, humanizeNumber } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';
 import {
@@ -67,7 +67,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   // chartData = [[]] or [[],[]]
   if (!chartData.some(_.isEmpty)) {
     maxVal = _.maxBy(chartData.map((data) => _.maxBy(data, 'y')), 'y').y;
-    maxUnit = humanizeBinaryBytes(maxVal).unit;
+    maxUnit = humanizeBinaryBytesWithoutB(maxVal).unit;
     suffixLabel = maxUnit;
     if (sortByKpi === BY_IOPS) {
       suffixLabel = numberInWords(maxVal);

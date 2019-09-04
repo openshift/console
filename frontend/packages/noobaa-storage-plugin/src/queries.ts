@@ -10,7 +10,7 @@ export enum DATA_RESILIENCE_QUERIES {
 
 export enum ObjectDataReductionQueries {
   EFFICIENCY_QUERY = 'NooBaa_reduction_ratio',
-  SAVINGS_QUERY = '(NooBaa_object_savings_logical_size - NooBaa_object_savings_physical_size) > 0',
+  SAVINGS_QUERY = '(NooBaa_object_savings_logical_size - NooBaa_object_savings_physical_size) >= 0',
   LOGICAL_SAVINGS_QUERY = 'NooBaa_object_savings_logical_size',
 }
 
