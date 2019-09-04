@@ -6,6 +6,7 @@ import { sortBuilds } from '@console/internal/components/overview';
 import {
   ResourceProps,
   TransformPodData,
+  edgesFromAnnotations,
   updateResourceApplication,
   createResourceConnection,
 } from '@console/shared';
@@ -355,7 +356,6 @@ export class TransformTopologyData {
       this.topologyData.graph.nodes.push(currentNode);
       const labels = _.get(deploymentConfig, 'metadata.labels');
       const annotations = _.get(deploymentConfig, 'metadata.annotations');
-      let edges = [];
       const totalDeployments = _.cloneDeep(
         _.concat(
           this.resources.deploymentConfigs && this.resources.deploymentConfigs.data,
@@ -365,35 +365,26 @@ export class TransformTopologyData {
         ),
       );
       // find and add the edges for a node
-      if (_.has(annotations, ['app.openshift.io/connects-to'])) {
-        try {
-          edges = JSON.parse(annotations['app.openshift.io/connects-to']);
-        } catch (e) {
-          // connects-to annotation should hold a JSON string value but failed to parse
-          // treat value as a comma separated list of strings
-          edges = annotations['app.openshift.io/connects-to'].split(',').map((v) => v.trim());
+      _.map(edgesFromAnnotations(annotations), (edge) => {
+        // handles multiple edges
+        const targetNode = _.get(
+          _.find(totalDeployments, (deployment) => {
+            const name =
+              _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
+              deployment.metadata.name;
+            return name === edge;
+          }),
+          'metadata.uid',
+        );
+        if (targetNode) {
+          this.topologyData.graph.edges.push({
+            id: `${currentNode.id}_${targetNode}`,
+            type: 'connects-to',
+            source: currentNode.id,
+            target: targetNode,
+          });
         }
-        _.map(edges, (edge) => {
-          // handles multiple edges
-          const targetNode = _.get(
-            _.find(totalDeployments, (deployment) => {
-              const name =
-                _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
-                deployment.metadata.name;
-              return name === edge;
-            }),
-            'metadata.uid',
-          );
-          if (targetNode) {
-            this.topologyData.graph.edges.push({
-              id: `${currentNode.id}_${targetNode}`,
-              type: 'connects-to',
-              source: currentNode.id,
-              target: targetNode,
-            });
-          }
-        });
-      }
+      });
 
       _.forEach(labels, (label, key) => {
         if (key !== 'app.kubernetes.io/part-of') {

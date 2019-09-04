@@ -93,7 +93,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
     const { hover, labelHover } = this.state;
 
     const contentsClasses = classNames('odc-base-node__contents', {
-      'odc-m-is-highlight': isDragging || isTarget,
+      'is-highlight': isDragging || isTarget,
     });
     const isHover = (hovered: boolean) => {
       onHover && onHover(hovered);

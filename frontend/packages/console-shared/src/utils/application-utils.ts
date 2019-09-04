@@ -1,6 +1,21 @@
 import { k8sList, k8sPatch, K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
 
+export const edgesFromAnnotations = (annotations): string[] => {
+  let edges: string[] = [];
+  if (_.has(annotations, ['app.openshift.io/connects-to'])) {
+    try {
+      edges = JSON.parse(annotations['app.openshift.io/connects-to']);
+    } catch (e) {
+      // connects-to annotation should hold a JSON string value but failed to parse
+      // treat value as a comma separated list of strings
+      edges = annotations['app.openshift.io/connects-to'].split(',').map((v) => v.trim());
+    }
+  }
+
+  return edges;
+};
+
 const listInstanceResources = (
   namespace: string,
   instanceName: string,
@@ -111,7 +126,7 @@ const updateItemAppConnectTo = (
 
   const existingTag = _.find(tags, (tag) => tag[0] === 'app.openshift.io/connects-to');
   if (existingTag) {
-    const connections = existingTag[1].split(',').map((v) => v.trim());
+    const connections = edgesFromAnnotations(item.metadata.annotations);
     if (connections.includes(connectValue)) {
       return Promise.resolve();
     }

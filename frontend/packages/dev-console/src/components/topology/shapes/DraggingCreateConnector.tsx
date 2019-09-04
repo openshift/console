@@ -3,6 +3,8 @@ import { createSvgIdUrl, hullPath, Point } from '../../../utils/svg-utils';
 import { DragConnectionProps } from '../topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 
+import './DraggingCreateConnector.scss';
+
 const TARGET_ARROW_MARKER_ID = 'createConnectionTargetArrowMarker';
 
 const END_OFFSET_X = 30;
@@ -48,18 +50,18 @@ export const DraggingCreateConnector: React.FC<DragConnectionProps> = ({
             id={TARGET_ARROW_MARKER_ID}
             nodeSize={-5}
             markerSize={12}
-            className="odc-creator-edge-marker"
+            className="odc-dragging-create-connector__marker"
           />
         </g>
         {!isDragging && (
           <path
-            className="odc-creator-edge__hover-box"
+            className="odc-dragging-create-connector__hover-box"
             d={hullPath([startPoint, endPoint], 15)}
             fillOpacity={0}
           />
         )}
         <line
-          className="odc-base-edge odc-creator-edge"
+          className="odc-dragging-create-connector"
           x1={startPoint[0]}
           y1={startPoint[1]}
           x2={endPoint[0]}

@@ -24,8 +24,8 @@ const BaseEdge: React.SFC<BaseEdgeProps> = ({
 }) => (
   <line
     className={classNames('odc-base-edge', {
-      'odc-m-is-highlight': isDragging,
-      'odc-m-is-hover': isHover,
+      'is-highlight': isDragging,
+      'is-hover': isHover,
     })}
     x1={source.x}
     y1={source.y}

@@ -89,7 +89,7 @@ class DefaultGroup extends React.Component<GroupProps, DefaultGroupState>
       return null;
     }
 
-    const pathClasses = classNames('odc-default-group', { 'odc-m-is-highlight': dropTarget });
+    const pathClasses = classNames('odc-default-group', { 'is-highlight': dropTarget });
     return (
       <g>
         <path d={containerPath} className={pathClasses} />

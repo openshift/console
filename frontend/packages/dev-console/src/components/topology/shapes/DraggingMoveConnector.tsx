@@ -3,6 +3,8 @@ import { createSvgIdUrl } from '../../../utils/svg-utils';
 import { NodeProps } from '../topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 
+import './DraggingMoveConnector.scss';
+
 const TARGET_ARROW_MARKER_ID = 'createConnectionTargetArrowMarker';
 
 export type DraggingMoveConnectorProps = NodeProps & {
@@ -29,10 +31,10 @@ export const DraggingMoveConnector: React.FC<DraggingMoveConnectorProps> = ({
         id={TARGET_ARROW_MARKER_ID}
         nodeSize={-5}
         markerSize={12}
-        className="odc-creator-edge-marker"
+        className="odc-dragging-move-connector__marker"
       />
       <line
-        className="odc-base-edge odc-move-edge"
+        className="odc-dragging-move-connector"
         x1={startX}
         y1={startY}
         x2={dragX}
