@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import classNames from 'classnames';
 import { K8sActivityProps, PrometheusActivityProps } from '@console/plugin-sdk';
 import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 import { Accordion } from '@patternfly/react-core';
@@ -123,8 +124,11 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
   );
 };
 
-const ActivityBody: React.FC<ActivityBodyProps> = ({ children }) => (
-  <div className="co-dashboard-card__body--no-padding co-activity-card__body" id="activity-body">
+const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
+  <div
+    className={classNames('co-dashboard-card__body--no-padding co-activity-card__body', className)}
+    id="activity-body"
+  >
     {children}
   </div>
 );
@@ -133,15 +137,16 @@ export default ActivityBody;
 
 type ActivityBodyProps = {
   children: React.ReactNode;
+  className?: string;
 };
 
 type OngoingActivityBodyProps = {
-  resourceActivities: {
+  resourceActivities?: {
     resource: K8sResourceKind;
     timestamp: Date;
     loader: LazyLoader<K8sActivityProps>;
   }[];
-  prometheusActivities: {
+  prometheusActivities?: {
     results: PrometheusResponse[];
     loader: LazyLoader<PrometheusActivityProps>;
   }[];

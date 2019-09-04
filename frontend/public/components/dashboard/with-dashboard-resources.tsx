@@ -114,9 +114,9 @@ export const withDashboardResources = <P extends DashboardItemProps>(
         this.props.watchURL(url, fetch);
       };
 
-      watchPrometheus: WatchPrometheus = (query) => {
+      watchPrometheus: WatchPrometheus = (query, namespace) => {
         this.queries.push(query);
-        this.props.watchPrometheusQuery(query);
+        this.props.watchPrometheusQuery(query, namespace);
       };
 
       watchAlerts: WatchAlerts = () => {
@@ -192,7 +192,7 @@ type DispatchToProps = (
 
 type WatchURL = (url: string, fetch?: Fetch) => void;
 type StopWatchURL = (url: string) => void;
-type WatchPrometheus = (query: string) => void;
+type WatchPrometheus = (query: string, namespace?: string) => void;
 type StopWatchPrometheus = (query: string) => void;
 type WatchAlerts = () => void;
 type StopWatchAlerts = () => void;
