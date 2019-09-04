@@ -312,6 +312,7 @@ export type StorageClassResourceKind = {
 export type NodeKind = {
   spec?: {
     taints?: Taint[];
+    unschedulable?: boolean;
   };
 } & K8sResourceKind;
 

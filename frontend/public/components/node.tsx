@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
+import { getNodeRoles, nodeStatus, makeNodeSchedulable, NodeKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
@@ -45,7 +45,7 @@ const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, Modif
 
 const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
 
-const getMachine = (node: K8sResourceKind) => {
+const getMachine = (node: NodeKind) => {
   const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]');
   if (!machine) {
     return null;
@@ -97,7 +97,12 @@ const NodeTableHeader = () => {
 };
 NodeTableHeader.displayName = 'NodeTableHeader';
 
-const NodeStatus = ({node}) => <Status status={nodeStatus(node)} />;
+const NodeStatus: React.FC<{node: NodeKind}> = ({node}) => (
+  <>
+    <Status status={nodeStatus(node)} />
+    {node.spec.unschedulable && <small className="text-muted">Scheduling Disabled</small>}
+  </>
+);
 
 const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style}) => {
   const machine = getMachine(node);
@@ -124,7 +129,7 @@ const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style
 };
 NodeTableRow.displayName = 'NodeTableRow';
 type NodeTableRowProps = {
-  obj: K8sResourceKind;
+  obj: NodeKind;
   index: number;
   key?: string;
   style: object;
