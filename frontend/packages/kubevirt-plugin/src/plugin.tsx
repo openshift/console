@@ -12,10 +12,12 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
-  DashboardsStorageTopConsumerRequested,
-  DashboardsStorageTopConsumerUsed,
-  DashboardsStorageCapacityDropdownItem,
 } from '@console/plugin-sdk';
+import {
+  DashboardsStorageTopConsumerUsed,
+  DashboardsStorageTopConsumerRequested,
+  DashboardsStorageCapacityDropdownItem,
+} from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
@@ -38,8 +40,8 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsStorageTopConsumerRequested
   | DashboardsStorageTopConsumerUsed
+  | DashboardsStorageTopConsumerRequested
   | DashboardsStorageCapacityDropdownItem;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';

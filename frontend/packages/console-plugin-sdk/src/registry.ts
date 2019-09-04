@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
   Extension,
+  ExtensionTypeGuard,
   ActivePlugin,
   isModelDefinition,
   isFeatureFlag,
@@ -18,9 +19,6 @@ import {
   isDashboardsOverviewQuery,
   isDashboardsOverviewUtilizationItem,
   isDashboardsOverviewTopConsumerItem,
-  isDashboardsStorageTopConsumerUsed,
-  isDashboardsStorageTopConsumerRequested,
-  isDashboardsStorageCapacityDropdownItem,
   isOverviewResourceTab,
   isOverviewCRD,
   isGlobalConfig,
@@ -39,6 +37,10 @@ export class ExtensionRegistry {
 
   public constructor(plugins: ActivePlugin[]) {
     this.extensions = _.flatMap(plugins.map((p) => p.extensions));
+  }
+
+  public get<E extends Extension>(typeGuard: ExtensionTypeGuard<E>): E[] {
+    return this.extensions.filter(typeGuard);
   }
 
   public getModelDefinitions() {
@@ -103,18 +105,6 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewTopConsumerItems() {
     return this.extensions.filter(isDashboardsOverviewTopConsumerItem);
-  }
-
-  public getDashboardsStorageTopConsumerUsed() {
-    return this.extensions.filter(isDashboardsStorageTopConsumerUsed);
-  }
-
-  public getDashboardsStorageTopConsumerRequested() {
-    return this.extensions.filter(isDashboardsStorageTopConsumerRequested);
-  }
-
-  public getDashboardsStorageCapacityDropdownItem() {
-    return this.extensions.filter(isDashboardsStorageCapacityDropdownItem);
   }
 
   public getOverviewResourceTabs() {

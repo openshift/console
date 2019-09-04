@@ -11,12 +11,18 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DashboardStorageExtension } from '@console/plugin-sdk';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
 import {
   getFlagsForExtensions,
   isDashboardExtensionInUse,
 } from '@console/internal/components/dashboards-page/utils';
+import {
+  DashboardsStorageTopConsumerExtension,
+  DashboardsStorageTopConsumerUsed,
+  DashboardsStorageTopConsumerRequested,
+  isDashboardsStorageTopConsumerUsed,
+  isDashboardsStorageTopConsumerRequested,
+} from '../../../../extensions/dashboards';
 import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants';
 import { TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
 import { TopConsumersBody } from './top-consumers-card-body';
@@ -37,11 +43,11 @@ const TopConsumerResourceValueMapping = {
   Pods: 'pod',
 };
 
-const getTopConsumersQueriesMap = (
-  pluginItem: DashboardStorageExtension,
+const updateTopConsumersQueries = (
   topConsumers: TopConsumersQueries,
+  pluginItem: DashboardsStorageTopConsumerExtension,
   category: string,
-): TopConsumersQueries => {
+) => {
   const { name } = pluginItem.properties;
   const queryName = `${name}_${category}`;
   if (!topConsumers[queryName]) {
@@ -49,30 +55,27 @@ const getTopConsumersQueriesMap = (
     TopConsumerResourceValueMapping[name] = pluginItem.properties.metricType;
     topConsumers[queryName] = pluginItem.properties.query;
   }
-  return topConsumers;
 };
 
-const getItems = (plugin: DashboardStorageExtension[], flags: FlagsObject) =>
-  plugin.filter((e) => isDashboardExtensionInUse(e, flags));
+const getItems = (extensions: DashboardsStorageTopConsumerExtension[], flags: FlagsObject) =>
+  extensions.filter((e) => isDashboardExtensionInUse(e, flags));
 
 const getTopConsumersQueries = (flags: FlagsObject) => {
-  let topConsumers: TopConsumersQueries = { ...TOP_CONSUMER_QUERIES };
-  getItems(plugins.registry.getDashboardsStorageTopConsumerUsed(), flags).forEach((pluginItem) => {
-    topConsumers = getTopConsumersQueriesMap(
-      pluginItem,
-      topConsumers,
-      TopConsumerSortByValue[BY_USED],
-    );
+  const topConsumers: TopConsumersQueries = { ...TOP_CONSUMER_QUERIES };
+  getItems(
+    plugins.registry.get<DashboardsStorageTopConsumerUsed>(isDashboardsStorageTopConsumerUsed),
+    flags,
+  ).forEach((pluginItem) => {
+    updateTopConsumersQueries(topConsumers, pluginItem, TopConsumerSortByValue[BY_USED]);
   });
-  getItems(plugins.registry.getDashboardsStorageTopConsumerRequested(), flags).forEach(
-    (pluginItem) => {
-      topConsumers = getTopConsumersQueriesMap(
-        pluginItem,
-        topConsumers,
-        TopConsumerSortByValue[BY_REQUESTED],
-      );
-    },
-  );
+  getItems(
+    plugins.registry.get<DashboardsStorageTopConsumerRequested>(
+      isDashboardsStorageTopConsumerRequested,
+    ),
+    flags,
+  ).forEach((pluginItem) => {
+    updateTopConsumersQueries(topConsumers, pluginItem, TopConsumerSortByValue[BY_REQUESTED]);
+  });
   return topConsumers;
 };
 
@@ -145,7 +148,7 @@ const TopConsumerCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
 };
 
 export default connectToFlags(
-  ...getFlagsForExtensions(plugins.registry.getDashboardsStorageTopConsumerUsed()),
+  ...getFlagsForExtensions(plugins.registry.get(isDashboardsStorageTopConsumerUsed)),
 )(withDashboardResources(TopConsumerCard));
 
 type TopConsumersQueries = {

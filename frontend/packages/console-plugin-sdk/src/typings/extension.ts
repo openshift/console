@@ -67,3 +67,5 @@ export type ActivePlugin = {
   name: string;
   extensions: Extension[];
 };
+
+export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
