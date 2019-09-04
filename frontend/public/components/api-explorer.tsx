@@ -34,6 +34,7 @@ import {
   BreadCrumbs,
   Dropdown,
   EmptyBox,
+  HorizontalNav,
   LinkifyExternal,
   LoadError,
   LoadingBox,
@@ -41,7 +42,6 @@ import {
   ResourceIcon,
   ScrollToTopOnMount,
   setQueryArgument,
-  SimpleTabNav,
 } from './utils';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
@@ -269,7 +269,7 @@ export const APIExplorerPage: React.FC<{}> = () => <>
 </>;
 APIExplorerPage.displayName = 'APIExplorerPage';
 
-const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
+const APIResourceOverview: React.FC<APIResourceTabProps> = ({customData: {kindObj}}) => {
   const description = getResourceDescription(kindObj);
   return (
     <div className="co-m-pane__body">
@@ -294,7 +294,7 @@ const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
 };
 
 const scrollTop = () => document.getElementById('content-scrollable').scrollTop = 0;
-const APIResourceSchema: React.FC<APIResourceTabProps> = ({kindObj}) => {
+const APIResourceSchema: React.FC<APIResourceTabProps> = ({customData: {kindObj}}) => {
   return (
     <div className="co-m-pane__body co-m-pane__body--no-top-margin">
       <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
@@ -302,7 +302,7 @@ const APIResourceSchema: React.FC<APIResourceTabProps> = ({kindObj}) => {
   );
 };
 
-const APIResourceInstances: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
+const APIResourceInstances: React.FC<APIResourceTabProps> = ({customData: {kindObj, namespace}}) => {
   const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
@@ -339,7 +339,7 @@ const AccessTableRows = ({componentProps: {data}}) => _.map(data, (subject) => [
 
 const EmptyAccessReviewMsg: React.FC<{}> = () => <EmptyBox label="Subjects" />;
 
-const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
+const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({customData: {kindObj, namespace}}) => {
   // TODO: Make sure verbs are filled in for all models. Currently static models don't use verbs from API discovery.
   const verbs: K8sVerb[] = (kindObj.verbs || ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch']).sort();
 
@@ -476,7 +476,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
 };
 
 const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, kindObj: K8sKind, kindsInFlight: boolean, flags: {[key: string]: boolean}}) => {
-  const [selectedTab, onClickTab] = React.useState('Overview');
   if (!kindObj) {
     return kindsInFlight
       ? <LoadingBox />
@@ -493,23 +492,27 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
     path: match.url,
   }];
 
-  const tabs = [{
+  const pages = [{
+    href: '',
     name: 'Overview',
     component: APIResourceOverview,
   }, {
+    href: 'schema',
     name: 'Schema',
     component: APIResourceSchema,
   }];
 
   if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
-    tabs.push({
+    pages.push({
+      href: 'instances',
       name: 'Instances',
       component: APIResourceInstances,
     });
   }
 
   if (flags[FLAGS.OPENSHIFT]) {
-    tabs.push({
+    pages.push({
+      href: 'access',
       name: 'Access Review',
       component: APIResourceAccessReview,
     });
@@ -526,12 +529,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
       <BreadCrumbs breadcrumbs={breadcrumbs} />
       <h1 className="co-m-pane__heading">{kindObj.label}</h1>
     </div>
-    <SimpleTabNav
-      onClickTab={onClickTab}
-      selectedTab={selectedTab}
-      tabProps={{kindObj, namespace}}
-      tabs={tabs}
-    />
+    <HorizontalNav pages={pages} match={match} customData={{kindObj, namespace}} noStatusBox />
   </>;
 };
 export const APIResourcePage = connectToModel(connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_));
@@ -549,6 +547,8 @@ type APIResourceLinkOwnProps = {
 };
 
 type APIResourceTabProps = {
-  kindObj: K8sKind;
-  namespace?: string;
+  customData: {
+    kindObj: K8sKind;
+    namespace?: string;
+  };
 };
