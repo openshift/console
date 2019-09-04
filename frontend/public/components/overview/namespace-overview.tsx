@@ -45,7 +45,7 @@ const OverviewNamespaceSummary = ({ns}) => <div className="group">
   </div>
 </div>;
 
-const getNamespaceDashboardConsoleLinks = (ns, consoleLinks) => {
+export const getNamespaceDashboardConsoleLinks = (ns, consoleLinks) => {
   return _.filter(consoleLinks, (link: K8sResourceKind) => {
     if (link.spec.location !== 'NamespaceDashboard') {
       return false;
@@ -55,7 +55,7 @@ const getNamespaceDashboardConsoleLinks = (ns, consoleLinks) => {
   });
 };
 
-const ConsoleLinks: React.FC<ConsoleLinksProps> = ({consoleLinks}) => {
+export const ConsoleLinks: React.FC<ConsoleLinksProps> = ({consoleLinks}) => {
   return <ul>
     {_.map(_.sortBy(consoleLinks, 'spec.text'), link => {
       return <li key={link.metadata.uid}><ExternalLink href={link.spec.href} text={link.spec.text} /></li>;
