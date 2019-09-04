@@ -7,6 +7,8 @@ import {
   ChartGroup,
   ChartLegend,
   ChartThemeColor,
+  ChartTooltip,
+  ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import {
   DashboardCard,
@@ -52,9 +54,9 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
     result[key] = prometheusResults.getIn([queries[key], 'result']); // building an object having 'key'from the queries object and 'value' as the Prometheus response
   });
 
-  let yTickValues: number[];
+  let maxUnit = '';
   let maxVal: number;
-  let suffixLabel: string = '';
+  let suffixLabel = '';
 
   const isLoading = _.values(result).includes(undefined);
 
@@ -65,27 +67,14 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   // chartData = [[]] or [[],[]]
   if (!chartData.some(_.isEmpty)) {
     maxVal = _.maxBy(chartData.map((data) => _.maxBy(data, 'y')), 'y').y;
-    let maxDataH = humanizeBinaryBytes(maxVal);
-    suffixLabel = maxDataH.unit;
+    maxUnit = humanizeBinaryBytes(maxVal).unit;
+    suffixLabel = maxUnit;
     if (sortByKpi === BY_IOPS) {
       suffixLabel = numberInWords(maxVal);
-      maxDataH = humanizeNumber(maxVal);
+      maxUnit = humanizeNumber(maxVal).unit;
     }
     // if suffixLabel is a non-empty string, show it in expected form
     if (suffixLabel) suffixLabel = `(in ${suffixLabel})`;
-    yTickValues = [
-      Number((maxVal / 10).toFixed(1)),
-      Number((maxVal / 5).toFixed(1)),
-      Number(((3 * maxVal) / 10).toFixed(1)),
-      maxVal,
-      Number(((4 * maxVal) / 10).toFixed(1)),
-      Number(((5 * maxVal) / 10).toFixed(1)),
-      Number(((6 * maxVal) / 10).toFixed(1)),
-      Number(((7 * maxVal) / 10).toFixed(1)),
-      Number(((8 * maxVal) / 10).toFixed(1)),
-      Number(((9 * maxVal) / 10).toFixed(1)),
-      Number(Number(maxVal).toFixed(1)),
-    ];
   }
 
   return (
@@ -99,26 +88,51 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
           setKpi={setsortByKpi}
         />
       </DashboardCardHeader>
-      <DashboardCardBody isLoading={isLoading}>
+      <DashboardCardBody className="co-dashboard-card__body--top-margin" isLoading={isLoading}>
         {!chartData.some(_.isEmpty) ? (
-          <div>
+          <>
             <span className="text-secondary">
               {CHART_LABELS[sortByKpi]} {suffixLabel}
             </span>
             <Chart
+              containerComponent={
+                <ChartVoronoiContainer
+                  labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
+                  labels={(datum) => `${datum.y} ${maxUnit}`}
+                  voronoiDimension="x"
+                />
+              }
+              domain={{ y: [0, maxVal + 10] }}
+              minDomain={{ y: 0 }}
+              maxDomain={{ y: maxVal + 10 }}
+              domainPadding={{ x: [50, 50] }}
+              legendComponent={
+                <ChartLegend
+                  themeColor={ChartThemeColor.purple}
+                  data={legendData}
+                  orientation="horizontal"
+                  symbolSpacer={7}
+                  height={30}
+                  gutter={10}
+                  style={{ labels: { fontSize: 8, padding: '5 0 0 0' } }}
+                />
+              }
+              legendPosition="bottom-left"
+              padding={{
+                bottom: 50,
+                left: 30,
+                right: 30,
+                top: 30,
+              }}
               themeColor={ChartThemeColor.purple}
-              domain={{ y: [0, maxVal] }}
-              domainPadding={{ x: [15, 20], y: [10, 10] }}
-              padding={{ top: 20, bottom: 40, left: 50, right: 17 }}
-              height={280}
             >
-              <ChartAxis style={{ tickLabels: { padding: 5, fontSize: 10 } }} />
+              <ChartAxis style={{ tickLabels: { fontSize: 8 } }} />
               <ChartAxis
                 dependentAxis
-                tickValues={yTickValues}
+                showGrid
+                tickCount={10}
                 style={{
-                  tickLabels: { padding: 5, fontSize: 8, fontWeight: 500 },
-                  grid: { stroke: '#4d525840' },
+                  tickLabels: { fontSize: 8, padding: 0 },
                 }}
               />
               <ChartGroup offset={11}>
@@ -127,15 +141,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
                 ))}
               </ChartGroup>
             </Chart>
-            <ChartLegend
-              themeColor={ChartThemeColor.purple}
-              data={legendData}
-              orientation="horizontal"
-              height={40}
-              width={500}
-              style={{ labels: { fontSize: 10 } }}
-            />
-          </div>
+          </>
         ) : (
           <GraphEmpty />
         )}

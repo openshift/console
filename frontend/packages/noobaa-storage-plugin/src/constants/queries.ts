@@ -30,7 +30,8 @@ export const DATA_CONSUMPTION_QUERIES: DataConsumptionQueriesType = {
     totalLogicalUsage: 'sum(NooBaa_providers_logical_size)',
   },
   [ObjectServiceDashboardQuery.PROVIDERS_BY_EGRESS]: {
-    egress: 'sort(topk(5,NooBaa_providers_bandwidth_read_size + NooBaa_providers_bandwidth_write_size))',
+    egress:
+      'sort(topk(5,NooBaa_providers_bandwidth_read_size + NooBaa_providers_bandwidth_write_size))',
   },
 };
 
