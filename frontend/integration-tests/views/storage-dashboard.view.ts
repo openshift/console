@@ -1,9 +1,9 @@
-import { $ } from 'protractor';
+import { $, $$ } from 'protractor';
 
 export const clusterHealth = $('[class="co-dashboard-text--small co-health-card__text"]');
-export const serviceName = $('[class="co-dashboard-card__body--top-margin co-details-card__body co-dashboard-text--small"]/[class="co-details-card__item-value"][1]')
-export const clusterName = $('[class="co-dashboard-card__body--top-margin co-details-card__body co-dashboard-text--small"]/[class="co-details-card__item-value"][2]')
-export const provider = $('[class="co-dashboard-card__body--top-margin co-details-card__body co-dashboard-text--small"]/[class="co-details-card__item-value"][3]')
-export const ocsVersion = $('[class="co-dashboard-card__body--top-margin co-details-card__body co-dashboard-text--small"]/[class="co-details-card__item-value"][4]')
-
-
+export const detailsCardStructure = $$('.co-details-card__body dt');
+const clusterDetails = $$('.co-details-card__body dd');
+export const serviceName = clusterDetails.get(0);
+export const clusterName = clusterDetails.get(1);
+export const provider = clusterDetails.get(2);
+export const ocsVersion = clusterDetails.get(3);

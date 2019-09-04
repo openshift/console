@@ -1,22 +1,23 @@
-import { browser, ExpectedConditions as until } from 'protractor';
-import { appHost, testName } from '../protractor.conf';
-import { isLoaded } from '../views/crud.view';
+import { browser } from 'protractor';
+import { appHost } from '../protractor.conf';
+import { dashboardIsLoaded } from '../views/crud.view';
 import { serviceName, clusterHealth } from '../views/storage-dashboard.view'
 
 describe('Check data on Storage Dashboard.', () => {
   beforeAll(async() => {
     await browser.get(`${appHost}/dashboards/persistent-storage`);
-    await isLoaded();
+    await dashboardIsLoaded();
   });
 
-  it('Check cluster health', async() => {
+  it('Check cluster health is OK', async() => {
 
   //TODO: create tests for different cluster states
-  expect(clusterHealth.getText()).toEqual('rook-ceph health is degraded');
+
+  expect(clusterHealth.getText()).toEqual('rook-ceph is healthy');
 
   });
 
-  it('Check service name', async() => {
+  it('Check service name is OCS', async() => {
 
   expect(serviceName.getText()).toEqual('OpenShift Container Storage');
     
