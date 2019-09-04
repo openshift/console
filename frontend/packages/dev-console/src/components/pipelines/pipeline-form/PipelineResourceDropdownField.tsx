@@ -27,21 +27,22 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
   const fieldId = getFieldId(props.name, 'pipeline-resource-dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+  const setFunctions = React.useRef({ setFieldValue, setStatus, setFieldTouched });
 
   const handleChange = React.useCallback(
     (value: string) => {
       const dropdownValue = value;
       if (dropdownValue === CREATE_PIPELINE_RESOURCE) {
         setCreateMode(true);
-        setStatus({
+        setFunctions.current.setStatus({
           subFormsOpened: status.subFormsOpened + 1,
         });
       } else {
-        setFieldValue(props.name, dropdownValue);
-        setFieldTouched(props.name, true);
+        setFunctions.current.setFieldValue(props.name, dropdownValue);
+        setFunctions.current.setFieldTouched(props.name, true);
       }
     },
-    [setFieldValue, props.name, setFieldTouched, setStatus, status.subFormsOpened],
+    [props.name, status.subFormsOpened],
   );
 
   return (
@@ -57,7 +58,7 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
         <PipelineResourceDropdown
           {...props}
           id={fieldId}
-          selectedKey={field.value}
+          selectedKey={createMode ? CREATE_PIPELINE_RESOURCE : field.value}
           namespace={values.namespace}
           dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
           actionItem={{
