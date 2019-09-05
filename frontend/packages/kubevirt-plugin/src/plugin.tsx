@@ -90,7 +90,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
-        import('./components/vms/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
+        import('./components/vms/vm' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VirtualMachinesPage,
         ),
     },
@@ -115,9 +115,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
-        import(
-          './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
-        ).then((m) => m.VirtualMachinesDetailsPage),
+        import('./components/vms/vm-details-page' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.VirtualMachinesDetailsPage,
+        ),
     },
   },
   {
@@ -126,9 +126,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
       loader: () =>
-        import(
-          './components/vm-templates/vm-template' /* webpackChunkName: "kubevirt-vmtemplates" */
-        ).then((m) => m.VirtualMachineTemplatesPage),
+        import('./components/vm-templates/vm-template' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.VirtualMachineTemplatesPage,
+        ),
     },
   },
   {
@@ -138,7 +138,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: ['/k8s/ns/:ns/vmtemplates/~new'],
       loader: () =>
         import(
-          './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt-vmtemplates-create-yaml" */
+          './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.CreateVMTemplateYAML),
     },
   },
@@ -148,7 +148,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: `/k8s/ns/:ns/vmtemplates/:name`,
       loader: () =>
         import(
-          './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
+          './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.VMTemplateDetailsPage),
     },
   },
