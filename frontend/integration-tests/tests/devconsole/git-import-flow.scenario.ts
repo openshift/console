@@ -1,4 +1,4 @@
-import { browser, element, by, ExpectedConditions as until } from 'protractor';
+import { browser, $, ExpectedConditions as until } from 'protractor';
 import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
 import {
   navigateImportFromGit,
@@ -18,7 +18,7 @@ import { switchPerspective, Perspective, sideHeader } from '../../views/devconso
 describe('git import flow', () => {
   let newApplication;
   let newApp;
-  const importFromGitHeader = element(by.id('resource-title'));
+  const importFromGitHeader = $('[data-test-id="resource-title"]');
 
   beforeAll(async() => {
     await browser.get(`${appHost}/k8s/cluster/projects`);

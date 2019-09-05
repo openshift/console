@@ -106,7 +106,7 @@ class DropDownRow extends React.PureComponent {
     if (!autocompleteFilter && !onBookmark && !onUnBookmark) {
       //use pf4 markup if not using the autocomplete dropdown
       return <li key={itemKey}>
-        <button className="pf-c-dropdown__menu-item" id={`${itemKey}-link`} onClick={e => onclick(itemKey, e)}>{content}</button>
+        <button className="pf-c-dropdown__menu-item" id={`${itemKey}-link`} data-test-id="dropdown-menu" onClick={e => onclick(itemKey, e)}>{content}</button>
       </li>;
     }
     if (onUnBookmark) {
@@ -408,7 +408,7 @@ export class Dropdown extends DropdownMixin {
     //pf4 markup
     return (<div className={className} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active}, dropDownClassName)}>
-        <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle', buttonClassName)} onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
+        <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle', buttonClassName)} data-test-id="dropdown-button" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
           <span className="pf-c-dropdown__toggle-text">
             {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
             {title}

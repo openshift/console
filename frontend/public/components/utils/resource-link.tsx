@@ -69,7 +69,7 @@ export const ResourceLink = connectToModel(
 
     return <span className={classes}>
       { !hideIcon && <ResourceIcon kind={kind} /> }
-      {(path && linkTo) ? <Link to={path} title={title} className="co-resource-item__resource-name">{value}</Link> : <span className="co-resource-item__resource-name">{value}</span>}
+      {(path && linkTo) ? <Link to={path} title={title} className="co-resource-item__resource-name" data-test-id={value}>{value}</Link> : <span className="co-resource-item__resource-name" data-test-id={value}>{value}</span>}
       {children}
     </span>;
   });

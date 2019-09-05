@@ -82,7 +82,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, e
 
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
     <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-      <Button type="button" variant="secondary" onClick={onCancelClick}>{cancelText || 'Cancel'}</Button>
+      <Button type="button" variant="secondary" data-test-id="modal-cancel-action" onClick={onCancelClick}>{cancelText || 'Cancel'}</Button>
       {submitDanger
         ? <Button type="submit" variant="danger" isDisabled={submitDisabled} id="confirm-action">{submitText}</Button>
         : <Button type="submit" variant="primary" isDisabled={submitDisabled} id="confirm-action">{submitText}</Button>}

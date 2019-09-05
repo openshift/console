@@ -50,7 +50,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
 
   const logo = isCSV
     ? csvLogo()
-    : <div className="co-m-pane__name co-resource-item">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span id="resource-title" className="co-resource-item__resource-name">{resourceTitle}</span></div>;
+    : <div className="co-m-pane__name co-resource-item">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span className="co-resource-item__resource-name" data-test-id="resource-title">{resourceTitle}</span></div>;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');

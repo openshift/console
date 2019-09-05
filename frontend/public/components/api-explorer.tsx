@@ -547,7 +547,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
     </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
       <BreadCrumbs breadcrumbs={breadcrumbs} />
-      <h1 className="co-m-pane__heading">{kindObj.label}</h1>
+      <h1 className="co-m-pane__heading" data-test-id="api-explorer-resource-title">{kindObj.label}</h1>
     </div>
     <HorizontalNav pages={pages} match={match} customData={{kindObj, namespace}} noStatusBox />
   </>;

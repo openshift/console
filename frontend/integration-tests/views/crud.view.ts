@@ -43,7 +43,7 @@ export const actions = Object.freeze({
   edit: 'Edit',
   delete: 'Delete',
 });
-const actionForLabel = (label: string) => $(`[data-test-action="${label}"]`);
+export const actionForLabel = (label: string) => $(`[data-test-action="${label}"]`);
 
 export const filterForName = async(name: string) => {
   await browser.wait(until.presenceOf(textFilter));
@@ -115,7 +115,7 @@ const actionsMenu = $('[data-test-id="details-actions"]');
 export const actionsButton = actionsMenu.$('[data-test-id="actions-menu-button"]');
 export const actionsDropdownMenu = actionsMenu.$('[data-test-id="action-items"]');
 
-export const resourceTitle = $('#resource-title');
+export const resourceTitle = $('[data-test-id="resource-title"]');
 
 export const nameFilter = $('.pf-c-form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
