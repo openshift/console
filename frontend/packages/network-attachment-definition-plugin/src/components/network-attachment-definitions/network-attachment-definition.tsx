@@ -117,6 +117,7 @@ export const NetworkAttachmentDefinitionsPage: React.SFC<NetworkAttachmentDefini
     kind={NetworkAttachmentDefinitionReference}
     ListComponent={NetworkAttachmentDefinitionsList}
     filterLabel={props.filterLabel}
+    canCreate
   />
 );
 NetworkAttachmentDefinitionsPage.displayName = 'NetworkAttachmentDefinitionsPage';

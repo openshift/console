@@ -9,6 +9,7 @@ import {
   RoutePage,
 } from '@console/plugin-sdk';
 import * as models from './models';
+import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -44,6 +45,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/network-attachment-definitions/network-attachment-definition' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.NetworkAttachmentDefinitionsPage),
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: models.NetworkAttachmentDefinitionModel,
+      template: NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']),
     },
   },
 ];
