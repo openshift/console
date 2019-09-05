@@ -36,7 +36,7 @@ const ODCEmptyState: React.FC<Props> = ({
     <React.Fragment>
       <div className="odc-empty-state__title">
         <PageHeading title={title} />
-        {hintBlockTitle || hintBlockDescription ? (
+        {hintBlockTitle ? (
           <HintBlock
             className="odc-empty-state__hint-block"
             title={hintBlockTitle}

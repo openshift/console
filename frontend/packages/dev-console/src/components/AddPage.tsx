@@ -34,18 +34,18 @@ const openProjectModal = () =>
   });
 
 const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
-  const [noWorkloads, setNoWorkLoads] = React.useState(false);
+  const [noWorkloads, setNoWorkloads] = React.useState(false);
 
   React.useEffect(() => {
     if (loaded) {
-      setNoWorkLoads(
+      setNoWorkloads(
         _.isEmpty(resources.deploymentConfigs.data) &&
           _.isEmpty(resources.deployments.data) &&
           _.isEmpty(resources.daemonSets.data) &&
           _.isEmpty(resources.statefulSets.data),
       );
     } else if (loadError) {
-      setNoWorkLoads(false);
+      setNoWorkloads(false);
     }
   }, [
     loadError,
