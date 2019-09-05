@@ -3,13 +3,14 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {K8sResourceKindReference, K8sResourceKind} from '../module/k8s';
+import {LimitRangeModel} from '../models';
 import {DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {Kebab, navFactory, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp} from './utils';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
 
-const LimitRangeReference: K8sResourceKindReference = 'LimitRange';
+const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
 const tableColumnClasses = [
   classNames('col-sm-4', 'col-xs-6'),

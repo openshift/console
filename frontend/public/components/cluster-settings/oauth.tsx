@@ -16,7 +16,7 @@ import {
 import { formatDuration } from '../utils/datetime';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common];
 
 const oAuthReference = referenceForModel(OAuthModel);
 

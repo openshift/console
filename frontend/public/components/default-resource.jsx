@@ -16,7 +16,7 @@ import {
 } from './utils';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(), ...common];
 
 const tableColumnClasses = [
   classNames('col-xs-6', 'col-sm-4'),

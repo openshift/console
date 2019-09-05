@@ -49,7 +49,11 @@ const pauseAction: KebabAction = (kind, obj) => ({
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 const nodeReference = referenceForModel(NodeModel);
-const machineConfigPoolMenuActions = [pauseAction, ...Kebab.factory.common];
+const machineConfigPoolMenuActions = [
+  pauseAction,
+  ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
+  ...Kebab.factory.common,
+];
 const getConditionStatus = (mcp: MachineConfigPoolKind, type: MachineConfigPoolConditionType): K8sResourceConditionStatus => {
   const {conditions} = mcp.status;
   const condition = _.find(conditions, {type});

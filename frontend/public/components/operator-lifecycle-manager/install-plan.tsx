@@ -253,7 +253,7 @@ export const InstallPlanDetailsPage: React.SFC<InstallPlanDetailsPageProps> = (p
     navFactory.editYaml(),
     {href: 'components', name: 'Components', component: InstallPlanPreview},
   ]}
-  menuActions={Kebab.factory.common} />;
+  menuActions={[...Kebab.getExtensionsActionsForKind(InstallPlanModel), ...Kebab.factory.common]} />;
 
 export type InstallPlansListProps = {
 

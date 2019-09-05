@@ -7,6 +7,7 @@ import { AlertVariant, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {ImageStreamModel} from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ImageStreamTimeline } from './image-stream-timeline';
@@ -65,7 +66,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamModel), ...common];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, specTag, statusTag}) => {
   const imageStreamStatus = _.get(imageStream, 'status');

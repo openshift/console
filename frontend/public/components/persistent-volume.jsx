@@ -6,9 +6,10 @@ import * as classNames from 'classnames';
 import { Status } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { PersistentVolumeModel } from '../models';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
 
 const PVStatus = ({pv}) => <Status status={pv.status.phase} />;
 

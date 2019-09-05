@@ -1,16 +1,15 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
+import { K8sResourceKind, LabelSelector, modelFor } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { sortBuilds } from '@console/internal/components/overview';
-import {
-  ResourceProps,
-  TransformPodData,
-  edgesFromAnnotations,
-  updateResourceApplication,
-  createResourceConnection,
-} from '@console/shared';
+import { ResourceProps, TransformPodData } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import {
+  edgesFromAnnotations,
+  createResourceConnection,
+  updateResourceApplication,
+} from '../../utils/application-utils';
 import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
 
 const isKnativeDeployment = (dc: ResourceProps): boolean => {
@@ -433,7 +432,7 @@ export const updateTopologyResourceApplication = (
   }
 
   const resource = getResourceDeploymentObject(item);
-  return updateResourceApplication(resource, application);
+  return updateResourceApplication(modelFor(resource.kind), resource, application);
 };
 
 export const createTopologyResourceConnection = (

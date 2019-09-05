@@ -8,7 +8,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sList } from '../module/k8s';
-import { SecretModel } from '../models';
+import { SecretModel, ServiceAccountModel } from '../models';
 import { SecretsPage } from './secret';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
@@ -78,7 +78,7 @@ const KubeConfigify = (kind, sa) => ({
   },
 });
 const { common } = Kebab.factory;
-const menuActions = [KubeConfigify, ...common];
+const menuActions = [KubeConfigify, ...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
 
 const kind = 'ServiceAccount';
 

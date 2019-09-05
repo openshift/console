@@ -5,8 +5,13 @@ import { sortable } from '@patternfly/react-table';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
+import {ServiceModel} from '../models';
 
-const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.factory.common];
+const menuActions = [
+  Kebab.factory.ModifyPodSelector,
+  ...Kebab.getExtensionsActionsForKind(ServiceModel),
+  ...Kebab.factory.common,
+];
 
 const ServiceIP = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {

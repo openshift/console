@@ -47,6 +47,7 @@ const { common } = Kebab.factory;
 
 const menuActions = [
   createBinding,
+  ...Kebab.getExtensionsActionsForKind(ServiceInstanceModel),
   ...common,
 ];
 

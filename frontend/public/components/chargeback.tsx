@@ -46,7 +46,7 @@ const reportPages=[
 ];
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ChargebackReportModel), ...common];
 
 const dataURL = (obj, format='json') => {
   return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;

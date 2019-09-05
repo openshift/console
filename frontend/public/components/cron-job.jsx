@@ -5,9 +5,10 @@ import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, ContainerTable, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
+import { CronJobModel } from '../models';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
 
 const kind = 'CronJob';
 

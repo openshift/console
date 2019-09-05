@@ -10,11 +10,16 @@ import { FLAGS } from '../const';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { ResourceEventStream } from './events';
+import { PersistentVolumeClaimModel } from '../models';
 
 export const pvcPhase = pvc => pvc.status.phase;
 
 const { common, ExpandPVC } = Kebab.factory;
-const menuActions = [ExpandPVC, ...common];
+const menuActions = [
+  ExpandPVC,
+  ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
+  ...common,
+];
 
 const PVCStatus = ({pvc}) => {
   const phase = pvcPhase(pvc);

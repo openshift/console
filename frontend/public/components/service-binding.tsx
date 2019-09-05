@@ -20,7 +20,7 @@ const actionButtons = [
 ];
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceBindingModel), ...common];
 
 const secretLink = (obj) => serviceCatalogStatus(obj) === 'Ready'
   ? <ResourceLink kind="Secret" name={obj.spec.secretName} title={obj.spec.secretName} namespace={obj.metadata.namespace} />

@@ -3,7 +3,16 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 import { EllipsisVIcon } from '@patternfly/react-icons';
-import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal, expandPVCModal } from '../modals';
+import {
+  annotationsModal,
+  configureReplicaCountModal,
+  taintsModal,
+  tolerationsModal,
+  labelsModal,
+  podSelectorModal,
+  deleteModal,
+  expandPVCModal,
+} from '../modals';
 import { DropdownMixin } from './dropdown';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
@@ -15,6 +24,7 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
+import * as plugins from '../../plugins';
 
 const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick}) => {
   return <button className="pf-c-dropdown__menu-item" onClick={(e) => onClick(e, option)} data-test-action={option.label}>{option.label}</button>;
@@ -134,6 +144,18 @@ const kebabFactory: KebabFactory = {
 // The common menu actions that most resource share
 kebabFactory.common = [kebabFactory.ModifyLabels, kebabFactory.ModifyAnnotations, kebabFactory.Edit, kebabFactory.Delete];
 
+export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
+  const extensionActions = [];
+  _.forEach(plugins.registry.getKebabActions(), (getActions: any) => {
+    if (getActions) {
+      _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
+        extensionActions.push(kebabAction);
+      });
+    }
+  });
+  return extensionActions;
+};
+
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const {actions, kindObj, resource, isDisabled} = props;
 
@@ -150,6 +172,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
 export class Kebab extends DropdownMixin {
   static factory: KebabFactory = kebabFactory;
+  static getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
   // public static columnClass: string = 'pf-c-table__action';
   public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';

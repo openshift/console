@@ -16,7 +16,6 @@ import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
 
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = (
   {item: { buildConfigs, routes, services, pods, obj }}
@@ -31,7 +30,7 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
 export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, item}) =>
   <div className="overview__sidebar-pane resource-overview">
     <ResourceOverviewHeading
-      actions={menuActions}
+      actions={[...Kebab.getExtensionsActionsForKind(kindObject), ...common]}
       kindObj={kindObject}
       resource={item.obj}
     />

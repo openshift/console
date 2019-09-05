@@ -22,9 +22,11 @@ import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const resourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ResourceQuotaModel), ...common];
+const clusterResourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel), ...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
+const quotaActions = quota => quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions;
 const gaugeChartThresholds = [{ value: 90 }, { value: 101 }];
 
 const quotaScopes = Object.freeze({
@@ -83,7 +85,7 @@ export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
         {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
+        <ResourceKebab actions={quotaActions(rq)} kind={quotaKind(rq)} resource={rq} />
       </TableData>
     </TableRow>
   );
@@ -306,6 +308,6 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
 
 export const ResourceQuotasDetailsPage = props => <DetailsPage
   {...props}
-  menuActions={menuActions}
+  menuActions={resourceQuotaMenuActions}
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
