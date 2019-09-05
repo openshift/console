@@ -14,7 +14,7 @@ import {
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../../dashboards-page/utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../dashboards-page/utils';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
@@ -36,7 +36,7 @@ const defaultStatusGroupIcons = {
 
 const getStatusGroupIcons = (flags: FlagsObject) => {
   const groupStatusIcons = {...defaultStatusGroupIcons};
-  plugins.registry.getDashboardsInventoryItemGroups().filter(e => flags[e.properties.required]).forEach(group => {
+  plugins.registry.getDashboardsInventoryItemGroups().filter(e => isDashboardExtensionInUse(e, flags)).forEach(group => {
     if (!groupStatusIcons[group.properties.id]) {
       groupStatusIcons[group.properties.id] = group.properties.icon;
     }

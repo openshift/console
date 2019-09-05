@@ -15,7 +15,7 @@ import { K8sResourceKind, PodKind } from '../../../module/k8s';
 import { getPodStatusGroups, getNodeStatusGroups, getPVCStatusGroups } from '../../dashboard/inventory-card/utils';
 import { FirehoseResource } from '../../utils';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 import { uniqueResource } from './utils';
 import { InventoryBody } from '../../dashboard/inventory-card/inventory-body';
 
@@ -38,7 +38,7 @@ const k8sResources: FirehoseResource[] = [
 ];
 
 const getItems = (flags: FlagsObject) =>
-  plugins.registry.getDashboardsOverviewInventoryItems().filter(e => flags[e.properties.required]);
+  plugins.registry.getDashboardsOverviewInventoryItems().filter(e => isDashboardExtensionInUse(e, flags));
 
 const getResourcesToWatch = (flags: FlagsObject): FirehoseResource[] => {
   const allResources = [...k8sResources];

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-
+import { getInfrastructurePlatform } from '@console/shared';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -16,8 +16,6 @@ import { FLAGS } from '../../../const';
 import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FirehoseResource } from '../../utils';
 import { RootState } from '../../../redux';
-
-const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string => _.get(infrastructure, 'status.platform');
 
 const clusterVersionResource: FirehoseResource = {
   kind: referenceForModel(ClusterVersionModel),

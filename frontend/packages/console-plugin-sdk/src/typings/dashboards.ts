@@ -13,7 +13,7 @@ import { LazyLoader } from './types';
 namespace ExtensionProperties {
   interface DashboardExtension {
     /** Name of feature flag for this item. */
-    required: string;
+    required: string | string[];
   }
 
   interface DashboardsOverviewHealthSubsystem extends DashboardExtension {

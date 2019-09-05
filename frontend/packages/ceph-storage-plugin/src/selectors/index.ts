@@ -32,6 +32,3 @@ export const getCephSC = (scData: K8sResourceKind[]): K8sResourceKind[] =>
       _.get(sc, 'provisioner', '').includes(provisioner),
     );
   });
-
-export const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
-  _.get(infrastructure, 'status.platform');

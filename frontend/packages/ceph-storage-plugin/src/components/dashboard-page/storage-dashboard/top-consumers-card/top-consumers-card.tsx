@@ -12,7 +12,10 @@ import {
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardStorageExtension } from '@console/plugin-sdk';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
-import { getFlagsForExtensions } from '@console/internal/components/dashboards-page/utils';
+import {
+  getFlagsForExtensions,
+  isDashboardExtensionInUse,
+} from '@console/internal/components/dashboards-page/utils';
 import { BY_REQUESTED, BY_USED, PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants';
 import { TOP_CONSUMER_QUERIES } from '../../../../constants/queries';
 import { TopConsumersBody } from './top-consumers-card-body';
@@ -49,7 +52,7 @@ const getTopConsumersQueriesMap = (
 };
 
 const getItems = (plugin: DashboardStorageExtension[], flags: FlagsObject) =>
-  plugin.filter((e) => flags[e.properties.required]);
+  plugin.filter((e) => isDashboardExtensionInUse(e, flags));
 
 const getTopConsumersQueries = (flags: FlagsObject) => {
   let topConsumers: TopConsumersQueries = { ...TOP_CONSUMER_QUERIES };

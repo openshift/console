@@ -14,7 +14,7 @@ import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWith
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
 import { OverviewQuery, capacityQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
-import { getFlagsForExtensions } from '../utils';
+import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 
 const getLastStats = (response, getStats: GetStats): React.ReactText => {
   const stats = getStats(response);
@@ -23,7 +23,7 @@ const getLastStats = (response, getStats: GetStats): React.ReactText => {
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().filter(e => flags[e.properties.required]).forEach(pluginQuery => {
+  plugins.registry.getDashboardsOverviewQueries().filter(e => isDashboardExtensionInUse(e, flags)).forEach(pluginQuery => {
     const queryKey = pluginQuery.properties.queryKey;
     if (!pluginQueries[queryKey]) {
       pluginQueries[queryKey] = pluginQuery.properties.query;
