@@ -21,7 +21,7 @@ const chartPropsValue = {
 };
 
 const chartLegendPropsValue = {
-  x: 10,
+  x: 35,
   y: 5,
   symbolSpacer: 7,
   height: 30,
@@ -58,7 +58,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
           <Chart
             domain={{ y: [0, 1.5 * maxCapacityConverted.value] }}
             height={chartPropsValue.chartHeight}
-            padding={{ top: 20, bottom: 20, left: 30, right: 20 }}
+            padding={{ top: 20, bottom: 20, left: 40, right: 20 }}
             containerComponent={
               <ChartVoronoiContainer
                 labels={(datum) => `${datum.y} ${maxCapacityConverted.unit}`}
