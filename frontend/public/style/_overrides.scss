@@ -1,17 +1,6 @@
 // Use this file to override styles from 3rd party dependencies
 $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
-.breadcrumb {
-  margin-bottom: 0;
-  padding-bottom: 12px;
-  padding-top: 25px;
-  > li + li:before {
-    @include font-awesome-free-solid;
-    content: fa-content($fa-var-angle-right);
-    font-size: 12px;
-  }
-}
-
 // account for collapsing space between .btn
 .btn + .btn {
   margin-left: 3px;
@@ -119,6 +108,11 @@ h6 {
 .co-user-menu .pf-c-app-launcher__toggle {
   padding-left: 0;
   padding-right: 0;
+}
+
+.pf-c-breadcrumb {
+  padding-bottom: 12px;
+  padding-top: 25px;
 }
 
 .pf-c-button--align-right {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 
 import { getDefinitionKey, getStoredSwagger, K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
 import { ResourceSidebarWrapper, sidebarScrollTop } from './resource-sidebar';
@@ -78,16 +78,16 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
   return (
     <React.Fragment>
-      <ol className="breadcrumb">
+      <Breadcrumb>
         {breadcrumbs.map((crumb, i) => {
           const isLast = i === breadcrumbs.length - 1;
-          return <li key={i} className={classNames({'active': isLast})}>
+          return <BreadcrumbItem key={i} isActive={isLast}>
             {isLast
               ? crumb
               : <button type="button" className="btn btn-link btn-link--no-btn-default-values" onClick={e => breadcrumbClicked(e, i)}>{crumb}</button>}
-          </li>;
+          </BreadcrumbItem>;
         })}
-      </ol>
+      </Breadcrumb>
       {description && <p className="co-break-word co-pre-line"><LinkifyExternal>{description}</LinkifyExternal></p>}
       {_.isEmpty(currentDefinition.properties)
         ? <EmptyBox label="Properties" />

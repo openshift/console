@@ -20,7 +20,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/component-animations";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/input-groups";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/breadcrumbs";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/labels";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
@@ -33,7 +32,6 @@
 @import "~patternfly/dist/sass/patternfly/mixins";  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/buttons';
 @import '~patternfly/dist/sass/patternfly/dropdowns'; // required by @patternfly/react-console
-@import '~patternfly/dist/sass/patternfly/breadcrumbs';
 @import '~patternfly/dist/sass/patternfly/modals';
 @import '~patternfly/dist/sass/patternfly/toolbar';
 @import '~patternfly/dist/sass/patternfly/list-view';
