@@ -143,12 +143,12 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
   const ALL = '#all#';
   const GROUP_PARAM = 'g';
   const VERSION_PARAM = 'v';
+  const TEXT_FILTER_PARAM = 'q';
   const search = new URLSearchParams(location.search);
   // Differentiate between an empty group and an unspecified param.
   const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
   const versionFilter = search.get(VERSION_PARAM) || ALL;
-
-  const [textFilter, setTextFilter] = React.useState('');
+  const textFilter = search.get(TEXT_FILTER_PARAM) || '';
 
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, {apiGroup}) => {
@@ -213,6 +213,13 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
   };
   const onGroupSelected = (group: string) => updateURL(GROUP_PARAM, group);
   const onVersionSelected = (version: string) => updateURL(VERSION_PARAM, version);
+  const setTextFilter = (text: string) => {
+    if (!text) {
+      removeQueryArgument(TEXT_FILTER_PARAM);
+    } else {
+      setQueryArgument(TEXT_FILTER_PARAM, text);
+    }
+  };
 
   return <>
     <div className="co-m-pane__filter-bar">
@@ -237,7 +244,7 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
       </div>
       <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
         <TextFilter
-          defaultValue={textFilter}
+          value={textFilter}
           label="by kind"
           onChange={(e) => setTextFilter(e.target.value)}
         />

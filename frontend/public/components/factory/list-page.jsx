@@ -33,8 +33,8 @@ export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) 
   </label>
 </div>;
 
-/** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
-export const TextFilter = ({label, onChange, defaultValue, style, className}) => {
+/** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string}}>} */
+export const TextFilter = ({label, onChange, defaultValue, style, className, value}) => {
   const input = React.useRef();
   const onKeyDown = (e) => {
     const { nodeName } = e.target;
@@ -61,6 +61,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className}) =>
         ref={input}
         autoCapitalize="none"
         className={classNames('pf-c-form-control co-text-filter', className)}
+        value={value}
         defaultValue={defaultValue}
         onChange={onChange}
         onKeyDown={e => e.key === 'Escape' && e.target.blur()}
