@@ -18,9 +18,8 @@ export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, us
   };
   const description = error ? NOT_AVAILABLE : (
     <>
-      <span className="co-dashboard-text--small co-capacity-card__item-description-value">{available.string}</span>
-      {' available out of '}
-      <span className="co-dashboard-text--small co-capacity-card__item-description-value">{totalFormatted.string}</span>
+      <span className="co-dashboard-text--small co-capacity-card__item-description-value">{available.string}{' available'}</span>
+      <span className="co-dashboard-text--small co-capacity-card__item-description-value text-secondary">{'out of '}{totalFormatted.string}</span>
     </>
   );
   return (
