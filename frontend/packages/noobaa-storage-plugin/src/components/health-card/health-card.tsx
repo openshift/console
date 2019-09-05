@@ -20,7 +20,7 @@ import {
 import { FirehoseResource } from '@console/internal/components/utils';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { getPropsData, filterNooBaaAlerts } from '../../utils';
+import { getGaugeValue, filterNooBaaAlerts } from '../../utils';
 import { HealthCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
 
@@ -49,10 +49,10 @@ const getObjectStorageHealthState = (
   ) {
     return { state: HealthState.LOADING };
   }
-  const buckets = getPropsData(bucketsResponse);
-  const unhealthyBuckets = getPropsData(unhealthyBucketsResponse);
-  const pools = getPropsData(poolsResponse);
-  const unhealthyPools = getPropsData(unhealthyPoolResponse);
+  const buckets = getGaugeValue(bucketsResponse);
+  const unhealthyBuckets = getGaugeValue(unhealthyBucketsResponse);
+  const pools = getGaugeValue(poolsResponse);
+  const unhealthyPools = getGaugeValue(unhealthyPoolResponse);
   const result: ObjectStorageHealth = {
     message: 'Object Storage is healthy',
     state: HealthState.OK,

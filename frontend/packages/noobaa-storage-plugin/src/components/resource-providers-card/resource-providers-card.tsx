@@ -71,7 +71,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
 
   const noobaaSystemAddress = getMetric(resourcesLinksResponse, 'system_address');
   const noobaaSystemName = getMetric(resourcesLinksResponse, 'system_name');
-  let link = null;
+  let link: string = null;
   if (noobaaSystemAddress && noobaaSystemName)
     link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/resources/cloud/`;
 

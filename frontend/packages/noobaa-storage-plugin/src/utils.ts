@@ -4,7 +4,7 @@ import { Alert } from '@console/internal/components/monitoring';
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
 
-export const getPropsData = (data) => _.get(data, 'data.result[0].value[1]', null);
+export const getGaugeValue = (data) => _.get(data, 'data.result[0].value[1]', null);
 
 export const getMetric = (result: PrometheusMetricResult, metric: string): string =>
   _.get(result, ['data', 'result', '0', 'metric', metric], null);
