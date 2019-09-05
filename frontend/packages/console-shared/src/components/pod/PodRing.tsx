@@ -65,9 +65,9 @@ const PodRing: React.FC<PodRingProps> = ({ pods, obj, resourceKind, path, impers
             subTitle={
               obj.spec.replicas !== obj.status.availableReplicas
                 ? !obj.spec.replicas
-                  ? `pod`
+                  ? `pods`
                   : `scaling to ${obj.spec.replicas}`
-                : obj.spec.replicas > 1
+                : obj.spec.replicas > 1 || obj.spec.replicas === 0
                 ? 'pods'
                 : 'pod'
             }
