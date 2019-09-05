@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
+import { Helmet } from 'react-helmet';
 
 import * as plugins from '../../plugins';
 import { OverviewDashboard } from './overview-dashboard/overview-dashboard';
@@ -49,11 +50,15 @@ const getTabs = (flags: FlagsObject): Page[] => [
 ];
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels, flags }) => {
+  const title = 'Dashboards';
   return kindsInFlight && k8sModels.size === 0
     ? <LoadingBox />
     : (
       <>
-        <PageHeading title="Dashboards" detail={true} />
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <PageHeading title={title} detail={true} />
         <HorizontalNav match={match} pages={getTabs(flags)} noStatusBox />
       </>
     );
