@@ -144,11 +144,19 @@ export interface ServerlessScaling {
 }
 
 export enum GitTypes {
-  '' = 'Please choose Git type',
-  github = 'GitHub',
-  gitlab = 'GitLab',
-  bitbucket = 'Bitbucket',
+  github = 'github',
+  gitlab = 'gitlab',
+  bitbucket = 'bitbucket',
+  unsure = 'other',
+  invalid = '',
 }
+
+export const GitReadableTypes = {
+  [GitTypes.github]: 'GitHub',
+  [GitTypes.gitlab]: 'GitLab',
+  [GitTypes.bitbucket]: 'Bitbucket',
+  [GitTypes.unsure]: 'Other',
+};
 
 export enum ImportTypes {
   git = 'git',

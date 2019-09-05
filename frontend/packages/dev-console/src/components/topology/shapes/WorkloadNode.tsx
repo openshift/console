@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
 import { detectGitType } from '../../import/import-validation-utils';
+import { GitTypes } from '../../import/import-types';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -35,11 +36,11 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
 
   const routeDecoratorIcon = (editUrl: string): React.ReactElement => {
     switch (detectGitType(editUrl)) {
-      case 'github':
+      case GitTypes.github:
         return <GithubIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-      case 'bitbucket':
+      case GitTypes.bitbucket:
         return <BitbucketIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-      case 'gitlab':
+      case GitTypes.gitlab:
         return <GitlabIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
       default:
         return <GitAltIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;

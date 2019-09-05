@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import * as _ from 'lodash';
 import { convertToBaseValue } from '@console/internal/components/utils';
 import { isInteger } from '../../utils/yup-validation-util';
+import { GitTypes } from './import-types';
 
 const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
@@ -220,20 +221,22 @@ export const validationSchema = yup.object().shape({
   }),
 });
 
-export const detectGitType = (url: string): string | undefined => {
+export const detectGitType = (url: string): string => {
   if (!urlRegex.test(url)) {
-    return undefined;
+    // Not a URL
+    return GitTypes.invalid;
   }
   if (url.includes('github.com')) {
-    return 'github';
+    return GitTypes.github;
   }
   if (url.includes('bitbucket.org')) {
-    return 'bitbucket';
+    return GitTypes.bitbucket;
   }
   if (url.includes('gitlab.com')) {
-    return 'gitlab';
+    return GitTypes.gitlab;
   }
-  return '';
+  // Not a known URL
+  return GitTypes.unsure;
 };
 
 export const detectGitRepoName = (url: string): string | undefined => {
