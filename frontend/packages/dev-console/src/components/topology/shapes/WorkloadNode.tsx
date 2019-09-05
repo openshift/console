@@ -92,7 +92,11 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
         build && (
           <Link
             key="build"
-            to={resourcePathFromModel(BuildModel, build.metadata.name, build.metadata.namespace)}
+            to={`${resourcePathFromModel(
+              BuildModel,
+              build.metadata.name,
+              build.metadata.namespace,
+            )}/logs`}
             className="odc-decorator__link"
           >
             <Decorator
