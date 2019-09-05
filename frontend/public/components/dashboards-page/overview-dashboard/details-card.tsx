@@ -69,13 +69,16 @@ export const DetailsCard_ = connect(mapStateToProps)(({
   const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
   const clusterVersionError = _.get(resources.cv, 'loadError');
   const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
+  const clusterId = getClusterID(clusterVersionData);
+  const openShiftVersion = getOpenShiftVersion(clusterVersionData);
 
   const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
   const infrastructureError = _.get(resources.infrastructure, 'loadError');
   const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
-
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
   const kubernetesVersionResponse = urlResults.getIn(['version', 'result']);
+  const k8sGitVersion = getK8sGitVersion(kubernetesVersionResponse);
 
   return (
     <DashboardCard>
@@ -89,29 +92,37 @@ export const DetailsCard_ = connect(mapStateToProps)(({
               <DetailItem
                 key="clusterid"
                 title="Cluster ID"
-                value={getClusterID(clusterVersionData)}
+                error={!clusterId}
                 isLoading={!clusterVersionLoaded && !clusterVersionError}
-              />
+              >
+                {clusterId}
+              </DetailItem>
               <DetailItem
                 key="provider"
                 title="Provider"
-                value={getInfrastructurePlatform(infrastructureData)}
+                error={!infrastructurePlatform}
                 isLoading={!infrastructureLoaded && !infrastructureError}
-              />
+              >
+                {infrastructurePlatform}
+              </DetailItem>
               <DetailItem
                 key="openshift"
                 title="OpenShift version"
-                value={getOpenShiftVersion(clusterVersionData)}
+                error={!openShiftVersion}
                 isLoading={!clusterVersionLoaded && !clusterVersionError}
-              />
+              >
+                {openShiftVersion}
+              </DetailItem>
             </>
           ) : (
             <DetailItem
               key="kubernetes"
               title="Kubernetes version"
-              value={getK8sGitVersion(kubernetesVersionResponse)}
+              error={!k8sGitVersion}
               isLoading={!kubernetesVersionResponse}
-            />
+            >
+              {k8sGitVersion}
+            </DetailItem>
           )}
         </DetailsBody>
       </DashboardCardBody>
