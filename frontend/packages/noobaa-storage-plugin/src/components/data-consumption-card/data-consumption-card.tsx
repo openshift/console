@@ -21,7 +21,6 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { humanizeBinaryBytesWithoutB, humanizeNumber } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';
 import {
@@ -54,26 +53,29 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
     result[key] = prometheusResults.getIn([queries[key], 'result']); // building an object having 'key'from the queries object and 'value' as the Prometheus response
   });
 
-  let maxUnit = '';
-  let maxVal: number;
   let padding: number;
   let suffixLabel = '';
+  let maxVal: number;
+  let maxUnit: string;
 
   const isLoading = _.values(result).includes(undefined);
 
   const metric = metricType === PROVIDERS ? 'type' : 'account';
   const curentDropdown = DataConsumersValue[metricType] + DataConsumersSortByValue[sortByKpi];
-  const { chartData, legendData } = getDataConsumptionChartData(result, metric, curentDropdown);
+  const { chartData, legendData, max } = getDataConsumptionChartData(
+    result,
+    metric,
+    curentDropdown,
+  );
 
   // chartData = [[]] or [[],[]]
   if (!chartData.some(_.isEmpty)) {
     padding = chartData[0].length === 2 ? 125 : 30; // FIX: for making the bars closeby in case of two datapoints, should be removed once victory charts support this adjustment
-    maxVal = _.maxBy(chartData.map((data) => _.maxBy(data, 'y')), 'y').y;
-    maxUnit = humanizeBinaryBytesWithoutB(maxVal).unit;
+    maxVal = max.value;
+    maxUnit = max.unit;
     suffixLabel = maxUnit;
     if (sortByKpi === BY_IOPS) {
-      suffixLabel = numberInWords(maxVal);
-      maxUnit = humanizeNumber(maxVal).unit;
+      suffixLabel = numberInWords[maxUnit];
     }
     // if suffixLabel is a non-empty string, show it in expected form
     if (suffixLabel) suffixLabel = `(in ${suffixLabel})`;
