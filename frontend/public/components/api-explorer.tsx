@@ -6,6 +6,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
+import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
@@ -270,18 +271,31 @@ export const APIExplorerPage: React.FC<{}> = () => <>
 APIExplorerPage.displayName = 'APIExplorerPage';
 
 const APIResourceOverview: React.FC<APIResourceTabProps> = ({customData: {kindObj}}) => {
+  const {kind, apiGroup, apiVersion, namespaced, verbs, shortNames} = kindObj;
   const description = getResourceDescription(kindObj);
   return (
     <div className="co-m-pane__body">
       <dl className="co-m-pane__details">
         <dt>Kind</dt>
-        <dd>{kindObj.kind}</dd>
+        <dd>{kind}</dd>
         <dt>API Group</dt>
-        <dd className="co-select-to-copy">{kindObj.apiGroup || '-'}</dd>
+        <dd className="co-select-to-copy">{apiGroup || '-'}</dd>
         <dt>API Version</dt>
-        <dd>{kindObj.apiVersion}</dd>
+        <dd>{apiVersion}</dd>
         <dt>Namespaced</dt>
-        <dd>{kindObj.namespaced ? 'true' : 'false'}</dd>
+        <dd>{namespaced ? 'true' : 'false'}</dd>
+        <dt>Verbs</dt>
+        <dd>{verbs.join(', ')}</dd>
+        {shortNames && (
+          <>
+            <dt>
+              <Tooltip content="Short names can be used to match this resource on the CLI.">
+                <span>Short Names</span>
+              </Tooltip>
+            </dt>
+            <dd>{shortNames.join(', ')}</dd>
+          </>
+        )}
         {description && (
           <>
             <dt>Description</dt>
@@ -340,8 +354,7 @@ const AccessTableRows = ({componentProps: {data}}) => _.map(data, (subject) => [
 const EmptyAccessReviewMsg: React.FC<{}> = () => <EmptyBox label="Subjects" />;
 
 const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({customData: {kindObj, namespace}}) => {
-  // TODO: Make sure verbs are filled in for all models. Currently static models don't use verbs from API discovery.
-  const verbs: K8sVerb[] = (kindObj.verbs || ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch']).sort();
+  const {apiGroup, apiVersion, namespaced, plural, verbs} = kindObj;
 
   // state
   const [verb, setVerb] = React.useState(_.first(verbs));
@@ -360,15 +373,15 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({customData: {ki
       apiVersion: apiVersionForModel(accessReviewModel),
       kind: accessReviewModel.kind,
       namespace,
-      resourceAPIVersion: apiVersionForModel(kindObj),
-      resourceAPIGroup: kindObj.apiGroup,
-      resource: kindObj.plural,
+      resourceAPIVersion: apiVersion,
+      resourceAPIGroup: apiGroup,
+      resource: plural,
       verb,
     };
     k8sCreate(accessReviewModel, req, { ns: namespace })
       .then(setAccessResponse)
       .catch(setError);
-  }, [kindObj, namespace, verb]);
+  }, [apiGroup, apiVersion, plural, namespace, verb]);
 
   if (error) {
     return <LoadError message={error.message} label="Access Review" className="loading-box loading-box__errored" />;
@@ -455,10 +468,10 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({customData: {ki
           <CheckBox title="ServiceAccount" active={showServiceAccounts} number={serviceAccounts.length} toggle={toggleShowServiceAccounts} />
         </CheckBoxControls>
         <p className="co-m-pane__explanation">
-          The following subjects can {verb} {kindObj.plural}
-          {kindObj.namespaced && namespace && <> in namespace {namespace}</>}
-          {kindObj.namespaced && !namespace && <> in all namespaces</>}
-          {!kindObj.namespaced && <> at the cluster scope</>}
+          The following subjects can {verb} {plural}
+          {namespaced && namespace && <> in namespace {namespace}</>}
+          {namespaced && !namespace && <> in all namespaces</>}
+          {namespaced && <> at the cluster scope</>}
           .
         </p>
         <Table
