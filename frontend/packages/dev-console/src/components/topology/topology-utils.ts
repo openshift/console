@@ -103,8 +103,8 @@ export class TransformTopologyData {
             this.transformPodData.getPods(previous, deploymentConfig),
           )
         : [];
-      const service = this.getService(deploymentConfig);
-      const route = this.getRoute(service);
+      const services = this.getServices(deploymentConfig);
+      const routes = this.getRoutes(services);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
       const { builds } = buildConfigs;
       // list of Knative resources
@@ -115,8 +115,8 @@ export class TransformTopologyData {
       const nodeResources = [
         deploymentConfig,
         current,
-        service,
-        route,
+        ...services,
+        ...routes,
         buildConfigs,
         ksroute,
         configurations,
@@ -142,7 +142,7 @@ export class TransformTopologyData {
         }),
         pods: [...currentPods, ...previousPods],
         data: {
-          url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : this.getRouteData(ksroute),
+          url: this.getRoutesUrl(routes, ksroute),
           kind: targetDeploymentsKind,
           editUrl:
             deploymentsAnnotations['app.openshift.io/edit-url'] ||
@@ -163,6 +163,13 @@ export class TransformTopologyData {
       };
     });
     return this;
+  }
+
+  private getRoutesUrl(routes: ResourceProps[], ksroute: ResourceProps): string {
+    if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
+      return getRouteWebURL(routes[0]);
+    }
+    return this.getRouteData(ksroute);
   }
 
   private getSelectorsByService() {
@@ -197,7 +204,7 @@ export class TransformTopologyData {
    * get the route information from the service
    * @param service
    */
-  private getRoute(service: ResourceProps): ResourceProps {
+  private getRoutes(services: ResourceProps[]): ResourceProps[] {
     // get the route
     const route = {
       kind: 'Route',
@@ -205,12 +212,12 @@ export class TransformTopologyData {
       status: {},
       spec: {},
     };
-    _.forEach(this.resources.routes.data, (routeConfig) => {
-      if (_.get(service, 'metadata.name') === _.get(routeConfig, 'spec.to.name')) {
-        _.merge(route, routeConfig);
-      }
-    });
-    return route;
+    return this.resources.routes.data
+      .filter((routeConfig) => {
+        const name = _.get(routeConfig, 'spec.to.name');
+        return _.some(services, { metadata: { name } });
+      })
+      .map((r) => _.extend({}, route, r));
   }
 
   /**
@@ -322,20 +329,21 @@ export class TransformTopologyData {
    * fetches the service from the deploymentconfig
    * @param deploymentConfig
    */
-  private getService(deploymentConfig: ResourceProps): ResourceProps {
-    const service = {
+  private getServices(deploymentConfig: ResourceProps): ResourceProps[] {
+    const serviceModel = {
       kind: 'Service',
       metadata: {},
       status: {},
       spec: {},
     };
+    const services: ResourceProps[] = [];
     const configTemplate = _.get(deploymentConfig, 'spec.template');
     _.each(this.selectorsByService, (selector, serviceName) => {
       if (selector.matches(configTemplate)) {
-        _.merge(service, this.allServices[serviceName]);
+        services.push(_.extend({}, serviceModel, this.allServices[serviceName]));
       }
     });
-    return service;
+    return services;
   }
 
   /**
