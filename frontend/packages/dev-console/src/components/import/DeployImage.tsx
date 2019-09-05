@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { history } from '@console/internal/components/utils';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { connect } from 'react-redux';
+import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeployImageFormData } from './import-types';
 import { createResources } from './deployImage-submit-utils';
@@ -11,14 +15,21 @@ export interface DeployImageProps {
   namespace: string;
 }
 
-const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
+interface StateProps {
+  activeApplication: string;
+}
+
+type Props = DeployImageProps & StateProps;
+
+const DeployImage: React.FC<Props> = ({ namespace, activeApplication }) => {
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
     },
     application: {
-      name: '',
-      selectedKey: '',
+      initial: activeApplication,
+      name: activeApplication,
+      selectedKey: activeApplication,
     },
     name: '',
     searchTerm: '',
@@ -131,4 +142,11 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
   );
 };
 
-export default DeployImage;
+const mapStateToProps = (state: RootState): StateProps => {
+  const activeApplication = getActiveApplication(state);
+  return {
+    activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
+  };
+};
+
+export default connect(mapStateToProps)(DeployImage);

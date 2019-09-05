@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useField } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField, NSDropdownField } from '../../formik-fields';
+import { InputField } from '../../formik-fields';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
 import ApplicationSelector from './ApplicationSelector';
@@ -10,17 +11,10 @@ export interface AppSectionProps {
 }
 
 const AppSection: React.FC<AppSectionProps> = ({ project }) => {
+  const [initialApplication] = useField('application.initial');
   return (
     <FormSection title="General">
-      <NSDropdownField
-        data-test-id="application-form-namespace-dropdown"
-        name="project.name"
-        label="Project"
-        disabled={!!project.name}
-        fullWidth
-        required
-      />
-      <ApplicationSelector namespace={project.name} />
+      {!initialApplication.value && <ApplicationSelector namespace={project.name} />}
       <InputField
         type={TextInputTypes.text}
         data-test-id="application-form-app-name"

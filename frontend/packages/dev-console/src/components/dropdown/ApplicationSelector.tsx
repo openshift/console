@@ -10,26 +10,31 @@ import { RootState } from '@console/internal/redux';
 import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
 import ApplicationDropdown from './ApplicationDropdown';
 
-interface ApplicationSelectorProps {
+export interface ApplicationSelectorProps {
+  disabled?: boolean;
+}
+
+interface StateProps {
   namespace: string;
   application: string;
+}
+
+interface DispatchProps {
   onChange: (name: string) => void;
 }
 
-const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
-  namespace,
-  application,
-  onChange,
-}) => {
+type Props = ApplicationSelectorProps & StateProps & DispatchProps;
+
+const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange, disabled }) => {
   const onApplicationChange = (newApplication: string, key: string) => {
     key === ALL_APPLICATIONS_KEY ? onChange(key) : onChange(newApplication);
   };
   const allApplicationsTitle = 'all applications';
 
-  const disabled = namespace === ALL_NAMESPACES_KEY;
+  const allNamespaces = namespace === ALL_NAMESPACES_KEY;
 
   let title: string = application;
-  if (disabled) {
+  if (allNamespaces) {
     title = 'No applications';
   } else if (title === ALL_APPLICATIONS_KEY) {
     title = allApplicationsTitle;
@@ -50,23 +55,23 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
       storageKey={APPLICATION_LOCAL_STORAGE_KEY}
-      disabled={disabled}
+      disabled={disabled || allNamespaces}
     />
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
   namespace: getActiveNamespace(state),
   application: getActiveApplication(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   onChange: (app: string) => {
     dispatch(setActiveApplication(app));
   },
 });
 
-export default connect(
+export default connect<StateProps, DispatchProps, ApplicationSelectorProps>(
   mapStateToProps,
   mapDispatchToProps,
 )(ApplicationSelector);

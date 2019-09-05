@@ -101,9 +101,12 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   max-width: 60%;
 
   .pf-c-dropdown__toggle.pf-m-plain {
-    color: initial;
     font-size: ($font-size-base + 1);
     padding: 2px 0 !important;
+
+    &:not(:disabled) {
+      color: inherit;
+    }
 
     @media (min-width: $grid-float-breakpoint) {
       font-size: ($font-size-base + 2);

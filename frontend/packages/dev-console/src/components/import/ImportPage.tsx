@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ImportForm from './ImportForm';
 import { ImportTypes, ImportData } from './import-types';
 
@@ -71,7 +72,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
   }
 
   return (
-    <React.Fragment>
+    <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
         <title>{importData.title}</title>
       </Helmet>
@@ -81,7 +82,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
           <ImportForm namespace={namespace || preselectedNamespace} importData={importData} />
         </Firehose>
       </div>
-    </React.Fragment>
+    </NamespacedPage>
   );
 };
 

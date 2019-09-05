@@ -1,15 +1,36 @@
 import * as React from 'react';
+import * as cx from 'classnames';
 import { NamespaceBar } from '@console/internal/components/namespace';
 import ApplicationSelector from './dropdown/ApplicationSelector';
 
 import './NamespacedPage.scss';
 
-const NamespacedPage: React.FC = ({ children }) => (
+export enum NamespacedPageVariants {
+  light = 'light',
+  default = 'default',
+}
+
+export interface NamespacedPageProps {
+  disabled?: boolean;
+  variant?: NamespacedPageVariants;
+}
+
+const NamespacedPage: React.FC<NamespacedPageProps> = ({
+  children,
+  disabled,
+  variant = NamespacedPageVariants.default,
+}) => (
   <div className="odc-namespaced-page">
-    <NamespaceBar>
-      <ApplicationSelector />
+    <NamespaceBar disabled={disabled}>
+      <ApplicationSelector disabled={disabled} />
     </NamespaceBar>
-    <div className="odc-namespaced-page__content">{children}</div>
+    <div
+      className={cx('odc-namespaced-page__content', {
+        [`is-${variant}`]: variant !== NamespacedPageVariants.default,
+      })}
+    >
+      {children}
+    </div>
   </div>
 );
 

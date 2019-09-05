@@ -353,7 +353,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 
   render() {
-    const { activeNamespace, dispatch, canListNS, useProjects, children } = this.props;
+    const { activeNamespace, dispatch, canListNS, useProjects, children, disabled } = this.props;
     if (flagPending(canListNS)) {
       return null;
     }
@@ -393,6 +393,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     return <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <Dropdown
+        disabled={disabled}
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
         buttonClassName="pf-m-plain"
@@ -415,10 +416,10 @@ class NamespaceBarDropdowns_ extends React.Component {
 
 const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(NamespaceBarDropdowns_);
 
-const NamespaceBar_ = ({useProjects, children}) => {
+const NamespaceBar_ = ({useProjects, children, disabled}) => {
   return <div className="co-namespace-bar">
     <Firehose resources={[{kind: getModel(useProjects).kind, prop: 'namespace', isList: true}]}>
-      <NamespaceBarDropdowns useProjects={useProjects}>
+      <NamespaceBarDropdowns useProjects={useProjects} disabled={disabled}>
         {children}
       </NamespaceBarDropdowns>
     </Firehose>
@@ -431,7 +432,7 @@ const namespaceBarStateToProps = ({k8s}) => {
     useProjects,
   };
 };
-/** @type {React.FC<{children?: ReactNode}>} */
+/** @type {React.FC<{children?: ReactNode, disabled?: boolean}>} */
 export const NamespaceBar = connect(namespaceBarStateToProps)(NamespaceBar_);
 
 export const NamespacesDetailsPage = props => <DetailsPage

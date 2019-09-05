@@ -11,28 +11,27 @@ describe('Deploy Image', () => {
   const imageName = 'mysql';
 
   describe('Deploy Image page', () => {
-    it('should render project/namespace dropdown when all-namespace is selected', async() => {
-      // Navigate to the deploy-image page
-      await browser.get(`${appHost}/deploy-image/all-namespaces`);
-
-      const nsSpan =
-        '#form-ns-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .pf-c-dropdown__toggle-text--placeholder';
-      // Wait for the Project field to appear
-      await browser.wait(until.presenceOf(element(by.css(nsSpan))));
-      // Confirm that the project field has the right text
-      expect(element(by.css(nsSpan)).getText()).toEqual('Select namespace');
-    });
-
     it('should render project/namespace dropdown disabled when in a project context', async() => {
       // Navigate to the deploy-image page
       await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
 
-      const nsSpan =
-        '#form-ns-dropdown-project-name-field .btn-dropdown__content-wrap .pf-c-dropdown__toggle-text .co-resource-item .co-resource-item__resource-name';
-      // Wait for the Project field to appear
-      await browser.wait(until.presenceOf(element(by.css(nsSpan))));
-      // Confirm that the project field does not exist
-      expect(element(by.css(nsSpan)).getText()).toEqual(testName);
+      const dropdown = '[data-test-id=namespace-bar-dropdown] > *:nth-child(1) button:disabled';
+      // Wait for the Project dropdown to appear
+      await browser.wait(until.presenceOf(element(by.css(dropdown))));
+      // Confirm that the project dropdown text matches project context
+      expect(element(by.css(dropdown)).getText()).toEqual(`Project: ${testName}`);
+    });
+
+
+    it('should render applications dropdown disabled', async() => {
+      // Navigate to the deploy-image page
+      await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
+
+      const dropdown = '[data-test-id=namespace-bar-dropdown] > *:nth-child(2) button:disabled';
+      // Wait for the Applications dropdown to appear
+      await browser.wait(until.presenceOf(element(by.css(dropdown))));
+      // Confirm that the application dropdown is unset
+      expect(element(by.css(dropdown)).getText()).toEqual('Application: all applications');
     });
 
     it('can be used to search for an image', async() => {
