@@ -154,4 +154,4 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
   }
 }
 
-export default PodStatus;
+export default React.memo((props: PodStatusProps) => <PodStatus {...props} />);
