@@ -75,7 +75,7 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
       ['obj', 'data', 'status', 'containerStatuses'],
       [],
     );
-    if (this.props !== nextProps) {
+    if (!_.isEqual(this.props, nextProps)) {
       const firstrunningCont = containerStatus.findIndex(
         (container) => containerToLogSourceStatus(container) !== LOG_SOURCE_TERMINATED,
       );
