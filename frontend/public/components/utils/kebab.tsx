@@ -51,7 +51,7 @@ const KebabItem: React.FC<KebabItemProps> = (props) => {
 
 export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
-  return <ul className="pf-c-dropdown__menu dropdown-menu-right" data-test-id="action-items">
+  return <ul className="pf-c-dropdown__menu pf-m-align-right" data-test-id="action-items">
     {_.map(visibleOptions, (o, i) => <li key={i}>
       <KebabItem option={o} onClick={onClick} />
     </li>)}
