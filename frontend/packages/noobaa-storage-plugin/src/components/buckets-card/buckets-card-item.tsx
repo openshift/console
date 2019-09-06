@@ -14,7 +14,7 @@ const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, 
       <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Unavailable</span>
     ) : Number(status) > 0 ? (
       <React.Fragment>
-        <a href={link} style={{ textDecoration: 'none' }}>
+        <a href={link} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
           <RedExclamationCircleIcon className="co-dashboard-icon nb-bucket-card__status-icon" />
           <span className="nb-buckets-card__row-status-item-text">{status}</span>
         </a>
@@ -51,7 +51,7 @@ export type BucketsType = {
   bucketsCount: string;
   isLoading: boolean;
   objectsCount: string;
-  unhealthyCount: string;
+  unhealthyCount: string | number;
 };
 
 type BucketsItemProps = BucketsType & {
@@ -67,5 +67,5 @@ type BucketsRowProps = {
 
 type BucketsRowStatusProps = {
   link: string;
-  status: string;
+  status: string | number;
 };

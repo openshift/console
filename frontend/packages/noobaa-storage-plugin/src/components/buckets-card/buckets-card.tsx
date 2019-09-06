@@ -10,7 +10,10 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { getMetric } from '../../utils';
+import { FirehoseResource } from '@console/internal/components/utils';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { getMetric, getGaugeValue } from '../../utils';
+import { NooBaaObjectBucketClaimModel } from '../../models';
 import { BucketsItem, BucketsType } from './buckets-card-item';
 import './buckets-card.scss';
 
@@ -24,39 +27,50 @@ enum BucketsCardQueries {
   UNHEALTHY_BUCKETS_CLAIMS = 'NooBaa_num_unhealthy_bucket_claims',
 }
 
-const getPropsData = (data) => _.get(data, 'data.result[0].value[1]', null);
+const objectBucketClaimsResource: FirehoseResource = {
+  kind: referenceForModel(NooBaaObjectBucketClaimModel),
+  namespaced: false,
+  isList: true,
+  prop: 'obc',
+};
 
 const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
+  watchK8sResource,
   watchPrometheus,
   stopWatchPrometheusQuery,
+  stopWatchK8sResource,
   prometheusResults,
+  resources,
 }) => {
   React.useEffect(() => {
+    watchK8sResource(objectBucketClaimsResource);
     Object.keys(BucketsCardQueries).forEach((key) => watchPrometheus(BucketsCardQueries[key]));
-    return () =>
+    return () => {
       Object.keys(BucketsCardQueries).forEach((key) =>
         stopWatchPrometheusQuery(BucketsCardQueries[key]),
       );
-  }, [watchPrometheus, stopWatchPrometheusQuery]);
+      stopWatchK8sResource(objectBucketClaimsResource);
+    };
+  }, [watchK8sResource, watchPrometheus, stopWatchK8sResource, stopWatchPrometheusQuery]);
 
-  const objectBucketsCount = prometheusResults.getIn([BucketsCardQueries.BUCKETS_COUNT, 'result']);
-  const objectsCountOnBuckets = prometheusResults.getIn([
+  const obCountResponse = prometheusResults.getIn([BucketsCardQueries.BUCKETS_COUNT, 'result']);
+  const obObjectsCountResponse = prometheusResults.getIn([
     BucketsCardQueries.BUCKET_OBJECTS_COUNT,
     'result',
   ]);
-  const unhealthyBucketsCount = prometheusResults.getIn([
+  const unhealthyObResponse = prometheusResults.getIn([
     BucketsCardQueries.UNHEALTHY_BUCKETS,
     'result',
   ]);
-  const bucketClaimsCount = prometheusResults.getIn([
+  const obcCountResponse = prometheusResults.getIn([
     BucketsCardQueries.BUCKET_CLAIMS_COUNT,
     'result',
   ]);
-  const objectsCountOnBucketClaims = prometheusResults.getIn([
+  const obcObjectsCountsResponse = prometheusResults.getIn([
     BucketsCardQueries.BUCKET_CLAIMS_OBJECTS_COUNT,
     'result',
   ]);
-  const unhealthyBucketClaimsCount = prometheusResults.getIn([
+  const unhealthyObcCountResponse = prometheusResults.getIn([
     BucketsCardQueries.UNHEALTHY_BUCKETS_CLAIMS,
     'result',
   ]);
@@ -65,23 +79,32 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     'result',
   ]);
 
+  const obcData = _.get(resources.obc, 'data', null) as K8sResourceKind[];
   const noobaaSystemAddress = getMetric(bucketsLinksResponse, 'system_address');
   const noobaaSystemName = getMetric(bucketsLinksResponse, 'system_name');
-  let link = null;
+  const obcCount = getGaugeValue(obcCountResponse);
+  const unhealthyObcCount = getGaugeValue(unhealthyObcCountResponse);
+
+  let resultantUnhealthyObcCount: number = null;
+  let link: string = null;
+
+  if (obcCount && obcData && unhealthyObcCount)
+    resultantUnhealthyObcCount = obcData.length - Number(obcCount) + Number(unhealthyObcCount);
+
   if (noobaaSystemAddress && noobaaSystemName)
     link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/buckets/data-buckets`;
 
   const bucketProps: BucketsType = {
-    bucketsCount: getPropsData(objectBucketsCount),
-    objectsCount: getPropsData(objectsCountOnBuckets),
-    unhealthyCount: getPropsData(unhealthyBucketsCount),
-    isLoading: !(objectBucketsCount && objectsCountOnBuckets && unhealthyBucketsCount),
+    bucketsCount: getGaugeValue(obCountResponse),
+    objectsCount: getGaugeValue(obObjectsCountResponse),
+    unhealthyCount: getGaugeValue(unhealthyObResponse),
+    isLoading: !(obCountResponse && obObjectsCountResponse && unhealthyObResponse),
   };
   const bucketClaimProps: BucketsType = {
-    bucketsCount: getPropsData(bucketClaimsCount),
-    objectsCount: getPropsData(objectsCountOnBucketClaims),
-    unhealthyCount: getPropsData(unhealthyBucketClaimsCount),
-    isLoading: !(bucketClaimsCount && objectsCountOnBucketClaims && unhealthyBucketClaimsCount),
+    bucketsCount: obcCount,
+    objectsCount: getGaugeValue(obcObjectsCountsResponse),
+    unhealthyCount: resultantUnhealthyObcCount,
+    isLoading: !(obcCountResponse && obcObjectsCountsResponse && unhealthyObcCountResponse),
   };
   return (
     <DashboardCard>

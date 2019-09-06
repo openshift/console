@@ -6,7 +6,7 @@ const ResourceProvidersItemStatus: React.FC<ResourceProvidersRowStatusProps> = R
   ({ status, link }) => (
     <div className="nb-resource-providers-card__row-status">
       <div className="nb-resource-providers-card__row-status-item">
-        <a href={link} style={{ textDecoration: 'none' }}>
+        <a href={link} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
           <RedExclamationCircleIcon className="co-dashboard-icon nb-resource-providers-card__status-icon" />
           <span className="nb-resource-providers-card__row-status-item-text">{status}</span>
         </a>

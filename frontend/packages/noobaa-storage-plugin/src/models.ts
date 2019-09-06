@@ -38,3 +38,16 @@ export const NooBaaBucketClassModel: K8sKind = {
   id: 'noobaabucketclasses',
   crd: true,
 };
+
+export const NooBaaObjectBucketClaimModel: K8sKind = {
+  label: 'Object Bucket Claim',
+  labelPlural: 'Object Bucket Claims',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'objectbucket.io',
+  plural: 'objectbucketclaims',
+  abbr: 'NOBC',
+  namespaced: true,
+  kind: 'ObjectBucketClaim',
+  id: 'noobaaobjectbucketclaims',
+  crd: true,
+};

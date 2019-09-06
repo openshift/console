@@ -9,7 +9,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { getPropsData } from '../../utils';
+import { getGaugeValue } from '../../utils';
 import { ObjectDataReductionQueries } from '../../queries';
 import { EfficiencyItem, SavingsItem } from './object-data-reduction-card-item';
 import './object-data-reduction-card.scss';
@@ -42,9 +42,9 @@ const DataReductionCard: React.FC<DashboardItemProps> = ({
     'result',
   ]);
 
-  const efficiency = getPropsData(efficiencyQueryResult);
-  const savings = getPropsData(savingsQueryResult);
-  const logicalSize = getPropsData(logicalSavingsQueryResult);
+  const efficiency = getGaugeValue(efficiencyQueryResult);
+  const savings = getGaugeValue(savingsQueryResult);
+  const logicalSize = getGaugeValue(logicalSavingsQueryResult);
 
   const efficiencyProps = {
     efficiency,

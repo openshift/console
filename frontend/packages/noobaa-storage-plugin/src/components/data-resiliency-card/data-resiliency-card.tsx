@@ -15,7 +15,7 @@ import {
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
-import { getPropsData } from '../../utils';
+import { getGaugeValue } from '../../utils';
 import './data-resiliency-card.scss';
 
 const getFormattedEta = (eta: number): string => {
@@ -85,8 +85,8 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     'result',
   ]);
 
-  const rebuildProgress = getPropsData(rebuildProgressQueryResult);
-  const eta = getPropsData(etaQueryResult);
+  const rebuildProgress = getGaugeValue(rebuildProgressQueryResult);
+  const eta = getGaugeValue(etaQueryResult);
 
   const formattedRebuildProgress = rebuildProgress
     ? Number(Number(rebuildProgress).toFixed(1))
