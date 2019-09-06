@@ -217,7 +217,6 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     super(props);
     this.state = {
       inFlight: false,
-      isReportFinished: false,
       error: null,
       data: null,
       sortBy: null,
@@ -243,16 +242,15 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    // if request is still inFlight or the report has finished running, then return
-    if (this.state.inFlight || this.state.isReportFinished) {
+    // if request is still inFlight or props haven't changed then return
+    if (this.state.inFlight || _.isEqual(this.props, nextProps)) {
       return;
     }
+
     const conditions = _.get(nextProps.obj, 'status.conditions');
     const isReportFinished = _.some(conditions, {type: 'Running', status: 'False'});
     if (isReportFinished) {
-      this.setState({
-        isReportFinished: true,
-      }, () => this.fetchData());
+      this.fetchData();
     }
   }
 
@@ -523,7 +521,6 @@ export type ReportDataState = {
   error: any;
   data: any;
   inFlight: boolean;
-  isReportFinished: boolean;
   sortBy: string;
   orderBy: string;
   cols: string[];
