@@ -32,18 +32,14 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 
   return (
     <ResourceSummary resource={template}>
-      <dt>
-        Description
-        {canUpdateTemplate && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
-          />
-        )}
-      </dt>
+      <dt>Description</dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
-        {description}
+        <EditButton
+          canEdit={canUpdateTemplate}
+          onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
+        >
+          {description}
+        </EditButton>
       </dd>
       <dt>Operating System</dt>
       <dd id={prefixedID(id, 'os')}>
@@ -77,15 +73,11 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
           DASH
         )}
       </dd>
-      <dt>
-        Flavor
-        <EditButton
-          canEdit={canUpdateTemplate}
-          onClick={() => vmFlavorModal({ vmLike: template })}
-        />
-      </dt>
+      <dt>Flavor</dt>
       <dd id={prefixedID(id, 'flavor')}>
-        <FlavorText vmLike={template} />
+        <EditButton canEdit={canUpdateTemplate} onClick={() => vmFlavorModal({ vmLike: template })}>
+          <FlavorText vmLike={template} />
+        </EditButton>
       </dd>
       <dt>Provision Source</dt>
       <dd id={prefixedID(id, 'provisioning-source')}>

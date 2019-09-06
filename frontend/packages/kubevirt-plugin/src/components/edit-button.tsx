@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 
 export const EditButton: React.FC<EditButtonProps> = (props) => {
-  const { canEdit, onClick } = props;
+  const { canEdit, onClick, children } = props;
 
   if (canEdit) {
     return (
-      <Button
+      <button
         type="button"
         className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
         onClick={onClick}
-      />
+      >
+        {children}
+      </button>
     );
   }
 
@@ -18,6 +19,7 @@ export const EditButton: React.FC<EditButtonProps> = (props) => {
 };
 
 type EditButtonProps = {
+  children: any;
   canEdit: boolean;
   onClick: React.MouseEventHandler;
 };

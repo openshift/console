@@ -34,18 +34,11 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
 
   return (
     <ResourceSummary resource={vm}>
-      <dt>
-        Description
-        {canUpdateVM && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}
-          />
-        )}
-      </dt>
+      <dt>Description</dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
-        {description}
+        <EditButton canEdit={canUpdateVM} onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}>
+          {description}
+        </EditButton>
       </dd>
       <dt>Operating System</dt>
       <dd id={prefixedID(id, 'os')}>
@@ -106,12 +99,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </dd>
       <dt>Node</dt>
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
-      <dt>
-        Flavor
-        <EditButton canEdit={canUpdateVM} onClick={() => vmFlavorModal({ vmLike: vm })} />
-      </dt>
+      <dt>Flavor</dt>
       <dd id={prefixedID(id, 'flavor')}>
-        <FlavorText vmLike={vm} />
+        <EditButton canEdit={canUpdateVM} onClick={() => vmFlavorModal({ vmLike: vm })}>
+          <FlavorText vmLike={vm} />
+        </EditButton>
       </dd>
       <dt>Workload Profile</dt>
       <dd id={prefixedID(id, 'workload-profile')}>{getWorkloadProfile(vm) || DASH}</dd>
