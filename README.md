@@ -150,7 +150,7 @@ You must run this command once, and every time the dependencies change. `node_mo
 
 #### Interactive Development
 
-The following build task will watch the source code for changes and compile automatically.  
+The following build task will watch the source code for changes and compile automatically.
 If you would like to disable hot reloading, set the environment variable `HOT_RELOAD` to `false`.
 ```
 yarn run dev
@@ -214,8 +214,8 @@ Downloading chrome requires `curl`, `unzip`, and `sha256sum` command line utilit
 
 ```
 # # For Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
-$ export FORCE_CHRMOE_BRANCH_BASE="665006"
-$ export FORCE_CHRMOE_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
+$ export FORCE_CHROME_BRANCH_BASE="665006"
+$ export FORCE_CHROME_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
 $ ./test-gui.sh e2e
 ```
 
