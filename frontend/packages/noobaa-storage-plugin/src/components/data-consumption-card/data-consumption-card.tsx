@@ -56,6 +56,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
 
   let maxUnit = '';
   let maxVal: number;
+  let padding: number;
   let suffixLabel = '';
 
   const isLoading = _.values(result).includes(undefined);
@@ -66,6 +67,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
 
   // chartData = [[]] or [[],[]]
   if (!chartData.some(_.isEmpty)) {
+    padding = chartData[0].length === 2 ? 125 : 30; // FIX: for making the bars closeby in case of two datapoints, should be removed once victory charts support this adjustment
     maxVal = _.maxBy(chartData.map((data) => _.maxBy(data, 'y')), 'y').y;
     maxUnit = humanizeBinaryBytes(maxVal).unit;
     suffixLabel = maxUnit;
@@ -105,7 +107,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
               domain={{ y: [0, maxVal + 10] }}
               minDomain={{ y: 0 }}
               maxDomain={{ y: maxVal + 10 }}
-              domainPadding={{ x: [50, 50] }}
+              domainPadding={{ x: [padding, padding] }}
               legendComponent={
                 <ChartLegend
                   themeColor={ChartThemeColor.purple}
@@ -114,7 +116,8 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
                   symbolSpacer={7}
                   height={30}
                   gutter={10}
-                  style={{ labels: { fontSize: 8, padding: '5 0 0 0' } }}
+                  padding={{ top: 50, bottom: 0 }}
+                  style={{ labels: { fontSize: 8 } }}
                 />
               }
               legendPosition="bottom-left"
@@ -126,7 +129,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
               }}
               themeColor={ChartThemeColor.purple}
             >
-              <ChartAxis style={{ tickLabels: { fontSize: 8 } }} />
+              <ChartAxis style={{ tickLabels: { fontSize: 8, padding: 2 } }} />
               <ChartAxis
                 dependentAxis
                 showGrid

@@ -53,7 +53,7 @@ export const getChartData: GetChartData = (response, metric, humanize, name) => 
     if (!name) val = x; // For Egress having the legends name = providers/accounts name
     return {
       name: val,
-      x,
+      x: _.truncate(x, { length: 18 }),
       y: Number(humanize(y).value),
     };
   });
