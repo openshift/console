@@ -43,6 +43,6 @@ export function getRandomMacAddress() {
 }
 
 export function getResourceObject(name: string, namespace: string, kind: string) {
-  const resourceJson = execSync(`oc get -o json -n ${namespace} ${kind} ${name}`).toString();
+  const resourceJson = execSync(`kubectl get -o json -n ${namespace} ${kind} ${name}`).toString();
   return JSON.parse(resourceJson);
 }

@@ -1,108 +1,56 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '../../../../../integration-tests/protractor.conf';
-import { resourceTitle, isLoaded } from '../../../../../integration-tests/views/crud.view';
+import { isLoaded } from '../../../../../integration-tests/views/crud.view';
 import {
   selectDropdownOption,
   waitForStringNotInElement,
-  resolveTimeout,
 } from '../../../../console-shared/src/test-utils/utils';
 import * as vmView from '../../views/virtualMachine.view';
-import { nameInput, errorMessage } from '../../views/wizard.view';
+import { errorMessage } from '../../views/wizard.view';
 import { VMConfig } from '../utils/types';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
-  VM_STOP_TIMEOUT_SECS,
-  VM_ACTIONS_TIMEOUT_SECS,
   WIZARD_CREATE_VM_ERROR,
-  UNEXPECTED_ACTION_ERROR,
-  TABS,
   WIZARD_TABLE_FIRST_ROW,
+  TABS,
   DASHES,
 } from '../utils/consts';
-import { listViewAction } from '../../views/vm.actions.view';
-import { rowForName } from '../../views/kubevirtDetailView.view';
-import { KubevirtDetailView } from './kubevirtDetailView';
+import { detailViewAction } from '../../views/vm.actions.view';
+import { tableRowForName } from '../../views/kubevirtDetailView.view';
 import { Wizard } from './wizard';
+import { KubevirtDetailView } from './kubevirtDetailView';
+import { VirtualMachineInstance } from './virtualMachineInstance';
 
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config) {
     super({ ...config, kind: 'virtualmachines' });
   }
 
+  async navigateToVMI(vmiTab: string): Promise<VirtualMachineInstance> {
+    await this.navigateToTab(TABS.OVERVIEW);
+    const vmPodName = await vmView
+      .vmDetailPod(this.namespace, this.name)
+      .$('a')
+      .getText();
+    const vmi = new VirtualMachineInstance({ name: vmPodName, namespace: testName });
+    await vmi.navigateToTab(vmiTab);
+    return vmi;
+  }
+
   async action(action: string, waitForAction?: boolean, timeout?: number) {
-    await this.navigateToListView();
+    await this.navigateToTab(TABS.OVERVIEW);
 
     let confirmDialog = true;
     if (['Clone'].includes(action)) {
       confirmDialog = false;
     }
 
-    await listViewAction(this.name)(action, confirmDialog);
+    await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
-      switch (action) {
-        case 'Start':
-          await this.waitForStatusIcon(
-            vmView.statusIcons.running,
-            resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-          );
-          break;
-        case 'Restart':
-          await this.waitForStatusIcon(
-            vmView.statusIcons.starting,
-            resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-          );
-          await this.waitForStatusIcon(
-            vmView.statusIcons.running,
-            resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-          );
-          break;
-        case 'Stop':
-          await this.waitForStatusIcon(
-            vmView.statusIcons.off,
-            resolveTimeout(timeout, VM_STOP_TIMEOUT_SECS),
-          );
-          break;
-        case 'Clone':
-          await browser.wait(
-            until.presenceOf(nameInput),
-            resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-          );
-          await browser.sleep(500); // Wait until the fade in effect is finished, otherwise we may misclick
-          break;
-        case 'Migrate':
-          await this.waitForStatusIcon(
-            vmView.statusIcons.migrating,
-            resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-          );
-          await this.waitForStatusIcon(
-            vmView.statusIcons.running,
-            resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
-          );
-          break;
-        case 'Cancel':
-          await this.waitForStatusIcon(
-            vmView.statusIcons.running,
-            resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-          );
-          break;
-        case 'Delete':
-          // wait for redirect
-          await browser.wait(
-            until.textToBePresentInElement(resourceTitle, 'Virtual Machines'),
-            resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-          );
-          break;
-        default:
-          throw Error(UNEXPECTED_ACTION_ERROR);
-      }
+      await vmView.waitForActionFinished(action, timeout);
     }
-  }
-
-  async waitForStatusIcon(statusIcon: string, timeout: number) {
-    await this.navigateToTab(TABS.OVERVIEW);
-    await browser.wait(until.presenceOf(vmView.statusIcon(statusIcon)), timeout);
   }
 
   async waitForMigrationComplete(fromNode: string, timeout: number) {
@@ -116,7 +64,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async resourceExists(resourceName: string) {
-    return rowForName(resourceName).isPresent();
+    return tableRowForName(resourceName).isPresent();
   }
 
   async selectConsole(type: string) {
@@ -214,7 +162,7 @@ export class VirtualMachine extends KubevirtDetailView {
 
     if (startOnCreation === true) {
       // If startOnCreation is true, wait for VM to boot up
-      await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
+      await vmView.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
     }
   }
 }

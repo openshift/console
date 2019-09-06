@@ -7,10 +7,11 @@ import {
   createResources,
   deleteResources,
 } from '../../../console-shared/src/test-utils/utils';
-import { statusIcons } from '../views/virtualMachine.view';
+import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject } from './utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS } from './utils/consts';
+import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS, TABS } from './utils/consts';
+import { StorageResource, NetworkResource, ProvisionOption } from './utils/types';
 import {
   basicVmConfig,
   rootDisk,
@@ -19,7 +20,6 @@ import {
   hddDisk,
   dataVolumeManifest,
 } from './utils/mocks';
-import { NetworkResource, StorageResource, ProvisionOption } from './utils/types';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
@@ -135,7 +135,8 @@ describe('Kubevirt create VM using wizard', () => {
         await vm1.action('Start', false);
         await withResource(leakedResources, vm2.asResource(), async () => {
           await vm2.create(vm2Config);
-          await vm1.waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
+          await vm1.navigateToTab(TABS.OVERVIEW);
+          await waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
 
           // Verify that DV of VM created with Cloned disk method points to correct PVC
           const dvResource = getResourceObject(
