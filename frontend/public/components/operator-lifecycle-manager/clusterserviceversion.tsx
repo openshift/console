@@ -378,7 +378,9 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = (props) => {
     <SubscriptionDetails
       obj={subscription}
       installedCSV={props.obj}
-      pkg={!_.isNil(subscription) ? props.packageManifest.find(pkg => pkg.status.packageName === subscription.spec.name) : null} />
+      pkg={!_.isNil(subscription)
+        ? props.packageManifest.find(({status}) => status.packageName === subscription.spec.name && status.catalogSource === subscription.spec.source && status.catalogSourceNamespace === subscription.spec.sourceNamespace)
+        : null} />
   </StatusBox>;
 };
 

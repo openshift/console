@@ -288,6 +288,16 @@ describe(CSVSubscription.displayName, () => {
     expect(wrapper.find(SubscriptionDetails).props().installedCSV).toEqual(obj);
     expect(wrapper.find(SubscriptionDetails).props().pkg).toEqual(testPackageManifest);
   });
+
+  it('passes the matching `PackageManifest` if there are multiple with the same `metadata.name`', () => {
+    const obj = _.set(_.cloneDeep(testClusterServiceVersion), 'metadata.annotations', {'olm.operatorNamespace': 'default'});
+    const subscription = _.set(_.cloneDeep(testSubscription), 'status', {installedCSV: obj.metadata.name});
+    const otherPkg = _.set(_.cloneDeep(testPackageManifest), 'status.catalogSource', 'other-source');
+
+    wrapper = shallow(<CSVSubscription obj={obj} packageManifest={[testPackageManifest, otherPkg]} subscription={[testSubscription, subscription]} />);
+
+    expect(wrapper.find(SubscriptionDetails).props().pkg).toEqual(testPackageManifest);
+  });
 });
 
 describe(ClusterServiceVersionsDetailsPage.displayName, () => {
