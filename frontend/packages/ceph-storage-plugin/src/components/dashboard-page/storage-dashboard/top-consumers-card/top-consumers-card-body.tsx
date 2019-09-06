@@ -14,7 +14,7 @@ import { DataPoint, PrometheusResponse } from '@console/internal/components/grap
 import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { getGraphVectorStats, getMetricType, getYTickValues, sortResources } from './utils';
+import { getGraphVectorStats, getMetricType, sortResources } from './utils';
 
 const chartPropsValue = {
   chartHeight: 175,
@@ -74,7 +74,6 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             />
             <ChartAxis
               dependentAxis
-              tickValues={getYTickValues(maxCapacityConverted.value)}
               style={{ tickLabels: { fontSize: 8, padding: 5 }, grid: { stroke: '#4d525840' } }}
             />
             <ChartGroup>{chartLineList}</ChartGroup>
