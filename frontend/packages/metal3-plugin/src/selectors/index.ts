@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src/selectors';
+import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { BaremetalHostDisk } from '../types';
 import {
   HOST_POWER_STATUS_POWERED_ON,

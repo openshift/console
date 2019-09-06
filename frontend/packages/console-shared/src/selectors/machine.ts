@@ -20,3 +20,10 @@ export const getMachineNodeName = (obj: MachineKind) => _.get(obj, 'status.nodeR
 
 export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): NodeKind =>
   nodes.find((node) => getMachineNodeName(machine) === getName(node));
+
+export const getMachineAddresses = (machine: MachineKind) => _.get(machine, 'status.addresses', []);
+
+export const getMachineInternalIP = (machine: MachineKind) => {
+  const machineAddresses = getMachineAddresses(machine);
+  return _.get(machineAddresses.find((addr) => addr.type === 'InternalIP'), 'address');
+};
