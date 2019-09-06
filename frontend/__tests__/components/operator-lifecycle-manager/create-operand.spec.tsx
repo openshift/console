@@ -37,7 +37,7 @@ describe(CreateOperand.displayName, () => {
   });
 
   it('renders YAML editor by default', () => {
-    expect(wrapper.find(Button).shallow().text()).toEqual('Edit Form');
+    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit Form');
     expect(wrapper.find(CreateOperandYAML).exists()).toBe(true);
     expect(wrapper.find(CreateOperandForm).exists()).toBe(false);
   });
@@ -51,8 +51,9 @@ describe(CreateOperand.displayName, () => {
   });
 
   it('switches to form component when button is clicked', () => {
-    wrapper.find(Button).shallow().simulate('click');
-    expect(wrapper.find(Button).shallow().text()).toEqual('Edit YAML');
+    wrapper.find(Button).simulate('click');
+
+    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit YAML');
     expect(wrapper.find(CreateOperandYAML).exists()).toBe(false);
     expect(wrapper.find(CreateOperandForm).exists()).toBe(true);
   });
@@ -113,7 +114,7 @@ describe(CreateOperandForm.displayName, () => {
         done();
       });
 
-    wrapper.find({type: 'submit'}).shallow().simulate('click', new Event('click'));
+    wrapper.find({type: 'submit'}).simulate('click', new Event('click'));
   });
 
   it('displays errors if calling `k8sCreate` fails', (done) => {
@@ -125,7 +126,7 @@ describe(CreateOperandForm.displayName, () => {
         done();
       });
 
-    wrapper.find({type: 'submit'}).shallow().simulate('click', new Event('click'));
+    wrapper.find({type: 'submit'}).simulate('click', new Event('click'));
   });
 });
 
