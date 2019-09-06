@@ -170,6 +170,9 @@ export const testCRD: CustomResourceDefinitionKind = {
   spec: {
     group: 'testapp.coreos.com',
     version: 'v1alpha1',
+    validation: {
+      openAPIV3Schema: {},
+    },
     names: {
       kind: 'TestResource',
       plural: 'testresources',

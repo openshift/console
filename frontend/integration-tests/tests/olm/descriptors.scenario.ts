@@ -87,6 +87,7 @@ describe('Using OLM descriptor components', () => {
         openAPIV3Schema: {
           properties: {
             spec: {
+              type: 'object',
               required: ['password'],
               properties: {
                 password: {

@@ -66,7 +66,7 @@ describe(CreateOperandPage.displayName, () => {
 
     expect(wrapper.find(Firehose).props().resources).toEqual([
       {kind: k8s.referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'clusterServiceVersion'},
-      {kind: CustomResourceDefinitionModel.kind, name: k8s.nameForModel(testModel), isList: false, prop: 'customResourceDefinition'},
+      {kind: CustomResourceDefinitionModel.kind, name: k8s.nameForModel(testModel), isList: false, prop: 'customResourceDefinition', optional: true},
     ]);
   });
 });
@@ -80,7 +80,7 @@ describe(CreateOperandForm.displayName, () => {
   }));
 
   beforeEach(() => {
-    wrapper = shallow(<CreateOperandForm namespace="default" operandModel={testModel} providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]} clusterServiceVersion={testClusterServiceVersion} customResourceDefinition={testCRD} />);
+    wrapper = shallow(<CreateOperandForm namespace="default" operandModel={testModel} providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]} clusterServiceVersion={testClusterServiceVersion} openAPI={testCRD.spec.validation.openAPIV3Schema as k8s.SwaggerDefinition} />);
   });
 
   it('renders form', () => {
