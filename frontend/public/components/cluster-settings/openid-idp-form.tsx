@@ -235,7 +235,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
   }
 }
 
-type AddOpenIDIDPPageState = {
+export type AddOpenIDIDPPageState = {
   name: string;
   clientID: string;
   clientSecret: string;

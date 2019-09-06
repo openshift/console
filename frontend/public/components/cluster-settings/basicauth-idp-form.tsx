@@ -10,7 +10,7 @@ import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+export const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
 export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState> {
   readonly state: AddBasicAuthPageState = {
@@ -206,7 +206,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
   }
 }
 
-type AddBasicAuthPageState = {
+export type AddBasicAuthPageState = {
   name: string;
   url: string
   caFileContent: string;

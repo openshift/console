@@ -18,7 +18,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 
-const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+export const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
 export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> {
   readonly state: AddHTPasswdPageState = {
@@ -132,7 +132,7 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
   }
 }
 
-type AddHTPasswdPageState = {
+export type AddHTPasswdPageState = {
   name: string;
   htpasswdFileContent: string;
   inProgress: boolean;

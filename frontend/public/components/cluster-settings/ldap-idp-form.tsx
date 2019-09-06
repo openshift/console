@@ -247,7 +247,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
   }
 }
 
-type AddLDAPPageState = {
+export type AddLDAPPageState = {
   name: string;
   url: string;
   bindDN: string;

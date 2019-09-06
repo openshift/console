@@ -150,7 +150,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
   }
 }
 
-type AddGooglePageState = {
+export type AddGooglePageState = {
   name: string;
   hostedDomain: string
   clientID: string;
