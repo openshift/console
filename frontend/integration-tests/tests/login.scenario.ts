@@ -89,6 +89,8 @@ describe('Auth test', () => {
 
   it('is authenticated as cluster admin user', async() => {
     expect(await browser.getCurrentUrl()).toContain(appHost);
+    await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Compute')));
+    await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
     await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Administration')));
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await clusterSettingsView.isLoaded();
