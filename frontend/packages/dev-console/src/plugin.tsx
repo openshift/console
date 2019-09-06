@@ -110,14 +110,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       section: 'Advanced',
       perspective: 'dev',
       componentProps: {
-        name: 'Events',
-        resource: 'events',
-        testID: 'advanced-events-header',
+        name: 'Search',
+        href: '/search',
+        testID: 'advanced-search-header',
       },
     },
   },
@@ -127,9 +127,21 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Advanced',
       perspective: 'dev',
       componentProps: {
-        name: 'Search',
-        href: '/search',
-        testID: 'advanced-search-header',
+        name: 'Explore',
+        href: '/api-explorer',
+        testID: 'advanced-explore-header',
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Advanced',
+      perspective: 'dev',
+      componentProps: {
+        name: 'Events',
+        resource: 'events',
+        testID: 'advanced-events-header',
       },
     },
   },
