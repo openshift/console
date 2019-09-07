@@ -190,7 +190,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   }
 }
 
-type AddGitLabPageState = {
+export type AddGitLabPageState = {
   name: string;
   url: string
   clientID: string;

@@ -218,7 +218,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   }
 }
 
-type AddGitHubPageState = {
+export type AddGitHubPageState = {
   name: string;
   clientID: string;
   clientSecret: string;

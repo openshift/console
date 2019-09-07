@@ -200,7 +200,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
   }
 }
 
-type AddRequestHeaderPageState = {
+export type AddRequestHeaderPageState = {
   name: string;
   loginURL: string;
   challengeURL: string;
