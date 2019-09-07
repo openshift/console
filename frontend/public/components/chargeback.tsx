@@ -166,6 +166,7 @@ const numericUnits = new Set([
   'cpu_cores',
   'memory_bytes',
   'memory_byte_seconds',
+  'numeric',
   'seconds',
 ]);
 
@@ -188,14 +189,14 @@ const DataTable = ({cols, rows, schema}: DataTableProps) => {
 
   const getUnit = (col: string) => {
     const colSchema = _.find(schema.values, {'name': col});
-    return _.get(colSchema, 'unit');
+    return _.get(colSchema, 'unit', _.isFinite(_.get(colSchema, 'value')) ? 'numeric' : null);
   };
 
   const DataTableHeader = () => _.map(cols, col => {
     return ({
       sortAsNumber: numericUnits.has(getUnit(col)),
       sortField: col,
-      title: col.replace(/_/g, ' '),
+      title: <span className="pf-m-wrap co-break-word">{col.replace(/_/g, ' ')}</span>,
       transforms: [sortable],
     });
   });
