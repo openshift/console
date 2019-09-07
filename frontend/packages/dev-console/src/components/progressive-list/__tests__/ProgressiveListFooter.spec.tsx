@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { Button } from '@patternfly/react-core';
 import ProgressiveListFooter from '../ProgressiveListFooter';
 
 describe(ProgressiveListFooter.name, () => {
@@ -41,6 +42,6 @@ describe(ProgressiveListFooter.name, () => {
         onShowItem={() => {}}
       />,
     );
-    expect(wrapper.find('Button')).toHaveLength(3);
+    expect(wrapper.find(Button).length).toEqual(3);
   });
 });
