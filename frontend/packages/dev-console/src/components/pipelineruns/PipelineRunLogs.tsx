@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import { PodLogs } from '@console/internal/components/pod-logs';
 import { StatusIcon } from '@console/shared';
 import { Firehose } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
-import { truncateName, PipelineRun } from '../../utils/pipeline-augment';
+import { PipelineRun } from '../../utils/pipeline-augment';
+import PipelineTaskLogs from './PipelineTaskLogs';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
@@ -13,11 +13,12 @@ interface PipelineRunLogsProps {
 }
 interface PipelineRunLogsState {
   activeItem: string;
+  navUntouched: boolean;
 }
 class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunLogsState> {
   constructor(props) {
     super(props);
-    this.state = { activeItem: null };
+    this.state = { activeItem: null, navUntouched: true };
   }
 
   componentDidMount() {
@@ -32,13 +33,13 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
       const { obj } = this.props;
       const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
       const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
-      this.setState({ activeItem: taskRuns[taskRuns.length - 1] });
+      this.state.navUntouched && this.setState({ activeItem: taskRuns[taskRuns.length - 1] });
     }
   }
 
   getSortedTaskRun = (taskRunFromYaml) => {
     const taskRuns = Object.keys(taskRunFromYaml).sort((a, b) => {
-      if (taskRunFromYaml[a].status.completionTime) {
+      if (_.get(taskRunFromYaml, [a, 'status', 'completionTime'], false)) {
         return taskRunFromYaml[b].status.completionTime &&
           new Date(taskRunFromYaml[a].status.completionTime) >
             new Date(taskRunFromYaml[b].status.completionTime)
@@ -57,6 +58,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   onNavSelect = (item) => {
     this.setState({
       activeItem: item.itemId,
+      navUntouched: false,
     });
   };
 
@@ -78,7 +80,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
     ];
     return (
       <div className="odc-pipeline-run-logs">
-        <div className="col-xs-3 odc-pipeline-run-logs__task__list">
+        <div className="odc-pipeline-run-logs__tasklist">
           {taskCount > 0 ? (
             <Nav onSelect={this.onNavSelect}>
               <NavList className="odc-pipeline-run-logs__nav">
@@ -88,11 +90,13 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                       key={task}
                       itemId={task}
                       isActive={activeItem === task}
-                      className="odc-pipeline-run-logs__nav__item"
+                      className="odc-pipeline-run-logs__navitem"
                     >
-                      <StatusIcon status={pipelineRunFilterReducer(obj.status.taskRuns[task])} />
-                      <span className="odc-pipeline-run-logs__name__span">
-                        {truncateName(taskRunFromYaml[task].pipelineTaskName, 20)}
+                      <StatusIcon
+                        status={pipelineRunFilterReducer(_.get(obj, ['status', 'taskRuns', task]))}
+                      />
+                      <span className="odc-pipeline-run-logs__namespan">
+                        {_.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}
                       </span>
                     </NavItem>
                   );
@@ -103,13 +107,17 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             <div className="odc-pipeline-run-logs__nav">No Task Runs Found</div>
           )}
         </div>
-        <div className="col-xs-9 odc-pipeline-run-logs__container">
+        <div className="odc-pipeline-run-logs__container">
           {activeItem ? (
             <Firehose resources={resources}>
-              <FetchTRPod />
+              <PipelineTaskLogs
+                taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
+              />
             </Firehose>
-          ) : _.has(obj, ['status', 'conditions', '0', 'message']) ? (
-            <div className="odc-pipeline-run-logs__log">{obj.status.conditions[0].message}</div>
+          ) : _.has(obj, ['status', 'conditions', 0, 'message']) ? (
+            <div className="odc-pipeline-run-logs__log">
+              {_.get(obj, ['status', 'conditions', 0, 'message'], '-')}
+            </div>
           ) : (
             <div>No Logs Found</div>
           )}
@@ -120,6 +128,3 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
 }
 
 export default PipelineRunLogs;
-
-export const FetchTRPod = (props) =>
-  props.obj && props.obj.data ? <PodLogs obj={props.obj.data} /> : <div>No logs Found</div>;
