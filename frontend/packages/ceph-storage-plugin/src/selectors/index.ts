@@ -15,13 +15,7 @@ export const getCephPVCs = (
   pvcsData.filter((pvc) => cephSCNames.includes(_.get(pvc, 'spec.storageClassName')));
 
 export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =>
-  pvsData.filter((pv) => {
-    return cephStorageProvisioners.some((provisioner: string) =>
-      _.get(pv, 'metadata.annotations["pv.kubernetes.io/provisioned-by"]', '').includes(
-        provisioner,
-      ),
-    );
-  });
+  pvsData.filter((pv) => _.get(pv, 'spec.storageClassName').indexOf('ceph') >= 0);
 
 export const getCephNodes = (nodesData: K8sResourceKind[] = []): K8sResourceKind[] =>
   nodesData.filter((node) => _.keys(_.get(node, 'metadata.labels')).includes(cephStorageLabel));
