@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
-import { Humanize, humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
+import {
+  Humanize,
+  humanizeBinaryBytesWithoutB,
+  humanizeNumber,
+} from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   ACCOUNTS,
@@ -88,7 +92,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         getChartData(
           result.logicalUsage,
           metric,
-          humanizeBinaryBytes,
+          humanizeBinaryBytesWithoutB,
           'Total Logical Used Capacity',
         ),
       ];
@@ -96,7 +100,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         {
           name: `Total Logical Used Capacity ${getLegendData(
             result.totalLogicalUsage,
-            humanizeBinaryBytes,
+            humanizeBinaryBytesWithoutB,
           )}`,
         },
       ];
@@ -106,13 +110,13 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         getChartData(
           result.physicalUsage,
           metric,
-          humanizeBinaryBytes,
+          humanizeBinaryBytesWithoutB,
           'Total Logical Used Capacity',
         ),
         getChartData(
           result.logicalUsage,
           metric,
-          humanizeBinaryBytes,
+          humanizeBinaryBytesWithoutB,
           'Total Physical Used Capacity',
         ),
       ];
@@ -120,21 +124,21 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         {
           name: `Total Logical Used Capacity ${getLegendData(
             result.totalPhysicalUsage,
-            humanizeBinaryBytes,
+            humanizeBinaryBytesWithoutB,
           )}`,
         },
         {
           name: `Total Physical Used Capacity ${getLegendData(
             result.totalLogicalUsage,
-            humanizeBinaryBytes,
+            humanizeBinaryBytesWithoutB,
           )}`,
         },
       ];
       break;
     case 'PROVIDERS_BY_EGRESS':
-      chartData = [getChartData(result.egress, metric, humanizeBinaryBytes)];
+      chartData = [getChartData(result.egress, metric, humanizeBinaryBytesWithoutB)];
       legendData = chartData[0].map((dataPoint) => ({
-        name: `${dataPoint.x} ${humanizeBinaryBytes(dataPoint.y).string}`,
+        name: `${dataPoint.x} ${humanizeBinaryBytesWithoutB(dataPoint.y).string}`,
       }));
       break;
     default:

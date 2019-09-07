@@ -62,11 +62,9 @@ const DataReductionCard: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Object Data Reduction</DashboardCardTitle>
       </DashboardCardHeader>
-      <DashboardCardBody>
-        <div className="co-dashboard-card__body--no-padding">
-          <EfficiencyItem {...efficiencyProps} />
-          <SavingsItem {...savingsProps} />
-        </div>
+      <DashboardCardBody className="co-dashboard-card__body--no-padding">
+        <EfficiencyItem {...efficiencyProps} />
+        <SavingsItem {...savingsProps} />
       </DashboardCardBody>
     </DashboardCard>
   );
