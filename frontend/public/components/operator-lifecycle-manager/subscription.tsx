@@ -126,13 +126,11 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
 );
 
 export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
-  const namespace = _.get(props.match, 'params.ns');
   return <MultiListPage
     {...props}
-    namespace={namespace}
     resources={[
-      {kind: referenceForModel(SubscriptionModel), namespace, namespaced: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModel(SubscriptionModel), namespace: props.namespace, namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), namespace: props.namespace, namespaced: true, prop: 'operatorGroup'},
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
