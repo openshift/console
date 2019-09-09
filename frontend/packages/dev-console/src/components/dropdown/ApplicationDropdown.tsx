@@ -18,10 +18,10 @@ interface ApplicationDropdownProps {
     allSelectorTitle?: string;
   };
   namespace?: string;
-  actionItem?: {
+  actionItems?: {
     actionTitle: string;
     actionKey: string;
-  };
+  }[];
   selectedKey: string;
   autoSelect?: boolean;
   onChange?: (key: string, name?: string) => void;

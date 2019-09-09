@@ -7,6 +7,7 @@ import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
 import { getFieldId } from '../../formik-fields/field-utils';
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
+export const UNASSIGNED_KEY = '#UNASSIGNED_KEY#';
 
 export interface ApplicationSelectorProps {
   namespace?: string;
@@ -31,6 +32,9 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     if (key === CREATE_APPLICATION_KEY) {
       setFieldValue('application.name', '');
       setFieldValue('application.selectedKey', key);
+    } else if (key === UNASSIGNED_KEY) {
+      setFieldValue('application.name', '');
+      setFieldValue('application.selectedKey', key);
     } else {
       setFieldValue('application.name', application);
       setFieldValue('application.selectedKey', key);
@@ -46,6 +50,18 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
       setFieldValue('application.name', '');
     }
   };
+
+  const actionItems = [
+    {
+      actionTitle: 'Create Application',
+      actionKey: CREATE_APPLICATION_KEY,
+    },
+    {
+      actionTitle: 'Unassigned',
+      actionKey: UNASSIGNED_KEY,
+    },
+  ];
+
   return (
     <React.Fragment>
       {projectsAvailable && applicationsAvailable && (
@@ -54,16 +70,14 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           label="Application"
           helperTextInvalid={errorMessage}
           isValid={isValid}
+          helperText="Select an application for your grouping or Unassigned to not use an application grouping."
         >
           <ApplicationDropdown
             dropDownClassName="dropdown--full-width"
             menuClassName="dropdown-menu--text-wrap"
             id={fieldId}
             namespace={namespace}
-            actionItem={{
-              actionTitle: 'Create Application',
-              actionKey: CREATE_APPLICATION_KEY,
-            }}
+            actionItems={actionItems}
             autoSelect
             selectedKey={selectedKey.value}
             onChange={onDropdownChange}

@@ -61,10 +61,12 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
           selectedKey={createMode ? CREATE_PIPELINE_RESOURCE : field.value}
           namespace={values.namespace}
           dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
-          actionItem={{
-            actionTitle: 'Create New Pipeline Resource',
-            actionKey: CREATE_PIPELINE_RESOURCE,
-          }}
+          actionItems={[
+            {
+              actionTitle: 'Create New Pipeline Resource',
+              actionKey: CREATE_PIPELINE_RESOURCE,
+            },
+          ]}
           autoselect
           onChange={handleChange}
           disabled={createMode}

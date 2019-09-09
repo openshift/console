@@ -8,10 +8,10 @@ export interface PipelineResourceDropdownProps {
   dropDownClassName?: string;
   menuClassName?: string;
   namespace?: string;
-  actionItem?: {
+  actionItems?: {
     actionTitle: string;
     actionKey: string;
-  };
+  }[];
   selectedKey: string;
   onChange?: (key: string) => void;
   title?: React.ReactNode;

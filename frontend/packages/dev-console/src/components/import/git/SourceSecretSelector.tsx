@@ -40,10 +40,12 @@ const SourceSecretSelector: React.FC = () => {
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
           namespace={values.project.name}
-          actionItem={{
-            actionTitle: 'Create New Secret',
-            actionKey: CREATE_SOURCE_SECRET,
-          }}
+          actionItems={[
+            {
+              actionTitle: 'Create New Secret',
+              actionKey: CREATE_SOURCE_SECRET,
+            },
+          ]}
           selectedKey={secret.value}
           title={secret.value}
           onChange={handleDropdownChange}
