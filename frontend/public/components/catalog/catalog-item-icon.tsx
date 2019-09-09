@@ -56,6 +56,7 @@ import * as mysqlDatabaseImg from '../../imgs/logos/mysql-database.svg';
 import * as nginxImg from '../../imgs/logos/nginx.svg';
 import * as nodejsImg from '../../imgs/logos/nodejs.svg';
 import * as openjdkImg from '../../imgs/logos/openjdk.svg';
+import * as openlibertyImg from '../../imgs/logos/openliberty.svg';
 import * as openshiftImg from '../../imgs/logos/openshift.svg';
 import * as openstackImg from '../../imgs/logos/openstack.svg';
 import * as otherLinuxImg from '../../imgs/logos/other-linux.svg';
@@ -143,6 +144,7 @@ const logos = new Map()
   .set('icon-nginx', nginxImg)
   .set('icon-nodejs', nodejsImg)
   .set('icon-openjdk', openjdkImg)
+  .set('icon-openliberty', openlibertyImg)
   .set('icon-openshift', openshiftImg)
   .set('icon-openstack', openstackImg)
   .set('icon-other-linux', otherLinuxImg)
