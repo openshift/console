@@ -8,7 +8,7 @@ export const taintObj = {
 };
 
 export const ocsRequestData: K8sResourceKind = {
-  apiVersion: 'ocs.openshift.io/v1alpha1',
+  apiVersion: 'ocs.openshift.io/v1',
   kind: 'StorageCluster',
   metadata: {
     name: 'ocs-storagecluster',

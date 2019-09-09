@@ -16,7 +16,7 @@ export const CephClusterModel: K8sKind = {
 export const OCSServiceModel: K8sKind = {
   label: 'OCS Cluster Service',
   labelPlural: 'OCS Cluster Services',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1',
   apiGroup: 'ocs.openshift.io',
   plural: 'storageclusters',
   abbr: 'OCS',
