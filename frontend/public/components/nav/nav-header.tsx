@@ -8,6 +8,8 @@ import { RootState } from '../../redux';
 import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
+import { withRouter } from 'react-router-dom';
+import { matchPath } from 'react-router';
 
 type StateProps = {
   activePerspective: string;
@@ -75,7 +77,38 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   };
 
   const perspectives: Extension<any>[] = plugins.registry.getPerspectives();
+  const routePages: Extension<any>[] = plugins.registry.getRoutePages();
   const { icon, name } = perspectives.find((p) => p.properties.id === activePerspective).properties;
+
+  const PerspectiveWatcher = withRouter(props => {
+    const { location } = props;
+
+    if (location.pathname === '/') {
+      return null;
+    }
+
+    const matchedRoutePage = routePages.find(routePage => {
+      const paths = Array.isArray(routePage.properties.path) ? routePage.properties.path : [routePage.properties.path];
+      const matchedPath = paths.find(path => {
+        return matchPath(location.pathname, {
+          path,
+          exact: routePage.properties.exact,
+        });
+      });
+
+      if (matchedPath) {
+        return true;
+      }
+    });
+
+    const targetPerspective = (matchedRoutePage && matchedRoutePage.properties.perspective) || 'admin';
+
+    if (activePerspective !== targetPerspective) {
+      setActivePerspective(targetPerspective);
+    }
+
+    return null;
+  });
 
   return (
     <div className="oc-nav-header">
@@ -86,6 +119,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
         dropdownItems={getPerspectiveItems(perspectives)}
         data-test-id="perspective-switcher-menu"
       />
+      <PerspectiveWatcher />
     </div>
   );
 };

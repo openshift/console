@@ -177,6 +177,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/add', '/import', '/topology', '/deploy-image'],
       component: NamespaceRedirect,
@@ -185,6 +186,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
@@ -194,6 +196,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/topology/all-namespaces', '/topology/ns/:ns'],
       loader: async () =>
@@ -205,6 +208,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
@@ -216,6 +220,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/catalog/source-to-image'],
       loader: async () =>
@@ -239,6 +244,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/deploy-image/all-namespaces', '/deploy-image/ns/:ns'],
       loader: async () =>
