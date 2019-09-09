@@ -12,15 +12,10 @@ export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
   children,
 }) => {
   const [isExpanded, toggleExpandCollapse] = React.useState(false);
-  const ontoggle: any = (event: MouseEvent) => {
-    // TODO: Remove this when https://github.com/patternfly/patternfly-react/issues/2339 is fixed
-    event.preventDefault();
-    toggleExpandCollapse(!isExpanded);
-  };
   return (
     <Expandable
       toggleText={isExpanded ? textExpanded : textCollapsed}
-      onToggle={ontoggle}
+      onToggle={() => toggleExpandCollapse(!isExpanded)}
       isExpanded={isExpanded}
     >
       {children}
