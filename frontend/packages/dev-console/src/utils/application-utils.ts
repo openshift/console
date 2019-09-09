@@ -110,7 +110,7 @@ export const updateResourceApplication = (
       _.forEach(list, (item) => {
         // verify the case of no previous application
         if (prevApplication || !_.get(item, ['metadata', 'labels', 'app.kubernetes.io/part-of'])) {
-          patches.push(updateItemAppLabel(item.resourceKind, item, application));
+          patches.push(updateItemAppLabel(modelFor(item.kind), item, application));
         }
       });
     });
