@@ -37,7 +37,6 @@
 .query-browser__expand-icon {
   color: $color-pf-black-600;
   font-size: 30px;
-  font-weight: 600;
   vertical-align: middle;
 }
 
@@ -197,7 +196,7 @@ $tooltip-background-color: #151515;
 }
 
 .query-browser__tooltip-label-key {
-  font-weight: 600;
+  font-weight: var(--pf-global--FontWeight--bold);
   text-transform: uppercase;
 }
 
@@ -207,7 +206,7 @@ $tooltip-background-color: #151515;
 };
 
 .query-browser__tooltip-value {
-  font-weight: 600;
+  font-weight: var(--pf-global--FontWeight--bold);
 }
 
 .query-browser__wrapper {

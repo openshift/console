@@ -20,8 +20,18 @@ $fa-font-path: $consoleWebDistPath + '/';
 $font-family-base: var(--pf-global--FontFamily--sans-serif);
 // Patternfly 3 defaults to 12px, which is too small in many cases.
 $font-size-base: 14px;
+// Use PatternFly 4 heading font sizes in Patternfly 3.
+$font-size-h1: var(--pf-global--FontSize--2xl);
+$font-size-h2: 20px; // must be literal value because of calculation in patternfly/dist/sass/patternfly/_list-view.scss
+$font-size-h3: var(--pf-global--FontSize--lg);
+$font-size-h4: var(--pf-global--FontSize--md);
+$font-size-h5: var(--pf-global--FontSize--md);
+$font-size-h6: var(--pf-global--FontSize--md);
 // Patternfly 3 defaults to 40px, which leaves a lot more whitespace than we're used to.
 $grid-gutter-width: 30px;
+// Use PatternFly 4 headings font styles in PatternFly 3.
+$headings-font-family: var(--pf-global--FontFamily--heading--sans-serif);
+$headings-font-weight: var(--pf-global--FontWeight--normal);
 $kbd-bg: transparent;
 $kbd-color: $color-pf-black-600;
 // Match Patternfly 4 link colors
@@ -35,6 +45,7 @@ $popover-max-width: 325px;
 $table-border-color: $color-pf-black-200;
 
 :root {
+  --pf-chart-global--FontFamily: $font-family-base; // so charts get the correct font-family
   --pf-global--FontSize--md: $font-size-base;
   --pf-global--FontSize--sm: 13px;
 }

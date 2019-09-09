@@ -45,7 +45,7 @@
 
 .co-clusterserviceversion-empty__state__namespace {
   font-style: italic;
-  font-weight: bold;
+  font-weight: var(--pf-global--FontWeight--bold);
 }
 
 .co-crd-card-row {
@@ -127,8 +127,6 @@
 }
 
 .co-create-operand__header-text {
-  font-size: 20px;
-  font-weight: 300;
   margin: 0;
 }
 

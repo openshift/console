@@ -15,13 +15,13 @@
   }
 }
 
-.co-resource-sidebar-item__header {
-  font-weight: 600;
-}
-
 .co-resource-sidebar-item__details {
   margin: 0;
   padding: 25px 0;
+}
+
+.co-resource-sidebar-item__header {
+  font-size: ($font-size-base + 2);
 }
 
 .co-resource-sidebar-item__img {
@@ -29,5 +29,5 @@
 }
 
 .co-role-sidebar-subheader {
-  font-weight: normal;
+  font-weight: var(--pf-global--FontWeight--normal);
 }

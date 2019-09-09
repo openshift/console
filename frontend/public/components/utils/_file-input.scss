@@ -46,7 +46,7 @@
 
 .co-file-dropzone__drop-text {
   font-size: 20px;
-  font-weight: bolder;
+  font-weight: var(--pf-global--FontWeight--bold);
   left: 50%;
   margin-right: -50%;
   position: absolute;
