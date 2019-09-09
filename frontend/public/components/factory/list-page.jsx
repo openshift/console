@@ -217,7 +217,7 @@ export const FireMan_ = connect(null, {filterList})(
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
             <Dropdown
-              buttonClassName="pf-c-dropdown__toggle"
+              buttonClassName="pf-m-primary"
               id="item-create"
               title={createButtonText}
               noSelection
