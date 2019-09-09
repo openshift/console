@@ -32,6 +32,7 @@ export interface GraphProps {
     targetNodeId: string,
     replaceTargetNodeId?: string,
   ): Promise<any>;
+  onRemoveConnection(sourceNodeId: string, targetNodeId: string): void;
   graphApiRef?(GraphApi): void;
 }
 
@@ -68,6 +69,7 @@ export default class Graph extends React.Component<GraphProps, State> {
       onSelect,
       onUpdateNodeGroup,
       onCreateConnection,
+      onRemoveConnection,
       selected,
       topology,
     } = this.props;
@@ -88,6 +90,7 @@ export default class Graph extends React.Component<GraphProps, State> {
             onSelect={onSelect}
             onUpdateNodeGroup={onUpdateNodeGroup}
             onCreateConnection={onCreateConnection}
+            onRemoveConnection={onRemoveConnection}
             selected={selected}
           />
         )}

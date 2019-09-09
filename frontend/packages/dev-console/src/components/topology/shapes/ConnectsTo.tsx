@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TrashIcon } from '@patternfly/react-icons';
 import { EdgeProps } from '../topology-types';
 import { boundingBoxForLine, Point } from '../../../utils/svg-utils';
 import BaseEdge from './BaseEdge';
@@ -10,6 +11,8 @@ type ConnectsToProps = EdgeProps;
 
 const TARGET_ARROW_MARKER_ID = 'connectsToTargetArrowMarker';
 const TARGET_ARROW_MARKER_HOVER_ID = 'connectsToTargetArrowMarker--hover';
+
+const removeRadius = 14;
 
 const arrowBoundingBox = (
   startX: number,
@@ -31,7 +34,13 @@ const arrowBoundingBox = (
   return boundingBoxForLine(startPoint, endPoint, () => 10);
 };
 
-const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target, isDragging, targetArrowRef }) => {
+const ConnectsTo: React.FC<ConnectsToProps> = ({
+  source,
+  target,
+  isDragging,
+  targetArrowRef,
+  onRemove,
+}) => {
   const arrowBox = arrowBoundingBox(source.x, source.y, target.x, target.y, target.size);
   const lineBox = boundingBoxForLine([source.x, source.y], [target.x, target.y], () => 3);
   const [hover, setHover] = React.useState(false);
@@ -39,9 +48,13 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target, isDragging, tar
   return (
     <React.Fragment>
       <g onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+        <path
+          d={`M ${lineBox[0]} L ${lineBox[1]} L ${lineBox[2]} L ${lineBox[3]} Z`}
+          fillOpacity={0}
+        />
         <SvgArrowMarker id={TARGET_ARROW_MARKER_ID} nodeSize={source.size} markerSize={12} />
         <SvgArrowMarker
-          className="odc-hover-arrow"
+          className="odc-connects-to__hover-arrow"
           id={TARGET_ARROW_MARKER_HOVER_ID}
           nodeSize={source.size}
           markerSize={12}
@@ -53,10 +66,25 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ source, target, isDragging, tar
           isDragging={isDragging}
           isHover={hover}
         />
-        <path
-          d={`M ${lineBox[0]} L ${lineBox[1]} L ${lineBox[2]} L ${lineBox[3]} Z`}
-          fillOpacity={0}
-        />
+        {hover && (
+          <g
+            transform={`translate(${source.x + (target.x - source.x) * 0.5}, ${source.y +
+              (target.y - source.y) * 0.5})`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove && onRemove();
+            }}
+          >
+            <circle className="odc-connects-to__remove-bg" cx={0} cy={0} r={removeRadius} />
+            <g transform={`translate(-${removeRadius / 2}, -${removeRadius / 2})`}>
+              <TrashIcon
+                className="odc-connects-to__remove-icon"
+                style={{ fontSize: removeRadius }}
+                alt="Remove Connection"
+              />
+            </g>
+          </g>
+        )}
       </g>
       {arrowBox && (
         <path
