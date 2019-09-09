@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { mount } from 'enzyme';
 
-import {CatalogTile} from '../../node_modules/patternfly-react-extensions/dist/js/components/CatalogTile';
-import {VerticalTabsTab} from '../../node_modules/patternfly-react-extensions/dist/js/components/VerticalTabs';
-import {FilterSidePanel} from '../../node_modules/patternfly-react-extensions/dist/js/components/FilterSidePanel';
+import { CatalogTile } from '../../node_modules/patternfly-react-extensions/dist/js/components/CatalogTile';
+import { VerticalTabsTab } from '../../node_modules/patternfly-react-extensions/dist/js/components/VerticalTabs';
+import { FilterSidePanel } from '../../node_modules/patternfly-react-extensions/dist/js/components/FilterSidePanel';
 
 import { CatalogListPage } from '../../public/components/catalog/catalog-page';
 import { CatalogTileViewPage, catalogCategories as initCatalogCategories } from '../../public/components/catalog/catalog-items';

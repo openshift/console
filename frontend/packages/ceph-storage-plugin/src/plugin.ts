@@ -12,7 +12,7 @@ import {
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
-import { ClusterServiceVersionModel } from '@console/internal/models';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import {

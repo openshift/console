@@ -21,8 +21,8 @@ import {
   getServiceClassImage,
   getTemplateIcon,
 } from './catalog-item-icon';
-import { ClusterServiceClassModel, ClusterServiceVersionModel, TemplateModel } from '../../models';
-import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
+import { ClusterServiceClassModel, TemplateModel } from '../../models';
+import { ClusterServiceVersionModel, providedAPIsFor, referenceForProvidedAPI } from '@console/operator-lifecycle-manager';
 import * as operatorLogo from '../../imgs/operator.svg';
 
 export class CatalogListPage extends React.Component {

@@ -120,10 +120,10 @@ export const config: Config = {
       'tests/deploy-image.scenario.ts',
     ]),
     olmFull: suite([
-      'tests/olm/descriptors.scenario.ts',
-      'tests/operator-hub/operator-hub.scenario.ts',
-      'tests/olm/global-installmode.scenario.ts',
-      'tests/olm/single-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
     ]),
     performance: suite([
       'tests/performance.scenario.ts',

@@ -13,7 +13,8 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
-import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
+import { InfrastructureModel } from '@console/internal/models/index';
+import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';

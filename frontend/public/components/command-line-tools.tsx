@@ -7,7 +7,7 @@ import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/features';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
-import { MarkdownView } from './operator-lifecycle-manager/clusterserviceversion';
+import { SyncMarkdownView } from './markdown-view';
 
 const CommandLineTools: React.FC<CommandLineToolsProps> = ({obj}) => {
   const title = 'Command Line Tools';
@@ -17,7 +17,7 @@ const CommandLineTools: React.FC<CommandLineToolsProps> = ({obj}) => {
     return <React.Fragment key={tool.metadata.uid}>
       <hr />
       <h2 className="co-section-heading" data-test-id={displayName}>{displayName}</h2>
-      <MarkdownView content={tool.spec.description} exactHeight />
+      <SyncMarkdownView content={tool.spec.description} exactHeight />
       {tool.spec.links.length === 1 && <p><ExternalLink href={tool.spec.links[0].href} text={tool.spec.links[0].text || defaultLinkText} /></p>}
       {tool.spec.links.length > 1 && <ul>
         {_.map(tool.spec.links, (link, i) => <li key={i}><ExternalLink href={link.href} text={link.text || defaultLinkText} /></li>)}

@@ -1,6 +1,6 @@
 import { referenceFor, referenceForCRD, referenceForOwnerRef, referenceForModel, kindForReference, versionForReference, modelsToMap } from '../../../public/module/k8s';
-import { testNamespace, testClusterServiceVersion, testCRD, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { PodModel, DeploymentModel, SubscriptionModel, PrometheusModel } from '../../../public/models';
+import { testNamespace, testCRD, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { PodModel, DeploymentModel, ClusterResourceQuotaModel, PrometheusModel } from '../../../public/models';
 
 describe('referenceFor', () => {
 
@@ -9,7 +9,7 @@ describe('referenceFor', () => {
   });
 
   it('returns a reference for objects with an API group', () => {
-    expect(referenceFor(testClusterServiceVersion)).toEqual('operators.coreos.com~v1alpha1~ClusterServiceVersion');
+    expect(referenceFor(testOwnedResourceInstance)).toEqual('testapp.coreos.com~v1alpha1~TestOwnedResource');
   });
 });
 
@@ -53,22 +53,22 @@ describe('kindForReference', () => {
 describe('versionForReference', () => {
 
   it('returns the API version for a given reference', () => {
-    expect(versionForReference(referenceFor(testClusterServiceVersion))).toEqual('v1alpha1');
+    expect(versionForReference(referenceFor(testOwnedResourceInstance))).toEqual('v1alpha1');
   });
 });
 
 describe('modelsToMap', () => {
 
   it('returns a map with keys based on model.kind for models with crd:false', () => {
-    expect(modelsToMap([ PodModel, DeploymentModel ]).toObject()).toEqual({
+    expect(modelsToMap([PodModel, DeploymentModel]).toObject()).toEqual({
       [PodModel.kind]: PodModel,
       [DeploymentModel.kind]: DeploymentModel,
     });
   });
 
   it('returns a map with keys based on referenceForModel for models with crd:true', () => {
-    expect(modelsToMap([ SubscriptionModel, PrometheusModel ]).toObject()).toEqual({
-      [referenceForModel(SubscriptionModel)]: SubscriptionModel,
+    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel]).toObject()).toEqual({
+      [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
       [referenceForModel(PrometheusModel)]: PrometheusModel,
     });
   });

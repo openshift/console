@@ -10,7 +10,6 @@ import {
   BuildConfigModel,
   BuildModel,
   ChargebackReportModel,
-  ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
   MachineAutoscalerModel,
@@ -74,19 +73,7 @@ const AdminNav = () => (
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>
 
-    <NavSection title="Operators" required={FLAGS.OPERATOR_LIFECYCLE_MANAGER}>
-      <HrefLink
-        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP]}
-        href="/operatorhub"
-        name="OperatorHub"
-        activePath="/operatorhub/"
-      />
-      <ResourceNSLink
-        model={ClusterServiceVersionModel}
-        resource={ClusterServiceVersionModel.plural}
-        name="Installed Operators"
-      />
-    </NavSection>
+    <NavSection title="Operators" />
 
     <NavSection title="Workloads">
       <ResourceNSLink resource="pods" name="Pods" />
