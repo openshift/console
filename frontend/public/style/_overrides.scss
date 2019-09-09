@@ -322,6 +322,10 @@ kbd {
       @media screen and (min-width: $grid-float-breakpoint) {
         padding-left: var(--pf-c-nav__list-link--md--PaddingLeft);
       }
+
+      &.pf-m-current {
+        background-color: var(--pf-c-nav__list-link--hover--BackgroundColor);
+      }
     }
   }
 
