@@ -20,21 +20,13 @@ const DecoratorTooltip: React.FunctionComponent<TooltipProps> = ({
   position = TooltipPosition.left,
 }) => {
   const parentBox = { x: x - radius, y: y - radius, width: radius * 2, height: radius * 2 };
-  const getContent = (boxX: number, boxY: number): React.ReactNode => {
-    return (
-      <text x={boxX} y={boxY + 2} dominantBaseline="hanging" textAnchor="start">
-        <tspan>{title}</tspan>
-      </text>
-    );
-  };
 
   return (
-    <SvgTooltip
-      active={active}
-      parentBox={parentBox}
-      getContent={getContent}
-      arrowPosition={position}
-    />
+    <SvgTooltip active={active} parentBox={parentBox} arrowPosition={position}>
+      <text x={0} y={0} textAnchor="start" dy="1em">
+        <tspan>{title}</tspan>
+      </text>
+    </SvgTooltip>
   );
 };
 

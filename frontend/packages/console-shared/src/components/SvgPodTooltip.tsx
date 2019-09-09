@@ -2,6 +2,8 @@ import * as React from 'react';
 import { podColor } from '@console/shared';
 import SvgTooltip from './SvgTooltip';
 
+const STATUS_BOX_SIZE = 10;
+
 type TooltipProps = {
   datum?: any;
   active?: boolean;
@@ -25,21 +27,23 @@ const PodTooltip: React.FunctionComponent<TooltipProps> = ({
 
   const parentBox = { x, y, width, height };
 
-  const getTipContent = (boxX: number, boxY: number): React.ReactNode => {
-    return (
-      <React.Fragment>
-        <rect width={10} height={10} x={boxX} y={boxY + 3} style={{ fill: podColor[datum.x] }} />
-        <text x={boxX + 15} y={boxY + 2} textAnchor="start" dominantBaseline="hanging">
-          <tspan>{datum.x}</tspan>
-          {datum.x !== 'Scaled to 0' && datum.x !== 'Autoscaled to 0' && datum.x !== 'Idle' && (
-            <tspan dx={20}>{Math.round(datum.y)}</tspan>
-          )}
-        </text>
-      </React.Fragment>
-    );
-  };
-
-  return <SvgTooltip active={active} parentBox={parentBox} getContent={getTipContent} />;
+  return (
+    <SvgTooltip active={active} parentBox={parentBox}>
+      <rect
+        width={STATUS_BOX_SIZE}
+        height={STATUS_BOX_SIZE}
+        x={0}
+        y={4}
+        style={{ fill: podColor[datum.x] }}
+      />
+      <text x={15} y={0} dy="1em" textAnchor="start">
+        <tspan>{datum.x}</tspan>
+        {datum.x !== 'Scaled to 0' && datum.x !== 'Autoscaled to 0' && datum.x !== 'Idle' && (
+          <tspan dx={20}>{Math.round(datum.y)}</tspan>
+        )}
+      </text>
+    </SvgTooltip>
+  );
 };
 
 export default PodTooltip;
