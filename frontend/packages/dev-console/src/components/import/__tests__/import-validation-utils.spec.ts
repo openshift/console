@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { validationSchema, detectGitType } from '../import-validation-utils';
+import { validationSchema, detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
 
@@ -53,6 +53,14 @@ describe('ValidationUtils', () => {
         expect(err.message).toBe('Required');
         expect(err.type).toBe('required');
       });
+    });
+
+    it('should convert the detected name to lower case', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.git.url = 'https://github.com/openshift-evangelists/Wild-West-Frontend';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+      const name = detectGitRepoName(mockData.git.url);
+      expect(name).toEqual('wild-west-frontend');
     });
 
     it('should throw an error if name is invalid', async () => {
