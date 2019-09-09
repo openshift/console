@@ -247,5 +247,6 @@ export const detectGitRepoName = (url: string): string | undefined => {
   return url
     .split('/')
     .pop()
-    .replace('.', '-');
+    .replace('.', '-')
+    .toLowerCase();
 };
