@@ -340,6 +340,7 @@ const namespaceBarDropdownStateToProps = state => {
   return { activeNamespace, canListNS };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
+  setActiveNamespace: (ns) => dispatch(UIActions.setActiveNamespace(ns)),
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
@@ -353,7 +354,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 
   render() {
-    const { activeNamespace, dispatch, canListNS, useProjects, children, disabled } = this.props;
+    const { activeNamespace, setActiveNamespace, canListNS, useProjects, children, disabled } = this.props;
     if (flagPending(canListNS)) {
       return null;
     }
@@ -384,10 +385,10 @@ class NamespaceBarDropdowns_ extends React.Component {
       if (newNamespace === CREATE_NEW_RESOURCE) {
         createProjectModal({
           blocking: true,
-          onSubmit: (newProject) => dispatch(UIActions.setActiveNamespace(newProject.metadata.name)),
+          onSubmit: (newProject) => setActiveNamespace(newProject.metadata.name),
         });
       } else {
-        dispatch(UIActions.setActiveNamespace(newNamespace));
+        setActiveNamespace(newNamespace);
       }
     };
 
