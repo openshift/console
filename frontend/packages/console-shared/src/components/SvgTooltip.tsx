@@ -6,7 +6,7 @@ type TooltipProps = {
   active?: boolean;
   parentBox: { x: number; y: number; width: number; height: number };
   arrowPosition?: TooltipPosition;
-  getContent: (boxX: number, boxY: number) => React.ReactNode;
+  children: React.ReactNode;
 };
 
 type State = {
@@ -75,7 +75,7 @@ export default class SvgTooltip extends React.Component<TooltipProps> {
 
   render() {
     const { isActive, bb } = this.state;
-    const { parentBox, getContent, arrowPosition = 'top' } = this.props;
+    const { parentBox, children, arrowPosition = 'top' } = this.props;
     const bbWidth = bb ? bb.width : 0;
     const bbHeight = bb ? bb.height : 0;
     let boxX;
@@ -137,7 +137,9 @@ export default class SvgTooltip extends React.Component<TooltipProps> {
       <g className="odc-svg-tooltip">
         <rect x={boxX} y={boxY} width={bbWidth + PADDING_X * 2} height={bbHeight + PADDING_Y * 2} />
         <polygon points={`${arrowPoints[0]} ${arrowPoints[1]} ${arrowPoints[2]}`} />
-        <g ref={this.groupRef}>{getContent(boxX + PADDING_X, boxY + PADDING_Y)}</g>
+        <g transform={`translate(${boxX + PADDING_X}, ${boxY + PADDING_Y})`} ref={this.groupRef}>
+          {children}
+        </g>
       </g>
     );
   }
