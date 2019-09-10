@@ -41,9 +41,9 @@ const ItemRow = ({item}) => {
   ];
   const description = getResourceDescription(item.model);
 
-  return <div className="row co-resource-list__item">
+  return <div className="row co-resource-list__item" data-test-action={item.kind}>
     <div className="col-xs-10 col-sm-4">
-      <Link to={resourceLink}>{item.kind}</Link>
+      <Link to={resourceLink} data-test-id={item.kind}>{item.kind}</Link>
     </div>
     <div className="hidden-xs col-sm-7">
       <div className="co-line-clamp">{description || '-'}</div>

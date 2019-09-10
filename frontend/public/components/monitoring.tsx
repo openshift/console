@@ -1016,7 +1016,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name co-resource-item">
-          <span id="resource-title" className="co-resource-item__resource-name">Alerting</span>
+          <span className="co-resource-item__resource-name" data-test-id="resource-title">Alerting</span>
           <HeaderAlertmanagerLink path="/#/alerts" />
         </div>
       </h1>

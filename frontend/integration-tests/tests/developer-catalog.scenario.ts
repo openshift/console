@@ -119,12 +119,12 @@ describe('Developer Catalog', () => {
 
     await catalogView.createServiceBindingButton.click();
     await browser.wait(crudView.untilNoLoadersPresent);
-    expect($('#resource-title').getText()).toBe('Create Service Binding');
+    expect($('[data-test-id="resource-title"]').getText()).toBe('Create Service Binding');
 
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 
-    expect($('#resource-title').getText()).toBe('mongodb-persistent');
+    expect($('[data-test-id="resource-title"]').getText()).toBe('mongodb-persistent');
     expect($$('.co-section-heading').first().getText()).toBe('Service Binding Overview');
 
     execSync(`kubectl delete -n ${testName} servicebinding mongodb-persistent`);

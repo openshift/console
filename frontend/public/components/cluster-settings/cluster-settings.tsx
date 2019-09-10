@@ -53,7 +53,7 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => clusterChannelModal({cv})}>
+export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" data-test-id="current-channel-update-link" onClick={() => clusterChannelModal({cv})}>
   {cv.spec.channel || '-'}
 </button>;
 
@@ -268,7 +268,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
       <title>{title}</title>
     </Helmet>
     <div className="co-m-nav-title">
-      <h1 className="co-m-pane__heading">{title}</h1>
+      <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">{title}</h1>
     </div>
     <Firehose forceUpdate resources={resources}>
       <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} hideDivider />

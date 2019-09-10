@@ -189,6 +189,9 @@ export const config: Config = {
       'tests/devconsole/git-import-flow.scenario.ts',
       'tests/crd-extensions.scenario.ts',
     ]),
+    clusterSettings: suite([
+      'tests/cluster-settings.scenario.ts',
+    ]),
     login: [
       'tests/login.scenario.ts',
     ],
