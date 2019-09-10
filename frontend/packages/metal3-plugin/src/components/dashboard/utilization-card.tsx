@@ -22,7 +22,7 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { getHostMachineName } from '../../selectors';
 import { getUtilizationQueries, HostQuery } from './queries';
 
@@ -54,21 +54,23 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   const machineLoaded = _.get(resources.machine, 'loaded');
   const machineLoadError = _.get(resources.machine, 'loadError');
-  const machineAddresses = _.get(resources.machine, 'data.status.addresses', []);
-  const machineIP = _.get(machineAddresses.find((addr) => addr.type === 'InternalIP'), 'address');
+  const machine = _.get(resources.machine, 'data', null);
+
+  const hostName = getMachineNodeName(machine);
+  const hostIP = getMachineInternalIP(machine);
 
   React.useEffect(() => {
-    if (machineIP) {
-      const queries = getUtilizationQueries(machineIP);
+    if (machineName) {
+      const queries = getUtilizationQueries(hostName, hostIP);
       Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
       return () => {
         Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
       };
     }
     return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, machineIP]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, machineName, hostName, hostIP]);
 
-  const queries = getUtilizationQueries(machineIP);
+  const queries = getUtilizationQueries(hostName, hostIP);
   const cpuUtilization = prometheusResults.getIn([queries[HostQuery.CPU_UTILIZATION], 'result']);
   const memoryUtilization = prometheusResults.getIn([
     queries[HostQuery.MEMORY_UTILIZATION],
@@ -96,7 +98,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const numberOfPodsStats = getRangeVectorStats(numberOfPods);
 
   const itemIsLoading = (prometheusResult) =>
-    !machineLoadError && (machineLoaded ? (machineIP ? !prometheusResult : false) : true);
+    !machineLoadError && (machineLoaded ? (machine ? !prometheusResult : false) : true);
 
   return (
     <DashboardCard>

@@ -13,7 +13,7 @@ import { InventoryItem } from '@console/internal/components/dashboard/inventory-
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getMachineInternalIP } from '@console/shared';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { getHostMachineName } from '../../selectors';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
@@ -39,8 +39,8 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
 }) => {
   const namespace = getNamespace(obj);
   const machineName = getHostMachineName(obj);
-  const machineAddresses = _.get(resources.machine, 'data.status.addresses', []);
-  const machineIP = _.get(machineAddresses.find((addr) => addr.type === 'InternalIP'), 'address');
+  const machine = _.get(resources.machine, 'data', null);
+  const hostIP = getMachineInternalIP(machine);
 
   React.useEffect(() => {
     const k8sResources = getResources(namespace, machineName);
@@ -51,17 +51,17 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
   }, [watchK8sResource, stopWatchK8sResource, namespace, machineName]);
 
   React.useEffect(() => {
-    if (machineIP) {
-      const queries = getInventoryQueries(machineIP);
+    if (hostIP) {
+      const queries = getInventoryQueries(hostIP);
       Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
       return () => {
         Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
       };
     }
     return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, machineIP]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, hostIP]);
 
-  const queries = getInventoryQueries(machineIP);
+  const queries = getInventoryQueries(hostIP);
 
   const podResult = prometheusResults.getIn([queries[HostQuery.NUMBER_OF_PODS], 'result']);
   const podError = getHostQueryResultError(podResult);
