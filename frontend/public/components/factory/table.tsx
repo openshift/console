@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import { EmptyBox, StatusBox } from '../utils';
+import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   getJobTypeAndCompletions,
   K8sResourceKind,
@@ -318,6 +318,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       listId: PropTypes.string,
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
+      scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
     };
     _columnShift: number;
     _cellMeasurementCache: any;
@@ -428,11 +429,37 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
     }
 
     render() {
-      const {Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData, gridBreakPoint = TableGridBreakpoint.none} = this.props;
+      const {scrollElement, Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData, gridBreakPoint = TableGridBreakpoint.none} = this.props;
       const {sortBy, columns} = this.state;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const ariaRowCount = componentProps.data && componentProps.data.length;
-
+      const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
+      const renderVirtualizedTable = (scrollContainer) => (
+        <WindowScroller scrollElement={scrollContainer}>
+          {({height, isScrolling, registerChild, onChildScroll, scrollTop}) => (
+            <AutoSizer disableHeight>
+              {({width}) => (
+                <div ref={registerChild}>
+                  <VirtualBody
+                    bindBodyRef={this._bindBodyRef}
+                    cellMeasurementCache={this._cellMeasurementCache}
+                    Row={Row}
+                    customData={customData}
+                    height={height}
+                    isScrolling={isScrolling}
+                    onChildScroll={onChildScroll}
+                    data={componentProps.data}
+                    columns={columns}
+                    scrollTop={scrollTop}
+                    width={width}
+                    expand={expand}
+                  />
+                </div>
+              )}
+            </AutoSizer>
+          )}
+        </WindowScroller>
+      );
       const children = mock ? <EmptyBox label={label} /> : (
         <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
           <PfTable
@@ -451,32 +478,12 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
               <TableBody />
             )}
           </PfTable>
-          {virtualize && (
-            <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
-              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) => (
-                <AutoSizer disableHeight>
-                  {({width}) => (
-                    <div ref={registerChild}>
-                      <VirtualBody
-                        bindBodyRef={this._bindBodyRef}
-                        cellMeasurementCache={this._cellMeasurementCache}
-                        Row={Row}
-                        customData={customData}
-                        height={height}
-                        isScrolling={isScrolling}
-                        onChildScroll={onChildScroll}
-                        data={componentProps.data}
-                        columns={columns}
-                        scrollTop={scrollTop}
-                        width={width}
-                        expand={expand}
-                      />
-                    </div>
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
-          )}
+          {virtualize &&
+            (scrollNode ? (
+              renderVirtualizedTable(scrollNode)
+            ) : (
+              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
+            ))}
         </TableWrapper>
       );
       return <div className="co-m-table-grid co-m-table-grid--bordered">
@@ -522,6 +529,7 @@ export type TableInnerProps = {
   rowFilters?: any[];
   virtualize?: boolean;
   gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
+  scrollElement?: HTMLElement | (() => HTMLElement);
 };
 
 export type TableInnerState = {
