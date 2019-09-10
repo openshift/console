@@ -105,7 +105,7 @@ export const createDeploymentConfig = (
       selector: podLabels,
       template: {
         metadata: {
-          labels: podLabels,
+          labels: { ...labels, ...podLabels },
           annotations,
         },
         spec: {
