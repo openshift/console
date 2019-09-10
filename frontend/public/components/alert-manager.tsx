@@ -2,6 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableRow, TableData } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
@@ -38,7 +41,10 @@ const Details: React.SFC<DetailsProps> = (props) => {
             <dd>{spec.version}</dd>
             <dt>Replicas</dt>
             <dd>
-              <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</button>
+              <Button variant="link" type="button" isInline onClick={openReplicaCountModal}>
+                {pluralize(spec.replicas, 'pod')}
+                <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+              </Button>
             </dd>
           </dl>
         </div>

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { withHandlePromise } from '@console/internal/components/utils';
 import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -119,11 +121,16 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
     };
 
     return (
-      <button
+      <Button
         type="button"
-        className="btn btn-link co-modal-btn-link"
+        isInline
+        data-test-id="configure-modal-btn"
         onClick={onClick}
-      >{`CPU: ${cpu}, Memory: ${memory}`}</button>
+        variant="link"
+      >
+        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+        {`CPU: ${cpu}, Memory: ${memory}`}
+      </Button>
     );
   },
 );

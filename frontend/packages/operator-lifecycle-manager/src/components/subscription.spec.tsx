@@ -301,7 +301,9 @@ describe(SubscriptionUpdates.name, () => {
       )
       .parents()
       .at(0)
-      .find('dd')
+      .shallow()
+      .find('dd button')
+      .childAt(0)
       .text();
 
     expect(channel).toEqual(testSubscription.spec.channel);
@@ -314,7 +316,9 @@ describe(SubscriptionUpdates.name, () => {
       )
       .parents()
       .at(0)
-      .find('dd')
+      .shallow()
+      .find('dd button')
+      .childAt(0)
       .text();
 
     expect(strategy).toEqual(testSubscription.spec.installPlanApproval || 'Automatic');

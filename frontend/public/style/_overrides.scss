@@ -123,8 +123,25 @@ h6 {
   margin-left: auto !important;
 }
 
+.pf-c-button.pf-m-link {
+  white-space: normal; // override default .pf-c-button to enable wrapping
+}
+
 .pf-c-button.pf-m-link--align-left {
   padding-left: 0;
+}
+
+.pf-c-button {
+  &:hover,
+  &:focus {
+    .pf-c-button-icon--plain {
+      color: var(--pf-c-button--m-plain--hover--Color);
+    }
+  }
+}
+
+.pf-c-button-icon--plain {
+  color: var(--pf-c-button--m-plain--Color);
 }
 
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem

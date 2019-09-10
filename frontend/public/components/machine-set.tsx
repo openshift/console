@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { getMachineRole } from '@console/shared';
-import { Tooltip } from '@patternfly/react-core';
+import { Tooltip , Button } from '@patternfly/react-core';
+
+import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
@@ -160,7 +162,10 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
             <dt className="co-detail-table__section-header">Desired Count</dt>
             <dd>
               {canUpdate
-                ? <button type="button" className="btn btn-link co-modal-btn-link" onClick={editReplicas}>{desiredReplicasText}</button>
+                ? <Button variant="link" type="button" isInline onClick={editReplicas}>
+                  {desiredReplicasText}
+                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                </Button>
                 : desiredReplicasText}
             </dd>
           </dl>

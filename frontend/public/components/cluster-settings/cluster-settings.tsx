@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { Button } from 'patternfly-react';
+import { Button , Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { Tooltip } from '@patternfly/react-core';
+
 import {
   AddCircleOIcon,
   ArrowCircleUpIcon,
   SyncAltIcon,
+  PencilAltIcon,
 } from '@patternfly/react-icons';
 
 import { ClusterOperatorPage } from './cluster-operator';
@@ -58,15 +59,18 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" data-test-id="current-channel-update-link" onClick={() => clusterChannelModal({cv})}>
+export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <Button type="button" isInline data-test-id="current-channel-update-link" onClick={() => clusterChannelModal({cv})} variant="link">
   {cv.spec.channel || '-'}
-</button>;
+  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+</Button>;
 
 const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <>
   <div>
     <RedExclamationCircleIcon /> Invalid cluster version
   </div>
-  <Button bsStyle="primary" onClick={() => cancelUpdate(cv)}>
+  <Button
+    onClick={() => cancelUpdate(cv)}
+    variant="primary">
     Cancel update
   </Button>
 </>;
@@ -76,7 +80,9 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <>
     <ArrowCircleUpIcon className="update-pending" /> Update available
   </div>
   <div>
-    <Button bsStyle="primary" onClick={() => clusterUpdateModal({cv})}>
+    <Button
+      onClick={() => clusterUpdateModal({cv})}
+      variant="primary">
       Update now
     </Button>
   </div>
@@ -157,7 +163,7 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
   return <>
     {
       updatesAvailable && (status === ClusterUpdateStatus.ErrorRetrieving || status === ClusterUpdateStatus.Failing || status === ClusterUpdateStatus.Updating)
-        ? <Button bsStyle="link" className="btn-link--no-btn-default-values" onClick={() => (clusterUpdateModal({cv}))}>Update to another version</Button>
+        ? <Button variant="link" className="btn-link--no-btn-default-values" onClick={() => (clusterUpdateModal({cv}))}>Update to another version</Button>
         : null
     }
   </>;
