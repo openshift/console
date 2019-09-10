@@ -45,6 +45,19 @@ describe('ValidationUtils', () => {
       });
     });
 
+    it('should throw an error if project name is invalid', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.project.name = 'project-!';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema
+        .validate(mockData)
+        .catch((err) =>
+          expect(err.message).toBe(
+            "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
+          ),
+        );
+    });
+
     it('should throw an error for required fields if empty', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = '';

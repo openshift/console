@@ -3,15 +3,11 @@ import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { ButtonBar } from '@console/internal/components/utils';
 import { Form, ActionGroup, ButtonVariant, Button } from '@patternfly/react-core';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
-
-export interface DeployImageFormProps {
-  builderImages?: NormalizedBuilderImages;
-}
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -21,10 +17,14 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   status,
   isSubmitting,
   dirty,
+  projects,
 }) => (
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
     <ImageSearchSection />
-    <AppSection project={values.project} />
+    <AppSection
+      project={values.project}
+      noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+    />
     <ServerlessSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>

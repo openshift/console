@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { CatalogTile } from 'patternfly-react-extensions';
-import { HintBlock } from 'patternfly-react';
 import { connect } from 'react-redux';
 import { history, PageHeading } from '@console/internal/components/utils';
 import { formatNamespacedRouteForResource } from '@console/internal/actions/ui';
@@ -15,8 +14,7 @@ interface StateProps {
 
 export interface EmptySProps {
   title: string;
-  hintBlockTitle?: string;
-  hintBlockDescription?: string;
+  hintBlock?: React.ReactNode;
 }
 
 type Props = EmptySProps & StateProps;
@@ -29,23 +27,16 @@ const navigateTo = (e: Event, url: string) => {
 const ODCEmptyState: React.FC<Props> = ({
   title,
   activeNamespace,
-  hintBlockTitle,
-  hintBlockDescription,
+  hintBlock = 'Select a way to create an application, component or service from one of the options.',
 }) => {
   return (
     <React.Fragment>
       <div className="odc-empty-state__title">
         <PageHeading title={title} />
-        {hintBlockTitle ? (
-          <HintBlock
-            className="odc-empty-state__hint-block"
-            title={hintBlockTitle}
-            body={hintBlockDescription}
-          />
-        ) : (
-          <p className="odc-empty-state__hint-block">
-            Select a way to create an application, component or service from one of the options.
-          </p>
+        {hintBlock && (
+          <div className="co-catalog-page__description odc-empty-state__hint-block">
+            {hintBlock}
+          </div>
         )}
       </div>
       <div className="odc-empty-state__content">

@@ -10,10 +10,16 @@ export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 
 export interface ApplicationSelectorProps {
   namespace?: string;
+  noProjectsAvailable?: boolean;
 }
 
-const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) => {
-  const [isZeroApplication, setIsZeroApplication] = React.useState(false);
+const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
+  namespace,
+  noProjectsAvailable,
+}) => {
+  const [applicationsAvailable, setApplicationsAvailable] = React.useState(true);
+  const projectsAvailable = !noProjectsAvailable;
+
   const [selectedKey, { touched, error }] = useField('application.selectedKey');
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const fieldId = getFieldId('application-name', 'dropdown');
@@ -32,18 +38,17 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
     validateForm();
   };
 
-  const handleOnLoad = (items: { [key: string]: string }) => {
-    const isEmptyItems = _.isEmpty(items);
-    setIsZeroApplication(isEmptyItems);
-    if (isEmptyItems) {
+  const handleOnLoad = (applicationList: { [key: string]: string }) => {
+    const noApplicationsAvailable = _.isEmpty(applicationList);
+    setApplicationsAvailable(!noApplicationsAvailable);
+    if (noApplicationsAvailable) {
       setFieldValue('application.selectedKey', CREATE_APPLICATION_KEY);
       setFieldValue('application.name', '');
     }
   };
-
   return (
     <React.Fragment>
-      {!isZeroApplication && (
+      {projectsAvailable && applicationsAvailable && (
         <FormGroup
           fieldId={fieldId}
           label="Application"
@@ -66,7 +71,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
           />
         </FormGroup>
       )}
-      {selectedKey.value === CREATE_APPLICATION_KEY && (
+      {(noProjectsAvailable || selectedKey.value === CREATE_APPLICATION_KEY) && (
         <InputField
           type={TextInputTypes.text}
           name="application.name"

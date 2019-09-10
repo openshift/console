@@ -5,14 +5,27 @@ import {
   DeploymentConfigModel,
   ServiceModel,
   RouteModel,
+  ProjectRequestModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
-import { GitImportFormData } from './import-types';
+import { GitImportFormData, ProjectData } from './import-types';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
+
+export const createProject = (projectData: ProjectData): Promise<K8sResourceKind> => {
+  const project = {
+    metadata: {
+      name: projectData.name,
+    },
+    displayName: projectData.displayName,
+    description: projectData.description,
+  };
+
+  return k8sCreate(ProjectRequestModel, project);
+};
 
 export const createImageStream = (
   formData: GitImportFormData,
@@ -323,6 +336,7 @@ export const createRoute = (
 export const createResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
+  createNewProject?: boolean,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
@@ -339,6 +353,8 @@ export const createResources = async (
     git: { url: repository, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
+
+  createNewProject && (await createProject(formData.project));
 
   const requests: Promise<K8sResourceKind>[] = [
     createImageStream(formData, imageStream, dryRun),

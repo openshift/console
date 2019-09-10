@@ -55,10 +55,21 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
         name: imageStreamName,
         namespace: imageStreamNamespace,
       },
+      {
+        kind: 'Project',
+        prop: 'projects',
+        isList: true,
+      },
     ];
   } else if (importType === ImportTypes.docker) {
     importData = ImportFlows.docker;
-    resources = [];
+    resources = [
+      {
+        kind: 'Project',
+        prop: 'projects',
+        isList: true,
+      },
+    ];
   } else {
     importData = ImportFlows.git;
     resources = [
@@ -67,6 +78,11 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
         prop: 'imageStreams',
         isList: true,
         namespace: 'openshift',
+      },
+      {
+        kind: 'Project',
+        prop: 'projects',
+        isList: true,
       },
     ];
   }

@@ -15,6 +15,12 @@ export interface InputFieldProps extends FieldProps {
   onBlur?: (event) => void;
 }
 
+export interface TextAreaProps extends FieldProps {
+  placeholder?: string;
+  onChange?: (event) => void;
+  onBlur?: (event) => void;
+}
+
 export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
 }
