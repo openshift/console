@@ -118,7 +118,7 @@ ListPageWrapper_.displayName = 'ListPageWrapper_';
 ListPageWrapper_.propTypes = {
   data: PropTypes.array,
   kinds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
-  ListComponent: PropTypes.func.isRequired,
+  ListComponent: PropTypes.elementType.isRequired,
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
   customData: PropTypes.any,
