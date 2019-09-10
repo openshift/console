@@ -6,16 +6,15 @@ import { RedExclamationCircleIcon } from './Icons';
 type ErrorStatusProps = {
   title?: string;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const ErrorStatus: React.FC<ErrorStatusProps> = ({ title, iconOnly, children }) => {
+const ErrorStatus: React.FC<ErrorStatusProps> = (props) => {
   const icon = <RedExclamationCircleIcon />;
-  return children ? (
-    <PopoverStatus icon={icon} title={title} iconOnly={iconOnly}>
-      {children}
-    </PopoverStatus>
+  return props.children ? (
+    <PopoverStatus {...props} icon={icon} />
   ) : (
-    <StatusIconAndText icon={icon} title={title} iconOnly={iconOnly} />
+    <StatusIconAndText {...props} icon={icon} />
   );
 };
 

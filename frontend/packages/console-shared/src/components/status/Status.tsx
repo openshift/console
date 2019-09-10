@@ -18,10 +18,11 @@ export type StatusProps = {
   status?: string;
   title?: string;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly }) => {
-  const statusProps = { title: title || status, iconOnly };
+const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip }) => {
+  const statusProps = { title: title || status, iconOnly, noTooltip };
   switch (status) {
     case 'New':
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
