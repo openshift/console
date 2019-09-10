@@ -40,6 +40,8 @@ describe('Auth test', () => {
     });
 
     it('does not show admin nav items in Administration to htpasswd user', async() => {
+      // Let flags resolve before checking for the presence of nav items.
+      await browser.sleep(5000);
       await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Administration')));
       expect(sidenavView.navSectionFor('Administration')).not.toContain('Cluster Status');
       expect(sidenavView.navSectionFor('Administration')).not.toContain('Cluster Settings');
@@ -48,7 +50,8 @@ describe('Auth test', () => {
     });
 
     it('does not show admin nav items in Operators to htpasswd user', async() => {
-      expect(sidenavView.navSectionFor('Operators').isPresent()).toBe(false);
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
+      expect(sidenavView.navSectionFor('Operators')).not.toContain('OperatorHub');
     });
 
     it('does not show admin nav items in Storage to htpasswd user', async() => {
@@ -57,7 +60,6 @@ describe('Auth test', () => {
     });
 
     it('does not show Compute or Monitoring admin nav items to htpasswd user', async() => {
-      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Home')));
       expect(sidenavView.navSectionFor('Compute').isPresent()).toBe(false);
       expect(sidenavView.navSectionFor('Monitoring').isPresent()).toBe(false);
     });
