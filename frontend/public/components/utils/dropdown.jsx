@@ -49,7 +49,7 @@ export class DropdownMixin extends React.PureComponent {
     e.preventDefault();
     e.stopPropagation();
 
-    const { items, actionItem, onChange, noSelection, title } = this.props;
+    const { items, actionItems, onChange, noSelection, title } = this.props;
 
     if (onChange) {
       onChange(selectedKey, e);
@@ -57,7 +57,7 @@ export class DropdownMixin extends React.PureComponent {
 
     const newTitle = items[selectedKey];
 
-    if (!actionItem || (selectedKey !== actionItem.actionKey)) {
+    if (!actionItems || !_.some(actionItems, {actionKey: selectedKey})) {
       this.setState({
         selectedKey,
         title: noSelection ? title : newTitle,
@@ -310,22 +310,21 @@ export class Dropdown extends DropdownMixin {
   }
 
   renderActionItem() {
-    const { actionItem } = this.props;
-    if (actionItem) {
+    const { actionItems } = this.props;
+    if (actionItems) {
       const { selectedKey, keyboardHoverKey, noSelection } = this.props;
-      const { actionTitle, actionKey } = actionItem;
-      const selected = (actionKey === selectedKey) && !noSelection;
-      const hover = actionKey === keyboardHoverKey;
       return (
         <React.Fragment>
-          <DropDownRow
-            className={classNames({'active': selected})}
-            key={`${actionKey}-${actionTitle}`}
-            itemKey={actionKey}
-            content={actionTitle}
-            onclick={this.onClick}
-            selected={selected}
-            hover={hover} />
+          {actionItems.map((ai) =>
+            <DropDownRow
+              className={classNames({'active': (ai.actionKey === selectedKey) && !noSelection})}
+              key={`${ai.actionKey}-${ai.actionTitle}`}
+              itemKey={ai.actionKey}
+              content={ai.actionTitle}
+              onclick={this.onClick}
+              selected={(ai.actionKey === selectedKey) && !noSelection}
+              hover={ai.actionKey === keyboardHoverKey} />
+          )}
           <li className="co-namespace-selector__divider">
             <div className="dropdown-menu__divider" />
           </li>
@@ -426,10 +425,10 @@ export class Dropdown extends DropdownMixin {
 }
 
 Dropdown.propTypes = {
-  actionItem: PropTypes.shape({
+  actionItems: PropTypes.arrayOf(PropTypes.shape({
     actionKey: PropTypes.string,
     actionTitle: PropTypes.string,
-  }),
+  })),
   autocompleteFilter: PropTypes.func,
   autocompletePlaceholder: PropTypes.string,
   canFavorite: PropTypes.bool,

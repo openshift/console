@@ -29,10 +29,10 @@ interface ResourceDropdownProps {
     allSelectorKey?: string;
     allSelectorTitle?: string;
   };
-  actionItem?: {
+  actionItems?: {
     actionTitle: string;
     actionKey: string;
-  };
+  }[];
   dataSelector: string[] | number[] | symbol[];
   transformLabel?: Function;
   loaded?: boolean;
@@ -148,8 +148,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         selectedItem = allSelectorItem.allSelectorKey;
       } else if (autoSelect && !selectedKey) {
         selectedItem =
-          this.props.loaded && _.isEmpty(sortedList) && this.props.actionItem
-            ? this.props.actionItem.actionKey
+          this.props.loaded && _.isEmpty(sortedList) && this.props.actionItems
+            ? this.props.actionItems[0].actionKey
             : _.get(_.keys(sortedList), 0);
       }
       selectedItem && this.handleChange(selectedItem, sortedList);
@@ -159,8 +159,9 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
   private handleChange = (key, items) => {
     const name = items[key];
-    const { actionItem, onChange, selectedKey } = this.props;
-    const title = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
+    const { actionItems, onChange, selectedKey } = this.props;
+    const selectedActionItem = actionItems && actionItems.find((ai) => key === ai.actionKey);
+    const title = selectedActionItem ? selectedActionItem.actionTitle : name;
     if (title !== this.state.title) {
       this.setState({ title });
     }
@@ -183,7 +184,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         buttonClassName={this.props.buttonClassName}
         titlePrefix={this.props.titlePrefix}
         autocompleteFilter={fuzzy}
-        actionItem={this.props.actionItem}
+        actionItems={this.props.actionItems}
         items={this.state.items}
         onChange={this.onChange}
         selectedKey={this.props.selectedKey}

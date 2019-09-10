@@ -376,10 +376,10 @@ class NamespaceBarDropdowns_ extends React.Component {
       // If the currently active namespace is not found in the list of all namespaces, put it in anyway
       items[title] = title;
     }
-    const defaultActionItem = {
+    const defaultActionItem = [{
       actionTitle: `Create ${model.label}`,
       actionKey: CREATE_NEW_RESOURCE,
-    };
+    }];
 
     const onChange = (newNamespace) => {
       if (newNamespace === CREATE_NEW_RESOURCE) {
@@ -400,7 +400,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         buttonClassName="pf-m-plain"
         canFavorite
         items={items}
-        actionItem={defaultActionItem}
+        actionItems={defaultActionItem}
         titlePrefix={model.label}
         title={<span className="btn-link__title">{title}</span>}
         onChange={onChange}
