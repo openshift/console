@@ -145,11 +145,13 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
   const GROUP_PARAM = 'g';
   const VERSION_PARAM = 'v';
   const TEXT_FILTER_PARAM = 'q';
+  const SCOPE_PARAM = 's';
   const search = new URLSearchParams(location.search);
   // Differentiate between an empty group and an unspecified param.
   const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
   const versionFilter = search.get(VERSION_PARAM) || ALL;
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
+  const scopeFilter = search.get(SCOPE_PARAM) || ALL;
 
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, {apiGroup}) => {
@@ -185,13 +187,28 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
     versionSpacer.add(sortedVersions[0]);
   }
 
+  const scopeOptions = {
+    [ALL]: 'All Scopes',
+    'cluster': 'Cluster',
+    'namespace': 'Namespace',
+  };
+  const scopeSpacer = new Set<string>(['cluster']);
+
   // filter by group, version, or text
-  const filteredResources = models.filter(({kind, apiGroup, apiVersion}) => {
+  const filteredResources = models.filter(({kind, apiGroup, apiVersion, namespaced}) => {
     if (groupFilter !== ALL && (apiGroup || '') !== groupFilter) {
       return false;
     }
 
     if (versionFilter !== ALL && apiVersion !== versionFilter) {
+      return false;
+    }
+
+    if (scopeFilter === 'cluster' && namespaced) {
+      return false;
+    }
+
+    if (scopeFilter === 'namespace' && !namespaced) {
       return false;
     }
 
@@ -214,6 +231,7 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
   };
   const onGroupSelected = (group: string) => updateURL(GROUP_PARAM, group);
   const onVersionSelected = (version: string) => updateURL(VERSION_PARAM, version);
+  const onScopeSelected = (scope: string) => updateURL(SCOPE_PARAM, scope);
   const setTextFilter = (text: string) => {
     if (!text) {
       removeQueryArgument(TEXT_FILTER_PARAM);
@@ -240,6 +258,14 @@ const APIResourcesList = compose(withRouter, connect<APIResourcesListPropsFromSt
           selectedKey={versionFilter}
           spacerBefore={versionSpacer}
           title={versionOptions[versionFilter]}
+          className="btn-group"
+        />
+        <Dropdown
+          items={scopeOptions}
+          onChange={onScopeSelected}
+          selectedKey={scopeFilter}
+          spacerBefore={scopeSpacer}
+          title={scopeOptions[scopeFilter]}
           className="btn-group"
         />
       </div>
