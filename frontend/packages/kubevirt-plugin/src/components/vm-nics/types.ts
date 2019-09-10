@@ -1,31 +1,22 @@
-import { EntityMap } from '@console/shared';
-import { VMKind, VMLikeEntityKind } from '../../types';
-
-export enum NetworkRowType {
-  NETWORK_TYPE_VM = 'network-type-vm',
-  NETWORK_TYPE_CREATE = 'network-type-create',
-}
+import { VMLikeEntityKind } from '../../types';
 
 export type NetworkBundle = {
   name?: string;
+  model?: string;
   networkName: string;
-  binding: string;
-  networkType: NetworkRowType;
-  nic?: any;
+  interfaceType?: string;
+  macAddress?: string;
+  nic: any;
+  network: any;
+};
+
+export type VMNicRowCustomData = {
+  vmLikeEntity: VMLikeEntityKind;
 };
 
 export type VMNicRowProps = {
   obj: NetworkBundle;
+  customData: VMNicRowCustomData;
   index: number;
   style: object;
-  hasNADs?: boolean;
-  customData: {
-    vmLikeEntity: VMLikeEntityKind;
-    vm: VMKind;
-    interfaceLookup: EntityMap<any>;
-    preferableNicBus: string;
-    onCreateRowDismiss: () => void;
-    onCreateRowError: (error: string) => void;
-    forceRerender: () => void;
-  };
 };

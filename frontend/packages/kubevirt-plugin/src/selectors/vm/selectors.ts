@@ -2,31 +2,37 @@ import * as _ from 'lodash';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
   BUS_VIRTIO,
-  NetworkType,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { VMKind, VMLikeEntityKind, CPURaw } from '../../types';
-import { findKeySuffixValue, getValueByPrefix } from '../utils';
+import { V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
+import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { getDiskBus } from './disk';
-import { getNicBus } from './nic';
-import { Network } from './types';
 import { getVolumeCloudInitUserData } from './volume';
 import { vCPUCount } from './cpu';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
 export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
-export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
-export const getInterfaces = (vm: VMKind) =>
-  _.get(vm, 'spec.template.spec.domain.devices.interfaces') || [];
+export const getDisks = (vm: VMKind, defaultValue = []) =>
+  _.get(vm, 'spec.template.spec.domain.devices.disks') == null
+    ? defaultValue
+    : vm.spec.template.spec.domain.devices.disks;
+export const getInterfaces = (vm: VMKind, defaultValue = []): V1NetworkInterface[] =>
+  _.get(vm, 'spec.template.spec.domain.devices.interfaces') == null
+    ? defaultValue
+    : vm.spec.template.spec.domain.devices.interfaces;
 
-export const getNetworks = (vm: VMKind) => _.get(vm, 'spec.template.spec.networks') || [];
-export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes') || [];
-export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates') || [];
+export const getNetworks = (vm: VMKind, defaultValue = []) =>
+  _.get(vm, 'spec.template.spec.networks') == null ? defaultValue : vm.spec.template.spec.networks;
+export const getVolumes = (vm: VMKind, defaultValue = []) =>
+  _.get(vm, 'spec.template.spec.volumes') == null ? defaultValue : vm.spec.template.spec.volumes;
+export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
+  _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplate;
 
 export const getOperatingSystem = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
@@ -51,32 +57,13 @@ export const getVmPreferableDiskBus = (vm: VMKind) =>
     .map((disk) => getDiskBus(disk))
     .find((bus) => bus) || BUS_VIRTIO;
 
-export const getVmPreferableNicBus = (vm: VMKind) =>
-  getNetworks(vm)
-    .map((nic) => getNicBus(nic))
-    .find((bus) => bus) || BUS_VIRTIO;
-
-export const getUsedNetworks = (vm: VMKind): Network[] => {
+export const getUsedNetworks = (vm: VMKind): NetworkWrapper[] => {
   const interfaces = getInterfaces(vm);
-  const networkLookup = createBasicLookup<any>(getNetworks(vm), (network) =>
-    _.get(network, 'name'),
-  );
+  const networkLookup = createBasicLookup<any>(getNetworks(vm), getSimpleName);
 
   return interfaces
-    .map((i) => {
-      const network = networkLookup[i.name];
-      if (_.get(network, 'multus')) {
-        return {
-          networkType: NetworkType.MULTUS,
-          name: network.multus.networkName,
-        };
-      }
-      if (_.get(network, 'pod')) {
-        return { name: network.name, networkType: NetworkType.POD };
-      }
-      return null;
-    })
-    .filter((i) => i);
+    .map((i) => NetworkWrapper.initialize(networkLookup[i.name]))
+    .filter((i) => i.getType());
 };
 
 export const getFlavorDescription = (vm: VMKind) => {

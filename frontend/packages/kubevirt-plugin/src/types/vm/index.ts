@@ -73,6 +73,26 @@ export type CPURaw =
     }
   | string;
 
+export type V1NetworkInterface = {
+  name?: string;
+  model?: string;
+  macAddress?: string;
+  bootOrder?: number;
+  bridge?: {};
+  masquerade?: {};
+  sriov?: {};
+  slirp?: {};
+};
+
+export type V1Network = {
+  name?: string;
+  multus?: {
+    networkName: string;
+  };
+  pod?: {};
+  genie?: {};
+};
+
 export enum ProvisionSource {
   PXE = 'PXE',
   CONTAINER = 'Container',

@@ -15,3 +15,5 @@ export const findKeySuffixValue = (obj: StringHashMap, keyPrefix: string) => {
   const index = key ? key.lastIndexOf('/') : -1;
   return index > 0 ? key.substring(index + 1) : null;
 };
+
+export const getSimpleName = (obj) => obj && obj.name;

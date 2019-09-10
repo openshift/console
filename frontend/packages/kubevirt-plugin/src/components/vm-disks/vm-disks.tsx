@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
@@ -26,6 +25,7 @@ import {
 } from '../../selectors/dv/selectors';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { getResource } from '../../utils';
+import { getSimpleName } from '../../selectors/utils';
 import { DiskRow } from './disk-row';
 import { StorageBundle, StorageRowType, VMDiskRowProps } from './types';
 import { CreateDiskRowFirehose } from './create-disk-row';
@@ -58,7 +58,7 @@ const getStoragesData = (
 
   const pvcLookup = createLookup(pvcs, getName);
   const datavolumeLookup = createLookup(datavolumes, getName);
-  const volumeLookup = createBasicLookup(getVolumes(vm), (volume) => _.get(volume, 'name'));
+  const volumeLookup = createBasicLookup(getVolumes(vm), getSimpleName);
   const datavolumeTemplatesLookup = createBasicLookup(getDataVolumeTemplates(vm), getName);
 
   const disksWithType = getDisks(vm).map((disk) => {
@@ -177,7 +177,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
           customData={{
             vmLikeEntity,
             vm,
-            diskLookup: createBasicLookup(getDisks(vm), (disk) => _.get(disk, 'name')),
+            diskLookup: createBasicLookup(getDisks(vm), getSimpleName),
             onCreateRowDismiss: () => {
               setIsCreating(false);
             },

@@ -9,9 +9,17 @@ export const joinGrammaticallyListOfItems = (items: string[]) => {
     : result;
 };
 
+export const assureEndsWith = (sentence: string, appendix: string) => {
+  if (!sentence || !appendix || sentence.endsWith(appendix)) {
+    return sentence;
+  }
+
+  return `${sentence}${appendix}`;
+};
+
 export const makeSentence = (sentence: string, capitalize = true) => {
-  const result = capitalize ? _.capitalize(sentence) : sentence;
-  return !result || result.charAt(result.length) === '.' ? result : `${result}.`;
+  const result = capitalize ? _.upperFirst(sentence) : sentence;
+  return assureEndsWith(result, '.');
 };
 
 export const addMissingSubject = (sentence: string, subject: string) => {
@@ -20,5 +28,5 @@ export const addMissingSubject = (sentence: string, subject: string) => {
     // c is an upper case letter
     return sentence;
   }
-  return subject ? `${_.capitalize(subject)} ${sentence}` : sentence;
+  return subject ? `${_.upperFirst(subject)} ${sentence}` : sentence;
 };
