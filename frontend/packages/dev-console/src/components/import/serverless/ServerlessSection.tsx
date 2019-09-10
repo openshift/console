@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connectToFlags } from '@console/internal/reducers/features';
-import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import { TechPreviewBadge } from '@console/shared';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { CheckboxField } from '../../formik-fields';
@@ -11,7 +11,7 @@ type ServerlessSectionProps = {
 };
 
 const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
-  if (flags[FLAG_KNATIVE_SERVING]) {
+  if (flags[FLAG_KNATIVE_SERVING_SERVICE]) {
     const title = (
       <Split gutter="md">
         <SplitItem className="odc-form-section__heading">Serverless</SplitItem>
@@ -30,4 +30,4 @@ const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
   return null;
 };
 
-export default connectToFlags(FLAG_KNATIVE_SERVING)(ServerlessSection);
+export default connectToFlags(FLAG_KNATIVE_SERVING_SERVICE)(ServerlessSection);
