@@ -264,7 +264,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     k8sGet(InfrastructureModel, 'cluster')
       .then((infra: K8sResourceKind) => {
         // find infra supported provisioner
-        provisioner = infraProvisionerMap[_.lowerCase(getInfrastructurePlatform(infra))];
+        provisioner = infraProvisionerMap[_.toLower(getInfrastructurePlatform(infra))];
         return k8sList(StorageClassModel);
       })
       .then((storageClasses: StorageClassResourceKind[]) => {
