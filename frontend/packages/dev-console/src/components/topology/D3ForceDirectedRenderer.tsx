@@ -734,7 +734,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
     const { nodes, nodesById, moveConnection } = this.state;
     const d = edge.source;
 
-    if (d3.event.sourceEvent.which !== 1 || nodes.length === 1) {
+    if (d3.event.sourceEvent.which !== 1) {
       return;
     }
 
@@ -744,7 +744,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
       return;
     }
 
-    if (d3.event.dx === 0 && d3.event.dy === 0) {
+    if (!moveConnection || (d3.event.dx === 0 && d3.event.dy === 0)) {
       return;
     }
 
@@ -776,10 +776,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   private onMoveConnectionEnd = (edge: ViewEdge) => {
     const { onCreateConnection } = this.props;
-    const { connectionTarget, nodes } = this.state;
+    const { connectionTarget, moveConnection } = this.state;
     const d = edge.source;
 
-    if (d3.event.sourceEvent.which !== 1 || nodes.length === 1) {
+    if (!moveConnection || d3.event.sourceEvent.which !== 1) {
       return;
     }
 
