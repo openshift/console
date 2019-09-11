@@ -27,10 +27,10 @@ import {
 } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace, prefixedID } from '@console/shared';
 import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
-import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
+import { getLoadedData, getLoadError } from '../../../utils';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { validateVmName } from '../../../utils/validations/vm';

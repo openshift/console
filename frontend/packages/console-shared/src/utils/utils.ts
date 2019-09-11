@@ -26,3 +26,6 @@ export const createLookup = <A extends K8sResourceKind>(
   }
   return {};
 };
+
+export const prefixedID = (idPrefix: string, id: string) =>
+  idPrefix && id ? `${idPrefix}-${id}` : null;

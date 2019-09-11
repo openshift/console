@@ -1,8 +1,7 @@
-import { getName } from '@console/shared';
+import { getName, prefixedID } from '@console/shared/src';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { VMIKind } from '../../../types/vm';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
-import { prefixedID } from '../../../utils';
 import { VMIMigration } from '../../objects/vmi-migration/vmi-migration';
 
 export const getMigrationName = (vmi: VMIKind) => prefixedID(getName(vmi), 'migration');

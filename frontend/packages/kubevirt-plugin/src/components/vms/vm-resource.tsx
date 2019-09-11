@@ -14,11 +14,11 @@ import {
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, DASH } from '@console/shared';
+import { getName, getNamespace, prefixedID, DASH } from '@console/shared/src';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
-import { getBasicID, prefixedID } from '../../utils';
+import { getBasicID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
@@ -32,7 +32,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
   const description = getDescription(vm) || DASH;
 
   return (
-    <ResourceSummary resource={vm}>
+    <ResourceSummary resource={vm} id={id}>
       <dt>
         Description
         {canUpdateVM && (

@@ -10,9 +10,9 @@ import {
   TemplateSource,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { DASH } from '@console/shared';
+import { prefixedID, DASH } from '@console/shared/src';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { getBasicID, prefixedID } from '../../utils';
+import { getBasicID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
 import { VMTemplateLink } from './vm-template-link';
@@ -29,7 +29,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   const description = getDescription(template) || DASH;
 
   return (
-    <ResourceSummary resource={template}>
+    <ResourceSummary resource={template} id={id}>
       <dt>
         Description
         {canUpdateTemplate && (
