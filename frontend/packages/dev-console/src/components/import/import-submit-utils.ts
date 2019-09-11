@@ -6,14 +6,25 @@ import {
   ServiceModel,
   RouteModel,
   ProjectRequestModel,
+  SecretModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
-import { GitImportFormData, ProjectData } from './import-types';
+import { GitImportFormData, ProjectData, GitTypes, GitReadableTypes } from './import-types';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
+
+const generateSecret = () => {
+  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  const s4 = () =>
+    Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  return s4() + s4() + s4() + s4();
+};
 
 export const createProject = (projectData: ProjectData): Promise<K8sResourceKind> => {
   const project = {
@@ -57,6 +68,31 @@ export const createImageStream = (
   return k8sCreate(ImageStreamModel, imageStream, dryRun ? dryRunOpt : {});
 };
 
+export const createWebhookSecret = (
+  formData: GitImportFormData,
+  secretType: string,
+  dryRun: boolean,
+): Promise<K8sResourceKind> => {
+  const {
+    name,
+    project: { name: namespace },
+  } = formData;
+
+  const webhookSecret = {
+    apiVersion: 'v1',
+    data: {},
+    kind: 'Secret',
+    metadata: {
+      name: `${name}-${secretType}-webhook-secret`,
+      namespace,
+    },
+    stringData: { WebHookSecretKey: generateSecret() },
+    type: SecretType.opaque,
+  };
+
+  return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
+};
+
 export const createBuildConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
@@ -66,7 +102,7 @@ export const createBuildConfig = (
     name,
     project: { name: namespace },
     application: { name: application },
-    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
+    git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
     docker: { dockerfilePath },
     image: { tag: selectedTag },
     build: { env, triggers, strategy: buildStrategy },
@@ -100,6 +136,13 @@ export const createBuildConfig = (
       break;
   }
 
+  const webhookTriggerData = {
+    type: GitReadableTypes[gitType],
+    [gitType]: {
+      secretReference: { name: `${name}-${gitType}-webhook-secret` },
+    },
+  };
+
   const buildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
@@ -130,6 +173,13 @@ export const createBuildConfig = (
         ...buildStrategyData,
       },
       triggers: [
+        {
+          type: 'Generic',
+          generic: {
+            secretReference: { name: `${name}-generic-webhook-secret` },
+          },
+        },
+        ...(triggers.webhook && gitType !== GitTypes.unsure ? [webhookTriggerData] : []),
         ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
         ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
       ],
@@ -345,12 +395,15 @@ export const createResources = async (
     project: { name: projectName },
     route: { create: canCreateRoute },
     image: { ports, tag: imageTag },
-    build: { strategy: buildStrategy },
+    build: {
+      strategy: buildStrategy,
+      triggers: { webhook: webhookTrigger },
+    },
     labels: userLabels,
     limits,
     serverless: { scaling },
     route,
-    git: { url: repository, ref },
+    git: { url: repository, type: gitType, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
 
@@ -359,6 +412,7 @@ export const createResources = async (
   const requests: Promise<K8sResourceKind>[] = [
     createImageStream(formData, imageStream, dryRun),
     createBuildConfig(formData, imageStream, dryRun),
+    createWebhookSecret(formData, 'generic', dryRun),
   ];
 
   const defaultAnnotations = getAppAnnotations(repository, ref);
@@ -394,6 +448,10 @@ export const createResources = async (
     if (canCreateRoute) {
       requests.push(createRoute(formData, imageStream, dryRun));
     }
+  }
+
+  if (webhookTrigger) {
+    requests.push(createWebhookSecret(formData, gitType, dryRun));
   }
   return Promise.all(requests);
 };
