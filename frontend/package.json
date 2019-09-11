@@ -90,6 +90,7 @@
     "memoize-one": "5.x",
     "monaco-languageclient": "^0.9.0",
     "murmurhash-js": "1.0.x",
+    "null-loader": "^3.0.0",
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.59.1",
     "patternfly-react": "2.32.3",

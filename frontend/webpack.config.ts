@@ -20,6 +20,7 @@ const HOT_RELOAD = process.env.HOT_RELOAD;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
+const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 
 const config: Configuration = {
   entry: ['./polyfills.js', '@console/app', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
@@ -110,10 +111,18 @@ const config: Configuration = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
+        exclude: overpassTest,
         loader: 'file-loader',
         options: {
           name: 'assets/[name].[ext]',
         },
+      },
+      {
+        // Resolve to an empty module for overpass fonts included in SASS files.
+        // This way file-loader won't parse them. Make sure this is BELOW the
+        // file-loader rule.
+        test: overpassTest,
+        loader: 'null-loader',
       },
     ],
   },
