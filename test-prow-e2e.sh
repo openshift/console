@@ -27,7 +27,7 @@ oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-h
 
 # Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
 # get the branch base position for a specific chrmoe version using https://omahaproxy.appspot.com/
-export FORCE_CHRMOE_BRANCH_BASE="665006"
-export FORCE_CHRMOE_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
+export FORCE_CHROME_BRANCH_BASE="665006"
+export FORCE_CHROME_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
 
 ./test-gui.sh ${1:-e2e}

@@ -4,9 +4,9 @@ set -exuo pipefail
 
 cd frontend
 
-if [ -v FORCE_CHRMOE_BRANCH_BASE ];
+if [ -v FORCE_CHROME_BRANCH_BASE ];
 then
-  BRANCH_BASE=${FORCE_CHRMOE_BRANCH_BASE}
+  BRANCH_BASE=${FORCE_CHROME_BRANCH_BASE}
   export CHROME_BINARY_PATH="${PWD}/__chrome_browser__/${BRANCH_BASE}/chrome-linux/chrome"
 
   # look for chrome binary
@@ -25,7 +25,7 @@ then
     unzip "${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip" -d "${CHROME_DIR}/${BRANCH_BASE}"
 
     # check sha256sum
-    if [ "$(sha256sum ${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip | cut -f 1 -d ' ')" != "${FORCE_CHRMOE_BRANCH_SHA256SUM}" ];
+    if [ "$(sha256sum ${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip | cut -f 1 -d ' ')" != "${FORCE_CHROME_BRANCH_SHA256SUM}" ];
     then
       rm -rf "${CHROME_DIR}/${BRANCH_BASE}"
 
