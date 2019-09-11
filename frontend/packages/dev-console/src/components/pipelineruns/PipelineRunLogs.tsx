@@ -1,15 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { StatusIcon } from '@console/shared';
-import { Firehose } from '@console/internal/components/utils';
+import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../utils/pipeline-augment';
+import { PipelineRunModel } from '../../models';
 import PipelineTaskLogs from './PipelineTaskLogs';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
   obj: PipelineRun;
+  activeTask?: string;
 }
 interface PipelineRunLogsState {
   activeItem: string;
@@ -22,20 +26,27 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   }
 
   componentDidMount() {
-    const { obj } = this.props;
+    const { obj, activeTask } = this.props;
     const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
-    this.setState({ activeItem: taskRuns[taskRuns.length - 1] });
+    const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
+    this.setState({ activeItem });
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.obj !== nextProps.obj) {
-      const { obj } = this.props;
+      const { obj, activeTask } = this.props;
       const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
       const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
-      this.state.navUntouched && this.setState({ activeItem: taskRuns[taskRuns.length - 1] });
+      const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
+      this.state.navUntouched && this.setState({ activeItem });
     }
   }
+
+  getActiveTaskRun = (taskRuns: string[], activeTask: string): string =>
+    activeTask
+      ? taskRuns.find((taskRun) => taskRun.includes(activeTask))
+      : taskRuns[taskRuns.length - 1];
 
   getSortedTaskRun = (taskRunFromYaml) => {
     const taskRuns = Object.keys(taskRunFromYaml).sort((a, b) => {
@@ -78,6 +89,11 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
         isList: false,
       },
     ];
+    const path = `${resourcePathFromModel(
+      PipelineRunModel,
+      obj.metadata.name,
+      obj.metadata.namespace,
+    )}/logs/`;
     return (
       <div className="odc-pipeline-run-logs">
         <div className="odc-pipeline-run-logs__tasklist">
@@ -92,12 +108,16 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                       isActive={activeItem === task}
                       className="odc-pipeline-run-logs__navitem"
                     >
-                      <StatusIcon
-                        status={pipelineRunFilterReducer(_.get(obj, ['status', 'taskRuns', task]))}
-                      />
-                      <span className="odc-pipeline-run-logs__namespan">
-                        {_.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}
-                      </span>
+                      <Link to={path + _.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}>
+                        <StatusIcon
+                          status={pipelineRunFilterReducer(
+                            _.get(obj, ['status', 'taskRuns', task]),
+                          )}
+                        />
+                        <span className="odc-pipeline-run-logs__namespan">
+                          {_.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}
+                        </span>
+                      </Link>
                     </NavItem>
                   );
                 })}
@@ -126,5 +146,18 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
     );
   }
 }
+
+type PipelineRunLogsWithActiveTaskProps = {
+  obj: PipelineRun;
+  params?: RouteComponentProps;
+};
+
+export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTaskProps> = ({
+  obj,
+  params,
+}) => {
+  const activeTask = _.get(params, 'match.params.name');
+  return <PipelineRunLogs obj={obj} activeTask={activeTask} />;
+};
 
 export default PipelineRunLogs;

@@ -41,14 +41,16 @@ export class PipelineRunVisualization extends React.Component<
   }
 
   render() {
+    const { pipelineRun } = this.props;
     if (this.state.errorCode === 404) {
       return null;
     }
     return (
       <PipelineVisualizationGraph
-        namespace={this.props.pipelineRun.metadata.namespace}
-        graph={getPipelineTasks(this.state.pipeline, this.props.pipelineRun)}
-        runStatus={pipelineRunFilterReducer(this.props.pipelineRun)}
+        pipelineRun={pipelineRun.metadata.name}
+        namespace={pipelineRun.metadata.namespace}
+        graph={getPipelineTasks(this.state.pipeline, pipelineRun)}
+        runStatus={pipelineRunFilterReducer(pipelineRun)}
       />
     );
   }

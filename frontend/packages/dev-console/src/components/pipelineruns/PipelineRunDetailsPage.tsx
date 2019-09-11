@@ -4,7 +4,7 @@ import { navFactory } from '@console/internal/components/utils';
 import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { DevPreviewBadge } from '@console/shared';
 import { PipelineRunDetails } from './PipelineRunDetails';
-import PipelineRunLogs from './PipelineRunLogs';
+import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => (
   <DetailsPage
@@ -12,7 +12,12 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => (
     pages={[
       navFactory.details(PipelineRunDetails),
       navFactory.editYaml(viewYamlComponent),
-      navFactory.logs(PipelineRunLogs),
+      {
+        href: 'logs',
+        path: 'logs/:name?',
+        name: 'Logs',
+        component: PipelineRunLogsWithActiveTask,
+      },
     ]}
     badge={<DevPreviewBadge />}
   />
