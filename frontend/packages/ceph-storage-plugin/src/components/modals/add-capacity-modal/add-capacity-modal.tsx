@@ -19,7 +19,8 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
     Ti: 'Ti',
   };
   const requestSizeUnit = dropdownUnits.Ti;
-  const [requestSizeValue, setRequestSizeValue] = React.useState('');
+  const [buttonDisabled, setButton] = React.useState(false);
+  const [requestSizeValue, setRequestSizeValue] = React.useState('1');
   const [storageClass, setStorageClass] = React.useState('');
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -29,8 +30,10 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
-    const presentCapacity = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
-    const newValue = parseInt(presentCapacity, 10) + parseInt(requestSizeValue, 10) * 3;
+    const presentCount = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
+    const negativeValue = Number(requestSizeValue) < 0 ? -1 : 1;
+    const newValue =
+      (Number(presentCount) + Math.abs(Number(requestSizeValue)) * 3) * negativeValue;
     const patch = {
       op: 'replace',
       path: `/spec/storageDeviceSets/0/count`,
@@ -45,6 +48,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
       .catch((error) => {
         setError(error);
         setProgress(false);
+        setButton(true);
         throw error;
       });
   };
@@ -100,6 +104,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
         errorMessage={errorMessage}
         submitText="Add"
         cancel={cancel}
+        submitDisabled={buttonDisabled}
       />
     </form>
   );
