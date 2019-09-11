@@ -1,20 +1,57 @@
 .odc-pipeline-vis-steps-list {
-  list-style: none;
-  padding: 0;
-  width: 10em;
-  &__item {
-    padding: 5px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid var(--pf-global--BorderColor--light-100);
-    background: var(--pf-global--BackgroundColor--200);
-    color: var(--pf-global--Color--dark-100);
-    justify-content: center;
-    align-items: center;
+  min-width: 10em;
+
+  &__task-name {
+    font-weight: var(--pf-global--FontWeight--bold);
+    line-height: 1.5em;
+    max-height: 3em;
+
+    // Limit the size of the title so the content doesn't have unnecessary whitespace in the middle
+    max-width: 15em;
+    margin: 0 auto 10px auto;
+
+    // Apply ellipsis at multiple lines (apparently decent support cross browser)
+    // ref: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-line-clamp
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  &__step {
     display: flex;
-    text-align: center;
+    margin-bottom: 10px;
+
     &:last-child {
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
+  }
+
+  &__icon {
+    flex: 0 0 18px;
+  }
+
+  &__icon-backdrop {
+    fill: var(--pf-global--Color--light-100);
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding-left: var(--pf-global--spacer--sm);
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &.is-main-focus {
+      padding: 0 var(--pf-global--spacer--sm);
+      text-align: center;
+    }
+  }
+
+  &__duration {
+    flex: 0 0 auto;
+    padding-left: var(--pf-global--spacer--sm);
+    text-align: right;
   }
 }
