@@ -15,6 +15,7 @@ import {
   PROVIDERS,
 } from '../../constants';
 import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../constants/queries';
+import { getGaugeValue } from '../../utils';
 
 export const DataConsumersValue = {
   [PROVIDERS]: 'PROVIDERS_',
@@ -59,17 +60,17 @@ export const getChartData: GetChartData = (response, metric, humanize, unit, nam
     const x = _.get(r, ['metric', metric], '');
     const y = parseFloat(_.get(r, 'value[1]'));
     let val = name;
-    if (!name) val = x; // For Egress having the legends name = providers/accounts name
+    if (!name) val = x; // For Egress, which have the legend name(name) as providers name(x)
     return {
       name: val,
       x: _.truncate(x, { length: 18 }),
-      y: Number(humanize(y, unit).value),
+      y: Number(humanize(y, null, unit).value),
     };
   });
 };
 
 export const getLegendData: GetLegendData = (response, humanize) => {
-  const value = _.get(response, 'data.result[0].value[1]', null);
+  const value = getGaugeValue(response);
   return value ? humanize(value).string : '';
 };
 
@@ -157,7 +158,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       max = getMaxVal(result.egress, humanizeBinaryBytesWithoutB);
       chartData = [getChartData(result.egress, metric, humanizeBinaryBytesWithoutB, max.unit)];
       legendData = chartData[0].map((dataPoint) => ({
-        name: `${dataPoint.x} ${humanizeBinaryBytesWithoutB(dataPoint.y).string}`,
+        name: `${dataPoint.x} ${dataPoint.y} ${max.unit}`,
       }));
       break;
     default:
