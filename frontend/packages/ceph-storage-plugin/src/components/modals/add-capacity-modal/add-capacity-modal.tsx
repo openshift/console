@@ -24,13 +24,16 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const [storageClass, setStorageClass] = React.useState('');
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
+
+  const presentCount = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
   const storageClassTooltip =
     'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';
+  const labelTooltip =
+    'The backing storage requested will be higher as it will factor in the requested capacity, replica factor, and fault tolerant costs associated with the requested capacity.';
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
-    const presentCount = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
     const negativeValue = Number(requestSizeValue) < 0 ? -1 : 1;
     const newValue =
       (Number(presentCount) + Math.abs(Number(requestSizeValue)) * 3) * negativeValue;
@@ -71,11 +74,11 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
             <label className="control-label" htmlFor="request-size-input">
               Requested Capacity
               <span className="add-capacity-modal__span">
-                Used:{' '}
-                {_.get(
-                  ocsConfig,
-                  'spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage',
-                )}
+                <DashboardCardHelp>{labelTooltip}</DashboardCardHelp>
+                <span>
+                  Provisioned Capacity:
+                  {presentCount ? ` ${presentCount / 3}Ti` : ' Unavailable'}
+                </span>
               </span>
             </label>
             <RequestSizeInput
