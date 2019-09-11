@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { TechPreviewBadge } from '@console/shared';
 import { ServiceModel } from '../../models';
 import ServiceList from './ServiceList';
 
@@ -14,6 +15,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ namespace }) => (
     canCreate
     kind={referenceForModel(ServiceModel)}
     ListComponent={ServiceList}
+    badge={<TechPreviewBadge />}
   />
 );
 

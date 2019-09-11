@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { TechPreviewBadge } from '@console/shared';
 import { RouteModel } from '../../models';
 import RouteList from './RouteList';
 
@@ -14,6 +15,7 @@ const RoutesPage: React.FC<RoutesPageProps> = ({ namespace }) => (
     canCreate={false}
     kind={referenceForModel(RouteModel)}
     ListComponent={RouteList}
+    badge={<TechPreviewBadge />}
   />
 );
 

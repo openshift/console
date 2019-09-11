@@ -124,7 +124,7 @@ ListPageWrapper_.propTypes = {
   customData: PropTypes.any,
 };
 
-/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, canExpand?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any}> */
+/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, canExpand?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
 export const FireMan_ = connect(null, {filterList})(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
@@ -206,6 +206,8 @@ export const FireMan_ = connect(null, {filterList})(
         helpText,
         resources,
         textFilter,
+        badge,
+        title,
       } = this.props;
 
       let createLink;
@@ -235,9 +237,8 @@ export const FireMan_ = connect(null, {filterList})(
         }
       }
 
-      const {title} = this.props;
       return <React.Fragment>
-        {title && <PageHeading title={title} />}
+        {title && <PageHeading title={title} badge={badge} />}
         {/* Show help text above the filter bar if there's a create button. */}
         {helpText && createLink && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
         <div className={classNames('co-m-pane__filter-bar', {'co-m-pane__filter-bar--with-help-text': helpText && !createLink})}>
@@ -302,7 +303,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode} >} */
 export const ListPage = withFallback(props => {
   const {
     autoFocus,
@@ -325,6 +326,7 @@ export const ListPage = withFallback(props => {
     skipAccessReview,
     textFilter,
     match,
+    badge,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -384,12 +386,13 @@ export const ListPage = withFallback(props => {
     showTitle={showTitle}
     textFilter={textFilter}
     title={title}
+    badge={badge}
   />;
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
 export const MultiListPage = props => {
   const {
     autoFocus,
@@ -411,6 +414,7 @@ export const MultiListPage = props => {
     textFilter,
     title,
     customData,
+    badge,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -434,6 +438,7 @@ export const MultiListPage = props => {
     selectorFilterLabel="Filter by selector (app=nginx) ..."
     textFilter={textFilter}
     title={showTitle ? title : undefined}
+    badge={badge}
   >
     <Firehose resources={mock ? [] : resources}>
       <ListPageWrapper_

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { Button } from '@patternfly/react-core';
+import { Button, SplitItem, Split } from '@patternfly/react-core';
 import { ActionsMenu, ResourceIcon, KebabAction, resourcePath, FirehoseResult, KebabOption } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
@@ -15,20 +15,24 @@ import {
 } from '../../module/k8s';
 import { ResourceItemDeleting } from '../overview/project-overview';
 
-export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
+export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   <ol className="breadcrumb">
-    { breadcrumbs.map((crumb, i, {length}) => {
+    {breadcrumbs.map((crumb, i, { length }) => {
       const isLast = i === length - 1;
-
-      return <li key={i} className={classNames({'active': isLast})}>
-        {isLast ? (
-          crumb.name
-        ) : (
-          <Link className="breadcrumb-link" to={crumb.path} data-test-id={`breadcrumb-link-${i}`}>{crumb.name}</Link>
-        )}
-      </li>;
-    }) }
-  </ol>);
+      return (
+        <li key={i} className={classNames({ active: isLast })}>
+          {isLast ? (
+            crumb.name
+          ) : (
+            <Link className="breadcrumb-link" to={crumb.path} data-test-id={`breadcrumb-link-${i}`}>
+              {crumb.name}
+            </Link>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+);
 
 const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div className="co-action-buttons">
   {_.map(actionButtons, (actionButton, i) => {
@@ -39,7 +43,7 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 </div>;
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
-  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style, customData} = props;
+  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style, customData, badge} = props;
   const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
   const data = _.get(obj, 'data');
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
@@ -54,11 +58,22 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
-
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
-    { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
+    { breadcrumbsFor && !_.isEmpty(data) &&
+      <Split style={{alignItems: 'baseline'}}>
+        <SplitItem isFilled>
+          <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} />
+        </SplitItem>
+        { badge &&
+        <SplitItem>
+          {badge}
+        </SplitItem>
+        }
+      </Split>
+    }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }
+      { !breadcrumbsFor && badge }
       { showActions && <div className="co-actions" data-test-id="details-actions">
         { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
         { hasMenuActions && <ActionsMenu actions={_.isFunction(menuActions) ? menuActions(kindObj, data, extraResources, customData) : menuActions.map(a => a(kindObj, data, extraResources, customData))} /> }
@@ -119,6 +134,7 @@ export type PageHeadingProps = {
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   customData?: any;
+  badge?: React.ReactNode;
 };
 
 export type ResourceOverviewHeadingProps = {
