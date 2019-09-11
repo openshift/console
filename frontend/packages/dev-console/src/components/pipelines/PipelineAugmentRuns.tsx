@@ -34,12 +34,6 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
   propsReferenceForRuns,
   ...props
 }) => {
-  const paramFilters = {};
-  const params = new URLSearchParams(window.location.search);
-  params.forEach((v, k) => {
-    paramFilters[k] = v;
-  });
-
   const resourceData =
     props.pipeline && props.pipeline.data && propsReferenceForRuns
       ? augmentRunsToData(props.pipeline.data, propsReferenceForRuns, props as KeyedRuns)
@@ -48,7 +42,6 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
   const children = inject(props.children, {
     ...props,
     resources: { pipeline: { data: resourceData } },
-    filters: { ...props.filters, ...paramFilters },
   });
   return <React.Fragment>{children}</React.Fragment>;
 };
