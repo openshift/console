@@ -23,4 +23,5 @@ export const NodeMaintenanceModel: K8sKind = {
   namespaced: false,
   kind: 'NodeMaintenance',
   id: 'nodemaintenance',
+  crd: true,
 };
