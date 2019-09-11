@@ -1,22 +1,28 @@
-$gapSize: 3px;
-
 .odc-horizontal-stacked-bars {
-  display: inline-block;
+  --bar-gap: 3px;
+
+  display: block;
   height: 100%;
   overflow: hidden;
   vertical-align: middle;
   width: 100%;
+
+  &.is-inline {
+    display: inline-block;
+  }
 
   &__bars {
     display: flex;
     flex-direction: row;
     height: 100%;
     outline: none;
-    width: calc(100% + #{$gapSize});
+    width: calc(100% + var(--bar-gap));
   }
 
   &__data-bar {
-    box-shadow: inset -#{$gapSize} 0 0 #ffffff;
+    --bar-gap-neg: calc(var(--bar-gap) * -1);
+
+    box-shadow: inset var(--bar-gap-neg) 0 0 #ffffff;
     height: 100%;
     transition: flex-grow 300ms linear;
   }
