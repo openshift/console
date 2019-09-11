@@ -167,11 +167,19 @@ export const augmentRunsToData = (
   data: PropPipelineData[],
   propsReferenceForRuns: string[],
   runs: { [key: string]: Runs },
-) => {
+): PropPipelineData[] => {
   if (propsReferenceForRuns) {
-    propsReferenceForRuns.forEach(
-      (reference, i) => (data[i].latestRun = getLatestRun(runs[reference], 'creationTimestamp')),
-    );
+    const newData: PropPipelineData[] = [];
+    propsReferenceForRuns.forEach((reference, i) => {
+      const latestRun = getLatestRun(runs[reference], 'creationTimestamp');
+      if (latestRun !== data[i].latestRun) {
+        // ensure we create a new data object if the latestRun has changed so that shallow compare fails
+        newData.push({ ...data[i], latestRun });
+      } else {
+        newData.push(data[i]);
+      }
+    });
+    return newData;
   }
   return data;
 };
