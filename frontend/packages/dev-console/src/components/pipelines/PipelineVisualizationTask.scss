@@ -1,43 +1,53 @@
 $border-color: var(--pf-global--BorderColor--light-100);
-$gutter: 1.8em;
 .odc-pipeline-vis-task {
   position: relative;
-  width: 13em;
-  height: 2em;
-  white-space: normal;
-  border: 1px solid $border-color;
-  border-radius: 5px;
-  background-color: var(--pf-global--BackgroundColor--200);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  width: 10em;
   margin-top: 1.5em;
-  padding: 0.5em;
+
   &__content {
     width: inherit;
+    height: 2.5em;
+    white-space: normal;
+    border: 1px solid $border-color;
+    border-radius: 20px;
+    color: black;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     display: flex;
-    position: relative;
-    top: 1px;
+    flex-direction: row;
+    align-items: center;
+    &:hover {
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+    }
   }
+  &__connector {
+    display: none;
 
-  &.is-input-node {
-    width: 2em;
-    height: 2em;
-    border-radius: 2em;
-    color: var(--pf-global--BackgroundColor--200);
-    background: $border-color;
+    &::before,
     &::after {
       content: '';
+      width: 0.67em;
+      height: 1.2em;
       position: absolute;
-      transform: translateY(-100%);
-      left: 2em;
-      bottom: -1em;
+      top: -2.75em;
+      border-top: 1px solid $border-color;
+    }
+
+    &::after {
+      left: -17px;
+      border-right: 1px solid var(--pf-global--BorderColor--light-100);
+      border-radius: 0 20px;
+    }
+
+    &::before {
+      right: -17px;
+      border-left: 1px solid var(--pf-global--BorderColor--light-100);
+      border-radius: 20px 0 0;
     }
   }
 
   &:not(:first-child) {
-    margin-top: 3em;
+    margin-top: 1.5em;
   }
 
   &__stepcount {
@@ -46,29 +56,29 @@ $gutter: 1.8em;
   }
 
   &__status {
-    margin: 0 4px;
+    margin: 0 3px 0 7px;
     width: 1.5em;
+    height: 1.5em;
     flex-grow: 0;
     flex-shrink: 0;
     order: -1;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.1em;
   }
 
   &__title {
-    flex-grow: 1;
-    flex-shrink: 1;
+    flex: 0 0 75px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    margin: 0px 4px;
     &:hover {
       cursor: pointer;
     }
     &.is-text-center {
       text-align: center;
+      margin: 0 auto;
+      flex: 0 0 100px;
     }
   }
   // Connect each task
@@ -76,25 +86,36 @@ $gutter: 1.8em;
     &::after,
     &::before {
       content: '';
-      top: -4em;
+      border-radius: 0 0 0 1.33em;
+      top: -4.33em;
       position: absolute;
-      border-bottom: 1px solid $border-color;
-      width: $gutter / 2;
-      height: calc(5em + 1px);
+      border-bottom: 1px solid var(--pf-global--BorderColor--light-100);
+      width: 10px;
+      height: 5.75em;
     }
 
     // Right connecting lines
     &::after {
-      right: 0;
-      transform: translateX(100%);
+      right: -10px;
       border-right: 1px solid $border-color;
+      border-radius: 0 0 12px;
     }
 
     // Left connecting lines
     &::before {
-      left: 0;
-      transform: translateX(-100%);
+      left: -10px;
       border-left: 1px solid $border-color;
+      border-radius: 0 0 0 12px;
+    }
+  }
+  &:nth-child(2) {
+    .odc-pipeline-vis-task__connector {
+      display: block;
+    }
+    &::after,
+    &::before {
+      top: -1.9em;
+      height: 3.3em;
     }
   }
 }

@@ -1,37 +1,38 @@
 $border-color: var(--pf-global--BorderColor--light-100);
-$gutter: 1.8em;
+$gutter: 1.7em;
 
 .odc-pipeline-vis-graph {
-  background: var(--pf-global--BackgroundColor--100);
-  padding: var(--pf-global--spacer--md);
   margin: var(--pf-global--spacer--md) 0;
   overflow: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  font-size: 12px;
 
   // reset
   &__stage-column {
     list-style: none;
     padding: 0;
-    margin: 0;
   }
 
   &__stages {
     display: inline-flex;
+    background: var(--pf-global--BackgroundColor--300);
+    border-radius: 20px;
+    padding: 20px;
   }
 
   &__stage {
-    margin: 0 2em;
+    margin: 0 10px;
 
     &:not(:first-child) {
       & .odc-pipeline-vis-task:first-child {
         &::before {
           content: '';
           position: absolute;
-          top: 1em;
+          top: 1.25em;
 
           border-top: 1px solid $border-color;
-          width: $gutter * 1.7 + 1;
+          width: $gutter;
           height: 0;
         }
       }
@@ -41,13 +42,12 @@ $gutter: 1.8em;
   &__stage.is-parallel {
     & .odc-pipeline-vis-task {
       &:first-child {
-        &::before,
-        &::after {
+        &::before {
           content: '';
           position: absolute;
-          top: 1em;
+          top: 1.25em;
           border-top: 1px solid $border-color;
-          width: $gutter * 1.7 + 1;
+          width: $gutter;
           height: 0;
         }
         &::before {

@@ -3,6 +3,7 @@ import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { PipelineVisualizationGraph } from '../pipelines/PipelineVisualizationGraph';
 import { getPipelineTasks } from '../../utils/pipeline-utils';
 import { PipelineModel } from '../../models';
+import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 
 export interface PipelineRunVisualizationProps {
   pipelineRun: K8sResourceKind;
@@ -47,6 +48,7 @@ export class PipelineRunVisualization extends React.Component<
       <PipelineVisualizationGraph
         namespace={this.props.pipelineRun.metadata.namespace}
         graph={getPipelineTasks(this.state.pipeline, this.props.pipelineRun)}
+        runStatus={pipelineRunFilterReducer(this.props.pipelineRun)}
       />
     );
   }

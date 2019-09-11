@@ -3,8 +3,8 @@ import {
   chart_color_blue_300 as runningColor,
   global_danger_color_100 as failureColor,
   chart_color_blue_100 as pendingColor,
-  chart_color_black_200 as skippedColor,
-  chart_color_black_400 as cancelledColor,
+  chart_color_black_400 as skippedColor,
+  chart_color_black_500 as cancelledColor,
 } from '@patternfly/react-tokens';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
