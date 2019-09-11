@@ -31,6 +31,7 @@ import {
 } from '../../module/k8s';
 import {
   EmptyBox,
+  ExternalLink,
   Firehose,
   HorizontalNav,
   ResourceLink,
@@ -153,6 +154,7 @@ export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
 
 export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
+  const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
@@ -187,9 +189,17 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
         </div>
       </div>
       <div className="co-m-pane__body-group">
+        <p className="co-m-pane__explanation">
+          View this cluster and manage subscription settings at
+          {' '}
+          <ExternalLink
+            text="cloud.redhat.com"
+            href={`https://cloud.redhat.com/openshift/details/${clusterID}`}
+          />.
+        </p>
         <dl className="co-m-pane__details" >
           <dt>Cluster ID</dt>
-          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">{getClusterID(cv)}</dd>
+          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">{clusterID}</dd>
           <dt>Desired Release Image</dt>
           <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
             {imageParts.length === 2
