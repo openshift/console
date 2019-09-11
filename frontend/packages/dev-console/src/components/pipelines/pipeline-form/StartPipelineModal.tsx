@@ -16,6 +16,7 @@ export type newPipelineRun = (Pipeline: Pipeline, latestRun: PipelineRun) => {};
 export interface StartPipelineModalProps {
   pipeline: Pipeline;
   getNewPipelineRun: newPipelineRun;
+  onSubmit?: (pipelineRun: PipelineRun) => void;
 }
 export interface StartPipelineFormValues extends FormikValues {
   namespace: string;
@@ -27,6 +28,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
   pipeline,
   getNewPipelineRun,
   close,
+  onSubmit,
 }) => {
   const initialValues: StartPipelineFormValues = {
     namespace: pipeline.metadata.namespace,
@@ -52,8 +54,9 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       },
     };
     k8sCreate(PipelineRunModel, getNewPipelineRun(pipeline, pipelineRunData))
-      .then(() => {
+      .then((res) => {
         actions.setSubmitting(false);
+        onSubmit && onSubmit(res);
         close();
       })
       .catch((err) => {

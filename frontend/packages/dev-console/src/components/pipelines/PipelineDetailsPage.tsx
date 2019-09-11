@@ -5,7 +5,11 @@ import { viewYamlComponent } from '@console/internal/components//utils/horizonta
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { DevPreviewBadge } from '@console/shared';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { rerunPipeline } from '../../utils/pipeline-actions';
+import {
+  rerunPipeline,
+  startPipeline,
+  handlePipelineRunSubmit,
+} from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import PipelineDetails from './PipelineDetails';
@@ -35,10 +39,15 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
           .then((listres) => {
             this.setState({
               menuActions: [
+                startPipeline(
+                  res,
+                  getLatestRun({ data: listres }, 'creationTimestamp'),
+                  handlePipelineRunSubmit,
+                ),
                 rerunPipeline(
                   res,
                   getLatestRun({ data: listres }, 'creationTimestamp'),
-                  'pipelines',
+                  handlePipelineRunSubmit,
                 ),
                 Kebab.factory.Delete,
               ],

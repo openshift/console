@@ -26,6 +26,9 @@ const redirectToResourceList = (resource: string) => {
       : `/k8s/ns/${activeNamespace}/${resource}`;
   history.push(resourceUrl);
 };
+export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
+  redirectToResourceList(`pipelineruns/${pipelineRun.metadata.name}`);
+};
 
 export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): PipelineRun => {
   if (
@@ -115,14 +118,10 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
 export const triggerPipeline = (
   pipeline: Pipeline,
   latestRun: PipelineRun,
-  redirectURL?: string,
+  onSubmit?: (pipelineRun: PipelineRun) => void,
 ) => {
   k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
-    .then(() => {
-      if (redirectURL) {
-        redirectToResourceList(redirectURL);
-      }
-    })
+    .then(onSubmit)
     .catch((err) => errorModal({ error: err.message }));
 };
 
@@ -159,26 +158,32 @@ export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
     },
   });
 };
-export const startPipeline = (pipeline: Pipeline, latestRun: PipelineRun) => (): Action => ({
+export const startPipeline = (
+  pipeline: Pipeline,
+  latestRun: PipelineRun,
+  onSubmit?: (pipelineRun: PipelineRun) => void,
+) => (): Action => ({
   label: 'Start',
   callback: () => {
     const params = _.get(pipeline, ['spec', 'params'], []);
     const resources = _.get(pipeline, ['spec', 'resources'], []);
+
     if (!_.isEmpty(params) || !_.isEmpty(resources)) {
       startPipelineModal({
         pipeline,
         getNewPipelineRun: newPipelineRun,
         modalClassName: 'modal-lg',
+        onSubmit,
       });
     } else {
-      triggerPipeline(pipeline, latestRun);
+      triggerPipeline(pipeline, latestRun, onSubmit);
     }
   },
 });
 export const rerunPipeline = (
   pipeline: Pipeline,
   latestRun: PipelineRun,
-  redirectURL?: string,
+  onSubmit?: (pipelineRun: PipelineRun) => void,
 ): ActionFunction => {
   if (!latestRun || !latestRun.metadata) {
     // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
@@ -192,11 +197,7 @@ export const rerunPipeline = (
     label: 'Start Last Run',
     callback: () => {
       k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
-        .then(() => {
-          if (redirectURL) {
-            redirectToResourceList(redirectURL);
-          }
-        })
+        .then(onSubmit)
         .catch((err) => errorModal({ error: err.message }));
     },
   });
