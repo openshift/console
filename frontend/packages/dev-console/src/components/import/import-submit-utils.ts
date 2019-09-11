@@ -174,7 +174,7 @@ export const createDeploymentConfig = (
       replicas,
       template: {
         metadata: {
-          labels: { ...defaultLabels, ...userLabels, ...podLabels },
+          labels: { ...userLabels, ...podLabels },
         },
         spec: {
           containers: [
