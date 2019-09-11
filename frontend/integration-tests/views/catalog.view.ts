@@ -10,4 +10,6 @@ export const createResourceButton = $('.co-catalog-page__overlay-create');
 export const createServiceInstanceForm = $('.co-create-service-instance');
 export const createServiceBindingButton = $('.co-well').element(by.buttonText('Create Service Binding'));
 export const instantiateTemplateFrom = $('.co-instantiate-template-form');
-export const resourceItem = (resourceType: string, resourceName: string) => $(`.co-resource-item>.co-m-resource-icon[title=${resourceType}]+.co-resource-item__resource-name[href*=${resourceName}]`);
+export const templateInstanceResource = (resourceType: string, resourceName: string) => $(`.co-resource-item>.co-m-resource-icon[title=${resourceType}]+.co-resource-item__resource-name[href*=${resourceName}]`);
+export const templateInstanceItem = $('.co-resource-item .co-m-resource-templateinstance');
+export const templateInstanceName = $('.co-resource-item__resource-name');

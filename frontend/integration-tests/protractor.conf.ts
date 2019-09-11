@@ -166,6 +166,7 @@ export const config: Config = {
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
       'tests/crd-extensions.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
     ]),
     'kubevirt-plugin': suite([
       '../packages/kubevirt-plugin/integration-tests/tests/vm.wizard.scenario.ts',
