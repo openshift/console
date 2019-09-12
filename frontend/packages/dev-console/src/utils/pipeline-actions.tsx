@@ -7,6 +7,7 @@ import { k8sCreate, K8sKind, K8sResourceKind, k8sUpdate } from '@console/interna
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
+import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
@@ -29,23 +30,10 @@ const redirectToResourceList = (resource: string) => {
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   redirectToResourceList(`pipelineruns/${pipelineRun.metadata.name}`);
 };
-
-export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): PipelineRun => {
-  if (
-    (!pipeline || !pipeline.metadata || !pipeline.metadata.name || !pipeline.metadata.namespace) &&
-    (!latestRun ||
-      !latestRun.metadata ||
-      !latestRun.spec ||
-      !latestRun.spec.pipelineRef ||
-      !latestRun.spec.pipelineRef.name)
-  ) {
+export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun): PipelineRun => {
+  if (!pipeline || !pipeline.metadata || !pipeline.metadata.name || !pipeline.metadata.namespace) {
     // eslint-disable-next-line no-console
-    console.error(
-      'Unable to create new PipelineRun. Missing "metadata" in ',
-      pipeline,
-      ' and spec.pipelineRef in ',
-      latestRun,
-    );
+    console.error('Unable to create new PipelineRun. Missing "metadata" in ', pipeline);
     return null;
   }
   // TODO: Add serviceAccount for start scenario by fetching details from user
@@ -53,29 +41,8 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
     apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
     kind: PipelineRunModel.kind,
     metadata: {
-      name:
-        pipeline && pipeline.metadata && pipeline.metadata.name
-          ? `${pipeline.metadata.name}-${Math.random()
-              .toString(36)
-              .replace(/[^a-z0-9]+/g, '')
-              .substr(1, 6)}`
-          : latestRun &&
-            latestRun.spec &&
-            latestRun.spec.pipelineRef &&
-            latestRun.spec.pipelineRef.name
-          ? `${latestRun.spec.pipelineRef.name}-${Math.random()
-              .toString(36)
-              .replace(/[^a-z0-9]+/g, '')
-              .substr(1, 6)}`
-          : `PipelineRun-${Math.random()
-              .toString(36)
-              .replace(/[^a-z0-9]+/g, '')
-              .substr(1, 6)}`,
-
-      namespace:
-        latestRun && latestRun.metadata && latestRun.metadata.namespace
-          ? latestRun.metadata.namespace
-          : pipeline.metadata.namespace || '',
+      name: `${pipeline.metadata.name}-${getRandomChars(6)}`,
+      namespace: pipeline.metadata.namespace,
       labels:
         latestRun && latestRun.metadata && latestRun.metadata.labels
           ? latestRun.metadata.labels
@@ -85,15 +52,7 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
     },
     spec: {
       pipelineRef: {
-        name:
-          latestRun &&
-          latestRun.spec &&
-          latestRun.spec.pipelineRef &&
-          latestRun.spec.pipelineRef.name
-            ? latestRun.spec.pipelineRef.name
-            : pipeline && pipeline.metadata && pipeline.metadata.name
-            ? pipeline.metadata.name
-            : null,
+        name: pipeline.metadata.name,
       },
       resources:
         latestRun && latestRun.spec && latestRun.spec.resources
@@ -117,10 +76,9 @@ export const newPipelineRun = (pipeline: Pipeline, latestRun: PipelineRun): Pipe
 
 export const triggerPipeline = (
   pipeline: Pipeline,
-  latestRun: PipelineRun,
   onSubmit?: (pipelineRun: PipelineRun) => void,
 ) => {
-  k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
+  k8sCreate(PipelineRunModel, getPipelineRunData(pipeline))
     .then(onSubmit)
     .catch((err) => errorModal({ error: err.message }));
 };
@@ -144,12 +102,13 @@ export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
       }
       k8sCreate(
         PipelineRunModel,
-        newPipelineRun(
+        getPipelineRunData(
           {
             apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
             kind: 'Pipeline',
             metadata: {
               name: pipelineRun.spec.pipelineRef.name,
+              namespace: pipelineRun.metadata.namespace,
             },
           },
           pipelineRun,
@@ -160,7 +119,6 @@ export const reRunPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
 };
 export const startPipeline = (
   pipeline: Pipeline,
-  latestRun: PipelineRun,
   onSubmit?: (pipelineRun: PipelineRun) => void,
 ) => (): Action => ({
   label: 'Start',
@@ -171,12 +129,12 @@ export const startPipeline = (
     if (!_.isEmpty(params) || !_.isEmpty(resources)) {
       startPipelineModal({
         pipeline,
-        getNewPipelineRun: newPipelineRun,
+        getPipelineRunData,
         modalClassName: 'modal-lg',
         onSubmit,
       });
     } else {
-      triggerPipeline(pipeline, latestRun, onSubmit);
+      triggerPipeline(pipeline, onSubmit);
     }
   },
 });
@@ -196,7 +154,7 @@ export const rerunPipeline = (
   return (): Action => ({
     label: 'Start Last Run',
     callback: () => {
-      k8sCreate(PipelineRunModel, newPipelineRun(pipeline, latestRun))
+      k8sCreate(PipelineRunModel, getPipelineRunData(pipeline, latestRun))
         .then(onSubmit)
         .catch((err) => errorModal({ error: err.message }));
     },

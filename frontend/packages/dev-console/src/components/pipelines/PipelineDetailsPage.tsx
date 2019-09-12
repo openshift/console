@@ -39,11 +39,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
           .then((listres) => {
             this.setState({
               menuActions: [
-                startPipeline(
-                  res,
-                  getLatestRun({ data: listres }, 'creationTimestamp'),
-                  handlePipelineRunSubmit,
-                ),
+                startPipeline(res, handlePipelineRunSubmit),
                 rerunPipeline(
                   res,
                   getLatestRun({ data: listres }, 'creationTimestamp'),
