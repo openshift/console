@@ -176,13 +176,13 @@ export const clickListPageCreateYAMLButton = async() => {
     await browser.wait(until.presenceOf(createYAMLButton));
     await createYAMLButton.click();
   }
-  browser.wait(until.and(untilNoLoadersPresent, until.presenceOf(element(by.cssContainingText('h1', 'Create')))));
+  await browser.wait(until.and(untilNoLoadersPresent, until.presenceOf(element(by.cssContainingText('h1', 'Create')))));
 };
 
 export const createNamespacedResourceWithDefaultYAML = async function(resourceType: string) {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resourceType}`);
   await isLoaded();
   await clickListPageCreateYAMLButton();
-  await browser.wait(until.presenceOf(yamlView.saveButton));
+  await yamlView.isLoaded();
   await yamlView.saveButton.click();
 };
