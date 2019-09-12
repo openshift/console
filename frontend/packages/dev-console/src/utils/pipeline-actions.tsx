@@ -215,7 +215,8 @@ export const stopPipelineRun = (pipelineRun: PipelineRun): ActionFunction => {
   return (): Action => ({
     label: 'Stop',
     callback: () => {
-      k8sUpdate(PipelineRunModel, pipelineRun, {
+      k8sUpdate(PipelineRunModel, {
+        ...pipelineRun,
         spec: { ...pipelineRun.spec, status: 'PipelineRunCancelled' },
       });
     },
