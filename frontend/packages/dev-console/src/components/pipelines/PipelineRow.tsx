@@ -6,7 +6,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../utils/pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../models';
-import { rerunPipeline, startPipeline } from '../../utils/pipeline-actions';
+import {
+  rerunPipeline,
+  startPipeline,
+  handlePipelineRunSubmit,
+} from '../../utils/pipeline-actions';
 import LinkedPipelineRunTaskStatus from '../pipelineruns/LinkedPipelineRunTaskStatus';
 import { tableColumnClasses } from './pipeline-table';
 
@@ -22,8 +26,8 @@ interface PipelineRowProps {
 
 const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => {
   const menuActions = [
-    startPipeline(obj, obj.latestRun),
-    rerunPipeline(obj, obj.latestRun, ''),
+    startPipeline(obj, obj.latestRun, handlePipelineRunSubmit),
+    rerunPipeline(obj, obj.latestRun, handlePipelineRunSubmit),
     Kebab.factory.Delete,
   ];
   return (
