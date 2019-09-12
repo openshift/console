@@ -13,7 +13,9 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
+import HorizontalStackedBars, { StackedValue } from '../charts/HorizontalStackedBars';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
+import { computeStepColor, TaskStatus } from './pipeline-step-utils';
 
 import './PipelineVisualizationTask.scss';
 
@@ -22,11 +24,11 @@ interface TaskProps {
   loaded?: boolean;
   task?: {
     data: K8sResourceKind;
+    spec?: {
+      steps?: { name: string }[];
+    };
   };
-  status?: {
-    reason: string;
-    duration: string;
-  };
+  status?: TaskStatus;
   namespace: string;
   isPipelineRun: boolean;
 }
@@ -38,10 +40,7 @@ interface PipelineVisualizationTaskProp {
     taskRef: {
       name: string;
     };
-    status?: {
-      reason: string;
-      duration: string;
-    };
+    status?: TaskStatus;
   };
   taskRun?: string;
   pipelineRunStatus?: string;
@@ -117,21 +116,29 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
 };
 const TaskComponent: React.FC<TaskProps> = ({ task, status, name, isPipelineRun }) => {
   const taskData = task.data;
+  const stepList = _.get(taskData, ['spec', 'steps'], []);
+  const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
+
   return (
     <li className={cx('odc-pipeline-vis-task')}>
       <div className="odc-pipeline-vis-task__connector" />
       <Tooltip
         position="bottom"
         enableFlip={false}
-        content={
-          <PipelineVisualizationStepList steps={(taskData.spec && taskData.spec.steps) || []} />
-        }
+        content={<PipelineVisualizationStepList steps={stepList} />}
       >
         <div className="odc-pipeline-vis-task__content">
-          <div className={cx('odc-pipeline-vis-task__title', { 'is-text-center': !isPipelineRun })}>
-            {name || _.get(task, ['metadata', 'name'], '')}
+          <div
+            className={cx('odc-pipeline-vis-task__title-wrapper', {
+              'is-text-center': !isPipelineRun,
+            })}
+          >
+            <div className="odc-pipeline-vis-task__title">
+              {name || _.get(task, ['metadata', 'name'], '')}
+            </div>
+            {showStatusState && <TaskComponentTaskStatus steps={stepList} status={status} />}
           </div>
-          {isPipelineRun && status && status.reason && (
+          {isPipelineRun && (
             <div
               className="odc-pipeline-vis-task__status"
               style={{
@@ -141,11 +148,30 @@ const TaskComponent: React.FC<TaskProps> = ({ task, status, name, isPipelineRun 
                     : getRunStatusColor(runStatus.Cancelled).pftoken.value,
               }}
             >
-              <StatusIcon status={status.reason} height={18} width={18} />
+              {showStatusState && <StatusIcon status={status.reason} height={18} width={18} />}
             </div>
           )}
         </div>
       </Tooltip>
     </li>
   );
+};
+
+interface TaskStatusProps {
+  steps: { name: string }[];
+  status: TaskStatus;
+}
+
+const TaskComponentTaskStatus: React.FC<TaskStatusProps> = ({ steps, status }) => {
+  if (steps.length === 0) return null;
+
+  const visualValues: StackedValue[] = steps.map((step) => {
+    return {
+      color: computeStepColor(step, status),
+      name: step.name,
+      size: 1,
+    };
+  });
+
+  return <HorizontalStackedBars values={visualValues} barGap={2} height={2} />;
 };

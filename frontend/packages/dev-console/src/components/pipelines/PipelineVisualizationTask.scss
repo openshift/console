@@ -67,11 +67,11 @@ $border-color: var(--pf-global--BorderColor--light-100);
     align-items: center;
   }
 
-  &__title {
+  &__title-wrapper {
     flex: 0 0 75px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     &:hover {
       cursor: pointer;
     }
@@ -81,6 +81,14 @@ $border-color: var(--pf-global--BorderColor--light-100);
       flex: 0 0 100px;
     }
   }
+
+  &__title {
+    flex: 0 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   // Connect each task
   &:not(:first-child) {
     &::after,

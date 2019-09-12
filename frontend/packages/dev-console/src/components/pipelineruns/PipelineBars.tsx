@@ -31,6 +31,7 @@ export const PipelineBars: React.FC<PipelineBarProps> = ({ pipelinerun, pipeline
         // reuse elements and inadvertently cause animations BETWEEN different pipeline status'
         disableAnimation={!pipelineIdentifier}
         height="1em"
+        inline
         values={Object.keys(runStatus).map((status) => ({
           color: getRunStatusColor(runStatus[status]).pftoken.value,
           name: status,

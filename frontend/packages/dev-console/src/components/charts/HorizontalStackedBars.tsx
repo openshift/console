@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import './HorizontalStackedBars.scss';
 
 export type StackedValue = {
@@ -8,20 +9,27 @@ export type StackedValue = {
 };
 
 export type HorizontalStackedBarsProps = {
+  barGap?: number;
   disableAnimation?: boolean;
   height?: number | string;
+  inline?: boolean;
   values: StackedValue[];
   width?: number | string;
 };
 
 const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
+  barGap,
   disableAnimation,
   height,
+  inline,
   values,
   width,
 }) => {
   return (
-    <div className="odc-horizontal-stacked-bars" style={{ height, width }}>
+    <div
+      className={classNames('odc-horizontal-stacked-bars', { 'is-inline': inline })}
+      style={{ height, width, '--bar-gap': barGap && `${barGap}px` }}
+    >
       <div className="odc-horizontal-stacked-bars__bars">
         {values.map(({ color, name, size }) => (
           <div
