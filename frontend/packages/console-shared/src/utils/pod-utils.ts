@@ -21,7 +21,7 @@ export const podColor = {
   Empty: '#FFFFFF',
   Failed: '#CC0000',
   Pending: '#8BC1F7',
-  Succceeded: '#519149',
+  Succeeded: '#519149',
   Terminating: '#002F5D',
   Unknown: '#A18FFF',
   'Scaled to 0': '#FFFFFF',
