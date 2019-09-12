@@ -8,6 +8,7 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
+  DashboardCardHelp,
 } from '@console/internal/components/dashboard/dashboard-card';
 import {
   DashboardItemProps,
@@ -92,17 +93,21 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
 
   const statUsed: React.ReactText = getLastStats(storageUsed, getInstantVectorStats);
   const statTotal: React.ReactText = getLastStats(storageTotal, getInstantVectorStats);
+  const infoText =
+    'Total capacity reflects the actual raw capacity of the OpenShift Container Storage cluster.  Used capacity reflects provisioned capacity which factors capacity being used to store user data and overhead from ensuring redundancy and reliability of the data.';
 
   return (
     <DashboardCard className="ceph-capacity-card__dashboard-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity</DashboardCardTitle>
-        <Dropdown
-          className="ceph-capacity-card__dropdown-item"
-          items={CapacityViewType}
-          onChange={setCapacityViewType}
-          selectedKey={[cvTypeSelected]}
-        />
+        <div className="ceph-capacity-card__tootip-dropdown">
+          <Dropdown
+            items={CapacityViewType}
+            onChange={setCapacityViewType}
+            selectedKey={[cvTypeSelected]}
+          />
+          <DashboardCardHelp>{infoText}</DashboardCardHelp>
+        </div>
       </DashboardCardHeader>
       <DashboardCardBody>
         <CapacityBody>
