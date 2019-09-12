@@ -398,38 +398,6 @@ $co-external-link-padding-right: 15px;
   max-width: 600px;
 }
 
-// Enable word-break and append pencil icon ::after so that it doesn't wrap without text
-.co-modal-btn-link {
-  outline: none;
-  padding: 0 20px 0 0;
-  white-space: normal;
-  word-break: break-all; // Firefox
-  word-break: break-word;
-  &::after {
-    @include font-awesome-free-solid;
-    color: $color-pf-black-600;
-    content: fa-content($fa-var-pencil-alt);
-    line-height: 1;
-    margin-left: 5px;
-    margin-right: -20px; // width + margin-left
-    pointer-events: none;
-    position: relative;
-    right: 0;
-    width: 15px;
-  }
-  &:hover::after {
-    color: $color-pf-black-700;
-  }
-}
-
-.co-modal-btn-link--inline {
-  margin: 0 8px;
-}
-
-.co-modal-btn-link--left {
-  text-align: left;
-}
-
 .co-m-pane__body-group {
   padding: 0 0 30px 0;
 }

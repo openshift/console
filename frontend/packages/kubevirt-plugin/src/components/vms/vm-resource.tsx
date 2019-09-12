@@ -15,6 +15,8 @@ import {
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, DASH } from '@console/shared';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
@@ -36,11 +38,14 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
       <dt>
         Description
         {canUpdateVM && (
-          <button
+          <Button
+            variant="link"
             type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
+            className="pf-m-inline"
             onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}
-          />
+          >
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          </Button>
         )}
       </dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">

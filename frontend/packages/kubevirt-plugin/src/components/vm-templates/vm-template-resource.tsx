@@ -9,6 +9,8 @@ import {
   getBootableDevicesInOrder,
   TemplateSource,
 } from 'kubevirt-web-ui-components';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
@@ -33,11 +35,14 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       <dt>
         Description
         {canUpdateTemplate && (
-          <button
+          <Button
+            variant="link"
             type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
+            className="pf-m-inline"
             onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
-          />
+          >
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          </Button>
         )}
       </dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
