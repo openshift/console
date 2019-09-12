@@ -21,8 +21,6 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
   maintenance,
   hostName,
 }) => {
-  const [workloadsExpanded, setWorkloadsExpanded] = React.useState(false);
-
   const reason = getNodeMaintenanceReason(maintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(maintenance);
   const lastError = getNodeMaintenanceLastError(maintenance);
@@ -57,11 +55,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
         size={ProgressSize.sm}
       />
       <br />
-      <Expandable
-        toggleText={`Show remaining workloads (${pendingPods.length})`}
-        onToggle={() => setWorkloadsExpanded(!workloadsExpanded)}
-        isExpanded={workloadsExpanded}
-      >
+      <Expandable toggleText={`Show remaining workloads (${pendingPods.length})`}>
         <MaintenancePopoverPodList pods={pendingPods} />
       </Expandable>
       <br />
