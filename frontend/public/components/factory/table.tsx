@@ -164,7 +164,7 @@ const stateToProps = ({UI}, {
 // Common table row/columns helper SFCs for implementing accessible data grid
 export const TableRow: React.SFC<TableRowProps> = ({id, index, trKey, style, className, ...props}) => {
   return (
-    <tr {...props} data-id={id} data-index={index} data-test-rows="resource-row" data-key={trKey} style={style} className={className} role="row" />
+    <tr {...props} key={trKey} data-id={id} data-index={index} data-test-rows="resource-row" data-key={trKey} style={style} className={className} role="row" />
   );
 };
 TableRow.displayName = 'TableRow';
@@ -200,17 +200,22 @@ export type TableWrapperProps = {
   ariaRowCount: number | undefined;
 }
 
+const getRowKey = (obj, index) => {
+  return _.get(obj, 'rowKey') || _.get(obj, 'metadata.uid', index);
+};
+
 const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   const { bindBodyRef, cellMeasurementCache, customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
 
-  const rowRenderer = ({index, isScrolling: scrolling, key, style, parent}) => {
-    const rowArgs = {obj: data[index], index, columns, isScrolling: scrolling, key, style, customData};
+  const rowRenderer = ({index, isScrolling: scrolling, style, parent}) => {
+    const rowKey = getRowKey(data[index], index);
+    const rowArgs = {obj: data[index], index, columns, isScrolling: scrolling, key: rowKey, style, customData};
     const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
-    const uid = _.get(rowArgs, 'obj.metadata.uid');
+
     return <CellMeasurer
       cache={cellMeasurementCache}
       columnIndex={0}
-      key={uid || key}
+      key={rowKey}
       parent={parent}
       rowIndex={index}>{row}</CellMeasurer>;
   };
@@ -335,7 +340,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       this._onSort = this._onSort.bind(this);
       this._handleResize = _.debounce(this._handleResize.bind(this), 100);
       this._bindBodyRef = this._bindBodyRef.bind(this);
-      this._refreshGrid = this._refreshGrid.bind(this);
+      this._refreshGrid = _.debounce(this._refreshGrid.bind(this), 100);
 
       let sortBy = {};
       if (currentSortField && currentSortOrder) {
@@ -356,8 +361,8 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
         minHeight: 44,
         keyMapper: rowIndex => {
           const { data } = this.props;
-          const uid = _.get(data[rowIndex], 'metadata.uid', rowIndex);
-          return uid;
+          const key = getRowKey(data[rowIndex], rowIndex);
+          return key;
         },
       });
     }
@@ -386,6 +391,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
     componentDidUpdate(prevProps){
       const {data, virtualize} = this.props;
       if (virtualize && this._bodyRef && !_.isEqual(prevProps.data, data)){
+        console.log('refresh grid');
         // force react-virtualized to update after data changes with `isScrollingOptOut` set true
         this._refreshGrid();
       }

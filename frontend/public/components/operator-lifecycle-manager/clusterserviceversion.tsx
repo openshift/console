@@ -109,7 +109,7 @@ const uninstall = (sub: SubscriptionKind) => !_.isNil(sub)
   : null;
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>((props) => {
-  const {obj, index, key, style, subscription} = props;
+  const {obj, index, trKey, style, subscription} = props;
 
   const route = resourceObjPath(obj, referenceForModel(ClusterServiceVersionModel));
   const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
@@ -132,7 +132,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     : []);
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={obj.metadata.uid} index={index} trKey={trKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <Link to={route}>
           <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
@@ -164,13 +164,13 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 });
 
 export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProps> = (props) => {
-  const {obj, index, key, style} = props;
+  const {obj, index, trKey, style} = props;
 
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const subscriptionState = _.get(obj.status, 'state', 'Unknown');
 
-  return <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+  return <TableRow id={obj.metadata.uid} index={index} trKey={trKey} key={trKey} style={style}>
     <TableData className={tableColumnClasses[0]}>
       <Link to={route}>
         <ClusterServiceVersionLogo icon={null} displayName={obj.spec.name} version={null} provider={null} />
@@ -203,7 +203,16 @@ const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionK
   return sub.metadata.namespace === (csv.metadata.annotations || {})['olm.operatorNamespace'] && _.get(sub.status, 'installedCSV') === csv.metadata.name;
 });
 
-export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
+export const filterData = (data) => {
+  return data.map((item) => {
+    const viewData = {...item};
+    delete viewData.metadata.resourceVersion;
+    delete viewData.status.lastUpdateTime;
+    return viewData;
+  });
+};
+
+export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = ({data, ...props}) => {
 
   const EmptyMsg = () => <MsgBox title="No Operators match filter" detail="" />;
 
@@ -213,13 +222,15 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   </React.Fragment>;
   const AllItemsFilteredMsg = () => <MsgBox title="No Operators Found" detail={allItemsFilteredDetail} />;
 
+
   return <Table
     {...props}
+    data={filterData(data)}
     aria-label="Installed Operators"
     Header={ClusterServiceVersionTableHeader}
     Row={(rowProps) => referenceFor(rowProps.obj) === referenceForModel(ClusterServiceVersionModel)
-      ? <ClusterServiceVersionTableRow {...rowProps} subscription={subscriptionFor(rowProps.obj)(_.get(props.subscription, 'data', []))} />
-      : <FailedSubscriptionTableRow {...rowProps} />}
+      ? <ClusterServiceVersionTableRow {...rowProps} trKey={rowProps.key} subscription={subscriptionFor(rowProps.obj)(_.get(props.subscription, 'data', []))} />
+      : <FailedSubscriptionTableRow {...rowProps} trKey={rowProps.key} />}
     EmptyMsg={EmptyMsg}
     AllItemsFilteredMsg={AllItemsFilteredMsg}
     virtualize />;
@@ -470,14 +481,14 @@ export type ClusterServiceVersionTableRowProps = {
   obj: ClusterServiceVersionKind;
   subscription: SubscriptionKind;
   index: number;
-  key?: string;
+  trKey?: string;
   style: object;
 };
 
 export type FailedSubscriptionTableRowProps = {
   obj: SubscriptionKind;
   index: number;
-  key?: string;
+  trKey?: string;
   style: object;
 };
 
