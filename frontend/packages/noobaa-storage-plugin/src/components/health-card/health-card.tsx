@@ -64,7 +64,7 @@ const getObjectStorageHealthState = (
     result.state = HealthState.ERROR;
     return result;
   }
-  if (!_.isNil(poolsResponse) && !_.isNil(unhealthyPoolResponse)) {
+  if (!_.isNil(pools) && !_.isNil(unhealthyPools)) {
     if (Number(pools) === Number(unhealthyPools)) {
       result.message = 'All resources are unhealthy';
       result.state = HealthState.ERROR;
