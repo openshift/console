@@ -8,20 +8,13 @@ type LinkStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
   linkTo?: History.LocationDescriptor;
 };
 
-const LinkStatus: React.FC<LinkStatusProps> = ({
-  icon,
-  title,
-  spin,
-  linkTitle,
-  linkTo,
-  iconOnly,
-}) =>
+const LinkStatus: React.FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) =>
   linkTo ? (
     <Link to={linkTo} title={linkTitle}>
-      <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
+      <StatusIconAndText {...other} />
     </Link>
   ) : (
-    <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
+    <StatusIconAndText {...other} />
   );
 
 export default LinkStatus;

@@ -6,7 +6,7 @@ import {
   GithubIcon,
   BitbucketIcon,
 } from '@patternfly/react-icons';
-import { Status, calculateRadius, PodStatus, GreenCheckCircleIcon } from '@console/shared';
+import { Status, calculateRadius, PodStatus } from '@console/shared';
 import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -108,23 +108,13 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
               position={TooltipPosition.left}
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                {build.status.phase === 'Complete' ? (
-                  <GreenCheckCircleIcon
-                    alt={`${build.metadata.name} ${build.status && build.status.phase}`}
-                  />
-                ) : (
-                  <foreignObject
-                    width={decoratorRadius}
-                    height={decoratorRadius}
-                    style={{ fontSize: decoratorRadius }}
-                  >
-                    <Status
-                      title={`${build.metadata.name} ${build.status && build.status.phase}`}
-                      status={build.status.phase}
-                      iconOnly
-                    />
-                  </foreignObject>
-                )}
+                <foreignObject
+                  width={decoratorRadius}
+                  height={decoratorRadius}
+                  style={{ fontSize: decoratorRadius }}
+                >
+                  <Status status={build.status.phase} iconOnly noTooltip />
+                </foreignObject>
               </g>
             </Decorator>
           </Link>

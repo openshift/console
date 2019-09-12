@@ -5,10 +5,11 @@ import StatusIconAndText from './StatusIconAndText';
 type SuccessStatusProps = {
   title?: string;
   iconOnly?: boolean;
+  noTooltip?: boolean;
 };
 
-const SuccessStatus: React.FC<SuccessStatusProps> = ({ title, iconOnly }) => (
-  <StatusIconAndText icon={<GreenCheckCircleIcon />} title={title} iconOnly={iconOnly} />
+const SuccessStatus: React.FC<SuccessStatusProps> = (props) => (
+  <StatusIconAndText {...props} icon={<GreenCheckCircleIcon />} />
 );
 
 export default SuccessStatus;
