@@ -20,32 +20,6 @@ $border-color: var(--pf-global--BorderColor--light-100);
       box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
     }
   }
-  &__connector {
-    display: none;
-
-    &::before,
-    &::after {
-      content: '';
-      width: 0.67em;
-      height: 1.2em;
-      position: absolute;
-      top: -2.75em;
-      border-top: 1px solid $border-color;
-    }
-
-    &::after {
-      left: -17px;
-      border-right: 1px solid var(--pf-global--BorderColor--light-100);
-      border-radius: 0 20px;
-    }
-
-    &::before {
-      right: -17px;
-      border-left: 1px solid var(--pf-global--BorderColor--light-100);
-      border-radius: 20px 0 0;
-    }
-  }
-
   &:not(:first-child) {
     margin-top: 1.5em;
   }
@@ -84,43 +58,5 @@ $border-color: var(--pf-global--BorderColor--light-100);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  // Connect each task
-  &:not(:first-child) {
-    &::after,
-    &::before {
-      content: '';
-      border-radius: 0 0 0 1.33em;
-      top: -4.33em;
-      position: absolute;
-      border-bottom: 1px solid var(--pf-global--BorderColor--light-100);
-      width: 10px;
-      height: 5.75em;
-    }
-
-    // Right connecting lines
-    &::after {
-      right: -10px;
-      border-right: 1px solid $border-color;
-      border-radius: 0 0 12px;
-    }
-
-    // Left connecting lines
-    &::before {
-      left: -10px;
-      border-left: 1px solid $border-color;
-      border-radius: 0 0 0 12px;
-    }
-  }
-  &:nth-child(2) {
-    .odc-pipeline-vis-task__connector {
-      display: block;
-    }
-    &::after,
-    &::before {
-      top: -1.9em;
-      height: 3.3em;
-    }
   }
 }
