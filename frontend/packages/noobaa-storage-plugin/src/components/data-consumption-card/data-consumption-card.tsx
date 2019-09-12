@@ -106,7 +106,6 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
                   voronoiDimension="x"
                 />
               }
-              domain={{ y: [0, maxVal + 10] }}
               minDomain={{ y: 0 }}
               maxDomain={{ y: maxVal + 10 }}
               domainPadding={{ x: [padding, padding] }}

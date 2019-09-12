@@ -9,7 +9,7 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
     return r.values.map((arr) => ({
       name: getMetricType(r, metricType),
       x: new Date(arr[0] * 1000),
-      y: Number(humanizeBinaryBytesWithoutB(arr[1], unit).value),
+      y: Number(humanizeBinaryBytesWithoutB(arr[1], null, unit).value),
     }));
   });
 };
