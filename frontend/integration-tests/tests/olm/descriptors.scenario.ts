@@ -47,7 +47,7 @@ const inputValueFor = (capability: SpecCapability) => async(el: ElementFinder) =
       limits: {cpu: await el.$$('input').get(0).getAttribute('value'), memory: await el.$$('input').get(1).getAttribute('value')},
       requests: {cpu: await el.$$('input').get(2).getAttribute('value'), memory: await el.$$('input').get(3).getAttribute('value')},
     };
-    case SpecCapability.booleanSwitch: return (await el.$('.bootstrap-switch').getAttribute('class')).includes('bootstrap-switch-on');
+    case SpecCapability.booleanSwitch: return (await el.$('.pf-c-switch__input').getAttribute('checked')) !== 'false';
     case SpecCapability.password: return el.$('input').getAttribute('value');
     case SpecCapability.checkbox: return (await el.$('input').getAttribute('checked')) !== 'false';
     case SpecCapability.imagePullPolicy: return el.$('input[type=\'radio\']:checked').getAttribute('value');
