@@ -551,8 +551,8 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private onNodeHover = (node: ViewNode, hovered: boolean) => {
-    const { createConnection, moveConnection } = this.state;
-    if (moveConnection || (createConnection && createConnection.dragging)) {
+    const { createConnection, moveConnection, nodes } = this.state;
+    if (moveConnection || (createConnection && createConnection.dragging) || nodes.length === 1) {
       return;
     }
 
@@ -704,11 +704,17 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   private initializeMoveConnection = (edge: ViewEdge) => {
-    const { edgesById } = this.state;
+    const { edgesById, nodes } = this.state;
 
     const outwardEdges = _.filter(edgesById, (viewEdge: ViewEdge) => {
       return viewEdge.source.id === edge.source.id;
     });
+
+    // Only initiate moving the connection if there are other nodes available to connect to
+    if (nodes.length <= outwardEdges.length + 1) {
+      return;
+    }
+
     const connectedNodes = _.map(outwardEdges, 'target.id');
     const moveConnection: DragConnection = {
       viewNode: edge.source,
@@ -738,7 +744,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
       return;
     }
 
-    if (d3.event.dx === 0 && d3.event.dy === 0) {
+    if (!moveConnection || (d3.event.dx === 0 && d3.event.dy === 0)) {
       return;
     }
 
@@ -770,10 +776,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   private onMoveConnectionEnd = (edge: ViewEdge) => {
     const { onCreateConnection } = this.props;
-    const { connectionTarget } = this.state;
+    const { connectionTarget, moveConnection } = this.state;
     const d = edge.source;
 
-    if (d3.event.sourceEvent.which !== 1) {
+    if (!moveConnection || d3.event.sourceEvent.which !== 1) {
       return;
     }
 
