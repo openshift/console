@@ -7,7 +7,7 @@ import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { StatusBox, Firehose } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
-import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin/src/const';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
@@ -99,7 +99,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
   );
 };
 
-const getKnativeStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(FLAG_KNATIVE_SERVING);
+const getKnativeStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(FLAG_KNATIVE_SERVING_SERVICE);
 
 const mapStateToProps = (state: RootState): StateProps => {
   const consoleLinks = state.UI.get('consoleLinks');
