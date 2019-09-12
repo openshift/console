@@ -1,4 +1,4 @@
-import { asAccessReview, KebabOption } from '@console/internal/components/utils';
+import { asAccessReview, KebabOption, Kebab } from '@console/internal/components/utils';
 import {
   K8sKind,
   K8sResourceKind,
@@ -7,6 +7,7 @@ import {
   NodeKind,
 } from '@console/internal/module/k8s';
 import { getMachineNode, getMachineNodeName, getName } from '@console/shared';
+import { deleteModal } from '@console/internal/components/modals';
 import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../selectors';
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { getHostStatus } from '../utils/host-status';
@@ -15,6 +16,8 @@ import {
   HOST_POWER_STATUS_POWERED_ON,
   HOST_POWER_STATUS_POWERING_ON,
   HOST_POWER_STATUS_POWERED_OFF,
+  HOST_STATUS_READY,
+  HOST_STATUS_REGISTRATION_ERROR,
 } from '../constants';
 import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
 import { powerOffHostModal } from './modals/power-off-host-modal';
@@ -23,7 +26,7 @@ import stopNodeMaintenanceModal from './modals/stop-node-maintenance-modal';
 type ActionArgs = {
   nodeName?: string;
   nodeMaintenance?: K8sResourceKind;
-  hasNodeMaintenanceCapability: boolean;
+  hasNodeMaintenanceCapability?: boolean;
   status: string;
 };
 
@@ -82,7 +85,35 @@ export const PowerOff = (
   accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
 });
 
-export const menuActions = [SetNodeMaintenance, RemoveNodeMaintenance, PowerOn, PowerOff];
+export const Delete = (
+  kindObj: K8sKind,
+  host: K8sResourceKind,
+  resources: null,
+  { status }: ActionArgs,
+): KebabOption => {
+  const title = 'Delete Bare Metal Host';
+  return {
+    hidden: ![HOST_STATUS_READY, HOST_STATUS_REGISTRATION_ERROR].includes(status),
+    label: title,
+    callback: () =>
+      deleteModal({
+        kind: kindObj,
+        resource: host,
+      }),
+    accessReview: asAccessReview(BaremetalHostModel, host, 'delete'),
+  };
+};
+
+export const menuActions = [
+  SetNodeMaintenance,
+  RemoveNodeMaintenance,
+  PowerOn,
+  PowerOff,
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
+  Kebab.factory.Edit,
+  Delete,
+];
 
 type ExtraResources = {
   machines: MachineKind[];
