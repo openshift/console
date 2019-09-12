@@ -4,8 +4,8 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { OverviewItem } from '@console/internal/components/overview';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
-import RevisionsOverviewList from './RevisionsOverviewList';
-import KSRoutesOverviewList from './RoutesOverviewList';
+import { RevisionsOverviewListAlpha, RevisionsOverviewListBeta } from './RevisionsOverviewList';
+import { RoutesOverviewListAlpha, RoutesOverviewListBeta } from './RoutesOverviewList';
 
 export type KnativeOverviewProps = {
   ksroutes: K8sResourceKind[];
@@ -17,15 +17,19 @@ export type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };
 
-const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabProps> = ({
-  item: { ksroutes, revisions, configurations },
-}) => (
+export const OverviewDetailsKnativeResourcesTabAlpha: React.FC<
+  OverviewDetailsResourcesTabProps
+> = ({ item: { ksroutes, revisions, configurations } }) => (
   <div className="overview__sidebar-pane-body">
-    <KnativeOverview ksroutes={ksroutes} configurations={configurations} revisions={revisions} />
+    <KnativeOverviewAlpha
+      ksroutes={ksroutes}
+      configurations={configurations}
+      revisions={revisions}
+    />
   </div>
 );
 
-const KnativeOverview: React.FC<KnativeOverviewProps> = ({
+const KnativeOverviewAlpha: React.FC<KnativeOverviewProps> = ({
   ksroutes,
   configurations,
   revisions,
@@ -36,14 +40,14 @@ const KnativeOverview: React.FC<KnativeOverviewProps> = ({
       {_.isEmpty(revisions) ? (
         <span className="text-muted">No Revisions found for this resource.</span>
       ) : (
-        <RevisionsOverviewList revisions={revisions} />
+        <RevisionsOverviewListAlpha revisions={revisions} />
       )}
 
       <SidebarSectionHeading text="Routes" />
       {_.isEmpty(ksroutes) ? (
         <span className="text-muted">No Routes found for this resource.</span>
       ) : (
-        <KSRoutesOverviewList ksroutes={ksroutes} />
+        <RoutesOverviewListAlpha ksroutes={ksroutes} />
       )}
 
       <SidebarSectionHeading text="Configurations" />
@@ -56,4 +60,45 @@ const KnativeOverview: React.FC<KnativeOverviewProps> = ({
   );
 };
 
-export default OverviewDetailsKnativeResourcesTab;
+export const OverviewDetailsKnativeResourcesTabBeta: React.FC<OverviewDetailsResourcesTabProps> = ({
+  item: { ksroutes, revisions, configurations },
+}) => (
+  <div className="overview__sidebar-pane-body">
+    <KnativeOverviewBeta
+      ksroutes={ksroutes}
+      configurations={configurations}
+      revisions={revisions}
+    />
+  </div>
+);
+
+const KnativeOverviewBeta: React.FC<KnativeOverviewProps> = ({
+  ksroutes,
+  configurations,
+  revisions,
+}) => {
+  return (
+    <React.Fragment>
+      <SidebarSectionHeading text="Revisions" />
+      {_.isEmpty(revisions) ? (
+        <span className="text-muted">No Revisions found for this resource.</span>
+      ) : (
+        <RevisionsOverviewListBeta revisions={revisions} />
+      )}
+
+      <SidebarSectionHeading text="Routes" />
+      {_.isEmpty(ksroutes) ? (
+        <span className="text-muted">No Routes found for this resource.</span>
+      ) : (
+        <RoutesOverviewListBeta ksroutes={ksroutes} />
+      )}
+
+      <SidebarSectionHeading text="Configurations" />
+      {_.isEmpty(configurations) ? (
+        <span className="text-muted">No Configurations found for this resource.</span>
+      ) : (
+        <ConfigurationsOverviewList configurations={configurations} />
+      )}
+    </React.Fragment>
+  );
+};

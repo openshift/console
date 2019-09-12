@@ -2,21 +2,29 @@ import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TechPreviewBadge } from '@console/shared';
-import { RouteModel } from '../../models';
-import RouteList from './RouteList';
+import { RouteModelAlpha, RouteModelBeta } from '../../models';
+import { RouteListAlpha, RouteListBeta } from './RouteList';
 
 export interface RoutesPageProps {
   namespace: string;
 }
 
-const RoutesPage: React.FC<RoutesPageProps> = ({ namespace }) => (
+export const RoutesPageAlpha: React.FC<RoutesPageProps> = ({ namespace }) => (
   <ListPage
     namespace={namespace}
     canCreate={false}
-    kind={referenceForModel(RouteModel)}
-    ListComponent={RouteList}
+    kind={referenceForModel(RouteModelAlpha)}
+    ListComponent={RouteListAlpha}
     badge={<TechPreviewBadge />}
   />
 );
 
-export default RoutesPage;
+export const RoutesPageBeta: React.FC<RoutesPageProps> = ({ namespace }) => (
+  <ListPage
+    namespace={namespace}
+    canCreate={false}
+    kind={referenceForModel(RouteModelBeta)}
+    ListComponent={RouteListBeta}
+    badge={<TechPreviewBadge />}
+  />
+);

@@ -1,17 +1,25 @@
 import * as React from 'react';
 import { Table, TableProps } from '@console/internal/components/factory';
-import { ServiceModel } from '../../models';
+import { ServiceModelAlpha, ServiceModelBeta } from '../../models';
 import ServiceHeader from './ServiceHeader';
-import ServiceRow from './ServiceRow';
+import { ServiceRowAlpha, ServiceRowBeta } from './ServiceRow';
 
-const ServiceList: React.FC<TableProps> = (props) => (
+export const ServiceListAlpha: React.FC<TableProps> = (props) => (
   <Table
     {...props}
-    aria-label={ServiceModel.labelPlural}
+    aria-label={ServiceModelAlpha.labelPlural}
     Header={ServiceHeader}
-    Row={ServiceRow}
+    Row={ServiceRowAlpha}
     virtualize
   />
 );
 
-export default ServiceList;
+export const ServiceListBeta: React.FC<TableProps> = (props) => (
+  <Table
+    {...props}
+    aria-label={ServiceModelBeta.labelPlural}
+    Header={ServiceHeader}
+    Row={ServiceRowBeta}
+    virtualize
+  />
+);

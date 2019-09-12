@@ -1,10 +1,14 @@
 import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
-  ServiceModel,
-  RevisionModel,
-  ConfigurationModel,
-  RouteModel,
+  ServiceModelAlpha,
+  RevisionModelAlpha,
+  ConfigurationModelAlpha,
+  RouteModelAlpha,
+  ServiceModelBeta,
+  RevisionModelBeta,
+  ConfigurationModelBeta,
+  RouteModelBeta,
 } from '@console/knative-plugin';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 
@@ -27,7 +31,7 @@ interface ResourceType {
   limitUnit: string;
 }
 
-export const createKnativeService = (
+export const createKnativeServiceAlpha = (
   name: string,
   applicationName: string,
   namespace: string,
@@ -114,32 +118,146 @@ export const createKnativeService = (
     },
   };
 
-  return k8sCreate(ServiceModel, knativeDeployResource);
+  return k8sCreate(ServiceModelAlpha, knativeDeployResource);
+};
+
+export const createKnativeServiceBeta = (
+  name: string,
+  applicationName: string,
+  namespace: string,
+  scaling: ServerlessScaling,
+  limits: LimitsData,
+  { targetPort },
+  labels,
+  imageStreamUrl: string,
+  imageStreamName?: string,
+  annotations?: { [name: string]: string },
+  imageTag?: string,
+): Promise<K8sResourceKind> => {
+  const contTargetPort: number = parseInt(targetPort, 10);
+  const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
+  const {
+    cpu: {
+      request: cpuRequest,
+      requestUnit: cpuRequestUnit,
+      limit: cpuLimit,
+      limitUnit: cpuLimitUnit,
+    },
+    memory: {
+      request: memoryRequest,
+      requestUnit: memoryRequestUnit,
+      limit: memoryLimit,
+      limitUnit: memoryLimitUnit,
+    },
+  } = limits;
+  const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
+  delete defaultLabel.app;
+  const knativeDeployResource: K8sResourceKind = {
+    kind: 'Service',
+    apiVersion: 'serving.knative.dev/v1beta1',
+    metadata: {
+      name,
+      namespace,
+    },
+    spec: {
+      template: {
+        metadata: {
+          labels: {
+            ...defaultLabel,
+            ...labels,
+          },
+          annotations: {
+            ...(concurrencytarget && {
+              'autoscaling.knative.dev/target': `${concurrencytarget}`,
+            }),
+            ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
+            ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
+            ...annotations,
+          },
+        },
+        spec: {
+          ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
+          containers: [
+            {
+              image: `${imageStreamUrl}`,
+              ...(contTargetPort && {
+                ports: [
+                  {
+                    containerPort: contTargetPort,
+                  },
+                ],
+              }),
+              resources: {
+                ...((cpuLimit || memoryLimit) && {
+                  limits: {
+                    ...(cpuLimit && { cpu: `${cpuLimit}${cpuLimitUnit}` }),
+                    ...(memoryLimit && { memory: `${memoryLimit}${memoryLimitUnit}` }),
+                  },
+                }),
+                ...((cpuRequest || memoryRequest) && {
+                  requests: {
+                    ...(cpuRequest && { cpu: `${cpuRequest}${cpuRequestUnit}` }),
+                    ...(memoryRequest && { memory: `${memoryRequest}${memoryRequestUnit}` }),
+                  },
+                }),
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  return k8sCreate(ServiceModelBeta, knativeDeployResource);
 };
 
 export const knativeServingResources = (namespace: string): FirehoseResource[] => {
   const knativeResource = [
     {
       isList: true,
-      kind: referenceForModel(RevisionModel),
+      kind: referenceForModel(RevisionModelAlpha),
       namespace,
       prop: 'revisions',
     },
     {
       isList: true,
-      kind: referenceForModel(ConfigurationModel),
+      kind: referenceForModel(ConfigurationModelAlpha),
       namespace,
       prop: 'configurations',
     },
     {
       isList: true,
-      kind: referenceForModel(RouteModel),
+      kind: referenceForModel(RouteModelAlpha),
       namespace,
       prop: 'ksroutes',
     },
     {
       isList: true,
-      kind: referenceForModel(ServiceModel),
+      kind: referenceForModel(ServiceModelAlpha),
+      namespace,
+      prop: 'ksservices',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(RevisionModelBeta),
+      namespace,
+      prop: 'revisions',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ConfigurationModelBeta),
+      namespace,
+      prop: 'configurations',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(RouteModelBeta),
+      namespace,
+      prop: 'ksroutes',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ServiceModelBeta),
       namespace,
       prop: 'ksservices',
     },

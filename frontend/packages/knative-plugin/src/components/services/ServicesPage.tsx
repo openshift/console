@@ -2,21 +2,29 @@ import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TechPreviewBadge } from '@console/shared';
-import { ServiceModel } from '../../models';
-import ServiceList from './ServiceList';
+import { ServiceModelAlpha, ServiceModelBeta } from '../../models';
+import { ServiceListAlpha, ServiceListBeta } from './ServiceList';
 
 export interface ServicesPageProps {
   namespace: string;
 }
 
-const ServicesPage: React.FC<ServicesPageProps> = ({ namespace }) => (
+export const ServicesPageAlpha: React.FC<ServicesPageProps> = ({ namespace }) => (
   <ListPage
     namespace={namespace}
     canCreate
-    kind={referenceForModel(ServiceModel)}
-    ListComponent={ServiceList}
+    kind={referenceForModel(ServiceModelAlpha)}
+    ListComponent={ServiceListAlpha}
     badge={<TechPreviewBadge />}
   />
 );
 
-export default ServicesPage;
+export const ServicesPageBeta: React.FC<ServicesPageProps> = ({ namespace }) => (
+  <ListPage
+    namespace={namespace}
+    canCreate
+    kind={referenceForModel(ServiceModelBeta)}
+    ListComponent={ServiceListBeta}
+    badge={<TechPreviewBadge />}
+  />
+);

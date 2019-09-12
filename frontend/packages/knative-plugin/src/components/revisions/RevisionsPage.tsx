@@ -2,21 +2,29 @@ import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TechPreviewBadge } from '@console/shared';
-import { RevisionModel } from '../../models';
-import RevisionList from './RevisionList';
+import { RevisionModelAlpha, RevisionModelBeta } from '../../models';
+import { RevisionListAlpha, RevisionListBeta } from './RevisionList';
 
 export interface RevisionsPageProps {
   namespace: string;
 }
 
-const RevisionsPage: React.FC<RevisionsPageProps> = ({ namespace }) => (
+export const RevisionsPageAlpha: React.FC<RevisionsPageProps> = ({ namespace }) => (
   <ListPage
     namespace={namespace}
     canCreate={false}
-    kind={referenceForModel(RevisionModel)}
-    ListComponent={RevisionList}
+    kind={referenceForModel(RevisionModelAlpha)}
+    ListComponent={RevisionListAlpha}
     badge={<TechPreviewBadge />}
   />
 );
 
-export default RevisionsPage;
+export const RevisionsPageBeta: React.FC<RevisionsPageProps> = ({ namespace }) => (
+  <ListPage
+    namespace={namespace}
+    canCreate={false}
+    kind={referenceForModel(RevisionModelBeta)}
+    ListComponent={RevisionListBeta}
+    badge={<TechPreviewBadge />}
+  />
+);

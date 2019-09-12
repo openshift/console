@@ -9,13 +9,20 @@ import {
   ExternalLink,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { RevisionModel, RouteModel } from '../../models';
+import {
+  RevisionModelAlpha,
+  RevisionModelBeta,
+  RouteModelAlpha,
+  RouteModelBeta,
+} from '../../models';
 import { getConditionString } from '../../utils/condition-utils';
 import { RouteKind, ConfigurationKind } from '../../types';
 import { tableColumnClasses } from './route-table';
 
-const routeReference = referenceForModel(RouteModel);
-const revisionReference = referenceForModel(RevisionModel);
+const routeReferenceAlpha = referenceForModel(RouteModelAlpha);
+const routeReferenceBeta = referenceForModel(RouteModelBeta);
+const revisionReferenceAlpha = referenceForModel(RevisionModelAlpha);
+const revisionReferenceBeta = referenceForModel(RevisionModelBeta);
 
 export interface RouteRowProps {
   obj: RouteKind;
@@ -29,11 +36,11 @@ export interface RouteRowProps {
   };
 }
 
-const RouteRow: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
+export const RouteRowAlpha: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
     <TableData className={tableColumnClasses[0]}>
       <ResourceLink
-        kind={routeReference}
+        kind={routeReferenceAlpha}
         name={obj.metadata.name}
         namespace={obj.metadata.namespace}
         title={obj.metadata.uid}
@@ -62,7 +69,7 @@ const RouteRow: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
               {`${t.percent}% → `}
               <ResourceLink
                 namespace={obj.metadata.namespace}
-                kind={revisionReference}
+                kind={revisionReferenceAlpha}
                 name={t.revisionName}
                 inline
                 hideIcon
@@ -72,9 +79,55 @@ const RouteRow: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
         : '-'}
     </TableData>
     <TableData className={tableColumnClasses[6]}>
-      <ResourceKebab actions={Kebab.factory.common} kind={routeReference} resource={obj} />
+      <ResourceKebab actions={Kebab.factory.common} kind={routeReferenceAlpha} resource={obj} />
     </TableData>
   </TableRow>
 );
 
-export default RouteRow;
+export const RouteRowBeta: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
+  <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableData className={tableColumnClasses[0]}>
+      <ResourceLink
+        kind={routeReferenceBeta}
+        name={obj.metadata.name}
+        namespace={obj.metadata.namespace}
+        title={obj.metadata.uid}
+      />
+    </TableData>
+    <TableData className={cx(tableColumnClasses[1], 'co-break-word')}>
+      <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+    </TableData>
+    <TableData className={tableColumnClasses[2]}>
+      {(obj.status && obj.status.url && (
+        <ExternalLink href={obj.status.url} text={obj.status.url} />
+      )) ||
+        '-'}
+    </TableData>
+    <TableData className={tableColumnClasses[3]}>
+      <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </TableData>
+    <TableData className={tableColumnClasses[4]}>
+      {obj.status ? getConditionString(obj.status.conditions) : '-'}
+    </TableData>
+    <TableData className={tableColumnClasses[5]}>
+      {obj.status && obj.status.traffic
+        ? obj.status.traffic.map((t, i) => (
+            <React.Fragment key={t.revisionName}>
+              {i > 0 ? ', ' : ''}
+              {`${t.percent}% → `}
+              <ResourceLink
+                namespace={obj.metadata.namespace}
+                kind={revisionReferenceBeta}
+                name={t.revisionName}
+                inline
+                hideIcon
+              />
+            </React.Fragment>
+          ))
+        : '-'}
+    </TableData>
+    <TableData className={tableColumnClasses[6]}>
+      <ResourceKebab actions={Kebab.factory.common} kind={routeReferenceBeta} resource={obj} />
+    </TableData>
+  </TableRow>
+);

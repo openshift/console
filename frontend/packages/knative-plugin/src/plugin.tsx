@@ -13,13 +13,18 @@ import {
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
-import { yamlTemplates } from './yaml-templates';
+import { yamlTemplatesAlpha, yamlTemplatesBeta } from './yaml-templates';
 import {
-  FLAG_KNATIVE_SERVING_CONFIGURATION,
-  FLAG_KNATIVE_SERVING,
-  FLAG_KNATIVE_SERVING_REVISION,
-  FLAG_KNATIVE_SERVING_ROUTE,
-  FLAG_KNATIVE_SERVING_SERVICE,
+  FLAG_KNATIVE_SERVING_CONFIGURATION_ALPHA,
+  FLAG_KNATIVE_SERVING_ALPHA,
+  FLAG_KNATIVE_SERVING_REVISION_ALPHA,
+  FLAG_KNATIVE_SERVING_ROUTE_ALPHA,
+  FLAG_KNATIVE_SERVING_SERVICE_ALPHA,
+  FLAG_KNATIVE_SERVING_CONFIGURATION_BETA,
+  FLAG_KNATIVE_SERVING_BETA,
+  FLAG_KNATIVE_SERVING_REVISION_BETA,
+  FLAG_KNATIVE_SERVING_ROUTE_BETA,
+  FLAG_KNATIVE_SERVING_SERVICE_BETA,
 } from './const';
 import { knativeServingResources } from './utils/create-knative-utils';
 import { getKnativeServingResources } from './utils/get-knative-resources';
@@ -45,46 +50,46 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ConfigurationModel,
-      flag: FLAG_KNATIVE_SERVING_CONFIGURATION,
+      model: models.ConfigurationModelAlpha,
+      flag: FLAG_KNATIVE_SERVING_CONFIGURATION_ALPHA,
     },
   },
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.KnativeServingModel,
-      flag: FLAG_KNATIVE_SERVING,
+      model: models.KnativeServingModelAlpha,
+      flag: FLAG_KNATIVE_SERVING_ALPHA,
     },
   },
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.RevisionModel,
-      flag: FLAG_KNATIVE_SERVING_REVISION,
+      model: models.RevisionModelAlpha,
+      flag: FLAG_KNATIVE_SERVING_REVISION_ALPHA,
     },
   },
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.RouteModel,
-      flag: FLAG_KNATIVE_SERVING_ROUTE,
+      model: models.RouteModelAlpha,
+      flag: FLAG_KNATIVE_SERVING_ROUTE_ALPHA,
     },
   },
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ServiceModel,
-      flag: FLAG_KNATIVE_SERVING_SERVICE,
+      model: models.ServiceModelAlpha,
+      flag: FLAG_KNATIVE_SERVING_SERVICE_ALPHA,
     },
   },
   {
     type: 'GlobalConfig',
     properties: {
       kind: 'KnativeServing',
-      model: models.KnativeServingModel,
+      model: models.KnativeServingModelAlpha,
       name: 'knative-serving',
       namespace: 'knative-serving',
-      required: FLAG_KNATIVE_SERVING,
+      required: FLAG_KNATIVE_SERVING_ALPHA,
       uid: 'knative-serving',
     },
   },
@@ -93,9 +98,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Serverless',
       componentProps: {
-        name: models.ServiceModel.labelPlural,
-        resource: referenceForModel(models.ServiceModel),
-        required: FLAG_KNATIVE_SERVING_SERVICE,
+        name: models.ServiceModelAlpha.labelPlural,
+        resource: referenceForModel(models.ServiceModelAlpha),
+        required: FLAG_KNATIVE_SERVING_SERVICE_ALPHA,
       },
     },
   },
@@ -104,9 +109,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Serverless',
       componentProps: {
-        name: models.RevisionModel.labelPlural,
-        resource: referenceForModel(models.RevisionModel),
-        required: FLAG_KNATIVE_SERVING_REVISION,
+        name: models.RevisionModelAlpha.labelPlural,
+        resource: referenceForModel(models.RevisionModelAlpha),
+        required: FLAG_KNATIVE_SERVING_REVISION_ALPHA,
       },
     },
   },
@@ -115,9 +120,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Serverless',
       componentProps: {
-        name: models.RouteModel.labelPlural,
-        resource: referenceForModel(models.RouteModel),
-        required: FLAG_KNATIVE_SERVING_ROUTE,
+        name: models.RouteModelAlpha.labelPlural,
+        resource: referenceForModel(models.RouteModelAlpha),
+        required: FLAG_KNATIVE_SERVING_ROUTE_ALPHA,
       },
     },
   },
@@ -129,31 +134,31 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
-        ).then((m) => m.default),
+        ).then((m) => m.OverviewDetailsKnativeResourcesTabAlpha),
     },
   },
   {
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResources,
-      required: FLAG_KNATIVE_SERVING,
+      required: FLAG_KNATIVE_SERVING_ALPHA,
       utils: getKnativeServingResources,
     },
   },
   {
     type: 'Page/Resource/List',
     properties: {
-      model: models.RevisionModel,
+      model: models.RevisionModelAlpha,
       loader: async () =>
         (await import(
           './components/revisions/RevisionsPage' /* webpackChunkName: "knative-revisions-page" */
-        )).default,
+        )).RevisionsPageAlpha,
     },
   },
   {
     type: 'Page/Resource/Details',
     properties: {
-      model: models.RevisionModel,
+      model: models.RevisionModelAlpha,
       loader: async () =>
         (await import(
           './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revision-details-page" */
@@ -163,17 +168,17 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/List',
     properties: {
-      model: models.ServiceModel,
+      model: models.ServiceModelAlpha,
       loader: async () =>
         (await import(
           './components/services/ServicesPage' /* webpackChunkName: "knative-services-page" */
-        )).default,
+        )).ServicesPageAlpha,
     },
   },
   {
     type: 'Page/Resource/Details',
     properties: {
-      model: models.ServiceModel,
+      model: models.ServiceModelAlpha,
       loader: async () =>
         (await import(
           './components/services/ServiceDetailsPage' /* webpackChunkName: "knative-service-details-page" */
@@ -183,17 +188,17 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/List',
     properties: {
-      model: models.RouteModel,
+      model: models.RouteModelAlpha,
       loader: async () =>
         (await import(
           './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
-        )).default,
+        )).RoutesPageAlpha,
     },
   },
   {
     type: 'Page/Resource/Details',
     properties: {
-      model: models.RouteModel,
+      model: models.RouteModelAlpha,
       loader: async () =>
         (await import(
           './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
@@ -203,8 +208,174 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'YAMLTemplate',
     properties: {
-      model: models.ServiceModel,
-      template: yamlTemplates.getIn([models.ServiceModel, 'default']),
+      model: models.ServiceModelAlpha,
+      template: yamlTemplatesAlpha.getIn([models.ServiceModelAlpha, 'default']),
+    },
+  },
+  // Beta plugins
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ConfigurationModelBeta,
+      flag: FLAG_KNATIVE_SERVING_CONFIGURATION_BETA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.KnativeServingModelBeta,
+      flag: FLAG_KNATIVE_SERVING_BETA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.RevisionModelBeta,
+      flag: FLAG_KNATIVE_SERVING_REVISION_BETA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.RouteModelBeta,
+      flag: FLAG_KNATIVE_SERVING_ROUTE_BETA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ServiceModelBeta,
+      flag: FLAG_KNATIVE_SERVING_SERVICE_BETA,
+    },
+  },
+  {
+    type: 'GlobalConfig',
+    properties: {
+      kind: 'KnativeServing',
+      model: models.KnativeServingModelBeta,
+      name: 'knative-serving',
+      namespace: 'knative-serving',
+      required: FLAG_KNATIVE_SERVING_BETA,
+      uid: 'knative-serving',
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Serverless',
+      componentProps: {
+        name: models.ServiceModelBeta.labelPlural,
+        resource: referenceForModel(models.ServiceModelBeta),
+        required: FLAG_KNATIVE_SERVING_SERVICE_BETA,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Serverless',
+      componentProps: {
+        name: models.RevisionModelBeta.labelPlural,
+        resource: referenceForModel(models.RevisionModelBeta),
+        required: FLAG_KNATIVE_SERVING_REVISION_BETA,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Serverless',
+      componentProps: {
+        name: models.RouteModelBeta.labelPlural,
+        resource: referenceForModel(models.RouteModelBeta),
+        required: FLAG_KNATIVE_SERVING_ROUTE_BETA,
+      },
+    },
+  },
+  {
+    type: 'Overview/Resource',
+    properties: {
+      name: 'Resources',
+      key: 'configurations',
+      loader: () =>
+        import(
+          './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
+        ).then((m) => m.OverviewDetailsKnativeResourcesTabBeta),
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResources,
+      required: FLAG_KNATIVE_SERVING_BETA,
+      utils: getKnativeServingResources,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.RevisionModelBeta,
+      loader: async () =>
+        (await import(
+          './components/revisions/RevisionsPage' /* webpackChunkName: "knative-revisions-page" */
+        )).RevisionsPageBeta,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RevisionModelBeta,
+      loader: async () =>
+        (await import(
+          './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revision-details-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.ServiceModelBeta,
+      loader: async () =>
+        (await import(
+          './components/services/ServicesPage' /* webpackChunkName: "knative-services-page" */
+        )).ServicesPageBeta,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.ServiceModelBeta,
+      loader: async () =>
+        (await import(
+          './components/services/ServiceDetailsPage' /* webpackChunkName: "knative-service-details-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.RouteModelBeta,
+      loader: async () =>
+        (await import(
+          './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
+        )).RoutesPageBeta,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RouteModelBeta,
+      loader: async () =>
+        (await import(
+          './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: models.ServiceModelBeta,
+      template: yamlTemplatesBeta.getIn([models.ServiceModelBeta, 'default']),
     },
   },
 ];

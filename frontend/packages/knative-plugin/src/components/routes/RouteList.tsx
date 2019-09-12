@@ -1,17 +1,25 @@
 import * as React from 'react';
 import { Table, TableProps } from '@console/internal/components/factory';
-import { RouteModel } from '../../models';
+import { RouteModelAlpha, RouteModelBeta } from '../../models';
 import RouteHeader from './RouteHeader';
-import RouteRow from './RouteRow';
+import { RouteRowAlpha, RouteRowBeta } from './RouteRow';
 
-const RouteList: React.FC<TableProps> = (props) => (
+export const RouteListAlpha: React.FC<TableProps> = (props) => (
   <Table
     {...props}
-    aria-label={RouteModel.labelPlural}
+    aria-label={RouteModelAlpha.labelPlural}
     Header={RouteHeader}
-    Row={RouteRow}
+    Row={RouteRowAlpha}
     virtualize
   />
 );
 
-export default RouteList;
+export const RouteListBeta: React.FC<TableProps> = (props) => (
+  <Table
+    {...props}
+    aria-label={RouteModelBeta.labelPlural}
+    Header={RouteHeader}
+    Row={RouteRowBeta}
+    virtualize
+  />
+);

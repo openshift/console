@@ -1,17 +1,25 @@
 import * as React from 'react';
 import { Table, TableProps } from '@console/internal/components/factory';
-import { RevisionModel } from '../../models';
+import { RevisionModelAlpha, RevisionModelBeta } from '../../models';
 import RevisionHeader from './RevisionHeader';
-import RevisionRow from './RevisionRow';
+import { RevisionRowAlpha, RevisionRowBeta } from './RevisionRow';
 
-const RevisionList: React.FC<TableProps> = (props) => (
+export const RevisionListAlpha: React.FC<TableProps> = (props) => (
   <Table
     {...props}
-    aria-label={RevisionModel.labelPlural}
+    aria-label={RevisionModelAlpha.labelPlural}
     Header={RevisionHeader}
-    Row={RevisionRow}
+    Row={RevisionRowAlpha}
     virtualize
   />
 );
 
-export default RevisionList;
+export const RevisionListBeta: React.FC<TableProps> = (props) => (
+  <Table
+    {...props}
+    aria-label={RevisionModelBeta.labelPlural}
+    Header={RevisionHeader}
+    Row={RevisionRowBeta}
+    virtualize
+  />
+);
