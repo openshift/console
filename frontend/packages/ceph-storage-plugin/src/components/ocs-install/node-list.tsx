@@ -52,8 +52,9 @@ const getConvertedUnits = (value: string) => {
 
 const tableColumnClasses = [
   classNames('col-md-1', 'col-sm-1', 'col-xs-1'),
-  classNames('col-md-6', 'col-sm-8', 'col-xs-11'),
+  classNames('col-md-4', 'col-sm-8', 'col-xs-11'),
   classNames('col-md-2', 'col-sm-3', 'hidden-xs'),
+  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
   classNames('col-md-1', 'hidden-sm', 'hidden-xs'),
   classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
 ];
@@ -69,12 +70,16 @@ const getColumns = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'CPU',
+      title: 'Location',
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Memory',
+      title: 'CPU',
       props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: 'Memory',
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
@@ -96,6 +101,9 @@ const getRows = (nodes: NodeKind[]) => {
       },
       {
         title: roles.join(', ') || '-',
+      },
+      {
+        title: _.get(node.metadata.labels, 'failure-domain.beta.kubernetes.io/zone') || '-',
       },
       {
         title: `${humanizeCpuCores(_.get(node.status, 'capacity.cpu')).string || '-'}`,
