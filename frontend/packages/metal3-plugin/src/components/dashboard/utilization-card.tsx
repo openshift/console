@@ -18,7 +18,7 @@ import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import {
   FirehoseResource,
   humanizeBinaryBytesWithoutB,
-  humanizePercentage,
+  humanizeCpuCores,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
@@ -111,7 +111,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
             title="CPU usage"
             data={cpuStats}
             isLoading={itemIsLoading(cpuUtilization)}
-            humanizeValue={humanizePercentage}
+            humanizeValue={humanizeCpuCores}
             query={queries[HostQuery.CPU_UTILIZATION]}
           />
           <UtilizationItem
