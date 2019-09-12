@@ -74,7 +74,7 @@ export const getVncConnectionDetails = (vmi: VMIKind) => {
     port: window.location.port || (isConnectionEncrypted() ? '443' : '80'),
 
     // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha3/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
-    path: `${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc}`,
+    path: `${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc`,
 
     manual: undefined, // so far unsupported
     /* TODO: Desktop viewer connection needs general agreement by the Kubevirt community how to expose the VNC port for clients without WS
