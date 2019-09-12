@@ -59,9 +59,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
   &.co-m-horizontal-nav-item--active {
     a,
     button {
-      color: $color-pf-blue-400;
+      color: $link-color;
       &::after {
-        background: $color-pf-blue-400;
+        background: $link-color;
       }
     }
   }

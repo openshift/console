@@ -35,11 +35,4 @@
     opacity: 1;
     color: var(--pf-global--icon--Color--light);
   }
-  .pf-c-app-launcher__menu-item {
-    &:hover, &:focus {
-      .pf-c-app-launcher__menu-item-external-icon {
-        color: var(--pf-c-app-launcher__menu-item-external-icon--Color);
-      }
-    }
-  }
 }
