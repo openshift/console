@@ -13,4 +13,4 @@ export const filterCheckboxCount = (id: string) => filterCheckboxFor(id).$('.ite
   .then(text => parseInt(text.substring(1, text.indexOf(')')), 10));
 export const filterTextbox = $('.co-catalog-page__filter input');
 export const filterByKeyword = (filter: string) => filterTextbox.clear().then(() => filterTextbox.sendKeys(filter));
-export const clearFiltersText = $('.co-catalog-page__no-filter-results').$('.blank-slate-pf-helpLink').$('button');
+export const clearFiltersText = $('[data-test-id="catalog-clear-filters"]');

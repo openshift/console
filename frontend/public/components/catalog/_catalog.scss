@@ -183,14 +183,6 @@ $co-modal-ignore-warning-icon-width: 30px;
     flex: 0 0 220px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
   }
-
-  &__no-filter-results {
-    padding: 0;
-    &-title {
-      color: $color-pf-black-800;
-      font-size: 18px;
-    }
-  }
 }
 
 .co-catalog-tab__empty {
