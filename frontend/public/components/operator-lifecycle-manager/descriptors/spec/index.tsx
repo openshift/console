@@ -49,7 +49,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
   const [value, setValue] = React.useState(props.value);
   const [confirmed, setConfirmed] = React.useState(false);
 
-  const patchFor = (val: boolean) => [{op: 'replace', path: `/spec/${props.descriptor.path.replace('.', '/')}`, val}];
+  const patchFor = (val: boolean) => [{op: 'add', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value: val}];
   const update = () => {
     setConfirmed(true);
     return k8sPatch(props.model, props.obj, patchFor(value));
