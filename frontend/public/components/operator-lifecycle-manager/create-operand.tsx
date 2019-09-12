@@ -142,16 +142,18 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     ? fieldsFor(props.providedAPI)
     : [])
     .map(field => {
-      if (_.isEmpty(props.openAPI)) {
-        return field;
+      const capabilities = field.capabilities || [];
+      const openAPIProperties = _.get(props, 'openAPI.properties.spec.properties');
+      if (_.isEmpty(openAPIProperties)) {
+        return {...field, capabilities};
       }
       const schemaPath = field.path.split('.').join('.properties.');
       const required = (_.get(props.openAPI, _.dropRight(['spec', ...field.path.split('.')]).join('.properties.').concat('.required'), []) as string[])
         .includes(_.last(field.path.split('.')));
-      const type = _.get(props.openAPI.properties.spec.properties, schemaPath.concat('.type')) as JSONSchema6TypeName;
-      const validation = _.pick(_.get(props.openAPI.properties.spec.properties, schemaPath), [...Object.keys(Validations)]) as OperandField['validation'];
+      const type = _.get(openAPIProperties, schemaPath.concat('.type')) as JSONSchema6TypeName;
+      const validation = _.pick(openAPIProperties.schemaPath, [...Object.keys(Validations)]) as OperandField['validation'];
 
-      return {...field, type, required, validation};
+      return {...field, capabilities, type, required, validation};
     })
     .concat(fieldsForOpenAPI(props.openAPI).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
     // Associate `specDescriptors` with `fieldGroups` from OpenAPI
