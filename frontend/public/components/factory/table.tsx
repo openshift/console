@@ -206,11 +206,11 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   const rowRenderer = ({index, isScrolling: scrolling, key, style, parent}) => {
     const rowArgs = {obj: data[index], index, columns, isScrolling: scrolling, key, style, customData};
     const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
-
+    const uid = _.get(rowArgs, 'obj.metadata.uid');
     return <CellMeasurer
       cache={cellMeasurementCache}
       columnIndex={0}
-      key={key}
+      key={uid || key}
       parent={parent}
       rowIndex={index}>{row}</CellMeasurer>;
   };
@@ -355,7 +355,8 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
         fixedWidth: true,
         minHeight: 44,
         keyMapper: rowIndex => {
-          const uid = _.get(props.data[rowIndex], 'metadata.uid', rowIndex);
+          const { data } = this.props;
+          const uid = _.get(data[rowIndex], 'metadata.uid', rowIndex);
           return uid;
         },
       });
