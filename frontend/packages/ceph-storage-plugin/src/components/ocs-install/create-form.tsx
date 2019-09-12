@@ -35,7 +35,7 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = (props)
             isInline
           />
           <p className="co-legend co-required ceph-ocs-desc__legend">
-            Select at least 3 nodes you wish to use.
+            Select at least 3 nodes in different failure domains you wish to use.
           </p>
           <ListPage
             kind={NodeModel.kind}
