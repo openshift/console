@@ -425,7 +425,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, label?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,

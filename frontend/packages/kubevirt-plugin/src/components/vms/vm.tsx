@@ -182,6 +182,7 @@ const VirtualMachinesPageComponent: React.FC<VirtualMachinesPageProps> = (props)
       createProps={getCreateProps({ namespace, hasCreateVMWizardsSupport })}
       resources={resources}
       flatten={flatten}
+      label={VirtualMachineModel.labelPlural}
     />
   );
 };
