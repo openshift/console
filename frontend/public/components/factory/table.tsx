@@ -201,12 +201,22 @@ export type TableWrapperProps = {
 }
 
 const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
-  const { bindBodyRef, cellMeasurementCache, customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
+  const { customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
 
-  const rowRenderer = ({index, isScrolling: scrolling, key, style, parent}) => {
+  const cellMeasurementCache = new CellMeasurerCache({
+    fixedWidth: true,
+    minHeight: 44,
+    keyMapper: rowIndex => _.get(props.data[rowIndex], 'metadata.uid', rowIndex),
+  });
+
+  const rowRenderer = ({index, isScrolling: scrolling, isVisible, key, style, parent}) => {
     const rowArgs = {obj: data[index], index, columns, isScrolling: scrolling, key, style, customData};
     const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
 
+    // do not render non visible elements (this excludes overscan)
+    if (!isVisible){
+      return null;
+    }
     return <CellMeasurer
       cache={cellMeasurementCache}
       columnIndex={0}
@@ -217,16 +227,15 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
 
   return (
     <VirtualTableBody
-      ref={bindBodyRef}
       autoHeight
       className="pf-c-table pf-m-compact pf-m-border-rows pf-c-virtualized pf-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}
       isScrolling={isScrolling}
-      isScrollingOptOut={true}
       onScroll={onChildScroll}
-      columnCount={1}
+      overscanRowCount={10}
+      columns={columns}
       rows={data}
       rowCount={data.length}
       rowRenderer={rowRenderer}
@@ -240,8 +249,6 @@ export type RowFunctionArgs = {obj: object, index: number, columns: [], isScroll
 export type RowFunction = (args: RowFunctionArgs) => JSX.Element;
 
 export type VirtualBodyProps = {
-  bindBodyRef: Function;
-  cellMeasurementCache: any;
   customData?: any;
   Row: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
   height: number;
@@ -321,8 +328,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
     };
     _columnShift: number;
-    _cellMeasurementCache: any;
-    _bodyRef: any;
 
     constructor(props){
       super(props);
@@ -334,8 +339,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       this._applySort = this._applySort.bind(this);
       this._onSort = this._onSort.bind(this);
       this._handleResize = _.debounce(this._handleResize.bind(this), 100);
-      this._bindBodyRef = this._bindBodyRef.bind(this);
-      this._refreshGrid = this._refreshGrid.bind(this);
 
       let sortBy = {};
       if (currentSortField && currentSortOrder) {
@@ -350,15 +353,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
         }
       }
       this.state = { columns, sortBy };
-
-      this._cellMeasurementCache = new CellMeasurerCache({
-        fixedWidth: true,
-        minHeight: 44,
-        keyMapper: rowIndex => {
-          const uid = _.get(props.data[rowIndex], 'metadata.uid', rowIndex);
-          return uid;
-        },
-      });
     }
 
     componentDidMount(){
@@ -382,32 +376,12 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       window.addEventListener('resize', this._handleResize);
     }
 
-    componentDidUpdate(prevProps){
-      const {data, virtualize} = this.props;
-      if (virtualize && this._bodyRef && !_.isEqual(prevProps.data, data)){
-        // force react-virtualized to update after data changes with `isScrollingOptOut` set true
-        this._refreshGrid();
-      }
-    }
-
     componentWillUnmount(){
       window.removeEventListener('resize', this._handleResize);
     }
 
-    _refreshGrid() {
-      this._cellMeasurementCache.clearAll();
-      this._bodyRef.recomputeVirtualGridSize();
-    }
-
     _handleResize() {
-      const {virtualize} = this.props;
-      if (virtualize && this._bodyRef){
-        this._refreshGrid();
-      }
-    }
-
-    _bindBodyRef(ref) {
-      this._bodyRef = ref;
+      this.forceUpdate();
     }
 
     _applySort(sortField, sortFunc, sortAsNumber, direction, columnTitle){
@@ -441,8 +415,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
               {({width}) => (
                 <div ref={registerChild}>
                   <VirtualBody
-                    bindBodyRef={this._bindBodyRef}
-                    cellMeasurementCache={this._cellMeasurementCache}
                     Row={Row}
                     customData={customData}
                     height={height}
