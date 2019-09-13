@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 
 import { k8sList, K8sResourceKind, planExternalName, serviceCatalogStatus, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -19,6 +19,7 @@ import {
   Timestamp,
   history,
   navFactory,
+  HintBlock,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
@@ -102,10 +103,11 @@ class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProp
     // Show help for creating a binding when there are none for this instance.
     // TODO: Check if the plan is actually bindable.
     if (!deletionTimestamp && !hasBindings) {
-      return <div className="co-well">
-        <h4>Create Service Binding</h4>
-        <ServiceBindingDescription instanceName={obj.metadata.name} />
-        <button className="btn btn-primary" type="button" onClick={this.createBinding}>Create Service Binding</button>
+      return <div className="co-m-pane__body">
+        <HintBlock title="Create Service Binding">
+          <ServiceBindingDescription instanceName={obj.metadata.name} />
+          <Button variant="primary" onClick={this.createBinding}>Create Service Binding</Button>
+        </HintBlock>
       </div>;
     }
 

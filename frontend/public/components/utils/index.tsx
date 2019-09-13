@@ -56,6 +56,7 @@ export * from './expand-collapse';
 export * from './volume-type';
 export * from './skeleton-catalog';
 export * from './dom-utils';
+export * from './hint-block';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

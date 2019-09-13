@@ -3,11 +3,12 @@ import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import Spy = jasmine.Spy;
+import { Button } from '@patternfly/react-core';
 
 import { InstallPlanTableHeader, InstallPlanTableRow, InstallPlanTableRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
 import { InstallPlanKind, InstallPlanApproval, referenceForStepResource } from '../../../public/components/operator-lifecycle-manager';
 import { Table, TableRow, MultiListPage, DetailsPage } from '../../../public/components/factory';
-import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox } from '../../../public/components/utils';
+import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox, HintBlock } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel, CustomResourceDefinitionModel } from '../../../public/models';
 import * as k8s from '../../../public/module/k8s';
@@ -160,7 +161,7 @@ describe(InstallPlanPreview.name, () => {
   it('renders button to approve install plan if requires approval', () => {
     wrapper = wrapper.setState({needsApproval: true});
 
-    expect(wrapper.find('.co-well').find('button').at(0).text()).toEqual('Approve');
+    expect(wrapper.find(HintBlock).shallow().find(Button).at(0).render().text()).toEqual('Approve');
   });
 
   it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
@@ -171,13 +172,13 @@ describe(InstallPlanPreview.name, () => {
     });
 
     wrapper = wrapper.setState({needsApproval: true});
-    wrapper.find('.co-well').find('button').at(0).simulate('click');
+    wrapper.find(HintBlock).shallow().find(Button).at(0).simulate('click');
   });
 
   it('renders button to deny install plan if requires approval', () => {
     wrapper = wrapper.setState({needsApproval: true});
 
-    expect(wrapper.find('.co-well').find('button').at(1).text()).toEqual('Deny');
+    expect(wrapper.find(HintBlock).shallow().find(Button).at(1).render().text()).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
@@ -218,11 +219,11 @@ describe(InstallPlanDetails.displayName, () => {
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({obj: installPlan});
 
-    expect(wrapper.find('.co-well').find(Link).props().to).toEqual(`/k8s/ns/default/${k8s.referenceForModel(InstallPlanModel)}/${testInstallPlan.metadata.name}/components`);
+    expect(wrapper.find(HintBlock).shallow().find(Link).props().to).toEqual(`/k8s/ns/default/${k8s.referenceForModel(InstallPlanModel)}/${testInstallPlan.metadata.name}/components`);
   });
 
   it('does not render link to "Components" tab if install plan does not need approval"', () => {
-    expect(wrapper.find('.co-well').exists()).toBe(false);
+    expect(wrapper.find(HintBlock).exists()).toBe(false);
   });
 });
 

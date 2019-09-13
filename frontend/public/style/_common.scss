@@ -198,29 +198,6 @@ $co-external-link-padding-right: 15px;
   white-space: pre-wrap;
 }
 
-.co-well {
-  color: $color-pf-blue-600;
-  background-color: $color-pf-blue-50;
-  padding: 20px;
-  margin: ($grid-gutter-width / 2);
-
-  @media (min-width: $screen-sm-min) {
-    margin: $grid-gutter-width;
-  }
-
-  .co-well__close-button {
-    float: right;
-  }
-
-  .co-well__close-button {
-    color: $color-pf-blue-600;
-  }
-
-  .co-well__close-button:hover, .co-well__close-button:active {
-    color: $color-pf-blue-400;
-  }
-}
-
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
   @media (max-width: $grid-float-breakpoint-max) { // Target phones

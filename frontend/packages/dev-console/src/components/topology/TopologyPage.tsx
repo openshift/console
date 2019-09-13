@@ -2,10 +2,9 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import { HintBlock } from 'patternfly-react';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
-import { StatusBox, Firehose } from '@console/internal/components/utils';
+import { StatusBox, Firehose, HintBlock } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import EmptyState from '../EmptyState';
@@ -34,10 +33,12 @@ const EmptyMsg = () => (
   <EmptyState
     title="Topology"
     hintBlock={
-      <HintBlock
-        title="No workloads found"
-        body="To add content to your project, create an application, component or service using one of these options."
-      />
+      <HintBlock title="No workloads found">
+        <p>
+          To add content to your project, create an application, component or service using one of
+          these options.
+        </p>
+      </HintBlock>
     }
   />
 );

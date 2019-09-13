@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { HintBlock, Modal } from 'patternfly-react';
+import { Modal } from 'patternfly-react';
 import { Button } from '@patternfly/react-core';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
 import { Link } from 'react-router-dom';
 
 import { MarkdownView } from '../operator-lifecycle-manager/clusterserviceversion';
-import { history, ExternalLink } from '../utils';
+import { history, ExternalLink, HintBlock } from '../utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
 import { OperatorHubItem } from './index';
 import { SubscriptionModel } from '../../models';
@@ -36,37 +36,31 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   const getHintBlock = () => {
     if (installed) {
       return (
-        <HintBlock
-          title="Installed Operator"
-          body={
-            <span>
-              This Operator has been installed on the cluster.{' '}
-              <Link to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/clusterserviceversions`}>
-                View it here.
-              </Link>
-            </span>
-          }
-        />
+        <HintBlock title="Installed Operator">
+          <p>
+            This Operator has been installed on the cluster.{' '}
+            <Link to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/clusterserviceversions`}>
+              View it here.
+            </Link>
+          </p>
+        </HintBlock>
       );
     }
 
     if (providerType === 'Community') {
       return (
-        <HintBlock
-          title="Community Operator"
-          body={
-            <span>
-              This is a community provided operator. These are operators which have not been vetted or verified by Red Hat.
-              Community Operators should be used with caution because their stability is unknown.
-              Red Hat provides no support for Community Operators.
-              {RH_OPERATOR_SUPPORT_POLICY_LINK && (
-                <span className="co-modal-ignore-warning__link">
-                  <ExternalLink href={RH_OPERATOR_SUPPORT_POLICY_LINK} text="Learn more about Red Hat’s third party software support policy" />
-                </span>
-              )}
+        <HintBlock title="Community Operator">
+          <p>
+            This is a community provided operator. These are operators which have not been vetted or verified by Red Hat.
+            Community Operators should be used with caution because their stability is unknown.
+            Red Hat provides no support for Community Operators.
+          </p>
+          {RH_OPERATOR_SUPPORT_POLICY_LINK && (
+            <span className="co-modal-ignore-warning__link">
+              <ExternalLink href={RH_OPERATOR_SUPPORT_POLICY_LINK} text="Learn more about Red Hat’s third party software support policy" />
             </span>
-          }
-        />
+          )}
+        </HintBlock>
       );
     }
 

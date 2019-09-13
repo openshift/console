@@ -9,7 +9,7 @@ export const operatorModalUninstallBtn = operatorModal.element(by.buttonText('Un
 export const closeOperatorModal = () => operatorModal.$('.close').click();
 export const operatorModalIsClosed = () => browser.wait(until.not(until.presenceOf(operatorModal)), 1000)
   .then(() => browser.sleep(500));
-export const viewInstalledOperator = () => $('.hint-block-pf').element(by.linkText('View it here.')).click();
+export const viewInstalledOperator = () => $('.co-hint-block').element(by.linkText('View it here.')).click();
 
 export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'Create Operator Subscription'));
 export const createSubscriptionFormName = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
