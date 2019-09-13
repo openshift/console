@@ -128,6 +128,19 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Advanced',
       perspective: 'dev',
       componentProps: {
+        name: 'Metrics',
+        href: '/metrics',
+        required: FLAGS.OPENSHIFT,
+        testID: 'metrics-header',
+      },
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      section: 'Advanced',
+      perspective: 'dev',
+      componentProps: {
         name: 'Search',
         href: '/search',
         testID: 'advanced-search-header',
@@ -189,7 +202,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/add', '/import', '/topology', '/deploy-image'],
+      path: ['/add', '/import', '/topology', '/deploy-image', '/metrics'],
       component: NamespaceRedirect,
     },
   },
@@ -279,6 +292,16 @@ const plugin: Plugin<ConsumedExtensions> = [
         (await import(
           './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
         )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/metrics/all-namespaces', '/metrics/ns/:ns'],
+      loader: async () =>
+        (await import('./components/MetricsPage' /* webpackChunkName: "dev-console-metrics" */))
+          .default,
     },
   },
   {
