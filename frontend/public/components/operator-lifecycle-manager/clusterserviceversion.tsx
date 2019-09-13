@@ -203,16 +203,7 @@ const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionK
   return sub.metadata.namespace === (csv.metadata.annotations || {})['olm.operatorNamespace'] && _.get(sub.status, 'installedCSV') === csv.metadata.name;
 });
 
-export const filterData = (data) => {
-  return data.map((item) => {
-    const viewData = {...item};
-    delete viewData.metadata.resourceVersion;
-    delete viewData.status.lastUpdateTime;
-    return viewData;
-  });
-};
-
-export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = ({data, ...props}) => {
+export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
 
   const EmptyMsg = () => <MsgBox title="No Operators match filter" detail="" />;
 
@@ -225,7 +216,6 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
 
   return <Table
     {...props}
-    data={filterData(data)}
     aria-label="Installed Operators"
     Header={ClusterServiceVersionTableHeader}
     Row={(rowProps) => referenceFor(rowProps.obj) === referenceForModel(ClusterServiceVersionModel)

@@ -205,7 +205,16 @@ const getRowKey = (obj, index) => {
 };
 
 const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
-  const { bindBodyRef, cellMeasurementCache, customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
+  const { bindBodyRef, customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
+
+  const cellMeasurementCache = new CellMeasurerCache({
+    fixedWidth: true,
+    minHeight: 44,
+    keyMapper: rowIndex => {
+      const key = getRowKey(data[rowIndex], rowIndex);
+      return key;
+    },
+  });
 
   const rowRenderer = ({index, isScrolling: scrolling, style, parent}) => {
     const rowKey = getRowKey(data[index], index);
@@ -246,7 +255,6 @@ export type RowFunction = (args: RowFunctionArgs) => JSX.Element;
 
 export type VirtualBodyProps = {
   bindBodyRef: Function;
-  cellMeasurementCache: any;
   customData?: any;
   Row: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
   height: number;
@@ -326,7 +334,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
     };
     _columnShift: number;
-    _cellMeasurementCache: any;
     _bodyRef: any;
 
     constructor(props){
@@ -340,7 +347,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       this._onSort = this._onSort.bind(this);
       this._handleResize = _.debounce(this._handleResize.bind(this), 100);
       this._bindBodyRef = this._bindBodyRef.bind(this);
-      this._refreshGrid = _.debounce(this._refreshGrid.bind(this), 100);
 
       let sortBy = {};
       if (currentSortField && currentSortOrder) {
@@ -355,16 +361,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
         }
       }
       this.state = { columns, sortBy };
-
-      this._cellMeasurementCache = new CellMeasurerCache({
-        fixedWidth: true,
-        minHeight: 44,
-        keyMapper: rowIndex => {
-          const { data } = this.props;
-          const key = getRowKey(data[rowIndex], rowIndex);
-          return key;
-        },
-      });
     }
 
     componentDidMount(){
@@ -388,22 +384,13 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
       window.addEventListener('resize', this._handleResize);
     }
 
-    componentDidUpdate(prevProps){
-      const {data, virtualize} = this.props;
-      if (virtualize && this._bodyRef && !_.isEqual(prevProps.data, data)){
-        console.log('refresh grid');
-        // force react-virtualized to update after data changes with `isScrollingOptOut` set true
-        this._refreshGrid();
-      }
-    }
-
     componentWillUnmount(){
       window.removeEventListener('resize', this._handleResize);
     }
 
     _refreshGrid() {
-      this._cellMeasurementCache.clearAll();
       this._bodyRef.recomputeVirtualGridSize();
+      this.forceUpdate();
     }
 
     _handleResize() {
@@ -449,7 +436,6 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
                 <div ref={registerChild}>
                   <VirtualBody
                     bindBodyRef={this._bindBodyRef}
-                    cellMeasurementCache={this._cellMeasurementCache}
                     Row={Row}
                     customData={customData}
                     height={height}
