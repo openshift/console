@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { Row, Col } from 'patternfly-react';
 import {
   referenceForModel,
   K8sResourceKind,
@@ -94,8 +93,8 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Baremetal Host Overview" />
-      <Row>
-        <Col sm={6} xs={12} id="name-description-column">
+      <div className="row">
+        <div className="col-xs-12 col-sm-6" id="name-description-column">
           <dl>
             <dt>Name</dt>
             <dd>{getName(host)}</dd>
@@ -137,8 +136,8 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
               <Timestamp timestamp={creationTimestamp} />
             </dd>
           </dl>
-        </Col>
-        <Col sm={6} xs={12}>
+        </div>
+        <div className="col-xs-12 col-sm-6">
           <dl>
             <dt>Status</dt>
             <dd>
@@ -194,8 +193,8 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
               </>
             )}
           </dl>
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 };
