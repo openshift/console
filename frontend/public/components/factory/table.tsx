@@ -210,13 +210,9 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   const cellMeasurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
-    keyMapper: rowIndex => {
-      const key = getRowKey(data[rowIndex], rowIndex);
-      return key;
-    },
   });
 
-  const rowRenderer = ({index, isScrolling: scrolling, style, parent}) => {
+  const rowRenderer = ({index, isScrolling: scrolling, key, style, parent}) => {
     const rowKey = getRowKey(data[index], index);
     const rowArgs = {obj: data[index], index, columns, isScrolling: scrolling, key: rowKey, style, customData};
     const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
@@ -224,7 +220,7 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
     return <CellMeasurer
       cache={cellMeasurementCache}
       columnIndex={0}
-      key={rowKey}
+      key={key}
       parent={parent}
       rowIndex={index}>{row}</CellMeasurer>;
   };
@@ -238,7 +234,6 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}
       isScrolling={isScrolling}
-      isScrollingOptOut={true}
       onScroll={onChildScroll}
       columnCount={1}
       rows={data}
