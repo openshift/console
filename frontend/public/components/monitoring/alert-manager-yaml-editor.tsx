@@ -22,6 +22,11 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({obj, onC
 
   const save = e => {
     e.preventDefault();
+    if (_.isEmpty(yamlStringData)) {
+      setErrorMsg('Alertmanager configuration cannot be empty.');
+      setSuccessMsg('');
+      return;
+    }
     setInProgress(true);
     const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value:  Base64.encode(yamlStringData)}];
     k8sPatch(SecretModel, secret, patch)
@@ -44,7 +49,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({obj, onC
       <p className="co-alert-manager-yaml__explanation">
         Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings
       </p>
-      {!_.isEmpty(yamlStringData) && <div className="co-alert-manager-yaml__form-entry-wrapper">
+      <div className="co-alert-manager-yaml__form-entry-wrapper">
         <div className="co-alert-manager-yaml__form">
           <div className="form-group">
             <DroppableFileInput
@@ -54,12 +59,11 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({obj, onC
           </div>
         </div>
       </div>
-      }
       <ButtonBar errorMessage={errorMsg} successMessage={successMsg} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
-          {!_.isEmpty(yamlStringData) && <Button type="submit" variant="primary" id="save-changes">
+          <Button type="submit" variant="primary" id="save-changes">
             Save
-          </Button> }
+          </Button>
           <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
             Cancel
           </Button>
