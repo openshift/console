@@ -66,7 +66,7 @@ export const k8sCreate = (kind, data, opts = {}) => {
 
   // Lowercase the resource name
   // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
-  if (data.metadata.name && !data.metadata.generateName) {
+  if (data.metadata.name && _.isString(data.metadata.name) && !data.metadata.generateName) {
     data.metadata.name = data.metadata.name.toLowerCase();
   }
 
