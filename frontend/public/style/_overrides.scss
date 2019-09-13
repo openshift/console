@@ -382,6 +382,12 @@ kbd {
   --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 16px;
 }
 
+// react-virtualized disables pointer-events when scrolling, but this prevents
+// users from being able to click actions in the last row of a long list
+.dropdown-kebab-pf.pf-c-table__action .pf-c-dropdown__menu {
+  pointer-events: auto;
+}
+
 // operator name alignment adjusted
 .pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__icon {
   align-items: flex-start;
