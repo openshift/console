@@ -7,6 +7,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
+import { runStatus } from './pipeline-augment';
 
 interface Resources {
   inputs?: Resource[];
@@ -97,7 +98,7 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
       return task;
     }
     if (pipelineRun.status && !pipelineRun.status.taskRuns) {
-      return _.merge(task, { status: { reason: 'Failed' } });
+      return _.merge(task, { status: { reason: runStatus.Failed } });
     }
     const mTask = _.merge(task, {
       status: _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }), 'status'),
@@ -111,21 +112,21 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
     }
     // append task status
     if (!mTask.status) {
-      mTask.status = { reason: 'Idle' };
+      mTask.status = { reason: runStatus.Idle };
     } else if (mTask.status && mTask.status.conditions) {
       const statusCondition = mTask.status.conditions.pop() || {};
       switch (statusCondition.status) {
         case 'True':
-          mTask.status.reason = 'Succeeded';
+          mTask.status.reason = runStatus.Succeeded;
           break;
         case 'Unknown':
-          mTask.status.reason = 'In Progress';
+          mTask.status.reason = runStatus['In Progress'];
           break;
         case 'False':
-          mTask.status.reason = 'Failed';
+          mTask.status.reason = runStatus.Failed;
           break;
         default:
-          mTask.status.reason = 'Idle';
+          mTask.status.reason = runStatus.Idle;
           break;
       }
     }

@@ -1,49 +1,97 @@
-import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
+import { formatDuration } from '@console/internal/components/utils/datetime';
+import { runStatus } from '../../utils/pipeline-augment';
+
+enum TerminatedReasons {
+  Completed = 'Completed',
+}
 
 export type TaskStatusStep = {
   name: string;
   running?: { startedAt: string };
   terminated?: {
-    reason: string;
+    finishedAt: string;
+    reason: TerminatedReasons;
+    startedAt: string;
   };
   waiting?: {};
 };
 
 export type TaskStatus = {
-  reason: string;
+  reason: runStatus;
   duration?: string;
   steps?: TaskStatusStep[];
 };
 
-export const computeStepColor = (step: { name: string }, status: TaskStatus): string => {
-  if (!status || !status.reason) {
-    return getRunStatusColor(runStatus.Cancelled).pftoken.value;
-  }
-  if (status.reason !== 'In Progress') {
-    return getRunStatusColor(status.reason).pftoken.value;
-  }
-
-  // In progress, try to get granular statuses
-  const stepStatuses = status.steps || [];
-  const matchingStep = stepStatuses.find((stepStatus) => {
-    // TODO: Find a better way to link them up
-    return stepStatus.name.includes(step.name);
+const getMatchingStep = (step, status: TaskStatus): TaskStatusStep => {
+  const statusSteps: TaskStatusStep[] = status.steps || [];
+  return statusSteps.find((statusStep) => {
+    // In rare occasions the status step name is prefixed with `step-`
+    // This is likely a bug but this workaround will be temporary as it's investigated separately
+    return statusStep.name === step.name || statusStep.name === `step-${step.name}`;
   });
-  if (!matchingStep) {
-    return getRunStatusColor(runStatus.Pending).pftoken.value;
-  }
+};
 
-  let color;
+const calculateDurationFormatted = ({ startedAt, finishedAt }): string => {
+  const date = new Date(finishedAt).getTime() - new Date(startedAt).getTime();
+  return formatDuration(date);
+};
+
+const getMatchingStepDuration = (matchingStep?: TaskStatusStep) => {
+  if (!matchingStep) return '';
+
   if (matchingStep.terminated) {
-    color =
-      matchingStep.terminated.reason === 'Completed'
-        ? getRunStatusColor(runStatus.Succeeded).pftoken.value
-        : getRunStatusColor(runStatus.Failed).pftoken.value;
-  } else if (matchingStep.running) {
-    color = getRunStatusColor(runStatus.Running).pftoken.value;
-  } else if (matchingStep.waiting) {
-    color = getRunStatusColor(runStatus.Pending).pftoken.value;
+    return calculateDurationFormatted(matchingStep.terminated);
+  }
+  if (matchingStep.running) {
+    return calculateDurationFormatted({
+      startedAt: matchingStep.running.startedAt,
+      finishedAt: Date.now(),
+    });
   }
 
-  return color || getRunStatusColor(runStatus.PipelineNotStarted).pftoken.value;
+  return '';
+};
+
+export type StepStatus = {
+  duration: string | null;
+  name: string;
+  runStatus: runStatus;
+};
+
+export const createStepStatus = (step: { name: string }, status: TaskStatus): StepStatus => {
+  let stepRunStatus: runStatus = runStatus.PipelineNotStarted;
+  let duration: string = null;
+
+  if (!status || !status.reason) {
+    stepRunStatus = runStatus.Cancelled;
+  } else if (status.reason === runStatus['In Progress']) {
+    // In progress, try to get granular statuses
+    const matchingStep: TaskStatusStep = getMatchingStep(step, status);
+
+    if (!matchingStep) {
+      stepRunStatus = runStatus.Pending;
+    } else if (matchingStep.terminated) {
+      stepRunStatus =
+        matchingStep.terminated.reason === TerminatedReasons.Completed
+          ? runStatus.Succeeded
+          : runStatus.Failed;
+      duration = getMatchingStepDuration(matchingStep);
+    } else if (matchingStep.running) {
+      stepRunStatus = runStatus['In Progress'];
+      duration = getMatchingStepDuration(matchingStep);
+    } else if (matchingStep.waiting) {
+      stepRunStatus = runStatus.Pending;
+    }
+  } else {
+    // Not in progress, just use the run status reason
+    stepRunStatus = status.reason;
+
+    duration = getMatchingStepDuration(getMatchingStep(step, status)) || status.duration;
+  }
+
+  return {
+    duration,
+    name: step.name,
+    runStatus: stepRunStatus,
+  };
 };
