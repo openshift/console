@@ -42,7 +42,7 @@ interface ResourceDropdownProps {
   selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: any) => boolean;
-  onChange?: (key: string, name?: string) => void;
+  onChange?: (key: string, name?: string, isListEmpty?: boolean) => void;
   onLoad?: (items: { [key: string]: string }) => void;
 }
 
@@ -96,6 +96,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
   private getDropdownList = (
     {
+      loaded,
+      actionItems,
       autoSelect,
       selectedKey,
       resources,
@@ -141,15 +143,15 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     if (updateSelection) {
       let selectedItem = selectedKey;
       if (
-        (_.isEmpty(sortedList) || !sortedList[this.props.selectedKey]) &&
+        (_.isEmpty(sortedList) || !sortedList[selectedKey]) &&
         allSelectorItem &&
-        allSelectorItem.allSelectorKey !== this.props.selectedKey
+        allSelectorItem.allSelectorKey !== selectedKey
       ) {
         selectedItem = allSelectorItem.allSelectorKey;
       } else if (autoSelect && !selectedKey) {
         selectedItem =
-          this.props.loaded && _.isEmpty(sortedList) && this.props.actionItems
-            ? this.props.actionItems[0].actionKey
+          loaded && _.isEmpty(sortedList) && actionItems
+            ? actionItems[0].actionKey
             : _.get(_.keys(sortedList), 0);
       }
       selectedItem && this.handleChange(selectedItem, sortedList);
@@ -166,7 +168,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       this.setState({ title });
     }
     if (key !== selectedKey) {
-      onChange && onChange(key, name);
+      onChange && onChange(key, name, _.isEmpty(items));
     }
   };
 

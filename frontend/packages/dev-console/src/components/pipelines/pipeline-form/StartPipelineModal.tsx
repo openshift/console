@@ -9,7 +9,7 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { Pipeline, PipelineResource, Param, PipelineRun } from '../../../utils/pipeline-augment';
 import StartPipelineForm from './StartPipelineForm';
-import { validationSchema } from './pipelineForm-validation-utils';
+import { startPipelineSchema } from './pipelineForm-validation-utils';
 
 export type newPipelineRun = (Pipeline: Pipeline, latestRun: PipelineRun) => {};
 
@@ -69,9 +69,8 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
   return (
     <Formik
       initialValues={initialValues}
-      initialStatus={{ subFormsOpened: 0 }}
       onSubmit={handleSubmit}
-      validationSchema={validationSchema}
+      validationSchema={startPipelineSchema}
       render={(props) => <StartPipelineForm {...props} close={close} />}
     />
   );

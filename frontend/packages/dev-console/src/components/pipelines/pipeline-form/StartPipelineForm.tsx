@@ -43,7 +43,7 @@ const StartPipelineForm: React.FC<FormikValues> = ({
           errorMessage={status && status.submitError}
           inProgress={isSubmitting}
           submitText="Start"
-          submitDisabled={!_.isEmpty(errors) || !!status.subFormsOpened}
+          submitDisabled={!_.isEmpty(errors)}
           cancel={close}
         />
       </div>

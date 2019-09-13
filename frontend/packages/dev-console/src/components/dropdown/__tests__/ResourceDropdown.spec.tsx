@@ -32,7 +32,7 @@ describe('ResourceDropdown test suite', () => {
     const spy = jest.fn();
     const component = shallow(componentFactory({ onChange: spy }));
     component.setProps({ resources: [] });
-    expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined);
+    expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined, true);
   });
 
   it('should select Create New Application as default option when more than one action items is available', () => {
@@ -53,7 +53,7 @@ describe('ResourceDropdown test suite', () => {
       }),
     );
     component.setProps({ resources: [] });
-    expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined);
+    expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined, true);
   });
 
   it('should select Choose Existing Application as default option when selectedKey is passed as #CHOOSE_APPLICATION_KEY#', () => {
@@ -75,28 +75,28 @@ describe('ResourceDropdown test suite', () => {
     );
     component.setProps({ resources: [], selectedKey: '#CHOOSE_APPLICATION_KEY#' });
     expect(component.state('title')).toEqual('Choose Existing Application');
-    expect(spy).toHaveBeenCalledWith('#CHOOSE_APPLICATION_KEY#', undefined);
+    expect(spy).toHaveBeenCalledWith('#CHOOSE_APPLICATION_KEY#', undefined, true);
   });
 
   it('should select first item as default option when an item is available', () => {
     const spy = jest.fn();
     const component = shallow(componentFactory({ onChange: spy }));
     component.setProps({ resources: mockDropdownData.slice(0, 1) });
-    expect(spy).toHaveBeenCalledWith('app-group-1', 'app-group-1');
+    expect(spy).toHaveBeenCalledWith('app-group-1', 'app-group-1', false);
   });
 
   it('should select first item as default option when more than one items are available', () => {
     const spy = jest.fn();
     const component = shallow(componentFactory({ onChange: spy }));
     component.setProps({ resources: mockDropdownData });
-    expect(spy).toHaveBeenCalledWith('app-group-1', 'app-group-1');
+    expect(spy).toHaveBeenCalledWith('app-group-1', 'app-group-1', false);
   });
 
   it('should select given selectedKey as default option when more than one items are available', () => {
     const spy = jest.fn();
     const component = shallow(componentFactory({ onChange: spy, selectedKey: 'app-group-1' }));
     component.setProps({ resources: mockDropdownData, selectedKey: 'app-group-2' });
-    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2');
+    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2', false);
   });
 
   it('should reset to default item when the selectedKey is no longer available in the items', () => {
@@ -113,9 +113,9 @@ describe('ResourceDropdown test suite', () => {
       }),
     );
     component.setProps({ resources: mockDropdownData, selectedKey: 'app-group-2' });
-    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2');
+    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2', false);
     component.setProps({ resources: [] });
-    expect(spy).toHaveBeenCalledWith('#ALL_APPS#', undefined);
+    expect(spy).toHaveBeenCalledWith('#ALL_APPS#', undefined, true);
   });
 
   it('should callback selected item from dropdown and change the title to selected item', () => {
@@ -126,7 +126,7 @@ describe('ResourceDropdown test suite', () => {
       componentFactory({ onChange: spy, selectedKey: 'app-group-1', id: 'dropdown1' }),
     );
     component.setProps({ resources: mockDropdownData, selectedKey: 'app-group-2' });
-    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2');
+    expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2', false);
 
     const dropdownComponent = component.find('Dropdown#dropdown1').shallow();
     const dropdownBtn = dropdownComponent.find('button#dropdown1');
@@ -139,7 +139,18 @@ describe('ResourceDropdown test suite', () => {
       .find('#app-group-3-link');
     dropdownItem.simulate('click', { preventDefault, stopPropagation });
 
-    expect(spy).toHaveBeenCalledWith('app-group-3', 'app-group-3');
+    expect(spy).toHaveBeenCalledWith('app-group-3', 'app-group-3', false);
     expect(component.state('title')).toEqual('app-group-3');
+  });
+
+  it('should pass a third arugment in the onChange handler based on the resources availability', () => {
+    const spy = jest.fn();
+    const component = shallow(componentFactory({ onChange: spy }));
+
+    component.setProps({ resources: mockDropdownData.slice(0, 1) });
+    expect(spy).toHaveBeenCalledWith('app-group-1', 'app-group-1', false);
+
+    component.setProps({ resources: [] });
+    expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined, true);
   });
 });

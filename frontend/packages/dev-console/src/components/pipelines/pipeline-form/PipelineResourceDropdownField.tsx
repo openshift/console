@@ -21,28 +21,33 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
 }) => {
   const [field, { touched, error }] = useField(props.name);
   const [createMode, setCreateMode] = React.useState(false);
-  const { setFieldValue, setFieldTouched, setStatus, status, values } = useFormikContext<
-    FormikValues
-  >();
+  const [isListEmpty, setIsListEmpty] = React.useState(false);
+  const [prevState, setPrevState] = React.useState(field);
+  const { setFieldValue, setFieldTouched, values } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'pipeline-resource-dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
-  const setFunctions = React.useRef({ setFieldValue, setStatus, setFieldTouched });
+  const setFunctions = React.useRef({ setFieldValue, setFieldTouched });
+
+  const setDropDownValue = (value: string): void => {
+    setCreateMode(false);
+    setFieldValue(props.name, value);
+    setFieldTouched(props.name, true);
+  };
 
   const handleChange = React.useCallback(
-    (value: string) => {
-      const dropdownValue = value;
-      if (dropdownValue === CREATE_PIPELINE_RESOURCE) {
+    (value: string, name: string, resourcesAvailable?: boolean) => {
+      setPrevState(field);
+      if (value === CREATE_PIPELINE_RESOURCE) {
         setCreateMode(true);
-        setFunctions.current.setStatus({
-          subFormsOpened: status.subFormsOpened + 1,
-        });
+        setFunctions.current.setFieldValue(props.name, '');
+        setIsListEmpty(resourcesAvailable);
       } else {
-        setFunctions.current.setFieldValue(props.name, dropdownValue);
-        setFunctions.current.setFieldTouched(props.name, true);
+        setFunctions.current.setFieldValue(props.name, value);
       }
+      setFunctions.current.setFieldTouched(props.name, true);
     },
-    [props.name, status.subFormsOpened],
+    [field, props.name],
   );
 
   return (
@@ -77,15 +82,12 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
         <div style={{ marginTop: 'var(--pf-global--spacer--sm)' }}>
           <PipelineResourceForm
             type={props.filterType}
+            closeDisabled={isListEmpty}
             onClose={() => {
-              setCreateMode(false);
-              setStatus({ subFormsOpened: status.subFormsOpened ? status.subFormsOpened - 1 : 0 });
+              setDropDownValue(prevState.value);
             }}
             onCreate={(data) => {
-              setFieldValue(props.name, data.metadata.name);
-              setFieldTouched(props.name, true);
-              setCreateMode(false);
-              setStatus({ subFormsOpened: status.subFormsOpened ? status.subFormsOpened - 1 : 0 });
+              setDropDownValue(data.metadata.name);
             }}
           />
         </div>

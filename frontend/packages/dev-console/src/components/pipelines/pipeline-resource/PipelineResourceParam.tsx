@@ -12,9 +12,10 @@ import './PipelineResourceParam.scss';
 
 export interface PipelineResourceParamProps {
   type: string;
+  closeDisabled?: boolean;
 }
 
-const PipelineResourceParam: React.FC<PipelineResourceParamProps> = ({ type }) => {
+const PipelineResourceParam: React.FC<PipelineResourceParamProps> = ({ type, closeDisabled }) => {
   const { errors, handleReset, status, isSubmitting, dirty, submitForm } = useFormikContext<
     FormikValues
   >();
@@ -57,6 +58,7 @@ const PipelineResourceParam: React.FC<PipelineResourceParamProps> = ({ type }) =
             className="odc-pipeline-resource-param__action-btn"
             variant={ButtonVariant.plain}
             onClick={handleReset}
+            isDisabled={closeDisabled}
             aria-label="close"
           >
             <CloseIcon />

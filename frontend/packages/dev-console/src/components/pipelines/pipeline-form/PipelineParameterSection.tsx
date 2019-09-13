@@ -31,6 +31,7 @@ const PipelineParameterSection: React.FC<ParamertersSectionProps> = ({ parameter
                 label={parameter.name}
                 helpText={parameter.description}
                 placeholder="Name"
+                required
               />
             </div>
           ))}
