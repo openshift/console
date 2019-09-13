@@ -16,7 +16,6 @@ export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
     <Expandable
       toggleText={isExpanded ? textExpanded : textCollapsed}
       onToggle={() => toggleExpandCollapse(!isExpanded)}
-      isExpanded={isExpanded}
     >
       {children}
     </Expandable>
