@@ -22,8 +22,9 @@ interface Resource {
 export interface ContainerStatus {
   lastState?: string;
   state?: {
-    waiting: Record<string, any>;
-    terminated: Record<string, any>;
+    waiting?: Record<string, any>;
+    terminated?: Record<string, any>;
+    running?: Record<string, any>;
   };
 }
 
