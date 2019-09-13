@@ -24,12 +24,13 @@ import {
   Status,
   nameForModel,
   CustomResourceDefinitionKind,
+  modelFor,
 } from '../../module/k8s';
 import { SwaggerDefinition, definitionFor } from '../../module/k8s/swagger';
 import { ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor, CRDDescription, ClusterServiceVersionLogo, APIServiceDefinition } from './index';
 import { ClusterServiceVersionModel, CustomResourceDefinitionModel } from '../../models';
 import { Firehose } from '../utils/firehose';
-import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput, ListDropdown, resourcePathFromModel, FirehoseResult, useScrollToTopOnMount } from '../utils';
+import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput, ListDropdown, resourcePathFromModel, FirehoseResult, useScrollToTopOnMount, Dropdown } from '../utils';
 import { SpecCapability, StatusCapability, Descriptor } from './descriptors/types';
 import { ResourceRequirements } from './descriptors/spec/resource-requirements';
 import { RootState } from '../../redux';
@@ -87,16 +88,20 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
   }
 
   const fields: OperandField[] = _.flatten(_.map(_.get(openAPI, 'properties.spec.properties', {}), (val, key: string) => {
-    const capabilityFor = (type: string) => {
-      switch (type) {
-        case 'integer': return SpecCapability.number;
-        case 'boolean': return SpecCapability.booleanSwitch;
+    const capabilitiesFor = (property): SpecCapability[] => {
+      if (property.enum) {
+        return property.enum.map(i => SpecCapability.select.concat(i));
+      }
+      switch (property.type) {
+        case 'integer': return [SpecCapability.number];
+        case 'boolean': return [SpecCapability.booleanSwitch];
         case 'string':
         default:
-          return SpecCapability.text;
+          return [SpecCapability.text];
       }
     };
 
+    // FIXME(alecmerdler): Try out 3 levels of properties...
     switch (val.type) {
       case 'object':
         if (_.values(val.properties).some(nestedVal => ['object', 'array'].includes(nestedVal.type))) {
@@ -108,7 +113,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
           type: nestedVal.type,
           required: _.get(val, 'required', []).includes(nestedKey),
           validation: null,
-          capabilities: [SpecCapability.fieldGroup.concat(key), capabilityFor(nestedVal.type)],
+          capabilities: [SpecCapability.fieldGroup.concat(key), ...capabilitiesFor(nestedVal.type)],
         } as OperandField));
       case 'array':
         if (val.items.type !== 'object' || _.values(val.items.properties).some(itemVal => ['object', 'array'].includes(itemVal.type))) {
@@ -120,8 +125,10 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
           type: itemVal.type,
           required: _.get(val.items, 'required', []).includes(itemKey),
           validation: null,
-          capabilities: [SpecCapability.arrayFieldGroup.concat(key), capabilityFor(itemVal.type)],
+          capabilities: [SpecCapability.arrayFieldGroup.concat(key), ...capabilitiesFor(itemVal.type)],
         } as OperandField));
+      case undefined:
+        return null;
       default:
         return {
           path: key,
@@ -129,7 +136,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
           type: val.type,
           required: _.get(openAPI.properties.spec, 'required', []).includes(key),
           validation: _.pick(val, [...Object.keys(Validations)]),
-          capabilities: [capabilityFor(val.type)],
+          capabilities: capabilitiesFor(val),
         } as OperandField;
     }
   }));
@@ -142,16 +149,18 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     ? fieldsFor(props.providedAPI)
     : [])
     .map(field => {
-      if (_.isEmpty(props.openAPI)) {
-        return field;
+      const capabilities = field.capabilities || [];
+      const openAPIProperties = _.get(props, 'openAPI.properties.spec.properties');
+      if (_.isEmpty(openAPIProperties)) {
+        return {...field, capabilities};
       }
       const schemaPath = field.path.split('.').join('.properties.');
       const required = (_.get(props.openAPI, _.dropRight(['spec', ...field.path.split('.')]).join('.properties.').concat('.required'), []) as string[])
         .includes(_.last(field.path.split('.')));
-      const type = _.get(props.openAPI.properties.spec.properties, schemaPath.concat('.type')) as JSONSchema6TypeName;
-      const validation = _.pick(_.get(props.openAPI.properties.spec.properties, schemaPath), [...Object.keys(Validations)]) as OperandField['validation'];
+      const type = _.get(openAPIProperties, schemaPath.concat('.type')) as JSONSchema6TypeName;
+      const validation = _.pick(openAPIProperties[schemaPath], [...Object.keys(Validations)]) as OperandField['validation'];
 
-      return {...field, type, required, validation};
+      return {...field, capabilities, type, required, validation};
     })
     .concat(fieldsForOpenAPI(props.openAPI).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
     // Associate `specDescriptors` with `fieldGroups` from OpenAPI
@@ -160,14 +169,20 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       : field);
 
   const defaultValueFor = (field: OperandField) => {
-    if (field.capabilities.includes(SpecCapability.podCount)) {
+    if (_.intersection(
+      field.capabilities,
+      [
+        SpecCapability.podCount,
+        SpecCapability.password,
+        SpecCapability.imagePullPolicy,
+        SpecCapability.text,
+        SpecCapability.number,
+        SpecCapability.select,
+      ]).length > 0) {
       return '';
     }
     if (field.capabilities.includes(SpecCapability.resourceRequirements)) {
       return {limits: {cpu: '', memory: ''}, requests: {cpu: '', memory: ''}};
-    }
-    if (field.capabilities.includes(SpecCapability.password)) {
-      return '';
     }
     if (field.capabilities.some(c => c.startsWith(SpecCapability.k8sResourcePrefix))) {
       return null;
@@ -178,17 +193,8 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
       return false;
     }
-    if (field.capabilities.includes(SpecCapability.imagePullPolicy)) {
-      return '';
-    }
     if (field.capabilities.includes(SpecCapability.updateStrategy)) {
       return null;
-    }
-    if (field.capabilities.includes(SpecCapability.text)) {
-      return '';
-    }
-    if (field.capabilities.includes(SpecCapability.number)) {
-      return '';
     }
     if (field.capabilities.includes(SpecCapability.nodeAffinity)) {
       return _.cloneDeep(defaultNodeAffinity);
@@ -315,14 +321,18 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         value={formValues[field.path]} />;
     }
     if (field.capabilities.some(c => c.startsWith(SpecCapability.k8sResourcePrefix))) {
-      const groupVersionKind: GroupVersionKind = field.capabilities.find(c => c.startsWith(SpecCapability.k8sResourcePrefix)).split(SpecCapability.k8sResourcePrefix)[1];
+      const groupVersionKind: GroupVersionKind = field.capabilities.find(c => c.startsWith(SpecCapability.k8sResourcePrefix)).split(SpecCapability.k8sResourcePrefix)[1]
+        .replace('core~v1~', '');
+      const model = modelFor(groupVersionKind);
 
       return <div style={{width: '50%'}}>
-        <ListDropdown
-          resources={[{kind: groupVersionKind, namespace: props.namespace}]}
-          desc={field.description}
-          placeholder={`Select ${kindForReference(groupVersionKind)}`}
-          onChange={name => setFormValues(values => ({...values, [field.path]: name}))} />
+        {!_.isUndefined(model)
+          ? <ListDropdown
+            resources={[{kind: groupVersionKind, namespace: model.namespaced ? props.namespace : null}]}
+            desc={field.displayName}
+            placeholder={`Select ${kindForReference(groupVersionKind)}`}
+            onChange={name => setFormValues(values => ({...values, [field.path]: name}))} />
+          : <span>Cluster does not have resource {groupVersionKind}</span>}
       </div>;
     }
     if (field.capabilities.includes(SpecCapability.checkbox)) {
@@ -388,6 +398,18 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <PodAffinity affinity={formValues[field.path]} onChangeAffinity={affinity => setFormValues(values => ({...values, [field.path]: affinity}))} />
       </div>;
     }
+    if (field.capabilities.some(c => c.startsWith(SpecCapability.select))) {
+      return <div style={{}}>
+        <Dropdown
+          title=""
+          selectedKey={formValues[field.path]}
+          items={field.capabilities
+            .filter(c => c.startsWith(SpecCapability.select))
+            .map(c => c.split(SpecCapability.select)[1])
+            .reduce((all, option) => ({[option]: option, ...all}), {})}
+          onChange={(selected) => setFormValues(values => ({...values, [field.path]: selected}))} />
+      </div>;
+    }
     return null;
   };
 
@@ -401,7 +423,39 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     : groups,
   new Set<SpecCapability.arrayFieldGroup>());
 
+  const advancedFields = fields.filter(f => !f.capabilities.some(c => c.startsWith(SpecCapability.fieldGroup) || c.startsWith(SpecCapability.arrayFieldGroup)))
+    .filter(f => f.capabilities.includes(SpecCapability.advanced));
+
   useScrollToTopOnMount();
+
+  type FieldGroupProps = {
+    defaultExpand: boolean;
+    group: SpecCapability.fieldGroup;
+  };
+
+  const FieldGroup: React.FC<FieldGroupProps> = ({group, defaultExpand}) => {
+    const [expand, setExpand] = React.useState<boolean>(defaultExpand);
+
+    return <div key={group} id={group}>
+      <div className="co-operand-field-group-title">
+        <label className="form-label">{_.startCase(group.split(SpecCapability.fieldGroup)[1])}</label>
+        <button className="btn btn-link" type="button" onClick={() => setExpand(!expand)}>{expand ? 'Collapse' : 'Expand'}</button>
+      </div>
+      <div className="co-operand-field-group">
+        { expand && fields
+          .filter(f => f.capabilities.includes(group))
+          .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
+            <div className="form-group co-create-operand__form-group">
+              <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
+              { inputFor(field) }
+              { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
+              { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+            </div>
+          </div>) }
+      </div>
+    </div>;
+  };
+  FieldGroup.displayName = 'FieldGroup';
 
   return <div className="co-m-pane__body">
     <div className="row">
@@ -434,21 +488,14 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               </div>) }
           </div>
         </div>) }
-        { [...fieldGroups].map(group => <div key={group}>
-          <label className="form-label">{_.startCase(group.split(SpecCapability.fieldGroup)[1])}</label>
-          <div className="co-operand-field-group">
-            { fields.filter(f => f.capabilities.includes(group))
-              .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
-                <div className="form-group co-create-operand__form-group">
-                  <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
-                  { inputFor(field) }
-                  { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
-                  { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
-                </div>
-              </div>) }
-          </div>
+        { [...fieldGroups].map(group => <div key={group} id={group}>
+          <FieldGroup
+            group={group}
+            defaultExpand={_.every(fields.filter(f => f.capabilities.includes(SpecCapability.fieldGroup.concat(group) as SpecCapability.fieldGroup)),
+              f => f.capabilities.includes(SpecCapability.advanced) && !f.required)} />
         </div>) }
         { fields.filter(f => !f.capabilities.some(c => c.startsWith(SpecCapability.fieldGroup) || c.startsWith(SpecCapability.arrayFieldGroup)))
+          .filter(f => !f.capabilities.includes(SpecCapability.advanced))
           .filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
             <div className="form-group co-create-operand__form-group">
               <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
@@ -457,6 +504,17 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
             </div>
           </div>) }
+        { advancedFields.length > 0 && <div>
+          <h3>Advanced Configuration</h3>
+          { advancedFields.filter(f => !_.isNil(inputFor(f))).map(field => <div key={field.path}>
+            <div className="form-group co-create-operand__form-group">
+              <label className={classNames('form-label', {'co-required': field.required})} htmlFor={field.path}>{field.displayName}</label>
+              { inputFor(field) }
+              { field.description && <span id={`${field.path}__description`} className="help-block text-muted">{field.description}</span> }
+              { formErrors[field.path] && <span className="co-error">{formErrors[field.path]}</span> }
+            </div>
+          </div>) }
+        </div> }
         {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) &&
           <Alert isInline className="co-alert co-break-word" variant="danger" title={error || 'Fix above errors'} />
         }
@@ -509,7 +567,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
     .find((s: K8sResourceKind) => referenceFor(s) === referenceForModel(props.operandModel));
   const [method, setMethod] = React.useState<'yaml' | 'form'>('yaml');
 
-  const openAPI = definitionFor(props.operandModel) || _.get(props.customResourceDefinition, ['data', 'spec', 'validation', 'openAPIV3Schema']) as SwaggerDefinition;
+  const openAPI = _.get(props.customResourceDefinition, ['data', 'spec', 'validation', 'openAPIV3Schema']) as SwaggerDefinition || definitionFor(props.operandModel);
 
   return <React.Fragment>
     { props.loaded && <div className="co-create-operand__header">

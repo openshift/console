@@ -119,7 +119,6 @@ export const config: Config = {
       'tests/overview/overview.scenario.ts',
       'tests/deploy-image.scenario.ts',
     ]),
-    // TODO(alecmerdler): Rename this to `olm` (being used by ci-operator)
     olmFull: suite([
       'tests/olm/descriptors.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',

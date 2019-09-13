@@ -1,10 +1,10 @@
 import { execSync } from 'child_process';
 import { browser, element, by, $, $$, ExpectedConditions as until, ElementFinder } from 'protractor';
 import { safeDump } from 'js-yaml';
-import * as _ from 'lodash';
+import { startCase, get, find, isUndefined } from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors, create } from '../../protractor.conf';
-import { SpecCapability, StatusCapability, Descriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
+import { SpecCapability, StatusCapability } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
 import * as crudView from '../../views/crud.view';
 import * as yamlView from '../../views/yaml.view';
 
@@ -22,6 +22,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case SpecCapability.updateStrategy: return {type: 'Recreate'};
     case SpecCapability.text: return 'Some text';
     case SpecCapability.number: return 2;
+    case SpecCapability.select: return '';
 
     case StatusCapability.podStatuses: return {ready: ['pod-0', 'pod-1'], unhealthy: ['pod-2'], stopped: ['pod-3']};
     case StatusCapability.podCount: return 3;
@@ -38,8 +39,8 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
   }
 };
 
-const inputValueFor = (descriptor: Descriptor) => async(el: ElementFinder) => {
-  switch (descriptor['x-descriptors'][0]) {
+const inputValueFor = (capability: SpecCapability) => async(el: ElementFinder) => {
+  switch (capability) {
     case SpecCapability.podCount: return parseInt(await el.$('input').getAttribute('value'), 10);
     case SpecCapability.label: return el.$('input').getAttribute('value');
     case SpecCapability.resourceRequirements: return {
@@ -65,7 +66,18 @@ const inputValueFor = (descriptor: Descriptor) => async(el: ElementFinder) => {
 
 describe('Using OLM descriptor components', () => {
   const testLabel = 'automatedTestName';
-  const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, SpecCapability.fieldGroup, SpecCapability.arrayFieldGroup, StatusCapability.k8sResourcePrefix]);
+  const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, SpecCapability.fieldGroup, SpecCapability.arrayFieldGroup, SpecCapability.select, StatusCapability.k8sResourcePrefix]);
+  const specDescriptorFieldGroup = [{
+    description: 'Field #1 for specDescriptorFieldGroup',
+    displayName: 'Field1',
+    path: 'specDescriptorFieldGroup.fieldOne',
+    'x-descriptors': [SpecCapability.fieldGroup.concat('specDescriptorFieldGroup'), SpecCapability.number],
+  }, {
+    description: 'Field #2 for specDescriptorFieldGroup',
+    displayName: 'Field2',
+    path: 'specDescriptorFieldGroup.fieldTwo',
+    'x-descriptors': [SpecCapability.fieldGroup.concat('specDescriptorFieldGroup'), SpecCapability.number],
+  }];
   const testCRD = {
     apiVersion: 'apiextensions.k8s.io/v1beta1',
     kind: 'CustomResourceDefinition',
@@ -88,7 +100,7 @@ describe('Using OLM descriptor components', () => {
           properties: {
             spec: {
               type: 'object',
-              required: ['password'],
+              required: ['password', 'select'],
               properties: {
                 password: {
                   type: 'string',
@@ -100,6 +112,29 @@ describe('Using OLM descriptor components', () => {
                   type: 'integer',
                   minimum: 2,
                   maximum: 4,
+                },
+                select: {
+                  type: 'string',
+                  enum: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'],
+                },
+                fieldGroup: {
+                  type: 'object',
+                  properties: {
+                    itemOne: {
+                      type: 'string',
+                    },
+                    itemTwo: {
+                      type: 'integer',
+                    },
+                  },
+                },
+                hiddenFieldGroup: {
+                  type: 'object',
+                  properties: {
+                    hiddenItem: {
+                      type: 'object',
+                    },
+                  },
                 },
               },
             },
@@ -119,7 +154,7 @@ describe('Using OLM descriptor components', () => {
     spec: {
       ...Object.keys(SpecCapability).filter(c => !prefixedCapabilities.has(SpecCapability[c])).reduce((acc, cur) => ({
         ...acc, [cur]: defaultValueFor(SpecCapability[cur]),
-      }), {}),
+      }), {select: 'WARN'}),
     },
     status: {
       ...Object.keys(StatusCapability).filter(c => !prefixedCapabilities.has(StatusCapability[c])).reduce((acc, cur) => ({
@@ -184,7 +219,7 @@ describe('Using OLM descriptor components', () => {
               displayName: capability.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
               path: capability,
               'x-descriptors': [SpecCapability[capability]],
-            })),
+            })).concat(specDescriptorFieldGroup),
             statusDescriptors: Object.keys(StatusCapability).filter(c => !prefixedCapabilities.has(StatusCapability[c])).map(capability => ({
               description: `Status descriptor for ${capability}`,
               displayName: capability.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
@@ -267,18 +302,34 @@ describe('Using OLM descriptor components', () => {
 
       const label = await input.$('.form-label').getText();
       const descriptor = testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.find(d => d.displayName === label);
-      const helpText = await input.$(`#${descriptor.path}__description`).getText();
+      if (isUndefined(descriptor)) {
+        const hasProperty = (properties) => find(properties, (_, nestedKey) => startCase(nestedKey) === label);
+        expect(find(testCRD.spec.validation.openAPIV3Schema.properties.spec.properties as any,
+          (p, k) => startCase(k) === label || hasProperty(p.properties)))
+          .toBeDefined();
+      } else {
+        const helpText = await input.element(by.id(`${descriptor.path}__description`)).getText();
 
-      expect(descriptor).toBeDefined();
-      expect(label).toEqual(descriptor.displayName);
-      expect(helpText).toEqual(descriptor.description);
+        expect(descriptor).toBeDefined();
+        expect(label).toEqual(descriptor.displayName);
+        expect(helpText).toEqual(descriptor.description);
 
-      if (await inputValueFor(descriptor)(input) !== null) {
-        const value = await inputValueFor(descriptor)(input);
+        if (await inputValueFor(descriptor['x-descriptors'][0])(input) !== null) {
+          const value = await inputValueFor(descriptor['x-descriptors'][0])(input);
 
-        expect(value).toEqual(_.get(testCR, ['spec', descriptor.path]));
+          expect(value).toEqual(get(testCR, ['spec', descriptor.path]));
+        }
       }
     });
+  });
+
+  it('renders groups of fields together from specDescriptors', async() => {
+    expect(element(by.id(SpecCapability.fieldGroup.concat('specDescriptorFieldGroup'))).isDisplayed()).toBe(true);
+  });
+
+  it('renders groups of fields together from nested properties in OpenAPI schema', async() => {
+    expect(element(by.id(SpecCapability.fieldGroup.concat('fieldGroup'))).isDisplayed()).toBe(true);
+    expect(element(by.id(SpecCapability.fieldGroup.concat('hiddenFieldGroup'))).isPresent()).toBe(false);
   });
 
   it('prevents creation and displays validation errors for required or non-empty fields', async() => {

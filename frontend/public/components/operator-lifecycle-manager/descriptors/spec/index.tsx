@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { Tooltip } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Switch } from 'patternfly-react';
 
 import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
@@ -11,6 +12,7 @@ import { configureSizeModal } from './configure-size';
 import { Selector, ResourceLink, LoadingInline } from '../../../utils';
 import { k8sPatch } from '../../../../module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
   if (_.isEmpty(value) && !_.isNumber(value)) {
@@ -74,6 +76,19 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
   </div>;
 };
 
+const Secret: React.FC<SpecCapabilityProps> = (props) => {
+  const [reveal, setReveal] = React.useState(false);
+
+  return <React.Fragment>
+    <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
+      {reveal
+        ? <React.Fragment><EyeSlashIcon className="co-icon-space-r" />Hide Values</React.Fragment>
+        : <React.Fragment><EyeIcon className="co-icon-space-r" />Reveal Values</React.Fragment>}
+    </button>
+    <SecretValue value={props.value} encoded={false} reveal={reveal} />
+  </React.Fragment>;
+};
+
 const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<SpecCapabilityProps>>()
   .set(SpecCapability.podCount, PodCount)
   .set(SpecCapability.endpointList, Endpoints)
@@ -82,7 +97,8 @@ const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<Sp
   .set(SpecCapability.resourceRequirements, ResourceRequirements)
   .set(SpecCapability.k8sResourcePrefix, K8sResourceLink)
   .set(SpecCapability.selector, BasicSelector)
-  .set(SpecCapability.booleanSwitch, BooleanSwitch);
+  .set(SpecCapability.booleanSwitch, BooleanSwitch)
+  .set(SpecCapability.password, Secret);
 
 const capabilityFor = (specCapability: SpecCapability) => {
   if (_.isEmpty(specCapability)) {
