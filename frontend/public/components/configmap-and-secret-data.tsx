@@ -43,12 +43,12 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({data, label}) => {
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
-const SecretValue: React.FC<SecretValueProps> = ({value, reveal}) => {
+export const SecretValue: React.FC<SecretValueProps> = ({value, reveal, encoded = true}) => {
   if (!value) {
     return <span className="text-muted">No value</span>;
   }
 
-  const decodedValue = Base64.decode(value);
+  const decodedValue = encoded ? Base64.decode(value) : value;
   const visibleValue = reveal ? decodedValue : <MaskedData />;
   return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} />;
 };
@@ -95,6 +95,7 @@ type DownloadValueProps = {
 
 type SecretValueProps = {
   value: string;
+  encoded?: boolean;
   reveal: boolean;
 };
 

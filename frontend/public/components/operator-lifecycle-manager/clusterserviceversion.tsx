@@ -129,7 +129,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     : <span className="co-error co-icon-and-text"><ErrorStatus title="Failed" /></span>;
   const menuActions = [Kebab.factory.Edit].concat(!_.isNil(subscription)
     ? [() => editSubscription(subscription), () => uninstall(subscription)]
-    : []);
+    : [Kebab.factory.Delete]);
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -245,6 +245,8 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       flatten={({clusterServiceVersion, subscription}) => _.get(clusterServiceVersion, 'data', [] as ClusterServiceVersionKind[])
         .concat(_.get(subscription, 'data', [] as SubscriptionKind[])
           .filter(sub => ['', sub.metadata.namespace].includes(props.namespace) && _.isNil(_.get((sub as SubscriptionKind).status, 'installedCSV'))))
+        .filter((obj, i, all) => referenceFor(obj) !== referenceForModel(SubscriptionModel)
+            || _.isUndefined(all.find(({metadata}) => [_.get(obj.status, 'currentCSV'), _.get(obj.spec, 'startingCSV')].includes(metadata.name))))
       }
       namespace={props.namespace}
       ListComponent={ClusterServiceVersionList}
@@ -396,7 +398,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   type ExtraResources = {subscription: SubscriptionKind[]};
   const menuActions = (model, obj: ClusterServiceVersionKind, {subscription}: ExtraResources) => [Kebab.factory.Edit(model, obj)].concat(!_.isNil(subscriptionFor(obj)(subscription))
     ? [editSubscription(subscriptionFor(obj)(subscription)), uninstall(subscriptionFor(obj)(subscription))]
-    : []);
+    : [Kebab.factory.Delete(model, obj)]);
 
   const canListSubscriptions = useAccessReview({
     group: SubscriptionModel.apiGroup,

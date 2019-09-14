@@ -21,6 +21,8 @@ export enum SpecCapability {
   podAntiAffinity = 'urn:alm:descriptor:com.tectonic.ui:podAntiAffinity',
   fieldGroup = 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:',
   arrayFieldGroup = 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:',
+  select = 'urn:alm:descriptor:com.tectonic.ui:select:',
+  advanced = 'urn:alm:descriptor:com.tectonic.ui:advanced',
 }
 
 export enum StatusCapability {
