@@ -319,8 +319,8 @@ const Details = ({obj: node}) => {
           </thead>
           <tbody>
             {_.map(images, (image, i) => <tr key={i}>
-              <td className="co-break-all">{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
-              <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
+              <td className="co-break-all co-select-to-copy">{image.names.find((name: string) => !name.includes('@') && !name.includes('<none>')) || image.names[0]}</td>
+              <td>{units.humanize(image.sizeBytes, 'binaryBytes', true).string || '-'}</td>
             </tr>)}
           </tbody>
         </table>
