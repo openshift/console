@@ -53,7 +53,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.NetworkAttachmentDefinitionModel,
       loader: () =>
         import(
-          './components/network-attachment-definitions/network-attachment-definition' /* webpackChunkName: "network-attachment-definitions" */
+          './components/network-attachment-definitions/NetworkAttachmentDefinition' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.NetworkAttachmentDefinitionsPage),
     },
   },
@@ -64,8 +64,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: ['/k8s/ns/:ns/networkattachmentdefinitions/~new'],
       loader: () =>
         import(
-          './components/network-attachment-definitions' /* webpackChunkName: "network-attachment-definitions" */
-        ).then((m) => m.CreateNetAttachDefYAML),
+          './components/network-attachment-definitions/NetworkAttachmentDefinitionCreateYaml' /* webpackChunkName: "network-attachment-definitions" */
+        ).then((m) => m.default),
     },
   },
   {
@@ -73,6 +73,31 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.NetworkAttachmentDefinitionModel,
       template: NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/networkattachmentdefinitions/~new/form'],
+      loader: () =>
+        import(
+          './components/network-attachment-definitions/NetworkAttachmentDefinitionsForm' /* webpackChunkName: "network-attachment-definitions" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [
+        '/k8s/ns/:ns/networkattachmentdefinitions',
+        '/k8s/all-namespaces/networkattachmentdefinitions',
+      ],
+      loader: () =>
+        import(
+          './components/network-attachment-definitions' /* webpackChunkName: "network-attachment-definitions" */
+        ).then((m) => m.NetworkAttachmentDefinitionsPage),
     },
   },
 ];
