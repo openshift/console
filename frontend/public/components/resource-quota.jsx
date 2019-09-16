@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { FieldLevelHelp } from 'patternfly-react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -12,7 +11,7 @@ import {
 } from '@patternfly/react-icons';
 
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, FieldLevelHelp } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { GaugeChart } from './graphs/gauge';
@@ -230,13 +229,11 @@ const Details = ({obj: rq}) => {
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Resource Quota Details" style={{display: 'block', marginBottom: '20px'}}>
-        <FieldLevelHelp content={
-          <div>
-            <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
-            <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
-            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a Resource Quota.</p>
-          </div>
-        } />
+        <FieldLevelHelp>
+          <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
+          <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
+          <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a Resource Quota.</p>
+        </FieldLevelHelp>
       </SectionHeading>
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">

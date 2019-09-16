@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FieldLevelHelp } from 'patternfly-react';
 import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
@@ -13,6 +12,7 @@ import {
   ContainerDropdown,
   EnvFromPair,
   EnvType,
+  FieldLevelHelp,
   LoadingBox,
   LoadingInline,
   NameValueEditorPair,
@@ -474,18 +474,21 @@ export const EnvironmentPage = connect(stateToProps)(
           <div className={classNames({'co-m-pane__body-group': !currentEnvVars.isCreate})}>
             { !currentEnvVars.isCreate && <h3 className="co-section-heading-tertiary">Single values (env)
               {
-                !readOnly && <FieldLevelHelp content={
-                  <div>Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
+                !readOnly && <FieldLevelHelp>
+                  Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
+                </FieldLevelHelp>
               }
             </h3>
             }
             <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} addConfigMapSecret={addConfigMapSecret} />
           </div>
           { currentEnvVars.isContainerArray && <div className="co-m-pane__body-group environment-buttons">
-            <h3 className="co-section-heading-tertiary">All values from existing config maps or secrets (envFrom) {
-              !readOnly && <FieldLevelHelp content={
-                <div>Add new values by referencing an existing config map or secret. Drag and drop environment variables within this section to change the order in which they are run.<br /><strong>Note: </strong>If identical values exist in both lists, the single value in the list above will take precedence.</div>} />
-            }
+            <h3 className="co-section-heading-tertiary">All values from existing config maps or secrets (envFrom)
+              {
+                !readOnly && <FieldLevelHelp>
+                  Add new values by referencing an existing config map or secret. Drag and drop environment variables within this section to change the order in which they are run.<br /><strong>Note: </strong>If identical values exist in both lists, the single value in the list above will take precedence.
+                </FieldLevelHelp>
+              }
             </h3>
             <EnvFromEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
           </div>}

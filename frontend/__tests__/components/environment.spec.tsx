@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { FieldLevelHelp } from 'patternfly-react';
 
 import { EnvironmentPage } from '../../public/components/environment';
+// eslint-disable-next-line import/no-duplicates
+import { FieldLevelHelp } from '../../public/components/utils';
+// eslint-disable-next-line import/no-duplicates
+import * as utils from '../../public/components/utils';
 import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
 
@@ -37,6 +40,7 @@ describe(EnvironmentPage.name, () => {
 
   describe('When user does not have permission', () => {
     beforeEach(() => {
+      spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: false } }));
       environmentPageRO=<EnvironmentPage.WrappedComponent
         obj={obj}
         model={DeploymentModel}
@@ -45,7 +49,6 @@ describe(EnvironmentPage.name, () => {
         readOnly={false}
       />;
       wrapperRO = shallow(environmentPageRO);
-      wrapperRO.setState({allowed: false});
     });
 
     it('does not show field level help', () => {
@@ -60,6 +63,7 @@ describe(EnvironmentPage.name, () => {
   describe('When readOnly attribute is "false"', () => {
     beforeEach(() => {
       spyOn(k8s, 'k8sGet').and.callFake(() => Promise.resolve());
+      spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: true } }));
       environmentPage=<EnvironmentPage.WrappedComponent
         obj={obj}
         model={DeploymentModel}
@@ -68,7 +72,7 @@ describe(EnvironmentPage.name, () => {
         readOnly={false}
       />;
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps, allowed: true});
+      wrapper.setState({secrets, configMaps});
     });
 
     it('shows field level help component', () => {
