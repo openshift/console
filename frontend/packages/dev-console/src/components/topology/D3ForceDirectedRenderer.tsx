@@ -6,23 +6,25 @@ import * as _ from 'lodash';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
 import SvgDefsProvider from '../svg/SvgDefsProvider';
 import {
-  ViewNode,
-  ViewEdge,
-  NodeProvider,
+  ContextMenuProvider,
+  DragConnectionProps,
+  Edge,
+  EdgeProps,
   EdgeProvider,
+  GraphElementType,
+  GraphModel,
+  GroupElementInterface,
+  GroupProps,
+  GroupProvider,
   NodeProps,
+  NodeProvider,
   TopologyDataMap,
   TopologyDataObject,
-  GraphModel,
-  Edge,
+  ViewEdge,
   ViewGroup,
-  GroupProvider,
-  GroupProps,
-  GroupElementInterface,
-  DragConnectionProps,
-  EdgeProps,
+  ViewNode,
 } from './topology-types';
-import { DraggingCreateConnector, dragConnectorEndPoint } from './shapes/DraggingCreateConnector';
+import { dragConnectorEndPoint, DraggingCreateConnector } from './shapes/DraggingCreateConnector';
 import { DraggingMoveConnector } from './shapes/DraggingMoveConnector';
 
 const ZOOM_EXTENT: [number, number] = [0.25, 4];
@@ -71,6 +73,7 @@ export interface D3ForceDirectedRendererProps {
   nodeProvider: NodeProvider;
   edgeProvider: EdgeProvider;
   groupProvider: GroupProvider;
+  contextMenu: ContextMenuProvider;
   nodeSize: number;
   selected?: string;
   onSelect?(string): void;
@@ -378,6 +381,16 @@ export default class D3ForceDirectedRenderer extends React.Component<
         .on('end', (d) => this.onNodeDragEnd(d))
         .filter(() => this.state.nodes.length > 1),
     );
+
+    $node.on('contextmenu', this.onNodeContextMenu);
+  };
+
+  onNodeContextMenu = (d: ViewNode) => {
+    const { contextMenu } = this.props;
+
+    if (contextMenu.open(GraphElementType.node, d.id, d3.event.pageX, d3.event.pageY)) {
+      d3.event.preventDefault();
+    }
   };
 
   private onNodeDragStart = () => {
