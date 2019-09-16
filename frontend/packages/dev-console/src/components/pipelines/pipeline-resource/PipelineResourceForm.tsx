@@ -11,6 +11,7 @@ export interface PipelineResourceFormProps {
   type: string;
   onCreate: Function;
   onClose: Function;
+  closeDisabled?: boolean;
   namespace: string;
 }
 
@@ -19,6 +20,7 @@ const PipelineResourceForm: React.FC<PipelineResourceFormProps> = ({
   onCreate,
   onClose,
   namespace,
+  closeDisabled,
 }) => {
   const initialValues = {
     git: {
@@ -97,7 +99,9 @@ const PipelineResourceForm: React.FC<PipelineResourceFormProps> = ({
       onSubmit={handleSubmit}
       onReset={handleReset}
       validationSchema={validationSchema}
-      render={(props) => <PipelineResourceParam {...props} type={type} />}
+      render={(props) => (
+        <PipelineResourceParam {...props} type={type} closeDisabled={closeDisabled} />
+      )}
     />
   );
 };

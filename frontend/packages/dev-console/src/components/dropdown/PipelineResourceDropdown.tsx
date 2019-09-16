@@ -13,7 +13,7 @@ export interface PipelineResourceDropdownProps {
     actionKey: string;
   }[];
   selectedKey: string;
-  onChange?: (key: string) => void;
+  onChange?: (key: string, name: string, isListEmpty?: boolean) => void;
   title?: React.ReactNode;
   id?: string;
   autoselect?: boolean;
