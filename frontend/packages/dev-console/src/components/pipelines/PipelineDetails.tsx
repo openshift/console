@@ -12,28 +12,30 @@ const PipelineDetails = ({ obj: pipeline }) => (
       <div className="col-sm-6">
         <ResourceSummary resource={pipeline} />
       </div>
-      <div className="col-sm-6">
-        <SectionHeading text="Tasks" />
-        <dl>
-          {pipeline.spec.tasks.map((task) => {
-            return (
-              <React.Fragment key={task.name}>
-                <dt>Name: {task.name}</dt>
-                <dd>
-                  Ref:{' '}
-                  <ResourceLink
-                    kind={referenceForModel(TaskModel)}
-                    name={task.taskRef.name}
-                    namespace={pipeline.metadata.namespace}
-                    title={task.taskRef.name}
-                    inline
-                  />
-                </dd>
-              </React.Fragment>
-            );
-          })}
-        </dl>
-      </div>
+      {pipeline.spec.tasks && (
+        <div className="col-sm-6">
+          <SectionHeading text="Tasks" />
+          <dl>
+            {pipeline.spec.tasks.map((task) => {
+              return (
+                <React.Fragment key={task.name}>
+                  <dt>Name: {task.name}</dt>
+                  <dd>
+                    Ref:{' '}
+                    <ResourceLink
+                      kind={referenceForModel(TaskModel)}
+                      name={task.taskRef.name}
+                      namespace={pipeline.metadata.namespace}
+                      title={task.taskRef.name}
+                      inline
+                    />
+                  </dd>
+                </React.Fragment>
+              );
+            })}
+          </dl>
+        </div>
+      )}
     </div>
   </div>
 );
