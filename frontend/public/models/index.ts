@@ -435,7 +435,7 @@ export const ProjectRequestModel: K8sKind = {
 export const IngressModel: K8sKind = {
   label: 'Ingress',
   labelPlural: 'Ingresses',
-  apiGroup: 'extensions',
+  apiGroup: 'networking.k8s.io',
   apiVersion: 'v1beta1',
   plural: 'ingresses',
   abbr: 'I',
