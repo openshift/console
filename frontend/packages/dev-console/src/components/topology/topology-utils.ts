@@ -156,7 +156,7 @@ export class TransformTopologyData {
             'metadata.labels',
           ),
           donutStatus: {
-            pods: currentPods,
+            pods: [...currentPods, ...previousPods],
             build: builds && builds[0],
           },
         },
