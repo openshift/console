@@ -1,8 +1,10 @@
 import { K8sKind } from '@console/internal/module/k8s';
 
+const apiVersion = `v1beta1`;
+
 export const ConfigurationModel: K8sKind = {
   apiGroup: 'serving.knative.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion,
   kind: 'Configuration',
   plural: 'configurations',
   label: 'Configuration',
@@ -28,7 +30,7 @@ export const KnativeServingModel: K8sKind = {
 
 export const RevisionModel: K8sKind = {
   apiGroup: 'serving.knative.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion,
   kind: 'Revision',
   label: 'Revision',
   labelPlural: 'Revisions',
@@ -41,7 +43,7 @@ export const RevisionModel: K8sKind = {
 
 export const RouteModel: K8sKind = {
   apiGroup: 'serving.knative.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion,
   kind: 'Route',
   label: 'Route',
   labelPlural: 'Routes',
@@ -54,7 +56,7 @@ export const RouteModel: K8sKind = {
 
 export const ServiceModel: K8sKind = {
   apiGroup: 'serving.knative.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion,
   kind: 'Service',
   label: 'Service',
   labelPlural: 'Services',

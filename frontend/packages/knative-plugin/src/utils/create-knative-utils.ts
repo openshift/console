@@ -59,8 +59,8 @@ export const createKnativeService = (
   const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
   delete defaultLabel.app;
   const knativeDeployResource: K8sResourceKind = {
-    kind: 'Service',
-    apiVersion: 'serving.knative.dev/v1alpha1',
+    kind: ServiceModel.kind,
+    apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
     metadata: {
       name,
       namespace,
