@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
-import { Tooltip } from '@patternfly/react-core';
+import { Switch, Tooltip } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
-import { Switch } from 'patternfly-react';
 
 import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
@@ -59,14 +58,13 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
 
   return <div className="co-spec-descriptor--switch">
     <Switch
-      value={value}
-      onChange={(el, val) => {
+      isChecked={value}
+      onChange={(val) => {
         setValue(val);
         setConfirmed(false);
       }}
-      onText="True"
-      offText="False"
-      bsSize="mini" />
+      label="True"
+      labelOff="False" />
     &nbsp;&nbsp;
     {value !== props.value && confirmed && <LoadingInline />}
     {value !== props.value && !confirmed && <React.Fragment>

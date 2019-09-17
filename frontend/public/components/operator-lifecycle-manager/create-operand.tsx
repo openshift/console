@@ -6,8 +6,7 @@ import { safeDump } from 'js-yaml';
 import * as _ from 'lodash-es';
 import { PropertyPath } from 'lodash';
 import * as classNames from 'classnames';
-import { Switch } from 'patternfly-react';
-import { Alert, ActionGroup, Button } from '@patternfly/react-core';
+import { Alert, ActionGroup, Button, Switch } from '@patternfly/react-core';
 import { JSONSchema6TypeName } from 'json-schema';
 
 import {
@@ -346,11 +345,11 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     }
     if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
       return <Switch
-        value={formValues[field.path]}
-        onChange={(el, val) => setFormValues(values => ({...values, [field.path]: val}))}
-        onText="True"
-        offText="False"
-        bsSize="mini" />;
+        id={field.path}
+        isChecked={formValues[field.path]}
+        onChange={(val) => setFormValues(values => ({...values, [field.path]: val}))}
+        label="True"
+        labelOff="False" />;
     }
     if (field.capabilities.includes(SpecCapability.imagePullPolicy)) {
       return <RadioGroup
