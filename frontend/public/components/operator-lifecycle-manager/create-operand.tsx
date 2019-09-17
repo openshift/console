@@ -162,7 +162,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
 
       return {...field, capabilities, type, required, validation};
     })
-    .concat(fieldsForOpenAPI(props.openAPI).filter(crdField => !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
+    .concat(fieldsForOpenAPI(props.openAPI).filter(crdField => props.providedAPI.specDescriptors && !props.providedAPI.specDescriptors.some(d => d.path === crdField.path)))
     // Associate `specDescriptors` with `fieldGroups` from OpenAPI
     .map((field, i, allFields) => allFields.some(f => f.capabilities.includes(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup))
       ? {...field, capabilities: [...new Set(field.capabilities).add(SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup)]}
