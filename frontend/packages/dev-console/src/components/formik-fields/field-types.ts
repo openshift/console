@@ -79,3 +79,7 @@ export interface SecretKeyRef {
     name: string;
   };
 }
+
+export interface RadioButtonProps extends FieldProps {
+  options: { value: string; label: string }[];
+}
