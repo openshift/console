@@ -68,7 +68,7 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
             title="The Ceph storage cluster is not in a healthy state."
             isInline
           >
-            Maintenance cannot be started until the health of the storage cluster is restored.
+            Maintenance should not be started until the health of the storage cluster is restored.
           </Alert>
         )}
       </ModalBody>
