@@ -70,6 +70,7 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterPrometheus := fs.String("k8s-mode-off-cluster-prometheus", "", "DEV ONLY. URL of the cluster's Prometheus server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
+	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
@@ -144,18 +145,6 @@ func main() {
 			bridge.FlagFatalf("documentation-base-url", "value must end with slash")
 		}
 		documentationBaseURL = bridge.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
-	}
-
-	offClusterPrometheusURL := &url.URL{}
-	if *fK8sModeOffClusterPrometheus != "" && *fK8sMode == "off-cluster" {
-		offClusterPrometheusURL = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-prometheus", *fK8sModeOffClusterPrometheus)
-		offClusterPrometheusURL.Path = "/api"
-	}
-
-	offClusterAlertManagerURL := &url.URL{}
-	if *fK8sModeOffClusterAlertmanager != "" && *fK8sMode == "off-cluster" {
-		offClusterAlertManagerURL = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager)
-		offClusterAlertManagerURL.Path = "/api"
 	}
 
 	branding := *fBranding
@@ -311,7 +300,9 @@ func main() {
 			Endpoint:        k8sEndpoint,
 		}
 
-		if offClusterPrometheusURL.String() != "" {
+		if *fK8sModeOffClusterPrometheus != "" {
+			offClusterPrometheusURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-prometheus", *fK8sModeOffClusterPrometheus)
+			offClusterPrometheusURL.Path = "/api"
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -324,11 +315,23 @@ func main() {
 			}
 		}
 
-		if offClusterAlertManagerURL.String() != "" {
+		if *fK8sModeOffClusterAlertmanager != "" {
+			offClusterAlertManagerURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager)
+			offClusterAlertManagerURL.Path = "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterAlertManagerURL,
+			}
+		}
+
+		if *fK8sModeOffClusterMetering != "" {
+			offClusterMeteringURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-metering", *fK8sModeOffClusterMetering)
+			offClusterMeteringURL.Path = "/api"
+			srv.MeteringProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterMeteringURL,
 			}
 		}
 
