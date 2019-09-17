@@ -8,6 +8,10 @@ import {
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
+import {
+  global_warning_color_100 as warningColor,
+  global_danger_color_100 as dangerColor,
+} from '@patternfly/react-tokens';
 
 import { twentyFourHourTime } from '../utils/datetime';
 import { humanizeNumber, useRefWidth, Humanize } from '../utils';
@@ -24,6 +28,16 @@ const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
+export enum AreaChartStatus {
+  ERROR = 'ERROR',
+  WARNING = 'WARNING',
+}
+
+const chartStatusColors = {
+  [AreaChartStatus.ERROR]: dangerColor.value,
+  [AreaChartStatus.WARNING]: warningColor.value,
+};
+
 export const AreaChart: React.FC<AreaChartProps> = ({
   className,
   data,
@@ -38,10 +52,13 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   title,
   xAxis = true,
   yAxis = true,
+  chartStatus,
 }) => {
   const [containerRef, width] = useRefWidth();
   const getLabel = ({ datum: { x, y } }) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
+  const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
+
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {data.length ? (
@@ -63,7 +80,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
                 tickFormat={(tick) => humanize(tick).string}
               />
             )}
-            <ChartArea data={data} />
+            <ChartArea data={data} style={style} />
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -107,6 +124,7 @@ type AreaChartProps = {
   xAxis?: boolean;
   yAxis?: boolean;
   padding?: object;
+  chartStatus?: AreaChartStatus;
 };
 
 type AreaProps = AreaChartProps & {
