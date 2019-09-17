@@ -19,15 +19,16 @@ import {
   ClusterVersionKind,
   clusterVersionReference,
   getAvailableClusterUpdates,
+  getClusterID,
   getClusterUpdateStatus,
   getClusterVersionCondition,
   getDesiredClusterVersion,
+  getErrataLink,
   getLastCompletedUpdate,
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
-  getClusterID,
 } from '../../module/k8s';
 import {
   EmptyBox,
@@ -155,6 +156,7 @@ export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
 export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
+  const errataLink = getErrataLink(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
@@ -222,7 +224,9 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
       </div>
     </div>
     <div className="co-m-pane__body">
-      <SectionHeading text="Update History" />
+      <SectionHeading text="Update History">
+        {errataLink && <small><ExternalLink text="View Errata" href={errataLink} /></small>}
+      </SectionHeading>
       {_.isEmpty(history)
         ? <EmptyBox label="History" />
         : <div className="co-table-container">

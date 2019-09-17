@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 import { FLAGS } from '../const';
 import { connectToFlags } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
-import { Firehose } from './utils';
+import { ExternalLink, Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
 import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
-import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion, getClusterID } from '../module/k8s/cluster-settings';
+import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion, getClusterID, getErrataLink } from '../module/k8s/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
@@ -24,6 +24,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
   const clusterID = getClusterID(clusterVersion);
   const channel: string = _.get(cv, 'data.spec.channel');
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
+  const errataLink = getErrataLink(clusterVersion);
   return (
     <React.Fragment>
       {clusterVersion && hasAvailableUpdates(clusterVersion) && <Alert className="co-alert co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
@@ -32,7 +33,10 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
           {openshiftVersion && (
             <React.Fragment>
               <TextListItem component="dt">OpenShift Version</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">{openshiftVersion}</TextListItem>
+              <TextListItem component="dd">
+                <div className="co-select-to-copy">{openshiftVersion}</div>
+                {errataLink && <div><ExternalLink text="View Errata" href={errataLink} /></div>}
+              </TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">Kubernetes Version</TextListItem>
