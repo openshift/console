@@ -53,7 +53,8 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                     <input disabled={props.strategyType !== 'RollingUpdate'}
                       placeholder="25%" size={5} type="text" className="pf-c-form-control"
                       id="input-max-unavailable"
-                      defaultValue={props.maxUnavailable as string}
+                      value={props.maxUnavailable}
+                      onChange={e => props.onChangeMaxUnavailable(e.target.value)}
                       aria-describedby="input-max-unavailable-help" />
                     { props.replicas && <span className="pf-c-input-group__text">
                       <Tooltip content="Current desired pod count"><span>of { pluralize(props.replicas, 'pod')}</span></Tooltip>
@@ -77,7 +78,8 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       type="text"
                       className="pf-c-form-control"
                       id="input-max-surge"
-                      defaultValue={props.maxSurge as string}
+                      value={props.maxSurge}
+                      onChange={e => props.onChangeMaxSurge(e.target.value)}
                       aria-describedby="input-max-surge-help" />
                     <span className="pf-c-input-group__text">
                       <Tooltip content="Current desired pod count"><span>greater than { pluralize(props.replicas, 'pod')}</span></Tooltip>
