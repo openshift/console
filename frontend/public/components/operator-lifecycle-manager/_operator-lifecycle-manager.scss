@@ -8,6 +8,25 @@
   padding-bottom: 10px;
 }
 
+.co-clusterserviceversion-link {
+  .co-clusterserviceversion-logo {
+    flex-direction: column;
+    @media  (min-width: $screen-xs-min) and (max-width: $screen-xs-max),(min-width: $screen-md-min)  {
+      flex-direction: row;
+    }
+  }
+}
+
+.co-clusterserviceversion-link {
+  &:focus, &:hover {
+    text-decoration: none;
+
+    .co-clusterserviceversion-logo__name__clusterserviceversion {
+      text-decoration: underline;
+    }
+  }
+}
+
 .co-clusterserviceversion-logo {
   display: flex;
 }
@@ -17,30 +36,27 @@
   background: #fff;
   display: flex;
   flex: 0 0 auto;
-  height: 60px;
+  height: 40px;
   justify-content: center;
-  width: 60px;
-}
-
-.co-m-nav-title--logo .co-clusterserviceversion-logo__icon {
-  border: 1px solid $color-pf-black-200;
+  margin: 0 15px 5px 0;
+  width: 40px;
 }
 
 .co-clusterserviceversion-logo__name {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 0 10px;
 }
 
 .co-clusterserviceversion-logo__name__clusterserviceversion {
   font-size: 15px;
+  font-weight: var(--pf-global--FontWeight--normal);
   margin-top: 0;
   margin-bottom: 5px;
 }
-
+.co-m-pane__heading--logo
 .co-clusterserviceversion-logo__name__provider {
-  font-size: 13px;
+  font-size: var(--pf-global--FontSize--sm);
 }
 
 .co-clusterserviceversion-empty__state__namespace {
