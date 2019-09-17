@@ -7,7 +7,7 @@ import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { StatusBox, Firehose } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
-import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
