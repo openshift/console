@@ -23,6 +23,7 @@ import {
   getClusterVersionCondition,
   getDesiredClusterVersion,
   getLastCompletedUpdate,
+  getOCMLink,
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
@@ -194,7 +195,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
           {' '}
           <ExternalLink
             text="cloud.redhat.com"
-            href={`https://cloud.redhat.com/openshift/details/${clusterID}`}
+            href={getOCMLink(clusterID)}
           />.
         </p>
         <dl className="co-m-pane__details" >

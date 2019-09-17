@@ -99,3 +99,5 @@ export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
 export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;
 
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
+
+export const getOCMLink = (clusterID: string): string => `https://cloud.redhat.com/openshift/details/${clusterID}`;
