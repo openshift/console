@@ -31,7 +31,7 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = (props)
           <Alert
             className="co-alert"
             variant="info"
-            title="An AWS bucket will be created to provide the OCS Service."
+            title="A bucket will be created to provide the OCS Service."
             isInline
           />
           <p className="co-legend co-required ceph-ocs-desc__legend">
