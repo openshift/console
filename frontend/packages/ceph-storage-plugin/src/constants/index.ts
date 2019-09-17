@@ -11,3 +11,4 @@ export const STORAGE_CLASSES = 'Storage Classes';
 export const PODS = 'Pods';
 export const BY_USED = 'By Used Capacity';
 export const BY_REQUESTED = 'By Requested Capacity';
+export const OCS_OPERATOR = 'ocs-operator';
