@@ -65,6 +65,19 @@ kbd {
 
 // PatternFly 4 overrides
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  // reset headings font family back to correct value
+  // bug caused by PF4 _shield-inheritable.scss
+  .pf-l-split {
+    font-family: $headings-font-family;
+  }
+}
+
 .pf-c-about-modal-box {
   &__brand {
     align-items: flex-start; // so logos don't stretch vertically
@@ -98,6 +111,7 @@ kbd {
     padding-top: 0 !important;
   }
   &__group-title {
+    font-family: $font-family-base;
     padding-top: 8px !important;
   }
 }

@@ -89,7 +89,6 @@ $co-external-link-padding-right: 15px;
 
 .co-m-pane__heading {
   display: flex;
-  font-size: 22px;
   justify-content: space-between;
   margin: 0 0 $grid-gutter-width;
   &--baseline {
@@ -106,7 +105,6 @@ $co-external-link-padding-right: 15px;
 
 .co-m-pane__heading-link {
   font-size: $font-size-base;
-  font-weight: normal;
 }
 
 .co-inline-block {
@@ -114,7 +112,7 @@ $co-external-link-padding-right: 15px;
 }
 
 .co-no-bold {
-  font-weight: normal;
+  font-weight: var(--pf-global--FontWeight--normal);
 }
 
 .cos-error-title {
@@ -123,7 +121,6 @@ $co-external-link-padding-right: 15px;
 
 .co-section-heading {
   display: flex;
-  font-size: 20px;
   justify-content: space-between;
   margin: 0 0 20px 0;
 }
@@ -139,13 +136,11 @@ $co-external-link-padding-right: 15px;
 
 .co-section-heading-secondary {
   font-size: 16px;
-  font-weight: 600;
   margin: 30px 0;
 }
 
 .co-section-heading-tertiary {
   font-size: 16px;
-  font-weight: 600;
   margin: 15px 0;
 }
 
@@ -376,7 +371,7 @@ $co-external-link-padding-right: 15px;
 
 .co-legend {
   border-bottom: 0;
-  font-weight: 600;
+  font-weight: var(--pf-global--FontWeight--bold);
   font-size: $font-size-base;
   margin-bottom: 5px;
 

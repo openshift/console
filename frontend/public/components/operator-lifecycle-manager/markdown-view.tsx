@@ -75,7 +75,7 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
       }
       ${this.props.styles ? this.props.styles : ''}
       </style>
-      <body><div style="overflow-y: auto;">${markdownConvert(this.props.content || 'Not available')}</div></body>`;
+      <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(this.props.content || 'Not available')}</div></body>`;
     return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', display: 'block', width: '100%', height: '0'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
   }
 }

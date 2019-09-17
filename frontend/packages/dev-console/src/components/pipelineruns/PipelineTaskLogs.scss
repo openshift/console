@@ -18,7 +18,7 @@
   &__stepname {
     background-color: #030303;
     color: var(--pf-global--BackgroundColor--100);
-    font-weight: 900;
+    font-weight: var(--pf-global--FontWeight--bold);
     text-transform: uppercase;
     margin: 0px;
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--sm)
