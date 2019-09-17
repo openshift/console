@@ -79,3 +79,8 @@ export interface SecretKeyRef {
     name: string;
   };
 }
+
+export interface RadioButtonProps extends FieldProps {
+  value: string;
+  checked?: boolean;
+}
