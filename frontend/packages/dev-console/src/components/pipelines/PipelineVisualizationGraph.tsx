@@ -6,12 +6,14 @@ import { PipelineVisualizationTask } from './PipelineVisualizationTask';
 import './PipelineVisualizationGraph.scss';
 
 export interface PipelineVisualizationGraphProps {
+  pipelineRun?: string;
   graph: PipelineVisualizationTaskItem[][];
   namespace: string;
   runStatus?: string;
 }
 
 export const PipelineVisualizationGraph: React.FC<PipelineVisualizationGraphProps> = ({
+  pipelineRun,
   graph,
   namespace,
   runStatus,
@@ -30,6 +32,7 @@ export const PipelineVisualizationGraph: React.FC<PipelineVisualizationGraphProp
                   return (
                     <PipelineVisualizationTask
                       key={`${task.taskRef.name}-${task.name}`}
+                      pipelineRun={pipelineRun}
                       task={task}
                       pipelineRunStatus={runStatus}
                       namespace={namespace}
