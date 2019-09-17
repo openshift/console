@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-import { knativeServingResources } from '@console/knative-plugin';
+import { Firehose } from '@console/internal/components/utils';
+import { connect } from 'react-redux';
+import * as plugins from '@console/internal/plugins';
+import { getResourceList } from '@console/shared';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
-import { TransformTopologyData } from './topology-utils';
+import { transformTopologyData } from './topology-utils';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -11,6 +13,7 @@ export interface RenderProps {
 }
 
 export interface ControllerProps {
+  utils: Function[];
   loaded?: boolean;
   loadError?: any;
   resources?: TopologyDataResources;
@@ -25,109 +28,42 @@ export interface TopologyDataControllerProps {
   application: string;
   knative: boolean;
   cheURL: string;
+  resourceList: plugins.OverviewCRD[];
 }
 
+const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
+
 const Controller: React.FC<ControllerProps> = React.memo(
-  ({ render, application, cheURL, resources, loaded, loadError }) =>
+  ({ render, application, cheURL, resources, loaded, loadError, utils }) =>
     render({
       loaded,
       loadError,
       data: loaded
-        ? new TransformTopologyData(resources, application, cheURL)
-            .transformDataBy('deployments')
-            .transformDataBy('deploymentConfigs')
-            .transformDataBy('daemonSets')
-            .transformDataBy('statefulSets')
-            .getTopologyData()
+        ? transformTopologyData(resources, allowedResources, application, cheURL, utils)
         : null,
     }),
 );
 
-const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
+export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   namespace,
   render,
   application,
-  knative,
   cheURL,
+  resourceList,
 }) => {
-  let resources: FirehoseResource[] = [
-    {
-      isList: true,
-      kind: 'DeploymentConfig',
-      namespace,
-      prop: 'deploymentConfigs',
-    },
-    {
-      isList: true,
-      kind: 'Deployment',
-      namespace,
-      prop: 'deployments',
-    },
-    {
-      isList: true,
-      kind: 'DaemonSet',
-      namespace,
-      prop: 'daemonSets',
-    },
-    {
-      isList: true,
-      kind: 'Pod',
-      namespace,
-      prop: 'pods',
-    },
-    {
-      isList: true,
-      kind: 'ReplicationController',
-      namespace,
-      prop: 'replicationControllers',
-    },
-    {
-      isList: true,
-      kind: 'Route',
-      namespace,
-      prop: 'routes',
-    },
-    {
-      isList: true,
-      kind: 'Service',
-      namespace,
-      prop: 'services',
-    },
-    {
-      isList: true,
-      kind: 'ReplicaSet',
-      namespace,
-      prop: 'replicasets',
-    },
-    {
-      isList: true,
-      kind: 'BuildConfig',
-      namespace,
-      prop: 'buildconfigs',
-    },
-    {
-      isList: true,
-      kind: 'Build',
-      namespace,
-      prop: 'builds',
-    },
-    {
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets',
-    },
-  ];
-
-  if (knative) {
-    const knativeResource = knativeServingResources(namespace);
-    resources = [...resources, ...knativeResource];
-  }
+  const { resources, utils } = getResourceList(namespace, resourceList);
   return (
     <Firehose resources={resources} forceUpdate>
-      <Controller application={application} cheURL={cheURL} render={render} />
+      <Controller application={application} cheURL={cheURL} render={render} utils={utils} />
     </Firehose>
   );
 };
 
-export default React.memo(TopologyDataController);
+const DataControllerStateToProps = ({ FLAGS }) => {
+  const resourceList = plugins.registry
+    .getOverviewCRDs()
+    .filter((resource) => FLAGS.get(resource.properties.required));
+  return { resourceList };
+};
+
+export default connect(DataControllerStateToProps)(TopologyDataController);

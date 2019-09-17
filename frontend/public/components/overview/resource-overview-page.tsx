@@ -7,8 +7,8 @@ import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from 
 import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
-import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
+import { OverviewItem } from '@console/shared';
 
 const { common } = Kebab.factory;
 

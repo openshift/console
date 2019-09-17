@@ -5,8 +5,7 @@ import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav } from '../utils';
 import * as plugins from '../../plugins';
-
-import { OverviewItem } from '.';
+import { OverviewItem } from '@console/shared';
 
 const stateToProps = ({ UI }): PropsFromState => ({
   selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),

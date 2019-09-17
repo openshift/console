@@ -1,8 +1,12 @@
 import * as _ from 'lodash';
 import { getPodStatus, podStatus } from '@console/shared';
-import { ConfigurationModel, RevisionModel } from '@console/knative-plugin';
+import {
+  getKnativeServingRevisions,
+  getKnativeServingConfigurations,
+  getKnativeServingRoutes,
+} from '@console/knative-plugin/src/utils/get-knative-resources';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
-import { TransformTopologyData, getEditURL } from '../topology-utils';
+import { transformTopologyData, getEditURL } from '../topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 
@@ -11,9 +15,11 @@ export function getTranformedTopologyData(
   transformByProp: string[],
   mockCheURL?: string,
 ) {
-  const transformTopologyData = new TransformTopologyData(mockData, undefined, mockCheURL);
-  transformByProp.forEach((t) => transformTopologyData.transformDataBy(t));
-  const result = transformTopologyData.getTopologyData();
+  const result = transformTopologyData(mockData, transformByProp, undefined, mockCheURL, [
+    getKnativeServingRevisions,
+    getKnativeServingConfigurations,
+    getKnativeServingRoutes,
+  ]);
   const topologyTransformedData = result.topology;
   const graphData = result.graph;
   return { topologyTransformedData, graphData, keys: Object.keys(topologyTransformedData) };
@@ -21,34 +27,24 @@ export function getTranformedTopologyData(
 
 describe('TopologyUtils ', () => {
   it('should be able to create an object', () => {
-    const transformTopologyData = new TransformTopologyData(resources);
-    expect(transformTopologyData).toBeTruthy();
-  });
-
-  it('should have the resources object as a public member', () => {
-    const transformTopologyData = new TransformTopologyData(resources);
-    expect(transformTopologyData.resources).toEqual(resources);
+    expect(transformTopologyData(resources, ['deployments'])).toBeTruthy();
   });
 
   it('should throw an error, if the invalid target deployment string is provided', () => {
-    const transformTopologyData = new TransformTopologyData(resources);
-    const invalidTargetDeployment = 'dconfig'; // valid values are 'deployments' or 'deploymentConfigs'
+    const invalidTargetDeployment = ['dconfig']; // valid values are 'deployments' or 'deploymentConfigs'
     expect(() => {
-      transformTopologyData.transformDataBy(invalidTargetDeployment);
+      transformTopologyData(resources, invalidTargetDeployment);
     }).toThrowError(`Invalid target deployment resource: (${invalidTargetDeployment})`);
   });
 
   it('should not throw an error, if the valid target deployment string is provided', () => {
-    const transformTopologyData = new TransformTopologyData(resources);
-    const validTargetDeployment = 'deployments'; // valid values are 'deployments' or 'deploymentConfigs'
+    const validTargetDeployment = ['deployments']; // valid values are 'deployments' or 'deploymentConfigs'
     expect(() => {
-      transformTopologyData.transformDataBy(validTargetDeployment);
+      transformTopologyData(resources, validTargetDeployment);
     }).not.toThrowError(`Invalid target deployment resource: (${validTargetDeployment})`);
   });
   it('should return graph and topology data', () => {
-    const transformTopologyData = new TransformTopologyData(resources);
-    transformTopologyData.transformDataBy('deployments');
-    expect(transformTopologyData.getTopologyData()).toEqual(topologyData);
+    expect(transformTopologyData(resources, ['deployments'])).toEqual(topologyData);
   });
   it('should return graph and topology data only for the deployment kind', () => {
     const { graphData, keys } = getTranformedTopologyData(MockResources, ['deployments']);
@@ -76,11 +72,9 @@ describe('TopologyUtils ', () => {
   });
 
   it('should match the previous snapshot', () => {
-    const transformTopologyData = new TransformTopologyData(MockResources);
-    transformTopologyData.transformDataBy('deploymentConfigs');
-    transformTopologyData.transformDataBy('deployments');
-    const result = transformTopologyData.getTopologyData();
-    expect(result).toMatchSnapshot();
+    expect(
+      transformTopologyData(MockResources, ['deployments', 'deploymentConfigs']),
+    ).toMatchSnapshot();
   });
 
   it('should return a valid pod status', () => {
@@ -155,7 +149,7 @@ describe('TopologyUtils ', () => {
       'daemonSets',
     ]);
     expect(graphData.nodes).toHaveLength(1);
-    expect(topologyTransformedData[keys[0]].resources[0].kind).toEqual('DaemonSet');
+    expect(topologyTransformedData[keys[0]].resources.obj.kind).toEqual('DaemonSet');
   });
   it('should return a daemon set pod ', () => {
     const { topologyTransformedData, graphData, keys } = getTranformedTopologyData(MockResources, [
@@ -182,11 +176,7 @@ describe('TopologyUtils ', () => {
       'deploymentConfigs',
       'deployments',
     ]);
-    const revRes = topologyTransformedData[keys[0]].resources.filter(
-      (item) =>
-        item.kind === RevisionModel.kind &&
-        item.apiVersion === `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
-    );
+    const revRes = topologyTransformedData[keys[0]].resources.revisions;
     expect(revRes.length).toEqual(1);
   });
 
@@ -195,11 +185,7 @@ describe('TopologyUtils ', () => {
       'deploymentConfigs',
       'deployments',
     ]);
-    const configRes = topologyTransformedData[keys[0]].resources.filter(
-      (item) =>
-        item.kind === ConfigurationModel.kind &&
-        item.apiVersion === `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
-    );
+    const configRes = topologyTransformedData[keys[0]].resources.configurations;
     expect(configRes).toHaveLength(1);
   });
 
@@ -208,7 +194,7 @@ describe('TopologyUtils ', () => {
       'statefulSets',
     ]);
     expect(graphData.nodes).toHaveLength(1);
-    expect(topologyTransformedData[keys[0]].resources[0].kind).toEqual('StatefulSet');
+    expect(topologyTransformedData[keys[0]].resources.obj.kind).toEqual('StatefulSet');
   });
   it('should return a stateful set pod ', () => {
     const { topologyTransformedData, graphData, keys } = getTranformedTopologyData(MockResources, [

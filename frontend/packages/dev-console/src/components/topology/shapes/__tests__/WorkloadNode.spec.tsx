@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 import { MockResources } from '../../__tests__/topology-test-data';
-import { TransformTopologyData } from '../../topology-utils';
+import { transformTopologyData } from '../../topology-utils';
 import WorkloadNode from '../WorkloadNode';
 
 jest.mock('../../../svg/SvgDefs');
@@ -12,10 +12,8 @@ jest.mock('@console/internal/components/catalog/catalog-item-icon', () => ({
 describe('WorkloadNode', () => {
   let workloadData;
   beforeAll(() => {
-    const transformTopologyData = new TransformTopologyData(MockResources, undefined, undefined);
-    transformTopologyData.transformDataBy('deploymentConfigs');
-    const result = transformTopologyData.getTopologyData();
-    const topologyTransformedData = result.topology;
+    const topologyData = transformTopologyData(MockResources, ['deploymentConfigs'], undefined);
+    const topologyTransformedData = topologyData.topology;
     workloadData = topologyTransformedData[Object.keys(topologyTransformedData)[0]];
   });
 

@@ -5,8 +5,8 @@ import { menuActions } from '../stateful-set';
 import { ResourceSummary } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
-import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { OverviewItem } from '@console/shared';
 
 const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({ item }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">

@@ -23,11 +23,6 @@ Object {
     ],
     "nodes": Array [
       Object {
-        "id": "02f680df-680f-11e9-b69e-5254003f9382",
-        "name": "nodejs",
-        "type": "workload",
-      },
-      Object {
         "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
         "name": "analytics-deployment",
         "type": "workload",
@@ -35,6 +30,11 @@ Object {
       Object {
         "id": "60a9b423-680d-11e9-8c69-5254003f9382",
         "name": "wit-deployment",
+        "type": "workload",
+      },
+      Object {
+        "id": "02f680df-680f-11e9-b69e-5254003f9382",
+        "name": "nodejs",
         "type": "workload",
       },
     ],
@@ -47,7 +47,6 @@ Object {
           "build": undefined,
           "pods": Array [
             Object {
-              "id": "19e6c6a5-680f-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -79,7 +78,6 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/nodejs-1-2v82p",
                 "uid": "19e6c6a5-680f-11e9-8c69-5254003f9382",
               },
-              "name": "nodejs-1-2v82p",
               "spec": Object {
                 "containers": Array [],
               },
@@ -98,7 +96,6 @@ Object {
       "name": "nodejs",
       "pods": Array [
         Object {
-          "id": "19e6c6a5-680f-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -130,7 +127,6 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/nodejs-1-2v82p",
             "uid": "19e6c6a5-680f-11e9-8c69-5254003f9382",
           },
-          "name": "nodejs-1-2v82p",
           "spec": Object {
             "containers": Array [],
           },
@@ -139,9 +135,98 @@ Object {
           },
         },
       ],
-      "resources": Array [
-        Object {
-          "apiVersion": "apps/v1",
+      "resources": Object {
+        "alerts": Object {},
+        "buildConfigs": Array [],
+        "current": Object {
+          "alerts": Object {},
+          "obj": Object {
+            "apiVersion": "v1",
+            "kind": "ReplicationController",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/deployer-pod.completed-at": "2019-04-26 10:36:10 +0000 UTC",
+                "openshift.io/deployment-config.name": "nodejs",
+                "openshift.io/deployment.phase": "Complete",
+              },
+              "creationTimestamp": "2019-04-26T10:36:06Z",
+              "generation": 2,
+              "labels": Object {
+                "app": "nodejs",
+                "openshift.io/deployment-config.name": "nodejs",
+              },
+              "name": "nodejs-1",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps.openshift.io/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "DeploymentConfig",
+                  "name": "nodejs",
+                  "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1161189",
+              "selfLink": "/api/v1/namespaces/testproject3/replicationcontrollers/nodejs-1",
+              "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "availableReplicas": 1,
+              "fullyLabeledReplicas": 1,
+              "observedGeneration": 2,
+              "readyReplicas": 1,
+              "replicas": 1,
+            },
+          },
+          "phase": "Complete",
+          "pods": Array [
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/deployment-config.latest-version": "1",
+                  "openshift.io/deployment-config.name": "nodejs",
+                  "openshift.io/deployment.name": "nodejs-1",
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:36:07Z",
+                "generateName": "nodejs-1-",
+                "labels": Object {
+                  "app": "nodejs",
+                  "deployment": "nodejs-1",
+                  "deploymentconfig": "nodejs",
+                },
+                "name": "nodejs-1-2v82p",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicationController",
+                    "name": "nodejs-1",
+                    "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1161178",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/nodejs-1-2v82p",
+                "uid": "19e6c6a5-680f-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {
+                "containers": Array [],
+              },
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+          ],
+          "revision": undefined,
+        },
+        "isRollingOut": undefined,
+        "obj": Object {
+          "apiVersion": "apps.openshift.io/v1",
           "kind": "DeploymentConfig",
           "metadata": Object {
             "annotations": Object {
@@ -159,7 +244,6 @@ Object {
             "selfLink": "/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs",
             "uid": "02f680df-680f-11e9-b69e-5254003f9382",
           },
-          "name": "nodejs",
           "spec": Object {
             "template": Object {
               "metadata": Object {
@@ -181,127 +265,148 @@ Object {
             "updatedReplicas": 1,
           },
         },
-        Object {
-          "kind": "ReplicationController",
-          "metadata": Object {
-            "annotations": Object {
-              "openshift.io/deployer-pod.completed-at": "2019-04-26 10:36:10 +0000 UTC",
-              "openshift.io/deployment-config.name": "nodejs",
-              "openshift.io/deployment.phase": "Complete",
-            },
-            "creationTimestamp": "2019-04-26T10:36:06Z",
-            "generation": 2,
-            "labels": Object {
-              "app": "nodejs",
-              "openshift.io/deployment-config.name": "nodejs",
-            },
-            "name": "nodejs-1",
-            "namespace": "testproject3",
-            "ownerReferences": Array [
-              Object {
-                "apiVersion": "apps.openshift.io/v1",
-                "blockOwnerDeletion": true,
-                "controller": true,
-                "kind": "DeploymentConfig",
-                "name": "nodejs",
-                "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+        "pods": Array [
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/deployment-config.latest-version": "1",
+                "openshift.io/deployment-config.name": "nodejs",
+                "openshift.io/deployment.name": "nodejs-1",
+                "openshift.io/scc": "restricted",
               },
-            ],
-            "resourceVersion": "1161189",
-            "selfLink": "/api/v1/namespaces/testproject3/replicationcontrollers/nodejs-1",
-            "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
-          },
-          "name": "nodejs-1",
-          "spec": Object {},
-          "status": Object {
-            "availableReplicas": 1,
-            "fullyLabeledReplicas": 1,
-            "observedGeneration": 2,
-            "readyReplicas": 1,
-            "replicas": 1,
-          },
-        },
-        Object {
-          "kind": "Service",
-          "metadata": Object {
-            "creationTimestamp": "2019-04-26T10:35:29Z",
-            "labels": Object {
-              "app": "nodejs",
+              "creationTimestamp": "2019-04-26T10:36:07Z",
+              "generateName": "nodejs-1-",
+              "labels": Object {
+                "app": "nodejs",
+                "deployment": "nodejs-1",
+                "deploymentconfig": "nodejs",
+              },
+              "name": "nodejs-1-2v82p",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicationController",
+                  "name": "nodejs-1",
+                  "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1161178",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/nodejs-1-2v82p",
+              "uid": "19e6c6a5-680f-11e9-8c69-5254003f9382",
             },
-            "name": "nodejs",
-            "namespace": "testproject3",
-            "resourceVersion": "1160881",
-            "selfLink": "/api/v1/namespaces/testproject3/services/nodejs",
-            "uid": "02f53542-680f-11e9-8c69-5254003f9382",
-          },
-          "name": "nodejs",
-          "spec": Object {
-            "selector": Object {
-              "app": "nodejs",
-              "deploymentconfig": "nodejs",
+            "spec": Object {
+              "containers": Array [],
+            },
+            "status": Object {
+              "phase": "Running",
             },
           },
-          "status": Object {
-            "loadBalancer": Object {},
-          },
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {
-            "annotations": Object {
-              "openshift.io/host.generated": "true",
-            },
-            "creationTimestamp": "2019-04-26T10:35:29Z",
-            "labels": Object {
-              "app": "nodejs",
-            },
-            "name": "nodejs",
-            "namespace": "testproject3",
-            "resourceVersion": "1160889",
-            "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/nodejs",
-            "uid": "02f63696-680f-11e9-b69e-5254003f9382",
-          },
-          "name": "nodejs",
-          "spec": Object {
-            "host": "nodejs-testproject3.192.168.42.60.nip.io",
-            "to": Object {
-              "kind": "Service",
+        ],
+        "previous": undefined,
+        "routes": Array [
+          Object {
+            "kind": "Route",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/host.generated": "true",
+              },
+              "creationTimestamp": "2019-04-26T10:35:29Z",
+              "labels": Object {
+                "app": "nodejs",
+              },
               "name": "nodejs",
-              "weight": 100,
+              "namespace": "testproject3",
+              "resourceVersion": "1160889",
+              "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/nodejs",
+              "uid": "02f63696-680f-11e9-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "host": "nodejs-testproject3.192.168.42.60.nip.io",
+              "to": Object {
+                "kind": "Service",
+                "name": "nodejs",
+                "weight": 100,
+              },
+            },
+            "status": Object {},
+          },
+        ],
+        "services": Array [
+          Object {
+            "kind": "Service",
+            "metadata": Object {
+              "creationTimestamp": "2019-04-26T10:35:29Z",
+              "labels": Object {
+                "app": "nodejs",
+              },
+              "name": "nodejs",
+              "namespace": "testproject3",
+              "resourceVersion": "1160881",
+              "selfLink": "/api/v1/namespaces/testproject3/services/nodejs",
+              "uid": "02f53542-680f-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "selector": Object {
+                "app": "nodejs",
+                "deploymentconfig": "nodejs",
+              },
+            },
+            "status": Object {
+              "loadBalancer": Object {},
             },
           },
-          "status": Object {},
-        },
-        Object {
-          "builds": Array [],
-          "kind": "BuildConfig",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Configuration",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Revision",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-      ],
+        ],
+        "status": <Unknown
+          desired={undefined}
+          ready={1}
+          resource={
+            Object {
+              "apiVersion": "v1",
+              "kind": "ReplicationController",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/deployer-pod.completed-at": "2019-04-26 10:36:10 +0000 UTC",
+                  "openshift.io/deployment-config.name": "nodejs",
+                  "openshift.io/deployment.phase": "Complete",
+                },
+                "creationTimestamp": "2019-04-26T10:36:06Z",
+                "generation": 2,
+                "labels": Object {
+                  "app": "nodejs",
+                  "openshift.io/deployment-config.name": "nodejs",
+                },
+                "name": "nodejs-1",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps.openshift.io/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "DeploymentConfig",
+                    "name": "nodejs",
+                    "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1161189",
+                "selfLink": "/api/v1/namespaces/testproject3/replicationcontrollers/nodejs-1",
+                "uid": "18c94ccd-680f-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {},
+              "status": Object {
+                "availableReplicas": 1,
+                "fullyLabeledReplicas": 1,
+                "observedGeneration": 2,
+                "readyReplicas": 1,
+                "replicas": 1,
+              },
+            }
+          }
+        />,
+      },
       "type": "workload",
     },
     "5ca9ae28-680d-11e9-8c69-5254003f9382": Object {
@@ -311,7 +416,6 @@ Object {
           "build": undefined,
           "pods": Array [
             Object {
-              "id": "5cec460e-680d-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -343,7 +447,6 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t",
                 "uid": "5cec460e-680d-11e9-8c69-5254003f9382",
               },
-              "name": "analytics-deployment-59dd7c47d4-2jp7t",
               "spec": Object {
                 "containers": Array [],
               },
@@ -352,7 +455,6 @@ Object {
               },
             },
             Object {
-              "id": "c4592a49-683c-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -384,13 +486,14 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-6btjb",
                 "uid": "c4592a49-683c-11e9-8c69-5254003f9382",
               },
-              "name": "analytics-deployment-59dd7c47d4-6btjb",
+              "spec": Object {
+                "constainers": Array [],
+              },
               "status": Object {
                 "phase": "Running",
               },
             },
             Object {
-              "id": "5cec1049-680d-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -422,7 +525,9 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-n4zrh",
                 "uid": "5cec1049-680d-11e9-8c69-5254003f9382",
               },
-              "name": "analytics-deployment-59dd7c47d4-n4zrh",
+              "spec": Object {
+                "constainers": Array [],
+              },
               "status": Object {
                 "phase": "Running",
               },
@@ -438,7 +543,6 @@ Object {
       "name": "analytics-deployment",
       "pods": Array [
         Object {
-          "id": "5cec460e-680d-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -470,7 +574,6 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t",
             "uid": "5cec460e-680d-11e9-8c69-5254003f9382",
           },
-          "name": "analytics-deployment-59dd7c47d4-2jp7t",
           "spec": Object {
             "containers": Array [],
           },
@@ -479,7 +582,6 @@ Object {
           },
         },
         Object {
-          "id": "c4592a49-683c-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -511,13 +613,14 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-6btjb",
             "uid": "c4592a49-683c-11e9-8c69-5254003f9382",
           },
-          "name": "analytics-deployment-59dd7c47d4-6btjb",
+          "spec": Object {
+            "constainers": Array [],
+          },
           "status": Object {
             "phase": "Running",
           },
         },
         Object {
-          "id": "5cec1049-680d-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -549,14 +652,186 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-n4zrh",
             "uid": "5cec1049-680d-11e9-8c69-5254003f9382",
           },
-          "name": "analytics-deployment-59dd7c47d4-n4zrh",
+          "spec": Object {
+            "constainers": Array [],
+          },
           "status": Object {
             "phase": "Running",
           },
         },
       ],
-      "resources": Array [
-        Object {
+      "resources": Object {
+        "alerts": Object {},
+        "buildConfigs": Array [],
+        "current": Object {
+          "alerts": Object {},
+          "obj": Object {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/connects-to": "[\\"wit\\"]",
+                "deployment.kubernetes.io/desired-replicas": "3",
+                "deployment.kubernetes.io/max-replicas": "4",
+                "deployment.kubernetes.io/revision": "1",
+                "deployment.kubernetes.io/revision-history": "1,1,1",
+              },
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "generation": 3,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "1588370380",
+              },
+              "name": "analytics-deployment-59dd7c47d4",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "Deployment",
+                  "name": "analytics-deployment",
+                  "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1398999",
+              "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/analytics-deployment-59dd7c47d4",
+              "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "fullyLabeledReplicas": 3,
+              "observedGeneration": 3,
+              "replicas": 3,
+            },
+          },
+          "pods": Array [
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:23:41Z",
+                "generateName": "analytics-deployment-59dd7c47d4-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "analytics",
+                  "app.kubernetes.io/name": "python",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "1588370380",
+                },
+                "name": "analytics-deployment-59dd7c47d4-2jp7t",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "analytics-deployment-59dd7c47d4",
+                    "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1395096",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t",
+                "uid": "5cec460e-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {
+                "containers": Array [],
+              },
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T16:03:01Z",
+                "generateName": "analytics-deployment-59dd7c47d4-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "analytics",
+                  "app.kubernetes.io/name": "python",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "1588370380",
+                },
+                "name": "analytics-deployment-59dd7c47d4-6btjb",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "analytics-deployment-59dd7c47d4",
+                    "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1394896",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-6btjb",
+                "uid": "c4592a49-683c-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {
+                "constainers": Array [],
+              },
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:23:41Z",
+                "generateName": "analytics-deployment-59dd7c47d4-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "analytics",
+                  "app.kubernetes.io/name": "python",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "1588370380",
+                },
+                "name": "analytics-deployment-59dd7c47d4-n4zrh",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "analytics-deployment-59dd7c47d4",
+                    "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1394826",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-n4zrh",
+                "uid": "5cec1049-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {
+                "constainers": Array [],
+              },
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+          ],
+          "revision": 1,
+        },
+        "isRollingOut": false,
+        "obj": Object {
           "apiVersion": "apps/v1",
           "kind": "Deployment",
           "metadata": Object {
@@ -615,148 +890,246 @@ Object {
           },
           "status": Object {},
         },
-        Object {
-          "apiVersion": "apps/v1",
-          "kind": "ReplicaSet",
-          "metadata": Object {
-            "annotations": Object {
-              "app.openshift.io/connects-to": "[\\"wit\\"]",
-              "deployment.kubernetes.io/desired-replicas": "3",
-              "deployment.kubernetes.io/max-replicas": "4",
-              "deployment.kubernetes.io/revision": "1",
-              "deployment.kubernetes.io/revision-history": "1,1,1",
-            },
-            "creationTimestamp": "2019-04-26T10:23:41Z",
-            "generation": 3,
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "analytics",
-              "app.kubernetes.io/name": "python",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-              "pod-template-hash": "1588370380",
-            },
-            "name": "analytics-deployment-59dd7c47d4",
-            "namespace": "testproject3",
-            "ownerReferences": Array [
-              Object {
-                "apiVersion": "apps/v1",
-                "blockOwnerDeletion": true,
-                "controller": true,
-                "kind": "Deployment",
-                "name": "analytics-deployment",
-                "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
+        "pods": Array [
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
               },
-            ],
-            "resourceVersion": "1398999",
-            "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/analytics-deployment-59dd7c47d4",
-            "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "generateName": "analytics-deployment-59dd7c47d4-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "1588370380",
+              },
+              "name": "analytics-deployment-59dd7c47d4-2jp7t",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "analytics-deployment-59dd7c47d4",
+                  "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1395096",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t",
+              "uid": "5cec460e-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "containers": Array [],
+            },
+            "status": Object {
+              "phase": "Running",
+            },
           },
-          "name": "analytics-deployment-59dd7c47d4",
-          "spec": Object {},
-          "status": Object {
-            "fullyLabeledReplicas": 3,
-            "observedGeneration": 3,
-            "replicas": 3,
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
+              },
+              "creationTimestamp": "2019-04-26T16:03:01Z",
+              "generateName": "analytics-deployment-59dd7c47d4-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "1588370380",
+              },
+              "name": "analytics-deployment-59dd7c47d4-6btjb",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "analytics-deployment-59dd7c47d4",
+                  "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1394896",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-6btjb",
+              "uid": "c4592a49-683c-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "constainers": Array [],
+            },
+            "status": Object {
+              "phase": "Running",
+            },
           },
-        },
-        Object {
-          "kind": "Service",
-          "metadata": Object {
-            "annotations": Object {
-              "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"Service\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"python\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"analytics-service\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"ports\\":[{\\"port\\":80}],\\"selector\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"analytics\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"}}}
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
+              },
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "generateName": "analytics-deployment-59dd7c47d4-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "1588370380",
+              },
+              "name": "analytics-deployment-59dd7c47d4-n4zrh",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "analytics-deployment-59dd7c47d4",
+                  "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1394826",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-n4zrh",
+              "uid": "5cec1049-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "constainers": Array [],
+            },
+            "status": Object {
+              "phase": "Running",
+            },
+          },
+        ],
+        "previous": undefined,
+        "routes": Array [
+          Object {
+            "kind": "Route",
+            "metadata": Object {
+              "annotations": Object {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"route.openshift.io/v1\\",\\"kind\\":\\"Route\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"python\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"analytics-route\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"host\\":\\"analytics.io\\",\\"path\\":\\"/\\",\\"to\\":{\\"kind\\":\\"Service\\",\\"name\\":\\"analytics-service\\"}}}
 ",
+              },
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+              "name": "analytics-route",
+              "namespace": "testproject3",
+              "resourceVersion": "1157355",
+              "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/analytics-route",
+              "uid": "5cb4135f-680d-11e9-b69e-5254003f9382",
             },
-            "creationTimestamp": "2019-04-26T10:23:41Z",
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "analytics",
-              "app.kubernetes.io/name": "python",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
+            "spec": Object {
+              "host": "analytics.io",
+              "to": Object {
+                "kind": "Service",
+                "name": "analytics-service",
+                "weight": 100,
+              },
             },
-            "name": "analytics-service",
-            "namespace": "testproject3",
-            "resourceVersion": "1157349",
-            "selfLink": "/api/v1/namespaces/testproject3/services/analytics-service",
-            "uid": "5cb930e0-680d-11e9-8c69-5254003f9382",
+            "status": Object {},
           },
-          "name": "analytics-service",
-          "spec": Object {
-            "selector": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "analytics",
-              "app.kubernetes.io/name": "python",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-          },
-          "status": Object {
-            "loadBalancer": Object {},
-          },
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {
-            "annotations": Object {
-              "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"route.openshift.io/v1\\",\\"kind\\":\\"Route\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"python\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"analytics-route\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"host\\":\\"analytics.io\\",\\"path\\":\\"/\\",\\"to\\":{\\"kind\\":\\"Service\\",\\"name\\":\\"analytics-service\\"}}}
+        ],
+        "services": Array [
+          Object {
+            "kind": "Service",
+            "metadata": Object {
+              "annotations": Object {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"Service\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"python\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"analytics-service\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"ports\\":[{\\"port\\":80}],\\"selector\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"analytics\\",\\"app.kubernetes.io/name\\":\\"analytics\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"}}}
 ",
-            },
-            "creationTimestamp": "2019-04-26T10:23:41Z",
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "analytics",
-              "app.kubernetes.io/name": "python",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-            "name": "analytics-route",
-            "namespace": "testproject3",
-            "resourceVersion": "1157355",
-            "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/analytics-route",
-            "uid": "5cb4135f-680d-11e9-b69e-5254003f9382",
-          },
-          "name": "analytics-route",
-          "spec": Object {
-            "host": "analytics.io",
-            "to": Object {
-              "kind": "Service",
+              },
+              "creationTimestamp": "2019-04-26T10:23:41Z",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
               "name": "analytics-service",
-              "weight": 100,
+              "namespace": "testproject3",
+              "resourceVersion": "1157349",
+              "selfLink": "/api/v1/namespaces/testproject3/services/analytics-service",
+              "uid": "5cb930e0-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "selector": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "analytics",
+                "app.kubernetes.io/name": "python",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+            },
+            "status": Object {
+              "loadBalancer": Object {},
             },
           },
-          "status": Object {},
-        },
-        Object {
-          "builds": Array [],
-          "kind": "BuildConfig",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Configuration",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Revision",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-      ],
+        ],
+        "status": <Unknown
+          desired={3}
+          ready={undefined}
+          resource={
+            Object {
+              "apiVersion": "apps/v1",
+              "kind": "ReplicaSet",
+              "metadata": Object {
+                "annotations": Object {
+                  "app.openshift.io/connects-to": "[\\"wit\\"]",
+                  "deployment.kubernetes.io/desired-replicas": "3",
+                  "deployment.kubernetes.io/max-replicas": "4",
+                  "deployment.kubernetes.io/revision": "1",
+                  "deployment.kubernetes.io/revision-history": "1,1,1",
+                },
+                "creationTimestamp": "2019-04-26T10:23:41Z",
+                "generation": 3,
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "analytics",
+                  "app.kubernetes.io/name": "python",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "1588370380",
+                },
+                "name": "analytics-deployment-59dd7c47d4",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "Deployment",
+                    "name": "analytics-deployment",
+                    "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1398999",
+                "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/analytics-deployment-59dd7c47d4",
+                "uid": "5cad37cb-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {},
+              "status": Object {
+                "fullyLabeledReplicas": 3,
+                "observedGeneration": 3,
+                "replicas": 3,
+              },
+            }
+          }
+        />,
+      },
       "type": "workload",
     },
     "60a9b423-680d-11e9-8c69-5254003f9382": Object {
@@ -766,7 +1139,6 @@ Object {
           "build": undefined,
           "pods": Array [
             Object {
-              "id": "610c7d95-680d-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -798,13 +1170,12 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-2n6nl",
                 "uid": "610c7d95-680d-11e9-8c69-5254003f9382",
               },
-              "name": "wit-deployment-656cc8b469-2n6nl",
+              "spec": Object {},
               "status": Object {
                 "phase": "Running",
               },
             },
             Object {
-              "id": "60dbfd78-680d-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -836,13 +1207,12 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-kzh9c",
                 "uid": "60dbfd78-680d-11e9-8c69-5254003f9382",
               },
-              "name": "wit-deployment-656cc8b469-kzh9c",
+              "spec": Object {},
               "status": Object {
                 "phase": "Running",
               },
             },
             Object {
-              "id": "610bbd96-680d-11e9-8c69-5254003f9382",
               "kind": "Pod",
               "metadata": Object {
                 "annotations": Object {
@@ -874,7 +1244,7 @@ Object {
                 "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-r5nlj",
                 "uid": "610bbd96-680d-11e9-8c69-5254003f9382",
               },
-              "name": "wit-deployment-656cc8b469-r5nlj",
+              "spec": Object {},
               "status": Object {
                 "phase": "Running",
               },
@@ -890,7 +1260,6 @@ Object {
       "name": "wit-deployment",
       "pods": Array [
         Object {
-          "id": "610c7d95-680d-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -922,13 +1291,12 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-2n6nl",
             "uid": "610c7d95-680d-11e9-8c69-5254003f9382",
           },
-          "name": "wit-deployment-656cc8b469-2n6nl",
+          "spec": Object {},
           "status": Object {
             "phase": "Running",
           },
         },
         Object {
-          "id": "60dbfd78-680d-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -960,13 +1328,12 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-kzh9c",
             "uid": "60dbfd78-680d-11e9-8c69-5254003f9382",
           },
-          "name": "wit-deployment-656cc8b469-kzh9c",
+          "spec": Object {},
           "status": Object {
             "phase": "Running",
           },
         },
         Object {
-          "id": "610bbd96-680d-11e9-8c69-5254003f9382",
           "kind": "Pod",
           "metadata": Object {
             "annotations": Object {
@@ -998,14 +1365,177 @@ Object {
             "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-r5nlj",
             "uid": "610bbd96-680d-11e9-8c69-5254003f9382",
           },
-          "name": "wit-deployment-656cc8b469-r5nlj",
+          "spec": Object {},
           "status": Object {
             "phase": "Running",
           },
         },
       ],
-      "resources": Array [
-        Object {
+      "resources": Object {
+        "alerts": Object {},
+        "buildConfigs": Array [],
+        "current": Object {
+          "alerts": Object {},
+          "obj": Object {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "metadata": Object {
+              "annotations": Object {
+                "deployment.kubernetes.io/desired-replicas": "3",
+                "deployment.kubernetes.io/max-replicas": "4",
+                "deployment.kubernetes.io/revision": "1",
+              },
+              "creationTimestamp": "2019-04-26T10:23:47Z",
+              "generation": 1,
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "2127746025",
+              },
+              "name": "wit-deployment-656cc8b469",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "Deployment",
+                  "name": "wit-deployment",
+                  "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1389053",
+              "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/wit-deployment-656cc8b469",
+              "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "fullyLabeledReplicas": 3,
+              "observedGeneration": 1,
+              "replicas": 3,
+            },
+          },
+          "pods": Array [
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:23:48Z",
+                "generateName": "wit-deployment-656cc8b469-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "wit",
+                  "app.kubernetes.io/name": "nodejs",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "2127746025",
+                },
+                "name": "wit-deployment-656cc8b469-2n6nl",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "wit-deployment-656cc8b469",
+                    "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1394776",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-2n6nl",
+                "uid": "610c7d95-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {},
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:23:48Z",
+                "generateName": "wit-deployment-656cc8b469-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "wit",
+                  "app.kubernetes.io/name": "nodejs",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "2127746025",
+                },
+                "name": "wit-deployment-656cc8b469-kzh9c",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "wit-deployment-656cc8b469",
+                    "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1394914",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-kzh9c",
+                "uid": "60dbfd78-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {},
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+            Object {
+              "kind": "Pod",
+              "metadata": Object {
+                "annotations": Object {
+                  "openshift.io/scc": "restricted",
+                },
+                "creationTimestamp": "2019-04-26T10:23:48Z",
+                "generateName": "wit-deployment-656cc8b469-",
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "wit",
+                  "app.kubernetes.io/name": "nodejs",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "2127746025",
+                },
+                "name": "wit-deployment-656cc8b469-r5nlj",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "wit-deployment-656cc8b469",
+                    "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1395115",
+                "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-r5nlj",
+                "uid": "610bbd96-680d-11e9-8c69-5254003f9382",
+              },
+              "spec": Object {},
+              "status": Object {
+                "phase": "Running",
+              },
+            },
+          ],
+          "revision": 1,
+        },
+        "isRollingOut": false,
+        "obj": Object {
+          "apiVersion": "apps/v1",
           "kind": "Deployment",
           "metadata": Object {
             "annotations": Object {
@@ -1063,167 +1593,238 @@ Object {
           },
           "status": Object {},
         },
-        Object {
-          "kind": "ReplicaSet",
-          "metadata": Object {
-            "annotations": Object {
-              "deployment.kubernetes.io/desired-replicas": "3",
-              "deployment.kubernetes.io/max-replicas": "4",
-              "deployment.kubernetes.io/revision": "1",
+        "pods": Array [
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
+              },
+              "creationTimestamp": "2019-04-26T10:23:48Z",
+              "generateName": "wit-deployment-656cc8b469-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "2127746025",
+              },
+              "name": "wit-deployment-656cc8b469-2n6nl",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "wit-deployment-656cc8b469",
+                  "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1394776",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-2n6nl",
+              "uid": "610c7d95-680d-11e9-8c69-5254003f9382",
             },
-            "creationTimestamp": "2019-04-26T10:23:47Z",
-            "generation": 1,
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "wit",
-              "app.kubernetes.io/name": "nodejs",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-              "pod-template-hash": "2127746025",
+            "spec": Object {},
+            "status": Object {
+              "phase": "Running",
             },
-            "name": "wit-deployment-656cc8b469",
-            "namespace": "testproject3",
-            "ownerReferences": Array [
-              Object {
-                "apiVersion": "apps/v1",
-                "blockOwnerDeletion": true,
-                "controller": true,
-                "kind": "Deployment",
-                "name": "wit-deployment",
+          },
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
+              },
+              "creationTimestamp": "2019-04-26T10:23:48Z",
+              "generateName": "wit-deployment-656cc8b469-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "2127746025",
+              },
+              "name": "wit-deployment-656cc8b469-kzh9c",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "wit-deployment-656cc8b469",
+                  "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1394914",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-kzh9c",
+              "uid": "60dbfd78-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "phase": "Running",
+            },
+          },
+          Object {
+            "kind": "Pod",
+            "metadata": Object {
+              "annotations": Object {
+                "openshift.io/scc": "restricted",
+              },
+              "creationTimestamp": "2019-04-26T10:23:48Z",
+              "generateName": "wit-deployment-656cc8b469-",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+                "pod-template-hash": "2127746025",
+              },
+              "name": "wit-deployment-656cc8b469-r5nlj",
+              "namespace": "testproject3",
+              "ownerReferences": Array [
+                Object {
+                  "apiVersion": "apps/v1",
+                  "blockOwnerDeletion": true,
+                  "controller": true,
+                  "kind": "ReplicaSet",
+                  "name": "wit-deployment-656cc8b469",
+                  "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                },
+              ],
+              "resourceVersion": "1395115",
+              "selfLink": "/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-r5nlj",
+              "uid": "610bbd96-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {},
+            "status": Object {
+              "phase": "Running",
+            },
+          },
+        ],
+        "previous": undefined,
+        "routes": Array [
+          Object {
+            "kind": "Route",
+            "metadata": Object {
+              "annotations": Object {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"route.openshift.io/v1\\",\\"kind\\":\\"Route\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"wit-route\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"host\\":\\"wit.io\\",\\"path\\":\\"/\\",\\"to\\":{\\"kind\\":\\"Service\\",\\"name\\":\\"wit-service\\"}}}
+",
+              },
+              "creationTimestamp": "2019-04-26T10:23:48Z",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+              "name": "wit-route",
+              "namespace": "testproject3",
+              "resourceVersion": "1157450",
+              "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/wit-route",
+              "uid": "60dba9b8-680d-11e9-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "host": "wit.io",
+              "to": Object {
+                "kind": "Service",
+                "name": "wit-service",
+                "weight": 100,
+              },
+            },
+            "status": Object {},
+          },
+        ],
+        "services": Array [
+          Object {
+            "kind": "Service",
+            "metadata": Object {
+              "annotations": Object {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"Service\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"wit-service\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"ports\\":[{\\"port\\":80}],\\"selector\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"}}}
+",
+              },
+              "creationTimestamp": "2019-04-26T10:23:48Z",
+              "labels": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+              "name": "wit-service",
+              "namespace": "testproject3",
+              "resourceVersion": "1157449",
+              "selfLink": "/api/v1/namespaces/testproject3/services/wit-service",
+              "uid": "60e010cc-680d-11e9-8c69-5254003f9382",
+            },
+            "spec": Object {
+              "selector": Object {
+                "app.kubernetes.io/component": "backend",
+                "app.kubernetes.io/instance": "wit",
+                "app.kubernetes.io/name": "nodejs",
+                "app.kubernetes.io/part-of": "application-1",
+                "app.kubernetes.io/version": "1.0",
+              },
+            },
+            "status": Object {
+              "loadBalancer": Object {},
+            },
+          },
+        ],
+        "status": <Unknown
+          desired={3}
+          ready={undefined}
+          resource={
+            Object {
+              "apiVersion": "apps/v1",
+              "kind": "ReplicaSet",
+              "metadata": Object {
+                "annotations": Object {
+                  "deployment.kubernetes.io/desired-replicas": "3",
+                  "deployment.kubernetes.io/max-replicas": "4",
+                  "deployment.kubernetes.io/revision": "1",
+                },
+                "creationTimestamp": "2019-04-26T10:23:47Z",
+                "generation": 1,
+                "labels": Object {
+                  "app.kubernetes.io/component": "backend",
+                  "app.kubernetes.io/instance": "wit",
+                  "app.kubernetes.io/name": "nodejs",
+                  "app.kubernetes.io/part-of": "application-1",
+                  "app.kubernetes.io/version": "1.0",
+                  "pod-template-hash": "2127746025",
+                },
+                "name": "wit-deployment-656cc8b469",
+                "namespace": "testproject3",
+                "ownerReferences": Array [
+                  Object {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "Deployment",
+                    "name": "wit-deployment",
+                    "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
+                  },
+                ],
+                "resourceVersion": "1389053",
+                "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/wit-deployment-656cc8b469",
                 "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
               },
-            ],
-            "resourceVersion": "1389053",
-            "selfLink": "/apis/apps/v1/namespaces/testproject3/replicasets/wit-deployment-656cc8b469",
-            "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
-          },
-          "name": "wit-deployment-656cc8b469",
-          "spec": Object {},
-          "status": Object {
-            "fullyLabeledReplicas": 3,
-            "observedGeneration": 1,
-            "replicas": 3,
-          },
-        },
-        Object {
-          "kind": "Service",
-          "metadata": Object {
-            "annotations": Object {
-              "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"Service\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"wit-service\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"ports\\":[{\\"port\\":80}],\\"selector\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"}}}
-",
-            },
-            "creationTimestamp": "2019-04-26T10:23:48Z",
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "wit",
-              "app.kubernetes.io/name": "nodejs",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-            "name": "wit-service",
-            "namespace": "testproject3",
-            "resourceVersion": "1157449",
-            "selfLink": "/api/v1/namespaces/testproject3/services/wit-service",
-            "uid": "60e010cc-680d-11e9-8c69-5254003f9382",
-          },
-          "name": "wit-service",
-          "spec": Object {
-            "selector": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "wit",
-              "app.kubernetes.io/name": "nodejs",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-          },
-          "status": Object {
-            "loadBalancer": Object {},
-          },
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {
-            "annotations": Object {
-              "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"route.openshift.io/v1\\",\\"kind\\":\\"Route\\",\\"metadata\\":{\\"annotations\\":{},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"wit-route\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"host\\":\\"wit.io\\",\\"path\\":\\"/\\",\\"to\\":{\\"kind\\":\\"Service\\",\\"name\\":\\"wit-service\\"}}}
-",
-            },
-            "creationTimestamp": "2019-04-26T10:23:48Z",
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "wit",
-              "app.kubernetes.io/name": "nodejs",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-            "name": "wit-route",
-            "namespace": "testproject3",
-            "resourceVersion": "1157450",
-            "selfLink": "/apis/route.openshift.io/v1/namespaces/testproject3/routes/wit-route",
-            "uid": "60dba9b8-680d-11e9-b69e-5254003f9382",
-          },
-          "name": "wit-route",
-          "spec": Object {
-            "host": "wit.io",
-            "to": Object {
-              "kind": "Service",
-              "name": "wit-service",
-              "weight": 100,
-            },
-          },
-          "status": Object {},
-        },
-        Object {
-          "builds": Array [],
-          "kind": "BuildConfig",
-          "metadata": Object {
-            "annotations": Object {
-              "app.openshift.io/vcs-ref": "v1.0.0",
-              "app.openshift.io/vcs-uri": "git@github.com:redhat-developer/topology-example.git",
-              "kubectl.kubernetes.io/last-applied-configuration": "{\\"apiVersion\\":\\"build.openshift.io/v1\\",\\"kind\\":\\"BuildConfig\\",\\"metadata\\":{\\"annotations\\":{\\"app.openshift.io/vcs-ref\\":\\"v1.0.0\\",\\"app.openshift.io/vcs-uri\\":\\"git@github.com:redhat-developer/topology-example.git\\"},\\"labels\\":{\\"app.kubernetes.io/component\\":\\"backend\\",\\"app.kubernetes.io/instance\\":\\"wit\\",\\"app.kubernetes.io/name\\":\\"nodejs\\",\\"app.kubernetes.io/part-of\\":\\"application-1\\",\\"app.kubernetes.io/version\\":\\"1.0\\"},\\"name\\":\\"wit-build\\",\\"namespace\\":\\"testproject3\\"},\\"spec\\":{\\"output\\":{\\"to\\":{\\"kind\\":\\"ImageStreamTag\\",\\"name\\":\\"wit-build:latest\\"}},\\"source\\":{\\"git\\":{\\"uri\\":\\"git@github.com:DhritiShikhar/topology-example.git\\"},\\"type\\":\\"Git\\"},\\"strategy\\":{\\"dockerStrategy\\":{\\"noCache\\":true}}}}
-",
-            },
-            "creationTimestamp": "2019-04-26T10:23:47Z",
-            "labels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "wit",
-              "app.kubernetes.io/name": "nodejs",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-            "name": "wit-build",
-            "namespace": "testproject3",
-            "resourceVersion": "1157436",
-            "selfLink": "/apis/build.openshift.io/v1/namespaces/testproject3/buildconfigs/wit-build",
-            "uid": "608914d2-680d-11e9-b69e-5254003f9382",
-          },
-          "name": "wit-build",
-          "spec": Object {},
-          "status": Object {
-            "lastVersion": 0,
-          },
-        },
-        Object {
-          "kind": "Route",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Configuration",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-        Object {
-          "kind": "Revision",
-          "metadata": Object {},
-          "name": undefined,
-          "spec": Object {},
-          "status": Object {},
-        },
-      ],
+              "spec": Object {},
+              "status": Object {
+                "fullyLabeledReplicas": 3,
+                "observedGeneration": 1,
+                "replicas": 3,
+              },
+            }
+          }
+        />,
+      },
       "type": "workload",
     },
   },

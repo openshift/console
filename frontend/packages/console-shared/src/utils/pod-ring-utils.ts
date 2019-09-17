@@ -1,44 +1,50 @@
 import * as _ from 'lodash';
-import { TransformPodData } from './pod-utils';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { PodRCData, PodRingResources, PodRingData } from '../types';
+import { deploymentKindMap } from '../constants';
+import { TransformResourceData } from './resource-utils';
 
-export const transformPodRingData = (resources, kind) => {
-  const podsData = {};
+const applyPods = (podsData: PodRingData, dc: PodRCData) => {
+  const {
+    pods,
+    obj: {
+      metadata: { uid },
+    },
+  } = dc;
+  podsData[uid] = {
+    pods,
+  };
+  return podsData;
+};
 
+export const transformPodRingData = (resources: PodRingResources, kind: string): PodRingData => {
   const deploymentKinds = {
     Deployment: 'deployments',
     DeploymentConfig: 'deploymentConfigs',
   };
 
   const targetDeployment = deploymentKinds[kind];
+  const transformResourceData = new TransformResourceData(resources);
 
-  const transformPodData = new TransformPodData(resources);
-
-  if (!transformPodData.deploymentKindMap[targetDeployment]) {
+  if (!deploymentKindMap[targetDeployment]) {
     throw new Error(`Invalid target deployment resource: (${targetDeployment})`);
   }
   if (_.isEmpty(resources[targetDeployment].data)) {
     return {};
   }
 
-  const targetDeploymentsKind = transformPodData.deploymentKindMap[targetDeployment].dcKind;
+  const podsData: PodRingData = {};
+  const targetDeploymentsKind = deploymentKindMap[targetDeployment].dcKind;
   const resourceData = resources[targetDeployment].data;
 
-  _.forEach(resourceData, (d) => {
-    d.kind = targetDeploymentsKind;
-    const dUID = _.get(d, 'metadata.uid');
-    const replicationControllers = transformPodData.getReplicationControllers(d, targetDeployment);
-    const current = _.head(replicationControllers);
-    const previous = _.nth(replicationControllers, 1);
-    const currentPods = current
-      ? transformPodData.transformPods(transformPodData.getPods(current, d))
-      : [];
-    const previousPods = previous
-      ? transformPodData.transformPods(transformPodData.getPods(previous, d))
-      : [];
+  if (targetDeploymentsKind === DeploymentConfigModel.kind) {
+    return transformResourceData
+      .getPodsForDeploymentConfigs(resourceData)
+      .reduce(applyPods, podsData);
+  }
 
-    podsData[dUID] = {
-      pods: [...currentPods, ...previousPods],
-    };
-  });
+  if (targetDeploymentsKind === DeploymentModel.kind) {
+    return transformResourceData.getPodsForDeployments(resourceData).reduce(applyPods, podsData);
+  }
   return podsData;
 };

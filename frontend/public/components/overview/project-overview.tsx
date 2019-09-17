@@ -6,13 +6,18 @@ import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 import { Tooltip } from '@patternfly/react-core';
 
-import { Status as TooltipStatus, YellowExclamationTriangleIcon } from '@console/shared';
+import {
+  Status as TooltipStatus,
+  YellowExclamationTriangleIcon,
+  PodControllerOverviewItem,
+  OverviewItem,
+} from '@console/shared';
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { K8sResourceKind } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
 import { pluralize, ResourceIcon, resourceObjPath, truncateMiddle } from '../utils';
 
-import { OverviewGroup, OverviewItem, OverviewMetrics, PodControllerOverviewItem } from '.';
+import { OverviewGroup, OverviewMetrics } from '.';
 
 const formatToFractionalDigits = (value: number, digits: number): string =>
   Intl.NumberFormat(undefined, {

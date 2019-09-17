@@ -78,6 +78,7 @@ export type MatchExpression =
   | { key: string; operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals'; values: string[] };
 
 export type Selector = {
+  [key: string]: any;
   matchLabels?: { [key: string]: string };
   matchExpressions?: MatchExpression[];
 };
@@ -267,7 +268,19 @@ export type PodSpec = {
   [key: string]: any;
 };
 
-type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
+type PodPhase =
+  | 'Pending'
+  | 'Running'
+  | 'Succeeded'
+  | 'Failed'
+  | 'Empty'
+  | 'Warning'
+  | 'Unknown'
+  | 'Idle'
+  | 'Not Ready'
+  | 'Scaled to 0'
+  | 'Autoscaled to 0'
+  | 'Terminating';
 
 type ContainerStateValue = {
   reason?: string;

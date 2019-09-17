@@ -1,6 +1,7 @@
 import { ComponentType } from 'react';
-import { Pod, ResourceProps, Resource } from '@console/shared';
 import { KebabOption } from '@console/internal/components/utils';
+import { Pod, Resource, OverviewItem } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
 
 export interface TopologyDataResources {
@@ -10,8 +11,8 @@ export interface TopologyDataResources {
   services: Resource;
   routes: Resource;
   deployments: Resource;
-  replicasets: Resource;
-  buildconfigs: Resource;
+  replicaSets: Resource;
+  buildConfigs: Resource;
   builds: Resource;
   daemonSets?: Resource;
   ksroutes?: Resource;
@@ -60,7 +61,7 @@ export interface TopologyDataObject<D = {}> {
   id: string;
   name: string;
   type: string;
-  resources: ResourceProps[];
+  resources: OverviewItem;
   pods: Pod[];
   data: D;
 }
@@ -79,7 +80,7 @@ export interface WorkloadData {
   isKnativeResource?: boolean;
   donutStatus: {
     pods: Pod[];
-    build: ResourceProps;
+    build: K8sResourceKind;
   };
 }
 

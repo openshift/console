@@ -5,9 +5,8 @@ import { DeploymentConfigDetailsList, menuActions } from '../deployment-config';
 import { LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
-import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import { PodRing } from '@console/shared';
+import { PodRing, OverviewItem } from '@console/shared';
 
 const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetailsProps> = ({
   item: { obj: dc, pods: pods },

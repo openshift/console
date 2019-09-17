@@ -1,30 +1,18 @@
 import * as React from 'react';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-import { Pod, Resource } from '../../types';
+import { PodRingResources, PodRingData } from '../../types';
 import { transformPodRingData } from '../../utils';
-
-interface PodRingDataResources {
-  replicationControllers: Resource;
-  pods: Resource;
-  replicasets: Resource;
-  DeploymentConfig: Resource;
-  Deployment: Resource;
-}
 
 interface RenderPropsType {
   loaded: boolean;
   loadError: any;
-  data: {
-    [name: string]: {
-      pods: Pod[];
-    };
-  };
+  data: PodRingData;
 }
 
 interface ControllerProps {
   loaded?: boolean;
   loadError?: any;
-  resources?: PodRingDataResources;
+  resources?: PodRingResources;
   kind: string;
   render(RenderProps: RenderPropsType): React.ReactElement;
 }
@@ -57,7 +45,7 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
       isList: true,
       kind: 'ReplicaSet',
       namespace,
-      prop: 'replicasets',
+      prop: 'replicaSets',
     },
     {
       isList: true,

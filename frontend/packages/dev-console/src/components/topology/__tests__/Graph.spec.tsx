@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { TransformTopologyData } from '../topology-utils';
+import { transformTopologyData } from '../topology-utils';
 import Graph from '../Graph';
 import { nodeProvider, edgeProvider, groupProvider } from '../shape-providers';
 import { ActionProviders } from '../actions-providers';
@@ -14,12 +14,12 @@ describe('Graph', () => {
   let mockSelectFn;
 
   beforeEach(() => {
-    topologyData = new TransformTopologyData(MockGraphResources, undefined, mockCheURL)
-      .transformDataBy('deployments')
-      .transformDataBy('deploymentConfigs')
-      .transformDataBy('daemonSets')
-      .transformDataBy('statefulSets')
-      .getTopologyData();
+    topologyData = transformTopologyData(
+      MockGraphResources,
+      ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'],
+      undefined,
+      mockCheURL,
+    );
     mockSelectFn = jest.fn();
     const actionProvider = new ActionProviders(topologyData.topology);
     graphWrapper = shallow(

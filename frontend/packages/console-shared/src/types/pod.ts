@@ -1,4 +1,10 @@
-import { ObjectMetadata, ContainerSpec } from '@console/internal/module/k8s';
+import {
+  ObjectMetadata,
+  ContainerSpec,
+  K8sResourceKind,
+  PodKind,
+} from '@console/internal/module/k8s';
+import { PodControllerOverviewItem } from './resource';
 
 export interface Pod {
   id?: string;
@@ -11,26 +17,36 @@ export interface Pod {
   };
 }
 
-export interface ResourceProps {
-  kind: string;
-  apiVersion?: string;
-  metadata: ObjectMetadata;
-  status: {
-    [key: string]: any;
-  };
-  spec: {
-    [key: string]: any;
-  };
-}
-
 export interface Resource {
-  data: ResourceProps[];
+  data: K8sResourceKind[];
 }
 
 export interface PodDataResources {
   replicationControllers: Resource;
-  replicasets: Resource;
+  replicaSets: Resource;
   pods: Resource;
   deploymentConfigs?: Resource;
   deployments?: Resource;
+}
+
+export interface PodRCData {
+  current: PodControllerOverviewItem;
+  previous: PodControllerOverviewItem;
+  obj: K8sResourceKind;
+  isRollingOut: boolean;
+  pods: PodKind[];
+}
+
+export interface PodRingResources {
+  pods: Resource;
+  replicaSets: Resource;
+  replicationControllers: Resource;
+  deployments?: Resource;
+  deploymentConfigs?: Resource;
+}
+
+export interface PodRingData {
+  [key: string]: {
+    pods: Pod[];
+  };
 }
