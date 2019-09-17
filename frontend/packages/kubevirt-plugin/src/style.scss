@@ -11,8 +11,6 @@
 
 @import '~patternfly/dist/sass/patternfly/wizard';
 
-@import '~kubevirt-web-ui-components/dist/sass/components';
-
 // Console StyleSheets
 @import "~xterm/dist/xterm.css";
 
@@ -22,3 +20,5 @@
 @import "~@patternfly/react-console/dist/sass/serial-console";
 @import "~@patternfly/react-console/dist/sass/vnc-console";
 @import "~@patternfly/react-console/dist/sass/desktop-viewer";
+
+@import '~kubevirt-web-ui-components/dist/sass/components';
