@@ -61,7 +61,9 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             padding={{ top: 20, bottom: 20, left: 40, right: 20 }}
             containerComponent={
               <ChartVoronoiContainer
-                labels={(datum) => `${datum.y} ${maxCapacityConverted.unit}`}
+                labels={(datum) =>
+                  `${datum.y} ${maxCapacityConverted.unit} at ${twentyFourHourTime(datum.x)}`
+                }
                 labelComponent={<ChartTooltip style={{ fontSize: 8, padding: 5 }} />}
               />
             }
