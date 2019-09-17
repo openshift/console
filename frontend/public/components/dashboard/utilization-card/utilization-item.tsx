@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Col, Row } from 'patternfly-react';
 import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
 
 import { useRefWidth, Humanize } from '../../utils';
@@ -31,36 +30,30 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const rows = width < parseInt(breakpointSM.value, 10) ? (
       <div className="co-utilization-card__item">
-        <Row className="co-utilization-card__item-row--narrow co-utilization-card__item-title-row--narrow">
-          <Col lg={6} md={6} sm={6} xs={6} className="co-utilization-card__item-title co-dashboard-text--small">
+        <div className="row co-utilization-card__item-row--narrow co-utilization-card__item-title-row--narrow">
+          <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 co-utilization-card__item-title co-dashboard-text--small">
             {title}
-          </Col>
-          <Col className="co-utilization-card__item-current co-dashboard-text--small" lg={6} md={6} sm={6} xs={6}>
+          </div>
+          <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 co-utilization-card__item-current co-dashboard-text--small">
             {current}
-          </Col>
-        </Row>
-        <Row className="co-utilization-card__item-row--narrow">
-          <Col className="co-utilization-card__item-chart co-utilization-card__item-chart--narrow">{chart}</Col>
-        </Row>
+          </div>
+        </div>
+        <div className="row co-utilization-card__item-row--narrow">
+          <div className="co-utilization-card__item-chart co-utilization-card__item-chart--narrow">{chart}</div>
+        </div>
       </div>
     ) : (
-      <Row className="co-utilization-card__item co-utilization-card__item--wide">
-        <Col className="co-utilization-card__item-title" lg={3} md={3} sm={3} xs={3}>
+      <div className="row co-utilization-card__item co-utilization-card__item--wide">
+        <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3 co-utilization-card__item-title">
           {title}
-        </Col>
-        <Col className="co-utilization-card__item-current" lg={2} md={2} sm={2} xs={2}>
+        </div>
+        <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2 co-utilization-card__item-current">
           {current}
-        </Col>
-        <Col
-          className="co-utilization-card__item-chart co-utilization-card__item-chart--wide"
-          lg={7}
-          md={7}
-          sm={7}
-          xs={7}
-        >
+        </div>
+        <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__item-chart co-utilization-card__item-chart--wide">
           {chart}
-        </Col>
-      </Row>
+        </div>
+      </div>
     );
 
     return <div ref={containerRef}>{rows}</div>;
