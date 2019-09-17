@@ -8,4 +8,4 @@ export const pageHeadingNumberOfItems = () => pageNumberItemsHeading.getText()
 export const catalogDetailsLoaded = () => browser.wait(until.presenceOf($('.modal-content')), 10000).then(() => browser.sleep(1000));
 export const createServiceInstanceButton = $('.co-catalog-page__overlay-create');
 export const createServiceInstanceForm = $('.co-create-service-instance');
-export const createServiceBindingButton = $('.co-well').element(by.buttonText('Create Service Binding'));
+export const createServiceBindingButton = $('.co-hint-block').element(by.buttonText('Create Service Binding'));

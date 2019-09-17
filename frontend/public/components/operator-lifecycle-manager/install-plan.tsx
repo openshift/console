@@ -5,9 +5,10 @@ import { Map as ImmutableMap } from 'immutable';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { AddCircleOIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 
 import { MultiListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
-import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary, history } from '../utils';
+import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary, history, HintBlock } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step, referenceForStepResource } from './index';
 import { K8sResourceKind, referenceForModel, referenceForOwnerRef, k8sUpdate, apiVersionForReference } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
@@ -125,12 +126,13 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) =>
   const needsApproval = obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
 
   return <React.Fragment>
-    { needsApproval && <div className="co-well">
-      <h4>Review Manual Install Plan</h4>
-      <p>Inspect the requirements for the components specified in this install plan before approving.</p>
-      <Link to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${obj.metadata.name}/components`}>
-        <button className="btn btn-info">Preview Install Plan</button>
-      </Link>
+    { needsApproval && <div className="co-m-pane__body">
+      <HintBlock title="Review Manual Install Plan">
+        <p>Inspect the requirements for the components specified in this install plan before approving.</p>
+        <Link to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${obj.metadata.name}/components`}>
+          <Button variant="primary">Preview Install Plan</Button>
+        </Link>
+      </HintBlock>
     </div> }
     <div className="co-m-pane__body">
       <SectionHeading text="Install Plan Overview" />
@@ -187,21 +189,24 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
     return plan.length > 0
       ? <React.Fragment>
         { this.state.error && <div className="co-clusterserviceversion-detail__error-box">{this.state.error}</div> }
-        { this.state.needsApproval && <div className="co-well">
-          <h4>Review Manual Install Plan</h4>
-          <p>Once approved, the following resources will be created in order to satisfy the requirements for the components specified in the plan. Click the resource name to view the resource in detail.</p>
-          <button
-            className="btn btn-info"
-            disabled={!this.state.needsApproval}
-            onClick={() => approve()}>
-            {this.state.needsApproval ? 'Approve' : 'Approved'}
-          </button>
-          <button
-            className="btn btn-default"
-            disabled={false}
-            onClick={() => history.push(`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${subscription.name}?showDelete=true`)}>
-            Deny
-          </button>
+        { this.state.needsApproval && <div className="co-m-pane__body">
+          <HintBlock title="Review Manual Install Plan">
+            <p>Once approved, the following resources will be created in order to satisfy the requirements for the components specified in the plan. Click the resource name to view the resource in detail.</p>
+            <div className="pf-c-form pf-c-form__actions">
+              <Button
+                variant="primary"
+                isDisabled={!this.state.needsApproval}
+                onClick={() => approve()}>
+                {this.state.needsApproval ? 'Approve' : 'Approved'}
+              </Button>
+              <Button
+                variant="secondary"
+                isDisabled={false}
+                onClick={() => history.push(`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${subscription.name}?showDelete=true`)}>
+                Deny
+              </Button>
+            </div>
+          </HintBlock>
         </div> }
         { stepsByCSV.map((steps, i) => <div key={i} className="co-m-pane__body">
           <SectionHeading text={steps[0].resolving} />

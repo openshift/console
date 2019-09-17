@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { HintBlock } from 'patternfly-react';
-import { LoadingBox } from '@console/internal/components/utils';
+import { HintBlock, LoadingBox } from '@console/internal/components/utils';
 import ODCEmptyState from './EmptyState';
 
 export interface ProjectsExistWrapperProps {
@@ -24,11 +23,12 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
       <ODCEmptyState
         title={title}
         hintBlock={
-          <HintBlock
-            title="No projects exist"
-            body="Select one of the following options to create an application, component or service.
-              As part of the creation process a project and application will be created."
-          />
+          <HintBlock title="No projects exist">
+            <p>
+              Select one of the following options to create an application, component or service. As
+              part of the creation process a project and application will be created.
+            </p>
+          </HintBlock>
         }
       />
     );
