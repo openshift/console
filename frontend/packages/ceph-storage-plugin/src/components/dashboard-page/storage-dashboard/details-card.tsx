@@ -11,12 +11,13 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DetailsBody } from '@console/internal/components/dashboard/details-card/details-body';
-import { FirehoseResource } from '@console/internal/components/utils/index';
+import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { CephClusterModel } from '../../../models';
+import { getOCSVersion } from '../../../selectors';
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),
@@ -37,8 +38,7 @@ const SubscriptionResource: FirehoseResource = {
   kind: referenceForModel(SubscriptionModel),
   namespaced: false,
   prop: 'subscription',
-  name: 'ocs-subscription',
-  isList: false,
+  isList: true,
 };
 
 const DetailsCard: React.FC<DashboardItemProps> = ({
@@ -67,9 +67,9 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
   const cephClusterName = getName(_.get(cephClusterData, 0));
 
-  const subscription = _.get(resources, 'subscription');
+  const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
-  const ocsVersion = _.get(subscription, 'data.status.currentCSV');
+  const ocsVersion = getOCSVersion(subscription);
 
   return (
     <DashboardCard>
