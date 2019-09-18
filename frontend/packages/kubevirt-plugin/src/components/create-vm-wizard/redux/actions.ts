@@ -5,6 +5,8 @@ import {
   CommonData,
   DetectCommonDataChanges,
   VMSettingsField,
+  VMWizardNetwork,
+  VMWizardTab,
 } from '../types';
 import { cleanup, updateAndValidateState } from './utils';
 import { getTabInitialState } from './initial-state';
@@ -14,28 +16,40 @@ import { vmWizardInternalActions } from './internal-actions';
 
 type VMWizardActions = { [key in ActionType]: WizardActionDispatcher };
 
+const withUpdateAndValidateState = (
+  id: string,
+  resolveAction,
+  changedCommonData?: Set<ChangedCommonDataProp>,
+) => (dispatch, getState) => {
+  const prevState = getState(); // must be called before dispatch in resolveAction
+
+  resolveAction(dispatch, getState);
+
+  updateAndValidateState({
+    id,
+    dispatch,
+    changedCommonData: changedCommonData || new Set<ChangedCommonDataProp>(),
+    getState,
+    prevState,
+  });
+};
+
 export const vmWizardActions: VMWizardActions = {
-  [ActionType.Create]: (id, commonData: CommonData) => (dispatch, getState) => {
-    const prevState = getState(); // must be called before dispatch
-
-    dispatch(
-      vmWizardInternalActions[InternalActionType.Create](id, {
-        tabs: ALL_VM_WIZARD_TABS.reduce((initial, tabKey) => {
-          initial[tabKey] = getTabInitialState(tabKey, commonData);
-          return initial;
-        }, {}),
-        commonData,
-      }),
-    );
-
-    updateAndValidateState({
+  [ActionType.Create]: (id, commonData: CommonData) =>
+    withUpdateAndValidateState(
       id,
-      changedCommonData: new Set<ChangedCommonDataProp>(DetectCommonDataChanges),
-      dispatch,
-      getState,
-      prevState,
-    });
-  },
+      (dispatch) =>
+        dispatch(
+          vmWizardInternalActions[InternalActionType.Create](id, {
+            tabs: ALL_VM_WIZARD_TABS.reduce((initial, tabKey) => {
+              initial[tabKey] = getTabInitialState(tabKey, commonData);
+              return initial;
+            }, {}),
+            commonData,
+          }),
+        ),
+      new Set<ChangedCommonDataProp>(DetectCommonDataChanges),
+    ),
   [ActionType.Dispose]: (id) => (dispatch, getState) => {
     const prevState = getState(); // must be called before dispatch
     cleanup({
@@ -48,34 +62,32 @@ export const vmWizardActions: VMWizardActions = {
 
     dispatch(vmWizardInternalActions[InternalActionType.Dispose](id));
   },
-  [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => (
-    dispatch,
-    getState,
-  ) => {
-    const prevState = getState(); // must be called before dispatch
-    dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value));
-
-    updateAndValidateState({
+  [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
+    ),
+  [ActionType.UpdateCommonData]: (id, commonData: CommonData, changedProps: ChangedCommonData) =>
+    withUpdateAndValidateState(
       id,
-      dispatch,
-      changedCommonData: new Set<ChangedCommonDataProp>(),
-      getState,
-      prevState,
-    });
+      (dispatch) =>
+        dispatch(vmWizardInternalActions[InternalActionType.UpdateCommonData](id, commonData)),
+      changedProps,
+    ),
+  [ActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetTabLocked](id, tab, isLocked));
   },
-  [ActionType.UpdateCommonData]: (id, commonData: CommonData, changedProps: ChangedCommonData) => (
-    dispatch,
-    getState,
-  ) => {
-    const prevState = getState(); // must be called before dispatch
-
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateCommonData](id, commonData));
-
-    updateAndValidateState({ id, dispatch, changedCommonData: changedProps, getState, prevState });
-  },
-  [ActionType.SetNetworks]: (id, value: any, isValid: boolean, isLocked: boolean) => (dispatch) => {
-    dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, value, isValid, isLocked));
-  },
+  [ActionType.UpdateNIC]: (id, network: VMWizardNetwork) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.UpdateNIC](id, network)),
+    ),
+  [ActionType.RemoveNIC]: (id, networkID: string) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.RemoveNIC](id, networkID)),
+    ),
+  [ActionType.SetNetworks]: (id, networks: VMWizardNetwork[]) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networks)),
+    ),
   [ActionType.SetStorages]: (id, value: any, isValid: boolean, isLocked: boolean) => (dispatch) => {
     dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, value, isValid, isLocked));
   },

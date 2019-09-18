@@ -2,10 +2,10 @@ import { isEmpty } from 'lodash';
 import { List } from 'immutable';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
-  iGetFieldKey,
-  iGetVmSettings,
   hasVmSettingsChanged,
+  iGetFieldKey,
   iGetFieldValue,
+  iGetVmSettings,
   isFieldRequired,
 } from '../../selectors/immutable/vm-settings';
 import {
@@ -27,6 +27,7 @@ import {
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
 import { getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import {
+  checkTabValidityChanged,
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
@@ -163,12 +164,14 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
     );
   }
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.SetTabValidity](
-      id,
-      VMWizardTab.VM_SETTINGS,
-      isValid,
-      hasAllRequiredFilled,
-    ),
-  );
+  if (checkTabValidityChanged(state, id, VMWizardTab.VM_SETTINGS, isValid, hasAllRequiredFilled)) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.SetTabValidity](
+        id,
+        VMWizardTab.VM_SETTINGS,
+        isValid,
+        hasAllRequiredFilled,
+      ),
+    );
+  }
 };

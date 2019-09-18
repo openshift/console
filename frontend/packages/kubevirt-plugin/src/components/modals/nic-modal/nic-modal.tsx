@@ -94,17 +94,19 @@ export const Network: React.FC<NetworkProps> = ({
               : '--- Select Network Definition ---'
           }
         />
-        {ignoreCaseSort(networkChoices, ['readableName']).map((networkWrapper: NetworkWrapper) => {
-          const readableName = networkWrapper.getReadableName();
-          return (
-            <FormSelectOption
-              key={readableName}
-              data-network-type={networkWrapper.getType().getValue()}
-              value={readableName}
-              label={readableName}
-            />
-          );
-        })}
+        {ignoreCaseSort(networkChoices, undefined, (n) => n.getReadableName()).map(
+          (networkWrapper: NetworkWrapper) => {
+            const readableName = networkWrapper.getReadableName();
+            return (
+              <FormSelectOption
+                key={readableName}
+                data-network-type={networkWrapper.getType().getValue()}
+                value={readableName}
+                label={readableName}
+              />
+            );
+          },
+        )}
       </FormSelect>
     </FormRow>
   );
@@ -112,7 +114,6 @@ export const Network: React.FC<NetworkProps> = ({
 
 export const NICModal = withHandlePromise((props: NICModalProps) => {
   const {
-    network,
     nads,
     usedInterfacesNames,
     usedMultusNetworkNames,
@@ -126,6 +127,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   } = props;
   const asId = prefixedID.bind(null, 'nic');
   const nic = props.nic || NetworkInterfaceWrapper.EMPTY;
+  const network = props.network || NetworkWrapper.EMPTY;
   const isEditing = nic !== NetworkInterfaceWrapper.EMPTY;
 
   const [name, setName] = React.useState<string>(
@@ -288,8 +290,8 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 });
 
 export type NICModalProps = {
-  nic: NetworkInterfaceWrapper;
-  network: NetworkWrapper;
+  nic?: NetworkInterfaceWrapper;
+  network?: NetworkWrapper;
   onSubmit: (networkInterface: NetworkInterfaceWrapper, network: NetworkWrapper) => Promise<any>;
   nads?: FirehoseResult<K8sResourceKind[]>;
   usedInterfacesNames: Set<string>;

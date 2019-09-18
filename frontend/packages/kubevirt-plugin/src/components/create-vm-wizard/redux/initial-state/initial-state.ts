@@ -7,7 +7,7 @@ import { getReviewInitialState } from './review-tab-initial-state';
 
 const initialStateGetterResolver = {
   [VMWizardTab.VM_SETTINGS]: getVmSettingsInitialState,
-  [VMWizardTab.NETWORKS]: getNetworksInitialState,
+  [VMWizardTab.NETWORKING]: getNetworksInitialState,
   [VMWizardTab.STORAGE]: getStorageInitialState,
   [VMWizardTab.REVIEW]: getReviewInitialState,
   [VMWizardTab.RESULT]: getResultInitialState,

@@ -121,13 +121,13 @@ type NICModalFirehoseProps = ModalComponentProps & {
   hasNADs: boolean;
 };
 
-const cloneVMModalStateToProps = ({ k8s }) => {
+const nicModalStateToProps = ({ k8s }) => {
   const hasNADs = !!k8s.getIn(['RESOURCES', 'models', NetworkAttachmentDefinitionModel.kind]);
   return {
     hasNADs,
   };
 };
 
-const NICModalConnected = connect(cloneVMModalStateToProps)(NICModalFirehose);
+const NICModalConnected = connect(nicModalStateToProps)(NICModalFirehose);
 
 export const nicModalEnhanced = createModalLauncher(NICModalConnected);

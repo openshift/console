@@ -1,4 +1,4 @@
-import { VMSettingsField, VMWizardTab } from '../types';
+import { VMSettingsField, VMWizardNetwork, VMWizardTab } from '../types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
 
@@ -47,6 +47,14 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabValidity,
   }),
+  [InternalActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isLocked,
+    },
+    type: InternalActionType.SetTabLocked,
+  }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => ({
     payload: {
       id,
@@ -85,12 +93,24 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateVmSettings,
   }),
-  [InternalActionType.SetNetworks]: (id, value, isValid: boolean, isLocked: boolean) => ({
+  [InternalActionType.UpdateNIC]: (id, network: VMWizardNetwork) => ({
     payload: {
       id,
-      value,
-      isValid,
-      isLocked,
+      network,
+    },
+    type: InternalActionType.UpdateNIC,
+  }),
+  [InternalActionType.RemoveNIC]: (id, networkID: string) => ({
+    payload: {
+      id,
+      networkID,
+    },
+    type: InternalActionType.RemoveNIC,
+  }),
+  [InternalActionType.SetNetworks]: (id, networks: VMWizardNetwork[]) => ({
+    payload: {
+      id,
+      value: networks,
     },
     type: InternalActionType.SetNetworks,
   }),

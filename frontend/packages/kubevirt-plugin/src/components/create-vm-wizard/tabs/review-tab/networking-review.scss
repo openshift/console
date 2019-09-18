@@ -1,0 +1,14 @@
+@import '~patternfly/dist/sass/patternfly/color-variables';
+
+.kubevirt-create-vm-modal__review-tab-networking {
+  dt {
+    color:  $color-pf-black-600;
+    text-transform: capitalize;
+  }
+}
+
+.kubevirt-create-vm-modal__review-tab-networking-simple-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

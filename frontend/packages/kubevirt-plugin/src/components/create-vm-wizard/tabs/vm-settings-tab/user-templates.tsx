@@ -13,7 +13,7 @@ import { iGetName } from '../../selectors/immutable/selectors';
 export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
   ({ userTemplateField, userTemplates, commonTemplates, dataVolumes, onChange }) => {
     const data = iGetLoadedData(userTemplates);
-    const names =
+    const names: string[] =
       data &&
       data
         .toIndexedSeq()

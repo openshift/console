@@ -1,14 +1,19 @@
-import * as _ from 'lodash';
+import { createBasicLookup } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../types';
 import { iGetVmSettingValue } from '../../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps } from '../../../types';
+import {
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardNetworkType,
+  VMWizardProps,
+} from '../../../types';
 import { iGetLoadedCommonData, iGetName } from '../../../selectors/immutable/selectors';
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../../utils/immutable';
 import { iGetNetworks as getDialogNetworks } from '../../../selectors/immutable/networks';
 import { iGetStorages } from '../../../selectors/immutable/storage';
 import { podNetwork } from '../../initial-state/networks-tab-initial-state';
 import { vmWizardInternalActions } from '../../internal-actions';
-import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
+import { CUSTOM_FLAVOR, NetworkInterfaceModel } from '../../../../../constants/vm';
 import {
   DEFAULT_CPU,
   getCloudInitUserData,
@@ -25,12 +30,14 @@ import {
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
 } from '../../../../../selectors/vm-template/advanced';
-import { ProvisionSource } from '../../../../../types/vm';
+import { ProvisionSource, V1Network } from '../../../../../types/vm';
 import {
   getTemplateProvisionSource,
   getTemplateStorages,
 } from '../../../../../selectors/vm-template/combined';
 import { getFlavors } from '../../../../../selectors/vm-template/combined-dependent';
+import { getSimpleName } from '../../../../../selectors/utils';
+import { getNextIDResolver } from '../../../../../utils/utils';
 
 // used by user template; currently we do not support PROVISION_SOURCE_IMPORT
 const provisionSourceDataFieldResolver = {
@@ -53,15 +60,17 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   const vmSettingsUpdate = {};
 
   // filter out oldTemplates
-  const networkRowsUpdate = immutableListToShallowJS(getDialogNetworks(state, id)).filter(
-    (network) => !network.templateNetwork,
-  );
+  let networksUpdate = immutableListToShallowJS<VMWizardNetwork>(
+    getDialogNetworks(state, id),
+  ).filter((network) => network.type !== VMWizardNetworkType.TEMPLATE);
+  const getNextNetworkID = getNextIDResolver(networksUpdate);
+
   const storageRowsUpdate = immutableListToShallowJS(iGetStorages(state, id)).filter(
     (storage) => !(storage.templateStorage || storage.rootStorage),
   );
 
-  if (!networkRowsUpdate.find((row) => row.rootNetwork)) {
-    networkRowsUpdate.push(podNetwork);
+  if (!networksUpdate.find((row) => !!row.network.pod)) {
+    networksUpdate.unshift({ ...podNetwork, id: getNextNetworkID() });
   }
 
   if (iUserTemplate) {
@@ -111,24 +120,27 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       }
     }
 
+    const networkLookup = createBasicLookup<V1Network>(getNetworks(vm), getSimpleName);
     // prefill networks
-    const templateNetworks = getInterfaces(vm).map((i) => ({
-      templateNetwork: {
-        network: getNetworks(vm).find((n) => n.name === i.name),
-        interface: i,
+    const templateNetworks = getInterfaces(vm).map((intface) => ({
+      id: getNextNetworkID(),
+      type: VMWizardNetworkType.TEMPLATE,
+      network: networkLookup[getSimpleName(intface)],
+      networkInterface: {
+        ...intface,
+        model: intface.model || NetworkInterfaceModel.VIRTIO.getValue(),
       },
     }));
 
-    // do not add root interface if there already is one or autoAttachPodInterface is set to false
+    // remove pod networks if there is already one in template or autoAttachPodInterface is set to false
     if (
-      templateNetworks.some((network) => network.templateNetwork.network.pod) ||
+      templateNetworks.some((network) => !!network.network.pod) ||
       !hasAutoAttachPodInterface(vm, true)
     ) {
-      const index = _.findIndex(networkRowsUpdate, (network: any) => network.rootNetwork);
-      networkRowsUpdate.splice(index, 1);
+      networksUpdate = networksUpdate.filter((network) => !network.network.pod);
     }
 
-    networkRowsUpdate.push(...templateNetworks);
+    networksUpdate.push(...templateNetworks);
 
     // prefill storage
     const templateStorages = getTemplateStorages(userTemplate, dataVolumes).map((storage) => ({
@@ -153,6 +165,6 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   }
 
   dispatch(vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, vmSettingsUpdate));
-  dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networkRowsUpdate));
+  dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networksUpdate));
   dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, storageRowsUpdate));
 };

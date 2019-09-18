@@ -1,6 +1,6 @@
 export enum ValidationErrorType {
   Error = 'error',
-  TrivialError = 'trivial-error',
+  TrivialError = 'trivial-error', // should not be visible but affects data validation
   Warn = 'warning',
   Info = 'info',
 }

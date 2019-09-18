@@ -9,7 +9,7 @@ export const getInitialVmSettings = (common: CommonData) => {
   } = common;
 
   const provisionSources = [
-    // ProvisionSource.PXE, // TODO: uncomment when storage tab is implemented
+    ProvisionSource.PXE,
     ProvisionSource.URL,
     ProvisionSource.CONTAINER,
     // ProvisionSource.CLONED_DISK, // TODO: uncomment when storage tab is implemented

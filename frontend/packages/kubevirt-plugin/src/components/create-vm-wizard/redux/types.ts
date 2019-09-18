@@ -3,18 +3,22 @@ import {
   ChangedCommonDataProp,
   VMSettingsField,
   VMSettingsFieldType,
+  VMWizardNetwork,
   VMWizardTab,
 } from '../types';
 import { ValidationObject } from '../../../utils/validations/types';
 
 export enum ActionType {
-  Create = 'KubevirtVMWizardCreate',
-  Dispose = 'KubevirtVMWizardDispose',
-  UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
-  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
-  SetNetworks = 'KubevirtVMWizardSetNetworks',
-  SetStorages = 'KubevirtVMWizardSetStorages',
-  SetResults = 'KubevirtVMWizardSetResults',
+  Create = 'KubevirtVMWizardExternalCreate',
+  Dispose = 'KubevirtVMWiExternalDispose',
+  UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
+  SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
+  SetTabLocked = 'KubevirtVMWizardExternalSetTabLocked',
+  RemoveNIC = 'KubevirtVMWizardExternalRemoveNIC',
+  UpdateNIC = 'KubevirtVMWizardExternalUpdateNIC',
+  SetNetworks = 'KubevirtVMWizardExternalSetNetworks',
+  SetStorages = 'KubevirtVMWizardExternalSetStorages',
+  SetResults = 'KubevirtVMWizardExternalSetResults',
 }
 
 // should not be called directly from outside redux code (e.g. stateUpdate)
@@ -24,11 +28,14 @@ export enum InternalActionType {
   Update = 'KubevirtVMWizardUpdateInternal',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
   SetTabValidity = 'KubevirtVMWizardSetTabValidityInternal',
+  SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValueInternal',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettingsInternal',
   SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatchInternal',
   UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsFieldInternal',
   UpdateVmSettings = 'KubevirtVMWizardUpdateVmSettingsInternal',
+  RemoveNIC = 'KubevirtVMWizardRemoveNIC',
+  UpdateNIC = 'KubevirtVMWizardUpdateNIC',
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
@@ -47,6 +54,9 @@ export type WizardInternalAction = {
     key?: VMSettingsField;
     tab?: VMWizardTab;
     batch?: ActionBatch;
+    network?: VMWizardNetwork;
+    networks?: VMWizardNetwork[];
+    networkID?: string;
   };
 };
 

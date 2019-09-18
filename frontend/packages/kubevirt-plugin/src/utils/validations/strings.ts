@@ -15,3 +15,4 @@ export const VIRTUAL_MACHINE_TEMPLATE_EXISTS = 'is already used in another templ
 
 export const MAC_ADDRESS_INVALID_ERROR = 'Invalid MAC address format';
 export const NIC_NAME_EXISTS = 'Interface with this name already exists';
+export const NETWORK_MULTUS_NAME_EXISTS = 'Multus network with this name already exists';

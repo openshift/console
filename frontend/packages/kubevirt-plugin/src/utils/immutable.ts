@@ -3,7 +3,21 @@ import { List } from 'immutable';
 export const concatImmutableLists = (...args) =>
   args.filter((list) => list).reduce((acc, nextArray) => acc.concat(nextArray), List());
 
-export const immutableListToShallowJS = (list, defaultValue = []) =>
+export const iFirehoseResultToJS = (immutableValue, isList = true) => {
+  if (!immutableValue) {
+    return {};
+  }
+
+  const data = immutableValue.get('data');
+
+  return {
+    data: data && isList ? data.toArray().map((p) => p.toJSON()) : data.toJS(),
+    loadError: immutableValue.get('loadError'),
+    loaded: immutableValue.get('loaded'),
+  };
+};
+
+export const immutableListToShallowJS = <A = any>(list, defaultValue: A[] = []): A[] =>
   list ? list.toArray().map((p) => p.toJSON()) : defaultValue;
 
 export const hasTruthyValue = (obj) => !!(obj && !!obj.find((value) => value));

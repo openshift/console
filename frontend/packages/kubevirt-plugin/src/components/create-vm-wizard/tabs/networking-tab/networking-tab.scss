@@ -1,0 +1,14 @@
+.kubevirt-create-vm-modal__networking-tab-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.kubevirt-create-vm-modal__networking-tab-main {
+  flex: 1;
+}
+
+.kubevirt-create-vm-modal__networking-tab-pxe {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}

@@ -11,7 +11,7 @@ export const getCreateVMLikeEntityLabel = (isTemplate: boolean) =>
 
 export const TabTitleResolver = {
   [VMWizardTab.VM_SETTINGS]: 'General',
-  [VMWizardTab.NETWORKS]: 'Networking',
+  [VMWizardTab.NETWORKING]: 'Networking',
   [VMWizardTab.STORAGE]: 'Storage',
   [VMWizardTab.REVIEW]: 'Review',
   [VMWizardTab.RESULT]: 'Result',

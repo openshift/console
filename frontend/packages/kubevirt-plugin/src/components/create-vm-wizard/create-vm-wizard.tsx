@@ -33,12 +33,15 @@ import {
 } from '../../utils/immutable';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { ResultsWrapper } from '../../k8s/enhancedK8sMethods/types';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import {
   ChangedCommonData,
   CommonData,
   CreateVMWizardComponentProps,
   DetectCommonDataChanges,
   VMSettingsField,
+  VMWizardNetwork,
   VMWizardProps,
   VMWizardTab,
 } from './types';
@@ -47,13 +50,54 @@ import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
 import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
-import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
+import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
+import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
 
 import './create-vm-wizard.scss';
+
+// TODO remove after moving create functions from kubevirt-web-ui-components
+/** *
+ * kubevirt-web-ui-components InterOP
+ */
+const kubevirtInterOP = ({ activeNamespace, vmSettings, networks, storages, templates }) => {
+  const clonedVMsettings = _.cloneDeep(vmSettings);
+  const clonedNetworks = _.cloneDeep(networks);
+  const clonedStorages = _.cloneDeep(storages);
+
+  clonedVMsettings.namespace = { value: activeNamespace };
+  const operatingSystems = getTemplateOperatingSystems(templates);
+  const osField = clonedVMsettings[VMSettingsField.OPERATING_SYSTEM];
+  const osID = osField.value;
+  osField.value = operatingSystems.find(({ id }) => id === osID);
+
+  const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
+    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
+    const networkWrapper = NetworkWrapper.initialize(network);
+
+    return {
+      name: networkInterfaceWrapper.getName(),
+      mac: networkInterfaceWrapper.getMACAddress(),
+      binding: networkInterfaceWrapper.getTypeValue(),
+      isBootable: networkInterfaceWrapper.isFirstBootableDevice(),
+      network: networkWrapper.getReadableName(),
+      networkType: networkWrapper.getTypeValue(),
+      templateNetwork: {
+        network,
+        interface: networkInterface,
+      },
+    };
+  });
+
+  return {
+    interOPVMSettings: clonedVMsettings,
+    interOPNetworks,
+    interOPStorages: clonedStorages,
+  };
+};
 
 export class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
   private isClosed = false;
@@ -93,6 +137,12 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
     const vmSettings = iGetIn(this.props.stepData, [VMWizardTab.VM_SETTINGS, 'value']).toJS();
+    const networks = immutableListToShallowJS<VMWizardNetwork>(
+      iGetIn(this.props.stepData, [VMWizardTab.NETWORKING, 'value']),
+    );
+    const storages = immutableListToShallowJS(
+      iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']),
+    );
     const templates = immutableListToShallowJS(
       concatImmutableLists(
         iGetLoadedData(this.props[VMWizardProps.commonTemplates]),
@@ -100,25 +150,20 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       ),
     );
 
-    // TODO remove after moving create functions from kubevirt-web-ui-components
-    /** *
-     * BEGIN kubevirt-web-ui-components InterOP
-     */
-    vmSettings.namespace = { value: this.props.activeNamespace };
-    const operatingSystems = getTemplateOperatingSystems(templates);
-    const osField = vmSettings[VMSettingsField.OPERATING_SYSTEM];
-    const osID = osField.value;
-    osField.value = operatingSystems.find(({ id }) => id === osID);
-    /**
-     * END kubevirt-web-ui-components InterOP
-     */
+    const { interOPVMSettings, interOPNetworks, interOPStorages } = kubevirtInterOP({
+      vmSettings,
+      networks,
+      storages,
+      templates,
+      activeNamespace: this.props.activeNamespace,
+    });
 
     create(
       enhancedK8sMethods,
       templates,
-      vmSettings,
-      iGetIn(this.props.stepData, [VMWizardTab.NETWORKS, 'value']).toJS(),
-      iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']).toJS(),
+      interOPVMSettings,
+      interOPNetworks,
+      interOPStorages,
       immutableListToShallowJS(iGetLoadedData(this.props[VMWizardProps.persistentVolumeClaims])),
       units,
     )
@@ -148,9 +193,15 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           </>
         ),
       },
-      // {
-      //   id: VMWizardTab.NETWORKS,
-      // },
+      {
+        id: VMWizardTab.NETWORKING,
+        component: (
+          <>
+            <ResourceLoadErrors wizardReduxID={reduxID} />
+            <NetworkingTab wizardReduxID={reduxID} />
+          </>
+        ),
+      },
       // {
       //   id: VMWizardTab.STORAGE,
       // },
@@ -276,7 +327,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     }),
     getResource(NetworkAttachmentDefinitionModel, {
       namespace: activeNamespace,
-      prop: VMWizardProps.networkConfigs,
+      prop: VMWizardProps.networkAttachmentDefinitions,
     }),
     getResource(StorageClassModel, { prop: VMWizardProps.storageClasses }),
     getResource(PersistentVolumeClaimModel, {

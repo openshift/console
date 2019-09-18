@@ -1,15 +1,21 @@
-import { NetworkInterfaceType, NetworkType, POD_NETWORK } from '../../../../constants/vm';
+import { VMWizardNetwork, VMWizardNetworkType } from '../../types';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkInterfaceModel, NetworkType } from '../../../../constants/vm/network';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+import { getSequenceName } from '../../../../utils/strings';
 
-export const podNetwork = {
-  rootNetwork: {},
-  id: 0,
-  name: 'nic0',
-  mac: '',
-  network: POD_NETWORK,
-  editable: true,
-  edit: false,
-  networkType: NetworkType.POD,
-  binding: NetworkInterfaceType.MASQUERADE,
+export const podNetwork: VMWizardNetwork = {
+  id: '0',
+  type: VMWizardNetworkType.UI_DEFAULT_POD_NETWORK,
+  networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
+    name: getSequenceName('nic'),
+    model: NetworkInterfaceModel.VIRTIO,
+    interfaceType: NetworkType.POD.getDefaultInterfaceType(),
+  }).asResource(),
+  network: NetworkWrapper.initializeFromSimpleData({
+    name: getSequenceName('nic'),
+    type: NetworkType.POD,
+  }).asResource(),
 };
 
 export const getNetworksInitialState = () => ({

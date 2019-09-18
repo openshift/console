@@ -1,11 +1,14 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getStringEnumValues } from '../../utils/types';
-import { VMKind } from '../../types/vm';
+import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
+import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { UINetworkInterfaceValidation } from '../../utils/validations/vm';
 
 export enum VMWizardTab { // order important
   VM_SETTINGS = 'VM_SETTINGS',
-  NETWORKS = 'NETWORKS',
+  NETWORKING = 'NETWORKING',
   STORAGE = 'STORAGE',
   REVIEW = 'REVIEW',
   RESULT = 'RESULT',
@@ -18,7 +21,7 @@ export enum VMWizardProps {
   virtualMachines = 'virtualMachines',
   userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
-  networkConfigs = 'networkConfigs',
+  networkAttachmentDefinitions = 'networkAttachmentDefinitions',
   storageClasses = 'storageClasses',
   persistentVolumeClaims = 'persistentVolumeClaims',
   dataVolumes = 'dataVolumes',
@@ -67,7 +70,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplates
   | VMWizardProps.persistentVolumeClaims
   | VMWizardProps.commonTemplates
-  | VMWizardProps.networkConfigs
+  | VMWizardProps.networkAttachmentDefinitions
   | VMWizardProps.storageClasses;
 
 export type CommonDataProp = VMWizardProps.isCreateTemplate | ChangedCommonDataProp;
@@ -81,7 +84,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
   VMWizardProps.persistentVolumeClaims,
-  VMWizardProps.networkConfigs,
+  VMWizardProps.networkAttachmentDefinitions,
 ]);
 
 export type CommonData = {
@@ -105,4 +108,23 @@ export type CreateVMWizardComponentProps = {
   onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
   onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
   lockTab: (tabID: VMWizardTab) => void;
+};
+
+export enum VMWizardNetworkType {
+  TEMPLATE = 'TEMPLATE',
+  UI_DEFAULT_POD_NETWORK = 'UI_DEFAULT_POD_NETWORK',
+  UI_INPUT = 'UI_INPUT',
+}
+
+export type VMWizardNetwork = {
+  id?: string;
+  type: VMWizardNetworkType;
+  network: V1Network;
+  networkInterface: V1NetworkInterface;
+  validation?: UINetworkInterfaceValidation;
+};
+
+export type VMWizardNetworkWithWrappers = VMWizardNetwork & {
+  networkInterfaceWrapper: NetworkInterfaceWrapper;
+  networkWrapper: NetworkWrapper;
 };

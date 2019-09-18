@@ -5,8 +5,9 @@ import {
   setVmSettingsTabValidity,
   validateVmSettings,
 } from './validations/vm-settings-tab-validation';
+import { setNetworksTabValidity, validateNetworks } from './validations/networks-tab-validation';
 
-const UPDATE_TABS = [VMWizardTab.VM_SETTINGS];
+const UPDATE_TABS = [VMWizardTab.VM_SETTINGS, VMWizardTab.NETWORKING];
 
 const updaterResolver = {
   [VMWizardTab.VM_SETTINGS]: updateVmSettingsState,
@@ -14,10 +15,12 @@ const updaterResolver = {
 
 const validateTabResolver = {
   [VMWizardTab.VM_SETTINGS]: validateVmSettings,
+  [VMWizardTab.NETWORKING]: validateNetworks,
 };
 
 const isTabValidResolver = {
   [VMWizardTab.VM_SETTINGS]: setVmSettingsTabValidity,
+  [VMWizardTab.NETWORKING]: setNetworksTabValidity,
 };
 
 export const updateAndValidateState = (options: UpdateOptions) => {

@@ -53,6 +53,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const isLastStep = activeStepID === VMWizardTab.RESULT;
 
         const isNextButtonDisabled = isLocked;
+        const isReviewButtonDisabled = isLocked;
         const isBackButtonDisabled = isFirstStep || isLocked;
 
         return (
@@ -85,6 +86,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             {!isFinishingStep && (
               <Button
                 variant={ButtonVariant.secondary}
+                isDisabled={isReviewButtonDisabled}
                 onClick={() => {
                   const jumpToStepID =
                     (isValid &&

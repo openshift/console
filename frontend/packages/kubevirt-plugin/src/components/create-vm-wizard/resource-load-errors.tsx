@@ -22,7 +22,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   errors: [
     asError(state, wizardReduxID, VMWizardProps.commonTemplates),
     asError(state, wizardReduxID, VMWizardProps.userTemplates),
-    asError(state, wizardReduxID, VMWizardProps.networkConfigs),
+    asError(state, wizardReduxID, VMWizardProps.networkAttachmentDefinitions),
     asError(state, wizardReduxID, VMWizardProps.persistentVolumeClaims),
     asError(state, wizardReduxID, VMWizardProps.dataVolumes),
     asError(state, wizardReduxID, VMWizardProps.storageClasses),

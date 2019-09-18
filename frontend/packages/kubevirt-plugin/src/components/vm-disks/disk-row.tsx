@@ -54,7 +54,6 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
       <TableData className={Kebab.columnClass}>
         <Kebab
           options={getActions(vmLikeEntity, disk)}
-          key={`kebab-for--${diskName}`}
           isDisabled={getDeletetionTimestamp(vmLikeEntity)}
           id={`kebab-for-${diskName}`}
         />
