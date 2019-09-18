@@ -149,12 +149,12 @@ export const validationSchema = yup.object().shape({
     cpu: yup.object().shape({
       request: yup
         .number()
-        .nullable()
+        .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, 'Request must be greater than or equal to 0.')
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== null) {
+            if (limit !== undefined) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -168,12 +168,12 @@ export const validationSchema = yup.object().shape({
       limitUnit: yup.string('Unit must be millicores or cores.'),
       limit: yup
         .number()
-        .nullable()
+        .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, 'Limit must be greater than or equal to 0.')
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== null) {
+            if (limit !== undefined) {
               return (
                 convertToBaseValue(`${limit}${limitUnit}`) >=
                 convertToBaseValue(`${request}${requestUnit}`)
@@ -187,12 +187,12 @@ export const validationSchema = yup.object().shape({
     memory: yup.object().shape({
       request: yup
         .number()
-        .nullable()
+        .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, 'Request must be greater than or equal to 0.')
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== null) {
+            if (limit !== undefined) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -205,12 +205,12 @@ export const validationSchema = yup.object().shape({
       requestUnit: yup.string('Unit must be Mi or Gi.'),
       limit: yup
         .number()
-        .nullable()
+        .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, 'Limit must be greater than or equal to 0.')
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== null) {
+            if (limit !== undefined) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
