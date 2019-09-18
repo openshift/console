@@ -87,6 +87,8 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
   </React.Fragment>;
 };
 
+const UpdateStrategy: React.FC<SpecCapabilityProps> = (props) => <div>{_.get(props.value, 'type', 'None')}</div>;
+
 const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<SpecCapabilityProps>>()
   .set(SpecCapability.podCount, PodCount)
   .set(SpecCapability.endpointList, Endpoints)
@@ -96,7 +98,8 @@ const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<Sp
   .set(SpecCapability.k8sResourcePrefix, K8sResourceLink)
   .set(SpecCapability.selector, BasicSelector)
   .set(SpecCapability.booleanSwitch, BooleanSwitch)
-  .set(SpecCapability.password, Secret);
+  .set(SpecCapability.password, Secret)
+  .set(SpecCapability.updateStrategy, UpdateStrategy);
 
 const capabilityFor = (specCapability: SpecCapability) => {
   if (_.isEmpty(specCapability)) {

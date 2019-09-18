@@ -12,9 +12,10 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { FirehoseResource, ExternalLink } from '@console/internal/components/utils';
+import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
@@ -31,8 +32,7 @@ const SubscriptionResource: FirehoseResource = {
   kind: referenceForModel(SubscriptionModel),
   namespaced: false,
   prop: 'subscription',
-  name: 'ocs-subscription',
-  isList: false,
+  isList: true,
 };
 
 export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
@@ -66,9 +66,9 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
   const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
-  const subscription = _.get(resources, 'subscription');
+  const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
-  const ocsVersion = _.get(subscription, 'data.status.currentCSV');
+  const ocsVersion = getOCSVersion(subscription);
 
   return (
     <DashboardCard>
