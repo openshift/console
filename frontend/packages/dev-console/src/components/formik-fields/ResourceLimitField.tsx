@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { RequestSizeInput } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
@@ -31,7 +30,7 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
       <RequestSizeInput
         {...props}
         onChange={(val) => {
-          setFieldValue(props.name, _.toNumber(val.value));
+          setFieldValue(props.name, val.value);
           setFieldValue(unitName, val.unit);
           setFieldTouched(props.name, true);
         }}

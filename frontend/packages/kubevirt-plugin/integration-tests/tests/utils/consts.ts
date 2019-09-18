@@ -1,4 +1,4 @@
-export const DASHES = '---';
+export const DASH = '-';
 export const { STORAGE_CLASS = 'nfs-sc' } = process.env;
 
 // TIMEOUTS

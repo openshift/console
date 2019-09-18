@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
 import { ElementFinder, browser, ExpectedConditions as until } from 'protractor';
+import { NodePortService } from './types';
 
 export async function fillInput(elem: ElementFinder, value: string) {
   // Sometimes there seems to be an issue with clear() method not clearing the input
@@ -45,4 +46,13 @@ export function getRandomMacAddress() {
 export function getResourceObject(name: string, namespace: string, kind: string) {
   const resourceJson = execSync(`kubectl get -o json -n ${namespace} ${kind} ${name}`).toString();
   return JSON.parse(resourceJson);
+}
+
+export function exposeServices(services: Set<any>) {
+  const servicesArray: NodePortService[] = [...services];
+  servicesArray.forEach(({ name, kind, port, targetPort, exposeName, type, namespace }) => {
+    execSync(
+      `virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type} -n ${namespace}`,
+    );
+  });
 }

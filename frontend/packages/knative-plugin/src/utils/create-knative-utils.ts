@@ -21,9 +21,9 @@ interface LimitsData {
 }
 
 interface ResourceType {
-  request: number;
+  request: number | string;
   requestUnit: string;
-  limit: number;
+  limit: number | string;
   limitUnit: string;
 }
 
@@ -142,6 +142,42 @@ export const knativeServingResources = (namespace: string): FirehoseResource[] =
       kind: referenceForModel(ServiceModel),
       namespace,
       prop: 'ksservices',
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(RevisionModel),
+      namespace,
+      prop: 'revisions',
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesConfigurations = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(ConfigurationModel),
+      namespace,
+      prop: 'configurations',
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesRoutes = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(RouteModel),
+      namespace,
+      prop: 'ksroutes',
     },
   ];
   return knativeResource;

@@ -109,11 +109,17 @@ export const getErrataLink = (cv: ClusterVersionKind): string => {
     return null;
   }
 
+  const { major, minor, patch, prerelease } = parsed;
+  if (major !== 4 || !_.isEmpty(prerelease)) {
+    return null;
+  }
+
   // TODO: Determine architecture instead of assuming x86_64.
-  const { major, minor, patch } = parsed;
   return `https://access.redhat.com/downloads/content/290/ver=${major}.${minor}/rhel---7/${major}.${minor}.${patch}/x86_64/product-errata`;
 };
 
 export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;
 
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
+
+export const getOCMLink = (clusterID: string): string => `https://cloud.redhat.com/openshift/details/${clusterID}`;
