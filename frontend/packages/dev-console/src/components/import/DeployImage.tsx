@@ -66,6 +66,7 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
     route: {
       create: true,
       targetPort: '',
+      supplyPort: false,
       path: '',
       hostname: '',
       secure: false,
@@ -116,11 +117,29 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
     },
   };
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = (formValues, actions) => {
+    const {
+      isi: { ports },
+      route: { targetPort },
+    } = formValues;
+
+    let values = formValues;
+    if ((!Array.isArray(ports) || ports.length === 0) && targetPort) {
+      // If we lack pre-defined ports but they have specified a custom target port, use that instead
+      const suppliedPorts = [{ containerPort: parseInt(targetPort, 10), protocol: 'TCP' }];
+
+      values = {
+        ...values,
+        isi: {
+          ...values.isi,
+          ports: suppliedPorts,
+        },
+      };
+    }
+
     const {
       project: { name: projectName },
     } = values;
-
     const dryRunRequests: Promise<K8sResourceKind[]> = createResources(values, true);
     dryRunRequests
       .then(() => {

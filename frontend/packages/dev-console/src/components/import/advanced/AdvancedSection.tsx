@@ -17,11 +17,20 @@ export interface AdvancedSectionProps {
   values: FormikValues;
 }
 
+const ROUTING_NAME = 'Routing';
+
 const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
   const [visibleItems, setVisibleItems] = React.useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
+
+  const needsPort = values.route.supplyPort;
+  React.useEffect(() => {
+    if (needsPort && !visibleItems.includes(ROUTING_NAME)) {
+      setVisibleItems([...visibleItems, ROUTING_NAME]);
+    }
+  }, [needsPort, visibleItems]);
 
   return (
     <FormSection title="Advanced Options" fullWidth>
@@ -31,7 +40,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
         visibleItems={visibleItems}
         onVisibleItemChange={handleVisibleItemChange}
       >
-        <ProgressiveListItem name="Routing">
+        <ProgressiveListItem disableScroll={needsPort} name={ROUTING_NAME}>
           {values.serverless.enabled ? (
             <ServerlessRouteSection route={values.route} />
           ) : (

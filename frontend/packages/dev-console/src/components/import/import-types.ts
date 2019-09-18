@@ -111,6 +111,7 @@ export interface DockerData {
 export interface RouteData {
   create: boolean;
   targetPort: string;
+  supplyPort?: boolean;
   path: string;
   hostname: string;
   secure: boolean;

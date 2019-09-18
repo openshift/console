@@ -92,6 +92,7 @@ export const deployValidationSchema = yup.object().shape({
       }),
   }),
   route: yup.object().shape({
+    create: yup.boolean(),
     secure: yup.boolean(),
     tls: yup.object().when('secure', {
       is: true,
@@ -110,5 +111,13 @@ export const deployValidationSchema = yup.object().shape({
     path: yup
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
+    targetPort: yup.string().when('supplyPort', {
+      is: true,
+      then: yup.string().when('create', {
+        is: true,
+        then: yup.string().required('A target port is required.'),
+      }),
+    }),
+    supplyPort: yup.boolean(),
   }),
 });
