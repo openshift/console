@@ -24,19 +24,13 @@ import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
+import { getOCMLink } from '../module/k8s';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-
-const multiClusterManager = {
-  label: 'OpenShift Cluster Manager',
-  externalLink: true,
-  href: 'https://cloud.redhat.com/openshift',
-  image: <img src={openshiftLogoImg} alt="" />,
-};
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
@@ -222,26 +216,33 @@ class MastheadToolbar_ extends React.Component {
   }
 
   _launchActions = () => {
-    const { consoleLinks } = this.props;
+    const { clusterID, consoleLinks } = this.props;
     const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
 
-    const redHatApplications = {
-      name: 'Red Hat Applications',
-      isSection: true,
-      actions: [multiClusterManager],
-    };
+    const sections = [];
+    if (clusterID) {
+      sections.push({
+        name: 'Red Hat Applications',
+        isSection: true,
+        actions: [{
+          label: 'OpenShift Cluster Manager',
+          externalLink: true,
+          href: getOCMLink(clusterID),
+          image: <img src={openshiftLogoImg} alt="" />,
+        }],
+      });
+    }
 
-    const sections = _.reduce(launcherItems, (accumulator, item) => {
+    _.each(launcherItems, (item) => {
       const sectionName = _.get(item, 'spec.applicationMenu.section', '');
-      if (!_.find(accumulator, {name: sectionName})) {
-        accumulator.push({name: sectionName, isSection: true, actions: []});
+      if (!_.find(sections, {name: sectionName})) {
+        sections.push({name: sectionName, isSection: true, actions: []});
       }
-      return accumulator;
-    }, [redHatApplications]);
+    });
 
-    _.sortBy(sections, [this._sectionSort, 'name']);
+    const sortedSections = _.sortBy(sections, [this._sectionSort, 'name']);
 
-    _.each(sections, section => {
+    _.each(sortedSections, section => {
       const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
       _.each(sectionItems, item => {
         section.actions.push(
@@ -415,7 +416,7 @@ class MastheadToolbar_ extends React.Component {
         }],
       });
 
-      if (flags[FLAGS.OPENSHIFT]) {
+      if (!_.isEmpty(launchActions)) {
         actions.unshift(...launchActions);
       }
 
@@ -470,6 +471,7 @@ class MastheadToolbar_ extends React.Component {
       isList: false,
       prop: 'obj',
     }];
+    const launchActions = this._launchActions();
     return (
       <React.Fragment>
         <Toolbar>
@@ -484,7 +486,7 @@ class MastheadToolbar_ extends React.Component {
                 </Firehose>
             }
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
-            {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
+            {!_.isEmpty(launchActions) && <ToolbarItem>
               <ApplicationLauncher
                 className="co-app-launcher"
                 data-test-id="application-launcher"
@@ -533,6 +535,7 @@ class MastheadToolbar_ extends React.Component {
 
 const mastheadToolbarStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
+  clusterID: UI.get('clusterID'),
   user: UI.get('user'),
   consoleLinks: UI.get('consoleLinks'),
 });

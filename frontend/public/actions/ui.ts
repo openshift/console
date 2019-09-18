@@ -35,6 +35,7 @@ export enum ActionType {
   QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
+  SetClusterID = 'setClusterID',
   SetUser = 'setUser',
   SortList = 'sortList',
   BeginImpersonate = 'beginImpersonate',
@@ -198,6 +199,7 @@ export const sortList = (listId: string, field: string, func: string, sortAsNumb
   return action(ActionType.SortList, {listId, field, func, sortAsNumber, orderBy});
 };
 export const setCreateProjectMessage = (message: string) => action(ActionType.SetCreateProjectMessage, {message});
+export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, {clusterID});
 export const setUser = (user: any) => action(ActionType.SetUser, {user});
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, {uid});
 export const selectOverviewDetailsTab = (tab: string) => action(ActionType.SelectOverviewDetailsTab, {tab});
@@ -242,6 +244,7 @@ const uiActions = {
   endImpersonate,
   sortList,
   setCreateProjectMessage,
+  setClusterID,
   setUser,
   selectOverviewItem,
   selectOverviewDetailsTab,

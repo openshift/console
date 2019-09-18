@@ -110,6 +110,9 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetCreateProjectMessage:
       return state.set('createProjectMessage', action.payload.message);
 
+    case ActionType.SetClusterID:
+      return state.set('clusterID', action.payload.clusterID);
+
     case ActionType.SetUser:
       return state.set('user', action.payload.user);
 
