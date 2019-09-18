@@ -50,7 +50,7 @@ export const validateDNS1123SubdomainValue = (value: string): ValidationObject =
     return getValidationObject(makeSentence(EMPTY_ERROR, false), ValidationErrorType.TrivialError);
   }
 
-  const forbiddenCharacters = new Set();
+  const forbiddenCharacters = new Set<string>();
   const validationSentences = [];
 
   if (value.length > 253) {
