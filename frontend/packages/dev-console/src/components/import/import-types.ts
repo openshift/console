@@ -212,9 +212,9 @@ export interface LimitsData {
 }
 
 export interface ResourceType {
-  request: number;
+  request: number | string;
   requestUnit: string;
-  limit: number;
+  limit: number | string;
   limitUnit: string;
 }
 
