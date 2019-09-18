@@ -50,6 +50,9 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
       const { activeContainer } = this.state;
       const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
 
+      const isWindows =
+        _.get(this.props.obj, 'spec.nodeSelector["beta.kubernetes.io/os"]') === 'windows';
+      const command = isWindows ? ['cmd.exe'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
       const params = {
         ns: metadata.namespace,
         name: metadata.name,
@@ -60,9 +63,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
           stderr: 1,
           tty: 1,
           container: activeContainer,
-          command: ['sh', '-i', '-c', 'TERM=xterm sh']
-            .map((c) => encodeURIComponent(c))
-            .join('&command='),
+          command: command.map((c) => encodeURIComponent(c)).join('&command='),
         },
       };
 
@@ -90,7 +91,9 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
             if (previous.includes(NO_SH)) {
               current.reset();
               current.onConnectionClosed(
-                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${
+                `This container doesn't have a ${
+                  isWindows ? 'cmd.exe' : '/bin/sh'
+                } shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${
                   metadata.namespace
                 } exec ${metadata.name} -ti <command>`,
               );
