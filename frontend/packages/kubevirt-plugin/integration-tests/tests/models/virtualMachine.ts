@@ -15,7 +15,7 @@ import {
   WIZARD_CREATE_VM_ERROR,
   WIZARD_TABLE_FIRST_ROW,
   TABS,
-  DASHES,
+  DASH,
 } from '../utils/consts';
 import { detailViewAction } from '../../views/vm.actions.view';
 import { tableRowForName } from '../../views/kubevirtDetailView.view';
@@ -57,7 +57,7 @@ export class VirtualMachine extends KubevirtDetailView {
     await browser.wait(
       until.and(
         waitForStringNotInElement(vmView.vmDetailNode(this.namespace, this.name), fromNode),
-        waitForStringNotInElement(vmView.vmDetailNode(this.namespace, this.name), DASHES),
+        waitForStringNotInElement(vmView.vmDetailNode(this.namespace, this.name), DASH),
       ),
       timeout,
     );

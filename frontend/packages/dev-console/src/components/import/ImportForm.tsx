@@ -113,15 +113,15 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     labels: {},
     limits: {
       cpu: {
-        request: null,
+        request: '',
         requestUnit: 'm',
-        limit: null,
+        limit: '',
         limitUnit: 'm',
       },
       memory: {
-        request: null,
+        request: '',
         requestUnit: 'Mi',
-        limit: null,
+        limit: '',
         limitUnit: 'Mi',
       },
     },

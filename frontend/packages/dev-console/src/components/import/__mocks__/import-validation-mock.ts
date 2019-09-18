@@ -75,15 +75,15 @@ export const mockFormData: GitImportFormData = {
   },
   limits: {
     cpu: {
-      request: null,
+      request: '',
       requestUnit: 'millicores',
-      limit: null,
+      limit: '',
       limitUnit: 'millicores',
     },
     memory: {
-      request: null,
+      request: '',
       requestUnit: 'MiB',
-      limit: null,
+      limit: '',
       limitUnit: 'MiB',
     },
   },
