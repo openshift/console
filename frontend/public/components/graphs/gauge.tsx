@@ -19,7 +19,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   loading,
   query = '',
   remainderLabel = 'available',
-  theme,
+  themeColor = ChartThemeColor.green,
   thresholds = DEFAULT_THRESHOLDS,
   title,
   usedLabel = 'used',
@@ -31,7 +31,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
   const status = loading ? 'Loading' : error;
-  const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${d.y} ${remainderLabel}`;
+  const labels = ({ datum: { x, y }}) => x ? `${x} ${usedLabel}` : `${y} ${remainderLabel}`;
   return (
     <PrometheusGraph
       className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
@@ -42,18 +42,19 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
         <ChartDonutThreshold
           data={thresholds}
           height={width} // Changes the scale of the graph, not actual width and height
-          y="value"
+          padding={0}
           width={width}
+          y="value"
         >
           <ChartDonutUtilization
             labels={labels}
             data={ready ? data : { y: 0 }}
             invert={invert}
+            padding={0}
             subTitle={ready ? secondaryTitle : ''}
-            themeColor={ChartThemeColor.green}
+            themeColor={themeColor}
             thresholds={thresholds}
             title={status || label}
-            theme={theme}
           />
         </ChartDonutThreshold>
       </PrometheusGraphLink>
@@ -69,7 +70,6 @@ export const Gauge: React.FC<GaugeProps> = ({
   query,
   remainderLabel,
   secondaryTitle,
-  theme,
   thresholds,
   title,
   usedLabel,
@@ -94,7 +94,6 @@ export const Gauge: React.FC<GaugeProps> = ({
     query={query}
     remainderLabel={remainderLabel}
     secondaryTitle={secondaryTitle}
-    theme={theme}
     thresholds={thresholds}
     title={title}
     usedLabel={usedLabel}
@@ -112,7 +111,7 @@ type GaugeChartProps = {
   query?: string;
   remainderLabel?: string;
   secondaryTitle?: string;
-  theme?: any;
+  themeColor?: string;
   thresholds?: {
     value: number;
     color?: string;
@@ -135,6 +134,5 @@ type GaugeProps = {
     color?: string;
   }[];
   title?: string,
-  theme?: any,
   usedLabel?: string,
 }

@@ -165,12 +165,11 @@ const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
-// Use style because ChartVoronoiContainer does not accept a className prop
-const graphContainer: any = <ChartVoronoiContainer
+const graphContainer = <ChartVoronoiContainer
   activateData={false}
+  className="query-browser__graph-container"
   labelComponent={graphLabelComponent}
   labels={() => ''}
-  style={{zIndex: 1}}
 />;
 
 const Graph: React.FC<GraphProps> = React.memo(({data, disableTooltips, span, xDomain}) => {
