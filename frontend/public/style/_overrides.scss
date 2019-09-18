@@ -381,14 +381,6 @@ h6 {
   pointer-events: auto;
 }
 
-// operator name alignment adjusted
-.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__icon {
-  align-items: flex-start;
-}
-.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__name {
-  justify-content: flex-start;
-}
-
 .pf-c-table.pf-c-virtualized tr {
   display: table;
   table-layout: fixed;
@@ -404,17 +396,6 @@ h6 {
 .pf-c-table.pf-c-virtualized {
   tr > td {
     vertical-align: top;
-  }
-}
-
-.pf-c-table.pf-c-virtualized tr.vertical-align-middle > td {
-  vertical-align: middle;
-}
-
-.pf-c-table.pf-c-virtualized tr.vertical-align-middle {
-  .co-clusterserviceversion-logo__icon,
-  .co-clusterserviceversion-logo {
-    align-items: center;
   }
 }
 

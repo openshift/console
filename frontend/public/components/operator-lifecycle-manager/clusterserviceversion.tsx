@@ -134,7 +134,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <Link to={route}>
+        <Link to={route} className="co-clusterserviceversion-link">
           <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
         </Link>
       </TableData>
