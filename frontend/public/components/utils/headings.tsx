@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { Button, SplitItem, Split } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
 import { ActionsMenu, ResourceIcon, KebabAction, resourcePath, FirehoseResult, KebabOption } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
@@ -16,23 +16,23 @@ import {
 import { ResourceItemDeleting } from '../overview/project-overview';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
-  <ol className="breadcrumb">
+  <Breadcrumb>
     {breadcrumbs.map((crumb, i, { length }) => {
       const isLast = i === length - 1;
+
       return (
-        <li key={i} className={classNames({ active: isLast })}>
+        <BreadcrumbItem key={i} isActive={isLast}>
           {isLast ? (
             crumb.name
           ) : (
-            <Link className="breadcrumb-link" to={crumb.path} data-test-id={`breadcrumb-link-${i}`}>
+            <Link className="pf-c-breadcrumb__link" to={crumb.path} data-test-id={`breadcrumb-link-${i}`}>
               {crumb.name}
             </Link>
           )}
-        </li>
+        </BreadcrumbItem>
       );
     })}
-  </ol>
-);
+  </Breadcrumb>);
 
 const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div className="co-action-buttons">
   {_.map(actionButtons, (actionButton, i) => {
