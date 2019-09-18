@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Dashboard, DashboardGrid } from '@console/internal/components/dashboard';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { VMKind, VMIKind } from '../../types';
-import { VMDetailsCard } from '../dashboards-page/vm-dashboard/vm-details-card';
+import { VMDetailsCard, VMInventoryCard } from '../dashboards-page/vm-dashboard';
 import { VMDashboardContext } from './vm-dashboard-context';
 
 const mainCards = [];
-const leftCards = [{ Card: VMDetailsCard }];
+const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];
 const rightCards = [];
 
 export const VMDashboard: React.FC<VMDashboardProps> = (props) => {

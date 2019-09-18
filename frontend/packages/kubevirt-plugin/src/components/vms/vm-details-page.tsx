@@ -7,7 +7,12 @@ import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
 import { getResource } from '../../utils';
-import { VM_DETAIL_OVERVIEW_HREF } from '../../constants';
+import {
+  VM_DETAIL_OVERVIEW_HREF,
+  VM_DETAIL_DISKS_HREF,
+  VM_DETAIL_NETWORKS_HREF,
+  VM_DETAIL_CONSOLES_HREF,
+} from '../../constants';
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
@@ -42,19 +47,19 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   };
 
   const consolePage = {
-    href: 'consoles',
+    href: VM_DETAIL_CONSOLES_HREF,
     name: 'Consoles',
     component: VMConsoleFirehose,
   };
 
   const nicsPage = {
-    href: 'nics',
+    href: VM_DETAIL_NETWORKS_HREF,
     name: 'Network Interfaces',
     component: VMNics,
   };
 
   const disksPage = {
-    href: 'disks',
+    href: VM_DETAIL_DISKS_HREF,
     name: 'Disks',
     component: VMDisksFirehose,
   };

@@ -21,3 +21,6 @@ export const TEMPLATE_OS_NAME_ANNOTATION = 'name.os.template.kubevirt.io';
 export const DEFAULT_RDP_PORT = 3389;
 
 export const VM_DETAIL_OVERVIEW_HREF = 'overview';
+export const VM_DETAIL_DISKS_HREF = 'disks';
+export const VM_DETAIL_NETWORKS_HREF = 'nics';
+export const VM_DETAIL_CONSOLES_HREF = 'consoles';
