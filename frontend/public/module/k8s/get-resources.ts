@@ -78,8 +78,8 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
 
     return Promise.all(all)
       .then(data => {
-        const resourceSet = new Set();
-        const namespacedSet = new Set();
+        const resourceSet = new Set<string>();
+        const namespacedSet = new Set<string>();
         data.forEach(d => d.resources && d.resources.forEach(({namespaced, name}) => {
           resourceSet.add(name);
           namespaced && namespacedSet.add(name);

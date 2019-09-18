@@ -1,5 +1,4 @@
 import * as React from 'react';
-import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { NsDropdown } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
@@ -31,7 +30,6 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
         {...props}
         id={fieldId}
         selectedKey={field.value}
-        dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
         onChange={(value: string) => {
           setFieldValue(props.name, value);
           setFieldTouched(props.name, true);

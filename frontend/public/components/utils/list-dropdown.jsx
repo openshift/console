@@ -146,6 +146,7 @@ ListDropdown.propTypes = {
   })).isRequired,
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
+  id: PropTypes.string,
 };
 
 const NsDropdown_ = props => {
@@ -157,4 +158,5 @@ const NsDropdown_ = props => {
   const resources = [{ kind }];
   return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
 };
+/** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, selectedKeyKind?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, event: React.Event) => void, id?: string}}>} */
 export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);

@@ -28,7 +28,7 @@ const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
   return (
     <div
       className={classNames('odc-horizontal-stacked-bars', { 'is-inline': inline })}
-      style={{ height, width, '--bar-gap': barGap && `${barGap}px` }}
+      style={{ height, width, ['--bar-gap' as any]: barGap && `${barGap}px` }}
     >
       <div className="odc-horizontal-stacked-bars__bars">
         {values.map(({ color, name, size }) => (
