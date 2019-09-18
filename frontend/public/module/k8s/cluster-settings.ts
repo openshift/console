@@ -109,8 +109,12 @@ export const getErrataLink = (cv: ClusterVersionKind): string => {
     return null;
   }
 
+  const { major, minor, patch, prerelease } = parsed;
+  if (major !== 4 || !_.isEmpty(prerelease)) {
+    return null;
+  }
+
   // TODO: Determine architecture instead of assuming x86_64.
-  const { major, minor, patch } = parsed;
   return `https://access.redhat.com/downloads/content/290/ver=${major}.${minor}/rhel---7/${major}.${minor}.${patch}/x86_64/product-errata`;
 };
 
