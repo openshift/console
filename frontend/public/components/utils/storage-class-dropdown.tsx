@@ -123,7 +123,7 @@ export class StorageClassDropdownInner extends React.Component<StorageClassDropd
     return <React.Fragment>
       {loaded && itemsAvailableToShow &&
         <div>
-          <label className="control-label" htmlFor={id}>
+          <label className={this.props.hideClassName ? `${this.props.hideClassName } control-label`: 'control-label'} htmlFor={id}>
             Storage Class
           </label>
           <Dropdown
@@ -190,4 +190,5 @@ export type StorageClassDropdownInnerProps = {
   describedBy: string;
   defaultClass: string;
   required?: boolean;
+  hideClassName?: string;
 };
