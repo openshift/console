@@ -337,6 +337,11 @@ Update existing frontend dependencies:
 yarn upgrade <package@version>
 ```
 
+To upgrade yarn itself, download a new yarn release from
+<https://github.com/yarnpkg/yarn/releases>, replace the release in
+`frontend/.yarn/releases` with the new version, and update `yarn-path` in
+`frontend/.yarnrc`.
+
 #### Supported Browsers
 
 We support the latest versions of the following browsers:
