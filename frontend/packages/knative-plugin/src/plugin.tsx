@@ -21,8 +21,16 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from './const';
-import { knativeServingResources } from './utils/create-knative-utils';
-import { getKnativeServingResources } from './utils/get-knative-resources';
+import {
+  knativeServingResourcesRevision,
+  knativeServingResourcesConfigurations,
+  knativeServingResourcesRoutes,
+} from './utils/create-knative-utils';
+import {
+  getKnativeServingConfigurations,
+  getKnativeServingRoutes,
+  getKnativeServingRevisions,
+} from './utils/get-knative-resources';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -135,9 +143,25 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/CRD',
     properties: {
-      resources: knativeServingResources,
-      required: FLAG_KNATIVE_SERVING,
-      utils: getKnativeServingResources,
+      resources: knativeServingResourcesRevision,
+      required: FLAG_KNATIVE_SERVING_REVISION,
+      utils: getKnativeServingRevisions,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResourcesConfigurations,
+      required: FLAG_KNATIVE_SERVING_CONFIGURATION,
+      utils: getKnativeServingConfigurations,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResourcesRoutes,
+      required: FLAG_KNATIVE_SERVING_ROUTE,
+      utils: getKnativeServingRoutes,
     },
   },
   {

@@ -3,9 +3,9 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KNATIVE_SERVING_LABEL } from '../const';
 
 type KnativeItem = {
-  ksroutes: K8sResourceKind[];
-  configurations: K8sResourceKind[];
-  revisions: K8sResourceKind[];
+  revisions?: K8sResourceKind[];
+  configurations?: K8sResourceKind[];
+  ksroutes?: K8sResourceKind[];
 };
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
@@ -42,13 +42,23 @@ const getRevisions = (dc: K8sResourceKind, { revisions }): K8sResourceKind[] => 
   return revisionResource;
 };
 
-export const getKnativeServingResources = (dc: K8sResourceKind, props): KnativeItem => {
-  const ksroutes = getKSRoute(dc, props);
-  const configurations = getConfigurations(dc, props);
+export const getKnativeServingRevisions = (dc: K8sResourceKind, props): KnativeItem => {
   const revisions = getRevisions(dc, props);
   return {
-    ksroutes,
-    configurations,
     revisions,
+  };
+};
+
+export const getKnativeServingConfigurations = (dc: K8sResourceKind, props): KnativeItem => {
+  const configurations = getConfigurations(dc, props);
+  return {
+    configurations,
+  };
+};
+
+export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem => {
+  const ksroutes = getKSRoute(dc, props);
+  return {
+    ksroutes,
   };
 };
