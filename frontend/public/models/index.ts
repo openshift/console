@@ -148,6 +148,18 @@ export const ChargebackReportModel: K8sKind = {
   namespaced: true,
 };
 
+export const ReportQueryModel: K8sKind = {
+  kind: 'ReportQuery',
+  label: 'ReportQuery',
+  labelPlural: 'Report Queries',
+  apiGroup: 'metering.openshift.io',
+  apiVersion: 'v1',
+  crd: true,
+  plural: 'report queries',
+  abbr: 'RQ',
+  namespaced: true,
+};
+
 export const ServiceModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Service',
