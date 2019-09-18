@@ -25,6 +25,16 @@ export type CloudInitConfig = {
   sshKey?: string;
 };
 
+export type NodePortService = {
+  name: string;
+  namespace: string;
+  kind: string;
+  port: string;
+  targetPort: string;
+  exposeName: string;
+  type: string;
+};
+
 export type VMConfig = {
   name: string;
   namespace: string;

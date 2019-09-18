@@ -1,4 +1,4 @@
-import { $, $$, by, browser, element, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { resolveTimeout } from '../../../console-shared/src/test-utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
@@ -44,39 +44,18 @@ export const vmDetailIP = (namespace, vmName) =>
 export const vmDetailWorkloadProfile = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'workload-profile'));
 export const vmDetailTemplate = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'template'));
-export const vmDetailHostname = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'hostname'));
+  $(`${vmDetailItemId(namespace, vmName, 'template')} > a`);
 export const vmDetailNamespace = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'namespace'));
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
 export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
 export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
-export const vmDetailFlavorDropdownId = (namespace, vmName) =>
-  vmDetailItemId(namespace, vmName, 'flavor-dropdown');
-export const vmDetailFlavorDropdown = (namespace, vmName) =>
-  $(vmDetailFlavorDropdownId(namespace, vmName));
-export const vmDetailFlavorDesc = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'flavor-description'));
-export const vmDetailFlavorCPU = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'flavor-cpu'));
-export const vmDetailFlavorMemory = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'flavor-memory'));
-export const vmDetailDescTextarea = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'description-textarea'));
 export const vmDetailBootOrder = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order'))
     .$('.kubevirt-boot-order__list')
     .$$('li');
 
-export const detailViewEditBtn = element(by.buttonText('Edit'));
-export const detailViewSaveBtn = element(by.buttonText('Save'));
-export const detailViewCancelBtn = element(by.buttonText('Cancel'));
-
-export const vmDetailServiceItem = (namespace, serviceName) =>
-  `[href="/k8s/ns/${namespace}/services/${serviceName}"]`;
-export const vmDetailService = (namespace, serviceName) =>
-  $(vmDetailServiceItem(namespace, serviceName));
+export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
 
 export async function waitForStatusIcon(icon: string, timeout: number) {
   await browser.wait(until.presenceOf(statusIcon(icon)), timeout);
