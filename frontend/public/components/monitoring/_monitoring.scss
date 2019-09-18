@@ -231,6 +231,10 @@ $tooltip-background-color: #151515;
   z-index: $zindex-modal;
 }
 
+.query-browser__graph-container {
+  z-index: 1;
+}
+
 .co-alert-manager-yaml__explanation {
   margin-bottom: 0;
 }
