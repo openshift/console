@@ -94,7 +94,7 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const statUsed: React.ReactText = getLastStats(storageUsed, getInstantVectorStats);
   const statTotal: React.ReactText = getLastStats(storageTotal, getInstantVectorStats);
   const infoText =
-    'Total capacity reflects the actual raw capacity of the OpenShift Container Storage cluster.  Used capacity reflects provisioned capacity which factors capacity being used to store user data and overhead from ensuring redundancy and reliability of the data.';
+    'Capacity includes the capacity being used to store user data and overhead from ensuring redundancy and reliability of the data.';
 
   return (
     <DashboardCard className="ceph-capacity-card__dashboard-card">
