@@ -12,14 +12,12 @@ import { ClusterServiceVersionModel } from '@console/internal/models';
 import { ClusterServiceVersionKind } from '@console/internal/components/operator-lifecycle-manager/index';
 import { OCSServiceModel } from '../../models';
 import { CreateOCSServiceForm } from './create-form';
-import { CreateOCSServiceYAML } from './create-yaml';
 
 /**
  * Component which wraps the YAML editor and form together
  */
 export const CreateOCSService: React.FC<CreateOCSServiceProps> = React.memo((props) => {
   const [sample, setSample] = React.useState(null);
-  const [method, setMethod] = React.useState<'yaml' | 'form'>('form');
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
   React.useEffect(() => {
@@ -54,22 +52,12 @@ export const CreateOCSService: React.FC<CreateOCSServiceProps> = React.memo((pro
           )}
         </div>
       </div>
-      <div className="ceph-yaml__link">
-        {method === 'form' && (
-          <button type="button" className="btn btn-link" onClick={() => setMethod('yaml')}>
-            Edit YAML
-          </button>
-        )}
-      </div>
-      {(method === 'form' && (
-        <CreateOCSServiceForm
-          namespace={props.match.params.ns}
-          operandModel={OCSServiceModel}
-          sample={sample}
-          clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
-        />
-      )) ||
-        (method === 'yaml' && <CreateOCSServiceYAML match={props.match} sample={sample} />)}
+      <CreateOCSServiceForm
+        namespace={props.match.params.ns}
+        operandModel={OCSServiceModel}
+        sample={sample}
+        clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
+      />
     </React.Fragment>
   );
 });

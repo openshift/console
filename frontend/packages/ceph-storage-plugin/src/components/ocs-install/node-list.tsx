@@ -253,8 +253,6 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
             ocsProps.clusterServiceVersion.metadata.name
           }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
         );
-        setProgress(false);
-        setError('');
       })
       .catch((err) => {
         setProgress(false);
