@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { OCS_OPERATOR } from '../constants';
 
 const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
@@ -32,3 +34,12 @@ export const getCephSC = (scData: K8sResourceKind[]): K8sResourceKind[] =>
       _.get(sc, 'provisioner', '').includes(provisioner),
     );
   });
+
+export const getOCSVersion = (items: FirehoseResult): string => {
+  const itemsData: K8sResourceKind[] = _.get(items, 'data');
+  const operator: K8sResourceKind = _.find(
+    itemsData,
+    (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
+  );
+  return _.get(operator, 'status.currentCSV');
+};

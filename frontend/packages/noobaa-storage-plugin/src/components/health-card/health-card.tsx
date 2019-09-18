@@ -26,8 +26,7 @@ import { NooBaaSystemModel } from '../../models';
 
 const noobaaSystemResource: FirehoseResource = {
   kind: referenceForModel(NooBaaSystemModel),
-  namespaced: false,
-  isList: false,
+  isList: true,
   prop: 'noobaa',
 };
 
@@ -36,11 +35,26 @@ const getObjectStorageHealthState = (
   unhealthyBucketsResponse,
   poolsResponse,
   unhealthyPoolResponse,
-  noobaaSystemData,
+  noobaaSystem,
 ): ObjectStorageHealth => {
+  const loadError = _.get(noobaaSystem, 'loadError');
+  const loaded = _.get(noobaaSystem, 'loaded');
+  const noobaaSystemData = _.get(noobaaSystem, 'data[0]', null) as K8sResourceKind;
+  const noobaaPhase = _.get(noobaaSystemData, 'status.phase');
+
+  const buckets = getGaugeValue(bucketsResponse);
+  const unhealthyBuckets = getGaugeValue(unhealthyBucketsResponse);
+  const pools = getGaugeValue(poolsResponse);
+  const unhealthyPools = getGaugeValue(unhealthyPoolResponse);
+
+  const result: ObjectStorageHealth = {
+    message: 'Object Storage is healthy',
+    state: HealthState.OK,
+  };
+
   if (
     !(
-      noobaaSystemData &&
+      (loaded || loadError) &&
       bucketsResponse &&
       unhealthyBucketsResponse &&
       poolsResponse &&
@@ -49,17 +63,10 @@ const getObjectStorageHealthState = (
   ) {
     return { state: HealthState.LOADING };
   }
-  const buckets = getGaugeValue(bucketsResponse);
-  const unhealthyBuckets = getGaugeValue(unhealthyBucketsResponse);
-  const pools = getGaugeValue(poolsResponse);
-  const unhealthyPools = getGaugeValue(unhealthyPoolResponse);
-  const result: ObjectStorageHealth = {
-    message: 'Object Storage is healthy',
-    state: HealthState.OK,
-  };
-
-  let value;
-  if (_.isEmpty(noobaaSystemData)) {
+  if (loadError || !(buckets && unhealthyBuckets && pools && unhealthyPools)) {
+    return { message: null };
+  }
+  if (!noobaaSystemData || noobaaPhase !== 'Ready') {
     result.message = 'Multi cloud gateway is not running';
     result.state = HealthState.ERROR;
     return result;
@@ -72,7 +79,7 @@ const getObjectStorageHealthState = (
     }
   }
   if (!_.isNil(buckets) && !_.isNil(unhealthyBuckets)) {
-    value = Number(unhealthyBuckets) / Number(buckets);
+    const value = Number(unhealthyBuckets) / Number(buckets);
     if (value >= 0.5) {
       result.message = 'Many buckets have issues';
       result.state = HealthState.ERROR;
@@ -126,14 +133,14 @@ const HealthCard: React.FC<DashboardItemProps> = ({
     'result',
   ]);
 
-  const noobaaSystemData = _.get(resources.noobaa, 'data', null) as K8sResourceKind;
+  const noobaaSystem = _.get(resources, 'noobaa');
 
   const objectServiceHealthState = getObjectStorageHealthState(
     bucketsQueryResult,
     unhealthyBucketsQueryResult,
     poolsQueryResult,
     unhealthyPoolsQueryResult,
-    noobaaSystemData,
+    noobaaSystem,
   );
   const alerts = filterNooBaaAlerts(getAlerts(alertsResults));
 
@@ -144,10 +151,14 @@ const HealthCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody isLoading={objectServiceHealthState.state === HealthState.LOADING}>
         <HealthBody>
-          <HealthItem
-            state={objectServiceHealthState.state}
-            message={objectServiceHealthState.message}
-          />
+          {objectServiceHealthState.message ? (
+            <HealthItem
+              state={objectServiceHealthState.state}
+              message={objectServiceHealthState.message}
+            />
+          ) : (
+            <span className="text-muted">Unavailable</span>
+          )}
         </HealthBody>
       </DashboardCardBody>
       {alerts.length > 0 && (
@@ -171,6 +182,6 @@ const HealthCard: React.FC<DashboardItemProps> = ({
 export default withDashboardResources(HealthCard);
 
 type ObjectStorageHealth = {
-  state: HealthState;
+  state?: HealthState;
   message?: string;
 };
