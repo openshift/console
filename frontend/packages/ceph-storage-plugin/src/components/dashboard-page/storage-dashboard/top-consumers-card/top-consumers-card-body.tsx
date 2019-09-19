@@ -53,6 +53,21 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
 
       const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
+      // getting datapoints for tickValues
+      // showing only six tick values
+      let dataPoints: DataPoint[][] = chartData.filter((d) => d.length <= 6);
+      let maxLengthDataPoint: DataPoint[] = _.maxBy(dataPoints, (d) => d.length);
+
+      if (!maxLengthDataPoint) {
+        dataPoints = _.maxBy(chartData, (d) => d.length) as DataPoint[][];
+        maxLengthDataPoint = [];
+        const len = dataPoints.length;
+        const gap = Math.ceil(len / 6);
+        for (let i = 0; i < len; i += gap) {
+          maxLengthDataPoint.push(dataPoints[i] as DataPoint);
+        }
+      }
+
       const chartLineList = chartData.map((data, i) => (
         <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key
       ));
@@ -62,7 +77,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
           <Chart
             domain={{ y: [0, 1.5 * maxCapacityConverted.value] }}
             height={chartPropsValue.chartHeight}
-            padding={{ top: 20, bottom: 30, left: 40, right: 30 }}
+            padding={{ top: 20, bottom: 20, left: 40, right: 35 }}
             containerComponent={
               <ChartVoronoiContainer
                 labels={(datum) =>
@@ -75,7 +90,8 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             scale={{ x: 'time' }}
           >
             <ChartAxis
-              tickFormat={(x) => twentyFourHourTime(x)}
+              tickValues={maxLengthDataPoint.map((stat) => stat.x as Date)}
+              tickFormat={twentyFourHourTime}
               style={{ tickLabels: { fontSize: 8, padding: 5 } }}
             />
             <ChartAxis
