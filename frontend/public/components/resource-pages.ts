@@ -55,6 +55,7 @@ import {
   StatefulSetModel,
   StorageClassModel,
   TemplateInstanceModel,
+  UserModel,
 } from '../models';
 
 import * as plugins from '../plugins';
@@ -220,6 +221,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(RoleModel), () =>
     import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RolesDetailsPage),
+  )
+  .set(referenceForModel(UserModel), () =>
+    import('./user' /* webpackChunkName: "user" */).then((m) => m.UserDetailsPage),
   )
   .set(referenceForModel(AlertmanagerModel), () =>
     import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(
@@ -431,6 +435,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(RoleBindingModel), () =>
     import('./RBAC/bindings' /* webpackChunkName: "bindings" */).then((m) => m.RoleBindingsPage),
+  )
+  .set(referenceForModel(UserModel), () =>
+    import('./user' /* webpackChunkName: "user" */).then((m) => m.UserPage),
   )
   .set(referenceForModel(PrometheusModel), () =>
     import('./prometheus' /* webpackChunkName: "prometheus" */).then(
