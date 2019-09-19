@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { Text, Integer, Dropdown, CancelAcceptButtons } from 'kubevirt-web-ui-components';
+import {
+  Text,
+  Integer,
+  Dropdown,
+  CancelAcceptButtons,
+  getStorageClassConfigMap,
+} from 'kubevirt-web-ui-components';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { HelpBlock, FormGroup } from 'patternfly-react';
 import { StorageClassModel } from '@console/internal/models';
 import { getName } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sGet, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getVmPreferableDiskBus, getVMLikeModel } from '../../selectors/vm';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
@@ -17,14 +23,20 @@ import { getResource } from '../../utils';
 import { VMDiskRowProps } from './types';
 import './_create-device-row.scss';
 
-const createDisk = ({
+const createDisk = async ({
   vmLikeEntity,
   disk,
 }: {
   vmLikeEntity: VMLikeEntityKind;
   disk: any;
-}): Promise<VMLikeEntityKind> =>
-  k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, getAddDiskPatches(vmLikeEntity, disk));
+}): Promise<VMLikeEntityKind> => {
+  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
+  return k8sPatch(
+    getVMLikeModel(vmLikeEntity),
+    vmLikeEntity,
+    getAddDiskPatches(vmLikeEntity, disk, storageClassConfigMap),
+  );
+};
 
 type StorageClassColumn = {
   storageClass: string;
