@@ -480,7 +480,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${encodeURIComponent(query)}`;
       return coFetchJSON(url).then(({ data: {result} }) => {
         const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
-          acc[metric.pod_name] = Number(value[1]);
+          acc[metric.pod || metric.pod_name] = Number(value[1]);
           return acc;
         }, {});
         return { [name]: byPod };
