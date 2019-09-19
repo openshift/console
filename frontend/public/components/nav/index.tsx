@@ -13,7 +13,7 @@ export const Navigation: React.FC<NavigationProps> = React.memo(
   ({ isNavOpen, onNavSelect, onPerspectiveSelected }) => (
     <PageSidebar
       nav={
-        <Nav aria-label="Nav" onSelect={onNavSelect}>
+        <Nav aria-label="Nav" onSelect={onNavSelect} theme="dark">
           <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <NavList>
             <PerspectiveNav />
@@ -21,6 +21,7 @@ export const Navigation: React.FC<NavigationProps> = React.memo(
         </Nav>
       }
       isNavOpen={isNavOpen}
+      theme="dark"
     />
   )
 );
