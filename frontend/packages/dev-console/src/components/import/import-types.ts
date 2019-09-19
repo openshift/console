@@ -84,7 +84,7 @@ export interface ImageStreamImageData {
   name: string;
   image: object;
   tag: string;
-  status: string;
+  status: { metadata: {}; status: string };
   ports: ContainerPort[];
 }
 
@@ -111,6 +111,8 @@ export interface DockerData {
 export interface RouteData {
   create: boolean;
   targetPort: string;
+  unknownTargetPort?: string;
+  defaultUnknownPort?: number;
   path: string;
   hostname: string;
   secure: boolean;
