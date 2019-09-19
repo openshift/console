@@ -1,9 +1,15 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { TopologyView } from '@patternfly/react-topology';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
-import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
+import { edgeProvider, groupProvider, nodeProvider } from './shape-providers';
 import Graph from './Graph';
-import { GraphApi, TopologyDataModel, TopologyDataObject } from './topology-types';
+import {
+  GraphApi,
+  GraphElementType,
+  TopologyDataModel,
+  TopologyDataObject,
+} from './topology-types';
 import {
   createTopologyResourceConnection,
   removeTopologyResourceConnection,
@@ -12,15 +18,39 @@ import {
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 import { ActionProviders } from './actions-providers';
+import TopologyApplicationPanel from './TopologyApplicationPanel';
+import TopologyResourcePanel from './TopologyResourcePanel';
 
 type State = {
   selected?: string;
+  selectedType?: GraphElementType;
   graphApi?: GraphApi;
 };
 
 export interface TopologyProps {
   data: TopologyDataModel;
 }
+
+const getSelectedItem = (
+  topologyData: TopologyDataModel,
+  selectedType: GraphElementType,
+  selectedId: string,
+) => {
+  let selectedItem;
+
+  switch (selectedType) {
+    case GraphElementType.node:
+      selectedItem = topologyData.topology[selectedId];
+      break;
+    case GraphElementType.group:
+      selectedItem = _.find(topologyData.graph.groups, { id: selectedId });
+      break;
+    default:
+      selectedItem = null;
+  }
+
+  return selectedItem;
+};
 
 export default class Topology extends React.Component<TopologyProps, State> {
   constructor(props) {
@@ -29,16 +59,24 @@ export default class Topology extends React.Component<TopologyProps, State> {
   }
 
   static getDerivedStateFromProps(nextProps: TopologyProps, prevState: State): State {
-    const { selected } = prevState;
-    if (selected && !nextProps.data.topology[selected]) {
-      return { selected: null };
+    const { selected, selectedType } = prevState;
+
+    if (selected && selectedType) {
+      const selectedItem = getSelectedItem(nextProps.data, selectedType, selected);
+      if (!selectedItem) {
+        return { selected: null, selectedType: null };
+      }
     }
+
     return prevState;
   }
 
-  onSelect = (nodeId: string) => {
-    this.setState(({ selected }) => {
-      return { selected: !nodeId || selected === nodeId ? null : nodeId };
+  onSelect = (type: GraphElementType, id: string) => {
+    this.setState(({ selected, selectedType }) => {
+      if (!id || !type || (selected === id && selectedType === type)) {
+        return { selected: null, type: null };
+      }
+      return { selected: id, selectedType: type };
     });
   };
 
@@ -102,18 +140,43 @@ export default class Topology extends React.Component<TopologyProps, State> {
     this.setState({ graphApi: api });
   };
 
+  renderSelectedItemDetails() {
+    const { data } = this.props;
+    const { selected, selectedType } = this.state;
+    const selectedItem = getSelectedItem(data, selectedType, selected);
+
+    if (!selectedItem) {
+      return null;
+    }
+
+    switch (selectedType) {
+      case GraphElementType.node:
+        return <TopologyResourcePanel item={selectedItem as TopologyDataObject} />;
+      case GraphElementType.group:
+        return (
+          <TopologyApplicationPanel
+            application={{
+              id: selectedItem.id,
+              name: selectedItem.name,
+              resources: _.map(selectedItem.nodes, (nodeId: string) => data.topology[nodeId]),
+            }}
+          />
+        );
+      default:
+        return null;
+    }
+  }
+
   render() {
     const {
       data: { graph, topology },
     } = this.props;
-    const { selected, graphApi } = this.state;
+    const { selected, selectedType, graphApi } = this.state;
 
     const topologySideBar = (
-      <TopologySideBar
-        item={selected ? topology[selected] : null}
-        show={!!selected}
-        onClose={this.onSidebarClose}
-      />
+      <TopologySideBar show={!!selected} onClose={this.onSidebarClose}>
+        {this.renderSelectedItemDetails()}
+      </TopologySideBar>
     );
 
     const actionProvider = new ActionProviders(topology);
@@ -132,6 +195,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
           groupProvider={groupProvider}
           actionProvider={actionProvider.getActions}
           selected={selected}
+          selectedType={selectedType}
           onSelect={this.onSelect}
           onUpdateNodeGroup={this.onUpdateNodeGroup}
           onCreateConnection={this.onCreateConnection}

@@ -10,6 +10,7 @@ import {
   GroupProvider,
   ActionProvider,
   ContextMenuProvider,
+  GraphElementType,
 } from './topology-types';
 import './Graph.scss';
 import { GraphContextMenu } from './GraphContextMenu';
@@ -29,7 +30,8 @@ export interface GraphProps {
   graph: GraphModel;
   topology: TopologyDataMap;
   selected?: string;
-  onSelect?(string): void;
+  selectedType?: string;
+  onSelect?(type: GraphElementType, id: string): void;
   onUpdateNodeGroup?(nodeId: string, targetGroup: string): Promise<any>;
   onCreateConnection?(
     sourceNodeId: string,
@@ -82,6 +84,7 @@ export default class Graph extends React.Component<GraphProps, State> {
       onCreateConnection,
       onRemoveConnection,
       selected,
+      selectedType,
       topology,
     } = this.props;
     const { dimensions } = this.state;
@@ -104,6 +107,7 @@ export default class Graph extends React.Component<GraphProps, State> {
             onRemoveConnection={onRemoveConnection}
             selected={selected}
             contextMenu={this.contextMenuRef}
+            selectedType={selectedType}
           />
         )}
         <GraphContextMenu ref={this.setContextMenuRef} actionProvider={actionProvider} />

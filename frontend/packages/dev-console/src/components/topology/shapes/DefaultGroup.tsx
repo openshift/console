@@ -5,9 +5,13 @@ import * as _ from 'lodash';
 import { pointInSvgPath } from 'point-in-svg-path';
 import { GroupElementInterface, GroupProps, ViewNode } from '../topology-types';
 import SvgBoxedText from '../../svg/SvgBoxedText';
-import { hullPath, Point } from '../../../utils/svg-utils';
+import { createSvgIdUrl, hullPath, Point } from '../../../utils/svg-utils';
+import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 
 import './DefaultGroup.scss';
+
+const FILTER_ID = 'DefaultGroupShadowFilterId';
+const FILTER_ID_HOVER = 'DefaultGroupDropShadowFilterId--hover';
 
 type PointWithSize = Point & [number, number, number];
 
@@ -30,6 +34,7 @@ interface DefaultGroupState {
   nodes: ViewNode[];
   lowestPoint: PointWithSize;
   containerPath: string;
+  isHover?: boolean;
 }
 
 const getUpdatedStateValues = (nodes: ViewNode[]) => {
@@ -81,18 +86,43 @@ class DefaultGroup extends React.Component<GroupProps, DefaultGroupState>
     return pointInSvgPath(containerPath, point[0], point[1]);
   };
 
+  setHover = (isHover: boolean) => {
+    this.setState({ isHover });
+  };
+
+  handleClick = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
+    const { onSelect } = this.props;
+    e.stopPropagation();
+    onSelect();
+  };
+
   render() {
-    const { name, dropTarget } = this.props;
-    const { nodes, lowestPoint, containerPath } = this.state;
+    const { name, dropTarget, selected, onSelect, dragActive } = this.props;
+    const { nodes, lowestPoint, containerPath, isHover } = this.state;
 
     if (nodes.length === 0) {
       return null;
     }
 
-    const pathClasses = classNames('odc-default-group', { 'is-highlight': dropTarget });
+    const pathClasses = classNames('odc-default-group', {
+      'is-highlight': dropTarget,
+      'is-selected': selected,
+      'is-hover': isHover,
+    });
     return (
       <g>
-        <path d={containerPath} className={pathClasses} />
+        <SvgDropShadowFilter id={FILTER_ID} />
+        <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
+        <g
+          onClick={onSelect ? this.handleClick : null}
+          onMouseEnter={() => this.setHover(true)}
+          onMouseLeave={() => this.setHover(false)}
+          filter={
+            isHover && !dragActive ? createSvgIdUrl(FILTER_ID_HOVER) : createSvgIdUrl(FILTER_ID)
+          }
+        >
+          <path d={containerPath} className={pathClasses} />
+        </g>
         <SvgBoxedText
           className="odc-default-group__label"
           x={lowestPoint[0]}
@@ -107,4 +137,4 @@ class DefaultGroup extends React.Component<GroupProps, DefaultGroupState>
   }
 }
 
-export default DefaultGroup;
+export default React.memo(DefaultGroup);
