@@ -63,10 +63,24 @@ export const PipelineResourceModel: K8sKind = {
   label: 'Pipeline Resource',
   plural: 'pipelineresources',
   abbr: 'PR',
+  namespaced: true,
   kind: 'PipelineResource',
   id: 'pipelineresource',
   labelPlural: 'Pipeline Resources',
-  namespaced: true,
+  crd: true,
+  badge: BadgeType.DEV,
+};
+
+export const ClusterTaskModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Cluster Task',
+  plural: 'clustertasks',
+  abbr: 'CT',
+  namespaced: false,
+  kind: 'ClusterTask',
+  id: 'clustertask',
+  labelPlural: 'Cluster Tasks',
   crd: true,
   badge: BadgeType.DEV,
 };

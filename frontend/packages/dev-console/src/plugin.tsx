@@ -28,7 +28,14 @@ import {
 import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
 import { newPipelineTemplate } from './templates';
 
-const { PipelineModel, PipelineRunModel } = models;
+const {
+  ClusterTaskModel,
+  PipelineModel,
+  PipelineResourceModel,
+  PipelineRunModel,
+  TaskModel,
+  TaskRunModel,
+} = models;
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -105,7 +112,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       componentProps: {
-        name: 'Pipelines',
+        name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
         required: FLAG_OPENSHIFT_PIPELINE,
         testID: 'pipeline-header',
@@ -180,6 +187,78 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: tknPipelineAndPipelineRunsResources,
       required: FLAG_OPENSHIFT_PIPELINE,
       utils: getPipelinesAndPipelineRunsForResource,
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineModel.labelPlural,
+        resource: referenceForModel(PipelineModel),
+        required: SHOW_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineRunModel.labelPlural,
+        resource: referenceForModel(PipelineRunModel),
+        required: SHOW_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineResourceModel.labelPlural,
+        resource: referenceForModel(PipelineResourceModel),
+        required: SHOW_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: TaskModel.labelPlural,
+        resource: referenceForModel(TaskModel),
+        required: SHOW_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: TaskRunModel.labelPlural,
+        resource: referenceForModel(TaskRunModel),
+        required: SHOW_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: ClusterTaskModel.labelPlural,
+        resource: referenceForModel(ClusterTaskModel),
+        required: SHOW_PIPELINE,
+      },
     },
   },
   {
