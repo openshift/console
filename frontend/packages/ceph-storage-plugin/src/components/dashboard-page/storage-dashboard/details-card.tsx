@@ -85,7 +85,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="cluster_name"
             title="Cluster Name"
-            error={!cephClusterName}
+            error={cephClusterLoaded && !cephClusterName}
             isLoading={!cephClusterLoaded}
           >
             {cephClusterName}
@@ -93,7 +93,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="provider"
             title="Provider"
-            error={!infrastructurePlatform}
+            error={subscriptionLoaded && !infrastructurePlatform}
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
@@ -102,7 +102,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title="Version"
             isLoading={!subscriptionLoaded}
-            error={!ocsVersion}
+            error={subscriptionLoaded && !ocsVersion}
           >
             {ocsVersion}
           </DetailItem>

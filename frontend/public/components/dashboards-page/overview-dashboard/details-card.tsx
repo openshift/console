@@ -75,8 +75,9 @@ export const DetailsCard_ = connect(mapStateToProps)(({
   const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
   const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
-  const kubernetesVersionResponse = urlResults.getIn(['version', 'result']);
-  const k8sGitVersion = getK8sGitVersion(kubernetesVersionResponse);
+  const kubernetesVersionData = urlResults.getIn(['version', 'data']);
+  const kubernetesVersionError = urlResults.getIn(['version', 'loadError']);
+  const k8sGitVersion = getK8sGitVersion(kubernetesVersionData);
 
   return (
     <DashboardCard>
@@ -90,24 +91,24 @@ export const DetailsCard_ = connect(mapStateToProps)(({
               <DetailItem
                 key="clusterid"
                 title="Cluster ID"
-                error={!clusterId}
-                isLoading={!clusterVersionLoaded && !clusterVersionError}
+                error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
+                isLoading={!clusterVersionLoaded}
               >
                 {clusterId}
               </DetailItem>
               <DetailItem
                 key="provider"
                 title="Provider"
-                error={!infrastructurePlatform}
-                isLoading={!infrastructureLoaded && !infrastructureError}
+                error={!!infrastructureError || (infrastructureLoaded && !infrastructurePlatform)}
+                isLoading={!infrastructureLoaded}
               >
                 {infrastructurePlatform}
               </DetailItem>
               <DetailItem
                 key="openshift"
                 title="OpenShift version"
-                error={!openShiftVersion}
-                isLoading={!clusterVersionLoaded && !clusterVersionError}
+                error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
+                isLoading={!clusterVersionLoaded}
               >
                 {openShiftVersion}
               </DetailItem>
@@ -116,8 +117,8 @@ export const DetailsCard_ = connect(mapStateToProps)(({
             <DetailItem
               key="kubernetes"
               title="Kubernetes version"
-              error={!k8sGitVersion}
-              isLoading={!kubernetesVersionResponse}
+              error={kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
+              isLoading={!kubernetesVersionData}
             >
               {k8sGitVersion}
             </DetailItem>

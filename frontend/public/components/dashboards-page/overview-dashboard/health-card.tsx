@@ -20,6 +20,7 @@ import { connectToFlags, flagPending, featureReducerName, FlagsObject, WithFlags
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 import { uniqueResource } from './utils';
 import { isDashboardsOverviewHealthURLSubsystem, isDashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
+import { PrometheusResponse } from '../../graphs';
 
 export const HEALTHY = 'is healthy';
 export const ERROR = 'is in an error state';
@@ -140,18 +141,22 @@ const HealthCard_ = connect(mapStateToProps)(({
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const subsystems = getSubsystems(flags);
-  const k8sHealth = urlResults.getIn(['healthz', 'result']);
-  const k8sHealthState = getK8sHealthState(openshiftFlag, k8sHealth);
+  const k8sHealth = urlResults.getIn(['healthz', 'data']);
+  const k8sHealthError = urlResults.getIn(['healthz', 'loadError']);
+  const k8sHealthState = getK8sHealthState(openshiftFlag, k8sHealth || k8sHealthError);
 
   const subsystemsHealths = subsystems.map((subsystem, index) => {
     if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
-      return subsystem.properties.healthHandler(urlResults.getIn([subsystem.properties.url, 'result']));
+      const urlData = urlResults.getIn([subsystem.properties.url, 'data']);
+      const urlError = urlResults.getIn([subsystem.properties.url, 'loadError']);
+      return subsystem.properties.healthHandler(urlData, !!urlError);
     }
-    const result = prometheusResults.getIn([subsystem.properties.query, 'result']);
+    const queryData = prometheusResults.getIn([subsystem.properties.query, 'data']) as PrometheusResponse;
+    const queryError = prometheusResults.getIn([subsystem.properties.query, 'loadError']);
     const resource = subsystem.properties.resource
       ? resources[uniqueResource(subsystem.properties.resource, index).prop]
       : null;
-    return subsystem.properties.healthHandler(result, resource);
+    return subsystem.properties.healthHandler(queryData, !!queryError, resource);
   });
 
   const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);

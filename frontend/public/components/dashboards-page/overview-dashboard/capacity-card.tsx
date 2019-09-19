@@ -49,13 +49,20 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags)]);
 
   const queries = getQueries(flags);
-  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
-  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
-  const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'result']);
-  const storageUsed = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'result']);
-  const storageTotal = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'result']);
-  const networkUsed = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'result']);
-  const networkTotal = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'result']);
+  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'data']);
+  const cpuUtilizationError = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'loadError']);
+  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'data']);
+  const memoryUtilizationError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'loadError']);
+  const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'data']);
+  const memoryTotalError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'loadError']);
+  const storageUsed = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'data']);
+  const storageUsedError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'loadError']);
+  const storageTotal = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'data']);
+  const storageTotalError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'loadError']);
+  const networkUsed = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'data']);
+  const networkUsedError = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'loadError']);
+  const networkTotal = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'data']);
+  const networkTotalError = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'loadError']);
 
   const CPUItem = (
     <CapacityItem
@@ -64,6 +71,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       total={100}
       formatValue={humanizePercentage}
       isLoading={!cpuUtilization}
+      error={cpuUtilizationError}
     />
   );
 
@@ -74,6 +82,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       total={getLastStats(memoryTotal, getInstantVectorStats)}
       formatValue={humanizeBinaryBytesWithoutB}
       isLoading={!(memoryUtilization && memoryTotal)}
+      error={memoryUtilizationError || memoryTotalError}
     />
   );
 
@@ -84,6 +93,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       total={getLastStats(storageTotal, getInstantVectorStats)}
       formatValue={humanizeBinaryBytesWithoutB}
       isLoading={!(storageUsed && storageTotal)}
+      error={storageUsedError || storageTotalError}
     />
   );
 
@@ -94,6 +104,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       total={getLastStats(networkTotal, getInstantVectorStats)}
       formatValue={humanizeDecimalBytesPerSec}
       isLoading={!(networkUsed && networkTotal)}
+      error={networkUsedError || networkTotalError}
     />
   );
 

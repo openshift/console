@@ -49,8 +49,9 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
 
   const { queries, keys } = getQueries(metricType, sortByKpi);
   const result: { [key: string]: PrometheusResponse } = {};
+  const error = keys.some((key) => prometheusResults.getIn([queries[key], 'loadError']));
   keys.forEach((key) => {
-    result[key] = prometheusResults.getIn([queries[key], 'result']); // building an object having 'key'from the queries object and 'value' as the Prometheus response
+    result[key] = prometheusResults.getIn([queries[key], 'data']); // building an object having 'key'from the queries object and 'value' as the Prometheus response
   });
 
   let padding: number;
@@ -93,7 +94,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
         />
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--top-margin" isLoading={isLoading}>
-        {!chartData.some(_.isEmpty) ? (
+        {!error && !chartData.some(_.isEmpty) ? (
           <>
             <span className="text-secondary">
               {CHART_LABELS[sortByKpi]} {suffixLabel}

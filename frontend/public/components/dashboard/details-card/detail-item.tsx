@@ -4,10 +4,10 @@ import { LoadingInline } from '../../utils';
 export const DetailItem: React.FC<DetailItemProps> = React.memo(
   ({ title, isLoading = false, children, error = false }) => {
     let status: React.ReactNode;
-    if (isLoading) {
-      status = <LoadingInline />;
-    } else if (error) {
+    if (error) {
       status = <span className="text-secondary">Unavailable</span>;
+    } else if (isLoading) {
+      status = <LoadingInline />;
     } else {
       status = children;
     }

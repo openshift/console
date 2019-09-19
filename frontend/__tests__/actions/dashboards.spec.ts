@@ -70,7 +70,7 @@ describe('dashboards-actions', () => {
     testStartWatch(watchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery');
   });
 
-  it('watchPrometheusQuery sets empty result if base url is not available', () => {
+  it('watchPrometheusQuery sets error if base url is not available', () => {
     const getState = jasmine.createSpy('getState').and.returnValue(
       {dashboards: ImmutableMap(defaults)}
     );
@@ -82,9 +82,9 @@ describe('dashboards-actions', () => {
       payload: {
         key: 'fooQuery',
         type: RESULTS_TYPE.PROMETHEUS,
-        result: {},
+        error: new Error('Prometheus URL is not available'),
       },
-      type: ActionType.UpdateResult,
+      type: ActionType.SetError,
     });
   });
 

@@ -109,9 +109,10 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
   const topConsumersType = topConsumersMap[type];
   const metricTypeSort = metricTypeMap[sortOption];
   const currentQuery = topConsumersType.queries[sortOption];
-  const topConsumersResult = prometheusResults.getIn([currentQuery, 'result']);
+  const topConsumersData = prometheusResults.getIn([currentQuery, 'data']);
+  const topConsumersError = prometheusResults.getIn([currentQuery, 'loadError']);
 
-  const stats = getInstantVectorStats(topConsumersResult, topConsumersType.metric, metricTypeSort.humanize);
+  const stats = getInstantVectorStats(topConsumersData, topConsumersType.metric, metricTypeSort.humanize);
   const data = topConsumersType.mutator ? topConsumersType.mutator(stats) : stats;
 
   const top5Data = [];
@@ -180,7 +181,7 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
             data={top5Data}
             titleClassName="co-overview-consumers__chart"
             title={`${type} by ${metricTypeSort.description}`}
-            loading={!consumersLoadError && !(topConsumersResult && consumersLoaded)}
+            loading={!topConsumersError && !consumersLoadError && !(topConsumersData && consumersLoaded)}
             LabelComponent={LabelComponent}
           />
           {url && <div className="co-overview-consumers__view-more">

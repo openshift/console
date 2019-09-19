@@ -13,7 +13,17 @@ export const defaults = {
   [RESULTS_TYPE.ALERTS]: fromJS({}),
 };
 
-export type DashboardsState = ImmutableMap<string, any>;
+type Request<R> = {
+  active: boolean,
+  timeout: NodeJS.Timer,
+  inFlight: boolean,
+  data: R,
+  error: any,
+};
+
+export type RequestMap<R> = ImmutableMap<string, Request<R>>;
+
+export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
 
 export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean => state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
 
@@ -39,8 +49,13 @@ export const dashboardsReducer = (state: DashboardsState, action: DashboardsActi
       }
       return newState;
     }
-    case ActionType.UpdateResult:
-      return state.setIn([action.payload.type, action.payload.key, 'result'], action.payload.result);
+    case ActionType.SetError:
+      return state.setIn([action.payload.type, action.payload.key, 'loadError'], action.payload.error);
+    case ActionType.SetData:
+      return state.withMutations(s =>
+        s.setIn([action.payload.type, action.payload.key, 'data'], action.payload.data)
+          .setIn([action.payload.type, action.payload.key, 'loadError'], null)
+      );
     default:
       return state;
   }

@@ -14,6 +14,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import { getGaugeValue } from '../../utils';
 import './data-resiliency-card.scss';
@@ -78,12 +79,23 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
 
   const rebuildProgressQueryResult = prometheusResults.getIn([
     DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const rebuildProgressQueryResultError = prometheusResults.getIn([
+    DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+    'loadError',
   ]);
+
   const etaQueryResult = prometheusResults.getIn([
     DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const etaQueryResultError = prometheusResults.getIn([
+    DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
+    'loadError',
   ]);
+
+  const error = rebuildProgressQueryResultError || etaQueryResultError;
 
   const rebuildProgress = getGaugeValue(rebuildProgressQueryResult);
   const eta = getGaugeValue(etaQueryResult);
@@ -105,10 +117,10 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody
         className="nb-data-resiliency__dashboard-body"
-        isLoading={!rebuildProgressQueryResult}
+        isLoading={!error && !rebuildProgressQueryResult}
       >
         {formattedRebuildProgress >= 100 || !rebuildProgress ? (
-          <DataResiliencyStatusBody isResilient={formattedRebuildProgress} />
+          <DataResiliencyStatusBody isResilient={!error && formattedRebuildProgress} />
         ) : (
           <DataResiliencyBuildBody
             progressPercentage={formattedRebuildProgress}

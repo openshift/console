@@ -6,8 +6,8 @@ import { GaugeChart } from '../../graphs/gauge';
 
 const NOT_AVAILABLE = 'Not available';
 
-export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, used, total, formatValue, isLoading = false }) => {
-  const error = (!_.isFinite(used) || !_.isFinite(total)) ? 'No Data' : '';
+export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, used, total, formatValue, isLoading = false, error }) => {
+  const errorMsg = (error || !_.isFinite(used) || !_.isFinite(total)) ? 'No Data' : '';
   const totalFormatted = formatValue(total || 0);
   const usedFormatted = formatValue(used || 0, null, totalFormatted.unit);
   const available = formatValue(totalFormatted.value - usedFormatted.value, totalFormatted.unit, totalFormatted.unit);
@@ -16,7 +16,7 @@ export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, us
     x: usedFormatted.string,
     y: percentageUsed,
   };
-  const description = error ? NOT_AVAILABLE : (
+  const description = errorMsg ? NOT_AVAILABLE : (
     <>
       <span className="co-dashboard-text--small co-capacity-card__item-description-value">{available.string}</span>
       {' available out of '}
@@ -32,7 +32,7 @@ export const CapacityItem: React.FC<CapacityItemProps> = React.memo(({ title, us
         data={data}
         label={`${percentageUsed.toString()}%`}
         loading={isLoading}
-        error={error}
+        error={errorMsg}
       />
     </div>
   );
@@ -44,4 +44,5 @@ type CapacityItemProps = {
   total?: React.ReactText;
   formatValue: Humanize,
   isLoading: boolean;
+  error: boolean;
 };

@@ -22,6 +22,7 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { getHostMachineName } from '../../selectors';
 import { getUtilizationQueries, HostQuery } from './queries';
@@ -71,24 +72,54 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   }, [watchPrometheus, stopWatchPrometheusQuery, machineName, hostName, hostIP]);
 
   const queries = getUtilizationQueries(hostName, hostIP);
-  const cpuUtilization = prometheusResults.getIn([queries[HostQuery.CPU_UTILIZATION], 'result']);
+  const cpuUtilization = prometheusResults.getIn([
+    queries[HostQuery.CPU_UTILIZATION],
+    'data',
+  ]) as PrometheusResponse;
+  const cpuUtilizationError = prometheusResults.getIn([
+    queries[HostQuery.CPU_UTILIZATION],
+    'loadError',
+  ]);
   const memoryUtilization = prometheusResults.getIn([
     queries[HostQuery.MEMORY_UTILIZATION],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const memoryUtilizationError = prometheusResults.getIn([
+    queries[HostQuery.MEMORY_UTILIZATION],
+    'loadError',
   ]);
   const storageUtilization = prometheusResults.getIn([
     queries[HostQuery.STORAGE_UTILIZATION],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const storageUtilizationError = prometheusResults.getIn([
+    queries[HostQuery.STORAGE_UTILIZATION],
+    'loadError',
   ]);
   const networkInUtilization = prometheusResults.getIn([
     queries[HostQuery.NETWORK_IN_UTILIZATION],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const networkInUtilizationError = prometheusResults.getIn([
+    queries[HostQuery.NETWORK_IN_UTILIZATION],
+    'loadError',
   ]);
   const networkOutUtilization = prometheusResults.getIn([
     queries[HostQuery.NETWORK_OUT_UTILIZATION],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const networkOutUtilizationError = prometheusResults.getIn([
+    queries[HostQuery.NETWORK_OUT_UTILIZATION],
+    'loadError',
   ]);
-  const numberOfPods = prometheusResults.getIn([queries[HostQuery.NUMBER_OF_PODS], 'result']);
+  const numberOfPods = prometheusResults.getIn([
+    queries[HostQuery.NUMBER_OF_PODS],
+    'data',
+  ]) as PrometheusResponse;
+  const numberOfPodsError = prometheusResults.getIn([
+    queries[HostQuery.NUMBER_OF_PODS],
+    'loadError',
+  ]);
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
@@ -110,6 +141,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="CPU usage"
             data={cpuStats}
+            error={cpuUtilizationError}
             isLoading={itemIsLoading(cpuUtilization)}
             humanizeValue={humanizeCpuCores}
             query={queries[HostQuery.CPU_UTILIZATION]}
@@ -117,6 +149,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="Memory usage"
             data={memoryStats}
+            error={memoryUtilizationError}
             isLoading={itemIsLoading(memoryUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.MEMORY_UTILIZATION]}
@@ -124,6 +157,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="Number of pods"
             data={numberOfPodsStats}
+            error={numberOfPodsError}
             isLoading={itemIsLoading(numberOfPods)}
             humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
             query={queries[HostQuery.NUMBER_OF_PODS]}
@@ -131,6 +165,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="Network In"
             data={networkInStats}
+            error={networkInUtilizationError}
             isLoading={itemIsLoading(networkInUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
@@ -138,6 +173,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="Network Out"
             data={networkOutStats}
+            error={networkOutUtilizationError}
             isLoading={itemIsLoading(networkOutUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
@@ -145,6 +181,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           <UtilizationItem
             title="Filesystem"
             data={storageStats}
+            error={storageUtilizationError}
             isLoading={itemIsLoading(storageUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[HostQuery.STORAGE_UTILIZATION]}

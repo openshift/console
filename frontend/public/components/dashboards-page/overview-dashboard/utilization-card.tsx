@@ -52,9 +52,12 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags)]);
 
   const queries = getQueries(flags);
-  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
-  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
-  const storageUtilization = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'result']);
+  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'data']);
+  const cpuUtilizationError = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'loadError']);
+  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'data']);
+  const memoryUtilizationError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'loadError']);
+  const storageUtilization = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'data']);
+  const storageUtilizationError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'loadError']);
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
@@ -72,6 +75,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           <UtilizationItem
             title="CPU"
             data={cpuStats}
+            error={cpuUtilizationError}
             isLoading={!cpuUtilization}
             humanizeValue={humanizePercentage}
             query={queries[OverviewQuery.CPU_UTILIZATION]}
@@ -79,6 +83,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           <UtilizationItem
             title="Memory"
             data={memoryStats}
+            error={memoryUtilizationError}
             isLoading={!(memoryUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[OverviewQuery.MEMORY_UTILIZATION]}
@@ -86,18 +91,21 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           <UtilizationItem
             title="Disk Usage"
             data={storageStats}
+            error={storageUtilizationError}
             isLoading={!(storageUtilization)}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[OverviewQuery.STORAGE_UTILIZATION]}
           />
           {pluginItems.map(({ properties }, index) => {
-            const utilization = prometheusResults.getIn([properties.query, 'result']);
+            const utilization = prometheusResults.getIn([properties.query, 'data']);
+            const utilizationError = prometheusResults.getIn([properties.query, 'loadError']);
             const utilizationStats = getRangeVectorStats(utilization);
             return (
               <UtilizationItem
                 key={index}
                 title={properties.title}
                 data={utilizationStats}
+                error={utilizationError}
                 isLoading={!utilization}
                 humanizeValue={properties.humanizeValue}
                 query={properties.query}

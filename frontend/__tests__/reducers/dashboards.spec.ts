@@ -2,7 +2,7 @@ import * as Immutable from 'immutable';
 import { noop } from 'lodash-es';
 
 import { dashboardsReducer, defaults, RESULTS_TYPE } from '../../public/reducers/dashboards';
-import { activateWatch, updateWatchTimeout, updateWatchInFlight, stopWatch, updateResult } from '../../public/actions/dashboards';
+import { activateWatch, updateWatchTimeout, updateWatchInFlight, stopWatch, setData } from '../../public/actions/dashboards';
 
 describe('dashboardsReducer', () => {
   it('returns default values if state is uninitialized', () => {
@@ -69,14 +69,17 @@ describe('dashboardsReducer', () => {
   });
 
   it('updates result', () => {
-    const action = updateResult(RESULTS_TYPE.URL, 'fooUrl', 'result');
+    const action = setData(RESULTS_TYPE.URL, 'fooUrl', 'result');
     const initialState = Immutable.Map(defaults);
     const newState = dashboardsReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'result'], 'result'));
+    expect(newState).toEqual(initialState.withMutations(s =>
+      s.setIn([RESULTS_TYPE.URL, 'fooUrl', 'data'], 'result')
+        .setIn([RESULTS_TYPE.URL, 'fooUrl', 'loadError'], null)
+    ));
 
-    const nextAction = updateResult(RESULTS_TYPE.URL, 'fooUrl', 'newResult');
+    const nextAction = setData(RESULTS_TYPE.URL, 'fooUrl', 'newResult');
     const nextState = dashboardsReducer(newState, nextAction);
-    expect(nextState).toEqual(newState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'result'], 'newResult'));
+    expect(nextState).toEqual(newState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'data'], 'newResult'));
   });
 });

@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { getName } from '@console/shared/src/selectors/common';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { CEPH_HEALTHY, CEPH_DEGRADED, CEPH_ERROR, CEPH_UNKNOWN } from '../../../../constants';
 
 const CephHealthStatus = [
@@ -23,14 +24,20 @@ const CephHealthStatus = [
   },
 ];
 
-export const getCephHealthState = (ocsResponse, cephCluster): CephHealth => {
-  if (!ocsResponse || !_.get(cephCluster, 'loaded')) {
+export const getCephHealthState = (
+  ocsResponse: PrometheusResponse,
+  error: boolean,
+  cephCluster: FirehoseResult,
+): CephHealth => {
+  if ((!ocsResponse && !error) || !_.get(cephCluster, 'loaded')) {
     return { state: HealthState.LOADING };
   }
-  const value = _.get(ocsResponse, 'data.result[0].value[1]');
-  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
+
+  const cephClusterData = _.get(cephCluster, 'data') as FirehoseResult['data'];
   const cephClusterName = getName(_.get(cephClusterData, 0));
-  const cephHealth = CephHealthStatus[value] || CephHealthStatus[3];
+  const value = _.get(ocsResponse, 'data.result[0].value[1]');
+  const cephHealth = error ? CephHealthStatus[3] : CephHealthStatus[value] || CephHealthStatus[3];
+
   if (!cephClusterName) {
     return { ...cephHealth, message: `Openshift Storage ${cephHealth.message}` };
   }

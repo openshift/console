@@ -5,12 +5,13 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
   isLoading,
   hasProviders,
   children,
+  error,
 }) => {
   let body;
   if (isLoading) {
     body = <LoadingInline />;
   }
-  if (!hasProviders) {
+  if (error || !hasProviders) {
     body = (
       <div className="nb-resource-providers-card__not-available text-secondary">Unavailable</div>
     );
@@ -22,4 +23,5 @@ type ResourceProvidersBodyProps = {
   children: React.ReactNode;
   hasProviders: boolean;
   isLoading: boolean;
+  error: boolean;
 };

@@ -35,7 +35,10 @@ const getMaxCapacity = (topConsumerStatsResult: PrometheusResponse['data']['resu
 };
 
 export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
-  ({ topConsumerStats, metricType, sortByOption }) => {
+  ({ topConsumerStats, metricType, sortByOption, error }) => {
+    if (error) {
+      return <GraphEmpty />;
+    }
     if (!topConsumerStats) {
       return <LoadingInline />;
     }
@@ -105,7 +108,8 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
 );
 
 type TopConsumerBodyProps = {
-  topConsumerStats: PrometheusResponse[];
+  topConsumerStats: PrometheusResponse;
   metricType?: string;
   sortByOption?: string;
+  error: any;
 };

@@ -17,9 +17,10 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getGaugeValue, filterNooBaaAlerts } from '../../utils';
 import { HealthCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
@@ -31,11 +32,12 @@ const noobaaSystemResource: FirehoseResource = {
 };
 
 const getObjectStorageHealthState = (
-  bucketsResponse,
-  unhealthyBucketsResponse,
-  poolsResponse,
-  unhealthyPoolResponse,
-  noobaaSystem,
+  bucketsResponse: PrometheusResponse,
+  unhealthyBucketsResponse: PrometheusResponse,
+  poolsResponse: PrometheusResponse,
+  unhealthyPoolResponse: PrometheusResponse,
+  noobaaSystem: FirehoseResult,
+  queryError: boolean,
 ): ObjectStorageHealth => {
   const loadError = _.get(noobaaSystem, 'loadError');
   const loaded = _.get(noobaaSystem, 'loaded');
@@ -53,6 +55,7 @@ const getObjectStorageHealthState = (
   };
 
   if (
+    !queryError &&
     !(
       (loaded || loadError) &&
       bucketsResponse &&
@@ -63,7 +66,7 @@ const getObjectStorageHealthState = (
   ) {
     return { state: HealthState.LOADING };
   }
-  if (loadError || !(buckets && unhealthyBuckets && pools && unhealthyPools)) {
+  if (queryError || loadError || !(buckets && unhealthyBuckets && pools && unhealthyPools)) {
     return { message: null };
   }
   if (!noobaaSystemData || noobaaPhase !== 'Ready') {
@@ -122,18 +125,48 @@ const HealthCard: React.FC<DashboardItemProps> = ({
     stopWatchAlerts,
   ]);
 
-  const bucketsQueryResult = prometheusResults.getIn([HealthCardQueries.BUCKETS_COUNT, 'result']);
-  const unhealthyBucketsQueryResult = prometheusResults.getIn([
-    HealthCardQueries.UNHEALTHY_BUCKETS,
-    'result',
-  ]);
-  const poolsQueryResult = prometheusResults.getIn([HealthCardQueries.POOLS_COUNT, 'result']);
-  const unhealthyPoolsQueryResult = prometheusResults.getIn([
-    HealthCardQueries.UNHEALTHY_POOLS,
-    'result',
+  const bucketsQueryResult = prometheusResults.getIn([
+    HealthCardQueries.BUCKETS_COUNT,
+    'data',
+  ]) as PrometheusResponse;
+  const bucketsQueryResultError = prometheusResults.getIn([
+    HealthCardQueries.BUCKETS_COUNT,
+    'loadError',
   ]);
 
-  const noobaaSystem = _.get(resources, 'noobaa');
+  const unhealthyBucketsQueryResult = prometheusResults.getIn([
+    HealthCardQueries.UNHEALTHY_BUCKETS,
+    'data',
+  ]) as PrometheusResponse;
+  const unhealthyBucketsQueryResultError = prometheusResults.getIn([
+    HealthCardQueries.UNHEALTHY_BUCKETS,
+    'loadError',
+  ]);
+
+  const poolsQueryResult = prometheusResults.getIn([
+    HealthCardQueries.POOLS_COUNT,
+    'data',
+  ]) as PrometheusResponse;
+  const poolsQueryResultError = prometheusResults.getIn([
+    HealthCardQueries.POOLS_COUNT,
+    'loadError',
+  ]);
+
+  const unhealthyPoolsQueryResult = prometheusResults.getIn([
+    HealthCardQueries.UNHEALTHY_POOLS,
+    'data',
+  ]) as PrometheusResponse;
+  const unhealthyPoolsQueryResultError = prometheusResults.getIn([
+    HealthCardQueries.UNHEALTHY_POOLS,
+    'loadError',
+  ]);
+
+  const error =
+    bucketsQueryResultError ||
+    unhealthyBucketsQueryResultError ||
+    poolsQueryResultError ||
+    unhealthyPoolsQueryResultError;
+  const noobaaSystem = _.get(resources, 'noobaa') as FirehoseResult;
 
   const objectServiceHealthState = getObjectStorageHealthState(
     bucketsQueryResult,
@@ -141,6 +174,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
     poolsQueryResult,
     unhealthyPoolsQueryResult,
     noobaaSystem,
+    error,
   );
   const alerts = filterNooBaaAlerts(getAlerts(alertsResults));
 

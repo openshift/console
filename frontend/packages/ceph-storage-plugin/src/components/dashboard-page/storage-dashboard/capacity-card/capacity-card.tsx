@@ -17,6 +17,7 @@ import {
 import { DashboardsStorageCapacityDropdownItem } from '@console/plugin-sdk';
 import { Dropdown, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
 import { getInstantVectorStats, GetStats } from '@console/internal/components/graphs/utils';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { StorageDashboardQuery, CAPACITY_USAGE_QUERIES } from '../../../../constants/queries';
 import './capacity-card.scss';
 
@@ -88,8 +89,10 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const matchingQueries = capacityQueries[CapacityViewType[cvTypeSelected]];
   // 'matchingQueries[0] => TOTAL query
   // 'matchingQueries[1] => USED query
-  const storageTotal = prometheusResults.getIn([matchingQueries[0], 'result']);
-  const storageUsed = prometheusResults.getIn([matchingQueries[1], 'result']);
+  const storageTotal = prometheusResults.getIn([matchingQueries[0], 'data']) as PrometheusResponse;
+  const storageTotalError = prometheusResults.getIn([matchingQueries[0], 'loadError']);
+  const storageUsed = prometheusResults.getIn([matchingQueries[1], 'data']) as PrometheusResponse;
+  const storageUsedError = prometheusResults.getIn([matchingQueries[1], 'loadError']);
 
   const statUsed: React.ReactText = getLastStats(storageUsed, getInstantVectorStats);
   const statTotal: React.ReactText = getLastStats(storageTotal, getInstantVectorStats);
@@ -115,6 +118,7 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
             title="Storage"
             used={statUsed}
             total={statTotal}
+            error={storageTotalError || storageUsedError}
             formatValue={humanizeBinaryBytesWithoutB}
             isLoading={!(storageUsed && storageTotal)}
           />

@@ -58,16 +58,35 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
 
   const providersTypesQueryResult = prometheusResults.getIn([
     RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const providersTypesQueryResultError = prometheusResults.getIn([
+    RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES,
+    'loadError',
   ]);
+
   const unhealthyProvidersTypesQueryResult = prometheusResults.getIn([
     RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const unhealthyProvidersTypesQueryResultError = prometheusResults.getIn([
+    RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES,
+    'loadError',
   ]);
+
   const resourcesLinksResponse = prometheusResults.getIn([
     RESOURCE_PROVIDERS_QUERY.RESOURCES_LINK_QUERY,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const resourcesLinksResponseError = prometheusResults.getIn([
+    RESOURCE_PROVIDERS_QUERY.RESOURCES_LINK_QUERY,
+    'loadError',
   ]);
+
+  const error =
+    !!providersTypesQueryResultError ||
+    !!unhealthyProvidersTypesQueryResultError ||
+    !!resourcesLinksResponseError;
 
   const noobaaSystemAddress = getMetric(resourcesLinksResponse, 'system_address');
   const noobaaSystemName = getMetric(resourcesLinksResponse, 'system_name');
@@ -92,8 +111,9 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceProvidersBody
-          isLoading={!(providersTypesQueryResult && unhealthyProvidersTypesQueryResult)}
+          isLoading={!error && !(providersTypesQueryResult && unhealthyProvidersTypesQueryResult)}
           hasProviders={!_.isEmpty(allProviders) || !_.isNil(allProviders)}
+          error={error}
         >
           {providerTypes.map((provider) => (
             <ResourceProvidersItem
