@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+
 import * as React from 'react';
 import * as _ from 'lodash';
 import {
@@ -14,7 +16,7 @@ import { DataPoint, PrometheusResponse } from '@console/internal/components/grap
 import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { getGraphVectorStats, getMetricType, sortResources } from './utils';
+import { getGraphVectorStats, sortResources } from './utils';
 
 const chartPropsValue = {
   chartHeight: 175,
@@ -46,16 +48,32 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     if (topConsumerStatsResult.length) {
       const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
       const sortedResult = topConsumerStatsResult.sort(sortResources);
-      const legends = sortedResult.map((resource) => {
-        const name = getMetricType(resource, metricType);
-        return { name: _.truncate(name, { length: 40 }) };
-      });
 
       const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
-      const chartLineList = chartData.map((data, i) => (
+      // Sorts the line data whose capacity are equal according to the name
+      const sortByNameFunction = (obj: DataPoint[][]) => {
+        obj.sort(function(a, b) {
+          if (a[0].y !== b[0].y) {
+            return 0;
+          }
+          const nameA = a[0]['name'].toLowerCase();
+          const nameB = b[0]['name'].toLowerCase();
+
+          return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+        });
+        return obj;
+      };
+
+      const chartLineListSorted = sortByNameFunction(chartData).map((data, i) => (
         <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key
       ));
+
+      // Legends from sorted data
+      const legends = chartLineListSorted.map((lineChart) => ({
+        name: lineChart.props.data[0].name,
+      }));
+
       return (
         <>
           <span className="text-secondary">{`${sortByOption}(${maxCapacityConverted.unit})`}</span>
@@ -83,7 +101,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
               tickCount={5}
               style={{ tickLabels: { fontSize: 8, padding: 5 }, grid: { stroke: '#4d525840' } }}
             />
-            <ChartGroup>{chartLineList}</ChartGroup>
+            <ChartGroup>{chartLineListSorted}</ChartGroup>
           </Chart>
           <ChartLegend
             data={legends}
