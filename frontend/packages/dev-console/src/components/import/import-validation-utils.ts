@@ -66,7 +66,7 @@ export const validationSchema = yup.object().shape({
       .min(0, 'Replicas must be greater than or equal to 0.')
       .max(
         Number.MAX_SAFE_INTEGER,
-        `Replicas must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}`,
+        `Replicas must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
       )
       .test({
         name: 'isEmpty',
@@ -86,7 +86,7 @@ export const validationSchema = yup.object().shape({
           .min(0, 'Min Pods must be greater than or equal to 0.')
           .max(
             Number.MAX_SAFE_INTEGER,
-            `Min Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}`,
+            `Min Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
           ),
         maxpods: yup
           .number()
@@ -95,7 +95,7 @@ export const validationSchema = yup.object().shape({
           .min(1, 'Max Pods must be greater than or equal to 1.')
           .max(
             Number.MAX_SAFE_INTEGER,
-            `Max Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}`,
+            `Max Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
           )
           .test({
             test(limit) {
@@ -111,7 +111,7 @@ export const validationSchema = yup.object().shape({
           .min(0, 'Concurrency Target must be greater than or equal to 0.')
           .max(
             Number.MAX_SAFE_INTEGER,
-            `Concurrency Target must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}`,
+            `Concurrency Target must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
           ),
         concurrencylimit: yup
           .number()
@@ -120,7 +120,7 @@ export const validationSchema = yup.object().shape({
           .min(0, 'Concurrency Limit must be greater than or equal to 0.')
           .max(
             Number.MAX_SAFE_INTEGER,
-            `Concurrency Limit must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}`,
+            `Concurrency Limit must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
           ),
       }),
     }),
