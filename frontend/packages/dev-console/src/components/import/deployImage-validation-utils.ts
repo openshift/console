@@ -115,6 +115,9 @@ export const deployValidationSchema = yup.object().shape({
     path: yup
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
+    unknownTargetPort: yup
+      .string()
+      .matches(/^\d+$/, { message: 'Port must be an Integer.', excludeEmptyString: true }),
   }),
   limits: yup.object().shape({
     cpu: yup.object().shape({
