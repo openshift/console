@@ -110,5 +110,6 @@ export const deployValidationSchema = yup.object().shape({
     path: yup
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
+    unknownTargetPort: yup.number().test(isInteger('Port must be an Integer.')),
   }),
 });

@@ -9,7 +9,7 @@ const CreateRoute: React.FC = () => {
   const {
     values: {
       image: { ports },
-      route: { targetPort },
+      route: { defaultUnknownPort, targetPort },
     },
   } = useFormikContext<FormikValues>();
   const portOptions = ports.reduce((acc, port) => {
@@ -37,7 +37,15 @@ const CreateRoute: React.FC = () => {
         placeholder="/"
         helpText="Path that the router watches to route traffic to the service."
       />
-      {!_.isEmpty(ports) && (
+      {_.isEmpty(ports) ? (
+        <InputField
+          type={TextInputTypes.text}
+          name="route.unknownTargetPort"
+          label="Target Port"
+          placeholder={defaultUnknownPort}
+          helpText="Target port for traffic."
+        />
+      ) : (
         <DropdownField
           name="route.targetPort"
           label="Target Port"

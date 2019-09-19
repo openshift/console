@@ -223,10 +223,35 @@ export const createRoute = (
   return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
+export const ensurePortExists = (formData: DeployImageFormData): DeployImageFormData => {
+  const {
+    isi: { ports },
+    route: { defaultUnknownPort, unknownTargetPort },
+  } = formData;
+
+  let values = formData;
+  if (!Array.isArray(ports) || ports.length === 0) {
+    // If we lack pre-defined ports but they have specified a custom target port, use that instead
+    const containerPort = unknownTargetPort ? parseInt(unknownTargetPort, 10) : defaultUnknownPort;
+    const suppliedPorts = [{ containerPort, protocol: 'TCP' }];
+
+    values = {
+      ...values,
+      isi: {
+        ...values.isi,
+        ports: suppliedPorts,
+      },
+    };
+  }
+
+  return values;
+};
+
 export const createResources = async (
-  formData: DeployImageFormData,
+  rawFormData: DeployImageFormData,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
+  const formData = ensurePortExists(rawFormData);
   const {
     name,
     application: { name: applicationName },
@@ -238,6 +263,7 @@ export const createResources = async (
     limits,
     route,
   } = formData;
+
   const requests: Promise<K8sResourceKind>[] = [];
   requests.push(createImageStream(formData, dryRun));
   if (!formData.serverless.enabled) {
