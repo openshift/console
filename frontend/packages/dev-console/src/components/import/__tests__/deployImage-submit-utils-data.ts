@@ -54,9 +54,6 @@ export const defaultData: DeployImageFormData = {
       privateKey: '',
     },
   },
-  serverlessRoute: {
-    targetPort: '',
-  },
   build: {
     env: [],
     triggers: {
@@ -175,7 +172,6 @@ export const dataWithTargetPort: DeployImageFormData = {
       privateKey: '',
     },
   },
-  serverlessRoute: { targetPort: '' },
   build: { env: [], triggers: { webhook: true, image: true, config: true }, strategy: 'Source' },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},
@@ -377,7 +373,6 @@ export const dataWithPorts: DeployImageFormData = {
       privateKey: '',
     },
   },
-  serverlessRoute: { targetPort: '' },
   build: { env: [], triggers: { webhook: true, image: true, config: true }, strategy: 'Source' },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},
@@ -471,7 +466,6 @@ export const dataWithoutPorts: DeployImageFormData = {
       privateKey: '',
     },
   },
-  serverlessRoute: { targetPort: '' },
   build: { env: [], triggers: { webhook: true, image: true, config: true }, strategy: 'Source' },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},

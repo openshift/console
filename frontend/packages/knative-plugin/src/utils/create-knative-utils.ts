@@ -33,14 +33,14 @@ export const createKnativeService = (
   namespace: string,
   scaling: ServerlessScaling,
   limits: LimitsData,
-  { targetPort },
+  unknownTargetPort,
   labels,
   imageStreamUrl: string,
   imageStreamName?: string,
   annotations?: { [name: string]: string },
   imageTag?: string,
 ): Promise<K8sResourceKind> => {
-  const contTargetPort: number = parseInt(targetPort, 10);
+  const contTargetPort: number = parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
     cpu: {
