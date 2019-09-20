@@ -6,7 +6,7 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { createKnativeService } from '@console/knative-plugin';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { DeployImageFormData } from './import-types';

@@ -9,7 +9,7 @@ import {
   SecretModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { createKnativeService } from '@console/knative-plugin';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
