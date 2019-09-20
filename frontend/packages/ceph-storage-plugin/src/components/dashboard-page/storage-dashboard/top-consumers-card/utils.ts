@@ -2,12 +2,15 @@ import * as _ from 'lodash';
 import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 
-export const getMetricType = (resource, metricType) => _.get(resource, ['metric', metricType], '');
+export const getMetricType: GetMetricType = (resource, metricType) =>
+  _.get(resource, ['metric', metricType], '');
 
 export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
   return response.map((r) => {
+    const name = getMetricType(r, metricType);
+    const truncatedName = _.truncate(name, { length: 40 });
     return r.values.map((arr) => ({
-      name: getMetricType(r, metricType),
+      name: truncatedName,
       x: new Date(arr[0] * 1000),
       y: Number(humanizeBinaryBytesWithoutB(arr[1], null, unit).value),
     }));
@@ -22,6 +25,11 @@ export const sortResources: SortResourcesProps = (a, b) => {
   return y - x;
 };
 
+type PrometheusMetricResult = {
+  metric: { [key: string]: any };
+  value?: [number, string | number];
+};
+
 type GetStats = (
   response: PrometheusResponse['data']['result'],
   metric?: string,
@@ -32,3 +40,5 @@ type SortResourcesProps = (
   a: PrometheusResponse['data']['result'],
   b: PrometheusResponse['data']['result'],
 ) => number;
+
+type GetMetricType = (resources: PrometheusMetricResult, metricType: string) => string;

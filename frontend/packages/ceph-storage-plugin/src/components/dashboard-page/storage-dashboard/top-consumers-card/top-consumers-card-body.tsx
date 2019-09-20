@@ -21,11 +21,11 @@ const chartPropsValue = {
 };
 
 const chartLegendPropsValue = {
-  x: 35,
-  y: 5,
-  symbolSpacer: 7,
-  height: 30,
-  gutter: 10,
+  x: 80,
+  y: 15,
+  symbolSpacer: 6,
+  height: 80,
+  gutter: 0,
 };
 
 const getMaxCapacity = (topConsumerStatsResult: PrometheusResponse['data']['result']) => {
@@ -43,9 +43,10 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     if (topConsumerStatsResult.length) {
       const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
       const sortedResult = topConsumerStatsResult.sort(sortResources);
-      const legends = topConsumerStatsResult.map((resource) => ({
-        name: getMetricType(resource, metricType),
-      }));
+      const legends = sortedResult.map((resource) => {
+        const name = getMetricType(resource, metricType);
+        return { name: _.truncate(name, { length: 40 }) };
+      });
 
       const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
@@ -58,7 +59,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
           <Chart
             domain={{ y: [0, 1.5 * maxCapacityConverted.value] }}
             height={chartPropsValue.chartHeight}
-            padding={{ top: 20, bottom: 20, left: 40, right: 20 }}
+            padding={{ top: 20, bottom: 30, left: 40, right: 30 }}
             containerComponent={
               <ChartVoronoiContainer
                 labels={(datum) =>
@@ -76,6 +77,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             />
             <ChartAxis
               dependentAxis
+              tickCount={5}
               style={{ tickLabels: { fontSize: 8, padding: 5 }, grid: { stroke: '#4d525840' } }}
             />
             <ChartGroup>{chartLineList}</ChartGroup>
@@ -87,10 +89,12 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
             y={chartLegendPropsValue.y}
             symbolSpacer={chartLegendPropsValue.symbolSpacer}
             height={chartLegendPropsValue.height}
-            gutter={chartLegendPropsValue.gutter}
             orientation="horizontal"
+            width={800}
+            rowGutter={{ top: 0, bottom: 1 }}
+            itemsPerRow={2}
             style={{
-              labels: { fontSize: 8 },
+              labels: { fontSize: 15 },
             }}
           />
         </>
