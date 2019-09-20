@@ -161,10 +161,9 @@ export class Dropdown extends DropdownMixin {
 
     this.state.items = Object.assign({}, bookmarks, props.items);
 
-    const defaultTitle = React.isValidElement(props.title) ? props.title : <span className="pf-c-dropdown__toggle-text--placeholder">{props.title}</span>;
     this.state.title = props.noSelection
       ? props.title
-      : _.get(props.items, props.selectedKey, defaultTitle);
+      : _.get(props.items, props.selectedKey, props.title);
 
     this.onKeyDown = e => this.onKeyDown_(e);
     this.changeTextFilter = e => this.applyTextFilter_(e.target.value, this.props.items);
