@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ALL_NAMESPACES_KEY } from '@console/internal/const';
-import { history } from '@console/internal/components/utils';
-import { getNamespace } from '@console/internal/components/utils/link';
+import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
@@ -18,17 +16,14 @@ interface Action {
 
 type ActionFunction = (kind: K8sKind, obj: K8sResourceKind) => Action;
 
-const redirectToResourceList = (resource: string) => {
-  const url = window.location.pathname;
-  const activeNamespace = getNamespace(url);
-  const resourceUrl =
-    activeNamespace === ALL_NAMESPACES_KEY
-      ? `/k8s/all-namespaces/${resource}`
-      : `/k8s/ns/${activeNamespace}/${resource}`;
-  history.push(resourceUrl);
-};
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
-  redirectToResourceList(`pipelineruns/${pipelineRun.metadata.name}`);
+  history.push(
+    resourcePathFromModel(
+      PipelineRunModel,
+      pipelineRun.metadata.name,
+      pipelineRun.metadata.namespace,
+    ),
+  );
 };
 export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun): PipelineRun => {
   if (!pipeline || !pipeline.metadata || !pipeline.metadata.name || !pipeline.metadata.namespace) {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Firehose } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineResourceModel } from '../../models';
 import ResourceDropdown from './ResourceDropdown';
 
@@ -26,7 +27,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
     {
       isList: true,
       namespace: props.namespace,
-      kind: PipelineResourceModel.kind,
+      kind: referenceForModel(PipelineResourceModel),
       prop: 'pipelineresources',
     },
   ];

@@ -3,10 +3,10 @@ import * as _ from 'lodash';
 import * as cx from 'classnames';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { runStatus } from '../../utils/pipeline-augment';
-import { PipelineRunModel } from '../../models';
+import { PipelineRunModel, TaskModel } from '../../models';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import { ColoredStatusIcon } from './StatusIcon';
 import TaskComponentTaskStatus from './TaskComponentTaskStatus';
@@ -62,7 +62,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     <Firehose
       resources={[
         {
-          kind: 'Task',
+          kind: referenceForModel(TaskModel),
           name: task.taskRef.name,
           namespace,
           prop: 'task',

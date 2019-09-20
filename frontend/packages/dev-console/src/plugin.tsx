@@ -16,6 +16,7 @@ import {
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/internal/const';
+import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 
@@ -90,7 +91,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       componentProps: {
         name: 'Pipelines',
-        resource: 'pipelines',
+        resource: referenceForModel(PipelineModel),
         required: SHOW_PIPELINE,
         testID: 'pipeline-header',
       },
