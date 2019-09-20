@@ -62,14 +62,12 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
         onClick={() => onPerspectiveSelect(nextPerspective)}
         isHovered={nextPerspective.properties.id === activePerspective}
       >
-        <button autoFocus={nextPerspective.properties.id === activePerspective}>
-          <Title size="md">
-            <span className="oc-nav-header__icon">
-              {nextPerspective.properties.icon}
-            </span>
-            {nextPerspective.properties.name}
-          </Title>
-        </button>
+        <Title size="md">
+          <span className="oc-nav-header__icon">
+            {nextPerspective.properties.icon}
+          </span>
+          {nextPerspective.properties.name}
+        </Title>
       </DropdownItem>
     ));
   };
@@ -82,7 +80,6 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       <Dropdown
         isOpen={isPerspectiveDropdownOpen}
         toggle={renderToggle(icon, name)}
-        autoFocus={false}
         dropdownItems={getPerspectiveItems(perspectives)}
         data-test-id="perspective-switcher-menu"
       />
