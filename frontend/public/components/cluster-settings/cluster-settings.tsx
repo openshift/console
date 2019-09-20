@@ -193,10 +193,10 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
       </div>
       <div className="co-m-pane__body-group">
         <p className="co-m-pane__explanation">
-          View this cluster and manage subscription settings at
+          View this cluster and manage subscription settings in
           {' '}
           <ExternalLink
-            text="cloud.redhat.com"
+            text="OpenShift Cluster Manager"
             href={getOCMLink(clusterID)}
           />.
         </p>
