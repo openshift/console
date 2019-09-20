@@ -21,7 +21,7 @@ import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { FlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
-import { getVmiIpAddressesString } from '../ip-addresses';
+import { VmIpAddresses } from '../vm-ip-addresses';
 
 import './_vm-resource.scss';
 
@@ -91,7 +91,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         )}
       </dd>
       <dt>IP Address</dt>
-      <dd id={prefixedID(id, 'ip-addresses')}>{getVmiIpAddressesString(vmi, vmStatus) || DASH}</dd>
+      <dd id={prefixedID(id, 'ip-addresses')}>
+        <VmIpAddresses vmi={vmi} vmStatus={vmStatus} />
+      </dd>
       <dt>Node</dt>
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
       <dt>Flavor</dt>

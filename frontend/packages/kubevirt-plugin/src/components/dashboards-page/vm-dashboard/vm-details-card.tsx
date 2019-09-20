@@ -20,7 +20,7 @@ import { getNodeName } from '../../../selectors/pod/selectors';
 import { isVMRunning } from '../../../selectors/vm';
 import { getVMStatus } from '../../../statuses/vm/vm';
 import { VirtualMachineModel } from '../../../models';
-import { getVmiIpAddressesString } from '../../ip-addresses';
+import { VmIpAddresses } from '../../vm-ip-addresses';
 import { VM_DETAIL_OVERVIEW_HREF } from '../../../constants';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
@@ -29,8 +29,6 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
 
   const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
-
-  const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
 
   const isNodeLoading = !vm || !pods || !vmStatus;
   const name = getName(vm);
@@ -66,8 +64,8 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           >
             {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
           </DetailItem>
-          <DetailItem title="IP Address" error={!ipAddrs} isLoading={!vm}>
-            {ipAddrs}
+          <DetailItem title="IP Address" error={false} isLoading={!vm}>
+            <VmIpAddresses vmi={vmi} vmStatus={vmStatus} />
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
