@@ -9,7 +9,7 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { ResourceIcon } from '@console/internal/components/utils';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { PackageManifestModel, ClusterServiceVersionModel } from '../models';
 import {
   ClusterServiceVersionKind,

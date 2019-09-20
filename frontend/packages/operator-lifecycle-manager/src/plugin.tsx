@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { Plugin, ModelDefinition, ModelFeatureFlag } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
 import { Flags } from './const';
 import './style.scss';
@@ -26,6 +27,21 @@ export default [
     properties: {
       model: models.OperatorGroupModel,
       flag: Flags.CAN_LIST_OPERATOR_GROUP,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ClusterServiceVersionModel,
+      flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
+    },
+  },
+  {
+    type: 'DevCatalogModel',
+    properties: {
+      model: models.ClusterServiceVersionModel,
+      flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
+      normalize: normalizeClusterServiceVersions,
     },
   },
   {

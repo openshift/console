@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
 import { ANNOTATIONS, FLAGS } from '../../const';
 import { CatalogTileViewPage } from './catalog-items';
-import { k8sListPartialMetadata, referenceForModel, serviceClassDisplayName } from '../../module/k8s';
+import { k8sListPartialMetadata, referenceForModel, serviceClassDisplayName, K8sResourceKind, ObjectMetadata } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
 import { connectToFlags, flagPending } from '../../reducers/features';
-import { Firehose, LoadError, PageHeading, skeletonCatalog, StatusBox } from '../utils';
+import { Firehose, LoadError, PageHeading, skeletonCatalog, StatusBox, FirehoseResult } from '../utils';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
@@ -22,11 +21,10 @@ import {
   getTemplateIcon,
 } from './catalog-item-icon';
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
-import { ClusterServiceVersionModel, providedAPIsFor, referenceForProvidedAPI } from '@console/operator-lifecycle-manager';
-import * as operatorLogo from '../../imgs/operator.svg';
+import * as plugins from '../../plugins';
 
-export class CatalogListPage extends React.Component {
-  constructor(props) {
+export class CatalogListPage extends React.Component<CatalogListPageProps, CatalogListPageState> {
+  constructor(props: CatalogListPageProps) {
     super(props);
 
     const items = this.getItems();
@@ -34,30 +32,33 @@ export class CatalogListPage extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {serviceServiceClasses, templateMetadata, projectTemplateMetadata, imageStreams, clusterServiceVersions, namespace} = this.props;
+    const {clusterServiceClasses, templateMetadata, projectTemplateMetadata, imageStreams, namespace} = this.props;
     if (!_.isEqual(namespace, prevProps.namespace) ||
-      !_.isEqual(serviceServiceClasses, prevProps.serviceServiceClasses) ||
+      !_.isEqual(clusterServiceClasses, prevProps.clusterServiceClasses) ||
       !_.isEqual(templateMetadata, prevProps.templateMetadata) ||
       !_.isEqual(projectTemplateMetadata, prevProps.projectTemplateMetadata) ||
-      !_.isEqual(imageStreams, prevProps.imageStreams) ||
-      !_.isEqual(clusterServiceVersions, prevProps.clusterServiceVersions)) {
+      !_.isEqual(imageStreams, prevProps.imageStreams)) {
       const items = this.getItems();
       this.setState({items});
     }
   }
 
   getItems() {
+    const extensionItems = _.flatten(
+      plugins.registry.getDevCatalogModels()
+        .filter(({properties}) => _.get(this.props, referenceForModel(properties.model)))
+        .map(({properties}) => properties.normalize(_.get(this.props, [referenceForModel(properties.model), 'data'])))
+    );
+
     const {
       clusterServiceClasses,
       imageStreams,
-      clusterServiceVersions,
       templateMetadata,
       projectTemplateMetadata,
       loaded,
     } = this.props;
     let clusterServiceClassItems = [];
     let imageStreamItems = [];
-    let operatorProvidedAPIs = [];
     let templateItems = [];
     let projectTemplateItems = [];
 
@@ -73,31 +74,6 @@ export class CatalogListPage extends React.Component {
       imageStreamItems = this.normalizeImageStreams(imageStreams.data);
     }
 
-    if (clusterServiceVersions) {
-      const imgFor = (desc) => _.get(desc.csv, 'spec.icon')
-        ? `data:${_.get(desc.csv, 'spec.icon', [])[0].mediatype};base64,${_.get(desc.csv, 'spec.icon', [])[0].base64data}`
-        : operatorLogo;
-
-      operatorProvidedAPIs = _.flatten(clusterServiceVersions.data.map(csv => providedAPIsFor(csv).map(desc => ({...desc, csv}))))
-        .reduce((all, cur) => all.find(v => referenceForProvidedAPI(v) === referenceForProvidedAPI(cur)) ? all : all.concat([cur]), [])
-        .map(desc => ({
-          // NOTE: Faking a real k8s object to avoid fetching all CRDs
-          obj: {metadata: {uid: `${desc.csv.metadata.uid}-${desc.displayName}`, creationTimestamp: desc.csv.metadata.creationTimestamp}, ...desc},
-          kind: 'InstalledOperator',
-          tileName: desc.displayName,
-          tileIconClass: null,
-          tileImgUrl: imgFor(desc),
-          tileDescription: desc.description,
-          tileProvider: desc.csv.spec.provider.name,
-          tags: desc.csv.spec.keywords,
-          createLabel: 'Create',
-          href: `/ns/${this.props.namespace || desc.csv.metadata.namespace}/clusterserviceversions/${desc.csv.metadata.name}/${referenceForProvidedAPI(desc)}/~new`,
-          supportUrl: null,
-          longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
-          documentationUrl: _.get((desc.csv.spec.links || []).find(({name}) => name === 'Documentation'), 'url'),
-        }));
-    }
-
     // Templates are not passed as a Firehose item since we only request template metadata.
     if (templateMetadata) {
       templateItems = this.normalizeTemplates(templateMetadata);
@@ -108,7 +84,7 @@ export class CatalogListPage extends React.Component {
       projectTemplateItems = this.normalizeTemplates(projectTemplateMetadata);
     }
 
-    return _.sortBy([...clusterServiceClassItems, ...imageStreamItems, ...operatorProvidedAPIs, ...templateItems, ...projectTemplateItems], 'tileName');
+    return _.sortBy([...clusterServiceClassItems, ...imageStreamItems, ...templateItems, ...extensionItems, ...projectTemplateItems], 'tileName');
   }
 
   normalizeClusterServiceClasses(serviceClasses) {
@@ -120,7 +96,7 @@ export class CatalogListPage extends React.Component {
       }
 
       const iconClass = getServiceClassIcon(serviceClass);
-      const tileImgUrl = getServiceClassImage(serviceClass, iconClass);
+      const tileImgUrl = getServiceClassImage(serviceClass);
 
       acc.push({
         obj: serviceClass,
@@ -212,17 +188,10 @@ export class CatalogListPage extends React.Component {
   }
 }
 
-CatalogListPage.displayName = 'CatalogList';
-
-CatalogListPage.propTypes = {
-  obj: PropTypes.object,
-  namespace: PropTypes.string,
-};
-
-export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FLAGS.OPERATOR_LIFECYCLE_MANAGER)(({flags, mock, namespace}) => {
+export const Catalog = connectToFlags<CatalogProps>(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, ...plugins.registry.getDevCatalogModels().map(({properties}) => properties.flag))((props) => {
+  const {flags, mock, namespace} = props;
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
   const serviceCatalogFlag = flags[FLAGS.SERVICE_CATALOG];
-  const olmFlag = flags[FLAGS.OPERATOR_LIFECYCLE_MANAGER];
   const [templateMetadata, setTemplateMetadata] = React.useState();
   const [templateError, setTemplateError] = React.useState();
   const [projectTemplateMetadata, setProjectTemplateMetadata] = React.useState();
@@ -265,7 +234,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
     return <LoadError message={error.message} label="Templates" className="loading-box loading-box__errored" />;
   }
 
-  if (flagPending(openshiftFlag) || flagPending(serviceCatalogFlag) || flagPending(olmFlag)) {
+  if (_.some(flags, flag => flagPending(flag))) {
     return null;
   }
 
@@ -282,25 +251,21 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
       namespace: 'openshift',
       prop: 'imageStreams',
     }] : []),
-    ...(olmFlag ? [{
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
-      namespaced: true,
-      namespace,
-      prop: 'clusterServiceVersions',
-    }] : []),
+    ...plugins.registry.getDevCatalogModels()
+      .filter(({properties}) => !properties.flag || flags[properties.flag])
+      .map(({properties}) => ({
+        isList: true,
+        kind: referenceForModel(properties.model),
+        namespaced: properties.model.namespaced,
+        namespace,
+        prop: referenceForModel(properties.model),
+      })),
   ];
 
   return <Firehose resources={mock ? [] : resources}>
-    <CatalogListPage namespace={namespace} templateMetadata={templateMetadata} projectTemplateMetadata={projectTemplateMetadata} />
+    <CatalogListPage namespace={namespace} templateMetadata={templateMetadata} projectTemplateMetadata={projectTemplateMetadata} {...props as any} />
   </Firehose>;
 });
-
-Catalog.displayName = 'Catalog';
-
-Catalog.propTypes = {
-  namespace: PropTypes.string,
-};
 
 export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   const namespace = _.get(match, 'params.ns');
@@ -318,4 +283,25 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   </React.Fragment>;
 });
 
+export type CatalogListPageProps = {
+  clusterServiceClasses?: FirehoseResult<K8sResourceKind[]>;
+  imageStreams?: FirehoseResult<K8sResourceKind[]>;
+  templateMetadata?: ObjectMetadata[];
+  projectTemplateMetadata?: ObjectMetadata[];
+  loaded: boolean;
+  loadError?: string;
+  namespace?: string;
+};
+
+export type CatalogListPageState = {
+  items: any[];
+};
+
+export type CatalogProps = {
+  flags: {[key: string]: boolean};
+  namespace?: string;
+  mock: boolean;
+};
+
 CatalogPage.displayName = 'CatalogPage';
+Catalog.displayName = 'Catalog';
