@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { PodKind } from '../module/k8s';
 import { Dashboard, DashboardGrid } from './dashboard';
-import { PodKind } from '@console/internal/module/k8s';
-
-export const PodDashboardContext = React.createContext<PodDashboardContext>({ pod: undefined });
+import { PodDashboardDetailsCard } from './pod-dashboard-details';
+import { PodDashboardContext } from './pod-dashboard-context';
 
 const mainCards = [];
-const leftCards = [];
+const leftCards = [{ Card: PodDashboardDetailsCard }];
 const rightCards = [];
 
 export const PodDashboard: React.FC<PodDashboardProps> = (props) => {
@@ -23,9 +23,5 @@ export const PodDashboard: React.FC<PodDashboardProps> = (props) => {
 };
 
 type PodDashboardProps = {
-  obj: PodKind;
-};
-
-type PodDashboardContext = {
-  pod: PodKind;
+  obj?: PodKind;
 };
