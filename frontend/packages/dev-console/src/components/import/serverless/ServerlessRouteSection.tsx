@@ -14,7 +14,7 @@ const ServerlessRouteSection: React.FC<ServerlessRouteSectionProps> = ({ route }
       {route.create && (
         <InputField
           type={TextInputTypes.text}
-          name="serverlessRoute.targetPort"
+          name="route.unknownTargetPort"
           label="Target Port"
           placeholder="8080"
           helpText="Target port for traffic."

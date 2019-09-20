@@ -81,9 +81,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         privateKey: '',
       },
     },
-    serverlessRoute: {
-      targetPort: '',
-    },
     serverless: {
       enabled: false,
       scaling: {
