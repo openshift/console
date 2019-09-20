@@ -51,3 +51,8 @@
   align-items: center;
   display: flex;
 }
+
+.co-utilization-card__current--max {
+  font-size: 90%;
+  color: var(--pf-global--Color--200);
+}

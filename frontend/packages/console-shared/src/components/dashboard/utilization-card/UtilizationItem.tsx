@@ -2,17 +2,31 @@ import * as React from 'react';
 import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { Humanize } from '@console/internal/components/utils/types';
-import { AreaChart } from '@console/internal/components/graphs/area';
+import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
 
-const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
-  ({ title, data, humanizeValue, isLoading = false, query, error }) => {
+export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
+  ({ title, data, humanizeValue, isLoading = false, query, error, max = null }) => {
     const [containerRef, width] = useRefWidth();
 
     let current;
     if (data.length) {
       const latestData = data[data.length - 1];
       current = humanizeValue(latestData.y).string;
+    }
+
+    let humanMax;
+    let chartStatus;
+
+    if (current && max) {
+      humanMax = humanizeValue(max).string;
+      const percentage = (100 * data[data.length - 1].y) / max;
+
+      if (percentage >= 90) {
+        chartStatus = AreaChartStatus.ERROR;
+      } else if (percentage >= 75) {
+        chartStatus = AreaChartStatus.WARNING;
+      }
     }
 
     const chart = (
@@ -25,6 +39,7 @@ const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={80}
         className="co-utilization-card__area-chart"
+        chartStatus={chartStatus}
       />
     );
 
@@ -37,6 +52,7 @@ const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             </div>
             <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 co-utilization-card__item-current co-dashboard-text--small">
               {current}
+              {humanMax}
             </div>
           </div>
           <div className="row co-utilization-card__item-row--narrow">
@@ -52,6 +68,7 @@ const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           </div>
           <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2 co-utilization-card__item-current">
             {current}
+            {humanMax}
           </div>
           <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__item-chart co-utilization-card__item-chart--wide">
             {chart}
@@ -72,4 +89,5 @@ type UtilizationItemProps = {
   humanizeValue: Humanize;
   query: string;
   error: boolean;
+  max?: number;
 };
