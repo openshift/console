@@ -4,6 +4,7 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 export enum HostQuery {
   CPU_UTILIZATION = 'CPU_UTILIZATION',
   MEMORY_UTILIZATION = 'MEMORY_UTILIZATION',
+  MEMORY_TOTAL = 'MEMORY_TOTAL',
   STORAGE_UTILIZATION = 'STORAGE_UTILIZATION',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
@@ -15,6 +16,7 @@ export enum HostQuery {
 const hostQueriesByHostName = {
   [HostQuery.CPU_UTILIZATION]: 'instance:node_cpu:rate:sum',
   [HostQuery.MEMORY_UTILIZATION]: 'node_memory_Active_bytes',
+  [HostQuery.MEMORY_TOTAL]: 'node_memory_MemTotal_bytes',
   [HostQuery.STORAGE_UTILIZATION]: 'instance:node_filesystem_usage:sum',
   [HostQuery.NETWORK_IN_UTILIZATION]: 'instance:node_network_receive_bytes:rate:sum',
   [HostQuery.NETWORK_OUT_UTILIZATION]: 'instance:node_network_transmit_bytes:rate:sum',
@@ -43,6 +45,10 @@ export const getUtilizationQueries = (hostName: string, hostIP: string): HostQue
   [HostQuery.MEMORY_UTILIZATION]: getQueryForHostName(
     hostName,
     hostQueriesByHostName[HostQuery.MEMORY_UTILIZATION],
+  ),
+  [HostQuery.MEMORY_TOTAL]: getQueryForHostName(
+    hostName,
+    hostQueriesByHostName[HostQuery.MEMORY_TOTAL],
   ),
   [HostQuery.STORAGE_UTILIZATION]: getQueryForHostName(
     hostName,
