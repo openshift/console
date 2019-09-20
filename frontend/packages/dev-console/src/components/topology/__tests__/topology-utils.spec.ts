@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { getPodStatus, podStatus } from '@console/shared';
+import { ConfigurationModel, RevisionModel } from '@console/knative-plugin';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
 import { TransformTopologyData, getEditURL } from '../topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
@@ -183,10 +184,8 @@ describe('TopologyUtils ', () => {
     ]);
     const revRes = topologyTransformedData[keys[0]].resources.filter(
       (item) =>
-        item.kind &&
-        item.kind === 'Revision' &&
-        item.apiVersion &&
-        item.apiVersion === 'serving.knative.dev/v1alpha1',
+        item.kind === RevisionModel.kind &&
+        item.apiVersion === `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
     );
     expect(revRes.length).toEqual(1);
   });
@@ -198,10 +197,8 @@ describe('TopologyUtils ', () => {
     ]);
     const configRes = topologyTransformedData[keys[0]].resources.filter(
       (item) =>
-        item.kind &&
-        item.kind === 'Configuration' &&
-        item.apiVersion &&
-        item.apiVersion === 'serving.knative.dev/v1alpha1',
+        item.kind === ConfigurationModel.kind &&
+        item.apiVersion === `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
     );
     expect(configRes).toHaveLength(1);
   });

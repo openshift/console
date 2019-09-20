@@ -11,6 +11,11 @@ import {
   ServiceModel,
   BuildConfigModel,
 } from '@console/internal/models';
+import {
+  ConfigurationModel,
+  RouteModel as ServerlessRouteModel,
+  RevisionModel,
+} from '@console/knative-plugin';
 import { ResourceProps } from '@console/shared';
 import { TopologyDataObject } from './topology-types';
 
@@ -63,21 +68,22 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
     const ksroutes = metadataUIDCheck(
       item.resources.filter(
         (o) =>
-          o.kind === 'Route' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+          o.kind === ServerlessRouteModel.kind &&
+          o.apiVersion === `${ServerlessRouteModel.apiGroup}/${ServerlessRouteModel.apiVersion}`,
       ),
     );
     const configurations = metadataUIDCheck(
       item.resources.filter(
         (o) =>
-          o.kind === 'Configuration' &&
-          o.apiVersion &&
-          o.apiVersion === 'serving.knative.dev/v1alpha1',
+          o.kind === ConfigurationModel.kind &&
+          o.apiVersion === `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
       ),
     );
     const revisions = metadataUIDCheck(
       item.resources.filter(
         (o) =>
-          o.kind === 'Revision' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+          o.kind === RevisionModel.kind &&
+          o.apiVersion === `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
       ),
     );
     if (configurations.length) {
