@@ -6,8 +6,6 @@ import { VMKind } from '../../types';
 import { getDataVolumeTemplates } from '../vm';
 import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
 
-export const getNodeName = (pod: PodKind) =>
-  get(pod, 'spec.nodeName') as PodKind['spec']['nodeName'];
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];
 
