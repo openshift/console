@@ -6,6 +6,7 @@ type DataVolumeTemplateArgs = {
   pvcSourceName: string;
   pvcSourceNamespace: string;
   accessModes?: string[] | object[];
+  volumeMode: string;
   size: string;
   unit?: string;
   storageClassName?: string;
@@ -19,6 +20,7 @@ export class DataVolumeTemplate {
     pvcSourceName,
     pvcSourceNamespace,
     accessModes,
+    volumeMode,
     size,
     unit,
     storageClassName,
@@ -36,6 +38,7 @@ export class DataVolumeTemplate {
         },
         pvc: {
           accessModes: _.cloneDeep(accessModes),
+          volumeMode,
           resources: {
             requests: {
               storage: size && unit ? `${size}${unit}` : size,
