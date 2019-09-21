@@ -23,7 +23,7 @@ import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
 import { K8sResourceKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
-import { Alert } from '../monitoring';
+import { PrometheusRulesResponse } from '../monitoring';
 
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
@@ -39,7 +39,9 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<
     PrometheusResponse
   >,
-  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<Alert[]>,
+  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<
+    PrometheusRulesResponse
+  >,
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -87,9 +89,9 @@ export const withDashboardResources = <P extends DashboardItemProps>(
         );
         const alertsResultChanged =
           this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !==
-            nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'data']) ||
+            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) ||
           this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !==
-            nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'loadError']);
+            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         const nextExternalProps = this.getExternalProps(nextProps);
@@ -208,7 +210,7 @@ type WithDashboardResourcesProps = {
   stopWatchAlerts: StopWatchAlertsAction;
   [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
   [RESULTS_TYPE.URL]: RequestMap<any>;
-  [RESULTS_TYPE.ALERTS]: RequestMap<Alert[]>;
+  [RESULTS_TYPE.ALERTS]: RequestMap<PrometheusRulesResponse>;
 };
 
 export type WatchK8sResource = (resource: FirehoseResource) => void;
@@ -223,7 +225,7 @@ export type DashboardItemProps = {
   stopWatchAlerts: StopWatchAlerts;
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
-  alertsResults: RequestMap<Alert[]>;
+  alertsResults: RequestMap<PrometheusRulesResponse>;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {

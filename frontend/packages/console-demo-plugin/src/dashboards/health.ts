@@ -1,21 +1,17 @@
 import * as _ from 'lodash';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { PrometheusHealthHandler, URLHealthHandler } from '@console/plugin-sdk';
 
-export const getFooHealthState = (): SubsystemHealth => ({
-  message: 'Foo is healthy',
-  state: HealthState.OK,
-});
+export const getFooHealthState: URLHealthHandler<any> = () => ({ state: HealthState.OK });
 
-export const getBarHealthState = (response, error, nodes: FirehoseResult): SubsystemHealth => {
-  if (!response || !_.get(nodes, 'loaded')) {
+export const getBarHealthState: PrometheusHealthHandler = (responses = [], errors = [], nodes) => {
+  if (!responses.length || !errors.length || !_.get(nodes, 'loaded')) {
     return {
       state: HealthState.LOADING,
     };
   }
   return {
-    message: 'Bar is in an error state',
+    message: 'Additional message',
     state: HealthState.ERROR,
   };
 };

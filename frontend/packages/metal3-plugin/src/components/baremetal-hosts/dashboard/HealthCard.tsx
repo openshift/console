@@ -11,12 +11,13 @@ import { DashboardCardTitle } from '@console/internal/components/dashboard/dashb
 import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
 import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import {
   AlertsBody,
   AlertItem,
   getAlerts,
 } from '@console/internal/components/dashboard/health-card';
-import { Alert } from '@console/internal/components/monitoring';
+import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   HOST_STATUS_OK,
@@ -64,7 +65,9 @@ const HealthCard: React.FC<HealthCardProps> = ({
   }, [watchAlerts, stopWatchAlerts]);
 
   const health = getHostHealthState(obj);
-  const alerts = filterAlerts(getAlerts(alertsResults));
+
+  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+  const alerts = filterAlerts(getAlerts(alertsResponse));
 
   return (
     <DashboardCard>
@@ -84,7 +87,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
           <DashboardCardBody>
             <AlertsBody>
               {alerts.map((alert) => (
-                <AlertItem key={alert.fingerprint} alert={alert} />
+                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
               ))}
             </AlertsBody>
           </DashboardCardBody>

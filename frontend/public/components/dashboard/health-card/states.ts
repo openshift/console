@@ -3,4 +3,6 @@ export enum HealthState {
   ERROR = 'ERROR',
   WARNING = 'WARNING',
   LOADING = 'LOADING',
+  UNKNOWN = 'UNKNOWN',
+  UPDATING = 'UPDATING',
 }

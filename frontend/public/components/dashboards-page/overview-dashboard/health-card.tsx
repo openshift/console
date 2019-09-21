@@ -36,6 +36,8 @@ import {
   isDashboardsOverviewHealthPrometheusSubsystem,
 } from '@console/plugin-sdk';
 import { PrometheusResponse } from '../../graphs';
+import { ALERTS_KEY } from '../../../actions/dashboards';
+import { PrometheusRulesResponse, alertURL } from '../../monitoring';
 
 export const HEALTHY = 'is healthy';
 export const ERROR = 'is in an error state';
@@ -126,10 +128,10 @@ const HealthCard_ = connect(mapStateToProps)(
           const { url, fetch } = subsystem.properties;
           watchURL(url, fetch);
         } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
-          const { query, resource } = subsystem.properties;
-          watchPrometheus(query);
-          if (resource) {
-            watchK8sResource(uniqueResource(resource, index));
+          const { queries, additionalResource } = subsystem.properties;
+          queries.forEach((query) => watchPrometheus(query));
+          if (additionalResource) {
+            watchK8sResource(uniqueResource(additionalResource, index));
           }
         }
       });
@@ -142,10 +144,10 @@ const HealthCard_ = connect(mapStateToProps)(
           if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
             stopWatchURL(subsystem.properties.url);
           } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
-            const { query, resource } = subsystem.properties;
-            stopWatchPrometheusQuery(query);
-            if (resource) {
-              stopWatchK8sResource(uniqueResource(resource, index));
+            const { queries, additionalResource } = subsystem.properties;
+            queries.forEach((query) => stopWatchPrometheusQuery(query));
+            if (additionalResource) {
+              stopWatchK8sResource(uniqueResource(additionalResource, index));
             }
           }
         });
@@ -176,19 +178,21 @@ const HealthCard_ = connect(mapStateToProps)(
         const urlError = urlResults.getIn([subsystem.properties.url, 'loadError']);
         return subsystem.properties.healthHandler(urlData, !!urlError);
       }
-      const queryData = prometheusResults.getIn([
-        subsystem.properties.query,
-        'data',
-      ]) as PrometheusResponse;
-      const queryError = prometheusResults.getIn([subsystem.properties.query, 'loadError']);
-      const resource = subsystem.properties.resource
-        ? resources[uniqueResource(subsystem.properties.resource, index).prop]
+      const queriesData = subsystem.properties.queries.map(
+        (query) => prometheusResults.getIn([query, 'data']) as PrometheusResponse,
+      );
+      const queriesError = subsystem.properties.queries.map((query) =>
+        prometheusResults.getIn([query, 'loadError']),
+      );
+      const resource = subsystem.properties.additionalResource
+        ? resources[uniqueResource(subsystem.properties.additionalResource, index).prop]
         : null;
-      return subsystem.properties.healthHandler(queryData, !!queryError, resource);
+      return subsystem.properties.healthHandler(queriesData, queriesError, resource);
     });
 
     const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);
-    const alerts = getAlerts(alertsResults);
+    const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+    const alerts = getAlerts(alertsResponse);
 
     return (
       <DashboardCard>
@@ -232,7 +236,7 @@ const HealthCard_ = connect(mapStateToProps)(
             <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
               <AlertsBody>
                 {alerts.map((alert) => (
-                  <AlertItem key={alert.fingerprint} alert={alert} />
+                  <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
                 ))}
               </AlertsBody>
             </DashboardCardBody>

@@ -11,6 +11,8 @@ import { DashboardCardHeader } from '@console/internal/components/dashboard/dash
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { ALERTS_KEY } from '@console/internal/actions/dashboards';
+import { PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -62,9 +64,10 @@ const HealthCard: React.FC<DashboardItemProps> = ({
   ]);
 
   const cephCluster = _.get(resources, 'ceph') as FirehoseResult;
-  const cephHealthState = getCephHealthState(queryResult, !!queryResultError, cephCluster);
+  const cephHealthState = getCephHealthState([queryResult], [queryResultError], cephCluster);
 
-  const alerts = filterCephAlerts(getAlerts(alertsResults));
+  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+  const alerts = filterCephAlerts(getAlerts(alertsResponse));
 
   return (
     <DashboardCard>
@@ -84,7 +87,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
           <DashboardCardBody>
             <AlertsBody>
               {alerts.map((alert) => (
-                <AlertItem key={alert.fingerprint} alert={alert} />
+                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
               ))}
             </AlertsBody>
           </DashboardCardBody>

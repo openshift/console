@@ -84,7 +84,7 @@ const buildNotFiringAlert = (rule: Rule): Alert => ({
   state: AlertStates.NotFiring,
 });
 
-const alertURL = (alert, ruleID) =>
+export const alertURL = (alert, ruleID) =>
   `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = (rule) => `${AlertRuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -1449,13 +1449,35 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
   );
 };
 
+export const getAlerts = (data: PrometheusRulesResponse['data']): Alert[] => {
+  // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
+  // ones we will be using and add a unique ID to each rule.
+  const groups = _.get(data, 'groups') as PrometheusRulesResponse['data']['groups'];
+  const rules = _.flatMap(groups, (g) => {
+    const addID = (r: PrometheusRule): Rule => {
+      const key = [
+        g.file,
+        g.name,
+        r.name,
+        r.duration,
+        r.query,
+        ..._.map(r.labels, (k, v) => `${k}=${v}`),
+      ].join(',');
+      return { ...r, id: String(murmur3(key, 'monitoring-salt')) };
+    };
+
+    return _.filter(g.rules, { type: 'alerting' }).map(addID);
+  });
+
+  // If a rule is has no active alerts, create a "fake" alert
+  return _.flatMap(rules, (rule) =>
+    _.isEmpty(rule.alerts) ? buildNotFiringAlert(rule) : rule.alerts.map((a) => ({ rule, ...a })),
+  );
+};
+
 const PollerPages = () => {
   React.useEffect(() => {
-    const poll = (
-      url: string,
-      key: 'alerts' | 'silences',
-      dataHandler: (data: any[]) => any,
-    ): void => {
+    const poll: Poll = (url, key: 'alerts' | 'silences', dataHandler) => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
         coFetchJSON(url)
@@ -1471,34 +1493,7 @@ const PollerPages = () => {
     const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', (data) => {
-        // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
-        // ones we will be using and add a unique ID to each rule.
-        const groups = _.get(data, 'groups');
-        const rules = _.flatMap(groups, (g) => {
-          const addID = (r) => {
-            const key = [
-              g.file,
-              g.name,
-              r.name,
-              r.duration,
-              r.query,
-              ..._.map(r.labels, (k, v) => `${k}=${v}`),
-            ].join(',');
-            r.id = String(murmur3(key, 'monitoring-salt'));
-            return r;
-          };
-
-          return _.filter(g.rules, { type: 'alerting' }).map(addID);
-        });
-
-        // If a rule is has no active alerts, create a "fake" alert
-        return _.flatMap(rules, (rule) =>
-          _.isEmpty(rule.alerts)
-            ? buildNotFiringAlert(rule)
-            : rule.alerts.map((a) => ({ rule, ...a })),
-        );
-      });
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', getAlerts);
     } else {
       store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
@@ -1563,41 +1558,51 @@ type Silence = {
   status?: { state: SilenceStates };
   updatedAt?: string;
 };
+
 type Silences = {
   data: Silence[];
   loaded: boolean;
   loadError?: string;
 };
-export type Alert = {
+
+type PrometheusAlert = {
   activeAt?: string;
-  annotations: any;
-  labels: {
+  annotations: Labels;
+  labels: Labels & {
     alertname: string;
-    [key: string]: string;
   };
-  rule: any;
-  silencedBy?: Silence[];
   state: AlertStates;
   value?: number;
-  fingerprint?: string;
 };
-type Rule = {
-  alerts: Alert[];
-  annotations: any;
+
+export type Alert = PrometheusAlert & {
+  rule: Rule;
+  silencedBy?: Silence[];
+};
+
+type PrometheusRule = {
+  alerts: PrometheusAlert[];
+  annotations: Labels;
   duration: number;
-  id: string;
   labels: Labels;
   name: string;
   query: string;
 };
+
+type Rule = PrometheusRule & {
+  id: string;
+};
+
 type Alerts = {
   data: Alert[];
   loaded: boolean;
   loadError?: string;
 };
+
 type AlertStateProps = {
   state: AlertStates;
 };
+
 export type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
@@ -1605,17 +1610,20 @@ export type AlertsDetailsPageProps = {
   rule: Rule;
   silencesLoaded: boolean;
 };
+
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
   rule: Rule;
 };
+
 export type SilencesDetailsPageProps = {
   alertsLoaded: boolean;
   loaded: boolean;
   loadError?: string;
   silence: Silence;
 };
+
 export type SilenceFormProps = {
   defaults?: any;
   Info: React.ComponentType<{}>;
@@ -1623,11 +1631,13 @@ export type SilenceFormProps = {
   title: string;
   urls: { key: string }[];
 };
+
 export type SilenceFormState = {
   data: Silence;
   error: string;
   inProgress: boolean;
 };
+
 export type ListPageProps = {
   alertmanagerLinkPath: string;
   CreateButton: React.ComponentType<{}>;
@@ -1661,3 +1671,19 @@ type GraphProps = {
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;
 };
+
+type Group = {
+  rules: PrometheusRule[];
+  file: string;
+  inverval: number;
+  name: string;
+};
+
+export type PrometheusRulesResponse = {
+  data: {
+    groups: Group[];
+  };
+  status: string;
+};
+
+type Poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data) => any) => void;

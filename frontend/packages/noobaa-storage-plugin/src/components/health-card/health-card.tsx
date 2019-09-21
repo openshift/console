@@ -21,6 +21,8 @@ import { FirehoseResource, FirehoseResult } from '@console/internal/components/u
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { ALERTS_KEY } from '@console/internal/actions/dashboards';
+import { PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import { getGaugeValue, filterNooBaaAlerts } from '../../utils';
 import { HealthCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
@@ -176,7 +178,9 @@ const HealthCard: React.FC<DashboardItemProps> = ({
     noobaaSystem,
     error,
   );
-  const alerts = filterNooBaaAlerts(getAlerts(alertsResults));
+
+  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+  const alerts = filterNooBaaAlerts(getAlerts(alertsResponse));
 
   return (
     <DashboardCard>
@@ -203,7 +207,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
           <DashboardCardBody>
             <AlertsBody>
               {alerts.map((alert) => (
-                <AlertItem key={alert.fingerprint} alert={alert} />
+                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
               ))}
             </AlertsBody>
           </DashboardCardBody>

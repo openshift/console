@@ -90,18 +90,18 @@ export const watchAlerts: WatchAlertsAction = () => (dispatch, getState) => {
   const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.ALERTS, ALERTS_KEY);
   dispatch(activateWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY));
   if (!isActive) {
-    const alertManagerBaseURL = window.SERVER_FLAGS.alertManagerBaseURL;
-    if (!alertManagerBaseURL) {
+    const { prometheusBaseURL } = window.SERVER_FLAGS;
+    if (!prometheusBaseURL) {
       dispatch(
-        setError(RESULTS_TYPE.ALERTS, ALERTS_KEY, new Error('AlertManager URL is not available')),
+        setError(RESULTS_TYPE.ALERTS, ALERTS_KEY, new Error('Prometheus URL is not available')),
       );
     } else {
-      const alertManagerURL = `${alertManagerBaseURL}/api/v2/alerts?silenced=false&inhibited=false`;
+      const prometheusURL = `${prometheusBaseURL}/api/v1/rules`;
       fetchPeriodically(
         dispatch,
         RESULTS_TYPE.ALERTS,
         ALERTS_KEY,
-        alertManagerURL,
+        prometheusURL,
         getState,
         coFetchJSON,
       );

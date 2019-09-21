@@ -7,7 +7,7 @@ import {
 import { ActivityItem } from '@console/internal/components/dashboard/activity-card/activity-item';
 
 export const isClusterUpdateActivity = (cv: ClusterVersionKind) =>
-  getClusterUpdateStatus(cv) === ClusterUpdateStatus.Failing;
+  getClusterUpdateStatus(cv) === ClusterUpdateStatus.Updating;
 
 export const getClusterUpdateTimestamp = (cv: ClusterVersionKind) =>
   cv && cv.status.history[0] ? new Date(cv.status.history[0].startedTime) : null;

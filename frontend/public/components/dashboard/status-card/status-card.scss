@@ -1,0 +1,116 @@
+.co-status-card__alerts-body {
+  border-top: 1px solid $pf-color-black-300;
+  height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.co-status-card__alerts-body--loading {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.co-status-card__alerts-msg.pf-c-empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.co-status-card__alert-item {
+  align-items: center;
+  display: flex;
+  padding-bottom: 0.5rem;
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+}
+
+.co-status-card__alert-item-message {
+  display: flex;
+  flex-direction: column;
+}
+
+.co-status-card__alert-item-more {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+}
+
+.co-status-card__alert-item-text {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.co-health-card__alert-item-timestamp {
+  white-space: nowrap;
+}
+
+.co-status-card__alert-item:first-of-type {
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
+}
+
+.co-status-card__alert-item:last-of-type {
+  padding-bottom: var(--pf-c-card--child--PaddingBottom);
+}
+
+.co-status-card__health-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.co-status-card__health-item {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  padding-right: 3rem;
+}
+
+.co-status-card__health-item:last-of-type {
+  padding-right: 0;
+}
+
+.co-status-card__link-button {
+  padding: 0;
+}
+
+.co-status-card__popup {
+  padding: 0;
+}
+
+.skeleton-alerts {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 40px;
+  width: 400px;
+  opacity: 0;
+  margin-right: 0.5rem;
+  &::after {
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.skeleton-health {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 20px;
+  width: 20px;
+  opacity: 0;
+  &::after {
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
