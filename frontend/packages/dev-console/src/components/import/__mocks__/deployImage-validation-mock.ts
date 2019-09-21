@@ -91,9 +91,6 @@ export const mockFormData: DeployImageFormData = {
       privateKey: '',
     },
   },
-  serverlessRoute: {
-    targetPort: '',
-  },
   build: {
     env: [],
     triggers: {

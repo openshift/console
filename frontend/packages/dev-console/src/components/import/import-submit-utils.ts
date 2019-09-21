@@ -402,7 +402,7 @@ export const createResources = async (
     labels: userLabels,
     limits,
     serverless: { scaling },
-    route,
+    route: { unknownTargetPort },
     git: { url: repository, type: gitType, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
@@ -431,7 +431,7 @@ export const createResources = async (
         projectName,
         scaling,
         limits,
-        route,
+        unknownTargetPort,
         userLabels,
         imageStreamResponse.status.dockerImageRepository,
         imageStreamName,
