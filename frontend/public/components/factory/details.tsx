@@ -31,6 +31,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         resourceKeys={resourceKeys}
         customData={props.customData}
         badge={props.badge}
+        icon={props.icon}
       />
       <HorizontalNav
         pages={props.pages}
@@ -68,6 +69,7 @@ export type DetailsPageProps = {
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
   customData?: any;
   badge?: React.ReactNode;
+  icon?: React.ComponentType<{obj: K8sResourceKind}>;
 };
 
 DetailsPage.displayName = 'DetailsPage';

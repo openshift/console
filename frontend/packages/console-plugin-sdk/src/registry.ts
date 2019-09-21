@@ -26,6 +26,7 @@ import {
   isGlobalConfig,
   isClusterServiceVersionAction,
   isKebabActions,
+  isDevCatalogModel,
 } from './typings';
 
 /**
@@ -132,5 +133,9 @@ export class ExtensionRegistry {
 
   public getKebabActions() {
     return this.extensions.filter(isKebabActions);
+  }
+
+  public getDevCatalogModels() {
+    return this.extensions.filter(isDevCatalogModel);
   }
 }

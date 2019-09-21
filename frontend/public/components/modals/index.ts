@@ -57,9 +57,6 @@ export const taintsModal = (props) => import('./taints-modal' /* webpackChunkNam
 export const tolerationsModal = (props) => import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */)
   .then(m => m.tolerationsModal(props));
 
-export const installPlanPreviewModal = (props) => import('./installplan-preview-modal' /* webpackChunkName: "installplan-preview-modal" */)
-  .then(m => m.installPlanPreviewModal(props));
-
 export const expandPVCModal = (props) => import('./expand-pvc-modal' /* webpackChunkName: "expand-pvc-modal" */)
   .then(m => m.expandPVCModal(props));
 

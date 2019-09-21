@@ -1,0 +1,19 @@
+{
+  "name": "@console/operator-lifecycle-manager",
+  "version": "0.0.0-fixed",
+  "description": "A management framework for extending Kubernetes with Operators",
+  "main": "src/index.ts",
+  "private": true,
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed"
+  },
+  "devDependencies": {
+    "@types/enzyme": "3.x",
+    "@types/jasmine": "2.8.x",
+    "@types/jasminewd2": "2.0.x",
+    "@types/jest": "21.x"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
+  }
+}

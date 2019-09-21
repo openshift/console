@@ -62,9 +62,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   }
 
   const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
-  const componentLoader = props.match.params.appName
-    ? () => import('./operator-lifecycle-manager/operand' /* webpackChunkName: "operand" */).then(m => m.OperandDetailsPage)
-    : resourceDetailsPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
+  const componentLoader = resourceDetailsPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return <React.Fragment>
     <Helmet>

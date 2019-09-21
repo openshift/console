@@ -2,7 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { getInfrastructurePlatform } from '@console/shared/src/selectors';
-import { OperatorGroupModel, PackageManifestModel, SelfSubjectAccessReviewModel, InfrastructureModel } from '../models';
+import { SelfSubjectAccessReviewModel, InfrastructureModel } from '../models';
 import { k8sBasePath, ClusterVersionKind, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
@@ -194,12 +194,6 @@ const ssarChecks = [{
 }, {
   flag: FLAGS.CAN_LIST_CRD,
   resourceAttributes:{ group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' },
-}, {
-  flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
-  resourceAttributes:{ group: PackageManifestModel.apiGroup, resource: PackageManifestModel.plural, verb: 'list'},
-}, {
-  flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
-  resourceAttributes:{ group: OperatorGroupModel.apiGroup, resource: OperatorGroupModel.plural, verb: 'list' },
 }, {
   flag: FLAGS.CAN_LIST_CHARGEBACK_REPORTS,
   resourceAttributes:{ group: 'metering.openshift.io', resource: 'reports', namespace: 'openshift-metering', verb: 'list' },

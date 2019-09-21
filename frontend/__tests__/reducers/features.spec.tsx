@@ -5,7 +5,6 @@ import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
 import { FLAGS } from '../../public/const';
 import { featureReducer, defaults, connectToFlags } from '../../public/reducers/features';
-import { ClusterServiceVersionModel } from '../../public/models';
 
 describe('featureReducer', () => {
 
@@ -16,7 +15,7 @@ describe('featureReducer', () => {
   });
 
   it('returns updated state with new flags if `setFlag` action', () => {
-    const action = setFlag(FLAGS.OPERATOR_LIFECYCLE_MANAGER, true);
+    const action = setFlag(FLAGS.OPENSHIFT, true);
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
@@ -32,7 +31,7 @@ describe('featureReducer', () => {
   });
 
   it('sets flags when it gets CRDs', () => {
-    const action = receivedResources({models: [ClusterServiceVersionModel], adminResources: [], allResources: [], configResources: [], namespacedSet: null, safeResources: [], preferredVersions: []});
+    const action = receivedResources({models: [], adminResources: [], allResources: [], configResources: [], namespacedSet: null, safeResources: [], preferredVersions: []});
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
@@ -40,8 +39,6 @@ describe('featureReducer', () => {
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.CHARGEBACK]: false,
       [FLAGS.SERVICE_CATALOG]: false,
-      [FLAGS.OPERATOR_LIFECYCLE_MANAGER]: true,
-      [FLAGS.OPERATOR_HUB]: false,
       [FLAGS.CLUSTER_API]: false,
       [FLAGS.MACHINE_CONFIG]: false,
       [FLAGS.MACHINE_AUTOSCALER]: false,
