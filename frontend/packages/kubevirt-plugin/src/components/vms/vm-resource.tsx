@@ -6,7 +6,6 @@ import {
   getWorkloadProfile,
   getVmTemplate,
   getNodeName,
-  getFlavor,
   VmStatuses,
   BootOrder,
   isVmOff,
@@ -19,9 +18,11 @@ import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
-import { vmDescriptionModal } from '../modals/vm-description-modal';
+import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { FlavorText } from '../flavor-text';
+import { EditButton } from '../edit-button';
 
 import './_vm-resource.scss';
 
@@ -33,18 +34,11 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
 
   return (
     <ResourceSummary resource={vm}>
-      <dt>
-        Description
-        {canUpdateVM && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}
-          />
-        )}
-      </dt>
+      <dt>Description</dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
-        {description}
+        <EditButton canEdit={canUpdateVM} onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}>
+          {description}
+        </EditButton>
       </dd>
       <dt>Operating System</dt>
       <dd id={prefixedID(id, 'os')}>
@@ -58,7 +52,13 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
   );
 };
 
-export const VMDetailsList: React.FC<VMResourceListProps> = ({ vm, vmi, pods, migrations }) => {
+export const VMDetailsList: React.FC<VMResourceListProps> = ({
+  vm,
+  vmi,
+  pods,
+  migrations,
+  canUpdateVM,
+}) => {
   const id = getBasicID(vm);
   const vmStatus = getVMStatus(vm, pods, migrations);
   const { launcherPod } = vmStatus;
@@ -100,7 +100,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({ vm, vmi, pods, mi
       <dt>Node</dt>
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
       <dt>Flavor</dt>
-      <dd id={prefixedID(id, 'flavor')}>{getFlavor(vm) || DASH}</dd>
+      <dd id={prefixedID(id, 'flavor')}>
+        <EditButton canEdit={canUpdateVM} onClick={() => vmFlavorModal({ vmLike: vm })}>
+          <FlavorText vmLike={vm} />
+        </EditButton>
+      </dd>
       <dt>Workload Profile</dt>
       <dd id={prefixedID(id, 'workload-profile')}>{getWorkloadProfile(vm) || DASH}</dd>
     </dl>
@@ -117,4 +121,5 @@ type VMResourceListProps = {
   pods?: PodKind[];
   migrations?: any[];
   vmi?: VMIKind;
+  canUpdateVM: boolean;
 };

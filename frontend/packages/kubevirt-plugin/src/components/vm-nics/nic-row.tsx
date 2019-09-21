@@ -7,7 +7,7 @@ import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
 import { VirtualMachineModel } from '../../models';
-import { isVM } from '../../selectors/selectors';
+import { isVM } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { nicTableColumnClasses } from './utils';
 import { VMNicRowProps } from './types';

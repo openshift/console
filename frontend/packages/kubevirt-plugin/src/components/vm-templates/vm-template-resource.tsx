@@ -4,7 +4,6 @@ import {
   getOperatingSystem,
   getWorkloadProfile,
   getVmTemplate,
-  getFlavor,
   BootOrder,
   getBootableDevicesInOrder,
   TemplateSource,
@@ -15,6 +14,9 @@ import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { getDescription } from '../../selectors/selectors';
+import { vmFlavorModal } from '../modals';
+import { FlavorText } from '../flavor-text';
+import { EditButton } from '../edit-button';
 import { VMTemplateLink } from './vm-template-link';
 
 import './_vm-template-resource.scss';
@@ -30,18 +32,14 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 
   return (
     <ResourceSummary resource={template}>
-      <dt>
-        Description
-        {canUpdateTemplate && (
-          <button
-            type="button"
-            className="btn btn-link co-modal-btn-link co-modal-btn-link--left"
-            onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
-          />
-        )}
-      </dt>
+      <dt>Description</dt>
       <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
-        {description}
+        <EditButton
+          canEdit={canUpdateTemplate}
+          onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
+        >
+          {description}
+        </EditButton>
       </dd>
       <dt>Operating System</dt>
       <dd id={prefixedID(id, 'os')}>
@@ -60,6 +58,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   dataVolumes,
+  canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
   const sortedBootableDevices = getBootableDevicesInOrder(template);
@@ -75,7 +74,11 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         )}
       </dd>
       <dt>Flavor</dt>
-      <dd id={prefixedID(id, 'flavor')}>{getFlavor(template) || DASH}</dd>
+      <dd id={prefixedID(id, 'flavor')}>
+        <EditButton canEdit={canUpdateTemplate} onClick={() => vmFlavorModal({ vmLike: template })}>
+          <FlavorText vmLike={template} />
+        </EditButton>
+      </dd>
       <dt>Provision Source</dt>
       <dd id={prefixedID(id, 'provisioning-source')}>
         {dataVolumes ? (
@@ -91,6 +94,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 type VMTemplateResourceListProps = {
   template: TemplateKind;
   dataVolumes: K8sResourceKind[];
+  canUpdateTemplate: boolean;
 };
 
 type VMTemplateResourceSummaryProps = {

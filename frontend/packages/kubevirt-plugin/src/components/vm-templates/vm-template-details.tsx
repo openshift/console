@@ -24,14 +24,16 @@ const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (pro
     getResource(DataVolumeModel, { namespace, optional: true, prop: 'datavolumes' }),
   ];
 
+  const otherProps = { template };
+
   return (
     <div className="co-m-pane__body">
       {hasDataVolumes ? (
         <Firehose resources={resources}>
-          <VMTemplateDetails template={template} />
+          <VMTemplateDetails {...otherProps} />
         </Firehose>
       ) : (
-        <VMTemplateDetails template={template} hasDataVolumes={hasDataVolumes} />
+        <VMTemplateDetails {...otherProps} hasDataVolumes={hasDataVolumes} />
       )}
     </div>
   );
@@ -65,7 +67,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
             <VMTemplateResourceSummary {...flatResources} canUpdateTemplate={canUpdate} />
           </div>
           <div className="col-sm-6">
-            <VMTemplateDetailsList {...flatResources} />
+            <VMTemplateDetailsList {...flatResources} canUpdateTemplate={canUpdate} />
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMLikeEntityKind } from '../../types';
 
@@ -7,6 +7,7 @@ export type VMTabProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
+  templates?: TemplateKind[];
 };
 
 export type VMLikeEntityTabProps = {

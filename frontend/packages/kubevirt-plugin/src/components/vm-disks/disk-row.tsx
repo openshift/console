@@ -11,9 +11,8 @@ import { TemplateModel } from '@console/internal/models';
 import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
-import { getDiskBus } from '../../selectors/vm';
+import { getDiskBus, isVM } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
-import { isVM } from '../../selectors/selectors';
 import { VMDiskRowProps } from './types';
 
 const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => ({
