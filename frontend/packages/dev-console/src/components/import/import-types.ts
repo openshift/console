@@ -44,7 +44,6 @@ export interface DeployImageFormData {
   labels: { [name: string]: string };
   env: { [name: string]: string };
   route: RouteData;
-  serverlessRoute?: ServerlessRouteData;
   build: BuildData;
   deployment: DeploymentData;
   limits: LimitsData;
@@ -59,7 +58,6 @@ export interface GitImportFormData {
   serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
-  serverlessRoute?: ServerlessRouteData;
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
@@ -84,7 +82,7 @@ export interface ImageStreamImageData {
   name: string;
   image: object;
   tag: string;
-  status: string;
+  status: { metadata: {}; status: string };
   ports: ContainerPort[];
 }
 
@@ -111,14 +109,12 @@ export interface DockerData {
 export interface RouteData {
   create: boolean;
   targetPort: string;
+  unknownTargetPort?: string;
+  defaultUnknownPort?: number;
   path: string;
   hostname: string;
   secure: boolean;
   tls: TLSData;
-}
-
-export interface ServerlessRouteData {
-  targetPort: string;
 }
 
 export interface TLSData {

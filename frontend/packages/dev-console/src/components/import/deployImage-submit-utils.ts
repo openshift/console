@@ -6,7 +6,7 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { createKnativeService } from '@console/knative-plugin';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { DeployImageFormData } from './import-types';
@@ -223,10 +223,35 @@ export const createRoute = (
   return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
+export const ensurePortExists = (formData: DeployImageFormData): DeployImageFormData => {
+  const {
+    isi: { ports },
+    route: { defaultUnknownPort, unknownTargetPort },
+  } = formData;
+
+  let values = formData;
+  if (!Array.isArray(ports) || ports.length === 0) {
+    // If we lack pre-defined ports but they have specified a custom target port, use that instead
+    const containerPort = unknownTargetPort ? parseInt(unknownTargetPort, 10) : defaultUnknownPort;
+    const suppliedPorts = [{ containerPort, protocol: 'TCP' }];
+
+    values = {
+      ...values,
+      isi: {
+        ...values.isi,
+        ports: suppliedPorts,
+      },
+    };
+  }
+
+  return values;
+};
+
 export const createResources = async (
-  formData: DeployImageFormData,
+  rawFormData: DeployImageFormData,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
+  const formData = ensurePortExists(rawFormData);
   const {
     name,
     application: { name: applicationName },
@@ -236,8 +261,9 @@ export const createResources = async (
     serverless: { scaling },
     labels: userLabels,
     limits,
-    route,
+    route: { unknownTargetPort },
   } = formData;
+
   const requests: Promise<K8sResourceKind>[] = [];
   requests.push(createImageStream(formData, dryRun));
   if (!formData.serverless.enabled) {
@@ -259,7 +285,7 @@ export const createResources = async (
         projectName,
         scaling,
         limits,
-        route,
+        unknownTargetPort,
         userLabels,
         imageStreamResponse.status.dockerImageRepository,
       ),

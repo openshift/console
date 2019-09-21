@@ -750,6 +750,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               </label>
               <FormControl
                 type="text"
+                bsClass="pf-c-form-control"
                 value={_.get(this.state, `newStorageClass.parameters.${key}.value`, '')}
                 onChange={(event) => this.setParameterHandler(key, event, isCheckbox)} />
             </React.Fragment>
@@ -809,6 +810,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             <label className="control-label co-required" htmlFor="storage-class-name">Name</label>
             <FormControl
               type="text"
+              bsClass="pf-c-form-control"
               placeholder={newStorageClass.name}
               id="storage-class-name"
               onChange={(event) => this.setStorageHandler('name', event.target.value)}
@@ -820,6 +822,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             <label htmlFor="storage-class-description">Description</label>
             <FormControl
               type="text"
+              bsClass="pf-c-form-control"
               id="storage-class-description"
               onChange={(event) => this.setStorageHandler('description', event.target.value)}
               value={_.get(newStorageClass, 'description', '')} />

@@ -1,4 +1,10 @@
 import { Resource } from '@console/shared';
+import {
+  ConfigurationModel,
+  RouteModel,
+  RevisionModel,
+  ServiceModel,
+} from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
 export const sampleKnativeDeployments = {
@@ -27,8 +33,8 @@ export const sampleKnativeDeployments = {
         },
         ownerReferences: [
           {
-            apiVersion: 'serving.knative.dev/v1alpha1',
-            kind: 'Revision',
+            apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
+            kind: RevisionModel.kind,
             name: 'overlayimage-fdqsf',
             uid: '02c34a0e-9638-11e9-b134-06a61d886b62',
             controller: true,
@@ -150,8 +156,8 @@ const sampleKnativeBuilds: Resource = {
 const sampleKnativeConfigurations: Resource = {
   data: [
     {
-      apiVersion: 'serving.knative.dev/v1alpha1',
-      kind: 'Configuration',
+      apiVersion: `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
+      kind: ConfigurationModel.kind,
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
@@ -176,8 +182,8 @@ const sampleKnativeConfigurations: Resource = {
 const sampleKnativeRevisions: Resource = {
   data: [
     {
-      apiVersion: 'serving.knative.dev/v1alpha1',
-      kind: 'Revision',
+      apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
+      kind: RevisionModel.kind,
       metadata: {
         name: 'overlayimage-fdqsf',
         namespace: 'testproject3',
@@ -203,8 +209,8 @@ const sampleKnativeRevisions: Resource = {
 export const sampleKnativeRoutes = {
   data: [
     {
-      apiVersion: 'serving.knative.dev/v1alpha1',
-      kind: 'Service',
+      apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
+      kind: RouteModel.kind,
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
@@ -229,8 +235,8 @@ export const sampleKnativeRoutes = {
 export const sampleKnativeServices: Resource = {
   data: [
     {
-      apiVersion: 'serving.knative.dev/v1alpha1',
-      kind: 'Service',
+      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+      kind: ServiceModel.kind,
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
@@ -265,8 +271,8 @@ export const sampleServices: Resource = {
         },
         ownerReferences: [
           {
-            apiVersion: 'serving.knative.dev/v1alpha1',
-            kind: 'Route',
+            apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
+            kind: RouteModel.kind,
             name: 'overlayimage',
             uid: 'bca0d598-8ce0-11e9-bb7b-0ebb55b110b8',
             controller: true,
@@ -304,7 +310,7 @@ export const sampleServices: Resource = {
         },
         ownerReferences: [
           {
-            apiVersion: 'networking.internal.knative.dev/v1alpha1',
+            apiVersion: `networking.internal.knative.dev/${ServiceModel.apiVersion}`,
             kind: 'ServerlessService',
             name: 'overlayimage-9jsl8',
             uid: 'bcf5bfcf-8ce0-11e9-9020-0ab4b49bd478',
