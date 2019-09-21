@@ -136,6 +136,14 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
 
   const url = getPrometheusExpressionBrowserURL(urls, [`topk(20, ${currentQuery})`]);
 
+  const LabelComponent = React.useCallback(({ title, metric }) => (
+    <BarLink
+      title={`${title}`}
+      namespace={metric.namespace}
+      model={topConsumersType.model}
+    />
+  ), [topConsumersType.model]);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -173,13 +181,7 @@ const TopConsumersCard_ = connectToURLs(MonitoringRoutes.Prometheus)(({
             titleClassName="co-overview-consumers__chart"
             title={`${type} by ${metricTypeSort.description}`}
             loading={!consumersLoadError && !(topConsumersResult && consumersLoaded)}
-            LabelComponent={({ title, metric }) => (
-              <BarLink
-                title={`${title}`}
-                namespace={metric.namespace}
-                model={topConsumersType.model}
-              />
-            )}
+            LabelComponent={LabelComponent}
           />
           {url && <div className="co-overview-consumers__view-more">
             <ExternalLink href={url} text="View more" />
