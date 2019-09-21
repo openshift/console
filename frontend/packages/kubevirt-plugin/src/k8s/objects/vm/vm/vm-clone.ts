@@ -6,6 +6,7 @@ import {
   getPvcAccessModes,
   getPvcStorageClassName,
   getPvcStorageSize,
+  getPvcVolumeMode,
 } from '../../../../selectors/pvc/selectors';
 import { DataVolumeTemplate } from '../datavolume-template';
 import {
@@ -18,6 +19,7 @@ import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
+  getDataVolumeVolumeMode,
 } from '../../../../selectors/dv/selectors';
 import { TEMPLATE_OS_NAME_ANNOTATION, TEMPLATE_VM_NAME_LABEL } from '../../../../constants/vm';
 import { SafeVM } from './safe-vm';
@@ -93,6 +95,7 @@ export class VMClone extends SafeVM {
             pvcSourceName: pvcName,
             pvcSourceNamespace: this.oldVMNamespace,
             accessModes: getPvcAccessModes(pvc),
+            volumeMode: getPvcVolumeMode(pvc),
             size: getPvcStorageSize(pvc),
             storageClassName: getPvcStorageClassName(pvc),
           }).build();
@@ -123,6 +126,7 @@ export class VMClone extends SafeVM {
             pvcSourceName: dvName,
             pvcSourceNamespace: this.oldVMNamespace,
             accessModes: getDataVolumeAccessModes(dataVolume),
+            volumeMode: getDataVolumeVolumeMode(dataVolume),
             size: getDataVolumeStorageSize(dataVolume),
             storageClassName: getDataVolumeStorageClassName(dataVolume),
           }).build();
