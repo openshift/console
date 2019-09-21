@@ -16,16 +16,16 @@ import {
   AsyncComponent,
   Kebab,
   ResourceLink,
-  LabelList,
   resourcePath,
-  Selector,
   ResourceKebab,
   asAccessReview,
+  OwnerReferences,
 } from './utils';
 
 import { VolumesTable } from './volumes-table';
 import { confirmModal } from './modals';
 import { k8sPatch } from '../module/k8s';
+import { fromNow } from './utils/datetime';
 
 const Details = ({obj: replicationController}) => {
   const revision = _.get(replicationController, ['metadata', 'annotations', 'openshift.io/deployment-config.latest-version']);
@@ -111,10 +111,10 @@ const kind = 'ReplicationController';
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-1', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-1', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -130,18 +130,18 @@ const ReplicationControllerTableRow = ({obj, index, key, style}) => {
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
         <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         {phase}
       </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <OwnerReferences resource={obj} />
+      </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
+        {fromNow(obj.metadata.creationTimestamp)}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
@@ -163,19 +163,18 @@ const ReplicationControllerTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      title: 'Status', sortFunc: 'numReplicas', transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status', sortFunc: 'numReplicas', transforms: [sortable],
+      title: 'Phase', sortField: 'metadata.annotations["openshift.io/deployment.phase"]', transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Phase', sortField: 'metadata.annotations["openshift.io/deployment.phase"]', transforms: [sortable],
+      title: 'Owner', sortField:'metadata.ownerReferences[0].name', transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
-    {
-      title: 'Pod Selector', sortField: 'spec.selector', transforms: [sortable],
+    { title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
       props: { className: tableColumnClasses[5] },
     },
     {

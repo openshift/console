@@ -2,8 +2,11 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
+import { Link } from 'react-router-dom';
+import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table } from './factory';
+import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
 import {
   Kebab,
   ContainerTable,
@@ -12,16 +15,16 @@ import {
   ResourceSummary,
   ResourcePodCount,
   AsyncComponent,
+  ResourceLink,
+  resourcePath,
+  LabelList,
+  ResourceKebab,
+  OwnerReferences,
 } from './utils';
-
-import {
-  WorkloadTableRow,
-  WorkloadTableHeader,
-} from './workload-table';
-
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { ReplicaSetModel } from '../models';
+import { fromNow } from './utils/datetime';
 
 const {ModifyCount, AddStorage, common} = Kebab.factory;
 
@@ -80,17 +83,78 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
 
 const kind = 'ReplicaSet';
 
+const tableColumnClasses = [
+  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
+
 const ReplicaSetTableRow = ({obj, index, key, style}) => {
   return (
-    <WorkloadTableRow obj={obj} index={index} key={key} style={style} menuActions={replicaSetMenuActions} kind={kind} />
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={kind} labels={obj.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
+          {obj.status.replicas || 0} of {obj.spec.replicas} pods
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <OwnerReferences resource={obj} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        {fromNow(obj.metadata.creationTimestamp)}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
+      </TableData>
+    </TableRow>
   );
 };
 ReplicaSetTableRow.displayName = 'ReplicaSetTableRow';
 
-
 const ReplicaSetTableHeader = () => {
-  return WorkloadTableHeader();
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Status', sortFunc: 'numReplicas', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Owner', sortField: 'metadata.ownerReferences[0].name', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    { title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[6] },
+    },
+  ];
 };
+
 ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
 
 const ReplicaSetsList = props => <Table {...props} aria-label="Replicate Sets" Header={ReplicaSetTableHeader} Row={ReplicaSetTableRow} virtualize />;
