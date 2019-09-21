@@ -9,7 +9,7 @@ import {
   SecretModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { createKnativeService } from '@console/knative-plugin';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
@@ -402,7 +402,7 @@ export const createResources = async (
     labels: userLabels,
     limits,
     serverless: { scaling },
-    route,
+    route: { unknownTargetPort },
     git: { url: repository, type: gitType, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
@@ -431,7 +431,7 @@ export const createResources = async (
         projectName,
         scaling,
         limits,
-        route,
+        unknownTargetPort,
         userLabels,
         imageStreamResponse.status.dockerImageRepository,
         imageStreamName,

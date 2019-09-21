@@ -53,7 +53,7 @@ const ODCEmptyState: React.FC<Props> = ({
           href={`/deploy-image?preselected-ns=${activeNamespace}`}
           title="Container Image"
           iconClass="pficon-image"
-          description="Deploy an existing image from an image registry or image stream tag"
+          description="Deploy an existing image from an image registry"
         />
         <CatalogTile
           onClick={(e: Event) => navigateTo(e, '/catalog')}
@@ -76,7 +76,7 @@ const ODCEmptyState: React.FC<Props> = ({
           href={formatNamespacedRouteForResource('import', activeNamespace)}
           title="YAML"
           iconImg={yamlIcon}
-          description="Create or replace resources from their YAML or JSON definitions."
+          description="Create resources from their YAML or JSON definitions"
         />
         <CatalogTile
           onClick={(e: Event) => navigateTo(e, '/catalog?category=databases')}

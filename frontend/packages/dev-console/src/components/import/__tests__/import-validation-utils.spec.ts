@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 import { validationSchema, detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
+import { serverlessCommonTests } from './serverless-common-tests';
 
 describe('ValidationUtils', () => {
   describe('Detect Git Type', () => {
@@ -159,5 +160,7 @@ describe('ValidationUtils', () => {
       mockData.build.strategy = 'Source';
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
     });
+
+    serverlessCommonTests(mockFormData, validationSchema);
   });
 });

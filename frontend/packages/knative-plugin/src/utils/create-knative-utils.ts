@@ -33,14 +33,14 @@ export const createKnativeService = (
   namespace: string,
   scaling: ServerlessScaling,
   limits: LimitsData,
-  { targetPort },
+  unknownTargetPort,
   labels,
   imageStreamUrl: string,
   imageStreamName?: string,
   annotations?: { [name: string]: string },
   imageTag?: string,
 ): Promise<K8sResourceKind> => {
-  const contTargetPort: number = parseInt(targetPort, 10);
+  const contTargetPort: number = parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
     cpu: {
@@ -59,8 +59,8 @@ export const createKnativeService = (
   const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
   delete defaultLabel.app;
   const knativeDeployResource: K8sResourceKind = {
-    kind: 'Service',
-    apiVersion: 'serving.knative.dev/v1alpha1',
+    kind: ServiceModel.kind,
+    apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
     metadata: {
       name,
       namespace,

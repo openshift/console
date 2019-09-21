@@ -14,7 +14,12 @@ export const getCephPVCs = (
   cephSCNames: string[] = [],
   pvcsData: K8sResourceKind[] = [],
 ): K8sResourceKind[] =>
-  pvcsData.filter((pvc) => cephSCNames.includes(_.get(pvc, 'spec.storageClassName')));
+  pvcsData.filter((pvc) =>
+    cephSCNames.includes(
+      _.get(pvc, 'spec.storageClassName') ||
+        _.get(pvc, ['metadata', 'annotations', 'volume.beta.kubernetes.io/storage-class']),
+    ),
+  );
 
 export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =>
   pvsData.filter((pv) => {

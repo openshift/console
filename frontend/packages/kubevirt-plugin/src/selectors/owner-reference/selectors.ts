@@ -8,4 +8,4 @@ export const getKind = (ownerReference: OwnerReference) =>
   _.get(ownerReference, 'kind') as OwnerReference['kind'];
 
 export const getName = (ownerReference: OwnerReference) =>
-  _.get(ownerReference, 'kind') as OwnerReference['kind'];
+  _.get(ownerReference, 'name') as OwnerReference['name'];
