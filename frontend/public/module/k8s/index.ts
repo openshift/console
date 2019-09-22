@@ -90,6 +90,7 @@ export type K8sResourceKind = {
   apiVersion?: string;
   kind?: string;
   metadata?: ObjectMetadata;
+  pipelineTaskName?: string;
   spec?: {
     selector?: Selector;
     [key: string]: any
