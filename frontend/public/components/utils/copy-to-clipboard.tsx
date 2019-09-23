@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
-import { Tooltip } from '@patternfly/react-core';
-import { PasteIcon } from '@patternfly/react-icons';
+import { Button, Tooltip } from '@patternfly/react-core';
+import { CopyIcon } from '@patternfly/react-icons';
 
 export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props) => {
   const [copied, setCopied] = React.useState(false);
@@ -17,10 +17,10 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
     <pre className="co-pre-wrap co-copy-to-clipboard__text">{visibleValue}</pre>
     <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
       <CTC text={props.value} onCopy={() => setCopied(true)}>
-        <button onMouseEnter={() => setCopied(false)} className="btn btn-default co-copy-to-clipboard__btn fix" type="button">
-          <PasteIcon />
+        <Button variant="plain" onMouseEnter={() => setCopied(false)} className="co-copy-to-clipboard__btn pf-c-clipboard-copy__group-copy" type="button">
+          <CopyIcon />
           <span className="sr-only">Copy to Clipboard</span>
-        </button>
+        </Button>
       </CTC>
     </Tooltip>
   </div>;
