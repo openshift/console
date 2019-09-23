@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
+import { Tooltip } from '@patternfly/react-core';
 import {
   AddCircleOIcon,
   ArrowCircleUpIcon,
@@ -40,6 +41,7 @@ import {
   resourcePathFromModel,
   SectionHeading,
   Timestamp,
+  truncateMiddle,
 } from '../utils';
 import {
   GreenCheckCircleIcon,
@@ -60,16 +62,16 @@ export const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button 
   {cv.spec.channel || '-'}
 </button>;
 
-const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
+const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <>
   <div>
     <RedExclamationCircleIcon /> Invalid cluster version
   </div>
   <Button bsStyle="primary" onClick={() => cancelUpdate(cv)}>
     Cancel update
   </Button>
-</React.Fragment>;
+</>;
 
-const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
+const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <>
   <div className="co-update-status">
     <ArrowCircleUpIcon className="update-pending" /> Update available
   </div>
@@ -78,26 +80,38 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <Reac
       Update now
     </Button>
   </div>
-</React.Fragment>;
+</>;
 
 const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
   const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
-  return <React.Fragment>
+  return <>
     {updatingCondition.message && <div><SyncAltIcon className="fa-spin" /> {updatingCondition.message}</div>}
     <Link to="/settings/cluster/clusteroperators">View details</Link>
-  </React.Fragment>;
+  </>;
 };
 
-const ErrorRetrievingMessage: React.SFC<{}> = () => <div>
-  <RedExclamationCircleIcon /> Error retrieving
-</div>;
+const ErrorRetrievingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
+  const retrievedUpdatesCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.RetrievedUpdates, K8sResourceConditionStatus.False);
+  return retrievedUpdatesCondition.reason === 'NoChannel'
+    ? <span className="text-muted">No update channel selected</span>
+    : (
+      <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
+        <span><RedExclamationCircleIcon /> Error retrieving</span>
+      </Tooltip>
+    );
+};
 
-const FailingMessage: React.SFC<{}> = () => <React.Fragment>
-  <div>
-    <RedExclamationCircleIcon /> Failing
-  </div>
-  <Link to="/settings/cluster/clusteroperators">View details</Link>
-</React.Fragment>;
+const FailingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
+  const failingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Failing, K8sResourceConditionStatus.True);
+  return <>
+    <div>
+      <Tooltip content={truncateMiddle(failingCondition.message, { length: 256 })}>
+        <span><RedExclamationCircleIcon /> Failing</span>
+      </Tooltip>
+    </div>
+    <Link to="/settings/cluster/clusteroperators">View details</Link>
+  </>;
+};
 
 const UpToDateMessage: React.SFC<{}> = () => <span>
   <GreenCheckCircleIcon /> Up to date
@@ -113,9 +127,9 @@ export const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
     case ClusterUpdateStatus.Updating:
       return <UpdatingMessage cv={cv} />;
     case ClusterUpdateStatus.ErrorRetrieving:
-      return <ErrorRetrievingMessage />;
+      return <ErrorRetrievingMessage cv={cv} />;
     case ClusterUpdateStatus.Failing:
-      return <FailingMessage />;
+      return <FailingMessage cv={cv} />;
     default:
       return <UpToDateMessage />;
   }
@@ -129,29 +143,31 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion
       ? <span className="co-select-to-copy">{desiredVersion}</span>
-      : <React.Fragment><YellowExclamationTriangleIcon />&nbsp;Unknown</React.Fragment>;
+      : <><YellowExclamationTriangleIcon />&nbsp;Unknown</>;
   }
 
-  return <React.Fragment>{lastVersion || 'None'}</React.Fragment>;
+  return lastVersion
+    ? <span className="co-select-to-copy">{lastVersion}</span>
+    : <>None</>;
 };
 
 export const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
-  return <React.Fragment>
+  return <>
     {
       updatesAvailable && (status === ClusterUpdateStatus.ErrorRetrieving || status === ClusterUpdateStatus.Failing || status === ClusterUpdateStatus.Updating)
         ? <Button bsStyle="link" className="btn-link--no-btn-default-values" onClick={() => (clusterUpdateModal({cv}))}>Update to another version</Button>
         : null
     }
-  </React.Fragment>;
+  </>;
 };
 
 export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
-  return <React.Fragment>
+  return <>
     { status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable ? 'Current Version' : 'Last Completed Version' }
-  </React.Fragment>;
+  </>;
 };
 
 export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
@@ -162,7 +178,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
 
-  return <React.Fragment>
+  return <>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <div className="co-detail-table co-detail-table--lg">
@@ -206,7 +222,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
           <dt>Desired Release Image</dt>
           <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
             {imageParts.length === 2
-              ? <React.Fragment><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</React.Fragment>
+              ? <><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</>
               : desiredImage || '-'}
           </dd>
           <dt>Cluster Version Configuration</dt>
@@ -252,7 +268,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
         </div>
       }
     </div>
-  </React.Fragment>;
+  </>;
 };
 
 export const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
@@ -278,7 +294,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
     {kind: clusterAutoscalerReference, isList: true, prop: 'autoscalers', optional: true},
   ];
   const resourceKeys = _.map(resources, 'prop');
-  return <React.Fragment>
+  return <>
     <Helmet>
       <title>{title}</title>
     </Helmet>
@@ -288,7 +304,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
     <Firehose forceUpdate resources={resources}>
       <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} hideDivider />
     </Firehose>
-  </React.Fragment>;
+  </>;
 };
 
 type UpdateStatusProps = {
