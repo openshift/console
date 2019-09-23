@@ -9,6 +9,7 @@ import {
   element,
   ElementArrayFinder,
 } from 'protractor';
+import { By } from 'selenium-webdriver';
 import { config } from '../../../../integration-tests/protractor.conf';
 
 export function resolveTimeout(timeout: number, defaultTimeout: number) {
@@ -91,12 +92,20 @@ export async function click(elem: ElementFinder, timeout?: number) {
   await elem.click();
 }
 
-export async function selectDropdownOption(dropdownId: string, option: string) {
+async function selectDropdownOptionByLocator(dropdownId: string, optionLocator: By) {
   await click($(dropdownId));
-  await browser.wait(until.presenceOf(element(by.linkText(option))));
+  await browser.wait(until.presenceOf(element(optionLocator)));
   await $(`${dropdownId} + ul`)
-    .element(by.linkText(option))
+    .element(optionLocator)
     .click();
+}
+
+export async function selectDropdownOption(dropdownId: string, optionText: string) {
+  await selectDropdownOptionByLocator(dropdownId, by.linkText(optionText));
+}
+
+export async function selectDropdownOptionById(dropdownId: string, optionId: string) {
+  await selectDropdownOptionByLocator(dropdownId, by.id(optionId));
 }
 
 export async function getDropdownOptions(dropdownId: string): Promise<string[]> {
