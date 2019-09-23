@@ -44,6 +44,7 @@ export type ObjectMetadata = {
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
   deletionTimestamp?: string;
+  creationTimestamp?: string;
   [key: string]: any,
 };
 
