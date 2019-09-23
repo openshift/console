@@ -11,7 +11,9 @@ import { StorageResource, NetworkResource } from '../utils/types';
 import { fillInput } from '../utils/utils';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
 import { confirmAction } from '../../views/vm.actions.view';
+import { vmDetailFlavorEditButton } from '../../views/virtualMachine.view';
 import { DetailView } from './detailView';
+import * as editFlavor from './editFlavorView';
 
 export class KubevirtDetailView extends DetailView {
   async getAttachedDisks(): Promise<StorageResource[]> {
@@ -76,5 +78,11 @@ export class KubevirtDetailView extends DetailView {
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
+  }
+
+  // pops-up modal dialog
+  async modalEditFlavor() {
+    await click(vmDetailFlavorEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editFlavor.modalTitle()));
   }
 }

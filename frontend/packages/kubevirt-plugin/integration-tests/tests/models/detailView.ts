@@ -3,6 +3,7 @@ import { appHost, testName } from '../../../../../integration-tests/protractor.c
 import { clickHorizontalTab } from '../../../../../integration-tests/views/horizontal-nav.view';
 import { isLoaded, resourceTitle } from '../../../../../integration-tests/views/crud.view';
 import { activeTab } from '../../views/detailView.view';
+import * as VmsListView from '../../views/vms.list.view';
 
 export class DetailView {
   readonly name: string;
@@ -30,6 +31,15 @@ export class DetailView {
       await clickHorizontalTab(tabName);
       await isLoaded();
     }
+  }
+
+  // Similar to navigateToTab(TABS.OVERVIEW) but passes through resource list page
+  async navigateToDetail() {
+    await this.navigateToListView();
+    await VmsListView.vmListByName(this.name).click();
+    await isLoaded();
+    await clickHorizontalTab('Overview');
+    await isLoaded();
   }
 
   async navigateToListView() {
