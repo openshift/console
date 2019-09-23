@@ -1,8 +1,7 @@
 import { browser } from 'protractor';
 import { appHost } from '../protractor.conf';
 import { dashboardIsLoaded } from '../views/dashboard-shared.view';
-import { serviceName, clusterHealth, clusterName } from '../views/storage-dashboard.view';
-import { execSync } from 'child_process'
+import { serviceName, clusterHealth } from '../views/storage-dashboard.view';
 
 describe('Check data on Storage Dashboard.', () => {
   beforeAll(async() => {
