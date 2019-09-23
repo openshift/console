@@ -46,10 +46,10 @@ export type Page = {
   component?: React.ComponentType<any>;
 };
 
-type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
+type NavFactory = { [name: string]: (c?: React.ComponentType<any>, href?: string) => Page };
 export const navFactory: NavFactory = {
-  details: (component) => ({
-    href: '',
+  details: (component, href = '') => ({
+    href,
     name: 'Overview',
     component,
   }),

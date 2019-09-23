@@ -39,6 +39,7 @@ import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 import { PodDashboard } from './pod-dashboard';
+import { POD_DETAIL_DASHBOARD_HREF, POD_DETAIL_OVERVIEW_HREF } from './utils/href';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -405,11 +406,11 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
     menuActions={menuActions}
     pages={[
       {
-        href: 'dashboard', // TODO: make it default once additional Cards are implemented
+        href: POD_DETAIL_DASHBOARD_HREF,
         name: 'Dashboard',
         component: PodDashboard,
       },
-      navFactory.details(Details),
+      navFactory.details(Details, POD_DETAIL_OVERVIEW_HREF),
       navFactory.editYaml(),
       navFactory.envEditor(PodEnvironmentComponent),
       navFactory.logs(PodLogs),
