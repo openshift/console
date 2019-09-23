@@ -5,7 +5,7 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(
   ({ title, isLoading = false, children, error = false }) => {
     let status: React.ReactNode;
     if (error) {
-      status = <span className="text-secondary">Unavailable</span>;
+      status = <span className="text-secondary">Not available</span>;
     } else if (isLoading) {
       status = <LoadingInline />;
     } else {
