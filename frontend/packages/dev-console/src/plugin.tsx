@@ -155,6 +155,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: PipelineRunModel,
+      loader: async () =>
+        (await import(
+          './components/pipelineruns/PipelineRunResourceList' /* webpackChunkName: "pipelinerun-list" */
+        )).default,
+    },
+  },
+  {
     type: 'Page/Resource/Details',
     properties: {
       model: PipelineRunModel,

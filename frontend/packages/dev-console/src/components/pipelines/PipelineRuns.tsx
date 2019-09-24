@@ -6,17 +6,18 @@ import {
   pipelineRunFilterReducer,
   pipelineRunStatusFilter,
 } from '../../utils/pipeline-filter-reducer';
+import { ListFilterId, ListFilterLabels } from '../../utils/pipeline-utils';
 import { PipelineRunModel } from '../../models';
 
-const filters = [
+export const runFilters = [
   {
     type: 'pipelinerun-status',
-    selected: ['Succeeded'],
+    selected: [ListFilterId.Succeeded, ListFilterId.Running, ListFilterId.Failed],
     reducer: pipelineRunFilterReducer,
     items: [
-      { id: 'Succeeded', title: 'Complete' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Running', title: 'Running' },
+      { id: ListFilterId.Succeeded, title: ListFilterLabels[ListFilterId.Succeeded] },
+      { id: ListFilterId.Running, title: ListFilterLabels[ListFilterId.Running] },
+      { id: ListFilterId.Failed, title: ListFilterLabels[ListFilterId.Failed] },
     ],
     filter: pipelineRunStatusFilter,
   },
@@ -36,7 +37,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ obj }) => (
       'tekton.dev/pipeline': obj.metadata.name,
     }}
     ListComponent={PipelineRunsList}
-    rowFilters={filters}
+    rowFilters={runFilters}
   />
 );
 

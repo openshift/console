@@ -56,6 +56,18 @@ export const conditions = {
     task.runAfter && task.runAfter.length > 0,
 };
 
+export enum ListFilterId {
+  Running = 'Running',
+  Failed = 'Failed',
+  Succeeded = 'Succeeded',
+}
+
+export const ListFilterLabels = {
+  [ListFilterId.Running]: 'Running',
+  [ListFilterId.Failed]: 'Failed',
+  [ListFilterId.Succeeded]: 'Complete',
+};
+
 // to be used by both Pipeline and Pipelinerun visualisation
 const sortTasksByRunAfterAndFrom = (
   tasks: PipelineVisualizationTaskItem[],
