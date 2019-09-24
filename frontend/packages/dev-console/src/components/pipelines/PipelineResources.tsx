@@ -1,16 +1,11 @@
 import * as React from 'react';
-import {
-  Form,
-  Button,
-  Alert,
-  TextInputTypes,
-  ActionGroup,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
-import { ButtonBar, useAccessReview } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { MultiColumnField, InputField, DropdownField } from '../formik-fields';
+import { FormFooter } from '../form-utils';
 
 enum resourceTypes {
   '' = 'Select resource type',
@@ -59,34 +54,14 @@ const PipelineResources: React.FC<FormikProps<FormikValues>> = ({
         </MultiColumnField>
         <hr />
         {pipelineResourceAccess && (
-          <ButtonBar
-            inProgress={isSubmitting}
+          <FormFooter
+            handleReset={handleReset}
+            isSubmitting={isSubmitting}
             errorMessage={status && status.submitError}
-            successMessage={status && status.success}
-          >
-            {!status && dirty && (
-              <Alert
-                isInline
-                className="co-alert"
-                variant="info"
-                title="The information on this page is no longer current."
-              >
-                Click Reload to update and lose edits, or Save Changes to overwrite.
-              </Alert>
-            )}
-            <ActionGroup className="pf-c-form">
-              <Button
-                type="submit"
-                variant={ButtonVariant.primary}
-                isDisabled={!dirty || !!errors.resources}
-              >
-                Save
-              </Button>
-              <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
-                Reload
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
+            successMessage={status && !dirty && status.success}
+            disableSubmit={!dirty || !_.isEmpty(errors)}
+            showAlert={dirty}
+          />
         )}
       </div>
     </Form>

@@ -111,6 +111,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      section: 'Advanced',
+      perspective: 'dev',
+      componentProps: {
+        name: 'Project Access',
+        href: '/project-access',
+        testID: 'advanced-project-access-header',
+      },
+    },
+  },
+  {
     type: 'NavItem/ResourceNS',
     properties: {
       section: 'Advanced',
@@ -202,7 +214,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/add', '/import', '/topology', '/deploy-image', '/metrics'],
+      path: ['/add', '/import', '/topology', '/deploy-image', '/metrics', '/project-access'],
       component: NamespaceRedirect,
     },
   },
@@ -302,6 +314,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import('./components/MetricsPage' /* webpackChunkName: "dev-console-metrics" */))
           .default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/project-access/all-namespaces', '/project-access/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
+        )).default,
     },
   },
   {

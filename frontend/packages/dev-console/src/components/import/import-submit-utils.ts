@@ -18,7 +18,7 @@ import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resou
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { GitImportFormData, ProjectData, GitTypes, GitReadableTypes } from './import-types';
 
-const generateSecret = () => {
+export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   const s4 = () =>
     Math.floor((1 + Math.random()) * 0x10000)

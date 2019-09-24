@@ -17,6 +17,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   headers,
   emptyValues,
   isReadOnly,
+  toolTip,
 }) => (
   <FieldArray
     name={name}
@@ -36,6 +37,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                 // eslint-disable-next-line react/no-array-index-key
                 key={`multi-column-field-row-${index}`} // There is no other usable value for key prop in this case.
                 name={name}
+                toolTip={toolTip}
                 rowIndex={index}
                 onDelete={() => remove(index)}
                 isReadOnly={isReadOnly}
