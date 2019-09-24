@@ -115,7 +115,11 @@ describe(Firehose.displayName, () => {
     expect(
       wrapper
         .instance()
-        .shouldComponentUpdate({ inFlight: true, loaded: true } as FirehoseProps, null, null),
+        .shouldComponentUpdate(
+          { inFlight: true, loaded: true } as FirehoseProps,
+          wrapper.instance().state,
+          null,
+        ),
     ).toBe(false);
   });
 
