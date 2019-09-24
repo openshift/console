@@ -3,12 +3,18 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
+<<<<<<< HEAD
   VmStatus,
+=======
+  getResource,
+  // VmStatus,
+>>>>>>> Migrate VmStatus component from web-ui-components project
   // getSimpleVmStatus,
   // VM_SIMPLE_STATUS_ALL,
   // VM_SIMPLE_STATUS_TO_TEXT,
   //  DASHES,
 } from 'kubevirt-web-ui-components';
+import { VmStatus } from '@console/kubevirt-plugin/src/components/VmStatus';
 import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
@@ -77,7 +83,6 @@ const VMRow: React.FC<VMRowProps> = ({
 
   const migration = migrationLookup[lookupID];
   const vmi = vmiLookup[lookupID];
-
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
