@@ -3,12 +3,16 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"html/template"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
+
+
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
@@ -38,6 +42,20 @@ const (
 
 var (
 	plog = capnslog.NewPackageLogger("github.com/openshift/console", "server")
+)
+
+var (
+	appVersion = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "console_version",
+		Help: "Version information about this binary",
+		ConstLabels: map[string]string{
+			"version": "v0.1.0",
+		},
+	})
+	apiRequestsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "console_api_requests_total",
+		Help: "Count of all HTTP requests against the API",
+	}, []string{"code", "method", "path"})
 )
 
 type jsGlobals struct {
@@ -92,6 +110,7 @@ type Server struct {
 	MeteringProxyConfig          *proxy.Config
 }
 
+
 func (s *Server) authDisabled() bool {
 	return s.Auther == nil
 }
@@ -108,14 +127,45 @@ func (s *Server) meteringProxyEnabled() bool {
 	return s.MeteringProxyConfig != nil
 }
 
+// NOTE: by default, promhttp provides:
+//   promhttp.InstrumentHandlerCounter(apiRequestsTotal, handler)
+// but this handler does not allow for the additional "path" label, which
+// we desire.
+func InstrumentAPIHandlerCounter(counter *prometheus.CounterVec, next http.Handler, path string) http.HandlerFunc {
+	return http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
+
+		// we need to let the request be served before we can check the response status
+		next.ServeHTTP(writer, req)
+
+		apiRequestsTotal.With(prometheus.Labels{
+			// TODO: this is a little fiddly to unwrap
+			"code": "TODO",
+			"method": req.Method,
+			"path": path,
+		}).Inc()
+	})
+}
+
+// to use for page view when we track those
+// req.Header.Get("User-Agent")
+func InstrumentPageViewCounter() {}
+
 func (s *Server) HTTPHandler() http.Handler {
+	// TODO: decide where to place this.
+	r := prometheus.NewRegistry()
+	r.MustRegister(apiRequestsTotal)
+	r.MustRegister(appVersion)
+
 	mux := http.NewServeMux()
 
 	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
 		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
 	}
 	handle := func(path string, handler http.Handler) {
-		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
+		mux.Handle(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, path),
+			// promhttp.InstrumentHandlerCounter(apiRequestsTotal, handler))
+			InstrumentAPIHandlerCounter(apiRequestsTotal, handler, path))
 	}
 
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
@@ -153,6 +203,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
 		return authMiddlewareWithUser(s.Auther, hf)
 	}
+
+	// TODO: decide where to place this.
+	handle("/metrics", promhttp.HandlerFor(r, promhttp.HandlerOpts{}))
 
 	if s.authDisabled() {
 		authHandler = func(hf http.HandlerFunc) http.Handler {

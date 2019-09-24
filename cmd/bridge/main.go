@@ -43,7 +43,9 @@ const (
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 )
 
+
 func main() {
+
 	rl := capnslog.MustRepoLogger("github.com/openshift/console")
 	capnslog.SetFormatter(capnslog.NewStringFormatter(os.Stderr))
 
@@ -178,6 +180,7 @@ func main() {
 			log.Fatalf("could not read logo file: %v", err)
 		}
 	}
+
 
 	srv := &server.Server{
 		PublicDir:            *fPublicDir,
