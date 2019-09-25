@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import * as _ from 'lodash';
 import { convertToBaseValue } from '@console/internal/components/utils';
 import { isInteger } from '../../utils/yup-validation-util';
+import { CREATE_APPLICATION_KEY } from './app/ApplicationSelector';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
@@ -32,7 +33,10 @@ export const projectNameValidationSchema = yup.object().shape({
 
 export const applicationNameValidationSchema = yup.object().shape({
   selectedKey: yup.string(),
-  name: yup.string(),
+  name: yup.string().when('selectedKey', {
+    is: CREATE_APPLICATION_KEY,
+    then: yup.string().required('Required'),
+  }),
 });
 
 export const deploymentValidationSchema = yup.object().shape({
