@@ -9,7 +9,10 @@ import {
   SecretModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin';
+import {
+  getKnativeServiceDepResource,
+  ServiceModel as KnServiceModel,
+} from '@console/knative-plugin';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
@@ -390,19 +393,12 @@ export const createResources = async (
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
-    name,
-    application: { name: applicationName },
-    project: { name: projectName },
     route: { create: canCreateRoute },
-    image: { ports, tag: imageTag },
+    image: { ports },
     build: {
       strategy: buildStrategy,
       triggers: { webhook: webhookTrigger },
     },
-    labels: userLabels,
-    limits,
-    serverless: { scaling },
-    route: { unknownTargetPort },
     git: { url: repository, type: gitType, ref },
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
@@ -424,21 +420,13 @@ export const createResources = async (
     }
 
     const [imageStreamResponse] = await Promise.all(requests);
-    return Promise.all([
-      createKnativeService(
-        name,
-        applicationName,
-        projectName,
-        scaling,
-        limits,
-        unknownTargetPort,
-        userLabels,
-        imageStreamResponse.status.dockerImageRepository,
-        imageStreamName,
-        defaultAnnotations,
-        imageTag,
-      ),
-    ]);
+    const knDeploymentResource = getKnativeServiceDepResource(
+      formData,
+      imageStreamResponse.status.dockerImageRepository,
+      imageStreamName,
+      defaultAnnotations,
+    );
+    return Promise.all([k8sCreate(KnServiceModel, knDeploymentResource)]);
   }
 
   requests.push(createDeploymentConfig(formData, imageStream, dryRun));

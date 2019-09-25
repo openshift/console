@@ -1,4 +1,4 @@
-import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
   ServiceModel,
@@ -7,39 +7,27 @@ import {
   RouteModel,
 } from '@console/knative-plugin';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
+import {
+  DeployImageFormData,
+  GitImportFormData,
+} from '@console/dev-console/src/components/import/import-types';
 
-interface ServerlessScaling {
-  minpods: number;
-  maxpods: number | '';
-  concurrencytarget: number | '';
-  concurrencylimit: number | '';
-}
-
-interface LimitsData {
-  cpu: ResourceType;
-  memory: ResourceType;
-}
-
-interface ResourceType {
-  request: number | string;
-  requestUnit: string;
-  limit: number | string;
-  limitUnit: string;
-}
-
-export const createKnativeService = (
-  name: string,
-  applicationName: string,
-  namespace: string,
-  scaling: ServerlessScaling,
-  limits: LimitsData,
-  unknownTargetPort,
-  labels,
+export const getKnativeServiceDepResource = (
+  formData: GitImportFormData | DeployImageFormData,
   imageStreamUrl: string,
   imageStreamName?: string,
   annotations?: { [name: string]: string },
-  imageTag?: string,
-): Promise<K8sResourceKind> => {
+): K8sResourceKind => {
+  const {
+    name,
+    application: { name: applicationName },
+    project: { name: namespace },
+    serverless: { scaling },
+    limits,
+    route: { unknownTargetPort },
+    labels,
+    image: { tag: imageTag },
+  } = formData;
   const contTargetPort: number = parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
@@ -113,38 +101,7 @@ export const createKnativeService = (
       },
     },
   };
-
-  return k8sCreate(ServiceModel, knativeDeployResource);
-};
-
-export const knativeServingResources = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(RevisionModel),
-      namespace,
-      prop: 'revisions',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ConfigurationModel),
-      namespace,
-      prop: 'configurations',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(RouteModel),
-      namespace,
-      prop: 'ksroutes',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ServiceModel),
-      namespace,
-      prop: 'ksservices',
-    },
-  ];
-  return knativeResource;
+  return knativeDeployResource;
 };
 
 export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
@@ -178,6 +135,21 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
       kind: referenceForModel(RouteModel),
       namespace,
       prop: 'ksroutes',
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResources = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    ...knativeServingResourcesRevision(namespace),
+    ...knativeServingResourcesConfigurations(namespace),
+    ...knativeServingResourcesRoutes(namespace),
+    {
+      isList: true,
+      kind: referenceForModel(ServiceModel),
+      namespace,
+      prop: 'ksservices',
     },
   ];
   return knativeResource;

@@ -6,7 +6,10 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin';
+import {
+  getKnativeServiceDepResource,
+  ServiceModel as KnServiceModel,
+} from '@console/knative-plugin';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { DeployImageFormData } from './import-types';
@@ -253,15 +256,8 @@ export const createResources = async (
 ): Promise<K8sResourceKind[]> => {
   const formData = ensurePortExists(rawFormData);
   const {
-    name,
-    application: { name: applicationName },
     route: { create: canCreateRoute },
-    project: { name: projectName },
     isi: { ports },
-    serverless: { scaling },
-    labels: userLabels,
-    limits,
-    route: { unknownTargetPort },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -278,18 +274,11 @@ export const createResources = async (
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
     const [imageStreamResponse] = await Promise.all(requests);
-    requests.push(
-      createKnativeService(
-        name,
-        applicationName,
-        projectName,
-        scaling,
-        limits,
-        unknownTargetPort,
-        userLabels,
-        imageStreamResponse.status.dockerImageRepository,
-      ),
+    const knDeploymentResource = getKnativeServiceDepResource(
+      formData,
+      imageStreamResponse.status.dockerImageRepository,
     );
+    requests.push(k8sCreate(KnServiceModel, knDeploymentResource));
   }
 
   return Promise.all(requests);
