@@ -10,19 +10,26 @@ import { createAlertRoutingModal } from '../modals';
 import { Table, TableData, TableRow, TextFilter } from '../factory';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateVariant,
+  Title,
+} from '@patternfly/react-core';
 
 const AlertRouting: React.FC<AlertManagerProps> = ({ config, secret }) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Alert Routing">
-        <button
-          className="btn btn-default btn-edit-alert-routing"
+        <Button
+          className="btn-edit-alert-routing"
           onClick={() => createAlertRoutingModal({ config, secret })}
+          variant="secondary"
         >
           Edit
-        </button>
+        </Button>
       </SectionHeading>
       <div className="row">
         <div className="col-sm-6">

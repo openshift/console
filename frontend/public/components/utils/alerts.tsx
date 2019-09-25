@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Alert, AlertVariant, List, ListItem } from '@patternfly/react-core';
+import { Alert, AlertVariant, Button, List, ListItem } from '@patternfly/react-core';
 
 export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant }) => {
   const alertCount = alerts.length;
@@ -24,9 +24,9 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant })
       title={
         <React.Fragment>
           {`There are ${alertCount} ${variant} alerts.`}
-          <button type="button" className="btn btn-link" onClick={() => setExpanded(!expanded)}>
+          <Button type="button" onClick={() => setExpanded(!expanded)} variant="link">
             {expanded ? 'Hide' : 'Show'} Details
-          </button>
+          </Button>
         </React.Fragment>
       }
     >

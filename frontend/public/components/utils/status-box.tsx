@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { TimeoutError } from '../../co-fetch';
@@ -24,13 +24,9 @@ export const LoadError: React.FC<LoadErrorProps> = ({
     {canRetry && (
       <div className="text-center">
         Please{' '}
-        <button
-          type="button"
-          className="btn btn-link btn-link--no-btn-default-values"
-          onClick={window.location.reload.bind(window.location)}
-        >
+        <Button type="button" onClick={window.location.reload.bind(window.location)} variant="link">
           try again
-        </button>
+        </Button>
         .
       </div>
     )}

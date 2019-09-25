@@ -329,26 +329,18 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         {!useContainerSelector && (
           <p>
             The volume will be mounted into all containers. You can
-            <button
-              type="button"
-              className="btn btn-link .btn-link--no-btn-default-values"
-              onClick={handleSelectContainers}
-            >
+            <Button type="button" onClick={handleSelectContainers} variant="link">
               select specific containers
-            </button>
+            </Button>
             instead.
           </p>
         )}
         {useContainerSelector && (
           <div className="form-group">
             <label className="control-label">Containers</label>
-            <button
-              type="button"
-              className="btn btn-link .btn-link--no-btn-default-values"
-              onClick={handleSelectContainers}
-            >
+            <Button type="button" onClick={handleSelectContainers} variant="link">
               (use all containers)
-            </button>
+            </Button>
             <ContainerSelector
               containers={obj.spec.template.spec.containers}
               selected={selectedContainers}
