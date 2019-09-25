@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import {FilterSidePanel, VerticalTabs} from 'patternfly-react-extensions';
-import {EmptyState, FormControl} from 'patternfly-react';
+import {FormControl} from 'patternfly-react';
+import {Button, EmptyState, EmptyStateBody, EmptyStateSecondaryActions, EmptyStateVariant, Title} from '@patternfly/react-core';
 
 import {history} from './router';
 
@@ -640,16 +641,16 @@ export class TileViewPage extends React.Component {
   renderEmptyState() {
     const { emptyStateTitle, emptyStateInfo } = this.props;
     return (
-      <EmptyState className="co-catalog-page__no-filter-results">
-        <EmptyState.Title className="co-catalog-page__no-filter-results-title" aria-level="2">
+      <EmptyState variant={EmptyStateVariant.full}>
+        <Title headingLevel="h2" size="lg">
           {emptyStateTitle}
-        </EmptyState.Title>
-        <EmptyState.Info className="text-secondary">
+        </Title>
+        <EmptyStateBody>
           {emptyStateInfo}
-        </EmptyState.Info>
-        <EmptyState.Help>
-          <button type="button" className="btn btn-link" onClick={() => this.clearFilters()}>Clear All Filters</button>
-        </EmptyState.Help>
+        </EmptyStateBody>
+        <EmptyStateSecondaryActions>
+          <Button variant="link" onClick={() => this.clearFilters()} data-test-id="catalog-clear-filters">Clear All Filters</Button>
+        </EmptyStateSecondaryActions>
       </EmptyState>
     );
   }

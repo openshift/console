@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
-import { HintBlock } from 'patternfly-react';
 import { match as RMatch } from 'react-router';
-import { history, Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { history, Firehose, FirehoseResource, HintBlock } from '@console/internal/components/utils';
 import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import ODCEmptyState from './EmptyState';
@@ -61,10 +60,12 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
     <ODCEmptyState
       title="Add"
       hintBlock={
-        <HintBlock
-          title="No workloads found"
-          body="To add content to your project, create an application, component or service using one of these options."
-        />
+        <HintBlock title="No workloads found">
+          <p>
+            To add content to your project, create an application, component or service using one of
+            these options.
+          </p>
+        </HintBlock>
       }
     />
   ) : (

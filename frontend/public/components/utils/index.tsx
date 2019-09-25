@@ -56,6 +56,8 @@ export * from './expand-collapse';
 export * from './volume-type';
 export * from './skeleton-catalog';
 export * from './dom-utils';
+export * from './hint-block';
+export * from './owner-references';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
@@ -73,7 +75,6 @@ export const enum EnvFromPair {
   Resource,
   Index
 }
-
 /**
  * The environment editor manages two types of env variables env and envFrom. This const distinguishes the two.
  */

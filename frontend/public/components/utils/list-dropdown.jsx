@@ -19,7 +19,7 @@ class ListDropdown_ extends React.Component {
       this.state.selectedKey = props.selectedKeyKind ? `${props.selectedKey}-${props.selectedKeyKind}` : props.selectedKey;
     }
 
-    this.state.title = props.loaded ? <span className="pf-c-dropdown__toggle-text--placeholder">{props.placeholder}</span> : <LoadingInline />;
+    this.state.title = props.loaded ? props.placeholder : <LoadingInline />;
 
     this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
     // Pass both the resource name and the resource kind to onChange()
@@ -72,7 +72,7 @@ class ListDropdown_ extends React.Component {
 
       // did we switch from !loaded -> loaded ?
       if (!this.props.loaded && !selectedKey) {
-        state.title = <span className="pf-c-dropdown__toggle-text--placeholder">{nextProps.placeholder}</span>;
+        state.title = nextProps.placeholder;
       }
 
       if (selectedKey) {
@@ -146,6 +146,7 @@ ListDropdown.propTypes = {
   })).isRequired,
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
+  id: PropTypes.string,
 };
 
 const NsDropdown_ = props => {
@@ -157,4 +158,5 @@ const NsDropdown_ = props => {
   const resources = [{ kind }];
   return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
 };
+/** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, selectedKeyKind?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, event: React.Event) => void, id?: string}}>} */
 export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);

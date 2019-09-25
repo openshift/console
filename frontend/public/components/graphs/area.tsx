@@ -40,7 +40,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   yAxis = true,
 }) => {
   const [containerRef, width] = useRefWidth();
-  const getLabel = ({x, y}) => `${humanize(y).string} at ${formatDate(x)}`;
+  const getLabel = ({ datum: { x, y }}) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>

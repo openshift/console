@@ -436,7 +436,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
         <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
           <PfTable
             cells={columns}
-            rows={virtualize ? (customData || []) : Rows({componentProps, selectedResourcesForKind, customData})}
+            rows={virtualize ? [] : Rows({componentProps, selectedResourcesForKind, customData})}
             gridBreakPoint={gridBreakPoint}
             onSort={this._onSort}
             onSelect={onSelect}

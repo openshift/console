@@ -6,12 +6,11 @@ import { yamlTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
-import { K8sKind, apiVersionForModel, referenceForModel } from '../module/k8s';
+import { K8sKind, apiVersionForModel, referenceForModel, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { ErrorPage404 } from './error';
-import { ClusterServiceVersionModel } from '../models';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const {match, kindsInFlight, kindObj, hideHeader = false} = props;
+  const {match, kindsInFlight, kindObj, hideHeader = false, resourceObjPath} = props;
   const {params} = match;
 
   if (!kindObj) {
@@ -37,9 +36,8 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const header = `Create ${kindObj.label}`;
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
-  const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/${referenceForModel(kindObj)}` : null;
 
-  return <AsyncComponent loader={() => import('./droppable-edit-yaml').then(c => c.DroppableEditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} header={header} hideHeader={hideHeader} />;
+  return <AsyncComponent loader={() => import('./droppable-edit-yaml').then(c => c.DroppableEditYAML)} obj={obj} create={true} kind={kindObj.kind} header={header} hideHeader={hideHeader} resourceObjPath={resourceObjPath} />;
 });
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
@@ -57,6 +55,7 @@ export type CreateYAMLProps = {
   download?: boolean;
   header?: string;
   hideHeader?: boolean;
+  resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
 };
 
 export type EditYAMLPageProps = {

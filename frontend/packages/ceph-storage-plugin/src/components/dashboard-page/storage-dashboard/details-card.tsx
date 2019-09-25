@@ -12,7 +12,8 @@ import {
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DetailsBody } from '@console/internal/components/dashboard/details-card/details-body';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
-import { InfrastructureModel, SubscriptionModel } from '@console/internal/models/index';
+import { InfrastructureModel } from '@console/internal/models/index';
+import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';

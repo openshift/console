@@ -18,7 +18,6 @@
 }
 
 .co-capacity-card__item-description {
-  font-weight: normal;
   line-height: 1.5;
   margin-bottom: 0;
 }
@@ -28,5 +27,6 @@
 }
 
 .co-capacity-card__item-title {
+  font-family: $headings-font-family;
   margin-top: 0;
 }

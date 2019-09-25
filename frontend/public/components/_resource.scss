@@ -4,16 +4,15 @@
   color: #fff;
   display: inline-block;
   flex-shrink: 0;
-  font-size: $font-size-base - 1;
-  font-weight: 300;
+  font-size: $font-size-base;
   line-height: 16px;
   margin-right: 4px;
   min-width: 18px;
-  padding: 2px 4px 1px;
+  padding: 1px 4px;
   text-align: center;
   &--lg {
-    font-size: ($font-size-base + 1);
-    line-height: 21px;
+    font-size: ($font-size-base + 3);
+    line-height: 20px;
     margin-right: 7px;
     min-width: 24px;
     padding: 0 7px;
@@ -24,7 +23,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
-  width: 43px;
+  width: 50px;
 }
 
 .co-m-resource-clusterrole,
@@ -126,7 +125,7 @@
     animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate infinite;
     flex: 0 0 auto;
     font-size: ($font-size-base - 1);
-    font-weight: 600;
+    font-weight: var(--pf-global--FontWeight--bold);
     margin: 0 0 0 15px;
     overflow: hidden;
     padding: 0 0 2px;

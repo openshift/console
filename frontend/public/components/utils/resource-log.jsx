@@ -324,6 +324,7 @@ class ResourceLog_ extends React.Component {
   }
 }
 
+/** @type {React.FC<{bufferSize?: number, containerName?: string, dropdown?: React.ReactNode, resource: any, resourceStatus: string}}>} */
 export const ResourceLog = connectToFlags(FLAGS.CONSOLE_EXTERNAL_LOG_LINK)(ResourceLog_);
 
 ResourceLog.defaultProps = {

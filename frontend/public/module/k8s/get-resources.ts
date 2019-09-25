@@ -78,8 +78,8 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
 
     return Promise.all(all)
       .then(data => {
-        const resourceSet = new Set();
-        const namespacedSet = new Set();
+        const resourceSet = new Set<string>();
+        const namespacedSet = new Set<string>();
         data.forEach(d => d.resources && d.resources.forEach(({namespaced, name}) => {
           resourceSet.add(name);
           namespaced && namespacedSet.add(name);
@@ -91,16 +91,16 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
 
         const defineModels = (list: APIResourceList): K8sKind[] => list.resources.filter(({name}) => !name.includes('/'))
           .map(({name, singularName, namespaced, kind, verbs, shortNames}) => {
-            const label = kind.replace(/([A-Z]+)/g, ' $1').slice(1);
             const groupVersion = list.groupVersion.split('/').length === 2 ? list.groupVersion : `core/${list.groupVersion}`;
 
             return {
-              kind, namespaced, label, verbs, shortNames,
+              kind, namespaced, verbs, shortNames,
+              label: kind,
               plural: name,
               apiVersion: groupVersion.split('/')[1],
               abbr: kindToAbbr(kind),
               apiGroup: groupVersion.split('/')[0],
-              labelPlural: `${label}${label.endsWith('s') ? 'es' : 's'}`,
+              labelPlural: `${kind}${kind.endsWith('s') ? 'es' : 's'}`,
               path: name,
               id: singularName,
               crd: true,

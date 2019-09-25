@@ -8,7 +8,7 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { VMKind } from '../../types';
+import { VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { getDiskBus } from './disk';
@@ -17,7 +17,7 @@ import { Network } from './types';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
-export const getCPU = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.cpu.cores');
+export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
 export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
 export const getInterfaces = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.devices.interfaces', []);
@@ -26,13 +26,14 @@ export const getNetworks = (vm: VMKind) => _.get(vm, 'spec.template.spec.network
 export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes', []);
 export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates', []);
 
-export const getOperatingSystem = (vm: VMKind) =>
+export const getOperatingSystem = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
 export const getOperatingSystemName = (vm: VMKind) =>
   getValueByPrefix(getAnnotations(vm), `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vm)}`);
-export const getWorkloadProfile = (vm: VMKind) =>
+export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
-export const getFlavor = (vm: VMKind) => findKeySuffixValue(getLabels(vm), TEMPLATE_FLAVOR_LABEL);
+export const getFlavor = (vmLike: VMLikeEntityKind) =>
+  findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
 
 export const isVMRunning = (value: VMKind) =>
   _.get(value, 'spec.running', false) as VMKind['spec']['running'];

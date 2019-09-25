@@ -108,8 +108,8 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({volumeMounts}) => {
     <tbody>
       {volumeMounts.map((v: VolumeMount) => <tr key={v.name}>
         <td>{v.readOnly === true ? 'Read Only' : 'Read / Write'}</td>
-        <td>{v.name}</td>
-        <td className="co-break-all">{v.mountPath || '-'}</td>
+        <td className="co-break-all co-select-to-copy">{v.name}</td>
+        <td>{v.mountPath ? <div className="co-break-all co-select-to-copy">{v.mountPath}</div> : '-'}</td>
       </tr>)}
     </tbody>
   </table>;
@@ -192,7 +192,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
           <dt>State</dt>
           <dd><Status status={stateValue} /></dd>
           <dt>ID</dt>
-          <dd className="co-break-all">{status.containerID || '-'}</dd>
+          <dd>{status.containerID ? <div className="co-break-all co-select-to-copy">{status.containerID}</div> : '-'}</dd>
           <dt>Restarts</dt>
           <dd>{status.restartCount}</dd>
           <dt>Resource Requests</dt>
@@ -218,9 +218,9 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
         <SectionHeading text="Image Details" />
         <dl className="co-m-pane__details">
           <dt>Image</dt>
-          <dd className="co-break-all">{imageName || '-'}</dd>
+          <dd>{imageName ? <div className="co-break-all co-select-to-copy">{imageName}</div> : '-'}</dd>
           <dt>Image Version/Tag</dt>
-          <dd className="co-break-word">{imageTag || '-'}</dd>
+          <dd>{imageTag || '-'}</dd>
           <dt>Command</dt>
           <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
           <dt>Args</dt>

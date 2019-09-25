@@ -8,8 +8,8 @@ import {
   K8sResourceKindReference,
 } from '@console/internal/module/k8s';
 import { BreadCrumbs } from '@console/internal/components/utils/index';
-import { ClusterServiceVersionModel } from '@console/internal/models';
-import { ClusterServiceVersionKind } from '@console/internal/components/operator-lifecycle-manager/index';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
 import { OCSServiceModel } from '../../models';
 import { CreateOCSServiceForm } from './create-form';
 

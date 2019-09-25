@@ -1,18 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { mount } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 
-import {CatalogTile} from '../../node_modules/patternfly-react-extensions/dist/js/components/CatalogTile';
-import {VerticalTabsTab} from '../../node_modules/patternfly-react-extensions/dist/js/components/VerticalTabs';
-import {FilterSidePanel} from '../../node_modules/patternfly-react-extensions/dist/js/components/FilterSidePanel';
+import { CatalogTile } from '../../node_modules/patternfly-react-extensions/dist/js/components/CatalogTile';
+import { VerticalTabsTab } from '../../node_modules/patternfly-react-extensions/dist/js/components/VerticalTabs';
+import { FilterSidePanel } from '../../node_modules/patternfly-react-extensions/dist/js/components/FilterSidePanel';
 
-import { CatalogListPage } from '../../public/components/catalog/catalog-page';
+import { CatalogListPage, CatalogListPageProps, CatalogListPageState } from '../../public/components/catalog/catalog-page';
 import { CatalogTileViewPage, catalogCategories as initCatalogCategories } from '../../public/components/catalog/catalog-items';
 import { catalogListPageProps, catalogItems, catalogCategories} from '../../__mocks__/catalogItemsMocks';
 import { categorizeItems } from '../../public/components/utils/tile-view-page';
 
 describe(CatalogTileViewPage.displayName, () => {
-  let wrapper;
+  let wrapper: ReactWrapper<CatalogListPageProps, CatalogListPageState>;
 
   beforeEach(() => {
     wrapper = mount(<CatalogListPage {...catalogListPageProps} />);
@@ -26,21 +26,20 @@ describe(CatalogTileViewPage.displayName, () => {
   });
 
   it('renders category filter controls', () => {
-    const filterItems = wrapper.find(FilterSidePanel.CategoryItem);
+    const filterItems = wrapper.find<any>(FilterSidePanel.CategoryItem);
 
     expect(filterItems.exists()).toBe(true);
     expect(filterItems.length).toEqual(4); // Filter by Types
     expect(filterItems.at(0).props().count).toBe(11); // total count for clusterServiceClasses
     expect(filterItems.at(1).props().count).toBe(2); // total count for templates
     expect(filterItems.at(2).props().count).toBe(9); // total count for imagestreams
-    expect(filterItems.at(3).props().count).toBe(9); // total count for clusterServiceVersions
   });
 
   it('renders tiles correctly', () => {
-    const tiles = wrapper.find(CatalogTile);
+    const tiles = wrapper.find<any>(CatalogTile);
 
     expect(tiles.exists()).toBe(true);
-    expect(tiles.length).toEqual(31);
+    expect(tiles.length).toEqual(22);
 
     const cakeSqlTileProps = tiles.at(2).props();
     expect(cakeSqlTileProps.title).toEqual('CakePHP + MySQL');
@@ -49,14 +48,14 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(cakeSqlTileProps.vendor).toEqual('provided by Red Hat, Inc.');
     expect(cakeSqlTileProps.description.startsWith('An example CakePHP application with a MySQL database')).toBe(true);
 
-    const amqTileProps = tiles.at(23).props();
+    const amqTileProps = tiles.at(19).props();
     expect(amqTileProps.title).toEqual('Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)');
     expect(amqTileProps.iconImg).toEqual('test-file-stub');
     expect(amqTileProps.iconClass).toBe(null);
     expect(amqTileProps.vendor).toEqual('provided by Red Hat, Inc.');
     expect(amqTileProps.description.startsWith('Application template for JBoss A-MQ brokers. These can be deployed as standalone or in a mesh. This template doesn\'t feature SSL support.')).toBe(true);
 
-    const wildflyTileProps = tiles.at(30).props();
+    const wildflyTileProps = tiles.at(21).props();
     expect(wildflyTileProps.title).toEqual('WildFly');
     expect(wildflyTileProps.iconImg).toEqual('test-file-stub');
     expect(wildflyTileProps.iconClass).toBe(null);

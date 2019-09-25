@@ -9,7 +9,7 @@ import {
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { VMLikeEntityKind } from '../../../types';
-import { getVMLikeModel } from '../../../selectors/selectors';
+import { getVMLikeModel } from '../../../selectors/vm';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { getRemoveNicPatches } from '../../../k8s/patches/vm/vm-nic-patches';
 

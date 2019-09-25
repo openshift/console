@@ -7,14 +7,9 @@ $co-modal-ignore-warning-icon-width: 30px;
   @include co-break-word;
 }
 
-// reset font size back to 13px since console h5 font size is 15px
+// reset font size back to 13px since console h5 font size is 14px
 .catalog-item-header-pf-subtitle {
   font-size: 13px;
-}
-
-// reset font size back to 24px since console h1 font size is 26px
-.catalog-item-header-pf-title {
-  font-size: 24px;
 }
 
 .catalog-tile-pf-body .catalog-tile-pf-subtitle {
@@ -39,7 +34,7 @@ $co-modal-ignore-warning-icon-width: 30px;
   }
 
   &__kind-label {
-    font-weight: 600;
+    font-weight: var(--pf-global--FontWeight--bold);
   }
 
   &__name {
@@ -126,7 +121,6 @@ $co-modal-ignore-warning-icon-width: 30px;
 
   &__heading {
     font-size: 16px;
-    font-weight: 400;
     margin: 0 0 20px;
   }
 
@@ -136,13 +130,13 @@ $co-modal-ignore-warning-icon-width: 30px;
   }
 
   &__num-items {
-    font-weight: 700;
+    font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 0 20px;
   }
 
   // Enable scrolling on the modal
   &__overlay {
-    .modal-body .hint-block-pf {
+    .modal-body .co-hint-block {
         margin-bottom: 10px;
     }
 
@@ -183,18 +177,9 @@ $co-modal-ignore-warning-icon-width: 30px;
     flex: 0 0 220px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
   }
-
-  &__no-filter-results {
-    padding: 0;
-    &-title {
-      color: $color-pf-black-800;
-      font-size: 18px;
-    }
-  }
 }
 
 .co-catalog-tab__empty {
-  font-weight: lighter;
   color: $color-pf-black-600;
 }
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Row, Col } from 'patternfly-react';
 import { ChartAxis } from '@patternfly/react-charts';
 import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
 
@@ -36,18 +35,18 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
 
   const axis = width < parseInt(breakpointSM.value, 10) ?
     timestamps.length === 0 ? null : (
-      <Row className="co-utilization-card__item">
-        <Col className="co-utilization-card__axis">
+      <div className="row co-utilization-card__item">
+        <div className="co-utilization-card__axis">
           <UtilizationAxis timestamps={timestamps} />
-        </Col>
-      </Row>
+        </div>
+      </div>
     ) : (
-      <Row className="co-utilization-card__item">
-        <Col lg={5} md={5} sm={5} xs={5} />
-        <Col lg={7} md={7} sm={7} xs={7} className="co-utilization-card__axis">
+      <div className="row co-utilization-card__item">
+        <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5"></div>
+        <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__axis">
           {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
-        </Col>
-      </Row>
+        </div>
+      </div>
     );
   return (
     <div

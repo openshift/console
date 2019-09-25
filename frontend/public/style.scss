@@ -45,6 +45,7 @@
 @import "components/utils/log-window";
 @import "components/utils/resource-log";
 @import "components/utils/list-input";
+@import "components/utils/hint-block";
 @import "components/image-stream";
 @import "components/about-modal";
 @import "components/build-pipeline";
@@ -72,7 +73,6 @@
 @import "components/horizontal-nav";
 @import "components/edit-yaml";
 @import "components/sidebars/resource-sidebar";
-@import "components/operator-lifecycle-manager/operator-lifecycle-manager";
 @import "components/graphs/graphs";
 @import "components/masthead";
 @import "components/modals/modals";

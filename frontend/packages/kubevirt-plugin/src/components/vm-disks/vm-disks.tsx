@@ -12,8 +12,8 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 import { VMLikeEntityKind } from '../../types';
-import { asVM } from '../../selectors/selectors';
 import {
+  asVM,
   getDataVolumeTemplates,
   getDisks,
   getVolumeDataVolumeName,

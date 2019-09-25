@@ -13,7 +13,6 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   AsyncComponent,
   Kebab,
-  LabelList,
   NodeLink,
   ResourceIcon,
   ResourceKebab,
@@ -27,6 +26,7 @@ import {
   units,
   humanizeCpuCores,
   humanizeDecimalBytes,
+  OwnerReferences,
 } from './utils';
 import { PodLogs } from './pod-logs';
 import { requirePrometheus, Area } from './graphs';
@@ -56,7 +56,7 @@ const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
   classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
@@ -74,7 +74,7 @@ const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) 
         <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={pod.metadata.labels} />
+        <OwnerReferences resource={pod} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <NodeLink name={pod.spec.nodeName} />
@@ -110,7 +110,7 @@ const PodTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Pod Labels', sortField: 'metadata.labels', transforms: [sortable],
+      title: 'Owner', sortField:'metadata.ownerReferences[0].name', transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {

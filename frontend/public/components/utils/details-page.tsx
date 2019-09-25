@@ -1,12 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Kebab, LabelList, ResourceLink, Selector, Timestamp, useAccessReview } from './index';
+import {
+  Kebab,
+  LabelList,
+  OwnerReferences,
+  ResourceLink,
+  Selector,
+  Timestamp,
+  useAccessReview,
+} from './index';
 import {
   K8sResourceKind,
   modelFor,
   referenceFor,
-  referenceForOwnerRef,
   Toleration,
 } from '../../module/k8s';
 
@@ -27,8 +34,6 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
-  const owners = (_.get(metadata, 'ownerReferences') || [])
-    .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
   const tolerations = showTolerations ? getTolerations(resource) : null;
 
   const canUpdate = useAccessReview({
@@ -71,8 +76,8 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-    { owners.length ? <dt>{pluralize(owners.length, 'Owner')}</dt> : null }
-    { owners.length ? <dd>{ owners }</dd> : null }
+    <dt>Owner</dt>
+    <dd><OwnerReferences resource={resource} /></dd>
   </dl>;
 };
 

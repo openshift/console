@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { connectToFlags, flagPending } from '../reducers/features';
+import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -12,7 +11,6 @@ import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
 import {
   LoadError,
-  LoadingBox,
   LoadingInline,
   MsgBox,
 } from './utils/status-box';
@@ -367,33 +365,9 @@ const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Re
 export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} virtualize />;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
-  if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
-    return <LoadingBox />;
-  }
-  if (props.flags[FLAGS.CHARGEBACK]) {
-    return <div>
-      <ChargebackNavBar match={props.match} />
-      <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} />
-    </div>;
-  }
   return <div>
-    <div className="co-well">
-      <h4>Getting Started</h4>
-      <p>
-      Chargeback is not yet installed and enabled.
-      See our documention for instructions on how to install Chargeback Report on your Tectonic Cluster.
-      </p>
-      <p>
-        Chargeback is an alpha feature.
-      </p>
-      <a href="https://coreos.com/tectonic/docs/latest/reports/install-chargeback.html" target="_blank" rel="noopener noreferrer">
-        <button className="btn btn-info">Installing Chargeback Report <ExternalLinkAltIcon /></button>
-      </a>
-    </div>
-    <ListPage {...props} canCreate kind={ReportReference} ListComponent={ReportsList} mock title="Chargeback Reporting" />
-    <div style={{marginTop: '-60px', textAlign: 'center'}}>
-      <EmptyMsg />
-    </div>
+    <ChargebackNavBar match={props.match} />
+    <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} />
   </div>;
 };
 

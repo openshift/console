@@ -20,7 +20,7 @@ describe(BreadCrumbs.displayName, () => {
 
   it('renders each given breadcrumb', () => {
     const links: ShallowWrapper<any> = wrapper.find(Link);
-    const nonLink: ShallowWrapper<any> = wrapper.find('li.active');
+    const nonLink: ShallowWrapper<any> = wrapper.findWhere(BreadcrumbItem => BreadcrumbItem.props().isActive === true);
 
     expect(links.length + nonLink.length).toEqual(breadcrumbs.length);
 
@@ -29,7 +29,7 @@ describe(BreadCrumbs.displayName, () => {
         expect(links.at(i).props().to).toEqual(crumb.path);
         expect(links.at(i).childAt(0).text()).toEqual(crumb.name);
       } else {
-        expect(nonLink.text()).toEqual(crumb.name);
+        expect(nonLink.render().text()).toEqual(crumb.name);
       }
     });
   });

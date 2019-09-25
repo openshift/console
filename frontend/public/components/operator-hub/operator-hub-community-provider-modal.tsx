@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
-import { Checkbox } from 'patternfly-react';
+import { Checkbox } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
@@ -15,8 +14,8 @@ export class OperatorHubCommunityProviderModal extends React.Component<OperatorH
     };
   }
 
-  onIgnoreChange = (event) => {
-    this.setState({ ignoreWarnings: _.get(event, 'target.checked', false) });
+  onIgnoreChange = (checked) => {
+    this.setState({ ignoreWarnings: checked });
   };
 
   submit = (event) => {
@@ -45,9 +44,13 @@ export class OperatorHubCommunityProviderModal extends React.Component<OperatorH
                 </span>
               )}
             </p>
-            <Checkbox className="co-modal-ignore-warning__checkbox" onChange={this.onIgnoreChange} checked={ignoreWarnings}>
-              Do not show this warning again
-            </Checkbox>
+            <Checkbox
+              className="co-modal-ignore-warning__checkbox"
+              onChange={this.onIgnoreChange}
+              isChecked={ignoreWarnings}
+              id="do-not-show-warning"
+              label="Do not show this warning again"
+            />
           </div>
         </div>
       </ModalBody>

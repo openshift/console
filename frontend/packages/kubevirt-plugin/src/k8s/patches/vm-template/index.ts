@@ -1,6 +1,6 @@
 import { TemplateKind, Patch } from '@console/internal/module/k8s';
 import { VMLikeEntityKind, VMKind } from '../../../types';
-import { isVM } from '../../../selectors/selectors';
+import { isVM } from '../../../selectors/vm';
 import { selectVM } from '../../../selectors/vm-template/selectors';
 
 export const addPrefixToPatch = (prefix: string, patch: Patch): Patch => ({
