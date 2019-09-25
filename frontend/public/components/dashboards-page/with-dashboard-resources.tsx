@@ -178,7 +178,7 @@ type WithDashboardResourcesProps = {
   stopWatchAlerts: StopWatchAlertsAction;
   [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
   [RESULTS_TYPE.URL]: RequestMap<any>;
-  [RESULTS_TYPE.ALERTS]: RequestMap<any>;
+  [RESULTS_TYPE.ALERTS]: RequestMap<Alert[]>;
 };
 
 export type WatchK8sResource = (resource: FirehoseResource) => void;

@@ -117,7 +117,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({
             <DetailItem
               key="kubernetes"
               title="Kubernetes version"
-              error={kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
+              error={!!kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
               isLoading={!kubernetesVersionData}
             >
               {k8sGitVersion}

@@ -14,11 +14,11 @@ export const defaults = {
 };
 
 type Request<R> = {
-  active: boolean,
-  timeout: NodeJS.Timer,
-  inFlight: boolean,
-  data: R,
-  error: any,
+  active: boolean;
+  timeout: NodeJS.Timer;
+  inFlight: boolean;
+  data: R;
+  error: any;
 };
 
 export type RequestMap<R> = ImmutableMap<string, Request<R>>;
