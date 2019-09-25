@@ -9,7 +9,10 @@ import {
   SecretModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { createKnativeService } from '@console/knative-plugin';
+import {
+  getKnativeServiceDepResource,
+  ServiceModel as KnServiceModel,
+} from '@console/knative-plugin';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
@@ -424,21 +427,20 @@ export const createResources = async (
     }
 
     const [imageStreamResponse] = await Promise.all(requests);
-    return Promise.all([
-      createKnativeService(
-        name,
-        applicationName,
-        projectName,
-        scaling,
-        limits,
-        unknownTargetPort,
-        userLabels,
-        imageStreamResponse.status.dockerImageRepository,
-        imageStreamName,
-        defaultAnnotations,
-        imageTag,
-      ),
-    ]);
+    const knDeploymentResource = getKnativeServiceDepResource(
+      name,
+      applicationName,
+      projectName,
+      scaling,
+      limits,
+      unknownTargetPort,
+      userLabels,
+      imageStreamResponse.status.dockerImageRepository,
+      imageStreamName,
+      defaultAnnotations,
+      imageTag,
+    );
+    return Promise.all([k8sCreate(KnServiceModel, knDeploymentResource)]);
   }
 
   requests.push(createDeploymentConfig(formData, imageStream, dryRun));

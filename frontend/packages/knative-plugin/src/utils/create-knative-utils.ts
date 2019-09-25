@@ -1,4 +1,4 @@
-import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
   ServiceModel,
@@ -27,7 +27,7 @@ interface ResourceType {
   limitUnit: string;
 }
 
-export const createKnativeService = (
+export const getKnativeServiceDepResource = (
   name: string,
   applicationName: string,
   namespace: string,
@@ -39,7 +39,7 @@ export const createKnativeService = (
   imageStreamName?: string,
   annotations?: { [name: string]: string },
   imageTag?: string,
-): Promise<K8sResourceKind> => {
+): K8sResourceKind => {
   const contTargetPort: number = parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
@@ -114,7 +114,7 @@ export const createKnativeService = (
     },
   };
 
-  return k8sCreate(ServiceModel, knativeDeployResource);
+  return knativeDeployResource;
 };
 
 export const knativeServingResources = (namespace: string): FirehoseResource[] => {
