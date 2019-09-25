@@ -3,9 +3,10 @@ import { PodKind } from '../module/k8s';
 import { Dashboard, DashboardGrid } from './dashboard';
 import { PodDashboardDetailsCard } from './pod-dashboard-details';
 import { PodDashboardContext } from './pod-dashboard-context';
+import { PodDashboardInventoryCard } from './pod-dashboard-inventory';
 
 const mainCards = [];
-const leftCards = [{ Card: PodDashboardDetailsCard }];
+const leftCards = [{ Card: PodDashboardDetailsCard }, { Card: PodDashboardInventoryCard }];
 const rightCards = [];
 
 export const PodDashboard: React.FC<PodDashboardProps> = (props) => {
