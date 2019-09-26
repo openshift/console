@@ -19,7 +19,7 @@ describe('WorkloadNode', () => {
     workloadData = topologyTransformedData[Object.keys(topologyTransformedData)[0]];
   });
 
-  it('should render the decorators', () => {
+  xit('should render the decorators', () => {
     const wrapper = mount(
       <WorkloadNode
         x={0}

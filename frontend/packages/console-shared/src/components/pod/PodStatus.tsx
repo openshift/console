@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
-import Tooltip from '../SvgPodTooltip';
+import { Tooltip } from '@patternfly/react-core';
 import { Pod } from '../../types';
 import { calculateRadius, podStatus, getPodStatus, podColor } from '../../utils';
+import './PodStatus.scss';
 
 const ANIMATION_DURATION = 350;
 
@@ -28,9 +29,18 @@ type PodStatusProps = {
 type PodStatusState = {
   vData: PodData[];
   updateOnEnd: boolean;
+  tipIndex?: number;
 };
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
+
+const podStatusIsNumeric = (podStatusValue: string) => {
+  return (
+    podStatusValue !== 'Scaled to 0' &&
+    podStatusValue !== 'Autoscaled to 0' &&
+    podStatusValue !== 'Idle'
+  );
+};
 
 class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
   constructor(props) {
@@ -88,69 +98,71 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       title = '',
       subTitle = '',
     } = this.props;
-    const { vData, updateOnEnd } = this.state;
+    const { vData, updateOnEnd, tipIndex } = this.state;
 
     const tooltipEvent: any = showTooltip
       ? [
           {
-            target: 'data',
             eventHandlers: {
-              onMouseOver: () => {
-                return [
-                  {
-                    target: 'labels',
-                    mutation: () => {
-                      return { active: true };
-                    },
-                  },
-                ];
-              },
-              onMouseOut: () => {
-                return [
-                  {
-                    target: 'labels',
-                    mutation: () => {
-                      return { active: false };
-                    },
-                  },
-                ];
+              onMouseOver: (e, hoverSlice) => {
+                this.setState({ tipIndex: hoverSlice.index });
               },
             },
           },
         ]
       : undefined;
+
+    const tipContent = (
+      <div className="odc-pod-status-tooltip">
+        {vData[tipIndex] && (
+          <React.Fragment>
+            <span
+              className="odc-pod-status-tooltip__status-box"
+              style={{ background: podColor[vData[tipIndex].x] }}
+            />
+            {vData[tipIndex].x}
+            {podStatusIsNumeric(vData[tipIndex].x) && (
+              <span key={3} className="odc-pod-status-tooltip__status-count">
+                {Math.round(vData[tipIndex].y)}
+              </span>
+            )}
+          </React.Fragment>
+        )}
+      </div>
+    );
+
     return (
-      <ChartDonut
-        events={tooltipEvent}
-        animate={{
-          duration: ANIMATION_DURATION,
-          onEnd: updateOnEnd ? this.doUpdate : undefined,
-        }}
-        standalone={standalone}
-        innerRadius={innerRadius}
-        radius={outerRadius}
-        groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
-        data={vData}
-        height={size}
-        width={size}
-        title={title}
-        subTitle={subTitle}
-        labelComponent={<Tooltip x={0} y={0} width={size} height={size * -0.2} />}
-        /*
-          // @ts-ignore */
-        padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
-        style={{
-          data: {
-            fill: ({ datum }) => podColor[datum.x],
-            stroke: ({ datum }) =>
-              (datum.x === 'Scaled to 0' || datum.x === 'Idle' || datum.x === 'Autoscaled to 0') &&
-              datum.y > 0
-                ? '#BBBBBB'
-                : 'none',
-            strokeWidth: 1,
-          },
-        }}
-      />
+      <Tooltip content={tipContent}>
+        <ChartDonut
+          events={tooltipEvent}
+          animate={{
+            duration: ANIMATION_DURATION,
+            onEnd: updateOnEnd ? this.doUpdate : undefined,
+          }}
+          standalone={standalone}
+          innerRadius={innerRadius}
+          radius={outerRadius}
+          groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
+          data={vData}
+          height={size}
+          width={size}
+          title={title}
+          subTitle={subTitle}
+          allowTooltip={false}
+          labels={() => null}
+          /*
+            // @ts-ignore */
+          padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
+          style={{
+            data: {
+              fill: ({ datum }) => podColor[datum.x],
+              stroke: ({ datum }) =>
+                !podStatusIsNumeric(datum.x) && datum.y > 0 ? '#BBBBBB' : 'none',
+              strokeWidth: 1,
+            },
+          }}
+        />
+      </Tooltip>
     );
   }
 }

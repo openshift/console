@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Status, calculateRadius, PodStatus } from '@console/shared';
-import { TooltipPosition } from '@patternfly/react-core';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
@@ -40,65 +40,66 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       {...others}
       attachments={[
         repoIcon && (
-          <Decorator
-            key="edit"
-            x={radius - decoratorRadius * 0.7}
-            y={radius - decoratorRadius * 0.7}
-            radius={decoratorRadius}
-            href={workload.data.editUrl}
-            external
-            title="Edit Source Code"
-            position={TooltipPosition.right}
-          >
-            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              {repoIcon}
-            </g>
-          </Decorator>
-        ),
-        workload.data.url && (
-          <Decorator
-            key="route"
-            x={radius - decoratorRadius * 0.7}
-            y={-radius + decoratorRadius * 0.7}
-            radius={decoratorRadius}
-            href={workload.data.url}
-            external
-            title="Open URL"
-            position={TooltipPosition.right}
-          >
-            <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
-            </g>
-          </Decorator>
-        ),
-        build && (
-          <Link
-            key="build"
-            to={`${resourcePathFromModel(
-              BuildModel,
-              build.metadata.name,
-              build.metadata.namespace,
-            )}/logs`}
-            className="odc-decorator__link"
-          >
+          <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
             <Decorator
-              x={-radius + decoratorRadius * 0.7}
+              x={radius - decoratorRadius * 0.7}
               y={radius - decoratorRadius * 0.7}
               radius={decoratorRadius}
-              title={`${build.metadata.name} ${build.status && build.status.phase}`}
-              position={TooltipPosition.left}
+              href={workload.data.editUrl}
+              external
             >
               <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                <foreignObject
-                  width={decoratorRadius}
-                  height={decoratorRadius}
-                  style={{ fontSize: decoratorRadius }}
-                >
-                  <Status status={build.status.phase} iconOnly noTooltip />
-                </foreignObject>
+                {repoIcon}
               </g>
             </Decorator>
-          </Link>
+          </Tooltip>
+        ),
+        workload.data.url && (
+          <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+            <Decorator
+              x={radius - decoratorRadius * 0.7}
+              y={-radius + decoratorRadius * 0.7}
+              radius={decoratorRadius}
+              href={workload.data.url}
+              external
+            >
+              <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
+              </g>
+            </Decorator>
+          </Tooltip>
+        ),
+        build && (
+          <Tooltip
+            key="build"
+            content={`${build.metadata.name} ${build.status && build.status.phase}`}
+            position={TooltipPosition.left}
+          >
+            <Link
+              to={`${resourcePathFromModel(
+                BuildModel,
+                build.metadata.name,
+                build.metadata.namespace,
+              )}/logs`}
+              className="odc-decorator__link"
+            >
+              <Decorator
+                x={-radius + decoratorRadius * 0.7}
+                y={radius - decoratorRadius * 0.7}
+                radius={decoratorRadius}
+              >
+                <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                  <foreignObject
+                    width={decoratorRadius}
+                    height={decoratorRadius}
+                    style={{ fontSize: decoratorRadius }}
+                  >
+                    <Status status={build.status.phase} iconOnly noTooltip />
+                  </foreignObject>
+                </g>
+              </Decorator>
+            </Link>
+          </Tooltip>
         ),
       ]}
     >
