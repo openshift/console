@@ -83,26 +83,6 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
       item.subscription.metadata.name
     }?showDelete=true`;
 
-  const markdownStyles = `
-    table {
-      margin-bottom: 10px;
-    }
-    tr > th {
-      text-align: left;
-    }
-    th, td {
-      padding: 5px 15px;
-      word-break: break-word;
-      border: none;
-      border-bottom: 1px solid #ededed;
-      vertical-align: top;
-    }
-    code {
-      padding: 0;
-      background: transparent;
-      border: 0;
-    }`;
-
   return (
     <React.Fragment>
       <Modal.Header>
@@ -146,11 +126,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
               </PropertiesSidePanel>
               <div className="co-catalog-page__overlay-description">
                 {getHintBlock()}
-                {longDescription ? (
-                  <MarkdownView content={longDescription} styles={markdownStyles} />
-                ) : (
-                  description
-                )}
+                {longDescription ? <MarkdownView content={longDescription} /> : description}
               </div>
             </div>
           </div>
