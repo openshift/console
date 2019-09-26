@@ -29,7 +29,8 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   };
 
-  const onPerspectiveSelect = (perspective: Extension<any>):void => {
+  const onPerspectiveSelect = (event: React.MouseEvent<HTMLLinkElement>, perspective: Extension<any>):void => {
+    event.preventDefault();
     if (perspective.properties.id !== activePerspective) {
       setActivePerspective(perspective.properties.id);
       history.push(perspective.properties.landingPageURL);
@@ -59,8 +60,9 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     return perspectives.map((nextPerspective: Extension<any>) => (
       <DropdownItem
         key={nextPerspective.properties.id}
-        onClick={() => onPerspectiveSelect(nextPerspective)}
+        onClick={(event: React.MouseEvent<HTMLLinkElement>) => onPerspectiveSelect(event, nextPerspective)}
         isHovered={nextPerspective.properties.id === activePerspective}
+        href="#"
       >
         <Title size="md">
           <span className="oc-nav-header__icon">
