@@ -37,7 +37,7 @@ namespace ExtensionProperties {
     fetch?: (url: string) => Promise<R>;
 
     /** Resolve the subsystem's health */
-    healthHandler: (response: R) => SubsystemHealth;
+    healthHandler: (response: R, error: boolean) => SubsystemHealth;
   }
 
   export interface DashboardsOverviewHealthPrometheusSubsystem
@@ -51,6 +51,7 @@ namespace ExtensionProperties {
     /** Resolve the subsystem's health */
     healthHandler: (
       response: PrometheusResponse,
+      error: boolean,
       resource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
     ) => SubsystemHealth;
   }

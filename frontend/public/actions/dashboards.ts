@@ -8,10 +8,11 @@ import { RootState } from '../redux';
 
 export enum ActionType {
   StopWatch = 'stopWatch',
-  UpdateResult = 'updateResult',
+  SetData = 'setData',
   ActivateWatch = 'activateWatch',
   UpdateWatchTimeout = 'updateWatchTimeout',
   UpdateWatchInFlight = 'updateWatchInFlight',
+  SetError = 'setError',
 }
 
 const REFRESH_TIMEOUT = 5000;
@@ -19,32 +20,34 @@ const REFRESH_TIMEOUT = 5000;
 export const ALERTS_KEY = 'alerts';
 
 export const stopWatch = (type: RESULTS_TYPE, key: string) => action(ActionType.StopWatch, { type, key });
-export const updateResult = (type: RESULTS_TYPE, key: string, result) => action(ActionType.UpdateResult, { type, key, result });
+export const setData = (type: RESULTS_TYPE, key: string, data) => action(ActionType.SetData, { type, key, data });
 export const activateWatch = (type: RESULTS_TYPE, key: string) => action(ActionType.ActivateWatch, { type, key });
 export const updateWatchTimeout = (type: RESULTS_TYPE, key: string, timeout: NodeJS.Timer) => action(ActionType.UpdateWatchTimeout, { type, key, timeout});
 export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: boolean) => action(ActionType.UpdateWatchInFlight, { type, key, inFlight });
+export const setError = (type: RESULTS_TYPE, key: string, error) => action(ActionType.SetError, { type, key, error });
+
 
 const dashboardsActions = {
   stopWatch,
-  updateResult,
+  setData,
   activateWatch,
   updateWatchTimeout,
   updateWatchInFlight,
+  setError,
 };
 
 const fetchPeriodically: FetchPeriodically = async(dispatch, type, key, url, getState, fetch) => {
   if (!isWatchActive(getState().dashboards, type, key)) {
     return;
   }
-  let result;
   try {
     dispatch(updateWatchInFlight(type, key, true));
-    result = await fetch(url);
+    const data = await fetch(url);
+    dispatch(setData(type, key, data));
   } catch (error) {
-    result = error;
+    dispatch(setError(type, key, error));
   } finally {
     dispatch(updateWatchInFlight(type, key, false));
-    dispatch(updateResult(type, key, result));
     const timeout = setTimeout(() => fetchPeriodically(dispatch, type, key, url, getState, fetch), REFRESH_TIMEOUT);
     dispatch(updateWatchTimeout(type, key, timeout));
   }
@@ -56,7 +59,7 @@ export const watchPrometheusQuery: WatchPrometheusQueryAction = query => (dispat
   if (!isActive) {
     const prometheusBaseURL = window.SERVER_FLAGS.prometheusBaseURL;
     if (!prometheusBaseURL) {
-      dispatch(updateResult(RESULTS_TYPE.PROMETHEUS, query, {}));
+      dispatch(setError(RESULTS_TYPE.PROMETHEUS, query, new Error('Prometheus URL is not available')));
     } else {
       const url = `${prometheusBaseURL}/api/v1/query?query=${encodeURIComponent(query)}`;
       fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, query, url, getState, coFetchJSON);
@@ -79,7 +82,7 @@ export const watchAlerts: WatchAlertsAction = () => (dispatch, getState) => {
   if (!isActive) {
     const alertManagerBaseURL = window.SERVER_FLAGS.alertManagerBaseURL;
     if (!alertManagerBaseURL) {
-      dispatch(updateResult(RESULTS_TYPE.ALERTS, ALERTS_KEY, {}));
+      dispatch(setError(RESULTS_TYPE.ALERTS, ALERTS_KEY, new Error('AlertManager URL is not available')));
     } else {
       const alertManagerURL = `${alertManagerBaseURL}/api/v2/alerts?silenced=false&inhibited=false`;
       fetchPeriodically(dispatch, RESULTS_TYPE.ALERTS, ALERTS_KEY, alertManagerURL, getState, coFetchJSON);

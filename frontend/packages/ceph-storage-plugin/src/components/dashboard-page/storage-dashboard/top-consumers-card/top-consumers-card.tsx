@@ -6,6 +6,7 @@ import { DashboardCardBody } from '@console/internal/components/dashboard/dashbo
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -101,7 +102,11 @@ const TopConsumerCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const topConsumers = getTopConsumersQueries(flags);
   const topConsumerStats = prometheusResults.getIn([
     topConsumers[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const topConsumerStatsError = prometheusResults.getIn([
+    topConsumers[TopConsumerResourceValue[metricType] + TopConsumerSortByValue[sortBy]],
+    'loadError',
   ]);
 
   return (
@@ -130,6 +135,7 @@ const TopConsumerCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
       <DashboardCardBody className="co-dashboard-card__body--top-margin">
         <TopConsumersBody
           topConsumerStats={topConsumerStats}
+          error={topConsumerStatsError}
           metricType={TopConsumerResourceValueMapping[metricType]}
           sortByOption={sortBy}
         />

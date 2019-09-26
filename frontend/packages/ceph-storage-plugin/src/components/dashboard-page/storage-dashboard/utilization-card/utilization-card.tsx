@@ -13,6 +13,7 @@ import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
 import { UtilizationBody } from '@console/internal/components/dashboard/utilization-card/utilization-body';
 import { UtilizationItem } from '@console/internal/components/dashboard/utilization-card/utilization-item';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from '../../../../constants';
 import {
   StorageDashboardQuery,
@@ -44,22 +45,42 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
   const iopsUtilization = prometheusResults.getIn([
     UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY] +
       UTILIZATION_QUERY_HOUR_MAP[duration],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const iopsUtilizationError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
   ]);
   const latencyUtilization = prometheusResults.getIn([
     UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY] +
       UTILIZATION_QUERY_HOUR_MAP[duration],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const latencyUtilizationError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
   ]);
   const throughputUtilization = prometheusResults.getIn([
     UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY] +
       UTILIZATION_QUERY_HOUR_MAP[duration],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const throughputUtilizationError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
   ]);
   const recoveryUtilization = prometheusResults.getIn([
     UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY] +
       UTILIZATION_QUERY_HOUR_MAP[duration],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const recoveryUtilizationError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
   ]);
 
   const iopsStats = getRangeVectorStats(iopsUtilization);
@@ -83,6 +104,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           <UtilizationItem
             title="IOPS"
             data={iopsStats}
+            error={iopsUtilizationError}
             isLoading={!iopsUtilization}
             humanizeValue={humanizeIOPS}
             query={
@@ -93,6 +115,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           <UtilizationItem
             title="Latency"
             data={latencyStats}
+            error={latencyUtilizationError}
             isLoading={!latencyUtilization}
             humanizeValue={humanizeLatency}
             query={
@@ -103,6 +126,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           <UtilizationItem
             title="Throughput"
             data={throughputStats}
+            error={throughputUtilizationError}
             isLoading={!throughputUtilization}
             humanizeValue={humanizeDecimalBytesPerSec}
             query={
@@ -113,6 +137,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           <UtilizationItem
             title="Recovery"
             data={recoveryStats}
+            error={recoveryUtilizationError}
             isLoading={!recoveryUtilization}
             humanizeValue={humanizeDecimalBytesPerSec}
             query={

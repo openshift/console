@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 
 export enum HostQuery {
   CPU_UTILIZATION = 'CPU_UTILIZATION',
@@ -69,5 +70,5 @@ type HostQueryType = {
   [key: string]: string;
 };
 
-export const getHostQueryResultError = (result: any): boolean =>
+export const getHostQueryResultError = (result: PrometheusResponse): boolean =>
   _.get(result, 'status', '') !== 'success';

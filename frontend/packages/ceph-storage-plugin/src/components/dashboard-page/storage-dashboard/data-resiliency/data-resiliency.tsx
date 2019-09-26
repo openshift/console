@@ -12,6 +12,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 import './data-resiliency.scss';
 
@@ -60,18 +61,26 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
 
   const cleanAndActivePGRaw = prometheusResults.getIn([
     DATA_RESILIENCY_QUERIES.CEPH_PG_CLEAN_AND_ACTIVE_QUERY,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const cleanAndActivePGRawError = prometheusResults.getIn([
+    DATA_RESILIENCY_QUERIES.CEPH_PG_CLEAN_AND_ACTIVE_QUERY,
+    'loadError',
   ]);
   const totalPGRaw = prometheusResults.getIn([
     DATA_RESILIENCY_QUERIES.CEPH_PG_TOTAL_QUERY,
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const totalPGRawError = prometheusResults.getIn([
+    DATA_RESILIENCY_QUERIES.CEPH_PG_TOTAL_QUERY,
+    'loadError',
   ]);
 
   const infoText =
     'Data Resiliency presents status of data replication and rebalancing operations.';
   const totalPg = getCapacityStats(totalPGRaw);
   const cleanAndActivePg = getCapacityStats(cleanAndActivePGRaw);
-  const error = !(totalPg && cleanAndActivePg);
+  const error = cleanAndActivePGRawError || totalPGRawError || !(totalPg && cleanAndActivePg);
 
   let progressPercentage;
   if (!error) {
@@ -88,7 +97,7 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody
         className="ceph-data-resiliency__dashboard-body"
-        isLoading={!(totalPGRaw && cleanAndActivePGRaw)}
+        isLoading={!error && !(totalPGRaw && cleanAndActivePGRaw)}
       >
         {progressPercentage >= 100 || !progressPercentage ? (
           <DataResiliencyStatusBody error={error} />

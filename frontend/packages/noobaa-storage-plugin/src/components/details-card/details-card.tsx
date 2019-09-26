@@ -16,6 +16,7 @@ import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/interna
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';
 
@@ -55,7 +56,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     };
   }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
 
-  const queryResult = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'result']);
+  const queryResult = prometheusResults.getIn([
+    NOOBAA_SYSTEM_NAME_QUERY,
+    'data',
+  ]) as PrometheusResponse;
+  const queryResultError = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'loadError']);
 
   const systemName = getMetric(queryResult, 'system_name');
   const systemAddress = getMetric(queryResult, 'system_address');
@@ -85,14 +90,14 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="system_name"
             title="System Name"
             isLoading={!queryResult}
-            error={!systemLink}
+            error={queryResultError || !systemLink}
           >
             <ExternalLink href={systemLink} text={systemName} />
           </DetailItem>
           <DetailItem
             key="provider"
             title="Provider"
-            error={!infrastructurePlatform}
+            error={infrastructureLoaded && !infrastructurePlatform}
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
@@ -101,7 +106,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title="Version"
             isLoading={!subscriptionLoaded}
-            error={!ocsVersion}
+            error={subscriptionLoaded && !ocsVersion}
           >
             {ocsVersion}
           </DetailItem>

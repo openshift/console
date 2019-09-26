@@ -49,12 +49,20 @@ const ObjectDashboardCapacityCard: React.FC<DashboardItemProps> = ({
 
   const capacityUsageTop6AndOthers: PrometheusResponse = prometheusResults.getIn([
     ObjectCapacityQueries[capacityUsageType][0],
-    'result',
+    'data',
+  ]);
+  const capacityUsageTop6AndOthersError = prometheusResults.getIn([
+    ObjectCapacityQueries[capacityUsageType][0],
+    'loadError',
   ]);
 
   const capacityUsageTotalResult: PrometheusResponse = prometheusResults.getIn([
     ObjectCapacityQueries[capacityUsageType][1],
-    'result',
+    'data',
+  ]);
+  const capacityUsageTotalResultError = prometheusResults.getIn([
+    ObjectCapacityQueries[capacityUsageType][1],
+    'loadError',
   ]);
 
   let totalUsage = 0;
@@ -79,6 +87,7 @@ const ObjectDashboardCapacityCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--top-margin">
         <CapacityCardBody
+          error={capacityUsageTop6AndOthersError || capacityUsageTotalResultError}
           isLoading={!capacityUsageTop6AndOthers || !capacityUsageTotalResult}
           metricsData={capacityUsageVectorStats}
           totalUsage={totalUsage}

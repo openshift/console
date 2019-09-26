@@ -8,9 +8,9 @@ const formatCount = (count: number) => {
   return `${hCount.string} Object${count === 1 ? '' : 's'}`;
 };
 
-const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, link }) => (
+const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, link, error }) => (
   <div className="nb-buckets-card__row-status-item">
-    {_.isNil(status) ? (
+    {error || _.isNil(status) ? (
       <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Unavailable</span>
     ) : Number(status) > 0 ? (
       <React.Fragment>
@@ -36,13 +36,13 @@ const BucketsRow: React.FC<BucketsRowProps> = React.memo(
 );
 
 export const BucketsItem: React.FC<BucketsItemProps> = React.memo(
-  ({ title, bucketsCount, objectsCount, unhealthyCount, isLoading, link }) =>
+  ({ title, bucketsCount, objectsCount, unhealthyCount, isLoading, link, error }) =>
     isLoading ? (
       <LoadingInline />
     ) : (
       <div className="co-inventory-card__item">
         <BucketsRow title={title} bucketsCount={bucketsCount} objectsCount={objectsCount} />
-        <BucketsRowStatus status={unhealthyCount} link={link} />
+        <BucketsRowStatus status={unhealthyCount} link={link} error={error} />
       </div>
     ),
 );
@@ -52,6 +52,7 @@ export type BucketsType = {
   isLoading: boolean;
   objectsCount: string;
   unhealthyCount: string | number;
+  error: boolean;
 };
 
 type BucketsItemProps = BucketsType & {
@@ -68,4 +69,5 @@ type BucketsRowProps = {
 type BucketsRowStatusProps = {
   link: string;
   status: string | number;
+  error: boolean;
 };

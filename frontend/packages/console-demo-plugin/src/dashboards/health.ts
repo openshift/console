@@ -8,7 +8,7 @@ export const getFooHealthState = (): SubsystemHealth => ({
   state: HealthState.OK,
 });
 
-export const getBarHealthState = (response, nodes: FirehoseResult): SubsystemHealth => {
+export const getBarHealthState = (response, error, nodes: FirehoseResult): SubsystemHealth => {
   if (!response || !_.get(nodes, 'loaded')) {
     return {
       state: HealthState.LOADING,

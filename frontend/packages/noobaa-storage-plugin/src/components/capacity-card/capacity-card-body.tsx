@@ -43,7 +43,11 @@ export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({
   isLoading,
   metricsData,
   totalUsage,
+  error,
 }) => {
+  if (error) {
+    return <GraphEmpty />;
+  }
   if (isLoading) {
     return <LoadingInline />;
   }
@@ -77,4 +81,5 @@ type CapacityCardBodyProps = {
   isLoading: boolean;
   metricsData: DataPoint[];
   totalUsage: number;
+  error: boolean;
 };

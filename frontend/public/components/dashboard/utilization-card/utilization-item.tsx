@@ -6,7 +6,7 @@ import { DataPoint } from '../../graphs';
 import { AreaChart } from '../../graphs/area';
 
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
-  ({ title, data, humanizeValue, isLoading = false, query }) => {
+  ({ title, data, humanizeValue, isLoading = false, query, error }) => {
     const [containerRef, width] = useRefWidth();
 
     let current;
@@ -17,8 +17,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
-        data={data}
-        loading={isLoading}
+        data={error ? [] : data}
+        loading={!error && isLoading}
         query={query}
         xAxis={false}
         humanize={humanizeValue}
@@ -66,4 +66,5 @@ type UtilizationItemProps = {
   isLoading: boolean,
   humanizeValue: Humanize,
   query: string,
+  error: boolean;
 };

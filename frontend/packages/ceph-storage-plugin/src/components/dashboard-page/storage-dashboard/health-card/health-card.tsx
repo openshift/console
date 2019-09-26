@@ -9,6 +9,8 @@ import { DashboardCard } from '@console/internal/components/dashboard/dashboard-
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -52,11 +54,15 @@ const HealthCard: React.FC<DashboardItemProps> = ({
 
   const queryResult = prometheusResults.getIn([
     STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
-    'result',
+    'data',
+  ]) as PrometheusResponse;
+  const queryResultError = prometheusResults.getIn([
+    STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
+    'loadError',
   ]);
 
-  const cephCluster = _.get(resources, 'ceph');
-  const cephHealthState = getCephHealthState(queryResult, cephCluster);
+  const cephCluster = _.get(resources, 'ceph') as FirehoseResult;
+  const cephHealthState = getCephHealthState(queryResult, !!queryResultError, cephCluster);
 
   const alerts = filterCephAlerts(getAlerts(alertsResults));
 

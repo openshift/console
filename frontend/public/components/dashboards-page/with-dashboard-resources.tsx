@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { RESULTS_TYPE } from '../../reducers/dashboards';
+import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
 import {
   ALERTS_KEY,
   Fetch,
@@ -23,20 +22,22 @@ import {
 import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
 import { K8sResourceKind } from '../../module/k8s';
+import { PrometheusResponse } from '../graphs';
+import { Alert } from '../monitoring';
 
-const mapDispatchToProps = dispatch => ({
-  watchURL: (url, fetch): WatchURL => dispatch(watchURL(url, fetch)),
-  stopWatchURL: (url): StopWatchURL => dispatch(stopWatchURL(url)),
-  watchPrometheusQuery: (query): WatchPrometheus => dispatch(watchPrometheusQuery(query)),
-  stopWatchPrometheusQuery: (query): StopWatchPrometheus => dispatch(stopWatchPrometheusQuery(query)),
-  watchAlerts: (): WatchAlerts => dispatch(watchAlerts()),
-  stopWatchAlerts: (): StopWatchAlerts => dispatch(stopWatchAlerts()),
+const mapDispatchToProps: DispatchToProps = dispatch => ({
+  watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
+  stopWatchURL: (url) => dispatch(stopWatchURL(url)),
+  watchPrometheusQuery: (query) => dispatch(watchPrometheusQuery(query)),
+  stopWatchPrometheusQuery: (query) => dispatch(stopWatchPrometheusQuery(query)),
+  watchAlerts: () => dispatch(watchAlerts()),
+  stopWatchAlerts: () => dispatch(stopWatchAlerts()),
 });
 
 const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.URL]: state.dashboards.get(RESULTS_TYPE.URL),
-  [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS),
-  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS),
+  [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<PrometheusResponse>,
+  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<Alert[]>,
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -58,12 +59,16 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
 
       shouldComponentUpdate(nextProps: WithDashboardResourcesProps, nextState: WithDashboardResourcesState) {
         const urlResultChanged = this.urls.some(urlKey =>
-          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'result']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'result'])
+          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'data']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'data']) ||
+          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'loadError']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'loadError'])
         );
         const queryResultChanged = this.queries.some(query =>
-          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result'])
+          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) ||
+          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError'])
         );
-        const alertsResultChanged = this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'result']);
+        const alertsResultChanged =
+        this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'data']) ||
+        this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'loadError']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         return (
@@ -144,12 +149,21 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
     }
   );
 
-export type WatchURL = (url: string, fetch?: Fetch) => void;
-export type StopWatchURL = (url: string) => void;
-export type WatchPrometheus = (query: string) => void;
-export type StopWatchPrometheus = (query: string) => void;
-export type WatchAlerts = () => void;
-export type StopWatchAlerts = () => void;
+type DispatchToProps = (dispatch: any) => {
+  watchURL: WatchURL;
+  stopWatchURL: StopWatchURL;
+  watchPrometheusQuery: WatchPrometheus;
+  stopWatchPrometheusQuery: StopWatchPrometheus;
+  watchAlerts: WatchAlerts;
+  stopWatchAlerts: StopWatchAlerts;
+}
+
+type WatchURL = (url: string, fetch?: Fetch) => void;
+type StopWatchURL = (url: string) => void;
+type WatchPrometheus = (query: string) => void;
+type StopWatchPrometheus = (query: string) => void;
+type WatchAlerts = () => void;
+type StopWatchAlerts = () => void;
 
 type WithDashboardResourcesState = {
   k8sResources: FirehoseResource[];
@@ -162,9 +176,9 @@ type WithDashboardResourcesProps = {
   stopWatchURL: StopWatchURLAction;
   stopWatchPrometheusQuery: StopWatchPrometheusAction;
   stopWatchAlerts: StopWatchAlertsAction;
-  [RESULTS_TYPE.PROMETHEUS]: ImmutableMap<string, any>;
-  [RESULTS_TYPE.URL]: ImmutableMap<string, any>;
-  [RESULTS_TYPE.ALERTS]: ImmutableMap<string, any>;
+  [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
+  [RESULTS_TYPE.URL]: RequestMap<any>;
+  [RESULTS_TYPE.ALERTS]: RequestMap<Alert[]>;
 };
 
 export type WatchK8sResource = (resource: FirehoseResource) => void;
@@ -177,9 +191,9 @@ export type DashboardItemProps = {
   stopWatchPrometheusQuery: StopWatchPrometheus;
   watchAlerts: WatchAlerts;
   stopWatchAlerts: StopWatchAlerts;
-  urlResults: ImmutableMap<string, any>;
-  prometheusResults: ImmutableMap<string, any>;
-  alertsResults: ImmutableMap<string, any>;
+  urlResults: RequestMap<any>;
+  prometheusResults: RequestMap<PrometheusResponse>;
+  alertsResults: RequestMap<Alert[]>;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {
