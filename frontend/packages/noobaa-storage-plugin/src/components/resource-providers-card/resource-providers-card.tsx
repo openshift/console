@@ -4,9 +4,9 @@ import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
-  DashboardCardHelp,
   DashboardCardTitle,
 } from '@console/internal/components/dashboard/dashboard-card';
+import { FieldLevelHelp } from '@console/internal/components/utils/index';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -103,11 +103,11 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Resource Providers</DashboardCardTitle>
-        <DashboardCardHelp>
+        <FieldLevelHelp>
           A list of all MCG (Multi-cloud gateway) resources that are currently in use. Those
           resources are used to store data according to the buckets policies and can be a
           cloud-based resource or a bare metal resource.
-        </DashboardCardHelp>
+        </FieldLevelHelp>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceProvidersBody

@@ -8,14 +8,17 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-  DashboardCardHelp,
 } from '@console/internal/components/dashboard/dashboard-card';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardsStorageCapacityDropdownItem } from '@console/plugin-sdk';
-import { Dropdown, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
+import {
+  Dropdown,
+  FieldLevelHelp,
+  humanizeBinaryBytesWithoutB,
+} from '@console/internal/components/utils';
 import { getInstantVectorStats, GetStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { StorageDashboardQuery, CAPACITY_USAGE_QUERIES } from '../../../../constants/queries';
@@ -109,7 +112,7 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
             onChange={setCapacityViewType}
             selectedKey={[cvTypeSelected]}
           />
-          <DashboardCardHelp>{infoText}</DashboardCardHelp>
+          <FieldLevelHelp>{infoText}</FieldLevelHelp>
         </div>
       </DashboardCardHeader>
       <DashboardCardBody>

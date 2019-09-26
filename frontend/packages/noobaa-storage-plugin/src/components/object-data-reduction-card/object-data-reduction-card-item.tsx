@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardCardHelp } from '@console/internal/components/dashboard/dashboard-card';
 import {
+  FieldLevelHelp,
   humanizeBinaryBytesWithoutB,
   humanizePercentage,
   LoadingInline,
@@ -24,7 +24,7 @@ const ItemBody: React.FC<ItemBodyProps> = React.memo(
         <div className="nb-object-data-reduction-card__row-title">{title}</div>
         <div className="nb-object-data-reduction-card__row-status-item">
           {status}
-          <DashboardCardHelp>{infoText}</DashboardCardHelp>
+          <FieldLevelHelp>{infoText}</FieldLevelHelp>
         </div>
       </div>
     );
