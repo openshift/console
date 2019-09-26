@@ -1,5 +1,6 @@
 import { ComponentType } from 'react';
 import { Pod, ResourceProps, Resource } from '@console/shared';
+import { KebabOption } from '@console/internal/components/utils';
 import { Point } from '../../utils/svg-utils';
 
 export interface TopologyDataResources {
@@ -148,8 +149,19 @@ export type GroupProps = ViewGroup & {
   groupRef(element: GroupElementInterface): void;
 };
 
-export type NodeProvider = (string) => ComponentType<NodeProps>;
+export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
-export type EdgeProvider = (string) => ComponentType<EdgeProps>;
+export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;
 
-export type GroupProvider = (string) => ComponentType<GroupProps>;
+export type GroupProvider = (type: string) => ComponentType<GroupProps>;
+
+export enum GraphElementType {
+  node = 'node',
+  edge = 'edge',
+  group = 'group',
+}
+export type ActionProvider = (type: GraphElementType, id: string) => KebabOption[];
+
+export type ContextMenuProvider = {
+  open: (type: GraphElementType, id: string, eventX: number, eventY: number) => boolean;
+};

@@ -8,8 +8,11 @@ import {
   GraphModel,
   TopologyDataMap,
   GroupProvider,
+  ActionProvider,
+  ContextMenuProvider,
 } from './topology-types';
 import './Graph.scss';
+import { GraphContextMenu } from './GraphContextMenu';
 
 interface State {
   dimensions?: {
@@ -22,6 +25,7 @@ export interface GraphProps {
   nodeProvider: NodeProvider;
   edgeProvider: EdgeProvider;
   groupProvider: GroupProvider;
+  actionProvider: ActionProvider;
   graph: GraphModel;
   topology: TopologyDataMap;
   selected?: string;
@@ -37,6 +41,8 @@ export interface GraphProps {
 }
 
 export default class Graph extends React.Component<GraphProps, State> {
+  private contextMenuRef: ContextMenuProvider;
+
   constructor(props) {
     super(props);
     this.state = {};
@@ -60,12 +66,17 @@ export default class Graph extends React.Component<GraphProps, State> {
     graphApiRef && graphApiRef(r ? r.api() : null);
   };
 
+  setContextMenuRef = (r) => {
+    this.contextMenuRef = r;
+  };
+
   renderMeasure = ({ measureRef }) => {
     const {
       graph,
       nodeProvider,
       edgeProvider,
       groupProvider,
+      actionProvider,
       onSelect,
       onUpdateNodeGroup,
       onCreateConnection,
@@ -92,8 +103,10 @@ export default class Graph extends React.Component<GraphProps, State> {
             onCreateConnection={onCreateConnection}
             onRemoveConnection={onRemoveConnection}
             selected={selected}
+            contextMenu={this.contextMenuRef}
           />
         )}
+        <GraphContextMenu ref={this.setContextMenuRef} actionProvider={actionProvider} />
       </div>
     );
   };

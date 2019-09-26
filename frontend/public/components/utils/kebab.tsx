@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
+import { KEY_CODES } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import {
   annotationsModal,
@@ -26,8 +27,22 @@ import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
 
-const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick}) => {
-  return <button className="pf-c-dropdown__menu-item" onClick={(e) => onClick(e, option)} data-test-action={option.label}>{option.label}</button>;
+const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick, onEscape, autoFocus}) => {
+  const handleEscape = (e) => {
+    if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
+      onEscape();
+    }
+  };
+
+  return (
+    <button
+      className="pf-c-dropdown__menu-item"
+      onClick={(e) => onClick(e, option)}
+      autoFocus={autoFocus}
+      onKeyDown={onEscape && handleEscape}
+      data-test-action={option.label}>{option.label}
+    </button>
+  );
 };
 
 const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({option}) => {
@@ -43,17 +58,17 @@ const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string })
 };
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
-const KebabItem: React.FC<KebabItemProps> = (props) => {
+export const KebabItem: React.FC<KebabItemProps> = (props) => {
   return props.option.accessReview
     ? <KebabItemAccessReview {...props} />
     : <KebabItemEnabled {...props} />;
 };
 
-export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
+export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick, focusItem}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
   return <ul className="pf-c-dropdown__menu pf-m-align-right" data-test-id="action-items">
     {_.map(visibleOptions, (o, i) => <li key={i}>
-      <KebabItem option={o} onClick={onClick} />
+      <KebabItem option={o} onClick={onClick} autoFocus={focusItem ? o === focusItem : undefined} />
     </li>)}
   </ul>;
 };
@@ -244,9 +259,11 @@ type KebabItemProps = {
   option: KebabOption;
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
   isActionDropdown?: boolean;
+  autoFocus?: boolean;
+  onEscape?: () => void;
 };
 
-type KebabItemDisabledProps = {
+type KebabItemDisabledProps = React.HTMLProps<HTMLButtonElement> & {
   option: KebabOption;
   isActionDropdown?: boolean;
 }
@@ -255,6 +272,7 @@ export type KebabItemsProps = {
   options: KebabOption[];
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
   isActionDropdown?: boolean;
+  focusItem?: KebabOption;
 };
 
 export type KebabFactory = {[name: string]: KebabAction} & {common?: KebabAction[]};

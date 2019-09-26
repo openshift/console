@@ -417,7 +417,7 @@ export class TransformTopologyData {
   }
 }
 
-const getResourceDeploymentObject = (topologyObject: TopologyDataObject): ResourceProps => {
+export const getResourceDeploymentObject = (topologyObject: TopologyDataObject): ResourceProps => {
   if (!topologyObject) {
     return null;
   }

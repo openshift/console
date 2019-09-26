@@ -11,6 +11,7 @@ import {
 } from './topology-utils';
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
+import { ActionProviders } from './actions-providers';
 
 type State = {
   selected?: string;
@@ -115,6 +116,8 @@ export default class Topology extends React.Component<TopologyProps, State> {
       />
     );
 
+    const actionProvider = new ActionProviders(topology);
+
     return (
       <TopologyView
         controlBar={<TopologyControlBar graphApi={graphApi} />}
@@ -127,6 +130,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
           nodeProvider={nodeProvider}
           edgeProvider={edgeProvider}
           groupProvider={groupProvider}
+          actionProvider={actionProvider.getActions}
           selected={selected}
           onSelect={this.onSelect}
           onUpdateNodeGroup={this.onUpdateNodeGroup}
