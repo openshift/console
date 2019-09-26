@@ -48,12 +48,8 @@ body,
   }
 
   &__sidebar-heading {
-    font-size: 17px;
+    @include co-break-word;
     margin-bottom: 20px;
-    margin-top: 45px;
-  }
-
-  &__sidebar-heading--first {
     margin-top: 0;
   }
 

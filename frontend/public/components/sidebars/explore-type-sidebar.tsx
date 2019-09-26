@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 
 import { getDefinitionKey, getStoredSwagger, K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
-import { ResourceSidebarWrapper, sidebarScrollTop } from './resource-sidebar';
 import { CamelCaseWrap, EmptyBox, LinkifyExternal } from '../utils';
 
 const getRef = (definition: SwaggerDefinition): string => {
@@ -78,7 +77,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Breadcrumb>
+      {!_.isEmpty(breadcrumbs) && <Breadcrumb className="pf-c-breadcrumb--no-padding-top">
         {breadcrumbs.map((crumb, i) => {
           const isLast = i === breadcrumbs.length - 1;
           return <BreadcrumbItem key={i} isActive={isLast}>
@@ -87,7 +86,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
               : <button type="button" className="btn btn-link btn-link--no-btn-default-values" onClick={e => breadcrumbClicked(e, i)}>{crumb}</button>}
           </BreadcrumbItem>;
         })}
-      </Breadcrumb>
+      </Breadcrumb>}
       {description && <p className="co-break-word co-pre-line"><LinkifyExternal>{description}</LinkifyExternal></p>}
       {_.isEmpty(currentDefinition.properties)
         ? <EmptyBox label="Properties" />
@@ -116,17 +115,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   );
 };
 
-export const ExploreTypeSidebar: React.FC<ExploreTypeSidebarProps> = ({height, ...exploreTypeProps}) => (
-  <ResourceSidebarWrapper label={exploreTypeProps.kindObj.kind} linkLabel="View Schema" style={{height}} startHidden>
-    <ExploreType {...exploreTypeProps} scrollTop={sidebarScrollTop} />
-  </ResourceSidebarWrapper>
-);
-
 type ExploreTypeProps = {
   kindObj: K8sKind;
   scrollTop?: () => void;
 };
-
-type ExploreTypeSidebarProps = {
-  height: number;
-} & ExploreTypeProps;

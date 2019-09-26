@@ -53,12 +53,10 @@ $overview-sidebar-width: 550px;
 }
 
 .overview__sidebar-pane-body {
-  margin: $grid-gutter-width 0 0;
   padding: 0 20px;
 }
 
 .overview__sidebar-pane-head {
-  border-bottom: 1px solid $color-grey-background-border;
   padding-top: 5px;
 
   .co-m-pane__heading {
