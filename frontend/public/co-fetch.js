@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import 'whatwg-fetch';
 
-import { analyticsSvc } from './module/analytics';
 import { authSvc } from './module/auth';
 import store from './redux';
 
@@ -130,9 +129,7 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   const allOptions = _.defaultsDeep({method}, options, {headers});
   return coFetch(url, allOptions).then(response => {
     if (!response.ok) {
-      return response.text().then(text => {
-        analyticsSvc.error(`${text}: ${method} ${response.url}`);
-      });
+      return response.text();
     }
 
     // If the response has no body, return promise that resolves with an empty object

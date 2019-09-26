@@ -9,7 +9,6 @@ import 'abort-controller/polyfill';
 
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
-import { analyticsSvc } from '../module/analytics';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
@@ -63,7 +62,6 @@ class App extends React.PureComponent {
     // two way data binding :-/
     const { pathname } = props.location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-    analyticsSvc.route(pathname);
   }
 
   _isDesktop() {
@@ -144,35 +142,7 @@ fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
-
-window.onerror = function(message, source, lineno, colno, optError={}) {
-  try {
-    const e = `${message} ${source} ${lineno} ${colno}`;
-    analyticsSvc.error(e, null, optError.stack);
-  } catch (err) {
-    try {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } catch (ignored) {
-      // ignore
-    }
-  }
-  window.windowError = true;
-};
-
-window.onunhandledrejection = function(e) {
-  try {
-    analyticsSvc.error(e, null);
-  } catch (err) {
-    try {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } catch (ignored) {
-      // ignore
-    }
-  }
-  window.windowError = true;
-};
+window.onerror = window.onunhandledrejection = () => window.windowError = true;
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
