@@ -58,6 +58,7 @@ export * from './skeleton-catalog';
 export * from './dom-utils';
 export * from './hint-block';
 export * from './owner-references';
+export * from './field-level-help';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
