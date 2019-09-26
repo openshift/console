@@ -327,8 +327,8 @@ export const testOperatorDeployment: K8sResourceKind = {
         apiVersion: testClusterServiceVersion.apiVersion,
       },
     ],
-    spec: {},
   },
+  spec: {},
 };
 
 export const testSubscription: SubscriptionKind = {
