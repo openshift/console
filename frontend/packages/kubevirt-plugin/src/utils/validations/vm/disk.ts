@@ -1,6 +1,7 @@
 import { EntityMap } from '@console/shared';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '../common';
+import { validateDNS1123SubdomainValue } from '../common';
 import { addMissingSubject } from '../../grammar';
+import { ValidationErrorType } from '../types';
 
 export const validateDiskName = (name: string, diskLookup: EntityMap<any>) => {
   let validation = validateDNS1123SubdomainValue(name);

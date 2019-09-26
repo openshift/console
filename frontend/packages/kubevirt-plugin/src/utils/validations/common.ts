@@ -1,11 +1,18 @@
-import { joinGrammaticallyListOfItems, makeSentence } from '../grammar';
+import { getName, getNamespace } from '@console/shared';
+import * as _ from 'lodash';
+import { addMissingSubject, joinGrammaticallyListOfItems, makeSentence } from '../grammar';
+import { parseUrl } from '../url';
 import {
   DNS1123_END_ERROR,
   DNS1123_START_END_ERROR,
   DNS1123_START_ERROR,
   DNS1123_TOO_LONG_ERROR,
   EMPTY_ERROR,
+  END_WHITESPACE_ERROR,
+  START_WHITESPACE_ERROR,
+  URL_INVALID_ERROR,
 } from './strings';
+import { ValidationErrorType, ValidationObject } from './types';
 
 const alphanumericRegex = '[a-zA-Z0-9]';
 
@@ -14,13 +21,6 @@ const DNS_1123_OFFENDING_CHARACTERS = {
   "'": 'apostrophe', // eslint-disable-line quotes
   _: 'underscore',
 };
-
-export enum ValidationErrorType {
-  Error = 'error',
-  TrivialError = 'trivial-error',
-  Warn = 'warning',
-  Info = 'info',
-}
 
 export const getValidationObject = (
   message: string,
@@ -44,10 +44,41 @@ export const getValidationErrorMessage = (validationObject: ValidationObject): s
   );
 };
 
-// DNS-1123 subdomain
-export const validateDNS1123SubdomainValue = (value: string): ValidationObject => {
+export const isPositiveNumber = (value) => value && value.toString().match(/^[1-9]\d*$/);
+
+export const validateEntityAlreadyExists = (
+  name,
+  namespace,
+  entities,
+  { errorMessage, subject } = { errorMessage: undefined, subject: undefined },
+): ValidationObject => {
+  const exists =
+    entities &&
+    entities.some((entity) => getName(entity) === name && getNamespace(entity) === namespace);
+  return exists ? getValidationObject(addMissingSubject(errorMessage, subject)) : null;
+};
+
+export const validateEmptyValue = (
+  value: string,
+  { subject } = { subject: undefined },
+): ValidationObject => {
   if (!value) {
-    return getValidationObject(makeSentence(EMPTY_ERROR, false), ValidationErrorType.TrivialError);
+    return getValidationObject(
+      addMissingSubject(makeSentence(EMPTY_ERROR, false), subject),
+      ValidationErrorType.TrivialError,
+    );
+  }
+  return null;
+};
+
+// DNS-1123 subdomain
+export const validateDNS1123SubdomainValue = (
+  value: string,
+  { subject } = { subject: undefined },
+): ValidationObject => {
+  const emptyError = validateEmptyValue(value, { subject });
+  if (emptyError) {
+    return emptyError;
   }
 
   const forbiddenCharacters = new Set<string>();
@@ -99,10 +130,55 @@ export const validateDNS1123SubdomainValue = (value: string): ValidationObject =
     result = result ? `${result} ${forbiddenCharsSentence}` : forbiddenCharsSentence;
   }
 
-  return result && getValidationObject(result, ValidationErrorType.Error);
+  return (
+    result && getValidationObject(addMissingSubject(result, subject), ValidationErrorType.Error)
+  );
 };
 
-export type ValidationObject = {
-  message: string;
-  type?: ValidationErrorType;
+export const validatePositiveInteger = (
+  value: string,
+  { subject } = { subject: undefined },
+): ValidationObject => {
+  const emptyError = validateEmptyValue(value, { subject });
+  if (emptyError) {
+    return emptyError;
+  }
+  return isPositiveNumber(value) ? null : getValidationObject('must be positive integer');
+};
+
+export const validateTrim = (
+  value: string,
+  { subject }: { subject: string } = { subject: undefined },
+) => {
+  const emptyError = validateEmptyValue(value, { subject });
+  if (emptyError) {
+    return emptyError;
+  }
+
+  let resultErrror;
+  if (_.trimStart(value).length !== value.length) {
+    resultErrror = START_WHITESPACE_ERROR;
+  }
+
+  if (_.trimEnd(value).length !== value.length) {
+    resultErrror = END_WHITESPACE_ERROR;
+  }
+
+  return resultErrror
+    ? getValidationObject(addMissingSubject(resultErrror, subject), ValidationErrorType.Error)
+    : null;
+};
+
+export const validateURL = (
+  value: string,
+  { subject }: { subject: string } = { subject: undefined },
+) => {
+  const trimError = validateTrim(value, { subject });
+  if (trimError) {
+    return trimError;
+  }
+
+  return parseUrl(value)
+    ? null
+    : getValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
 };

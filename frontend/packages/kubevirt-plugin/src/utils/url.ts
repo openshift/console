@@ -7,3 +7,11 @@ export const getConsoleApiBase = () => {
 };
 
 export const isConnectionEncrypted = () => window.location.protocol === 'https:';
+
+export const parseUrl = (url: string) => {
+  try {
+    return new URL(url);
+  } catch (e) {
+    return null;
+  }
+};

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getResource, getServicesForVm } from 'kubevirt-web-ui-components';
+import { getServicesForVm } from 'kubevirt-web-ui-components';
 import {
   Firehose,
   StatusBox,
@@ -14,7 +14,7 @@ import { K8sResourceKind, PodKind, TemplateKind } from '@console/internal/module
 import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
-import { getLoadedData } from '../../utils';
+import { getLoadedData, getResource } from '../../utils';
 import { VirtualMachineInstanceModel } from '../../models';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';

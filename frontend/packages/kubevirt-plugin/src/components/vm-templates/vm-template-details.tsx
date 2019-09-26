@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { getResource } from 'kubevirt-web-ui-components';
 import { getNamespace } from '@console/shared';
 import {
   Firehose,
@@ -14,6 +13,7 @@ import {
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../models';
+import { getResource } from '../../utils';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {

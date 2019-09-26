@@ -1,0 +1,80 @@
+import * as React from 'react';
+import * as _ from 'lodash';
+import { inject } from '@console/internal/components/utils';
+import { getPlaceholder, getFieldId, getFieldTitle } from '../utils/vm-settings-tab-utils';
+import { iGetIn } from '../../../utils/immutable';
+import {
+  iGetFieldKey,
+  iGetFieldValue,
+  isFieldDisabled,
+  isFieldRequired,
+} from '../selectors/immutable/vm-settings';
+import { ValidationErrorType } from '../../../utils/validations/types';
+import { FormFieldContext } from './form-field-context';
+
+export enum FormFieldType {
+  TEXT = 'TEXT',
+  TEXT_AREA = 'TEXT_AREA',
+  SELECT = 'SELECT',
+  CHECKBOX = 'CHECKBOX',
+  INLINE_CHECKBOX = 'INLINE_CHECKBOX',
+}
+
+const hasValue = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA, FormFieldType.SELECT]);
+const hasIsDisabled = new Set([
+  FormFieldType.TEXT,
+  FormFieldType.SELECT,
+  FormFieldType.CHECKBOX,
+  FormFieldType.INLINE_CHECKBOX,
+]);
+const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
+const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
+const hasIsRequired = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA]);
+const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
+
+const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldType>, value) =>
+  supportedTypes.has(fieldType) ? value : undefined;
+
+// renders only when props change (shallow compare)
+export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled }) => {
+  return (
+    <FormFieldContext.Consumer>
+      {({
+        field,
+        fieldType,
+        isLoading,
+      }: {
+        field: any;
+        fieldType: FormFieldType;
+        isLoading: boolean;
+      }) => {
+        const set = setSupported.bind(undefined, fieldType);
+        const value = iGetFieldValue(field);
+        const key = iGetFieldKey(field);
+        const disabled = isDisabled || isFieldDisabled(field) || isLoading;
+
+        return inject(
+          children,
+          _.omitBy(
+            {
+              value: hasValue.has(fieldType) ? value || getPlaceholder(key) || '' : undefined,
+              isChecked: set(hasIsChecked, value),
+              isDisabled: set(hasIsDisabled, disabled),
+              disabled: set(hasDisabled, disabled),
+              isRequired: set(hasIsRequired, isFieldRequired(field)),
+              isValid: iGetIn(field, ['validation', 'type']) !== ValidationErrorType.Error,
+              id: getFieldId(key),
+              label: set(hasLabel, getFieldTitle(key)),
+            },
+            _.isUndefined,
+          ),
+        );
+      }}
+    </FormFieldContext.Consumer>
+  );
+};
+
+type FormFieldProps = {
+  children: React.ReactNode;
+  isDisabled?: boolean;
+};

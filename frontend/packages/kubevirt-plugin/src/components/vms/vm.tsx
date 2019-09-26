@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
-  getResource,
   VmStatus,
   // getSimpleVmStatus,
   // VM_SIMPLE_STATUS_ALL,
@@ -22,9 +22,10 @@ import {
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
-import { getBasicID, getLoadedData } from '../../utils';
+import { getBasicID, getLoadedData, getResource } from '../../utils';
 import { openCreateVmWizard } from '../modals';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { getCreateVMWizards } from '../create-vm-wizard/selectors/selectors';
 import { vmStatusFilter } from './table-filters';
 import { menuActions } from './menu-actions';
 
@@ -129,17 +130,34 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 
 VMList.displayName = 'VMList';
 
-const getCreateProps = (namespace: string) => ({
-  items: {
+const getCreateProps = ({
+  namespace,
+  hasCreateVMWizardsSupport,
+}: {
+  namespace: string;
+  hasCreateVMWizardsSupport: boolean;
+}) => {
+  const items: any = {
     wizard: 'Create with Wizard',
     yaml: 'Create from YAML',
-  },
-  createLink: () => `/k8s/ns/${namespace || 'default'}/virtualmachines/~new/`, // covers 'yaml' and default
-  action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace) : null),
-});
+  };
 
-export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
-  const { namespace } = props;
+  if (hasCreateVMWizardsSupport) {
+    items.wizardNew = 'Create with New Wizard';
+  }
+
+  return {
+    items,
+    createLink: (itemName) =>
+      `/k8s/ns/${namespace || 'default'}/virtualmachines/${
+        !hasCreateVMWizardsSupport || itemName === 'yaml' ? '~new' : '~new-wizard'
+      }`, // covers 'yaml', new-wizard and default
+    action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace) : null),
+  };
+};
+
+const VirtualMachinesPageComponent: React.FC<VirtualMachinesPageProps> = (props) => {
+  const { namespace, hasCreateVMWizardsSupport } = props;
 
   const resources = [
     getResource(VirtualMachineModel, { namespace, prop: 'vms' }),
@@ -161,12 +179,16 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       title={VirtualMachineModel.labelPlural}
       rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
-      createProps={getCreateProps(props.namespace)}
+      createProps={getCreateProps({ namespace, hasCreateVMWizardsSupport })}
       resources={resources}
       flatten={flatten}
     />
   );
 };
+
+export const VirtualMachinesPage = connect((state) => ({
+  hasCreateVMWizardsSupport: !!getCreateVMWizards(state),
+}))(VirtualMachinesPageComponent);
 
 type VMRowProps = {
   obj: VMKind;
@@ -193,4 +215,5 @@ type VMListProps = {
 type VirtualMachinesPageProps = {
   namespace: string;
   obj: VMKind;
+  hasCreateVMWizardsSupport: boolean;
 };

@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  Text,
-  Integer,
-  Dropdown,
-  CancelAcceptButtons,
-  getResource,
-} from 'kubevirt-web-ui-components';
+import { Text, Integer, Dropdown, CancelAcceptButtons } from 'kubevirt-web-ui-components';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { HelpBlock, FormGroup } from 'patternfly-react';
@@ -16,9 +10,10 @@ import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getVmPreferableDiskBus, getVMLikeModel } from '../../selectors/vm';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
-import { ValidationErrorType } from '../../utils/validations/common';
 import { validateDiskName } from '../../utils/validations/vm';
 import { GENERAL_ERROR_MSG } from '../../utils/validations/strings';
+import { ValidationErrorType } from '../../utils/validations/types';
+import { getResource } from '../../utils';
 import { VMDiskRowProps } from './types';
 import './_create-device-row.scss';
 

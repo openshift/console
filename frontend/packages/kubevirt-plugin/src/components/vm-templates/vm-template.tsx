@@ -14,9 +14,11 @@ import { getNamespace, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
+import { connect } from 'react-redux';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { openCreateVmWizard } from '../modals';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { getCreateVMWizards } from '../create-vm-wizard/selectors/selectors';
 import { menuActions } from './menu-actions';
 import { VMTemplateLink } from './vm-template-link';
 
@@ -101,7 +103,7 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
       <TableData className={dimensify()}>
         <TemplateSource template={template} />
       </TableData>
-      <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
+      <TableData className={dimensify()}>{os ? os.name || os.fieldId : DASH}</TableData>
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
       <TableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={kind} resource={template} />
@@ -122,17 +124,34 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (p
     />
   );
 };
-
-const getCreateProps = (namespace: string) => ({
-  items: {
+const getCreateProps = ({
+  namespace,
+  hasCreateVMWizardsSupport,
+}: {
+  namespace: string;
+  hasCreateVMWizardsSupport: boolean;
+}) => {
+  const items: any = {
     wizard: 'Create with Wizard',
     yaml: 'Create from YAML',
-  },
-  createLink: () => `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`,
-  action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace, true) : null),
-});
+  };
 
-const VirtualMachineTemplatesPage: React.FC<
+  if (hasCreateVMWizardsSupport) {
+    items.wizardNew = 'Create with New Wizard';
+  }
+
+  return {
+    items,
+    createLink: (itemName) =>
+      `/k8s/ns/${namespace || 'default'}/vmtemplates/${
+        !hasCreateVMWizardsSupport || itemName === 'yaml' ? '~new' : '~new-wizard'
+      }`, // covers 'yaml', new-wizard and default
+    action: (itemName) =>
+      itemName === 'wizard' ? () => openCreateVmWizard(namespace, true) : null,
+  };
+};
+
+const VirtualMachineTemplatesPageComponent: React.FC<
   VirtualMachineTemplatesPageProps & React.ComponentProps<typeof ListPage>
 > = (props) => (
   <ListPage
@@ -142,9 +161,16 @@ const VirtualMachineTemplatesPage: React.FC<
     kind={kind}
     selector={selector}
     canCreate
-    createProps={getCreateProps(props.match.params.ns)}
+    createProps={getCreateProps({
+      namespace: props.match.params.ns,
+      hasCreateVMWizardsSupport: props.hasCreateVMWizardsSupport,
+    })}
   />
 );
+
+const VirtualMachineTemplatesPage = connect((state) => ({
+  hasCreateVMWizardsSupport: !!getCreateVMWizards(state),
+}))(VirtualMachineTemplatesPageComponent);
 
 type VMTemplateTableRowProps = {
   obj: TemplateKind;
@@ -155,6 +181,7 @@ type VMTemplateTableRowProps = {
 
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
+  hasCreateVMWizardsSupport: boolean;
 };
 
 export { VirtualMachineTemplatesPage };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import { VmConsoles, isWindows, getResource } from 'kubevirt-web-ui-components';
+import { VmConsoles, isWindows } from 'kubevirt-web-ui-components';
 import { getName, getNamespace } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -19,8 +19,8 @@ import {
 } from '../../selectors/vmi';
 import { findVMPod } from '../../selectors/pod/selectors';
 import { VMIKind, VMKind } from '../../types/vm';
-import { getLoadedData } from '../../utils';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { getLoadedData, getResource } from '../../utils';
 import { menuActionStart } from './menu-actions';
 import { VMTabProps } from './types';
 

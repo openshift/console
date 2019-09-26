@@ -145,7 +145,29 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      path: `/k8s/ns/:ns/vmtemplates/:name`,
+      exact: true,
+      path: ['/k8s/ns/:ns/virtualmachines/~new-wizard'],
+      loader: () =>
+        import(
+          './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
+        ).then((m) => m.CreateVMWizardPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/vmtemplates/~new-wizard'],
+      loader: () =>
+        import(
+          './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
+        ).then((m) => m.CreateVMWizardPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: '/k8s/ns/:ns/vmtemplates/:name',
       loader: () =>
         import(
           './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */

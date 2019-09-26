@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { CancelAcceptButtons, Dropdown, getResource, Text } from 'kubevirt-web-ui-components';
+import { CancelAcceptButtons, Dropdown, Text } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
@@ -17,6 +17,7 @@ import { NetworkType } from '../../constants/vm';
 import { getValidationErrorMessage, getValidationErrorType } from '../../utils/validations/common';
 import { validateMACAddress, validateNicName } from '../../utils/validations/vm';
 import { GENERAL_ERROR_MSG } from '../../utils/validations/strings';
+import { getResource } from '../../utils';
 import { getDefaultNetworkBinding, getNetworkBindings, nicTableColumnClasses } from './utils';
 import { VMNicRowProps } from './types';
 import '../vm-disks/_create-device-row.scss';
