@@ -6,6 +6,7 @@ import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
 
 import {
+  MachineKind,
   nodeStatus,
   podPhaseFilterReducer,
   serviceCatalogStatus,
@@ -20,7 +21,7 @@ import {
   silenceState,
 } from '../../reducers/monitoring';
 
-export const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
+export const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(_.toLower(a), _.toLower(b));
 
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
@@ -166,6 +167,11 @@ export const tableFilters: TableFilterMap = {
     const status = getTemplateInstanceStatus(instance);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+
+  'machine': (str: string, machine: MachineKind): boolean => {
+    const node: string = _.get(machine, 'status.nodeRef.name');
+    return fuzzyCaseInsensitive(str, machine.metadata.name) || (node && fuzzyCaseInsensitive(str, node));
+  },
 };
 
 interface TableFilterGroups {
@@ -176,7 +182,8 @@ interface TableFilterGroups {
 }
 
 export type TableFilter = (groups: TableFilterGroups, obj: any) => boolean;
+export type TextFilter = (text: string, obj: any) => boolean;
 
 type TableFilterMap = {
-  [key: string]: TableFilter;
+  [key: string]: TableFilter | TextFilter;
 }
