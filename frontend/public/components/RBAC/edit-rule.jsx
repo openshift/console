@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { k8sGet, k8sUpdate } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
@@ -416,8 +416,22 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
             <div className="row">
               <div className="col-xs-12">
                 <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-                  <button type="submit" className="btn btn-primary" onClick={this.save}>Save</button>
-                  {role && <Link to={`${resourceObjPath(role, this.kind.kind)}`} className="btn btn-default">Cancel</Link>}
+                  <ActionGroup className="pf-c-form">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={this.save}>
+                      Save
+                    </Button>
+                    {role &&
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={history.goBack}>
+                        Cancel
+                      </Button>
+                    }
+                  </ActionGroup>
                 </ButtonBar>
               </div>
             </div>

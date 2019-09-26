@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { JSONSchema6 } from 'json-schema';
 
@@ -145,8 +145,20 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
             </form>
             <BindingParameters instance={serviceInstance} onSubmit={this.save} formData={formData} onChange={this.onFormChange}>
               <ButtonBar errorMessage={error} inProgress={inProgress}>
-                <button type="submit" className="btn btn-primary">Create</button>
-                <Link to={resourcePathFromModel(ServiceInstanceModel, serviceInstance.metadata.name, serviceInstance.metadata.namespace)} className="btn btn-default">Cancel</Link>
+                <ActionGroup className="pf-c-form">
+                  <Button
+                    type="submit"
+                    variant="primary">
+                    Create
+                  </Button>
+                  <Button
+                    type="button"
+                    id="cancel"
+                    onClick={history.goBack}
+                    variant="secondary">
+                    Cancel
+                  </Button>
+                </ActionGroup>
               </ButtonBar>
             </BindingParameters>
           </div>
