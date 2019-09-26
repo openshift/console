@@ -51,6 +51,7 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
         selectedTab={selectedDetailsTab}
         tabProps={{item}}
         tabs={getPluginTabResources(item,tabs)}
+        additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
 );

@@ -7,12 +7,14 @@ import {
 } from '@patternfly/react-icons';
 
 import { resourceSidebars } from './resource-sidebars';
+import { ExploreType } from './explore-type-sidebar';
+import { SimpleTabNav } from '../utils';
 
-export const sidebarScrollTop = () => {
+const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
 };
 
-export class ResourceSidebarWrapper extends React.Component {
+class ResourceSidebarWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.toggleSidebar = this.toggleSidebar.bind(this);
@@ -45,9 +47,9 @@ export class ResourceSidebarWrapper extends React.Component {
         <button type="button" className="close" aria-label="Close" onClick={this.toggleSidebar}>
           <CloseIcon />
         </button>
-        <h1 className="co-p-has-sidebar__sidebar-heading co-resource-sidebar-header text-capitalize">
+        <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">
           {label}
-        </h1>
+        </h2>
         {children}
       </div>
     </div>;
@@ -73,18 +75,49 @@ export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
   </li>;
 };
 
+const ResourceSchema = ({kindObj}) => <ExploreType kindObj={kindObj} scrollTop={sidebarScrollTop} />;
+
 export const ResourceSidebar = props => {
-  const {kindObj, height} = props;
-  if (!kindObj || !props.isCreateMode) {
+  const {
+    downloadSampleYaml,
+    height,
+    isCreateMode,
+    kindObj,
+    loadSampleYaml,
+  } = props;
+  if (!kindObj) {
     return null;
   }
 
   const {kind, label} = kindObj;
-  const SidebarComponent = resourceSidebars.get(kind);
-  if (SidebarComponent) {
-    return <ResourceSidebarWrapper label={`${label} Samples`} linkLabel="View Samples" style={{height}}>
-      <SidebarComponent {...props} />
-    </ResourceSidebarWrapper>;
-  }
-  return null;
+  const ResourceSamples = resourceSidebars.get(kind);
+  const showSamples = ResourceSamples && isCreateMode;
+
+  return <ResourceSidebarWrapper
+    label={label}
+    linkLabel={`View Schema ${showSamples ? 'and Samples' : ''}`}
+    style={{height}}
+    startHidden={!isCreateMode}
+  >
+    { showSamples
+      ? <SimpleTabNav
+        tabs={[
+          {
+            name: 'Schema',
+            component: ResourceSchema,
+          },
+          {
+            name: 'Samples',
+            component: ResourceSamples,
+          },
+        ]}
+        tabProps={{
+          downloadSampleYaml,
+          kindObj,
+          loadSampleYaml,
+        }}
+        additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
+      />
+      : <ResourceSchema kindObj={kindObj} /> }
+  </ResourceSidebarWrapper>;
 };

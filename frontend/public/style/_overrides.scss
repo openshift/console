@@ -113,6 +113,10 @@ h6 {
 .pf-c-breadcrumb {
   padding-bottom: 12px;
   padding-top: 25px;
+
+  &--no-padding-top {
+    padding-top: 0;
+  }
 }
 
 .pf-c-button--align-right {

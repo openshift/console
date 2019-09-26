@@ -31,19 +31,19 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
 
   onClickTab(name) {
     const {tabs} = this.props;
-    this.props.onClickTab(name);
+    this.props.onClickTab && this.props.onClickTab(name);
     this.setState({
       'selectedTab': _.find(tabs, {name}),
     });
   }
 
   render() {
-    const {tabs, tabProps} = this.props;
+    const {tabs, tabProps, additionalClassNames} = this.props;
     const {selectedTab} = this.state;
     const Component = selectedTab.component;
 
     return <React.Fragment>
-      <div className="co-m-horizontal-nav__menu">
+      <div className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
         <ul className="co-m-horizontal-nav__menu-primary">
           {
             _.map(tabs, (tab) => (
@@ -70,6 +70,7 @@ type SimpleTabNavProps = {
     name: string;
     component: any;
   }[];
+  additionalClassNames?: string;
 };
 
 type SimpleTabNavState = {

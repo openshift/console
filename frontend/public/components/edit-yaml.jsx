@@ -16,7 +16,6 @@ import {
 import { ALL_NAMESPACES_KEY } from '../const';
 import { k8sCreate, k8sUpdate, referenceFor, groupVersionFor, referenceForModel } from '../module/k8s';
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
-import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
 
@@ -579,8 +578,7 @@ export const EditYAML = connect(stateToProps)(
                   </div>
                 </div>
               </div>
-              {create && <ResourceSidebar isCreateMode={create} kindObj={model} height={height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />}
-              {!create && <ExploreTypeSidebar kindObj={model} height={this.state.height} />}
+              <ResourceSidebar isCreateMode={create} kindObj={model} height={height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
             </div>
           </div>
         </div>

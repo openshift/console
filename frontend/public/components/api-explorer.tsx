@@ -343,7 +343,7 @@ const APIResourceOverview: React.FC<APIResourceTabProps> = ({customData: {kindOb
 const scrollTop = () => document.getElementById('content-scrollable').scrollTop = 0;
 const APIResourceSchema: React.FC<APIResourceTabProps> = ({customData: {kindObj}}) => {
   return (
-    <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+    <div className="co-m-pane__body">
       <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
     </div>
   );
