@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalFooter,
 } from '@console/internal/components/factory/modal';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { ResourceLink, CopyToClipboard } from '@console/internal/components/utils';
 import { referenceForStepResource } from '../index';
 import { StepResource } from '../../types';
@@ -24,9 +25,11 @@ const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, st
       <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest))} />
     </ModalBody>
     <ModalFooter inProgress={false}>
-      <button type="button" onClick={() => cancel()} className="btn btn-default">
-        OK
-      </button>
+      <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+        <Button type="button" variant="secondary" onClick={() => cancel()}>
+          OK
+        </Button>
+      </ActionGroup>
     </ModalFooter>
   </div>
 );

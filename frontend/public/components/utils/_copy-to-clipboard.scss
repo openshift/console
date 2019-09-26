@@ -3,12 +3,10 @@
   position: relative;
 }
 
-.co-copy-to-clipboard__btn {
+.pf-c-clipboard-copy__group-copy.co-copy-to-clipboard__btn {
   position: absolute;
   right: 0px;
   top: 0px;
-  width: 42px;
-  height: 42px;
 }
 
 .co-copy-to-clipboard__text {
@@ -24,4 +22,13 @@
   .co-copy-to-clipboard__text {
     max-height: 25vh;
   }
+}
+
+.pf-c-button.co-copy-to-clipboard__btn,
+.pf-c-button.co-copy-to-clipboard__btn:hover {
+  --pf-c-button--BorderColor: #ccc;
+  --pf-c-button--BorderRadius: 0;
+  --pf-c-button--hover--BorderWidth: 1px;
+  line-height: 20px;
+  padding: 11px 16px;
 }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ServiceInstanceModel, ClusterServiceClassModel, ClusterServicePlanModel } from '../../models';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
@@ -173,8 +174,19 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
               </form>
               <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
                 <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-                  <button type="submit" className="btn btn-primary">Create</button>
-                  <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+                  <ActionGroup className="pf-c-form">
+                    <Button
+                      type="submit"
+                      variant="primary">
+                      Create
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={history.goBack}>
+                      Cancel
+                    </Button>
+                  </ActionGroup>
                 </ButtonBar>
               </ServiceCatalogParametersForm>
             </div>
