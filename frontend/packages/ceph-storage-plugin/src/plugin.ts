@@ -203,6 +203,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       kind: 'StorageCluster',
       label: 'Add Capacity',
+      apiGroup: models.OCSServiceModel.apiGroup,
       callback: (kind, ocsConfig) => () => {
         const clusterObject = { ocsConfig };
         import(
