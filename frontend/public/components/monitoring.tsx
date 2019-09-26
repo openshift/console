@@ -30,6 +30,7 @@ import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
 import { AlertManagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
+import { AlertManagerConfigWrapper } from './monitoring/alert-manager-config';
 import {
   ActionsMenu,
   ButtonBar,
@@ -1014,10 +1015,17 @@ const AlertManagerYAML = () => {
   </Firehose>;
 };
 
+const AlertManagerConfig = () => {
+  return <Firehose resources={[{kind: 'Secret', name: 'alertmanager-main', namespace: 'openshift-monitoring', isList: false, prop: 'obj'}]}>
+    <AlertManagerConfigWrapper />
+  </Firehose>;
+};
+
 const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
   const alertPath = '/monitoring/alerts';
   const silencePath = '/monitoring/silences';
   const YAMLPath = '/monitoring/alertmanageryaml';
+  const ConfigPath = '/monitoring/alertmanagerconfig';
   return <React.Fragment>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
@@ -1038,6 +1046,10 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
           <Link to={silencePath}>Silences</Link>
         </li>
         <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === ConfigPath})}>
+          <Link to={ConfigPath}>Configuration</Link>
+        </li>
+        <li
           className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === YAMLPath})}>
           <Link to={YAMLPath}>YAML</Link>
         </li>
@@ -1047,6 +1059,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
     <Switch>
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
+      <Route path={ConfigPath} exact component={AlertManagerConfig} />
       <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
     </Switch>
   </React.Fragment>;
@@ -1114,7 +1127,7 @@ const PollerPages = () => {
   }, []);
 
   return <Switch>
-    <Route path="/monitoring/(alertmanageryaml|alerts|silences)" exact component={AlertingPage} />
+    <Route path="/monitoring/(alertmanageryaml|alerts|silences|alertmanagerconfig)" exact component={AlertingPage} />
     <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
     <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
     <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />

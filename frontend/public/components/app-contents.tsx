@@ -189,6 +189,7 @@ const AppContents = connect((state: RootState) => ({
           <LazyRoute path="/monitoring/alerts" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
           <LazyRoute path="/monitoring/silences" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
           <LazyRoute path="/monitoring/alertmanageryaml" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
+          <LazyRoute path="/monitoring/alertmanagerconfig" exact loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
           <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
 
           <LazyRoute path="/settings/idp/github" exact loader={() => import('./cluster-settings/github-idp-form' /* webpackChunkName: "github-idp-form" */).then(m => m.AddGitHubPage)} />
