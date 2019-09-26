@@ -47,7 +47,11 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({
 
   return (
     <React.Fragment>
-      <g onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <g
+        data-test-id="connects-to-handler"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
         <path
           d={`M ${lineBox[0]} L ${lineBox[1]} L ${lineBox[2]} L ${lineBox[3]} Z`}
           fillOpacity={0}

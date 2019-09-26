@@ -6,7 +6,7 @@ import { TransformTopologyData, getEditURL } from '../topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 
-function getTranformedTopologyData(
+export function getTranformedTopologyData(
   mockData: TopologyDataResources,
   transformByProp: string[],
   mockCheURL?: string,
