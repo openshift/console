@@ -14,6 +14,7 @@ import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { VM_STATUS_STARTING, VM_STATUS_VMI_WAITING } from '@console/kubevirt-plugin/src/statuses/vm/constants';
 
 type ActionArgs = {
   migration?: K8sResourceKind;
@@ -71,7 +72,12 @@ const menuActionRestart = (
 ): KebabOption => {
   const title = 'Restart Virtual Machine';
   return {
-    hidden: isVMImporting(vmStatus) || !isVMRunningWithVMI({ vm, vmi }) || isMigrating(migration),
+    hidden:
+      isVMImporting(vmStatus) ||
+      !isVMRunningWithVMI({ vm, vmi }) ||
+      isMigrating(migration) ||
+      vmStatus.status === VM_STATUS_STARTING ||
+      vmStatus.status === VM_STATUS_VMI_WAITING,
     label: title,
     callback: () =>
       confirmModal({
