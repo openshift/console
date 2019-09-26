@@ -80,7 +80,7 @@ export async function getDetailActionDropdownOptions(): Promise<string[]> {
     .then(() => getActionsDropdown().click());
 
   const options = [];
-  await $('ul.dropdown-menu-right')
+  await $('[data-test-id="action-items"]')
     .$$('li')
     .each(async (elem) => {
       elem
