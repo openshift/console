@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { RedExclamationCircleIcon } from '@console/shared';
+import { referenceFor } from '../../../module/k8s';
 import { Timestamp, ResourceLink } from '../../utils';
 import { EventComponentProps } from '../../utils/event-stream';
 import { categoryFilter } from '../../events';
@@ -17,7 +18,7 @@ export const EventItem: React.FC<EventComponentProps> = React.memo(({ event }) =
         {isError && <RedExclamationCircleIcon className="co-events-card__item-icon--error" />}
         <ResourceLink
           className="co-events-card__item-resourcelink"
-          kind={obj.kind}
+          kind={referenceFor(obj)}
           namespace={obj.namespace}
           name={obj.name}
           title={obj.uid}

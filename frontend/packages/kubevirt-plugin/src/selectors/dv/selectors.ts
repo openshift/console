@@ -10,5 +10,7 @@ export const getDataVolumeStorageSize = (dataVolume: K8sResourceKind): string =>
 
 export const getDataVolumeAccessModes = (dataVolume: K8sResourceKind) =>
   _.get(dataVolume, 'spec.pvc.accessModes');
+export const getDataVolumeVolumeMode = (dataVolume: K8sResourceKind) =>
+  _.get(dataVolume, 'spec.pvc.volumeMode');
 export const getDataVolumeStorageClassName = (dataVolume: K8sResourceKind): string =>
   _.get(dataVolume, 'spec.pvc.storageClassName');

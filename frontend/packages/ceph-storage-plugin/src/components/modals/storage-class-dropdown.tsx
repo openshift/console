@@ -40,4 +40,5 @@ type OCSStorageClassDropdownProps = {
   describedBy?: string;
   defaultClass: string;
   required?: boolean;
+  hideClassName?: string;
 };

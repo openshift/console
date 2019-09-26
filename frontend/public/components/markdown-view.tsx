@@ -68,10 +68,23 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
       ${linkRefs}
       <style type="text/css">
       body {
-          color: ${this.props.content ? '#333' : '#999'};
-          background-color: transparent !important;
-          min-width: auto !important;
-          font-family: var(--pf-global--FontFamily--sans-serif);
+        background-color: transparent !important;
+        color: ${this.props.content ? '#333' : '#999'};
+        font-family: var(--pf-global--FontFamily--sans-serif);
+        min-width: auto !important;
+      }
+      table {
+        margin-bottom: 11.5px;
+      }
+      td,
+      th {
+        border-bottom: 1px solid #ededed;
+        padding: 10px;
+        vertical-align: top;
+        word-break: break-word;
+      }
+      th {
+        padding-top: 0;
       }
       ${this.props.styles ? this.props.styles : ''}
       </style>

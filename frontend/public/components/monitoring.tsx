@@ -25,11 +25,12 @@ import store from '../redux';
 import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
-import { Labels, QueryBrowser } from './monitoring/query-browser';
+import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
 import { AlertManagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
+import { AlertManagerConfigWrapper } from './monitoring/alert-manager-config';
 import {
   ActionsMenu,
   ButtonBar,
@@ -184,11 +185,17 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
 
 const queryBrowserURL = query => `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
-const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
+const Graph_: React.FC<GraphProps> = ({filterLabels = undefined, hideGraphs, patchQuery, rule}) => {
+  const {duration = 0, query = ''} = rule || {};
+
+  // Set the query in Redux so that other components like the graph tooltip can access it
+  React.useEffect(() => {
+    patchQuery(0, {query});
+  }, [patchQuery, query]);
+
   if (hideGraphs) {
     return null;
   }
-  const {duration = 0, query = ''} = rule || {};
 
   // 3 times the rule's duration, but not less than 30 minutes
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
@@ -202,7 +209,7 @@ const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
     queries={[query]}
   />;
 };
-const Graph = connect(graphStateToProps)(Graph_);
+const Graph = connect(graphStateToProps, {patchQuery: UIActions.queryBrowserPatchQuery})(Graph_);
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
   {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
@@ -1008,10 +1015,17 @@ const AlertManagerYAML = () => {
   </Firehose>;
 };
 
+const AlertManagerConfig = () => {
+  return <Firehose resources={[{kind: 'Secret', name: 'alertmanager-main', namespace: 'openshift-monitoring', isList: false, prop: 'obj'}]}>
+    <AlertManagerConfigWrapper />
+  </Firehose>;
+};
+
 const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
   const alertPath = '/monitoring/alerts';
   const silencePath = '/monitoring/silences';
   const YAMLPath = '/monitoring/alertmanageryaml';
+  const ConfigPath = '/monitoring/alertmanagerconfig';
   return <React.Fragment>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
@@ -1032,6 +1046,10 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
           <Link to={silencePath}>Silences</Link>
         </li>
         <li
+          className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === ConfigPath})}>
+          <Link to={ConfigPath}>Configuration</Link>
+        </li>
+        <li
           className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.url === YAMLPath})}>
           <Link to={YAMLPath}>YAML</Link>
         </li>
@@ -1041,6 +1059,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({match}) => {
     <Switch>
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
+      <Route path={ConfigPath} exact component={AlertManagerConfig} />
       <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
     </Switch>
   </React.Fragment>;
@@ -1108,7 +1127,7 @@ const PollerPages = () => {
   }, []);
 
   return <Switch>
-    <Route path="/monitoring/(alertmanageryaml|alerts|silences)" exact component={AlertingPage} />
+    <Route path="/monitoring/(alertmanageryaml|alerts|silences|alertmanagerconfig)" exact component={AlertingPage} />
     <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
     <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
     <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
@@ -1221,4 +1240,11 @@ export type ListPageProps = {
 
 type AlertingPageProps = {
   match: any;
+};
+
+type GraphProps = {
+  filterLabels?: Labels;
+  hideGraphs: boolean;
+  patchQuery: (index: number, patch: QueryObj) => any;
+  rule: Rule;
 };

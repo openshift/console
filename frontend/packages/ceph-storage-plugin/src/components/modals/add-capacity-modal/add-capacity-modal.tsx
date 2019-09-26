@@ -73,8 +73,8 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
           <div className="form-group">
             <label className="control-label" htmlFor="request-size-input">
               Requested Capacity
+              <DashboardCardHelp>{labelTooltip}</DashboardCardHelp>
               <span className="add-capacity-modal__span">
-                <DashboardCardHelp>{labelTooltip}</DashboardCardHelp>
                 <span>
                   Provisioned Capacity:
                   {presentCount ? ` ${presentCount / 3}Ti` : ' Unavailable'}
@@ -91,13 +91,15 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
               required
             />
           </div>
-          <div className="toolTip_dropdown">
+          <label className="control-label">
+            Storage Class
             <DashboardCardHelp>{storageClassTooltip}</DashboardCardHelp>
-          </div>
+          </label>
           <OCSStorageClassDropdown
             onChange={handleStorageClass}
             name="storageClass"
             defaultClass={storageClass}
+            hideClassName="add-capacity-modal__hide"
             required
           />
         </div>

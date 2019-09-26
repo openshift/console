@@ -7,6 +7,7 @@ import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
 import { fromNow } from '../utils/datetime';
 import { K8sResourceKind } from '../../module/k8s';
+import { BuildConfigModel } from '../../models';
 import {
   BuildPhase,
   startBuild,
@@ -14,6 +15,7 @@ import {
 import {
   ResourceLink,
   SidebarSectionHeading,
+  useAccessReview,
 } from '../utils';
 
 import { BuildConfigOverviewItem } from '.';
@@ -82,12 +84,23 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({build}) => {
 
 const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({buildConfig}) => {
   const {metadata: {name, namespace}, builds} = buildConfig;
+
+  const canStartBuild = useAccessReview({
+    group: BuildConfigModel.apiGroup,
+    resource: BuildConfigModel.plural,
+    subresource: 'instantiate',
+    name,
+    namespace,
+    verb: 'create',
+  });
+
   const onClick = () => {
     startBuild(buildConfig).catch(err => {
       const error = err.message;
       errorModal({error});
     });
   };
+
   return <ListGroup className="build-overview__list" componentClass="ul">
     <li className="list-group-item build-overview__item">
       <div className="build-overview__item-title">
@@ -99,9 +112,11 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({buildConfig}) => 
             namespace={namespace}
           />
         </div>
-        <div>
-          <Button bsStyle="default" bsSize="xs" onClick={onClick}>Start Build</Button>
-        </div>
+        {canStartBuild && (
+          <div>
+            <Button bsStyle="default" bsSize="xs" onClick={onClick}>Start Build</Button>
+          </div>
+        )}
       </div>
     </li>
     {

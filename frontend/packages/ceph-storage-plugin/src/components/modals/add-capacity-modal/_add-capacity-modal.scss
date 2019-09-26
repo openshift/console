@@ -1,5 +1,9 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
+.add-capacity-modal__hide {
+  display: none;
+}
+
 .add-capacity-modal--padding {
   .co-storage-class-dropdown {
     .dropdown {
@@ -20,17 +24,10 @@
       top: 8.5rem;
     }
   }
-  
   padding-top: 2em;
 }
 
 .add-capacity-modal__span {
   margin-left: 3em;
   color: $pf-color-black-500;
-  button {
-    position: absolute;
-    left: 9.1rem;
-    top: 3.8rem
-  }
 }
-

@@ -22,7 +22,7 @@ import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Overview } from './overview';
-import { OverviewNamespaceDashboard } from './overview/namespace-overview';
+import { OverviewNamespaceDashboard, ConsoleLinks, getNamespaceDashboardConsoleLinks } from './overview/namespace-overview';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -317,15 +317,26 @@ export const NamespaceSummary = ({ns}) => {
   </div>;
 };
 
-const Details = ({obj: ns}) => {
+const Details_ = ({obj: ns, consoleLinks}) => {
+  const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return <div>
     <div className="co-m-pane__body">
       <SectionHeading text={`${ns.kind} Overview`} />
       <NamespaceSummary ns={ns} />
     </div>
     <ResourceUsage ns={ns} />
+    {!_.isEmpty(links) && <div className="co-m-pane__body">
+      <SectionHeading text="Launcher" />
+      <ConsoleLinks consoleLinks={links} />
+    </div>}
   </div>;
 };
+
+const DetailsStateToProps = ({UI}) => ({
+  consoleLinks: UI.get('consoleLinks'),
+});
+
+const Details = connect(DetailsStateToProps)(Details_);
 
 const RolesPage = ({obj: {metadata}}) => <RoleBindingsPage namespace={metadata.name} showTitle={false} />;
 

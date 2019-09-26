@@ -164,6 +164,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       createProps={getCreateProps(props.namespace)}
       resources={resources}
       flatten={flatten}
+      label={VirtualMachineModel.labelPlural}
     />
   );
 };
