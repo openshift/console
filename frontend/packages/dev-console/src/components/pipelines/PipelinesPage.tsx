@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../models';
 import DefaultPage from '../DefaultPage';
 import { filters } from './PipelineAugmentRuns';
@@ -15,7 +16,7 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
   const resources = [
     {
       isList: true,
-      kind: PipelineModel.kind,
+      kind: referenceForModel(PipelineModel),
       namespace,
       prop: PipelineModel.id,
       filters: { ...filters },

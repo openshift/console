@@ -27,7 +27,7 @@ export const createPipelineResource = (
   const resourceName = `${type}-${getRandomChars(6)}`;
   const pipelineResource: K8sResourceKind = {
     apiVersion: 'tekton.dev/v1alpha1',
-    kind: 'PipelineResource',
+    kind: PipelineResourceModel.kind,
     metadata: {
       name: resourceName,
       namespace,

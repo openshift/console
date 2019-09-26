@@ -6,7 +6,8 @@ import {
   chart_color_black_400 as skippedColor,
   chart_color_black_500 as cancelledColor,
 } from '@patternfly/react-tokens';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { PipelineRunModel } from '../models';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
 interface Metadata {
@@ -110,7 +111,7 @@ export const getResources = (data: PropPipelineData[]): Resource => {
       if (pipeline.metadata && pipeline.metadata.namespace && pipeline.metadata.name) {
         propsReferenceForRuns.push(`PipelineRun_${i}`);
         resources.push({
-          kind: 'PipelineRun',
+          kind: referenceForModel(PipelineRunModel),
           namespace: pipeline.metadata.namespace,
           isList: true,
           prop: `PipelineRun_${i}`,

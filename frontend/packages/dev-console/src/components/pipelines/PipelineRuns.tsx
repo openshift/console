@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
+import { referenceForModel } from '@console/internal/module/k8s';
 import PipelineRunsList from '../pipelineruns/PipelineRunList';
 import {
   pipelineRunFilterReducer,
@@ -29,7 +30,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ obj }) => (
   <ListPage
     showTitle={false}
     canCreate={false}
-    kind={PipelineRunModel.kind}
+    kind={referenceForModel(PipelineRunModel)}
     namespace={obj.metadata.namespace}
     selector={{
       'tekton.dev/pipeline': obj.metadata.name,

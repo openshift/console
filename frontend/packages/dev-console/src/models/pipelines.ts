@@ -10,6 +10,7 @@ export const PipelineModel: K8sKind = {
   kind: 'Pipeline',
   id: 'pipeline',
   labelPlural: 'Pipelines',
+  crd: true,
 };
 
 export const PipelineRunModel: K8sKind = {
@@ -22,6 +23,7 @@ export const PipelineRunModel: K8sKind = {
   kind: 'PipelineRun',
   id: 'pipelinerun',
   labelPlural: 'Pipeline Runs',
+  crd: true,
 };
 
 export const TaskModel: K8sKind = {
@@ -34,6 +36,7 @@ export const TaskModel: K8sKind = {
   kind: 'Task',
   id: 'task',
   labelPlural: 'Tasks',
+  crd: true,
 };
 
 export const TaskRunModel: K8sKind = {
@@ -46,6 +49,7 @@ export const TaskRunModel: K8sKind = {
   kind: 'TaskRun',
   id: 'taskrun',
   labelPlural: 'Task Runs',
+  crd: true,
 };
 
 export const PipelineResourceModel: K8sKind = {
@@ -57,4 +61,6 @@ export const PipelineResourceModel: K8sKind = {
   kind: 'PipelineResource',
   id: 'pipelineresource',
   labelPlural: 'Pipeline Resources',
+  namespaced: true,
+  crd: true,
 };

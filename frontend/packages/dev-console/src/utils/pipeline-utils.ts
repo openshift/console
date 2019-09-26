@@ -137,7 +137,11 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
 
 export const getPipelineTasks = (
   pipeline: K8sResourceKind,
-  pipelineRun: K8sResourceKind = { apiVersion: '', metadata: {}, kind: 'PipelineRun' },
+  pipelineRun: K8sResourceKind = {
+    apiVersion: '',
+    metadata: {},
+    kind: 'PipelineRun',
+  },
 ): PipelineVisualizationTaskItem[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
