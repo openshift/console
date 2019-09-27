@@ -46,7 +46,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     const noApplicationsAvailable = _.isEmpty(applicationList);
     setApplicationsAvailable(!noApplicationsAvailable);
     if (noApplicationsAvailable) {
-      setFieldValue('application.selectedKey', CREATE_APPLICATION_KEY);
+      setFieldValue('application.selectedKey', '');
       setFieldValue('application.name', '');
     }
   };
@@ -85,9 +85,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           />
         </FormGroup>
       )}
-      {(noProjectsAvailable || selectedKey.value === CREATE_APPLICATION_KEY) && (
+      {(!applicationsAvailable || selectedKey.value === CREATE_APPLICATION_KEY) && (
         <InputField
           type={TextInputTypes.text}
+          required={selectedKey.value === CREATE_APPLICATION_KEY}
           name="application.name"
           label="Application Name"
           data-test-id="application-form-app-input"

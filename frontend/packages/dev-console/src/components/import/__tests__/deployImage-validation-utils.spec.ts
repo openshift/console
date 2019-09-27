@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { deployValidationSchema } from '../deployImage-validation-utils';
 import { mockFormData } from '../__mocks__/deployImage-validation-mock';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../app/ApplicationSelector';
 import { serverlessCommonTests } from './serverless-common-tests';
 
 describe('Deploy Image ValidationUtils', () => {
@@ -29,6 +30,30 @@ describe('Deploy Image ValidationUtils', () => {
           'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
         );
       });
+    });
+
+    it('should throw an error when no application name given for create application option', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.application.selectedKey = CREATE_APPLICATION_KEY;
+      mockData.application.name = '';
+      await deployValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await deployValidationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('Required');
+      });
+    });
+
+    it('should not throw an error when unassigned application is chosen', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.application.selectedKey = UNASSIGNED_KEY;
+      mockData.application.name = '';
+      await deployValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+    });
+
+    it('should not throw an error when allowing either create or unassigned application', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.application.selectedKey = '';
+      mockData.application.name = '';
+      await deployValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
     });
 
     it('should throw an error if path is invalid', async () => {
