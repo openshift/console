@@ -67,7 +67,9 @@ export const CapacityCardBody: React.FC<CapacityCardBodyProps> = ({
           legendData={metricLegend}
           legendOrientation="vertical"
           data={metricData}
-          labels={(datum) => `${datum.x}: ${humanizePercentage(totalUsage ? datum.y : 0).string}`}
+          labels={({ datum }) =>
+            `${datum.x}: ${humanizePercentage(totalUsage ? datum.y : 0).string}`
+          }
           themeColor={ChartThemeColor.multi}
           themeVariant={ChartThemeVariant.light}
           title={totalHumanized.string}
