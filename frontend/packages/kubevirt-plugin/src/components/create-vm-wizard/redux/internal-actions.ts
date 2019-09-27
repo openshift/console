@@ -33,13 +33,27 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateCommonData,
   }),
-  [InternalActionType.SetTabValidity]: (id, tab: VMWizardTab, valid: boolean) => ({
+  [InternalActionType.SetTabValidity]: (
+    id,
+    tab: VMWizardTab,
+    isValid: boolean,
+    hasAllRequiredFilled: boolean,
+  ) => ({
     payload: {
       id,
       tab,
-      valid,
+      isValid,
+      hasAllRequiredFilled,
     },
     type: InternalActionType.SetTabValidity,
+  }),
+  [InternalActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isLocked,
+    },
+    type: InternalActionType.SetTabLocked,
   }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => ({
     payload: {
@@ -79,29 +93,29 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateVmSettings,
   }),
-  [InternalActionType.SetNetworks]: (id, value, valid: boolean, locked: boolean) => ({
+  [InternalActionType.SetNetworks]: (id, value, isValid: boolean, isLocked: boolean) => ({
     payload: {
       id,
       value,
-      valid,
-      locked,
+      isValid,
+      isLocked,
     },
     type: InternalActionType.SetNetworks,
   }),
-  [InternalActionType.SetStorages]: (id, value, valid: boolean, locked: boolean) => ({
+  [InternalActionType.SetStorages]: (id, value, isValid: boolean, isLocked: boolean) => ({
     payload: {
       id,
       value,
-      valid,
-      locked,
+      isValid,
+      isLocked,
     },
     type: InternalActionType.SetStorages,
   }),
-  [InternalActionType.SetResults]: (id, value, valid: boolean) => ({
+  [InternalActionType.SetResults]: (id, value, isValid: boolean) => ({
     payload: {
       id,
       value,
-      valid,
+      isValid,
     },
     type: InternalActionType.SetResults,
   }),

@@ -59,5 +59,5 @@ export const getInitialVmSettings = (common: CommonData) => {
 
 export const getVmSettingsInitialState = (props) => ({
   value: getInitialVmSettings(props),
-  valid: false,
+  isValid: false,
 });

@@ -73,13 +73,16 @@ export const vmWizardActions: VMWizardActions = {
 
     updateAndValidateState({ id, dispatch, changedCommonData: changedProps, getState, prevState });
   },
-  [ActionType.SetNetworks]: (id, value: any, valid: boolean, locked: boolean) => (dispatch) => {
-    dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, value, valid, locked));
+  [ActionType.SetTabLocked]: (id, value: any, isLocked: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetTabLocked](id, value, isLocked));
   },
-  [ActionType.SetStorages]: (id, value: any, valid: boolean, locked: boolean) => (dispatch) => {
-    dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, value, valid, locked));
+  [ActionType.SetNetworks]: (id, value: any, isValid: boolean, isLocked: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, value, isValid, isLocked));
   },
-  [ActionType.SetResults]: (id, value: any, valid: boolean) => (dispatch) => {
-    dispatch(vmWizardInternalActions[InternalActionType.SetResults](id, value, valid));
+  [ActionType.SetStorages]: (id, value: any, isValid: boolean, isLocked: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, value, isValid, isLocked));
+  },
+  [ActionType.SetResults]: (id, value: any, isValid: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetResults](id, value, isValid));
   },
 };

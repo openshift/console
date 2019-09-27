@@ -12,6 +12,7 @@ export enum ActionType {
   Dispose = 'KubevirtVMWizardDispose',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
+  SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
@@ -24,6 +25,7 @@ export enum InternalActionType {
   Update = 'KubevirtVMWizardUpdateInternal',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
   SetTabValidity = 'KubevirtVMWizardSetTabValidityInternal',
+  SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValueInternal',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettingsInternal',
   SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatchInternal',
@@ -39,8 +41,9 @@ export type WizardInternalAction = {
   payload: {
     id: string;
     value?: any;
-    valid?: boolean;
-    locked?: boolean;
+    isValid?: boolean;
+    isLocked?: boolean;
+    hasAllRequiredFilled?: boolean;
     path?: string[];
     key?: VMSettingsField;
     tab?: VMWizardTab;
