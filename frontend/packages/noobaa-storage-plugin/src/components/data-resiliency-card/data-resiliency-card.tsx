@@ -6,9 +6,9 @@ import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
-  DashboardCardHelp,
   DashboardCardTitle,
 } from '@console/internal/components/dashboard/dashboard-card';
+import { FieldLevelHelp } from '@console/internal/components/utils/index';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -109,11 +109,11 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Data Resiliency</DashboardCardTitle>
-        <DashboardCardHelp>
+        <FieldLevelHelp>
           Data resiliency is the ability of stored objects to recover and continue operating in the
           case of a failure.Certain changes in the system (unavailable resource/ change of bucket
           policy etc.) cause an object to require a rebuilding process in order to stay resilient.
-        </DashboardCardHelp>
+        </FieldLevelHelp>
       </DashboardCardHeader>
       <DashboardCardBody
         className="nb-data-resiliency__dashboard-body"

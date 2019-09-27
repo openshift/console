@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardCardHelp } from '@console/internal/components/dashboard/dashboard-card/card-help';
-import { RequestSizeInput, withHandlePromise } from '@console/internal/components/utils/index';
+import {
+  FieldLevelHelp,
+  RequestSizeInput,
+  withHandlePromise,
+} from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
   ModalBody,
@@ -73,7 +76,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
           <div className="form-group">
             <label className="control-label" htmlFor="request-size-input">
               Requested Capacity
-              <DashboardCardHelp>{labelTooltip}</DashboardCardHelp>
+              <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
               <span className="add-capacity-modal__span">
                 <span>
                   Provisioned Capacity:
@@ -93,7 +96,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
           </div>
           <label className="control-label">
             Storage Class
-            <DashboardCardHelp>{storageClassTooltip}</DashboardCardHelp>
+            <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
           </label>
           <OCSStorageClassDropdown
             onChange={handleStorageClass}

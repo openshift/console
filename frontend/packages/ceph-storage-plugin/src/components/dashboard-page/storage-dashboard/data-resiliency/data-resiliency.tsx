@@ -5,7 +5,7 @@ import { GreenCheckCircleIcon } from '@console/shared';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardHelp } from '@console/internal/components/dashboard/dashboard-card';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
 import {
   DashboardItemProps,
@@ -93,7 +93,7 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
     <DashboardCard className="ceph-data-resiliency__dashboard-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Data Resiliency</DashboardCardTitle>
-        <DashboardCardHelp>{infoText}</DashboardCardHelp>
+        <FieldLevelHelp>{infoText}</FieldLevelHelp>
       </DashboardCardHeader>
       <DashboardCardBody
         className="ceph-data-resiliency__dashboard-body"
