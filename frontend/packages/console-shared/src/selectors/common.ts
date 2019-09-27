@@ -9,6 +9,8 @@ export const getUID = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
   _.get(value, 'metadata.uid') as K8sResourceKind['metadata']['uid'];
 export const getDeletetionTimestamp = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
   _.get(value, 'metadata.deletionTimestamp') as K8sResourceKind['metadata']['deletionTimestamp'];
+export const getCreationTimestamp = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
+  _.get(value, 'metadata.creationTimestamp') as K8sResourceKind['metadata']['creationTimestamp'];
 export const getAPIVersion = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
   _.get(value, 'apiVersion') as K8sResourceKind['apiVersion'];
 export const getKind = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
