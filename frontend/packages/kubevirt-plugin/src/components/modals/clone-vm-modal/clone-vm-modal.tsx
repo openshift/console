@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import {
   Firehose,
+  FirehoseResource,
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
@@ -25,10 +26,10 @@ import {
 } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src';
 import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
-import { getLoadedData, getLoadError, getResource, prefixedID } from '../../../utils';
+import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { validateVmLikeEntityName } from '../../../utils/validations/vm';
@@ -233,24 +234,42 @@ export type CloneVMModalProps = CloneVMModalFirehoseProps &
 
 const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
   const { vm, useProjects } = props;
-  const [namespace, setNamespace] = React.useState(getNamespace(vm));
+  const vmNamespace = getNamespace(vm);
+  const [namespace, setNamespace] = React.useState(vmNamespace);
 
   const requestsDataVolumes = !!getVolumes(vm).find(getVolumeDataVolumeName);
   const requestsPVCs = !!getVolumes(vm).find(getVolumePersistentVolumeClaimName);
 
-  const resources = [
-    getResource(useProjects ? ProjectModel : NamespaceModel, { prop: 'namespaces' }),
-    getResource(VirtualMachineModel, { namespace, prop: 'virtualMachines' }),
+  const resources: FirehoseResource[] = [
+    {
+      kind: (useProjects ? ProjectModel : NamespaceModel).kind,
+      isList: true,
+      prop: 'namespaces',
+    },
+    {
+      kind: VirtualMachineModel.kind,
+      namespace,
+      isList: true,
+      prop: 'virtualMachines',
+    },
   ];
 
   if (requestsPVCs) {
-    resources.push(
-      getResource(PersistentVolumeClaimModel, { namespace, prop: 'persistentVolumeClaims' }),
-    );
+    resources.push({
+      kind: PersistentVolumeClaimModel.kind,
+      namespace: vmNamespace,
+      isList: true,
+      prop: 'persistentVolumeClaims',
+    });
   }
 
   if (requestsDataVolumes) {
-    resources.push(getResource(DataVolumeModel, { namespace, prop: 'dataVolumes' }));
+    resources.push({
+      kind: DataVolumeModel.kind,
+      namespace: vmNamespace,
+      isList: true,
+      prop: 'dataVolumes',
+    });
   }
 
   return (
