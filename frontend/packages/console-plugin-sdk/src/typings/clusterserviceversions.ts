@@ -7,6 +7,8 @@ namespace ExtensionProperties {
     kind: K8sResourceKindReference;
     /** label of action */
     label: string;
+    /** API group of the resource */
+    apiGroup: string;
     /** action callback */
     callback: (kind: K8sResourceKindReference, obj: any) => () => any;
   }

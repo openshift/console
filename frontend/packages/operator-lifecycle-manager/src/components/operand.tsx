@@ -36,6 +36,7 @@ import {
   referenceFor,
   GroupVersionKind,
   referenceForModel,
+  groupVersionFor,
 } from '@console/internal/module/k8s';
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
@@ -60,7 +61,11 @@ const csvName = () =>
 const getActions = (selectedObj: any) => {
   const actions = plugins.registry
     .getClusterServiceVersionActions()
-    .filter((action) => action.properties.kind === selectedObj.kind);
+    .filter(
+      (action) =>
+        action.properties.kind === selectedObj.kind &&
+        groupVersionFor(selectedObj.apiVersion).group === action.properties.apiGroup,
+    );
   const pluginActions = actions.map((action) => (kind, ocsObj) => ({
     label: action.properties.label,
     callback: action.properties.callback(kind, ocsObj),
