@@ -138,12 +138,13 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
         labelComponent={<Tooltip x={0} y={0} width={size} height={size * -0.2} />}
         /*
           // @ts-ignore */
-        padAngle={(d: PodData) => (d.y > 0 ? 2 : 0)}
+        padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
         style={{
           data: {
-            fill: (d: PodData) => podColor[d.x],
-            stroke: (d: PodData) =>
-              (d.x === 'Scaled to 0' || d.x === 'Idle' || d.x === 'Autoscaled to 0') && d.y > 0
+            fill: ({ datum }) => podColor[datum.x],
+            stroke: ({ datum }) =>
+              (datum.x === 'Scaled to 0' || datum.x === 'Idle' || datum.x === 'Autoscaled to 0') &&
+              datum.y > 0
                 ? '#BBBBBB'
                 : 'none',
             strokeWidth: 1,
