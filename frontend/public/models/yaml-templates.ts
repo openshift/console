@@ -162,8 +162,19 @@ spec:
   reportingStart: '2019-01-01T00:00:00Z'
   reportingEnd: '2019-12-30T23:59:59Z'
   runImmediately: true
-`)
-  .setIn([referenceForModel(k8sModels.DeploymentModel), 'default'], `
+`).setIn([referenceForModel(k8sModels.ReportQueryModel), 'default'], `
+apiVersion: metering.openshift.io/v1
+kind: ReportQuery
+metadata:
+  name: example
+  namespace: openshift-metering
+spec:
+  columns:
+  - name: the_time
+    type: timestamp
+  query: |
+    SELECT now() AS the_time;
+`).setIn([referenceForModel(k8sModels.DeploymentModel), 'default'], `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
