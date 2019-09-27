@@ -62,7 +62,6 @@ type jsGlobals struct {
 	CustomLogoURL            string `json:"customLogoURL"`
 	StatuspageID             string `json:"statuspageID"`
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
-	GoogleTagManagerID       string `json:"googleTagManagerID"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
 }
 
@@ -81,7 +80,6 @@ type Server struct {
 	CustomProductName    string
 	CustomLogoFile       string
 	StatuspageID         string
-	GoogleTagManagerID   string
 	LoadTestFactor       int
 	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
@@ -291,7 +289,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		CustomProductName:    s.CustomProductName,
 		StatuspageID:         s.StatuspageID,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
-		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,
 	}
 

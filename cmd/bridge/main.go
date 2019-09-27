@@ -95,7 +95,6 @@ func main() {
 	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
-	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
@@ -177,7 +176,6 @@ func main() {
 		CustomLogoFile:       *fCustomLogoFile,
 		StatuspageID:         *fStatuspageID,
 		DocumentationBaseURL: documentationBaseURL,
-		GoogleTagManagerID:   *fGoogleTagManagerID,
 		LoadTestFactor:       *fLoadTestFactor,
 	}
 

@@ -18,7 +18,6 @@ declare interface Window {
     customLogoURL: string;
     customProductName: string;
     documentationBaseURL: string;
-    googleTagManagerID: string;
     kubeAPIServerURL: string;
     kubeAdminLogoutURL: string;
     kubectlClientID: string;
