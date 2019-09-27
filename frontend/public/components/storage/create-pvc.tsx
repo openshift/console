@@ -10,6 +10,7 @@ import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
+import { isCephProvisioner } from '@console/ceph-storage-plugin/src/selectors';
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -80,6 +81,12 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ nameValuePairs }, this.onChange);
   };
 
+  getAccessModeForProvisioner = (provisioner: string) => {
+    return provisioner && isCephProvisioner(provisioner)
+      ? ['ReadWriteOnce', 'ReadWriteMany']
+      : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+  };
+
   handleStorageClass = (storageClass) => {
     //if the provisioner is unknown or no storage class selected, user should be able to set any access mode
     const modes =
@@ -87,10 +94,12 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
       storageClass.provisioner &&
       provisionerAccessModeMapping[storageClass.provisioner]
         ? provisionerAccessModeMapping[storageClass.provisioner]
-        : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+        : this.getAccessModeForProvisioner(storageClass.provisioner);
     //setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage =
-      storageClass && provisionerAccessModeMapping[storageClass.provisioner]
+      storageClass &&
+      (provisionerAccessModeMapping[storageClass.provisioner] ||
+        isCephProvisioner(storageClass.provisioner))
         ? 'Access mode is set by storage class and cannot be changed.'
         : 'Permissions to the mounted drive.';
     this.setState({ accessModeHelp: displayMessage }, this.onChange);

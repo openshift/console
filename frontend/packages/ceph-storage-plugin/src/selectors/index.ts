@@ -59,3 +59,10 @@ export const getOCSVersion = (items: FirehoseResult): string => {
   );
   return _.get(operator, 'status.currentCSV');
 };
+
+// To check if the provisioner is OCS based
+export const isCephProvisioner = (scProvisioner: string) => {
+  return cephStorageProvisioners.some((provisioner: string) =>
+    _.endsWith(scProvisioner, provisioner),
+  );
+};
