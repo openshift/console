@@ -3,7 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
 import { getNodeMaintenanceReason, getNodeMaintenanceCreationTimestamp } from '../../selectors';
-import stopNodeMaintenanceModal from '../modals/stop-node-maintenance-modal';
+import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {
   maintenance: K8sResourceKind;

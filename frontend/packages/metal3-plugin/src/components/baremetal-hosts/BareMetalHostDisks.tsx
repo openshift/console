@@ -3,8 +3,8 @@ import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
-import { getHostStorage } from '../selectors';
-import { BaremetalHostDisk } from '../types';
+import { getHostStorage } from '../../selectors';
+import { BareMetalHostDisk } from '../../types';
 
 const DisksTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -17,7 +17,7 @@ const DisksTableHeader = () => [
 ];
 
 type DisksTableRowProps = {
-  obj: BaremetalHostDisk;
+  obj: BareMetalHostDisk;
   index: number;
   key?: string;
   style: React.StyleHTMLAttributes<any>;
@@ -39,18 +39,18 @@ const DisksTableRow: React.FC<DisksTableRowProps> = ({ obj, index, key, style })
   );
 };
 
-type BaremetalHostNICListProps = {
+type BareMetalHostDisksProps = {
   obj: K8sResourceKind;
 };
 
-const BaremetalHostDiskList: React.FC<BaremetalHostNICListProps> = ({ obj: host }) => {
+const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host }) => {
   const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
       <div className="co-m-pane__body">
         <Table
           data={disks}
-          aria-label="Baremetal Host NICs"
+          aria-label="Bare Metal Host Disks"
           Header={DisksTableHeader}
           Row={DisksTableRow}
           loaded
@@ -60,4 +60,4 @@ const BaremetalHostDiskList: React.FC<BaremetalHostNICListProps> = ({ obj: host 
   );
 };
 
-export default BaremetalHostDiskList;
+export default BareMetalHostDisks;

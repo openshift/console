@@ -1,22 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
 import {
   referenceForModel,
   K8sResourceKind,
   MachineKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import { DetailsPage } from '@console/internal/components/factory';
 import {
-  navFactory,
   SectionHeading,
   Timestamp,
   humanizeDecimalBytes,
   ResourceLink,
-  FirehoseResource,
 } from '@console/internal/components/utils';
-import { MachineModel, NodeModel } from '@console/internal/models';
+import { NodeModel } from '@console/internal/models';
 import {
   getName,
   getMachineNode,
@@ -25,9 +21,7 @@ import {
   getMachineRole,
   StatusIconAndText,
 } from '@console/shared';
-import { ResourceEventStream } from '@console/internal/components/events';
-import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
-import { canHostAddMachine, getHostStatus } from '../utils/host-status';
+import { canHostAddMachine, getHostStatus } from '../../utils/host-status';
 import {
   getHostNICs,
   getHostDescription,
@@ -41,30 +35,19 @@ import {
   getHostMachine,
   findNodeMaintenance,
   getHostBios,
-} from '../selectors';
-import MachineCell from './machine-cell';
-import BaremetalHostStatus from './host-status';
-import BaremetalHostNICList from './host-nics';
-import BaremetalHostDiskList from './host-disks';
-import { HostDashboard } from './dashboard';
-import { menuActionsCreator } from './host-menu-actions';
-import HostPowerStatusIcon from './HostPowerStatusIcon';
+} from '../../selectors';
+import MachineLink from './MachineLink';
+import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
+import BareMetalHostStatus from './BareMetalHostStatus';
 
-type BaremetalHostDetailPageProps = {
-  namespace: string;
-  name: string;
-  match: any;
-  hasNodeMaintenanceCapability: boolean;
-};
-
-type BaremetalHostDetailsProps = {
+type BareMetalHostDetailsProps = {
   obj: K8sResourceKind;
   machines: MachineKind[];
   nodes: NodeKind[];
   nodeMaintenances: K8sResourceKind[];
 };
 
-const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
+const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   obj: host,
   machines,
   nodes,
@@ -92,7 +75,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Baremetal Host Overview" />
+      <SectionHeading text="Bare Metal Host Overview" />
       <div className="row">
         <div className="col-xs-12 col-sm-6" id="name-description-column">
           <dl>
@@ -114,7 +97,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
               <>
                 <dt>Machine</dt>
                 <dd>
-                  <MachineCell host={host} status={status} />
+                  <MachineLink host={host} status={status} />
                 </dd>
               </>
             )}
@@ -141,13 +124,13 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
           <dl>
             <dt>Status</dt>
             <dd>
-              <BaremetalHostStatus status={status} />
+              <BareMetalHostStatus status={status} />
             </dd>
             <dt>Power Status</dt>
             <dd>
               <StatusIconAndText
                 title={powerStatus}
-                icon={<HostPowerStatusIcon powerStatus={powerStatus} />}
+                icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
               />
             </dd>
             {role && (
@@ -199,77 +182,4 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   );
 };
 
-const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = ({
-  hasNodeMaintenanceCapability,
-  ...props
-}) => {
-  const resources: FirehoseResource[] = [
-    {
-      kind: referenceForModel(MachineModel),
-      namespaced: true,
-      isList: true,
-      prop: 'machines',
-    },
-    {
-      kind: NodeModel.kind,
-      namespaced: false,
-      isList: true,
-      prop: 'nodes',
-    },
-  ];
-
-  if (hasNodeMaintenanceCapability) {
-    resources.push({
-      kind: referenceForModel(NodeMaintenanceModel),
-      namespaced: false,
-      isList: true,
-      prop: 'nodeMaintenances',
-      optional: true,
-    });
-  }
-
-  const nicsPage = {
-    href: 'nics',
-    name: 'Network Interfaces',
-    component: BaremetalHostNICList,
-  };
-  const disksPage = {
-    href: 'disks',
-    name: 'Disks',
-    component: BaremetalHostDiskList,
-  };
-  const dashboardPage = {
-    href: 'dashboard',
-    name: 'Dashboard',
-    component: HostDashboard,
-  };
-  return (
-    <DetailsPage
-      {...props}
-      pagesFor={() => [
-        navFactory.details(BaremetalHostDetails),
-        dashboardPage,
-        navFactory.editYaml(),
-        nicsPage,
-        disksPage,
-        navFactory.events(ResourceEventStream),
-      ]}
-      kind={referenceForModel(BaremetalHostModel)}
-      resources={resources}
-      menuActions={menuActionsCreator}
-      customData={{ hasNodeMaintenanceCapability }}
-    />
-  );
-};
-
-const hostPageStateToProps = ({ k8s }) => ({
-  hasNodeMaintenanceCapability: !!k8s.getIn([
-    'RESOURCES',
-    'models',
-    referenceForModel(NodeMaintenanceModel),
-  ]),
-});
-
-export const BaremetalHostDetailPageConnected = connect(hostPageStateToProps)(
-  BaremetalHostDetailPage,
-);
+export default BareMetalHostDetails;

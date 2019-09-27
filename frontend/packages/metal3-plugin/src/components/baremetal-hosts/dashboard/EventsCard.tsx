@@ -20,8 +20,8 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
-import { getHostMachineName } from '../../selectors';
-import { BaremetalHostModel } from '../../models';
+import { getHostMachineName } from '../../../selectors';
+import { BareMetalHostModel } from '../../../models';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const getMachineResource = (name: string, namespace: string): FirehoseResource => ({
@@ -46,7 +46,7 @@ const machesInvolvedObject = (
   });
 
 const hostEventsFilter = (host: K8sResourceKind, machine: MachineKind, event: EventKind): boolean =>
-  machesInvolvedObject(BaremetalHostModel.kind, getName(host), getNamespace(host), event) ||
+  machesInvolvedObject(BareMetalHostModel.kind, getName(host), getNamespace(host), event) ||
   machesInvolvedObject(MachineModel.kind, getName(machine), getNamespace(machine), event) ||
   machesInvolvedObject(NodeModel.kind, getMachineNodeName(machine), null, event);
 

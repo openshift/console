@@ -7,6 +7,7 @@ import {
   ErrorStatus,
   Status,
   StatusIconAndText,
+  getNamespace,
 } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RequireCreatePermission } from '@console/internal/components/utils';
@@ -17,23 +18,21 @@ import {
   HOST_SUCCESS_STATES,
   HOST_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_STARTING_MAINTENANCE,
-} from '../constants';
-import { BaremetalHostModel } from '../models';
-import { getHostErrorMessage } from '../selectors';
-import { HostMultiStatus } from './types';
-import MaintenancePopover from './maintenance/MaintenancePopover';
+} from '../../constants';
+import { BareMetalHostModel } from '../../models';
+import { getHostErrorMessage } from '../../selectors';
+import { HostMultiStatus } from '../types';
+import MaintenancePopover from '../maintenance/MaintenancePopover';
 
 // TODO(jtomasek): Update this with onClick handler once add discovered host functionality
 // is available
 export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
   { host }, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
-  const {
-    metadata: { namespace },
-  } = host;
+  const namespace = getNamespace(host);
 
   return (
-    <RequireCreatePermission model={BaremetalHostModel} namespace={namespace}>
+    <RequireCreatePermission model={BareMetalHostModel} namespace={namespace}>
       <Button bsStyle="link">
         <StatusIconAndText icon={<AddCircleOIcon />} title="Add host" />
       </Button>
@@ -41,11 +40,11 @@ export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
   );
 };
 
-type BaremetalHostStatusProps = {
+type BareMetalHostStatusProps = {
   status: HostMultiStatus;
 };
 
-const BaremetalHostStatus = ({ status: { status, title, ...props } }: BaremetalHostStatusProps) => {
+const BareMetalHostStatus = ({ status: { status, title, ...props } }: BareMetalHostStatusProps) => {
   const statusTitle = title || status;
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
@@ -65,4 +64,4 @@ const BaremetalHostStatus = ({ status: { status, title, ...props } }: BaremetalH
   }
 };
 
-export default BaremetalHostStatus;
+export default BareMetalHostStatus;

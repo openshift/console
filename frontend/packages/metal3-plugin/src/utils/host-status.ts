@@ -48,7 +48,7 @@ const getMaintenanceStatus = (maintenance: K8sResourceKind, host: K8sResourceKin
   return null;
 };
 
-const getBaremetalHostStatus = (host: K8sResourceKind) => {
+const getBareMetalHostStatus = (host: K8sResourceKind) => {
   const operationalStatus = getHostOperationalStatus(host);
   const provisioningState = getHostProvisioningState(host);
 
@@ -84,6 +84,6 @@ type HostStatusProps = {
 };
 
 export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): HostMultiStatus =>
-  getMaintenanceStatus(nodeMaintenance, host) || getBaremetalHostStatus(host);
+  getMaintenanceStatus(nodeMaintenance, host) || getBareMetalHostStatus(host);
 
 export const canHostAddMachine = (status: string): boolean => [HOST_STATUS_READY].includes(status);

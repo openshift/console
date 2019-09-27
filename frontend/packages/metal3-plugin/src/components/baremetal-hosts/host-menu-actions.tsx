@@ -8,9 +8,9 @@ import {
 } from '@console/internal/module/k8s';
 import { getMachineNode, getMachineNodeName, getName } from '@console/shared';
 import { deleteModal } from '@console/internal/components/modals';
-import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../selectors';
-import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
-import { getHostStatus } from '../utils/host-status';
+import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../../selectors';
+import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
+import { getHostStatus } from '../../utils/host-status';
 import {
   HOST_POWER_STATUS_POWERING_OFF,
   HOST_POWER_STATUS_POWERED_ON,
@@ -18,10 +18,10 @@ import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_STATUS_READY,
   HOST_STATUS_REGISTRATION_ERROR,
-} from '../constants';
-import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
-import { powerOffHostModal } from './modals/power-off-host-modal';
-import stopNodeMaintenanceModal from './modals/stop-node-maintenance-modal';
+} from '../../constants';
+import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
+import { powerOffHostModal } from '../modals/PowerOffHostModal';
+import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 
 type ActionArgs = {
   nodeName?: string;
@@ -65,9 +65,9 @@ export const PowerOn = (kindObj: K8sKind, host: K8sResourceKind): KebabOption =>
     ),
     label: title,
     callback: () => {
-      k8sPatch(BaremetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
+      k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
     },
-    accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
+    accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
   };
 };
 
@@ -82,7 +82,7 @@ export const PowerOff = (
   ),
   label: 'Shut down',
   callback: () => powerOffHostModal({ hasNodeMaintenanceCapability, host, nodeName, status }),
-  accessReview: host && asAccessReview(BaremetalHostModel, host, 'update'),
+  accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
 export const Delete = (
@@ -100,7 +100,7 @@ export const Delete = (
         kind: kindObj,
         resource: host,
       }),
-    accessReview: asAccessReview(BaremetalHostModel, host, 'delete'),
+    accessReview: asAccessReview(BareMetalHostModel, host, 'delete'),
   };
 };
 
