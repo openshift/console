@@ -32,6 +32,7 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { NodeModel, InfrastructureModel, StorageClassModel } from '@console/internal/models';
+import { isDefaultClass } from '@console/internal/components/storage-class';
 import { OCSServiceModel } from '../../models';
 import {
   infraProvisionerMap,
@@ -43,8 +44,6 @@ import {
 import './ocs-install.scss';
 
 const ocsLabel = 'cluster.ocs.openshift.io/openshift-storage';
-const nodeLabel = 'cluster.ocs.openshift.io~1openshift-storage';
-const defaultSAnotations = { 'storageclass.kubernetes.io/is-default-class': 'true' };
 
 const getConvertedUnits = (value: string) => {
   return humanizeBinaryBytes(convertToBaseValue(value)).string || '-';
@@ -178,7 +177,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
       setNodes(formattedNodes);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(data), loaded]);
+  }, [data, loaded]);
 
   const onSelect = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -204,7 +203,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
       const patch = [
         {
           op: 'add',
-          path: `/metadata/labels/${nodeLabel}`,
+          path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
           value: '',
         },
       ];
@@ -278,7 +277,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
         const scList = _.filter(storageClasses, (sc) => sc.provisioner === provisioner);
         // take the default storageclass
         _.forEach(scList, (sc) => {
-          if (sc.metadata && _.isEqual(sc.metadata.annotations, defaultSAnotations)) {
+          if (isDefaultClass(sc)) {
             storageClass = sc.metadata.name;
           }
         });
@@ -294,6 +293,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     <>
       <div className="node-list__max-height">
         <Table
+          aria-label="node list table"
           onSelect={onSelect}
           cells={columns}
           rows={nodes}
