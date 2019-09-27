@@ -96,7 +96,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
             error={!!pvcsLoadError}
             kind={PersistentVolumeClaimModel}
             useAbbr
-            resources={getCephPVCs(filteredSCNames, pvcsData)}
+            resources={getCephPVCs(filteredSCNames, pvcsData, pvsData)}
             mapper={getPVCStatusGroups}
             showLink={false}
           />
