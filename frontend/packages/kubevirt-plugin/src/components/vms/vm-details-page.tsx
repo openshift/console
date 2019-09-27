@@ -7,10 +7,12 @@ import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
 import { getResource } from '../../utils';
+import { VM_DETAIL_OVERVIEW_HREF } from '../../constants';
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
 import { menuActionsCreator } from './menu-actions';
+import { VMDashboard } from './vm-dashboard';
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, namespace } = props;
@@ -26,6 +28,18 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     getResource(PodModel, { namespace, prop: 'pods' }),
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
   ];
+
+  const dashboardPage = {
+    href: '', // default landing page
+    name: 'Dashboard',
+    component: VMDashboard,
+  };
+
+  const overviewPage = {
+    href: VM_DETAIL_OVERVIEW_HREF,
+    name: 'Overview',
+    component: VMDetailsFirehose,
+  };
 
   const consolePage = {
     href: 'consoles',
@@ -46,7 +60,8 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   };
 
   const pages = [
-    navFactory.details(VMDetailsFirehose),
+    dashboardPage,
+    overviewPage,
     navFactory.editYaml(),
     consolePage,
     navFactory.events(VMEvents),

@@ -2,13 +2,11 @@ import * as React from 'react';
 import {
   getOperatingSystemName,
   getOperatingSystem,
-  getVmiIpAddresses,
   getWorkloadProfile,
   getVmTemplate,
   getNodeName,
   VmStatuses,
   BootOrder,
-  isVmOff,
   getBootableDevicesInOrder,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
@@ -23,6 +21,7 @@ import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { FlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
+import { getVmiIpAddressesString } from '../ip-addresses';
 
 import './_vm-resource.scss';
 
@@ -64,8 +63,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const { launcherPod } = vmStatus;
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
   const nodeName = getNodeName(launcherPod);
-  const vmIsOff = isVmOff(vmStatus);
-  const ipAddresses = vmIsOff ? [] : getVmiIpAddresses(vmi);
 
   return (
     <dl className="co-m-pane__details">
@@ -94,9 +91,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         )}
       </dd>
       <dt>IP Address</dt>
-      <dd id={prefixedID(id, 'ip-addresses')}>
-        {ipAddresses.length > 0 ? ipAddresses.join(', ') : DASH}
-      </dd>
+      <dd id={prefixedID(id, 'ip-addresses')}>{getVmiIpAddressesString(vmi, vmStatus) || DASH}</dd>
       <dt>Node</dt>
       <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
       <dt>Flavor</dt>

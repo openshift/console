@@ -1,0 +1,78 @@
+import * as React from 'react';
+import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardTitle,
+  DashboardCardBody,
+  DashboardCardLink,
+} from '@console/internal/components/dashboard/dashboard-card';
+import { DetailsBody, DetailItem } from '@console/internal/components/dashboard/details-card';
+import { getName, getNamespace, getUID, getCreationTimestamp } from '@console/shared';
+import {
+  ResourceLink,
+  Timestamp,
+  NodeLink,
+  resourcePath,
+} from '@console/internal/components/utils';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { getNodeName } from '../../../selectors/pod/selectors';
+import { isVMRunning } from '../../../selectors/vm';
+import { getVMStatus } from '../../../statuses/vm/vm';
+import { VirtualMachineModel } from '../../../models';
+import { getVmiIpAddressesString } from '../../ip-addresses';
+import { VM_DETAIL_OVERVIEW_HREF } from '../../../constants';
+
+export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
+  const vmDashboardContext = React.useContext(VMDashboardContext);
+  const { vm, vmi, pods, migrations } = vmDashboardContext;
+
+  const vmStatus = getVMStatus(vm, pods, migrations);
+  const { launcherPod } = vmStatus;
+
+  const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
+
+  const isNodeLoading = !vm || !pods || !vmStatus;
+  const name = getName(vm);
+  const namespace = getNamespace(vm);
+
+  const viewAllLink = `${resourcePath(
+    VirtualMachineModel.kind,
+    name,
+    namespace,
+  )}/${VM_DETAIL_OVERVIEW_HREF}`;
+
+  return (
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardLink to={viewAllLink}>View all</DashboardCardLink>
+      </DashboardCardHeader>
+      <DashboardCardBody isLoading={false}>
+        <DetailsBody>
+          <DetailItem title="Name" error={false} isLoading={!vm}>
+            {name}
+          </DetailItem>
+          <DetailItem title="Namespace" error={false} isLoading={!vm}>
+            <ResourceLink kind="Namespace" name={namespace} title={getUID(vm)} namespace={null} />
+          </DetailItem>
+          <DetailItem title="Created" error={false} isLoading={!vm}>
+            <Timestamp timestamp={getCreationTimestamp(vm)} />
+          </DetailItem>
+          <DetailItem
+            title="Node"
+            error={!isNodeLoading && (!launcherPod || !isVMRunning(vm))}
+            isLoading={isNodeLoading}
+          >
+            {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
+          </DetailItem>
+          <DetailItem title="IP Address" error={!ipAddrs} isLoading={!vm}>
+            {ipAddrs}
+          </DetailItem>
+        </DetailsBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+};
+
+type VMDetailsCardProps = DashboardItemProps;

@@ -188,7 +188,11 @@ const isWaitingForVMI = (vm: VMKind): VMStatus => {
   return NOT_HANDLED;
 };
 
-export const getVMStatus = (vm: VMKind, pods: PodKind[], migrations: K8sResourceKind[]) => {
+export const getVMStatus = (
+  vm: VMKind,
+  pods: PodKind[],
+  migrations: K8sResourceKind[],
+): VMStatus => {
   const launcherPod = findVMPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
   return (
     isV2VConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
@@ -209,7 +213,7 @@ export const getSimpleVMStatus = (vm: VMKind, pods: PodKind[], migrations: K8sRe
     : VM_SIMPLE_STATUS_OTHER;
 };
 
-type VMStatus = Status & {
+export type VMStatus = Status & {
   pod?: PodKind;
   launcherPod?: PodKind;
   progress?: number;
