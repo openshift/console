@@ -25,6 +25,7 @@ import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
+  checkServerlessAccess,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
@@ -146,6 +147,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: knativeServingResourcesRevision,
       required: FLAG_KNATIVE_SERVING_REVISION,
       utils: getKnativeServingRevisions,
+      auth: checkServerlessAccess,
     },
   },
   {
@@ -154,6 +156,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: knativeServingResourcesConfigurations,
       required: FLAG_KNATIVE_SERVING_CONFIGURATION,
       utils: getKnativeServingConfigurations,
+      auth: checkServerlessAccess,
     },
   },
   {
@@ -162,6 +165,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: knativeServingResourcesRoutes,
       required: FLAG_KNATIVE_SERVING_ROUTE,
       utils: getKnativeServingRoutes,
+      auth: checkServerlessAccess,
     },
   },
   {

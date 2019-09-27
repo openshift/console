@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { OverviewDetailsResourcesTabProps } from '@console/internal/components/overview/resource-overview-page';
 import { OverviewMainContentProps } from '@console/internal/components/overview';
@@ -19,6 +19,9 @@ namespace ExtensionProperties {
 
     /** util to check get resources. */
     utils: (dc: K8sResourceKind, props: OverviewMainContentProps) => ResourceItem;
+
+    /** resource attribute to check authorization(RBAC) against */
+    auth: (namespace: string) => AccessReviewResourceAttributes;
   }
 
   export interface OverviewResourceTab {

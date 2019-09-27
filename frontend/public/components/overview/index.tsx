@@ -37,6 +37,7 @@ import {
   FirehoseResult,
   FirehoseResource,
   MsgBox,
+  checkAccess,
 } from '../utils';
 
 import { ProjectOverview } from './project-overview';
@@ -941,26 +942,8 @@ const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
   };
 };
 
-const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourceList, title, dismissDetails}) => {
-  const namespace = _.get(match, 'params.name');
-  const sidebarOpen = !_.isEmpty(selectedItem);
-  const className = classnames('overview', {'overview--sidebar-shown': sidebarOpen});
-  const ref = React.useRef();
-  const [height, setHeight] = React.useState(500);
-  const calcHeight = (node) => {
-    setHeight(document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom - node.current.getBoundingClientRect().top);
-  };
-  React.useLayoutEffect(() => {
-    calcHeight(ref);
-    const handleResize = () => calcHeight(ref);
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  });
-
-  // TODO: Update resources for native Kubernetes clusters.
-  let resources: FirehoseResource[] = [
+const getResourceList = (namespace: string) => {
+  const resourcesList: FirehoseResource[] = [
     {
       isList: true,
       kind: 'Build',
@@ -1034,11 +1017,47 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourc
       prop: 'statefulSets',
     },
   ];
-  let crdUtils = [];
-  resourceList.forEach(resource => {
-    resources = [...resources, ...resource.properties.resources(namespace)];
-    crdUtils = [...crdUtils, resource.properties.utils];
+  return resourcesList;
+};
+const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourceList, title, dismissDetails}) => {
+  const namespace = _.get(match, 'params.name');
+  const sidebarOpen = !_.isEmpty(selectedItem);
+  const className = classnames('overview', {'overview--sidebar-shown': sidebarOpen});
+  const ref = React.useRef();
+  const [height, setHeight] = React.useState(500);
+  const calcHeight = (node) => {
+    setHeight(document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom - node.current.getBoundingClientRect().top);
+  };
+  React.useLayoutEffect(() => {
+    calcHeight(ref);
+    const handleResize = () => calcHeight(ref);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   });
+
+  const [resources, setResources] = React.useState(getResourceList(namespace));
+  const [crdUtils, setCrdUtils] = React.useState([]);
+  React.useEffect(() => {
+    const checkResourceAuth = async() => {
+      let resList = [];
+      let crList = [];
+      const resourcesList = getResourceList(namespace);
+      for (let i =0; i<resourceList.length; i++){
+        await checkAccess(resourceList[i].properties.auth(namespace))
+          .then((resp) => {
+            if (resp && resp.status && resp.status.allowed) {
+              resList = [...resList, ...resourceList[i].properties.resources(namespace)];
+              crList = [...crList, resourceList[i].properties.utils];
+            }
+          });
+      }
+      setResources([...resourcesList, ...resList]);
+      setCrdUtils(crList);
+    };
+    checkResourceAuth();
+  },[namespace, resourceList]);
 
   return <div className={className}>
     <div className="overview__main-column" ref={ref} style={{height}}>

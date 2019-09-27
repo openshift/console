@@ -1,4 +1,9 @@
-import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  K8sResourceKind,
+  referenceForModel,
+  AccessReviewResourceAttributes,
+} from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
   ServiceModel,
@@ -181,4 +186,14 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
     },
   ];
   return knativeResource;
+};
+
+export const checkServerlessAccess = (namespace: string): AccessReviewResourceAttributes => {
+  const resourceAttributes: AccessReviewResourceAttributes = {
+    group: ServiceModel.apiGroup,
+    resource: ServiceModel.plural,
+    verb: 'get',
+    namespace,
+  };
+  return resourceAttributes;
 };

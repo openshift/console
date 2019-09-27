@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-import { knativeServingResources } from '@console/knative-plugin';
+import { Firehose, FirehoseResource, checkAccess } from '@console/internal/components/utils';
+import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
+import { knativeServingResources, ServiceModel } from '@console/knative-plugin';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
 import { TransformTopologyData } from './topology-utils';
 
@@ -43,14 +44,8 @@ const Controller: React.FC<ControllerProps> = React.memo(
     }),
 );
 
-const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
-  namespace,
-  render,
-  application,
-  knative,
-  cheURL,
-}) => {
-  let resources: FirehoseResource[] = [
+const getResourceList = (namespace: string) => {
+  const resourcesList: FirehoseResource[] = [
     {
       isList: true,
       kind: 'DeploymentConfig',
@@ -118,11 +113,42 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       prop: 'statefulSets',
     },
   ];
+  return resourcesList;
+};
 
-  if (knative) {
-    const knativeResource = knativeServingResources(namespace);
-    resources = [...resources, ...knativeResource];
-  }
+const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
+  namespace,
+  render,
+  application,
+  knative,
+  cheURL,
+}) => {
+  const [resources, setResourcesItems] = React.useState(getResourceList(namespace));
+  React.useEffect(() => {
+    const checkKnAccess = async () => {
+      const resourceList = getResourceList(namespace);
+      if (knative) {
+        const resourceAttributes: AccessReviewResourceAttributes = {
+          group: ServiceModel.apiGroup,
+          resource: ServiceModel.plural,
+          verb: 'get',
+          namespace,
+        };
+        const knativeResource = knativeServingResources(namespace);
+        await checkAccess(resourceAttributes).then((resp) => {
+          if (resp && resp.status && resp.status.allowed) {
+            setResourcesItems([...resourceList, ...knativeResource]);
+          } else {
+            setResourcesItems(resourceList);
+          }
+        });
+      } else {
+        setResourcesItems(resourceList);
+      }
+    };
+    checkKnAccess();
+  }, [namespace, knative]);
+
   return (
     <Firehose resources={resources} forceUpdate>
       <Controller application={application} cheURL={cheURL} render={render} />
