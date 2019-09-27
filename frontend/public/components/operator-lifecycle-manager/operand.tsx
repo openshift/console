@@ -16,7 +16,7 @@ import { ErrorPage404 } from '../error';
 import { MultiListPage, ListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
 import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab, KebabAction, LoadingBox } from '../utils';
 import { connectToModel } from '../../kinds';
-import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
+import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel, groupVersionFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
 import { RootState } from '../../redux';
@@ -25,8 +25,10 @@ import * as plugins from '../../plugins';
 const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
 const getActions = (selectedObj: any) => {
-  const actions = plugins.registry.getClusterServiceVersionActions().filter(action =>
-    action.properties.kind === selectedObj.kind
+  const actions = plugins.registry.getClusterServiceVersionActions().filter(
+    (action) =>
+      action.properties.kind === selectedObj.kind &&
+      groupVersionFor(selectedObj.apiVersion).group === action.properties.apiGroup,
   );
   const pluginActions = actions.map(action => (kind, ocsObj) => ({
     label: action.properties.label,
