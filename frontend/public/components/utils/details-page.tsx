@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
 
 import {
   Kebab,
@@ -61,7 +63,11 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showTolerations && (
       <dd>
         {canUpdate
-          ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</button>
+          ? <Button type="button" isInline onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
+            variant="link">
+            {pluralize(_.size(tolerations), 'Toleration')}
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          </Button>
           : pluralize(_.size(tolerations), 'Toleration')}
       </dd>
     )}
@@ -69,7 +75,10 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showAnnotations && (
       <dd>
         {canUpdate
-          ? <button data-test-id="edit-annotations" type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button>
+          ? <Button data-test-id="edit-annotations" type="button" isInline onClick={Kebab.factory.ModifyAnnotations(model, resource).callback} variant="link">
+            {pluralize(_.size(metadata.annotations), 'Annotation')}
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          </Button>
           : pluralize(_.size(metadata.annotations), 'Annotation')}
       </dd>
     )}

@@ -2,6 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { Status } from '@console/shared';
 import { getNodeRoles, nodeStatus, makeNodeSchedulable, NodeKind, referenceForModel } from '../module/k8s';
@@ -232,13 +234,19 @@ const Details = ({obj: node}) => {
             <dt>Taints</dt>
             <dd>
               {canUpdate
-                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button>
+                ? <Button variant="link" type="button" isInline onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>
+                  {pluralize(_.size(node.spec.taints), 'Taint')}
+                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                </Button>
                 : pluralize(_.size(node.spec.taints), 'Taint')}
             </dd>
             <dt>Annotations</dt>
             <dd>
               {canUpdate
-                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button>
+                ? <Button variant="link" type="button" isInline onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>
+                  {pluralize(_.size(node.metadata.annotations), 'Annotation')}
+                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                </Button>
                 : pluralize(_.size(node.metadata.annotations), 'Annotation')}
             </dd>
             {machine && <React.Fragment>

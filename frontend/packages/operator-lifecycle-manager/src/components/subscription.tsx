@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
+import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   DetailsPage,
   MultiListPage,
@@ -379,13 +380,10 @@ export class SubscriptionUpdates extends React.Component<
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <button
-                    type="button"
-                    className="btn btn-link co-modal-btn-link"
-                    onClick={() => channelModal()}
-                  >
+                  <Button type="button" isInline onClick={() => channelModal()} variant="link">
                     {obj.spec.channel || 'default'}
-                  </button>
+                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  </Button>
                 )}
               </dd>
             </dl>
@@ -397,13 +395,10 @@ export class SubscriptionUpdates extends React.Component<
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <button
-                    type="button"
-                    className="btn btn-link co-modal-btn-link"
-                    onClick={() => approvalModal()}
-                  >
+                  <Button type="button" isInline onClick={() => approvalModal()} variant="link">
                     {obj.spec.installPlanApproval || 'Automatic'}
-                  </button>
+                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  </Button>
                 )}
               </dd>
             </dl>

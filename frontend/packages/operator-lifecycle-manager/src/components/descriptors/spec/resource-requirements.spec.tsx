@@ -99,19 +99,34 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     const { memory, cpu } = obj.spec.resources.limits;
     wrapper = wrapper.setProps({ type: 'requests' });
 
-    expect(wrapper.find('button').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    expect(
+      wrapper
+        .find('button')
+        .childAt(0)
+        .text(),
+    ).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
   });
 
   it('renders a button link with the resource limits', () => {
     const { memory, cpu } = obj.spec.resources.requests;
-    expect(wrapper.find('button').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    expect(
+      wrapper
+        .find('button')
+        .childAt(0)
+        .text(),
+    ).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
   });
 
   it('renders default values if undefined', () => {
     obj.spec.resources = undefined;
     wrapper.setProps({ obj });
 
-    expect(wrapper.find('button').text()).toEqual('CPU: none, Memory: none');
+    expect(
+      wrapper
+        .find('button')
+        .childAt(0)
+        .text(),
+    ).toEqual('CPU: none, Memory: none');
   });
 
   it('opens resource requirements modal when clicked', (done) => {

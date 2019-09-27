@@ -52,9 +52,9 @@ describe(SpecDescriptor.name, () => {
         .find('dd')
         .childAt(0)
         .shallow()
-        .find('button.co-modal-btn-link')
+        .find('[data-test-id="configure-modal-btn"]')
         .text(),
-    ).toEqual(`${value} pods`);
+    ).toEqual(`${value}`);
 
     spyOn(configureSize, 'configureSizeModal').and.callFake((props) => {
       expect(props).toEqual({
@@ -69,7 +69,7 @@ describe(SpecDescriptor.name, () => {
       .find('dd')
       .childAt(0)
       .shallow()
-      .find('button.co-modal-btn-link')
+      .find('[data-test-id="configure-modal-btn"]')
       .props()
       .onClick(null);
   });

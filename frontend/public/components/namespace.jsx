@@ -3,7 +3,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { connect } from 'react-redux';
-import { Tooltip } from '@patternfly/react-core';
+import { Tooltip , Button } from '@patternfly/react-core';
+
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import { Status } from '@console/shared';
@@ -244,7 +246,10 @@ export const PullSecret = (props) => {
   }
   const modal = () => configureNamespacePullSecretModal({namespace: props.namespace, pullSecret: data});
 
-  return <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={modal}>{_.get(data, 'metadata.name') || 'Not Configured'}</button>;
+  return <Button variant="link" type="button" isInline onClick={modal}>
+    {_.get(data, 'metadata.name') || 'Not Configured'}
+    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+  </Button>;
 };
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
