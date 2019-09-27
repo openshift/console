@@ -16,6 +16,7 @@ export const FormRow: React.FC<FormRowProps> = ({
   isLoading,
   validationMessage,
   validationType,
+  validation,
   children,
 }) => {
   if (isHidden) {
@@ -27,8 +28,8 @@ export const FormRow: React.FC<FormRowProps> = ({
       label={title}
       isRequired={isRequired}
       fieldId={fieldId}
-      isValid={validationType !== ValidationErrorType.Error}
-      helperTextInvalid={validationMessage}
+      isValid={((validation && validation.type) || validationType) !== ValidationErrorType.Error}
+      helperTextInvalid={(validation && validation.message) || validationMessage}
     >
       {help && (
         <span className="kubevirt-form-row__icon-status-container">
@@ -63,5 +64,9 @@ type FormRowProps = {
   isLoading?: boolean;
   validationMessage?: string;
   validationType?: ValidationErrorType;
+  validation?: {
+    message?: string;
+    type?: ValidationErrorType;
+  };
   children?: React.ReactNode;
 };

@@ -1,6 +1,5 @@
 // left intentionally empty
 import { ProvisionSource } from '../../../../types/vm';
-import { StorageType } from '../../../../constants/vm/storage';
 
 const rootDisk = {
   rootStorage: {},
@@ -9,11 +8,11 @@ const rootDisk = {
 };
 export const rootContainerDisk = {
   ...rootDisk,
-  storageType: StorageType.CONTAINER,
+  // storageType: StorageType.CONTAINER, TODO!!
 };
 export const rootDataVolumeDisk = {
   ...rootDisk,
-  storageType: StorageType.DATAVOLUME,
+  // storageType: StorageType.DATAVOLUME, TODO!!
   size: 10,
 };
 export const getInitialDisk = (provisionSource: ProvisionSource) => {

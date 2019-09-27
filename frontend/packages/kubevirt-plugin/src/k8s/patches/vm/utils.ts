@@ -19,6 +19,7 @@ export const getShiftBootOrderPatches = (
     .map((device) => {
       const patchedDevice = _.cloneDeep(device);
       patchedDevice.bootOrder = getDeviceBootOrder(patchedDevice) - 1;
+
       return new PatchBuilder(path)
         .setListUpdate(patchedDevice, devicesWithoutRemovedDevice, getSimpleName)
         .build();

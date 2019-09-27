@@ -9,7 +9,7 @@ import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../wrapper/vm/network-interface-wrapper';
 import { getShiftBootOrderPatches } from './utils';
 
-export const getRemoveNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
+export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
     const nicName = nic.name;
     const nics = getInterfaces(vm);
@@ -60,7 +60,7 @@ export const getRemoveNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
   });
 };
 
-export const getAddNicPatches = (
+export const getUpdateNICPatches = (
   vmLikeEntity: VMLikeEntityKind,
   {
     nic,
@@ -75,14 +75,10 @@ export const getAddNicPatches = (
 
     return [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setListUpdate(nic, nics, (currentNIC) =>
-          currentNIC === nic ? oldNICName : getSimpleName(currentNIC),
-        )
+        .setListUpdate(nic, nics, getSimpleName, oldNICName)
         .build(),
       new PatchBuilder('/spec/template/spec/networks')
-        .setListUpdate(network, networks, (currentNetwork) =>
-          currentNetwork === network ? oldNetworkName : getSimpleName(currentNetwork),
-        )
+        .setListUpdate(network, networks, getSimpleName, oldNetworkName)
         .build(),
     ].filter((patch) => patch);
   });

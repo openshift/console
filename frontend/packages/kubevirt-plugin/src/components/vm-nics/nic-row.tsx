@@ -5,7 +5,7 @@ import { DASH, getDeletetionTimestamp } from '@console/shared/src';
 import { TemplateModel } from '@console/internal/models';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VirtualMachineModel } from '../../models';
-import { isVM } from '../../selectors/vm';
+import { asVM, isVM, isVMRunning } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { VMLikeEntityKind } from '../../types';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
@@ -63,6 +63,9 @@ const menuActionDelete = (
 });
 
 const getActions = (nic, network, vmLikeEntity: VMLikeEntityKind, opts: VMNicRowActionOpts) => {
+  if (isVMRunning(asVM(vmLikeEntity))) {
+    return [];
+  }
   const actions = [menuActionEdit, menuActionDelete];
   return actions.map((a) => a(nic, network, vmLikeEntity, opts));
 };
@@ -131,7 +134,9 @@ export const NicRow: React.FC<VMNicRowProps> = ({
     actionsComponent={
       <Kebab
         options={getActions(nic, network, vmLikeEntity, { withProgress })}
-        isDisabled={isDisabled || !!getDeletetionTimestamp(vmLikeEntity)}
+        isDisabled={
+          isDisabled || !!getDeletetionTimestamp(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))
+        }
         id={`kebab-for-${name}`}
       />
     }

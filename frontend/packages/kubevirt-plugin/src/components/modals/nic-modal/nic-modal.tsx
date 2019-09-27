@@ -195,8 +195,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             fieldId={asId('name')}
             isRequired
             isLoading={!usedInterfacesNames}
-            validationMessage={nameValidation && nameValidation.message}
-            validationType={nameValidation && nameValidation.type}
+            validation={nameValidation}
           >
             <TextInput
               isValid={!isValidationError(nameValidation)}
@@ -260,8 +259,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
           <FormRow
             title="MAC Address"
             fieldId={asId('mac-address')}
-            validationMessage={macAddressValidation && macAddressValidation.message}
-            validationType={macAddressValidation && macAddressValidation.type}
+            validation={macAddressValidation}
           >
             <TextInput
               isValid={!isValidationError(macAddressValidation)}

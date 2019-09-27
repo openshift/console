@@ -1,23 +1,15 @@
 import * as React from 'react';
-import { Button } from 'patternfly-react';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { getNamespace, getName, createBasicLookup, createLookup } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 import { VMLikeEntityKind } from '../../types';
-import {
-  asVM,
-  getDataVolumeTemplates,
-  getDisks,
-  getVolumeDataVolumeName,
-  getVolumePersistentVolumeClaimName,
-  getVolumes,
-} from '../../selectors/vm';
+import { asVM, getDataVolumeTemplates, getDisks, getVolumes, isVM } from '../../selectors/vm';
 import { getPvcStorageClassName, getPvcStorageSize } from '../../selectors/pvc/selectors';
 import {
   getDataVolumeStorageClassName,
@@ -26,52 +18,44 @@ import {
 import { VMLikeEntityTabProps } from '../vms/types';
 import { getResource } from '../../utils';
 import { getSimpleName } from '../../selectors/utils';
+import { wrapWithProgress } from '../../utils/utils';
+import { dimensifyHeader } from '../../utils/table';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { DiskType, VolumeType } from '../../constants/vm/storage';
+import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
+import { StorageUISource } from '../modals/disk-modal/storage-ui-source';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
-import { StorageBundle, StorageRowType, VMDiskRowProps } from './types';
-import { CreateDiskRowFirehose } from './create-disk-row';
+import { diskTableColumnClasses } from './utils';
 
-export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
-  switch (props.obj.storageType) {
-    case StorageRowType.STORAGE_TYPE_VM:
-      return <DiskRow {...props} key={StorageRowType.STORAGE_TYPE_VM} />;
-    case StorageRowType.STORAGE_TYPE_CREATE:
-      return <CreateDiskRowFirehose {...props} key={StorageRowType.STORAGE_TYPE_CREATE} />;
-    default:
-      return null;
-  }
-};
-
-const getStoragesData = (
-  {
-    vmLikeEntity,
-    datavolumes,
-    pvcs,
-  }: {
-    vmLikeEntity: VMLikeEntityKind;
-    pvcs: FirehoseResult<K8sResourceKind[]>;
-    datavolumes: FirehoseResult<K8sResourceKind[]>;
-  },
-  addNewDisk: boolean,
-  rerenderFlag: boolean,
-): StorageBundle[] => {
+const getStoragesData = ({
+  vmLikeEntity,
+  datavolumes,
+  pvcs,
+}: {
+  vmLikeEntity: VMLikeEntityKind;
+  pvcs: FirehoseResult<K8sResourceKind[]>;
+  datavolumes: FirehoseResult<K8sResourceKind[]>;
+}): StorageBundle[] => {
   const vm = asVM(vmLikeEntity);
 
   const pvcLookup = createLookup(pvcs, getName);
   const datavolumeLookup = createLookup(datavolumes, getName);
   const volumeLookup = createBasicLookup(getVolumes(vm), getSimpleName);
-  const datavolumeTemplatesLookup = createBasicLookup(getDataVolumeTemplates(vm), getName);
+  const datavolumeTemplatesLookup = createBasicLookup<any>(getDataVolumeTemplates(vm), getName);
 
-  const disksWithType = getDisks(vm).map((disk) => {
-    const volume = volumeLookup[disk.name];
-
-    const pvcName = getVolumePersistentVolumeClaimName(volume);
-    const dataVolumeName = getVolumeDataVolumeName(volume);
+  return getDisks(vm).map((disk) => {
+    const diskWrapper = DiskWrapper.initialize(disk);
+    const volume = volumeLookup[diskWrapper.getName()];
+    const volumeWrapper = VolumeWrapper.initialize(volume);
 
     let size = null;
     let storageClass = null;
 
-    if (pvcName) {
-      const pvc = pvcLookup[pvcName];
+    if (volumeWrapper.getType() === VolumeType.PERSISTENT_VOLUME_CLAIM) {
+      const pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
       if (pvc) {
         size = getPvcStorageSize(pvc);
         storageClass = getPvcStorageClassName(pvc);
@@ -79,9 +63,10 @@ const getStoragesData = (
         size = undefined;
         storageClass = undefined;
       }
-    } else if (dataVolumeName) {
+    } else if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
       const dataVolumeTemplate =
-        datavolumeTemplatesLookup[dataVolumeName] || datavolumeLookup[dataVolumeName];
+        datavolumeTemplatesLookup[volumeWrapper.getDataVolumeName()] ||
+        datavolumeLookup[volumeWrapper.getDataVolumeName()];
 
       if (dataVolumeTemplate) {
         size = getDataVolumeStorageSize(dataVolumeTemplate);
@@ -92,62 +77,47 @@ const getStoragesData = (
       }
     }
 
+    const dataVolume = datavolumeTemplatesLookup[volumeWrapper.getDataVolumeName()];
+    const source = StorageUISource.fromTypes(
+      volumeWrapper.getType(),
+      DataVolumeWrapper.initialize(dataVolume).getType(),
+    );
+    const isTemplate = vmLikeEntity && !isVM(vmLikeEntity);
     return {
-      ...disk, // for sorting
+      disk,
+      volume,
+      dataVolume,
+      isEditingEnabled: isTemplate || (source && source.isEditingSupported()),
+      // for sorting
+      name: diskWrapper.getName(),
+      diskInterface:
+        diskWrapper.getType() === DiskType.DISK ? diskWrapper.getReadableDiskBus() : undefined,
       size,
       storageClass,
-      storageType: StorageRowType.STORAGE_TYPE_VM,
-      disk,
     };
   });
-
-  return addNewDisk
-    ? [{ storageType: StorageRowType.STORAGE_TYPE_CREATE, rerenderFlag }, ...disksWithType]
-    : disksWithType;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolumes }) => {
-  const [isCreating, setIsCreating] = useSafetyFirst(false);
-  const [createError, setCreateError] = useSafetyFirst(null);
-  const [forceRerenderFlag, setForceRerenderFlag] = useSafetyFirst(false); // TODO: HACK: fire changes in Virtualize Table for CreateNicRow. Remove after deprecating CreateNicRow
+export type VMDisksTableProps = {
+  data?: any[];
+  customData?: object;
+  row: React.ComponentClass<any, any> | React.ComponentType<any>;
+  columnClasses: string[];
+};
 
-  const vm = asVM(vmLikeEntity);
-
+export const VMDisksTable: React.FC<VMDisksTableProps> = ({
+  data,
+  customData,
+  row: Row,
+  columnClasses,
+}) => {
   return (
-    <div className="co-m-list">
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Button
-            bsStyle="primary"
-            id="create-disk-btn"
-            onClick={() => setIsCreating(true)}
-            disabled={isCreating}
-          >
-            Create Disk
-          </Button>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
-        {createError && (
-          <Alert
-            variant="danger"
-            title={createError}
-            className="kubevirt-vm-create-device-error"
-            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
-          />
-        )}
-        <Table
-          aria-label="VM Disks List"
-          data={getStoragesData(
-            {
-              vmLikeEntity,
-              pvcs,
-              datavolumes,
-            },
-            isCreating,
-            forceRerenderFlag,
-          )}
-          Header={() => [
+    <Table
+      aria-label="VM Disks List"
+      data={data}
+      Header={() =>
+        dimensifyHeader(
+          [
             {
               title: 'Name',
               sortField: 'name',
@@ -160,7 +130,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             },
             {
               title: 'Interface',
-              sortField: 'disk.bus',
+              sortField: 'diskInterface',
               transforms: [sortable],
             },
             {
@@ -170,36 +140,63 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             },
             {
               title: '',
-              props: { className: Kebab.columnClass },
             },
-          ]}
-          Row={VMDiskRow}
+          ],
+          columnClasses,
+        )
+      }
+      Row={Row}
+      customData={{ ...customData, columnClasses }}
+      virtualize
+      loaded
+    />
+  );
+};
+
+type VMDisksProps = {
+  vmLikeEntity?: VMLikeEntityKind;
+  pvcs?: FirehoseResult<K8sResourceKind[]>;
+  datavolumes?: FirehoseResult<K8sResourceKind[]>;
+};
+
+export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolumes }) => {
+  const [isLocked, setIsLocked] = useSafetyFirst(false);
+  const withProgress = wrapWithProgress(setIsLocked);
+  return (
+    <div className="co-m-list">
+      <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
+          <Button
+            variant={ButtonVariant.primary}
+            id="create-disk-btn"
+            onClick={() =>
+              withProgress(
+                diskModalEnhanced({
+                  vmLikeEntity,
+                }).result,
+              )
+            }
+            isDisabled={isLocked}
+          >
+            Create Disk
+          </Button>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <VMDisksTable
+          data={getStoragesData({ vmLikeEntity, pvcs, datavolumes })}
           customData={{
             vmLikeEntity,
-            vm,
-            diskLookup: createBasicLookup(getDisks(vm), getSimpleName),
-            onCreateRowDismiss: () => {
-              setIsCreating(false);
-            },
-            onCreateRowError: (error) => {
-              setIsCreating(false);
-              setCreateError(error);
-            },
-            forceRerender: () => setForceRerenderFlag(!forceRerenderFlag),
+            withProgress,
+            isDisabled: isLocked,
           }}
-          virtualize
-          loaded
+          row={DiskRow}
+          columnClasses={diskTableColumnClasses}
         />
       </div>
     </div>
   );
 };
-
-interface VMDisksProps {
-  vmLikeEntity?: VMLikeEntityKind;
-  pvcs?: FirehoseResult<K8sResourceKind[]>;
-  datavolumes?: FirehoseResult<K8sResourceKind[]>;
-}
 
 export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const namespace = getNamespace(vmLikeEntity);

@@ -26,7 +26,7 @@ export interface V1PersistentVolumeClaimSpec {
    * @type {Array<object>}
    * @memberof V1PersistentVolumeClaimSpec
    */
-  accessModes?: object[];
+  accessModes?: object[] | string[];
   /**
    *
    * @type {V1TypedLocalObjectReference}
@@ -56,7 +56,7 @@ export interface V1PersistentVolumeClaimSpec {
    * @type {object}
    * @memberof V1PersistentVolumeClaimSpec
    */
-  volumeMode?: object;
+  volumeMode?: object | string;
   /**
    * VolumeName is the binding reference to the PersistentVolume backing this claim.
    * @type {string}
