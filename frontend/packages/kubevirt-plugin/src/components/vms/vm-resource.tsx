@@ -11,7 +11,7 @@ import {
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, DASH } from '@console/shared';
+import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
@@ -19,34 +19,56 @@ import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { getDescription } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
-import { FlavorText } from '../flavor-text';
+import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
 
 import './_vm-resource.scss';
 
+export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
+  title,
+  idValue,
+  isNotAvail = false,
+  valueClassName,
+  children,
+}) => {
+  return (
+    <>
+      <dt>{title}</dt>
+      <dd id={idValue} className={valueClassName}>
+        {isNotAvail ? <span className="text-secondary">Not available</span> : children}
+      </dd>
+    </>
+  );
+};
+
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpdateVM }) => {
   const template = getVmTemplate(vm);
 
   const id = getBasicID(vm);
-  const description = getDescription(vm) || DASH;
+  const description = getDescription(vm);
+  const os = getOperatingSystemName(vm) || getOperatingSystem(vm);
 
   return (
     <ResourceSummary resource={vm}>
-      <dt>Description</dt>
-      <dd id={prefixedID(id, 'description')} className="kubevirt-vm-resource-summary__description">
+      <VMDetailsItem
+        title="Description"
+        idValue={prefixedID(id, 'description')}
+        valueClassName="kubevirt-vm-resource-summary__description"
+        isNotAvail={!description}
+      >
         <EditButton canEdit={canUpdateVM} onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}>
           {description}
         </EditButton>
-      </dd>
-      <dt>Operating System</dt>
-      <dd id={prefixedID(id, 'os')}>
-        {getOperatingSystemName(vm) || getOperatingSystem(vm) || DASH}
-      </dd>
-      <dt>Template</dt>
-      <dd id={prefixedID(id, 'template')}>
-        {template ? <VMTemplateLink template={template} /> : DASH}
-      </dd>
+      </VMDetailsItem>
+
+      <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
+        {os}
+      </VMDetailsItem>
+
+      <VMDetailsItem title="Template" idValue={prefixedID(id, 'template')} isNotAvail={!template}>
+        {template && <VMTemplateLink template={template} />}
+      </VMDetailsItem>
     </ResourceSummary>
   );
 };
@@ -63,47 +85,69 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const { launcherPod } = vmStatus;
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
   const nodeName = getNodeName(launcherPod);
+  const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
+  const workloadProfile = getWorkloadProfile(vm);
+  const flavorText = getFlavorText(vm);
 
   return (
     <dl className="co-m-pane__details">
-      <dt>Status</dt>
-      <dd id={prefixedID(id, 'vm-statuses')}>
+      <VMDetailsItem title="Status" idValue={prefixedID(id, 'vm-statuses')}>
         <VmStatuses vm={vm} pods={pods} migrations={migrations} />
-      </dd>
-      <dt>Pod</dt>
-      <dd id={prefixedID(id, 'pod')}>
-        {launcherPod ? (
+      </VMDetailsItem>
+
+      <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
+        {launcherPod && (
           <ResourceLink
             kind={PodModel.kind}
             name={getName(launcherPod)}
             namespace={getNamespace(launcherPod)}
           />
-        ) : (
-          DASH
         )}
-      </dd>
-      <dt>Boot Order</dt>
-      <dd id={prefixedID(id, 'boot-order')}>
-        {sortedBootableDevices.length > 0 ? (
-          <BootOrder bootableDevices={sortedBootableDevices} />
-        ) : (
-          DASH
-        )}
-      </dd>
-      <dt>IP Address</dt>
-      <dd id={prefixedID(id, 'ip-addresses')}>{getVmiIpAddressesString(vmi, vmStatus) || DASH}</dd>
-      <dt>Node</dt>
-      <dd id={prefixedID(id, 'node')}>{<NodeLink name={nodeName} />}</dd>
-      <dt>Flavor</dt>
-      <dd id={prefixedID(id, 'flavor')}>
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="Boot Order"
+        idValue={prefixedID(id, 'boot-order')}
+        isNotAvail={sortedBootableDevices.length === 0}
+      >
+        <BootOrder bootableDevices={sortedBootableDevices} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="IP Address"
+        idValue={prefixedID(id, 'ip-addresses')}
+        isNotAvail={!ipAddrs}
+      >
+        {ipAddrs}
+      </VMDetailsItem>
+
+      <VMDetailsItem title="Node" idValue={prefixedID(id, 'node')} isNotAvail={!nodeName}>
+        {nodeName && <NodeLink name={nodeName} />}
+      </VMDetailsItem>
+
+      <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
         <EditButton canEdit={canUpdateVM} onClick={() => vmFlavorModal({ vmLike: vm })}>
-          <FlavorText vmLike={vm} />
+          {flavorText}
         </EditButton>
-      </dd>
-      <dt>Workload Profile</dt>
-      <dd id={prefixedID(id, 'workload-profile')}>{getWorkloadProfile(vm) || DASH}</dd>
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="Workload Profile"
+        idValue={prefixedID(id, 'workload-profile')}
+        isNotAvail={!workloadProfile}
+      >
+        {workloadProfile}
+      </VMDetailsItem>
     </dl>
   );
+};
+
+type VMDetailsItemProps = {
+  title: string;
+  idValue?: string;
+  isNotAvail?: boolean;
+  valueClassName?: string;
+  children: React.ReactNode;
 };
 
 type VMResourceSummaryProps = {
