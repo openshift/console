@@ -6,6 +6,7 @@ export enum HostQuery {
   MEMORY_UTILIZATION = 'MEMORY_UTILIZATION',
   MEMORY_TOTAL = 'MEMORY_TOTAL',
   STORAGE_UTILIZATION = 'STORAGE_UTILIZATION',
+  STORAGE_TOTAL = 'STORAGE_TOTAL',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
   NUMBER_OF_PODS = 'NUMBER_OF_PODS',
@@ -25,6 +26,7 @@ const hostQueriesByHostName = {
   [HostQuery.STORAGE_UTILIZATION]: _.template(
     `instance:node_filesystem_usage:sum{instance=~'<%= host %>'}[60m:5m]`,
   ),
+  [HostQuery.STORAGE_TOTAL]: _.template(`sum(node_filesystem_size_bytes{instance=~'<%= host %>'})`),
   [HostQuery.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance=~'<%= host %>'}[60m:5m]`,
   ),
@@ -57,6 +59,7 @@ export const getUtilizationQueries = (hostName: string, hostIP: string): HostQue
     hostName,
     hostQueriesByHostName[HostQuery.STORAGE_UTILIZATION],
   ),
+  [HostQuery.STORAGE_TOTAL]: getQuery(hostName, hostQueriesByHostName[HostQuery.STORAGE_TOTAL]),
   [HostQuery.NETWORK_IN_UTILIZATION]: getQuery(
     hostName,
     hostQueriesByHostName[HostQuery.NETWORK_IN_UTILIZATION],

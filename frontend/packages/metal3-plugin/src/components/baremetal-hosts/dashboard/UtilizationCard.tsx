@@ -92,6 +92,10 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
     queries[HostQuery.STORAGE_UTILIZATION],
     'data',
   ]) as PrometheusResponse;
+  const storageTotal = prometheusResults.getIn([
+    queries[HostQuery.STORAGE_TOTAL],
+    'data',
+  ]) as PrometheusResponse;
   const storageUtilizationError = prometheusResults.getIn([
     queries[HostQuery.STORAGE_UTILIZATION],
     'loadError',
@@ -125,11 +129,13 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const memoryStats = getRangeVectorStats(memoryUtilization);
   const memoryTotalStats = getInstantVectorStats(memoryTotal);
   const storageStats = getRangeVectorStats(storageUtilization);
+  const storageTotalStats = getInstantVectorStats(storageTotal);
   const networkInStats = getRangeVectorStats(networkInUtilization);
   const networkOutStats = getRangeVectorStats(networkOutUtilization);
   const numberOfPodsStats = getRangeVectorStats(numberOfPods);
 
   const memoryTotalValue = memoryTotalStats.length ? memoryTotalStats[0].y : null;
+  const storageTotalValue = storageTotalStats.length ? storageTotalStats[0].y : null;
 
   const itemIsLoading = (prometheusResult) =>
     !machineLoadError && (machineLoaded ? (machine ? !prometheusResult : false) : true);
@@ -188,6 +194,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           isLoading={itemIsLoading(storageUtilization)}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.STORAGE_UTILIZATION]}
+          max={storageTotalValue}
         />
       </UtilizationBody>
     </DashboardCard>
