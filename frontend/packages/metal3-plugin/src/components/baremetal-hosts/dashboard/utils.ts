@@ -2,9 +2,9 @@ import { StatusGroupMapper } from '@console/internal/components/dashboard/invent
 import { InventoryStatusGroup } from '@console/internal/components/dashboard/inventory-card/status-group';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getMachineNode, getName } from '@console/shared/src/selectors';
-import { getHostStatus } from '../../utils/host-status';
-import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../constants';
-import { findNodeMaintenance, getHostMachine } from '../../selectors';
+import { getHostStatus } from '../../../utils/host-status';
+import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../../constants';
+import { findNodeMaintenance, getHostMachine } from '../../../selectors';
 import { getHostFilterStatus } from '../table-filters';
 
 const BMH_STATUS_GROUP_MAPPER = {

@@ -9,7 +9,7 @@ import {
   getNodeMaintenanceLastError,
   getNodeMaintenancePendingPods,
 } from '../../selectors';
-import stopNodeMaintenanceModal from '../modals/stop-node-maintenance-modal';
+import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import MaintenancePopoverPodList from './MaintenancePopoverPodList';
 
 type StartingMaintenancePopoverContentProps = {

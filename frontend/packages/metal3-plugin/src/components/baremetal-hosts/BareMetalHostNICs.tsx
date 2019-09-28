@@ -3,8 +3,8 @@ import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-i
 import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getHostNICs } from '../selectors';
-import { BaremetalHostNIC } from '../types';
+import { getHostNICs } from '../../selectors';
+import { BareMetalHostNIC } from '../../types';
 
 const NICsTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -17,7 +17,7 @@ const NICsTableHeader = () => [
 ];
 
 type NICsTableRowProps = {
-  obj: BaremetalHostNIC;
+  obj: BareMetalHostNIC;
   index: number;
   key?: string;
   style: React.StyleHTMLAttributes<any>;
@@ -38,18 +38,18 @@ const NICsTableRow: React.FC<NICsTableRowProps> = ({ obj: nic, index, key, style
   );
 };
 
-type BaremetalHostNICListProps = {
+type BareMetalHostNICsProps = {
   obj: K8sResourceKind;
 };
 
-const BaremetalHostNICList: React.FC<BaremetalHostNICListProps> = ({ obj: host }) => {
+const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host }) => {
   const nics = getHostNICs(host);
   return (
     <div className="co-m-list">
       <div className="co-m-pane__body">
         <Table
           data={nics}
-          aria-label="Baremetal Host NICs"
+          aria-label="Bare Metal Host NICs"
           Header={NICsTableHeader}
           Row={NICsTableRow}
           loaded
@@ -59,4 +59,4 @@ const BaremetalHostNICList: React.FC<BaremetalHostNICListProps> = ({ obj: host }
   );
 };
 
-export default BaremetalHostNICList;
+export default BareMetalHostNICs;

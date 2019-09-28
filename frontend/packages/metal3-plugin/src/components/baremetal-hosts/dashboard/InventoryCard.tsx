@@ -16,7 +16,7 @@ import { MachineModel } from '@console/internal/models';
 import { getNamespace, getMachineInternalIP } from '@console/shared';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getHostMachineName } from '../../selectors';
+import { getHostMachineName } from '../../../selectors';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
 
 const getResources = (namespace: string, machineName: string): FirehoseResource[] => [

@@ -8,8 +8,8 @@ import {
   HOST_STATUS_TITLES,
   HOST_STATUS_PROVISIONED,
   HOST_STATUS_EXTERNALLY_PROVISIONED,
-} from '../constants';
-import { HostRowBundle } from './types';
+} from '../../constants';
+import { HostRowBundle } from '../types';
 
 const hostStatesToFilterMap = Object.freeze({
   registering: {

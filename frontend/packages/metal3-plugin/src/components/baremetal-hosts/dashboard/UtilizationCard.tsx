@@ -24,7 +24,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { MachineModel } from '@console/internal/models';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
-import { getHostMachineName } from '../../selectors';
+import { getHostMachineName } from '../../../selectors';
 import { getUtilizationQueries, HostQuery } from './queries';
 
 const getMachineResource = (namespace: string, name: string): FirehoseResource => ({

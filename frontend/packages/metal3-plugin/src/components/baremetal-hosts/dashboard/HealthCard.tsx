@@ -24,8 +24,8 @@ import {
   HOST_STATUS_ERROR,
   HOST_HEALTH_ERROR,
   HOST_HEALTH_LOADING,
-} from '../../constants';
-import { getHostOperationalStatus } from '../../selectors';
+} from '../../../constants';
+import { getHostOperationalStatus } from '../../../selectors';
 
 const getHostHealthState = (obj): HostHealthState => {
   const status = getHostOperationalStatus(obj);

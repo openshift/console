@@ -4,7 +4,7 @@ import { ButtonBar, history, resourcePathFromModel } from '@console/internal/com
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { BaremetalHostModel } from '../models';
+import { BareMetalHostModel } from '../../models';
 
 interface AddHostFormFields {
   name: string;
@@ -44,9 +44,9 @@ const buildSecret = (name, namespace, username, password) => ({
   type: 'Opaque',
 });
 
-const buildBaremetalHostObject = (name, namespace, managementAddress, online) => ({
-  apiVersion: `${BaremetalHostModel.apiGroup}/${BaremetalHostModel.apiVersion}`,
-  kind: BaremetalHostModel.kind,
+const buildBareMetalHostObject = (name, namespace, managementAddress, online) => ({
+  apiVersion: `${BareMetalHostModel.apiGroup}/${BareMetalHostModel.apiVersion}`,
+  kind: BareMetalHostModel.kind,
   metadata: {
     name,
     namespace,
@@ -67,10 +67,10 @@ const AddHost: React.FC = () => {
   const [formValue, setFormValue] = React.useState(initFormFields());
   const [inProgress, setProgress] = React.useState(false);
   const [error, setError] = React.useState('');
-  const createBaremetalHost = async (secret, bmo) => {
+  const createBareMetalHost = async (secret, bmo) => {
     const results = [];
     results.push(await k8sCreate(SecretModel, secret));
-    results.push(await k8sCreate(BaremetalHostModel, bmo));
+    results.push(await k8sCreate(BareMetalHostModel, bmo));
     return results;
   };
 
@@ -89,11 +89,11 @@ const AddHost: React.FC = () => {
     const { name, managementAddress, username, password, online } = formValue;
     const namespace = getActiveNamespace();
     const secret = buildSecret(getSecretName(name), namespace, username, password);
-    const bmo = buildBaremetalHostObject(name, namespace, managementAddress, online);
-    createBaremetalHost(secret, bmo)
+    const bmo = buildBareMetalHostObject(name, namespace, managementAddress, online);
+    createBareMetalHost(secret, bmo)
       .then(() => {
         setProgress(false);
-        history.push(resourcePathFromModel(BaremetalHostModel, name, namespace));
+        history.push(resourcePathFromModel(BareMetalHostModel, name, namespace));
       })
       .catch(({ message }) => {
         setProgress(false);
