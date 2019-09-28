@@ -2,7 +2,13 @@ import * as Immutable from 'immutable';
 import { noop } from 'lodash-es';
 
 import { dashboardsReducer, defaults, RESULTS_TYPE } from '../../public/reducers/dashboards';
-import { activateWatch, updateWatchTimeout, updateWatchInFlight, stopWatch, setData } from '../../public/actions/dashboards';
+import {
+  activateWatch,
+  updateWatchTimeout,
+  updateWatchInFlight,
+  stopWatch,
+  setData,
+} from '../../public/actions/dashboards';
 
 describe('dashboardsReducer', () => {
   it('returns default values if state is uninitialized', () => {
@@ -28,19 +34,23 @@ describe('dashboardsReducer', () => {
   });
 
   it('updates watch timeout reference', () => {
-    const timeout = {ref: noop, unref: noop};
+    const timeout = { ref: noop, unref: noop };
     const action = updateWatchTimeout(RESULTS_TYPE.URL, 'fooUrl', timeout);
     const initialState = Immutable.Map(defaults);
     const stateWithTimeout = dashboardsReducer(initialState, action);
 
-    expect(stateWithTimeout).toEqual(initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'timeout'], timeout));
+    expect(stateWithTimeout).toEqual(
+      initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'timeout'], timeout),
+    );
 
-    const nextTimeout = {ref: noop, unref: noop};
+    const nextTimeout = { ref: noop, unref: noop };
     const nextAction = updateWatchTimeout(RESULTS_TYPE.URL, 'fooUrl', nextTimeout);
 
     const nextState = dashboardsReducer(stateWithTimeout, nextAction);
 
-    expect(nextState).toEqual(stateWithTimeout.setIn([RESULTS_TYPE.URL, 'fooUrl', 'timeout'], nextTimeout));
+    expect(nextState).toEqual(
+      stateWithTimeout.setIn([RESULTS_TYPE.URL, 'fooUrl', 'timeout'], nextTimeout),
+    );
   });
 
   it('updates in flight resource', () => {
@@ -48,7 +58,9 @@ describe('dashboardsReducer', () => {
     const initialState = Immutable.Map(defaults);
     const stateInFlight = dashboardsReducer(initialState, action);
 
-    expect(stateInFlight).toEqual(initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'inFlight'], true));
+    expect(stateInFlight).toEqual(
+      initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'inFlight'], true),
+    );
 
     const nextAction = updateWatchInFlight(RESULTS_TYPE.URL, 'fooUrl', false);
     const nextState = dashboardsReducer(stateInFlight, nextAction);
@@ -57,9 +69,11 @@ describe('dashboardsReducer', () => {
   });
 
   it('stops watch', () => {
-    const timeout = {ref: noop, unref: noop};
+    const timeout = { ref: noop, unref: noop };
     const action = stopWatch(RESULTS_TYPE.URL, 'fooUrl');
-    const initialState = Immutable.Map(defaults).merge({[RESULTS_TYPE.URL]: {fooUrl: {active: 2, timeout}}});
+    const initialState = Immutable.Map(defaults).merge({
+      [RESULTS_TYPE.URL]: { fooUrl: { active: 2, timeout } },
+    });
     const newState = dashboardsReducer(initialState, action);
 
     expect(newState).toEqual(initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'active'], 1));
@@ -73,10 +87,13 @@ describe('dashboardsReducer', () => {
     const initialState = Immutable.Map(defaults);
     const newState = dashboardsReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.withMutations(s =>
-      s.setIn([RESULTS_TYPE.URL, 'fooUrl', 'data'], 'result')
-        .setIn([RESULTS_TYPE.URL, 'fooUrl', 'loadError'], null)
-    ));
+    expect(newState).toEqual(
+      initialState.withMutations((s) =>
+        s
+          .setIn([RESULTS_TYPE.URL, 'fooUrl', 'data'], 'result')
+          .setIn([RESULTS_TYPE.URL, 'fooUrl', 'loadError'], null),
+      ),
+    );
 
     const nextAction = setData(RESULTS_TYPE.URL, 'fooUrl', 'newResult');
     const nextState = dashboardsReducer(newState, nextAction);

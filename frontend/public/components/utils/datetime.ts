@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 
 // Behaves like moment.js's fromNow
-export const fromNow = (dateTime, now=undefined, options = { omitSuffix: false }) => {
+export const fromNow = (dateTime, now = undefined, options = { omitSuffix: false }) => {
   if (!now) {
     now = new Date();
   }
@@ -13,45 +13,45 @@ export const fromNow = (dateTime, now=undefined, options = { omitSuffix: false }
 
   if (daysAgo > 548) {
     const count = Math.round(daysAgo / 365);
-    return (options.omitSuffix) ? `${count} years`:`${count} years ago`;
+    return options.omitSuffix ? `${count} years` : `${count} years ago`;
   }
   if (daysAgo > 320) {
-    return (options.omitSuffix) ? 'year':'a year ago';
+    return options.omitSuffix ? 'year' : 'a year ago';
   }
   if (daysAgo > 45) {
     const count = Math.round(daysAgo / 30);
-    return (options.omitSuffix) ? `${count} months`:`${count} months ago`;
+    return options.omitSuffix ? `${count} months` : `${count} months ago`;
   }
   if (daysAgo > 26) {
-    return (options.omitSuffix) ? 'month':'a month ago';
+    return options.omitSuffix ? 'month' : 'a month ago';
   }
   if (hoursAgo > 36) {
     const count = Math.round(daysAgo);
-    return (options.omitSuffix) ? `${count} days`:`${count} days ago`;
+    return options.omitSuffix ? `${count} days` : `${count} days ago`;
   }
   if (hoursAgo > 22) {
-    return (options.omitSuffix) ? 'day':'a day ago';
+    return options.omitSuffix ? 'day' : 'a day ago';
   }
   if (minutesAgo > 90) {
     const count = Math.round(hoursAgo);
-    return (options.omitSuffix) ? `${count} hours`:`${count} hours ago`;
+    return options.omitSuffix ? `${count} hours` : `${count} hours ago`;
   }
   if (minutesAgo > 45) {
-    return (options.omitSuffix) ? 'hour':'an hour ago';
+    return options.omitSuffix ? 'hour' : 'an hour ago';
   }
   if (secondsAgo > 90) {
     const count = Math.round(minutesAgo);
-    return (options.omitSuffix) ? `${count} minutes`:`${count} minutes ago`;
+    return options.omitSuffix ? `${count} minutes` : `${count} minutes ago`;
   }
   if (secondsAgo > 45) {
-    return (options.omitSuffix) ? 'minute':'a minute ago';
+    return options.omitSuffix ? 'minute' : 'a minute ago';
   }
   if (secondsAgo > 15) {
-    return (options.omitSuffix) ? 'few seconds':'less than a minute ago';
+    return options.omitSuffix ? 'few seconds' : 'less than a minute ago';
   }
 
   if (secondsAgo >= 0) {
-    return (options.omitSuffix) ? 'few seconds':'a few seconds ago';
+    return options.omitSuffix ? 'few seconds' : 'a few seconds ago';
   }
 
   if (secondsAgo > -45) {
@@ -121,7 +121,7 @@ const m = s * 60;
 const h = m * 60;
 const d = h * 24;
 const w = d * 7;
-const units = {w, d, h, m, s};
+const units = { w, d, h, m, s };
 
 // Formats a duration in milliseconds like "1h 10m"
 export const formatPrometheusDuration = (ms: number) => {
@@ -143,15 +143,18 @@ export const formatPrometheusDuration = (ms: number) => {
 // Converts a duration like "1h 10m 23s" to milliseconds or returns 0 if the duration could not be parsed
 export const parsePrometheusDuration = (duration: string): number => {
   try {
-    const parts = duration.trim().split(/\s+/).map(p => p.match(/^(\d+)([wdhms])$/));
-    return _.sumBy(parts, p => parseInt(p[1], 10) * units[p[2]]);
+    const parts = duration
+      .trim()
+      .split(/\s+/)
+      .map((p) => p.match(/^(\d+)([wdhms])$/));
+    return _.sumBy(parts, (p) => parseInt(p[1], 10) * units[p[2]]);
   } catch (ignored) {
     // Invalid duration format
     return 0;
   }
 };
 
-const zeroPad = (number: number) => number < 10 ? `0${number}` : number;
+const zeroPad = (number: number) => (number < 10 ? `0${number}` : number);
 
 export const twentyFourHourTime = (date: Date): string => {
   const hours = zeroPad(date.getHours());

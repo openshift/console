@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineNodeName, getMachineRegion, getMachineRole, getMachineZone } from '@console/shared';
+import {
+  getMachineNodeName,
+  getMachineRegion,
+  getMachineRole,
+  getMachineZone,
+} from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
@@ -35,40 +40,56 @@ const tableColumnClasses = [
 const MachineTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Node', sortField: 'status.nodeRef.name', transforms: [sortable],
+      title: 'Node',
+      sortField: 'status.nodeRef.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Region', sortField: 'metadata.labels[\'machine.openshift.io/region\']',
-      transforms: [sortable], props: { className: tableColumnClasses[3] },
+      title: 'Region',
+      sortField: "metadata.labels['machine.openshift.io/region']",
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Availability Zone', sortField: 'metadata.labels[\'machine.openshift.io/zone\']',
-      transforms: [sortable], props: { className: tableColumnClasses[4] },
+      title: 'Availability Zone',
+      sortField: "metadata.labels['machine.openshift.io/zone']",
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
     },
     {
-      title: '', props: { className: tableColumnClasses[5] },
+      title: '',
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
 MachineTableHeader.displayName = 'MachineTableHeader';
 
-const MachineTableRow: React.FC<MachineTableRowProps> = ({obj, index, key, style}) => {
+const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, style }) => {
   const nodeName = getMachineNodeName(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind={machineReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink
+          kind={machineReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -76,12 +97,8 @@ const MachineTableRow: React.FC<MachineTableRowProps> = ({obj, index, key, style
       <TableData className={tableColumnClasses[2]}>
         {nodeName ? <NodeLink name={nodeName} /> : '-'}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {region || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {zone || '-'}
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{region || '-'}</TableData>
+      <TableData className={tableColumnClasses[4]}>{zone || '-'}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
@@ -96,45 +113,67 @@ type MachineTableRowProps = {
   style: object;
 };
 
-const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind}) => {
+const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Machine Overview" />
-      <ResourceSummary resource={obj}>
-        {nodeName && <React.Fragment>
-          <dt>Node</dt>
-          <dd><NodeLink name={nodeName} /></dd>
-        </React.Fragment>}
-        {machineRole && <React.Fragment>
-          <dt>Machine Role</dt>
-          <dd>{machineRole}</dd>
-        </React.Fragment>}
-        {region && <React.Fragment>
-          <dt>Region</dt>
-          <dd>{region}</dd>
-        </React.Fragment>}
-        {zone && <React.Fragment>
-          <dt>Availability Zone</dt>
-          <dd>{zone}</dd>
-        </React.Fragment>}
-        <dt>Machine Addresses</dt>
-        <dd><NodeIPList ips={_.get(obj, 'status.addresses')} expand={true} /></dd>
-      </ResourceSummary>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Conditions" />
-      <Conditions conditions={_.get(obj, 'status.providerStatus.conditions')} />
-    </div>
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Machine Overview" />
+        <ResourceSummary resource={obj}>
+          {nodeName && (
+            <React.Fragment>
+              <dt>Node</dt>
+              <dd>
+                <NodeLink name={nodeName} />
+              </dd>
+            </React.Fragment>
+          )}
+          {machineRole && (
+            <React.Fragment>
+              <dt>Machine Role</dt>
+              <dd>{machineRole}</dd>
+            </React.Fragment>
+          )}
+          {region && (
+            <React.Fragment>
+              <dt>Region</dt>
+              <dd>{region}</dd>
+            </React.Fragment>
+          )}
+          {zone && (
+            <React.Fragment>
+              <dt>Availability Zone</dt>
+              <dd>{zone}</dd>
+            </React.Fragment>
+          )}
+          <dt>Machine Addresses</dt>
+          <dd>
+            <NodeIPList ips={_.get(obj, 'status.addresses')} expand={true} />
+          </dd>
+        </ResourceSummary>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={_.get(obj, 'status.providerStatus.conditions')} />
+      </div>
+    </React.Fragment>
+  );
 };
 
-export const MachineList: React.SFC = props => <Table {...props} aria-label="Machines" Header={MachineTableHeader} Row={MachineTableRow} virtualize />;
+export const MachineList: React.SFC = (props) => (
+  <Table
+    {...props}
+    aria-label="Machines"
+    Header={MachineTableHeader}
+    Row={MachineTableRow}
+    virtualize
+  />
+);
 
-export const MachinePage: React.SFC<MachinePageProps> = props =>
+export const MachinePage: React.SFC<MachinePageProps> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineList}
@@ -142,9 +181,10 @@ export const MachinePage: React.SFC<MachinePageProps> = props =>
     textFilter="machine"
     filterLabel="by machine or node name"
     canCreate
-  />;
+  />
+);
 
-export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
+export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}
@@ -154,7 +194,8 @@ export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
       navFactory.editYaml(),
       navFactory.events(ResourceEventStream),
     ]}
-  />;
+  />
+);
 
 export type MachineDetailsProps = {
   obj: MachineKind;

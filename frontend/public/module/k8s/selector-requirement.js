@@ -1,31 +1,31 @@
 import * as _ from 'lodash-es';
 
-const toArray = value => Array.isArray(value) ? value : [value];
+const toArray = (value) => (Array.isArray(value) ? value : [value]);
 
 export const createEquals = (key, value) => ({
   key,
   operator: 'Equals',
-  values:   [value],
+  values: [value],
 });
 
-export const requirementFromString = string => {
+export const requirementFromString = (string) => {
   string = string.trim();
 
   // "key"
   if (/^[0-9A-Za-z/\-_.]+$/.test(string)) {
     return {
-      key:      string,
+      key: string,
       operator: 'Exists',
-      values:   [],
+      values: [],
     };
   }
 
   // "!key"
   if (/^!\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
     return {
-      key:      string.split(/!\s*/)[1],
+      key: string.split(/!\s*/)[1],
       operator: 'DoesNotExist',
-      values:   [],
+      values: [],
     };
   }
 
@@ -40,9 +40,9 @@ export const requirementFromString = string => {
   // "key!=value"
   if (/^[0-9A-Za-z/\-_.]+\s*!=\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
     return {
-      key:      string.split(/\s*!=\s*/)[0],
+      key: string.split(/\s*!=\s*/)[0],
       operator: 'NotEquals',
-      values:   [string.split(/\s*!=\s*/)[1]],
+      values: [string.split(/\s*!=\s*/)[1]],
     };
   }
 
@@ -50,7 +50,10 @@ export const requirementFromString = string => {
   if (/^[0-9A-Za-z/\-_.]+\s+in\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
     const parts = string.split(/\s+in\s+/);
     const key = parts[0];
-    const values = parts[1].slice(1, -1).split(',').map(_.trim);
+    const values = parts[1]
+      .slice(1, -1)
+      .split(',')
+      .map(_.trim);
 
     return {
       key,
@@ -63,7 +66,10 @@ export const requirementFromString = string => {
   if (/^[0-9A-Za-z/\-_.]+\s+notin\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
     const parts = string.split(/\s+notin\s+/);
     const key = parts[0];
-    const values = parts[1].slice(1, -1).split(',').map(_.trim);
+    const values = parts[1]
+      .slice(1, -1)
+      .split(',')
+      .map(_.trim);
 
     return {
       key,
@@ -81,7 +87,7 @@ export const requirementFromString = string => {
     return {
       key,
       operator: 'GreaterThan',
-      values:   [value],
+      values: [value],
     };
   }
 
@@ -94,14 +100,14 @@ export const requirementFromString = string => {
     return {
       key,
       operator: 'LessThan',
-      values:   [value],
+      values: [value],
     };
   }
 
   return; // falsy means parsing failure
 };
 
-export const requirementToString = requirement => {
+export const requirementToString = (requirement) => {
   if (requirement.operator === 'Equals') {
     return `${requirement.key}=${requirement.values[0]}`;
   }

@@ -17,8 +17,9 @@ const PullPolicy = {
   Never: {
     id: 'Never',
     label: 'Never Pull',
-    description: 'Don\'t pull down a container image. ' +
-      'If the correct container image doesn\'t exist locally, the pod will fail to start correctly.',
+    description:
+      "Don't pull down a container image. " +
+      "If the correct container image doesn't exist locally, the pod will fail to start correctly.",
   },
 };
 
@@ -47,11 +48,13 @@ export const getContainerState = (containerStatus: ContainerStatus): any => {
 
 export const getContainerStatus = (pod: PodKind, containerName: string): ContainerStatus => {
   const statuses: ContainerStatus[] = _.get(pod, 'status.containerStatuses');
-  const initStatuses : ContainerStatus[]= _.get(pod, 'status.initContainerStatuses');
+  const initStatuses: ContainerStatus[] = _.get(pod, 'status.initContainerStatuses');
   const identity = (s: ContainerStatus) => s.name === containerName;
   return _.find(statuses, identity) || _.find(initStatuses, identity);
 };
 
-const getPullPolicy = (container: ContainerSpec) => _.find(PullPolicy, {id: _.get(container, 'imagePullPolicy')});
+const getPullPolicy = (container: ContainerSpec) =>
+  _.find(PullPolicy, { id: _.get(container, 'imagePullPolicy') });
 
-export const getPullPolicyLabel = (container: ContainerSpec): string => _.get(getPullPolicy(container), 'label', '');
+export const getPullPolicyLabel = (container: ContainerSpec): string =>
+  _.get(getPullPolicy(container), 'label', '');

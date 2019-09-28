@@ -26,7 +26,7 @@ import { formatNamespacedRouteForResource } from '../../actions/ui';
 
 type SeparatorProps = {
   required?: string;
-}
+};
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
 const Separator: React.FC<SeparatorProps> = () => <NavItemSeparator />;
 
@@ -37,7 +37,12 @@ const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules', 'monitoring/silences', 'monitoring/alertmanageryaml'];
+const monitoringAlertsStartsWith = [
+  'monitoring/alerts',
+  'monitoring/alertrules',
+  'monitoring/silences',
+  'monitoring/alertmanageryaml',
+];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 const meteringStartsWith = ['metering.openshift.io'];
 const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
@@ -48,25 +53,36 @@ const monitoringNavSectionStateToProps = (state) => ({
   kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
 });
 
-const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL}) => {
+const MonitoringNavSection_ = ({ grafanaURL, canAccess, kibanaURL }) => {
   const showAlerts = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
   const showGrafana = canAccess && !!grafanaURL;
-  return showAlerts || showSilences || showGrafana || kibanaURL
-    ? <NavSection title="Monitoring">
-      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerting" startsWith={monitoringAlertsStartsWith} />}
+  return showAlerts || showSilences || showGrafana || kibanaURL ? (
+    <NavSection title="Monitoring">
+      {showAlerts && (
+        <HrefLink
+          href="/monitoring/alerts"
+          name="Alerting"
+          startsWith={monitoringAlertsStartsWith}
+        />
+      )}
       {showAlerts && <HrefLink href="/monitoring/query-browser?query0=" name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
-    : null;
+  ) : null;
 };
 const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
 const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
-      <HrefLink href="/dashboards" activePath="/dashboards/" name="Dashboards" required={FLAGS.CAN_LIST_NS} />
+      <HrefLink
+        href="/dashboards"
+        activePath="/dashboards/"
+        name="Dashboards"
+        required={FLAGS.CAN_LIST_NS}
+      />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
       <HrefLink href="/api-explorer" name="Explore" startsWith={apiExplorerStartsWith} />
@@ -78,7 +94,11 @@ const AdminNav = () => (
     <NavSection title="Workloads">
       <ResourceNSLink resource="pods" name="Pods" />
       <ResourceNSLink resource="deployments" name="Deployments" />
-      <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+      <ResourceNSLink
+        resource="deploymentconfigs"
+        name={DeploymentConfigModel.labelPlural}
+        required={FLAGS.OPENSHIFT}
+      />
       <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
       <ResourceNSLink resource="secrets" name="Secrets" />
       <ResourceNSLink resource="configmaps" name="Config Maps" />
@@ -91,8 +111,8 @@ const AdminNav = () => (
       <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
     </NavSection>
 
-    { /* Temporary addition of Knative Serverless section until extensibility allows for section ordering
-         and admin-nav gets contributed through extensions. */ }
+    {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
+         and admin-nav gets contributed through extensions. */}
     <NavSection title="Serverless" />
 
     <NavSection title="Networking">
@@ -103,7 +123,11 @@ const AdminNav = () => (
     </NavSection>
 
     <NavSection title="Storage">
-      <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
+      <ResourceClusterLink
+        resource="persistentvolumes"
+        name="Persistent Volumes"
+        required={FLAGS.CAN_LIST_PV}
+      />
       <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
       <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
     </NavSection>
@@ -111,7 +135,11 @@ const AdminNav = () => (
     <NavSection title="Builds" required={FLAGS.OPENSHIFT}>
       <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
       <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
-      <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
+      <ResourceNSLink
+        resource="imagestreams"
+        name={ImageStreamModel.labelPlural}
+        startsWith={imagestreamsStartsWith}
+      />
     </NavSection>
 
     <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
@@ -133,33 +161,79 @@ const AdminNav = () => (
 
     <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
       <ResourceClusterLink resource="nodes" name="Nodes" />
-      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineModel), 'openshift-machine-api')}
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineModel),
+          'openshift-machine-api',
+        )}
         name="Machines"
-        required={FLAGS.CLUSTER_API} />
-      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), 'openshift-machine-api')}
+        required={FLAGS.CLUSTER_API}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineSetModel),
+          'openshift-machine-api',
+        )}
         name="Machine Sets"
-        required={FLAGS.CLUSTER_API} />
-      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(MachineAutoscalerModel), 'openshift-machine-api')}
+        required={FLAGS.CLUSTER_API}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineAutoscalerModel),
+          'openshift-machine-api',
+        )}
         name="Machine Autoscalers"
-        required={FLAGS.MACHINE_AUTOSCALER} />
+        required={FLAGS.MACHINE_AUTOSCALER}
+      />
       <Separator required={FLAGS.MACHINE_CONFIG} />
-      <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
-      <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
+      <ResourceClusterLink
+        resource={referenceForModel(MachineConfigModel)}
+        name="Machine Configs"
+        required={FLAGS.MACHINE_CONFIG}
+      />
+      <ResourceClusterLink
+        resource={referenceForModel(MachineConfigPoolModel)}
+        name="Machine Config Pools"
+        required={FLAGS.MACHINE_CONFIG}
+      />
     </NavSection>
 
     <NavSection title="Administration">
-      <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
+      <HrefLink
+        href="/settings/cluster"
+        activePath="/settings/cluster/"
+        name="Cluster Settings"
+        required={FLAGS.CLUSTER_VERSION}
+        startsWith={clusterSettingsStartsWith}
+      />
       <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
       <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
       <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
-      <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
-      <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
+      <ResourceNSLink
+        resource="rolebindings"
+        name="Role Bindings"
+        startsWith={rolebindingsStartsWith}
+      />
+      <ResourceNSLink
+        resource="resourcequotas"
+        name="Resource Quotas"
+        startsWith={quotaStartsWith}
+      />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-      <HrefLink href={formatNamespacedRouteForResource(referenceForModel(ChargebackReportModel), 'openshift-metering')}
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(ChargebackReportModel),
+          'openshift-metering',
+        )}
         name="Chargeback"
         required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]}
-        startsWith={meteringStartsWith} />
-      <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
+        startsWith={meteringStartsWith}
+      />
+      <ResourceClusterLink
+        resource="customresourcedefinitions"
+        name="Custom Resource Definitions"
+        required={FLAGS.CAN_LIST_CRD}
+      />
     </NavSection>
   </React.Fragment>
 );

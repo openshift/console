@@ -1,16 +1,8 @@
 import * as _ from 'lodash-es';
 
 import { OAuthModel } from '../../models';
-import {
-  IdentityProvider,
-  k8sGet,
-  k8sPatch,
-  OAuthKind,
-} from '../../module/k8s';
-import {
-  history,
-  resourcePathFromModel,
-} from '../utils';
+import { IdentityProvider, k8sGet, k8sPatch, OAuthKind } from '../../module/k8s';
+import { history, resourcePathFromModel } from '../utils';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const OAUTH_RESOURCE_NAME = 'cluster';

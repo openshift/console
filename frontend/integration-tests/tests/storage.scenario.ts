@@ -5,10 +5,16 @@ import * as storageView from '../views/storage.view';
 import { execSync } from 'child_process';
 
 describe('Add storage is applicable for all workloads', () => {
-
-  const k8sWorkloads = ['replicationcontrollers', 'daemonsets', 'deployments', 'replicasets', 'statefulsets'];
+  const k8sWorkloads = [
+    'replicationcontrollers',
+    'daemonsets',
+    'deployments',
+    'replicasets',
+    'statefulsets',
+  ];
   const openshiftWorkloads = ['deploymentconfigs'];
-  const resourceObjs = browser.params.openshift === 'true' ? k8sWorkloads.concat(openshiftWorkloads) : k8sWorkloads;
+  const resourceObjs =
+    browser.params.openshift === 'true' ? k8sWorkloads.concat(openshiftWorkloads) : k8sWorkloads;
 
   afterEach(() => {
     checkLogs();
@@ -30,11 +36,11 @@ describe('Add storage is applicable for all workloads', () => {
       const pvcName = `${resourceType}-pvc`;
       const pvcSize = '1';
       const mountPath = '/data';
-      it(`create a ${resourceType} resource`, async() => {
+      it(`create a ${resourceType} resource`, async () => {
         await crudView.createNamespacedResourceWithDefaultYAML(resourceType);
         expect(crudView.errorMessage.isPresent()).toBe(false);
       });
-      it(`add storage to ${resourceType}`, async() => {
+      it(`add storage to ${resourceType}`, async () => {
         await storageView.addNewStorageToWorkload(pvcName, pvcSize, mountPath);
         expect(crudView.errorMessage.isPresent()).toBe(false);
 
@@ -42,8 +48,12 @@ describe('Add storage is applicable for all workloads', () => {
         await browser.wait(until.presenceOf(volumeTile));
         const volumeRow = await $(`[data-id="${pvcName}-${mountPath}"]`);
         await browser.wait(until.presenceOf(volumeRow));
-        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="name"]`).getText()).toContain(pvcName);
-        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="path"]`).getText()).toContain(mountPath);
+        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="name"]`).getText()).toContain(
+          pvcName,
+        );
+        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="path"]`).getText()).toContain(
+          mountPath,
+        );
       });
     });
   });

@@ -35,6 +35,6 @@ export const getClusterOperatorStatus = (operator: ClusterOperator) => {
 
 export const getClusterOperatorVersion = (operator: ClusterOperator) => {
   const versions: OperandVersion[] = _.get(operator, 'status.versions', []);
-  const operatorVersion = _.find(versions, v => v.name === 'operator');
+  const operatorVersion = _.find(versions, (v) => v.name === 'operator');
   return operatorVersion ? operatorVersion.version : '';
 };

@@ -6,12 +6,34 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { Status } from '@console/shared';
-import { getNodeRoles, nodeStatus, makeNodeSchedulable, NodeKind, referenceForModel } from '../module/k8s';
+import {
+  getNodeRoles,
+  nodeStatus,
+  makeNodeSchedulable,
+  NodeKind,
+  referenceForModel,
+} from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
+import {
+  Kebab,
+  navFactory,
+  LabelList,
+  ResourceKebab,
+  SectionHeading,
+  ResourceLink,
+  Timestamp,
+  units,
+  cloudProviderNames,
+  cloudProviderID,
+  pluralize,
+  humanizeDecimalBytes,
+  humanizeCpuCores,
+  useAccessReview,
+  humanizeDecimalBytesPerSec,
+} from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -19,7 +41,7 @@ import { CamelCaseWrap } from './utils/camel-case-wrap';
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable',
   hidden: _.get(obj, 'spec.unschedulable'),
-  callback: () => configureUnschedulableModal({resource: obj}),
+  callback: () => configureUnschedulableModal({ resource: obj }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -45,7 +67,7 @@ const MarkAsSchedulable = (kind, obj) => ({
 const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;
 const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit];
 
-const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
+const NodeKebab = ({ node }) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
 
 const getMachine = (node: NodeKind) => {
   const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]');
@@ -57,14 +79,23 @@ const getMachine = (node: NodeKind) => {
   return { namespace, name };
 };
 
-export const NodeIPList = ({ips, expand = false}) => <div>
-  {_.sortBy(ips, ['type']).map((ip, i) => ip.address && <div key={i} className="co-node-ip">
-    {(expand || ip.type === 'InternalIP') && <p>
-      <span className="co-ip-type">{ip.type.replace(/([a-z])([A-Z])/g, '$1 $2')}: </span>
-      <span className="co-ip-addr">{ip.address}</span>
-    </p>}
-  </div>)}
-</div>;
+export const NodeIPList = ({ ips, expand = false }) => (
+  <div>
+    {_.sortBy(ips, ['type']).map(
+      (ip, i) =>
+        ip.address && (
+          <div key={i} className="co-node-ip">
+            {(expand || ip.type === 'InternalIP') && (
+              <p>
+                <span className="co-ip-type">{ip.type.replace(/([a-z])([A-Z])/g, '$1 $2')}: </span>
+                <span className="co-ip-addr">{ip.address}</span>
+              </p>
+            )}
+          </div>
+        ),
+    )}
+  </div>
+);
 
 const tableColumnClasses = [
   classNames('col-md-5', 'col-sm-5', 'col-xs-8'),
@@ -77,36 +108,45 @@ const tableColumnClasses = [
 const NodeTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Status', sortFunc: 'nodeReadiness', transforms: [sortable],
+      title: 'Status',
+      sortFunc: 'nodeReadiness',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Role', sortFunc: 'nodeRoles', transforms: [sortable],
+      title: 'Role',
+      sortFunc: 'nodeRoles',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Machine', sortField: 'metadata.annotations[\'machine.openshift.io/machine\']', transforms: [sortable],
+      title: 'Machine',
+      sortField: "metadata.annotations['machine.openshift.io/machine']",
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: '', props: { className: tableColumnClasses[4] },
+      title: '',
+      props: { className: tableColumnClasses[4] },
     },
   ];
 };
 NodeTableHeader.displayName = 'NodeTableHeader';
 
-const NodeStatus: React.FC<{node: NodeKind}> = ({node}) => (
+const NodeStatus: React.FC<{ node: NodeKind }> = ({ node }) => (
   <>
     <Status status={nodeStatus(node)} />
     {node.spec.unschedulable && <small className="text-muted">Scheduling Disabled</small>}
   </>
 );
 
-const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style}) => {
+const NodeTableRow: React.FC<NodeTableRowProps> = ({ obj: node, index, key, style }) => {
   const machine = getMachine(node);
   const roles = getNodeRoles(node).sort();
   return (
@@ -121,7 +161,13 @@ const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style
         {roles.length ? roles.join(', ') : '-'}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
+        {machine && (
+          <ResourceLink
+            kind={referenceForModel(MachineModel)}
+            name={machine.name}
+            namespace={machine.namespace}
+          />
+        )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <NodeKebab node={node} />
@@ -137,74 +183,78 @@ type NodeTableRowProps = {
   style: object;
 };
 
-const NodesList = props => <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} virtualize />;
+const NodesList = (props) => (
+  <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} virtualize />
+);
 
-const filters = [{
-  type: 'node-status',
-  selected: ['Ready', 'Not Ready'],
-  reducer: nodeStatus,
-  items: [
-    {id: 'Ready', title: 'Ready'},
-    {id: 'Not Ready', title: 'Not Ready'},
-  ],
-}];
-export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} />;
+const filters = [
+  {
+    type: 'node-status',
+    selected: ['Ready', 'Not Ready'],
+    reducer: nodeStatus,
+    items: [{ id: 'Ready', title: 'Ready' }, { id: 'Not Ready', title: 'Not Ready' }],
+  },
+];
+export const NodesPage = (props) => (
+  <ListPage {...props} ListComponent={NodesList} rowFilters={filters} />
+);
 
-const NodeGraphs = requirePrometheus(({node}) => {
+const NodeGraphs = requirePrometheus(({ node }) => {
   const instanceQuery = `{instance='${node.metadata.name}'}`;
-  const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
+  const nodeIp = _.find<{ type: string; address: string }>(node.status.addresses, {
+    type: 'InternalIP',
+  });
   const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
 
-  return <React.Fragment>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Memory Usage"
-          humanize={humanizeDecimalBytes}
-          query={`node_memory_Active_bytes${instanceQuery}`}
-        />
+  return (
+    <React.Fragment>
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Memory Usage"
+            humanize={humanizeDecimalBytes}
+            query={`node_memory_Active_bytes${instanceQuery}`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="CPU Usage"
+            humanize={humanizeCpuCores}
+            query={`instance:node_cpu:rate:sum${instanceQuery}`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="CPU Usage"
-          humanize={humanizeCpuCores}
-          query={`instance:node_cpu:rate:sum${instanceQuery}`}
-        />
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Network In"
+            humanize={humanizeDecimalBytesPerSec}
+            query={`instance:node_network_receive_bytes:rate:sum${instanceQuery}`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Network Out"
+            humanize={humanizeDecimalBytesPerSec}
+            query={`instance:node_network_transmit_bytes:rate:sum${instanceQuery}`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Filesystem"
+            humanize={humanizeDecimalBytes}
+            query={`instance:node_filesystem_usage:sum${instanceQuery}`}
+          />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Number of Pods"
-          query={ipQuery && `kubelet_running_pod_count${ipQuery}`}
-        />
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Network In"
-          humanize={humanizeDecimalBytesPerSec}
-          query={`instance:node_network_receive_bytes:rate:sum${instanceQuery}`}
-        />
-      </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Network Out"
-          humanize={humanizeDecimalBytesPerSec}
-          query={`instance:node_network_transmit_bytes:rate:sum${instanceQuery}`}
-        />
-      </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Filesystem"
-          humanize={humanizeDecimalBytes}
-          query={`instance:node_filesystem_usage:sum${instanceQuery}`}
-        />
-      </div>
-    </div>
-  </React.Fragment>;
+    </React.Fragment>
+  );
 });
 
-const Details = ({obj: node}) => {
+const Details = ({ obj: node }) => {
   const images = _.filter(node.status.images, 'names');
   const machine = getMachine(node);
   const canUpdate = useAccessReview({
@@ -214,139 +264,192 @@ const Details = ({obj: node}) => {
     name: node.metadata.name,
     namespace: node.metadata.namespace,
   });
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Node Overview" />
-      <NodeGraphs node={node} />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Node Name</dt>
-            <dd>{node.metadata.name || '-'}</dd>
-            <dt>Status</dt>
-            <dd><NodeStatus node={node} /></dd>
-            <dt>External ID</dt>
-            <dd>{_.get(node, 'spec.externalID', '-')}</dd>
-            <dt>Node Addresses</dt>
-            <dd><NodeIPList ips={_.get(node, 'status.addresses')} expand={true} /></dd>
-            <dt>Node Labels</dt>
-            <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
-            <dt>Taints</dt>
-            <dd>
-              {canUpdate
-                ? <Button variant="link" type="button" isInline onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>
-                  {pluralize(_.size(node.spec.taints), 'Taint')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                </Button>
-                : pluralize(_.size(node.spec.taints), 'Taint')}
-            </dd>
-            <dt>Annotations</dt>
-            <dd>
-              {canUpdate
-                ? <Button variant="link" type="button" isInline onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>
-                  {pluralize(_.size(node.metadata.annotations), 'Annotation')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                </Button>
-                : pluralize(_.size(node.metadata.annotations), 'Annotation')}
-            </dd>
-            {machine && <React.Fragment>
-              <dt>Machine</dt>
-              <dd><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></dd>
-            </React.Fragment>}
-            <dt>Provider ID</dt>
-            <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
-            {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
-            {_.has(node, 'spec.unschedulable') && <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}
-            </dd>}
-            <dt>Created</dt>
-            <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>
-          </dl>
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Node Overview" />
+        <NodeGraphs node={node} />
+        <div className="row">
+          <div className="col-md-6 col-xs-12">
+            <dl className="co-m-pane__details">
+              <dt>Node Name</dt>
+              <dd>{node.metadata.name || '-'}</dd>
+              <dt>Status</dt>
+              <dd>
+                <NodeStatus node={node} />
+              </dd>
+              <dt>External ID</dt>
+              <dd>{_.get(node, 'spec.externalID', '-')}</dd>
+              <dt>Node Addresses</dt>
+              <dd>
+                <NodeIPList ips={_.get(node, 'status.addresses')} expand={true} />
+              </dd>
+              <dt>Node Labels</dt>
+              <dd>
+                <LabelList kind="Node" labels={node.metadata.labels} />
+              </dd>
+              <dt>Taints</dt>
+              <dd>
+                {canUpdate ? (
+                  <Button
+                    variant="link"
+                    type="button"
+                    isInline
+                    onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
+                  >
+                    {pluralize(_.size(node.spec.taints), 'Taint')}
+                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  </Button>
+                ) : (
+                  pluralize(_.size(node.spec.taints), 'Taint')
+                )}
+              </dd>
+              <dt>Annotations</dt>
+              <dd>
+                {canUpdate ? (
+                  <Button
+                    variant="link"
+                    type="button"
+                    isInline
+                    onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
+                  >
+                    {pluralize(_.size(node.metadata.annotations), 'Annotation')}
+                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  </Button>
+                ) : (
+                  pluralize(_.size(node.metadata.annotations), 'Annotation')
+                )}
+              </dd>
+              {machine && (
+                <React.Fragment>
+                  <dt>Machine</dt>
+                  <dd>
+                    <ResourceLink
+                      kind={referenceForModel(MachineModel)}
+                      name={machine.name}
+                      namespace={machine.namespace}
+                    />
+                  </dd>
+                </React.Fragment>
+              )}
+              <dt>Provider ID</dt>
+              <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
+              {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
+              {_.has(node, 'spec.unschedulable') && (
+                <dd className="text-capitalize">
+                  {_.get(node, 'spec.unschedulable', '-').toString()}
+                </dd>
+              )}
+              <dt>Created</dt>
+              <dd>
+                <Timestamp timestamp={node.metadata.creationTimestamp} />
+              </dd>
+            </dl>
+          </div>
+          <div className="col-md-6 col-xs-12">
+            <dl className="co-m-pane__details">
+              <dt>Operating System</dt>
+              <dd className="text-capitalize">
+                {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
+              </dd>
+              <dt>OS Image</dt>
+              <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
+              <dt>Architecture</dt>
+              <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
+              <dt>Kernel Version</dt>
+              <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
+              <dt>Boot ID</dt>
+              <dd>{_.get(node, 'status.nodeInfo.bootID', '-')}</dd>
+              <dt>Container Runtime</dt>
+              <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}</dd>
+              <dt>Kubelet Version</dt>
+              <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
+              <dt>Kube-Proxy Version</dt>
+              <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
+            </dl>
+          </div>
         </div>
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Operating System</dt>
-            <dd className="text-capitalize">{_.get(node, 'status.nodeInfo.operatingSystem', '-')}</dd>
-            <dt>OS Image</dt>
-            <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
-            <dt>Architecture</dt>
-            <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
-            <dt>Kernel Version</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
-            <dt>Boot ID</dt>
-            <dd>{_.get(node, 'status.nodeInfo.bootID', '-')}</dd>
-            <dt>Container Runtime</dt>
-            <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}</dd>
-            <dt>Kubelet Version</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
-            <dt>Kube-Proxy Version</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
-          </dl>
+      </div>
+
+      <div className="co-m-pane__body">
+        <SectionHeading text="Node Conditions" />
+        <div className="co-table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Updated</th>
+                <th>Changed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(node.status.conditions, (c, i) => (
+                <tr key={i}>
+                  <td>
+                    <CamelCaseWrap value={c.type} />
+                  </td>
+                  <td>{c.status || '-'}</td>
+                  <td>
+                    <CamelCaseWrap value={c.reason} />
+                  </td>
+                  <td>
+                    <Timestamp timestamp={c.lastHeartbeatTime} />
+                  </td>
+                  <td>
+                    <Timestamp timestamp={c.lastTransitionTime} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
 
-    <div className="co-m-pane__body">
-      <SectionHeading text="Node Conditions" />
-      <div className="co-table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Reason</th>
-              <th>Updated</th>
-              <th>Changed</th>
-            </tr>
-          </thead>
-          <tbody>
-            {_.map(node.status.conditions, (c, i) => <tr key={i}>
-              <td><CamelCaseWrap value={c.type} /></td>
-              <td>{c.status || '-'}</td>
-              <td><CamelCaseWrap value={c.reason} /></td>
-              <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
-              <td><Timestamp timestamp={c.lastTransitionTime} /></td>
-            </tr>)}
-          </tbody>
-        </table>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Images" />
+        <div className="co-table-container">
+          <table className="table table--layout-fixed">
+            <colgroup>
+              <col className="col-sm-10 col-xs-9" />
+              <col className="col-sm-2 col-xs-3" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Size</th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(images, (image, i) => (
+                <tr key={i}>
+                  <td className="co-break-all co-select-to-copy">
+                    {image.names.find(
+                      (name: string) => !name.includes('@') && !name.includes('<none>'),
+                    ) || image.names[0]}
+                  </td>
+                  <td>{units.humanize(image.sizeBytes, 'binaryBytes', true).string || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-
-    <div className="co-m-pane__body">
-      <SectionHeading text="Images" />
-      <div className="co-table-container">
-        <table className="table table--layout-fixed">
-          <colgroup>
-            <col className="col-sm-10 col-xs-9"></col>
-            <col className="col-sm-2 col-xs-3"></col>
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Size</th>
-            </tr>
-          </thead>
-          <tbody>
-            {_.map(images, (image, i) => <tr key={i}>
-              <td className="co-break-all co-select-to-copy">{image.names.find((name: string) => !name.includes('@') && !name.includes('<none>')) || image.names[0]}</td>
-              <td>{units.humanize(image.sizeBytes, 'binaryBytes', true).string || '-'}</td>
-            </tr>)}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </React.Fragment>;
+    </React.Fragment>
+  );
 };
 
-const {details, editYaml, events, pods} = navFactory;
+const { details, editYaml, events, pods } = navFactory;
 
 const pages = [
   details(Details),
   editYaml(),
-  pods(({obj}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />),
+  pods(({ obj }) => (
+    <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
+  )),
   events(ResourceEventStream),
 ];
-export const NodesDetailsPage = props => <DetailsPage
-  {...props}
-  menuActions={menuActions}
-  pages={pages}
-/>;
+export const NodesDetailsPage = (props) => (
+  <DetailsPage {...props} menuActions={menuActions} pages={pages} />
+);

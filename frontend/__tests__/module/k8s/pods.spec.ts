@@ -12,7 +12,7 @@ describe('podPhase', () => {
 
   it('returns empty string if given invalid pod', () => {
     const invalidPods: any[] = [null, undefined, {}];
-    invalidPods.forEach(p => {
+    invalidPods.forEach((p) => {
       const phase: string = podPhase(p);
 
       expect(phase).toEqual('');
@@ -42,14 +42,16 @@ describe('podPhase', () => {
 
   it('returns the state reason of the last waiting or terminated container in the pod', () => {
     pod.status.containerStatuses = [
-      {state: {waiting: {reason: 'Unschedulable'}}},
-      {state: {terminated: {reason: 'Initialized'}}},
-      {state: {waiting: {reason: 'Ready'}}},
-      {state: {running: {}}},
+      { state: { waiting: { reason: 'Unschedulable' } } },
+      { state: { terminated: { reason: 'Initialized' } } },
+      { state: { waiting: { reason: 'Ready' } } },
+      { state: { running: {} } },
     ];
     const expectedPhase: string = pod.status.containerStatuses
-      .filter(({state}) => state.waiting !== undefined || state.terminated !== undefined)
-      .map(({state}) => state.waiting !== undefined ? state.waiting.reason : state.terminated.reason)
+      .filter(({ state }) => state.waiting !== undefined || state.terminated !== undefined)
+      .map(({ state }) =>
+        state.waiting !== undefined ? state.waiting.reason : state.terminated.reason,
+      )
       .slice(-1)[0];
     const phase: string = podPhase(pod);
 
@@ -64,9 +66,7 @@ describe('podReadiness', () => {
     pod = {
       status: {
         phase: 'Running',
-        conditions: [
-          {type: 'Ready', status: 'True'},
-        ],
+        conditions: [{ type: 'Ready', status: 'True' }],
       },
     };
   });
@@ -86,13 +86,29 @@ describe('podReadiness', () => {
 
   it('returns `reason` of the condition with the oldest `lastTransitionTime` if not all ready', () => {
     pod.status.conditions = pod.status.conditions.concat([
-      {type: 'Initialized', status: 'False', lastTransitionTime: '2017-04-01T12:00:00Z', reason: 'Ready'},
-      {type: 'PodScheduled', status: 'True', lastTransitionTime: '2017-03-01T12:00:00Z', reason: 'Initialized'},
-      {type: 'Unschedulable', status: 'False', lastTransitionTime: '2017-02-01T12:00:00Z', reason: 'Unschedulable'},
+      {
+        type: 'Initialized',
+        status: 'False',
+        lastTransitionTime: '2017-04-01T12:00:00Z',
+        reason: 'Ready',
+      },
+      {
+        type: 'PodScheduled',
+        status: 'True',
+        lastTransitionTime: '2017-03-01T12:00:00Z',
+        reason: 'Initialized',
+      },
+      {
+        type: 'Unschedulable',
+        status: 'False',
+        lastTransitionTime: '2017-02-01T12:00:00Z',
+        reason: 'Unschedulable',
+      },
     ]);
     const expectedReadiness: string = pod.status.conditions
-      .filter(condition => condition.status !== 'True')
-      .sort((a, b) => new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1)[0].reason;
+      .filter((condition) => condition.status !== 'True')
+      .sort((a, b) => (new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1))[0]
+      .reason;
 
     const readiness = podReadiness(pod);
 
@@ -101,13 +117,14 @@ describe('podReadiness', () => {
 
   it('returns `type` of the condition with the oldest `lastTransitionTime` if not all ready and `reason` is undefined', () => {
     pod.status.conditions = pod.status.conditions.concat([
-      {type: 'Initialized', status: 'False', lastTransitionTime: '2017-04-01T12:00:00Z'},
-      {type: 'PodScheduled', status: 'True', lastTransitionTime: '2017-03-01T12:00:00Z'},
-      {type: 'Unschedulable', status: 'False', lastTransitionTime: '2017-02-01T12:00:00Z'},
+      { type: 'Initialized', status: 'False', lastTransitionTime: '2017-04-01T12:00:00Z' },
+      { type: 'PodScheduled', status: 'True', lastTransitionTime: '2017-03-01T12:00:00Z' },
+      { type: 'Unschedulable', status: 'False', lastTransitionTime: '2017-02-01T12:00:00Z' },
     ]);
     const expectedReadiness: string = pod.status.conditions
-      .filter(condition => condition.status !== 'True')
-      .sort((a, b) => new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1)[0].type;
+      .filter((condition) => condition.status !== 'True')
+      .sort((a, b) => (new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1))[0]
+      .type;
 
     const readiness = podReadiness(pod);
 

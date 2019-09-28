@@ -24,77 +24,81 @@ const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, m
   canDrop: monitor.canDrop(),
 }))(EditYAML);
 
-
-export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileUpload: '',
-      error: '',
-    };
-    this.handleFileDrop = this.handleFileDrop.bind(this);
-  }
-
-  containsNonPrintableCharacters(value: string) {
-    if (!value) {
-      return false;
-    }
-    // eslint-disable-next-line no-control-regex
-    return /[\x00-\x09\x0E-\x1F]/.test(value);
-  }
-
-  handleFileDrop(item, monitor) {
-    if (!monitor) {
-      return;
-    }
-    const [file] = monitor.getItem().files;
-
-    // If unsupported file type is dropped into drop zone, file will be undefined
-    if (!file) {
-      return;
-    }
-
-    // limit size size uploading to 1 mb
-    if (file.size <= maxFileUploadSize) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const input = reader.result as string;
-        if (this.containsNonPrintableCharacters(input)) {
-          this.setState({
-            error: fileTypeErrorMsg,
-          });
-        } else {
-          this.setState({
-            fileUpload: input,
-            error: '',
-          });
-        }
+export const DroppableEditYAML = withDragDropContext(
+  class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
+    constructor(props) {
+      super(props);
+      this.state = {
+        fileUpload: '',
+        error: '',
       };
-      reader.readAsText(file, 'UTF-8');
-    } else {
-      this.setState({
-        error: fileSizeErrorMsg,
-      });
+      this.handleFileDrop = this.handleFileDrop.bind(this);
     }
-  }
 
-  render() {
-    const { obj } = this.props;
-    const { fileUpload, error } = this.state;
-    return <EditYAMLComponent
-      {...this.props}
-      obj={obj}
-      fileUpload={fileUpload}
-      error={error}
-      onDrop={this.handleFileDrop} />;
-  }
-});
+    containsNonPrintableCharacters(value: string) {
+      if (!value) {
+        return false;
+      }
+      // eslint-disable-next-line no-control-regex
+      return /[\x00-\x09\x0E-\x1F]/.test(value);
+    }
+
+    handleFileDrop(item, monitor) {
+      if (!monitor) {
+        return;
+      }
+      const [file] = monitor.getItem().files;
+
+      // If unsupported file type is dropped into drop zone, file will be undefined
+      if (!file) {
+        return;
+      }
+
+      // limit size size uploading to 1 mb
+      if (file.size <= maxFileUploadSize) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const input = reader.result as string;
+          if (this.containsNonPrintableCharacters(input)) {
+            this.setState({
+              error: fileTypeErrorMsg,
+            });
+          } else {
+            this.setState({
+              fileUpload: input,
+              error: '',
+            });
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+      } else {
+        this.setState({
+          error: fileSizeErrorMsg,
+        });
+      }
+    }
+
+    render() {
+      const { obj } = this.props;
+      const { fileUpload, error } = this.state;
+      return (
+        <EditYAMLComponent
+          {...this.props}
+          obj={obj}
+          fileUpload={fileUpload}
+          error={error}
+          onDrop={this.handleFileDrop}
+        />
+      );
+    }
+  },
+);
 
 export type DroppableEditYAMLProps = {
-  obj: string,
+  obj: string;
 };
 
 export type DroppableEditYAMLState = {
-  fileUpload: string | ArrayBuffer,
-  error: string,
+  fileUpload: string | ArrayBuffer;
+  error: string;
 };

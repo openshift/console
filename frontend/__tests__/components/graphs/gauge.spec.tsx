@@ -3,10 +3,12 @@ import { shallow } from 'enzyme';
 import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts';
 
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
-import { PrometheusGraph, PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
+import {
+  PrometheusGraph,
+  PrometheusGraphLink,
+} from '@console/internal/components/graphs/prometheus-graph';
 
 const MOCK_DATA = { x: 'test', y: 100 };
-
 
 describe('<GaugeChart />', () => {
   let wrapper;
@@ -24,13 +26,12 @@ describe('<GaugeChart />', () => {
   });
 
   it('should show an error state', () => {
-    wrapper.setProps({error: 'Error Message'});
+    wrapper.setProps({ error: 'Error Message' });
     expect(wrapper.find(ChartDonutUtilization).props().title).toBe('Error Message');
-
   });
 
   it('should show a loading state', () => {
-    wrapper.setProps({loading: true});
+    wrapper.setProps({ loading: true });
     expect(wrapper.find(ChartDonutUtilization).props().title).toBe('Loading');
   });
 });

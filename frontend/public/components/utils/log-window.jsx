@@ -16,8 +16,8 @@ export class LogWindow extends React.PureComponent {
     this._unpause = this._unpause.bind(this);
     this._handleScroll = _.throttle(this._handleScroll.bind(this), 100);
     this._handleResize = _.debounce(this._handleResize.bind(this), 50);
-    this._setScrollPane = (element) => this.scrollPane = element;
-    this._setLogContents = (element) => this.logContents = element;
+    this._setScrollPane = (element) => (this.scrollPane = element);
+    this._setLogContents = (element) => (this.logContents = element);
     this.state = {
       content: '',
       height: '',
@@ -35,20 +35,24 @@ export class LogWindow extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.scrollPane.addEventListener('scroll', this._handleScroll, {passive: true});
-    window.addEventListener('resize', this._handleResize, {passive: true});
+    this.scrollPane.addEventListener('scroll', this._handleScroll, { passive: true });
+    window.addEventListener('resize', this._handleResize, { passive: true });
     this._handleResize();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.status !== this.props.status || prevProps.lines.length || this.props.lines.length) {
+    if (
+      prevProps.status !== this.props.status ||
+      prevProps.lines.length ||
+      this.props.lines.length
+    ) {
       this._scrollToBottom();
     }
   }
 
   componentWillUnmount() {
-    this.scrollPane.removeEventListener('scroll', this._handleScroll, {passive: true});
-    window.removeEventListener('resize', this._handleResize, {passive: true});
+    this.scrollPane.removeEventListener('scroll', this._handleScroll, { passive: true });
+    window.removeEventListener('resize', this._handleResize, { passive: true });
   }
 
   _handleScroll() {
@@ -81,8 +85,11 @@ export class LogWindow extends React.PureComponent {
       return;
     }
 
-    const targetHeight = Math.floor(window.innerHeight - this.scrollPane.getBoundingClientRect().top -
-      (this.props.isFullscreen ? FULLSCREEN_FUDGE_FACTOR : FUDGE_FACTOR));
+    const targetHeight = Math.floor(
+      window.innerHeight -
+        this.scrollPane.getBoundingClientRect().top -
+        (this.props.isFullscreen ? FULLSCREEN_FUDGE_FACTOR : FUDGE_FACTOR),
+    );
     this.prevScrollLeft = this.scrollPane.scrollLeft;
     this.setState({
       height: targetHeight,
@@ -105,36 +112,34 @@ export class LogWindow extends React.PureComponent {
   }
 
   render() {
-    const {bufferFull, lines, linesBehind, status } = this.props;
-    const {content, height} = this.state;
+    const { bufferFull, lines, linesBehind, status } = this.props;
+    const { content, height } = this.state;
 
     // TODO maybe move these variables into state so they are only updated on changes
     const totalLineCount = pluralize(lines.length, 'line');
     const linesBehindCount = pluralize(linesBehind, 'new line');
     const headerText = bufferFull ? `last ${totalLineCount}` : totalLineCount;
-    const resumeText = (linesBehind > 0)
-      ? ` Resume stream and show ${linesBehindCount}`
-      : ' Resume stream';
+    const resumeText =
+      linesBehind > 0 ? ` Resume stream and show ${linesBehindCount}` : ' Resume stream';
 
-    return <div className="log-window">
-      <div className="log-window__header">
-        {headerText}
-      </div>
-      <div className="log-window__body">
-        <div className="log-window__scroll-pane" ref={this._setScrollPane}>
-          <div className="log-window__contents" ref={this._setLogContents} style={{ height }}>
-            <div className="log-window__contents__text">
-              {content}
+    return (
+      <div className="log-window">
+        <div className="log-window__header">{headerText}</div>
+        <div className="log-window__body">
+          <div className="log-window__scroll-pane" ref={this._setScrollPane}>
+            <div className="log-window__contents" ref={this._setLogContents} style={{ height }}>
+              <div className="log-window__contents__text">{content}</div>
             </div>
           </div>
         </div>
+        {status === STREAM_PAUSED && (
+          <button onClick={this._unpause} className="btn btn-block log-window__resume-btn">
+            <OutlinedPlayCircleIcon />
+            {resumeText}
+          </button>
+        )}
       </div>
-      { status === STREAM_PAUSED &&
-        <button onClick={this._unpause} className="btn btn-block log-window__resume-btn">
-          <OutlinedPlayCircleIcon />
-          {resumeText}
-        </button> }
-    </div>;
+    );
   }
 }
 

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
 import { makeNodeUnschedulable } from '../../module/k8s/node';
-import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {PromiseComponent} from '../utils';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { PromiseComponent } from '../utils';
 
 class UnscheduleNodeModal extends PromiseComponent {
   constructor(props) {
@@ -23,13 +23,21 @@ class UnscheduleNodeModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" className="modal-content ">
-      <ModalTitle>Mark as Unschedulable</ModalTitle>
-      <ModalBody>
-        Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Mark Unschedulable" cancel={this._cancel} />
-    </form>;
+    return (
+      <form onSubmit={this._submit} name="form" className="modal-content ">
+        <ModalTitle>Mark as Unschedulable</ModalTitle>
+        <ModalBody>
+          Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance
+          or preparing to decommission a node.
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText="Mark Unschedulable"
+          cancel={this._cancel}
+        />
+      </form>
+    );
   }
 }
 

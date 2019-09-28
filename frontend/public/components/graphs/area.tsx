@@ -40,7 +40,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   yAxis = true,
 }) => {
   const [containerRef, width] = useRefWidth();
-  const getLabel = ({ datum: { x, y }}) => `${humanize(y).string} at ${formatDate(x)}`;
+  const getLabel = ({ datum: { x, y } }) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
@@ -48,15 +48,21 @@ export const AreaChart: React.FC<AreaChartProps> = ({
         <PrometheusGraphLink query={query}>
           <Chart
             containerComponent={container}
-            domainPadding={{y: 20}}
+            domainPadding={{ y: 20 }}
             height={height}
             width={width}
             theme={theme}
-            scale={{x: 'time', y: 'linear'}}
+            scale={{ x: 'time', y: 'linear' }}
             padding={padding}
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
-            {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tick => humanize(tick).string} />}
+            {yAxis && (
+              <ChartAxis
+                dependentAxis
+                tickCount={tickCount}
+                tickFormat={(tick) => humanize(tick).string}
+              />
+            )}
             <ChartArea data={data} />
           </Chart>
         </PrometheusGraphLink>
@@ -75,7 +81,7 @@ export const Area: React.FC<AreaProps> = ({
   timespan = DEFAULT_TIMESPAN,
   ...rest
 }) => {
-  const [response,, loading] = usePrometheusPoll({
+  const [response, , loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     namespace,
     query,
@@ -91,7 +97,7 @@ type AreaChartProps = {
   className?: string;
   formatDate?: (date: Date) => string;
   humanize?: Humanize;
-  height?: number,
+  height?: number;
   loading?: boolean;
   query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
@@ -101,7 +107,7 @@ type AreaChartProps = {
   xAxis?: boolean;
   yAxis?: boolean;
   padding?: object;
-}
+};
 
 type AreaProps = AreaChartProps & {
   namespace?: string;
@@ -109,4 +115,4 @@ type AreaProps = AreaChartProps & {
   samples?: number;
   timeout?: string;
   timespan?: number;
-}
+};

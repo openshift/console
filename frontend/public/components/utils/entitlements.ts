@@ -1,4 +1,4 @@
-import {pluralize} from './';
+import { pluralize } from './';
 
 export const entitlementTitles = {
   nodes: {

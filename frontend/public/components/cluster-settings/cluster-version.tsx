@@ -4,20 +4,12 @@ import * as _ from 'lodash-es';
 import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
 import { Conditions } from '../conditions';
-import {
-  ClusterVersionKind,
-  K8sResourceKindReference,
-  referenceForModel,
-} from '../../module/k8s';
-import {
-  navFactory,
-  ResourceSummary,
-  SectionHeading,
-} from '../utils';
+import { ClusterVersionKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
+import { navFactory, ResourceSummary, SectionHeading } from '../utils';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
 
-const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({obj}) => {
+const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) => {
   const conditions = _.get(obj, 'status.conditions', []);
   return (
     <React.Fragment>
@@ -33,12 +25,13 @@ const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({obj}) => 
   );
 };
 
-export const ClusterVersionDetailsPage: React.SFC<ClusterVersionDetailsPageProps> = props =>
+export const ClusterVersionDetailsPage: React.SFC<ClusterVersionDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={clusterVersionReference}
     pages={[navFactory.details(ClusterVersionDetails), navFactory.editYaml()]}
-  />;
+  />
+);
 
 type ClusterVersionDetailsProps = {
   obj: ClusterVersionKind;

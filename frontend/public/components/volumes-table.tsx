@@ -13,7 +13,15 @@ import {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import { asAccessReview, EmptyBox, Kebab, KebabOption, ResourceIcon, SectionHeading, VolumeType } from './utils';
+import {
+  asAccessReview,
+  EmptyBox,
+  Kebab,
+  KebabOption,
+  ResourceIcon,
+  SectionHeading,
+  VolumeType,
+} from './utils';
 import { Table, TableData, TableRow } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
@@ -22,11 +30,12 @@ import { connectToModel } from '../kinds';
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
   return {
     label: 'Remove Volume',
-    callback: () => removeVolumeModal({
-      kind,
-      resource: obj,
-      volume,
-    }),
+    callback: () =>
+      removeVolumeModal({
+        kind,
+        resource: obj,
+        volume,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   };
 };
@@ -34,7 +43,7 @@ const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData
 const menuActions = [removeVolume];
 
 const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
-  return resource.kind === 'Pod' ? resource as PodKind : resource.spec.template;
+  return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
 };
 
 const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) => {
@@ -55,17 +64,28 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
 
   _.forEach(pod.spec.containers, (c: ContainerSpec) => {
     _.forEach(c.volumeMounts, (v: VolumeMount) => {
-      data.push({name: v.name, readOnly: !!v.readOnly, volumeDetail: volumes[v.name],
-        container: c.name, mountPath: v.mountPath, subPath: v.subPath, resource});
+      data.push({
+        name: v.name,
+        readOnly: !!v.readOnly,
+        volumeDetail: volumes[v.name],
+        container: c.name,
+        mountPath: v.mountPath,
+        subPath: v.subPath,
+        resource,
+      });
     });
   });
   return data;
 };
 
-const ContainerLink: React.FC<ContainerLinkProps> = ({name, pod}) => <span className="co-resource-item co-resource-item--inline">
-  <ResourceIcon kind="Container" />
-  <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
-</span>;
+const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
+  <span className="co-resource-item co-resource-item--inline">
+    <ResourceIcon kind="Container" />
+    <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
+      {name}
+    </Link>
+  </span>
+);
 ContainerLink.displayName = 'ContainerLink';
 
 const volumeRowColumnClasses = [
@@ -81,91 +101,136 @@ const volumeRowColumnClasses = [
 const VolumesTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'name', transforms: [sortable],
-      props: { className: volumeRowColumnClasses[0]},
+      title: 'Name',
+      sortField: 'name',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[0] },
     },
     {
-      title: 'Mount Path', sortField: 'mountPath', transforms: [sortable],
-      props: { className: volumeRowColumnClasses[1]},
+      title: 'Mount Path',
+      sortField: 'mountPath',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[1] },
     },
     {
-      title: 'SubPath', sortField: 'subPath', transforms: [sortable],
-      props: { className: volumeRowColumnClasses[2]},
+      title: 'SubPath',
+      sortField: 'subPath',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[2] },
     },
     {
       title: 'Type',
-      props: { className: volumeRowColumnClasses[3]},
+      props: { className: volumeRowColumnClasses[3] },
     },
     {
-      title: 'Permissions', sortField: 'readOnly', transforms: [sortable],
-      props: { className: volumeRowColumnClasses[4]},
+      title: 'Permissions',
+      sortField: 'readOnly',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[4] },
     },
     {
-      title: 'Utilized By', sortField: 'container', transforms: [sortable],
-      props: { className: volumeRowColumnClasses[5]},
+      title: 'Utilized By',
+      sortField: 'container',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[5] },
     },
     {
       title: '',
-      props: { className: volumeRowColumnClasses[6]},
+      props: { className: volumeRowColumnClasses[6] },
     },
   ];
 };
 VolumesTableHeader.displayName = 'VolumesTableHeader';
 
-const VolumesTableRow = ({obj: volume, index, key, style}) => {
+const VolumesTableRow = ({ obj: volume, index, key, style }) => {
   const { name, resource, readOnly, mountPath, subPath, volumeDetail } = volume;
   const permission = readOnly ? 'Read-only' : 'Read/Write';
   const pod: PodTemplate = getPodTemplate(resource);
 
   return (
     <TableRow id={`${name}-${mountPath}`} index={index} trKey={key} style={style}>
-      <TableData className={volumeRowColumnClasses[0]} data-test-id="name">{name}</TableData>
-      <TableData className={classNames(volumeRowColumnClasses[1], 'co-break-word')} data-test-id="path">{mountPath}</TableData>
+      <TableData className={volumeRowColumnClasses[0]} data-test-id="name">
+        {name}
+      </TableData>
+      <TableData
+        className={classNames(volumeRowColumnClasses[1], 'co-break-word')}
+        data-test-id="path"
+      >
+        {mountPath}
+      </TableData>
       <TableData className={volumeRowColumnClasses[2]}>{subPath}</TableData>
       <TableData className={volumeRowColumnClasses[3]}>
         <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />
       </TableData>
       <TableData className={volumeRowColumnClasses[4]}>{permission}</TableData>
       <TableData className={volumeRowColumnClasses[5]}>
-        {_.get(pod, 'kind') === 'Pod' ? <ContainerLink name={volume.container} pod={pod as PodKind} /> : <div>{volume.container}</div>}
+        {_.get(pod, 'kind') === 'Pod' ? (
+          <ContainerLink name={volume.container} pod={pod as PodKind} />
+        ) : (
+          <div>{volume.container}</div>
+        )}
       </TableData>
       <TableData className={volumeRowColumnClasses[6]}>
-        <VolumeKebab actions={menuActions} kind={resource.kind} resource={resource} rowVolumeData={volume} />
+        <VolumeKebab
+          actions={menuActions}
+          kind={resource.kind}
+          resource={resource}
+          rowVolumeData={volume}
+        />
       </TableData>
     </TableRow>
   );
 };
 VolumesTableRow.displayName = 'VolumesTableRow';
 
-export const VolumesTable = props => {
+export const VolumesTable = (props) => {
   const { resource, ...tableProps } = props;
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
-  return <React.Fragment>
-    {props.heading && <SectionHeading text={props.heading} />}
-    {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers)
-      ? <EmptyBox label="Volumes" />
-      : (
-        <Table {...tableProps} aria-label="Volumes" loaded={true} label={props.heading} data={data} Header={VolumesTableHeader} Row={VolumesTableRow} virtualize />
+  return (
+    <React.Fragment>
+      {props.heading && <SectionHeading text={props.heading} />}
+      {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
+        <EmptyBox label="Volumes" />
+      ) : (
+        <Table
+          {...tableProps}
+          aria-label="Volumes"
+          loaded={true}
+          label={props.heading}
+          data={data}
+          Header={VolumesTableHeader}
+          Row={VolumesTableRow}
+          virtualize
+        />
       )}
-  </React.Fragment>;
+    </React.Fragment>
+  );
 };
 
 VolumesTable.displayName = 'VolumesTable';
 
 const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
-  const {actions, kindObj, resource, isDisabled, rowVolumeData} = props;
+  const { actions, kindObj, resource, isDisabled, rowVolumeData } = props;
   if (!kindObj || kindObj.kind === 'Pod') {
     return null;
   }
-  const options = actions.map(b => b(kindObj, resource, rowVolumeData));
-  return <Kebab
-    options={options}
-    isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-  />;
+  const options = actions.map((b) => b(kindObj, resource, rowVolumeData));
+  return (
+    <Kebab
+      options={options}
+      isDisabled={
+        isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
+      }
+    />
+  );
 });
 
-type VolumeKebabAction = (kind: K8sKind, obj: K8sResourceKind, rowVolumeData: RowVolumeData) => KebabOption;
+type VolumeKebabAction = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  rowVolumeData: RowVolumeData,
+) => KebabOption;
 type VolumeKebabProps = {
   kindObj: K8sKind;
   actions: VolumeKebabAction[];

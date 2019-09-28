@@ -22,7 +22,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
         width={width}
         padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
         style={{
-          axis: {visibility: 'hidden'},
+          axis: { visibility: 'hidden' },
         }}
         fixLabelOverlap
       />
@@ -33,16 +33,18 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
 export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
   const [containerRef, width] = useRefWidth();
 
-  const axis = width < parseInt(breakpointSM.value, 10) ?
-    timestamps.length === 0 ? null : (
-      <div className="row co-utilization-card__item">
-        <div className="co-utilization-card__axis">
-          <UtilizationAxis timestamps={timestamps} />
+  const axis =
+    width < parseInt(breakpointSM.value, 10) ? (
+      timestamps.length === 0 ? null : (
+        <div className="row co-utilization-card__item">
+          <div className="co-utilization-card__axis">
+            <UtilizationAxis timestamps={timestamps} />
+          </div>
         </div>
-      </div>
+      )
     ) : (
       <div className="row co-utilization-card__item">
-        <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5"></div>
+        <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5" />
         <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__axis">
           {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
         </div>
@@ -66,4 +68,4 @@ type UtilizationBodyProps = {
 
 type UtilizationAxisProps = {
   timestamps: Date[];
-}
+};

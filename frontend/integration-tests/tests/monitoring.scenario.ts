@@ -23,31 +23,37 @@ describe('Monitoring: Alerts', () => {
     checkErrors();
   });
 
-  it('displays the Alerts list page', async() => {
+  it('displays the Alerts list page', async () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     expect(monitoringView.listPageHeading.getText()).toContain('Alerting');
   });
 
-  it('does not have a namespace dropdown', async() => {
+  it('does not have a namespace dropdown', async () => {
     expect(namespaceView.namespaceSelector.isPresent()).toBe(false);
   });
 
-  it('filters Alerts by name', async() => {
+  it('filters Alerts by name', async () => {
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(testAlertName);
+    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(
+      testAlertName,
+    );
   });
 
-  it('displays Alert details page', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('alert-resource-link')));
-    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(testAlertName);
+  it('displays Alert details page', async () => {
+    await monitoringView.wait(
+      until.elementToBeClickable(monitoringView.firstListLinkById('alert-resource-link')),
+    );
+    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(
+      testAlertName,
+    );
     await monitoringView.firstListLinkById('alert-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
 
-  it('links to the Alerting Rule details page', async() => {
+  it('links to the Alerting Rule details page', async () => {
     expect(monitoringView.ruleLink.getText()).toContain(testAlertName);
     await monitoringView.ruleLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingRuleIcon));
@@ -60,7 +66,7 @@ describe('Monitoring: Alerts', () => {
     testDetailsPage('Alert Overview', testAlertName);
   });
 
-  it('creates a new Silence from an existing alert', async() => {
+  it('creates a new Silence from an existing alert', async () => {
     await crudView.clickDetailsPageAction('Silence Alert');
     await monitoringView.wait(until.presenceOf(monitoringView.saveButton));
     await monitoringView.saveButton.click();
@@ -71,7 +77,7 @@ describe('Monitoring: Alerts', () => {
     testDetailsPage('Silence Overview', testAlertName);
   });
 
-  it('shows the silenced Alert in the Silenced Alerts list', async() => {
+  it('shows the silenced Alert in the Silenced Alerts list', async () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstAlertsListLink));
     expect(monitoringView.firstAlertsListLink.getText()).toContain(testAlertName);
 
@@ -81,9 +87,13 @@ describe('Monitoring: Alerts', () => {
     testDetailsPage('Alert Overview', testAlertName);
   });
 
-  it('shows the newly created Silence in the Silenced By list', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')));
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
+  it('shows the newly created Silence in the Silenced By list', async () => {
+    await monitoringView.wait(
+      until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')),
+    );
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
+      testAlertName,
+    );
 
     // Click the link to navigate back to the Silence details page
     await monitoringView.firstListLinkById('silence-resource-link').click();
@@ -91,7 +101,7 @@ describe('Monitoring: Alerts', () => {
     testDetailsPage('Silence Overview', testAlertName);
   });
 
-  it('expires the Silence', async() => {
+  it('expires the Silence', async () => {
     await crudView.clickDetailsPageAction('Expire Silence');
     await monitoringView.wait(until.elementToBeClickable(monitoringView.modalConfirmButton));
     await monitoringView.modalConfirmButton.click();
@@ -105,18 +115,20 @@ describe('Monitoring: Silences', () => {
     checkErrors();
   });
 
-  it('displays the Silences list page', async() => {
+  it('displays the Silences list page', async () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Silences');
-    expect(monitoringView.helpText.getText()).toContain('Silences temporarily mute alerts based on a set of conditions');
+    expect(monitoringView.helpText.getText()).toContain(
+      'Silences temporarily mute alerts based on a set of conditions',
+    );
   });
 
-  it('does not have a namespace dropdown', async() => {
+  it('does not have a namespace dropdown', async () => {
     expect(namespaceView.namespaceSelector.isPresent()).toBe(false);
   });
 
-  it('creates a new Silence', async() => {
+  it('creates a new Silence', async () => {
     await monitoringView.createButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.matcherNameInput));
     await monitoringView.matcherNameInput.sendKeys('alertname');
@@ -126,29 +138,35 @@ describe('Monitoring: Silences', () => {
   });
 
   // After creating the Silence, should be redirected to its details page
-  it('displays detail view for new Silence', async() => {
+  it('displays detail view for new Silence', async () => {
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
-  it('filters Silences by name', async() => {
+  it('filters Silences by name', async () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Silences');
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
+      testAlertName,
+    );
   });
 
-  it('displays Silence details page', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')));
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
+  it('displays Silence details page', async () => {
+    await monitoringView.wait(
+      until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')),
+    );
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
+      testAlertName,
+    );
     await monitoringView.firstListLinkById('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
-  it('edits the Silence', async() => {
+  it('edits the Silence', async () => {
     await crudView.clickDetailsPageAction('Edit Silence');
     await monitoringView.wait(until.presenceOf(monitoringView.commentTextarea));
     await monitoringView.commentTextarea.sendKeys('Test Comment');
@@ -161,7 +179,7 @@ describe('Monitoring: Silences', () => {
     expect(monitoringView.silenceComment.getText()).toEqual('Test Comment');
   });
 
-  it('expires the Silence', async() => {
+  it('expires the Silence', async () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Silences');
@@ -181,7 +199,7 @@ describe('Monitoring: YAML', () => {
     checkErrors();
   });
 
-  it('displays the YAML page', async() => {
+  it('displays the YAML page', async () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
@@ -189,7 +207,7 @@ describe('Monitoring: YAML', () => {
     expect(monitoringView.alertManagerYamlForm.isPresent()).toBe(true);
   });
 
-  it('saves alert-manager.yaml', async() => {
+  it('saves alert-manager.yaml', async () => {
     expect(monitoringView.successAlert.isPresent()).toBe(false);
     await monitoringView.saveButton.click();
     await crudView.isLoaded();

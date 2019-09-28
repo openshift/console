@@ -3,15 +3,15 @@ import * as _ from 'lodash-es';
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
-const loginState = key => localStorage.getItem(key);
+const loginState = (key) => localStorage.getItem(key);
 
-const loginStateItem = key => loginState(key);
+const loginStateItem = (key) => loginState(key);
 
 const userID = 'userID';
 const name = 'name';
 const email = 'email';
 
-const setNext = next => {
+const setNext = (next) => {
   if (!next) {
     return;
   }
@@ -24,7 +24,7 @@ const setNext = next => {
 };
 
 const clearLocalStorage = () => {
-  [userID, name, email].forEach(key => {
+  [userID, name, email].forEach((key) => {
     try {
       localStorage.removeItem(key);
     } catch (e) {
@@ -54,7 +54,7 @@ export const authSvc = {
     clearLocalStorage();
     coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
-      .catch(e => console.error('Error logging out', e))
+      .catch((e) => console.error('Error logging out', e))
       .then(() => {
         if (window.SERVER_FLAGS.logoutRedirect && !next) {
           window.location = window.SERVER_FLAGS.logoutRedirect;
@@ -77,9 +77,11 @@ export const authSvc = {
   },
 
   deleteOpenShiftToken: () => {
-    return coFetch('/api/openshift/delete-token', { method: 'POST' })
-      // eslint-disable-next-line no-console
-      .catch(e => console.error('Error deleting token', e));
+    return (
+      coFetch('/api/openshift/delete-token', { method: 'POST' })
+        // eslint-disable-next-line no-console
+        .catch((e) => console.error('Error deleting token', e))
+    );
   },
 
   // The kube:admin user has a special logout flow. The OAuth server has a
@@ -91,7 +93,7 @@ export const authSvc = {
     // First POST to the console server to clear the console session cookie.
     coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
-      .catch(e => console.error('Error logging out', e))
+      .catch((e) => console.error('Error logging out', e))
       .then(() => {
         // We need to POST to the kube:admin logout URL. Since this is a
         // cross-origin request, use a hidden form to POST.

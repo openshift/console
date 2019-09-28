@@ -2,7 +2,15 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
-import { ContainerSpec, getVolumeType, K8sKind, k8sPatch, K8sResourceKind, Volume, VolumeMount } from '../../module/k8s/';
+import {
+  ContainerSpec,
+  getVolumeType,
+  K8sKind,
+  k8sPatch,
+  K8sResourceKind,
+  Volume,
+  VolumeMount,
+} from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -20,8 +28,14 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         if (mount.name !== rowVolumeData.name) {
           return;
         }
-        if (mount.mountPath === rowVolumeData.mountPath && container.name === rowVolumeData.container) {
-          patches.push({op: 'remove', path: `/spec/template/spec/containers/${i}/volumeMounts/${j}`});
+        if (
+          mount.mountPath === rowVolumeData.mountPath &&
+          container.name === rowVolumeData.container
+        ) {
+          patches.push({
+            op: 'remove',
+            path: `/spec/template/spec/containers/${i}/volumeMounts/${j}`,
+          });
         } else {
           allowRemoveVolume = false;
         }
@@ -34,7 +48,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
       const volumes: Volume[] = _.get(resource, 'spec.template.spec.volumes', []);
       const volumeIndex = volumes.findIndex((v: Volume) => v.name === rowVolumeData.name);
       if (volumeIndex > -1) {
-        patches.push({op: 'remove', path: `/spec/template/spec/volumes/${volumeIndex}`});
+        patches.push({ op: 'remove', path: `/spec/template/spec/volumes/${volumeIndex}` });
       }
     }
     return patches;
@@ -45,37 +59,56 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
     setErrorMessage('');
     setInProgress(true);
     const { kind, resource, volume } = props;
-    k8sPatch(kind, resource, getRemoveVolumePatch(resource, volume)).then(() => {
-      setInProgress(false);
-      props.close();
-    }).catch(({message: errMessage}) => {
-      setErrorMessage(errMessage);
-      setInProgress(false);
-    });
+    k8sPatch(kind, resource, getRemoveVolumePatch(resource, volume))
+      .then(() => {
+        setInProgress(false);
+        props.close();
+      })
+      .catch(({ message: errMessage }) => {
+        setErrorMessage(errMessage);
+        setInProgress(false);
+      });
   };
 
-  const {kind, resource, volume} = props;
+  const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
-  return <form onSubmit={submit} className="modal-content">
-    <ModalTitle>Remove Volume</ModalTitle>
-    <ModalBody className="modal-body">
-      <div className="co-delete-modal">
-        <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-        <div>
-          <p className="lead">Remove volume <span className="co-break-word">{volume.name}</span>?</p>
-          <div>Are you sure you want to remove volume <strong className="co-break-word">{volume.name}</strong>
-            <span> from <strong>{ kind.label }</strong>: <strong>{ resource.metadata.name }</strong>?</span>
+  return (
+    <form onSubmit={submit} className="modal-content">
+      <ModalTitle>Remove Volume</ModalTitle>
+      <ModalBody className="modal-body">
+        <div className="co-delete-modal">
+          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
+          <div>
+            <p className="lead">
+              Remove volume <span className="co-break-word">{volume.name}</span>?
+            </p>
+            <div>
+              Are you sure you want to remove volume{' '}
+              <strong className="co-break-word">{volume.name}</strong>
+              <span>
+                {' '}
+                from <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
+              </span>
+            </div>
+            {type && (
+              <div>
+                <label className="control-label">
+                  Note: This will not remove the underlying {type}.
+                </label>
+              </div>
+            )}
           </div>
-          {type && <div>
-            <label className="control-label">
-              Note: This will not remove the underlying { type }.
-            </label>
-          </div>}
         </div>
-      </div>
-    </ModalBody>
-    <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitDanger submitText="Remove Volume" cancel={props.cancel} />
-  </form>;
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={errorMessage}
+        inProgress={inProgress}
+        submitDanger
+        submitText="Remove Volume"
+        cancel={props.cancel}
+      />
+    </form>
+  );
 };
 
 export const removeVolumeModal = createModalLauncher(RemoveVolumeModal);

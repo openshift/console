@@ -1,6 +1,11 @@
 import * as _ from 'lodash-es';
 
-import { units, validate, convertToBaseValue, humanizePercentage } from '../public/components/utils/units';
+import {
+  units,
+  validate,
+  convertToBaseValue,
+  humanizePercentage,
+} from '../public/components/utils/units';
 
 describe('units', () => {
   describe('round', () => {
@@ -11,9 +16,9 @@ describe('units', () => {
     };
 
     testRound(NaN, 0);
-    testRound(.101010, .101);
+    testRound(0.10101, 0.101);
     testRound(0, 0);
-    testRound(0.727272, .727);
+    testRound(0.727272, 0.727);
     testRound(1, 1);
     testRound(1.727272, 1.73);
     testRound(9.991234, 9.99);
@@ -21,7 +26,7 @@ describe('units', () => {
     testRound(10.72727, 10.73);
     testRound(99.99123, 99.99);
     testRound(100, 100);
-    testRound(100.101010, 100.10);
+    testRound(100.10101, 100.1);
     testRound(111.119, 111.1);
     testRound(999.999, 1000);
     testRound(1023.12345, 1023.1);
@@ -39,8 +44,8 @@ describe('units', () => {
     test_('banana', 0, '0');
     test_(-1, -1, '-1');
     test_(-0, -0, '0');
-    test_(1/0, 0, '0');
-    test_(-1/0, 0, '0');
+    test_(1 / 0, 0, '0');
+    test_(-1 / 0, 0, '0');
     test_('100$', 0, '0');
     test_(Number.MIN_VALUE, Number.MIN_VALUE, '0');
     test_(0, 0, '0');
@@ -78,8 +83,8 @@ describe('units', () => {
     test_('banana', '0%');
     test_(-1, '-1%');
     test_(-0, '0%');
-    test_(1/0, '0%');
-    test_(-1/0, '0%');
+    test_(1 / 0, '0%');
+    test_(-1 / 0, '0%');
     test_('100$', '0%');
     test_(Number.MIN_VALUE, '0%');
     test_(0, '0%');
@@ -90,11 +95,11 @@ describe('units', () => {
     test_(123, '123%');
     test_(123.123, '123.1%');
     test_(999.999, '1,000%');
-    test_(1.000, '1%');
+    test_(1.0, '1%');
     test_(1.001, '1%');
     test_(1.011, '1%');
     test_(5.123, '5.1%');
-    test_(10.000, '10%');
+    test_(10.0, '10%');
     test_(10.234, '10.2%');
     test_(100, '100%');
     test_(1000, '1,000%');
@@ -117,8 +122,8 @@ describe('units', () => {
     test_('banana', '0 B');
     test_(-1, '-1 B');
     test_(-0, '0 B');
-    test_(1/0, '0 B');
-    test_(-1/0, '0 B');
+    test_(1 / 0, '0 B');
+    test_(-1 / 0, '0 B');
     test_('100$', '0 B');
     test_(Number.MIN_VALUE, '0 B');
     test_(0, '0 B');
@@ -155,8 +160,8 @@ describe('units', () => {
     test_('banana', '0 B');
     test_(-1, '-1 B');
     test_(-0, '0 B');
-    test_(1/0, '0 B');
-    test_(-1/0, '0 B');
+    test_(1 / 0, '0 B');
+    test_(-1 / 0, '0 B');
     test_('100$', '0 B');
     test_(Number.MIN_VALUE, '0 B');
     test_(0, '0 B');
@@ -193,8 +198,8 @@ describe('units', () => {
     test_('banana', '0 i');
     test_(-1, '-1 i');
     test_(-0, '0 i');
-    test_(1/0, '0 i');
-    test_(-1/0, '0 i');
+    test_(1 / 0, '0 i');
+    test_(-1 / 0, '0 i');
     test_('100$', '0 i');
     test_(Number.MIN_VALUE, '0 i');
     test_(0, '0 i');
@@ -232,8 +237,8 @@ describe('units', () => {
     test_(-1, -1);
     test_(-0, -0);
     test_(0, 0);
-    test_(1/0, 1/0);
-    test_(-1/0, -1/0);
+    test_(1 / 0, 1 / 0);
+    test_(-1 / 0, -1 / 0);
     test_('100$', '100$');
     test_(Number.MIN_VALUE, Number.MIN_VALUE);
     test_('0i', 0);
@@ -271,8 +276,8 @@ describe('units', () => {
     test_(-1, -1);
     test_(-0, -0);
     test_(0, 0);
-    test_(1/0, 1/0);
-    test_(-1/0, -1/0);
+    test_(1 / 0, 1 / 0);
+    test_(-1 / 0, -1 / 0);
     test_(Number.MIN_VALUE, Number.MIN_VALUE);
     test_('0', 0);
     test_(NaN, NaN);
@@ -283,30 +288,30 @@ describe('units', () => {
 
 describe('validate', () => {
   it('memory', () => {
-    ['32', '32M', '32Mi'].forEach(v => {
+    ['32', '32M', '32Mi'].forEach((v) => {
       expect(validate.memory(v)).toEqual(undefined);
     });
 
-    ['32m','32 Mi', ' 32Mi', '32Mii', '32e6', '32m4', 'a32m4'].forEach(v => {
+    ['32m', '32 Mi', ' 32Mi', '32Mii', '32e6', '32m4', 'a32m4'].forEach((v) => {
       expect(_.isString(validate.memory(v))).toEqual(true);
     });
   });
 
   it('cpu', () => {
-    ['32', '32m'].forEach(v => {
+    ['32', '32m'].forEach((v) => {
       expect(validate.CPU(v)).toEqual(undefined);
     });
 
-    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4', '32M', '32Mi'].forEach(v => {
+    ['-1', '32mi', '32 m', ' 32m', '32mm', '32e6', '32m4', '32M', '32Mi'].forEach((v) => {
       expect(_.isString(validate.CPU(v))).toEqual(true);
     });
   });
   it('time', () => {
-    ['32h', '32s', '32m', '1h'].forEach(v => {
+    ['32h', '32s', '32m', '1h'].forEach((v) => {
       expect(validate.time(v)).toEqual(undefined);
     });
 
-    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4'].forEach(v => {
+    ['-1', '32mi', '32 m', ' 32m', '32mm', '32e6', '32m4'].forEach((v) => {
       expect(_.isString(validate.time(v))).toEqual(true);
     });
   });

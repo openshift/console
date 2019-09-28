@@ -34,7 +34,7 @@ const getStatusGroups = (resources, mapping, mapper, filterType) => {
       count: 0,
     },
   };
-  Object.keys(mapping).forEach(key => {
+  Object.keys(mapping).forEach((key) => {
     groups[key] = {
       statusIDs: [...mapping[key]],
       count: 0,
@@ -42,16 +42,22 @@ const getStatusGroups = (resources, mapping, mapper, filterType) => {
     };
   });
 
-  resources.forEach(resource => {
+  resources.forEach((resource) => {
     const status = mapper(resource);
-    const group = Object.keys(mapping).find(key => mapping[key].includes(status)) || InventoryStatusGroup.NOT_MAPPED;
+    const group =
+      Object.keys(mapping).find((key) => mapping[key].includes(status)) ||
+      InventoryStatusGroup.NOT_MAPPED;
     groups[group].count++;
   });
 
   return groups;
 };
 
-export const getPodStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, POD_PHASE_GROUP_MAPPING, podPhaseFilterReducer, 'pod-status');
-export const getNodeStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'node-status');
-export const getPVCStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, pvcPhase, 'pvc-status');
-export const getPVStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');
+export const getPodStatusGroups: StatusGroupMapper = (resources) =>
+  getStatusGroups(resources, POD_PHASE_GROUP_MAPPING, podPhaseFilterReducer, 'pod-status');
+export const getNodeStatusGroups: StatusGroupMapper = (resources) =>
+  getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'node-status');
+export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
+  getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, pvcPhase, 'pvc-status');
+export const getPVStatusGroups: StatusGroupMapper = (resources) =>
+  getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');

@@ -6,7 +6,7 @@ import * as React from 'react';
  */
 export const useSafetyFirst = <S extends {}>(initialState: S) => {
   const mounted = React.useRef(true);
-  React.useEffect(() => () => mounted.current = false, []);
+  React.useEffect(() => () => (mounted.current = false), []);
 
   const [value, setValue] = React.useState(initialState);
   const setValueSafe = (newValue) => {

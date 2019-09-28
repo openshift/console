@@ -12,21 +12,28 @@ export const EventsBody: React.FC<EventsBodyProps> = ({ events, filter }) => {
   if (events && events.loadError) {
     eventsBody = <ErrorLoadingEvents />;
   } else if (!(events && events.loaded)) {
-    eventsBody = <div className="co-events-card__body-loading"><LoadingInline /></div>;
+    eventsBody = (
+      <div className="co-events-card__body-loading">
+        <LoadingInline />
+      </div>
+    );
   } else {
     const filteredEvents = filter ? events.data.filter(filter) : events.data;
     const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);
-    eventsBody = filteredEvents.length === 0 ? (
-      <NoEvents />
-    ) : (
-      <EventStreamList events={sortedEvents} EventComponent={EventItem} scrollableElementId="events-body" />
-    );
+    eventsBody =
+      filteredEvents.length === 0 ? (
+        <NoEvents />
+      ) : (
+        <EventStreamList
+          events={sortedEvents}
+          EventComponent={EventItem}
+          scrollableElementId="events-body"
+        />
+      );
   }
   return (
     <div className="co-dashboard-card__body--no-padding co-events-card__body" id="events-body">
-      <div className="co-events-card__body-stream">
-        {eventsBody}
-      </div>
+      <div className="co-events-card__body-stream">{eventsBody}</div>
     </div>
   );
 };

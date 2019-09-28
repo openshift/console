@@ -19,7 +19,7 @@ class DeleteModal extends PromiseComponent {
 
   _submit(event) {
     event.preventDefault();
-    const {kind, resource} = this.props;
+    const { kind, resource } = this.props;
 
     //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
     const propagationPolicy = this.state.isChecked ? kind.propagationPolicy : 'Orphan';
@@ -27,7 +27,7 @@ class DeleteModal extends PromiseComponent {
       ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
       : null;
 
-    this.handlePromise( k8sKill(kind, resource, {}, json)).then(() => {
+    this.handlePromise(k8sKill(kind, resource, {}, json)).then(() => {
       this.props.close();
 
       // If we are currently on the deleted resource's page, redirect to the resource list page
@@ -46,29 +46,52 @@ class DeleteModal extends PromiseComponent {
   }
 
   render() {
-    const {kind, resource} = this.props;
-    return <form onSubmit={this._submit} name="form" className="modal-content ">
-      <ModalTitle>Delete {kind.label}</ModalTitle>
-      <ModalBody className="modal-body">
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p className="lead">Delete <span className="co-break-word">{resource.metadata.name}</span>?</p>
-            <div>Are you sure you want to delete <strong className="co-break-word">{resource.metadata.name}</strong>
-              {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong></span>}
-              ?
-              {_.has(kind, 'propagationPolicy') && <div className="checkbox">
-                <label className="control-label">
-                  <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
-                  Delete dependent objects of this resource
-                </label>
-              </div>}
+    const { kind, resource } = this.props;
+    return (
+      <form onSubmit={this._submit} name="form" className="modal-content ">
+        <ModalTitle>Delete {kind.label}</ModalTitle>
+        <ModalBody className="modal-body">
+          <div className="co-delete-modal">
+            <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
+            <div>
+              <p className="lead">
+                Delete <span className="co-break-word">{resource.metadata.name}</span>?
+              </p>
+              <div>
+                Are you sure you want to delete{' '}
+                <strong className="co-break-word">{resource.metadata.name}</strong>
+                {_.has(resource.metadata, 'namespace') && (
+                  <span>
+                    {' '}
+                    in namespace <strong>{resource.metadata.namespace}</strong>
+                  </span>
+                )}
+                ?
+                {_.has(kind, 'propagationPolicy') && (
+                  <div className="checkbox">
+                    <label className="control-label">
+                      <input
+                        type="checkbox"
+                        onChange={() => this.setState({ isChecked: !this.state.isChecked })}
+                        checked={!!this.state.isChecked}
+                      />
+                      Delete dependent objects of this resource
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitDanger submitText={this.props.btnText || 'Delete'} cancel={this._cancel} />
-    </form>;
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitDanger
+          submitText={this.props.btnText || 'Delete'}
+          cancel={this._cancel}
+        />
+      </form>
+    );
   }
 }
 

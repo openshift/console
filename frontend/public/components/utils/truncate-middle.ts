@@ -1,4 +1,3 @@
-
 const DEFAULT_OPTIONS = {
   length: 20,
   omission: '\u2026', // ellipsis character

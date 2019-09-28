@@ -68,20 +68,20 @@ export * from './field-level-help';
 export const enum NameValueEditorPair {
   Name = 0,
   Value,
-  Index
+  Index,
 }
 
 export const enum EnvFromPair {
   Prefix = 0,
   Resource,
-  Index
+  Index,
 }
 /**
  * The environment editor manages two types of env variables env and envFrom. This const distinguishes the two.
  */
 export const enum EnvType {
   ENV = 0,
-  ENV_FROM = 1
+  ENV_FROM = 1,
 }
 
 export type FirehoseResource = {
@@ -105,8 +105,8 @@ export type HumanizeResult = {
   string: string;
   value: number;
   unit: string;
-}
+};
 
 export type Humanize = {
   (v: React.ReactText, initialUnit?: string, preferredUnit?: string): HumanizeResult;
-}
+};

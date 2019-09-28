@@ -13,11 +13,17 @@ class SimpleTab extends React.PureComponent<SimpleTabProps> {
   }
 
   render() {
-    const {active, title} = this.props;
-    const className = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': active});
-    return <li className={className}>
-      <button onClick={this.onClick} type="button">{title}</button>
-    </li>;
+    const { active, title } = this.props;
+    const className = classNames('co-m-horizontal-nav__menu-item', {
+      'co-m-horizontal-nav-item--active': active,
+    });
+    return (
+      <li className={className}>
+        <button onClick={this.onClick} type="button">
+          {title}
+        </button>
+      </li>
+    );
   }
 }
 
@@ -25,46 +31,46 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
   constructor(props) {
     super(props);
     this.onClickTab = this.onClickTab.bind(this);
-    const selectedTab = _.find(props.tabs, {name: props.selectedTab}) || _.head(props.tabs);
-    this.state = {selectedTab};
+    const selectedTab = _.find(props.tabs, { name: props.selectedTab }) || _.head(props.tabs);
+    this.state = { selectedTab };
   }
 
   onClickTab(name) {
-    const {tabs} = this.props;
+    const { tabs } = this.props;
     this.props.onClickTab && this.props.onClickTab(name);
     this.setState({
-      'selectedTab': _.find(tabs, {name}),
+      selectedTab: _.find(tabs, { name }),
     });
   }
 
   render() {
-    const {tabs, tabProps, additionalClassNames} = this.props;
-    const {selectedTab} = this.state;
+    const { tabs, tabProps, additionalClassNames } = this.props;
+    const { selectedTab } = this.state;
     const Component = selectedTab.component;
 
-    return <React.Fragment>
-      <div className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
-        <ul className="co-m-horizontal-nav__menu-primary">
-          {
-            _.map(tabs, (tab) => (
+    return (
+      <React.Fragment>
+        <div className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
+          <ul className="co-m-horizontal-nav__menu-primary">
+            {_.map(tabs, (tab) => (
               <SimpleTab
                 active={selectedTab.name === tab.name}
                 key={tab.name}
                 onClick={this.onClickTab}
                 title={tab.name}
               />
-            ))
-          }
-        </ul>
-      </div>
-      <Component {...tabProps} />
-    </React.Fragment>;
+            ))}
+          </ul>
+        </div>
+        <Component {...tabProps} />
+      </React.Fragment>
+    );
   }
 }
 
 type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
-  selectedTab?: string,
+  selectedTab?: string;
   tabProps: any;
   tabs: {
     name: string;
@@ -74,7 +80,7 @@ type SimpleTabNavProps = {
 };
 
 type SimpleTabNavState = {
-  selectedTab: any
+  selectedTab: any;
 };
 
 type SimpleTabProps = {

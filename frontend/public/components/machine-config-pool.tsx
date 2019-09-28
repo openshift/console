@@ -14,13 +14,7 @@ import {
   MachineConfigPoolKind,
   referenceForModel,
 } from '../module/k8s';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableRow,
-  TableData,
-} from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
   KebabAction,
@@ -38,7 +32,7 @@ import { ResourceEventStream } from './events';
 
 const pauseAction: KebabAction = (kind, obj) => ({
   label: obj.spec.paused ? 'Resume Updates' : 'Pause Updates',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -54,139 +48,158 @@ const machineConfigPoolMenuActions = [
   ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
   ...Kebab.factory.common,
 ];
-const getConditionStatus = (mcp: MachineConfigPoolKind, type: MachineConfigPoolConditionType): K8sResourceConditionStatus => {
-  const {conditions} = mcp.status;
-  const condition = _.find(conditions, {type});
+const getConditionStatus = (
+  mcp: MachineConfigPoolKind,
+  type: MachineConfigPoolConditionType,
+): K8sResourceConditionStatus => {
+  const { conditions } = mcp.status;
+  const condition = _.find(conditions, { type });
   return condition ? condition.status : K8sResourceConditionStatus.Unknown;
 };
 
-const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({obj}) => {
+const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({
+  obj,
+}) => {
   const configuration = _.get(obj, 'status.configuration');
   const maxUnavailable = _.get(obj, 'spec.maxUnavailable', 1);
-  return <dl className="co-m-pane__details">
-    <dt>Max Unavailable Machines</dt>
-    <dd>{maxUnavailable}</dd>
-    { configuration &&
-      <React.Fragment>
-        <dt>Current Configuration</dt>
-        <dd>
-          {
-            configuration.name
-              ? <ResourceLink kind={machineConfigReference} name={configuration.name} title={configuration.name} />
-              : '-'
-          }
-        </dd>
-        <dt>Current Configuration Source</dt>
-        <dd>
-          {
-            configuration.source
-              ? _.map(configuration.source, ({apiVersion, kind, name}) =>
-                <ResourceLink key={`${apiVersion}-${kind}-${name}`} kind={machineConfigReference} name={name} title={name} />
-              )
-              : '-'
-          }
-        </dd>
-      </React.Fragment>
-    }
-  </dl>;
+  return (
+    <dl className="co-m-pane__details">
+      <dt>Max Unavailable Machines</dt>
+      <dd>{maxUnavailable}</dd>
+      {configuration && (
+        <React.Fragment>
+          <dt>Current Configuration</dt>
+          <dd>
+            {configuration.name ? (
+              <ResourceLink
+                kind={machineConfigReference}
+                name={configuration.name}
+                title={configuration.name}
+              />
+            ) : (
+              '-'
+            )}
+          </dd>
+          <dt>Current Configuration Source</dt>
+          <dd>
+            {configuration.source
+              ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
+                  <ResourceLink
+                    key={`${apiVersion}-${kind}-${name}`}
+                    kind={machineConfigReference}
+                    name={name}
+                    title={name}
+                  />
+                ))
+              : '-'}
+          </dd>
+        </React.Fragment>
+      )}
+    </dl>
+  );
 };
 
-const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj}) => {
-
-  return <div className="co-m-pane__body-group">
-    <div className="co-detail-table">
-      <div className="co-detail-table__row row">
-        <div className="co-detail-table__section">
-          <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">Total Machine Count</dt>
-            <dd>
-              <Tooltip content="Total number of machines in the machine pool.">
-                <span>{pluralize(_.get(obj, 'status.machineCount', 0), 'machine')}</span>
-              </Tooltip>
-            </dd>
-          </dl>
-        </div>
-        <div className="co-detail-table__section">
-          <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">Ready Machines</dt>
-            <dd>
-              <Tooltip content="Total number of ready machines targeted by the pool.">
-                <span>{pluralize(_.get(obj, 'status.readyMachineCount', 0), 'machine')}</span>
-              </Tooltip>
-            </dd>
-          </dl>
-        </div>
-        <div className="co-detail-table__section">
-          <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">Updated Count</dt>
-            <dd>
-              <Tooltip content="Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.">
-                <span>{pluralize(_.get(obj, 'status.updatedMachineCount', 0), 'machine')}</span>
-              </Tooltip>
-            </dd>
-          </dl>
-        </div>
-        <div className="co-detail-table__section co-detail-table__section--last">
-          <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">Unavailable Count</dt>
-            <dd>
-              <Tooltip content="Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.">
-                <span>{pluralize(_.get(obj, 'status.unavailableMachineCount', 0), 'machine')}</span>
-              </Tooltip>
-            </dd>
-          </dl>
+const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj }) => {
+  return (
+    <div className="co-m-pane__body-group">
+      <div className="co-detail-table">
+        <div className="co-detail-table__row row">
+          <div className="co-detail-table__section">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Total Machine Count</dt>
+              <dd>
+                <Tooltip content="Total number of machines in the machine pool.">
+                  <span>{pluralize(_.get(obj, 'status.machineCount', 0), 'machine')}</span>
+                </Tooltip>
+              </dd>
+            </dl>
+          </div>
+          <div className="co-detail-table__section">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Ready Machines</dt>
+              <dd>
+                <Tooltip content="Total number of ready machines targeted by the pool.">
+                  <span>{pluralize(_.get(obj, 'status.readyMachineCount', 0), 'machine')}</span>
+                </Tooltip>
+              </dd>
+            </dl>
+          </div>
+          <div className="co-detail-table__section">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Updated Count</dt>
+              <dd>
+                <Tooltip content="Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.">
+                  <span>{pluralize(_.get(obj, 'status.updatedMachineCount', 0), 'machine')}</span>
+                </Tooltip>
+              </dd>
+            </dl>
+          </div>
+          <div className="co-detail-table__section co-detail-table__section--last">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Unavailable Count</dt>
+              <dd>
+                <Tooltip content="Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.">
+                  <span>
+                    {pluralize(_.get(obj, 'status.unavailableMachineCount', 0), 'machine')}
+                  </span>
+                </Tooltip>
+              </dd>
+            </dl>
+          </div>
         </div>
       </div>
     </div>
-  </div>;
+  );
 };
 
-const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj}) => {
+const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const machineSelector = _.get(obj, 'spec.machineSelector');
-  return <ResourceSummary resource={obj}>
-    <dt>Machine Config Selector</dt>
-    <dd>
-      <Selector
-        kind={machineConfigReference}
-        selector={machineConfigSelector}
-      />
-    </dd>
-    <dt>Machine Selector</dt>
-    <dd>
-      <Selector
-        kind={nodeReference}
-        selector={machineSelector}
-      />
-    </dd>
-  </ResourceSummary>;
+  return (
+    <ResourceSummary resource={obj}>
+      <dt>Machine Config Selector</dt>
+      <dd>
+        <Selector kind={machineConfigReference} selector={machineConfigSelector} />
+      </dd>
+      <dt>Machine Selector</dt>
+      <dd>
+        <Selector kind={nodeReference} selector={machineSelector} />
+      </dd>
+    </ResourceSummary>
+  );
 };
 
-const MachineConfigList: React.SFC<MachineConfigListProps> = ({obj}) => (
-  <MachineConfigPage canCreate={false} showTitle={false} selector={_.get(obj, 'spec.machineConfigSelector')} />
+const MachineConfigList: React.SFC<MachineConfigListProps> = ({ obj }) => (
+  <MachineConfigPage
+    canCreate={false}
+    showTitle={false}
+    selector={_.get(obj, 'spec.machineConfigSelector')}
+  />
 );
 
-const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({obj}) => {
+const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Machine Config Pool Overview " />
-      {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
-      <MachineConfigPoolCounts obj={obj} />
-      <div className="row">
-        <div className="col-sm-6">
-          <MachineConfigPoolSummary obj={obj} />
-        </div>
-        <div className="col-sm-6">
-          <MachineConfigPoolCharacteristics obj={obj} />
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Machine Config Pool Overview " />
+        {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
+        <MachineConfigPoolCounts obj={obj} />
+        <div className="row">
+          <div className="col-sm-6">
+            <MachineConfigPoolSummary obj={obj} />
+          </div>
+          <div className="col-sm-6">
+            <MachineConfigPoolCharacteristics obj={obj} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Conditions" />
-      <Conditions conditions={_.get(obj, 'status.conditions')} />
-    </div>
-  </React.Fragment>;
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={_.get(obj, 'status.conditions')} />
+      </div>
+    </React.Fragment>
+  );
 };
 
 const pages = [
@@ -196,7 +209,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigPoolDetailsPage: React.SFC<any> = props => (
+export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
   <DetailsPage
     {...props}
     kind={machineConfigPoolReference}
@@ -217,37 +230,62 @@ const tableColumnClasses = [
 const MachineConfigPoolTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Configuration', sortField: 'status.configuration.name', transforms: [sortable],
+      title: 'Configuration',
+      sortField: 'status.configuration.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Updated', props: { className: tableColumnClasses[2] },
+      title: 'Updated',
+      props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Updating', props: { className: tableColumnClasses[3] },
+      title: 'Updating',
+      props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Degraded', props: { className: tableColumnClasses[4] },
+      title: 'Degraded',
+      props: { className: tableColumnClasses[4] },
     },
     {
-      title: '', props: { className: tableColumnClasses[5] },
+      title: '',
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
 MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
 
-const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({obj, index, key, style}) => {
+const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} title={obj.metadata.name} />
+        <ResourceLink
+          kind={machineConfigPoolReference}
+          name={obj.metadata.name}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
+        {_.get(obj, 'status.configuration.name') ? (
+          <ResourceLink
+            kind={machineConfigReference}
+            name={obj.status.configuration.name}
+            title={obj.status.configuration.name}
+          />
+        ) : (
+          '-'
+        )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
@@ -259,7 +297,11 @@ const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({ob
         {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={machineConfigPoolMenuActions} kind={machineConfigPoolReference} resource={obj} />
+        <ResourceKebab
+          actions={machineConfigPoolMenuActions}
+          kind={machineConfigPoolReference}
+          resource={obj}
+        />
       </TableData>
     </TableRow>
   );
@@ -272,14 +314,17 @@ type MachineConfigPoolTableRowProps = {
   style: object;
 };
 
-const MachineConfigPoolList: React.SFC<any> = props => <Table
-  {...props}
-  aria-label="Machine Config Pools"
-  Header={MachineConfigPoolTableHeader}
-  Row={MachineConfigPoolTableRow}
-  virtualize />;
+const MachineConfigPoolList: React.SFC<any> = (props) => (
+  <Table
+    {...props}
+    aria-label="Machine Config Pools"
+    Header={MachineConfigPoolTableHeader}
+    Row={MachineConfigPoolTableRow}
+    virtualize
+  />
+);
 
-export const MachineConfigPoolPage: React.SFC<any> = props => (
+export const MachineConfigPoolPage: React.SFC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineConfigPoolList}

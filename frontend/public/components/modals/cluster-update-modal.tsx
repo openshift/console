@@ -22,7 +22,7 @@ import {
 const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
   const available = getAvailableClusterUpdates(cv) || [];
   try {
-    return available.sort(({version: left}, {version: right}) => semver.rcompare(left, right));
+    return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('error sorting cluster updates', e);
@@ -30,7 +30,10 @@ const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
   }
 };
 
-class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, ClusterUpdateModalState> {
+class ClusterUpdateModal extends PromiseComponent<
+  ClusterUpdateModalProps,
+  ClusterUpdateModalState
+> {
   readonly state: ClusterUpdateModalState;
 
   constructor(public props: ClusterUpdateModalProps) {
@@ -41,65 +44,82 @@ class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, Clust
 
   _submit = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
-    const {selectedVersion} = this.state;
+    const { selectedVersion } = this.state;
     if (!selectedVersion) {
       return;
     }
-    const {cv} = this.props;
+    const { cv } = this.props;
     const available = getAvailableClusterUpdates(cv);
     const desired = _.find(available, { version: selectedVersion });
     if (!desired) {
-      this.setState({errorMessage: `Version ${selectedVersion} not found among the available updates. Select another version.`});
+      this.setState({
+        errorMessage: `Version ${selectedVersion} not found among the available updates. Select another version.`,
+      });
       return;
     }
 
     // Clear any previous error message.
-    this.setState({errorMessage: ''});
+    this.setState({ errorMessage: '' });
     const patch = [{ op: 'add', path: '/spec/desiredUpdate', value: desired }];
     this.handlePromise(k8sPatch(ClusterVersionModel, cv, patch)).then(this.props.close);
-  }
+  };
 
   _cancel = () => {
     this.props.close();
-  }
+  };
 
   _change = (selectedVersion: string) => {
-    this.setState({selectedVersion});
-  }
+    this.setState({ selectedVersion });
+  };
 
   render() {
-    const {cv} = this.props;
-    const {selectedVersion} = this.state;
+    const { cv } = this.props;
+    const { selectedVersion } = this.state;
     const availableUpdates = getSortedUpdates(cv);
     const currentVersion = getDesiredClusterVersion(cv);
-    const dropdownItems = _.reduce(availableUpdates, (acc, {version}) => {
-      acc[version] = version;
-      return acc;
-    }, {});
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Update Cluster</ModalTitle>
-      <ModalBody>
-        {/* <p>
+    const dropdownItems = _.reduce(
+      availableUpdates,
+      (acc, { version }) => {
+        acc[version] = version;
+        return acc;
+      },
+      {},
+    );
+    return (
+      <form
+        onSubmit={this._submit}
+        name="form"
+        className="modal-content modal-content--no-inner-scroll"
+      >
+        <ModalTitle>Update Cluster</ModalTitle>
+        <ModalBody>
+          {/* <p>
           // TODO: Determine what content goes here.
         </p> */}
-        <div className="form-group">
-          <label>Current Version</label>
-          <p>{currentVersion}</p>
-        </div>
-        <div className="form-group">
-          <label htmlFor="version_dropdown">Select New Version</label>
-          <Dropdown
-            className="cluster-update-modal__dropdown"
-            id="version_dropdown"
-            items={dropdownItems}
-            onChange={this._change}
-            selectedKey={selectedVersion}
-            title="Select Version"
-          />
-        </div>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Update" cancel={this._cancel} />
-    </form>;
+          <div className="form-group">
+            <label>Current Version</label>
+            <p>{currentVersion}</p>
+          </div>
+          <div className="form-group">
+            <label htmlFor="version_dropdown">Select New Version</label>
+            <Dropdown
+              className="cluster-update-modal__dropdown"
+              id="version_dropdown"
+              items={dropdownItems}
+              onChange={this._change}
+              selectedKey={selectedVersion}
+              title="Select Version"
+            />
+          </div>
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText="Update"
+          cancel={this._cancel}
+        />
+      </form>
+    );
   }
 }
 

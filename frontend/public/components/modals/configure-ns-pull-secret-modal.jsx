@@ -54,7 +54,7 @@ const parseExisitingPullSecret = (pullSecret) => {
     invalidData = true;
   }
 
-  return {username, password, email, address, invalidData, invalidJson };
+  return { username, password, email, address, invalidData, invalidJson };
 };
 
 const generateSecretData = (formData) => {
@@ -70,7 +70,7 @@ const generateSecretData = (formData) => {
   authParts.push(formData.password);
 
   config.auths[formData.address] = {
-    auth:  Base64.encode(authParts.join(':')),
+    auth: Base64.encode(authParts.join(':')),
     email: formData.email,
   };
 
@@ -108,7 +108,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     }
 
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = (e) => {
       const input = e.target.result;
       try {
         JSON.parse(input);
@@ -123,7 +123,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
   _submit(event) {
     event.preventDefault();
-    const {namespace, pullSecret} = this.props;
+    const { namespace, pullSecret } = this.props;
 
     let promise;
     let secretData;
@@ -142,11 +142,13 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     }
 
     if (pullSecret) {
-      const patch = [{
-        op: 'replace',
-        path: `/data/${CONST.PULL_SECRET_DATA}`,
-        value: secretData,
-      }];
+      const patch = [
+        {
+          op: 'replace',
+          path: `/data/${CONST.PULL_SECRET_DATA}`,
+          value: secretData,
+        },
+      ];
       promise = k8sPatch(SecretModel, pullSecret, patch);
     } else {
       const data = {};
@@ -167,129 +169,209 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
   }
 
   render() {
-    const {namespace, pullSecret} = this.props;
+    const { namespace, pullSecret } = this.props;
 
     const existingData = parseExisitingPullSecret(pullSecret);
 
-    return <form onSubmit={this._submit} name="form" className="modal-content">
-      <ModalTitle>Default Pull Secret</ModalTitle>
-      <ModalBody>
-        <p>
-          Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull secret.
-        </p>
+    return (
+      <form onSubmit={this._submit} name="form" className="modal-content">
+        <ModalTitle>Default Pull Secret</ModalTitle>
+        <ModalBody>
+          <p>
+            Specify default credentials to be used to authenticate and download containers within
+            this namespace. These credentials will be the default unless a pod references a specific
+            pull secret.
+          </p>
 
-        {existingData.invalidData && <Alert isInline className="co-alert" variant="danger" title="Overwriting default pull secret">A default pull secret exists, but can't be parsed. Saving this will overwrite it.</Alert>}
+          {existingData.invalidData && (
+            <Alert
+              isInline
+              className="co-alert"
+              variant="danger"
+              title="Overwriting default pull secret"
+            >
+              A default pull secret exists, but can't be parsed. Saving this will overwrite it.
+            </Alert>
+          )}
 
-        <div className="row co-m-form-row">
-          <div className="col-xs-3">
-            <label>Namespace</label>
-          </div>
-          <div className="col-xs-9">
-            <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
-          </div>
-        </div>
-
-        <div className="row co-m-form-row">
-          <div className="col-xs-3">
-            <label htmlFor="namespace-pull-secret-name">Secret Name</label>
-          </div>
-          { pullSecret ?
+          <div className="row co-m-form-row">
+            <div className="col-xs-3">
+              <label>Namespace</label>
+            </div>
             <div className="col-xs-9">
-              <ResourceIcon kind="Secret" />
+              <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
+            </div>
+          </div>
+
+          <div className="row co-m-form-row">
+            <div className="col-xs-3">
+              <label htmlFor="namespace-pull-secret-name">Secret Name</label>
+            </div>
+            {pullSecret ? (
+              <div className="col-xs-9">
+                <ResourceIcon kind="Secret" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
-            </div> : <div className="col-xs-9">
-              <input type="text" className="pf-c-form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
-              <p className="help-block text-muted" id="namespace-pull-secret-name-help">Friendly name to help you manage this in the future</p>
-            </div>
-          }
-        </div>
-
-        <div className="row co-m-form-row form-group">
-          <div className="col-xs-3">
-            <label>Method</label>
+              </div>
+            ) : (
+              <div className="col-xs-9">
+                <input
+                  type="text"
+                  className="pf-c-form-control"
+                  id="namespace-pull-secret-name"
+                  aria-describedby="namespace-pull-secret-name-help"
+                  required
+                />
+                <p className="help-block text-muted" id="namespace-pull-secret-name-help">
+                  Friendly name to help you manage this in the future
+                </p>
+              </div>
+            )}
           </div>
-          <div className="col-xs-9">
-            <div className="radio">
-              <label className="control-label">
-                <input type="radio" id="namespace-pull-secret-method--form"
-                  checked={this.state.method === 'form'}
-                  onChange={this._onMethodChange} value="form" />
+
+          <div className="row co-m-form-row form-group">
+            <div className="col-xs-3">
+              <label>Method</label>
+            </div>
+            <div className="col-xs-9">
+              <div className="radio">
+                <label className="control-label">
+                  <input
+                    type="radio"
+                    id="namespace-pull-secret-method--form"
+                    checked={this.state.method === 'form'}
+                    onChange={this._onMethodChange}
+                    value="form"
+                  />
                   Enter Username/Password
-              </label>
-            </div>
-            <div className="radio">
-              <label className="control-label">
-                <input type="radio"
-                  checked={this.state.method === 'upload'}
-                  onChange={this._onMethodChange}
-                  id="namespace-pull-secret-method--upload" value="upload" />
-                Upload Docker config.json
-              </label>
+                </label>
+              </div>
+              <div className="radio">
+                <label className="control-label">
+                  <input
+                    type="radio"
+                    checked={this.state.method === 'upload'}
+                    onChange={this._onMethodChange}
+                    id="namespace-pull-secret-method--upload"
+                    value="upload"
+                  />
+                  Upload Docker config.json
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-        { this.state.method === 'form' && <div>
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-address">Registry Address</label>
+          {this.state.method === 'form' && (
+            <div>
+              <div className="row co-m-form-row">
+                <div className="col-xs-3">
+                  <label htmlFor="namespace-pull-secret-address">Registry Address</label>
+                </div>
+                <div className="col-xs-9">
+                  <input
+                    type="text"
+                    className="pf-c-form-control"
+                    id="namespace-pull-secret-address"
+                    defaultValue={existingData.address}
+                    placeholder="quay.io"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="row co-m-form-row">
+                <div className="col-xs-3">
+                  <label htmlFor="namespace-pull-secret-email">Email Address</label>
+                </div>
+                <div className="col-xs-9">
+                  <input
+                    type="email"
+                    className="pf-c-form-control"
+                    defaultValue={existingData.email}
+                    id="namespace-pull-secret-email"
+                    aria-describedby="namespace-pull-secret-email-help"
+                  />
+                  <p className="help-block text-muted" id="namespace-pull-secret-email-help">
+                    Optional, depending on registry provider
+                  </p>
+                </div>
+              </div>
+              <div className="row co-m-form-row">
+                <div className="col-xs-3">
+                  <label htmlFor="namespace-pull-secret-username">Username</label>
+                </div>
+                <div className="col-xs-9">
+                  <input
+                    type="text"
+                    defaultValue={existingData.username}
+                    className="pf-c-form-control"
+                    id="namespace-pull-secret-username"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="row co-m-form-row">
+                <div className="col-xs-3">
+                  <label htmlFor="namespace-pull-secret-password">Password</label>
+                </div>
+                <div className="col-xs-9">
+                  <input
+                    type="password"
+                    defaultValue={existingData.password}
+                    className="pf-c-form-control"
+                    id="namespace-pull-secret-password"
+                    required
+                  />
+                </div>
+              </div>
             </div>
-            <div className="col-xs-9">
-              <input type="text" className="pf-c-form-control" id="namespace-pull-secret-address" defaultValue={existingData.address} placeholder="quay.io" required />
-            </div>
-          </div>
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-email">Email Address</label>
-            </div>
-            <div className="col-xs-9">
-              <input type="email" className="pf-c-form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" aria-describedby="namespace-pull-secret-email-help" />
-              <p className="help-block text-muted" id="namespace-pull-secret-email-help">Optional, depending on registry provider</p>
-            </div>
-          </div>
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-username">Username</label>
-            </div>
-            <div className="col-xs-9">
-              <input type="text" defaultValue={existingData.username} className="pf-c-form-control" id="namespace-pull-secret-username" required />
-            </div>
-          </div>
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-password">Password</label>
-            </div>
-            <div className="col-xs-9">
-              <input type="password" defaultValue={existingData.password} className="pf-c-form-control" id="namespace-pull-secret-password" required />
-            </div>
-          </div>
-        </div> }
+          )}
 
-        { this.state.method === 'upload' && <div>
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-file">File Upload</label>
+          {this.state.method === 'upload' && (
+            <div>
+              <div className="row co-m-form-row">
+                <div className="col-xs-3">
+                  <label htmlFor="namespace-pull-secret-file">File Upload</label>
+                </div>
+                <div className="col-xs-9">
+                  <input
+                    type="file"
+                    id="namespace-pull-secret-file"
+                    onChange={this._onFileChange}
+                    aria-describedby="namespace-pull-secret-file-help"
+                  />
+                  <p className="help-block etext-muted" id="namespace-pull-secret-file-help">
+                    Properly configured Docker config file in JSON format. Will be base64 encoded
+                    after upload.
+                  </p>
+                </div>
+              </div>
+              {this.state.invalidJson ||
+                (existingData.invalidJson && (
+                  <div className="row co-m-form-row">
+                    <div className="col-xs-9 col-sm-offset-3">
+                      <Alert isInline className="co-alert" variant="danger" title="Invalid JSON">
+                        The uploaded file is not properly-formatted JSON.
+                      </Alert>
+                    </div>
+                  </div>
+                ))}
+              {this.state.fileData && (
+                <div className="row co-m-form-row">
+                  <div className="col-xs-9 col-sm-offset-3">
+                    <pre className="co-pre-wrap">{this.state.fileData}</pre>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="col-xs-9">
-              <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} aria-describedby="namespace-pull-secret-file-help" />
-              <p className="help-block etext-muted" id="namespace-pull-secret-file-help">Properly configured Docker config file in JSON format. Will be base64 encoded after upload.</p>
-            </div>
-          </div>
-          { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
-            <div className="col-xs-9 col-sm-offset-3">
-              <Alert isInline className="co-alert" variant="danger" title="Invalid JSON">The uploaded file is not properly-formatted JSON.</Alert>
-            </div>
-          </div> }
-          { this.state.fileData &&<div className="row co-m-form-row">
-            <div className="col-xs-9 col-sm-offset-3">
-              <pre className="co-pre-wrap">{this.state.fileData}</pre>
-            </div>
-          </div> }
-        </div> }
-
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={this._cancel} />
-    </form>;
+          )}
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText="Save"
+          cancel={this._cancel}
+        />
+      </form>
+    );
   }
 }
 

@@ -2,7 +2,7 @@ export const areaTheme = {
   area: {
     style: {
       data: {
-        fillOpacity: .15,
+        fillOpacity: 0.15,
       },
     },
   },
@@ -16,7 +16,7 @@ export const areaTheme = {
   },
   dependentAxis: {
     style: {
-      grid: {stroke: '#EDEDED'},
+      grid: { stroke: '#EDEDED' },
     },
   },
 };

@@ -1,5 +1,5 @@
-import {execSync} from 'child_process';
-import {browser, $, $$, ExpectedConditions as until} from 'protractor';
+import { execSync } from 'child_process';
+import { browser, $, $$, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
 import * as srvCatalogView from '../../views/service-catalog.view';
@@ -8,7 +8,7 @@ import * as crudView from '../../views/crud.view';
 import * as horizontalnavView from '../../views/horizontal-nav.view';
 
 describe('Test for Cluster Service Binding', () => {
-  beforeAll(async() => {
+  beforeAll(async () => {
     browser.get(`${appHost}/status/ns/${testName}`);
     await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
@@ -18,7 +18,7 @@ describe('Test for Cluster Service Binding', () => {
     checkErrors();
   });
 
-  it('creates a new binding for new service instance `mysql-persistent`', async() => {
+  it('creates a new binding for new service instance `mysql-persistent`', async () => {
     await sidenavView.clickNavLink(['Service Catalog', 'Broker Management']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Service Classes');
@@ -37,7 +37,10 @@ describe('Test for Cluster Service Binding', () => {
 
     // select test namespace, then submit create instance form
     await $('#dropdown-selectbox').click();
-    await $$('.pf-c-dropdown__menu').first().$(`#${testName}-Project-link`).click();
+    await $$('.pf-c-dropdown__menu')
+      .first()
+      .$(`#${testName}-Project-link`)
+      .click();
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 

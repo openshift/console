@@ -6,8 +6,21 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ANNOTATIONS } from '../const';
-import { getImageForIconClass, getTemplateIcon, normalizeIconClass } from './catalog/catalog-item-icon';
-import { ButtonBar, ExternalLink, Firehose, history, LoadingBox, LoadError, NsDropdown, resourcePathFromModel } from './utils';
+import {
+  getImageForIconClass,
+  getTemplateIcon,
+  normalizeIconClass,
+} from './catalog/catalog-item-icon';
+import {
+  ButtonBar,
+  ExternalLink,
+  Firehose,
+  history,
+  LoadingBox,
+  LoadError,
+  NsDropdown,
+  resourcePathFromModel,
+} from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
   k8sCreate,
@@ -17,7 +30,7 @@ import {
   TemplateParameter,
 } from '../module/k8s';
 
-const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({template}) => {
+const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
   if (_.isEmpty(resources)) {
     return null;
@@ -26,18 +39,18 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({templa
   return (
     <React.Fragment>
       <hr />
-      <p>
-        The following resources will be created:
-      </p>
+      <p>The following resources will be created:</p>
       <ul>
-        {resources.map((kind: string) => <li key={kind}>{kind}</li>)}
+        {resources.map((kind: string) => (
+          <li key={kind}>{kind}</li>
+        ))}
       </ul>
     </React.Fragment>
   );
 };
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
-const TemplateInfo: React.FC<TemplateInfoProps> = ({template}) => {
+const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
@@ -47,33 +60,59 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({template}) => {
   const documentationURL = annotations[ANNOTATIONS.documentationURL];
   const supportURL = annotations[ANNOTATIONS.supportURL];
 
-  return <div className="co-catalog-item-info">
-    <div className="co-catalog-item-details">
-      <span className="co-catalog-item-icon">
-        { imgURL
-          ? <img className="co-catalog-item-icon__img co-catalog-item-icon__img--large" src={imgURL} />
-          : <span className={classNames('co-catalog-item-icon__icon co-catalog-item-icon__icon--large', normalizeIconClass(iconClass))} /> }
-      </span>
-      <div>
-        <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
-        {!_.isEmpty(tags) && <p className="co-catalog-item-details__tags">{_.map(tags, (tag, i) => <span className="co-catalog-item-details__tag" key={i}>{tag}</span>)}</p>}
-        {(documentationURL || supportURL) && <ul className="list-inline">
-          {documentationURL && <li className="co-break-word">
-            <ExternalLink href={documentationURL} text="View Documentation" />
-          </li>}
-          {supportURL && <li className="co-break-word">
-            <ExternalLink href={supportURL} text="Get Support" />
-          </li>}
-        </ul>}
+  return (
+    <div className="co-catalog-item-info">
+      <div className="co-catalog-item-details">
+        <span className="co-catalog-item-icon">
+          {imgURL ? (
+            <img
+              className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+              src={imgURL}
+            />
+          ) : (
+            <span
+              className={classNames(
+                'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
+                normalizeIconClass(iconClass),
+              )}
+            />
+          )}
+        </span>
+        <div>
+          <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
+          {!_.isEmpty(tags) && (
+            <p className="co-catalog-item-details__tags">
+              {_.map(tags, (tag, i) => (
+                <span className="co-catalog-item-details__tag" key={i}>
+                  {tag}
+                </span>
+              ))}
+            </p>
+          )}
+          {(documentationURL || supportURL) && (
+            <ul className="list-inline">
+              {documentationURL && (
+                <li className="co-break-word">
+                  <ExternalLink href={documentationURL} text="View Documentation" />
+                </li>
+              )}
+              {supportURL && (
+                <li className="co-break-word">
+                  <ExternalLink href={supportURL} text="Get Support" />
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
       </div>
+      {description && <p className="co-catalog-item-details__description">{description}</p>}
+      <TemplateResourceDetails template={template} />
     </div>
-    {description && <p className="co-catalog-item-details__description">{description}</p>}
-    <TemplateResourceDetails template={template} />
-  </div>;
+  );
 };
 TemplateInfo.displayName = 'TemplateInfo';
 
-const stateToProps = ({k8s}) => ({
+const stateToProps = ({ k8s }) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
@@ -81,7 +120,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
   constructor(props: TemplateFormProps) {
     super(props);
 
-    const { preselectedNamespace: namespace = ''} = this.props;
+    const { preselectedNamespace: namespace = '' } = this.props;
     const parameters = this.getParameterValues(props);
     this.state = {
       namespace,
@@ -94,25 +133,25 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
   componentDidUpdate(prevProps: TemplateFormProps) {
     if (this.props.obj !== prevProps.obj) {
       const parameters = this.getParameterValues(this.props);
-      this.setState({parameters});
+      this.setState({ parameters });
     }
   }
 
   getParameterValues = (props: TemplateFormProps) => {
     const templateParameters: TemplateParameter[] = props.obj.data.parameters || [];
-    return templateParameters.reduce((acc, {name, value}: TemplateParameter) => {
+    return templateParameters.reduce((acc, { name, value }: TemplateParameter) => {
       acc[name] = value;
       return acc;
     }, {});
   };
 
   onNamespaceChange = (namespace: string) => {
-    this.setState({namespace});
-  }
+    this.setState({ namespace });
+  };
 
-  onParameterChanged: React.ReactEventHandler<HTMLInputElement> = event => {
+  onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
-    this.setState(({parameters}) => ({
+    this.setState(({ parameters }) => ({
       parameters: {
         ...parameters,
         [name]: value,
@@ -160,23 +199,37 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
     event.preventDefault();
     const { namespace } = this.state;
     if (!namespace) {
-      this.setState({error: 'Please complete all fields.'});
+      this.setState({ error: 'Please complete all fields.' });
       return;
     }
 
-    this.setState({error: '', inProgress: true});
-    this.createTemplateSecret().then((secret: K8sResourceKind) => {
-      return this.createTemplateInstance(secret).then((instance: TemplateInstanceKind) => {
-        this.setState({inProgress: false});
-        history.push(resourcePathFromModel(TemplateInstanceModel, instance.metadata.name, instance.metadata.namespace));
-      });
-    }).catch(err => this.setState({ inProgress: false, error: err.message }));
+    this.setState({ error: '', inProgress: true });
+    this.createTemplateSecret()
+      .then((secret: K8sResourceKind) => {
+        return this.createTemplateInstance(secret).then((instance: TemplateInstanceKind) => {
+          this.setState({ inProgress: false });
+          history.push(
+            resourcePathFromModel(
+              TemplateInstanceModel,
+              instance.metadata.name,
+              instance.metadata.namespace,
+            ),
+          );
+        });
+      })
+      .catch((err) => this.setState({ inProgress: false, error: err.message }));
   };
 
   render() {
     const { obj } = this.props;
     if (obj.loadError) {
-      return <LoadError message={obj.loadError.message} label="Template" className="loading-box loading-box__errored" />;
+      return (
+        <LoadError
+          message={obj.loadError.message}
+          label="Template"
+          className="loading-box loading-box__errored"
+        />
+      );
     }
 
     if (!obj.loaded) {
@@ -186,48 +239,82 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
     const template: TemplateKind = obj.data;
     const parameters = template.parameters || [];
 
-    return <div className="row">
-      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
-        <TemplateInfo template={template} />
-      </div>
-      <div className="col-md-5 col-md-pull-7">
-        <form className="co-instantiate-template-form" onSubmit={this.save}>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="namespace">Namespace</label>
-            <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
-          </div>
-          {parameters.map(({name, displayName, description, required: requiredParam, generate}: TemplateParameter) => {
-            const value = this.state.parameters[name] || '';
-            const helpID = description ? `${name}-help` : '';
-            const placeholder = generate ? '(generated if empty)' : '';
-            // Only set required for parameters not generated.
-            const requiredInput = requiredParam && !generate;
-            return <div className="form-group" key={name}>
-              <label className={classNames('control-label', { 'co-required': requiredInput })} htmlFor={name}>
-                {displayName || name}
+    return (
+      <div className="row">
+        <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+          <TemplateInfo template={template} />
+        </div>
+        <div className="col-md-5 col-md-pull-7">
+          <form className="co-instantiate-template-form" onSubmit={this.save}>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="namespace">
+                Namespace
               </label>
-              <input
-                type="text"
-                className="pf-c-form-control"
-                id={name}
-                name={name}
-                value={value}
-                onChange={this.onParameterChanged}
-                required={requiredInput}
-                placeholder={placeholder}
-                aria-describedby={helpID} />
-              {description && <div className="help-block" id={helpID}>{description}</div>}
-            </div>;
-          })}
-          <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">Create</Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>Cancel</Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+              <NsDropdown
+                selectedKey={this.state.namespace}
+                onChange={this.onNamespaceChange}
+                id="namespace"
+              />
+            </div>
+            {parameters.map(
+              ({
+                name,
+                displayName,
+                description,
+                required: requiredParam,
+                generate,
+              }: TemplateParameter) => {
+                const value = this.state.parameters[name] || '';
+                const helpID = description ? `${name}-help` : '';
+                const placeholder = generate ? '(generated if empty)' : '';
+                // Only set required for parameters not generated.
+                const requiredInput = requiredParam && !generate;
+                return (
+                  <div className="form-group" key={name}>
+                    <label
+                      className={classNames('control-label', { 'co-required': requiredInput })}
+                      htmlFor={name}
+                    >
+                      {displayName || name}
+                    </label>
+                    <input
+                      type="text"
+                      className="pf-c-form-control"
+                      id={name}
+                      name={name}
+                      value={value}
+                      onChange={this.onParameterChanged}
+                      required={requiredInput}
+                      placeholder={placeholder}
+                      aria-describedby={helpID}
+                    />
+                    {description && (
+                      <div className="help-block" id={helpID}>
+                        {description}
+                      </div>
+                    )}
+                  </div>
+                );
+              },
+            )}
+            <ButtonBar
+              className="co-instantiate-template-form__button-bar"
+              errorMessage={this.state.error}
+              inProgress={this.state.inProgress}
+            >
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  Create
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  Cancel
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
-    </div>;
+    );
   }
 }
 const TemplateForm = connect(stateToProps)(TemplateForm_);
@@ -239,20 +326,28 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   const templateNamespace = searchParams.get('template-ns');
   const preselectedNamespace = searchParams.get('preselected-ns');
   const resources = [
-    {kind: 'Template', name: templateName, namespace: templateNamespace, isList: false, prop: 'obj'},
+    {
+      kind: 'Template',
+      name: templateName,
+      namespace: templateNamespace,
+      isList: false,
+      prop: 'obj',
+    },
   ];
 
-  return <React.Fragment>
-    <Helmet>
-      <title>{title}</title>
-    </Helmet>
-    <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading">{title}</h1>
-      <Firehose resources={resources}>
-        <TemplateForm preselectedNamespace={preselectedNamespace} {...props as any} />
-      </Firehose>
-    </div>
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        <h1 className="co-m-pane__heading">{title}</h1>
+        <Firehose resources={resources}>
+          <TemplateForm preselectedNamespace={preselectedNamespace} {...props as any} />
+        </Firehose>
+      </div>
+    </React.Fragment>
+  );
 };
 
 type TemplateResourceDetailsProps = {

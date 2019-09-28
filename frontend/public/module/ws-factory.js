@@ -45,7 +45,10 @@ export function WSFactory(id, options) {
   this._connect();
 
   if (this.bufferMax) {
-    this.flushCanceler = setInterval(this.flushMessageBuffer.bind(this), this.options.bufferFlushInterval || 500);
+    this.flushCanceler = setInterval(
+      this.flushMessageBuffer.bind(this),
+      this.options.bufferFlushInterval || 500,
+    );
   }
 }
 
@@ -111,9 +114,9 @@ WSFactory.prototype._connect = function() {
     that._triggerEvent('error', evt);
   };
   this.ws.onmessage = function(evt) {
-    const msg = (that.options && that.options.jsonParse) ? JSON.parse(evt.data) : evt.data;
+    const msg = that.options && that.options.jsonParse ? JSON.parse(evt.data) : evt.data;
     // In some browsers, onmessage can fire after onclose/error. Don't update state to be incorrect.
-    if (that._state !== 'destroyed' && that._state !== 'closed'){
+    if (that._state !== 'destroyed' && that._state !== 'closed') {
       that._state = 'open';
     }
     that._triggerEvent('message', msg);
@@ -172,7 +175,6 @@ WSFactory.prototype.onbulkmessage = function(fn) {
   return this;
 };
 
-
 WSFactory.prototype.onerror = function(fn) {
   this._registerHandler('error', fn);
   return this;
@@ -205,7 +207,7 @@ WSFactory.prototype.flushMessageBuffer = function() {
   if (this._handlers.bulkmessage.length) {
     this._invokeHandlers('bulkmessage', this._messageBuffer);
   } else {
-    this._messageBuffer.forEach(e => this._invokeHandlers('message', e));
+    this._messageBuffer.forEach((e) => this._invokeHandlers('message', e));
   }
 
   this._messageBuffer = [];

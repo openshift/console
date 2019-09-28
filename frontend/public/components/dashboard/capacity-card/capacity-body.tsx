@@ -6,4 +6,4 @@ export const CapacityBody: React.FC<CapacityBodyProps> = ({ children }) => (
 
 type CapacityBodyProps = {
   children: React.ReactNode;
-}
+};

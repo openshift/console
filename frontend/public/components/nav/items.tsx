@@ -11,17 +11,27 @@ import { featureReducerName } from '../../reducers/features';
 import { RootState } from '../../redux';
 import { getActiveNamespace } from '../../reducers/ui';
 
-export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
-export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
+export const matchesPath = (resourcePath, prefix) =>
+  resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
+export const matchesModel = (resourcePath, model) =>
+  model && matchesPath(resourcePath, referenceForModel(model));
 
-export const stripNS = href => {
+export const stripNS = (href) => {
   href = stripBasePath(href);
-  return href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
+  return href
+    .replace(/^\/?k8s\//, '')
+    .replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
+    .replace(/^\//, '');
 };
 
-export const ExternalLink = ({href, name}) => <NavItem isActive={false}>
-  <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">{name}<span className="co-external-link"></span></a>
-</NavItem>;
+export const ExternalLink = ({ href, name }) => (
+  <NavItem isActive={false}>
+    <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">
+      {name}
+      <span className="co-external-link" />
+    </a>
+  </NavItem>
+);
 
 class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   static defaultProps = {
@@ -39,7 +49,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   }
 
   static startsWith(resourcePath: string, someStrings: string[]) {
-    return _.some(someStrings, s => resourcePath.startsWith(s));
+    return _.some(someStrings, (s) => resourcePath.startsWith(s));
   }
 
   render() {
@@ -50,12 +60,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
 
     return (
       <NavItem isActive={isActive}>
-        <Link
-          id={id}
-          data-test-id={testID}
-          to={this.to}
-          onClick={onClick}
-        >
+        <Link id={id} data-test-id={testID} to={this.to} onClick={onClick}>
           {name}
         </Link>
       </NavItem>
@@ -77,7 +82,11 @@ export class ResourceNSLink extends NavLink<ResourceNSLinkProps> {
 
 export class ResourceClusterLink extends NavLink<ResourceClusterLinkProps> {
   static isActive(props, resourcePath) {
-    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`) || matchesModel(resourcePath, props.model);
+    return (
+      resourcePath === props.resource ||
+      _.startsWith(resourcePath, `${props.resource}/`) ||
+      matchesModel(resourcePath, props.model)
+    );
   }
 
   get to() {
@@ -154,7 +163,7 @@ export const createLink = (item: plugins.NavItem, rootNavLink = false): React.Re
 type RootNavLinkStateProps = {
   canRender: boolean;
   isActive: boolean;
-  activeNamespace: string,
+  activeNamespace: string;
 };
 
 type RootNavLinkProps<T extends NavLinkProps = NavLinkProps> = NavLinkProps & {
@@ -179,11 +188,7 @@ const rootNavLinkMapStateToProps = (
 ): RootNavLinkStateProps => ({
   canRender: required ? _.castArray(required).every((r) => state[featureReducerName].get(r)) : true,
   activeNamespace: getActiveNamespace(state),
-  isActive: Component.isActive(
-    props,
-    stripNS(state.UI.get('location')),
-    getActiveNamespace(state),
-  ),
+  isActive: Component.isActive(props, stripNS(state.UI.get('location')), getActiveNamespace(state)),
 });
 
 export const RootNavLink = connect(rootNavLinkMapStateToProps)(RootNavLink_);

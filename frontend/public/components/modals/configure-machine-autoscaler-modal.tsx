@@ -6,7 +6,10 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { history, NumberSpinner, PromiseComponent, resourcePathFromModel } from '../utils';
 import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 
-export class ConfigureMachineAutoscalerModal extends PromiseComponent<ConfigureMachineAutoscalerModalProps, ConfigureMachineAutoscalerModalState> {
+export class ConfigureMachineAutoscalerModal extends PromiseComponent<
+  ConfigureMachineAutoscalerModalProps,
+  ConfigureMachineAutoscalerModalState
+> {
   readonly state: ConfigureMachineAutoscalerModalState = {
     inProgress: false,
     errorMessage: '',
@@ -16,26 +19,30 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<ConfigureM
 
   changeMinReplicas = (event) => {
     const minReplicas = _.toInteger(event.target.value);
-    this.setState({minReplicas});
+    this.setState({ minReplicas });
   };
 
   changeMinReplicasBy = (operation) => {
     const minReplicas = this.state.minReplicas + operation;
-    this.setState({minReplicas});
+    this.setState({ minReplicas });
   };
 
   changeMaxReplicas = (event) => {
     const maxReplicas = _.toInteger(event.target.value);
-    this.setState({maxReplicas});
+    this.setState({ maxReplicas });
   };
 
   changeMaxReplicasBy = (operation) => {
     const maxReplicas = this.state.maxReplicas + operation;
-    this.setState({maxReplicas});
+    this.setState({ maxReplicas });
   };
 
   createAutoscaler = (): Promise<K8sResourceKind> => {
-    const { apiVersion, kind, metadata: { name, namespace } } = this.props.machineSet;
+    const {
+      apiVersion,
+      kind,
+      metadata: { name, namespace },
+    } = this.props.machineSet;
     const { minReplicas, maxReplicas } = this.state;
 
     const machineAutoscaler = {
@@ -65,34 +72,56 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<ConfigureM
     const promise = this.createAutoscaler();
     this.handlePromise(promise).then((obj: K8sResourceKind) => {
       close();
-      history.push(resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace));
+      history.push(
+        resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace),
+      );
     });
   };
 
   render() {
-    const {name} = this.props.machineSet.metadata;
+    const { name } = this.props.machineSet.metadata;
 
-    return <form onSubmit={this.submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">Create Machine Autoscaler</ModalTitle>
-      <ModalBody>
-        <p>
-          This will automatically scale machine set <b>{name}</b>.
-        </p>
-        <div className="form-group">
-          <label className="co-delete-modal-checkbox-label">
-            Minimum Replicas:
-            <NumberSpinner className="pf-c-form-control" value={this.state.minReplicas} onChange={this.changeMinReplicas} changeValueBy={this.changeMinReplicasBy} autoFocus required />
-          </label>
-        </div>
-        <div className="form-group">
-          <label className="co-delete-modal-checkbox-label">
-            Maximum Replicas:
-            <NumberSpinner className="pf-c-form-control" value={this.state.maxReplicas} onChange={this.changeMaxReplicas} changeValueBy={this.changeMaxReplicasBy} required />
-          </label>
-        </div>
-      </ModalBody>
-      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel} submitText="Create" />
-    </form>;
+    return (
+      <form onSubmit={this.submit} name="form" className="modal-content">
+        <ModalTitle className="modal-header">Create Machine Autoscaler</ModalTitle>
+        <ModalBody>
+          <p>
+            This will automatically scale machine set <b>{name}</b>.
+          </p>
+          <div className="form-group">
+            <label className="co-delete-modal-checkbox-label">
+              Minimum Replicas:
+              <NumberSpinner
+                className="pf-c-form-control"
+                value={this.state.minReplicas}
+                onChange={this.changeMinReplicas}
+                changeValueBy={this.changeMinReplicasBy}
+                autoFocus
+                required
+              />
+            </label>
+          </div>
+          <div className="form-group">
+            <label className="co-delete-modal-checkbox-label">
+              Maximum Replicas:
+              <NumberSpinner
+                className="pf-c-form-control"
+                value={this.state.maxReplicas}
+                onChange={this.changeMaxReplicas}
+                changeValueBy={this.changeMaxReplicasBy}
+                required
+              />
+            </label>
+          </div>
+        </ModalBody>
+        <ModalSubmitFooter
+          inProgress={this.state.inProgress}
+          errorMessage={this.state.errorMessage}
+          cancel={this.props.cancel}
+          submitText="Create"
+        />
+      </form>
+    );
   }
 }
 

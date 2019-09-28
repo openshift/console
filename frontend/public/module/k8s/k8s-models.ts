@@ -8,17 +8,16 @@ import store from '../../redux';
 import { registry } from '../../plugins';
 
 export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
-  return ImmutableMap<K8sResourceKindReference, K8sKind>()
-    .withMutations(map => {
-      models.forEach(model => {
-        if (model.crd) {
-          map.set(referenceForModel(model), model);
-        } else {
-          // TODO: Use `referenceForModel` even for known API objects
-          map.set(model.kind, model);
-        }
-      });
+  return ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
+    models.forEach((model) => {
+      if (model.crd) {
+        map.set(referenceForModel(model), model);
+      } else {
+        // TODO: Use `referenceForModel` even for known API objects
+        map.set(model.kind, model);
+      }
     });
+  });
 };
 
 /**
@@ -27,11 +26,12 @@ export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindRefe
  */
 let k8sModels = modelsToMap(_.values(staticModels));
 
-const hasModel = (model: K8sKind) => k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
+const hasModel = (model: K8sKind) =>
+  k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
 
-k8sModels = k8sModels.withMutations(map => {
-  const pluginModels = _.flatMap(registry.getModelDefinitions().map(md => md.properties.models));
-  map.merge(modelsToMap(pluginModels.filter(model => !hasModel(model))));
+k8sModels = k8sModels.withMutations((map) => {
+  const pluginModels = _.flatMap(registry.getModelDefinitions().map((md) => md.properties.models));
+  map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
 });
 
 /**
@@ -44,7 +44,10 @@ export const modelFor = (ref: K8sResourceKindReference) => {
     return m;
   }
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
-  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
+  m = store
+    .getState()
+    .k8s.getIn(['RESOURCES', 'models'])
+    .get(ref);
   if (m) {
     return m;
   }
@@ -52,7 +55,10 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
-  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(kindForReference(ref));
+  m = store
+    .getState()
+    .k8s.getIn(['RESOURCES', 'models'])
+    .get(kindForReference(ref));
   if (m) {
     return m;
   }

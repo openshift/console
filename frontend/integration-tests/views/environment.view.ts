@@ -16,7 +16,7 @@ const textFilter = $('[placeholder="Config Map or Secret"]');
 
 export const isLoaded = () => browser.wait(until.presenceOf(inputs.first()), BROWSER_TIMEOUT);
 
-export const addVariable = async(key: string, value: string) => {
+export const addVariable = async (key: string, value: string) => {
   await isLoaded();
   await inputs.get(0).clear();
   await inputs.get(0).sendKeys(key);
@@ -26,7 +26,7 @@ export const addVariable = async(key: string, value: string) => {
   await saveBtn.click();
 };
 
-export const addVariableFrom = async(resourceName: string, resourcePrefix: string) => {
+export const addVariableFrom = async (resourceName: string, resourcePrefix: string) => {
   await isLoaded();
   await dropDownBtn.first().click();
   await textFilter.sendKeys(resourceName);
@@ -37,7 +37,7 @@ export const addVariableFrom = async(resourceName: string, resourcePrefix: strin
   await saveBtn.click();
 };
 
-export const deleteVariable = async() => {
+export const deleteVariable = async () => {
   await isLoaded();
   await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
   await deleteBtn.click();

@@ -3,22 +3,17 @@ import { Helmet } from 'react-helmet';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
-import {
-  IdentityProvider,
-  k8sCreate,
-  K8sResourceKind,
-  OAuthKind,
-} from '../../module/k8s';
-import {
-  AsyncComponent,
-  ButtonBar,
-  PromiseComponent,
-  history,
-} from '../utils';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
+import { AsyncComponent, ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 
-export const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+export const DroppableFileInput = (props: any) => (
+  <AsyncComponent
+    loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
+    {...props}
+  />
+);
 
 export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> {
   readonly state: AddHTPasswdPageState = {
@@ -26,7 +21,7 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
     htpasswdFileContent: '',
     inProgress: false,
     errorMessage: '',
-  }
+  };
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -67,68 +62,67 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!this.state.htpasswdFileContent) {
-      this.setState({errorMessage: 'You must specify an HTPasswd file.'});
+      this.setState({ errorMessage: 'You must specify an HTPasswd file.' });
       return;
     }
 
     // Clear any previous errors.
-    this.setState({errorMessage: ''});
+    this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
       return this.createHTPasswdSecret()
         .then((secret: K8sResourceKind) => this.addHTPasswdIDP(oauth, secret.metadata.name))
         .then(redirectToOAuthPage);
     });
-  }
+  };
 
   nameChanged: React.ReactEventHandler<HTMLInputElement> = (e) => {
-    this.setState({name: e.currentTarget.value});
+    this.setState({ name: e.currentTarget.value });
   };
 
   htpasswdFileChanged = (htpasswdFileContent: string) => {
-    this.setState({htpasswdFileContent});
+    this.setState({ htpasswdFileContent });
   };
 
   render() {
     const { name, htpasswdFileContent } = this.state;
     const title = 'Add Identity Provider: HTPasswd';
 
-    return <div className="co-m-pane__body">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.
-        </p>
-        <IDPNameInput value={name} onChange={this.nameChanged} />
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.htpasswdFileChanged}
-            inputFileData={htpasswdFileContent}
-            id="htpasswd-file"
-            label="HTPasswd File"
-            inputFieldHelpText="Upload an HTPasswd file created using the htpasswd command."
-            isRequired
-            hideContents />
-        </div>
-        <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              type="submit"
-              variant="primary">
-              Add
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={history.goBack}>
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>;
+    return (
+      <div className="co-m-pane__body">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">
+            HTPasswd validates usernames and passwords against a flat file generated using the
+            htpasswd command.
+          </p>
+          <IDPNameInput value={name} onChange={this.nameChanged} />
+          <div className="form-group">
+            <DroppableFileInput
+              onChange={this.htpasswdFileChanged}
+              inputFileData={htpasswdFileContent}
+              id="htpasswd-file"
+              label="HTPasswd File"
+              inputFieldHelpText="Upload an HTPasswd file created using the htpasswd command."
+              isRequired
+              hideContents
+            />
+          </div>
+          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                Add
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    );
   }
 }
 

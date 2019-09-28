@@ -10,9 +10,19 @@ describe(DetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<DetailsPageProps>;
 
   beforeEach(() => {
-    const match = {params: {ns: 'default'}, isExact: true, path: '', url: ''};
+    const match = { params: { ns: 'default' }, isExact: true, path: '', url: '' };
 
-    wrapper = shallow(<DetailsPage match={match} name="test-name" namespace="default" kind={referenceForModel(PodModel)} pages={[]} />).childAt(0).shallow();
+    wrapper = shallow(
+      <DetailsPage
+        match={match}
+        name="test-name"
+        namespace="default"
+        kind={referenceForModel(PodModel)}
+        pages={[]}
+      />,
+    )
+      .childAt(0)
+      .shallow();
   });
 
   it('renders a `Firehose` using the given props', () => {
@@ -26,14 +36,16 @@ describe(DetailsPage.displayName, () => {
   });
 
   it('adds extra resources to `Firehose` if provided in props', () => {
-    const resources = [{
-      kind: referenceForModel(ConfigMapModel),
-      name: 'test-configmap',
-      namespace: 'kube-system',
-      isList: false,
-      prop: 'configMap',
-    }];
-    wrapper = wrapper.setProps({resources});
+    const resources = [
+      {
+        kind: referenceForModel(ConfigMapModel),
+        name: 'test-configmap',
+        namespace: 'kube-system',
+        isList: false,
+        prop: 'configMap',
+      },
+    ];
+    wrapper = wrapper.setProps({ resources });
 
     expect(wrapper.find<any>(Firehose).props().resources.length).toEqual(resources.length + 1);
     resources.forEach((resource, i) => {

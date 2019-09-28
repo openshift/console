@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {PromiseComponent} from '../utils';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { PromiseComponent } from '../utils';
 
 class ConfirmModal extends PromiseComponent {
   constructor(props) {
@@ -17,16 +17,24 @@ class ConfirmModal extends PromiseComponent {
     this.handlePromise(
       this.props.executeFn(null, {
         supressNotifications: true,
-      })
+      }),
     ).then(this.props.close);
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" className="modal-content">
-      <ModalTitle>{this.props.title}</ModalTitle>
-      <ModalBody>{this.props.message}</ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} cancelText={this.props.cancelText || 'Cancel'} />
-    </form>;
+    return (
+      <form onSubmit={this._submit} name="form" className="modal-content">
+        <ModalTitle>{this.props.title}</ModalTitle>
+        <ModalBody>{this.props.message}</ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText={this.props.btnText || 'Confirm'}
+          cancel={this._cancel}
+          cancelText={this.props.cancelText || 'Cancel'}
+        />
+      </form>
+    );
   }
 }
 ConfirmModal.propTypes = {

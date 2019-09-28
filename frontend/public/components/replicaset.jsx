@@ -26,7 +26,7 @@ import { VolumesTable } from './volumes-table';
 import { ReplicaSetModel } from '../models';
 import { fromNow } from './utils/datetime';
 
-const {ModifyCount, AddStorage, common} = Kebab.factory;
+const { ModifyCount, AddStorage, common } = Kebab.factory;
 
 export const replicaSetMenuActions = [
   ModifyCount,
@@ -35,51 +35,74 @@ export const replicaSetMenuActions = [
   ...common,
 ];
 
-const Details = ({obj: replicaSet}) => {
-  const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Replica Set Overview" />
-      <div className="row">
-        <div className="col-md-6">
-          <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
-            {revision && <React.Fragment>
-              <dt>Deployment Revision</dt>
-              <dd>{revision}</dd>
-            </React.Fragment>}
-          </ResourceSummary>
-        </div>
-        <div className="col-md-6">
-          <ResourcePodCount resource={replicaSet} />
+const Details = ({ obj: replicaSet }) => {
+  const revision = _.get(replicaSet, [
+    'metadata',
+    'annotations',
+    'deployment.kubernetes.io/revision',
+  ]);
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Replica Set Overview" />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
+              {revision && (
+                <React.Fragment>
+                  <dt>Deployment Revision</dt>
+                  <dd>{revision}</dd>
+                </React.Fragment>
+              )}
+            </ResourceSummary>
+          </div>
+          <div className="col-md-6">
+            <ResourcePodCount resource={replicaSet} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Containers" />
-      <ContainerTable containers={replicaSet.spec.template.spec.containers} />
-    </div>
-    <div className="co-m-pane__body">
-      <VolumesTable resource={replicaSet} heading="Volumes" />
-    </div>
-  </React.Fragment>;
+      <div className="co-m-pane__body">
+        <SectionHeading text="Containers" />
+        <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+      </div>
+      <div className="co-m-pane__body">
+        <VolumesTable resource={replicaSet} heading="Volumes" />
+      </div>
+    </React.Fragment>
+  );
 };
 
-const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
+const EnvironmentPage = (props) => (
+  <AsyncComponent
+    loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
+    {...props}
+  />
+);
 
-const envPath = ['spec','template','spec','containers'];
-const environmentComponent = (props) => <EnvironmentPage
-  obj={props.obj}
-  rawEnvData={props.obj.spec.template.spec}
-  envPath={envPath}
-  readOnly={false}
-/>;
+const envPath = ['spec', 'template', 'spec', 'containers'];
+const environmentComponent = (props) => (
+  <EnvironmentPage
+    obj={props.obj}
+    rawEnvData={props.obj.spec.template.spec}
+    envPath={envPath}
+    readOnly={false}
+  />
+);
 
-const {details, editYaml, pods, envEditor, events} = navFactory;
-const ReplicaSetsDetailsPage = props => <DetailsPage
-  {...props}
-  menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
-/>;
+const { details, editYaml, pods, envEditor, events } = navFactory;
+const ReplicaSetsDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    menuActions={replicaSetMenuActions}
+    pages={[
+      details(Details),
+      editYaml(),
+      pods(),
+      envEditor(environmentComponent),
+      events(ResourceEventStream),
+    ]}
+  />
+);
 
 const kind = 'ReplicaSet';
 
@@ -93,20 +116,32 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ReplicaSetTableRow = ({obj, index, key, style}) => {
+const ReplicaSetTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
+        <ResourceLink
+          kind={kind}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.uid}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+        <ResourceLink
+          kind="Namespace"
+          name={obj.metadata.namespace}
+          title={obj.metadata.namespace}
+        />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
+        <Link
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          title="pods"
+        >
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
       </TableData>
@@ -127,37 +162,61 @@ ReplicaSetTableRow.displayName = 'ReplicaSetTableRow';
 const ReplicaSetTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      title: 'Labels',
+      sortField: 'metadata.labels',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status', sortFunc: 'numReplicas', transforms: [sortable],
+      title: 'Status',
+      sortFunc: 'numReplicas',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Owner', sortField: 'metadata.ownerReferences[0].name', transforms: [sortable],
+      title: 'Owner',
+      sortField: 'metadata.ownerReferences[0].name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
-    { title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
     },
     {
-      title: '', props: { className: tableColumnClasses[6] },
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
 
 ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
 
-const ReplicaSetsList = props => <Table {...props} aria-label="Replicate Sets" Header={ReplicaSetTableHeader} Row={ReplicaSetTableRow} virtualize />;
-const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
+const ReplicaSetsList = (props) => (
+  <Table
+    {...props}
+    aria-label="Replicate Sets"
+    Header={ReplicaSetTableHeader}
+    Row={ReplicaSetTableRow}
+    virtualize
+  />
+);
+const ReplicaSetsPage = (props) => (
+  <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />
+);
 
-export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};
+export { ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage };

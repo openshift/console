@@ -1,15 +1,25 @@
 import * as React from 'react';
 
-import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardTitle, DashboardCardLink } from '../../dashboard/dashboard-card';
+import {
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardBody,
+  DashboardCardTitle,
+  DashboardCardLink,
+} from '../../dashboard/dashboard-card';
 import { EventsBody } from '../../dashboard/events-card/events-body';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { EventModel } from '../../../models';
 import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventKind } from '../../../module/k8s';
 
-const eventsResource: FirehoseResource = {isList: true, kind: EventModel.kind, prop: 'events'};
+const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
-const EventsCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWatchK8sResource, resources }) => {
+const EventsCard_: React.FC<DashboardItemProps> = ({
+  watchK8sResource,
+  stopWatchK8sResource,
+  resources,
+}) => {
   React.useEffect(() => {
     watchK8sResource(eventsResource);
     return () => stopWatchK8sResource(eventsResource);

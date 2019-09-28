@@ -25,12 +25,13 @@ describe('CRD extensions', () => {
       },
       spec: {
         displayName: name,
-        description: 'This is an example CLI download description that can include markdown such as paragraphs, unordered lists, code, [links](https://www.example.com), etc.',
-        links: [{href: 'https://www.example.com'}],
+        description:
+          'This is an example CLI download description that can include markdown such as paragraphs, unordered lists, code, [links](https://www.example.com), etc.',
+        links: [{ href: 'https://www.example.com' }],
       },
     };
 
-    it(`displays YAML editor for creating a new ${crd} instance`, async() => {
+    it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -41,24 +42,24 @@ describe('CRD extensions', () => {
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
-    it(`creates a new ${crd} instance`, async() => {
+    it(`creates a new ${crd} instance`, async () => {
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it(`displays detail view for ${crd} instance`, async() => {
+    it(`displays detail view for ${crd} instance`, async () => {
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain(`/${name}`);
       expect(crudView.resourceTitle.getText()).toEqual(name);
     });
 
-    it(`displays the ${crd} instance on the Command Line Tools page`, async() => {
+    it(`displays the ${crd} instance on the Command Line Tools page`, async () => {
       await browser.get(`${appHost}/command-line-tools`);
       await browser.wait(until.presenceOf($(`[data-test-id=${name}]`)));
       expect($(`[data-test-id=${name}]`).getText()).toEqual(name);
     });
 
-    it(`deletes the ${crd} instance`, async() => {
+    it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -73,63 +74,87 @@ describe('CRD extensions', () => {
   describe('ConsoleLink CRD', () => {
     const crd = 'ConsoleLink';
     const name = `${testName}-cl`;
-    const testObjs = [{
-      name,
-      dropdownMenuName: 'help menu',
-      dropdownToggle: $('[data-test=help-dropdown-toggle] .pf-c-app-launcher__toggle'),
-      menuLinkLocation: 'HelpMenu',
-      menuLinkText: `${name} help menu link`,
-    }, {
-      name,
-      dropdownMenuName: 'user menu',
-      dropdownToggle: $('[data-test=user-dropdown] .pf-c-app-launcher__toggle'),
-      menuLinkLocation: 'UserMenu',
-      menuLinkText: `${name} user menu link`,
-    }];
+    const testObjs = [
+      {
+        name,
+        dropdownMenuName: 'help menu',
+        dropdownToggle: $('[data-test=help-dropdown-toggle] .pf-c-app-launcher__toggle'),
+        menuLinkLocation: 'HelpMenu',
+        menuLinkText: `${name} help menu link`,
+      },
+      {
+        name,
+        dropdownMenuName: 'user menu',
+        dropdownToggle: $('[data-test=user-dropdown] .pf-c-app-launcher__toggle'),
+        menuLinkLocation: 'UserMenu',
+        menuLinkText: `${name} user menu link`,
+      },
+    ];
 
-    testObjs.forEach(({name: instanceName, dropdownMenuName, dropdownToggle, menuLinkLocation, menuLinkText}) => {
-      it(`displays YAML editor for creating a new ${crd} ${dropdownMenuName} instance`, async() => {
-        await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
-        await crudView.isLoaded();
-        await crudView.clickKebabAction(crd, 'View Instances');
-        await crudView.isLoaded();
-        await crudView.createYAMLButton.click();
-        await yamlView.isLoaded();
-        const content = await yamlView.getEditorContent();
-        const newContent = _.defaultsDeep({}, {metadata: {name: instanceName}, spec: {location: menuLinkLocation, text: menuLinkText}}, safeLoad(content));
-        await yamlView.setEditorContent(safeDump(newContent));
-        expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
-      });
+    testObjs.forEach(
+      ({
+        name: instanceName,
+        dropdownMenuName,
+        dropdownToggle,
+        menuLinkLocation,
+        menuLinkText,
+      }) => {
+        it(`displays YAML editor for creating a new ${crd} ${dropdownMenuName} instance`, async () => {
+          await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+          await crudView.isLoaded();
+          await crudView.clickKebabAction(crd, 'View Instances');
+          await crudView.isLoaded();
+          await crudView.createYAMLButton.click();
+          await yamlView.isLoaded();
+          const content = await yamlView.getEditorContent();
+          const newContent = _.defaultsDeep(
+            {},
+            {
+              metadata: { name: instanceName },
+              spec: { location: menuLinkLocation, text: menuLinkText },
+            },
+            safeLoad(content),
+          );
+          await yamlView.setEditorContent(safeDump(newContent));
+          expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
+        });
 
-      it(`creates a new ${crd} ${dropdownMenuName} instance`, async() => {
-        await yamlView.saveButton.click();
-        expect(crudView.errorMessage.isPresent()).toBe(false);
-      });
+        it(`creates a new ${crd} ${dropdownMenuName} instance`, async () => {
+          await yamlView.saveButton.click();
+          expect(crudView.errorMessage.isPresent()).toBe(false);
+        });
 
-      it(`displays detail view for ${crd} ${dropdownMenuName} instance`, async() => {
-        await browser.wait(until.presenceOf(crudView.resourceTitle));
-        expect(browser.getCurrentUrl()).toContain(`/${instanceName}`);
-        expect(crudView.resourceTitle.getText()).toEqual(instanceName);
-      });
+        it(`displays detail view for ${crd} ${dropdownMenuName} instance`, async () => {
+          await browser.wait(until.presenceOf(crudView.resourceTitle));
+          expect(browser.getCurrentUrl()).toContain(`/${instanceName}`);
+          expect(crudView.resourceTitle.getText()).toEqual(instanceName);
+        });
 
-      it(`displays the ${crd} instance in the ${dropdownMenuName}`, async() => {
-        await browser.get(`${appHost}`);
-        // reload the app so the new CRD link is visible
-        await browser.refresh();
-        await browser.wait(until.presenceOf(dropdownToggle));
-        await browser.wait(dropdownToggle.click());
-        await browser.wait(until.presenceOf(element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText))));
-        expect(element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText)).getText()).toContain(menuLinkText);
-      });
+        it(`displays the ${crd} instance in the ${dropdownMenuName}`, async () => {
+          await browser.get(`${appHost}`);
+          // reload the app so the new CRD link is visible
+          await browser.refresh();
+          await browser.wait(until.presenceOf(dropdownToggle));
+          await browser.wait(dropdownToggle.click());
+          await browser.wait(
+            until.presenceOf(
+              element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText)),
+            ),
+          );
+          expect(
+            element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText)).getText(),
+          ).toContain(menuLinkText);
+        });
 
-      it(`deletes the ${crd} ${dropdownMenuName} instance`, async() => {
-        await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
-        await crudView.isLoaded();
-        await crudView.clickKebabAction(crd, 'View Instances');
-        await crudView.resourceRowsPresent();
-        await crudView.deleteRow(crd)(instanceName);
-      });
-    });
+        it(`deletes the ${crd} ${dropdownMenuName} instance`, async () => {
+          await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+          await crudView.isLoaded();
+          await crudView.clickKebabAction(crd, 'View Instances');
+          await crudView.resourceRowsPresent();
+          await crudView.deleteRow(crd)(instanceName);
+        });
+      },
+    );
   });
 
   describe('ConsoleNotification CRD', () => {
@@ -139,7 +164,7 @@ describe('CRD extensions', () => {
     let text = `${name} notification that appears ${location}`;
     let notification = $(`[data-test=${name}-${location}]`);
 
-    it(`displays YAML editor for creating a new ${crd} instance`, async() => {
+    it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -147,34 +172,38 @@ describe('CRD extensions', () => {
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {metadata: {name}, spec: {location, text}}, safeLoad(content));
+      const newContent = _.defaultsDeep(
+        {},
+        { metadata: { name }, spec: { location, text } },
+        safeLoad(content),
+      );
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
-    it(`creates a new ${crd} instance`, async() => {
+    it(`creates a new ${crd} instance`, async () => {
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it(`displays detail view for ${crd} instance`, async() => {
+    it(`displays detail view for ${crd} instance`, async () => {
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain(`/${name}`);
       expect(crudView.resourceTitle.getText()).toEqual(name);
     });
 
-    it(`displays the ${crd} instance`, async() => {
+    it(`displays the ${crd} instance`, async () => {
       await browser.wait(until.presenceOf(notification));
       expect(notification.getText()).toContain(text);
     });
 
-    it(`displays YAML editor for modifying the location of ${crd} instance`, async() => {
+    it(`displays YAML editor for modifying the location of ${crd} instance`, async () => {
       location = 'BannerBottom';
       text = `${name} notification that appears ${location}`;
       await browser.getCurrentUrl().then((url) => browser.get(`${url}/yaml`));
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {spec: {location, text}}, safeLoad(content));
+      const newContent = _.defaultsDeep({}, { spec: { location, text } }, safeLoad(content));
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`location: ${location}`);
       await yamlView.saveButton.click();
@@ -182,7 +211,7 @@ describe('CRD extensions', () => {
       expect(crudView.successMessage.isPresent()).toBe(true);
     });
 
-    it(`displays the ${crd} instance in its new location`, async() => {
+    it(`displays the ${crd} instance in its new location`, async () => {
       location = 'BannerBottom';
       notification = $(`[data-test=${name}-${location}]`);
       text = `${name} notification that appears ${location}`;
@@ -190,7 +219,7 @@ describe('CRD extensions', () => {
       expect(notification.getText()).toContain(text);
     });
 
-    it(`deletes the ${crd} instance`, async() => {
+    it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -207,7 +236,7 @@ describe('CRD extensions', () => {
     const text = `${name} Logs`;
     const namespaceFilter = '^openshift-';
 
-    it(`displays YAML editor for creating a new ${crd} instance`, async() => {
+    it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -215,42 +244,50 @@ describe('CRD extensions', () => {
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {metadata: {name}, spec: {text}}, safeLoad(content));
+      const newContent = _.defaultsDeep(
+        {},
+        { metadata: { name }, spec: { text } },
+        safeLoad(content),
+      );
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
-    it(`creates a new ${crd} instance`, async() => {
+    it(`creates a new ${crd} instance`, async () => {
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it(`displays detail view for ${crd} instance`, async() => {
+    it(`displays detail view for ${crd} instance`, async () => {
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain(`/${name}`);
       expect(crudView.resourceTitle.getText()).toEqual(name);
     });
 
-    it(`creates a new test pod to display the ${crd} instance`, async() => {
+    it(`creates a new test pod to display the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/pods`);
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {metadata: {name: podName, labels: {app: name}}}, safeLoad(content));
+      const newContent = _.defaultsDeep(
+        {},
+        { metadata: { name: podName, labels: { app: name } } },
+        safeLoad(content),
+      );
       await yamlView.setEditorContent(safeDump(newContent));
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it(`displays the ${crd} instance on the test pod`, async() => {
+    it(`displays the ${crd} instance on the test pod`, async () => {
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       await browser.getCurrentUrl().then((url) => browser.get(`${url}/logs`));
       await browser.wait(until.presenceOf(cell));
       expect(cell.getText()).toContain(text);
     });
 
-    it(`displays YAML editor for adding namespaceFilter to the ${crd} instance`, async() => {
+    it(`displays YAML editor for adding namespaceFilter to the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');
@@ -258,7 +295,7 @@ describe('CRD extensions', () => {
       await crudView.editRow(crd)(name);
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {spec: {namespaceFilter}}, safeLoad(content));
+      const newContent = _.defaultsDeep({}, { spec: { namespaceFilter } }, safeLoad(content));
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`namespaceFilter: ${namespaceFilter}`);
       await yamlView.saveButton.click();
@@ -266,19 +303,19 @@ describe('CRD extensions', () => {
       expect(crudView.successMessage.isPresent()).toBe(true);
     });
 
-    it(`does not display the ${crd} instance on the test pod`, async() => {
+    it(`does not display the ${crd} instance on the test pod`, async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/pods/${podName}/logs`);
       await crudView.isLoaded();
       expect(cell.isPresent()).toBe(false);
     });
 
-    it('deletes the test pod', async() => {
+    it('deletes the test pod', async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/pods?name=${podName}`);
       await crudView.isLoaded();
       await crudView.deleteRow('Pod')(podName);
     });
 
-    it(`deletes the ${crd} instance`, async() => {
+    it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View Instances');

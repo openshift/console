@@ -8,10 +8,14 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { Dropdown, history, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 import { RadioInput } from '../radio';
 
-const workloadResourceModels = [ DeploymentModel, DeploymentConfigModel, StatefulSetModel ];
-const getContainers = (workload: K8sResourceKind) => _.get(workload, 'spec.template.spec.containers') || [];
+const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
+const getContainers = (workload: K8sResourceKind) =>
+  _.get(workload, 'spec.template.spec.containers') || [];
 
-export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloadModalProps, AddSecretToWorkloadModalState> {
+export class AddSecretToWorkloadModal extends React.Component<
+  AddSecretToWorkloadModalProps,
+  AddSecretToWorkloadModalState
+> {
   state = {
     inProgress: false,
     errorMessage: '',
@@ -26,25 +30,31 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
   componentDidMount() {
     const { namespace } = this.props;
     const opts = { ns: namespace };
-    Promise.all(workloadResourceModels.map(model => {
-      return k8sList(model, opts)
-        .catch(err => {
-          const errorMessage = err.message;
-          this.setState({ errorMessage });
-          return [];
-        })
-        .then((res: K8sResourceKind[]): WorkloadItem[] => res.map(obj => ({ model, obj })));
-    })).then((responses) => {
+    Promise.all(
+      workloadResourceModels.map((model) => {
+        return k8sList(model, opts)
+          .catch((err) => {
+            const errorMessage = err.message;
+            this.setState({ errorMessage });
+            return [];
+          })
+          .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj })));
+      }),
+    ).then((responses) => {
       // TODO: Group by kind.
       const allItems: WorkloadItem[] = _.flatten(responses);
       const workloadsByUID = _.keyBy(allItems, 'obj.metadata.uid');
       const sortedItems = _.orderBy(allItems, ['obj.metadata.name', 'model.kind'], ['asc', 'asc']);
-      const workloadOptions = _.reduce(sortedItems, (options, item) => {
-        const { name, uid } = item.obj.metadata;
-        options[uid] = <ResourceName kind={item.model.kind} name={name} />;
-        return options;
-      }, {});
-      this.setState({workloadOptions, workloadsByUID});
+      const workloadOptions = _.reduce(
+        sortedItems,
+        (options, item) => {
+          const { name, uid } = item.obj.metadata;
+          options[uid] = <ResourceName kind={item.model.kind} name={name} />;
+          return options;
+        },
+        {},
+      );
+      this.setState({ workloadOptions, workloadsByUID });
     });
   }
 
@@ -54,20 +64,20 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
 
   onWorkloadChange = (selectedWorkloadUID: string) => {
     this.setState({ selectedWorkloadUID });
-  }
+  };
 
-  handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
+  handleChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
     this.setState({
       [name]: value,
     } as any);
-  }
+  };
 
-  onAddAsChange: React.ReactEventHandler<HTMLInputElement> = event => {
+  onAddAsChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({
       addAs: event.currentTarget.value,
     });
-  }
+  };
 
   getEnvPatches(obj) {
     const { secretName } = this.props;
@@ -123,7 +133,7 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
     const volumePatch = _.isEmpty(existingVolumes)
       ? { op: 'add', path: '/spec/template/spec/volumes', value: [volume] }
       : { op: 'add', path: '/spec/template/spec/volumes/-', value: volume };
-    return [ ...patches, volumePatch ];
+    return [...patches, volumePatch];
   }
 
   getPatches(obj) {
@@ -146,13 +156,15 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
     const workload = workloadsByUID[selectedWorkloadUID];
     const { model, obj } = workload;
     const patches = this.getPatches(obj);
-    k8sPatch(model, obj, patches).then(() => {
-      this.setState({ inProgress: false });
-      this.props.close();
-      const { name, namespace } = obj.metadata;
-      history.push(resourcePathFromModel(model, name, namespace));
-    }).catch(({message: errorMessage}) => this.setState({ inProgress: false, errorMessage }));
-  }
+    k8sPatch(model, obj, patches)
+      .then(() => {
+        this.setState({ inProgress: false });
+        this.props.close();
+        const { name, namespace } = obj.metadata;
+        history.push(resourcePathFromModel(model, name, namespace));
+      })
+      .catch(({ message: errorMessage }) => this.setState({ inProgress: false, errorMessage }));
+  };
 
   render() {
     const { secretName } = this.props;
@@ -161,59 +173,101 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
     const addAsVolume = addAs === 'volume';
     const selectWorkloadPlaceholder = 'Select a workload';
 
-    return <form onSubmit={this.submit} name="co-add-secret-to-workload" className="co-add-secret-to-workload modal-content">
-      <ModalTitle>Add Secret to Workload</ModalTitle>
-      <ModalBody>
-        <p>
-          Add all values from <ResourceIcon kind="Secret" />{secretName} to a
-          workload as environment variables or a volume.
-        </p>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="co-add-secret-to-workload__workload">Add this secret to workload</label>
-          <Dropdown
-            items={workloadOptions}
-            selectedKey={selectedWorkloadUID}
-            title={selectWorkloadPlaceholder}
-            onChange={this.onWorkloadChange}
-            autocompleteFilter={this.autocompleteFilter}
-            autocompletePlaceholder={selectWorkloadPlaceholder}
-            id="co-add-secret-to-workload__workload"
-          />
-        </div>
-        <fieldset>
-          <legend className="co-legend co-required">Add secret as</legend>
-          <RadioInput title="Enviroment Variables" name="co-add-secret-to-workload__add-as" id="co-add-secret-to-workload__envvars" value="environment" onChange={this.onAddAsChange} checked={addAsEnvironment} />
-          {addAsEnvironment && <div className="co-m-radio-desc">
-            <div className="form-group">
-              <label htmlFor="co-add-secret-to-workload__prefix">Prefix</label>
-              <input className="pf-c-form-control"
-                name="prefix"
-                id="co-add-secret-to-workload__prefix"
-                placeholder="(optional)"
-                type="text"
-                onChange={this.handleChange} />
-            </div>
-          </div>}
-          <RadioInput title="Volume" name="co-add-secret-to-workload__add-as" id="co-add-secret-to-workload__volume" value="volume" onChange={this.onAddAsChange} checked={addAsVolume} />
-          {addAsVolume && <div className="co-m-radio-desc">
-            <div className="form-group">
-              <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">Mount Path</label>
-              <input className="pf-c-form-control"
-                name="mountPath"
-                id="co-add-secret-to-workload__mountpath"
-                type="text"
-                onChange={this.handleChange}
-                required />
-            </div>
-          </div>}
-        </fieldset>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={this.props.cancel} />
-    </form>;
+    return (
+      <form
+        onSubmit={this.submit}
+        name="co-add-secret-to-workload"
+        className="co-add-secret-to-workload modal-content"
+      >
+        <ModalTitle>Add Secret to Workload</ModalTitle>
+        <ModalBody>
+          <p>
+            Add all values from <ResourceIcon kind="Secret" />
+            {secretName} to a workload as environment variables or a volume.
+          </p>
+          <div className="form-group">
+            <label
+              className="control-label co-required"
+              htmlFor="co-add-secret-to-workload__workload"
+            >
+              Add this secret to workload
+            </label>
+            <Dropdown
+              items={workloadOptions}
+              selectedKey={selectedWorkloadUID}
+              title={selectWorkloadPlaceholder}
+              onChange={this.onWorkloadChange}
+              autocompleteFilter={this.autocompleteFilter}
+              autocompletePlaceholder={selectWorkloadPlaceholder}
+              id="co-add-secret-to-workload__workload"
+            />
+          </div>
+          <fieldset>
+            <legend className="co-legend co-required">Add secret as</legend>
+            <RadioInput
+              title="Enviroment Variables"
+              name="co-add-secret-to-workload__add-as"
+              id="co-add-secret-to-workload__envvars"
+              value="environment"
+              onChange={this.onAddAsChange}
+              checked={addAsEnvironment}
+            />
+            {addAsEnvironment && (
+              <div className="co-m-radio-desc">
+                <div className="form-group">
+                  <label htmlFor="co-add-secret-to-workload__prefix">Prefix</label>
+                  <input
+                    className="pf-c-form-control"
+                    name="prefix"
+                    id="co-add-secret-to-workload__prefix"
+                    placeholder="(optional)"
+                    type="text"
+                    onChange={this.handleChange}
+                  />
+                </div>
+              </div>
+            )}
+            <RadioInput
+              title="Volume"
+              name="co-add-secret-to-workload__add-as"
+              id="co-add-secret-to-workload__volume"
+              value="volume"
+              onChange={this.onAddAsChange}
+              checked={addAsVolume}
+            />
+            {addAsVolume && (
+              <div className="co-m-radio-desc">
+                <div className="form-group">
+                  <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
+                    Mount Path
+                  </label>
+                  <input
+                    className="pf-c-form-control"
+                    name="mountPath"
+                    id="co-add-secret-to-workload__mountpath"
+                    type="text"
+                    onChange={this.handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+          </fieldset>
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText="Save"
+          cancel={this.props.cancel}
+        />
+      </form>
+    );
   }
 }
 
-export const configureAddSecretToWorkloadModal = createModalLauncher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModal);
+export const configureAddSecretToWorkloadModal = createModalLauncher<AddSecretToWorkloadModalProps>(
+  AddSecretToWorkloadModal,
+);
 
 type WorkloadItem = {
   model: K8sKind;

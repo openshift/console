@@ -8,27 +8,27 @@ import { K8sResourceKind } from '../../public/module/k8s';
 describe(RouteLocation.displayName, () => {
   it('renders a https link when TLS Settings', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'spec': {
-        'host': 'www.example.com',
-        'tls': {
-          'termination': 'edge',
+      spec: {
+        host: 'www.example.com',
+        tls: {
+          termination: 'edge',
         },
-        'wildcardPolicy': 'None',
+        wildcardPolicy: 'None',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'host': 'www.example.com',
-            'conditions': [
+            host: 'www.example.com',
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -43,24 +43,24 @@ describe(RouteLocation.displayName, () => {
 
   it('renders a http link when no TLS Settings', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'spec': {
-        'host': 'www.example.com',
-        'wildcardPolicy': 'None',
+      spec: {
+        host: 'www.example.com',
+        wildcardPolicy: 'None',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'host': 'www.example.com',
-            'conditions': [
+            host: 'www.example.com',
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -75,25 +75,25 @@ describe(RouteLocation.displayName, () => {
 
   it('renders additional path in url', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'spec': {
-        'host': 'www.example.com',
-        'path': '\\mypath',
-        'wildcardPolicy': 'None',
+      spec: {
+        host: 'www.example.com',
+        path: '\\mypath',
+        wildcardPolicy: 'None',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'host': 'www.example.com',
-            'conditions': [
+            host: 'www.example.com',
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -108,24 +108,24 @@ describe(RouteLocation.displayName, () => {
 
   it('renders Subdomain', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'spec': {
-        'host': 'www.example.com',
-        'wildcardPolicy': 'Subdomain',
+      spec: {
+        host: 'www.example.com',
+        wildcardPolicy: 'Subdomain',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'host': 'www.example.com',
-            'conditions': [
+            host: 'www.example.com',
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -140,24 +140,24 @@ describe(RouteLocation.displayName, () => {
 
   it('renders non-admitted label', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'spec': {
-        'host': 'www.example.com',
-        'wildcardPolicy': 'None',
+      spec: {
+        host: 'www.example.com',
+        wildcardPolicy: 'None',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'host': 'www.example.com',
-            'conditions': [
+            host: 'www.example.com',
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'False',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'False',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -171,23 +171,22 @@ describe(RouteLocation.displayName, () => {
   });
 });
 
-
 describe(RouteStatus.displayName, () => {
   it('renders Accepted status', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'conditions': [
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -203,19 +202,19 @@ describe(RouteStatus.displayName, () => {
 
   it('renders Rejected status', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
-      'status': {
-        'ingress': [
+      status: {
+        ingress: [
           {
-            'conditions': [
+            conditions: [
               {
-                'type': 'Admitted',
-                'status': 'False',
-                'lastTransitionTime': '2018-04-30T16:55:48Z',
+                type: 'Admitted',
+                status: 'False',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
               },
             ],
           },
@@ -231,9 +230,9 @@ describe(RouteStatus.displayName, () => {
 
   it('renders Pending status', () => {
     const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
         name: 'example',
       },
     };

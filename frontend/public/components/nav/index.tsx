@@ -23,5 +23,5 @@ export const Navigation: React.FC<NavigationProps> = React.memo(
       isNavOpen={isNavOpen}
       theme="dark"
     />
-  )
+  ),
 );

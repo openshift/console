@@ -31,27 +31,31 @@ const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
   href: `/settings/idp/${id}`,
 }));
 
-const ItemRow = ({item}) => {
+const ItemRow = ({ item }) => {
   const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
   const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
   const menuItems = [
     editYAMLMenuItem(item.kind, resourceLink),
     viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
-    ...(item.kind === 'OAuth') ? oauthMenuItems : [],
+    ...(item.kind === 'OAuth' ? oauthMenuItems : []),
   ];
   const description = getResourceDescription(item.model);
 
-  return <div className="row co-resource-list__item" data-test-action={item.kind}>
-    <div className="col-xs-10 col-sm-4">
-      <Link to={resourceLink} data-test-id={item.kind}>{item.kind}</Link>
+  return (
+    <div className="row co-resource-list__item" data-test-action={item.kind}>
+      <div className="col-xs-10 col-sm-4">
+        <Link to={resourceLink} data-test-id={item.kind}>
+          {item.kind}
+        </Link>
+      </div>
+      <div className="hidden-xs col-sm-7">
+        <div className="co-line-clamp">{description || '-'}</div>
+      </div>
+      <div className="dropdown-kebab-pf">
+        <Kebab options={menuItems} />
+      </div>
     </div>
-    <div className="hidden-xs col-sm-7">
-      <div className="co-line-clamp">{description || '-'}</div>
-    </div>
-    <div className="dropdown-kebab-pf">
-      <Kebab options={menuItems} />
-    </div>
-  </div>;
+  );
 };
 
 class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalConfigPageState> {
@@ -59,7 +63,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     errorMessage: '',
     items: [],
     loading: true,
-  }
+  };
 
   getGlobalConfigs(): plugins.GlobalConfig[] {
     return plugins.registry.getGlobalConfigs();
@@ -67,16 +71,25 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
 
   componentDidMount() {
     let errorMessage = '';
-    Promise.all(this.props.configResources.map((model: K8sKind) => {
-      return k8sList(model)
-        .catch(err => {
-          errorMessage += `${err.message} `;
-          this.setState({ errorMessage });
-          return [];
-        }).then(items => items.map((i: K8sKind) => ({...i, model})));
-    })).then((responses) => {
+    Promise.all(
+      this.props.configResources.map((model: K8sKind) => {
+        return k8sList(model)
+          .catch((err) => {
+            errorMessage += `${err.message} `;
+            this.setState({ errorMessage });
+            return [];
+          })
+          .then((items) => items.map((i: K8sKind) => ({ ...i, model })));
+      }),
+    ).then((responses) => {
       const flattenedResponses = _.flatten(responses);
-      const winnowedResponses = flattenedResponses.map(item => ({model: item.model, uid: item.metadata.uid, name: item.metadata.name, namespace: item.metadata.namespace, kind: item.kind}));
+      const winnowedResponses = flattenedResponses.map((item) => ({
+        model: item.model,
+        uid: item.metadata.uid,
+        name: item.metadata.name,
+        namespace: item.metadata.namespace,
+        kind: item.kind,
+      }));
       const sortedResponses = _.sortBy(_.flatten(winnowedResponses), 'kind', 'asc');
 
       this.setState({
@@ -91,9 +104,10 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     const { required } = c.properties;
 
     const requiredArray = required ? _.castArray(required) : [];
-    const requirementMissing = _.some(requiredArray, flag => (
-      flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-    ));
+    const requirementMissing = _.some(
+      requiredArray,
+      (flag) => flag && (flagPending(flags.get(flag)) || !flags.get(flag)),
+    );
     return requirementMissing ? null : c.properties;
   }
 
@@ -101,29 +115,42 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     const { errorMessage, items, loading } = this.state;
 
     const globalConfigs = this.getGlobalConfigs();
-    const usableConfigs = globalConfigs.filter(item => this.checkFlags(item)).map(item => item.properties);
+    const usableConfigs = globalConfigs
+      .filter((item) => this.checkFlags(item))
+      .map((item) => item.properties);
     const allItems = usableConfigs.length > 0 && items.concat(usableConfigs);
-    const sortedItems = usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
+    const sortedItems =
+      usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
 
-    return <div className="co-m-pane__body">
-      {errorMessage && <Alert isInline className="co-alert" variant="danger" title="Error loading resources">{errorMessage}</Alert>}
-      {loading && <LoadingBox />}
-      {!loading && <React.Fragment>
-        <p className="co-m-pane__explanation">
-          Edit the following resources to manage the configuration of your cluster.
-        </p>
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-xs-10 col-sm-4">Configuration Resource</div>
-            <div className="hidden-xs col-sm-7">Description</div>
-            <div></div>
-          </div>
-          <div className="co-m-table-grid__body">
-            { _.map(sortedItems, item => <ItemRow item={item} key={item.uid} />)}
-          </div>
-        </div>
-      </React.Fragment>}
-    </div>;
+    return (
+      <div className="co-m-pane__body">
+        {errorMessage && (
+          <Alert isInline className="co-alert" variant="danger" title="Error loading resources">
+            {errorMessage}
+          </Alert>
+        )}
+        {loading && <LoadingBox />}
+        {!loading && (
+          <React.Fragment>
+            <p className="co-m-pane__explanation">
+              Edit the following resources to manage the configuration of your cluster.
+            </p>
+            <div className="co-m-table-grid co-m-table-grid--bordered">
+              <div className="row co-m-table-grid__head">
+                <div className="col-xs-10 col-sm-4">Configuration Resource</div>
+                <div className="hidden-xs col-sm-7">Description</div>
+                <div />
+              </div>
+              <div className="co-m-table-grid__body">
+                {_.map(sortedItems, (item) => (
+                  <ItemRow item={item} key={item.uid} />
+                ))}
+              </div>
+            </div>
+          </React.Fragment>
+        )}
+      </div>
+    );
   }
 }
 
@@ -135,9 +162,9 @@ type GlobalConfigPageProps = {
 };
 
 type GlobalConfigPageState = {
-  errorMessage: string,
-  items: any,
-  loading: boolean,
+  errorMessage: string;
+  items: any;
+  loading: boolean;
 };
 
 type GlobalConfigObjectProps = {
@@ -146,4 +173,4 @@ type GlobalConfigObjectProps = {
   name: string;
   namespace: string;
   uid: string;
-}
+};

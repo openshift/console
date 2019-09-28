@@ -66,7 +66,10 @@ allModels().forEach((v, k) => {
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
 
-export const formatNamespacedRouteForResource = (resource, activeNamespace = getActiveNamespace()) => {
+export const formatNamespacedRouteForResource = (
+  resource,
+  activeNamespace = getActiveNamespace(),
+) => {
   return activeNamespace === ALL_NAMESPACES_KEY
     ? `/k8s/all-namespaces/${resource}`
     : `/k8s/ns/${activeNamespace}/${resource}`;
@@ -75,7 +78,7 @@ export const formatNamespacedRouteForResource = (resource, activeNamespace = get
 export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
-  let parts = path.split('/').filter(p => p);
+  let parts = path.split('/').filter((p) => p);
   const prefix = parts.shift();
 
   let previousNS;
@@ -91,12 +94,17 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
     return originalPath;
   }
 
-  if ((previousNS !== activeNamespace && (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) || activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') {
+  if (
+    (previousNS !== activeNamespace &&
+      (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) ||
+    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new')
+  ) {
     // a given resource will not exist when we switch namespaces, so pop off the tail end
     parts = parts.slice(0, 1);
   }
 
-  const namespacePrefix = activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
+  const namespacePrefix =
+    activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
 
   path = `/${prefix}/${namespacePrefix}`;
   if (parts.length) {
@@ -110,10 +118,11 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
   return path;
 };
 
-export const setCurrentLocation = (location: string) => action(ActionType.SetCurrentLocation, {location});
+export const setCurrentLocation = (location: string) =>
+  action(ActionType.SetCurrentLocation, { location });
 
 export const setActiveApplication = (application: string) => {
-  return action(ActionType.SetActiveApplication, {application});
+  return action(ActionType.SetActiveApplication, { application });
 };
 
 export const setActiveNamespace = (namespace: string = '') => {
@@ -132,19 +141,20 @@ export const setActiveNamespace = (namespace: string = '') => {
     localStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, namespace);
   }
 
-  return action(ActionType.SetActiveNamespace, {namespace});
+  return action(ActionType.SetActiveNamespace, { namespace });
 };
 
 export const setActivePerspective = (perspective: string) => {
   // remember the most recently-viewed perspective, which is automatically
   // selected when returning to the console
   localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, perspective);
-  return action(ActionType.SetActivePerspective, {perspective});
+  return action(ActionType.SetActivePerspective, { perspective });
 };
 
-export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) => action(ActionType.BeginImpersonate, {kind, name, subprotocols});
+export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
+  action(ActionType.BeginImpersonate, { kind, name, subprotocols });
 export const endImpersonate = () => action(ActionType.EndImpersonate);
-export const startImpersonate = (kind: string, name: string) => async(dispatch, getState) => {
+export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
   let textEncoder;
   try {
     textEncoder = new TextEncoder();
@@ -154,7 +164,7 @@ export const startImpersonate = (kind: string, name: string) => async(dispatch, 
   }
 
   if (!textEncoder) {
-    textEncoder = await import('text-encoding').then(module => new module.TextEncoder('utf-8'));
+    textEncoder = await import('text-encoding').then((module) => new module.TextEncoder('utf-8'));
   }
 
   const imp = getState().UI.get('impersonate', {});
@@ -173,7 +183,7 @@ export const startImpersonate = (kind: string, name: string) => async(dispatch, 
   encodedName = encodedName.replace(/=/g, '_').replace(/\//g, '-');
 
   let subprotocols;
-  if (kind === 'User' ) {
+  if (kind === 'User') {
     subprotocols = [`Impersonate-User.${encodedName}`];
   }
   if (kind === 'Group') {
@@ -189,50 +199,80 @@ export const stopImpersonate = () => (dispatch) => {
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
-export const sortList = (listId: string, field: string, func: string, sortAsNumber: boolean, orderBy: string, column: string) => {
+export const sortList = (
+  listId: string,
+  field: string,
+  func: string,
+  sortAsNumber: boolean,
+  orderBy: string,
+  column: string,
+) => {
   const url = new URL(window.location.href);
   const sp = new URLSearchParams(window.location.search);
   sp.set('orderBy', orderBy);
   sp.set('sortBy', column);
   history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
-  return action(ActionType.SortList, {listId, field, func, sortAsNumber, orderBy});
+  return action(ActionType.SortList, { listId, field, func, sortAsNumber, orderBy });
 };
-export const setCreateProjectMessage = (message: string) => action(ActionType.SetCreateProjectMessage, {message});
-export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, {clusterID});
-export const setUser = (user: any) => action(ActionType.SetUser, {user});
-export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, {uid});
-export const selectOverviewDetailsTab = (tab: string) => action(ActionType.SelectOverviewDetailsTab, {tab});
-export const updateOverviewMetrics = (metrics: any) => action(ActionType.UpdateOverviewMetrics, {metrics});
-export const updateOverviewResources = (resources: OverviewItem[]) => action(ActionType.UpdateOverviewResources, {resources});
-export const updateTimestamps = (lastTick: number) => action(ActionType.UpdateTimestamps, {lastTick});
+export const setCreateProjectMessage = (message: string) =>
+  action(ActionType.SetCreateProjectMessage, { message });
+export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, { clusterID });
+export const setUser = (user: any) => action(ActionType.SetUser, { user });
+export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
+export const selectOverviewDetailsTab = (tab: string) =>
+  action(ActionType.SelectOverviewDetailsTab, { tab });
+export const updateOverviewMetrics = (metrics: any) =>
+  action(ActionType.UpdateOverviewMetrics, { metrics });
+export const updateOverviewResources = (resources: OverviewItem[]) =>
+  action(ActionType.UpdateOverviewResources, { resources });
+export const updateTimestamps = (lastTick: number) =>
+  action(ActionType.UpdateTimestamps, { lastTick });
 export const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
-export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) => action(ActionType.UpdateOverviewSelectedGroup, {group});
-export const updateOverviewLabels = (labels: string[]) => action(ActionType.UpdateOverviewLabels, {labels});
-export const updateOverviewFilterValue = (value: string) => action(ActionType.UpdateOverviewFilterValue, {value});
-export const monitoringLoading = (key: 'alerts' | 'silences') => action(ActionType.SetMonitoringData, {key, data: {loaded: false, loadError: null, data: null}});
-export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError: null, data}});
-export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError, data: null}});
+export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) =>
+  action(ActionType.UpdateOverviewSelectedGroup, { group });
+export const updateOverviewLabels = (labels: string[]) =>
+  action(ActionType.UpdateOverviewLabels, { labels });
+export const updateOverviewFilterValue = (value: string) =>
+  action(ActionType.UpdateOverviewFilterValue, { value });
+export const monitoringLoading = (key: 'alerts' | 'silences') =>
+  action(ActionType.SetMonitoringData, {
+    key,
+    data: { loaded: false, loadError: null, data: null },
+  });
+export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) =>
+  action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError: null, data } });
+export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) =>
+  action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
-export const queryBrowserDeleteQuery = (index: number) => action(ActionType.QueryBrowserDeleteQuery, {index});
-export const queryBrowserInsertText = (index: number, newText: string, replaceFrom: number, replaceTo: number) => {
-  return action(ActionType.QueryBrowserInsertText, {index, newText, replaceFrom, replaceTo});
+export const queryBrowserDeleteQuery = (index: number) =>
+  action(ActionType.QueryBrowserDeleteQuery, { index });
+export const queryBrowserInsertText = (
+  index: number,
+  newText: string,
+  replaceFrom: number,
+  replaceTo: number,
+) => {
+  return action(ActionType.QueryBrowserInsertText, { index, newText, replaceFrom, replaceTo });
 };
-export const queryBrowserPatchQuery = (index: number, patch: {[key: string]: unknown}) => {
-  return action(ActionType.QueryBrowserPatchQuery, {index, patch});
+export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) => {
+  return action(ActionType.QueryBrowserPatchQuery, { index, patch });
 };
 export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
 export const queryBrowserSetAllExpanded = (isExpanded: boolean) => {
-  return action(ActionType.QueryBrowserSetAllExpanded, {isExpanded});
+  return action(ActionType.QueryBrowserSetAllExpanded, { isExpanded });
 };
-export const queryBrowserSetMetrics = (metrics: string[]) => action(ActionType.QueryBrowserSetMetrics, {metrics});
-export const queryBrowserToggleIsEnabled = (index: number) => action(ActionType.QueryBrowserToggleIsEnabled, {index});
-export const queryBrowserToggleSeries = (index: number, labels: {[key: string]: unknown}) => {
-  return action(ActionType.QueryBrowserToggleSeries, {index, labels});
+export const queryBrowserSetMetrics = (metrics: string[]) =>
+  action(ActionType.QueryBrowserSetMetrics, { metrics });
+export const queryBrowserToggleIsEnabled = (index: number) =>
+  action(ActionType.QueryBrowserToggleIsEnabled, { index });
+export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) => {
+  return action(ActionType.QueryBrowserToggleSeries, { index, labels });
 };
-export const setConsoleLinks = (consoleLinks: string[]) => action(ActionType.SetConsoleLinks, {consoleLinks});
+export const setConsoleLinks = (consoleLinks: string[]) =>
+  action(ActionType.SetConsoleLinks, { consoleLinks });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {

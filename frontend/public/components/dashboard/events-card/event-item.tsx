@@ -12,7 +12,11 @@ export const EventItem: React.FC<EventComponentProps> = React.memo(({ event }) =
   return (
     <div className="co-events-card__item">
       <small>
-        <Timestamp simple className="co-events-card__item-timestamp text-secondary" timestamp={lastTimestamp} />
+        <Timestamp
+          simple
+          className="co-events-card__item-timestamp text-secondary"
+          timestamp={lastTimestamp}
+        />
       </small>
       <div className="co-events-card__item-subheader">
         {isError && <RedExclamationCircleIcon className="co-events-card__item-icon--error" />}

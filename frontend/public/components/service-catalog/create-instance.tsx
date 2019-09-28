@@ -4,14 +4,14 @@ import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ServiceInstanceModel, ClusterServiceClassModel, ClusterServicePlanModel } from '../../models';
+import {
+  ServiceInstanceModel,
+  ClusterServiceClassModel,
+  ClusterServicePlanModel,
+} from '../../models';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
-import {
-  k8sCreate,
-  K8sResourceKind,
-  referenceForModel,
-} from '../../module/k8s';
+import { k8sCreate, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import {
   createParametersSecret,
   getInstanceCreateParametersForm,
@@ -30,13 +30,14 @@ import {
 
 const PARAMETERS_SECRET_KEY = 'parameters';
 
-const getAvailablePlans = (plans: any): any[] => _.reject(plans.data, 'status.removedFromBrokerCatalog');
+const getAvailablePlans = (plans: any): any[] =>
+  _.reject(plans.data, 'status.removedFromBrokerCatalog');
 
 class CreateInstance extends React.Component<CreateInstanceProps, CreateInstanceState> {
   constructor(props) {
     super(props);
 
-    const { preselectedNamespace: namespace = ''} = this.props;
+    const { preselectedNamespace: namespace = '' } = this.props;
     this.state = {
       name: '',
       namespace,
@@ -65,19 +66,21 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   }
 
   onNamespaceChange = (namespace: string) => {
-    this.setState({namespace});
-  }
+    this.setState({ namespace });
+  };
 
-  onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({name: event.currentTarget.value});
-  }
+  onNameChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({ name: event.currentTarget.value });
+  };
 
-  onPlanChange: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({plan: event.currentTarget.value});
-  }
+  onPlanChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({ plan: event.currentTarget.value });
+  };
 
   createInstance = (secretName: string): Promise<K8sResourceKind> => {
-    const parametersFrom = secretName ? [{ secretKeyRef: { name: secretName, key: PARAMETERS_SECRET_KEY } }] : [];
+    const parametersFrom = secretName
+      ? [{ secretKeyRef: { name: secretName, key: PARAMETERS_SECRET_KEY } }]
+      : [];
     const serviceInstance: K8sResourceKind = {
       apiVersion: 'servicecatalog.k8s.io/v1beta1',
       kind: 'ServiceInstance',
@@ -93,28 +96,35 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     };
 
     return k8sCreate(ServiceInstanceModel, serviceInstance);
-  }
+  };
 
-  onFormChange = ({formData}: IChangeEvent) => this.setState({formData})
+  onFormChange = ({ formData }: IChangeEvent) => this.setState({ formData });
 
-  save = ({formData}: ISubmitEvent<any>) => {
+  save = ({ formData }: ISubmitEvent<any>) => {
     const { name, namespace, plan } = this.state;
     if (!name || !namespace || !plan) {
-      this.setState({error: 'Please complete all fields.'});
+      this.setState({ error: 'Please complete all fields.' });
       return;
     }
 
-    this.setState({inProgress: true});
+    this.setState({ inProgress: true });
     const secretName = _.isEmpty(formData) ? null : `${this.state.name}-parameters`;
 
     // Create the instance first so we can set an ownerRef from the parameters secret to the instance.
     this.createInstance(secretName)
-      .then(instance => secretName ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, formData, instance) : null)
-      .then(() => {
-        this.setState({inProgress: false});
-        history.push(resourcePathFromModel(ServiceInstanceModel, name, namespace));
-      }, err => this.setState({error: err.message, inProgress: false}));
-  }
+      .then((instance) =>
+        secretName
+          ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, formData, instance)
+          : null,
+      )
+      .then(
+        () => {
+          this.setState({ inProgress: false });
+          history.push(resourcePathFromModel(ServiceInstanceModel, name, namespace));
+        },
+        (err) => this.setState({ error: err.message, inProgress: false }),
+      );
+  };
 
   render() {
     const { obj, plans, loaded, loadError } = this.props;
@@ -129,71 +139,95 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     const parametersForm = getInstanceCreateParametersForm(selectedPlan);
     const uiSchema = getUISchema(parametersForm);
 
-    const planOptions = _.map(availablePlans, plan => {
-      return <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
-        <label>
-          <input type="radio" name="plan" id="plan" value={plan.spec.externalName} checked={selectedPlanName === plan.spec.externalName} onChange={this.onPlanChange} />
-          {_.get(plan.spec, ['externalMetadata', 'displayName']) || plan.spec.externalName}
-          {plan.spec.description && <div className="text-muted">{plan.spec.description}</div>}
-        </label>
-      </div>;
+    const planOptions = _.map(availablePlans, (plan) => {
+      return (
+        <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
+          <label>
+            <input
+              type="radio"
+              name="plan"
+              id="plan"
+              value={plan.spec.externalName}
+              checked={selectedPlanName === plan.spec.externalName}
+              onChange={this.onPlanChange}
+            />
+            {_.get(plan.spec, ['externalMetadata', 'displayName']) || plan.spec.externalName}
+            {plan.spec.description && <div className="text-muted">{plan.spec.description}</div>}
+          </label>
+        </div>
+      );
     });
 
-    return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <StatusBox data={serviceClass} loaded={loaded} loadError={loadError} label="Service Class">
-        <PageHeading title={title} />
-        <div className="co-m-pane__body co-create-service-instance">
-          <div className="row">
-            <div className="col-md-7 col-md-push-5 co-catalog-item-info">
-              <ClusterServiceClassInfo obj={serviceClass} />
-            </div>
-            <div className="col-md-5 col-md-pull-7">
-              <form className="co-create-service-instance">
-                <div className="form-group co-create-service-instance__namespace">
-                  <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
-                  <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
-                </div>
-                <div className="form-group co-create-service-instance__name">
-                  <label className="control-label co-required" htmlFor="name">Service Instance Name</label>
-                  <input className="pf-c-form-control"
-                    type="text"
-                    onChange={this.onNameChange}
-                    value={this.state.name}
-                    id="name"
-                    required />
-                </div>
-                <div className="form-group co-create-service-instance__plans">
-                  <label className="control-label">Plans</label>
-                  {_.isEmpty(availablePlans)
-                    ? <p>There are no plans currently available for this service.</p>
-                    : planOptions}
-                </div>
-              </form>
-              <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
-                <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-                  <ActionGroup className="pf-c-form">
-                    <Button
-                      type="submit"
-                      variant="primary">
-                      Create
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={history.goBack}>
-                      Cancel
-                    </Button>
-                  </ActionGroup>
-                </ButtonBar>
-              </ServiceCatalogParametersForm>
+    return (
+      <React.Fragment>
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <StatusBox data={serviceClass} loaded={loaded} loadError={loadError} label="Service Class">
+          <PageHeading title={title} />
+          <div className="co-m-pane__body co-create-service-instance">
+            <div className="row">
+              <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+                <ClusterServiceClassInfo obj={serviceClass} />
+              </div>
+              <div className="col-md-5 col-md-pull-7">
+                <form className="co-create-service-instance">
+                  <div className="form-group co-create-service-instance__namespace">
+                    <label className="control-label co-required" htmlFor="dropdown-selectbox">
+                      Namespace
+                    </label>
+                    <NsDropdown
+                      selectedKey={this.state.namespace}
+                      onChange={this.onNamespaceChange}
+                      id="dropdown-selectbox"
+                    />
+                  </div>
+                  <div className="form-group co-create-service-instance__name">
+                    <label className="control-label co-required" htmlFor="name">
+                      Service Instance Name
+                    </label>
+                    <input
+                      className="pf-c-form-control"
+                      type="text"
+                      onChange={this.onNameChange}
+                      value={this.state.name}
+                      id="name"
+                      required
+                    />
+                  </div>
+                  <div className="form-group co-create-service-instance__plans">
+                    <label className="control-label">Plans</label>
+                    {_.isEmpty(availablePlans) ? (
+                      <p>There are no plans currently available for this service.</p>
+                    ) : (
+                      planOptions
+                    )}
+                  </div>
+                </form>
+                <ServiceCatalogParametersForm
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  onSubmit={this.save}
+                  formData={this.state.formData}
+                  onChange={this.onFormChange}
+                >
+                  <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+                    <ActionGroup className="pf-c-form">
+                      <Button type="submit" variant="primary">
+                        Create
+                      </Button>
+                      <Button type="button" variant="secondary" onClick={history.goBack}>
+                        Cancel
+                      </Button>
+                    </ActionGroup>
+                  </ButtonBar>
+                </ServiceCatalogParametersForm>
+              </div>
             </div>
           </div>
-        </div>
-      </StatusBox>
-    </React.Fragment>;
+        </StatusBox>
+      </React.Fragment>
+    );
   }
 }
 
@@ -202,28 +236,35 @@ export const CreateInstancePage = (props) => {
   const name = searchParams.get('cluster-service-class');
   const preselectedNamespace = searchParams.get('preselected-ns');
   const resources = [
-    {kind: referenceForModel(ClusterServiceClassModel), name, isList: false, prop: 'obj'},
-    {kind: referenceForModel(ClusterServicePlanModel), isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${name}`},
+    { kind: referenceForModel(ClusterServiceClassModel), name, isList: false, prop: 'obj' },
+    {
+      kind: referenceForModel(ClusterServicePlanModel),
+      isList: true,
+      prop: 'plans',
+      fieldSelector: `spec.clusterServiceClassRef.name=${name}`,
+    },
   ];
-  return <Firehose resources={resources}>
-    <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />
-  </Firehose>;
+  return (
+    <Firehose resources={resources}>
+      <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />
+    </Firehose>
+  );
 };
 
 export type CreateInstanceProps = {
-  obj: any,
-  plans: any,
-  loaded: any,
-  loadError: boolean,
-  match: any,
-  preselectedNamespace: string,
+  obj: any;
+  plans: any;
+  loaded: any;
+  loadError: boolean;
+  match: any;
+  preselectedNamespace: string;
 };
 
 export type CreateInstanceState = {
-  name: string,
-  namespace: string,
-  plan: string,
-  formData: any,
-  inProgress: boolean,
-  error?: any,
+  name: string;
+  namespace: string;
+  plan: string;
+  formData: any;
+  inProgress: boolean;
+  error?: any;
 };

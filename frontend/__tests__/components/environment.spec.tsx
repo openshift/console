@@ -10,23 +10,26 @@ import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
 
 describe(EnvironmentPage.name, () => {
-
-  const configMaps={}, secrets = {}, obj = {'metadata': {'namespace': 'test'}};
+  const configMaps = {},
+    secrets = {},
+    obj = { metadata: { namespace: 'test' } };
 
   let wrapper, wrapperRO;
   let environmentPage, environmentPageRO;
 
   describe('When readOnly attribute is "true"', () => {
     beforeEach(() => {
-      environmentPageRO=<EnvironmentPage.WrappedComponent
-        obj={obj}
-        model={DeploymentModel}
-        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
-        envPath={[]}
-        readOnly={true}
-      />;
+      environmentPageRO = (
+        <EnvironmentPage.WrappedComponent
+          obj={obj}
+          model={DeploymentModel}
+          rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
+          envPath={[]}
+          readOnly={true}
+        />
+      );
       wrapperRO = shallow(environmentPageRO);
-      wrapperRO.setState({allowed: true});
+      wrapperRO.setState({ allowed: true });
     });
 
     it('does not show field level help', () => {
@@ -40,14 +43,18 @@ describe(EnvironmentPage.name, () => {
 
   describe('When user does not have permission', () => {
     beforeEach(() => {
-      spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: false } }));
-      environmentPageRO=<EnvironmentPage.WrappedComponent
-        obj={obj}
-        model={DeploymentModel}
-        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
-        envPath={[]}
-        readOnly={false}
-      />;
+      spyOn(utils, 'checkAccess').and.callFake(() =>
+        Promise.resolve({ status: { allowed: false } }),
+      );
+      environmentPageRO = (
+        <EnvironmentPage.WrappedComponent
+          obj={obj}
+          model={DeploymentModel}
+          rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
+          envPath={[]}
+          readOnly={false}
+        />
+      );
       wrapperRO = shallow(environmentPageRO);
     });
 
@@ -63,16 +70,20 @@ describe(EnvironmentPage.name, () => {
   describe('When readOnly attribute is "false"', () => {
     beforeEach(() => {
       spyOn(k8s, 'k8sGet').and.callFake(() => Promise.resolve());
-      spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: true } }));
-      environmentPage=<EnvironmentPage.WrappedComponent
-        obj={obj}
-        model={DeploymentModel}
-        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
-        envPath={[]}
-        readOnly={false}
-      />;
+      spyOn(utils, 'checkAccess').and.callFake(() =>
+        Promise.resolve({ status: { allowed: true } }),
+      );
+      environmentPage = (
+        <EnvironmentPage.WrappedComponent
+          obj={obj}
+          model={DeploymentModel}
+          rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
+          envPath={[]}
+          readOnly={false}
+        />
+      );
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps});
+      wrapper.setState({ secrets, configMaps });
     });
 
     it('shows field level help component', () => {
@@ -80,51 +91,65 @@ describe(EnvironmentPage.name, () => {
     });
 
     it('renders save and reload buttons', () => {
-      expect(wrapper.find({type: 'submit', variant: 'primary'}).childAt(0).text()).toEqual('Save');
-      expect(wrapper.find({type: 'button', variant: 'secondary'}).childAt(0).text()).toEqual('Reload');
+      expect(
+        wrapper
+          .find({ type: 'submit', variant: 'primary' })
+          .childAt(0)
+          .text(),
+      ).toEqual('Save');
+      expect(
+        wrapper
+          .find({ type: 'button', variant: 'secondary' })
+          .childAt(0)
+          .text(),
+      ).toEqual('Reload');
     });
   });
 
   describe('When page has error messages or alerts', () => {
     beforeEach(() => {
-      environmentPage=<EnvironmentPage.WrappedComponent
-        obj={obj}
-        model={DeploymentModel}
-        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
-        envPath={[]}
-        readOnly={true}
-      />;
+      environmentPage = (
+        <EnvironmentPage.WrappedComponent
+          obj={obj}
+          model={DeploymentModel}
+          rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
+          envPath={[]}
+          readOnly={true}
+        />
+      );
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps, allowed: true});
+      wrapper.setState({ secrets, configMaps, allowed: true });
     });
 
     it('renders error message when error in state', () => {
-      wrapper.setState({errorMessage: 'errorMessage'});
+      wrapper.setState({ errorMessage: 'errorMessage' });
       expect(wrapper.find('.environment-buttons Alert [variant="danger"]'));
     });
 
     it('renders error message when data is stale', () => {
-      wrapper.setState({stale: true});
+      wrapper.setState({ stale: true });
       expect(wrapper.find('.environment-buttons Alert [variant="info"]'));
     });
 
     it('renders success message when data is updated successfully', () => {
-      wrapper.setState({success: 'success'});
+      wrapper.setState({ success: 'success' });
       expect(wrapper.find('.environment-buttons Alert [variant="success"]'));
     });
   });
 
   describe('When page does not have error messages or alerts', () => {
     beforeEach(() => {
-      environmentPage=<EnvironmentPage.WrappedComponent
-        obj={obj}
-        model={DeploymentModel}
-        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
-        envPath={[]}
-        readOnly={true}
-      />;
+      environmentPage = (
+        <EnvironmentPage.WrappedComponent
+          obj={obj}
+          model={DeploymentModel}
+          rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
+          envPath={[]}
+          readOnly={true}
+        />
+      );
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps});
+      wrapper.setState({ secrets, configMaps });
     });
 
     it('does not render error message when error not in state', () => {

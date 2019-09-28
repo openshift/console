@@ -16,16 +16,18 @@ class ListDropdown_ extends React.Component {
     };
 
     if (props.selectedKey) {
-      this.state.selectedKey = props.selectedKeyKind ? `${props.selectedKey}-${props.selectedKeyKind}` : props.selectedKey;
+      this.state.selectedKey = props.selectedKeyKind
+        ? `${props.selectedKey}-${props.selectedKeyKind}`
+        : props.selectedKey;
     }
 
     this.state.title = props.loaded ? props.placeholder : <LoadingInline />;
 
     this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
     // Pass both the resource name and the resource kind to onChange()
-    this.onChange = key => {
-      const {name, kindLabel} = _.get(this.state, ['items', key], {});
-      this.setState({selectedKey: key, title: <ResourceName kind={kindLabel} name={name} />});
+    this.onChange = (key) => {
+      const { name, kindLabel } = _.get(this.state, ['items', key], {});
+      this.setState({ selectedKey: key, title: <ResourceName kind={kindLabel} name={name} /> });
       this.props.onChange(name, kindLabel);
     };
   }
@@ -38,12 +40,12 @@ class ListDropdown_ extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {loaded, loadError} = nextProps;
+    const { loaded, loadError } = nextProps;
     if (!loaded) {
       return;
     }
 
-    this.setState(({selectedKey}) => {
+    this.setState(({ selectedKey }) => {
       if (loadError) {
         return {
           title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
@@ -54,19 +56,28 @@ class ListDropdown_ extends React.Component {
       const { resources, dataFilter } = nextProps;
 
       const unsortedList = {};
-      _.each(resources, ({data}, kindLabel) => {
-        _.reduce(data, (acc, resource) => {
-          if (!dataFilter || dataFilter(resource)) {
-            acc[`${resource.metadata.name}-${kindLabel}`] = {kindLabel, name: resource.metadata.name};
-          }
-          return acc;
-        }, unsortedList);
+      _.each(resources, ({ data }, kindLabel) => {
+        _.reduce(
+          data,
+          (acc, resource) => {
+            if (!dataFilter || dataFilter(resource)) {
+              acc[`${resource.metadata.name}-${kindLabel}`] = {
+                kindLabel,
+                name: resource.metadata.name,
+              };
+            }
+            return acc;
+          },
+          unsortedList,
+        );
       });
 
-      const sortedList= {};
-      _.keys(unsortedList).sort().forEach(key => {
-        sortedList[key] = unsortedList[key];
-      });
+      const sortedList = {};
+      _.keys(unsortedList)
+        .sort()
+        .forEach((key) => {
+          sortedList[key] = unsortedList[key];
+        });
 
       state.items = sortedList;
 
@@ -95,19 +106,20 @@ class ListDropdown_ extends React.Component {
   }
 
   render() {
-    const {desc, fixed, placeholder, id, loaded, disabled} = this.props;
+    const { desc, fixed, placeholder, id, loaded, disabled } = this.props;
     const items = {};
 
-    _.keys(this.state.items).forEach(key => {
+    _.keys(this.state.items).forEach((key) => {
       const item = this.state.items[key];
       items[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
     });
 
-    const {selectedKey} = this.state;
+    const { selectedKey } = this.state;
 
-    const Component = fixed
-      ? items[selectedKey]
-      : <Dropdown
+    const Component = fixed ? (
+      items[selectedKey]
+    ) : (
+      <Dropdown
         autocompleteFilter={this.autocompleteFilter}
         autocompletePlaceholder={placeholder}
         items={items}
@@ -117,20 +129,35 @@ class ListDropdown_ extends React.Component {
         id={id}
         dropDownClassName="dropdown--full-width"
         menuClassName="dropdown-menu--text-wrap"
-        disabled={disabled} />;
+        disabled={disabled}
+      />
+    );
 
-    return <div>
-      { Component }
-      { loaded && _.isEmpty(items) && <Alert isInline className="co-alert pf-c-alert--top-margin" variant="info" title={`No ${desc} found or defined`} />}
-    </div>;
+    return (
+      <div>
+        {Component}
+        {loaded && _.isEmpty(items) && (
+          <Alert
+            isInline
+            className="co-alert pf-c-alert--top-margin"
+            variant="info"
+            title={`No ${desc} found or defined`}
+          />
+        )}
+      </div>
+    );
   }
 }
 
-export const ListDropdown = props => {
-  const resources = _.map(props.resources, resource => _.assign({ isList: true, prop: resource.kind }, resource));
-  return <Firehose resources={resources}>
-    <ListDropdown_ {...props} />
-  </Firehose>;
+export const ListDropdown = (props) => {
+  const resources = _.map(props.resources, (resource) =>
+    _.assign({ isList: true, prop: resource.kind }, resource),
+  );
+  return (
+    <Firehose resources={resources}>
+      <ListDropdown_ {...props} />
+    </Firehose>
+  );
 };
 
 ListDropdown.propTypes = {
@@ -140,23 +167,33 @@ ListDropdown.propTypes = {
   selectedKey: PropTypes.string,
   selectedKeyKind: PropTypes.string,
   fixed: PropTypes.bool,
-  resources: PropTypes.arrayOf(PropTypes.shape({
-    kind: PropTypes.string.isRequired,
-    namespace: PropTypes.string,
-  })).isRequired,
+  resources: PropTypes.arrayOf(
+    PropTypes.shape({
+      kind: PropTypes.string.isRequired,
+      namespace: PropTypes.string,
+    }),
+  ).isRequired,
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
   id: PropTypes.string,
 };
 
-const NsDropdown_ = props => {
+const NsDropdown_ = (props) => {
   const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
   if (flagPending(openshiftFlag)) {
     return null;
   }
   const kind = openshiftFlag ? 'Project' : 'Namespace';
   const resources = [{ kind }];
-  return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
+  return (
+    <ListDropdown
+      {...props}
+      desc="Namespaces"
+      resources={resources}
+      selectedKeyKind={kind}
+      placeholder="Select namespace"
+    />
+  );
 };
 /** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, selectedKeyKind?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, event: React.Event) => void, id?: string}}>} */
 export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);

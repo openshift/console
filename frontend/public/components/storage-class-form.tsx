@@ -19,7 +19,12 @@ import { k8sCreate } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { StorageClassModel } from './../models';
 
-const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
+const NameValueEditorComponent = (props) => (
+  <AsyncComponent
+    loader={() => import('./utils/name-value-editor').then((c) => c.NameValueEditor)}
+    {...props}
+  />
+);
 
 const defaultState = {
   newStorageClass: {
@@ -33,11 +38,13 @@ const defaultState = {
   validationSuccessful: false,
   loading: false,
   error: null,
-  fieldErrors: {parameters: {}},
+  fieldErrors: { parameters: {} },
 };
 
-export class StorageClassForm_ extends React.Component<StorageClassFormProps, StorageClassFormState> {
-
+export class StorageClassForm_ extends React.Component<
+  StorageClassFormProps,
+  StorageClassFormState
+> {
   resources: Resources;
   reduxId: string;
   previousName: string;
@@ -63,7 +70,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         type: {
           name: 'Type',
-          values: {io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1'},
+          values: { io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1' },
           hintText: 'Select AWS Type',
         },
         iopsPerGB: {
@@ -100,7 +107,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         type: {
           name: 'Type',
-          values: {'pd-standard': 'pd-standard', 'pd-ssd': 'pd-ssd'},
+          values: { 'pd-standard': 'pd-standard', 'pd-ssd': 'pd-ssd' },
           hintText: 'Select GCE type',
         },
         zone: {
@@ -123,10 +130,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
         'replication-type': {
           name: 'Replication Type',
-          values: {none: 'none', 'regional-pd': 'regional-pd'},
+          values: { none: 'none', 'regional-pd': 'regional-pd' },
           hintText: 'Select Replication Type',
           validation: (params) => {
-            if (params['replication-type'].value === 'regional-pd' && _.get(params, 'zone.value', '') !== '') {
+            if (
+              params['replication-type'].value === 'regional-pd' &&
+              _.get(params, 'zone.value', '') !== ''
+            ) {
               return 'Zone cannot be specified when Replication Type regional-pd is chosen, use zones instead';
             }
             return null;
@@ -181,12 +191,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     openstackCinder: {
       title: 'OpenStack Cinder',
       provisioner: 'kubernetes.io/cinder',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#openstack-cinder',
+      documentationLink:
+        'https://kubernetes.io/docs/concepts/storage/storage-classes/#openstack-cinder',
       parameters: {
         type: {
           name: 'Volume Type',
         },
-        availability:{
+        availability: {
           name: 'Availability Zone',
         },
       },
@@ -221,7 +232,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
         kind: {
           name: 'Account Kind',
-          values: {shared: 'shared', dedicated: 'dedicated', managed: 'managed'},
+          values: { shared: 'shared', dedicated: 'dedicated', managed: 'managed' },
           hintText: 'Select Account Kind',
         },
       },
@@ -311,7 +322,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
         imageFormat: {
           name: 'Image Format',
-          values: {1: '1', 2: '2'},
+          values: { 1: '1', 2: '2' },
           hintText: 'Select Image Format',
         },
         imageFeatures: {
@@ -328,7 +339,11 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         diskformat: {
           name: 'Disk Format',
-          values: {thin: 'thin', zeroedthick: 'zeroed thick', eagerzeroedthick: 'eager zeroed thick'},
+          values: {
+            thin: 'thin',
+            zeroedthick: 'zeroed thick',
+            eagerzeroedthick: 'eager zeroed thick',
+          },
           hintText: 'Select Disk Format',
         },
         datastore: {
@@ -340,14 +355,16 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     portworxVolume: {
       title: 'Portworx Volume',
       provisioner: 'kubernetes.io/portworx-volume',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#portworx-volume',
+      documentationLink:
+        'https://kubernetes.io/docs/concepts/storage/storage-classes/#portworx-volume',
       parameters: {
         fs: {
           name: 'Filesystem',
-          values: {none: 'none', xfs: 'xfs', ext4: 'ext4'},
+          values: { none: 'none', xfs: 'xfs', ext4: 'ext4' },
           hintText: 'Select Filesystem',
         },
-        block_size: { // eslint-disable-line camelcase
+        // eslint-disable-next-line camelcase
+        block_size: {
           name: 'Block Size',
           hintText: 'Block size in Kb',
           validation: (params) => {
@@ -367,12 +384,14 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             return null;
           },
         },
-        io_priority: { // eslint-disable-line camelcase
+        // eslint-disable-next-line camelcase
+        io_priority: {
           name: 'I/O Priority',
-          values: {high: 'high', medium: 'medium', low: 'low'},
+          values: { high: 'high', medium: 'medium', low: 'low' },
           hintText: 'I/O Priority',
         },
-        snap_interval: { // eslint-disable-line camelcase
+        // eslint-disable-next-line camelcase
+        snap_interval: {
           name: 'Snapshot Interval',
           hintText: 'Clock/time interval in minutes for when to trigger snapshots',
           validation: (params) => {
@@ -383,11 +402,15 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           },
           format: (value) => value.toString(),
         },
-        aggregation_level: { // eslint-disable-line camelcase
+        // eslint-disable-next-line camelcase
+        aggregation_level: {
           name: 'Aggregation Level',
           hintText: 'The number of chunks the volume would be distributed into',
           validation: (params) => {
-            if (params.aggregation_level.value !== '' && !params.aggregation_level.value.match(/^[1-9]\d*$/)) {
+            if (
+              params.aggregation_level.value !== '' &&
+              !params.aggregation_level.value.match(/^[1-9]\d*$/)
+            ) {
               return 'Aggregation level must be a number';
             }
             return null;
@@ -428,7 +451,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
         storageMode: {
           name: 'Storage Mode',
-          values: {thinProvisioned: 'ThinProvisioned', thickProvisioned: 'ThickProvisioned'},
+          values: { thinProvisioned: 'ThinProvisioned', thickProvisioned: 'ThickProvisioned' },
           hintText: 'Select Storage Provision Mode',
         },
         secretRef: {
@@ -453,7 +476,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         pool: {
           name: 'Pool',
-          hintText: 'Name of the StorageOS distributed capacity pool from which to provision the volume',
+          hintText:
+            'Name of the StorageOS distributed capacity pool from which to provision the volume',
         },
         description: {
           name: 'Description',
@@ -491,7 +515,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       if (loaded) {
         const data = this.props.k8s.getIn([StorageClassModel.plural, 'data']);
         this.resources = {
-          data: data && data.toArray().map(p => p.toJSON()),
+          data: data && data.toArray().map((p) => p.toJSON()),
           loadError: this.props.k8s.getIn([StorageClassModel.plural, 'loadError']),
           loaded,
         };
@@ -502,20 +526,24 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   }
 
   setParameterHandler = (param, event, checkbox) => {
-    const newParams = {...this.state.newStorageClass.parameters};
+    const newParams = { ...this.state.newStorageClass.parameters };
     if (checkbox) {
-      newParams[param] = {value: event.target.checked};
+      newParams[param] = { value: event.target.checked };
     } else {
       if (event.target) {
-        newParams[param] = {value: event.target.value};
+        newParams[param] = { value: event.target.value };
       } else {
-        newParams[param] = {value: event};
+        newParams[param] = { value: event };
       }
     }
 
     _.forOwn(newParams, (value, key) => {
       if (newParams.hasOwnProperty(key)) {
-        const validation = _.get(this.storageTypes[this.state.newStorageClass.type], ['parameters', key, 'validation'], null);
+        const validation = _.get(
+          this.storageTypes[this.state.newStorageClass.type],
+          ['parameters', key, 'validation'],
+          null,
+        );
         newParams[key].validationMsg = validation ? validation(newParams) : null;
       }
     });
@@ -533,7 +561,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       [param]: value,
     };
 
-    runValidation ? this.setState({newStorageClass: newParams}, this.validateForm) : this.setState({newStorageClass: newParams});
+    runValidation
+      ? this.setState({ newStorageClass: newParams }, this.validateForm)
+      : this.setState({ newStorageClass: newParams });
   };
 
   createStorageClass = (e: React.FormEvent<EventTarget>) => {
@@ -546,7 +576,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const { description, type, reclaim } = this.state.newStorageClass;
     const dataParameters = this.getFormParams();
     const annotations = description ? { description } : {};
-    const data : StorageClass = {
+    const data: StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
         annotations,
@@ -566,10 +596,10 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
     k8sCreate(StorageClassModel, data)
       .then(() => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
         history.push('/k8s/cluster/storageclasses');
       })
-      .catch(error => this.setState({loading: false, error}));
+      .catch((error) => this.setState({ loading: false, error }));
   };
 
   getFormParams = () => {
@@ -581,7 +611,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           finalValue = this.storageTypes[type].parameters[key].format(value.value);
         }
         return finalValue;
-      }), (value) => value !== ''
+      }),
+      (value) => value !== '',
     );
 
     return _.merge(dataParameters, this.getCustomParams());
@@ -589,18 +620,25 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   getCustomParams = () => {
     // Discard any row whose key is blank
-    const customParams = _.reject(this.state.customParams, t => _.isEmpty(t[NameValueEditorPair.Name]));
+    const customParams = _.reject(this.state.customParams, (t) =>
+      _.isEmpty(t[NameValueEditorPair.Name]),
+    );
 
     // Display error if duplicate keys are found
-    const keys = customParams.map(t => t[NameValueEditorPair.Name]);
+    const keys = customParams.map((t) => t[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      this.setState({error: 'Duplicate keys found.'});
+      this.setState({ error: 'Duplicate keys found.' });
       return;
     }
 
     // Convert any blank values to null
-    _.each(customParams, t => t[NameValueEditorPair.Value] = _.isEmpty(t[NameValueEditorPair.Value])
-      ? null : t[NameValueEditorPair.Value]);
+    _.each(
+      customParams,
+      (t) =>
+        (t[NameValueEditorPair.Value] = _.isEmpty(t[NameValueEditorPair.Value])
+          ? null
+          : t[NameValueEditorPair.Value]),
+    );
 
     return _.fromPairs(customParams);
   };
@@ -613,7 +651,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   validateForm = () => {
     // Clear error messages from previous validation attempts first
-    this.setState({error: null, fieldErrors: {}}, () => {
+    this.setState({ error: null, fieldErrors: {} }, () => {
       const fieldErrors = this.state.fieldErrors;
       let validationSuccessful = true;
 
@@ -633,7 +671,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         validationSuccessful = false;
       }
 
-      this.setState({fieldErrors, validationSuccessful});
+      this.setState({ fieldErrors, validationSuccessful });
     });
   };
 
@@ -666,7 +704,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   validateParameters = () => {
     const params = this.state.newStorageClass.parameters;
-    const allParamsValid = !_.some(params, ({validationMsg}) => validationMsg !== null);
+    const allParamsValid = !_.some(params, ({ validationMsg }) => validationMsg !== null);
     return allParamsValid;
   };
 
@@ -683,8 +721,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
     const allParamsForType = this.storageTypes[storageType].parameters;
 
-    const requiredKeys = _.keys(allParamsForType).filter(key => this.paramIsRequired(key));
-    const allReqdFieldsEntered = _.every(requiredKeys, key => {
+    const requiredKeys = _.keys(allParamsForType).filter((key) => this.paramIsRequired(key));
+    const allReqdFieldsEntered = _.every(requiredKeys, (key) => {
       const value = _.get(userEnteredParams, [key, 'value']);
       return !_.isEmpty(value);
     });
@@ -693,7 +731,11 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   };
 
   paramIsRequired = (paramKey, params = this.state.newStorageClass.parameters) => {
-    const requiredParam = _.get(this.storageTypes[this.state.newStorageClass.type], ['parameters', paramKey, 'required'], null);
+    const requiredParam = _.get(
+      this.storageTypes[this.state.newStorageClass.type],
+      ['parameters', paramKey, 'required'],
+      null,
+    );
     let isRequired = false;
     if (requiredParam) {
       isRequired = _.isFunction(requiredParam) ? requiredParam(params) : requiredParam;
@@ -717,9 +759,11 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         return null;
       }
 
-      const children = parameter.values
-        ? <React.Fragment>
-          <label className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}>
+      const children = parameter.values ? (
+        <React.Fragment>
+          <label
+            className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}
+          >
             {_.get(parameter, 'name', key)}
           </label>
           <Dropdown
@@ -727,42 +771,58 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             items={parameter.values}
             dropDownClassName="dropdown--full-width"
             selectedKey={_.get(this.state, `newStorageClass.parameters.${key}.value`)}
-            onChange={(event) => this.setParameterHandler(key, event, false)} />
+            onChange={(event) => this.setParameterHandler(key, event, false)}
+          />
           <HelpBlock>{validationMsg ? validationMsg : null}</HelpBlock>
         </React.Fragment>
-        : <React.Fragment>
-          {isCheckbox
-            ? <React.Fragment>
+      ) : (
+        <React.Fragment>
+          {isCheckbox ? (
+            <React.Fragment>
               <div className="checkbox">
                 <label>
-                  <input type="checkbox"
+                  <input
+                    type="checkbox"
                     className="create-storage-class-form__checkbox"
                     onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
                     checked={_.get(this.state, `newStorageClass.parameters.${key}.value`, false)}
-                    id={`provisioner-settings-${key}-checkbox`} />
+                    id={`provisioner-settings-${key}-checkbox`}
+                  />
                   {_.get(parameter, 'name', key)}
                 </label>
               </div>
             </React.Fragment>
-            : <React.Fragment>
-              <label className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}>
+          ) : (
+            <React.Fragment>
+              <label
+                className={classNames('control-label', {
+                  'co-required': this.paramIsRequired(key),
+                })}
+              >
                 {_.get(parameter, 'name', key)}
               </label>
               <FormControl
                 type="text"
                 bsClass="pf-c-form-control"
                 value={_.get(this.state, `newStorageClass.parameters.${key}.value`, '')}
-                onChange={(event) => this.setParameterHandler(key, event, isCheckbox)} />
+                onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
+              />
             </React.Fragment>
-          }
+          )}
           <HelpBlock>{validationMsg ? validationMsg : parameter.hintText}</HelpBlock>
-        </React.Fragment>;
+        </React.Fragment>
+      );
 
       return (
         <FormGroup
           key={key}
           controlId={`provisioner-settings-${key}`}
-          validationState={_.get(this.state.newStorageClass.parameters, `${key}.validationMsg`, null) ? 'error' : null} >
+          validationState={
+            _.get(this.state.newStorageClass.parameters, `${key}.validationMsg`, null)
+              ? 'error'
+              : null
+          }
+        >
           {children}
         </FormGroup>
       );
@@ -776,14 +836,18 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           <label className="control-label">Additional Parameters</label>
           <p>
             Specific fields for the selected provisioner. &nbsp;
-            <ExternalLink href={this.storageTypes[this.state.newStorageClass.type].documentationLink} text="What should I enter here?" />
+            <ExternalLink
+              href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
+              text="What should I enter here?"
+            />
           </p>
           <NameValueEditorComponent
             nameValuePairs={this.state.customParams}
             nameString="Parameter"
             valueString="Value"
             addString="Add Parameter"
-            updateParentData={this.updateCustomParams} />
+            updateParentData={this.updateCustomParams}
+          />
         </FormGroup>
       </React.Fragment>
     );
@@ -793,29 +857,38 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   render() {
     const { newStorageClass, fieldErrors } = this.state;
-    const reclaimPolicyKey = newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
+    const reclaimPolicyKey =
+      newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
 
     return (
       <div className="co-m-pane__body co-m-pane__form">
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-          <div className="co-m-pane__name">
-            Create Storage Class
-          </div>
+          <div className="co-m-pane__name">Create Storage Class</div>
           <div className="co-m-pane__heading-link">
-            <Link to="/k8s/cluster/storageclasses/~new" id="yaml-link" replace>Edit YAML</Link>
+            <Link to="/k8s/cluster/storageclasses/~new" id="yaml-link" replace>
+              Edit YAML
+            </Link>
           </div>
         </h1>
         <Form>
-          <FormGroup controlId={'basic-settings-name'} validationState={fieldErrors.nameValidationMsg ? 'error': null}>
-            <label className="control-label co-required" htmlFor="storage-class-name">Name</label>
+          <FormGroup
+            controlId={'basic-settings-name'}
+            validationState={fieldErrors.nameValidationMsg ? 'error' : null}
+          >
+            <label className="control-label co-required" htmlFor="storage-class-name">
+              Name
+            </label>
             <FormControl
               type="text"
               bsClass="pf-c-form-control"
               placeholder={newStorageClass.name}
               id="storage-class-name"
               onChange={(event) => this.setStorageHandler('name', event.target.value)}
-              value={_.get(newStorageClass, 'name', '')} />
-            <HelpBlock>{fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}</HelpBlock>
+              value={_.get(newStorageClass, 'name', '')}
+            />
+            <HelpBlock>
+              {fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}
+            </HelpBlock>
           </FormGroup>
 
           <FormGroup controlId={'basic-settings-description'}>
@@ -825,7 +898,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               bsClass="pf-c-form-control"
               id="storage-class-description"
               onChange={(event) => this.setStorageHandler('description', event.target.value)}
-              value={_.get(newStorageClass, 'description', '')} />
+              value={_.get(newStorageClass, 'description', '')}
+            />
           </FormGroup>
 
           <FormGroup controlId={'basic-settings-reclaim-policy'}>
@@ -835,9 +909,11 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               items={this.reclaimPolicies}
               dropDownClassName="dropdown--full-width"
               selectedKey={reclaimPolicyKey}
-              onChange={(event) => this.setStorageHandler('reclaim', event)} />
+              onChange={(event) => this.setStorageHandler('reclaim', event)}
+            />
             <HelpBlock>
-              Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to &lsquo;Delete&rsquo;
+              Determines what happens to persistent volumes when the associated persistent volume
+              claim is deleted. Defaults to &lsquo;Delete&rsquo;
             </HelpBlock>
           </FormGroup>
 
@@ -851,29 +927,37 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               dropDownClassName="dropdown--full-width"
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={_.get(this.state, 'newStorageClass.type')}
-              onChange={(event) => this.setStorageHandler('type', event)} />
-            <HelpBlock>Determines what volume plugin is used for provisioning persistent volumes.</HelpBlock>
+              onChange={(event) => this.setStorageHandler('type', event)}
+            />
+            <HelpBlock>
+              Determines what volume plugin is used for provisioning persistent volumes.
+            </HelpBlock>
           </FormGroup>
 
           <div className="co-form-subsection">
             {newStorageClass.type !== null ? this.getProvisionerElements() : null}
           </div>
 
-          <ButtonBar errorMessage={this.state.error ? this.state.error.message : ''} inProgress={this.state.loading}>
+          <ButtonBar
+            errorMessage={this.state.error ? this.state.error.message : ''}
+            inProgress={this.state.loading}
+          >
             <ActionGroup className="pf-c-form">
               <Button
                 id="save-changes"
                 isDisabled={!this.state.validationSuccessful}
                 onClick={this.createStorageClass}
                 type="submit"
-                variant="primary">
+                variant="primary"
+              >
                 Create
               </Button>
               <Button
                 id="cancel"
                 onClick={() => history.push('/k8s/cluster/storageclasses')}
                 type="button"
-                variant="secondary">
+                variant="secondary"
+              >
                 Cancel
               </Button>
             </ActionGroup>
@@ -884,7 +968,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   }
 }
 
-const mapStateToProps = ({k8s}, {onClose}) => ({
+const mapStateToProps = ({ k8s }, { onClose }) => ({
   k8s,
   onClose,
 });
@@ -923,7 +1007,7 @@ export type StorageClassFormState = {
   validationSuccessful: boolean;
   loading: boolean;
   error: any;
-  fieldErrors: {[k: string]: any};
+  fieldErrors: { [k: string]: any };
 };
 
 export type Resources = {
@@ -932,10 +1016,13 @@ export type Resources = {
   loadError: string;
 };
 
-export const ConnectedStorageClassForm = connect(mapStateToProps, mapDispatchToProps)(StorageClassForm_);
+export const ConnectedStorageClassForm = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(StorageClassForm_);
 
-export const StorageClassForm = props => {
-  const resources = [{kind: 'StorageClass', isList: true}];
+export const StorageClassForm = (props) => {
+  const resources = [{ kind: 'StorageClass', isList: true }];
   return (
     <Firehose resources={resources}>
       <ConnectedStorageClassForm {...props} />
@@ -943,4 +1030,4 @@ export const StorageClassForm = props => {
   );
 };
 
-ConnectedStorageClassForm.displayName='StorageClassForm';
+ConnectedStorageClassForm.displayName = 'StorageClassForm';

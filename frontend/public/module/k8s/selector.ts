@@ -3,12 +3,12 @@ import { Selector, MatchExpression } from './index';
 
 const isOldFormat = (selector: Selector) => !selector.matchLabels && !selector.matchExpressions;
 
-type Options = {undefinedWhenEmpty?: boolean, basic?: boolean};
+type Options = { undefinedWhenEmpty?: boolean; basic?: boolean };
 
 export const fromRequirements = (requirements: MatchExpression[], options = {} as Options) => {
   options = options || {};
   const selector = {
-    matchLabels:      {},
+    matchLabels: {},
     matchExpressions: [],
   };
 
@@ -32,16 +32,18 @@ export const fromRequirements = (requirements: MatchExpression[], options = {} a
   return selector;
 };
 
-export const split = (str: string) => str.trim() ? str.split(/,(?![^(]*\))/) : []; // [''] -> []
+export const split = (str: string) => (str.trim() ? str.split(/,(?![^(]*\))/) : []); // [''] -> []
 
 export const toRequirements = (selector: Selector = {}) => {
   const requirements = [];
   const matchLabels = isOldFormat(selector) ? selector : selector.matchLabels;
   const matchExpressions = selector.matchExpressions;
 
-  Object.keys(matchLabels || {}).sort().forEach(function(k) {
-    requirements.push(createEquals(k, matchLabels[k]));
-  });
+  Object.keys(matchLabels || {})
+    .sort()
+    .forEach(function(k) {
+      requirements.push(createEquals(k, matchLabels[k]));
+    });
 
   (matchExpressions || []).forEach(function(me) {
     requirements.push(me);

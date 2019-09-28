@@ -25,8 +25,14 @@ class ExpandPVCModal extends PromiseComponent {
 
   _submit(e) {
     e.preventDefault();
-    const { requestSizeUnit, requestSizeValue } =this.state;
-    const patch = [{op: 'replace', path: '/spec/resources/requests', value: {storage: `${requestSizeValue}${requestSizeUnit}`}}];
+    const { requestSizeUnit, requestSizeValue } = this.state;
+    const patch = [
+      {
+        op: 'replace',
+        path: '/spec/resources/requests',
+        value: { storage: `${requestSizeValue}${requestSizeUnit}` },
+      },
+    ];
     this.handlePromise(k8sPatch(this.props.kind, this.props.resource, patch)).then((resource) => {
       this.props.close();
       // redirected to the details page for persitent volume claim
@@ -35,29 +41,44 @@ class ExpandPVCModal extends PromiseComponent {
   }
 
   render() {
-    const {kind, resource} = this.props;
+    const { kind, resource } = this.props;
     const dropdownUnits = {
       Mi: 'Mi',
       Gi: 'Gi',
       Ti: 'Ti',
     };
-    const { requestSizeUnit, requestSizeValue } =this.state;
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Expand {kind.label}</ModalTitle>
-      <ModalBody>
-        <p>Increase the capacity of claim <strong className="co-break-word">{resource.metadata.name}.</strong> This can be a time-consuming process.</p>
-        <label className="control-label co-required">Size</label>
-        <RequestSizeInput
-          name="requestSize"
-          required
-          onChange={this._handleRequestSizeInputChange}
-          defaultRequestSizeUnit={requestSizeUnit}
-          defaultRequestSizeValue={requestSizeValue}
-          dropdownUnits={dropdownUnits}
+    const { requestSizeUnit, requestSizeValue } = this.state;
+    return (
+      <form
+        onSubmit={this._submit}
+        name="form"
+        className="modal-content modal-content--no-inner-scroll"
+      >
+        <ModalTitle>Expand {kind.label}</ModalTitle>
+        <ModalBody>
+          <p>
+            Increase the capacity of claim{' '}
+            <strong className="co-break-word">{resource.metadata.name}.</strong> This can be a
+            time-consuming process.
+          </p>
+          <label className="control-label co-required">Size</label>
+          <RequestSizeInput
+            name="requestSize"
+            required
+            onChange={this._handleRequestSizeInputChange}
+            defaultRequestSizeUnit={requestSizeUnit}
+            defaultRequestSizeValue={requestSizeValue}
+            dropdownUnits={dropdownUnits}
+          />
+        </ModalBody>
+        <ModalSubmitFooter
+          errorMessage={this.state.errorMessage}
+          inProgress={this.state.inProgress}
+          submitText="Expand"
+          cancel={this._cancel}
         />
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Expand" cancel={this._cancel} />
-    </form>;
+      </form>
+    );
   }
 }
 

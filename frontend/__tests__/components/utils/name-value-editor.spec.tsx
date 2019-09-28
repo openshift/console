@@ -6,7 +6,6 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
 
 describe(NameValueEditor.displayName, () => {
-
   const Editor = DragDropContext(HTML5Backend)(NameValueEditor);
 
   describe('When supplied with attributes nameString and valueString', () => {
@@ -14,10 +13,10 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           nameString={'foo'}
           valueString={'bar'}
-        />
+        />,
       );
 
       expect(wrapper.html()).toContain('foo');
@@ -28,10 +27,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When supplied with nameValuePairs', () => {
     it('renders PairElement correctly', () => {
       const wrapper = shallow(
-        <Editor
-          nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
-        />
+        <Editor nameValuePairs={[['name', 'value', 0]]} updateParentData={() => {}} />,
       );
 
       expect(wrapper.html()).toContain('value="name"');
@@ -44,9 +40,9 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           readOnly={true}
-        />
+        />,
       );
 
       expect(wrapper.html()).not.toContain('pairs-list__add-icon');
@@ -56,9 +52,9 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           readOnly={true}
-        />
+        />,
       );
       expect(wrapper.html()).not.toContain('pairs-list__delete-icon');
       expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');
@@ -70,10 +66,10 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           readOnly={false}
           allowSorting={true}
-        />
+        />,
       );
 
       expect(wrapper.html()).toContain('pairs-list__add-icon');
@@ -85,10 +81,10 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           readOnly={false}
           allowSorting={true}
-        />
+        />,
       );
 
       expect(wrapper.html()).toContain('pairs-list__delete-icon');
@@ -101,9 +97,9 @@ describe(NameValueEditor.displayName, () => {
       const wrapper = shallow(
         <Editor
           nameValuePairs={[['name', 'value', 0]]}
-          updateParentData={()=>{}}
+          updateParentData={() => {}}
           allowSorting={false}
-        />
+        />,
       );
       expect(wrapper.html()).toContain('pairs-list__delete-icon');
       expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');

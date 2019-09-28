@@ -117,7 +117,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   return { value, unit };
 };
 
-const getDefaultFractionDigits = value => {
+const getDefaultFractionDigits = (value) => {
   if (value < 1) {
     return 3;
   }
@@ -129,7 +129,7 @@ const getDefaultFractionDigits = value => {
 
 const formatValue = (value, options) => {
   const fractionDigits = getDefaultFractionDigits(value);
-  const {locales, ...rest} = _.defaults(options, {
+  const { locales, ...rest } = _.defaults(options, {
     maximumFractionDigits: fractionDigits,
   });
 
@@ -139,57 +139,82 @@ const formatValue = (value, options) => {
   return Intl.NumberFormat(locales, rest).format(value);
 };
 
-const round = units.round = (value, fractionDigits) => {
+const round = (units.round = (value, fractionDigits) => {
   if (!isFinite(value)) {
     return 0;
   }
   const multiplier = Math.pow(10, fractionDigits || getDefaultFractionDigits(value));
   return Math.round(value * multiplier) / multiplier;
-};
+});
 
-const humanize = units.humanize = (value, typeName, useRound = false, initialUnit, preferredUnit) => {
+const humanize = (units.humanize = (
+  value,
+  typeName,
+  useRound = false,
+  initialUnit,
+  preferredUnit,
+) => {
   const type = getType(typeName);
 
   if (!isFinite(value)) {
     value = 0;
   }
 
-  let converted = convertBaseValueToUnits(value, type.units, type.divisor, initialUnit, preferredUnit);
+  let converted = convertBaseValueToUnits(
+    value,
+    type.units,
+    type.divisor,
+    initialUnit,
+    preferredUnit,
+  );
 
   if (useRound) {
     converted.value = round(converted.value);
-    converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, converted.unit, preferredUnit);
+    converted = convertBaseValueToUnits(
+      converted.value,
+      type.units,
+      type.divisor,
+      converted.unit,
+      preferredUnit,
+    );
   }
 
   const formattedValue = formatValue(converted.value);
 
   return {
-    string: type.space ? `${formattedValue} ${converted.unit}`: formattedValue + converted.unit,
+    string: type.space ? `${formattedValue} ${converted.unit}` : formattedValue + converted.unit,
     unit: converted.unit,
     value: converted.value,
   };
-};
+});
 
 const formatPercentage = (value, options) => {
-  const {locales, ...rest} = _.defaults(
+  const { locales, ...rest } = _.defaults(
     { style: 'percent' }, // Don't allow perent style to be overridden.
     options,
     {
       maximumFractionDigits: 1,
-    }
+    },
   );
   return Intl.NumberFormat(locales, rest).format(value);
 };
 
-export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
-export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
-export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
-export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
-export const humanizeNumber = (v, initialUnit, preferredUnit) => humanize(v, 'numeric', true, initialUnit, preferredUnit);
-export const humanizeNumberSI = (v, initialUnit, preferredUnit) => humanize(v, 'SI', true, initialUnit, preferredUnit);
-export const humanizeSeconds = (v, initialUnit, preferredUnit) => humanize(v, 'seconds', true, initialUnit, preferredUnit);
-export const humanizeCpuCores = v => {
-  const value = v < 1 ? round(v*1000) : v;
+export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
+export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
+export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
+export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
+export const humanizeNumber = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'numeric', true, initialUnit, preferredUnit);
+export const humanizeNumberSI = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'SI', true, initialUnit, preferredUnit);
+export const humanizeSeconds = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'seconds', true, initialUnit, preferredUnit);
+export const humanizeCpuCores = (v) => {
+  const value = v < 1 ? round(v * 1000) : v;
   const unit = v < 1 ? 'm' : '';
   return {
     string: `${formatValue(value)}${unit}`,
@@ -197,12 +222,12 @@ export const humanizeCpuCores = v => {
     value,
   };
 };
-export const humanizePercentage = value => {
+export const humanizePercentage = (value) => {
   if (!isFinite(value)) {
     value = 0;
   }
   return {
-    string: formatPercentage(value/100),
+    string: formatPercentage(value / 100),
     unit: '%',
     value: round(value, 1),
   };
@@ -213,7 +238,7 @@ units.dehumanize = (value, typeName) => {
   return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
 };
 
-validate.split = value => {
+validate.split = (value) => {
   const index = value.search(/([a-zA-Z]+)/g);
   let number, unit;
   if (index === -1) {
@@ -225,7 +250,7 @@ validate.split = value => {
   return [parseFloat(number, 10), unit];
 };
 
-const baseUnitedValidation = value => {
+const baseUnitedValidation = (value) => {
   if (value === null || value.length === 0) {
     return;
   }
@@ -234,7 +259,7 @@ const baseUnitedValidation = value => {
   }
 };
 
-const validateNumber = (float='') => {
+const validateNumber = (float = '') => {
   if (float < 0) {
     return 'must be positive';
   }
@@ -243,14 +268,14 @@ const validateNumber = (float='') => {
   }
 };
 const validCPUUnits = new Set(['m', '']);
-const validateCPUUnit = (value='') => {
+const validateCPUUnit = (value = '') => {
   if (validCPUUnits.has(value)) {
     return;
   }
   return `unrecongnized unit: ${value}`;
 };
 
-validate.CPU = (value='') => {
+validate.CPU = (value = '') => {
   if (!value) {
     return;
   }
@@ -269,7 +294,7 @@ validate.CPU = (value='') => {
 };
 
 const validMemUnits = new Set(['E', 'P', 'T', 'G', 'M', 'k', 'Pi', 'Ti', 'Gi', 'Mi', 'Ki']);
-const validateMemUnit = (value='') => {
+const validateMemUnit = (value = '') => {
   if (validMemUnits.has(value)) {
     return;
   }
@@ -277,14 +302,14 @@ const validateMemUnit = (value='') => {
 };
 
 const validTimeUnits = new Set(['s', 'm', 'h', 'd', 'M', 'y']);
-const validateTimeUnit = (value='') => {
+const validateTimeUnit = (value = '') => {
   if (validTimeUnits.has(value)) {
     return;
   }
   return `unrecongnized unit: ${value}`;
 };
 
-validate.time = (value='') => {
+validate.time = (value = '') => {
   if (!value) {
     return;
   }
@@ -302,7 +327,7 @@ validate.time = (value='') => {
   return validateNumber(number) || validateTimeUnit(unit);
 };
 
-validate.memory = (value='') => {
+validate.memory = (value = '') => {
   if (!value) {
     return;
   }

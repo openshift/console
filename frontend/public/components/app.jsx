@@ -69,14 +69,13 @@ class App extends React.PureComponent {
   }
 
   _onNavToggle() {
-
     // Some components, like svg charts, need to reflow when nav is toggled.
     // Fire event after a short delay to allow nav animation to complete.
     setTimeout(() => {
       window.dispatchEvent(new Event('nav_toggle'));
     }, 100);
 
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return {
         isNavOpen: !prevState.isNavOpen,
       };
@@ -86,14 +85,14 @@ class App extends React.PureComponent {
   _onNavSelect() {
     //close nav on mobile nav selects
     if (!this._isDesktop()) {
-      this.setState({isNavOpen: false});
+      this.setState({ isNavOpen: false });
     }
   }
 
   _onResize() {
     const isDesktop = this._isDesktop();
     if (this.previousDesktopState !== isDesktop) {
-      this.setState({isNavOpen: isDesktop});
+      this.setState({ isNavOpen: isDesktop });
       this.previousDesktopState = isDesktop;
     }
   }
@@ -104,14 +103,17 @@ class App extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Helmet
-          titleTemplate={`%s · ${productName}`}
-          defaultTitle={productName}
-        />
+        <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <ConsoleNotifier location="BannerTop" />
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
-          sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} />}
+          sidebar={
+            <Navigation
+              isNavOpen={isNavOpen}
+              onNavSelect={this._onNavSelect}
+              onPerspectiveSelected={this._onNavSelect}
+            />
+          }
         >
           <AppContents />
         </Page>
@@ -124,13 +126,15 @@ class App extends React.PureComponent {
 const startDiscovery = () => store.dispatch(watchAPIServices());
 
 // Load cached API resources from localStorage to speed up page load.
-getCachedResources().then(resources => {
-  if (resources) {
-    store.dispatch(receivedResources(resources));
-  }
-  // Still perform discovery to refresh the cache.
-  startDiscovery();
-}).catch(startDiscovery);
+getCachedResources()
+  .then((resources) => {
+    if (resources) {
+      store.dispatch(receivedResources(resources));
+    }
+    // Still perform discovery to refresh the cache.
+    startDiscovery();
+  })
+  .catch(startDiscovery);
 
 store.dispatch(detectFeatures());
 
@@ -142,27 +146,41 @@ fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
-window.onerror = window.onunhandledrejection = () => window.windowError = true;
+window.onerror = window.onunhandledrejection = () => (window.windowError = true);
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
     // eslint-disable-next-line import/no-unresolved
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-      .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))
-      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: window.SERVER_FLAGS.loadTestFactor}));
+      .then(
+        () =>
+          new Promise((r) =>
+            navigator.serviceWorker.controller
+              ? r()
+              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
+          ),
+      )
+      .then(() =>
+        navigator.serviceWorker.controller.postMessage({
+          topic: 'setFactor',
+          value: window.SERVER_FLAGS.loadTestFactor,
+        }),
+      );
   } else {
-    navigator.serviceWorker.getRegistrations()
-      .then((registrations) => registrations.forEach(reg => reg.unregister()))
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) => registrations.forEach((reg) => reg.unregister()))
       // eslint-disable-next-line no-console
-      .catch(e => console.warn('Error unregistering service workers', e));
+      .catch((e) => console.warn('Error unregistering service workers', e));
   }
 }
 
-render((
+render(
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <Route path="/" component={App} />
     </Router>
-  </Provider>
-), document.getElementById('app'));
+  </Provider>,
+  document.getElementById('app'),
+);

@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceQuotaTableRow, UsageIcon, ResourceUsageRow } from '../../public/components/resource-quota';
+import {
+  ResourceQuotaTableRow,
+  UsageIcon,
+  ResourceUsageRow,
+} from '../../public/components/resource-quota';
 
 describe(ResourceQuotaTableRow.displayName, () => {
   let wrapper: ShallowWrapper;
@@ -43,7 +47,7 @@ describe(ResourceQuotaTableRow.displayName, () => {
 
 describe('Check quota table columns by ResourceUsageRow', () => {
   let wrapper: ShallowWrapper;
-  const quota = { 'status': {'hard': {'limits.cpu' : 2}, 'used': {'limits.cpu' : 1} } };
+  const quota = { status: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } } };
 
   beforeEach(() => {
     wrapper = shallow(<ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />);

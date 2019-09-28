@@ -11,7 +11,14 @@ import {
 import { DetailsBody, DetailItem } from '../../dashboard/details-card';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { InfrastructureModel, ClusterVersionModel } from '../../../models';
-import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, ClusterVersionKind, getClusterID } from '../../../module/k8s';
+import {
+  referenceForModel,
+  K8sResourceKind,
+  getOpenShiftVersion,
+  getK8sGitVersion,
+  ClusterVersionKind,
+  getClusterID,
+} from '../../../module/k8s';
 import { FLAGS } from '../../../const';
 import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FirehoseResource } from '../../utils';
@@ -37,100 +44,102 @@ const mapStateToProps = (state: RootState) => ({
   openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
 });
 
-export const DetailsCard_ = connect(mapStateToProps)(({
-  watchURL,
-  stopWatchURL,
-  watchK8sResource,
-  stopWatchK8sResource,
-  resources,
-  urlResults,
-  openshiftFlag,
-}: DetailsCardProps) => {
-  React.useEffect(() => {
-    if (flagPending(openshiftFlag)) {
-      return;
-    }
-    if (openshiftFlag) {
-      watchK8sResource(clusterVersionResource);
-      watchK8sResource(infrastructureResource);
+export const DetailsCard_ = connect(mapStateToProps)(
+  ({
+    watchURL,
+    stopWatchURL,
+    watchK8sResource,
+    stopWatchK8sResource,
+    resources,
+    urlResults,
+    openshiftFlag,
+  }: DetailsCardProps) => {
+    React.useEffect(() => {
+      if (flagPending(openshiftFlag)) {
+        return;
+      }
+      if (openshiftFlag) {
+        watchK8sResource(clusterVersionResource);
+        watchK8sResource(infrastructureResource);
+        return () => {
+          stopWatchK8sResource(clusterVersionResource);
+          stopWatchK8sResource(infrastructureResource);
+        };
+      }
+      watchURL('version');
       return () => {
-        stopWatchK8sResource(clusterVersionResource);
-        stopWatchK8sResource(infrastructureResource);
+        stopWatchURL('version');
       };
-    }
-    watchURL('version');
-    return () => {
-      stopWatchURL('version');
-    };
-  }, [openshiftFlag, watchK8sResource, stopWatchK8sResource, watchURL, stopWatchURL]);
+    }, [openshiftFlag, watchK8sResource, stopWatchK8sResource, watchURL, stopWatchURL]);
 
-  const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
-  const clusterVersionError = _.get(resources.cv, 'loadError');
-  const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
-  const clusterId = getClusterID(clusterVersionData);
-  const openShiftVersion = getOpenShiftVersion(clusterVersionData);
+    const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
+    const clusterVersionError = _.get(resources.cv, 'loadError');
+    const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
+    const clusterId = getClusterID(clusterVersionData);
+    const openShiftVersion = getOpenShiftVersion(clusterVersionData);
 
-  const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
-  const infrastructureError = _.get(resources.infrastructure, 'loadError');
-  const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
-  const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
+    const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
+    const infrastructureError = _.get(resources.infrastructure, 'loadError');
+    const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
+    const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
 
-  const kubernetesVersionData = urlResults.getIn(['version', 'data']);
-  const kubernetesVersionError = urlResults.getIn(['version', 'loadError']);
-  const k8sGitVersion = getK8sGitVersion(kubernetesVersionData);
+    const kubernetesVersionData = urlResults.getIn(['version', 'data']);
+    const kubernetesVersionError = urlResults.getIn(['version', 'loadError']);
+    const k8sGitVersion = getK8sGitVersion(kubernetesVersionData);
 
-  return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
-        <DetailsBody>
-          {openshiftFlag ? (
-            <>
+    return (
+      <DashboardCard>
+        <DashboardCardHeader>
+          <DashboardCardTitle>Details</DashboardCardTitle>
+        </DashboardCardHeader>
+        <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
+          <DetailsBody>
+            {openshiftFlag ? (
+              <>
+                <DetailItem
+                  key="clusterid"
+                  title="Cluster ID"
+                  error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
+                  isLoading={!clusterVersionLoaded}
+                >
+                  {clusterId}
+                </DetailItem>
+                <DetailItem
+                  key="provider"
+                  title="Provider"
+                  error={!!infrastructureError || (infrastructureLoaded && !infrastructurePlatform)}
+                  isLoading={!infrastructureLoaded}
+                >
+                  {infrastructurePlatform}
+                </DetailItem>
+                <DetailItem
+                  key="openshift"
+                  title="OpenShift version"
+                  error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
+                  isLoading={!clusterVersionLoaded}
+                >
+                  {openShiftVersion}
+                </DetailItem>
+              </>
+            ) : (
               <DetailItem
-                key="clusterid"
-                title="Cluster ID"
-                error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
-                isLoading={!clusterVersionLoaded}
+                key="kubernetes"
+                title="Kubernetes version"
+                error={!!kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
+                isLoading={!kubernetesVersionData}
               >
-                {clusterId}
+                {k8sGitVersion}
               </DetailItem>
-              <DetailItem
-                key="provider"
-                title="Provider"
-                error={!!infrastructureError || (infrastructureLoaded && !infrastructurePlatform)}
-                isLoading={!infrastructureLoaded}
-              >
-                {infrastructurePlatform}
-              </DetailItem>
-              <DetailItem
-                key="openshift"
-                title="OpenShift version"
-                error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
-                isLoading={!clusterVersionLoaded}
-              >
-                {openShiftVersion}
-              </DetailItem>
-            </>
-          ) : (
-            <DetailItem
-              key="kubernetes"
-              title="Kubernetes version"
-              error={!!kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
-              isLoading={!kubernetesVersionData}
-            >
-              {k8sGitVersion}
-            </DetailItem>
-          )}
-        </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
-  );
-});
+            )}
+          </DetailsBody>
+        </DashboardCardBody>
+      </DashboardCard>
+    );
+  },
+);
 
 export const DetailsCard = withDashboardResources(DetailsCard_);
 
 type DetailsCardProps = DashboardItemProps & {
   openshiftFlag: boolean;
-}
+};

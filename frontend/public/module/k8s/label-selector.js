@@ -23,33 +23,49 @@ export class LabelSelector {
     // For now it will also handle key: null as key exists for backwards compatibility from before
     // the matchExpression support was added.
     this._OPERATOR_MAP = {
-      'In': 'in',
-      'NotIn': 'not in',
-      'Exists': 'exists',
-      'DoesNotExist': 'does not exist',
+      In: 'in',
+      NotIn: 'not in',
+      Exists: 'exists',
+      DoesNotExist: 'does not exist',
     };
     this._REVERSE_OPERATOR_MAP = {
-      'in': 'In',
+      in: 'In',
       'not in': 'NotIn',
-      'exists': 'Exists',
+      exists: 'Exists',
       'does not exist': 'DoesNotExist',
     };
     if (selector) {
       if (selector.matchLabels || selector.matchExpressions) {
-        _.forEach(selector.matchLabels, (details, key) => {
-          this.addConjunct(key, 'in', [details]);
-        }, this);
-        _.forEach(selector.matchExpressions, (expression) => {
-          this.addConjunct(expression.key, this._OPERATOR_MAP[expression.operator], expression.values);
-        }, this);
-      } else {
-        _.forEach(selector, (details, key) => {
-          if (details || details === '') {
+        _.forEach(
+          selector.matchLabels,
+          (details, key) => {
             this.addConjunct(key, 'in', [details]);
-          } else {
-            this.addConjunct(key, 'exists', []);
-          }
-        }, this);
+          },
+          this,
+        );
+        _.forEach(
+          selector.matchExpressions,
+          (expression) => {
+            this.addConjunct(
+              expression.key,
+              this._OPERATOR_MAP[expression.operator],
+              expression.values,
+            );
+          },
+          this,
+        );
+      } else {
+        _.forEach(
+          selector,
+          (details, key) => {
+            if (details || details === '') {
+              this.addConjunct(key, 'in', [details]);
+            } else {
+              this.addConjunct(key, 'exists', []);
+            }
+          },
+          this,
+        );
       }
     }
   }
@@ -66,7 +82,6 @@ export class LabelSelector {
     conjunct.string = this._getStringForConjunct(conjunct);
     return conjunct;
   }
-
 
   // Can accept either the id of the conjunct to remove, or the conjunct
   // object that was returned from a call to addConjunct
@@ -146,10 +161,13 @@ export class LabelSelector {
     return !!this._conjuncts[this._getIdForConjunct(conjunct)];
   }
   findConjunctsMatching(operator, key) {
-    return _.pickBy(this._conjuncts, _.matches({
-      operator,
-      key,
-    }));
+    return _.pickBy(
+      this._conjuncts,
+      _.matches({
+        operator,
+        key,
+      }),
+    );
   }
   // Test whether this label selector covers the given selector
   covers(selector) {
@@ -181,7 +199,9 @@ export class LabelSelector {
             return false;
           }
           return _.every(inConjuncts, function(inConjunct) {
-            return inConjunct.values.length === _.intersection(inConjunct.values, conjunct.values).length;
+            return (
+              inConjunct.values.length === _.intersection(inConjunct.values, conjunct.values).length
+            );
           });
         case 'not in':
           // NotIn (A,B) covers NotIn (A,B,C) AND NotIn (A,B,D)
@@ -190,7 +210,10 @@ export class LabelSelector {
             return false;
           }
           return _.every(notInConjuncts, function(notInConjunct) {
-            return conjunct.values.length === _.intersection(notInConjunct.values, conjunct.values).length;
+            return (
+              conjunct.values.length ===
+              _.intersection(notInConjunct.values, conjunct.values).length
+            );
           });
       }
       return true;
@@ -219,9 +242,9 @@ export class LabelSelector {
   _getStringForConjunct(conjunct) {
     let conjunctString = conjunct.key;
     if (conjunct.operator === 'exists') {
-      return `${conjunctString } exists`;
+      return `${conjunctString} exists`;
     } else if (conjunct.operator === 'does not exist') {
-      return `${conjunctString } does not exist`;
+      return `${conjunctString} does not exist`;
     }
     if (conjunct.operator === 'not in') {
       conjunctString += ' not';
@@ -243,9 +266,9 @@ export class LabelSelector {
   }
 
   _getIdForConjunct(conjunct) {
-    let id = `${conjunct.key }-${ conjunct.operator}`;
+    let id = `${conjunct.key}-${conjunct.operator}`;
     if (conjunct.values) {
-      id += `-${ conjunct.values.join(',')}`;
+      id += `-${conjunct.values.join(',')}`;
     }
     return id;
   }

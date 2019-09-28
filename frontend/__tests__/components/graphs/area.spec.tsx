@@ -5,7 +5,10 @@ import { Chart, ChartArea, ChartAxis } from '@patternfly/react-charts';
 import { AreaChart } from '@console/internal/components/graphs/area';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingBox } from '@console/internal/components/utils';
-import { PrometheusGraph, PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
+import {
+  PrometheusGraph,
+  PrometheusGraphLink,
+} from '@console/internal/components/graphs/prometheus-graph';
 
 const MOCK_DATA = [{ x: 1, y: 100 }];
 
@@ -23,7 +26,9 @@ describe('<AreaChart />', () => {
   });
 
   it('should not render any axes', () => {
-    const wrapper = shallow(<AreaChart title="Test Area" data={MOCK_DATA} xAxis={false} yAxis={false} />);
+    const wrapper = shallow(
+      <AreaChart title="Test Area" data={MOCK_DATA} xAxis={false} yAxis={false} />,
+    );
     expect(wrapper.find(ChartAxis).exists()).toBe(false);
   });
 

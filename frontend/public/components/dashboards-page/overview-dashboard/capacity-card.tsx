@@ -11,7 +11,12 @@ import {
 } from '../../dashboard/dashboard-card';
 import { CapacityBody, CapacityItem } from '../../dashboard/capacity-card';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
-import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB, useRefWidth } from '../../utils';
+import {
+  humanizePercentage,
+  humanizeDecimalBytesPerSec,
+  humanizeBinaryBytesWithoutB,
+  useRefWidth,
+} from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
 import { OverviewQuery, capacityQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
@@ -24,12 +29,15 @@ const getLastStats = (response, getStats: GetStats): React.ReactText => {
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().filter(e => isDashboardExtensionInUse(e, flags)).forEach(pluginQuery => {
-    const queryKey = pluginQuery.properties.queryKey;
-    if (!pluginQueries[queryKey]) {
-      pluginQueries[queryKey] = pluginQuery.properties.query;
-    }
-  });
+  plugins.registry
+    .getDashboardsOverviewQueries()
+    .filter((e) => isDashboardExtensionInUse(e, flags))
+    .forEach((pluginQuery) => {
+      const queryKey = pluginQuery.properties.queryKey;
+      if (!pluginQueries[queryKey]) {
+        pluginQueries[queryKey] = pluginQuery.properties.query;
+      }
+    });
   return _.defaults(pluginQueries, capacityQueries);
 };
 
@@ -42,27 +50,51 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const [containerRef, width] = useRefWidth();
   React.useEffect(() => {
     const queries = getQueries(flags);
-    Object.keys(queries).forEach(key => watchPrometheus(queries[key]));
-    return () => Object.keys(queries).forEach(key => stopWatchPrometheusQuery(queries[key]));
+    Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
+    return () => Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
     // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags)]);
 
   const queries = getQueries(flags);
   const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'data']);
-  const cpuUtilizationError = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'loadError']);
-  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'data']);
-  const memoryUtilizationError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'loadError']);
+  const cpuUtilizationError = prometheusResults.getIn([
+    queries[OverviewQuery.CPU_UTILIZATION],
+    'loadError',
+  ]);
+  const memoryUtilization = prometheusResults.getIn([
+    queries[OverviewQuery.MEMORY_UTILIZATION],
+    'data',
+  ]);
+  const memoryUtilizationError = prometheusResults.getIn([
+    queries[OverviewQuery.MEMORY_UTILIZATION],
+    'loadError',
+  ]);
   const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'data']);
-  const memoryTotalError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'loadError']);
+  const memoryTotalError = prometheusResults.getIn([
+    queries[OverviewQuery.MEMORY_TOTAL],
+    'loadError',
+  ]);
   const storageUsed = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'data']);
-  const storageUsedError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'loadError']);
+  const storageUsedError = prometheusResults.getIn([
+    queries[OverviewQuery.STORAGE_UTILIZATION],
+    'loadError',
+  ]);
   const storageTotal = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'data']);
-  const storageTotalError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'loadError']);
+  const storageTotalError = prometheusResults.getIn([
+    queries[OverviewQuery.STORAGE_TOTAL],
+    'loadError',
+  ]);
   const networkUsed = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'data']);
-  const networkUsedError = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'loadError']);
+  const networkUsedError = prometheusResults.getIn([
+    queries[OverviewQuery.NETWORK_UTILIZATION],
+    'loadError',
+  ]);
   const networkTotal = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'data']);
-  const networkTotalError = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'loadError']);
+  const networkTotalError = prometheusResults.getIn([
+    queries[OverviewQuery.NETWORK_TOTAL],
+    'loadError',
+  ]);
 
   const CPUItem = (
     <CapacityItem
@@ -108,23 +140,14 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
     />
   );
 
-
   let grid;
   if (width <= 300) {
     grid = (
       <>
-        <GridItem className="co-overview-capacity__item">
-          {CPUItem}
-        </GridItem>
-        <GridItem className="co-overview-capacity__item">
-          {MemoryItem}
-        </GridItem>
-        <GridItem className="co-overview-capacity__item">
-          {StorageItem}
-        </GridItem>
-        <GridItem className="co-overview-capacity__item">
-          {NetworkItem}
-        </GridItem>
+        <GridItem className="co-overview-capacity__item">{CPUItem}</GridItem>
+        <GridItem className="co-overview-capacity__item">{MemoryItem}</GridItem>
+        <GridItem className="co-overview-capacity__item">{StorageItem}</GridItem>
+        <GridItem className="co-overview-capacity__item">{NetworkItem}</GridItem>
       </>
     );
   } else if (width <= 650) {

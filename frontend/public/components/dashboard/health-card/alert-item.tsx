@@ -21,7 +21,9 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   return (
     <div className="co-health-card__alerts-item">
       {getSeverityIcon(getAlertSeverity(alert))}
-      <span className="co-health-card__text">{getAlertDescription(alert) || getAlertMessage(alert)}</span>
+      <span className="co-health-card__text">
+        {getAlertDescription(alert) || getAlertMessage(alert)}
+      </span>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 /* eslint-env node */
 
 import * as React from 'react';
@@ -26,18 +25,24 @@ describe('When calling setter from `useState()` hook in an unsafe React componen
     const consoleErrorSpy = spyOn(global.console, 'error').and.callThrough();
 
     let wrapper = mount<Props>(<Unsafe loader={null} />);
-    const loader = () => new Promise(resolve => {
-      expect(wrapper.text()).toEqual('Loading...');
-      wrapper.unmount();
-      resolve();
-    });
+    const loader = () =>
+      new Promise((resolve) => {
+        expect(wrapper.text()).toEqual('Loading...');
+        wrapper.unmount();
+        resolve();
+      });
 
-    wrapper = wrapper.setProps({loader});
+    wrapper = wrapper.setProps({ loader });
     wrapper.find('button').simulate('click');
 
     // FIXME(alecmerdler): Shouldn't need a `setTimeout` here...
     setTimeout(() => {
-      expect(consoleErrorSpy.calls.all().map(call => call.args[0] as string).some(text => text.includes(warning))).toBe(true);
+      expect(
+        consoleErrorSpy.calls
+          .all()
+          .map((call) => call.args[0] as string)
+          .some((text) => text.includes(warning)),
+      ).toBe(true);
       done();
     }, 500);
   });
@@ -61,35 +66,47 @@ describe('useSafetyFirst', () => {
   });
 
   it('does not attempt to set React state if unmounted (using hook)', (done) => {
-    const loader = () => new Promise(resolve => {
-      expect(wrapper.text()).toEqual('Loading...');
-      wrapper.unmount();
-      resolve();
-    });
+    const loader = () =>
+      new Promise((resolve) => {
+        expect(wrapper.text()).toEqual('Loading...');
+        wrapper.unmount();
+        resolve();
+      });
 
-    wrapper = wrapper.setProps({loader});
+    wrapper = wrapper.setProps({ loader });
     wrapper.find('button').simulate('click');
 
     // FIXME(alecmerdler): Shouldn't need a `setTimeout` here...
     setTimeout(() => {
-      expect(consoleErrorSpy.calls.all().map(call => call.args[0] as string).some(text => text.includes(warning))).toBe(false);
+      expect(
+        consoleErrorSpy.calls
+          .all()
+          .map((call) => call.args[0] as string)
+          .some((text) => text.includes(warning)),
+      ).toBe(false);
       done();
     }, 500);
   });
 
   it('will set React state if mounted (using hook)', (done) => {
-    const loader = () => new Promise(resolve => {
-      expect(wrapper.text()).toEqual('Loading...');
-      resolve();
-    });
+    const loader = () =>
+      new Promise((resolve) => {
+        expect(wrapper.text()).toEqual('Loading...');
+        resolve();
+      });
 
-    wrapper = wrapper.setProps({loader});
+    wrapper = wrapper.setProps({ loader });
     wrapper.find('button').simulate('click');
 
     // FIXME(alecmerdler): Shouldn't need a `setTimeout` here...
     setTimeout(() => {
       expect(wrapper.text()).toEqual('Loaded');
-      expect(consoleErrorSpy.calls.all().map(call => call.args[0] as string).some(text => text.includes(warning))).toBe(false);
+      expect(
+        consoleErrorSpy.calls
+          .all()
+          .map((call) => call.args[0] as string)
+          .some((text) => text.includes(warning)),
+      ).toBe(false);
       done();
     }, 500);
   });

@@ -19,21 +19,30 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
 };
 
 export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
-  ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
+  ({ children, query, urls }: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
     const url = getPrometheusExpressionBrowserURL(urls, [query]);
-    return query
-      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>{children}</a>
-      : <React.Fragment>{children}</React.Fragment>;
-  }
+    return query ? (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: 'inherit', textDecoration: 'none' }}
+      >
+        {children}
+      </a>
+    ) : (
+      <React.Fragment>{children}</React.Fragment>
+    );
+  },
 );
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
-  ({children, className, title}, ref: React.RefObject<HTMLDivElement>) => (
+  ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
     <div ref={ref} className={classNames('graph-wrapper', className)}>
       {title && <h5 className="graph-title">{title}</h5>}
       {children}
     </div>
-  )
+  ),
 );
 
 type PrometheusGraphLinkProps = {
@@ -45,4 +54,4 @@ type PrometheusGraphProps = {
   className?: string;
   ref?: React.Ref<HTMLDivElement>;
   title?: string;
-}
+};

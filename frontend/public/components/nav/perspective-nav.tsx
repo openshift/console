@@ -26,8 +26,8 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
       {_.compact(
         plugins.registry
           .getNavItems()
-          .filter(item => item.properties.perspective === perspective)
-          .map(item => {
+          .filter((item) => item.properties.perspective === perspective)
+          .map((item) => {
             const { section } = item.properties;
             if (section) {
               if (renderedSections.includes(section)) {
@@ -37,7 +37,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
               return <NavSection title={section} key={section} />;
             }
             return createLink(item, true);
-          })
+          }),
       )}
     </React.Fragment>
   );

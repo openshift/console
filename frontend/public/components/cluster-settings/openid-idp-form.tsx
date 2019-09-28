@@ -3,18 +3,8 @@ import { Helmet } from 'react-helmet';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
-import {
-  IdentityProvider,
-  k8sCreate,
-  K8sResourceKind,
-  OAuthKind,
-} from '../../module/k8s';
-import {
-  ButtonBar,
-  ListInput,
-  PromiseComponent,
-  history,
-} from '../utils';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
+import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -76,8 +66,20 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addOpenIDIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
+  addOpenIDIDP(
+    oauth: OAuthKind,
+    clientSecretName: string,
+    caName: string,
+  ): Promise<K8sResourceKind> {
+    const {
+      name,
+      clientID,
+      issuer,
+      extraScopes,
+      claimPreferredUsernames,
+      claimNames,
+      claimEmails,
+    } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'OpenID',
@@ -110,128 +112,167 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     e.preventDefault();
 
     // Clear any previous errors.
-    this.setState({errorMessage: ''});
+    this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [
-        this.createClientSecret(),
-        this.createCAConfigMap(),
-      ];
+      const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises).then(([secret, configMap]) => {
-        const caName = configMap ? configMap.metadata.name : '';
-        return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
-      }).then(redirectToOAuthPage);
+      Promise.all(promises)
+        .then(([secret, configMap]) => {
+          const caName = configMap ? configMap.metadata.name : '';
+          return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
+        })
+        .then(redirectToOAuthPage);
     });
   };
 
   nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({name: event.currentTarget.value});
+    this.setState({ name: event.currentTarget.value });
   };
 
   clientIDChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({clientID: event.currentTarget.value});
+    this.setState({ clientID: event.currentTarget.value });
   };
 
   clientSecretChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({clientSecret: event.currentTarget.value});
+    this.setState({ clientSecret: event.currentTarget.value });
   };
 
   issuerChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({issuer: event.currentTarget.value});
+    this.setState({ issuer: event.currentTarget.value });
   };
 
   claimPreferredUsernamesChanged = (claimPreferredUsernames: string[]) => {
-    this.setState({claimPreferredUsernames});
+    this.setState({ claimPreferredUsernames });
   };
 
   claimNamesChanged = (claimNames: string[]) => {
-    this.setState({claimNames});
+    this.setState({ claimNames });
   };
 
   claimEmailsChanged = (claimEmails: string[]) => {
-    this.setState({claimEmails});
+    this.setState({ claimEmails });
   };
 
   extraScopesChanged = (extraScopes: string[]) => {
-    this.setState({extraScopes});
+    this.setState({ extraScopes });
   };
 
   caFileChanged = (caFileContent: string) => {
-    this.setState({caFileContent});
+    this.setState({ caFileContent });
   };
 
   render() {
-    const { name, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
+    const {
+      name,
+      clientID,
+      clientSecret,
+      issuer,
+      claimPreferredUsernames,
+      claimNames,
+      claimEmails,
+      caFileContent,
+    } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
-    return <div className="co-m-pane__body">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
-        </p>
-        <IDPNameInput value={name} onChange={this.nameChanged} />
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientID">Client ID</label>
-          <input className="pf-c-form-control"
-            type="text"
-            onChange={this.clientIDChanged}
-            value={clientID}
-            id="clientID"
-            required />
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientSecret">Client Secret</label>
-          <input className="pf-c-form-control"
-            type="password"
-            onChange={this.clientSecretChanged}
-            value={clientSecret}
-            id="clientSecret"
-            required />
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
-          <input className="pf-c-form-control"
-            type="text"
-            onChange={this.issuerChanged}
-            value={issuer}
-            id="issuer"
-            required
-            aria-describedby="issuer-help" />
-          <div className="help-block" id="issuer-help">
-            The URL that the OpenID Provider asserts as its Issuer Identifier.
-            It must use the https scheme with no URL query parameters or fragment.
+    return (
+      <div className="co-m-pane__body">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">
+            Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
+          </p>
+          <IDPNameInput value={name} onChange={this.nameChanged} />
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="clientID">
+              Client ID
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={this.clientIDChanged}
+              value={clientID}
+              id="clientID"
+              required
+            />
           </div>
-        </div>
-        <div className="co-form-section__separator"></div>
-        <h3>Claims</h3>
-        <p className="co-help-text">Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.</p>
-        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} helpText="Any scopes to request in addition to the standard openid scope." />
-        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} helpText="The list of claims whose values should be used as the display name." />
-        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} helpText="The list of claims whose values should be used as the email address." />
-        <div className="co-form-section__separator"></div>
-        <h3>More Options</h3>
-        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-        <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} helpText="Any scopes to request in addition to the standard openid scope." />
-        <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              type="submit"
-              variant="primary">
-              Add
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={history.goBack}>
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>;
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="clientSecret">
+              Client Secret
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="password"
+              onChange={this.clientSecretChanged}
+              value={clientSecret}
+              id="clientSecret"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="issuer">
+              Issuer URL
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={this.issuerChanged}
+              value={issuer}
+              id="issuer"
+              required
+              aria-describedby="issuer-help"
+            />
+            <div className="help-block" id="issuer-help">
+              The URL that the OpenID Provider asserts as its Issuer Identifier. It must use the
+              https scheme with no URL query parameters or fragment.
+            </div>
+          </div>
+          <div className="co-form-section__separator" />
+          <h3>Claims</h3>
+          <p className="co-help-text">
+            Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty
+            claim is used.
+          </p>
+          <ListInput
+            label="Preferred Username"
+            initialValues={claimPreferredUsernames}
+            onChange={this.claimPreferredUsernamesChanged}
+            helpText="Any scopes to request in addition to the standard openid scope."
+          />
+          <ListInput
+            label="Name"
+            initialValues={claimNames}
+            onChange={this.claimNamesChanged}
+            helpText="The list of claims whose values should be used as the display name."
+          />
+          <ListInput
+            label="Email"
+            initialValues={claimEmails}
+            onChange={this.claimEmailsChanged}
+            helpText="The list of claims whose values should be used as the email address."
+          />
+          <div className="co-form-section__separator" />
+          <h3>More Options</h3>
+          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+          <ListInput
+            label="Extra Scopes"
+            onChange={this.extraScopesChanged}
+            helpText="Any scopes to request in addition to the standard openid scope."
+          />
+          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                Add
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    );
   }
 }
 

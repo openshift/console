@@ -43,35 +43,37 @@ export const BarChart: React.FC<BarChartProps> = ({
   };
 
   return (
-    <PrometheusGraph ref={containerRef} title={title} className={titleClassName} >
-      {
-        data.length ? (
-          <PrometheusGraphLink query={query}>
-            {data.map((datum, index) => (
-              <React.Fragment key={index}>
-                <div className="graph-bar__label">
-                  {LabelComponent ? <LabelComponent title={datum.x} metric={datum.metric} /> : datum.x}
-                </div>
-                <div className="graph-bar__chart">
-                  <ChartBar
-                    barWidth={barWidth}
-                    data={[datum]}
-                    horizontal
-                    labelComponent={<ChartLabel x={width} />}
-                    theme={theme}
-                    height={barWidth + padding.bottom}
-                    width={width}
-                    domain={{y: [0, data[0].y]}}
-                    padding={padding}
-                  />
-                </div>
-              </React.Fragment>
-            ))}
-          </PrometheusGraphLink>
-        ) : (
-          <GraphEmpty loading={loading} />
-        )
-      }
+    <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
+      {data.length ? (
+        <PrometheusGraphLink query={query}>
+          {data.map((datum, index) => (
+            <React.Fragment key={index}>
+              <div className="graph-bar__label">
+                {LabelComponent ? (
+                  <LabelComponent title={datum.x} metric={datum.metric} />
+                ) : (
+                  datum.x
+                )}
+              </div>
+              <div className="graph-bar__chart">
+                <ChartBar
+                  barWidth={barWidth}
+                  data={[datum]}
+                  horizontal
+                  labelComponent={<ChartLabel x={width} />}
+                  theme={theme}
+                  height={barWidth + padding.bottom}
+                  width={width}
+                  domain={{ y: [0, data[0].y] }}
+                  padding={padding}
+                />
+              </div>
+            </React.Fragment>
+          ))}
+        </PrometheusGraphLink>
+      ) : (
+        <GraphEmpty loading={loading} />
+      )}
     </PrometheusGraph>
   );
 };
@@ -85,7 +87,11 @@ export const Bar: React.FC<BarProps> = ({
   query,
   title,
 }) => {
-  const [response,, loading] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
+  const [response, , loading] = usePrometheusPoll({
+    endpoint: PrometheusEndpoint.QUERY,
+    namespace,
+    query,
+  });
   const data = getInstantVectorStats(response, metric, humanize);
 
   return (
@@ -102,8 +108,8 @@ export const Bar: React.FC<BarProps> = ({
 
 type LabelComponentProps = {
   title: Date | string | number;
-  metric?: {[key: string]: string};
-}
+  metric?: { [key: string]: string };
+};
 
 type BarChartProps = {
   LabelComponent?: React.ComponentType<LabelComponentProps>;
@@ -114,7 +120,7 @@ type BarChartProps = {
   data?: DataPoint[];
   titleClassName?: string;
   loading?: boolean;
-}
+};
 
 type BarProps = {
   humanize?: Humanize;
@@ -125,4 +131,4 @@ type BarProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
   titleClassName: string;
-}
+};

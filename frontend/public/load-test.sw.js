@@ -3,14 +3,19 @@
  */
 const uuidFor = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
 
-const pageFromToken = (continueToken) => continueToken ? parseInt(continueToken.replace('toPage', ''), 10) : 0;
+const pageFromToken = (continueToken) =>
+  continueToken ? parseInt(continueToken.replace('toPage', ''), 10) : 0;
 
-const cloneResource = (obj, num) => ({...obj, metadata: {...obj.metadata, name: `${obj.metadata.name}-clone-${num}`, uid: uuidFor()}});
+const cloneResource = (obj, num) => ({
+  ...obj,
+  metadata: { ...obj.metadata, name: `${obj.metadata.name}-clone-${num}`, uid: uuidFor() },
+});
 
 const strippedURLFor = (request) => {
   const url = new URL(request.url);
@@ -45,31 +50,43 @@ const workloads = new Set()
  * Also mocks k8s pagination.
  */
 self.addEventListener('fetch', (event) => {
-  if ([...workloads].some(url => url.test(event.request.url))) {
-    event.respondWith((async() => {
-      const response = await fetch(strippedURLFor(event.request));
-      try {
-        const json = await response.json();
+  if ([...workloads].some((url) => url.test(event.request.url))) {
+    event.respondWith(
+      (async () => {
+        const response = await fetch(strippedURLFor(event.request));
+        try {
+          const json = await response.json();
 
-        const limit = parseInt(new URL(event.request.url).searchParams.get('limit'), 10);
-        const continueToken = new URL(event.request.url).searchParams.get('continue');
+          const limit = parseInt(new URL(event.request.url).searchParams.get('limit'), 10);
+          const continueToken = new URL(event.request.url).searchParams.get('continue');
 
-        const allItems = json.items.map(item => Array.from(Array(multiplicationFactor)).map((_, i) => cloneResource(item, i)).concat([item]))
-          .reduce((flattened, items) => flattened.concat(items), []);
+          const allItems = json.items
+            .map((item) =>
+              Array.from(Array(multiplicationFactor))
+                .map((_, i) => cloneResource(item, i))
+                .concat([item]),
+            )
+            .reduce((flattened, items) => flattened.concat(items), []);
 
-        json.items = limit
-          ? allItems.slice(pageFromToken(continueToken) * limit, (pageFromToken(continueToken) + 1) * limit)
-          : allItems;
+          json.items = limit
+            ? allItems.slice(
+                pageFromToken(continueToken) * limit,
+                (pageFromToken(continueToken) + 1) * limit,
+              )
+            : allItems;
 
-        if (limit && pageFromToken(continueToken) < (allItems.length / limit)) {
-          json.metadata.continue = `toPage${pageFromToken(continueToken) + 1}`;
+          if (limit && pageFromToken(continueToken) < allItems.length / limit) {
+            json.metadata.continue = `toPage${pageFromToken(continueToken) + 1}`;
+          }
+
+          return new Response(new Blob([JSON.stringify(json)], { type: 'application/json' }), {
+            headers: response.headers,
+          });
+        } catch (e) {
+          return response;
         }
-
-        return new Response(new Blob([JSON.stringify(json)], {type: 'application/json'}), {headers: response.headers});
-      } catch (e) {
-        return response;
-      }
-    })());
+      })(),
+    );
   }
 });
 
@@ -83,5 +100,5 @@ self.addEventListener('message', (event) => {
   }
 });
 
-self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
-self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()));
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));

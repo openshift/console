@@ -11,15 +11,32 @@ import { format } from 'util';
 const tap = !!process.env.TAP;
 
 export const BROWSER_TIMEOUT = 15000;
-export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
-export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
+export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
+  process.env.BRIDGE_BASE_PATH || '/'
+).replace(/\/$/, '')}`;
+export const testName = `test-${Math.random()
+  .toString(36)
+  .replace(/[^a-z]+/g, '')
+  .substr(0, 5)}`;
 export const screenshotsDir = 'gui_test_screenshots';
 
-const htmlReporter = new HtmlScreenshotReporter({ dest: `./${screenshotsDir}`, inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html' });
-const junitReporter = new JUnitXmlReporter({ savePath: `./${screenshotsDir}`, consolidateAll: true });
+const htmlReporter = new HtmlScreenshotReporter({
+  dest: `./${screenshotsDir}`,
+  inlineImages: true,
+  captureOnlyFailedSpecs: true,
+  filename: 'test-gui-report.html',
+});
+const junitReporter = new JUnitXmlReporter({
+  savePath: `./${screenshotsDir}`,
+  consolidateAll: true,
+});
 const browserLogs: logging.Entry[] = [];
 
-const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
+const suite = (tests: string[]) =>
+  (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
+    'tests/base.scenario.ts',
+    ...tests,
+  ]);
 
 export const config: Config = {
   framework: 'jasmine',
@@ -50,13 +67,16 @@ export const config: Config = {
         '--disable-dev-shm-usage',
       ],
       prefs: {
+        // eslint-disable-next-line camelcase
         'profile.password_manager_enabled': false,
-        'credentials_enable_service': false,
-        'password_manager_enabled': false,
+        // eslint-disable-next-line camelcase
+        credentials_enable_service: false,
+        // eslint-disable-next-line camelcase
+        password_manager_enabled: false,
       },
     },
   },
-  beforeLaunch: () => new Promise(resolve => htmlReporter.beforeLaunch(resolve)),
+  beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
     const addReporter = (jasmine as any).getEnv().addReporter;
     browser.waitForAngularEnabled(false);
@@ -68,9 +88,9 @@ export const config: Config = {
       addReporter(new ConsoleReporter());
     }
   },
-  onComplete: async() => {
+  onComplete: async () => {
     const consoleLogStream = createWriteStream(`${screenshotsDir}/browser.log`, { flags: 'a' });
-    browserLogs.forEach(log => {
+    browserLogs.forEach((log) => {
       const { level, message } = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
       consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
@@ -81,30 +101,23 @@ export const config: Config = {
 
     // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
     // since we're using kubectl instead of oc.
-    const resource = browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
+    const resource =
+      browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
     await browser.close();
-    execSync(`if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`);
+    execSync(
+      `if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`,
+    );
   },
   afterLaunch: (exitCode) => {
     failFast.clean();
-    return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
+    return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
-    filter: suite([
-      'tests/filter.scenario.ts',
-    ]),
-    annotation: suite([
-      'tests/modal-annotations.scenario.ts',
-    ]),
-    environment: suite([
-      'tests/environment.scenario.ts',
-    ]),
-    secrets: suite([
-      'tests/secrets.scenario.ts',
-    ]),
-    storage: suite([
-      'tests/storage.scenario.ts',
-    ]),
+    filter: suite(['tests/filter.scenario.ts']),
+    annotation: suite(['tests/modal-annotations.scenario.ts']),
+    environment: suite(['tests/environment.scenario.ts']),
+    secrets: suite(['tests/secrets.scenario.ts']),
+    storage: suite(['tests/storage.scenario.ts']),
     crud: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -112,22 +125,15 @@ export const config: Config = {
       'tests/modal-annotations.scenario.ts',
       'tests/environment.scenario.ts',
     ]),
-    monitoring: suite([
-      'tests/monitoring.scenario.ts',
-    ]),
-    newApp: suite([
-      'tests/overview/overview.scenario.ts',
-      'tests/deploy-image.scenario.ts',
-    ]),
+    monitoring: suite(['tests/monitoring.scenario.ts']),
+    newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
     olmFull: suite([
       '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
       '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
       '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
       '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
     ]),
-    performance: suite([
-      'tests/performance.scenario.ts',
-    ]),
+    performance: suite(['tests/performance.scenario.ts']),
     serviceCatalog: suite([
       'tests/service-catalog/service-catalog.scenario.ts',
       'tests/service-catalog/service-broker.scenario.ts',
@@ -135,12 +141,8 @@ export const config: Config = {
       'tests/service-catalog/service-binding.scenario.ts',
       'tests/developer-catalog.scenario.ts',
     ]),
-    overview: suite([
-      'tests/overview/overview.scenario.ts',
-    ]),
-    crdExtensions: suite([
-      'tests/crd-extensions.scenario.ts',
-    ]),
+    overview: suite(['tests/overview/overview.scenario.ts']),
+    crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
     e2e: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -188,12 +190,8 @@ export const config: Config = {
       'tests/devconsole/git-import-flow.scenario.ts',
       'tests/crd-extensions.scenario.ts',
     ]),
-    clusterSettings: suite([
-      'tests/cluster-settings.scenario.ts',
-    ]),
-    login: [
-      'tests/login.scenario.ts',
-    ],
+    clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
+    login: ['tests/login.scenario.ts'],
     devconsole: [
       'tests/devconsole/dev-perspective.scenario.ts',
       'tests/devconsole/git-import-flow.scenario.ts',
@@ -209,8 +207,11 @@ export const config: Config = {
   },
 };
 
-export const checkLogs = async() => (await browser.manage().logs().get('browser'))
-  .map(log => {
+export const checkLogs = async () =>
+  (await browser
+    .manage()
+    .logs()
+    .get('browser')).map((log) => {
     browserLogs.push(log);
     return log;
   });
@@ -218,28 +219,31 @@ export const checkLogs = async() => (await browser.manage().logs().get('browser'
 function hasError() {
   return window.windowError;
 }
-export const checkErrors = async() => await browser.executeScript(hasError).then(err => {
-  if (err) {
-    fail(`omg js error: ${err}`);
-  }
-});
+export const checkErrors = async () =>
+  await browser.executeScript(hasError).then((err) => {
+    if (err) {
+      fail(`omg js error: ${err}`);
+    }
+  });
 
 export const waitForCount = (elementArrayFinder, expectedCount) => {
-  return async() => {
+  return async () => {
     const actualCount = await elementArrayFinder.count();
     return expectedCount >= actualCount;
   };
 };
 
 export const waitForNone = (elementArrayFinder) => {
-  return async() => {
+  return async () => {
     const count = await elementArrayFinder.count();
     return count === 0;
   };
 };
 
 export const create = (obj) => {
-  const filename = [screenshotsDir, `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`].join('/');
+  const filename = [screenshotsDir, `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`].join(
+    '/',
+  );
   writeFileSync(filename, JSON.stringify(obj));
   execSync(`kubectl create -f ${filename}`);
   execSync(`rm ${filename}`);

@@ -2,9 +2,9 @@
 // to json schemas
 
 interface GroupVersionKind {
-  'kind': string,
-  'version': string,
-  'group': string
+  kind: string;
+  version: string;
+  group: string;
 }
 
 /**
@@ -15,7 +15,7 @@ function groupVersionKindToEnums(gvkObjArray: [GroupVersionKind]) {
   const kindEnum = [];
   for (const gvkObj of gvkObjArray) {
     if (gvkObj.group && gvkObj.version) {
-      versionEnum.push(`${gvkObj.group }/${ gvkObj.version}`);
+      versionEnum.push(`${gvkObj.group}/${gvkObj.version}`);
     } else if (gvkObj.version) {
       versionEnum.push(gvkObj.version);
     }
@@ -34,7 +34,7 @@ function groupVersionKindToEnums(gvkObjArray: [GroupVersionKind]) {
  */
 function createOrAppendAPIVersion(openAPI, apiVersionEnum: string[]) {
   if (openAPI.apiVersion) {
-    if (openAPI.apiVersion.enum){
+    if (openAPI.apiVersion.enum) {
       openAPI.apiVersion.enum.push(...apiVersionEnum);
     } else {
       openAPI.apiVersion.enum = apiVersionEnum;
@@ -51,7 +51,7 @@ function createOrAppendAPIVersion(openAPI, apiVersionEnum: string[]) {
  */
 function createOrAppendKind(openAPI, kindEnum: string[]) {
   if (openAPI.kind) {
-    if (openAPI.kind.enum){
+    if (openAPI.kind.enum) {
       openAPI.kind.enum.push(...kindEnum);
     } else {
       openAPI.kind.enum = kindEnum;
@@ -101,18 +101,16 @@ export function openAPItoJSONSchema(openAPI) {
   for (const schemaProperty in convertedOpenAPI) {
     if (convertedOpenAPI.hasOwnProperty(schemaProperty)) {
       openAPIDefinitions[schemaProperty] = convertedOpenAPI[schemaProperty];
-      oneOfSchemas.push(
-        {
-          '$ref': `#/definitions/${schemaProperty}`,
-        }
-      );
+      oneOfSchemas.push({
+        $ref: `#/definitions/${schemaProperty}`,
+      });
     }
   }
 
   return {
-    'definitions': {
+    definitions: {
       ...openAPIDefinitions,
     },
-    'oneOf': oneOfSchemas,
+    oneOf: oneOfSchemas,
   };
 }

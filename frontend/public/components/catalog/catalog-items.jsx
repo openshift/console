@@ -16,14 +16,19 @@ export const catalogCategories = {
     label: 'Languages',
     field: 'tags',
     subcategories: {
-      java: {id: 'java', label: 'Java', values: ['java']},
-      javascript: {id: 'javascript', label: 'JavaScript', field: 'tags', values: ['javascript', 'nodejs', 'js']},
-      dotnet: {id: 'dotnet', label: '.NET', field: 'tags', values: ['dotnet']},
-      perl: {id: 'perl', label: 'Perl', field: 'tags', values: ['perl']},
-      ruby: {id: 'ruby', label: 'Ruby', field: 'tags', values: ['ruby']},
-      php: {id: 'php', label: 'PHP', field: 'tags', values: ['php']},
-      python: {id: 'python', label: 'Python', field: 'tags', values: ['python']},
-      golang: {id: 'golang', label: 'Go', field: 'tags', values: ['golang', 'go']},
+      java: { id: 'java', label: 'Java', values: ['java'] },
+      javascript: {
+        id: 'javascript',
+        label: 'JavaScript',
+        field: 'tags',
+        values: ['javascript', 'nodejs', 'js'],
+      },
+      dotnet: { id: 'dotnet', label: '.NET', field: 'tags', values: ['dotnet'] },
+      perl: { id: 'perl', label: 'Perl', field: 'tags', values: ['perl'] },
+      ruby: { id: 'ruby', label: 'Ruby', field: 'tags', values: ['ruby'] },
+      php: { id: 'php', label: 'PHP', field: 'tags', values: ['php'] },
+      python: { id: 'python', label: 'Python', field: 'tags', values: ['python'] },
+      golang: { id: 'golang', label: 'Go', field: 'tags', values: ['golang', 'go'] },
     },
   },
   databases: {
@@ -31,10 +36,10 @@ export const catalogCategories = {
     label: 'Databases',
     field: 'tags',
     subcategories: {
-      mongodb: {id: 'mongodb', label: 'Mongo', field: 'tags', values: ['mongodb']},
-      mysql: {id: 'mysql', label: 'MySQL', field: 'tags', values: ['mysql']},
-      postgresql: {id: 'postgresql', label: 'Postgres', field: 'tags', values: ['postgresql']},
-      mariadb: {id: 'mariadb', label: 'MariaDB', field: 'tags', values: ['mariadb']},
+      mongodb: { id: 'mongodb', label: 'Mongo', field: 'tags', values: ['mongodb'] },
+      mysql: { id: 'mysql', label: 'MySQL', field: 'tags', values: ['mysql'] },
+      postgresql: { id: 'postgresql', label: 'Postgres', field: 'tags', values: ['postgresql'] },
+      mariadb: { id: 'mariadb', label: 'MariaDB', field: 'tags', values: ['mariadb'] },
     },
   },
   middleware: {
@@ -42,10 +47,30 @@ export const catalogCategories = {
     label: 'Middleware',
     field: 'tags',
     subcategories: {
-      integration: {id: 'integration', label: 'Integration', field: 'tags', values: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale']},
-      processAutomation: {id: 'processAutomation', label: 'Process Automation', field: 'tags', values: ['decisionserver', 'processserver']},
-      analyticsData: {id: 'analyticsData', label: 'Analytics & Data', field: 'tags', values: ['datagrid', 'datavirt']},
-      runtimes: {id: 'runtimes', label: 'Runtimes & Frameworks', field: 'tags', values: ['eap', 'httpd', 'tomcat']},
+      integration: {
+        id: 'integration',
+        label: 'Integration',
+        field: 'tags',
+        values: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale'],
+      },
+      processAutomation: {
+        id: 'processAutomation',
+        label: 'Process Automation',
+        field: 'tags',
+        values: ['decisionserver', 'processserver'],
+      },
+      analyticsData: {
+        id: 'analyticsData',
+        label: 'Analytics & Data',
+        field: 'tags',
+        values: ['datagrid', 'datavirt'],
+      },
+      runtimes: {
+        id: 'runtimes',
+        label: 'Runtimes & Frameworks',
+        field: 'tags',
+        values: ['eap', 'httpd', 'tomcat'],
+      },
     },
   },
   cicd: {
@@ -53,8 +78,8 @@ export const catalogCategories = {
     label: 'CI/CD',
     field: 'tags',
     subcategories: {
-      jenkins: {id: 'jenkins', label: 'Jenkins', field: 'tags', values: ['jenkins']},
-      pipelines: {id: 'pipelines', label: 'Pipelines', field: 'tags', values: ['pipelines']},
+      jenkins: { id: 'jenkins', label: 'Jenkins', field: 'tags', values: ['jenkins'] },
+      pipelines: { id: 'pipelines', label: 'Pipelines', field: 'tags', values: ['pipelines'] },
     },
   },
   virtualization: {
@@ -62,20 +87,19 @@ export const catalogCategories = {
     label: 'Virtualization',
     field: 'tags',
     subcategories: {
-      vms: {id: 'vms', label: 'Virtual Machines', field: 'tags', values: ['virtualmachine']},
+      vms: { id: 'vms', label: 'Virtual Machines', field: 'tags', values: ['virtualmachine'] },
     },
   },
 };
 
-const pageDescription = 'Add shared apps, services, or source-to-image builders to your project from the Developer ' +
+const pageDescription =
+  'Add shared apps, services, or source-to-image builders to your project from the Developer ' +
   'Catalog. Cluster admins can install additional apps which will show up here automatically.';
 
 // Filter property white list
-const filterGroups = [
-  'kind',
-];
+const filterGroups = ['kind'];
 
-const getAvailableFilters = initialFilters => {
+const getAvailableFilters = (initialFilters) => {
   const filters = _.cloneDeep(initialFilters);
   filters.kind = {
     ClusterServiceClass: {
@@ -103,7 +127,6 @@ const getAvailableFilters = initialFilters => {
   return filters;
 };
 
-
 const filterGroupNameMap = {
   kind: 'Type',
 };
@@ -121,12 +144,14 @@ const keywordCompare = (filterString, item) => {
     return false;
   }
 
-  return item.tileName.toLowerCase().includes(filterString) ||
+  return (
+    item.tileName.toLowerCase().includes(filterString) ||
     (item.tileDescription && item.tileDescription.toLowerCase().includes(filterString)) ||
-    (item.tags && item.tags.includes(filterString));
+    (item.tags && item.tags.includes(filterString))
+  );
 };
 
-const setURLParams = params => {
+const setURLParams = (params) => {
   const url = new URL(window.location);
   const searchParams = `?${params.toString()}${url.hash}`;
 
@@ -137,7 +162,7 @@ export class CatalogTileViewPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {detailsItem: null};
+    this.state = { detailsItem: null };
 
     this.openOverlay = this.openOverlay.bind(this);
     this.closeOverlay = this.closeOverlay.bind(this);
@@ -145,12 +170,13 @@ export class CatalogTileViewPage extends React.Component {
   }
 
   componentDidMount() {
-    const {items} = this.props;
+    const { items } = this.props;
     const searchParams = new URLSearchParams(window.location.search);
     const detailsItemID = searchParams.get('details-item');
-    const detailsItem = detailsItemID && _.find(items, item => detailsItemID === _.get(item, 'obj.metadata.uid'));
+    const detailsItem =
+      detailsItemID && _.find(items, (item) => detailsItemID === _.get(item, 'obj.metadata.uid'));
 
-    this.setState({detailsItem});
+    this.setState({ detailsItem });
   }
 
   openOverlay(detailsItem) {
@@ -158,7 +184,7 @@ export class CatalogTileViewPage extends React.Component {
     params.set('details-item', _.get(detailsItem, 'obj.metadata.uid'));
     setURLParams(params);
 
-    this.setState({detailsItem});
+    this.setState({ detailsItem });
   }
 
   closeOverlay() {
@@ -166,7 +192,7 @@ export class CatalogTileViewPage extends React.Component {
     params.delete('details-item');
     setURLParams(params);
 
-    this.setState({detailsItem: null});
+    this.setState({ detailsItem: null });
   }
 
   renderTile(item) {
@@ -201,7 +227,9 @@ export class CatalogTileViewPage extends React.Component {
       <React.Fragment>
         <TileViewPage
           items={items}
-          itemsSorter={itemsToSort => _.sortBy(itemsToSort, ({tileName}) => tileName.toLowerCase())}
+          itemsSorter={(itemsToSort) =>
+            _.sortBy(itemsToSort, ({ tileName }) => tileName.toLowerCase())
+          }
           getAvailableCategories={() => catalogCategories}
           // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
           getAvailableFilters={getAvailableFilters}
@@ -213,8 +241,15 @@ export class CatalogTileViewPage extends React.Component {
           pageDescription={pageDescription}
           emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
         />
-        <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
-          {detailsItem && <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />}
+        <Modal
+          show={!!detailsItem}
+          onHide={this.closeOverlay}
+          bsSize={'lg'}
+          className="co-catalog-page__overlay right-side-modal-pf"
+        >
+          {detailsItem && (
+            <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
+          )}
         </Modal>
       </React.Fragment>
     );

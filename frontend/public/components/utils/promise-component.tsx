@@ -7,21 +7,28 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const handlePromise = (promise) => {
     setInProgress(true);
     return promise.then(
-      res => {
+      (res) => {
         setInProgress(false);
         setErrorMessage('');
         return res;
       },
-      error => {
+      (error) => {
         const errorMsg = error.message || 'An error occurred. Please try again.';
         setInProgress(false);
         setErrorMessage(errorMsg);
         return Promise.reject(errorMsg);
-      }
+      },
     );
   };
 
-  return <Component {...props as any} handlePromise={handlePromise} inProgress={inProgress} errorMessage={errorMessage} />;
+  return (
+    <Component
+      {...props as any}
+      handlePromise={handlePromise}
+      inProgress={inProgress}
+      errorMessage={errorMessage}
+    />
+  );
 };
 
 export class PromiseComponent<P, S extends PromiseComponentState> extends React.Component<P, S> {
@@ -37,10 +44,7 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
     this.setState({
       inProgress: true,
     });
-    return promise.then(
-      res => this.then(res),
-      error => this.catch(error)
-    );
+    return promise.then((res) => this.then(res), (error) => this.catch(error));
   }
 
   private then(res) {
@@ -67,7 +71,9 @@ export type HandlePromiseProps = {
   errorMessage: string;
 };
 
-export type WithHandlePromise = <P extends HandlePromiseProps>(C: React.ComponentType<P>) => React.FC<Diff<P, HandlePromiseProps>>;
+export type WithHandlePromise = <P extends HandlePromiseProps>(
+  C: React.ComponentType<P>,
+) => React.FC<Diff<P, HandlePromiseProps>>;
 
 export type PromiseComponentState = {
   inProgress: boolean;

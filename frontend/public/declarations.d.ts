@@ -21,7 +21,7 @@ declare interface Window {
     kubeAPIServerURL: string;
     kubeAdminLogoutURL: string;
     kubectlClientID: string;
-    loadTestFactor: number
+    loadTestFactor: number;
     loginErrorURL: string;
     loginSuccessURL: string;
     loginURL: string;

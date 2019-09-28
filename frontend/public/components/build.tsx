@@ -5,7 +5,13 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { K8sResourceKindReference, referenceFor, K8sResourceKind, k8sPatch, K8sKind } from '../module/k8s';
+import {
+  K8sResourceKindReference,
+  referenceFor,
+  K8sResourceKind,
+  k8sPatch,
+  K8sKind,
+} from '../module/k8s';
 import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { errorModal, confirmModal } from './modals';
@@ -38,12 +44,15 @@ const BuildsReference: K8sResourceKindReference = 'Build';
 
 const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   label: 'Rebuild',
-  callback: () => cloneBuild(build).then(clone => {
-    history.push(resourceObjPath(clone, referenceFor(clone)));
-  }).catch(err => {
-    const error = err.message;
-    errorModal({ error });
-  }),
+  callback: () =>
+    cloneBuild(build)
+      .then((clone) => {
+        history.push(resourceObjPath(clone, referenceFor(clone)));
+      })
+      .catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+      }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -56,16 +65,19 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
 
 const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   label: 'Cancel Build',
-  hidden: build.status.phase !== 'Running' && build.status.phase !== 'Pending' && build.status.phase !== 'New',
-  callback: () => confirmModal({
-    title: 'Cancel build',
-    message: 'Are you sure you want to cancel this build?',
-    btnText: 'Yes, cancel',
-    cancelText: 'No, don\'t cancel',
-    executeFn: () => k8sPatch(kind,
-      build,
-      [{ op: 'add', path: '/status/cancelled', value: true }]),
-  }),
+  hidden:
+    build.status.phase !== 'Running' &&
+    build.status.phase !== 'Pending' &&
+    build.status.phase !== 'New',
+  callback: () =>
+    confirmModal({
+      title: 'Cancel build',
+      message: 'Are you sure you want to cancel this build?',
+      btnText: 'Yes, cancel',
+      cancelText: "No, don't cancel",
+      executeFn: () =>
+        k8sPatch(kind, build, [{ op: 'add', path: '/status/cancelled', value: true }]),
+    }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -89,27 +101,29 @@ export enum BuildStrategyType {
   Source = 'Source',
 }
 
-export const BuildLogLink = ({build}) => {
-  const {metadata: {name, namespace}} = build;
+export const BuildLogLink = ({ build }) => {
+  const {
+    metadata: { name, namespace },
+  } = build;
   const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
-  return isPipeline
-    ? <BuildPipelineLogLink obj={build} />
-    : <Link to={`${resourcePath('Build', name, namespace)}/logs`}>
-    View Logs
-    </Link>;
+  return isPipeline ? (
+    <BuildPipelineLogLink obj={build} />
+  ) : (
+    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>View Logs</Link>
+  );
 };
 
-export const BuildNumberLink = ({build}) => {
-  const {metadata: {name, namespace}} = build;
+export const BuildNumberLink = ({ build }) => {
+  const {
+    metadata: { name, namespace },
+  } = build;
   const buildNumber = getBuildNumber(build);
   const title = _.isFinite(buildNumber) ? `#${buildNumber}` : name;
 
-  return <Link to={resourcePath('Build', name, namespace)}>
-    {title}
-  </Link>;
+  return <Link to={resourcePath('Build', name, namespace)}>{title}</Link>;
 };
 
-const BuildGraphs = requirePrometheus(({build}) => {
+const BuildGraphs = requirePrometheus(({ build }) => {
   const podName = _.get(build, ['metadata', 'annotations', 'openshift.io/build.pod-name']);
   if (!podName) {
     return null;
@@ -117,35 +131,37 @@ const BuildGraphs = requirePrometheus(({build}) => {
 
   const namespace = build.metadata.namespace;
 
-  return <React.Fragment>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Memory Usage"
-          humanize={humanizeDecimalBytes}
-          namespace={namespace}
-          query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
-        />
+  return (
+    <React.Fragment>
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Memory Usage"
+            humanize={humanizeDecimalBytes}
+            namespace={namespace}
+            query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="CPU Usage"
+            humanize={humanizeCpuCores}
+            namespace={namespace}
+            query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title="Filesystem"
+            humanize={humanizeDecimalBytes}
+            namespace={namespace}
+            query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
+          />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="CPU Usage"
-          humanize={humanizeCpuCores}
-          namespace={namespace}
-          query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
-        />
-      </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Filesystem"
-          humanize={humanizeDecimalBytes}
-          namespace={namespace}
-          query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
-        />
-      </div>
-    </div>
-    <br />
-  </React.Fragment>;
+      <br />
+    </React.Fragment>
+  );
 });
 
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
@@ -154,40 +170,54 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   const duration = formatBuildDuration(build);
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
 
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Build Overview" />
-      <BuildGraphs build={build} />
-      {hasPipeline && <div className="row">
-        <div className="col-xs-12">
-          <BuildPipeline obj={build} />
-        </div>
-      </div>}
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={build}>
-            {triggeredBy && <dt>Triggered By</dt>}
-            {triggeredBy && <dd>{triggeredBy}</dd>}
-            {startTimestamp && <dt>Started</dt>}
-            {startTimestamp && <dd><Timestamp timestamp={startTimestamp} /></dd>}
-          </ResourceSummary>
-        </div>
-        <div className="col-sm-6">
-          <BuildStrategy resource={build}>
-            <dt>Status</dt>
-            <dd><Status status={build.status.phase} /></dd>
-            {logSnippet && <dt>Log Snippet</dt>}
-            {logSnippet && <dd><pre>{logSnippet}</pre></dd>}
-            {message && <dt>Reason</dt>}
-            {message && <dd>{message}</dd>}
-            {duration && <dt>Duration</dt>}
-            {duration && <dd>{duration}</dd>}
-          </BuildStrategy>
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Build Overview" />
+        <BuildGraphs build={build} />
+        {hasPipeline && (
+          <div className="row">
+            <div className="col-xs-12">
+              <BuildPipeline obj={build} />
+            </div>
+          </div>
+        )}
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={build}>
+              {triggeredBy && <dt>Triggered By</dt>}
+              {triggeredBy && <dd>{triggeredBy}</dd>}
+              {startTimestamp && <dt>Started</dt>}
+              {startTimestamp && (
+                <dd>
+                  <Timestamp timestamp={startTimestamp} />
+                </dd>
+              )}
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <BuildStrategy resource={build}>
+              <dt>Status</dt>
+              <dd>
+                <Status status={build.status.phase} />
+              </dd>
+              {logSnippet && <dt>Log Snippet</dt>}
+              {logSnippet && (
+                <dd>
+                  <pre>{logSnippet}</pre>
+                </dd>
+              )}
+              {message && <dt>Reason</dt>}
+              {message && <dd>{message}</dd>}
+              {duration && <dt>Duration</dt>}
+              {duration && <dd>{duration}</dd>}
+            </BuildStrategy>
+          </div>
         </div>
       </div>
-    </div>
-    <BuildHooks resource={build} />
-  </React.Fragment>;
+      <BuildHooks resource={build} />
+    </React.Fragment>
+  );
 };
 
 export const getStrategyType = (strategy: BuildStrategyType) => {
@@ -210,24 +240,34 @@ export const getEnvPath = (props) => {
   return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
 
-const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
+const EnvironmentPage = (props) => (
+  <AsyncComponent
+    loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
+    {...props}
+  />
+);
 
 export const BuildEnvironmentComponent = (props) => {
-  const {obj} = props;
+  const { obj } = props;
   const readOnly = obj.kind === 'Build';
   const envPath = getEnvPath(props);
   if (envPath) {
-    return <EnvironmentPage
-      obj={obj}
-      rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy.type)]}
-      envPath={getEnvPath(props)}
-      readOnly={readOnly} />;
+    return (
+      <EnvironmentPage
+        obj={obj}
+        rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy.type)]}
+        envPath={getEnvPath(props)}
+        readOnly={readOnly}
+      />
+    );
   }
-  return <div className="cos-status-box">
-    <div className="text-center">The environment variable editor does not support build
-      strategy: {obj.spec.strategy.type}.
+  return (
+    <div className="cos-status-box">
+      <div className="text-center">
+        The environment variable editor does not support build strategy: {obj.spec.strategy.type}.
+      </div>
     </div>
-  </div>;
+  );
 };
 
 const pages = [
@@ -238,12 +278,9 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
-  <DetailsPage
-    {...props}
-    kind={BuildsReference}
-    menuActions={menuActions}
-    pages={pages} />;
+export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => (
+  <DetailsPage {...props} kind={BuildsReference} menuActions={menuActions} pages={pages} />
+);
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
 const tableColumnClasses = [
@@ -257,33 +294,47 @@ const tableColumnClasses = [
 const BuildsTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status', sortField: 'status.phase', transforms: [sortable],
+      title: 'Status',
+      sortField: 'status.phase',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: '', props: { className: tableColumnClasses[4] },
+      title: '',
+      props: { className: tableColumnClasses[4] },
     },
   ];
 };
 BuildsTableHeader.displayName = 'BuildsTableHeader';
 
-const BuildsTableRow: React.FC<BuildsTableRowProps> = ({obj, index, key, style}) => {
+const BuildsTableRow: React.FC<BuildsTableRowProps> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink
+          kind={BuildsReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -308,24 +359,34 @@ type BuildsTableRowProps = {
   style: object;
 };
 
-export const BuildsList: React.SFC = props => <Table {...props} aria-label="Builds" Header={BuildsTableHeader} Row={BuildsTableRow} virtualize />;
+export const BuildsList: React.SFC = (props) => (
+  <Table
+    {...props}
+    aria-label="Builds"
+    Header={BuildsTableHeader}
+    Row={BuildsTableRow}
+    virtualize
+  />
+);
 
 BuildsList.displayName = 'BuildsList';
 
-export const buildPhase = build => build.status.phase;
+export const buildPhase = (build) => build.status.phase;
 
 const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
-const filters = [{
-  type: 'build-status',
-  selected: allPhases,
-  reducer: buildPhase,
-  items: _.map(allPhases, phase => ({
-    id: phase,
-    title: phase,
-  })),
-}];
+const filters = [
+  {
+    type: 'build-status',
+    selected: allPhases,
+    reducer: buildPhase,
+    items: _.map(allPhases, (phase) => ({
+      id: phase,
+      title: phase,
+    })),
+  },
+];
 
-export const BuildsPage: React.SFC<BuildsPageProps> = props =>
+export const BuildsPage: React.SFC<BuildsPageProps> = (props) => (
   <ListPage
     {...props}
     title="Builds"
@@ -333,19 +394,20 @@ export const BuildsPage: React.SFC<BuildsPageProps> = props =>
     ListComponent={BuildsList}
     canCreate={false}
     rowFilters={filters}
-  />;
+  />
+);
 BuildsPage.displayName = 'BuildsListPage';
 
 export type BuildsDetailsProps = {
-  obj: any,
+  obj: any;
 };
 
 export type BuildsPageProps = {
-  showTitle?: boolean,
-  namespace?: string,
-  selector?: any,
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
 };
 
 export type BuildsDetailsPageProps = {
-  match: any,
+  match: any;
 };

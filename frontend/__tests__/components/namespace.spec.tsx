@@ -11,28 +11,35 @@ import { SecretModel } from '../../public/models';
 describe(PullSecret.displayName, () => {
   let wrapper: ReactWrapper;
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) => new Promise(resolve => spy.and.callFake((...args) => {
-    resolve(args);
-    return returnValue;
-  }));
+  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+    new Promise((resolve) =>
+      spy.and.callFake((...args) => {
+        resolve(args);
+        return returnValue;
+      }),
+    );
 
   it('renders link to open modal once pull secrets are loaded', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sGet'))(Promise.resolve({items: []})).then(([model, name, namespace, options]) => {
-      expect(model).toEqual(SecretModel);
-      expect(name).toBe(null);
-      expect(namespace).toEqual(testNamespace.metadata.name);
-      expect(options).toEqual({queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}});
-    }).then(() => {
-      wrapper.update();
-      expect(wrapper.find('button').exists()).toBe(true);
-      done();
-    });
+    spyAndExpect(spyOn(k8s, 'k8sGet'))(Promise.resolve({ items: [] }))
+      .then(([model, name, namespace, options]) => {
+        expect(model).toEqual(SecretModel);
+        expect(name).toBe(null);
+        expect(namespace).toEqual(testNamespace.metadata.name);
+        expect(options).toEqual({
+          queryParams: { fieldSelector: 'type=kubernetes.io/dockerconfigjson' },
+        });
+      })
+      .then(() => {
+        wrapper.update();
+        expect(wrapper.find('button').exists()).toBe(true);
+        done();
+      });
 
     wrapper = mount(<PullSecret namespace={testNamespace} />);
   });
 
   it('does not render link if still loading', () => {
-    spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({items: []}));
+    spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
     wrapper = mount(<PullSecret namespace={testNamespace} />);
 
     expect(wrapper.find(LoadingInline).exists()).toBe(true);

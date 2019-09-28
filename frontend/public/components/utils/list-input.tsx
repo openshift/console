@@ -21,7 +21,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   }
 
   valueChanged(i: number, v: string) {
-    this.setState(state => {
+    this.setState((state) => {
       const values = [...state.values];
       values[i] = v;
       return { values };
@@ -29,11 +29,11 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   }
 
   addValue() {
-    this.setState(state => ({ values: [...state.values, '']}));
+    this.setState((state) => ({ values: [...state.values, ''] }));
   }
 
   removeValue(i: number) {
-    this.setState(state => {
+    this.setState((state) => {
       const values = [...state.values];
       values.splice(i, 1);
       return {
@@ -45,7 +45,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   render() {
     const { label, required, helpText } = this.props;
     const { values } = this.state;
-    const missingValues = required && (_.isEmpty(values) || _.every(values, v => !v));
+    const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
       <div className="form-group">
         <label className={classNames('control-label', { 'co-required': required })}>{label}</label>
@@ -56,22 +56,36 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
                 className="pf-c-form-control"
                 type="text"
                 value={v}
-                onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)}
+                onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                  this.valueChanged(i, e.currentTarget.value)
+                }
                 required={missingValues && i === 0}
-                aria-describedby={helpText ? this.helpID : undefined} />
+                aria-describedby={helpText ? this.helpID : undefined}
+              />
             </div>
-            <button type="button" className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__span-btns" onClick={() => this.removeValue(i)} aria-label="Remove">
+            <button
+              type="button"
+              className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__span-btns"
+              onClick={() => this.removeValue(i)}
+              aria-label="Remove"
+            >
               <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
             </button>
           </div>
         ))}
-        {helpText && <div className="co-list-input__help-block help-block" id={this.helpID}>{helpText}</div>}
+        {helpText && (
+          <div className="co-list-input__help-block help-block" id={this.helpID}>
+            {helpText}
+          </div>
+        )}
         <Button
           className="pf-m-link--align-left"
           onClick={() => this.addValue()}
           type="button"
-          variant="link">
-          <PlusCircleIcon className="co-icon-space-r" />Add More
+          variant="link"
+        >
+          <PlusCircleIcon className="co-icon-space-r" />
+          Add More
         </Button>
       </div>
     );

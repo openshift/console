@@ -4,13 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableRow,
-  TableData,
-} from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
 import {
@@ -35,29 +29,45 @@ const tableColumnClasses = [
 const TemplateInstanceTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status', sortFunc: 'getTemplateInstanceStatus', transforms: [sortable],
+      title: 'Status',
+      sortFunc: 'getTemplateInstanceStatus',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: '', props: { className: tableColumnClasses[3] },
+      title: '',
+      props: { className: tableColumnClasses[3] },
     },
   ];
 };
 TemplateInstanceTableHeader.displayName = 'TemplateInstanceTableHeader';
 
-const TemplateInstanceTableRow: React.FC<TemplateInstanceTableRowProps> = ({obj, index, key, style}) => {
+const TemplateInstanceTableRow: React.FC<TemplateInstanceTableRowProps> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind="TemplateInstance" name={obj.metadata.name} namespace={obj.metadata.namespace} />
+        <ResourceLink
+          kind="TemplateInstance"
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -79,21 +89,31 @@ type TemplateInstanceTableRowProps = {
   style: object;
 };
 
-export const TemplateInstanceList: React.SFC = props => <Table {...props} aria-label="Template Instances" Header={TemplateInstanceTableHeader} Row={TemplateInstanceTableRow} virtualize />;
+export const TemplateInstanceList: React.SFC = (props) => (
+  <Table
+    {...props}
+    aria-label="Template Instances"
+    Header={TemplateInstanceTableHeader}
+    Row={TemplateInstanceTableRow}
+    virtualize
+  />
+);
 
 const allStatuses = ['Ready', 'Not Ready', 'Failed'];
 
-const filters = [{
-  type: 'template-instance-status',
-  selected: allStatuses,
-  reducer: getTemplateInstanceStatus,
-  items: _.map(allStatuses, status => ({
-    id: status,
-    title: status,
-  })),
-}];
+const filters = [
+  {
+    type: 'template-instance-status',
+    selected: allStatuses,
+    reducer: getTemplateInstanceStatus,
+    items: _.map(allStatuses, (status) => ({
+      id: status,
+      title: status,
+    })),
+  },
+];
 
-export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = props =>
+export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = (props) => (
   <ListPage
     {...props}
     title="Template Instances"
@@ -101,9 +121,10 @@ export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = props 
     ListComponent={TemplateInstanceList}
     canCreate={false}
     rowFilters={filters}
-  />;
+  />
+);
 
-const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj}) => {
+const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj }) => {
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
   const requester = _.get(obj, 'spec.requester.username');
@@ -121,12 +142,18 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj})
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Status</dt>
-                <dd><Status status={status} /></dd>
+                <dd>
+                  <Status status={status} />
+                </dd>
                 {secretName && (
                   <React.Fragment>
                     <dt>Parameters</dt>
                     <dd>
-                      <ResourceLink kind="Secret" name={secretName} namespace={obj.metadata.namespace} />
+                      <ResourceLink
+                        kind="Secret"
+                        name={secretName}
+                        namespace={obj.metadata.namespace}
+                      />
                     </dd>
                   </React.Fragment>
                 )}
@@ -145,17 +172,24 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj})
             <div className="col-sm-6">Namespace</div>
           </div>
           <div className="co-m-table-grid__body">
-            {_.isEmpty(objects)
-              ? <EmptyBox label="Objects" />
-              : _.map(objects, ({ref}, i) => (
+            {_.isEmpty(objects) ? (
+              <EmptyBox label="Objects" />
+            ) : (
+              _.map(objects, ({ ref }, i) => (
                 <div className="row co-resource-list__item" key={i}>
                   <div className="col-sm-6">
-                    <ResourceLink kind={referenceFor(ref)} name={ref.name} namespace={ref.namespace} />
+                    <ResourceLink
+                      kind={referenceFor(ref)}
+                      name={ref.name}
+                      namespace={ref.namespace}
+                    />
                   </div>
                   <div className="col-sm-6">
                     {ref.namespace ? <ResourceLink kind="Namespace" name={ref.namespace} /> : '-'}
                   </div>
-                </div>))}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -167,13 +201,14 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj})
   );
 };
 
-export const TemplateInstanceDetailsPage: React.SFC<TemplateInstanceDetailsPageProps> = props =>
+export const TemplateInstanceDetailsPage: React.SFC<TemplateInstanceDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind="TemplateInstance"
     menuActions={menuActions}
     pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
-  />;
+  />
+);
 
 type TemplateInstancePageProps = {
   autoFocus?: boolean;

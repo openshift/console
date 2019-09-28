@@ -11,26 +11,30 @@ const kind: string = 'Pod';
 const MAX_PODS: number = 3;
 const MAX_ERROR_PODS: number = 10;
 
-const podUpdateTime = (pod: PodKind ) => {
+const podUpdateTime = (pod: PodKind) => {
   const allStatuses = [
     ..._.get(pod, 'status.containerStatuses', []),
     ..._.get(pod, 'status.initContainerStatuses', []),
   ];
-  const updateTimes = _.reduce(allStatuses, (times, nextStatus) => {
-    if (nextStatus.state.running) {
-      return [...times, _.get(nextStatus, 'state.running.startedAt')];
-    }
-    if (nextStatus.state.terminated) {
-      return [...times, _.get(nextStatus, 'state.terminated.finishedAt')];
-    }
-    if (nextStatus.lastState.running) {
-      return [...times, _.get(nextStatus, 'lastState.running.startedAt')];
-    }
-    if (nextStatus.lastState.terminated) {
-      return [...times, _.get(nextStatus, 'lastState.terminated.finishedAt')];
-    }
-    return [...times, _.get(nextStatus, _.get(pod, 'startTime'))];
-  }, []);
+  const updateTimes = _.reduce(
+    allStatuses,
+    (times, nextStatus) => {
+      if (nextStatus.state.running) {
+        return [...times, _.get(nextStatus, 'state.running.startedAt')];
+      }
+      if (nextStatus.state.terminated) {
+        return [...times, _.get(nextStatus, 'state.terminated.finishedAt')];
+      }
+      if (nextStatus.lastState.running) {
+        return [...times, _.get(nextStatus, 'lastState.running.startedAt')];
+      }
+      if (nextStatus.lastState.terminated) {
+        return [...times, _.get(nextStatus, 'lastState.terminated.finishedAt')];
+      }
+      return [...times, _.get(nextStatus, _.get(pod, 'startTime'))];
+    },
+    [],
+  );
 
   return _.head(_.reverse(updateTimes.sort()));
 };
@@ -48,7 +52,7 @@ const errorPhases = [
   'Terminating',
 ];
 
-const isPodError = (pod: PodKind ) => _.includes(errorPhases, podPhase(pod));
+const isPodError = (pod: PodKind) => _.includes(errorPhases, podPhase(pod));
 
 const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   const error1 = isPodError(pod1);
@@ -115,7 +119,7 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({ pods, obj }) => {
     metadata: { name, namespace },
   } = obj;
 
-  const errorPodCount = _.size(_.filter(pods, pod => isPodError(pod)));
+  const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
 
   pods.sort(podCompare);

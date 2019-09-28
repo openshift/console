@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import {PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH} from './index';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './index';
 
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
@@ -9,7 +9,11 @@ export enum PrometheusEndpoint {
 }
 
 // Range vector queries require end, start, and step search params
-const getRangeVectorSearchParams = (timespan: number, endTime: number = Date.now(), samples: number = 60): URLSearchParams => {
+const getRangeVectorSearchParams = (
+  timespan: number,
+  endTime: number = Date.now(),
+  samples: number = 60,
+): URLSearchParams => {
   const params = new URLSearchParams();
   if (timespan > 0) {
     params.append('start', `${(endTime - timespan) / 1000}`);
@@ -19,15 +23,25 @@ const getRangeVectorSearchParams = (timespan: number, endTime: number = Date.now
   return params;
 };
 
-const getSearchParams = ({endpoint, endTime, timespan, samples, ...params}: PrometheusURLProps): URLSearchParams => {
-  const searchParams = endpoint === PrometheusEndpoint.QUERY_RANGE
-    ? getRangeVectorSearchParams(timespan, endTime, samples)
-    : new URLSearchParams();
+const getSearchParams = ({
+  endpoint,
+  endTime,
+  timespan,
+  samples,
+  ...params
+}: PrometheusURLProps): URLSearchParams => {
+  const searchParams =
+    endpoint === PrometheusEndpoint.QUERY_RANGE
+      ? getRangeVectorSearchParams(timespan, endTime, samples)
+      : new URLSearchParams();
   _.each(params, (value, key) => value && searchParams.append(key, value.toString()));
   return searchParams;
 };
 
-export const getPrometheusURL = (props: PrometheusURLProps, basePath: string = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH): string => {
+export const getPrometheusURL = (
+  props: PrometheusURLProps,
+  basePath: string = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH,
+): string => {
   if (!props.query) {
     return '';
   }

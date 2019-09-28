@@ -25,9 +25,13 @@ export type RequestMap<R> = ImmutableMap<string, Request<R>>;
 
 export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
 
-export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean => state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
+export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean =>
+  state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
 
-export const dashboardsReducer = (state: DashboardsState, action: DashboardsAction): DashboardsState => {
+export const dashboardsReducer = (
+  state: DashboardsState,
+  action: DashboardsAction,
+): DashboardsState => {
   if (!state) {
     return ImmutableMap(defaults);
   }
@@ -38,9 +42,15 @@ export const dashboardsReducer = (state: DashboardsState, action: DashboardsActi
       return state.setIn(activePath, active + 1);
     }
     case ActionType.UpdateWatchTimeout:
-      return state.setIn([action.payload.type, action.payload.key, 'timeout'], action.payload.timeout);
+      return state.setIn(
+        [action.payload.type, action.payload.key, 'timeout'],
+        action.payload.timeout,
+      );
     case ActionType.UpdateWatchInFlight:
-      return state.setIn([action.payload.type, action.payload.key, 'inFlight'], action.payload.inFlight);
+      return state.setIn(
+        [action.payload.type, action.payload.key, 'inFlight'],
+        action.payload.inFlight,
+      );
     case ActionType.StopWatch: {
       const active = state.getIn([action.payload.type, action.payload.key, 'active']);
       const newState = state.setIn([action.payload.type, action.payload.key, 'active'], active - 1);
@@ -50,11 +60,15 @@ export const dashboardsReducer = (state: DashboardsState, action: DashboardsActi
       return newState;
     }
     case ActionType.SetError:
-      return state.setIn([action.payload.type, action.payload.key, 'loadError'], action.payload.error);
+      return state.setIn(
+        [action.payload.type, action.payload.key, 'loadError'],
+        action.payload.error,
+      );
     case ActionType.SetData:
-      return state.withMutations(s =>
-        s.setIn([action.payload.type, action.payload.key, 'data'], action.payload.data)
-          .setIn([action.payload.type, action.payload.key, 'loadError'], null)
+      return state.withMutations((s) =>
+        s
+          .setIn([action.payload.type, action.payload.key, 'data'], action.payload.data)
+          .setIn([action.payload.type, action.payload.key, 'loadError'], null),
       );
     default:
       return state;

@@ -5,7 +5,7 @@ export const testNamespace: K8sResourceKind = {
   kind: 'Namespace',
   metadata: {
     name: 'default',
-    annotations: {'alm-manager': 'tectonic-system.alm-operator'},
+    annotations: { 'alm-manager': 'tectonic-system.alm-operator' },
   },
 };
 
@@ -49,7 +49,7 @@ export const testResourceInstance: K8sResourceKind = {
   spec: {
     selector: {
       matchLabels: {
-        'fizz': 'buzz',
+        fizz: 'buzz',
       },
     },
   },
@@ -65,12 +65,14 @@ export const testOwnedResourceInstance: K8sResourceKind = {
     name: 'owned-test-resource',
     uid: '62fa5eac-3df4-448d-a576-916dd5b432f2',
     creationTimestamp: '2005-02-20T18:13:42Z',
-    ownerReferences: [{
-      name: testResourceInstance.metadata.name,
-      kind: 'TestResource',
-      apiVersion: testResourceInstance.apiVersion,
-      uid: testResourceInstance.metadata.uid,
-    }],
+    ownerReferences: [
+      {
+        name: testResourceInstance.metadata.name,
+        kind: 'TestResource',
+        apiVersion: testResourceInstance.apiVersion,
+        uid: testResourceInstance.metadata.uid,
+      },
+    ],
   },
   spec: {},
   status: {

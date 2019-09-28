@@ -13,11 +13,11 @@ import { EventKind } from '../../module/k8s';
 
 // Keep track of seen events so we only animate new ones.
 const seen = new Set();
-const timeout = {enter: 150};
+const timeout = { enter: 150 };
 
 const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
-  minHeight: 109, /* height of event with a one-line event message on desktop */
+  minHeight: 109 /* height of event with a one-line event message on desktop */,
 });
 
 class SysEvent extends React.Component<SysEventProps> {
@@ -38,7 +38,7 @@ class SysEvent extends React.Component<SysEventProps> {
   }
 
   render() {
-    const { EventComponent, index, style, event} = this.props;
+    const { EventComponent, index, style, event } = this.props;
 
     let shouldAnimate: boolean;
     const key = event.metadata.uid;
@@ -48,11 +48,24 @@ class SysEvent extends React.Component<SysEventProps> {
       shouldAnimate = true;
     }
 
-    return <div className="co-sysevent--transition" style={style}>
-      <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <div className={`slide-${status}`}><EventComponent event={event} /></div>}
-      </CSSTransition>
-    </div>;
+    return (
+      <div className="co-sysevent--transition" style={style}>
+        <CSSTransition
+          mountOnEnter={true}
+          appear={shouldAnimate}
+          in
+          exit={false}
+          timeout={timeout}
+          classNames="slide"
+        >
+          {(status) => (
+            <div className={`slide-${status}`}>
+              <EventComponent event={event} />
+            </div>
+          )}
+        </CSSTransition>
+      </div>
+    );
   }
 }
 
@@ -68,10 +81,19 @@ export class EventStreamList extends React.Component<EventStreamListProps> {
         columnIndex={0}
         key={key}
         rowIndex={index}
-        parent={parent}>
-        {({ measure }) =>
-          <SysEvent event={events[index]} EventComponent={props.EventComponent} onLoad={measure} onEntered={print} key={key} style={style} index={index} />
-        }
+        parent={parent}
+      >
+        {({ measure }) => (
+          <SysEvent
+            event={events[index]}
+            EventComponent={props.EventComponent}
+            onLoad={measure}
+            onEntered={print}
+            key={key}
+            style={style}
+            index={index}
+          />
+        )}
       </CellMeasurer>
     );
   }
@@ -91,30 +113,38 @@ export class EventStreamList extends React.Component<EventStreamListProps> {
 
   /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */
   render() {
-    const { events, scrollableElementId = 'content-scrollable'} = this.props;
-    return events.length > 0 &&
-    <WindowScroller scrollElement={document.getElementById(scrollableElementId)}>
-      {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-        <AutoSizer disableHeight onResize={this.onResize}>
-          {({width}) => <div ref={registerChild}>
-            <VirtualList
-              autoHeight
-              data={events}
-              deferredMeasurementCache={measurementCache}
-              height={height || 0}
-              isScrolling={isScrolling}
-              onScroll={onChildScroll}
-              ref={virtualList => this.list = virtualList}
-              rowCount={events.length}
-              rowHeight={measurementCache.rowHeight}
-              rowRenderer={({index, style, key, parent}) => this.rowRenderer(events, index, style, key, parent)}
-              scrollTop={scrollTop}
-              tabIndex={null}
-              width={width}
-            />
-          </div>}
-        </AutoSizer>}
-    </WindowScroller>;
+    const { events, scrollableElementId = 'content-scrollable' } = this.props;
+    return (
+      events.length > 0 && (
+        <WindowScroller scrollElement={document.getElementById(scrollableElementId)}>
+          {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+            <AutoSizer disableHeight onResize={this.onResize}>
+              {({ width }) => (
+                <div ref={registerChild}>
+                  <VirtualList
+                    autoHeight
+                    data={events}
+                    deferredMeasurementCache={measurementCache}
+                    height={height || 0}
+                    isScrolling={isScrolling}
+                    onScroll={onChildScroll}
+                    ref={(virtualList) => (this.list = virtualList)}
+                    rowCount={events.length}
+                    rowHeight={measurementCache.rowHeight}
+                    rowRenderer={({ index, style, key, parent }) =>
+                      this.rowRenderer(events, index, style, key, parent)
+                    }
+                    scrollTop={scrollTop}
+                    tabIndex={null}
+                    width={width}
+                  />
+                </div>
+              )}
+            </AutoSizer>
+          )}
+        </WindowScroller>
+      )
+    );
   }
 }
 
@@ -122,11 +152,11 @@ type EventStreamListProps = {
   scrollableElementId?: string;
   events: EventKind[];
   EventComponent: React.ComponentType<EventComponentProps>;
-}
+};
 
 export type EventComponentProps = {
   event: EventKind;
-}
+};
 
 type SysEventProps = {
   EventComponent: React.ComponentType<EventComponentProps>;
@@ -135,4 +165,4 @@ type SysEventProps = {
   onEntered: () => void;
   style: React.CSSProperties;
   index: number;
-}
+};

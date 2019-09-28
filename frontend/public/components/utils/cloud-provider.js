@@ -4,9 +4,9 @@ export const cloudProviderID = (node) => {
 
 export const cloudProviderNames = (providerNames) => {
   if (providerNames.length) {
-    const displayNames = providerNames.length === 1 ? providerNames[0] : `Hybrid (${providerNames.join(' , ')})`;
+    const displayNames =
+      providerNames.length === 1 ? providerNames[0] : `Hybrid (${providerNames.join(' , ')})`;
     return displayNames.replace(/aws/i, 'Amazon Web Services');
   }
   return '';
-
 };

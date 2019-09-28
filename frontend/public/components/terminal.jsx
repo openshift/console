@@ -11,12 +11,12 @@ XTerminal.applyAddon(full);
 export class Terminal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {height: 0, width: 0};
+    this.state = { height: 0, width: 0 };
     this.innerRef = React.createRef();
     this.outerRef = React.createRef();
     this.isFullscreen = false;
     this.onResize = () => this.onResize_();
-    this.onDataReceived = data => this.terminal && this.terminal.write(data);
+    this.onDataReceived = (data) => this.terminal && this.terminal.write(data);
 
     this.terminal = new XTerminal(Object.assign({}, this.props.options));
     this.terminal.on('data', this.props.onData);
@@ -46,7 +46,7 @@ export class Terminal extends React.Component {
     document.getElementById('content-scrollable').classList.remove('default-overflow');
   }
 
-  setFullscreen( fullscreen ) {
+  setFullscreen(fullscreen) {
     this.terminal.toggleFullScreen(fullscreen);
     this.isFullscreen = fullscreen;
     this.focus();
@@ -95,14 +95,16 @@ export class Terminal extends React.Component {
 
     // This assumes we want to fill everything below and to the right.  In full-screen, fill entire viewport
     const height = Math.floor(pageRect.bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
-    const width = Math.floor(bodyRect.width - (this.isFullscreen ? 0 : nodeRect.left) - (this.isFullscreen ? 10 : padding));
+    const width = Math.floor(
+      bodyRect.width - (this.isFullscreen ? 0 : nodeRect.left) - (this.isFullscreen ? 10 : padding),
+    );
 
     if (height === this.state.height && width === this.state.width) {
       return;
     }
 
     // rerender with correct dimensions
-    this.setState({height, width}, () => {
+    this.setState({ height, width }, () => {
       const terminal = this.terminal;
       if (!terminal) {
         return;
@@ -115,13 +117,21 @@ export class Terminal extends React.Component {
   }
 
   render() {
-    return <div ref={this.outerRef} style={this.state} className={this.props.className}>
-      <div ref={this.innerRef} className="console">
-        { this.isFullscreen && <button className="btn btn-link console-collapse-link" onClick={() => this.setFullscreen(false)}>
-          <CompressIcon className="co-icon-space-r" />Collapse
-        </button> }
+    return (
+      <div ref={this.outerRef} style={this.state} className={this.props.className}>
+        <div ref={this.innerRef} className="console">
+          {this.isFullscreen && (
+            <button
+              className="btn btn-link console-collapse-link"
+              onClick={() => this.setFullscreen(false)}
+            >
+              <CompressIcon className="co-icon-space-r" />
+              Collapse
+            </button>
+          )}
+        </div>
       </div>
-    </div>;
+    );
   }
 }
 

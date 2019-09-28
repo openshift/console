@@ -4,11 +4,16 @@ import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/componen
 
 describe('getPrometheusURL()', () => {
   it('should build a Prometheus /api/v1/query URL', () => {
-    const url = new URL(getPrometheusURL({
-      namespace: 'test-namespace',
-      endpoint: PrometheusEndpoint.QUERY,
-      query: 'test-query',
-    }, 'https://mock.prometheus.com'));
+    const url = new URL(
+      getPrometheusURL(
+        {
+          namespace: 'test-namespace',
+          endpoint: PrometheusEndpoint.QUERY,
+          query: 'test-query',
+        },
+        'https://mock.prometheus.com',
+      ),
+    );
 
     // Check that url contains all expected params, in no particular order
     expect(url.pathname).toBe('/api/v1/query');
@@ -23,15 +28,20 @@ describe('getPrometheusURL()', () => {
   });
 
   it('should build a Prometheus /api/v1/query_range URL', () => {
-    const url = new URL(getPrometheusURL({
-      endpoint: PrometheusEndpoint.QUERY_RANGE,
-      endTime: 50000,
-      namespace: 'test-namespace',
-      query: 'test-query',
-      samples: 10,
-      timeout: '5s',
-      timespan: 10000,
-    }, 'https://mock.prometheus.com'));
+    const url = new URL(
+      getPrometheusURL(
+        {
+          endpoint: PrometheusEndpoint.QUERY_RANGE,
+          endTime: 50000,
+          namespace: 'test-namespace',
+          query: 'test-query',
+          samples: 10,
+          timeout: '5s',
+          timespan: 10000,
+        },
+        'https://mock.prometheus.com',
+      ),
+    );
 
     // Check that url contains all expected params, in no particular order
     expect(url.pathname).toBe('/api/v1/query_range');
@@ -44,11 +54,16 @@ describe('getPrometheusURL()', () => {
   });
 
   it('should build a Prometheus /api/v1/label URL', () => {
-    const url = new URL(getPrometheusURL({
-      endpoint: PrometheusEndpoint.LABEL,
-      namespace: 'test-namespace',
-      query: 'test-query',
-    }, 'https://mock.prometheus.com'));
+    const url = new URL(
+      getPrometheusURL(
+        {
+          endpoint: PrometheusEndpoint.LABEL,
+          namespace: 'test-namespace',
+          query: 'test-query',
+        },
+        'https://mock.prometheus.com',
+      ),
+    );
 
     // Check that url contains all expected params, in no particular order
     expect(url.pathname).toBe('/api/v1/label');

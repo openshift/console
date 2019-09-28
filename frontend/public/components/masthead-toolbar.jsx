@@ -28,27 +28,37 @@ import { getOCMLink } from '../module/k8s';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
-import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
+import {
+  getAvailableClusterUpdates,
+  clusterVersionReference,
+} from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
-const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
-  ? <ToolbarItem className={className}>
-    <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
-      <YellowExclamationTriangleIcon className="co-masthead-icon" />
-    </a>
-  </ToolbarItem>
-  : null;
+const SystemStatusButton = ({ statuspageData, className }) =>
+  !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
+    <ToolbarItem className={className}>
+      <a
+        className="pf-c-button pf-m-plain"
+        aria-label="System Status"
+        href={statuspageData.page.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <YellowExclamationTriangleIcon className="co-masthead-icon" />
+      </a>
+    </ToolbarItem>
+  ) : null;
 
-const UpdatesAvailableButton = ({obj, onClick, systemStatusButtonPresent}) => {
+const UpdatesAvailableButton = ({ obj, onClick, systemStatusButtonPresent }) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
-  return updatesAvailable
-    ? <ToolbarItem className={classNames({'hidden-sm': systemStatusButtonPresent})}>
+  return updatesAvailable ? (
+    <ToolbarItem className={classNames({ 'hidden-sm': systemStatusButtonPresent })}>
       <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
         <ArrowCircleUpIcon color="#08c" className="co-masthead-icon" />
       </Button>
     </ToolbarItem>
-    : null;
+  ) : null;
 };
 
 class MastheadToolbar_ extends React.Component {
@@ -72,8 +82,12 @@ class MastheadToolbar_ extends React.Component {
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
     this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
-    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
-    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
+    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(
+      this,
+    );
+    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(
+      this,
+    );
     this._onImportYAML = this._onImportYAML.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
@@ -89,16 +103,20 @@ class MastheadToolbar_ extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT]
-      || !_.isEqual(this.props.user, prevProps.user)) {
+    if (
+      this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
+      !_.isEqual(this.props.user, prevProps.user)
+    ) {
       this._updateUser();
     }
   }
 
   _getStatuspageData(statuspageID) {
-    fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {headers: {Accept: 'application/json'}})
-      .then(response => response.json())
-      .then(statuspageData => this.setState({ statuspageData }));
+    fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {
+      headers: { Accept: 'application/json' },
+    })
+      .then((response) => response.json())
+      .then((statuspageData) => this.setState({ statuspageData }));
   }
 
   _updateUser() {
@@ -154,7 +172,10 @@ class MastheadToolbar_ extends React.Component {
 
   _onImportYAML(e) {
     e.preventDefault();
-    const importYAMLPath = UIActions.formatNamespacedRouteForResource('import', this.props.activeNamespace);
+    const importYAMLPath = UIActions.formatNamespacedRouteForResource(
+      'import',
+      this.props.activeNamespace,
+    );
     history.push(importYAMLPath);
   }
 
@@ -190,13 +211,16 @@ class MastheadToolbar_ extends React.Component {
   }
 
   _getAdditionalLinks(links, type) {
-    return _.sortBy(_.filter(links, link => link.spec.location === type), 'spec.text');
+    return _.sortBy(_.filter(links, (link) => link.spec.location === type), 'spec.text');
   }
 
   _getSectionLauncherItems(launcherItems, sectionName) {
     return _.sortBy(
-      _.filter(launcherItems, link => _.get(link, 'spec.applicationMenu.section', '') === sectionName),
-      'spec.text'
+      _.filter(
+        launcherItems,
+        (link) => _.get(link, 'spec.applicationMenu.section', '') === sectionName,
+      ),
+      'spec.text',
     );
   }
 
@@ -224,35 +248,35 @@ class MastheadToolbar_ extends React.Component {
       sections.push({
         name: 'Red Hat Applications',
         isSection: true,
-        actions: [{
-          label: 'OpenShift Cluster Manager',
-          externalLink: true,
-          href: getOCMLink(clusterID),
-          image: <img src={openshiftLogoImg} alt="" />,
-        }],
+        actions: [
+          {
+            label: 'OpenShift Cluster Manager',
+            externalLink: true,
+            href: getOCMLink(clusterID),
+            image: <img src={openshiftLogoImg} alt="" />,
+          },
+        ],
       });
     }
 
     _.each(launcherItems, (item) => {
       const sectionName = _.get(item, 'spec.applicationMenu.section', '');
-      if (!_.find(sections, {name: sectionName})) {
-        sections.push({name: sectionName, isSection: true, actions: []});
+      if (!_.find(sections, { name: sectionName })) {
+        sections.push({ name: sectionName, isSection: true, actions: [] });
       }
     });
 
     const sortedSections = _.sortBy(sections, [this._sectionSort, 'name']);
 
-    _.each(sortedSections, section => {
+    _.each(sortedSections, (section) => {
       const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
-      _.each(sectionItems, item => {
-        section.actions.push(
-          {
-            label: _.get(item, 'spec.text'),
-            externalLink: true,
-            href: _.get(item, 'spec.href'),
-            image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
-          }
-        );
+      _.each(sectionItems, (item) => {
+        section.actions.push({
+          label: _.get(item, 'spec.text'),
+          externalLink: true,
+          href: _.get(item, 'spec.href'),
+          image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
+        });
       });
     });
 
@@ -261,27 +285,25 @@ class MastheadToolbar_ extends React.Component {
 
   _helpActions(additionalHelpActions) {
     const helpActions = [];
-    helpActions.push(
-      {
-        name: '',
-        isSection: true,
-        actions: [
-          {
-            label: 'Documentation',
-            externalLink: true,
-            href: openshiftHelpBase,
-          },
-          {
-            label: 'Command Line Tools',
-            callback: this._onCommandLineTools,
-          },
-          {
-            label: 'About',
-            callback: this._onAboutModal,
-          },
-        ],
-      }
-    );
+    helpActions.push({
+      name: '',
+      isSection: true,
+      actions: [
+        {
+          label: 'Documentation',
+          externalLink: true,
+          href: openshiftHelpBase,
+        },
+        {
+          label: 'Command Line Tools',
+          callback: this._onCommandLineTools,
+        },
+        {
+          label: 'About',
+          callback: this._onAboutModal,
+        },
+      ],
+    });
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
@@ -291,11 +313,11 @@ class MastheadToolbar_ extends React.Component {
   }
 
   _getAdditionalActions(links) {
-    const actions = _.map(links, link => {
+    const actions = _.map(links, (link) => {
       return {
         callback: (e) => {
           e.preventDefault();
-          window.open(link.spec.href,'_blank').opener = null;
+          window.open(link.spec.href, '_blank').opener = null;
         },
         label: link.spec.text,
         externalLink: true,
@@ -309,16 +331,16 @@ class MastheadToolbar_ extends React.Component {
     };
   }
 
-  _externalProps = action => action.externalLink ? {isExternal: true, target: '_blank', rel: 'noopener noreferrer'} : {};
+  _externalProps = (action) =>
+    action.externalLink ? { isExternal: true, target: '_blank', rel: 'noopener noreferrer' } : {};
 
   _renderApplicationItems(actions) {
     return _.map(actions, (action, index) => {
-
       if (action.isSection) {
         return (
           <ApplicationLauncherGroup key={`group_${index}`} label={action.name}>
             <React.Fragment>
-              {_.map(action.actions, sectionAction => {
+              {_.map(action.actions, (sectionAction) => {
                 return (
                   <ApplicationLauncherItem
                     key={sectionAction.label}
@@ -331,7 +353,9 @@ class MastheadToolbar_ extends React.Component {
                   </ApplicationLauncherItem>
                 );
               })}
-              {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+              {index < actions.length - 1 && (
+                <ApplicationLauncherSeparator key={`separator-${index}`} />
+              )}
             </React.Fragment>
           </ApplicationLauncherGroup>
         );
@@ -349,7 +373,9 @@ class MastheadToolbar_ extends React.Component {
             >
               {action.label}
             </ApplicationLauncherItem>
-            {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+            {index < actions.length - 1 && (
+              <ApplicationLauncherSeparator key={`separator-${index}`} />
+            )}
           </React.Fragment>
         </ApplicationLauncherGroup>
       );
@@ -359,11 +385,19 @@ class MastheadToolbar_ extends React.Component {
   _renderMenu(mobile) {
     const { flags, consoleLinks } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
-    const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
-    const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
+    const additionalUserActions = this._getAdditionalActions(
+      this._getAdditionalLinks(consoleLinks, 'UserMenu'),
+    );
+    const helpActions = this._helpActions(
+      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+    );
     const launchActions = this._launchActions();
 
-    if (flagPending(flags[FLAGS.OPENSHIFT]) || flagPending(flags[FLAGS.AUTH_ENABLED]) || !username) {
+    if (
+      flagPending(flags[FLAGS.OPENSHIFT]) ||
+      flagPending(flags[FLAGS.AUTH_ENABLED]) ||
+      !username
+    ) {
       return null;
     }
 
@@ -371,7 +405,7 @@ class MastheadToolbar_ extends React.Component {
     if (flags[FLAGS.AUTH_ENABLED]) {
       const userActions = [];
 
-      const logout = e => {
+      const logout = (e) => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
           authSvc.logoutOpenShift(this.state.isKubeAdmin);
@@ -410,10 +444,12 @@ class MastheadToolbar_ extends React.Component {
       actions.unshift({
         name: '',
         isSection: true,
-        actions: [{
-          label: 'Import YAML',
-          callback: this._onImportYAML,
-        }],
+        actions: [
+          {
+            label: 'Import YAML',
+            callback: this._onImportYAML,
+          },
+        ],
       });
 
       if (!_.isEmpty(launchActions)) {
@@ -463,14 +499,21 @@ class MastheadToolbar_ extends React.Component {
   }
 
   render() {
-    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
+    const {
+      isApplicationLauncherDropdownOpen,
+      isHelpDropdownOpen,
+      showAboutModal,
+      statuspageData,
+    } = this.state;
     const { flags, consoleLinks } = this.props;
-    const resources = [{
-      kind: clusterVersionReference,
-      name: 'version',
-      isList: false,
-      prop: 'obj',
-    }];
+    const resources = [
+      {
+        kind: clusterVersionReference,
+        name: 'version',
+        isList: false,
+        prop: 'obj',
+      },
+    ];
     const launchActions = this._launchActions();
     return (
       <React.Fragment>
@@ -479,25 +522,29 @@ class MastheadToolbar_ extends React.Component {
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (updates button) */}
-            {
-              flags[FLAGS.CLUSTER_VERSION] &&
-                <Firehose resources={resources}>
-                  <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))} />
-                </Firehose>
-            }
+            {flags[FLAGS.CLUSTER_VERSION] && (
+              <Firehose resources={resources}>
+                <UpdatesAvailableButton
+                  onClick={this._onClusterUpdatesAvailable}
+                  systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))}
+                />
+              </Firehose>
+            )}
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
-            {!_.isEmpty(launchActions) && <ToolbarItem>
-              <ApplicationLauncher
-                className="co-app-launcher"
-                data-test-id="application-launcher"
-                onSelect={this._onApplicationLauncherDropdownSelect}
-                onToggle={this._onApplicationLauncherDropdownToggle}
-                isOpen={isApplicationLauncherDropdownOpen}
-                items={this._renderApplicationItems(this._launchActions())}
-                position="right"
-                isGrouped
-              />
-            </ToolbarItem>}
+            {!_.isEmpty(launchActions) && (
+              <ToolbarItem>
+                <ApplicationLauncher
+                  className="co-app-launcher"
+                  data-test-id="application-launcher"
+                  onSelect={this._onApplicationLauncherDropdownSelect}
+                  onToggle={this._onApplicationLauncherDropdownToggle}
+                  isOpen={isApplicationLauncherDropdownOpen}
+                  items={this._renderApplicationItems(this._launchActions())}
+                  position="right"
+                  isGrouped
+                />
+              </ToolbarItem>
+            )}
             <ToolbarItem>
               <Button variant="plain" aria-label="Import YAML" onClick={this._onImportYAML}>
                 <PlusCircleIcon className="co-masthead-icon" />
@@ -511,7 +558,11 @@ class MastheadToolbar_ extends React.Component {
                 onSelect={this._onHelpDropdownSelect}
                 onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
-                items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
+                items={this._renderApplicationItems(
+                  this._helpActions(
+                    this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+                  ),
+                )}
                 position="right"
                 toggleIcon={<QuestionCircleIcon />}
                 isGrouped
@@ -533,17 +584,13 @@ class MastheadToolbar_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = ({UI}) => ({
+const mastheadToolbarStateToProps = ({ UI }) => ({
   activeNamespace: UI.get('activeNamespace'),
   clusterID: UI.get('clusterID'),
   user: UI.get('user'),
   consoleLinks: UI.get('consoleLinks'),
 });
 
-export const MastheadToolbar = connect(
-  mastheadToolbarStateToProps
-)(
-  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(
-    MastheadToolbar_
-  )
+export const MastheadToolbar = connect(mastheadToolbarStateToProps)(
+  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(MastheadToolbar_),
 );

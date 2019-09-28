@@ -10,7 +10,7 @@ const initDefaults = {
 };
 
 // TODO: url can be url or path, but shouldLogout only handles paths
-export const shouldLogout = url => {
+export const shouldLogout = (url) => {
   const k8sRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/`);
   // 401 from k8s. show logout screen
   if (k8sRegex.test(url)) {
@@ -19,7 +19,9 @@ export const shouldLogout = url => {
     if (proxyRegex.test(url)) {
       return false;
     }
-    const serviceRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`);
+    const serviceRegex = new RegExp(
+      `^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`,
+    );
     if (serviceRegex.test(url)) {
       return false;
     }
@@ -45,7 +47,7 @@ const validateStatus = (response, url) => {
   }
 
   if (response.status === 403) {
-    return response.json().then(json => {
+    return response.json().then((json) => {
       const error = new Error(json.message || 'Access denied due to cluster policy.');
       error.response = response;
       error.json = json;
@@ -53,7 +55,7 @@ const validateStatus = (response, url) => {
     });
   }
 
-  return response.json().then(json => {
+  return response.json().then((json) => {
     const cause = _.get(json, 'details.causes[0]');
     let reason;
     if (cause) {
@@ -84,12 +86,17 @@ export class TimeoutError extends Error {
 }
 
 const cookiePrefix = 'csrf-token=';
-const getCSRFToken = () => document && document.cookie && document.cookie.split(';')
-  .map(c => _.trim(c))
-  .filter(c => c.startsWith(cookiePrefix))
-  .map(c => c.slice(cookiePrefix.length)).pop();
+const getCSRFToken = () =>
+  document &&
+  document.cookie &&
+  document.cookie
+    .split(';')
+    .map((c) => _.trim(c))
+    .filter((c) => c.startsWith(cookiePrefix))
+    .map((c) => c.slice(cookiePrefix.length))
+    .pop();
 
-export const coFetch = (url, options = {}, timeout=20000) => {
+export const coFetch = (url, options = {}, timeout = 20000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
   if (allOptions.method !== 'GET') {
     allOptions.headers['X-CSRFToken'] = getCSRFToken();
@@ -104,8 +111,10 @@ export const coFetch = (url, options = {}, timeout=20000) => {
 
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
-    fetch(url, allOptions).then(response => validateStatus(response, url)),
-    new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout)),
+    fetch(url, allOptions).then((response) => validateStatus(response, url)),
+    new Promise((unused, reject) =>
+      setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
+    ),
   ]);
 };
 
@@ -116,8 +125,8 @@ export const coFetchUtils = {
 };
 
 export const coFetchJSON = (url, method = 'GET', options = {}) => {
-  const headers = {Accept: 'application/json'};
-  const {kind, name} = store.getState().UI.get('impersonate', {});
+  const headers = { Accept: 'application/json' };
+  const { kind, name } = store.getState().UI.get('impersonate', {});
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     headers['Impersonate-User'] = name;
@@ -126,8 +135,8 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
     }
   }
   // Pass headers last to let callers to override Accept.
-  const allOptions = _.defaultsDeep({method}, options, {headers});
-  return coFetch(url, allOptions).then(response => {
+  const allOptions = _.defaultsDeep({ method }, options, { headers });
+  return coFetch(url, allOptions).then((response) => {
     if (!response.ok) {
       return response.text();
     }
@@ -144,7 +153,9 @@ const coFetchSendJSON = (url, method, json = null, options = {}) => {
   const allOptions = {
     headers: {
       Accept: 'application/json',
-      'Content-Type': `application/${method === 'PATCH' ? 'json-patch+json' : 'json'};charset=UTF-8`,
+      'Content-Type': `application/${
+        method === 'PATCH' ? 'json-patch+json' : 'json'
+      };charset=UTF-8`,
     },
   };
   if (json) {

@@ -2,42 +2,49 @@ import * as _ from 'lodash-es';
 
 import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './';
 
-const getRestartPolicy = (pod: PodKind) => _.find({
-  Always: {
-    // A unique id to identify the type, used as the value when communicating with the API.
-    id: 'Always',
-    // What is shown in the UI.
-    label: 'Always Restart',
-    // Description in the UI.
-    description: 'If the container restarts for any reason, restart it. ' +
-      'Useful for stateless services that may fail from time to time.',
-    // Default selection for new pods.
-    default: true,
-  },
-  OnFailure: {
-    id: 'OnFailure',
-    label: 'Restart On Failure',
-    description: 'If the container exits with a non-zero status code, restart it.',
-  },
-  Never: {
-    id: 'Never',
-    label: 'Never Restart',
-    description: 'Never restart the container. ' +
-      'Useful for containers that exit when they have completed a specific job, like a data import daemon.',
-  },
-}, {id: _.get<any, string>(pod, 'spec.restartPolicy')});
+const getRestartPolicy = (pod: PodKind) =>
+  _.find(
+    {
+      Always: {
+        // A unique id to identify the type, used as the value when communicating with the API.
+        id: 'Always',
+        // What is shown in the UI.
+        label: 'Always Restart',
+        // Description in the UI.
+        description:
+          'If the container restarts for any reason, restart it. ' +
+          'Useful for stateless services that may fail from time to time.',
+        // Default selection for new pods.
+        default: true,
+      },
+      OnFailure: {
+        id: 'OnFailure',
+        label: 'Restart On Failure',
+        description: 'If the container exits with a non-zero status code, restart it.',
+      },
+      Never: {
+        id: 'Never',
+        label: 'Never Restart',
+        description:
+          'Never restart the container. ' +
+          'Useful for containers that exit when they have completed a specific job, like a data import daemon.',
+      },
+    },
+    { id: _.get<any, string>(pod, 'spec.restartPolicy') },
+  );
 
 export const VolumeSource = {
   emptyDir: {
     id: 'emptyDir',
     label: 'Container Volume',
-    description: 'Temporary directory that shares a pod\'s lifetime.',
+    description: "Temporary directory that shares a pod's lifetime.",
   },
   hostPath: {
     id: 'hostPath',
     label: 'Host Directory',
-    description: 'Pre-existing host file or directory, ' +
-        'generally for privileged system daemons or other agents tied to the host.',
+    description:
+      'Pre-existing host file or directory, ' +
+      'generally for privileged system daemons or other agents tied to the host.',
   },
   gitRepo: {
     id: 'gitRepo',
@@ -95,7 +102,7 @@ export const getVolumeType = (volume: Volume) => {
   });
 };
 
-const genericFormatter = volInfo => {
+const genericFormatter = (volInfo) => {
   const keys = Object.keys(volInfo).sort();
   const parts = keys.map(function(key) {
     if (key === 'readOnly') {
@@ -132,7 +139,6 @@ export const getVolumeLocation = (volume: Volume) => {
   }
 };
 
-
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
 
 export type PodReadiness = string;
@@ -160,11 +166,11 @@ export const getVolumeMountsByPermissions = (pod: PodKind) => {
   _.forEach(pod.spec.containers, (c: ContainerSpec) => {
     _.forEach(c.volumeMounts, (v: VolumeMount) => {
       const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
-      const mount = {container: c.name, mountPath: v.mountPath, subPath: v.subPath};
+      const mount = { container: c.name, mountPath: v.mountPath, subPath: v.subPath };
       if (k in m) {
         return m[k].mounts.push(mount);
       }
-      m[k] = {mounts: [mount], name: v.name, readOnly: !!v.readOnly, volume: volumes[v.name]};
+      m[k] = { mounts: [mount], name: v.name, readOnly: !!v.readOnly, volume: volumes[v.name] };
     });
   });
 
@@ -190,7 +196,7 @@ export const podPhase = (pod: PodKind): PodPhase => {
   let phase = pod.status.phase || pod.status.reason;
 
   _.each(pod.status.initContainerStatuses, (container: ContainerStatus, i: number) => {
-    const {terminated, waiting} = container.state;
+    const { terminated, waiting } = container.state;
     if (terminated && terminated.exitCode === 0) {
       return true;
     }
@@ -199,7 +205,9 @@ export const podPhase = (pod: PodKind): PodPhase => {
     if (terminated && terminated.reason) {
       phase = `Init:${terminated.reason}`;
     } else if (terminated && !terminated.reason) {
-      phase = terminated.signal ? `Init:Signal:${terminated.signal}` : `Init:ExitCode:${terminated.exitCode}`;
+      phase = terminated.signal
+        ? `Init:Signal:${terminated.signal}`
+        : `Init:ExitCode:${terminated.exitCode}`;
     } else if (waiting && waiting.reason && waiting.reason !== 'PodInitializing') {
       phase = `Init:${waiting.reason}`;
     } else {
@@ -211,13 +219,15 @@ export const podPhase = (pod: PodKind): PodPhase => {
   if (!initializing) {
     let hasRunning = false;
     _.each(pod.status.containerStatuses, (container: ContainerStatus) => {
-      const {running, terminated, waiting} = container.state;
+      const { running, terminated, waiting } = container.state;
       if (terminated && terminated.reason) {
         phase = terminated.reason;
       } else if (waiting && waiting.reason) {
         phase = waiting.reason;
       } else if (waiting && !waiting.reason) {
-        phase = terminated.signal ? `Signal:${terminated.signal}` : `ExitCode:${terminated.exitCode}`;
+        phase = terminated.signal
+          ? `Signal:${terminated.signal}`
+          : `ExitCode:${terminated.exitCode}`;
       } else if (running && container.ready) {
         hasRunning = true;
       }
@@ -244,7 +254,7 @@ export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   return _.get(pod, 'status.phase', 'Unknown');
 };
 
-export const podReadiness = ({status}: PodKind): PodReadiness => {
+export const podReadiness = ({ status }: PodKind): PodReadiness => {
   if (_.isEmpty(status.conditions)) {
     return null;
   }
@@ -254,7 +264,7 @@ export const podReadiness = ({status}: PodKind): PodReadiness => {
     if (c.status !== 'True') {
       allReady = false;
     }
-    return Object.assign({time: new Date(c.lastTransitionTime)}, c);
+    return Object.assign({ time: new Date(c.lastTransitionTime) }, c);
   });
 
   if (allReady) {
@@ -262,7 +272,7 @@ export const podReadiness = ({status}: PodKind): PodReadiness => {
   }
 
   let earliestNotReady = null;
-  _.each(conditions, c => {
+  _.each(conditions, (c) => {
     if (c.status === 'True') {
       return;
     }

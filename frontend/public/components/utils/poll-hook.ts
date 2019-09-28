@@ -16,7 +16,8 @@ export const usePoll = (callback, delay, ...dependencies) => {
 
     tick(); // Run first tick immediately.
 
-    if (delay) { // Only start interval if a delay is provided.
+    if (delay) {
+      // Only start interval if a delay is provided.
       const id = setInterval(tick, delay);
       return () => clearInterval(id);
     }
