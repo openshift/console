@@ -1,3 +1,5 @@
+$co-dashboard-card--line-height: 19px;
+
 .co-dashboard-card {
   margin: 0;
 }
@@ -12,11 +14,9 @@
   margin-top: 1.5rem;
 }
 
-.co-dashboard-card__button-link {
-  line-height: 1;
-  padding: 0;
-  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
-  padding-top: var(--pf-c-card--first-child--PaddingTop);
+.co-dashboard-card__button-link,
+.co-dashboard-card__link {
+  line-height: $co-dashboard-card--line-height !important;
 }
 
 .co-dashboard-card__header {
@@ -24,15 +24,16 @@
   border-bottom: 1px solid $pf-color-black-300;
   display: flex;
   justify-content: space-between;
-  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
   padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
 }
 
 .co-dashboard-card__title {
   font-size: 1rem;
+  line-height: $co-dashboard-card--line-height;
   margin: 0;
-  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
-  padding-top: var(--pf-c-card--first-child--PaddingTop);
 }
 
 .co-dashboard-icon {

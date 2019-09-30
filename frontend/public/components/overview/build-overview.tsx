@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, ListGroup } from 'patternfly-react';
+import { ListGroup } from 'patternfly-react';
+import { Button } from '@patternfly/react-core';
 
 import { Status, StatusIconAndText } from '@console/shared';
 import { BuildNumberLink, BuildLogLink } from '../build';
@@ -110,7 +111,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
           </div>
           {canStartBuild && (
             <div>
-              <Button bsStyle="default" bsSize="xs" onClick={onClick}>
+              <Button variant="secondary" onClick={onClick}>
                 Start Build
               </Button>
             </div>
