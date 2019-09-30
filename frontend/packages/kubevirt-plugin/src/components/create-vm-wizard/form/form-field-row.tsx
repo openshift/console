@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { getFieldHelp, getFieldId, getFieldTitle } from '../utils/vm-settings-tab-utils';
-import { isFieldHidden, isFieldRequired } from '../selectors/immutable/vm-settings';
+import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/vm-settings';
 import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
 import { FormFieldContext } from './form-field-context';
 import { FormFieldType } from './form-field';
+import { FormFieldReviewContext } from './form-field-review-context';
+import { FormFieldReviewRow } from './form-field-review-row';
 
 const isLoading = (loadingResources?: { [k: string]: any }) =>
   loadingResources &&
@@ -26,19 +28,30 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
   const loading = isLoading(loadingResources);
 
   return (
-    <FormRow
-      fieldId={getFieldId(fieldKey)}
-      title={fieldType === FormFieldType.INLINE_CHECKBOX ? undefined : getFieldTitle(fieldKey)}
-      help={getFieldHelp(fieldKey, iGet(field, 'value'))}
-      isRequired={isFieldRequired(field)}
-      validationMessage={iGetIn(field, ['validation', 'message'])}
-      validationType={iGetIn(field, ['validation', 'type'])}
-      isLoading={loading}
-    >
-      <FormFieldContext.Provider value={{ field, fieldType, isLoading: loading }}>
-        {children}
-      </FormFieldContext.Provider>
-    </FormRow>
+    <FormFieldReviewContext.Consumer>
+      {({ isReview }: { isReview: boolean }) => {
+        if (isReview) {
+          return <FormFieldReviewRow field={field} fieldType={fieldType} />;
+        }
+        return (
+          <FormRow
+            fieldId={getFieldId(fieldKey)}
+            title={
+              fieldType === FormFieldType.INLINE_CHECKBOX ? undefined : getFieldTitle(fieldKey)
+            }
+            help={getFieldHelp(fieldKey, iGetFieldValue(field))}
+            isRequired={isFieldRequired(field)}
+            validationMessage={iGetIn(field, ['validation', 'message'])}
+            validationType={iGetIn(field, ['validation', 'type'])}
+            isLoading={loading}
+          >
+            <FormFieldContext.Provider value={{ field, fieldType, isLoading: loading }}>
+              {children}
+            </FormFieldContext.Provider>
+          </FormRow>
+        );
+      }}
+    </FormFieldReviewContext.Consumer>
   );
 };
 
