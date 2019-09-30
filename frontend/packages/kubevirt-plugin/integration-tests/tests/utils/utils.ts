@@ -1,6 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
+import * as _ from 'lodash';
 import { ElementFinder, browser, ExpectedConditions as until } from 'protractor';
+import { STORAGE_CLASS } from './consts';
 import { NodePortService } from './types';
 
 export async function fillInput(elem: ElementFinder, value: string) {
@@ -55,4 +57,12 @@ export function exposeServices(services: Set<any>) {
       `virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type} -n ${namespace}`,
     );
   });
+}
+
+export function resolveStorageDataAttribute(configMap: any, attribute: string): string {
+  const storageClassAttributePath = ['data', `${STORAGE_CLASS}.${attribute}`];
+  if (_.has(configMap, storageClassAttributePath)) {
+    return _.get(configMap, storageClassAttributePath);
+  }
+  return _.get(configMap, ['data', attribute]);
 }

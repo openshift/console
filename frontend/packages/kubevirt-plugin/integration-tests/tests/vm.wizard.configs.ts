@@ -7,6 +7,8 @@ import {
   dataVolumeManifest,
 } from './utils/mocks';
 import { StorageResource, ProvisionConfig } from './utils/types';
+import { KUBEVIRT_STORAGE_CLASS_DEFAULTS, KUBEVIRT_PROJECT_NAME } from './utils/consts';
+import { resolveStorageDataAttribute, getResourceObject } from './utils/utils';
 
 export const vmConfig = (name: string, provisionConfig, testName: string) => {
   const commonSettings = {
@@ -30,11 +32,19 @@ export const vmConfig = (name: string, provisionConfig, testName: string) => {
   };
 };
 
+export const kubevirtStorage = getResourceObject(
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+  KUBEVIRT_PROJECT_NAME,
+  'configMap',
+);
+
 export const getTestDataVolume = (testName: string) =>
   dataVolumeManifest({
     name: `toclone-${testName}`,
     namespace: testName,
     sourceURL: basicVmConfig.sourceURL,
+    accessMode: resolveStorageDataAttribute(kubevirtStorage, 'accessMode'),
+    volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
   });
 
 const getDiskToCloneFrom = (testName: string): StorageResource => {

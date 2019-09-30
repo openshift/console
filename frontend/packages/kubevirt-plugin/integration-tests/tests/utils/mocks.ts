@@ -16,7 +16,7 @@ export const multusNad = {
   },
 };
 
-export const dataVolumeManifest = ({ name, namespace, sourceURL }) => {
+export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
     apiVersion: 'cdi.kubevirt.io/v1alpha1',
     kind: 'DataVolume',
@@ -26,13 +26,14 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL }) => {
     },
     spec: {
       pvc: {
-        accessModes: ['ReadWriteMany'],
+        accessModes: [accessMode],
         dataSource: null,
         resources: {
           requests: {
             storage: '5Gi',
           },
         },
+        volumeMode,
         storageClassName: STORAGE_CLASS,
       },
       source: {

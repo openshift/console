@@ -38,6 +38,10 @@ export const NODE_READY_STATUS = 'Ready';
 // Wizard dialog
 export const WIZARD_TABLE_FIRST_ROW = 1;
 
+// Kubevirt related
+export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
+export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
+
 // Tab names
 export const TABS = {
   OVERVIEW: 'Overview',
