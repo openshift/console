@@ -27,7 +27,7 @@ const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
             <p>
               <ExternalLink
                 href={tool.spec.links[0].href}
-                text={tool.spec.links[0].text || defaultLinkText}
+                text={tool.spec.links[0].name || defaultLinkText}
               />
             </p>
           )}
@@ -35,7 +35,7 @@ const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
             <ul>
               {_.map(tool.spec.links, (link, i) => (
                 <li key={i}>
-                  <ExternalLink href={link.href} text={link.text || defaultLinkText} />
+                  <ExternalLink href={link.href} text={link.name || defaultLinkText} />
                 </li>
               ))}
             </ul>
