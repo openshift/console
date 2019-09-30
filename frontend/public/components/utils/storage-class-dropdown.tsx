@@ -149,6 +149,7 @@ export class StorageClassDropdownInner extends React.Component<
             </label>
             <Dropdown
               className="co-storage-class-dropdown"
+              dropDownClassName="dropdown--full-width"
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder="Select storage class"
               items={items}
@@ -189,28 +190,21 @@ const StorageClassDropdownEntry = (props) => {
   ];
   const storageClassDescriptionLine = _.compact(storageClassProperties).join(' | ');
   return (
-    <div className="form__storage-class-dropdown__flex-column">
-      <div className="form__storage-class-dropdown__flex-row">
-        <span className="form__storage-class-dropdown__icon-column">
-          <ResourceIcon kind={props.kindLabel} />
-        </span>{' '}
-        <span>{props.name}</span>
-      </div>
-      <div className="form__storage-class-dropdown__flex-row">
-        <div className="form__storage-class-dropdown__icon-column"> &nbsp;</div>
-        <div className="text-muted"> {storageClassDescriptionLine}</div>
-      </div>
-    </div>
+    <span className="co-resource-item">
+      <ResourceIcon kind={props.kindLabel} />
+      <span className="co-resource-item__resource-name">
+        {props.name}
+        <div className="text-muted small"> {storageClassDescriptionLine}</div>
+      </span>
+    </span>
   );
 };
 
 const StorageClassDropdownNoStorageClassOption = (props) => {
   return (
-    <div className="form__storage-class-dropdown__flex-column">
-      <div className="form__storage-class-dropdown__flex-row">
-        <span className="form__storage-class-dropdown__icon-column" /> <span>{props.name}</span>
-      </div>
-    </div>
+    <span className="co-resource-item">
+      <span className="co-resource-item__resource-name">{props.name}</span>
+    </span>
   );
 };
 

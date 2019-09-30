@@ -10,6 +10,7 @@
   min-width: 18px;
   padding: 1px 4px;
   text-align: center;
+  white-space: nowrap;
   &--lg {
     font-size: ($font-size-base + 3);
     line-height: 20px;
