@@ -4,15 +4,8 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
-
-import { Status } from '@console/shared';
-import {
-  getNodeRoles,
-  nodeStatus,
-  makeNodeSchedulable,
-  NodeKind,
-  referenceForModel,
-} from '../module/k8s';
+import { Status, getNodeRoles } from '@console/shared';
+import { nodeStatus, makeNodeSchedulable, NodeKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';

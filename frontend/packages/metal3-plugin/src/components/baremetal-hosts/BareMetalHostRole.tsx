@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getMachineRole, DASH } from '@console/shared';
-import { MachineKind, getNodeRoles, NodeKind } from '@console/internal/module/k8s';
+import { getNodeRoles, getMachineRole, DASH } from '@console/shared';
+import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 
 type BareMetalHostRoleProps = {
   machine?: MachineKind;

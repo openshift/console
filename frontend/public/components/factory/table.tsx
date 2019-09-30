@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-
+import { getNodeRoles } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
@@ -18,7 +18,6 @@ import {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getTemplateInstanceStatus,
-  getNodeRoles,
 } from '../../module/k8s';
 
 import {
