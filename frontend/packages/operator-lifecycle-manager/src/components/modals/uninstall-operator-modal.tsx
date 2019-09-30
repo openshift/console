@@ -13,12 +13,11 @@ import {
 } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/actions/ui';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SubscriptionKind } from '../../types';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 
 export const UninstallOperatorModal = withHandlePromise((props: UninstallOperatorModalProps) => {
-  const [deleteCSV, setDeleteCSV] = React.useState(true);
-
   const submit = (event) => {
     event.preventDefault();
 
@@ -29,7 +28,7 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
       propagationPolicy: 'Foreground',
     };
     const promises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)].concat(
-      _.get(subscription, 'status.installedCSV') && deleteCSV
+      _.get(subscription, 'status.installedCSV')
         ? k8sKill(
             ClusterServiceVersionModel,
             {
@@ -61,26 +60,25 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
 
   return (
     <form onSubmit={submit} name="form" className="modal-content co-catalog-install-modal">
-      <ModalTitle className="modal-header">Remove Operator Subscription</ModalTitle>
+      <ModalTitle className="modal-header">Uninstall Operator?</ModalTitle>
       <ModalBody>
-        <div>
-          <p>
-            This will remove the subscription from <i>{props.subscription.metadata.namespace}</i>{' '}
-            and the Operator will no longer receive updates.
-          </p>
-        </div>
-        <div>
-          <label className="co-delete-modal-checkbox-label">
-            <input type="checkbox" checked={deleteCSV} onChange={() => setDeleteCSV(!deleteCSV)} />
-            &nbsp;&nbsp;{' '}
-            <strong>Also completely remove the Operator from the selected namespace.</strong>
-          </label>
+        <div className="co-delete-modal">
+          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
+          <div>
+            <p className="lead">Uninstall {props.displayName || props.subscription.spec.name}?</p>
+            <div>
+              This will remove the operator from <i>{props.subscription.metadata.namespace}</i>.
+              Your application will keep running, but it will no longer receive updates or
+              configuration changes.
+            </div>
+          </div>
         </div>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={props.inProgress}
         errorMessage={props.errorMessage}
         cancel={props.cancel}
+        submitDanger
         submitText="Remove"
       />
     </form>
@@ -103,6 +101,7 @@ export type UninstallOperatorModalProps = {
     data: { op: string; path: string; value: any }[],
   ) => Promise<any>;
   subscription: SubscriptionKind;
+  displayName?: string;
 };
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
