@@ -154,7 +154,7 @@ const NodeTableRow: React.FC<NodeTableRowProps> = ({ obj: node, index, key, styl
         {roles.length ? roles.join(', ') : '-'}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {machine && (
+        {machine.name && (
           <ResourceLink
             kind={referenceForModel(MachineModel)}
             name={machine.name}

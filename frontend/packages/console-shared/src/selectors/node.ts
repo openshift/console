@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
@@ -15,4 +15,14 @@ export const getNodeRoles = (node: K8sResourceKind): string[] => {
     },
     [],
   );
+};
+
+type NodeMachineAndNamespace = {
+  name: string;
+  namespace: string;
+};
+export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNamespace => {
+  const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]', '/');
+  const [namespace, name] = machine.split('/');
+  return { namespace, name };
 };
