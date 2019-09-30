@@ -103,6 +103,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
     return (
       <g transform={`translate(${x}, ${y})`} className="odc-base-node">
         <g
+          data-test-id="base-node-handler"
           onClick={
             onSelect
               ? (e) => {
