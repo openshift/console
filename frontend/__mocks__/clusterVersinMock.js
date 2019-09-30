@@ -26,21 +26,24 @@ export const clusterVersionProps = {
       },
       {
         lastTransitionTime: '2019-07-30T04:18:13Z',
-        message: 'Cluster operator monitoring is reporting a failure: Failed to rollout the stack. Error: running task Updating prometheus-adapter failed: reconciling PrometheusAdapter Deployment failed: updating deployment object failed: waiting for DeploymentRollout of prometheus-adapter: deployment prometheus-adapter is not ready. status: (replicas: 3, updated: 1, ready: 2, unavailable: 1)',
+        message:
+          'Cluster operator monitoring is reporting a failure: Failed to rollout the stack. Error: running task Updating prometheus-adapter failed: reconciling PrometheusAdapter Deployment failed: updating deployment object failed: waiting for DeploymentRollout of prometheus-adapter: deployment prometheus-adapter is not ready. status: (replicas: 3, updated: 1, ready: 2, unavailable: 1)',
         reason: 'ClusterOperatorDegraded',
         status: 'True',
         type: 'Failing',
       },
       {
         lastTransitionTime: '2019-07-29T09:20:13Z',
-        message: 'Error while reconciling 4.2.0-0.ci-2019-07-22-025130: the cluster operator monitoring is degraded',
+        message:
+          'Error while reconciling 4.2.0-0.ci-2019-07-22-025130: the cluster operator monitoring is degraded',
         reason: 'ClusterOperatorDegraded',
         status: 'False',
         type: 'Progressing',
       },
       {
         lastTransitionTime: '2019-07-29T09:04:05Z',
-        message: 'Unable to retrieve available updates: currently installed version 4.2.0-0.ci-2019-07-22-025130 not found in the "stable-4.2" channel',
+        message:
+          'Unable to retrieve available updates: currently installed version 4.2.0-0.ci-2019-07-22-025130 not found in the "stable-4.2" channel',
         reason: 'RemoteFailed',
         status: 'False',
         type: 'RetrievedUpdates',
@@ -48,13 +51,15 @@ export const clusterVersionProps = {
     ],
     desired: {
       force: false,
-      image: 'registry.svc.ci.openshift.org/ocp/release@sha256:12da30aa8d94d8d4d4db3f8c88a30b6bdaf847bc714b2a551a2637a89c36f3c1',
+      image:
+        'registry.svc.ci.openshift.org/ocp/release@sha256:12da30aa8d94d8d4d4db3f8c88a30b6bdaf847bc714b2a551a2637a89c36f3c1',
       version: '4.2.0-0.ci-2019-07-22-025130',
     },
     history: [
       {
         completionTime: '2019-07-29T09:20:13Z',
-        image: 'registry.svc.ci.openshift.org/ocp/release@sha256:12da30aa8d94d8d4d4db3f8c88a30b6bdaf847bc714b2a551a2637a89c36f3c1',
+        image:
+          'registry.svc.ci.openshift.org/ocp/release@sha256:12da30aa8d94d8d4d4db3f8c88a30b6bdaf847bc714b2a551a2637a89c36f3c1',
         startedTime: '2019-07-29T09:04:05Z',
         state: 'Completed',
         verified: false,

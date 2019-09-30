@@ -5,10 +5,12 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
-export const MaskedData: React.FC<{}> = () => <React.Fragment>
-  <span className="sr-only">Value hidden</span>
-  <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
-</React.Fragment>;
+export const MaskedData: React.FC<{}> = () => (
+  <React.Fragment>
+    <span className="sr-only">Value hidden</span>
+    <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
+  </React.Fragment>
+);
 
 const downloadBinary = (key, value) => {
   const rawBinary = window.atob(value);
@@ -17,33 +19,51 @@ const downloadBinary = (key, value) => {
   for (let i = 0; i < rawBinaryLength; i++) {
     array[i] = rawBinary.charCodeAt(i);
   }
-  const blob = new Blob([array], {type: 'data:application/octet-stream;'});
+  const blob = new Blob([array], { type: 'data:application/octet-stream;' });
   saveAs(blob, key);
 };
 
-export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({data}) => {
+export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
   const dl = [];
-  Object.keys(data || {}).sort().forEach(k => {
-    const value = data[k];
-    dl.push(<dt key={`${k}-k`}>{k}</dt>);
-    dl.push(<dd key={`${k}-v`}><button className="btn btn-link btn-link--no-btn-default-values" type="button" onClick={() => downloadBinary(k, value)}>Save File</button></dd>);
-  });
+  Object.keys(data || {})
+    .sort()
+    .forEach((k) => {
+      const value = data[k];
+      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dd key={`${k}-v`}>
+          <button
+            className="btn btn-link btn-link--no-btn-default-values"
+            type="button"
+            onClick={() => downloadBinary(k, value)}
+          >
+            Save File
+          </button>
+        </dd>,
+      );
+    });
   return dl.length ? <dl>{dl}</dl> : <EmptyBox label="Binary Data" />;
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
 
-export const ConfigMapData: React.FC<ConfigMapDataProps> = ({data, label}) => {
+export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => {
   const dl = [];
-  Object.keys(data || {}).sort().forEach(k => {
-    const value = data[k];
-    dl.push(<dt key={`${k}-k`}>{k}</dt>);
-    dl.push(<dd key={`${k}-v`}><CopyToClipboard value={value} /></dd>);
-  });
+  Object.keys(data || {})
+    .sort()
+    .forEach((k) => {
+      const value = data[k];
+      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dd key={`${k}-v`}>
+          <CopyToClipboard value={value} />
+        </dd>,
+      );
+    });
   return dl.length ? <dl>{dl}</dl> : <EmptyBox label={label} />;
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
-export const SecretValue: React.FC<SecretValueProps> = ({value, reveal, encoded = true}) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true }) => {
   if (!value) {
     return <span className="text-muted">No value</span>;
   }
@@ -54,25 +74,39 @@ export const SecretValue: React.FC<SecretValueProps> = ({value, reveal, encoded 
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({data}) => {
+export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
   const [reveal, setReveal] = React.useState(false);
 
   const dl = [];
-  Object.keys(data || {}).sort().forEach(k => {
-    dl.push(<dt key={`${k}-k`}>{k}</dt>);
-    dl.push(<dd key={`${k}-v`}><SecretValue value={data[k]} reveal={reveal} /></dd>);
-  });
+  Object.keys(data || {})
+    .sort()
+    .forEach((k) => {
+      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dd key={`${k}-v`}>
+          <SecretValue value={data[k]} reveal={reveal} />
+        </dd>,
+      );
+    });
 
   return (
     <React.Fragment>
       <SectionHeading text="Data">
-        {dl.length
-          ? <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
-            {reveal
-              ? <React.Fragment><EyeSlashIcon className="co-icon-space-r" />Hide Values</React.Fragment>
-              : <React.Fragment><EyeIcon className="co-icon-space-r" />Reveal Values</React.Fragment>}
+        {dl.length ? (
+          <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
+            {reveal ? (
+              <React.Fragment>
+                <EyeSlashIcon className="co-icon-space-r" />
+                Hide Values
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <EyeIcon className="co-icon-space-r" />
+                Reveal Values
+              </React.Fragment>
+            )}
           </button>
-          : null}
+        ) : null}
       </SectionHeading>
       {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label="Data" />}
     </React.Fragment>

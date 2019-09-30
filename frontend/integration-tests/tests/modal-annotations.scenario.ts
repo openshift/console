@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as until} from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 
@@ -16,14 +16,17 @@ const Actions = {
 };
 
 describe('Modal Annotations', () => {
-
-  beforeAll(async() => {
+  beforeAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
     const content = await yamlView.getEditorContent();
-    const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {'lbl-modal': testName}}}, safeLoad(content));
+    const newContent = _.defaultsDeep(
+      {},
+      { metadata: { name: WORKLOAD_NAME, labels: { 'lbl-modal': testName } } },
+      safeLoad(content),
+    );
     await yamlView.setEditorContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
@@ -37,7 +40,7 @@ describe('Modal Annotations', () => {
     checkErrors();
   });
 
-  afterAll(async() => {
+  afterAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.resourceRowsPresent();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
@@ -46,21 +49,24 @@ describe('Modal Annotations', () => {
     checkErrors();
   });
 
-  const validateKeyAndValue = async function( annotationKey: string,
+  const validateKeyAndValue = async function(
+    annotationKey: string,
     annotationValue: string,
-    isPresent: boolean
+    isPresent: boolean,
   ) {
     let keyFound = 0;
 
-    await modalAnnotationsView.annotationRowsKey.each( async function(item, index) {
+    await modalAnnotationsView.annotationRowsKey.each(async function(item, index) {
       const annKey = await item.getAttribute('value');
-      if (annKey === annotationKey){
+      if (annKey === annotationKey) {
         keyFound = keyFound + 1;
-        expect( modalAnnotationsView.annotationRowsValue.get(index).getAttribute('value')).toBe(annotationValue);
+        expect(modalAnnotationsView.annotationRowsValue.get(index).getAttribute('value')).toBe(
+          annotationValue,
+        );
       }
     });
 
-    if (isPresent){
+    if (isPresent) {
       expect(keyFound).toEqual(1);
     } else {
       expect(keyFound).toEqual(0);
@@ -77,7 +83,7 @@ describe('Modal Annotations', () => {
   const crudAnnotationFromDetail = async function(
     action: string,
     annotationKey: string,
-    annotationValue: string
+    annotationValue: string,
   ) {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
     await clickModalAnnotationsLink();
@@ -110,7 +116,7 @@ describe('Modal Annotations', () => {
     action: string,
     annotationKey: string,
     annotationValue: string,
-    isPresent: boolean
+    isPresent: boolean,
   ) {
     await crudAnnotationFromDetail(action, annotationKey, annotationValue);
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
@@ -127,20 +133,26 @@ describe('Modal Annotations', () => {
   //  When I delete the annotation
   //  Then I expect that the annotation is not displayed
   //   And I expect to see that the YAML should not contain the annotation
-  it('Delete Annotation', async() => {
+  it('Delete Annotation', async () => {
     const annotationKey = 'KEY_del3t3';
     const annotationValue = 'delete';
 
     await crudAnnotationFromDetail(Actions.add, annotationKey, annotationValue);
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
-    await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'),
+      BROWSER_TIMEOUT,
+    );
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, true);
 
     await crudAnnotationFromDetail(Actions.delete, annotationKey, annotationValue);
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
-    await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '1'), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.textToBePresentInElement(crudView.modalAnnotationsLink, '1'),
+      BROWSER_TIMEOUT,
+    );
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, false);
@@ -156,7 +168,7 @@ describe('Modal Annotations', () => {
   //   And I open modal annotations from gear option
   //  Then I expect to see the annotation created
   //   And I expect to see that the YAML should contain the annotation value with simple quotes
-  it('Add numeric Annotation from grid', async() => {
+  it('Add numeric Annotation from grid', async () => {
     const annotationKey = 'NUM_KEY_FROM_GRID';
     const annotationValue = '2233344';
     const annotationYAML = `${annotationKey}: '${annotationValue}'`;
@@ -165,7 +177,7 @@ describe('Modal Annotations', () => {
     await crudView.isLoaded();
     await crudView.clickKebabAction(WORKLOAD_NAME, crudView.actions.annotations);
     await modalAnnotationsView.isLoaded();
-    await modalAnnotationsView.addAnnotation(annotationKey,annotationValue);
+    await modalAnnotationsView.addAnnotation(annotationKey, annotationValue);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.confirmActionBtn.click();
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
@@ -188,7 +200,7 @@ describe('Modal Annotations', () => {
   //   And I open modal annotations
   //  Then I expect to see the annotation created
   //   And I expect to see that the YAML should contain the annotation value without simple quotes
-  it('Add alphanumeric Annotation from object detail', async() => {
+  it('Add alphanumeric Annotation from object detail', async () => {
     const annotationKey = 'ALPHA_Num_KEY_FROM_detail-12333';
     const annotationValue = 'from_dEtaIL-2';
     const annotationYAML = `${annotationKey}: ${annotationValue}`;
@@ -208,7 +220,7 @@ describe('Modal Annotations', () => {
   //  When I add an annotation without value
   //  Then I expect to see the annotation created without value
   //   And I expect to see that the YAML should contain an empty string ('') as annotation value
-  it('Add Annotation without value', async() => {
+  it('Add Annotation without value', async () => {
     const annotationKey = 'KEY_without_v4lu3';
     const annotationValue = '';
     const annotationYAML = `${annotationKey}: ''`;
@@ -228,7 +240,7 @@ describe('Modal Annotations', () => {
   //  When I add an annotation without key
   //   And I close the modal
   //  Then I expect that the annotation is not displayed
-  it('Add annotation wihout key', async() => {
+  it('Add annotation wihout key', async () => {
     const annotationKey = '';
     const annotationValue = 'value_no_key';
 
@@ -244,7 +256,7 @@ describe('Modal Annotations', () => {
   //   And I update this annotation to empty value
   //  Then I expect to see the annotation created without value
   //   And I expect to see that the YAML should contain an empty string ('') as annotation value
-  xit('Update Annotation from value to empty value: CONSOLE-394', async() => {
+  xit('Update Annotation from value to empty value: CONSOLE-394', async () => {
     const annotationKey = 'KEY_UPDATE_FROM_VALUE_TO_EMPTY';
     const annotationValueBeforeUpd = 'new_value_not_empty-1';
     const annotationValueAfterUpd = '';
@@ -259,7 +271,7 @@ describe('Modal Annotations', () => {
   //   And I open modal annotations from gear option
   //  When I update this annotation
   //  Then I expect to see the annotation
-  it('Update Annotation from empty value to value', async() => {
+  it('Update Annotation from empty value to value', async () => {
     const annotationKey = 'KEY_UPDATE_TO_EMPTY';
     const annotationValueBeforeUpd = '';
     const annotationValueAfterUpd = 'new_value_not_empty-2';
@@ -282,7 +294,7 @@ describe('Modal Annotations', () => {
   //   And I cancel the action
   //   And I open modal annotations from gear option
   //  Then I expect that the annotation is not displayed
-  it('Cancel add Annotation', async() => {
+  it('Cancel add Annotation', async () => {
     const annotationKey = 'KEY_Cancel';
     const annotationValue = 'cancel';
 

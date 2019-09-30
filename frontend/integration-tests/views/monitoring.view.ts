@@ -1,6 +1,6 @@
 import { $, $$, browser } from 'protractor';
 
-export const wait = async(condition) => await browser.wait(condition, 15000);
+export const wait = async (condition) => await browser.wait(condition, 15000);
 
 // List pages
 export const listPageHeading = $('.co-m-pane__heading');

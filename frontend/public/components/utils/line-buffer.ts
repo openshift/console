@@ -1,10 +1,9 @@
 export const LINE_PATTERN = /^.*(\n|$)/gm;
 
 export class LineBuffer {
-
-  private _maxSize: number
-  private _buffer: string[]
-  private _tail: string
+  private _maxSize: number;
+  private _buffer: string[];
+  private _tail: string;
 
   constructor(maxSize) {
     this._maxSize = maxSize;

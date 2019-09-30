@@ -19,13 +19,16 @@ export type UIState = ImmutableMap<string, any>;
 
 export function getDefaultPerspective() {
   let activePerspective = localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY);
-  if (activePerspective && !plugins.registry.getPerspectives().some(p => p.properties.id === activePerspective)) {
+  if (
+    activePerspective &&
+    !plugins.registry.getPerspectives().some((p) => p.properties.id === activePerspective)
+  ) {
     // invalid saved perspective
     activePerspective = undefined;
   }
   if (!activePerspective) {
     // assign default perspective
-    const defaultPerspective = plugins.registry.getPerspectives().find(p => p.properties.default);
+    const defaultPerspective = plugins.registry.getPerspectives().find((p) => p.properties.default);
     if (defaultPerspective) {
       activePerspective = defaultPerspective.properties.id;
     }
@@ -33,7 +36,7 @@ export function getDefaultPerspective() {
   return activePerspective || undefined;
 }
 
-const defaultQueryBrowserQuery = ImmutableMap({isEnabled: true, isExpanded: true});
+const defaultQueryBrowserQuery = ImmutableMap({ isEnabled: true, isExpanded: true });
 
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
@@ -42,7 +45,10 @@ export default (state: UIState, action: UIAction): UIState => {
     let activeNamespace = getNamespace(pathname);
     if (!activeNamespace) {
       const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-      if (_.isString(parsedFavorite) && (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY)) {
+      if (
+        _.isString(parsedFavorite) &&
+        (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY)
+      ) {
         activeNamespace = parsedFavorite;
       } else {
         activeNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
@@ -85,7 +91,9 @@ export default (state: UIState, action: UIAction): UIState => {
         return state;
       }
 
-      return state.set('activeApplication', ALL_APPLICATIONS_KEY).set('activeNamespace', action.payload.namespace);
+      return state
+        .set('activeApplication', ALL_APPLICATIONS_KEY)
+        .set('activeNamespace', action.payload.namespace);
 
     case ActionType.SetActivePerspective:
       return state.set('activePerspective', action.payload.perspective);
@@ -99,13 +107,20 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.set('activeNamespace', ns);
     }
     case ActionType.BeginImpersonate:
-      return state.set('impersonate', {kind: action.payload.kind, name: action.payload.name, subprotocols: action.payload.subprotocols});
+      return state.set('impersonate', {
+        kind: action.payload.kind,
+        name: action.payload.name,
+        subprotocols: action.payload.subprotocols,
+      });
 
     case ActionType.EndImpersonate:
       return state.delete('impersonate');
 
     case ActionType.SortList:
-      return state.mergeIn(['listSorts', action.payload.listId], _.pick(action.payload, ['field', 'func', 'sortAsNumber', 'orderBy']));
+      return state.mergeIn(
+        ['listSorts', action.payload.listId],
+        _.pick(action.payload, ['field', 'func', 'sortAsNumber', 'orderBy']),
+      );
 
     case ActionType.SetCreateProjectMessage:
       return state.set('createProjectMessage', action.payload.message);
@@ -117,18 +132,29 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.set('user', action.payload.user);
 
     case ActionType.SetMonitoringData: {
-      const alerts = action.payload.key === 'alerts' ? action.payload.data : state.getIn(['monitoring', 'alerts']);
-      const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
-      const silences = action.payload.key === 'silences' ? action.payload.data : state.getIn(['monitoring', 'silences']);
+      const alerts =
+        action.payload.key === 'alerts'
+          ? action.payload.data
+          : state.getIn(['monitoring', 'alerts']);
+      const firingAlerts = _.filter(_.get(alerts, 'data'), (a) =>
+        [AlertStates.Firing, AlertStates.Silenced].includes(a.state),
+      );
+      const silences =
+        action.payload.key === 'silences'
+          ? action.payload.data
+          : state.getIn(['monitoring', 'silences']);
 
       // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
-      _.each(firingAlerts, a => {
-        a.silencedBy = _.filter(_.get(silences, 'data'), s => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s));
+      _.each(firingAlerts, (a) => {
+        a.silencedBy = _.filter(
+          _.get(silences, 'data'),
+          (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
+        );
         if (a.silencedBy.length) {
           a.state = AlertStates.Silenced;
           // Also set the state of Alerts in `rule.alerts`
-          _.each(a.rule.alerts, ruleAlert => {
-            if (_.some(a.silencedBy, s => isSilenced(ruleAlert, s))) {
+          _.each(a.rule.alerts, (ruleAlert) => {
+            if (_.some(a.silencedBy, (s) => isSilenced(ruleAlert, s))) {
               ruleAlert.state = AlertStates.Silenced;
             }
           });
@@ -137,8 +163,8 @@ export default (state: UIState, action: UIAction): UIState => {
       state = state.setIn(['monitoring', 'alerts'], alerts);
 
       // For each Silence, store a list of the Alerts it is silencing
-      _.each(_.get(silences, 'data'), s => {
-        s.firingAlerts = _.filter(firingAlerts, a => isSilenced(a, s));
+      _.each(_.get(silences, 'data'), (s) => {
+        s.firingAlerts = _.filter(firingAlerts, (a) => isSilenced(a, s));
       });
       return state.setIn(['monitoring', 'silences'], silences);
     }
@@ -148,7 +174,7 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
         ['queryBrowser', 'queries'],
-        state.getIn(['queryBrowser', 'queries']).push(defaultQueryBrowserQuery)
+        state.getIn(['queryBrowser', 'queries']).push(defaultQueryBrowserQuery),
       );
 
     case ActionType.QueryBrowserDeleteAllQueries:
@@ -162,27 +188,31 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['queryBrowser', 'queries'], queries);
     }
     case ActionType.QueryBrowserInsertText: {
-      const {index, newText, replaceFrom, replaceTo} = action.payload;
+      const { index, newText, replaceFrom, replaceTo } = action.payload;
       const oldText = state.getIn(['queryBrowser', 'queries', index, 'text'], '');
-      const text = _.isInteger(replaceFrom) && _.isInteger(replaceTo)
-        ? oldText.substring(0, replaceFrom) + newText + oldText.substring(replaceTo)
-        : oldText + newText;
+      const text =
+        _.isInteger(replaceFrom) && _.isInteger(replaceTo)
+          ? oldText.substring(0, replaceFrom) + newText + oldText.substring(replaceTo)
+          : oldText + newText;
       return state.setIn(['queryBrowser', 'queries', index, 'text'], text);
     }
     case ActionType.QueryBrowserPatchQuery:
-      return state.mergeIn(['queryBrowser', 'queries', action.payload.index], ImmutableMap(action.payload.patch));
+      return state.mergeIn(
+        ['queryBrowser', 'queries', action.payload.index],
+        ImmutableMap(action.payload.patch),
+      );
 
     case ActionType.QueryBrowserRunQueries: {
-      const queries = state.getIn(['queryBrowser', 'queries']).map(q => {
+      const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
         const isEnabled = q.get('isEnabled');
         const query = q.get('query');
         const text = _.trim(q.get('text'));
-        return isEnabled && query !== text ? q.merge({query: text, series: undefined}) : q;
+        return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
       });
       return state.setIn(['queryBrowser', 'queries'], queries);
     }
     case ActionType.QueryBrowserSetAllExpanded: {
-      const queries = state.getIn(['queryBrowser', 'queries']).map(q => {
+      const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
         return q.set('isExpanded', action.payload.isExpanded);
       });
       return state.setIn(['queryBrowser', 'queries'], queries);
@@ -195,13 +225,17 @@ export default (state: UIState, action: UIAction): UIState => {
       const isEnabled = !query.get('isEnabled');
       return state.setIn(
         ['queryBrowser', 'queries', action.payload.index],
-        query.merge({isEnabled, isExpanded: isEnabled, query: isEnabled ? query.get('text') : ''})
+        query.merge({
+          isEnabled,
+          isExpanded: isEnabled,
+          query: isEnabled ? query.get('text') : '',
+        }),
       );
     }
     case ActionType.QueryBrowserToggleSeries:
       return state.updateIn(
         ['queryBrowser', 'queries', action.payload.index, 'disabledSeries'],
-        v => _.xorWith(v, [action.payload.labels], _.isEqual)
+        (v) => _.xorWith(v, [action.payload.labels], _.isEqual),
       );
 
     case ActionType.SelectOverviewItem:
@@ -211,7 +245,7 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['overview', 'selectedDetailsTab'], action.payload.tab);
 
     case ActionType.DismissOverviewDetails:
-      return state.mergeIn(['overview'], {selectedUID: '', selectedDetailsTab: ''});
+      return state.mergeIn(['overview'], { selectedUID: '', selectedDetailsTab: '' });
 
     case ActionType.UpdateOverviewMetrics:
       return state.setIn(['overview', 'metrics'], action.payload.metrics);
@@ -244,16 +278,16 @@ export default (state: UIState, action: UIAction): UIState => {
   return state;
 };
 
-export const createProjectMessageStateToProps = ({UI}: RootState) => {
-  return {createProjectMessage: UI.get('createProjectMessage') as string};
+export const createProjectMessageStateToProps = ({ UI }: RootState) => {
+  return { createProjectMessage: UI.get('createProjectMessage') as string };
 };
 
-export const userStateToProps = ({UI}: RootState) => {
-  return {user: UI.get('user')};
+export const userStateToProps = ({ UI }: RootState) => {
+  return { user: UI.get('user') };
 };
 
-export const impersonateStateToProps = ({UI}: RootState) => {
-  return {impersonate: UI.get('impersonate')};
+export const impersonateStateToProps = ({ UI }: RootState) => {
+  return { impersonate: UI.get('impersonate') };
 };
 
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');

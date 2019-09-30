@@ -19,24 +19,28 @@ describe('getDefaultPerspective', () => {
 
   it('should default to perspective extension marked default', () => {
     // return Perspectives extension with one marked as the default
-    spyOn(plugins.registry, 'getPerspectives').and.returnValue([{
-      type: 'Perspective',
-      properties: {
-        id: 'admin',
-        default: true,
-      },
-    } as plugins.Perspective]);
+    spyOn(plugins.registry, 'getPerspectives').and.returnValue([
+      {
+        type: 'Perspective',
+        properties: {
+          id: 'admin',
+          default: true,
+        },
+      } as plugins.Perspective,
+    ]);
     expect(getDefaultPerspective()).toBe('admin');
   });
 
   it('should default to localStorage if perspective is a valid extension', () => {
     // return Perspectives extension whose id matches that in the localStorage
-    spyOn(plugins.registry, 'getPerspectives').and.returnValue([{
-      type: 'Perspective',
-      properties: {
-        id: 'test',
-      },
-    } as plugins.Perspective]);
+    spyOn(plugins.registry, 'getPerspectives').and.returnValue([
+      {
+        type: 'Perspective',
+        properties: {
+          id: 'test',
+        },
+      } as plugins.Perspective,
+    ]);
     localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, 'test');
     expect(getDefaultPerspective()).toBe('test');
   });

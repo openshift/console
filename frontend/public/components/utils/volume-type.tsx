@@ -5,7 +5,7 @@ import { Volume } from '../../module/k8s';
 import { getVolumeLocation, getVolumeType } from '../../module/k8s/pods';
 import { ResourceLink } from './';
 
-export const VolumeType: React.FC<VolumeTypeProps> = ({volume, namespace}) => {
+export const VolumeType: React.FC<VolumeTypeProps> = ({ volume, namespace }) => {
   if (volume) {
     if (volume.secret) {
       return <ResourceLink kind="Secret" name={volume.secret.secretName} namespace={namespace} />;
@@ -16,18 +16,29 @@ export const VolumeType: React.FC<VolumeTypeProps> = ({volume, namespace}) => {
     }
 
     if (volume.persistentVolumeClaim) {
-      return <ResourceLink kind="PersistentVolumeClaim" name={volume.persistentVolumeClaim.claimName} namespace={namespace} />;
+      return (
+        <ResourceLink
+          kind="PersistentVolumeClaim"
+          name={volume.persistentVolumeClaim.claimName}
+          namespace={namespace}
+        />
+      );
     }
   }
 
   const type = getVolumeType(volume);
   const loc = _.trim(getVolumeLocation(volume));
-  return type
-    ? <>
+  return type ? (
+    <>
       {type.label}
-      {loc && <> (<span className="co-break-word co-select-to-copy">{loc}</span>)</>}
+      {loc && (
+        <>
+          {' '}
+          (<span className="co-break-word co-select-to-copy">{loc}</span>)
+        </>
+      )}
     </>
-    : null;
+  ) : null;
 };
 
 export type VolumeTypeProps = {

@@ -4,11 +4,14 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import { AddGitHubPage, AddGitHubPageState } from '../../../public/components/cluster-settings/github-idp-form';
+import {
+  AddGitHubPage,
+  AddGitHubPageState,
+} from '../../../public/components/cluster-settings/github-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: GitHub', () => {
-  let wrapper : ShallowWrapper<{}, AddGitHubPageState>;
+  let wrapper: ShallowWrapper<{}, AddGitHubPageState>;
 
   beforeEach(() => {
     wrapper = shallow(<AddGitHubPage />);
@@ -40,7 +43,17 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should prefill GitHub list input default values as empty', () => {
-    expect(wrapper.find(ListInput).at(0).props().initialValues).toEqual(undefined);
-    expect(wrapper.find(ListInput).at(1).props().initialValues).toEqual(undefined);
+    expect(
+      wrapper
+        .find(ListInput)
+        .at(0)
+        .props().initialValues,
+    ).toEqual(undefined);
+    expect(
+      wrapper
+        .find(ListInput)
+        .at(1)
+        .props().initialValues,
+    ).toEqual(undefined);
   });
 });

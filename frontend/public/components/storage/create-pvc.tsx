@@ -5,35 +5,34 @@ import { Link } from 'react-router-dom';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import {
-  AsyncComponent,
-  ButtonBar,
-  RequestSizeInput,
-  history,
-  resourceObjPath,
-} from '../utils';
+import { AsyncComponent, ButtonBar, RequestSizeInput, history, resourceObjPath } from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
 
-const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
+const NameValueEditorComponent = (props) => (
+  <AsyncComponent
+    loader={() => import('../utils/name-value-editor').then((c) => c.NameValueEditor)}
+    {...props}
+  />
+);
 
 //See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
 const provisionerAccessModeMapping = {
   'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
-  'kubernetes.io/aws-ebs' : ['ReadWriteOnce'],
-  'kubernetes.io/gce-pd' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/glusterfs' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/cinder' : ['ReadWriteOnce'],
-  'kubernetes.io/azure-file' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/azure-disk' : ['ReadWriteOnce'],
-  'kubernetes.io/quobyte' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/rbd' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/vsphere-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/portworx-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/scaleio' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/storageos' : ['ReadWriteOnce'],
+  'kubernetes.io/aws-ebs': ['ReadWriteOnce'],
+  'kubernetes.io/gce-pd': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/glusterfs': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/cinder': ['ReadWriteOnce'],
+  'kubernetes.io/azure-file': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/azure-disk': ['ReadWriteOnce'],
+  'kubernetes.io/quobyte': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/rbd': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/vsphere-volume': ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/portworx-volume': ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/scaleio': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/storageos': ['ReadWriteOnce'],
 };
 
 // This form is done a little odd since it is used in both its own page and as
@@ -71,7 +70,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     },
   };
 
-  handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
+  handleChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     // this handles pvcName, accessMode, size
     const { name, value } = event.currentTarget;
     this.setState({ [name]: value } as any, this.onChange);
@@ -81,20 +80,35 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ nameValuePairs }, this.onChange);
   };
 
-  handleStorageClass = storageClass => {
+  handleStorageClass = (storageClass) => {
     //if the provisioner is unknown or no storage class selected, user should be able to set any access mode
-    const modes = storageClass && storageClass.provisioner && provisionerAccessModeMapping[storageClass.provisioner] ? provisionerAccessModeMapping[storageClass.provisioner] : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+    const modes =
+      storageClass &&
+      storageClass.provisioner &&
+      provisionerAccessModeMapping[storageClass.provisioner]
+        ? provisionerAccessModeMapping[storageClass.provisioner]
+        : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
     //setting message to display for various modes when a storage class of a know provisioner is selected
-    const displayMessage = storageClass && provisionerAccessModeMapping[storageClass.provisioner] ? 'Access mode is set by storage class and cannot be changed.': 'Permissions to the mounted drive.';
+    const displayMessage =
+      storageClass && provisionerAccessModeMapping[storageClass.provisioner]
+        ? 'Access mode is set by storage class and cannot be changed.'
+        : 'Permissions to the mounted drive.';
     this.setState({ accessModeHelp: displayMessage }, this.onChange);
 
     //setting accessMode to default with the change to Storage Class selection
-    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce'}, this.onChange);
+    this.setState(
+      {
+        storageClass: _.get(storageClass, 'metadata.name'),
+        allowedAccessModes: modes,
+        accessMode: 'ReadWriteOnce',
+      },
+      this.onChange,
+    );
   };
 
-  handleRequestSizeInputChange = obj => {
+  handleRequestSizeInputChange = (obj) => {
     this.setState({ requestSizeValue: obj.value, requestSizeUnit: obj.unit }, this.onChange);
-  }
+  };
 
   handleUseSelector: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({ useSelector: event.currentTarget.checked }, this.onChange);
@@ -106,16 +120,20 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
       return null;
     }
 
-    const matchLabels = _.reduce(nameValuePairs, (acc, [key, value]) => {
-      return key ? { ...acc, [key]: value } : acc;
-    }, {});
+    const matchLabels = _.reduce(
+      nameValuePairs,
+      (acc, [key, value]) => {
+        return key ? { ...acc, [key]: value } : acc;
+      },
+      {},
+    );
 
     return _.isEmpty(matchLabels) ? null : { matchLabels };
   }
 
   onChange = () => {
     return this.props.onChange(this.updatePVC());
-  }
+  };
 
   updatePVC = () => {
     const { namespace } = this.props;
@@ -151,7 +169,15 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
   };
 
   render() {
-    const { accessMode, dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, allowedAccessModes } = this.state;
+    const {
+      accessMode,
+      dropdownUnits,
+      useSelector,
+      nameValuePairs,
+      requestSizeUnit,
+      requestSizeValue,
+      allowedAccessModes,
+    } = this.state;
 
     return (
       <div>
@@ -187,11 +213,11 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
           Access Mode
         </label>
         <div className="form-group">
-          {this.state.accessModeRadios.map(radio => {
+          {this.state.accessModeRadios.map((radio) => {
             let radioObj = null;
             const disabled = !allowedAccessModes.includes(radio.value);
 
-            allowedAccessModes.forEach(mode => {
+            allowedAccessModes.forEach((mode) => {
               const checked = !disabled ? radio.value === accessMode : radio.value === mode;
               radioObj = (
                 <RadioInput
@@ -210,7 +236,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
             return radioObj;
           })}
           <p className="help-block" id="access-mode-help">
-            {this.state.accessModeHelp }
+            {this.state.accessModeHelp}
           </p>
         </div>
         <label className="control-label co-required" htmlFor="request-size-input">
@@ -251,7 +277,6 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
           </p>
         </div>
       </div>
-
     );
   }
 }
@@ -272,11 +297,11 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
     e.preventDefault();
     this.setState({ inProgress: true });
     k8sCreate(PersistentVolumeClaimModel, this.state.pvcObj).then(
-      resource => {
+      (resource) => {
         this.setState({ inProgress: false });
         history.push(resourceObjPath(resource, referenceFor(resource)));
       },
-      err => this.setState({ error: err.message, inProgress: false })
+      (err) => this.setState({ error: err.message, inProgress: false }),
     );
   };
 
@@ -289,27 +314,21 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
           <title>{title}</title>
         </Helmet>
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-          <div className="co-m-pane__name">
-            {title}
-          </div>
+          <div className="co-m-pane__name">{title}</div>
           <div className="co-m-pane__heading-link">
-            <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`} id="yaml-link" replace>Edit YAML</Link>
+            <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`} id="yaml-link" replace>
+              Edit YAML
+            </Link>
           </div>
         </h1>
         <form className="co-m-pane__body-group" onSubmit={this.save}>
           <CreatePVCForm onChange={this.onChange} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button
-                id="save-changes"
-                type="submit"
-                variant="primary">
+              <Button id="save-changes" type="submit" variant="primary">
                 Create
               </Button>
-              <Button
-                onClick={history.goBack}
-                type="button"
-                variant="secondary">
+              <Button onClick={history.goBack} type="button" variant="secondary">
                 Cancel
               </Button>
             </ActionGroup>
@@ -347,7 +366,7 @@ export type CreatePVCFormState = {
   requestSizeValue: string;
   requestSizeUnit: string;
   disableForm: boolean;
-  accessModeRadios: { value: string, title: string }[];
+  accessModeRadios: { value: string; title: string }[];
   dropdownUnits: { [key: string]: string };
   useSelector: boolean;
   nameValuePairs: string[][];

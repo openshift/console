@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { ChartDonutThreshold, ChartDonutUtilization, ChartThemeColor } from '@patternfly/react-charts';
+import {
+  ChartDonutThreshold,
+  ChartDonutUtilization,
+  ChartThemeColor,
+} from '@patternfly/react-charts';
 import classNames from 'classnames';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
@@ -31,7 +35,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
   const status = loading ? 'Loading' : error;
-  const labels = ({ datum: { x, y }}) => x ? `${x} ${usedLabel}` : `${y} ${remainderLabel}`;
+  const labels = ({ datum: { x, y } }) => (x ? `${x} ${usedLabel}` : `${y} ${remainderLabel}`);
   return (
     <PrometheusGraph
       className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
@@ -80,24 +84,24 @@ export const Gauge: React.FC<GaugeProps> = ({
     query,
   });
 
-  const [data] = response ? (
-    getInstantVectorStats(response, null, humanize).map(({ label, y }) => ({ x: label, y }))
-  ) : (
-    [{ x: humanize(percent).string, y: percent }]
+  const [data] = response
+    ? getInstantVectorStats(response, null, humanize).map(({ label, y }) => ({ x: label, y }))
+    : [{ x: humanize(percent).string, y: percent }];
+  return (
+    <GaugeChart
+      data={data}
+      error={!!error && 'No Data'}
+      invert={invert}
+      label={data.x}
+      loading={loading}
+      query={query}
+      remainderLabel={remainderLabel}
+      secondaryTitle={secondaryTitle}
+      thresholds={thresholds}
+      title={title}
+      usedLabel={usedLabel}
+    />
   );
-  return <GaugeChart
-    data={data}
-    error={!!error && 'No Data'}
-    invert={invert}
-    label={data.x}
-    loading={loading}
-    query={query}
-    remainderLabel={remainderLabel}
-    secondaryTitle={secondaryTitle}
-    thresholds={thresholds}
-    title={title}
-    usedLabel={usedLabel}
-  />;
 };
 
 type GaugeChartProps = {
@@ -119,20 +123,20 @@ type GaugeChartProps = {
   title?: string;
   usedLabel?: string;
   className?: string;
-}
+};
 
 type GaugeProps = {
   humanize?: Humanize;
   invert?: boolean;
   namespace?: string;
   percent?: number;
-  query?: string,
-  remainderLabel?: string,
-  secondaryTitle?: string,
+  query?: string;
+  remainderLabel?: string;
+  secondaryTitle?: string;
   thresholds?: {
     value: number;
     color?: string;
   }[];
-  title?: string,
-  usedLabel?: string,
-}
+  title?: string;
+  usedLabel?: string;
+};

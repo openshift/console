@@ -8,7 +8,7 @@ import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
-export const ResourceIcon: React.SFC<ResourceIconProps> = ({className, kind}) => {
+export const ResourceIcon: React.SFC<ResourceIconProps> = ({ className, kind }) => {
   // if no kind, return null so an empty icon isn't rendered
   if (!kind) {
     return null;
@@ -22,10 +22,14 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({className, kind}) =>
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
-  const rendered = <React.Fragment>
-    <span className="sr-only">{kindStr}</span>
-    <span className={klass} title={kindStr}>{iconLabel}</span>
-  </React.Fragment>;
+  const rendered = (
+    <React.Fragment>
+      <span className="sr-only">{kindStr}</span>
+      <span className={klass} title={kindStr}>
+        {iconLabel}
+      </span>
+    </React.Fragment>
+  );
   if (kindObj) {
     MEMO[memoKey] = rendered;
   }
@@ -43,6 +47,11 @@ export type ResourceNameProps = {
   name: string;
 };
 
-export const ResourceName: React.SFC<ResourceNameProps> = (props) => <span className="co-resource-item"><ResourceIcon kind={props.kind} /> <span className="co-resource-item__resource-name">{props.name}</span></span>;
+export const ResourceName: React.SFC<ResourceNameProps> = (props) => (
+  <span className="co-resource-item">
+    <ResourceIcon kind={props.kind} />{' '}
+    <span className="co-resource-item__resource-name">{props.name}</span>
+  </span>
+);
 
 ResourceName.displayName = 'ResourceName';

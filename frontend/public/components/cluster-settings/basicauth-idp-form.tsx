@@ -10,7 +10,12 @@ import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+export const DroppableFileInput = (props: any) => (
+  <AsyncComponent
+    loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
+    {...props}
+  />
+);
 
 export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState> {
   readonly state: AddBasicAuthPageState = {
@@ -102,113 +107,118 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
-      this.setState({errorMessage: 'Values for Certificate and Key should both be either excluded or provided.'});
+      this.setState({
+        errorMessage: 'Values for Certificate and Key should both be either excluded or provided.',
+      });
       return;
     }
     // Clear any previous errors.
-    this.setState({errorMessage: ''});
+    this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [
-        this.createTLSSecret(),
-        this.createCAConfigMap(),
-      ];
+      const promises = [this.createTLSSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises).then(([tlsSecret, configMap]) => {
-        const caName = configMap ? configMap.metadata.name : '';
-        const secretName = tlsSecret ? tlsSecret.metadata.name: '';
-        return this.addBasicAuthIDP(oauth, secretName, caName);
-      }).then(redirectToOAuthPage);
+      Promise.all(promises)
+        .then(([tlsSecret, configMap]) => {
+          const caName = configMap ? configMap.metadata.name : '';
+          const secretName = tlsSecret ? tlsSecret.metadata.name : '';
+          return this.addBasicAuthIDP(oauth, secretName, caName);
+        })
+        .then(redirectToOAuthPage);
     });
   };
 
   nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({name: event.currentTarget.value});
+    this.setState({ name: event.currentTarget.value });
   };
 
   urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({url: event.currentTarget.value});
+    this.setState({ url: event.currentTarget.value });
   };
 
   caFileChanged = (caFileContent: string) => {
-    this.setState({caFileContent});
+    this.setState({ caFileContent });
   };
 
   certFileChanged = (certFileContent: string) => {
-    this.setState({certFileContent});
+    this.setState({ certFileContent });
   };
 
   keyFileChanged = (keyFileContent: string) => {
-    this.setState({keyFileContent});
+    this.setState({ keyFileContent });
   };
 
   render() {
     const { name, url, caFileContent, certFileContent, keyFileContent } = this.state;
     const title = 'Add Identity Provider: Basic Authentication';
-    return <div className="co-m-pane__body">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.
-        </p>
-        <IDPNameInput value={name} onChange={this.nameChanged} />
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="pf-c-form-control"
-            type="text"
-            onChange={this.urlChanged}
-            value={url}
-            id="url"
-            aria-describedby="idp-url-help"
-            required />
-          <p className="help-block" id="idp-url-help">
-            The remote URL to connect to.
+    return (
+      <div className="co-m-pane__body">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">
+            Basic authentication is a generic backend integration mechanism that allows users to
+            authenticate with credentials validated against a remote identity provider.
           </p>
-        </div>
-        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.certFileChanged}
-            inputFileData={certFileContent}
-            id="cert-file-input"
-            label="Certificate"
-            hideContents
-            inputFieldHelpText="PEM-encoded TLS client certificate to present when connecting to the server." />
-        </div>
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.keyFileChanged}
-            inputFileData={keyFileContent}
-            id="key-file-input"
-            label="Key"
-            hideContents
-            inputFieldHelpText="PEM-encoded TLS private key for the client certificate. Required if Certificate is specified." />
-        </div>
-        <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              type="submit"
-              variant="primary">
-              Add
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={history.goBack}>
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>;
+          <IDPNameInput value={name} onChange={this.nameChanged} />
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="url">
+              URL
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={this.urlChanged}
+              value={url}
+              id="url"
+              aria-describedby="idp-url-help"
+              required
+            />
+            <p className="help-block" id="idp-url-help">
+              The remote URL to connect to.
+            </p>
+          </div>
+          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+          <div className="form-group">
+            <DroppableFileInput
+              onChange={this.certFileChanged}
+              inputFileData={certFileContent}
+              id="cert-file-input"
+              label="Certificate"
+              hideContents
+              inputFieldHelpText="PEM-encoded TLS client certificate to present when connecting to the server."
+            />
+          </div>
+          <div className="form-group">
+            <DroppableFileInput
+              onChange={this.keyFileChanged}
+              inputFileData={keyFileContent}
+              id="key-file-input"
+              label="Key"
+              hideContents
+              inputFieldHelpText="PEM-encoded TLS private key for the client certificate. Required if Certificate is specified."
+            />
+          </div>
+          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                Add
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    );
   }
 }
 
 export type AddBasicAuthPageState = {
   name: string;
-  url: string
+  url: string;
   caFileContent: string;
   certFileContent: string;
   keyFileContent: string;

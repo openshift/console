@@ -4,9 +4,13 @@ export const switcher = element(by.css('[data-test-id="perspective-switcher-togg
 
 export const switcherMenu = element(by.css('[data-test-id="perspective-switcher-menu"]'));
 
-export const devPerspective = element(by.cssContainingText('.pf-c-dropdown__menu-item', 'Developer'));
+export const devPerspective = element(
+  by.cssContainingText('.pf-c-dropdown__menu-item', 'Developer'),
+);
 
-export const adminPerspective = element(by.cssContainingText('.pf-c-dropdown__menu-item', 'Administrator'));
+export const adminPerspective = element(
+  by.cssContainingText('.pf-c-dropdown__menu-item', 'Administrator'),
+);
 
 export enum Perspective {
   Developer = 'Developer Perspective',
@@ -15,7 +19,6 @@ export enum Perspective {
 
 export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
 export const sideHeader = $('#page-sidebar .oc-nav-header h1');
-
 
 export const switchPerspective = async function(perspective: Perspective) {
   await browser.wait(until.elementToBeClickable(switcher), 5000);

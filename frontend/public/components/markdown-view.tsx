@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 
-const tableTags = [ 'table', 'thead', 'tbody', 'tr', 'th', 'td'];
+const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
 const markdownConvert = (markdown) => {
   const unsafeHtml = new Converter({
@@ -14,18 +14,41 @@ const markdownConvert = (markdown) => {
   }).makeHtml(markdown);
 
   return sanitizeHtml(unsafeHtml, {
-    allowedTags: ['b', 'i', 'strike', 's', 'del', 'em', 'strong', 'a', 'p', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'code', 'pre', ...tableTags],
+    allowedTags: [
+      'b',
+      'i',
+      'strike',
+      's',
+      'del',
+      'em',
+      'strong',
+      'a',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'ul',
+      'ol',
+      'li',
+      'code',
+      'pre',
+      ...tableTags,
+    ],
     allowedAttributes: {
-      'a': ['href', 'target', 'rel'],
+      a: ['href', 'target', 'rel'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     transformTags: {
-      'a': sanitizeHtml.simpleTransform('a', {rel: 'noopener noreferrer'}, true),
+      a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }, true),
     },
   });
 };
 
-export class SyncMarkdownView extends React.Component<{content: string, styles?: string, exactHeight?: boolean}, {}> {
+export class SyncMarkdownView extends React.Component<
+  { content: string; styles?: string; exactHeight?: boolean },
+  {}
+> {
   private frame: any;
 
   constructor(props) {
@@ -37,8 +60,11 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
   }
 
   updateDimensions() {
-    if (!this.frame || !this.frame.contentWindow.document.body ||
-        !this.frame.contentWindow.document.body.firstChild) {
+    if (
+      !this.frame ||
+      !this.frame.contentWindow.document.body ||
+      !this.frame.contentWindow.document.body.firstChild
+    ) {
       return;
     }
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
@@ -46,23 +72,29 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
     // Let the new height take effect, then reset again once we recompute
     setTimeout(() => {
       if (this.props.exactHeight) {
-        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
+        this.frame.style.height = `${
+          this.frame.contentWindow.document.body.firstChild.scrollHeight
+        }px`;
       } else {
         // Increase by 15px for the case where a horizontal scrollbar might appear
-        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 15}px`;
+        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild
+          .scrollHeight + 15}px`;
       }
     });
   }
 
   render() {
     // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
-    const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) => _.includes(l.href, 'app-bundle'));
+    const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
+      _.includes(l.href, 'app-bundle'),
+    );
 
     const linkRefs = _.reduce(
       filteredLinks,
       (refs, link) => `${refs}
         <link rel="stylesheet" href="${link.href}">`,
-      '');
+      '',
+    );
 
     const contents = `
       ${linkRefs}
@@ -88,7 +120,17 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
       }
       ${this.props.styles ? this.props.styles : ''}
       </style>
-      <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(this.props.content || 'Not available')}</div></body>`;
-    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', display: 'block', width: '100%', height: '0'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
+      <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(
+        this.props.content || 'Not available',
+      )}</div></body>`;
+    return (
+      <iframe
+        sandbox="allow-popups allow-same-origin"
+        srcDoc={contents}
+        style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
+        ref={(r) => (this.frame = r)}
+        onLoad={() => this.updateDimensions()}
+      />
+    );
   }
 }

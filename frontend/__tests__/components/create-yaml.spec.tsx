@@ -12,12 +12,14 @@ describe(CreateYAML.displayName, () => {
   let wrapper: ShallowWrapper<CreateYAMLProps>;
 
   beforeEach(() => {
-    const match = {url: '', params: {ns: 'default', plural: 'pods'}, isExact: true, path: ''};
-    wrapper = shallow(<CreateYAML.WrappedComponent match={match} kindsInFlight={false} kindObj={PodModel} />);
+    const match = { url: '', params: { ns: 'default', plural: 'pods' }, isExact: true, path: '' };
+    wrapper = shallow(
+      <CreateYAML.WrappedComponent match={match} kindsInFlight={false} kindObj={PodModel} />,
+    );
   });
 
   it('renders loading box if `props.kindsInFlight` is true', () => {
-    wrapper = wrapper.setProps({kindObj: null, kindsInFlight: true});
+    wrapper = wrapper.setProps({ kindObj: null, kindsInFlight: true });
 
     expect(wrapper.find(AsyncComponent).exists()).toBe(false);
     expect(wrapper.find(LoadingBox).exists()).toBe(true);
@@ -28,9 +30,13 @@ describe(CreateYAML.displayName, () => {
   });
 
   it('uses `props.template` to create sample object if given', () => {
-    const templateObj = {apiVersion: 'v1', kind: 'Pod', metadata: {name: 'cool-app'}};
-    const expectedObj = {apiVersion: 'v1', kind: 'Pod', metadata: {name: 'cool-app', namespace: 'default'}};
-    wrapper = wrapper.setProps({template: safeDump(templateObj)});
+    const templateObj = { apiVersion: 'v1', kind: 'Pod', metadata: { name: 'cool-app' } };
+    const expectedObj = {
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: { name: 'cool-app', namespace: 'default' },
+    };
+    wrapper = wrapper.setProps({ template: safeDump(templateObj) });
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);
   });

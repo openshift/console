@@ -1,19 +1,32 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { ContainerDropdown, ResourceLog, LOG_SOURCE_RESTARTING, LOG_SOURCE_WAITING, LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED } from './utils';
+import {
+  ContainerDropdown,
+  ResourceLog,
+  LOG_SOURCE_RESTARTING,
+  LOG_SOURCE_WAITING,
+  LOG_SOURCE_RUNNING,
+  LOG_SOURCE_TERMINATED,
+} from './utils';
 
 const containersToStatuses = ({ status }, containers) => {
-  return _.reduce(containers, (accumulator, { name }, order) => {
-    const containerStatus = _.find(status.containerStatuses, { name }) || _.find(status.initContainerStatuses, { name });
-    if (containerStatus) {
-      return {
-        ...accumulator,
-        [name]: { ...containerStatus, order },
-      };
-    }
-    return accumulator;
-  }, {});
+  return _.reduce(
+    containers,
+    (accumulator, { name }, order) => {
+      const containerStatus =
+        _.find(status.containerStatuses, { name }) ||
+        _.find(status.initContainerStatuses, { name });
+      if (containerStatus) {
+        return {
+          ...accumulator,
+          [name]: { ...containerStatus, order },
+        };
+      }
+      return accumulator;
+    },
+    {},
+  );
 };
 
 const containerToLogSourceStatus = (container) => {
@@ -63,26 +76,31 @@ export class PodLogs extends React.Component {
   }
 
   _selectContainer(name) {
-    this.setState({currentKey: name});
+    this.setState({ currentKey: name });
   }
 
   render() {
     const { containers, currentKey, initContainers } = this.state;
     const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
     const currentContainerStatus = containerToLogSourceStatus(currentContainer);
-    const containerDropdown = <ContainerDropdown
-      currentKey={currentKey}
-      containers={containers}
-      initContainers={initContainers}
-      onChange={this._selectContainer} />;
-
-    return <div className="co-m-pane__body">
-      <ResourceLog
-        containerName={currentContainer ? currentContainer.name : ''}
-        dropdown={containerDropdown}
-        resource={this.props.obj}
-        resourceStatus={currentContainerStatus}
+    const containerDropdown = (
+      <ContainerDropdown
+        currentKey={currentKey}
+        containers={containers}
+        initContainers={initContainers}
+        onChange={this._selectContainer}
       />
-    </div>;
+    );
+
+    return (
+      <div className="co-m-pane__body">
+        <ResourceLog
+          containerName={currentContainer ? currentContainer.name : ''}
+          dropdown={containerDropdown}
+          resource={this.props.obj}
+          resourceStatus={currentContainerStatus}
+        />
+      </div>
+    );
   }
 }

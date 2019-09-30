@@ -12,7 +12,7 @@ export enum BuildPhase {
   Error = 'Error',
   Failed = 'Failed',
   New = 'New',
-  Pending ='Pending',
+  Pending = 'Pending',
   Running = 'Running',
 }
 
@@ -29,18 +29,18 @@ const createBuildRequest = (obj, model, subresource) => {
   return k8sCreate(model, req, opts);
 };
 
-export const startBuild = buildConfig => {
+export const startBuild = (buildConfig) => {
   return createBuildRequest(buildConfig, BuildConfigModel, 'instantiate');
 };
 
-export const cloneBuild = build => {
+export const cloneBuild = (build) => {
   return createBuildRequest(build, BuildModel, 'clone');
 };
 
-export const isFinished = build => !!_.get(build, 'status.completionTimestamp');
+export const isFinished = (build) => !!_.get(build, 'status.completionTimestamp');
 
 // Formats duration for finished builds.
-export const formatBuildDuration = build => {
+export const formatBuildDuration = (build) => {
   if (!isFinished(build)) {
     return '';
   }

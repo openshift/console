@@ -6,7 +6,12 @@ import * as _ from 'lodash-es';
 import { Status, ErrorStatus } from '@console/shared';
 
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
-import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
+import {
+  getRestartPolicyLabel,
+  podPhase,
+  podPhaseFilterReducer,
+  podReadiness,
+} from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -37,7 +42,7 @@ import { VolumesTable } from './volumes-table';
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
 
-export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
+export const Readiness: React.FC<ReadinessProps> = ({ pod }) => {
   const readiness = podReadiness(pod);
   if (!readiness) {
     return null;
@@ -45,9 +50,11 @@ export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
   if (validReadinessStates.has(readiness)) {
     return <CamelCaseWrap value={readiness} />;
   }
-  return <span className="co-error co-icon-and-text">
-    <ErrorStatus title={readiness} />
-  </span>;
+  return (
+    <span className="co-error co-icon-and-text">
+      <ErrorStatus title={readiness} />
+    </span>
+  );
 };
 Readiness.displayName = 'Readiness';
 
@@ -63,15 +70,24 @@ const tableColumnClasses = [
 
 const kind = 'Pod';
 
-const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) => {
+const PodTableRow: React.FC<PodTableRowProps> = ({ obj: pod, index, key, style }) => {
   const phase = podPhase(pod);
   return (
     <TableRow id={pod.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
+        <ResourceLink
+          kind={kind}
+          name={pod.metadata.name}
+          namespace={pod.metadata.namespace}
+          title={pod.metadata.uid}
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
+        <ResourceLink
+          kind="Namespace"
+          name={pod.metadata.namespace}
+          title={pod.metadata.namespace}
+        />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <OwnerReferences resource={pod} />
@@ -86,7 +102,12 @@ const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) 
         <Readiness pod={pod} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={pod} isDisabled={phase === 'Terminating'} />
+        <ResourceKebab
+          actions={menuActions}
+          kind={kind}
+          resource={pod}
+          isDisabled={phase === 'Terminating'}
+        />
       </TableData>
     </TableRow>
   );
@@ -102,240 +123,324 @@ type PodTableRowProps = {
 const PodTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Owner', sortField:'metadata.ownerReferences[0].name', transforms: [sortable],
+      title: 'Owner',
+      sortField: 'metadata.ownerReferences[0].name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Node', sortField: 'spec.nodeName', transforms: [sortable],
+      title: 'Node',
+      sortField: 'spec.nodeName',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Status', sortFunc: 'podPhase', transforms: [sortable],
+      title: 'Status',
+      sortFunc: 'podPhase',
+      transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Readiness', sortFunc: 'podReadiness', transforms: [sortable],
+      title: 'Readiness',
+      sortFunc: 'podReadiness',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
     },
     {
-      title: '', props: { className: tableColumnClasses[6] },
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
 PodTableHeader.displayName = 'PodTableHeader';
 
-const ContainerLink: React.FC<ContainerLinkProps> = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
-  <ResourceIcon kind="Container" />
-  <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
-</span>;
+const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
+  <span className="co-resource-item co-resource-item--inline">
+    <ResourceIcon kind="Container" />
+    <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
+      {name}
+    </Link>
+  </span>
+);
 
-export const ContainerRow: React.FC<ContainerRowProps> = ({pod, container}) => {
+export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
   const startedAt = _.get(cstate, 'startedAt');
   const finishedAt = _.get(cstate, 'finishedAt');
 
-  return <div className="row">
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
-      <ContainerLink pod={pod} name={container.name} />
+  return (
+    <div className="row">
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
+        <ContainerLink pod={pod} name={container.name} />
+      </div>
+      <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">
+        {container.image || '-'}
+      </div>
+      <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
+        <Status status={cstate.label} />
+      </div>
+      <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">
+        {_.get(cstatus, 'restartCount', '0')}
+      </div>
+      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+        <Timestamp timestamp={startedAt} />
+      </div>
+      <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
+        <Timestamp timestamp={finishedAt} />
+      </div>
+      <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">{container.image || '-'}</div>
-    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><Status status={cstate.label} /></div>
-    <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
-    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
-    <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
-  </div>;
+  );
 };
 
-export const PodContainerTable: React.FC<PodContainerTableProps> = ({heading, containers, pod}) => <React.Fragment>
-  <SectionHeading text={heading} />
-  <div className="co-m-table-grid co-m-table-grid--bordered">
-    <div className="row co-m-table-grid__head">
-      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Name</div>
-      <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Image</div>
-      <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">State</div>
-      <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Restarts</div>
-      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Started</div>
-      <div className="col-lg-2 hidden-md hidden-sm hidden-xs">Finished</div>
-      <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
+export const PodContainerTable: React.FC<PodContainerTableProps> = ({
+  heading,
+  containers,
+  pod,
+}) => (
+  <React.Fragment>
+    <SectionHeading text={heading} />
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Name</div>
+        <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Image</div>
+        <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">State</div>
+        <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Restarts</div>
+        <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Started</div>
+        <div className="col-lg-2 hidden-md hidden-sm hidden-xs">Finished</div>
+        <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {containers.map((c: any, i: number) => (
+          <ContainerRow key={i} pod={pod} container={c} />
+        ))}
+      </div>
     </div>
-    <div className="co-m-table-grid__body">
-      {containers.map((c: any, i: number) => <ContainerRow key={i} pod={pod} container={c} />)}
-    </div>
-  </div>
-</React.Fragment>;
+  </React.Fragment>
+);
 
-const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
-  <div className="row">
-    <div className="col-md-12 col-lg-4">
-      <Area
-        title="Memory Usage"
-        humanize={humanizeDecimalBytes}
-        namespace={pod.metadata.namespace}
-        query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
-      />
+const PodGraphs = requirePrometheus(({ pod }) => (
+  <React.Fragment>
+    <div className="row">
+      <div className="col-md-12 col-lg-4">
+        <Area
+          title="Memory Usage"
+          humanize={humanizeDecimalBytes}
+          namespace={pod.metadata.namespace}
+          query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${
+            pod.metadata.namespace
+          }',container='',}) BY (pod, namespace)`}
+        />
+      </div>
+      <div className="col-md-12 col-lg-4">
+        <Area
+          title="CPU Usage"
+          humanize={humanizeCpuCores}
+          namespace={pod.metadata.namespace}
+          query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${
+            pod.metadata.namespace
+          }'}`}
+        />
+      </div>
+      <div className="col-md-12 col-lg-4">
+        <Area
+          title="Filesystem"
+          humanize={humanizeDecimalBytes}
+          namespace={pod.metadata.namespace}
+          query={`pod_name:container_fs_usage_bytes:sum{pod_name='${
+            pod.metadata.name
+          }',namespace='${pod.metadata.namespace}'}`}
+        />
+      </div>
     </div>
-    <div className="col-md-12 col-lg-4">
-      <Area
-        title="CPU Usage"
-        humanize={humanizeCpuCores}
-        namespace={pod.metadata.namespace}
-        query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-      />
-    </div>
-    <div className="col-md-12 col-lg-4">
-      <Area
-        title="Filesystem"
-        humanize={humanizeDecimalBytes}
-        namespace={pod.metadata.namespace}
-        query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-      />
-    </div>
-  </div>
 
-  <br />
-</React.Fragment>);
+    <br />
+  </React.Fragment>
+));
 
-export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <Status status={podPhase(pod)} />;
+export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
 
-export const PodDetailsList: React.FC<PodDetailsListProps> = ({pod}) => {
+export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
-  return <dl className="co-m-pane__details">
-    <dt>Status</dt>
-    <dd><PodStatus pod={pod} /></dd>
-    <dt>Restart Policy</dt>
-    <dd>{getRestartPolicyLabel(pod)}</dd>
-    {
-      activeDeadlineSeconds &&
+  return (
+    <dl className="co-m-pane__details">
+      <dt>Status</dt>
+      <dd>
+        <PodStatus pod={pod} />
+      </dd>
+      <dt>Restart Policy</dt>
+      <dd>{getRestartPolicyLabel(pod)}</dd>
+      {activeDeadlineSeconds && (
         <React.Fragment>
           <dt>Active Deadline</dt>
           {/* Convert to ms for formatDuration */}
           <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
         </React.Fragment>
-    }
-    <dt>Pod IP</dt>
-    <dd>{pod.status.podIP || '-'}</dd>
-    <dt>Node</dt>
-    <dd><NodeLink name={pod.spec.nodeName} /></dd>
-  </dl>;
+      )}
+      <dt>Pod IP</dt>
+      <dd>{pod.status.podIP || '-'}</dd>
+      <dt>Node</dt>
+      <dd>
+        <NodeLink name={pod.spec.nodeName} />
+      </dd>
+    </dl>
+  );
 };
 
-export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({pod}) => (
+export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({ pod }) => (
   <ResourceSummary resource={pod} showTolerations>
     <dt>Node Selector</dt>
-    <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
+    <dd>
+      <Selector kind="Node" selector={pod.spec.nodeSelector} />
+    </dd>
   </ResourceSummary>
 );
 
-const Details: React.FC<PodDetailsProps> = ({obj: pod}) => {
+const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   const limits = {
     cpu: null,
     memory: null,
   };
-  limits.cpu = _.reduce(pod.spec.containers, (sum, container) => {
-    const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
-    return sum + value;
-  }, 0);
-  limits.memory = _.reduce(pod.spec.containers, (sum, container) => {
-    const value = units.dehumanize(_.get(container, 'resources.limits.memory', 0), 'binaryBytesWithoutB').value;
-    return sum + value;
-  }, 0);
+  limits.cpu = _.reduce(
+    pod.spec.containers,
+    (sum, container) => {
+      const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
+      return sum + value;
+    },
+    0,
+  );
+  limits.memory = _.reduce(
+    pod.spec.containers,
+    (sum, container) => {
+      const value = units.dehumanize(
+        _.get(container, 'resources.limits.memory', 0),
+        'binaryBytesWithoutB',
+      ).value;
+      return sum + value;
+    },
+    0,
+  );
 
-  return <React.Fragment>
-    <ScrollToTopOnMount />
-    <div className="co-m-pane__body">
-      <SectionHeading text="Pod Overview" />
-      <PodGraphs pod={pod} />
-      <div className="row">
-        <div className="col-sm-6">
-          <PodResourceSummary pod={pod} />
-        </div>
-        <div className="col-sm-6">
-          <PodDetailsList pod={pod} />
-        </div>
-      </div>
-    </div>
-    {
-      pod.spec.initContainers &&
+  return (
+    <React.Fragment>
+      <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <PodContainerTable key="initContainerTable" heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />
+        <SectionHeading text="Pod Overview" />
+        <PodGraphs pod={pod} />
+        <div className="row">
+          <div className="col-sm-6">
+            <PodResourceSummary pod={pod} />
+          </div>
+          <div className="col-sm-6">
+            <PodDetailsList pod={pod} />
+          </div>
+        </div>
       </div>
-    }
-    <div className="co-m-pane__body">
-      <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
-    </div>
-    <div className="co-m-pane__body">
-      <VolumesTable resource={pod} heading="Volumes" />
-    </div>
-  </React.Fragment>;
+      {pod.spec.initContainers && (
+        <div className="co-m-pane__body">
+          <PodContainerTable
+            key="initContainerTable"
+            heading="Init Containers"
+            containers={pod.spec.initContainers}
+            pod={pod}
+          />
+        </div>
+      )}
+      <div className="co-m-pane__body">
+        <PodContainerTable
+          key="containerTable"
+          heading="Containers"
+          containers={pod.spec.containers}
+          pod={pod}
+        />
+      </div>
+      <div className="co-m-pane__body">
+        <VolumesTable resource={pod} heading="Volumes" />
+      </div>
+    </React.Fragment>
+  );
 };
 
-const EnvironmentPage = (props: any) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
+const EnvironmentPage = (props: any) => (
+  <AsyncComponent
+    loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
+    {...props}
+  />
+);
 
-const envPath = ['spec','containers'];
-const PodEnvironmentComponent = props => <EnvironmentPage
-  obj={props.obj}
-  rawEnvData={props.obj.spec}
-  envPath={envPath}
-  readOnly={true}
-/>;
+const envPath = ['spec', 'containers'];
+const PodEnvironmentComponent = (props) => (
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
+);
 
-const PodExecLoader: React.FC<PodExecLoaderProps> = ({obj}) => <div className="co-m-pane__body">
-  <div className="row">
-    <div className="col-xs-12">
-      <div className="panel-body">
-        <AsyncComponent loader={() => import('./pod-exec').then(c => c.PodExec)} obj={obj} />
+const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj }) => (
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-xs-12">
+        <div className="panel-body">
+          <AsyncComponent loader={() => import('./pod-exec').then((c) => c.PodExec)} obj={obj} />
+        </div>
       </div>
     </div>
   </div>
-</div>;
+);
 
-export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => <DetailsPage
-  {...props}
-  menuActions={menuActions}
-  pages={[
-    navFactory.details(Details),
-    navFactory.editYaml(),
-    navFactory.envEditor(PodEnvironmentComponent),
-    navFactory.logs(PodLogs),
-    navFactory.events(ResourceEventStream),
-    {
-      href: 'terminal',
-      name: 'Terminal',
-      component: PodExecLoader,
-    },
-  ]}
-/>;
+export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
+  <DetailsPage
+    {...props}
+    menuActions={menuActions}
+    pages={[
+      navFactory.details(Details),
+      navFactory.editYaml(),
+      navFactory.envEditor(PodEnvironmentComponent),
+      navFactory.logs(PodLogs),
+      navFactory.events(ResourceEventStream),
+      {
+        href: 'terminal',
+        name: 'Terminal',
+        component: PodExecLoader,
+      },
+    ]}
+  />
+);
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC = props => <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={PodTableRow} virtualize />;
+export const PodList: React.FC = (props) => (
+  <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={PodTableRow} virtualize />
+);
 PodList.displayName = 'PodList';
 
-const filters = [{
-  type: 'pod-status',
-  selected: [ 'Running', 'Pending', 'Terminating', 'CrashLoopBackOff' ],
-  reducer: podPhaseFilterReducer,
-  items: [
-    { id: 'Running', title: 'Running' },
-    { id: 'Pending', title: 'Pending' },
-    { id: 'Terminating', title: 'Terminating' },
-    { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
-    // Use title "Completed" to match what appears in the status column for the pod.
-    // The pod phase is "Succeeded," but the container state is "Completed."
-    { id: 'Succeeded', title: 'Completed' },
-    { id: 'Failed', title: 'Failed' },
-    { id: 'Unknown', title: 'Unknown '},
-  ],
-}];
+const filters = [
+  {
+    type: 'pod-status',
+    selected: ['Running', 'Pending', 'Terminating', 'CrashLoopBackOff'],
+    reducer: podPhaseFilterReducer,
+    items: [
+      { id: 'Running', title: 'Running' },
+      { id: 'Pending', title: 'Pending' },
+      { id: 'Terminating', title: 'Terminating' },
+      { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
+      // Use title "Completed" to match what appears in the status column for the pod.
+      // The pod phase is "Succeeded," but the container state is "Completed."
+      { id: 'Succeeded', title: 'Completed' },
+      { id: 'Failed', title: 'Failed' },
+      { id: 'Unknown', title: 'Unknown ' },
+    ],
+  },
+];
 
 export class PodsPage extends React.Component<PodPageProps> {
   shouldComponentUpdate(nextProps: PodPageProps) {
@@ -343,13 +448,15 @@ export class PodsPage extends React.Component<PodPageProps> {
   }
   render() {
     const { canCreate = true } = this.props;
-    return <ListPage
-      {...this.props}
-      canCreate={canCreate}
-      kind="Pod"
-      ListComponent={PodList}
-      rowFilters={filters}
-    />;
+    return (
+      <ListPage
+        {...this.props}
+        canCreate={canCreate}
+        kind="Pod"
+        ListComponent={PodList}
+        rowFilters={filters}
+      />
+    );
   }
 }
 

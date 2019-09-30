@@ -36,7 +36,7 @@ export const stripBasePath = (path: string): string => path.replace(basePathPatt
 
 export const getNamespace = (path: string): string => {
   path = stripBasePath(path);
-  const split = path.split('/').filter(x => x);
+  const split = path.split('/').filter((x) => x);
 
   if (split[1] === 'all-namespaces') {
     return ALL_NAMESPACES_KEY;
@@ -66,10 +66,27 @@ export const getURLSearchParams = () => {
   return all;
 };
 
-export const ExternalLink: React.FC<ExternalLinkProps> = ({href, text, additionalClassName='', dataTestID}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>{text}</a>;
+export const ExternalLink: React.FC<ExternalLinkProps> = ({
+  href,
+  text,
+  additionalClassName = '',
+  dataTestID,
+}) => (
+  <a
+    className={classNames('co-external-link', additionalClassName)}
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-test-id={dataTestID}
+  >
+    {text}
+  </a>
+);
 
 // Open links in a new window and set noopener/noreferrer.
-export const LinkifyExternal: React.FC<{children: React.ReactNode}> = ({children}) => <Linkify properties={{target: '_blank', rel: 'noopener noreferrer'}}>{children}</Linkify>;
+export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
+);
 LinkifyExternal.displayName = 'LinkifyExternal';
 
 type ExternalLinkProps = {

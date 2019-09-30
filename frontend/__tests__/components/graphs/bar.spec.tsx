@@ -5,7 +5,10 @@ import { ChartBar } from '@patternfly/react-charts';
 import { BarChart } from '@console/internal/components/graphs/bar';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingBox } from '@console/internal/components/utils';
-import { PrometheusGraph, PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
+import {
+  PrometheusGraph,
+  PrometheusGraphLink,
+} from '@console/internal/components/graphs/prometheus-graph';
 
 const MOCK_DATA = [{ x: 1, y: 100 }];
 

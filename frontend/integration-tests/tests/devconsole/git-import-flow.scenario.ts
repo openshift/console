@@ -13,14 +13,18 @@ import {
   builderImageVersionName,
 } from '../../views/devconsole-view/git-imort-flow';
 import { newApplicationName, newAppName } from '../../views/devconsole-view/new-app-name.view';
-import { switchPerspective, Perspective, sideHeader } from '../../views/devconsole-view/dev-perspective.view';
+import {
+  switchPerspective,
+  Perspective,
+  sideHeader,
+} from '../../views/devconsole-view/dev-perspective.view';
 
 describe('git import flow', () => {
   let newApplication;
   let newApp;
   const importFromGitHeader = $('[data-test-id="resource-title"]');
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     await browser.get(`${appHost}/k8s/cluster/projects`);
     newApplication = newApplicationName();
     newApp = newAppName();
@@ -31,7 +35,7 @@ describe('git import flow', () => {
     checkErrors();
   });
 
-  it('public git normal flow', async() => {
+  it('public git normal flow', async () => {
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();

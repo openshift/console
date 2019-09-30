@@ -1,4 +1,4 @@
-import {DragDropContext} from 'react-dnd';
+import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 // Need to create this decorator, because of the issue with react-dnd module:

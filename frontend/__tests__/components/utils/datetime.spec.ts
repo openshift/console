@@ -1,11 +1,25 @@
-import { fromNow, isValid, formatDuration, formatPrometheusDuration, parsePrometheusDuration } from '../../../public/components/utils/datetime';
+import {
+  fromNow,
+  isValid,
+  formatDuration,
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '../../../public/components/utils/datetime';
 
 describe('fromNow', () => {
   it('prints past dates correctly', () => {
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:00:02'))).toEqual('a few seconds ago');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:01:00'))).toEqual('a minute ago');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:51:00'))).toEqual('an hour ago');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 12:45:00'))).toEqual('13 hours ago');
+    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:00:02'))).toEqual(
+      'a few seconds ago',
+    );
+    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:01:00'))).toEqual(
+      'a minute ago',
+    );
+    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:51:00'))).toEqual(
+      'an hour ago',
+    );
+    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 12:45:00'))).toEqual(
+      '13 hours ago',
+    );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 02 1970'))).toEqual('a day ago');
     expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 09 1970'))).toEqual('8 days ago');
     expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1970'))).toEqual('a month ago');
@@ -14,24 +28,60 @@ describe('fromNow', () => {
     expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1973'))).toEqual('3 years ago');
   });
 
-  it('prints past dates with no prefixes/suffixes correctly', ()=> {
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:00:02'), {omitSuffix: true})).toEqual('few seconds');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:01:00'), {omitSuffix: true})).toEqual('minute');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:51:00'), {omitSuffix: true})).toEqual('hour');
-    expect(fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 12:45:00'), {omitSuffix: true})).toEqual('13 hours');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 02 1970'), {omitSuffix: true})).toEqual('day');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 09 1970'), {omitSuffix: true})).toEqual('8 days');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1970'), {omitSuffix: true})).toEqual('month');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Mar 02 1970'), {omitSuffix: true})).toEqual('2 months');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1971'), {omitSuffix: true})).toEqual('year');
-    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1973'), {omitSuffix: true})).toEqual('3 years');
+  it('prints past dates with no prefixes/suffixes correctly', () => {
+    expect(
+      fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:00:02'), {
+        omitSuffix: true,
+      }),
+    ).toEqual('few seconds');
+    expect(
+      fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:01:00'), {
+        omitSuffix: true,
+      }),
+    ).toEqual('minute');
+    expect(
+      fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:51:00'), {
+        omitSuffix: true,
+      }),
+    ).toEqual('hour');
+    expect(
+      fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 12:45:00'), {
+        omitSuffix: true,
+      }),
+    ).toEqual('13 hours');
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 02 1970'), { omitSuffix: true })).toEqual(
+      'day',
+    );
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 09 1970'), { omitSuffix: true })).toEqual(
+      '8 days',
+    );
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1970'), { omitSuffix: true })).toEqual(
+      'month',
+    );
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Mar 02 1970'), { omitSuffix: true })).toEqual(
+      '2 months',
+    );
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1971'), { omitSuffix: true })).toEqual(
+      'year',
+    );
+    expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1973'), { omitSuffix: true })).toEqual(
+      '3 years',
+    );
   });
 
   it('prints future dates correctly', () => {
-    expect(fromNow(new Date('Jan 01 1970 00:00:02'), new Date('Jan 01 1970 00:00:00'))).toEqual('a few seconds from now');
-    expect(fromNow(new Date('Jan 01 1970 00:01:01'), new Date('Jan 01 1970 00:00:00'))).toEqual('a minute from now');
-    expect(fromNow(new Date('Jan 01 1970 01:01:00'), new Date('Jan 01 1970 00:00:00'))).toEqual('an hour from now');
-    expect(fromNow(new Date('Jan 01 1970 14:20:00'), new Date('Jan 01 1970 00:00:00'))).toEqual('14 hours from now');
+    expect(fromNow(new Date('Jan 01 1970 00:00:02'), new Date('Jan 01 1970 00:00:00'))).toEqual(
+      'a few seconds from now',
+    );
+    expect(fromNow(new Date('Jan 01 1970 00:01:01'), new Date('Jan 01 1970 00:00:00'))).toEqual(
+      'a minute from now',
+    );
+    expect(fromNow(new Date('Jan 01 1970 01:01:00'), new Date('Jan 01 1970 00:00:00'))).toEqual(
+      'an hour from now',
+    );
+    expect(fromNow(new Date('Jan 01 1970 14:20:00'), new Date('Jan 01 1970 00:00:00'))).toEqual(
+      '14 hours from now',
+    );
     expect(fromNow(new Date('Jan 02 1970'), new Date('Jan 01 1970'))).toEqual('a day from now');
     expect(fromNow(new Date('Jan 09 1970'), new Date('Jan 01 1970'))).toEqual('8 days from now');
     expect(fromNow(new Date('Feb 02 1970'), new Date('Jan 01 1970'))).toEqual('a month from now');
@@ -56,7 +106,7 @@ describe('isValid', () => {
 });
 
 describe('formatDuration', () => {
-  const toMS = (h: number, m: number, s: number) => ((h * 60 * 60) + (m * 60) + s) * 1000;
+  const toMS = (h: number, m: number, s: number) => (h * 60 * 60 + m * 60 + s) * 1000;
 
   it('prints durations correctly', () => {
     expect(formatDuration(toMS(0, 0, 1))).toEqual('1s');
@@ -93,7 +143,8 @@ describe('formatDuration', () => {
 });
 
 // Converts time durations to milliseconds
-const ms = (s = 0, m = 0, h = 0, d = 0, w = 0) => ((((w * 7 + d) * 24 + h) * 60 + m) * 60 + s) * 1000;
+const ms = (s = 0, m = 0, h = 0, d = 0, w = 0) =>
+  ((((w * 7 + d) * 24 + h) * 60 + m) * 60 + s) * 1000;
 
 describe('formatPrometheusDuration', () => {
   it('formats durations correctly', () => {
@@ -105,7 +156,7 @@ describe('formatPrometheusDuration', () => {
   });
 
   it('handles invalid values', () => {
-    [null, undefined, 0, -1, -9999].forEach(v => expect(formatPrometheusDuration(v)).toEqual(''));
+    [null, undefined, 0, -1, -9999].forEach((v) => expect(formatPrometheusDuration(v)).toEqual(''));
   });
 });
 
@@ -153,7 +204,7 @@ describe('parsePrometheusDuration', () => {
       '1h 0',
       '1h 0z',
       '-1h',
-    ].forEach(v => expect(parsePrometheusDuration(v)).toEqual(0));
+    ].forEach((v) => expect(parsePrometheusDuration(v)).toEqual(0));
   });
 
   it('mirrors formatPrometheusDuration()', () => {
@@ -170,6 +221,6 @@ describe('parsePrometheusDuration', () => {
       '5w 6d 12h 30m 1s',
       '999w',
       '',
-    ].forEach(v => expect(formatPrometheusDuration(parsePrometheusDuration(v))).toEqual(v));
+    ].forEach((v) => expect(formatPrometheusDuration(parsePrometheusDuration(v))).toEqual(v));
   });
 });

@@ -12,14 +12,19 @@ import { errorModal } from '../modals/error-modal';
 
 const kubeAPIServerURL = window.SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
 enum TriggerTypes {
-  Bitbucket ='Bitbucket',
+  Bitbucket = 'Bitbucket',
   ConfigChange = 'ConfigChange',
   Generic = 'Generic',
   GitHub = 'GitHub',
   GitLab = 'GitLab',
   ImageChange = 'ImageChange',
 }
-const webhookTriggers = new Set<TriggerTypes>([TriggerTypes.Bitbucket, TriggerTypes.Generic, TriggerTypes.GitHub, TriggerTypes.GitLab]);
+const webhookTriggers = new Set<TriggerTypes>([
+  TriggerTypes.Bitbucket,
+  TriggerTypes.Generic,
+  TriggerTypes.GitHub,
+  TriggerTypes.GitLab,
+]);
 const getTriggerProperty = (trigger: WebhookTrigger) => trigger.type.toLowerCase();
 
 const getTableColumnClasses = (canGetSecret: boolean) => {
@@ -39,7 +44,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
   ];
 };
 
-export const WebhookTriggers: React.FC<WebhookTriggersProps> = props => {
+export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   const { resource } = props;
   const { name, namespace } = resource.metadata;
   const { triggers } = resource.spec;
@@ -50,22 +55,26 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = props => {
     namespace,
   });
   const tableColumnClasses = getTableColumnClasses(canGetSecret);
-  const webhooks = _.filter(triggers, trigger => webhookTriggers.has(trigger.type));
+  const webhooks = _.filter(triggers, (trigger) => webhookTriggers.has(trigger.type));
   if (_.isEmpty(webhooks)) {
     return null;
   }
 
   const getWebhookURL = (trigger: WebhookTrigger, secret?: string) => {
     const triggerProperty = getTriggerProperty(trigger);
-    return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/${secret ? secret : '<secret>'}/${triggerProperty}`;
+    return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/${
+      secret ? secret : '<secret>'
+    }/${triggerProperty}`;
   };
 
   const getSecretReference = (trigger: WebhookTrigger) => {
     const triggerProperty = getTriggerProperty(trigger);
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
-    return secretName
-      ? <ResourceLink kind="Secret" name={secretName} namespace={namespace} title={secretName} />
-      : <span className="text-muted">No secret</span>;
+    return secretName ? (
+      <ResourceLink kind="Secret" name={secretName} namespace={namespace} title={secretName} />
+    ) : (
+      <span className="text-muted">No secret</span>
+    );
   };
 
   const copyWebhookToClipboard = (trigger: WebhookTrigger) => {
@@ -81,55 +90,71 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = props => {
     }
 
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
-    k8sGet(SecretModel, secretName, namespace).then((secret: K8sResourceKind) => {
-      if (!_.has(secret, 'data.WebHookSecretKey')) {
-        errorModal({error: `Secret referenced in the ${triggerProperty} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference`});
-        return;
-      }
-      const webhookSecretValue = Base64.decode(secret.data.WebHookSecretKey);
-      const url = getWebhookURL(trigger, webhookSecretValue);
-      navigator.clipboard.writeText(url);
-    }, err => {
-      const error = err.message;
-      errorModal({error});
-    });
+    k8sGet(SecretModel, secretName, namespace).then(
+      (secret: K8sResourceKind) => {
+        if (!_.has(secret, 'data.WebHookSecretKey')) {
+          errorModal({
+            error: `Secret referenced in the ${triggerProperty} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference`,
+          });
+          return;
+        }
+        const webhookSecretValue = Base64.decode(secret.data.WebHookSecretKey);
+        const url = getWebhookURL(trigger, webhookSecretValue);
+        navigator.clipboard.writeText(url);
+      },
+      (err) => {
+        const error = err.message;
+        errorModal({ error });
+      },
+    );
   };
 
-  return <div className="co-m-pane__body">
-    <SectionHeading text="Webhooks" />
-    <div className="co-table-container">
-      <table className="table table--layout-fixed">
-        <colgroup>
-          <col className={tableColumnClasses[0]} />
-          <col className={tableColumnClasses[1]} />
-          <col className={tableColumnClasses[2]} />
-          <col className={tableColumnClasses[3]} />
-        </colgroup>
-        <thead>
-          <tr>
-            <th className={tableColumnClasses[0]}>Type</th>
-            <th className={tableColumnClasses[1]}>Webhook URL</th>
-            <th className={tableColumnClasses[2]}>Secret</th>
-            <th className={tableColumnClasses[3]}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {_.map(webhooks, (trigger, i) => {
-            const webhookURL = getWebhookURL(trigger);
-            const secretReference = getSecretReference(trigger);
-            return <tr key={i}>
-              <td className={tableColumnClasses[0]}>{trigger.type}</td>
-              <td className={tableColumnClasses[1]}>{webhookURL || '-'}</td>
-              <td className={tableColumnClasses[2]}>{secretReference}</td>
-              <td className={tableColumnClasses[3]}>
-                <Button variant="link" type="button" onClick={() => copyWebhookToClipboard(trigger)}><PasteIcon />&nbsp;Copy URL with Secret</Button>
-              </td>
-            </tr>;
-          })}
-        </tbody>
-      </table>
+  return (
+    <div className="co-m-pane__body">
+      <SectionHeading text="Webhooks" />
+      <div className="co-table-container">
+        <table className="table table--layout-fixed">
+          <colgroup>
+            <col className={tableColumnClasses[0]} />
+            <col className={tableColumnClasses[1]} />
+            <col className={tableColumnClasses[2]} />
+            <col className={tableColumnClasses[3]} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th className={tableColumnClasses[0]}>Type</th>
+              <th className={tableColumnClasses[1]}>Webhook URL</th>
+              <th className={tableColumnClasses[2]}>Secret</th>
+              <th className={tableColumnClasses[3]} />
+            </tr>
+          </thead>
+          <tbody>
+            {_.map(webhooks, (trigger, i) => {
+              const webhookURL = getWebhookURL(trigger);
+              const secretReference = getSecretReference(trigger);
+              return (
+                <tr key={i}>
+                  <td className={tableColumnClasses[0]}>{trigger.type}</td>
+                  <td className={tableColumnClasses[1]}>{webhookURL || '-'}</td>
+                  <td className={tableColumnClasses[2]}>{secretReference}</td>
+                  <td className={tableColumnClasses[3]}>
+                    <Button
+                      variant="link"
+                      type="button"
+                      onClick={() => copyWebhookToClipboard(trigger)}
+                    >
+                      <PasteIcon />
+                      &nbsp;Copy URL with Secret
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>;
+  );
 };
 
 export type WebhookTriggersProps = {
@@ -140,6 +165,5 @@ export type WebhookTrigger = {
   type: string;
   [key: string]: any;
 };
-
 
 WebhookTriggers.displayName = 'WebhookTriggers';

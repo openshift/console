@@ -7,7 +7,6 @@ import * as secretsView from '../views/secrets.view';
 import { execSync } from 'child_process';
 
 describe('Interacting with the create secret forms', () => {
-
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -17,32 +16,41 @@ describe('Interacting with the create secret forms', () => {
     const webhookSecretName = 'webhook-secret';
     const webhookSecretValue = 'webhookValue';
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates webhook secret', async() => {
-      await secretsView.createSecret(secretsView.createWebhookSecretLink, testName, webhookSecretName, async() => {
-        await secretsView.secretWebhookInput.sendKeys(webhookSecretValue);
+    it('creates webhook secret', async () => {
+      await secretsView.createSecret(
+        secretsView.createWebhookSecretLink,
+        testName,
+        webhookSecretName,
+        async () => {
+          await secretsView.secretWebhookInput.sendKeys(webhookSecretValue);
+        },
+      );
+    });
+
+    it('check for created webhook secret value', async () => {
+      await secretsView.checkSecret(testName, webhookSecretName, {
+        WebHookSecretKey: webhookSecretValue,
       });
     });
 
-    it('check for created webhook secret value', async() => {
-      await secretsView.checkSecret(testName, webhookSecretName, {'WebHookSecretKey': webhookSecretValue});
-    });
-
-    it('edits webhook secret', async() => {
-      await secretsView.editSecret(testName, webhookSecretName, async() => {
+    it('edits webhook secret', async () => {
+      await secretsView.editSecret(testName, webhookSecretName, async () => {
         await element(by.buttonText('Generate')).isPresent();
         await element(by.buttonText('Generate')).click();
       });
     });
 
-    it('check for edited webhook secret value', async() => {
-      await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), webhookSecretName));
+    it('check for edited webhook secret value', async () => {
+      await browser.wait(
+        until.textToBePresentInElement($('.co-m-pane__heading'), webhookSecretName),
+      );
       await secretsView.clickRevealValues();
       expect(secretsView.pre.get(0).getText()).not.toEqual(webhookSecretValue);
     });
 
-    it('deletes the webhook secret', async() => {
+    it('deletes the webhook secret', async () => {
       await crudView.deleteResource('secrets', 'Secret', webhookSecretName);
     });
   });
@@ -54,21 +62,29 @@ describe('Interacting with the create secret forms', () => {
     const basicSourceSecretPassword = 'password';
     const basicSourceSecretPasswordUpdated = 'passwordUpdated';
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates basic source secret', async() => {
-      await secretsView.createSecret(secretsView.createSourceSecretLink, testName, basicSourceSecretName, async() => {
-        await secretsView.secretUsernameInput.sendKeys(basicSourceSecretUsername);
-        await secretsView.secretPasswordInput.sendKeys(basicSourceSecretPassword);
+    it('creates basic source secret', async () => {
+      await secretsView.createSecret(
+        secretsView.createSourceSecretLink,
+        testName,
+        basicSourceSecretName,
+        async () => {
+          await secretsView.secretUsernameInput.sendKeys(basicSourceSecretUsername);
+          await secretsView.secretPasswordInput.sendKeys(basicSourceSecretPassword);
+        },
+      );
+    });
+
+    it('check for created basic source secret values', async () => {
+      await secretsView.checkSecret(testName, basicSourceSecretName, {
+        username: basicSourceSecretUsername,
+        password: basicSourceSecretPassword,
       });
     });
 
-    it('check for created basic source secret values', async() => {
-      await secretsView.checkSecret(testName, basicSourceSecretName, {'username': basicSourceSecretUsername, 'password': basicSourceSecretPassword});
-    });
-
-    it('edits basic source secret', async() => {
-      await secretsView.editSecret(testName, basicSourceSecretName, async() => {
+    it('edits basic source secret', async () => {
+      await secretsView.editSecret(testName, basicSourceSecretName, async () => {
         await secretsView.secretUsernameInput.clear();
         await secretsView.secretUsernameInput.sendKeys(basicSourceSecretUsernameUpdated);
         await secretsView.secretPasswordInput.clear();
@@ -76,11 +92,14 @@ describe('Interacting with the create secret forms', () => {
       });
     });
 
-    it('check for edited basic source secret values', async() => {
-      await secretsView.checkSecret(testName, basicSourceSecretName, {'username': basicSourceSecretUsernameUpdated, 'password': basicSourceSecretPasswordUpdated});
+    it('check for edited basic source secret values', async () => {
+      await secretsView.checkSecret(testName, basicSourceSecretName, {
+        username: basicSourceSecretUsernameUpdated,
+        password: basicSourceSecretPasswordUpdated,
+      });
     });
 
-    it('deletes the basic source secret', async() => {
+    it('deletes the basic source secret', async () => {
       await crudView.deleteResource('secrets', 'Secret', basicSourceSecretName);
     });
   });
@@ -90,32 +109,46 @@ describe('Interacting with the create secret forms', () => {
     const sshSourceSecretSSHKey = 'sshKey';
     const sshSourceSecretSSHKeUpdated = 'sshKeyUpdated';
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates SSH source secret', async() => {
-      await secretsView.createSecret(secretsView.createSourceSecretLink, testName, sshSourceSecretName, async() => {
-        await secretsView.authTypeDropdown.click().then(() => browser.actions().sendKeys(Key.ARROW_UP, Key.ENTER).perform());
-        await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
-        await secretsView.uploadFileTextArea.sendKeys(sshSourceSecretSSHKey);
+    it('creates SSH source secret', async () => {
+      await secretsView.createSecret(
+        secretsView.createSourceSecretLink,
+        testName,
+        sshSourceSecretName,
+        async () => {
+          await secretsView.authTypeDropdown.click().then(() =>
+            browser
+              .actions()
+              .sendKeys(Key.ARROW_UP, Key.ENTER)
+              .perform(),
+          );
+          await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
+          await secretsView.uploadFileTextArea.sendKeys(sshSourceSecretSSHKey);
+        },
+      );
+    });
+
+    it('check for created SSH source secret values', async () => {
+      await secretsView.checkSecret(testName, sshSourceSecretName, {
+        'ssh-privatekey': sshSourceSecretSSHKey,
       });
     });
 
-    it('check for created SSH source secret values', async() => {
-      await secretsView.checkSecret(testName, sshSourceSecretName, {'ssh-privatekey': sshSourceSecretSSHKey});
-    });
-
-    it('edits SSH source secret', async() => {
-      await secretsView.editSecret(testName, sshSourceSecretName, async() => {
+    it('edits SSH source secret', async () => {
+      await secretsView.editSecret(testName, sshSourceSecretName, async () => {
         await secretsView.uploadFileTextArea.clear();
         await secretsView.uploadFileTextArea.sendKeys(sshSourceSecretSSHKeUpdated);
       });
     });
 
-    it('check for edited SSH source secret values', async() => {
-      await secretsView.checkSecret(testName, sshSourceSecretName, {'ssh-privatekey': sshSourceSecretSSHKeUpdated});
+    it('check for edited SSH source secret values', async () => {
+      await secretsView.checkSecret(testName, sshSourceSecretName, {
+        'ssh-privatekey': sshSourceSecretSSHKeUpdated,
+      });
     });
 
-    it('deletes the SSH source secret', async() => {
+    it('deletes the SSH source secret', async () => {
       await crudView.deleteResource('secrets', 'Secret', sshSourceSecretName);
     });
   });
@@ -137,14 +170,14 @@ describe('Interacting with the create secret forms', () => {
 
     const credentialsToCheck = {
       '.dockerconfigjson': {
-        auths:{
-          'https://index.openshift.io/v0':{
+        auths: {
+          'https://index.openshift.io/v0': {
             username: username0,
             password: password0,
             auth: secretsView.encode(username0, password0),
             email: 'test@secret.com0',
           },
-          'https://index.openshift.io/v1':{
+          'https://index.openshift.io/v1': {
             username: username1,
             password: password1,
             auth: secretsView.encode(username1, password1),
@@ -155,8 +188,8 @@ describe('Interacting with the create secret forms', () => {
     };
     const updatedCredentialsToCheck = {
       '.dockerconfigjson': {
-        auths:{
-          'https://index.openshift.io/updated/v1':{
+        auths: {
+          'https://index.openshift.io/updated/v1': {
             username: usernameUpdated,
             password: passwordUpdated,
             auth: secretsView.encode(usernameUpdated, passwordUpdated),
@@ -166,27 +199,37 @@ describe('Interacting with the create secret forms', () => {
       },
     };
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates registry credentials image secret', async() => {
-      await secretsView.createSecret(secretsView.createImageSecretLink, testName, credentialsImageSecretName, async() => {
-        await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretsView.addSecretEntryLink)));
-        await secretsView.addSecretEntryLink.click();
-        await secretsView.imageSecretForm.each(async(el, index) => {
-          await el.$('input[name=address]').sendKeys(address + index);
-          await el.$('input[name=username]').sendKeys(username + index);
-          await el.$('input[name=password]').sendKeys(password + index);
-          await el.$('input[name=email]').sendKeys(mail + index);
-        });
-      });
+    it('creates registry credentials image secret', async () => {
+      await secretsView.createSecret(
+        secretsView.createImageSecretLink,
+        testName,
+        credentialsImageSecretName,
+        async () => {
+          await browser.wait(
+            until.and(
+              crudView.untilNoLoadersPresent,
+              until.presenceOf(secretsView.addSecretEntryLink),
+            ),
+          );
+          await secretsView.addSecretEntryLink.click();
+          await secretsView.imageSecretForm.each(async (el, index) => {
+            await el.$('input[name=address]').sendKeys(address + index);
+            await el.$('input[name=username]').sendKeys(username + index);
+            await el.$('input[name=password]').sendKeys(password + index);
+            await el.$('input[name=email]').sendKeys(mail + index);
+          });
+        },
+      );
     });
 
-    it('check for created registry credentials image secret values', async() => {
+    it('check for created registry credentials image secret values', async () => {
       await secretsView.checkSecret(testName, credentialsImageSecretName, credentialsToCheck, true);
     });
 
-    it('edits registry credentials image secret', async() => {
-      await secretsView.editSecret(testName, credentialsImageSecretName, async() => {
+    it('edits registry credentials image secret', async () => {
+      await secretsView.editSecret(testName, credentialsImageSecretName, async () => {
         await secretsView.removeSecretEntryLink.click();
         await secretsView.secretAddressInput.clear();
         await secretsView.secretAddressInput.sendKeys(addressUpdated);
@@ -199,11 +242,16 @@ describe('Interacting with the create secret forms', () => {
       });
     });
 
-    it('check for edited registry credentials image secret value', async() => {
-      await secretsView.checkSecret(testName, credentialsImageSecretName, updatedCredentialsToCheck, true);
+    it('check for edited registry credentials image secret value', async () => {
+      await secretsView.checkSecret(
+        testName,
+        credentialsImageSecretName,
+        updatedCredentialsToCheck,
+        true,
+      );
     });
 
-    it('deletes the registry credentials image secret', async() => {
+    it('deletes the registry credentials image secret', async () => {
       await crudView.deleteResource('secrets', 'Secret', credentialsImageSecretName);
     });
   });
@@ -213,8 +261,8 @@ describe('Interacting with the create secret forms', () => {
     const username = 'username';
     const password = 'password';
     const configFile = {
-      auths:{
-        'https://index.openshift.io/v1':{
+      auths: {
+        'https://index.openshift.io/v1': {
           username,
           password,
           auth: secretsView.encode(username, password),
@@ -223,21 +271,36 @@ describe('Interacting with the create secret forms', () => {
       },
     };
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates image secret by uploading configuration file', async() => {
-      await secretsView.createSecret(secretsView.createImageSecretLink, testName, uploadConfigFileImageSecretName, async() => {
-        await secretsView.authTypeDropdown.click().then(() => browser.actions().sendKeys(Key.ARROW_UP, Key.ENTER).perform());
-        await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
-        await secretsView.uploadFileTextArea.sendKeys(JSON.stringify(configFile));
-      });
+    it('creates image secret by uploading configuration file', async () => {
+      await secretsView.createSecret(
+        secretsView.createImageSecretLink,
+        testName,
+        uploadConfigFileImageSecretName,
+        async () => {
+          await secretsView.authTypeDropdown.click().then(() =>
+            browser
+              .actions()
+              .sendKeys(Key.ARROW_UP, Key.ENTER)
+              .perform(),
+          );
+          await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
+          await secretsView.uploadFileTextArea.sendKeys(JSON.stringify(configFile));
+        },
+      );
     });
 
-    it('check for created image secret values from uploaded configuration file', async() => {
-      await secretsView.checkSecret(testName, uploadConfigFileImageSecretName, {'.dockerconfigjson': configFile}, true);
+    it('check for created image secret values from uploaded configuration file', async () => {
+      await secretsView.checkSecret(
+        testName,
+        uploadConfigFileImageSecretName,
+        { '.dockerconfigjson': configFile },
+        true,
+      );
     });
 
-    it('deletes the image secret created from uploaded configuration file', async() => {
+    it('deletes the image secret created from uploaded configuration file', async () => {
       await crudView.deleteResource('secrets', 'Secret', uploadConfigFileImageSecretName);
     });
   });
@@ -253,26 +316,39 @@ describe('Interacting with the create secret forms', () => {
     const keyUpdated = 'keyUpdated';
     const valueUpdated = 'valueUpdated';
 
-    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+    beforeAll(async () => secretsView.visitSecretsPage(appHost, testName));
 
-    it('creates Key/Value secret', async() => {
-      await secretsView.createSecret(secretsView.createGenericSecretLink, testName, keyValueSecretName, async() => {
-        await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretsView.addSecretEntryLink)));
-        await secretsView.addSecretEntryLink.click();
-        await browser.wait(waitForCount($$('.co-file-dropzone__textarea'), 2));
-        await secretsView.genericSecretForm.each(async(el, index) => {
-          await el.$('input[name=key]').sendKeys(key + index);
-          await el.$('.co-file-dropzone__textarea').sendKeys(value + index);
-        });
+    it('creates Key/Value secret', async () => {
+      await secretsView.createSecret(
+        secretsView.createGenericSecretLink,
+        testName,
+        keyValueSecretName,
+        async () => {
+          await browser.wait(
+            until.and(
+              crudView.untilNoLoadersPresent,
+              until.presenceOf(secretsView.addSecretEntryLink),
+            ),
+          );
+          await secretsView.addSecretEntryLink.click();
+          await browser.wait(waitForCount($$('.co-file-dropzone__textarea'), 2));
+          await secretsView.genericSecretForm.each(async (el, index) => {
+            await el.$('input[name=key]').sendKeys(key + index);
+            await el.$('.co-file-dropzone__textarea').sendKeys(value + index);
+          });
+        },
+      );
+    });
+
+    it('check for created Key/Value secret values', async () => {
+      await secretsView.checkSecret(testName, keyValueSecretName, {
+        [key0]: value0,
+        [key1]: value1,
       });
     });
 
-    it('check for created Key/Value secret values', async() => {
-      await secretsView.checkSecret(testName, keyValueSecretName, {[key0]: value0, [key1]: value1});
-    });
-
-    it('edits Key/Value secret', async() => {
-      await secretsView.editSecret(testName, keyValueSecretName, async() => {
+    it('edits Key/Value secret', async () => {
+      await secretsView.editSecret(testName, keyValueSecretName, async () => {
         await secretsView.removeSecretEntryLink.click();
         await secretsView.secretKeyInput.clear();
         await secretsView.secretKeyInput.sendKeys(keyUpdated);
@@ -281,11 +357,11 @@ describe('Interacting with the create secret forms', () => {
       });
     });
 
-    it('check for edited Key/Value secret values', async() => {
-      await secretsView.checkSecret(testName, keyValueSecretName, {[keyUpdated]: valueUpdated});
+    it('check for edited Key/Value secret values', async () => {
+      await secretsView.checkSecret(testName, keyValueSecretName, { [keyUpdated]: valueUpdated });
     });
 
-    it('deletes the Key/Value secret', async() => {
+    it('deletes the Key/Value secret', async () => {
       await crudView.deleteResource('secrets', 'Secret', keyValueSecretName);
     });
   });
@@ -298,47 +374,84 @@ describe('Add Secret to Workloads', () => {
   const envPrefix = 'env-';
   const mountPath = '/tmp/testdata';
 
-
-  beforeAll(async()=> {
+  beforeAll(async () => {
     // create deployment and secret
     execSync(`kubectl run ${resourceName} --image=aosqe/hello-openshift -n ${testName}`);
-    execSync(`kubectl create secret generic ${secretName} --from-literal=key1=supersecret -n ${testName}`);
+    execSync(
+      `kubectl create secret generic ${secretName} --from-literal=key1=supersecret -n ${testName}`,
+    );
   });
 
-  beforeEach(async() => secretsView.visitSecretDetailsPage(appHost, testName, secretName));
+  beforeEach(async () => secretsView.visitSecretDetailsPage(appHost, testName, secretName));
 
   afterEach(() => {
     checkLogs();
     checkErrors();
   });
 
-  describe('Add Secret to Workloads as Enviroment Variables', ()=> {
-    it('Add Secret to Deployment as Env', async() => {
+  describe('Add Secret to Workloads as Enviroment Variables', () => {
+    it('Add Secret to Deployment as Env', async () => {
       await secretsView.addSecretToWorkloadAsEnv(resourceName, envPrefix);
-      await new Promise(resolve => (function checkForValues() {
-        const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
-        if ( JSON.parse(output).status.observedGeneration === 2 ) {
-          return resolve();
-        }
-        setTimeout(checkForValues, 2000);
-      })());
-      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].envFrom[0].secretRef.name', secretName, resourceName, testName, resourceKind)).toBe(true);
-      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].envFrom[0].prefix', envPrefix, resourceName, testName, resourceKind)).toBe(true);
+      await new Promise((resolve) =>
+        (function checkForValues() {
+          const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
+          if (JSON.parse(output).status.observedGeneration === 2) {
+            return resolve();
+          }
+          setTimeout(checkForValues, 2000);
+        })(),
+      );
+      expect(
+        secretsView.isValueInJSONPath(
+          'spec.template.spec.containers[0].envFrom[0].secretRef.name',
+          secretName,
+          resourceName,
+          testName,
+          resourceKind,
+        ),
+      ).toBe(true);
+      expect(
+        secretsView.isValueInJSONPath(
+          'spec.template.spec.containers[0].envFrom[0].prefix',
+          envPrefix,
+          resourceName,
+          testName,
+          resourceKind,
+        ),
+      ).toBe(true);
     });
   });
 
-  describe('Add Secret to Workloads as Volume', ()=> {
-    it('Add Secret to Deployment as Vol', async() => {
+  describe('Add Secret to Workloads as Volume', () => {
+    it('Add Secret to Deployment as Vol', async () => {
       await secretsView.addSecretToWorkloadAsVol(resourceName, mountPath);
-      await new Promise(resolve => (function checkForValues() {
-        const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
-        if ( JSON.parse(output).status.observedGeneration === 3 ) {
-          return resolve();
-        }
-        setTimeout(checkForValues, 2000);
-      })());
-      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].volumeMounts[0].name', secretName, resourceName, testName, resourceKind)).toBe(true);
-      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].volumeMounts[0].mountPath', mountPath, resourceName, testName, resourceKind)).toBe(true);
+      await new Promise((resolve) =>
+        (function checkForValues() {
+          const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
+          if (JSON.parse(output).status.observedGeneration === 3) {
+            return resolve();
+          }
+          setTimeout(checkForValues, 2000);
+        })(),
+      );
+      expect(
+        secretsView.isValueInJSONPath(
+          'spec.template.spec.containers[0].volumeMounts[0].name',
+          secretName,
+          resourceName,
+          testName,
+          resourceKind,
+        ),
+      ).toBe(true);
+      expect(
+        secretsView.isValueInJSONPath(
+          'spec.template.spec.containers[0].volumeMounts[0].mountPath',
+          mountPath,
+          resourceName,
+          testName,
+          resourceKind,
+        ),
+      ).toBe(true);
     });
   });
 });

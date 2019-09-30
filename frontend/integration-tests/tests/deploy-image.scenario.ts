@@ -11,7 +11,7 @@ describe('Deploy Image', () => {
   const imageName = 'mysql';
 
   describe('Deploy Image page', () => {
-    it('should render project/namespace dropdown disabled when in a project context', async() => {
+    it('should render project/namespace dropdown disabled when in a project context', async () => {
       // Navigate to the deploy-image page
       await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
 
@@ -22,8 +22,7 @@ describe('Deploy Image', () => {
       expect(element(by.css(dropdown)).getText()).toEqual(`Project: ${testName}`);
     });
 
-
-    it('should render applications dropdown disabled', async() => {
+    it('should render applications dropdown disabled', async () => {
       // Navigate to the deploy-image page
       await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
 
@@ -34,7 +33,7 @@ describe('Deploy Image', () => {
       expect(element(by.css(dropdown)).getText()).toEqual('Application: all applications');
     });
 
-    it('can be used to search for an image', async() => {
+    it('can be used to search for an image', async () => {
       // Put the search term in the search field
       await element(by.css('[data-test-id="deploy-image-search-term"]')).sendKeys(imageName);
       // Click the search button
@@ -47,7 +46,7 @@ describe('Deploy Image', () => {
       ).toBe(true);
     });
 
-    it('should auto fill in the application', async() => {
+    it('should auto fill in the application', async () => {
       await browser.wait(until.presenceOf(element(by.id('form-input-application-name-field'))));
       // Confirm that a node is present in the topology
       expect(element(by.id('form-input-application-name-field')).getAttribute('value')).toEqual(
@@ -55,7 +54,7 @@ describe('Deploy Image', () => {
       );
     });
 
-    it('should deploy the image and display it in the topology', async() => {
+    it('should deploy the image and display it in the topology', async () => {
       // Deploy the image
       // Wait until the button is active
       await browser.wait(

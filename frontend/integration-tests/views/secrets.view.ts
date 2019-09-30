@@ -1,4 +1,12 @@
-import { $, $$, browser, by, ExpectedConditions as until, element, ElementFinder } from 'protractor';
+import {
+  $,
+  $$,
+  browser,
+  by,
+  ExpectedConditions as until,
+  element,
+  ElementFinder,
+} from 'protractor';
 import { Base64 } from 'js-base64';
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
@@ -27,7 +35,9 @@ export const createImageSecretLink = $('#image-link');
 export const createGenericSecretLink = $('#generic-link');
 
 export const addSecretEntryLink = $('.co-create-secret-form__link--add-entry');
-export const removeSecretEntryLink = $$('.co-create-secret-form__link--remove-entry .pf-m-link').first();
+export const removeSecretEntryLink = $$(
+  '.co-create-secret-form__link--remove-entry .pf-m-link',
+).first();
 export const imageSecretForm = $$('.co-create-image-secret__form');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
@@ -40,29 +50,34 @@ const addSecretAsVol = $('#co-add-secret-to-workload__volume');
 const addSecretAsEnvPrefixInput = $('#co-add-secret-to-workload__prefix');
 const addSecretAsVolMntPathInput = $('#co-add-secret-to-workload__mountpath');
 
-export const visitSecretsPage = async(appHost: string, ns: string) => {
+export const visitSecretsPage = async (appHost: string, ns: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets`);
   await crudView.isLoaded();
 };
 
-export const visitSecretDetailsPage = async(appHost: string, ns: string, secretname: string) => {
+export const visitSecretDetailsPage = async (appHost: string, ns: string, secretname: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets/${secretname}`);
   await crudView.isLoaded();
 };
 
-export const clickAddSecretToWorkload = async() => {
+export const clickAddSecretToWorkload = async () => {
   await browser.wait(until.presenceOf(addSecrettoWorkloadButton));
   await addSecrettoWorkloadButton.click();
 };
 
-export const clickRevealValues = async() => {
+export const clickRevealValues = async () => {
   await browser.wait(until.presenceOf(revealValuesButton));
   await revealValuesButton.click();
 };
 
 export const encode = (username, password) => Base64.encode(`${username}:${password}`);
 
-export const createSecret = async(linkElement: ElementFinder, ns: string, name: string, updateForm: Function) => {
+export const createSecret = async (
+  linkElement: ElementFinder,
+  ns: string,
+  name: string,
+  updateForm: Function,
+) => {
   await crudView.createItemButton.click();
   await linkElement.click();
   await browser.wait(until.presenceOf(secretNameInput));
@@ -72,11 +87,16 @@ export const createSecret = async(linkElement: ElementFinder, ns: string, name: 
   expect(crudView.errorMessage.isPresent()).toBe(false);
 };
 
-export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Object, jsonOutput: boolean = false) => {
+export const checkSecret = async (
+  ns: string,
+  name: string,
+  keyValuesToCheck: Object,
+  jsonOutput: boolean = false,
+) => {
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}`));
   await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), name));
   await clickRevealValues();
-  const renderedKeyValues = await dt.reduce(async(acc, el, index) => {
+  const renderedKeyValues = await dt.reduce(async (acc, el, index) => {
     const key = await el.getAttribute('textContent');
     const value = await pre.get(index).getText();
     acc[key] = jsonOutput ? JSON.parse(value) : value;
@@ -85,7 +105,7 @@ export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Obj
   expect(renderedKeyValues).toEqual(keyValuesToCheck);
 };
 
-export const editSecret = async(ns: string, name: string, updateForm: Function) => {
+export const editSecret = async (ns: string, name: string, updateForm: Function) => {
   await crudView.clickDetailsPageAction('Edit Secret');
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
   await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretNameInput)));
@@ -94,7 +114,7 @@ export const editSecret = async(ns: string, name: string, updateForm: Function) 
   expect(crudView.errorMessage.isPresent()).toBe(false);
 };
 
-export const addSecretToWorkloadAsEnv = async(workloadname: string, EnvPrefix: string) => {
+export const addSecretToWorkloadAsEnv = async (workloadname: string, EnvPrefix: string) => {
   await clickAddSecretToWorkload();
   await browser.wait(until.presenceOf(selectWorkloadBtn));
   await selectWorkloadBtn.click();
@@ -105,7 +125,7 @@ export const addSecretToWorkloadAsEnv = async(workloadname: string, EnvPrefix: s
   await $('#confirm-action').click();
 };
 
-export const addSecretToWorkloadAsVol = async(workloadname: string, MntPath: string) => {
+export const addSecretToWorkloadAsVol = async (workloadname: string, MntPath: string) => {
   await clickAddSecretToWorkload();
   await browser.wait(until.presenceOf(selectWorkloadBtn));
   await selectWorkloadBtn.click();
@@ -120,7 +140,13 @@ export const getResourceJSON = (name: string, namespace: string, kind: string) =
   return execSync(`kubectl get -o json -n ${namespace} ${kind} ${name}`).toString();
 };
 
-export const isValueInJSONPath = (propertyPath: string, value: string, name: string, namespace: string, kind: string): boolean => {
+export const isValueInJSONPath = (
+  propertyPath: string,
+  value: string,
+  name: string,
+  namespace: string,
+  kind: string,
+): boolean => {
   const resource = JSON.parse(getResourceJSON(name, namespace, kind));
   const result = _.get(resource, propertyPath, undefined);
   return result === value;

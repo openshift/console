@@ -1,6 +1,12 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { watchURL, ActionType, stopWatchURL, stopWatchPrometheusQuery, watchPrometheusQuery } from '../../public/actions/dashboards';
+import {
+  watchURL,
+  ActionType,
+  stopWatchURL,
+  stopWatchPrometheusQuery,
+  watchPrometheusQuery,
+} from '../../public/actions/dashboards';
 import { RESULTS_TYPE, defaults } from '../../public/reducers/dashboards';
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
@@ -14,10 +20,12 @@ const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
 };
 
 const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
-  const getState = jasmine.createSpy('getState').and.returnValues(
-    {dashboards: ImmutableMap(defaults)},
-    {dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1)},
-  );
+  const getState = jasmine
+    .createSpy('getState')
+    .and.returnValues(
+      { dashboards: ImmutableMap(defaults) },
+      { dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) },
+    );
   const dispatch = jasmine.createSpy('dispatch');
 
   watchAction(key)(dispatch, getState);
@@ -40,9 +48,9 @@ const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
 };
 
 const testIncrementActiveWatch = (watchAction, type, key) => {
-  const getState = jasmine.createSpy('getState').and.returnValue(
-    {dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1)},
-  );
+  const getState = jasmine
+    .createSpy('getState')
+    .and.returnValue({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
   const dispatch = jasmine.createSpy('dispatch');
 
   watchAction(key)(dispatch, getState);
@@ -61,9 +69,7 @@ describe('dashboards-actions', () => {
     window.SERVER_FLAGS.prometheusBaseURL = undefined;
   });
 
-  it('watchURL starts watching URL', () =>
-    testStartWatch(watchURL, RESULTS_TYPE.URL, 'fooURL')
-  );
+  it('watchURL starts watching URL', () => testStartWatch(watchURL, RESULTS_TYPE.URL, 'fooURL'));
 
   it('watchPrometheusQuery starts watching Query', () => {
     window.SERVER_FLAGS.prometheusBaseURL = 'prometheusBaseURL';
@@ -71,9 +77,9 @@ describe('dashboards-actions', () => {
   });
 
   it('watchPrometheusQuery sets error if base url is not available', () => {
-    const getState = jasmine.createSpy('getState').and.returnValue(
-      {dashboards: ImmutableMap(defaults)}
-    );
+    const getState = jasmine
+      .createSpy('getState')
+      .and.returnValue({ dashboards: ImmutableMap(defaults) });
     const dispatch = jasmine.createSpy('dispatch');
 
     watchPrometheusQuery('fooQuery')(dispatch, getState);
@@ -89,18 +95,14 @@ describe('dashboards-actions', () => {
   });
 
   it('watchURL increments active count for active watch', () =>
-    testIncrementActiveWatch(watchURL, RESULTS_TYPE.URL, 'fooURL')
-  );
+    testIncrementActiveWatch(watchURL, RESULTS_TYPE.URL, 'fooURL'));
 
   it('watchPrometheusQuery increments active count for active watch', () =>
-    testIncrementActiveWatch(watchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery')
-  );
+    testIncrementActiveWatch(watchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery'));
 
   it('stopWatchURL stops watching URL', () =>
-    testStopWatch(stopWatchURL, RESULTS_TYPE.URL, 'fooURL')
-  );
+    testStopWatch(stopWatchURL, RESULTS_TYPE.URL, 'fooURL'));
 
   it('stopWatchPrometheusQuery stops watching Prometheus', () =>
-    testStopWatch(stopWatchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery')
-  );
+    testStopWatch(stopWatchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery'));
 });

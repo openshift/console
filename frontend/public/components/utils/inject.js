@@ -5,7 +5,7 @@ import { modelFor, kindForReference } from '../../module/k8s';
 
 export const inject = (children, props) => {
   const safeProps = _.omit(props, ['children']);
-  return React.Children.map(children, c => {
+  return React.Children.map(children, (c) => {
     if (!_.isObject(c)) {
       return c;
     }
@@ -23,7 +23,9 @@ const lastKind = new Set();
 export const kindObj = (kind) => {
   if (kindForReference(kind) === kind && !lastKind.has(kind)) {
     // eslint-disable-next-line no-console
-    console.warn(`Attempting to get Kubernetes object model using string kind: ${kind}, which is not guaranteed to be unique!`);
+    console.warn(
+      `Attempting to get Kubernetes object model using string kind: ${kind}, which is not guaranteed to be unique!`,
+    );
     lastKind.add(kind);
   }
   const model = modelFor(kind);

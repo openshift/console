@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const Checkbox: React.SFC<CheckboxProps> = ({name, label, checked, onChange}) => (
+export const Checkbox: React.SFC<CheckboxProps> = ({ name, label, checked, onChange }) => (
   <div className="form-group">
     <div className="checkbox">
       <label className="control-label">

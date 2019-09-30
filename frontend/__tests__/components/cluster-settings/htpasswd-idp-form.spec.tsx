@@ -10,7 +10,7 @@ import {
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: HTPasswd', () => {
-  let wrapper : ShallowWrapper<{}, AddHTPasswdPageState>;
+  let wrapper: ShallowWrapper<{}, AddHTPasswdPageState>;
 
   beforeEach(() => {
     wrapper = shallow(<AddHTPasswdPage />);

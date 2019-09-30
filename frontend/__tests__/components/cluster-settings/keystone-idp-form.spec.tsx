@@ -11,7 +11,7 @@ import {
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Keystone', () => {
-  let wrapper : ShallowWrapper<{}, AddKeystonePageState>;
+  let wrapper: ShallowWrapper<{}, AddKeystonePageState>;
 
   beforeEach(() => {
     wrapper = shallow(<AddKeystonePage />);

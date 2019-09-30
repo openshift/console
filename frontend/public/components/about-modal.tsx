@@ -1,6 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Alert, AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import {
+  Alert,
+  AboutModal as PfAboutModal,
+  TextContent,
+  TextList,
+  TextListItem,
+} from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 
 import { FLAGS } from '../const';
@@ -10,13 +16,19 @@ import { ExternalLink, Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
 import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
-import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion, getClusterID, getErrataLink } from '../module/k8s/cluster-settings';
+import {
+  hasAvailableUpdates,
+  getK8sGitVersion,
+  getOpenShiftVersion,
+  getClusterID,
+  getErrataLink,
+} from '../module/k8s/cluster-settings';
 
-const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) => {
+const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
   React.useEffect(() => {
     k8sVersion()
-      .then(response => setKubernetesVersion(getK8sGitVersion(response) || '-'))
+      .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion('unknown'));
   }, []);
 
@@ -27,7 +39,20 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
   const errataLink = getErrataLink(clusterVersion);
   return (
     <React.Fragment>
-      {clusterVersion && hasAvailableUpdates(clusterVersion) && <Alert className="co-alert co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
+      {clusterVersion && hasAvailableUpdates(clusterVersion) && (
+        <Alert
+          className="co-alert co-about-modal__alert"
+          variant="info"
+          title={
+            <React.Fragment>
+              Update available.{' '}
+              <Link to="/settings/cluster" onClick={closeAboutModal}>
+                View Cluster Settings
+              </Link>
+            </React.Fragment>
+          }
+        />
+      )}
       <TextContent>
         <TextList component="dl">
           {openshiftVersion && (
@@ -35,26 +60,38 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
               <TextListItem component="dt">OpenShift Version</TextListItem>
               <TextListItem component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
-                {errataLink && <div><ExternalLink text="View Errata" href={errataLink} /></div>}
+                {errataLink && (
+                  <div>
+                    <ExternalLink text="View Errata" href={errataLink} />
+                  </div>
+                )}
               </TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">Kubernetes Version</TextListItem>
-          <TextListItem component="dd" className="co-select-to-copy">{kubernetesVersion}</TextListItem>
+          <TextListItem component="dd" className="co-select-to-copy">
+            {kubernetesVersion}
+          </TextListItem>
           {channel && (
             <React.Fragment>
               <TextListItem component="dt">Channel</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">{channel}</TextListItem>
+              <TextListItem component="dd" className="co-select-to-copy">
+                {channel}
+              </TextListItem>
             </React.Fragment>
           )}
           {clusterID && (
             <React.Fragment>
               <TextListItem component="dt">Cluster ID</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">{clusterID}</TextListItem>
+              <TextListItem component="dd" className="co-select-to-copy">
+                {clusterID}
+              </TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">API Server</TextListItem>
-          <TextListItem component="dd" className="co-select-to-copy">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
+          <TextListItem component="dd" className="co-select-to-copy">
+            {window.SERVER_FLAGS.kubeAPIServerURL}
+          </TextListItem>
         </TextList>
       </TextContent>
     </React.Fragment>
@@ -78,8 +115,12 @@ const AboutModal_: React.FC<AboutModalProps> = (props) => {
       brandImageAlt={details.productName}
       noAboutModalBoxContentContainer={true}
     >
-      {!customBranding && <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
-        and scale applications in a cloud environment.</p>}
+      {!customBranding && (
+        <p>
+          OpenShift is Red Hat&apos;s container application platform that allows developers to
+          quickly develop, host, and scale applications in a cloud environment.
+        </p>
+      )}
       <Firehose resources={resources}>
         <AboutModalItems {...props as any} />
       </Firehose>
@@ -99,5 +140,5 @@ type AboutModalItemsProps = {
 type AboutModalProps = {
   isOpen: boolean;
   closeAboutModal: () => void;
-  flags: {[key: string]: boolean};
+  flags: { [key: string]: boolean };
 };

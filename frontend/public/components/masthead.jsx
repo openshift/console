@@ -54,7 +54,7 @@ export const Masthead = React.memo(({ onNavToggle }) => {
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload
-    onClick: e => {
+    onClick: (e) => {
       e.preventDefault();
       history.push(defaultRoute);
     },

@@ -10,7 +10,7 @@ export const PrometheusModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'prometheuses',
-  propagationPolicy : 'Foreground',
+  propagationPolicy: 'Foreground',
 };
 
 export const ServiceMonitorModel: K8sKind = {
@@ -23,7 +23,7 @@ export const ServiceMonitorModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'servicemonitors',
-  propagationPolicy : 'Foreground',
+  propagationPolicy: 'Foreground',
 };
 
 export const AlertmanagerModel: K8sKind = {
@@ -36,7 +36,7 @@ export const AlertmanagerModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'alertmanagers',
-  propagationPolicy : 'Foreground',
+  propagationPolicy: 'Foreground',
 };
 
 export const ChargebackReportModel: K8sKind = {
@@ -578,7 +578,7 @@ export const CronJobModel: K8sKind = {
   kind: 'CronJob',
   id: 'cronjob',
   labelPlural: 'Cron Jobs',
-  propagationPolicy : 'Foreground',
+  propagationPolicy: 'Foreground',
 };
 
 export const StorageClassModel: K8sKind = {

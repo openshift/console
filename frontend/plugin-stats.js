@@ -6,14 +6,12 @@ require('ts-node').register({
     ...require('./tsconfig.json').compilerOptions,
     module: 'commonjs',
   },
-  ignore: [
-    /node_modules\/(?!lodash-es|@console|@spice-project)/,
-  ],
+  ignore: [/node_modules\/(?!lodash-es|@console|@spice-project)/],
 });
 
 // When an extension is unknown to Node.js, ts-node handles the file as ".js".
 // https://github.com/TypeStrong/ts-node/issues/175#issuecomment-455429261
-['.css', '.scss'].forEach(ext => {
+['.css', '.scss'].forEach((ext) => {
   require.extensions[ext] = () => undefined;
 });
 

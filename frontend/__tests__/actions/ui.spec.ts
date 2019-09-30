@@ -6,9 +6,11 @@ import store from '../../public/redux';
 import * as UIActions from '../../public/actions/ui';
 import * as router from '../../public/components/utils/router';
 
-const setActiveNamespace = ns => store.dispatch(UIActions.setActiveNamespace(ns));
-const setActivePerspective = perspective => store.dispatch(UIActions.setActivePerspective(perspective));
-const getNamespacedRoute = path => UIActions.formatNamespaceRoute(UIActions.getActiveNamespace(), path);
+const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));
+const setActivePerspective = (perspective) =>
+  store.dispatch(UIActions.setActivePerspective(perspective));
+const getNamespacedRoute = (path) =>
+  UIActions.formatNamespaceRoute(UIActions.getActiveNamespace(), path);
 
 describe('ui-actions', () => {
   describe('UIActions.formatNamespaceRoute', () => {
@@ -19,7 +21,7 @@ describe('ui-actions', () => {
         ['bar', '/status/ns/foo', '/status/ns/bar'],
         ['bar', '/k8s/all-namespaces/foo', '/k8s/ns/bar/foo'],
         ['bar', '/k8s/ns/foo/bar/baz', '/k8s/ns/bar/bar'],
-      ].forEach(t => {
+      ].forEach((t) => {
         expect(UIActions.formatNamespaceRoute(t[0], t[1])).toEqual(t[2]);
       });
     });
@@ -50,22 +52,28 @@ describe('ui-actions', () => {
     it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods';
       setActiveNamespace('dessert-topping');
-      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/ns/dessert-topping/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual(
+        '/k8s/ns/dessert-topping/pods',
+      );
     });
 
     it('should redirect namespaced location paths to their prefixes', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods/new-shimmer';
       setActiveNamespace(ALL_NAMESPACES_KEY); // reset active namespace
-      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual(
+        '/k8s/all-namespaces/pods',
+      );
     });
 
     it('should redirect to all if no namespaces is selected', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods';
       setActiveNamespace(ALL_NAMESPACES_KEY);
-      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual(
+        '/k8s/all-namespaces/pods',
+      );
     });
 
-    it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', () => {
+    it("should not redirect if the current path isn't namespaced, but should set active namespace in memory", () => {
       window.location.pathname = '/not-a-namespaced-path';
       setActiveNamespace('dessert-topping');
       expect(window.location.pathname).toEqual('/not-a-namespaced-path');
@@ -93,7 +101,7 @@ describe('ui-actions', () => {
       expect(getNamespacedRoute('/k8s/ns/hello/pods/GRIBBL')).toEqual('/k8s/ns/test/pods');
     });
 
-    it('preserves paths that aren\'t namespaced', () => {
+    it("preserves paths that aren't namespaced", () => {
       setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/')).toEqual('/');
       expect(getNamespacedRoute('/gribbl')).toEqual('/gribbl');
@@ -103,7 +111,9 @@ describe('ui-actions', () => {
     it('parses resource from path', () => {
       setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/k8s/ns/foo/pods')).toEqual('/k8s/all-namespaces/pods');
-      expect(getNamespacedRoute('/k8s/ns/foo/pods/WACKY_SUFFIX')).toEqual('/k8s/all-namespaces/pods');
+      expect(getNamespacedRoute('/k8s/ns/foo/pods/WACKY_SUFFIX')).toEqual(
+        '/k8s/all-namespaces/pods',
+      );
     });
   });
 

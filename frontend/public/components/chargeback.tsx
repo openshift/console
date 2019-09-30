@@ -9,17 +9,8 @@ import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
-import {
-  LoadError,
-  LoadingInline,
-  MsgBox,
-} from './utils/status-box';
-import {
-  GroupVersionKind,
-  K8sResourceKind,
-  modelFor,
-  referenceForModel,
-} from '../module/k8s';
+import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
+import { GroupVersionKind, K8sResourceKind, modelFor, referenceForModel } from '../module/k8s';
 import {
   Kebab,
   DownloadButton,
@@ -36,24 +27,36 @@ import {
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
 export const ScheduledReportReference: GroupVersionKind = 'metering.openshift.io~ScheduledReport';
-export const ReportGenerationQueryReference: GroupVersionKind = 'metering.openshift.io~v1alpha1~ReportQuery';
+export const ReportGenerationQueryReference: GroupVersionKind =
+  'metering.openshift.io~v1alpha1~ReportQuery';
 
-const reportPages=[
-  {name: 'All Reports', href: ReportReference},
-  {name: 'Report Queries', href: ReportGenerationQueryReference},
+const reportPages = [
+  { name: 'All Reports', href: ReportReference },
+  { name: 'Report Queries', href: ReportGenerationQueryReference },
 ];
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ChargebackReportModel), ...common];
 
-const dataURL = (obj, format='json') => {
-  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;
+const dataURL = (obj, format = 'json') => {
+  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${
+    obj.metadata.name
+  }/table?format=${format}`;
 };
 
-const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
-  <PageHeading title="Chargeback Reporting" style={{paddingBottom: 15}} />
-  <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} hideDivider />
-</div>;
+const ChargebackNavBar: React.SFC<{ match: { url: string } }> = (props) => (
+  <div>
+    <PageHeading title="Chargeback Reporting" style={{ paddingBottom: 15 }} />
+    <NavBar
+      pages={reportPages}
+      basePath={props.match.url
+        .split('/')
+        .slice(0, -1)
+        .join('/')}
+      hideDivider
+    />
+  </div>
+);
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-xs-4'),
@@ -67,42 +70,67 @@ const tableColumnClasses = [
 const ReportsTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Report Query', props: { className: tableColumnClasses[2] },
+      title: 'Report Query',
+      props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Reporting Start', sortField: 'spec.reportingStart', transforms: [sortable],
+      title: 'Reporting Start',
+      sortField: 'spec.reportingStart',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Reporting End', sortField: 'spec.reportingEnd', transforms: [sortable],
+      title: 'Reporting End',
+      sortField: 'spec.reportingEnd',
+      transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '', props: { className: tableColumnClasses[5] },
+      title: '',
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
 ReportsTableHeader.displayName = 'ReportsTableHeader';
 
-const ReportsTableRow: React.FC<ReportsTableRowProps> = ({obj, index, key, style}) => {
+const ReportsTableRow: React.FC<ReportsTableRowProps> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink
+          kind={ReportReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} />
+        <ResourceLink
+          kind="Namespace"
+          name={obj.metadata.namespace}
+          namespace={undefined}
+          title={obj.metadata.namespace}
+        />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
+        <ResourceLink
+          kind={ReportGenerationQueryReference}
+          name={_.get(obj, ['spec', 'query'])}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.namespace}
+        />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
@@ -126,34 +154,47 @@ type ReportsTableRowProps = {
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render() {
-    const {obj} = this.props;
-    return <div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Report Overview" />
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <ResourceSummary resource={obj} />
-          </div>
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Reporting Start</dt>
-              <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
-              <dt>Reporting End</dt>
-              <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></dd>
-              <dt>Report Query</dt>
-              <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
-              <dt>Run Immediately?</dt>
-              <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
-            </dl>
+    const { obj } = this.props;
+    return (
+      <div>
+        <div className="co-m-pane__body">
+          <SectionHeading text="Report Overview" />
+          <div className="row">
+            <div className="col-sm-6 col-xs-12">
+              <ResourceSummary resource={obj} />
+            </div>
+            <div className="col-sm-6 col-xs-12">
+              <dl className="co-m-pane__details">
+                <dt>Reporting Start</dt>
+                <dd>
+                  <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
+                </dd>
+                <dt>Reporting End</dt>
+                <dd>
+                  <Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} />
+                </dd>
+                <dt>Report Query</dt>
+                <dd>
+                  <ResourceLink
+                    kind={ReportGenerationQueryReference}
+                    name={_.get(obj, ['spec', 'query'])}
+                    namespace={obj.metadata.namespace}
+                    title={obj.metadata.namespace}
+                  />
+                </dd>
+                <dt>Run Immediately?</dt>
+                <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
+              </dl>
+            </div>
           </div>
         </div>
+        <div className="co-m-pane__body">
+          <SectionHeading text="Conditions" />
+          <Conditions conditions={_.get(obj, 'status.conditions')} />
+        </div>
+        <ReportData obj={obj} />
       </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
-        <Conditions conditions={_.get(obj, 'status.conditions')} />
-      </div>
-      <ReportData obj={obj} />
-    </div>;
+    );
   }
 }
 
@@ -168,7 +209,7 @@ const numericUnits = new Set([
   'seconds',
 ]);
 
-const DataCell = ({name, value, unit}: DataTableCellProps) => {
+const DataCell = ({ name, value, unit }: DataTableCellProps) => {
   if (numericUnits.has(unit)) {
     return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
   }
@@ -183,32 +224,39 @@ const DataCell = ({name, value, unit}: DataTableCellProps) => {
   return value;
 };
 
-const DataTable = ({cols, rows, schema}: DataTableProps) => {
-
+const DataTable = ({ cols, rows, schema }: DataTableProps) => {
   const getUnit = (col: string) => {
-    const colSchema = _.find(schema.values, {'name': col});
+    const colSchema = _.find(schema.values, { name: col });
     return _.get(colSchema, 'unit', _.isFinite(_.get(colSchema, 'value')) ? 'numeric' : null);
   };
 
-  const DataTableHeader = () => _.map(cols, col => {
-    return ({
-      sortAsNumber: numericUnits.has(getUnit(col)),
-      sortField: col,
-      title: <span className="pf-m-wrap co-break-word">{col.replace(/_/g, ' ')}</span>,
-      transforms: [sortable],
+  const DataTableHeader = () =>
+    _.map(cols, (col) => {
+      return {
+        sortAsNumber: numericUnits.has(getUnit(col)),
+        sortField: col,
+        title: <span className="pf-m-wrap co-break-word">{col.replace(/_/g, ' ')}</span>,
+        transforms: [sortable],
+      };
     });
-  });
 
-  const DataTableRows = ({componentProps: {data}}: DataTableRowsProps) => _.map(data, (r) => _.map(r, (v, c) => {
-    return {title: <DataCell name={c} value={v} unit={getUnit(c)} />};
-  }));
+  const DataTableRows = ({ componentProps: { data } }: DataTableRowsProps) =>
+    _.map(data, (r) =>
+      _.map(r, (v, c) => {
+        return { title: <DataCell name={c} value={v} unit={getUnit(c)} /> };
+      }),
+    );
 
-  return <Table aria-label="Usage Report"
-    Header={DataTableHeader}
-    Rows={DataTableRows}
-    data={rows}
-    virtualize={false}
-    loaded={true} />;
+  return (
+    <Table
+      aria-label="Usage Report"
+      Header={DataTableHeader}
+      Rows={DataTableRows}
+      data={rows}
+      virtualize={false}
+      loaded={true}
+    />
+  );
 };
 
 class ReportData extends React.Component<ReportDataProps, ReportDataState> {
@@ -226,14 +274,18 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   }
 
   fetchData() {
-    this.setState({
-      inFlight: true,
-      error: null,
-      // setState is async. Re-render with inFlight = true so that we don't show a "No data" msg while data is loading
-    }, () => coFetchJSON(dataURL(this.props.obj))
-      .then(data => this.makeTable(data))
-      .catch(e => this.setState({error: e}))
-      .then(() => this.setState({inFlight: false})));
+    this.setState(
+      {
+        inFlight: true,
+        error: null,
+        // setState is async. Re-render with inFlight = true so that we don't show a "No data" msg while data is loading
+      },
+      () =>
+        coFetchJSON(dataURL(this.props.obj))
+          .then((data) => this.makeTable(data))
+          .catch((e) => this.setState({ error: e }))
+          .then(() => this.setState({ inFlight: false })),
+    );
   }
 
   componentDidMount() {
@@ -247,13 +299,13 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     }
 
     const conditions = _.get(nextProps.obj, 'status.conditions');
-    const isReportFinished = _.some(conditions, {type: 'Running', status: 'False'});
+    const isReportFinished = _.some(conditions, { type: 'Running', status: 'False' });
     if (isReportFinished) {
       this.fetchData();
     }
   }
 
-  makeTable(data=this.state.data) {
+  makeTable(data = this.state.data) {
     if (!data || _.isEmpty(data.results)) {
       return;
     }
@@ -267,12 +319,12 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     });
   }
 
-  getColumns(data: {results: any[]}) {
+  getColumns(data: { results: any[] }) {
     const firstRow = _.head(data.results);
-    return _.map(firstRow.values, item => item.name);
+    return _.map(firstRow.values, (item) => item.name);
   }
 
-  getRows(data: {results: any[]}) {
+  getRows(data: { results: any[] }) {
     /* Converts data to rows:
     //  data = {
     //   results: [
@@ -318,23 +370,33 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     //  },
     //  ...
      */
-    const rows = _.map(data.results, ({values}) => {
-      return _.reduce(values, (acc, {name, value}) => {
-        acc[name] = value;
-        return acc;
-      }, {});
+    const rows = _.map(data.results, ({ values }) => {
+      return _.reduce(
+        values,
+        (acc, { name, value }) => {
+          acc[name] = value;
+          return acc;
+        },
+        {},
+      );
     });
 
     return rows;
   }
 
   render() {
-    const {obj} = this.props;
-    const {data, cols, rows, inFlight, error} = this.state;
+    const { obj } = this.props;
+    const { data, cols, rows, inFlight, error } = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report contains no results." />;
     if (inFlight) {
-      dataElem = <div className="row"><div className="col-xs-12 text-center"><LoadingInline /></div></div>;
+      dataElem = (
+        <div className="row">
+          <div className="col-xs-12 text-center">
+            <LoadingInline />
+          </div>
+        </div>
+      );
     } else if (error) {
       dataElem = <LoadError label="Report" message={_.get(error, 'json.error') || error.message} />;
     } else if (data) {
@@ -347,34 +409,57 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     const format = 'csv';
     const downloadURL = dataURL(obj, format);
 
-    return <div className="co-m-pane__body">
-      <SectionHeading text="Usage Report" />
-      <DownloadButton url={downloadURL} />
-      { dataElem }
-    </div>;
+    return (
+      <div className="co-m-pane__body">
+        <SectionHeading text="Usage Report" />
+        <DownloadButton url={downloadURL} />
+        {dataElem}
+      </div>
+    );
   }
 }
 
-const reportsPages = [
-  navFactory.details(ReportsDetails),
-  navFactory.editYaml(),
-];
+const reportsPages = [navFactory.details(ReportsDetails), navFactory.editYaml()];
 
-const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
+const EmptyMsg = () => (
+  <MsgBox
+    title="No reports have been generated"
+    detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more."
+  />
+);
 
-export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} virtualize />;
+export const ReportsList: React.SFC = (props) => (
+  <Table
+    {...props}
+    aria-label="Reports"
+    Header={ReportsTableHeader}
+    Row={ReportsTableRow}
+    EmptyMsg={EmptyMsg}
+    virtualize
+  />
+);
 
-const ReportsPage_: React.SFC<ReportsPageProps> = props => {
-  return <div>
-    <ChargebackNavBar match={props.match} />
-    <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} />
-  </div>;
+const ReportsPage_: React.SFC<ReportsPageProps> = (props) => {
+  return (
+    <div>
+      <ChargebackNavBar match={props.match} />
+      <ListPage
+        {...props}
+        showTitle={false}
+        kind={ReportReference}
+        ListComponent={ReportsList}
+        canCreate={true}
+      />
+    </div>
+  );
 };
 
 export const ReportsPage = connectToFlags(FLAGS.CHARGEBACK)(ReportsPage_);
 
-export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
+export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = (props) => {
+  return (
+    <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />
+  );
 };
 
 const reportsGenerationColumnClasses = [
@@ -388,38 +473,64 @@ const reportsGenerationColumnClasses = [
 const ReportGenerationQueriesTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: reportsGenerationColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: reportsGenerationColumnClasses[1] },
     },
     {
-      title: 'Labels', props: { className: reportsGenerationColumnClasses[2] },
+      title: 'Labels',
+      props: { className: reportsGenerationColumnClasses[2] },
     },
     {
-      title: 'Created At', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      title: 'Created At',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: reportsGenerationColumnClasses[3] },
     },
     {
-      title: '', props: { className: reportsGenerationColumnClasses[4] },
+      title: '',
+      props: { className: reportsGenerationColumnClasses[4] },
     },
   ];
 };
 ReportGenerationQueriesTableHeader.displayName = 'ReportGenerationQueriesTableHeader';
 
-const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowProps> = ({obj, index, key, style}) => {
+const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowProps> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={reportsGenerationColumnClasses[0]}>
-        <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink
+          kind={ReportGenerationQueryReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[1]}>
-        <ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} />
+        <ResourceLink
+          kind="Namespace"
+          namespace={undefined}
+          name={obj.metadata.namespace}
+          title={obj.metadata.namespace}
+        />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[2]}>
-        <LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} />
+        <LabelList
+          kind={ReportGenerationQueryReference}
+          labels={_.get(obj, ['metadata', 'labels'])}
+        />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} />
@@ -438,51 +549,88 @@ type ReportGenerationQueriesTableRowProps = {
   style: object;
 };
 
-const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsProps> = ({obj}) => {
-  const columns = _.get(obj, ['spec', 'columns'], []).map((column, i) => <tr key={i}>
-    <td>{column.name}</td>
-    <td>{column.type}</td>
-  </tr>);
+const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsProps> = ({
+  obj,
+}) => {
+  const columns = _.get(obj, ['spec', 'columns'], []).map((column, i) => (
+    <tr key={i}>
+      <td>{column.name}</td>
+      <td>{column.type}</td>
+    </tr>
+  ));
 
-  return <div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Chargeback Report Generation Query" />
-      <ResourceSummary resource={obj}>
-        <dt>Query</dt>
-        <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
-        <div className="row">
-          <div className="col-xs-12">
-            <h3>Columns</h3>
-            <div className="co-table-container">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Column</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {columns}
-                </tbody>
-              </table>
+  return (
+    <div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Chargeback Report Generation Query" />
+        <ResourceSummary resource={obj}>
+          <dt>Query</dt>
+          <dd>
+            <pre>
+              <code>{_.get(obj, ['spec', 'query'])}</code>
+            </pre>
+          </dd>
+          <div className="row">
+            <div className="col-xs-12">
+              <h3>Columns</h3>
+              <div className="co-table-container">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Column</th>
+                      <th>Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>{columns}</tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      </ResourceSummary>
+        </ResourceSummary>
+      </div>
     </div>
-  </div>;
+  );
 };
 
-export const ReportGenerationQueriesList: React.SFC = props => <Table aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} virtualize />;
+export const ReportGenerationQueriesList: React.SFC = (props) => (
+  <Table
+    aria-label="Chargeback Queries List"
+    {...props}
+    Header={ReportGenerationQueriesTableHeader}
+    Row={ReportGenerationQueriesTableRow}
+    virtualize
+  />
+);
 
-export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = props => <div>
-  <ChargebackNavBar match={props.match} />
-  <ListPage {...props} showTitle={false} kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />
-</div>;
+export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = (props) => (
+  <div>
+    <ChargebackNavBar match={props.match} />
+    <ListPage
+      {...props}
+      showTitle={false}
+      kind={ReportGenerationQueryReference}
+      ListComponent={ReportGenerationQueriesList}
+      canCreate={true}
+      filterLabel={props.filterLabel}
+    />
+  </div>
+);
 
-const reportGenerationQueryPages = [navFactory.details(ReportGenerationQueriesDetails), navFactory.editYaml()];
-export const ReportGenerationQueriesDetailsPage: React.SFC<ReportGenerationQueriesDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
+const reportGenerationQueryPages = [
+  navFactory.details(ReportGenerationQueriesDetails),
+  navFactory.editYaml(),
+];
+export const ReportGenerationQueriesDetailsPage: React.SFC<
+  ReportGenerationQueriesDetailsPageProps
+> = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={ReportGenerationQueryReference}
+      menuActions={menuActions}
+      pages={reportGenerationQueryPages}
+    />
+  );
 };
 
 export type ReportsDetailsProps = {
@@ -515,13 +663,13 @@ export type DataTableCellProps = {
 };
 
 export type DataTableRowsProps = {
-  componentProps: {data: any[]};
+  componentProps: { data: any[] };
 };
 
 export type ReportsPageProps = {
   filterLabel: string;
-  flags: {[_: string]: boolean};
-  match: {url: string};
+  flags: { [_: string]: boolean };
+  match: { url: string };
 };
 
 export type ReportsDetailsPageProps = {
@@ -538,7 +686,7 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string;
-  match: {url: string};
+  match: { url: string };
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {

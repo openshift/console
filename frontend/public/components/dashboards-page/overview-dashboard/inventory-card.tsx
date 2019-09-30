@@ -12,7 +12,11 @@ import { ResourceInventoryItem } from '../../dashboard/inventory-card/inventory-
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { PodModel, NodeModel, PersistentVolumeClaimModel } from '../../../models';
 import { K8sResourceKind, PodKind } from '../../../module/k8s';
-import { getPodStatusGroups, getNodeStatusGroups, getPVCStatusGroups } from '../../dashboard/inventory-card/utils';
+import {
+  getPodStatusGroups,
+  getNodeStatusGroups,
+  getPVCStatusGroups,
+} from '../../dashboard/inventory-card/utils';
 import { FirehoseResource } from '../../utils';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
@@ -38,14 +42,18 @@ const k8sResources: FirehoseResource[] = [
 ];
 
 const getItems = (flags: FlagsObject) =>
-  plugins.registry.getDashboardsOverviewInventoryItems().filter(e => isDashboardExtensionInUse(e, flags));
+  plugins.registry
+    .getDashboardsOverviewInventoryItems()
+    .filter((e) => isDashboardExtensionInUse(e, flags));
 
 const getResourcesToWatch = (flags: FlagsObject): FirehoseResource[] => {
   const allResources = [...k8sResources];
   getItems(flags).forEach((item, index) => {
     allResources.push(uniqueResource(item.properties.resource, index));
     if (item.properties.additionalResources) {
-      item.properties.additionalResources.forEach(ar => allResources.push(uniqueResource(ar, index)));
+      item.properties.additionalResources.forEach((ar) =>
+        allResources.push(uniqueResource(ar, index)),
+      );
     }
   });
   return allResources;
@@ -59,10 +67,10 @@ const InventoryCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 }) => {
   React.useEffect(() => {
     const resourcesToWatch = getResourcesToWatch(flags);
-    resourcesToWatch.forEach(r => watchK8sResource(r));
+    resourcesToWatch.forEach((r) => watchK8sResource(r));
 
     return () => {
-      resourcesToWatch.forEach(r => stopWatchK8sResource(r));
+      resourcesToWatch.forEach((r) => stopWatchK8sResource(r));
     };
     // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,9 +97,28 @@ const InventoryCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <InventoryBody>
-          <ResourceInventoryItem isLoading={!nodesLoaded} error={!!nodesLoadError} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
-          <ResourceInventoryItem isLoading={!podsLoaded} error={!!podsLoadError} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
-          <ResourceInventoryItem isLoading={!pvcsLoaded} error={!!pvcsLoadError} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
+          <ResourceInventoryItem
+            isLoading={!nodesLoaded}
+            error={!!nodesLoadError}
+            kind={NodeModel}
+            resources={nodesData}
+            mapper={getNodeStatusGroups}
+          />
+          <ResourceInventoryItem
+            isLoading={!podsLoaded}
+            error={!!podsLoadError}
+            kind={PodModel}
+            resources={podsData}
+            mapper={getPodStatusGroups}
+          />
+          <ResourceInventoryItem
+            isLoading={!pvcsLoaded}
+            error={!!pvcsLoadError}
+            kind={PersistentVolumeClaimModel}
+            useAbbr
+            resources={pvcsData}
+            mapper={getPVCStatusGroups}
+          />
           {pluginItems.map((item, index) => {
             const resource = _.get(resources, uniqueResource(item.properties.resource, index).prop);
             const resourceLoaded = _.get(resource, 'loaded');
@@ -100,16 +127,21 @@ const InventoryCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 
             const additionalResources = {};
             if (item.properties.additionalResources) {
-              item.properties.additionalResources.forEach(ar => {
+              item.properties.additionalResources.forEach((ar) => {
                 additionalResources[ar.prop] = _.get(resources, uniqueResource(ar, index).prop);
               });
             }
-            const additionalResourcesLoaded = Object.keys(additionalResources).every(key =>
-              !additionalResources[key] || additionalResources[key].loaded || additionalResources[key].loadError
+            const additionalResourcesLoaded = Object.keys(additionalResources).every(
+              (key) =>
+                !additionalResources[key] ||
+                additionalResources[key].loaded ||
+                additionalResources[key].loadError,
             );
             const additionalResourcesData = {};
 
-            Object.keys(additionalResources).forEach(key => additionalResourcesData[key] = _.get(additionalResources[key], 'data', []));
+            Object.keys(additionalResources).forEach(
+              (key) => (additionalResourcesData[key] = _.get(additionalResources[key], 'data', [])),
+            );
 
             return (
               <ResourceInventoryItem

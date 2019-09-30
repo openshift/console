@@ -11,7 +11,16 @@ import {
 } from '@patternfly/react-icons';
 
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, FieldLevelHelp } from './utils';
+import {
+  Kebab,
+  SectionHeading,
+  navFactory,
+  ResourceKebab,
+  ResourceLink,
+  ResourceSummary,
+  convertToBaseValue,
+  FieldLevelHelp,
+} from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { GaugeChart } from './graphs/gauge';
@@ -21,18 +30,44 @@ import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
-const resourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ResourceQuotaModel), ...common];
-const clusterResourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel), ...common];
+const resourceQuotaMenuActions = [
+  ...Kebab.getExtensionsActionsForKind(ResourceQuotaModel),
+  ...common,
+];
+const clusterResourceQuotaMenuActions = [
+  ...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel),
+  ...common,
+];
 
-const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
-const quotaActions = quota => quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions;
+const quotaKind = (quota) =>
+  quota.metadata.namespace
+    ? referenceForModel(ResourceQuotaModel)
+    : referenceForModel(ClusterResourceQuotaModel);
+const quotaActions = (quota) =>
+  quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions;
 const gaugeChartThresholds = [{ value: 90 }, { value: 101 }];
 
 const quotaScopes = Object.freeze({
-  'Terminating': {label: 'Terminating', description: 'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.'},
-  'NotTerminating': {label: 'Not Terminating', description: 'Affects pods that do not have an active deadline. These pods usually include your applications.'},
-  'BestEffort': {label: 'Best Effort', description: 'Affects pods that do not have resource limits set. These pods have a best effort quality of service.'},
-  'NotBestEffort': {label: 'Not Best Effort', description: 'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.'},
+  Terminating: {
+    label: 'Terminating',
+    description:
+      'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
+  },
+  NotTerminating: {
+    label: 'Not Terminating',
+    description:
+      'Affects pods that do not have an active deadline. These pods usually include your applications.',
+  },
+  BestEffort: {
+    label: 'Best Effort',
+    description:
+      'Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
+  },
+  NotBestEffort: {
+    label: 'Not Best Effort',
+    description:
+      'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
+  },
 });
 
 export const getQuotaResourceTypes = (quota) => {
@@ -41,9 +76,10 @@ export const getQuotaResourceTypes = (quota) => {
 };
 
 const getResourceUsage = (quota, resourceType) => {
-  const max = _.get(quota, ['status', 'hard', resourceType]) || _.get(quota, ['spec', 'hard', resourceType]);
+  const max =
+    _.get(quota, ['status', 'hard', resourceType]) || _.get(quota, ['spec', 'hard', resourceType]);
   const used = _.get(quota, ['status', 'used', resourceType]);
-  const percent = (!max || !used) ? 0 : convertToBaseValue(used) / convertToBaseValue(max) * 100;
+  const percent = !max || !used ? 0 : (convertToBaseValue(used) / convertToBaseValue(max)) * 100;
   return {
     used,
     max,
@@ -60,28 +96,46 @@ const tableColumnClasses = [
 const ResourceQuotaTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: '', props: { className: tableColumnClasses[2] },
+      title: '',
+      props: { className: tableColumnClasses[2] },
     },
   ];
 };
 ResourceQuotaTableHeader.displayName = 'ResourceQuotaTableHeader';
 
-export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
+export const ResourceQuotaTableRow = ({ obj: rq, index, key, style }) => {
   return (
     <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
+        <ResourceLink
+          kind={quotaKind(rq)}
+          name={rq.metadata.name}
+          namespace={rq.metadata.namespace}
+          className="co-resource-item__resource-name"
+        />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
+        {rq.metadata.namespace ? (
+          <ResourceLink
+            kind="Namespace"
+            name={rq.metadata.namespace}
+            title={rq.metadata.namespace}
+          />
+        ) : (
+          'None'
+        )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <ResourceKebab actions={quotaActions(rq)} kind={quotaKind(rq)} resource={rq} />
@@ -91,13 +145,13 @@ export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
 };
 ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
 
-export const UsageIcon = ({percent}) => {
+export const UsageIcon = ({ percent }) => {
   let usageIcon = <UnknownIcon />;
   if (percent === 0) {
     usageIcon = <OutlinedCircleIcon className="co-resource-quota-empty" />;
   } else if (percent > 0 && percent < 50) {
     usageIcon = <ResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
-  } else if (percent >= 50 && percent < 100){
+  } else if (percent >= 50 && percent < 100) {
     usageIcon = <ResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
   } else if (percent === 100) {
     usageIcon = <ResourcesFullIcon className="co-resource-quota-full" />;
@@ -107,152 +161,209 @@ export const UsageIcon = ({percent}) => {
   return usageIcon;
 };
 
-export const ResourceUsageRow = ({quota, resourceType}) => {
+export const ResourceUsageRow = ({ quota, resourceType }) => {
   const { used, max, percent } = getResourceUsage(quota, resourceType);
-  return <div className="row co-m-row">
-    <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
-    <div className="col-sm-2 hidden-xs co-resource-quota-icon"><UsageIcon percent={percent} /></div>
-    <div className="col-sm-3 col-xs-3">{used}</div>
-    <div className="col-sm-3 col-xs-3">{max}</div>
-  </div>;
+  return (
+    <div className="row co-m-row">
+      <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
+      <div className="col-sm-2 hidden-xs co-resource-quota-icon">
+        <UsageIcon percent={percent} />
+      </div>
+      <div className="col-sm-3 col-xs-3">{used}</div>
+      <div className="col-sm-3 col-xs-3">{max}</div>
+    </div>
+  );
 };
 
-const NoQuotaGuage = ({title}) => <GaugeChart
-  error="No Quota"
-  thresholds={[{value: 100}]}
-  title={title}
-/>;
+const NoQuotaGuage = ({ title }) => (
+  <GaugeChart error="No Quota" thresholds={[{ value: 100 }]} title={title} />
+);
 
-export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
+export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
   const resourceTypesSet = new Set(resourceTypes);
-  return <div className="co-resource-quota-chart-row">
-    {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) ?
-      <div className="co-resource-quota-gauge-chart">
-        <GaugeChart
-          data={{ y: getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent }}
-          thresholds={gaugeChartThresholds}
-          title="CPU Request"
-        />
-      </div>
-      :
-      <div className="co-resource-quota-gauge-chart">
-        <NoQuotaGuage title="CPU Request" />
-      </div>
-    }
-    {resourceTypesSet.has('limits.cpu') ?
-      <div className="co-resource-quota-gauge-chart">
-        <GaugeChart
-          data={{ y: getResourceUsage(quota, 'limits.cpu').percent }}
-          thresholds={gaugeChartThresholds}
-          title="CPU Limit"
-        />
-      </div>
-      :
-      <div className="co-resource-quota-gauge-chart">
-        <NoQuotaGuage title="CPU Limit" />
-      </div>
-    }
-    {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) ?
-      <div className="co-resource-quota-gauge-chart">
-        <GaugeChart
-          data={{ y: getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent }}
-          thresholds={gaugeChartThresholds}
-          title="Memory Request"
-        />
-      </div>
-      :
-      <div className="co-resource-quota-gauge-chart">
-        <NoQuotaGuage title="Memory Request" />
-      </div>
-    }
-    {resourceTypesSet.has('limits.memory') ?
-      <div className="co-resource-quota-gauge-chart">
-        <GaugeChart
-          data={{ y: getResourceUsage(quota, 'limits.memory').percent }}
-          thresholds={gaugeChartThresholds}
-          title="Memory Limit"
-        />
-      </div>
-      :
-      <div className="co-resource-quota-gauge-chart">
-        <NoQuotaGuage title="Memory Limit" />
-      </div>
-    }
-  </div>;
+  return (
+    <div className="co-resource-quota-chart-row">
+      {resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu') ? (
+        <div className="co-resource-quota-gauge-chart">
+          <GaugeChart
+            data={{
+              y: getResourceUsage(
+                quota,
+                resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu',
+              ).percent,
+            }}
+            thresholds={gaugeChartThresholds}
+            title="CPU Request"
+          />
+        </div>
+      ) : (
+        <div className="co-resource-quota-gauge-chart">
+          <NoQuotaGuage title="CPU Request" />
+        </div>
+      )}
+      {resourceTypesSet.has('limits.cpu') ? (
+        <div className="co-resource-quota-gauge-chart">
+          <GaugeChart
+            data={{ y: getResourceUsage(quota, 'limits.cpu').percent }}
+            thresholds={gaugeChartThresholds}
+            title="CPU Limit"
+          />
+        </div>
+      ) : (
+        <div className="co-resource-quota-gauge-chart">
+          <NoQuotaGuage title="CPU Limit" />
+        </div>
+      )}
+      {resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory') ? (
+        <div className="co-resource-quota-gauge-chart">
+          <GaugeChart
+            data={{
+              y: getResourceUsage(
+                quota,
+                resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory',
+              ).percent,
+            }}
+            thresholds={gaugeChartThresholds}
+            title="Memory Request"
+          />
+        </div>
+      ) : (
+        <div className="co-resource-quota-gauge-chart">
+          <NoQuotaGuage title="Memory Request" />
+        </div>
+      )}
+      {resourceTypesSet.has('limits.memory') ? (
+        <div className="co-resource-quota-gauge-chart">
+          <GaugeChart
+            data={{ y: getResourceUsage(quota, 'limits.memory').percent }}
+            thresholds={gaugeChartThresholds}
+            title="Memory Limit"
+          />
+        </div>
+      ) : (
+        <div className="co-resource-quota-gauge-chart">
+          <NoQuotaGuage title="Memory Limit" />
+        </div>
+      )}
+    </div>
+  );
 };
 
-export const QuotaScopesInline = ({scopes, className}) => {
-  return <span className={classNames(className)}>(
-    {scopes.map(scope => {
-      const scopeObj = _.get(quotaScopes, scope);
-      return scopeObj ? scopeObj.label : scope;
-    }).join(',')})
-  </span>;
+export const QuotaScopesInline = ({ scopes, className }) => {
+  return (
+    <span className={classNames(className)}>
+      (
+      {scopes
+        .map((scope) => {
+          const scopeObj = _.get(quotaScopes, scope);
+          return scopeObj ? scopeObj.label : scope;
+        })
+        .join(',')}
+      )
+    </span>
+  );
 };
 
-export const QuotaScopesList = ({scopes}) => {
-  return scopes.map(scope => {
+export const QuotaScopesList = ({ scopes }) => {
+  return scopes.map((scope) => {
     const scopeObj = _.get(quotaScopes, scope);
-    return scopeObj ?
+    return scopeObj ? (
       <dd key={scope}>
         <div className="co-resource-quota-scope__label">{scopeObj.label}</div>
         <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
       </dd>
-      : <dd key={scope} className="co-resource-quota-scope__label">{scope}</dd>;
+    ) : (
+      <dd key={scope} className="co-resource-quota-scope__label">
+        {scope}
+      </dd>
+    );
   });
 };
 
-export const hasComputeResources = resourceTypes => {
-  const chartResourceTypes = ['requests.cpu', 'cpu', 'limits.cpu', 'requests.memory', 'memory', 'limits.memory'];
+export const hasComputeResources = (resourceTypes) => {
+  const chartResourceTypes = [
+    'requests.cpu',
+    'cpu',
+    'limits.cpu',
+    'requests.memory',
+    'memory',
+    'limits.memory',
+  ];
   return _.intersection(resourceTypes, chartResourceTypes).length > 0;
 };
 
-const Details = ({obj: rq}) => {
+const Details = ({ obj: rq }) => {
   const resourceTypes = getQuotaResourceTypes(rq);
   const showChartRow = hasComputeResources(resourceTypes);
   const scopes = _.get(rq, ['spec', 'scopes']);
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Resource Quota Overview" />
-      {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={rq} />
-        </div>
-        {scopes && <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <dt>Scopes</dt>
-            <QuotaScopesList scopes={scopes} />
-          </dl>
-        </div>}
-      </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Resource Quota Details" style={{display: 'block', marginBottom: '20px'}}>
-        <FieldLevelHelp>
-          <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
-          <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
-          <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a Resource Quota.</p>
-        </FieldLevelHelp>
-      </SectionHeading>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-sm-4 col-xs-6">Resource Type</div>
-          <div className="col-sm-2 hidden-xs">Capacity</div>
-          <div className="col-sm-3 col-xs-3">Used</div>
-          <div className="col-sm-3 col-xs-3">Max</div>
-        </div>
-        <div className="co-m-table-grid__body">
-          {resourceTypes.map(type => <ResourceUsageRow key={type} quota={rq} resourceType={type} />)}
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Resource Quota Overview" />
+        {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={rq} />
+          </div>
+          {scopes && (
+            <div className="col-sm-6">
+              <dl className="co-m-pane__details">
+                <dt>Scopes</dt>
+                <QuotaScopesList scopes={scopes} />
+              </dl>
+            </div>
+          )}
         </div>
       </div>
-    </div>
-  </React.Fragment>;
+      <div className="co-m-pane__body">
+        <SectionHeading
+          text="Resource Quota Details"
+          style={{ display: 'block', marginBottom: '20px' }}
+        >
+          <FieldLevelHelp>
+            <p>
+              Requests are the amount of resources you expect to use. These are used when
+              establishing if the cluster can fulfill your Request.
+            </p>
+            <p>
+              Limits are a maximum amount of a resource you can consume. Applications consuming more
+              than the Limit may be terminated.
+            </p>
+            <p>
+              A cluster administrator can establish limits on both the amount you can Request and
+              your Limits with a Resource Quota.
+            </p>
+          </FieldLevelHelp>
+        </SectionHeading>
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div className="row co-m-table-grid__head">
+            <div className="col-sm-4 col-xs-6">Resource Type</div>
+            <div className="col-sm-2 hidden-xs">Capacity</div>
+            <div className="col-sm-3 col-xs-3">Used</div>
+            <div className="col-sm-3 col-xs-3">Max</div>
+          </div>
+          <div className="co-m-table-grid__body">
+            {resourceTypes.map((type) => (
+              <ResourceUsageRow key={type} quota={rq} resourceType={type} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
 };
 
-export const ResourceQuotasList = props => <Table {...props} aria-label="Resource Quoates" Header={ResourceQuotaTableHeader} Row={ResourceQuotaTableRow} virtualize />;
+export const ResourceQuotasList = (props) => (
+  <Table
+    {...props}
+    aria-label="Resource Quoates"
+    Header={ResourceQuotaTableHeader}
+    Row={ResourceQuotaTableRow}
+    virtualize
+  />
+);
 
-export const quotaType = quota => {
+export const quotaType = (quota) => {
   if (!quota) {
     return undefined;
   }
@@ -260,51 +371,60 @@ export const quotaType = quota => {
 };
 
 // Split each resource quota into one row per subject
-export const flatten = resources => _.flatMap(resources, resource => _.compact(resource.data));
+export const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
 
-export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, flags, mock}) => {
-
-  const resources = [{kind: 'ResourceQuota', namespaced: true}];
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, flags, mock }) => {
+  const resources = [{ kind: 'ResourceQuota', namespaced: true }];
   let rowFilters = null;
 
   if (flagPending(flags[FLAGS.OPENSHIFT])) {
     return <LoadingBox />;
   }
   if (flags[FLAGS.OPENSHIFT]) {
-    resources.push({kind: referenceForModel(ClusterResourceQuotaModel), namespaced: false, optional: true});
-    rowFilters = [{
-      type: 'role-kind',
-      selected: ['cluster', 'namespace'],
-      reducer: quotaType,
-      items: [
-        {id: 'cluster', title: 'Cluster-wide Resource Quotas'},
-        {id: 'namespace', title: 'Namespace Resource Quotas'},
-      ],
-    }];
+    resources.push({
+      kind: referenceForModel(ClusterResourceQuotaModel),
+      namespaced: false,
+      optional: true,
+    });
+    rowFilters = [
+      {
+        type: 'role-kind',
+        selected: ['cluster', 'namespace'],
+        reducer: quotaType,
+        items: [
+          { id: 'cluster', title: 'Cluster-wide Resource Quotas' },
+          { id: 'namespace', title: 'Namespace Resource Quotas' },
+        ],
+      },
+    ];
   }
   const createNS = namespace || 'default';
   const accessReview = {
     model: ResourceQuotaModel,
     namespace: createNS,
   };
-  return <MultiListPage
-    canCreate={true}
-    createAccessReview={accessReview}
-    createButtonText="Create Resource Quota"
-    createProps={{to: `/k8s/ns/${createNS}/resourcequotas/~new`}}
-    ListComponent={ResourceQuotasList}
-    resources={resources}
-    label="Resource Quotas"
-    namespace={namespace}
-    flatten={flatten}
-    title="Resource Quotas"
-    rowFilters={rowFilters}
-    mock={mock}
-  />;
+  return (
+    <MultiListPage
+      canCreate={true}
+      createAccessReview={accessReview}
+      createButtonText="Create Resource Quota"
+      createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
+      ListComponent={ResourceQuotasList}
+      resources={resources}
+      label="Resource Quotas"
+      namespace={namespace}
+      flatten={flatten}
+      title="Resource Quotas"
+      rowFilters={rowFilters}
+      mock={mock}
+    />
+  );
 });
 
-export const ResourceQuotasDetailsPage = props => <DetailsPage
-  {...props}
-  menuActions={resourceQuotaMenuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
-/>;
+export const ResourceQuotasDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    menuActions={resourceQuotaMenuActions}
+    pages={[navFactory.details(Details), navFactory.editYaml()]}
+  />
+);

@@ -13,22 +13,29 @@ import { resourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { referenceForModel, kindForReference } from '../module/k8s';
-import {
-  history,
-  LoadingBox,
-  PageHeading,
-  SelectorInput,
-} from './utils';
+import { history, LoadingBox, PageHeading, SelectorInput } from './utils';
 
-const ResourceList = connectToModel(({kindObj, mock, namespace, selector}) => {
+const ResourceList = connectToModel(({ kindObj, mock, namespace, selector }) => {
   if (!kindObj) {
     return <LoadingBox />;
   }
 
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () =>
+    Promise.resolve(DefaultPage),
+  );
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} mock={mock} />;
+  return (
+    <AsyncComponent
+      loader={componentLoader}
+      namespace={ns}
+      selector={selector}
+      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+      showTitle={false}
+      autoFocus={false}
+      mock={mock}
+    />
+  );
 });
 
 const updateUrlParams = (k, v) => {
@@ -38,21 +45,21 @@ const updateUrlParams = (k, v) => {
   history.push(`${url.pathname}?${sp.toString()}${url.hash}`);
 };
 
-const updateKind = kind => updateUrlParams('kind', encodeURIComponent(kind));
-const updateTags = tags => updateUrlParams('q', tags.map(encodeURIComponent).join(','));
+const updateKind = (kind) => updateUrlParams('kind', encodeURIComponent(kind));
+const updateTags = (tags) => updateUrlParams('q', tags.map(encodeURIComponent).join(','));
 
 class SearchPage_ extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.setRef = ref => this.ref = ref;
-    this.onSelectorChange = k => {
+    this.setRef = (ref) => (this.ref = ref);
+    this.onSelectorChange = (k) => {
       updateKind(k);
       this.ref && this.ref.focus();
     };
   }
 
   render() {
-    const {location, namespace, noProjectsAvailable} = this.props;
+    const { location, namespace, noProjectsAvailable } = this.props;
     let kind, q;
 
     if (location.search) {
@@ -65,24 +72,37 @@ class SearchPage_ extends React.PureComponent {
     kind = kind ? decodeURIComponent(kind) : 'Service';
 
     const tags = split(_.isString(q) ? decodeURIComponent(q) : '');
-    const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
+    const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     const selector = selectorFromString(validTags.join(','));
     const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
 
-    return <React.Fragment>
-      <Helmet>
-        <title>Search</title>
-      </Helmet>
-      <PageHeading detail={true} title="Search" >
-        <div className="co-search">
-          <div className="pf-c-input-group">
-            <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
-            <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!noProjectsAvailable} />
+    return (
+      <React.Fragment>
+        <Helmet>
+          <title>Search</title>
+        </Helmet>
+        <PageHeading detail={true} title="Search">
+          <div className="co-search">
+            <div className="pf-c-input-group">
+              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
+              <SelectorInput
+                labelClassName={labelClassName}
+                tags={validTags}
+                onChange={updateTags}
+                ref={this.setRef}
+                autoFocus={!noProjectsAvailable}
+              />
+            </div>
           </div>
-        </div>
-      </PageHeading>
-      <ResourceList kind={kind} selector={selector} namespace={namespace} mock={noProjectsAvailable} />
-    </React.Fragment>;
+        </PageHeading>
+        <ResourceList
+          kind={kind}
+          selector={selector}
+          namespace={namespace}
+          mock={noProjectsAvailable}
+        />
+      </React.Fragment>
+    );
   }
 }
 

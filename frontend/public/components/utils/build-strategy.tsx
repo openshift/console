@@ -26,44 +26,86 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const resourceLimits = _.get(resource, 'spec.resources.limits');
   const triggers = _.map(resource.spec.triggers, 'type').join(', ');
 
-  return <dl className="co-m-pane__details">
-    {children}
-    <dt>Type</dt>
-    <dd>{strategy.type}</dd>
-    {git && <dt>Git Repository</dt>}
-    {git && <dd>{git.uri}</dd>}
-    {gitRef && <dt>Git Ref</dt>}
-    {gitRef && <dd>{gitRef}</dd>}
-    {commitMessage && <dt>Git Commit</dt>}
-    {commitMessage && <dd>{commitMessage}<br />{commitHash && <code>{commitHash.substring(0,7)}</code>} {commitAuthorName && `by ${commitAuthorName}`}</dd>}
-    {asFile && <dt>Binary Input as File</dt>}
-    {asFile && <dd>{asFile}</dd>}
-    {contextDir && <dt>Context Dir</dt>}
-    {contextDir && <dd>{contextDir}</dd>}
-    {dockerfile && <dt>Dockerfile</dt>}
-    {dockerfile && <dd><pre>{dockerfile}</pre></dd>}
-    {jenkinsfile && <dt>Jenkinsfile</dt>}
-    {jenkinsfile && <dd><pre>{jenkinsfile}</pre></dd>}
-    {jenkinsfilePath && <dt>Jenkinsfile Path</dt>}
-    {jenkinsfilePath && <dd>{jenkinsfilePath}</dd>}
-    {buildFrom && (buildFrom.kind === 'ImageStreamTag' || buildFrom.kind === 'DockerImage') && <dt>Builder Image</dt>}
-    {buildFrom && buildFrom.kind === 'ImageStreamTag' && <dd>
-      <ResourceLink kind={ImageStreamTagsReference} name={buildFrom.name} namespace={buildFrom.namespace || resource.metadata.namespace} title={buildFrom.name} />
-    </dd>}
-    {buildFrom && buildFrom.kind === 'DockerImage' && <dd>{buildFrom.name}</dd>}
-    {outputTo && <dt>Output To</dt>}
-    {outputTo && <dd>
-      <ResourceLink kind={ImageStreamTagsReference} name={outputTo.name} namespace={outputTo.namespace || resource.metadata.namespace} title={outputTo.name} />
-    </dd>}
-    {pushSecret && <dt>Push Secret</dt>}
-    {pushSecret && <dd><ResourceLink kind="Secret" name={pushSecret.name} namespace={resource.metadata.namespace} title={pushSecret.name} /></dd>}
-    <dt>Run Policy</dt>
-    <dd>{resource.spec.runPolicy || 'Serial'}</dd>
-    {resourceLimits && <dt>Resource Limits</dt>}
-    {resourceLimits && <dd>{_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}</dd>}
-    {triggers && <dt>Triggers</dt>}
-    {triggers && <dd>{triggers}</dd>}
-  </dl>;
+  return (
+    <dl className="co-m-pane__details">
+      {children}
+      <dt>Type</dt>
+      <dd>{strategy.type}</dd>
+      {git && <dt>Git Repository</dt>}
+      {git && <dd>{git.uri}</dd>}
+      {gitRef && <dt>Git Ref</dt>}
+      {gitRef && <dd>{gitRef}</dd>}
+      {commitMessage && <dt>Git Commit</dt>}
+      {commitMessage && (
+        <dd>
+          {commitMessage}
+          <br />
+          {commitHash && <code>{commitHash.substring(0, 7)}</code>}{' '}
+          {commitAuthorName && `by ${commitAuthorName}`}
+        </dd>
+      )}
+      {asFile && <dt>Binary Input as File</dt>}
+      {asFile && <dd>{asFile}</dd>}
+      {contextDir && <dt>Context Dir</dt>}
+      {contextDir && <dd>{contextDir}</dd>}
+      {dockerfile && <dt>Dockerfile</dt>}
+      {dockerfile && (
+        <dd>
+          <pre>{dockerfile}</pre>
+        </dd>
+      )}
+      {jenkinsfile && <dt>Jenkinsfile</dt>}
+      {jenkinsfile && (
+        <dd>
+          <pre>{jenkinsfile}</pre>
+        </dd>
+      )}
+      {jenkinsfilePath && <dt>Jenkinsfile Path</dt>}
+      {jenkinsfilePath && <dd>{jenkinsfilePath}</dd>}
+      {buildFrom && (buildFrom.kind === 'ImageStreamTag' || buildFrom.kind === 'DockerImage') && (
+        <dt>Builder Image</dt>
+      )}
+      {buildFrom && buildFrom.kind === 'ImageStreamTag' && (
+        <dd>
+          <ResourceLink
+            kind={ImageStreamTagsReference}
+            name={buildFrom.name}
+            namespace={buildFrom.namespace || resource.metadata.namespace}
+            title={buildFrom.name}
+          />
+        </dd>
+      )}
+      {buildFrom && buildFrom.kind === 'DockerImage' && <dd>{buildFrom.name}</dd>}
+      {outputTo && <dt>Output To</dt>}
+      {outputTo && (
+        <dd>
+          <ResourceLink
+            kind={ImageStreamTagsReference}
+            name={outputTo.name}
+            namespace={outputTo.namespace || resource.metadata.namespace}
+            title={outputTo.name}
+          />
+        </dd>
+      )}
+      {pushSecret && <dt>Push Secret</dt>}
+      {pushSecret && (
+        <dd>
+          <ResourceLink
+            kind="Secret"
+            name={pushSecret.name}
+            namespace={resource.metadata.namespace}
+            title={pushSecret.name}
+          />
+        </dd>
+      )}
+      <dt>Run Policy</dt>
+      <dd>{resource.spec.runPolicy || 'Serial'}</dd>
+      {resourceLimits && <dt>Resource Limits</dt>}
+      {resourceLimits && <dd>{_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}</dd>}
+      {triggers && <dt>Triggers</dt>}
+      {triggers && <dd>{triggers}</dd>}
+    </dl>
+  );
 };
 
 export type BuildStrategyProps = {

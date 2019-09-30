@@ -11,7 +11,10 @@ import * as plugins from '../../plugins';
 import { stripNS, createLink } from './items';
 import { getActivePerspective } from '../../reducers/ui';
 
-const navSectionStateToProps = (state: RootState, {required}: NavSectionProps): NavSectionStateProps => {
+const navSectionStateToProps = (
+  state: RootState,
+  { required }: NavSectionProps,
+): NavSectionStateProps => {
   const flags = state[featureReducerName];
   const canRender = required ? flags.get(required) : true;
 
@@ -24,8 +27,12 @@ const navSectionStateToProps = (state: RootState, {required}: NavSectionProps): 
   };
 };
 
-const mergePluginChild = (Children: React.ReactElement[], pluginChild: React.ReactElement, mergeAfter?: string) => {
-  const index = mergeAfter ? Children.findIndex(c => c.props.name === mergeAfter) : -1;
+const mergePluginChild = (
+  Children: React.ReactElement[],
+  pluginChild: React.ReactElement,
+  mergeAfter?: string,
+) => {
+  const index = mergeAfter ? Children.findIndex((c) => c.props.name === mergeAfter) : -1;
   if (index >= 0) {
     Children.splice(index + 1, 0, pluginChild);
   } else {
@@ -73,25 +80,27 @@ export const NavSection = connect(navSectionStateToProps)(
       const resourcePath = location ? stripNS(location) : '';
 
       //current bug? - we should be checking if children is a single item or .filter is undefined
-      return (children as any[]).filter(c => {
-        if (!c) {
-          return false;
-        }
-        if (c.props.startsWith) {
-          const active = c.type.startsWith(resourcePath, c.props.startsWith);
-          if (active || !c.props.activePath) {
-            return active;
+      return (children as any[])
+        .filter((c) => {
+          if (!c) {
+            return false;
           }
-        }
-        return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
-      }).map(c => c.props.name)[0];
+          if (c.props.startsWith) {
+            const active = c.type.startsWith(resourcePath, c.props.startsWith);
+            if (active || !c.props.activePath) {
+              return active;
+            }
+          }
+          return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
+        })
+        .map((c) => c.props.name)[0];
     }
 
     componentDidUpdate(prevProps, prevState) {
       const activeChild = this.getActiveChild();
 
       if (prevState.activeChild !== activeChild) {
-        const state: Partial<NavSectionState> = {activeChild};
+        const state: Partial<NavSectionState> = { activeChild };
         if (activeChild && !prevState.activeChild) {
           state.isOpen = true;
         }
@@ -100,27 +109,29 @@ export const NavSection = connect(navSectionStateToProps)(
     }
 
     toggle = (e, expandState) => {
-      this.setState({isOpen: expandState});
-    }
+      this.setState({ isOpen: expandState });
+    };
 
     getNavItems(perspective: string, section: string): plugins.NavItem[] {
       const defaultPerspective = _.find(
         plugins.registry.getPerspectives(),
-        p => p.properties.default
+        (p) => p.properties.default,
       );
       const isDefaultPerspective =
         defaultPerspective && perspective === defaultPerspective.properties.id;
       return plugins.registry.getNavItems().filter(
-        item =>
+        (item) =>
           // check if the item is contributed to the current perspective,
           // or if no perspective specified, are we in the default perspective
           (item.properties.perspective === perspective ||
             (!item.properties.perspective && isDefaultPerspective)) &&
-          item.properties.section === section
+          item.properties.section === section,
       );
     }
 
-    getPluginNavItems: (perspective: string, section: string) => plugins.NavItem[] = memoize(this.getNavItems)
+    getPluginNavItems: (perspective: string, section: string) => plugins.NavItem[] = memoize(
+      this.getNavItems,
+    );
 
     mapChild = (c: React.ReactElement) => {
       if (!c) {
@@ -132,9 +143,10 @@ export const NavSection = connect(navSectionStateToProps)(
       const { name, required, disallowed } = c.props;
 
       const requiredArray = required ? _.castArray(required) : [];
-      const requirementMissing = _.some(requiredArray, flag => (
-        flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-      ));
+      const requirementMissing = _.some(
+        requiredArray,
+        (flag) => flag && (flagPending(flags.get(flag)) || !flags.get(flag)),
+      );
       if (requirementMissing) {
         return null;
       }
@@ -148,7 +160,7 @@ export const NavSection = connect(navSectionStateToProps)(
         activeNamespace,
         flags,
       });
-    }
+    };
 
     getChildren() {
       const { title, children, perspective } = this.props;
@@ -180,7 +192,7 @@ export const NavSection = connect(navSectionStateToProps)(
         </NavExpandable>
       ) : null;
     }
-  }
+  },
 );
 
 export type NavSectionTitle =

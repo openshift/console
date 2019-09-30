@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
-import { ErrorBoundary, ErrorBoundaryProps, ErrorBoundaryState, withFallback } from '../../../public/components/utils/error-boundary';
+import {
+  ErrorBoundary,
+  ErrorBoundaryProps,
+  ErrorBoundaryState,
+  withFallback,
+} from '../../../public/components/utils/error-boundary';
 
 describe(ErrorBoundary.name, () => {
   let wrapper: ShallowWrapper<ErrorBoundaryProps, ErrorBoundaryState>;
   const Child = () => <span>childrens</span>;
 
   beforeEach(() => {
-    wrapper = shallow(<ErrorBoundary>
-      <Child />
-    </ErrorBoundary>);
+    wrapper = shallow(
+      <ErrorBoundary>
+        <Child />
+      </ErrorBoundary>,
+    );
   });
 
   it('renders child components if not in error state', () => {
@@ -19,23 +26,28 @@ describe(ErrorBoundary.name, () => {
 
   it('renders fallback component if given when in error state', () => {
     const FallbackComponent = () => <p>Custom Fallback</p>;
-    wrapper = wrapper.setProps({FallbackComponent});
-    wrapper = wrapper.setState({hasError: true});
+    wrapper = wrapper.setProps({ FallbackComponent });
+    wrapper = wrapper.setState({ hasError: true });
 
     expect(wrapper.find(Child).exists()).toBe(false);
     expect(wrapper.find(FallbackComponent).exists()).toBe(true);
   });
 
   it('renders default fallback component if none given when in error state', () => {
-    wrapper = wrapper.setState({hasError: true});
+    wrapper = wrapper.setState({ hasError: true });
 
     expect(wrapper.find(Child).exists()).toBe(false);
-    expect(wrapper.at(0).shallow().text()).toEqual('');
+    expect(
+      wrapper
+        .at(0)
+        .shallow()
+        .text(),
+    ).toEqual('');
   });
 });
 
 describe('withFallback', () => {
-  const Component: React.SFC<{size: number}> = (props) => <span>childrens: {props.size}</span>;
+  const Component: React.SFC<{ size: number }> = (props) => <span>childrens: {props.size}</span>;
 
   it('returns the given component wrapped in an `ErrorBoundary`', () => {
     const WrappedComponent = withFallback(Component);

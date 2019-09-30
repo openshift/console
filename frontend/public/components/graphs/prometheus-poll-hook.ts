@@ -27,11 +27,11 @@ export const usePrometheusPoll = ({
   const tick = useCallback(() => {
     if (url) {
       safeFetch(url)
-        .then(data => {
+        .then((data) => {
           setResponse(data);
           setError(undefined);
         })
-        .catch(err => {
+        .catch((err) => {
           setError(err);
           // eslint-disable-next-line no-console
           console.error(`Error polling Prometheus: ${err}`);
@@ -56,4 +56,4 @@ type PrometheusPollProps = {
   samples?: number;
   timeout?: string;
   timespan?: number;
-}
+};

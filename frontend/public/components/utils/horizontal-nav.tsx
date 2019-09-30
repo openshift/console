@@ -9,12 +9,23 @@ import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { K8sResourceKind } from '../../module/k8s';
 
-const editYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
-export const viewYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
+const editYamlComponent = (props) => (
+  <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
+);
+export const viewYamlComponent = (props) => (
+  <AsyncComponent
+    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
+    obj={props.obj}
+    readOnly={true}
+  />
+);
 
 class PodsComponent extends React.PureComponent<PodsComponentProps> {
   render() {
-    const {metadata: {namespace}, spec: {selector}} = this.props.obj;
+    const {
+      metadata: { namespace },
+      spec: { selector },
+    } = this.props.obj;
     if (_.isEmpty(selector)) {
       return <EmptyBox label="Pods" />;
     }
@@ -22,7 +33,9 @@ class PodsComponent extends React.PureComponent<PodsComponentProps> {
     // Hide the create button to avoid confusion when showing pods for an object.
     // Otherwise it might seem like you click "Create Pod" to add replicas instead
     // of scaling the owner.
-    return <PodsPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} />;
+    return (
+      <PodsPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} />
+    );
   }
 }
 
@@ -33,19 +46,19 @@ export type Page = {
   component?: React.ComponentType<any>;
 };
 
-type NavFactory = {[name: string]: (c?: React.ComponentType<any>) => Page};
+type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
-  details: component => ({
+  details: (component) => ({
     href: '',
     name: 'Overview',
     component,
   }),
-  events: component => ({
+  events: (component) => ({
     href: 'events',
     name: 'Events',
     component,
   }),
-  logs: component => ({
+  logs: (component) => ({
     href: 'logs',
     name: 'Logs',
     component,
@@ -55,17 +68,17 @@ export const navFactory: NavFactory = {
     name: 'YAML',
     component,
   }),
-  pods: component => ({
+  pods: (component) => ({
     href: 'pods',
     name: 'Pods',
     component: component || PodsComponent,
   }),
-  roles: component => ({
+  roles: (component) => ({
     href: 'roles',
     name: 'Role Bindings',
     component,
   }),
-  builds: component => ({
+  builds: (component) => ({
     href: 'builds',
     name: 'Builds',
     component,
@@ -75,126 +88,184 @@ export const navFactory: NavFactory = {
     name: 'Environment',
     component,
   }),
-  clusterServiceClasses: component => ({
+  clusterServiceClasses: (component) => ({
     href: 'serviceclasses',
     name: 'Service Classes',
     component,
   }),
-  clusterServicePlans: component => ({
+  clusterServicePlans: (component) => ({
     href: 'serviceplans',
     name: 'Service Plans',
     component,
   }),
-  serviceBindings: component => ({
+  serviceBindings: (component) => ({
     href: 'servicebindings',
     name: 'Service Bindings',
     component,
   }),
-  clusterOperators: component => ({
+  clusterOperators: (component) => ({
     href: 'clusteroperators',
     name: 'Cluster Operators',
     component,
   }),
-  machineConfigs: component => ({
+  machineConfigs: (component) => ({
     href: 'machineconfigs',
     name: 'Machine Configs',
     component,
   }),
-  machines: component => ({
+  machines: (component) => ({
     href: 'machines',
     name: 'Machines',
     component,
   }),
-  workloads: component => ({
+  workloads: (component) => ({
     href: 'workloads',
     name: 'Workloads',
     component,
   }),
-  history: component => ({
+  history: (component) => ({
     href: 'history',
     name: 'History',
     component,
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({pages, basePath, hideDivider}) => {
+export const NavBar = withRouter<NavBarProps>(({ pages, basePath, hideDivider }) => {
   // These tabs go before the divider
   const before = ['', 'edit', 'yaml'];
-  const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
+  const divider = (
+    <li
+      className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"
+      key="_divider"
+    />
+  );
   basePath = basePath.replace(/\/$/, '');
 
-  const primaryTabs = <ul className="co-m-horizontal-nav__menu-primary">{
-    pages.filter(({href}, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href'))).map(({name, href, path}) => {
-      const matchUrl = matchPath(location.pathname, {path: `${basePath}/${path || href}`, exact: true});
-      const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active':  matchUrl && matchUrl.isExact});
-      return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
-    })}{!hideDivider && divider}</ul>;
+  const primaryTabs = (
+    <ul className="co-m-horizontal-nav__menu-primary">
+      {pages
+        .filter(
+          ({ href }, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href')),
+        )
+        .map(({ name, href, path }) => {
+          const matchUrl = matchPath(location.pathname, {
+            path: `${basePath}/${path || href}`,
+            exact: true,
+          });
+          const klass = classNames('co-m-horizontal-nav__menu-item', {
+            'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
+          });
+          return (
+            <li className={klass} key={name}>
+              <Link to={`${basePath}/${href}`}>{name}</Link>
+            </li>
+          );
+        })}
+      {!hideDivider && divider}
+    </ul>
+  );
 
-  const secondaryTabs = <ul className="co-m-horizontal-nav__menu-secondary">{
-    pages.slice(React.Children.count(primaryTabs.props.children) - 1).map(({name, href, path}) => {
-      const matchUrl = matchPath(location.pathname, {path: `${basePath}/${path || href}`, exact: true});
-      const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact});
-      return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
-    })}</ul>;
+  const secondaryTabs = (
+    <ul className="co-m-horizontal-nav__menu-secondary">
+      {pages
+        .slice(React.Children.count(primaryTabs.props.children) - 1)
+        .map(({ name, href, path }) => {
+          const matchUrl = matchPath(location.pathname, {
+            path: `${basePath}/${path || href}`,
+            exact: true,
+          });
+          const klass = classNames('co-m-horizontal-nav__menu-item', {
+            'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
+          });
+          return (
+            <li className={klass} key={name}>
+              <Link to={`${basePath}/${href}`}>{name}</Link>
+            </li>
+          );
+        })}
+    </ul>
+  );
 
-  return <div className="co-m-horizontal-nav__menu">
-    {primaryTabs}
-    {secondaryTabs}
-  </div>;
+  return (
+    <div className="co-m-horizontal-nav__menu">
+      {primaryTabs}
+      {secondaryTabs}
+    </div>
+  );
 });
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) => {
   const renderContent = (routes: JSX.Element[]) => {
-    const {noStatusBox, obj, EmptyMsg, label} = props;
+    const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = <Switch> {routes} </Switch>;
 
-    const skeletonDetails = <div className="skeleton-detail-view">
-      <div className="skeleton-detail-view--head" />
-      <div className="skeleton-detail-view--grid">
-        <div className="skeleton-detail-view--column">
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-labels" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
-        </div>
-        <div className="skeleton-detail-view--column">
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
-          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+    const skeletonDetails = (
+      <div className="skeleton-detail-view">
+        <div className="skeleton-detail-view--head" />
+        <div className="skeleton-detail-view--grid">
+          <div className="skeleton-detail-view--column">
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-labels" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+          </div>
+          <div className="skeleton-detail-view--column">
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+            <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+          </div>
         </div>
       </div>
-    </div>;
+    );
 
     if (noStatusBox) {
       return content;
     }
 
     return (
-      <StatusBox skeleton={skeletonDetails} {...obj} EmptyMsg={EmptyMsg} label={label} >
+      <StatusBox skeleton={skeletonDetails} {...obj} EmptyMsg={EmptyMsg} label={label}>
         {content}
       </StatusBox>
     );
   };
 
-  const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: _.get(props.obj, 'data')};
-  const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
+  const componentProps = {
+    ..._.pick(props, ['filters', 'selected', 'match']),
+    obj: _.get(props.obj, 'data'),
+  };
+  const extraResources = _.reduce(
+    props.resourceKeys,
+    (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
+    {},
+  );
   const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
-  const routes = pages.map(p => {
+  const routes = pages.map((p) => {
     const path = `${props.match.url}/${p.path || p.href}`;
     const render = (params) => {
-      return <p.component {...componentProps} {...extraResources} params={params} customData={props.customData} />;
+      return (
+        <p.component
+          {...componentProps}
+          {...extraResources}
+          params={params}
+          customData={props.customData}
+        />
+      );
     };
     return <Route path={path} exact key={p.name} render={render} />;
   });
 
-  return <div className={props.className}>
-    <div className="co-m-horizontal-nav">
-      {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
-      {renderContent(routes)}
+  return (
+    <div className={props.className}>
+      <div className="co-m-horizontal-nav">
+        {!props.hideNav && (
+          <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />
+        )}
+        {renderContent(routes)}
+      </div>
     </div>
-  </div>;
+  );
 }, _.isEqual);
 
 export type PodsComponentProps = {
@@ -212,7 +283,7 @@ export type NavBarProps = {
 
 export type HorizontalNavProps = {
   className?: string;
-  obj?: {loaded: boolean, data: K8sResourceKind};
+  obj?: { loaded: boolean; data: K8sResourceKind };
   label?: string;
   pages: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];

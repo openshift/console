@@ -1,6 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING, MsgBox, ResourceLog } from './utils';
+import {
+  LOG_SOURCE_RUNNING,
+  LOG_SOURCE_TERMINATED,
+  LOG_SOURCE_WAITING,
+  MsgBox,
+  ResourceLog,
+} from './utils';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './build';
 import { BuildPhase } from '../module/k8s/builds';
@@ -11,17 +17,18 @@ const PipelineLogMessage = ({ build }) => {
     ? 'Pipeline build logs are available through Jenkins (linked below)'
     : 'A link to the Jenkins pipeline build logs will appear below when the build starts';
 
-  const detail = <React.Fragment>
-    <p>{message}</p>
-    <BuildPipelineLogLink obj={build} />
-  </React.Fragment>;
+  const detail = (
+    <React.Fragment>
+      <p>{message}</p>
+      <BuildPipelineLogLink obj={build} />
+    </React.Fragment>
+  );
 
   return <MsgBox title="See Jenkins Log" detail={detail} />;
 };
 
 const buildPhaseToLogSourceStatus = (phase) => {
   switch (phase) {
-
     case BuildPhase.New:
     case BuildPhase.Pending:
       return LOG_SOURCE_WAITING;
@@ -48,21 +55,21 @@ export class BuildLogs extends React.Component {
   static getDerivedStateFromProps({ obj: build }, { status: prevStatus }) {
     const phase = _.get(build, 'status.phase');
     const status = buildPhaseToLogSourceStatus(phase);
-    return prevStatus !== status ? {status} : null;
+    return prevStatus !== status ? { status } : null;
   }
 
   render() {
     const { obj: build } = this.props;
     const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
 
-    return <div className="co-m-pane__body">
-      { isPipeline
-        ? <PipelineLogMessage build={build} />
-        : <ResourceLog
-          resource={build}
-          resourceStatus={this.state.status}
-        />
-      }
-    </div>;
+    return (
+      <div className="co-m-pane__body">
+        {isPipeline ? (
+          <PipelineLogMessage build={build} />
+        ) : (
+          <ResourceLog resource={build} resourceStatus={this.state.status} />
+        )}
+      </div>
+    );
   }
 }

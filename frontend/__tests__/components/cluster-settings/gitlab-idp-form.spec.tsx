@@ -3,11 +3,14 @@ import { shallow, ShallowWrapper } from 'enzyme';
 
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import { AddGitLabPage, AddGitLabPageState } from '../../../public/components/cluster-settings/gitlab-idp-form';
+import {
+  AddGitLabPage,
+  AddGitLabPageState,
+} from '../../../public/components/cluster-settings/gitlab-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: GitLab', () => {
-  let wrapper : ShallowWrapper<{}, AddGitLabPageState>;
+  let wrapper: ShallowWrapper<{}, AddGitLabPageState>;
 
   beforeEach(() => {
     wrapper = shallow(<AddGitLabPage />);

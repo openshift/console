@@ -6,15 +6,20 @@ import { K8sKind, referenceForModel, SwaggerDefinitions } from './';
 
 const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
 
-export const getDefinitionKey = _.memoize((model: K8sKind, definitions: SwaggerDefinitions): string => {
-  return _.findKey(definitions, (def: SwaggerDefinition) => {
-    return _.some(def['x-kubernetes-group-version-kind'], ({group, version, kind}) => {
-      return (model.apiGroup || '') === (group || '') &&
-        model.apiVersion === version &&
-        model.kind === kind;
+export const getDefinitionKey = _.memoize(
+  (model: K8sKind, definitions: SwaggerDefinitions): string => {
+    return _.findKey(definitions, (def: SwaggerDefinition) => {
+      return _.some(def['x-kubernetes-group-version-kind'], ({ group, version, kind }) => {
+        return (
+          (model.apiGroup || '') === (group || '') &&
+          model.apiVersion === version &&
+          model.kind === kind
+        );
+      });
     });
-  });
-}, referenceForModel);
+  },
+  referenceForModel,
+);
 
 export const getStoredSwagger = (): SwaggerDefinitions => {
   const json = window.localStorage.getItem(SWAGGER_LOCAL_STORAGE_KEY);
@@ -36,7 +41,7 @@ const storeSwagger = (swagger: SwaggerAPISpec) => {
   window.localStorage.setItem(SWAGGER_LOCAL_STORAGE_KEY, json);
 };
 
-export const fetchSwagger = async(): Promise<SwaggerDefinitions> => {
+export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
   try {
     const swagger: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
     storeSwagger(swagger);
@@ -83,7 +88,7 @@ export type SwaggerDefinitions = {
 
 export type SwaggerAPISpec = {
   swagger: string;
-  info: {title: string, version: string};
-  paths: {[path: string]: any};
+  info: { title: string; version: string };
+  paths: { [path: string]: any };
   definitions: SwaggerDefinitions;
 };

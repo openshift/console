@@ -7,7 +7,9 @@ import { NumberSpinner, withHandlePromise } from '../utils';
 
 export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
   const getPath = props.path.substring(1).replace('/', '.');
-  const [value, setValue] = React.useState<number>(_.get(props.resource, getPath) || props.defaultValue);
+  const [value, setValue] = React.useState<number>(
+    _.get(props.resource, getPath) || props.defaultValue,
+  );
 
   const submit = (e) => {
     e.preventDefault();
@@ -17,7 +19,8 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     const invalidateState = props.invalidateState || _.noop;
 
     invalidateState(true, _.toInteger(value));
-    props.handlePromise(k8sPatch(props.resourceKind, props.resource, patch))
+    props
+      .handlePromise(k8sPatch(props.resourceKind, props.resource, patch))
       .then(props.close)
       .catch((error) => {
         invalidateState(false);
@@ -25,42 +28,64 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
       });
   };
 
-  return <form onSubmit={submit} name="form" className="modal-content ">
-    <ModalTitle>{props.title}</ModalTitle>
-    <ModalBody>
-      <p>{props.message}</p>
-      <NumberSpinner
-        className="pf-c-form-control"
-        value={value}
-        onChange={(e: any) => setValue(e.target.value)}
-        changeValueBy={operation => setValue(_.toInteger(value) + operation)}
-        autoFocus
-        required />
-    </ModalBody>
-    <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText={props.buttonText} cancel={props.cancel} />
-  </form>;
+  return (
+    <form onSubmit={submit} name="form" className="modal-content ">
+      <ModalTitle>{props.title}</ModalTitle>
+      <ModalBody>
+        <p>{props.message}</p>
+        <NumberSpinner
+          className="pf-c-form-control"
+          value={value}
+          onChange={(e: any) => setValue(e.target.value)}
+          changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
+          autoFocus
+          required
+        />
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={props.errorMessage}
+        inProgress={props.inProgress}
+        submitText={props.buttonText}
+        cancel={props.cancel}
+      />
+    </form>
+  );
 });
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
 export const configureReplicaCountModal = (props) => {
-  return configureCountModal(_.assign({}, {
-    defaultValue: 0,
-    title: 'Edit Count',
-    message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
-    path: '/spec/replicas',
-    buttonText: 'Save',
-  }, props));
+  return configureCountModal(
+    _.assign(
+      {},
+      {
+        defaultValue: 0,
+        title: 'Edit Count',
+        message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
+        path: '/spec/replicas',
+        buttonText: 'Save',
+      },
+      props,
+    ),
+  );
 };
 
 export const configureJobParallelismModal = (props) => {
-  return configureCountModal(_.defaults({}, {
-    defaultValue: 1,
-    title: 'Edit Parallelism',
-    message: `${props.resourceKind.labelPlural} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
-    path: '/spec/parallelism',
-    buttonText: 'Save',
-  }, props));
+  return configureCountModal(
+    _.defaults(
+      {},
+      {
+        defaultValue: 1,
+        title: 'Edit Parallelism',
+        message: `${
+          props.resourceKind.labelPlural
+        } create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
+        path: '/spec/parallelism',
+        buttonText: 'Save',
+      },
+      props,
+    ),
+  );
 };
 
 export type ConfigureCountModalProps = {

@@ -8,7 +8,7 @@ import * as catalogPageView from '../views/catalog-page.view';
 import * as srvCatalogView from '../views/service-catalog.view';
 
 describe('Developer Catalog', () => {
-  beforeEach(async() => {
+  beforeEach(async () => {
     await browser.get(`${appHost}/catalog/ns/${testName}`);
     await crudView.isLoaded();
   });
@@ -18,7 +18,7 @@ describe('Developer Catalog', () => {
     checkErrors();
   });
 
-  it('clicking on Catalog Tile opens details modal', async() => {
+  it('clicking on Catalog Tile opens details modal', async () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     await catalogPageView.catalogTiles.first().click();
@@ -26,7 +26,7 @@ describe('Developer Catalog', () => {
     expect($('.co-catalog-page__overlay-body').isPresent()).toBe(true);
   });
 
-  it('filters catalog tiles by Category', async() => {
+  it('filters catalog tiles by Category', async () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     const origNumItems = await catalogView.pageHeadingNumberOfItems();
@@ -40,12 +40,12 @@ describe('Developer Catalog', () => {
     expect(numLanguagesItems).toBeLessThan(origNumItems);
   });
 
-  it('displays "Jenkins" catalog tile when filter by name: "jenkins"', async() => {
+  it('displays "Jenkins" catalog tile when filter by name: "jenkins"', async () => {
     await catalogPageView.filterByKeyword('jenkins');
     expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
   });
 
-  it('displays "No Filter Results" page correctly', async() => {
+  it('displays "No Filter Results" page correctly', async () => {
     await catalogPageView.filterByKeyword('NoFilterResultsTest');
     await catalogPageView.clickFilterCheckbox('kind-ImageStream');
     expect(catalogPageView.catalogTiles.count()).toBe(0);
@@ -59,10 +59,12 @@ describe('Developer Catalog', () => {
     expect(catalogPageView.catalogTiles.count()).toBeGreaterThan(0);
   });
 
-  it('filters catalog tiles by \'Service Class\' Type correctly', async() => {
+  it("filters catalog tiles by 'Service Class' Type correctly", async () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
-    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ClusterServiceClass');
+    const srvClassFilterCount = await catalogPageView.filterCheckboxCount(
+      'kind-ClusterServiceClass',
+    );
 
     // 'Node.js' is source-to-image and should be shown initially
     expect(catalogPageView.catalogTileFor('Node.js').isDisplayed()).toBe(true);
@@ -78,7 +80,7 @@ describe('Developer Catalog', () => {
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
   });
 
-  it('filters catalog tiles by \'Source-To-Image\' Type correctly', async() => {
+  it("filters catalog tiles by 'Source-To-Image' Type correctly", async () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ImageStream');
@@ -96,7 +98,7 @@ describe('Developer Catalog', () => {
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
   });
 
-  it('creates a service instance and binding', async() => {
+  it('creates a service instance and binding', async () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     await catalogPageView.clickFilterCheckbox('kind-ClusterServiceClass');
@@ -108,10 +110,18 @@ describe('Developer Catalog', () => {
 
     expect(catalogView.createServiceInstanceButton.isDisplayed()).toBe(true);
     await catalogView.createServiceInstanceButton.click();
-    await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(catalogView.createServiceInstanceForm)));
+    await browser.wait(
+      until.and(
+        crudView.untilNoLoadersPresent,
+        until.presenceOf(catalogView.createServiceInstanceForm),
+      ),
+    );
 
     await $('#dropdown-selectbox').click();
-    await $$('.pf-c-dropdown__menu').first().$(`#${testName}-Project-link`).click();
+    await $$('.pf-c-dropdown__menu')
+      .first()
+      .$(`#${testName}-Project-link`)
+      .click();
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 
@@ -125,7 +135,11 @@ describe('Developer Catalog', () => {
     await crudView.isLoaded();
 
     expect($('[data-test-id="resource-title"]').getText()).toBe('mongodb-persistent');
-    expect($$('.co-section-heading').first().getText()).toBe('Service Binding Overview');
+    expect(
+      $$('.co-section-heading')
+        .first()
+        .getText(),
+    ).toBe('Service Binding Overview');
 
     execSync(`kubectl delete -n ${testName} servicebinding mongodb-persistent`);
     execSync(`kubectl delete -n ${testName} serviceinstance mongodb-persistent`);

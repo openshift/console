@@ -9,7 +9,6 @@ import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-
 export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   readonly state: AddGitLabPageState = {
     name: 'gitlab',
@@ -63,7 +62,11 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addGitLabIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
+  addGitLabIDP(
+    oauth: OAuthKind,
+    clientSecretName: string,
+    caName: string,
+  ): Promise<K8sResourceKind> {
     const { name, clientID, url } = this.state;
     const idp: IdentityProvider = {
       name,
@@ -91,108 +94,116 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     e.preventDefault();
 
     // Clear any previous errors.
-    this.setState({errorMessage: ''});
+    this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [
-        this.createClientSecret(),
-        this.createCAConfigMap(),
-      ];
+      const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises).then(([secret, configMap]) => {
-        const caName = configMap ? configMap.metadata.name : '';
-        return this.addGitLabIDP(oauth, secret.metadata.name, caName);
-      }).then(redirectToOAuthPage);
+      Promise.all(promises)
+        .then(([secret, configMap]) => {
+          const caName = configMap ? configMap.metadata.name : '';
+          return this.addGitLabIDP(oauth, secret.metadata.name, caName);
+        })
+        .then(redirectToOAuthPage);
     });
   };
 
   nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({name: event.currentTarget.value});
+    this.setState({ name: event.currentTarget.value });
   };
 
   clientIDChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({clientID: event.currentTarget.value});
+    this.setState({ clientID: event.currentTarget.value });
   };
 
   clientSecretChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({clientSecret: event.currentTarget.value});
+    this.setState({ clientSecret: event.currentTarget.value });
   };
 
   urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({url: event.currentTarget.value});
+    this.setState({ url: event.currentTarget.value });
   };
 
   caFileChanged = (caFileContent: string) => {
-    this.setState({caFileContent});
+    this.setState({ caFileContent });
   };
 
   render() {
     const { name, clientID, clientSecret, url, caFileContent } = this.state;
     const title = 'Add Identity Provider: GitLab';
-    return <div className="co-m-pane__body">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          You can use GitLab integration for users authenticating with GitLab credentials.
-        </p>
-        <IDPNameInput value={name} onChange={this.nameChanged} />
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="pf-c-form-control"
-            type="text"
-            onChange={this.urlChanged}
-            value={url}
-            id="url"
-            aria-describedby="idp-url-help"
-            required />
-          <p className="help-block" id="idp-url-help">
-            The OAuth server base URL.
+    return (
+      <div className="co-m-pane__body">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">
+            You can use GitLab integration for users authenticating with GitLab credentials.
           </p>
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="client-id">Client ID</label>
-          <input className="pf-c-form-control"
-            type="text"
-            onChange={this.clientIDChanged}
-            value={clientID}
-            id="client-id"
-            required />
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="client-secret">Client Secret</label>
-          <input className="pf-c-form-control"
-            type="password"
-            onChange={this.clientSecretChanged}
-            value={clientSecret}
-            id="client-secret"
-            required />
-        </div>
-        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-        <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              type="submit"
-              variant="primary">
+          <IDPNameInput value={name} onChange={this.nameChanged} />
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="url">
+              URL
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={this.urlChanged}
+              value={url}
+              id="url"
+              aria-describedby="idp-url-help"
+              required
+            />
+            <p className="help-block" id="idp-url-help">
+              The OAuth server base URL.
+            </p>
+          </div>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="client-id">
+              Client ID
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={this.clientIDChanged}
+              value={clientID}
+              id="client-id"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="client-secret">
+              Client Secret
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="password"
+              onChange={this.clientSecretChanged}
+              value={clientSecret}
+              id="client-secret"
+              required
+            />
+          </div>
+          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
                 Add
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={history.goBack}>
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
                 Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>;
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    );
   }
 }
 
 export type AddGitLabPageState = {
   name: string;
-  url: string
+  url: string;
   clientID: string;
   clientSecret: string;
   caFileContent: string;

@@ -6,9 +6,11 @@ import { SearchIcon } from '@patternfly/react-icons';
 import { Selector as SelectorKind } from '../../module/k8s';
 import { selectorToString } from '../../module/k8s/selector';
 
-const Requirement: React.FC<RequirementProps> = ({kind, requirements, namespace=''}) => {
+const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
   // Strip off any trailing '=' characters for valueless selectors
-  const requirementAsString = selectorToString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
+  const requirementAsString = selectorToString(requirements)
+    .replace(/=,/g, ',')
+    .replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
 
   const to = namespace
@@ -17,7 +19,11 @@ const Requirement: React.FC<RequirementProps> = ({kind, requirements, namespace=
 
   return (
     <div className="co-m-requirement">
-      <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to} tabIndex={-1}>
+      <Link
+        className={`co-m-requirement__link co-text-${kind.toLowerCase()}`}
+        to={to}
+        tabIndex={-1}
+      >
         <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
         <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
       </Link>
@@ -26,11 +32,19 @@ const Requirement: React.FC<RequirementProps> = ({kind, requirements, namespace=
 };
 Requirement.displayName = 'Requirement';
 
-export const Selector: React.FC<SelectorProps> = ({kind = 'Pod', selector = {}, namespace = undefined}) => <div className="co-m-selector">
-  { _.isEmpty(selector)
-    ? <p className="text-muted">No selector</p>
-    : <Requirement kind={kind} requirements={selector} namespace={namespace} /> }
-</div>;
+export const Selector: React.FC<SelectorProps> = ({
+  kind = 'Pod',
+  selector = {},
+  namespace = undefined,
+}) => (
+  <div className="co-m-selector">
+    {_.isEmpty(selector) ? (
+      <p className="text-muted">No selector</p>
+    ) : (
+      <Requirement kind={kind} requirements={selector} namespace={namespace} />
+    )}
+  </div>
+);
 Selector.displayName = 'Selector';
 
 type RequirementProps = {

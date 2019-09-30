@@ -5,17 +5,17 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
   state = {
     unit: this.props.defaultRequestSizeUnit,
     value: this.props.defaultRequestSizeValue,
-  }
+  };
 
-  onValueChange: React.ReactEventHandler<HTMLInputElement> = event => {
+  onValueChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({ value: event.currentTarget.value });
     this.props.onChange({ value: event.currentTarget.value, unit: this.state.unit });
   };
 
-  onUnitChange = unit => {
+  onUnitChange = (unit) => {
     this.setState({ unit });
     this.props.onChange({ value: this.state.value, unit });
-  }
+  };
 
   render() {
     const { describedBy, name } = this.props;

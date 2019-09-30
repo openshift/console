@@ -16,16 +16,14 @@ import {
   getTemplateInstanceStatus,
 } from '../../module/k8s';
 
-import {
-  alertState,
-  silenceState,
-} from '../../reducers/monitoring';
+import { alertState, silenceState } from '../../reducers/monitoring';
 
-export const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(_.toLower(a), _.toLower(b));
+export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
+  fuzzy(_.toLower(a), _.toLower(b));
 
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
-  'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
+  name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
   'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
 
@@ -42,15 +40,15 @@ export const tableFilters: TableFilterMap = {
   'role-binding-kind': (filter, binding) => filter.selected.has(bindingType(binding)),
 
   // Filter role bindings by text match
-  'role-binding': (str, {metadata, roleRef, subject}) => {
-    const isMatch = val => fuzzyCaseInsensitive(str, val);
+  'role-binding': (str, { metadata, roleRef, subject }) => {
+    const isMatch = (val) => fuzzyCaseInsensitive(str, val);
     return [metadata.name, roleRef.name, subject.kind, subject.name].some(isMatch);
   },
 
   // Filter role bindings by roleRef name
   'role-binding-roleRef': (roleRef, binding) => binding.roleRef.name === roleRef,
 
-  'selector': (selector, obj) => {
+  selector: (selector, obj) => {
     if (!selector || !selector.values || !selector.values.size) {
       return true;
     }
@@ -82,9 +80,14 @@ export const tableFilters: TableFilterMap = {
     return filters.selected.has(resource.kind);
   },
 
-  'packagemanifest-name': (filter, pkg) => fuzzyCaseInsensitive(filter, (pkg.status.defaultChannel
-    ? pkg.status.channels.find(ch => ch.name === pkg.status.defaultChannel)
-    : pkg.status.channels[0]).currentCSVDesc.displayName),
+  'packagemanifest-name': (filter, pkg) =>
+    fuzzyCaseInsensitive(
+      filter,
+      (pkg.status.defaultChannel
+        ? pkg.status.channels.find((ch) => ch.name === pkg.status.defaultChannel)
+        : pkg.status.channels[0]
+      ).currentCSVDesc.displayName,
+    ),
 
   'build-status': (phases, build) => {
     if (!phases || !phases.selected || !phases.selected.size) {
@@ -168,9 +171,11 @@ export const tableFilters: TableFilterMap = {
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
-  'machine': (str: string, machine: MachineKind): boolean => {
+  machine: (str: string, machine: MachineKind): boolean => {
     const node: string = _.get(machine, 'status.nodeRef.name');
-    return fuzzyCaseInsensitive(str, machine.metadata.name) || (node && fuzzyCaseInsensitive(str, node));
+    return (
+      fuzzyCaseInsensitive(str, machine.metadata.name) || (node && fuzzyCaseInsensitive(str, node))
+    );
   },
 };
 
@@ -186,4 +191,4 @@ export type TextFilter = (text: string, obj: any) => boolean;
 
 type TableFilterMap = {
   [key: string]: TableFilter | TextFilter;
-}
+};

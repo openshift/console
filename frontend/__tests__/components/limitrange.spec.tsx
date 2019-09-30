@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { LimitRangeTableHeader, LimitRangeTableRow, LimitRangeDetailsRowProps, LimitRangeDetailsRow } from '../../public/components/limit-range';
+import {
+  LimitRangeTableHeader,
+  LimitRangeTableRow,
+  LimitRangeDetailsRowProps,
+  LimitRangeDetailsRow,
+} from '../../public/components/limit-range';
 
 describe(LimitRangeTableHeader.displayName, () => {
   it('returns column header definition for resource', () => {
@@ -11,11 +16,17 @@ describe(LimitRangeTableHeader.displayName, () => {
 describe(LimitRangeTableRow.displayName, () => {
   let wrapper: ShallowWrapper<LimitRangeDetailsRowProps>;
   const limitContent = {
-    max:'', min:'1', default:'', defaultRequest:'', maxLimitRequestRatio:'',
+    max: '',
+    min: '1',
+    default: '',
+    defaultRequest: '',
+    maxLimitRequestRatio: '',
   };
 
   beforeEach(() => {
-    wrapper = shallow(<LimitRangeDetailsRow limitType={'Container'} resource={'memory'} limit={limitContent} />);
+    wrapper = shallow(
+      <LimitRangeDetailsRow limitType={'Container'} resource={'memory'} limit={limitContent} />,
+    );
   });
 
   it('renders column for limit type', () => {
@@ -52,5 +63,4 @@ describe(LimitRangeTableRow.displayName, () => {
     const col = wrapper.childAt(6);
     expect(col.text()).toBe('-');
   });
-
 });

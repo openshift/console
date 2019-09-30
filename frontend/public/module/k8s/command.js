@@ -1,22 +1,26 @@
-export const fromArgs = args => {
-  return args.map(function(arg) {
-    if (!arg) { // empty argument is still valid argument and needs to be quoted
-      return '\'\'';
-    }
+export const fromArgs = (args) => {
+  return args
+    .map(function(arg) {
+      if (!arg) {
+        // empty argument is still valid argument and needs to be quoted
+        return "''";
+      }
 
-    if (!/\s/.test(arg)) { // no whitespaces? no need to use quotes then...
-      return arg;
-    }
+      if (!/\s/.test(arg)) {
+        // no whitespaces? no need to use quotes then...
+        return arg;
+      }
 
-    const sqi = arg.indexOf('\''); // possible single quote position
-    const dqi = arg.indexOf('"'); // possible double quote position
-    const qk = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
+      const sqi = arg.indexOf("'"); // possible single quote position
+      const dqi = arg.indexOf('"'); // possible double quote position
+      const qk = sqi > dqi ? '"' : "'"; // whatever quote comes first, we use opposite
 
-    return qk + arg + qk;
-  }).join(' ');
+      return qk + arg + qk;
+    })
+    .join(' ');
 };
 
-export const toArgs = cmd => {
+export const toArgs = (cmd) => {
   const parts = cmd.split(' ');
   const args = [];
   let quoteKind = null;
@@ -24,7 +28,8 @@ export const toArgs = cmd => {
 
   parts.forEach(function(part) {
     if (quotedArgs.length === 0) {
-      if (part[0] === '\'' || part[0] === '"') { // first time we see single/double quote?
+      if (part[0] === "'" || part[0] === '"') {
+        // first time we see single/double quote?
         quoteKind = part[0];
         return quotedArgs.push(part.slice(1)); // start building list of quoted parts
       }

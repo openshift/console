@@ -17,7 +17,7 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(
         <dd className="co-details-card__item-value">{status}</dd>
       </React.Fragment>
     );
-  }
+  },
 );
 
 type DetailItemProps = {

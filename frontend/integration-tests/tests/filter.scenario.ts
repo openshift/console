@@ -12,14 +12,17 @@ const WORKLOAD_NAME = `filter-${testName}`;
 const WORKLOAD_LABEL = `lbl-filter=${testName}`;
 
 describe('Filtering', () => {
-
-  beforeAll(async() => {
+  beforeAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
     const content = await yamlView.getEditorContent();
-    const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {['lbl-filter']: testName}}}, safeLoad(content));
+    const newContent = _.defaultsDeep(
+      {},
+      { metadata: { name: WORKLOAD_NAME, labels: { ['lbl-filter']: testName } } },
+      safeLoad(content),
+    );
     await yamlView.setEditorContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
@@ -31,27 +34,36 @@ describe('Filtering', () => {
     checkErrors();
   });
 
-  afterAll(async() => {
+  afterAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     await crudView.deleteRow('Deployment')(WORKLOAD_NAME);
   });
 
-  it('filters Pod from object detail', async() => {
+  it('filters Pod from object detail', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });
 
-  it('filters invalid Pod from object detail', async() => {
+  it('filters invalid Pod from object detail', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys('XYZ123');
@@ -59,7 +71,7 @@ describe('Filtering', () => {
     expect(crudView.messageLbl.isPresent()).toBe(true);
   });
 
-  it('filters Deployment from other namespace', async() => {
+  it('filters Deployment from other namespace', async () => {
     await browser.get(`${appHost}/k8s/ns/kube-system/deployments`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
@@ -67,33 +79,42 @@ describe('Filtering', () => {
     expect(crudView.messageLbl.isPresent()).toBe(true);
   });
 
-  it('filters from Pods list', async() => {
+  it('filters from Pods list', async () => {
     await browser.get(`${appHost}/k8s/all-namespaces/pods`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });
 
-  xit('CONSOLE-1503 - searches for object by label', async() => {
+  xit('CONSOLE-1503 - searches for object by label', async () => {
     await browser.get(`${appHost}/search/ns/${testName}`);
     await browser.wait(until.elementToBeClickable(searchView.dropdown), BROWSER_TIMEOUT);
     await searchView.selectSearchType('Deployment');
     await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });
 
-  it('searches for pod by label and filtering by name', async() => {
+  it('searches for pod by label and filtering by name', async () => {
     await browser.get(`${appHost}/search/all-namespaces?kind=Pod`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await searchView.labelFilter.sendKeys('app=hello-openshift', Key.ENTER);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
+    await browser.wait(
+      until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
+      BROWSER_TIMEOUT,
+    );
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });
 
-  it('searches for object by label using by other kind of workload', async() => {
+  it('searches for object by label using by other kind of workload', async () => {
     await browser.get(`${appHost}/search/all-namespaces?kind=ReplicationController`);
     await crudView.isLoaded();
     await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);

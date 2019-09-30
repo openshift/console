@@ -21,12 +21,14 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common
 const oAuthReference = referenceForModel(OAuthModel);
 
 // Convert to ms for formatDuration
-const tokenDuration = (seconds: number) => _.isNil(seconds) ? '-' : formatDuration(seconds * 1000);
+const tokenDuration = (seconds: number) =>
+  _.isNil(seconds) ? '-' : formatDuration(seconds * 1000);
 
-const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders}) => {
-  return _.isEmpty(identityProviders)
-    ? <EmptyBox label="Identity Providers" />
-    : <div className="co-table-container">
+const IdentityProviders: React.SFC<IdentityProvidersProps> = ({ identityProviders }) => {
+  return _.isEmpty(identityProviders) ? (
+    <EmptyBox label="Identity Providers" />
+  ) : (
+    <div className="co-table-container">
       <table className="table">
         <thead>
           <tr>
@@ -36,7 +38,7 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
           </tr>
         </thead>
         <tbody>
-          {_.map(identityProviders, idp => (
+          {_.map(identityProviders, (idp) => (
             <tr key={idp.name}>
               <td>{idp.name}</td>
               <td>{idp.type}</td>
@@ -45,7 +47,8 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
           ))}
         </tbody>
       </table>
-    </div>;
+    </div>
+  );
 };
 
 export const addIDPItems = Object.freeze({
@@ -60,37 +63,42 @@ export const addIDPItems = Object.freeze({
   requestheader: 'Request Header',
 });
 
-const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => {
+const OAuthDetails: React.SFC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
   const { identityProviders, tokenConfig } = obj.spec;
 
-  return <React.Fragment>
-    <div className="co-m-pane__body">
-      <SectionHeading text="OAuth Overview" />
-      <ResourceSummary resource={obj}>
-        {tokenConfig && <React.Fragment>
-          <dt>Access Token Max Age</dt>
-          <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
-        </React.Fragment>}
-      </ResourceSummary>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Identity Providers" />
-      <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-        Identity providers determine how users log into the cluster.
-      </p>
-      <Dropdown
-        className="co-m-pane__dropdown"
-        buttonClassName="pf-c-dropdown__toggle"
-        title="Add"
-        noSelection={true}
-        items={addIDPItems}
-        onChange={(name: string) => history.push(`/settings/idp/${name}`)} />
-      <IdentityProviders identityProviders={identityProviders} />
-    </div>
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__body">
+        <SectionHeading text="OAuth Overview" />
+        <ResourceSummary resource={obj}>
+          {tokenConfig && (
+            <React.Fragment>
+              <dt>Access Token Max Age</dt>
+              <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
+            </React.Fragment>
+          )}
+        </ResourceSummary>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Identity Providers" />
+        <p className="co-m-pane__explanation co-m-pane__explanation--alt">
+          Identity providers determine how users log into the cluster.
+        </p>
+        <Dropdown
+          className="co-m-pane__dropdown"
+          buttonClassName="pf-c-dropdown__toggle"
+          title="Add"
+          noSelection={true}
+          items={addIDPItems}
+          onChange={(name: string) => history.push(`/settings/idp/${name}`)}
+        />
+        <IdentityProviders identityProviders={identityProviders} />
+      </div>
+    </React.Fragment>
+  );
 };
 
-export const OAuthDetailsPage: React.SFC<OAuthDetailsPageProps> = props => (
+export const OAuthDetailsPage: React.SFC<OAuthDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={oAuthReference}

@@ -1,4 +1,7 @@
-import { getRangeVectorStats, getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import {
+  getRangeVectorStats,
+  getInstantVectorStats,
+} from '@console/internal/components/graphs/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
 
@@ -9,10 +12,7 @@ const RANGE_VECTOR_RESPONSE: PrometheusResponse = {
     result: [
       {
         metric: { testMetric: 'test-0' },
-        values: [
-          [1, '123.4'],
-          [2, '5678.9'],
-        ],
+        values: [[1, '123.4'], [2, '5678.9']],
       },
     ],
   },
@@ -51,7 +51,11 @@ describe('getInstantVectorStats()', () => {
       value: parseFloat(v),
       unit: 'units',
     });
-    const [{x, y, label}] = getInstantVectorStats(INSTANT_VECTOR_RESPONSE, 'testMetric', humanize);
+    const [{ x, y, label }] = getInstantVectorStats(
+      INSTANT_VECTOR_RESPONSE,
+      'testMetric',
+      humanize,
+    );
     expect(x).toBe('test-0');
     expect(y).toBe(123.45);
     expect(label).toBe('123.45 units');

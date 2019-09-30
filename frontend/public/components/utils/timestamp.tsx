@@ -6,7 +6,20 @@ import { GlobeAmericasIcon } from '@patternfly/react-icons';
 
 import * as dateTime from './datetime';
 
-const monthAbbrs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthAbbrs = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
   if (!dateTime.isValid(mdate)) {
@@ -15,9 +28,10 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
 
   const timeDifference = now.getTime() - mdate.getTime();
   if (omitSuffix) {
-    return dateTime.fromNow(mdate, undefined, {omitSuffix: true});
+    return dateTime.fromNow(mdate, undefined, { omitSuffix: true });
   }
-  if (Math.sign(timeDifference) !== -1 && timeDifference < 630000) { // 10.5 minutes
+  if (Math.sign(timeDifference) !== -1 && timeDifference < 630000) {
+    // 10.5 minutes
     // Show a relative time if within 10.5 minutes in the past from the current time.
     return dateTime.fromNow(mdate);
   }
@@ -29,7 +43,10 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
     a = 'pm';
   }
 
-  const minuteStr = mdate.getMinutes().toString().padStart(2, '00');
+  const minuteStr = mdate
+    .getMinutes()
+    .toString()
+    .padStart(2, '00');
   let timeStr = `${hours}:${minuteStr} ${a}`;
   if (mdate.getFullYear() !== now.getFullYear()) {
     timeStr = `${mdate.getFullYear()} ${timeStr}`;
@@ -40,10 +57,12 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
   return `${monthStr} ${mdate.getDate()}, ${timeStr}`;
 };
 
-const nowStateToProps = ({UI}) => ({now: UI.get('lastTick')});
+const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
-  const mdate = props.isUnix ? new Date((props.timestamp as number) * 1000) : new Date(props.timestamp);
+  const mdate = props.isUnix
+    ? new Date((props.timestamp as number) * 1000)
+    : new Date(props.timestamp);
   const timestamp = timestampFor(mdate, new Date(props.now), props.omitSuffix);
 
   if (!dateTime.isValid(mdate)) {
@@ -54,12 +73,20 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
     return <React.Fragment>{timestamp}</React.Fragment>;
   }
 
-  return <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
-    <GlobeAmericasIcon className="co-icon-and-text__icon" />
-    <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{ mdate.toISOString() }</span>]}>
-      <span>{ timestamp }</span>
-    </Tooltip>
-  </div>;
+  return (
+    <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
+      <GlobeAmericasIcon className="co-icon-and-text__icon" />
+      <Tooltip
+        content={[
+          <span className="co-nowrap" key="co-timestamp">
+            {mdate.toISOString()}
+          </span>,
+        ]}
+      >
+        <span>{timestamp}</span>
+      </Tooltip>
+    </div>
+  );
 });
 
 export type TimestampProps = {

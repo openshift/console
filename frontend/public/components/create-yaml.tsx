@@ -6,12 +6,18 @@ import { yamlTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
-import { K8sKind, apiVersionForModel, referenceForModel, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import {
+  K8sKind,
+  apiVersionForModel,
+  referenceForModel,
+  K8sResourceKindReference,
+  K8sResourceKind,
+} from '../module/k8s';
 import { ErrorPage404 } from './error';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const {match, kindsInFlight, kindObj, hideHeader = false, resourceObjPath} = props;
-  const {params} = match;
+  const { match, kindsInFlight, kindObj, hideHeader = false, resourceObjPath } = props;
+  const { params } = match;
 
   if (!kindObj) {
     if (kindsInFlight) {
@@ -21,7 +27,10 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   }
 
   const namespace = params.ns || 'default';
-  const template = props.template || yamlTemplates.getIn([referenceForModel(kindObj), 'default']) || yamlTemplates.getIn(['DEFAULT', 'default']);
+  const template =
+    props.template ||
+    yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
+    yamlTemplates.getIn(['DEFAULT', 'default']);
 
   const obj = safeLoad(template);
   obj.kind = kindObj.kind;
@@ -37,18 +46,47 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
 
-  return <AsyncComponent loader={() => import('./droppable-edit-yaml').then(c => c.DroppableEditYAML)} obj={obj} create={true} kind={kindObj.kind} header={header} hideHeader={hideHeader} resourceObjPath={resourceObjPath} />;
+  return (
+    <AsyncComponent
+      loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
+      obj={obj}
+      create={true}
+      kind={kindObj.kind}
+      header={header}
+      hideHeader={hideHeader}
+      resourceObjPath={resourceObjPath}
+    />
+  );
 });
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
-  const Wrapper = (wrapperProps) => <AsyncComponent {...wrapperProps} obj={wrapperProps.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} />;
-  return <Firehose resources={[{kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'}]}>
-    <Wrapper />
-  </Firehose>;
+  const Wrapper = (wrapperProps) => (
+    <AsyncComponent
+      {...wrapperProps}
+      obj={wrapperProps.obj.data}
+      loader={() => import('./edit-yaml').then((c) => c.EditYAML)}
+      create={false}
+    />
+  );
+  return (
+    <Firehose
+      resources={[
+        {
+          kind: props.kind,
+          name: props.match.params.name,
+          namespace: props.match.params.ns,
+          isList: false,
+          prop: 'obj',
+        },
+      ]}
+    >
+      <Wrapper />
+    </Firehose>
+  );
 };
 
 export type CreateYAMLProps = {
-  match: RouterMatch<{ns: string, plural: string, appName?: string}>;
+  match: RouterMatch<{ ns: string; plural: string; appName?: string }>;
   kindsInFlight: boolean;
   kindObj: K8sKind;
   template?: string;
@@ -59,7 +97,7 @@ export type CreateYAMLProps = {
 };
 
 export type EditYAMLPageProps = {
-  match: RouterMatch<{ns: string, name: string}>;
+  match: RouterMatch<{ ns: string; name: string }>;
   kind: string;
 };
 

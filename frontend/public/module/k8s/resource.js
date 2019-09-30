@@ -5,7 +5,7 @@ import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
 /** @type {(model: K8sKind) => string} */
-const getK8sAPIPath = model => {
+const getK8sAPIPath = (model) => {
   const isLegacy = _.get(model, 'apiGroup', 'core') === 'core' && model.apiVersion === 'v1';
   let p = k8sBasePath;
 
@@ -56,7 +56,8 @@ export const watchURL = (kind, options) => {
   return resourceURL(kind, opts);
 };
 
-export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
+export const k8sGet = (kind, name, ns, opts) =>
+  coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
 
 export const k8sCreate = (kind, data, opts = {}) => {
   // Occassionally, a resource won't have a metadata property.
@@ -70,24 +71,35 @@ export const k8sCreate = (kind, data, opts = {}) => {
     data.metadata.name = data.metadata.name.toLowerCase();
   }
 
-  return coFetchJSON.post(resourceURL(kind, Object.assign({ns: data.metadata.namespace}, opts)), data);
+  return coFetchJSON.post(
+    resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
+    data,
+  );
 };
 
-export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(
-  resourceURL(kind, {ns: ns || data.metadata.namespace, name: name || data.metadata.name}),
-  data
-);
+export const k8sUpdate = (kind, data, ns, name) =>
+  coFetchJSON.put(
+    resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }),
+    data,
+  );
 
-export const k8sPatch = (kind, resource, data) => coFetchJSON.patch(
-  resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
-  data
-);
+export const k8sPatch = (kind, resource, data) =>
+  coFetchJSON.patch(
+    resourceURL(kind, { ns: resource.metadata.namespace, name: resource.metadata.name }),
+    data,
+  );
 
-export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.delete(
-  resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts)), opts, json
-);
+export const k8sKill = (kind, resource, opts = {}, json = null) =>
+  coFetchJSON.delete(
+    resourceURL(
+      kind,
+      Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
+    ),
+    opts,
+    json,
+  );
 
-export const k8sList = (kind, params={}, raw=false, options = {}) => {
+export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {
       v = selectorToString(v);
@@ -95,24 +107,34 @@ export const k8sList = (kind, params={}, raw=false, options = {}) => {
     return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
   }).join('&');
 
-  const listURL = resourceURL(kind, {ns: params.ns});
-  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => raw ? result : result.items);
+  const listURL = resourceURL(kind, { ns: params.ns });
+  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then((result) =>
+    raw ? result : result.items,
+  );
 };
 
 export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
-  return k8sList(kind, params, raw, {headers: {Accept: 'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json'}});
+  return k8sList(kind, params, raw, {
+    headers: {
+      Accept:
+        'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json',
+    },
+  });
 };
 
 export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
-  const queryParams = {watch: true};
-  const opts = {queryParams};
-  wsOptions = Object.assign({
-    host: 'auto',
-    reconnect: true,
-    jsonParse: true,
-    bufferFlushInterval: 500,
-    bufferMax: 1000,
-  }, wsOptions);
+  const queryParams = { watch: true };
+  const opts = { queryParams };
+  wsOptions = Object.assign(
+    {
+      host: 'auto',
+      reconnect: true,
+      jsonParse: true,
+      bufferFlushInterval: 500,
+      bufferMax: 1000,
+    },
+    wsOptions,
+  );
 
   const labelSelector = query.labelSelector || kind.labelSelector;
   if (labelSelector) {

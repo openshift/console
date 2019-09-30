@@ -10,21 +10,15 @@ import { Status as TooltipStatus, YellowExclamationTriangleIcon } from '@console
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { K8sResourceKind } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
-import {
-  pluralize,
-  ResourceIcon,
-  resourceObjPath,
-  truncateMiddle,
-} from '../utils';
+import { pluralize, ResourceIcon, resourceObjPath, truncateMiddle } from '../utils';
 
-import {
-  OverviewGroup,
-  OverviewItem,
-  OverviewMetrics,
-  PodControllerOverviewItem,
-} from '.';
+import { OverviewGroup, OverviewItem, OverviewMetrics, PodControllerOverviewItem } from '.';
 
-const formatToFractionalDigits = (value: number, digits: number): string => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+const formatToFractionalDigits = (value: number, digits: number): string =>
+  Intl.NumberFormat(undefined, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
 
 const formatBytesAsMiB = (bytes: number): string => {
   const mib = bytes / 1024 / 1024;
@@ -36,34 +30,49 @@ const formatCores = (cores: number): string => formatToFractionalDigits(cores, 3
 // Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
 const isMobile = window.screen.width < 768;
 
-const ControllerLink: React.SFC<ControllerLinkProps> = ({controller}) => {
+const ControllerLink: React.SFC<ControllerLinkProps> = ({ controller }) => {
   const { obj, revision } = controller;
   const { name } = obj.metadata;
   const label = _.isFinite(revision) ? `#${revision}` : name;
-  return <Link to={resourceObjPath(obj, obj.kind)} title={name}>{label}</Link>;
+  return (
+    <Link to={resourceObjPath(obj, obj.kind)} title={name}>
+      {label}
+    </Link>
+  );
 };
 
-export const ComponentLabel: React.SFC<ComponentLabelProps> = ({text}) => <div className="co-component-label">{text}</div>;
+export const ComponentLabel: React.SFC<ComponentLabelProps> = ({ text }) => (
+  <div className="co-component-label">{text}</div>
+);
 
-const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, children}) => {
+const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
-    : _.concat(<div className="project-overview__metric-tooltip-title" key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
-      <div key={name} className="project-overview__metric-tooltip">
-        <div className="project-overview__metric-tooltip-name">
-          <span className="no-wrap">{truncateMiddle(name)}</span>
-        </div>
-        <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
-      </div>
-    )));
+    : _.concat(
+        <div className="project-overview__metric-tooltip-title" key="#title">
+          {metricLabel} Usage by Pod
+        </div>,
+        sortedMetrics.map(({ name, formattedValue }) => (
+          <div key={name} className="project-overview__metric-tooltip">
+            <div className="project-overview__metric-tooltip-name">
+              <span className="no-wrap">{truncateMiddle(name)}</span>
+            </div>
+            <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
+          </div>
+        )),
+      );
 
   const keepLines = 6;
   // Don't remove a single line to show a "1 other" message since there's space to show the last pod in that case.
   // Make sure we always remove at least 2 lines if we truncate.
-  if (content.length > (keepLines + 1)) {
+  if (content.length > keepLines + 1) {
     const numRemoved = content.length - keepLines;
-    content.splice(keepLines, numRemoved, <div key="#removed-pods">and {numRemoved} other pods</div>);
+    content.splice(
+      keepLines,
+      numRemoved,
+      <div key="#removed-pods">and {numRemoved} other pods</div>,
+    );
   }
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
@@ -71,11 +80,14 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
   if (isMobile) {
     return <>{children}</>;
   }
-  return <Tooltip content={content} distance={15}><>{children}</></Tooltip>;
-
+  return (
+    <Tooltip content={content} distance={15}>
+      <>{children}</>
+    </Tooltip>
+  );
 };
 
-const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
+const Metrics: React.SFC<MetricsProps> = ({ metrics, item }) => {
   const getPods = () => {
     if (item.obj.kind === 'Pod') {
       return [item.obj];
@@ -114,52 +126,72 @@ const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
 
   const formattedMiB = formatBytesAsMiB(totalBytes);
   const formattedCores = formatCores(totalCores);
-  return <React.Fragment>
-    <div className="project-overview__detail project-overview__detail--memory">
-      <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
-        <span>
-          <span className="project-overview__metric-value">{formattedMiB}</span>
-          &nbsp;
-          <span className="project-overview__metric-unit">MiB</span>
-        </span>
-      </MetricsTooltip>
-    </div>
-    <div className="project-overview__detail project-overview__detail--cpu">
-      <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
-        <span>
-          <span className="project-overview__metric-value">{formattedCores}</span>
-          &nbsp;
-          <span className="project-overview__metric-unit">cores</span>
-        </span>
-      </MetricsTooltip>
-    </div>
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      <div className="project-overview__detail project-overview__detail--memory">
+        <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
+          <span>
+            <span className="project-overview__metric-value">{formattedMiB}</span>
+            &nbsp;
+            <span className="project-overview__metric-unit">MiB</span>
+          </span>
+        </MetricsTooltip>
+      </div>
+      <div className="project-overview__detail project-overview__detail--cpu">
+        <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
+          <span>
+            <span className="project-overview__metric-value">{formattedCores}</span>
+            &nbsp;
+            <span className="project-overview__metric-unit">cores</span>
+          </span>
+        </MetricsTooltip>
+      </div>
+    </React.Fragment>
+  );
 };
 
-const Status: React.SFC<StatusProps> = ({item}) => {
-  const {status} = item;
-  return status ? <div className="project-overview__detail project-overview__detail--status">
-    {status}
-  </div> : null;
+const Status: React.SFC<StatusProps> = ({ item }) => {
+  const { status } = item;
+  return status ? (
+    <div className="project-overview__detail project-overview__detail--status">{status}</div>
+  ) : null;
 };
 
-const AlertTooltip = ({alerts, severity, noSeverityLabel=false}) => {
+const AlertTooltip = ({ alerts, severity, noSeverityLabel = false }) => {
   const label = severity === 'Info' ? 'Message' : severity;
   const count = _.size(alerts);
   const message = _.uniq(_.map(alerts, 'message')).join('\n');
-  const content = [<span key="message" className="co-pre-wrap">{message}</span>];
+  const content = [
+    <span key="message" className="co-pre-wrap">
+      {message}
+    </span>,
+  ];
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
   if (isMobile) {
-    return <span className="project-overview__status"><TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} /></span>;
+    return (
+      <span className="project-overview__status">
+        <TooltipStatus
+          status={severity}
+          title={noSeverityLabel ? String(count) : pluralize(count, label)}
+        />
+      </span>
+    );
   }
-  return <Tooltip content={content} distance={10}>
-    <span className="project-overview__status"><TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} /></span>
-  </Tooltip>;
+  return (
+    <Tooltip content={content} distance={10}>
+      <span className="project-overview__status">
+        <TooltipStatus
+          status={severity}
+          title={noSeverityLabel ? String(count) : pluralize(count, label)}
+        />
+      </span>
+    </Tooltip>
+  );
 };
 
-const Alerts: React.SFC<AlertsProps> = ({item}) => {
+const Alerts: React.SFC<AlertsProps> = ({ item }) => {
   const currentAlerts = _.get(item, 'current.alerts', {});
   const previousAlerts = _.get(item, 'previous.alerts', {});
   const itemAlerts = _.get(item, 'alerts', {});
@@ -172,102 +204,144 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
     return null;
   }
 
-  const { error, warning, info, buildNew, buildPending, buildRunning, buildFailed, buildError } = _.groupBy(alerts, 'severity');
-  return <div className="project-overview__detail project-overview__detail--alert">
-    {error && <AlertTooltip severity="Error" alerts={error} />}
-    {warning && <AlertTooltip severity="Warning" alerts={warning} />}
-    {info && <AlertTooltip severity="Info" alerts={info} />}
-    {(buildNew || buildPending || buildRunning || buildFailed || buildError) && <div className="project-overview__builds">
-      Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />} {buildPending && <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />} {buildRunning && <AlertTooltip severity="Running" alerts={buildRunning} noSeverityLabel />} {buildFailed && <AlertTooltip severity="Failed" alerts={buildFailed} noSeverityLabel />} {buildError && <AlertTooltip severity="Error" alerts={buildError} noSeverityLabel />}
-    </div>}
-  </div>;
+  const {
+    error,
+    warning,
+    info,
+    buildNew,
+    buildPending,
+    buildRunning,
+    buildFailed,
+    buildError,
+  } = _.groupBy(alerts, 'severity');
+  return (
+    <div className="project-overview__detail project-overview__detail--alert">
+      {error && <AlertTooltip severity="Error" alerts={error} />}
+      {warning && <AlertTooltip severity="Warning" alerts={warning} />}
+      {info && <AlertTooltip severity="Info" alerts={info} />}
+      {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
+        <div className="project-overview__builds">
+          Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />}{' '}
+          {buildPending && (
+            <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />
+          )}{' '}
+          {buildRunning && (
+            <AlertTooltip severity="Running" alerts={buildRunning} noSeverityLabel />
+          )}{' '}
+          {buildFailed && <AlertTooltip severity="Failed" alerts={buildFailed} noSeverityLabel />}{' '}
+          {buildError && <AlertTooltip severity="Error" alerts={buildError} noSeverityLabel />}
+        </div>
+      )}
+    </div>
+  );
 };
 
-const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemPropsFromState => ({
+const projectOverviewListItemStateToProps = ({ UI }): ProjectOverviewListItemPropsFromState => ({
   metrics: UI.getIn(['overview', 'metrics']),
   selectedUID: UI.getIn(['overview', 'selectedUID']),
 });
 
-const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListItemPropsFromDispatch => ({
+const projectOverviewListItemDispatchToProps = (
+  dispatch,
+): ProjectOverviewListItemPropsFromDispatch => ({
   selectItem: (uid) => dispatch(UIActions.selectOverviewItem(uid)),
   dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
 });
 
-export const ResourceItemDeleting = () => <span className="co-resource-item__deleting"><YellowExclamationTriangleIcon /> Deleting</span>;
+export const ResourceItemDeleting = () => (
+  <span className="co-resource-item__deleting">
+    <YellowExclamationTriangleIcon /> Deleting
+  </span>
+);
 
-const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
-  ({dismissDetails, item, metrics, selectItem, selectedUID}: ProjectOverviewListItemProps) => {
-    const {current, obj} = item;
-    const {name, uid, deletionTimestamp} = obj.metadata;
-    const {kind} = obj;
-    // Hide metrics when a selection is active.
-    const hasSelection = !!selectedUID;
-    const isSelected = uid === selectedUID;
-    const className = classnames(`project-overview__item project-overview__item--${kind}`, {'project-overview__item--selected': isSelected});
+const ProjectOverviewListItem = connect<
+  ProjectOverviewListItemPropsFromState,
+  ProjectOverviewListItemPropsFromDispatch,
+  ProjectOverviewListItemOwnProps
+>(
+  projectOverviewListItemStateToProps,
+  projectOverviewListItemDispatchToProps,
+)(({ dismissDetails, item, metrics, selectItem, selectedUID }: ProjectOverviewListItemProps) => {
+  const { current, obj } = item;
+  const { name, uid, deletionTimestamp } = obj.metadata;
+  const { kind } = obj;
+  // Hide metrics when a selection is active.
+  const hasSelection = !!selectedUID;
+  const isSelected = uid === selectedUID;
+  const className = classnames(`project-overview__item project-overview__item--${kind}`, {
+    'project-overview__item--selected': isSelected,
+  });
 
-    const onClick = (e: React.MouseEvent<any>) => {
-      // Don't toggle details if clicking on a link inside the row.
-      const target = e.target as HTMLElement;
-      if (target.tagName.toLowerCase() === 'a') {
-        return;
-      }
+  const onClick = (e: React.MouseEvent<any>) => {
+    // Don't toggle details if clicking on a link inside the row.
+    const target = e.target as HTMLElement;
+    if (target.tagName.toLowerCase() === 'a') {
+      return;
+    }
 
-      if (isSelected) {
-        dismissDetails();
-      } else {
-        selectItem(uid);
-      }
-    };
+    if (isSelected) {
+      dismissDetails();
+    } else {
+      selectItem(uid);
+    }
+  };
 
-    const heading = <h3 className="project-overview__item-heading">
+  const heading = (
+    <h3 className="project-overview__item-heading">
       <span className="co-resource-item co-resource-item--truncate">
         <ResourceIcon kind={kind} />
-        <button type="button" onClick={onClick} className="btn btn-link btn-link--truncated btn-link--no-btn-default-values co-resource-item__resource-name">
+        <button
+          type="button"
+          onClick={onClick}
+          className="btn btn-link btn-link--truncated btn-link--no-btn-default-values co-resource-item__resource-name"
+        >
           {name}
         </button>
-        {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
+        {current && (
+          <React.Fragment>
+            ,&nbsp;
+            <ControllerLink controller={current} />
+          </React.Fragment>
+        )}
         {deletionTimestamp && <ResourceItemDeleting />}
       </span>
-    </h3>;
+    </h3>
+  );
 
-    const additionalInfo = <div key={uid} className="project-overview__additional-info">
+  const additionalInfo = (
+    <div key={uid} className="project-overview__additional-info">
       <Alerts item={item} />
       {!hasSelection && <Metrics item={item} metrics={metrics} />}
       <Status item={item} />
-    </div>;
+    </div>
+  );
 
-    return <ListView.Item
+  return (
+    <ListView.Item
       onClick={onClick}
       className={className}
       heading={heading}
       additionalInfo={[additionalInfo]}
       id={uid}
-    />;
-  }
-);
-
-const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items}) => {
-  const listItems = _.map(items, (item) =>
-    <ProjectOverviewListItem
-      item={item}
-      key={item.obj.metadata.uid}
     />
   );
-  return <ListView className="project-overview__list">
-    {listItems}
-  </ListView>;
+});
+
+const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({ items }) => {
+  const listItems = _.map(items, (item) => (
+    <ProjectOverviewListItem item={item} key={item.obj.metadata.uid} />
+  ));
+  return <ListView className="project-overview__list">{listItems}</ListView>;
 };
 
-const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items}) =>
+const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({ heading, items }) => (
   <div className="project-overview__group">
     <h2 className="project-overview__group-heading">{heading}</h2>
-    <ProjectOverviewList
-      items={items}
-    />
-  </div>;
+    <ProjectOverviewList items={items} />
+  </div>
+);
 
-
-const projectOverviewStateToProps = ({UI}) => ({
+const projectOverviewStateToProps = ({ UI }) => ({
   selectedUID: UI.getIn(['overview', 'selectedUID']),
 });
 
@@ -290,7 +364,7 @@ class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
   }
 
   findIndex(items: OverviewItem[], uid: string): number {
-    return _.findIndex(items, i => _.get(i, 'obj.metadata.uid') === uid);
+    return _.findIndex(items, (i) => _.get(i, 'obj.metadata.uid') === uid);
   }
 
   selectItem(item: OverviewItem) {
@@ -298,7 +372,7 @@ class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
     this.props.selectItemUID(uid);
     const element = document.getElementById(uid);
     if (element) {
-      element.scrollIntoView({block: 'nearest'});
+      element.scrollIntoView({ block: 'nearest' });
     }
   }
 
@@ -359,21 +433,23 @@ class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
   };
 
   render() {
-    return <div className="project-overview">
-      {_.map(this.props.groups, ({name, items}, index) =>
-        <ProjectOverviewGroup
-          key={name || `_${index}`}
-          heading={name}
-          items={items}
-        />
-      )}
-      <p className="small text-center hidden-xs">
-        <kbd>&uarr;</kbd> and <kbd>&darr;</kbd> selects items, and <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd> filters items.
-      </p>
-    </div>;
+    return (
+      <div className="project-overview">
+        {_.map(this.props.groups, ({ name, items }, index) => (
+          <ProjectOverviewGroup key={name || `_${index}`} heading={name} items={items} />
+        ))}
+        <p className="small text-center hidden-xs">
+          <kbd>&uarr;</kbd> and <kbd>&darr;</kbd> selects items, and{' '}
+          <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd> filters items.
+        </p>
+      </div>
+    );
   }
 }
-export const ProjectOverview = connect(projectOverviewStateToProps, projectOverviewDispatchToProps)(ProjectOverview_);
+export const ProjectOverview = connect(
+  projectOverviewStateToProps,
+  projectOverviewDispatchToProps,
+)(ProjectOverview_);
 
 type ControllerLinkProps = {
   controller: PodControllerOverviewItem;
@@ -386,7 +462,7 @@ type ComponentLabelProps = {
 type MetricsTooltipProps = {
   metricLabel: string;
   byPod: {
-    formattedValue: string
+    formattedValue: string;
     name: string;
     value: number;
   }[];
@@ -415,11 +491,13 @@ type ProjectOverviewListItemPropsFromDispatch = {
   dismissDetails: () => void;
 };
 
-type ProjectOverviewListItemOwnProps= {
+type ProjectOverviewListItemOwnProps = {
   item: OverviewItem;
 };
 
-type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOverviewListItemPropsFromDispatch & ProjectOverviewListItemPropsFromState;
+type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps &
+  ProjectOverviewListItemPropsFromDispatch &
+  ProjectOverviewListItemPropsFromState;
 
 type ProjectOverviewListProps = {
   items: OverviewItem[];

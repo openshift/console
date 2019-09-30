@@ -25,7 +25,7 @@ import { K8sResourceKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
 import { Alert } from '../monitoring';
 
-const mapDispatchToProps: DispatchToProps = dispatch => ({
+const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
   stopWatchURL: (url) => dispatch(stopWatchURL(url)),
   watchPrometheusQuery: (query) => dispatch(watchPrometheusQuery(query)),
@@ -36,16 +36,26 @@ const mapDispatchToProps: DispatchToProps = dispatch => ({
 
 const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.URL]: state.dashboards.get(RESULTS_TYPE.URL),
-  [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<PrometheusResponse>,
+  [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<
+    PrometheusResponse
+  >,
   [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<Alert[]>,
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-export const withDashboardResources = <P extends DashboardItemProps>(WrappedComponent: React.ComponentType<P>) =>
-  connect<StateProps, DispatchProps, Diff<P, DashboardItemProps>>(mapStateToProps, mapDispatchToProps)(
-    class WithDashboardResources extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
+export const withDashboardResources = <P extends DashboardItemProps>(
+  WrappedComponent: React.ComponentType<P>,
+) =>
+  connect<StateProps, DispatchProps, Diff<P, DashboardItemProps>>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(
+    class WithDashboardResources extends React.Component<
+      WithDashboardResourcesProps,
+      WithDashboardResourcesState
+    > {
       private urls: Array<string> = [];
       private queries: Array<string> = [];
       private watchingAlerts: boolean = false;
@@ -57,18 +67,29 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         };
       }
 
-      shouldComponentUpdate(nextProps: WithDashboardResourcesProps, nextState: WithDashboardResourcesState) {
-        const urlResultChanged = this.urls.some(urlKey =>
-          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'data']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'data']) ||
-          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'loadError']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'loadError'])
+      shouldComponentUpdate(
+        nextProps: WithDashboardResourcesProps,
+        nextState: WithDashboardResourcesState,
+      ) {
+        const urlResultChanged = this.urls.some(
+          (urlKey) =>
+            this.props[RESULTS_TYPE.URL].getIn([urlKey, 'data']) !==
+              nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'data']) ||
+            this.props[RESULTS_TYPE.URL].getIn([urlKey, 'loadError']) !==
+              nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'loadError']),
         );
-        const queryResultChanged = this.queries.some(query =>
-          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) ||
-          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError'])
+        const queryResultChanged = this.queries.some(
+          (query) =>
+            this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) !==
+              nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'data']) ||
+            this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']) !==
+              nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']),
         );
         const alertsResultChanged =
-        this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'data']) ||
-        this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'loadError']);
+          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !==
+            nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'data']) ||
+          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !==
+            nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'loadError']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         return (
@@ -85,7 +106,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         this.props.watchURL(url, fetch);
       };
 
-      watchPrometheus: WatchPrometheus = query => {
+      watchPrometheus: WatchPrometheus = (query) => {
         this.queries.push(query);
         this.props.watchPrometheusQuery(query);
       };
@@ -100,20 +121,21 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         this.props.stopWatchAlerts();
       };
 
-      watchK8sResource: WatchK8sResource = resource => {
+      watchK8sResource: WatchK8sResource = (resource) => {
         this.setState((state: WithDashboardResourcesState) => ({
           k8sResources: [...state.k8sResources, resource],
         }));
       };
 
-      stopWatchK8sResource: StopWatchK8sResource = resource => {
+      stopWatchK8sResource: StopWatchK8sResource = (resource) => {
         this.setState((state: WithDashboardResourcesState) => ({
-          k8sResources: state.k8sResources.filter(r => r.prop !== resource.prop),
+          k8sResources: state.k8sResources.filter((r) => r.prop !== resource.prop),
         }));
       };
 
       getExternalProps = (props) => {
-        return _.omit(props,
+        return _.omit(
+          props,
           'watchURL',
           'stopWatchURL',
           'watchPrometheusQuery',
@@ -124,7 +146,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
           RESULTS_TYPE.PROMETHEUS,
           RESULTS_TYPE.ALERTS,
         );
-      }
+      };
 
       render() {
         return (
@@ -146,17 +168,19 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
           </Firehose>
         );
       }
-    }
+    },
   );
 
-type DispatchToProps = (dispatch: any) => {
+type DispatchToProps = (
+  dispatch: any,
+) => {
   watchURL: WatchURL;
   stopWatchURL: StopWatchURL;
   watchPrometheusQuery: WatchPrometheus;
   stopWatchPrometheusQuery: StopWatchPrometheus;
   watchAlerts: WatchAlerts;
   stopWatchAlerts: StopWatchAlerts;
-}
+};
 
 type WatchURL = (url: string, fetch?: Fetch) => void;
 type StopWatchURL = (url: string) => void;

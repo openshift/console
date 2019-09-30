@@ -29,7 +29,10 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   };
 
-  const onPerspectiveSelect = (event: React.MouseEvent<HTMLLinkElement>, perspective: Extension<any>):void => {
+  const onPerspectiveSelect = (
+    event: React.MouseEvent<HTMLLinkElement>,
+    perspective: Extension<any>,
+  ): void => {
     event.preventDefault();
     if (perspective.properties.id !== activePerspective) {
       setActivePerspective(perspective.properties.id);
@@ -48,9 +51,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       data-test-id="perspective-switcher-toggle"
     >
       <Title size="md">
-        <span className="oc-nav-header__icon">
-          {icon}
-        </span>
+        <span className="oc-nav-header__icon">{icon}</span>
         {name}
       </Title>
     </DropdownToggle>
@@ -60,14 +61,14 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     return perspectives.map((nextPerspective: Extension<any>) => (
       <DropdownItem
         key={nextPerspective.properties.id}
-        onClick={(event: React.MouseEvent<HTMLLinkElement>) => onPerspectiveSelect(event, nextPerspective)}
+        onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
+          onPerspectiveSelect(event, nextPerspective)
+        }
         isHovered={nextPerspective.properties.id === activePerspective}
         href="#"
       >
         <Title size="md">
-          <span className="oc-nav-header__icon">
-            {nextPerspective.properties.icon}
-          </span>
+          <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
           {nextPerspective.properties.name}
         </Title>
       </DropdownItem>
@@ -97,7 +98,5 @@ const mapStateToProps = (state: RootState): StateProps => {
 
 export default connect<StateProps, {}, NavHeaderProps>(
   mapStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective }
-)(
-  NavHeader_
-);
+  { setActivePerspective: UIActions.setActivePerspective },
+)(NavHeader_);

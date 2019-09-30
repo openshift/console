@@ -4,7 +4,12 @@ import { Set as ImmutableSet } from 'immutable';
 import { appHost, testName, checkErrors, checkLogs } from '../../protractor.conf';
 import * as overviewView from '../../views/overview.view';
 import * as crudView from '../../views/crud.view';
-import { DeploymentModel, StatefulSetModel, DeploymentConfigModel, DaemonSetModel } from '../../../public/models';
+import {
+  DeploymentModel,
+  StatefulSetModel,
+  DeploymentConfigModel,
+  DaemonSetModel,
+} from '../../../public/models';
 
 const overviewResources = ImmutableSet([
   DaemonSetModel,
@@ -19,7 +24,7 @@ describe('Visiting Overview page', () => {
     checkLogs();
   });
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     await browser.get(`${appHost}/k8s/cluster/projects/${testName}/workloads`);
     await crudView.isLoaded();
   });
@@ -27,18 +32,20 @@ describe('Visiting Overview page', () => {
   overviewResources.forEach((kindModel) => {
     describe(kindModel.labelPlural, () => {
       const resourceName = `${testName}-${kindModel.kind.toLowerCase()}`;
-      beforeAll(async()=>{
+      beforeAll(async () => {
         await crudView.createNamespacedTestResource(kindModel, resourceName);
       });
 
-      it(`displays a ${kindModel.id} in the project overview list`, async() => {
+      it(`displays a ${kindModel.id} in the project overview list`, async () => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
         await overviewView.itemsAreVisible();
-        expect(overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent()).toBeTruthy();
+        expect(
+          overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent(),
+        ).toBeTruthy();
       });
 
       // Disabling for now due to flake https://jira.coreos.com/browse/CONSOLE-1298
-      xit(`CONSOLE-1298 - shows ${kindModel.id} details sidebar when item is clicked`, async() => {
+      xit(`CONSOLE-1298 - shows ${kindModel.id} details sidebar when item is clicked`, async () => {
         const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, resourceName);
         expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
         await browser.wait(until.elementToBeClickable(overviewListItem));

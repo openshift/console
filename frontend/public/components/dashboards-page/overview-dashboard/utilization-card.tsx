@@ -18,17 +18,22 @@ import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().filter(e => isDashboardExtensionInUse(e, flags)).forEach(pluginQuery => {
-    const queryKey = pluginQuery.properties.queryKey;
-    if (!pluginQueries[queryKey]) {
-      pluginQueries[queryKey] = pluginQuery.properties.query;
-    }
-  });
+  plugins.registry
+    .getDashboardsOverviewQueries()
+    .filter((e) => isDashboardExtensionInUse(e, flags))
+    .forEach((pluginQuery) => {
+      const queryKey = pluginQuery.properties.queryKey;
+      if (!pluginQueries[queryKey]) {
+        pluginQueries[queryKey] = pluginQuery.properties.query;
+      }
+    });
   return _.defaults(pluginQueries, utilizationQueries);
 };
 
 const getItems = (flags: FlagsObject) =>
-  plugins.registry.getDashboardsOverviewUtilizationItems().filter(e => isDashboardExtensionInUse(e, flags));
+  plugins.registry
+    .getDashboardsOverviewUtilizationItems()
+    .filter((e) => isDashboardExtensionInUse(e, flags));
 
 const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
@@ -38,14 +43,14 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 }) => {
   React.useEffect(() => {
     const queries = getQueries(flags);
-    Object.keys(queries).forEach(key => watchPrometheus(queries[key]));
+    Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
 
     const pluginItems = getItems(flags);
-    pluginItems.forEach(item => watchPrometheus(item.properties.query));
+    pluginItems.forEach((item) => watchPrometheus(item.properties.query));
 
     return () => {
-      Object.keys(queries).forEach(key => stopWatchPrometheusQuery(queries[key]));
-      pluginItems.forEach(item => stopWatchPrometheusQuery(item.properties.query));
+      Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
+      pluginItems.forEach((item) => stopWatchPrometheusQuery(item.properties.query));
     };
     // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,11 +58,26 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 
   const queries = getQueries(flags);
   const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'data']);
-  const cpuUtilizationError = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'loadError']);
-  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'data']);
-  const memoryUtilizationError = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'loadError']);
-  const storageUtilization = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'data']);
-  const storageUtilizationError = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'loadError']);
+  const cpuUtilizationError = prometheusResults.getIn([
+    queries[OverviewQuery.CPU_UTILIZATION],
+    'loadError',
+  ]);
+  const memoryUtilization = prometheusResults.getIn([
+    queries[OverviewQuery.MEMORY_UTILIZATION],
+    'data',
+  ]);
+  const memoryUtilizationError = prometheusResults.getIn([
+    queries[OverviewQuery.MEMORY_UTILIZATION],
+    'loadError',
+  ]);
+  const storageUtilization = prometheusResults.getIn([
+    queries[OverviewQuery.STORAGE_UTILIZATION],
+    'data',
+  ]);
+  const storageUtilizationError = prometheusResults.getIn([
+    queries[OverviewQuery.STORAGE_UTILIZATION],
+    'loadError',
+  ]);
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
@@ -71,7 +91,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <UtilizationBody timestamps={cpuStats.map(stat => stat.x as Date)}>
+        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
           <UtilizationItem
             title="CPU"
             data={cpuStats}
@@ -84,7 +104,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
             title="Memory"
             data={memoryStats}
             error={memoryUtilizationError}
-            isLoading={!(memoryUtilization)}
+            isLoading={!memoryUtilization}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[OverviewQuery.MEMORY_UTILIZATION]}
           />
@@ -92,7 +112,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
             title="Disk Usage"
             data={storageStats}
             error={storageUtilizationError}
-            isLoading={!(storageUtilization)}
+            isLoading={!storageUtilization}
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[OverviewQuery.STORAGE_UTILIZATION]}
           />
@@ -118,7 +138,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   );
 };
 
-export const UtilizationCard = connectToFlags(...getFlagsForExtensions([
-  ...plugins.registry.getDashboardsOverviewQueries(),
-  ...plugins.registry.getDashboardsOverviewUtilizationItems(),
-]))(withDashboardResources(UtilizationCard_));
+export const UtilizationCard = connectToFlags(
+  ...getFlagsForExtensions([
+    ...plugins.registry.getDashboardsOverviewQueries(),
+    ...plugins.registry.getDashboardsOverviewUtilizationItems(),
+  ]),
+)(withDashboardResources(UtilizationCard_));

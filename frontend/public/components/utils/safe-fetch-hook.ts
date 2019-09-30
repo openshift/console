@@ -8,5 +8,5 @@ export const useSafeFetch = () => {
     return () => controller.current.abort();
   }, []);
 
-  return (url) => coFetchJSON(url, 'get', {signal: controller.current.signal as AbortSignal});
+  return (url) => coFetchJSON(url, 'get', { signal: controller.current.signal as AbortSignal });
 };

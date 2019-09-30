@@ -17,36 +17,39 @@ const K8S_CREATION_TIMEOUT = 15000;
 describe('Kubernetes resource CRUD operations', () => {
   const testLabel = 'automatedTestName';
   const leakedResources = new Set<string>();
-  const k8sObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('pods', {kind: 'Pod'})
-    .set('services', {kind: 'Service'})
-    .set('serviceaccounts', {kind: 'ServiceAccount'})
-    .set('secrets', {kind: 'Secret'})
-    .set('configmaps', {kind: 'ConfigMap'})
-    .set('persistentvolumes', {kind: 'PersistentVolume', namespaced: false})
-    .set('storageclasses', {kind: 'StorageClass', namespaced: false})
-    .set('ingresses', {kind: 'Ingress'})
-    .set('cronjobs', {kind: 'CronJob'})
-    .set('jobs', {kind: 'Job'})
-    .set('daemonsets', {kind: 'DaemonSet'})
-    .set('deployments', {kind: 'Deployment'})
-    .set('replicasets', {kind: 'ReplicaSet'})
-    .set('replicationcontrollers', {kind: 'ReplicationController'})
-    .set('persistentvolumeclaims', {kind: 'PersistentVolumeClaim'})
-    .set('statefulsets', {kind: 'StatefulSet'})
-    .set('resourcequotas', {kind: 'ResourceQuota'})
-    .set('horizontalpodautoscalers', {kind: 'HorizontalPodAutoscaler'})
-    .set('networkpolicies', {kind: 'NetworkPolicy'})
-    .set('roles', {kind: 'Role'});
-  const openshiftObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('deploymentconfigs', {kind: 'DeploymentConfig'})
-    .set('buildconfigs', {kind: 'BuildConfig'})
-    .set('imagestreams', {kind: 'ImageStream'})
-    .set('routes', {kind: 'Route'});
-  const serviceCatalogObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('clusterservicebrokers', {kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false});
+  const k8sObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>()
+    .set('pods', { kind: 'Pod' })
+    .set('services', { kind: 'Service' })
+    .set('serviceaccounts', { kind: 'ServiceAccount' })
+    .set('secrets', { kind: 'Secret' })
+    .set('configmaps', { kind: 'ConfigMap' })
+    .set('persistentvolumes', { kind: 'PersistentVolume', namespaced: false })
+    .set('storageclasses', { kind: 'StorageClass', namespaced: false })
+    .set('ingresses', { kind: 'Ingress' })
+    .set('cronjobs', { kind: 'CronJob' })
+    .set('jobs', { kind: 'Job' })
+    .set('daemonsets', { kind: 'DaemonSet' })
+    .set('deployments', { kind: 'Deployment' })
+    .set('replicasets', { kind: 'ReplicaSet' })
+    .set('replicationcontrollers', { kind: 'ReplicationController' })
+    .set('persistentvolumeclaims', { kind: 'PersistentVolumeClaim' })
+    .set('statefulsets', { kind: 'StatefulSet' })
+    .set('resourcequotas', { kind: 'ResourceQuota' })
+    .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler' })
+    .set('networkpolicies', { kind: 'NetworkPolicy' })
+    .set('roles', { kind: 'Role' });
+  const openshiftObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>()
+    .set('deploymentconfigs', { kind: 'DeploymentConfig' })
+    .set('buildconfigs', { kind: 'BuildConfig' })
+    .set('imagestreams', { kind: 'ImageStream' })
+    .set('routes', { kind: 'Route' });
+  const serviceCatalogObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>().set(
+    'clusterservicebrokers',
+    { kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false },
+  );
   let testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
-  testObjs = browser.params.servicecatalog === 'true' ? testObjs.merge(serviceCatalogObjs) : testObjs;
+  testObjs =
+    browser.params.servicecatalog === 'true' ? testObjs.merge(serviceCatalogObjs) : testObjs;
 
   afterEach(() => {
     checkLogs();
@@ -55,10 +58,13 @@ describe('Kubernetes resource CRUD operations', () => {
 
   afterAll(() => {
     const leakedArray: Array<string> = [...leakedResources];
-    console.error(`Leaked ${leakedArray.length} resources out of ${testObjs.size}:\n${leakedArray.join('\n')}`);
-    leakedArray.map(r => JSON.parse(r) as {name: string, plural: string, namespace?: string})
-      .filter(r => r.namespace === undefined)
-      .forEach(({name, plural}) => {
+    console.error(
+      `Leaked ${leakedArray.length} resources out of ${testObjs.size}:\n${leakedArray.join('\n')}`,
+    );
+    leakedArray
+      .map((r) => JSON.parse(r) as { name: string; plural: string; namespace?: string })
+      .filter((r) => r.namespace === undefined)
+      .forEach(({ name, plural }) => {
         try {
           execSync(`kubectl delete --cascade ${plural} ${name}`);
         } catch (error) {
@@ -67,27 +73,30 @@ describe('Kubernetes resource CRUD operations', () => {
       });
   });
 
-  testObjs.forEach(({kind, namespaced = true}, resource) => {
-
+  testObjs.forEach(({ kind, namespaced = true }, resource) => {
     describe(kind, () => {
       const name = `${testName}-${kind.toLowerCase()}`;
-      it('displays a list view for the resource', async() => {
-        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`);
+      it('displays a list view for the resource', async () => {
+        await browser.get(
+          `${appHost}${
+            namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'
+          }/${resource}?name=${testName}`,
+        );
         await crudView.isLoaded();
       });
 
       if (namespaced) {
-        it('has a working namespace dropdown on namespaced objects', async() => {
+        it('has a working namespace dropdown on namespaced objects', async () => {
           await browser.wait(until.presenceOf(namespaceView.namespaceSelector));
           expect(namespaceView.namespaceSelector.getText()).toContain(testName);
         });
       } else {
-        it('does not have a namespace dropdown on non-namespaced objects', async() => {
+        it('does not have a namespace dropdown on non-namespaced objects', async () => {
           expect(namespaceView.namespaceSelector.isPresent()).toBe(false);
         });
       }
 
-      it('displays a YAML editor for creating a new resource instance', async() => {
+      it('displays a YAML editor for creating a new resource instance', async () => {
         await crudView.clickListPageCreateYAMLButton();
         const yamlLinkIsPresent = await crudView.createYAMLLink.isPresent();
         if (yamlLinkIsPresent) {
@@ -96,49 +105,70 @@ describe('Kubernetes resource CRUD operations', () => {
         await yamlView.isLoaded();
 
         const content = await yamlView.getEditorContent();
-        const newContent = _.defaultsDeep({}, {metadata: {name, labels: {[testLabel]: testName}}}, safeLoad(content));
+        const newContent = _.defaultsDeep(
+          {},
+          { metadata: { name, labels: { [testLabel]: testName } } },
+          safeLoad(content),
+        );
         await yamlView.setEditorContent(safeDump(newContent));
       });
 
-      it('creates a new resource instance', async() => {
-        leakedResources.add(JSON.stringify({name, plural: resource, namespace: namespaced ? testName : undefined}));
+      it('creates a new resource instance', async () => {
+        leakedResources.add(
+          JSON.stringify({ name, plural: resource, namespace: namespaced ? testName : undefined }),
+        );
         await yamlView.saveButton.click();
 
         expect(crudView.errorMessage.isPresent()).toBe(false);
       });
 
-      it('displays detail view for new resource instance', async() => {
+      it('displays detail view for new resource instance', async () => {
         await browser.wait(until.presenceOf(crudView.resourceTitle));
         expect(browser.getCurrentUrl()).toContain(`/${name}`);
         expect(crudView.resourceTitle.getText()).toEqual(name);
       });
 
-      it('search view displays created resource instance', async() => {
-        await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
+      it('search view displays created resource instance', async () => {
+        await browser.get(
+          `${appHost}/search/${
+            namespaced ? `ns/${testName}` : 'all-namespaces'
+          }?kind=${kind}&q=${testLabel}%3d${testName}`,
+        );
         await crudView.resourceRowsPresent();
         await crudView.filterForName(name);
-        await crudView.rowForName(name).element(by.linkText(name)).click();
+        await crudView
+          .rowForName(name)
+          .element(by.linkText(name))
+          .click();
         await browser.wait(until.urlContains(`/${name}`));
         expect(crudView.resourceTitle.getText()).toEqual(name);
       });
 
-      it('edit the resource instance', async() => {
+      it('edit the resource instance', async () => {
         if (kind !== 'ServiceAccount') {
-          await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
+          await browser.get(
+            `${appHost}/search/${
+              namespaced ? `ns/${testName}` : 'all-namespaces'
+            }?kind=${kind}&q=${testLabel}%3d${testName}`,
+          );
           await crudView.filterForName(name);
           await crudView.resourceRowsPresent();
           await crudView.editRow(kind)(name);
         }
       });
 
-      it('deletes the resource instance', async() => {
-        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+      it('deletes the resource instance', async () => {
+        await browser.get(
+          `${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`,
+        );
         await crudView.resourceRowsPresent();
         // Filter by resource name to make sure the resource is on the first page of results.
         // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
         await crudView.filterForName(name);
         await crudView.deleteRow(kind)(name);
-        leakedResources.delete(JSON.stringify({name, plural: resource, namespace: namespaced ? testName : undefined}));
+        leakedResources.delete(
+          JSON.stringify({ name, plural: resource, namespace: namespaced ? testName : undefined }),
+        );
       });
     });
   });
@@ -146,14 +176,16 @@ describe('Kubernetes resource CRUD operations', () => {
   describe('Role Bindings', () => {
     const bindingName = `${testName}-cluster-admin`;
     const roleName = 'cluster-admin';
-    it('displays "Create Role Binding" page', async() => {
+    it('displays "Create Role Binding" page', async () => {
       await browser.get(`${appHost}/k8s/all-namespaces/rolebindings`);
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
-      await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Role Binding'));
+      await browser.wait(
+        until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Role Binding'),
+      );
     });
 
-    it('creates a RoleBinding', async() => {
+    it('creates a RoleBinding', async () => {
       await browser.wait(crudView.untilNoLoadersPresent);
 
       // Role Binding specific actions
@@ -166,11 +198,15 @@ describe('Kubernetes resource CRUD operations', () => {
 
       await crudView.saveChangesBtn.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
-      await browser.wait(until.presenceOf(element(by.cssContainingText('h1.co-m-pane__heading', bindingName))));
-      leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
+      await browser.wait(
+        until.presenceOf(element(by.cssContainingText('h1.co-m-pane__heading', bindingName))),
+      );
+      leakedResources.add(
+        JSON.stringify({ name: bindingName, plural: 'rolebindings', namespace: testName }),
+      );
     });
 
-    it('displays created RoleBinding in list view', async() => {
+    it('displays created RoleBinding in list view', async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/rolebindings`);
       await crudView.isLoaded();
       await crudView.resourceRowsPresent();
@@ -180,42 +216,47 @@ describe('Kubernetes resource CRUD operations', () => {
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
 
-    it('deletes the RoleBinding', async() => {
+    it('deletes the RoleBinding', async () => {
       await crudView.resourceRowsPresent();
       await crudView.deleteRow('RoleBinding')(bindingName);
-      leakedResources.delete(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
+      leakedResources.delete(
+        JSON.stringify({ name: bindingName, plural: 'rolebindings', namespace: testName }),
+      );
     });
   });
 
   describe('Namespace', () => {
     const name = `${testName}-ns`;
 
-    it('displays `Namespace` list view', async() => {
+    it('displays `Namespace` list view', async () => {
       await browser.get(`${appHost}/k8s/cluster/namespaces`);
       await crudView.isLoaded();
 
       expect(crudView.rowForName(name).isPresent()).toBe(false);
     });
 
-    it('creates the namespace', async() => {
+    it('creates the namespace', async () => {
       await crudView.createYAMLButton.click();
       await browser.wait(until.presenceOf($('.modal-body__field')));
-      await $$('.modal-body__field').get(0).$('input').sendKeys(name);
-      leakedResources.add(JSON.stringify({name, plural: 'namespaces'}));
+      await $$('.modal-body__field')
+        .get(0)
+        .$('input')
+        .sendKeys(name);
+      leakedResources.add(JSON.stringify({ name, plural: 'namespaces' }));
       await $('#confirm-action').click();
       await browser.wait(until.invisibilityOf($('.modal-content')), K8S_CREATION_TIMEOUT);
 
       expect(browser.getCurrentUrl()).toContain(`/k8s/cluster/namespaces/${testName}-ns`);
     });
 
-    it('deletes the namespace', async() => {
+    it('deletes the namespace', async () => {
       await browser.get(`${appHost}/k8s/cluster/namespaces`);
       // Filter by resource name to make sure the resource is on the first page of results.
       // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
       await crudView.filterForName(name);
       await crudView.resourceRowsPresent();
       await crudView.deleteRow('Namespace')(name);
-      leakedResources.delete(JSON.stringify({name, plural: 'namespaces'}));
+      leakedResources.delete(JSON.stringify({ name, plural: 'namespaces' }));
     });
   });
 
@@ -228,7 +269,7 @@ describe('Kubernetes resource CRUD operations', () => {
       kind: 'CustomResourceDefinition',
       metadata: {
         name,
-        labels: {[testLabel]: testName},
+        labels: { [testLabel]: testName },
       },
       spec: {
         group,
@@ -242,13 +283,13 @@ describe('Kubernetes resource CRUD operations', () => {
       },
     };
 
-    it('displays `CustomResourceDefinitions` list view', async() => {
+    it('displays `CustomResourceDefinitions` list view', async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions`);
       await crudView.isLoaded();
       expect(crudView.resourceRows.count()).not.toEqual(0);
     });
 
-    it('displays a YAML editor for creating a new custom resource definition', async() => {
+    it('displays a YAML editor for creating a new custom resource definition', async () => {
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       await yamlView.setEditorContent(safeDump(crd));
@@ -257,27 +298,27 @@ describe('Kubernetes resource CRUD operations', () => {
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it('displays YAML editor for creating a new custom resource instance', async() => {
+    it('displays YAML editor for creating a new custom resource instance', async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd.spec.names.kind,'View Instances');
+      await crudView.clickKebabAction(crd.spec.names.kind, 'View Instances');
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       expect(yamlView.getEditorContent()).toContain(`kind: CRD${testName}`);
     });
 
-    it('creates a new custom resource instance', async() => {
-      leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
+    it('creates a new custom resource instance', async () => {
+      leakedResources.add(JSON.stringify({ name, plural: 'customresourcedefinitions' }));
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
-    it('deletes the `CustomResourceDefinition`', async() => {
+    it('deletes the `CustomResourceDefinition`', async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.resourceRowsPresent();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
-      leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
+      leakedResources.delete(JSON.stringify({ name, plural: 'customresourcedefinitions' }));
     });
   });
 
@@ -287,17 +328,21 @@ describe('Kubernetes resource CRUD operations', () => {
     const kind = 'ConfigMap';
     const labelValue = 'appblah';
 
-    beforeAll(async() => {
+    beforeAll(async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/~new`);
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, {metadata: {name, namespace: testName}}, safeLoad(content));
+      const newContent = _.defaultsDeep(
+        {},
+        { metadata: { name, namespace: testName } },
+        safeLoad(content),
+      );
       await yamlView.setEditorContent(safeDump(newContent));
-      leakedResources.add(JSON.stringify({name, plural, namespace: testName}));
+      leakedResources.add(JSON.stringify({ name, plural, namespace: testName }));
       await yamlView.saveButton.click();
     });
 
-    it('displays modal for editing resource instance labels', async() => {
+    it('displays modal for editing resource instance labels', async () => {
       await crudView.clickDetailsPageAction(crudView.actions.labels);
       await browser.wait(until.presenceOf($('.tags input')));
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
@@ -306,21 +351,29 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('.modal-footer #confirm-action').click();
     });
 
-    it('updates the resource instance labels', async() => {
+    it('updates the resource instance labels', async () => {
       await browser.wait(until.presenceOf($('.co-m-label.co-m-label--expand')));
-      expect($$('.co-m-label__key').first().getText()).toEqual(labelValue);
+      expect(
+        $$('.co-m-label__key')
+          .first()
+          .getText(),
+      ).toEqual(labelValue);
     });
 
-    it('sees if label links still work', async() => {
-      await $$('.co-m-label').first().click();
-      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=core~v1~ConfigMap&q=${labelValue}`));
+    it('sees if label links still work', async () => {
+      await $$('.co-m-label')
+        .first()
+        .click();
+      await browser.wait(
+        until.urlContains(`/search/ns/${testName}?kind=core~v1~ConfigMap&q=${labelValue}`),
+      );
 
       expect($('.co-text-configmap').isDisplayed()).toBe(true);
     });
 
-    afterAll(async() => {
+    afterAll(async () => {
       await crudView.deleteResource(plural, kind, name);
-      leakedResources.delete(JSON.stringify({name, plural, namespace: testName}));
+      leakedResources.delete(JSON.stringify({ name, plural, namespace: testName }));
     });
   });
 
@@ -334,9 +387,8 @@ describe('Kubernetes resource CRUD operations', () => {
       '/',
       '/k8s/all-namespaces/alertmanagers',
       '/k8s/ns/tectonic-system/alertmanagers/main',
-    ]).forEach(route => {
-
-      it(`successfully displays view for route: ${route}`, async() => {
+    ]).forEach((route) => {
+      it(`successfully displays view for route: ${route}`, async () => {
         await browser.get(`${appHost}${route}`);
         await browser.sleep(5000);
       });

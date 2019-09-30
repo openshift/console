@@ -33,19 +33,31 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   render() {
-    const {hasError, error, errorInfo} = this.state;
+    const { hasError, error, errorInfo } = this.state;
     const FallbackComponent = this.props.FallbackComponent || DefaultFallback;
-    return hasError
-      ? <FallbackComponent title={error.name} componentStack={errorInfo.componentStack} errorMessage={error.message} stack={error.stack} />
-      : <React.Fragment>{this.props.children}</React.Fragment>;
+    return hasError ? (
+      <FallbackComponent
+        title={error.name}
+        componentStack={errorInfo.componentStack}
+        errorMessage={error.message}
+        stack={error.stack}
+      />
+    ) : (
+      <React.Fragment>{this.props.children}</React.Fragment>
+    );
   }
 }
 
-export const withFallback: WithFallback = (Component, FallbackComponent) => (props) => <ErrorBoundary FallbackComponent={FallbackComponent}>
-  <Component {...props} />
-</ErrorBoundary>;
+export const withFallback: WithFallback = (Component, FallbackComponent) => (props) => (
+  <ErrorBoundary FallbackComponent={FallbackComponent}>
+    <Component {...props} />
+  </ErrorBoundary>
+);
 
-export type WithFallback = <P = {}>(Component: React.ComponentType<P>, FallbackComponent?: React.ComponentType<any>) => React.ComponentType<P>;
+export type WithFallback = <P = {}>(
+  Component: React.ComponentType<P>,
+  FallbackComponent?: React.ComponentType<any>,
+) => React.ComponentType<P>;
 
 export type ErrorBoundaryFallbackProps = {
   errorMessage: string;
@@ -60,6 +72,6 @@ export type ErrorBoundaryProps = {
 
 export type ErrorBoundaryState = {
   hasError: boolean;
-  error: {message: string, stack: string, name: string};
-  errorInfo: {componentStack: string};
+  error: { message: string; stack: string; name: string };
+  errorInfo: { componentStack: string };
 };

@@ -27,7 +27,7 @@ import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
 
-const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick, onEscape, autoFocus}) => {
+const KebabItemEnabled: React.FC<KebabItemProps> = ({ option, onClick, onEscape, autoFocus }) => {
   const handleEscape = (e) => {
     if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
       onEscape();
@@ -40,46 +40,57 @@ const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick, onEscape, 
       onClick={(e) => onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
-      data-test-action={option.label}>{option.label}
+      data-test-action={option.label}
+    >
+      {option.label}
     </button>
   );
 };
 
-const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({option}) => {
+const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({ option }) => {
   return <button className="pf-c-dropdown__menu-item pf-m-disabled">{option.label}</button>;
 };
 
 const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
-  return isAllowed
-    ? <KebabItemEnabled {...props} />
-    : <KebabItemDisabled option={option} />;
+  return isAllowed ? <KebabItemEnabled {...props} /> : <KebabItemDisabled option={option} />;
 };
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
 export const KebabItem: React.FC<KebabItemProps> = (props) => {
-  return props.option.accessReview
-    ? <KebabItemAccessReview {...props} />
-    : <KebabItemEnabled {...props} />;
+  return props.option.accessReview ? (
+    <KebabItemAccessReview {...props} />
+  ) : (
+    <KebabItemEnabled {...props} />
+  );
 };
 
-export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick, focusItem}) => {
-  const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
-  return <ul className="pf-c-dropdown__menu pf-m-align-right" data-test-id="action-items">
-    {_.map(visibleOptions, (o, i) => <li key={i}>
-      <KebabItem option={o} onClick={onClick} autoFocus={focusItem ? o === focusItem : undefined} />
-    </li>)}
-  </ul>;
+export const KebabItems: React.SFC<KebabItemsProps> = ({ options, onClick, focusItem }) => {
+  const visibleOptions = _.reject(options, (o) => _.get(o, 'hidden', false));
+  return (
+    <ul className="pf-c-dropdown__menu pf-m-align-right" data-test-id="action-items">
+      {_.map(visibleOptions, (o, i) => (
+        <li key={i}>
+          <KebabItem
+            option={o}
+            onClick={onClick}
+            autoFocus={focusItem ? o === focusItem : undefined}
+          />
+        </li>
+      ))}
+    </ul>
+  );
 };
 
 const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label}`,
-    callback: () => deleteModal({
-      kind,
-      resource: obj,
-    }),
+    callback: () =>
+      deleteModal({
+        kind,
+        resource: obj,
+      }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind, obj) => ({
@@ -90,55 +101,61 @@ const kebabFactory: KebabFactory = {
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Edit Labels',
-    callback: () => labelsModal({
-      kind,
-      resource: obj,
-      blocking: true,
-    }),
+    callback: () =>
+      labelsModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Edit Pod Selector',
-    callback: () => podSelectorModal({
-      kind,
-      resource:  obj,
-      blocking: true,
-    }),
+    callback: () =>
+      podSelectorModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind, obj) => ({
     label: 'Edit Annotations',
-    callback: () => annotationsModal({
-      kind,
-      resource: obj,
-      blocking: true,
-    }),
+    callback: () =>
+      annotationsModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
     label: 'Edit Count',
-    callback: () => configureReplicaCountModal({
-      resourceKind: kind,
-      resource: obj,
-    }),
+    callback: () =>
+      configureReplicaCountModal({
+        resourceKind: kind,
+        resource: obj,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTaints: (kind, obj) => ({
     label: 'Edit Taints',
-    callback: () => taintsModal({
-      resourceKind: kind,
-      resource: obj,
-      modalClassName: 'modal-lg',
-    }),
+    callback: () =>
+      taintsModal({
+        resourceKind: kind,
+        resource: obj,
+        modalClassName: 'modal-lg',
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTolerations: (kind, obj) => ({
     label: 'Edit Tolerations',
-    callback: () => tolerationsModal({
-      resourceKind: kind,
-      resource: obj,
-      modalClassName: 'modal-lg',
-    }),
+    callback: () =>
+      tolerationsModal({
+        resourceKind: kind,
+        resource: obj,
+        modalClassName: 'modal-lg',
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind, obj) => ({
@@ -148,16 +165,22 @@ const kebabFactory: KebabFactory = {
   }),
   ExpandPVC: (kind, obj) => ({
     label: 'Expand PVC',
-    callback: () => expandPVCModal({
-      kind,
-      resource: obj,
-    }),
+    callback: () =>
+      expandPVCModal({
+        kind,
+        resource: obj,
+      }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
 };
 
 // The common menu actions that most resource share
-kebabFactory.common = [kebabFactory.ModifyLabels, kebabFactory.ModifyAnnotations, kebabFactory.Edit, kebabFactory.Delete];
+kebabFactory.common = [
+  kebabFactory.ModifyLabels,
+  kebabFactory.ModifyAnnotations,
+  kebabFactory.Edit,
+  kebabFactory.Delete,
+];
 
 export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
   const extensionActions = [];
@@ -172,17 +195,21 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const {actions, kindObj, resource, isDisabled} = props;
+  const { actions, kindObj, resource, isDisabled } = props;
 
   if (!kindObj) {
     return null;
   }
-  const options = _.reject(actions.map(a => a(kindObj, resource)), 'hidden');
-  return <Kebab
-    options={options}
-    key={resource.metadata.uid}
-    isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-  />;
+  const options = _.reject(actions.map((a) => a(kindObj, resource)), 'hidden');
+  return (
+    <Kebab
+      options={options}
+      key={resource.metadata.uid}
+      isDisabled={
+        isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
+      }
+    />
+  );
 });
 
 export class Kebab extends DropdownMixin {
@@ -214,38 +241,54 @@ export class Kebab extends DropdownMixin {
         checkAccess(option.accessReview);
       }
     });
-  }
+  };
 
   render() {
-    const {options, isDisabled} = this.props;
+    const { options, isDisabled } = this.props;
 
-    return <div ref={this.dropdownElement} className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
-      <button
-        type="button"
-        aria-expanded={this.state.active}
-        aria-haspopup="true"
-        aria-label="Actions"
-        className="pf-c-dropdown__toggle pf-m-plain"
-        data-test-id="kebab-button"
-        disabled={isDisabled}
-        onClick={this.toggle}
-        onFocus={this.onHover}
-        onMouseEnter={this.onHover}
+    return (
+      <div
+        ref={this.dropdownElement}
+        className={classNames({
+          'dropdown pf-c-dropdown': true,
+          'pf-m-expanded': this.state.active,
+        })}
       >
-        <EllipsisVIcon />
-      </button>
-      {(!isDisabled && this.state.active) && <KebabItems options={options} onClick={this.onClick} />}
-    </div>;
+        <button
+          type="button"
+          aria-expanded={this.state.active}
+          aria-haspopup="true"
+          aria-label="Actions"
+          className="pf-c-dropdown__toggle pf-m-plain"
+          data-test-id="kebab-button"
+          disabled={isDisabled}
+          onClick={this.toggle}
+          onFocus={this.onHover}
+          onMouseEnter={this.onHover}
+        >
+          <EllipsisVIcon />
+        </button>
+        {!isDisabled && this.state.active && (
+          <KebabItems options={options} onClick={this.onClick} />
+        )}
+      </div>
+    );
   }
 }
 
 export type KebabOption = {
-  hidden?: boolean,
+  hidden?: boolean;
   label: string;
-  href?: string, callback?: () => any;
+  href?: string;
+  callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;
 };
-export type KebabAction = (kind: K8sKind, obj: K8sResourceKind, resources?: any, customData?: any) => KebabOption;
+export type KebabAction = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  resources?: any,
+  customData?: any,
+) => KebabOption;
 
 export type ResourceKebabProps = {
   kindObj: K8sKind;
@@ -266,7 +309,7 @@ type KebabItemProps = {
 type KebabItemDisabledProps = React.HTMLProps<HTMLButtonElement> & {
   option: KebabOption;
   isActionDropdown?: boolean;
-}
+};
 
 export type KebabItemsProps = {
   options: KebabOption[];
@@ -275,7 +318,7 @@ export type KebabItemsProps = {
   focusItem?: KebabOption;
 };
 
-export type KebabFactory = {[name: string]: KebabAction} & {common?: KebabAction[]};
+export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
 KebabItems.displayName = 'KebabItems';
 ResourceKebab.displayName = 'ResourceKebab';

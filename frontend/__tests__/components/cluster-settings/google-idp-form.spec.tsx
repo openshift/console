@@ -2,11 +2,14 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
-import { AddGooglePage, AddGooglePageState } from '../../../public/components/cluster-settings/google-idp-form';
+import {
+  AddGooglePage,
+  AddGooglePageState,
+} from '../../../public/components/cluster-settings/google-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Google', () => {
-  let wrapper : ShallowWrapper<{}, AddGooglePageState>;
+  let wrapper: ShallowWrapper<{}, AddGooglePageState>;
 
   beforeEach(() => {
     wrapper = shallow(<AddGooglePage />);

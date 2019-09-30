@@ -6,13 +6,7 @@ import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 
 import { ClusterOperatorModel } from '../../models';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableRow,
-  TableData,
-} from '../factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
@@ -36,12 +30,11 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import {
-  GreenCheckCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
-export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
+export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
+  ClusterOperatorModel,
+);
 
 const getIcon = (status: OperatorStatus) => {
   return {
@@ -52,9 +45,13 @@ const getIcon = (status: OperatorStatus) => {
   }[status];
 };
 
-const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({status}) => {
+const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({ status }) => {
   const icon = getIcon(status);
-  return <React.Fragment>{icon} {status}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {icon} {status}
+    </React.Fragment>
+  );
 };
 
 const tableColumnClasses = [
@@ -68,38 +65,53 @@ const tableColumnClasses = [
 const ClusterOperatorTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      title: 'Name',
+      sortField: 'metadata.name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Status', sortFunc: 'getClusterOperatorStatus', transforms: [sortable],
+      title: 'Status',
+      sortFunc: 'getClusterOperatorStatus',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Version', sortFunc: 'getClusterOperatorVersion', transforms: [sortable],
+      title: 'Version',
+      sortFunc: 'getClusterOperatorVersion',
+      transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Message', props: { className: tableColumnClasses[3] },
+      title: 'Message',
+      props: { className: tableColumnClasses[3] },
     },
   ];
 };
 ClusterOperatorTableHeader.displayName = 'ClusterOperatorTableHeader';
 
-const ClusterOperatorTableRow: React.FC<ClusterOperatorTableRowProps> = ({obj, index, key, style}) => {
+const ClusterOperatorTableRow: React.FC<ClusterOperatorTableRowProps> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
   const { status, message } = getStatusAndMessage(obj);
   const operatorVersion = getClusterOperatorVersion(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={clusterOperatorReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink
+          kind={clusterOperatorReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+          title={obj.metadata.name}
+        />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <OperatorStatusIconAndLabel status={status} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {operatorVersion || '-'}
-      </TableData>
+      <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word', 'co-pre-line')}>
         {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
       </TableData>
@@ -114,7 +126,15 @@ type ClusterOperatorTableRowProps = {
   style: object;
 };
 
-export const ClusterOperatorList: React.SFC = props => <Table {...props} aria-label="Cluster Operators" Header={ClusterOperatorTableHeader} Row={ClusterOperatorTableRow} virtualize />;
+export const ClusterOperatorList: React.SFC = (props) => (
+  <Table
+    {...props}
+    aria-label="Cluster Operators"
+    Header={ClusterOperatorTableHeader}
+    Row={ClusterOperatorTableRow}
+    virtualize
+  />
+);
 
 const allStatuses = [
   OperatorStatus.Available,
@@ -123,32 +143,38 @@ const allStatuses = [
   OperatorStatus.Unknown,
 ];
 
-const filters = [{
-  type: 'cluster-operator-status',
-  selected: allStatuses,
-  reducer: getClusterOperatorStatus,
-  items: _.map(allStatuses, phase => ({
-    id: phase,
-    title: phase,
-  })),
-}];
+const filters = [
+  {
+    type: 'cluster-operator-status',
+    selected: allStatuses,
+    reducer: getClusterOperatorStatus,
+    items: _.map(allStatuses, (phase) => ({
+      id: phase,
+      title: phase,
+    })),
+  },
+];
 
-const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({cv}) => {
-  const updateCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
+const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({ cv }) => {
+  const updateCondition = getClusterVersionCondition(
+    cv,
+    ClusterVersionConditionType.Progressing,
+    K8sResourceConditionStatus.True,
+  );
   return (
     <React.Fragment>
-      { updateCondition &&
+      {updateCondition && (
         <div className="co-m-pane__body co-m-pane__body--section-heading">
           <Alert isInline className="co-alert" variant="info" title="Cluster update in progress.">
             {updateCondition.message}
           </Alert>
         </div>
-      }
+      )}
     </React.Fragment>
   );
 };
 
-export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
+export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = (props) => (
   <React.Fragment>
     <UpdateInProgressAlert cv={props.cv} />
     <ListPage
@@ -159,12 +185,14 @@ export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
       canCreate={false}
       rowFilters={filters}
     />
-  </React.Fragment>;
+  </React.Fragment>
+);
 
-const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
-  return _.isEmpty(versions)
-    ? <EmptyBox label="Versions" />
-    : <div className="co-table-container">
+const OperandVersions: React.SFC<OperandVersionsProps> = ({ versions }) => {
+  return _.isEmpty(versions) ? (
+    <EmptyBox label="Versions" />
+  ) : (
+    <div className="co-table-container">
       <table className="table">
         <thead>
           <tr>
@@ -173,7 +201,7 @@ const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
           </tr>
         </thead>
         <tbody>
-          {_.map(versions, ({name, version}, i) => (
+          {_.map(versions, ({ name, version }, i) => (
             <tr key={i}>
               <td>{name}</td>
               <td>{version}</td>
@@ -181,18 +209,17 @@ const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
           ))}
         </tbody>
       </table>
-    </div>;
+    </div>
+  );
 };
 
-
-const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) => {
+const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj }) => {
   const { status, message } = getStatusAndMessage(obj);
   const versions: OperandVersion[] = _.get(obj, 'status.versions', []);
   const conditions = _.get(obj, 'status.conditions', []);
   // Show the operator version in the details overview if it's the only version.
-  const operatorVersion = versions.length === 1 && versions[0].name === 'operator'
-    ? versions[0].version
-    : null;
+  const operatorVersion =
+    versions.length === 1 && versions[0].name === 'operator' ? versions[0].version : null;
   return (
     <React.Fragment>
       <div className="co-m-pane__body">
@@ -203,12 +230,16 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) =
           </div>
           <div className="col-sm-6">
             <dl>
-              {operatorVersion && <React.Fragment>
-                <dt>Version</dt>
-                <dd>{operatorVersion}</dd>
-              </React.Fragment>}
+              {operatorVersion && (
+                <React.Fragment>
+                  <dt>Version</dt>
+                  <dd>{operatorVersion}</dd>
+                </React.Fragment>
+              )}
               <dt>Status</dt>
-              <dd><OperatorStatusIconAndLabel status={status} /></dd>
+              <dd>
+                <OperatorStatusIconAndLabel status={status} />
+              </dd>
               <dt>Message</dt>
               <dd className="co-pre-line">{message || '-'}</dd>
             </dl>
@@ -227,12 +258,13 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) =
   );
 };
 
-export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPageProps> = props =>
+export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={clusterOperatorReference}
     pages={[navFactory.details(ClusterOperatorDetails), navFactory.editYaml()]}
-  />;
+  />
+);
 
 type OperatorStatusIconAndLabelProps = {
   status: OperatorStatus;

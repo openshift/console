@@ -71,7 +71,7 @@ const parsers = {
     return {
       // as per http://kubernetes.io/docs/api-reference/v1/definitions/#_v1_tcpsocketaction
       // port can be either number or IANA name
-      port: /^\d+$/.test(str) ? (+str) : str,
+      port: /^\d+$/.test(str) ? +str : str,
     };
   },
 };
@@ -144,7 +144,10 @@ export function getActionLabelFromObject(obj: Handler): string {
   return getActionLabel(a);
 }
 
-export const getLifecycleHookLabel = function(lifecycle: ContainerLifecycle, stage: ContainerLifecycleStage) {
+export const getLifecycleHookLabel = function(
+  lifecycle: ContainerLifecycle,
+  stage: ContainerLifecycleStage,
+) {
   if (!lifecycle || !stage || !lifecycle[stage]) {
     return '';
   }
