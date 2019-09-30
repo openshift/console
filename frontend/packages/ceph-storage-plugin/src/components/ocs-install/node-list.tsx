@@ -33,12 +33,7 @@ import {
 } from '@console/internal/module/k8s';
 import { NodeModel, InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel } from '../../models';
-import {
-  infraProvisionerMap,
-  minSelectedNode,
-  ocsRequestData,
-  taintObj,
-} from '../../constants/ocs-install';
+import { infraProvisionerMap, minSelectedNode, ocsRequestData } from '../../constants/ocs-install';
 
 import './ocs-install.scss';
 
@@ -213,34 +208,35 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
   };
 
   // tainting the selected nodes
-  const makeTaintNodesRequest = (selectedNode: NodeKind[]): Promise<NodeKind>[] => {
-    const taintNodesRequest = selectedNode
-      .filter((node: NodeKind) => {
-        const roles = getNodeRoles(node);
-        // don't taint master nodes as its already tainted
-        return roles.indexOf('master') === -1;
-      })
-      .map((node) => {
-        const taints = node.spec && node.spec.taints ? [...node.spec.taints, taintObj] : [taintObj];
-        const patch = [
-          {
-            value: taints,
-            path: '/spec/taints',
-            op: node.spec.taints ? 'replace' : 'add',
-          },
-        ];
-        return k8sPatch(NodeModel, node, patch);
-      });
+  // const makeTaintNodesRequest = (selectedNode: NodeKind[]): Promise<NodeKind>[] => {
+  //   const taintNodesRequest = selectedNode
+  //     .filter((node: NodeKind) => {
+  //       const roles = getNodeRoles(node);
+  //       // don't taint master nodes as its already tainted
+  //       return roles.indexOf('master') === -1;
+  //     })
+  //     .map((node) => {
+  //       const taints = node.spec && node.spec.taints ? [...node.spec.taints, taintObj] : [taintObj];
+  //       const patch = [
+  //         {
+  //           value: taints,
+  //           path: '/spec/taints',
+  //           op: node.spec.taints ? 'replace' : 'add',
+  //         },
+  //       ];
+  //       return k8sPatch(NodeModel, node, patch);
+  //     });
 
-    return taintNodesRequest;
-  };
+  //   return taintNodesRequest;
+  // };
 
   const makeOCSRequest = () => {
     const selectedData: NodeKind[] = _.filter(nodes, 'selected');
     const promises = [];
 
     promises.push(...makeLabelNodesRequest(selectedData));
-    promises.push(...makeTaintNodesRequest(selectedData));
+    // intentionally keeping the taint logic as its required in 4.3 and will be handled with checkbox selection
+    // promises.push(...makeTaintNodesRequest(selectedData));
 
     const ocsObj = _.cloneDeep(ocsRequestData);
     ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
