@@ -11,6 +11,10 @@
   .odc-base-edge {
     opacity: 0.3;
 
+    &.is-hover {
+      stroke: var(--pf-global--BackgroundColor--dark-200);
+    }
+
     &.is-highlight {
       opacity: 0.5;
     }

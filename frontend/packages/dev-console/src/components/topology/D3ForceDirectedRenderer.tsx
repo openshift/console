@@ -1,5 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 import * as React from 'react';
+import * as classNames from 'classnames';
 import * as d3 from 'd3';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
@@ -76,7 +77,8 @@ export interface D3ForceDirectedRendererProps {
   contextMenu: ContextMenuProvider;
   nodeSize: number;
   selected?: string;
-  onSelect?(string): void;
+  selectedType?: string;
+  onSelect?(type: GraphElementType, id: string): void;
   onUpdateNodeGroup?(nodeId: string, targetGroup: string): Promise<any>;
   onCreateConnection?(
     sourceNodeId: string,
@@ -259,7 +261,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
     if (this.ignoreNextSizeChange && sizeChanged) {
       this.ignoreNextSizeChange = false;
       if (this.props.selected) {
-        this.makeNodeVisible(this.props.selected);
+        this.makeSelectionVisible();
       }
     }
 
@@ -309,21 +311,46 @@ export default class D3ForceDirectedRenderer extends React.Component<
     this.setState({ zoomTransform: d3.event.transform });
   };
 
-  private makeNodeVisible = (nodeId: string) => {
+  private makeBoxVisible = (boundingBox: {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  }) => {
     const { width, height } = this.props;
-    const { nodesById, zoomTransform = { x: 0, y: 0, k: 1 } } = this.state;
-    const node: ViewNode = nodesById[nodeId];
-    let moveToNode = false;
+    const { zoomTransform = { x: 0, y: 0, k: 1 } } = this.state;
+    let move = false;
     const panOffset = 20;
-
-    if (!node) {
-      return;
-    }
 
     const center = {
       x: (width / 2 - zoomTransform.x) / zoomTransform.k,
       y: (height / 2 - zoomTransform.y) / zoomTransform.k,
     };
+
+    if (boundingBox.right < 0) {
+      center.x += (boundingBox.left - panOffset) / zoomTransform.k;
+      move = true;
+    }
+    if (boundingBox.left > width) {
+      center.x += (boundingBox.right - width + panOffset) / zoomTransform.k;
+      move = true;
+    }
+    if (boundingBox.bottom < 0) {
+      center.y += (boundingBox.top - panOffset) / zoomTransform.k;
+      move = true;
+    }
+    if (boundingBox.top > height) {
+      center.y += (boundingBox.bottom - height + panOffset) / zoomTransform.k;
+      move = true;
+    }
+
+    if (move) {
+      this.zoom.translateTo(this.$svg, center.x, center.y);
+    }
+  };
+
+  private getNodeBoundingBox = (node: ViewNode) => {
+    const { zoomTransform = { x: 0, y: 0, k: 1 } } = this.state;
 
     const nodeMin = {
       x: zoomTransform.x + (node.x - node.size / 2) * zoomTransform.k,
@@ -334,26 +361,60 @@ export default class D3ForceDirectedRenderer extends React.Component<
       y: zoomTransform.y + (node.y + node.size / 2) * zoomTransform.k,
     };
 
-    if (nodeMax.x < 0) {
-      center.x += (nodeMin.x - panOffset) / zoomTransform.k;
-      moveToNode = true;
-    }
-    if (nodeMin.x > width) {
-      center.x += (nodeMax.x - width + panOffset) / zoomTransform.k;
-      moveToNode = true;
-    }
-    if (nodeMax.y < 0) {
-      center.y += (nodeMin.y - panOffset) / zoomTransform.k;
-      moveToNode = true;
-    }
-    if (nodeMin.y > height) {
-      center.y += (nodeMax.y - height + panOffset) / zoomTransform.k;
-      moveToNode = true;
+    return {
+      left: nodeMin.x,
+      right: nodeMax.x,
+      top: nodeMin.y,
+      bottom: nodeMax.y,
+    };
+  };
+
+  private makeNodeVisible = (nodeId) => {
+    const { nodesById } = this.state;
+    const node: ViewNode = nodesById[nodeId];
+
+    if (!node) {
+      return;
     }
 
-    if (moveToNode) {
-      this.zoom.translateTo(this.$svg, center.x, center.y);
+    this.makeBoxVisible(this.getNodeBoundingBox(node));
+  };
+
+  private makeGroupVisible = (groupId: string) => {
+    const { groupsById } = this.state;
+    const group: ViewGroup = groupsById[groupId];
+
+    const boundingBox = _.reduce(
+      group.nodes,
+      (box, node) => {
+        const nodeBox = this.getNodeBoundingBox(node);
+        return {
+          left: Math.min(nodeBox.left, box.left),
+          right: Math.max(nodeBox.right, box.right),
+          top: Math.min(nodeBox.top, box.top),
+          bottom: Math.max(nodeBox.bottom, box.bottom),
+        };
+      },
+      {
+        left: Number.POSITIVE_INFINITY,
+        right: Number.NEGATIVE_INFINITY,
+        top: Number.POSITIVE_INFINITY,
+        bottom: Number.NEGATIVE_INFINITY,
+      },
+    );
+
+    this.makeBoxVisible(boundingBox);
+  };
+
+  private makeSelectionVisible = () => {
+    const { selectedType, selected } = this.props;
+
+    if (selectedType === GraphElementType.node) {
+      this.makeNodeVisible(selected);
+      return;
     }
+
+    this.makeGroupVisible(selected);
   };
 
   private lockNodes = () => {
@@ -822,9 +883,57 @@ export default class D3ForceDirectedRenderer extends React.Component<
   private deselect = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (this.props.selected) {
-      this.props.onSelect(null);
+      this.props.onSelect(null, null);
     }
   };
+
+  private isDragActive = (): boolean => {
+    const { dragNodeId, createConnection, moveConnection } = this.state;
+    return !!dragNodeId || !!moveConnection || (!!createConnection && createConnection.dragging);
+  };
+
+  private draggedEdges() {
+    const { dragNodeId, edgesById } = this.state;
+    if (!dragNodeId) {
+      return [];
+    }
+    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
+    });
+    return _.map(edges, 'id');
+  }
+
+  private draggedNodes() {
+    const { dragNodeId, edgesById, nodes } = this.state;
+    if (!dragNodeId) {
+      return [];
+    }
+    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
+      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
+    });
+
+    return _.filter(nodes, (nodeId: string) =>
+      _.find(edges, (edge: ViewEdge) => edge.source.id === nodeId || edge.target.id === nodeId),
+    );
+  }
+
+  private createGroupLinks(): any[] {
+    const { groups, groupsById } = this.state;
+    const groupLinks = [];
+    // link each node within a group together to form group clusters
+    groups.forEach((g) => {
+      const { nodes } = groupsById[g];
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          groupLinks.push({
+            source: nodes[i],
+            target: nodes[j],
+          });
+        }
+      }
+    });
+    return groupLinks;
+  }
 
   public api() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -886,51 +995,31 @@ export default class D3ForceDirectedRenderer extends React.Component<
     return api;
   }
 
-  private createGroupLinks(): any[] {
-    const { groups, groupsById } = this.state;
-    const groupLinks = [];
-    // link each node within a group together to form group clusters
-    groups.forEach((g) => {
-      const { nodes } = groupsById[g];
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          groupLinks.push({
-            source: nodes[i],
-            target: nodes[j],
-          });
-        }
-      }
-    });
-    return groupLinks;
-  }
+  renderGroup(groupId: string) {
+    const { groupProvider, onSelect, selectedType, selected } = this.props;
+    const { groupsById, sourceGroup, targetGroup } = this.state;
+    const viewGroup = groupsById[groupId];
+    const Component = groupProvider(viewGroup.type);
 
-  private draggedEdges() {
-    const { dragNodeId, edgesById } = this.state;
-    if (!dragNodeId) {
-      return [];
-    }
-    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
-      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
-    });
-    return _.map(edges, 'id');
-  }
-
-  private draggedNodes() {
-    const { dragNodeId, edgesById, nodes } = this.state;
-    if (!dragNodeId) {
-      return [];
-    }
-    const edges = _.filter(edgesById, (viewEdge: ViewEdge) => {
-      return viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId;
-    });
-
-    return _.filter(nodes, (nodeId: string) =>
-      _.find(edges, (edge: ViewEdge) => edge.source.id === nodeId || edge.target.id === nodeId),
+    return (
+      <GroupWrapper
+        component={Component}
+        {...viewGroup}
+        key={groupId}
+        onEnter={this.onGroupEnter}
+        view={viewGroup}
+        onSelect={onSelect ? () => onSelect(GraphElementType.group, groupId) : null}
+        selected={selectedType === GraphElementType.group && selected === groupId}
+        dragActive={this.isDragActive()}
+        dropSource={groupId === sourceGroup}
+        dropTarget={groupId === targetGroup}
+        groupRef={(ref: GroupElementInterface) => this.refGroupSvg(ref, groupId)}
+      />
     );
   }
 
   renderNode(nodeId: string) {
-    const { nodeProvider, selected, onSelect, topology } = this.props;
+    const { nodeProvider, selected, selectedType, onSelect, topology } = this.props;
     const {
       nodesById,
       dragNodeId,
@@ -949,8 +1038,9 @@ export default class D3ForceDirectedRenderer extends React.Component<
         view={viewNode}
         data={data}
         key={nodeId}
-        selected={nodeId === selected}
-        onSelect={onSelect ? () => onSelect(nodeId) : null}
+        dragActive={this.isDragActive()}
+        selected={selectedType === GraphElementType.node && nodeId === selected}
+        onSelect={onSelect ? () => onSelect(GraphElementType.node, nodeId) : null}
         onEnter={this.onNodeEnter}
         onHover={(hovered: boolean) => this.onNodeHover(viewNode, hovered)}
         isDragging={
@@ -1019,6 +1109,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         {...viewEdge}
         key={edgeId}
         data={data}
+        dragActive={this.isDragActive()}
         isDragging={viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId}
         onTargetArrowEnter={this.onMoveConnectionEnter}
         onRemove={() => onRemoveConnection(viewEdge.source.id, viewEdge.target.id)}
@@ -1036,16 +1127,13 @@ export default class D3ForceDirectedRenderer extends React.Component<
   }
 
   render() {
-    const { width, height, groupProvider } = this.props;
+    const { width, height } = this.props;
     const {
       nodes,
       edges,
       groups,
-      groupsById,
       zoomTransform,
       dragNodeId,
-      sourceGroup,
-      targetGroup,
       createConnection,
       moveConnection,
     } = this.state;
@@ -1053,35 +1141,19 @@ export default class D3ForceDirectedRenderer extends React.Component<
     const draggedNodes = this.draggedNodes();
     const dragActive =
       dragNodeId || !!moveConnection || (createConnection && createConnection.dragging);
+
+    const className = classNames('odc-graph__svg', { 'odc-m-drag-active': dragActive });
     return (
       <svg
         height={height}
         width={width}
         ref={this.refSvg}
         onClick={this.deselect}
-        className={dragActive ? 'odc-m-drag-active' : ''}
+        className={className}
       >
         <SvgDefsProvider>
           <g transform={zoomTransform && zoomTransform.toString()} ref={this.zoomGroup}>
-            <g>
-              {groups.map((groupId) => {
-                const viewGroup = groupsById[groupId];
-                const Component = groupProvider(viewGroup.type);
-
-                return (
-                  <GroupWrapper
-                    component={Component}
-                    {...viewGroup}
-                    key={groupId}
-                    onEnter={this.onGroupEnter}
-                    view={viewGroup}
-                    dropSource={groupId === sourceGroup}
-                    dropTarget={groupId === targetGroup}
-                    groupRef={(ref: GroupElementInterface) => this.refGroupSvg(ref, groupId)}
-                  />
-                );
-              })}
-            </g>
+            <g>{groups.map((groupId) => this.renderGroup(groupId))}</g>
             <g>
               {edges.map((edgeId) =>
                 _.includes(draggedEdges, edgeId) ? null : this.renderEdge(edgeId),

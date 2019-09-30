@@ -65,6 +65,12 @@ export interface TopologyDataObject<D = {}> {
   data: D;
 }
 
+export interface TopologyApplicationObject {
+  id: string;
+  name: string;
+  resources: TopologyDataObject[];
+}
+
 export interface WorkloadData {
   url?: string;
   editUrl?: string;
@@ -83,6 +89,12 @@ export interface GraphApi {
   zoomReset(): void;
   zoomFit(): void;
   resetLayout(): void;
+}
+
+export enum GraphElementType {
+  node = 'node',
+  edge = 'edge',
+  group = 'group',
 }
 
 export interface Selectable {
@@ -124,6 +136,7 @@ export type ViewGroup = {
 export type NodeProps<D = {}> = ViewNode &
   Selectable & {
     data?: TopologyDataObject<D>;
+    dragActive?: boolean;
     isDragging?: boolean;
     isTarget?: boolean;
     onHover?(hovered: boolean): void;
@@ -138,16 +151,19 @@ export type DragConnectionProps = NodeProps & {
 
 export type EdgeProps<D = {}> = ViewEdge & {
   data?: TopologyDataObject<D>;
+  dragActive?: boolean;
   isDragging?: boolean;
   targetArrowRef?(ref: SVGPathElement): void;
   onRemove?: () => void;
 };
 
-export type GroupProps = ViewGroup & {
-  dropSource?: boolean;
-  dropTarget?: boolean;
-  groupRef(element: GroupElementInterface): void;
-};
+export type GroupProps = ViewGroup &
+  Selectable & {
+    dragActive?: boolean;
+    dropSource?: boolean;
+    dropTarget?: boolean;
+    groupRef(element: GroupElementInterface): void;
+  };
 
 export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
@@ -155,11 +171,6 @@ export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;
 
 export type GroupProvider = (type: string) => ComponentType<GroupProps>;
 
-export enum GraphElementType {
-  node = 'node',
-  edge = 'edge',
-  group = 'group',
-}
 export type ActionProvider = (type: GraphElementType, id: string) => KebabOption[];
 
 export type ContextMenuProvider = {

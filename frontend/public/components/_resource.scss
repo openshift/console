@@ -26,6 +26,10 @@
   width: 50px;
 }
 
+.co-m-resource-application {
+  background-color: $color-application-dark;
+}
+
 .co-m-resource-clusterrole,
 .co-m-resource-role {
   background-color: $color-rbac-role-dark;

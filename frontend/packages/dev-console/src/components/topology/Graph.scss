@@ -9,4 +9,7 @@
   & > svg {
     display: block;
   }
+  &__svg.odc-m-drag-active {
+    cursor: pointer;
+  }
 }
