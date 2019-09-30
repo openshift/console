@@ -1,10 +1,5 @@
 import * as _ from 'lodash';
-import {
-  DeploymentConfigModel,
-  ImageStreamModel,
-  ServiceModel,
-  RouteModel,
-} from '@console/internal/models';
+import { DeploymentConfigModel, ImageStreamModel } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getKnativeServiceDepResource,
@@ -12,13 +7,13 @@ import {
 } from '@console/knative-plugin';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
+import {
+  createRoute,
+  createService,
+  annotations,
+  dryRunOpt,
+} from '../../utils/shared-submit-utils';
 import { DeployImageFormData } from './import-types';
-
-const annotations = {
-  'openshift.io/generated-by': 'OpenShiftWebConsole',
-};
-
-const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 export const createImageStream = (
   formData: DeployImageFormData,
@@ -72,6 +67,7 @@ export const createDeploymentConfig = (
     isi: { image, tag, ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
+    limits: { cpu, memory },
   } = formData;
 
   const defaultLabels = getAppLabels(name, application);
@@ -120,6 +116,20 @@ export const createDeploymentConfig = (
               ports,
               volumeMounts,
               env,
+              resources: {
+                ...((cpu.limit || memory.limit) && {
+                  limits: {
+                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+                  },
+                }),
+                ...((cpu.request || memory.request) && {
+                  requests: {
+                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+                  },
+                }),
+              },
             },
           ],
         },
@@ -143,87 +153,6 @@ export const createDeploymentConfig = (
   };
 
   return k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
-};
-
-export const createService = (
-  formData: DeployImageFormData,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const {
-    project: { name: namespace },
-    application: { name: application },
-    name,
-    isi: { ports },
-    labels: userLabels,
-  } = formData;
-
-  const defaultLabels = getAppLabels(name, application);
-  const podLabels = getPodLabels(name);
-  const service = {
-    kind: 'Service',
-    apiVersion: 'v1',
-    metadata: {
-      name,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-      annotations,
-    },
-    spec: {
-      selector: podLabels,
-      ports: _.map(ports, (port) => ({
-        port: port.containerPort,
-        targetPort: port.containerPort,
-        protocol: port.protocol,
-        // Use the same naming convention as CLI new-app.
-        name: `${port.containerPort}-${port.protocol}`.toLowerCase(),
-      })),
-    },
-  };
-
-  return k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
-};
-
-export const createRoute = (
-  formData: DeployImageFormData,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const {
-    project: { name: namespace },
-    application: { name: application },
-    name,
-    isi: { ports },
-    labels: userLabels,
-  } = formData;
-
-  const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application);
-  const route = {
-    kind: 'Route',
-    apiVersion: 'route.openshift.io/v1',
-    metadata: {
-      name,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-      annotations,
-    },
-    spec: {
-      to: {
-        kind: 'Service',
-        name,
-      },
-      // The service created by `createService` uses the same port as the container port.
-      port: {
-        // Use the port name, not the number for targetPort. The router looks
-        // at endpoints, not services, when resolving ports, so port numbers
-        // will not resolve correctly if the service port and container port
-        // numbers don't match.
-        targetPort: makePortName(firstPort),
-      },
-      wildcardPolicy: 'None',
-    },
-  };
-
-  return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
 export const ensurePortExists = (formData: DeployImageFormData): DeployImageFormData => {
