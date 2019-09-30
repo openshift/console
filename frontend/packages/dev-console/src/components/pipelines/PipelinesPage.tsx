@@ -25,7 +25,6 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
   return namespace ? (
     <FireMan
       canCreate={false}
-      canExpand={false}
       filterLabel="by name"
       textFilter="name"
       resources={resources}

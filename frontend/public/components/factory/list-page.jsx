@@ -24,17 +24,6 @@ import {
   RequireCreatePermission,
 } from '../utils';
 
-export const CompactExpandButtons = ({ expand = false, onExpandChange = _.noop }) => (
-  <div className="btn-group btn-group-sm" data-toggle="buttons">
-    <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
-      <input type="radio" onClick={() => onExpandChange(false)} /> Compact
-    </label>
-    <label className={classNames('btn compaction-btn', expand ? 'btn-primary' : 'btn-default')}>
-      <input type="radio" onClick={() => onExpandChange(true)} /> Expand
-    </label>
-  </div>
-);
-
 /** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string}}>} */
 export const TextFilter = ({ label, onChange, defaultValue, style, className, value }) => {
   const input = React.useRef();
@@ -132,7 +121,7 @@ ListPageWrapper_.propTypes = {
   customData: PropTypes.any,
 };
 
-/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, canExpand?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
+/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
 export const FireMan_ = connect(
   null,
   { filterList },
@@ -213,7 +202,6 @@ export const FireMan_ = connect(
       const {
         autoFocus,
         canCreate,
-        canExpand,
         createAccessReview,
         createButtonText,
         createProps = {},
@@ -287,14 +275,6 @@ export const FireMan_ = connect(
               </div>
             )}
             {createLink && <div className="co-m-pane__filter-bar-group">{createLink}</div>}
-            {canExpand && (
-              <div className="co-m-pane__filter-bar-group">
-                <CompactExpandButtons
-                  expand={this.state.expand}
-                  onExpandChange={this.onExpandChange}
-                />
-              </div>
-            )}
             <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
               <TextFilter
                 label={filterLabel}
@@ -327,7 +307,6 @@ FireMan_.defaultProps = {
 
 FireMan_.propTypes = {
   canCreate: PropTypes.bool,
-  canExpand: PropTypes.bool,
   createAccessReview: PropTypes.object,
   createButtonText: PropTypes.string,
   createProps: PropTypes.object,
@@ -359,7 +338,6 @@ export const ListPage = withFallback((props) => {
   const {
     autoFocus,
     canCreate,
-    canExpand,
     createButtonText,
     createHandler,
     fieldSelector,
@@ -424,7 +402,6 @@ export const ListPage = withFallback((props) => {
     <MultiListPage
       autoFocus={autoFocus}
       canCreate={canCreate}
-      canExpand={canExpand}
       createAccessReview={createAccessReview}
       createButtonText={createButtonText || `Create ${label}`}
       createProps={createProps}
@@ -453,7 +430,6 @@ export const MultiListPage = (props) => {
   const {
     autoFocus,
     canCreate,
-    canExpand,
     createAccessReview,
     createButtonText,
     createProps,
@@ -484,7 +460,6 @@ export const MultiListPage = (props) => {
     <FireMan_
       autoFocus={autoFocus}
       canCreate={canCreate}
-      canExpand={canExpand}
       createAccessReview={createAccessReview}
       createButtonText={createButtonText || 'Create'}
       createProps={createProps}

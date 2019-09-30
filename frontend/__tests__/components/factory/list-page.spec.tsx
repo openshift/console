@@ -70,19 +70,6 @@ describe(FireMan_.displayName, () => {
     });
   });
 
-  it('renders expand button if given `canExpand` true', () => {
-    wrapper.setProps({ canExpand: true });
-    expect(
-      wrapper
-        .find('.co-m-pane__filter-bar-group')
-        .not('.co-m-pane__filter-bar-group--filter')
-        .childAt(0)
-        .dive()
-        .find('.compaction-btn')
-        .exists(),
-    ).toBe(true);
-  });
-
   it('renders `TextFilter` with given props', () => {
     const filterLabel = 'My filter';
     wrapper.setProps({ filterLabel });
