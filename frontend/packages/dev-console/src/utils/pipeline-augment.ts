@@ -26,11 +26,20 @@ interface StatusMessage {
 }
 
 export interface TaskStatus {
-  Succeeded?: number;
-  Running?: number;
-  Failed?: number;
-  Notstarted?: number;
-  FailedToStart?: number;
+  PipelineNotStarted: number;
+  Pending: number;
+  Running: number;
+  Succeeded: number;
+  Cancelled: number;
+  Failed: number;
+}
+
+export interface PipelineTask {
+  name: string;
+  runAfter?: string[];
+  taskRef: {
+    name: string;
+  };
 }
 
 export interface Resource {
@@ -56,9 +65,9 @@ export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
   spec?: {
     pipelineRef?: { name: string };
-    params: Param[];
-    resources: PipelineResource[];
-    tasks: K8sResourceKind[];
+    params?: PipelineParam[];
+    resources?: PipelineResource[];
+    tasks: PipelineTask[];
     serviceAccount?: string;
   };
 }
@@ -66,12 +75,14 @@ export interface Pipeline extends K8sResourceKind {
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef?: { name: string };
-    params: Param[];
+    params?: PipelineRunParam[];
     trigger: {
       type: string;
     };
-    resources: PipelineResource[];
+    resources?: PipelineResource[];
     serviceAccount?: string;
+    // Odd status value that only appears in a single case - cancelling a pipeline
+    status?: 'PipelineRunCancelled';
   };
   status?: {
     succeededCondition?: string;
@@ -79,7 +90,9 @@ export interface PipelineRun extends K8sResourceKind {
     conditions?: Condition[];
     startTime?: string;
     completionTime?: string;
-    taskRuns?: K8sResourceKind[];
+    taskRuns?: {
+      [key: string]: K8sResourceKind;
+    };
   };
 }
 
@@ -88,12 +101,22 @@ export interface Condition {
   status: string;
   reason?: string;
   message?: string;
+  lastTransitionTime?: string;
 }
 
 export interface Param {
-  input: string;
-  output: string;
+  name: string;
+}
+
+export interface PipelineParam extends Param {
+  default?: string;
+}
+
+export interface PipelineRunParam extends Param {
+  input?: string;
+  output?: string;
   resource?: object;
+  value?: string;
 }
 
 interface FirehoseResource {
@@ -237,10 +260,14 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
       ? Object.keys(pipelinerun.status.taskRuns)
       : [];
   const plrTaskLength = plrTasks.length;
-  const taskStatus: TaskStatus = {};
-  Object.keys(runStatus).forEach((key) => {
-    taskStatus[key] = 0;
-  });
+  const taskStatus: TaskStatus = {
+    PipelineNotStarted: 0,
+    Pending: 0,
+    Running: 0,
+    Succeeded: 0,
+    Failed: 0,
+    Cancelled: 0,
+  };
   if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
     plrTasks.forEach((taskRun) => {
       const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
