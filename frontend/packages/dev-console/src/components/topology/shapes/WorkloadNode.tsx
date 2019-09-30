@@ -1,18 +1,11 @@
 import * as React from 'react';
-import {
-  ExternalLinkAltIcon,
-  GitAltIcon,
-  GitlabIcon,
-  GithubIcon,
-  BitbucketIcon,
-} from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Status, calculateRadius, PodStatus } from '@console/shared';
 import { TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { detectGitType } from '../../import/import-validation-utils';
-import { GitTypes } from '../../import/import-types';
+import { routeDecoratorIcon } from '../../import/render-utils';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
@@ -33,19 +26,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       donutStatus: { build },
     },
   } = workload;
-
-  const routeDecoratorIcon = (editUrl: string): React.ReactElement => {
-    switch (detectGitType(editUrl)) {
-      case GitTypes.github:
-        return <GithubIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-      case GitTypes.bitbucket:
-        return <BitbucketIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-      case GitTypes.gitlab:
-        return <GitlabIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-      default:
-        return <GitAltIcon style={{ fontSize: decoratorRadius }} alt="Edit Source Code" />;
-    }
-  };
+  const repoIcon = routeDecoratorIcon(workload.data.editUrl, decoratorRadius);
 
   return (
     <BaseNode
@@ -58,7 +39,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       kind={workload.data.kind}
       {...others}
       attachments={[
-        workload.data.editUrl && (
+        repoIcon && (
           <Decorator
             key="edit"
             x={radius - decoratorRadius * 0.7}
@@ -70,7 +51,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             position={TooltipPosition.right}
           >
             <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-              {routeDecoratorIcon(workload.data.editUrl)}
+              {repoIcon}
             </g>
           </Decorator>
         ),
