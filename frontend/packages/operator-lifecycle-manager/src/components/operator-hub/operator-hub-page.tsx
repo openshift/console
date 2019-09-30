@@ -72,7 +72,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
         provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
         providerType: getOperatorProviderType(pkg),
-        tags: pkg.metadata.tags,
+        tags: [],
         version: _.get(currentCSVDesc, 'version'),
         categories: _.get(currentCSVAnnotations, 'categories', '')
           .split(',')

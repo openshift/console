@@ -199,7 +199,7 @@ export const samplePods: Resource = {
         resourceVersion: '1395096',
         name: 'analytics-deployment-59dd7c47d4-2jp7t',
         uid: '5cec460e-680d-11e9-8c69-5254003f9382',
-        creationTimestaResourcePropsmp: '2019-04-26T10:23:41Z',
+        creationTimestamp: '2019-04-26T10:23:41Z',
         namespace: 'testproject3',
         ownerReferences: [
           {

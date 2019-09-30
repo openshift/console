@@ -317,7 +317,7 @@ Object {
                 "annotations": Object {
                   "openshift.io/scc": "restricted",
                 },
-                "creationTimestaResourcePropsmp": "2019-04-26T10:23:41Z",
+                "creationTimestamp": "2019-04-26T10:23:41Z",
                 "generateName": "analytics-deployment-59dd7c47d4-",
                 "labels": Object {
                   "app.kubernetes.io/component": "backend",
@@ -444,7 +444,7 @@ Object {
             "annotations": Object {
               "openshift.io/scc": "restricted",
             },
-            "creationTimestaResourcePropsmp": "2019-04-26T10:23:41Z",
+            "creationTimestamp": "2019-04-26T10:23:41Z",
             "generateName": "analytics-deployment-59dd7c47d4-",
             "labels": Object {
               "app.kubernetes.io/component": "backend",

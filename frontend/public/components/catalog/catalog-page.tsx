@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 
 import { ANNOTATIONS, FLAGS } from '../../const';
 import { CatalogTileViewPage } from './catalog-items';
-import { k8sListPartialMetadata, referenceForModel, serviceClassDisplayName, K8sResourceKind, ObjectMetadata } from '../../module/k8s';
+import { k8sListPartialMetadata, referenceForModel, serviceClassDisplayName, K8sResourceKind, PartialObjectMetadata } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
 import { connectToFlags, flagPending } from '../../reducers/features';
 import { Firehose, LoadError, PageHeading, skeletonCatalog, StatusBox, FirehoseResult } from '../utils';
@@ -286,8 +286,8 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
 export type CatalogListPageProps = {
   clusterServiceClasses?: FirehoseResult<K8sResourceKind[]>;
   imageStreams?: FirehoseResult<K8sResourceKind[]>;
-  templateMetadata?: ObjectMetadata[];
-  projectTemplateMetadata?: ObjectMetadata[];
+  templateMetadata?: PartialObjectMetadata[];
+  projectTemplateMetadata?: PartialObjectMetadata[];
   loaded: boolean;
   loadError?: string;
   namespace?: string;

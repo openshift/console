@@ -36,16 +36,28 @@ export type ObjectReference = {
 };
 
 export type ObjectMetadata = {
-  name?: string;
-  generateName?: string;
-  uid?: string;
-  annotations?: {[key: string]: string},
-  namespace?: string,
-  labels?: {[key: string]: string},
-  ownerReferences?: OwnerReference[],
-  deletionTimestamp?: string;
+  annotations?: {[key: string]: string};
+  clusterName?: string;
   creationTimestamp?: string;
-  [key: string]: any,
+  deletionGracePeriodSeconds?: number;
+  deletionTimestamp?: string;
+  finalizers?: string[];
+  generateName?: string;
+  generation?: number;
+  labels?: {[key: string]: string},
+  managedFields?: any[];
+  name?: string;
+  namespace?: string;
+  ownerReferences?: OwnerReference[];
+  resourceVersion?: string;
+  selfLink?: string;
+  uid?: string;
+};
+
+export type PartialObjectMetadata = {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMetadata;
 };
 
 export enum K8sResourceConditionStatus {
