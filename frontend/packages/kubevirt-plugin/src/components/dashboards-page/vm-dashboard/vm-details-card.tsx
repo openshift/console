@@ -8,7 +8,7 @@ import {
   DashboardCardLink,
 } from '@console/internal/components/dashboard/dashboard-card';
 import { DetailsBody, DetailItem } from '@console/internal/components/dashboard/details-card';
-import { getName, getNamespace, getUID, getCreationTimestamp } from '@console/shared';
+import { getName, getNamespace, getUID, getCreationTimestamp, getNodeName } from '@console/shared';
 import {
   ResourceLink,
   Timestamp,
@@ -16,7 +16,6 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { getNodeName } from '../../../selectors/pod/selectors';
 import { isVMRunning } from '../../../selectors/vm';
 import { getVMStatus } from '../../../statuses/vm/vm';
 import { VirtualMachineModel } from '../../../models';
