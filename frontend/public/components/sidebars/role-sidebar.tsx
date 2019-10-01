@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { RoleModel, ClusterRoleModel } from '../../models';
-import { referenceForModel } from '../../module/k8s';
+import { K8sKind, referenceForModel } from '../../module/k8s';
 import { SampleYaml } from './resource-sidebar';
 
 const samples = [
@@ -51,10 +51,15 @@ const samples = [
   },
 ];
 
-export const RoleSidebar = ({ kindObj, loadSampleYaml, downloadSampleYaml, isCreateMode }) => {
-  const filteredSamples = isCreateMode
-    ? samples
-    : _.filter(samples, { kind: referenceForModel(kindObj) });
+export const RoleSidebar: React.FC<RoleSidebarProps> = ({
+  kindObj,
+  loadSampleYaml,
+  downloadSampleYaml,
+}) => {
+  const filteredSamples =
+    kindObj.kind === ClusterRoleModel.kind && kindObj.apiGroup === ClusterRoleModel.apiGroup
+      ? _.filter(samples, { kind: referenceForModel(kindObj) })
+      : samples;
   return (
     <ol className="co-resource-sidebar-list">
       {_.map(filteredSamples, (sample) => (
@@ -67,4 +72,10 @@ export const RoleSidebar = ({ kindObj, loadSampleYaml, downloadSampleYaml, isCre
       ))}
     </ol>
   );
+};
+
+type RoleSidebarProps = {
+  kindObj: K8sKind;
+  loadSampleYaml: (templateName: string, kind: K8sKind) => void;
+  downloadSampleYaml: (templateName: string, kind: K8sKind) => void;
 };
