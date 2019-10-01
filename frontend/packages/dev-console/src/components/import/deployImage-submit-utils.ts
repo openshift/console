@@ -1,11 +1,15 @@
 import * as _ from 'lodash';
-import { DeploymentConfigModel, ImageStreamModel } from '@console/internal/models';
+import {
+  DeploymentConfigModel,
+  ImageStreamModel,
+  ServiceModel,
+  RouteModel,
+} from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getKnativeServiceDepResource,
   ServiceModel as KnServiceModel,
 } from '@console/knative-plugin';
-import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import {
   createRoute,
@@ -195,9 +199,11 @@ export const createResources = async (
     requests.push(createDeploymentConfig(formData, dryRun));
 
     if (!_.isEmpty(ports)) {
-      requests.push(createService(formData, dryRun));
+      const service = createService(formData);
+      requests.push(k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {}));
       if (canCreateRoute) {
-        requests.push(createRoute(formData, dryRun));
+        const route = createRoute(formData);
+        requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
       }
     }
   } else if (!dryRun) {

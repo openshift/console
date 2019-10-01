@@ -5,6 +5,8 @@ import {
   DeploymentConfigModel,
   ProjectRequestModel,
   SecretModel,
+  ServiceModel,
+  RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -316,9 +318,11 @@ export const createResources = async (
   requests.push(createDeploymentConfig(formData, imageStream, dryRun));
 
   if (!_.isEmpty(ports) || buildStrategy === 'Docker') {
-    requests.push(createService(formData, dryRun, imageStream));
+    const service = createService(formData, imageStream);
+    requests.push(k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {}));
     if (canCreateRoute) {
-      requests.push(createRoute(formData, dryRun, imageStream));
+      const route = createRoute(formData, imageStream);
+      requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
     }
   }
 
