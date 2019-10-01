@@ -11,7 +11,7 @@ const PipelineHeader = () => {
     },
     {
       title: 'Last Run',
-      sortField: 'lastRun.metadata.name',
+      sortField: 'latestRun.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
