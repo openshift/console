@@ -20,7 +20,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';
+import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../../../utils/object-service-dashboard';
 import {
   DataConsumersValue,
   DataConsumersSortByValue,

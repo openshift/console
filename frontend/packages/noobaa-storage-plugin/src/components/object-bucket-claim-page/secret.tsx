@@ -5,7 +5,7 @@ import { SecretData } from '@console/internal/components/configmap-and-secret-da
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import { isBound } from '../../utils';
+import { isBound } from '../../utils/bucket-pages';
 
 export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
   const secretData = {

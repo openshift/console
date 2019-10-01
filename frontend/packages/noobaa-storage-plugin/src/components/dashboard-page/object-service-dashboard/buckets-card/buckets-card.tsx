@@ -11,8 +11,8 @@ import {
 import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric, getGaugeValue } from '../../utils';
-import { NooBaaObjectBucketClaimModel } from '../../models';
+import { getMetric, getGaugeValue } from '../../../../utils/object-service-dashboard';
+import { NooBaaObjectBucketClaimModel } from '../../../../models';
 import { BucketsItem, BucketsType } from './buckets-card-item';
 import './buckets-card.scss';
 

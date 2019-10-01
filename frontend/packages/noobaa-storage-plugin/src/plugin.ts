@@ -59,7 +59,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/health-card/health-card' /* webpackChunkName: "object-service-health-card" */
+          './components/dashboard-page/object-service-dashboard/health-card/health-card' /* webpackChunkName: "object-service-health-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
@@ -71,7 +71,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/details-card/details-card' /* webpackChunkName: "object-service-details-card" */
+          './components/dashboard-page/object-service-dashboard/details-card/details-card' /* webpackChunkName: "object-service-details-card" */
         ).then((m) => m.DetailsCard),
       required: NOOBAA_FLAG,
     },
@@ -83,7 +83,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
+          './components/dashboard-page/object-service-dashboard/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
         ).then((m) => m.BucketsCard),
       required: NOOBAA_FLAG,
     },
@@ -95,7 +95,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
+          './components/dashboard-page/object-service-dashboard/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
         ).then((m) => m.ResourceProvidersCard),
       required: NOOBAA_FLAG,
     },
@@ -107,7 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
+          './components/dashboard-page/object-service-dashboard/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
@@ -119,7 +119,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
+          './components/dashboard-page/object-service-dashboard/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
@@ -131,7 +131,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
+          './components/dashboard-page/object-service-dashboard/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
@@ -143,7 +143,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+          './components/dashboard-page/object-service-dashboard/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },

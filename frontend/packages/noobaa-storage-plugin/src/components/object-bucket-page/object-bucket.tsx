@@ -24,8 +24,8 @@ import {
 } from '@console/noobaa-storage-plugin/src/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
-import { getOBPhase } from '../../utils';
-import { obStatusFilter } from '../../table-filters';
+import { getOBPhase } from '../../selectors';
+import { obStatusFilter } from '../../constants/table-filters';
 
 const kind = referenceForModel(NooBaaObjectBucketModel);
 const menuActions = [...Kebab.factory.common];

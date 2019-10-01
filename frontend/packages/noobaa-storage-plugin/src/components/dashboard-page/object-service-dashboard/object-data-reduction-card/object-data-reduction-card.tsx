@@ -8,8 +8,10 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getGaugeValue } from '../../utils';
-import { ObjectDataReductionQueries } from '../../queries';
+import {
+  getGaugeValue,
+  ObjectDataReductionQueries,
+} from '../../../../utils/object-service-dashboard';
 import { EfficiencyItem, SavingsItem } from './object-data-reduction-card-item';
 import './object-data-reduction-card.scss';
 

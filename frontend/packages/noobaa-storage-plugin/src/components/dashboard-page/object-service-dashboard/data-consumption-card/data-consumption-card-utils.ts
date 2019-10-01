@@ -13,9 +13,10 @@ import {
   BY_PHYSICAL_VS_LOGICAL_USAGE,
   BY_EGRESS,
   PROVIDERS,
-} from '../../constants';
-import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../constants/queries';
-import { getGaugeValue } from '../../utils';
+  DATA_CONSUMPTION_QUERIES,
+  getGaugeValue,
+  ObjectServiceDashboardQuery,
+} from '../../../../utils/object-service-dashboard';
 
 export const DataConsumersValue = {
   [PROVIDERS]: 'PROVIDERS_',

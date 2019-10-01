@@ -19,14 +19,11 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import {
-  NooBaaObjectBucketClaimModel,
-  NooBaaObjectBucketModel,
-} from '@console/noobaa-storage-plugin/src/models';
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
-import { obcStatusFilter } from '../../table-filters';
-import { isBound, getOBCPhase } from '../../utils';
+import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
+import { obcStatusFilter } from '../../constants/table-filters';
+import { isBound, getOBCPhase } from '../../selectors';
 import { menuActionCreator, menuActions } from './menu-actions';
 import { GetSecret } from './secret';
 

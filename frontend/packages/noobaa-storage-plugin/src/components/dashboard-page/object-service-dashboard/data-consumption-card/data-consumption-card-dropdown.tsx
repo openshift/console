@@ -7,7 +7,7 @@ import {
   BY_LOGICAL_USAGE,
   BY_PHYSICAL_VS_LOGICAL_USAGE,
   BY_EGRESS,
-} from '../../constants';
+} from '../../../../utils/object-service-dashboard';
 
 export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = ({
   type,

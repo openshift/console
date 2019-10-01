@@ -10,7 +10,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric } from '../../utils';
+import { getMetric } from '../../../../utils/object-service-dashboard';
 import { ResourceProvidersBody } from './resource-providers-card-body';
 import { ResourceProvidersItem, ProviderType } from './resource-providers-card-item';
 import './resource-providers-card.scss';

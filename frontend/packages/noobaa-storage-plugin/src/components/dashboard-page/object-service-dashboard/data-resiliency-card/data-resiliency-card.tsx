@@ -13,8 +13,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { DATA_RESILIENCE_QUERIES } from '../../queries';
-import { getGaugeValue } from '../../utils';
+import { DATA_RESILIENCE_QUERIES, getGaugeValue } from '../../../../utils/object-service-dashboard';
 import './data-resiliency-card.scss';
 
 const getFormattedEta = (eta: number): string => {

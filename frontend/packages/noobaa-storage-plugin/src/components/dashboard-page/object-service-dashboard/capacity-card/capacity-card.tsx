@@ -10,7 +10,10 @@ import {
 import { Dropdown } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { ObjectDashboardQuery, ObjectCapacityQueries } from '../../queries';
+import {
+  ObjectDashboardQuery,
+  ObjectCapacityQueries,
+} from '../../../../utils/object-service-dashboard';
 import { CapacityCardBody } from './capacity-card-body';
 
 import './capacity-card.scss';

@@ -17,7 +17,7 @@ import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/model
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
-import { getMetric } from '../../utils';
+import { getMetric } from '../../../../utils/object-service-dashboard';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
 
