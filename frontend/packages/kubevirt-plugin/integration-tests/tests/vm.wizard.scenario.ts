@@ -8,10 +8,15 @@ import {
 } from '../../../console-shared/src/test-utils/utils';
 import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
-import { getResourceObject } from './utils/utils';
+import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS, TABS } from './utils/consts';
 import { multusNad } from './utils/mocks';
-import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
+import {
+  vmConfig,
+  getProvisionConfigs,
+  getTestDataVolume,
+  kubevirtStorage,
+} from './vm.wizard.configs';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
@@ -44,6 +49,28 @@ describe('Kubevirt create VM using wizard', () => {
       VM_BOOTUP_TIMEOUT_SECS,
     );
   });
+
+  it(
+    'Creates DV with correct accessMode/volumeMode',
+    async () => {
+      const testVMConfig = vmConfig('test-dv', provisionConfigs.get('URL'), testName);
+      testVMConfig.networkResources = [];
+      const vm = new VirtualMachine(testVMConfig);
+
+      await withResource(leakedResources, vm.asResource(), async () => {
+        await vm.create(testVMConfig);
+        const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
+        const expectedAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
+        const expectedVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
+
+        expect(expectedAccessMode).toBeDefined();
+        expect(expectedVolumeMode).toBeDefined();
+        expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(expectedAccessMode);
+        expect(vmDataVolume.spec.pvc.volumeMode).toEqual(expectedVolumeMode);
+      });
+    },
+    VM_BOOTUP_TIMEOUT_SECS,
+  );
 
   it(
     'Multiple VMs created using "Cloned Disk" method from single source',
