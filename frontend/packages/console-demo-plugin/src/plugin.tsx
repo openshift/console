@@ -237,6 +237,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       model: RouteModel,
       mapper: getRouteStatusGroups,
+      expandedComponent: () =>
+        import('./dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */).then(
+          (m) => m.ExpandedRoutes,
+        ),
       required: 'TEST_MODEL_FLAG',
     },
   },
