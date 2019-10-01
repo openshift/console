@@ -257,7 +257,7 @@ export const createResources = async (
   const formData = ensurePortExists(rawFormData);
   const {
     route: { create: canCreateRoute },
-    isi: { ports },
+    isi: { ports, tag: imageStreamTag },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -274,10 +274,10 @@ export const createResources = async (
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
     const [imageStreamResponse] = await Promise.all(requests);
-    const knDeploymentResource = getKnativeServiceDepResource(
-      formData,
-      imageStreamResponse.status.dockerImageRepository,
-    );
+    const imageStreamUrl = imageStreamTag
+      ? `${imageStreamResponse.status.dockerImageRepository}:${imageStreamTag}`
+      : imageStreamResponse.status.dockerImageRepository;
+    const knDeploymentResource = getKnativeServiceDepResource(formData, imageStreamUrl);
     requests.push(k8sCreate(KnServiceModel, knDeploymentResource));
   }
 
