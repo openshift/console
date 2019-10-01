@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from 'patternfly-react';
-import { Popover, PopoverPosition } from '@patternfly/react-core';
+import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 
 const DashboardCardButtonLink: React.FC<DashboardCardButtonLinkProps> = React.memo(
   ({ children, ...rest }) => (
-    <Button bsStyle="link" className="co-dashboard-card__button-link" {...rest}>
+    <Button variant="link" isInline className="co-dashboard-card__button-link" {...rest}>
       {children}
     </Button>
   ),

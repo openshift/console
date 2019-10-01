@@ -24,7 +24,6 @@ export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
 
   return {
-    btnClass: 'btn-primary',
     callback: () => configureAddSecretToWorkloadModal({ secretName, namespace, blocking: true }),
     label: 'Add Secret to Workload',
   };
