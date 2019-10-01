@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-import { Tooltip, Switch } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { Tooltip, Switch, Button } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { Selector, ResourceLink, LoadingInline } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
@@ -23,9 +23,9 @@ const Default: React.SFC<SpecCapabilityProps> = ({ value }) => {
 };
 
 const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
-  <button
+  <Button
+    isInline
     type="button"
-    className="btn btn-link co-modal-btn-link"
     onClick={() =>
       configureSizeModal({
         kindObj: model,
@@ -34,9 +34,11 @@ const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, valu
         specValue: value,
       })
     }
+    variant="link"
   >
     {value} pods
-  </button>
+    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+  </Button>
 );
 
 const Endpoints: React.SFC<SpecCapabilityProps> = ({ value }) => <EndpointList endpoints={value} />;
