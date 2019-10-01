@@ -49,3 +49,9 @@ export type VMConfig = {
   storageResources: StorageResource[];
   networkResources: NetworkResource[];
 };
+
+export type ProvisionConfig = {
+  provision: ProvisionOption;
+  networkResources: NetworkResource[];
+  storageResources: StorageResource[];
+};

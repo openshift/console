@@ -95,7 +95,11 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
-        <EditButton canEdit={canUpdateTemplate} onClick={() => vmFlavorModal({ vmLike: template })}>
+        <EditButton
+          id={prefixedID(id, 'flavor-edit')}
+          canEdit={canUpdateTemplate}
+          onClick={() => vmFlavorModal({ vmLike: template })}
+        >
           {flavorText}
         </EditButton>
       </VMDetailsItem>

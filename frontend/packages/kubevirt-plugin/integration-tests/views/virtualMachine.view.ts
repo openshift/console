@@ -50,10 +50,35 @@ export const vmDetailNamespace = (namespace, vmName) =>
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
 export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
 export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
+export const vmDetailFlavorEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'flavor-edit'));
+export const vmDetailFlavorDropdownId = (namespace, vmName) =>
+  vmDetailItemId(namespace, vmName, 'flavor-dropdown');
+export const vmDetailFlavorDropdown = (namespace, vmName) =>
+  $(vmDetailFlavorDropdownId(namespace, vmName));
+export const vmDetailFlavorDesc = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'flavor-description'));
+export const vmDetailFlavorCPU = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'flavor-cpu'));
+export const vmDetailFlavorMemory = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'flavor-memory'));
+export const vmDetailDescTextarea = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'description-textarea'));
 export const vmDetailBootOrder = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order'))
     .$('.kubevirt-boot-order__list')
     .$$('li');
+export const vmDetailLabelValue = async (labelKey) => {
+  const filteredLabel = $$('.co-m-label').filter((elem) =>
+    elem
+      .$('.co-m-label__key')
+      .getText()
+      .then((text) => text === labelKey),
+  );
+  const valueElem = filteredLabel.first().$('.co-m-label__value');
+  const value = await valueElem.getText();
+  return value;
+};
 
 export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
 
