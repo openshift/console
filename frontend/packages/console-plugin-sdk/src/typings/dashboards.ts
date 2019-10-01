@@ -144,6 +144,34 @@ namespace ExtensionProperties {
     /** Function which will be used to format data from prometheus */
     humanizeValue: Humanize;
   }
+
+  export interface DashboardsOverviewResourceActivity extends DashboardExtension {
+    /** Resource to watch */
+    k8sResource: FirehoseResource;
+
+    /**
+     * Function which will determine if given resource represents the action.
+     * If the function is not defined, every resource represents activity.
+     */
+    isActivity?: (resource: K8sResourceKind) => boolean;
+
+    /** Timestamp for given action, which will be used for ordering */
+    getTimestamp: (resource: K8sResourceKind) => Date;
+
+    /** Loader for corresponding action component */
+    loader: LazyLoader<K8sActivityProps>;
+  }
+
+  export interface DashboardsOverviewPrometheusActivity extends DashboardExtension {
+    /** Queries to watch */
+    queries: string[];
+
+    /** Function which will determine if given query results represent the action */
+    isActivity: (results: PrometheusResponse[]) => boolean;
+
+    /** Loader for corresponding action component */
+    loader: LazyLoader<PrometheusActivityProps>;
+  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R>
@@ -232,4 +260,31 @@ export const isDashboardsOverviewTopConsumerItem = (
   e: Extension<any>,
 ): e is DashboardsOverviewTopConsumerItem => e.type === 'Dashboards/Overview/TopConsumers/Item';
 
+export interface DashboardsOverviewResourceActivity
+  extends Extension<ExtensionProperties.DashboardsOverviewResourceActivity> {
+  type: 'Dashboards/Overview/Activity/Resource';
+}
+
+export const isDashboardsOverviewResourceActivity = (
+  e: Extension<any>,
+): e is DashboardsOverviewResourceActivity => e.type === 'Dashboards/Overview/Activity/Resource';
+
+export interface DashboardsOverviewPrometheusActivity
+  extends Extension<ExtensionProperties.DashboardsOverviewPrometheusActivity> {
+  type: 'Dashboards/Overview/Activity/Prometheus';
+}
+
+export const isDashboardsOverviewPrometheusActivity = (
+  e: Extension<any>,
+): e is DashboardsOverviewPrometheusActivity =>
+  e.type === 'Dashboards/Overview/Activity/Prometheus';
+
 export type DashboardCardSpan = 4 | 6 | 12;
+
+export type K8sActivityProps = {
+  resource: K8sResourceKind;
+};
+
+export type PrometheusActivityProps = {
+  results: PrometheusResponse[];
+};
