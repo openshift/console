@@ -1,18 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { k8sPatch } from './resource';
-import { NodeModel } from '../../models';
 import { K8sResourceKind } from './';
-
-export const makeNodeUnschedulable = (resource: K8sResourceKind): Promise<K8sResourceKind> => {
-  const op = _.has(resource, 'spec.unschedulable') ? 'replace' : 'add';
-  return k8sPatch(NodeModel, resource, [{ op, path: '/spec/unschedulable', value: true }]);
-};
-
-export const makeNodeSchedulable = (resource: K8sResourceKind): Promise<K8sResourceKind> => {
-  const op = _.has(resource, 'spec.unschedulable') ? 'replace' : 'add';
-  return k8sPatch(NodeModel, resource, [{ op, path: '/spec/unschedulable', value: false }]);
-};
 
 const isNodeReady = (node: K8sResourceKind): boolean => {
   if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {

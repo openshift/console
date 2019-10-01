@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Status, getNodeMachineNameAndNamespace, getName, getUID } from '@console/shared';
+import {
+  Status,
+  getNodeMachineNameAndNamespace,
+  getName,
+  getUID,
+  isNodeUnschedulable,
+} from '@console/shared';
 import { MachineModel } from '@console/internal/models';
 import { nodeStatus, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { Table, TableRow, TableData, ListPage } from '@console/internal/components/factory';
@@ -14,7 +20,7 @@ const NodeKebab = ({ node }) => <ResourceKebab actions={menuActions} kind="Node"
 const NodeStatus: React.FC<NodeStatusProps> = ({ node }) => (
   <>
     <Status status={nodeStatus(node)} />
-    {node.spec.unschedulable && <small className="text-muted">Scheduling Disabled</small>}
+    {isNodeUnschedulable(node) && <small className="text-muted">Scheduling Disabled</small>}
   </>
 );
 type NodeStatusProps = {

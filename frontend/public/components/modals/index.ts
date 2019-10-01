@@ -38,11 +38,6 @@ export const deleteNamespaceModal = (props) =>
 export const errorModal = (props) =>
   import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
 
-export const configureUnschedulableModal = (props) =>
-  import(
-    './configure-unschedulable-modal' /* webpackChunkName: "configure-unschedulable-modal" */
-  ).then((m) => m.configureUnschedulableModal(props));
-
 export const configureNamespacePullSecretModal = (props) =>
   import(
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */

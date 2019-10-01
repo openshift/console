@@ -1,12 +1,13 @@
-import * as _ from 'lodash';
-import { makeNodeSchedulable } from '@console/internal/module/k8s';
-import { configureUnschedulableModal } from '@console/internal/components/modals';
+import { K8sKind, NodeKind } from '@console/internal/module/k8s';
 import { Kebab } from '@console/internal/components/utils';
+import { isNodeUnschedulable } from '@console/shared';
+import { makeNodeSchedulable } from '../../k8s/requests/nodes';
+import { createConfigureUnschedulableModal } from './modals';
 
-export const MarkAsUnschedulable = (kind, obj) => ({
+export const MarkAsUnschedulable = (kind: K8sKind, obj: NodeKind) => ({
   label: 'Mark as Unschedulable',
-  hidden: _.get(obj, 'spec.unschedulable'),
-  callback: () => configureUnschedulableModal({ resource: obj }),
+  hidden: isNodeUnschedulable(obj),
+  callback: () => createConfigureUnschedulableModal({ resource: obj }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -16,9 +17,9 @@ export const MarkAsUnschedulable = (kind, obj) => ({
   },
 });
 
-export const MarkAsSchedulable = (kind, obj) => ({
+export const MarkAsSchedulable = (kind: K8sKind, obj: NodeKind) => ({
   label: 'Mark as Schedulable',
-  hidden: !_.get(obj, 'spec.unschedulable', false),
+  hidden: !isNodeUnschedulable(obj),
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
     group: kind.apiGroup,

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
+import { NodeKind } from '@console/internal/module/k8s';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
-export const getNodeRoles = (node: K8sResourceKind): string[] => {
+export const getNodeRoles = (node: NodeKind): string[] => {
   const labels = _.get(node, 'metadata.labels');
   return _.reduce(
     labels,
@@ -26,3 +26,6 @@ export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNa
   const [namespace, name] = machine.split('/');
   return { namespace, name };
 };
+
+export const isNodeUnschedulable = (node: NodeKind): boolean =>
+  _.get(node, 'spec.unschedulable', false);
