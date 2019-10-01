@@ -74,7 +74,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
+export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) => {
   const [reveal, setReveal] = React.useState(false);
 
   const dl = [];
@@ -91,7 +91,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
 
   return (
     <React.Fragment>
-      <SectionHeading text="Data">
+      <SectionHeading text={title}>
         {dl.length ? (
           <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
             {reveal ? (
@@ -135,4 +135,5 @@ type SecretValueProps = {
 
 type SecretDataProps = {
   data: KeyValueData;
+  title?: string;
 };
