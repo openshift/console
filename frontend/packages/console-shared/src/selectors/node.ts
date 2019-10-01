@@ -29,3 +29,19 @@ export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNa
 
 export const isNodeUnschedulable = (node: NodeKind): boolean =>
   _.get(node, 'spec.unschedulable', false);
+
+type NodeCondition = {
+  lastHeartbeatTime: string;
+  lastTransitionTime: string;
+  message: string;
+  reason: string;
+  status: string;
+  type: string;
+};
+
+export const isNodeReady = (node: NodeKind): boolean => {
+  const conditions = _.get(node, 'status.conditions', []);
+  const readyState = _.find(conditions, { type: 'Ready' }) as NodeCondition;
+
+  return readyState && readyState.status === 'True';
+};

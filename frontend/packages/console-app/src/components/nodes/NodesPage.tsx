@@ -1,31 +1,15 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  Status,
-  getNodeMachineNameAndNamespace,
-  getName,
-  getUID,
-  isNodeUnschedulable,
-} from '@console/shared';
-import { MachineModel } from '@console/internal/models';
-import { nodeStatus, NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { getNodeMachineNameAndNamespace, getName, getUID } from '@console/shared';
+import { MachineModel, NodeModel } from '@console/internal/models';
+import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { Table, TableRow, TableData, ListPage } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
+import { nodeStatus } from '../../status/node';
 import NodeRoles from './NodeRoles';
 import { menuActions } from './menu-actions';
-
-const NodeKebab = ({ node }) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
-
-const NodeStatus: React.FC<NodeStatusProps> = ({ node }) => (
-  <>
-    <Status status={nodeStatus(node)} />
-    {isNodeUnschedulable(node) && <small className="text-muted">Scheduling Disabled</small>}
-  </>
-);
-type NodeStatusProps = {
-  node: NodeKind;
-};
+import NodeStatus from './NodeStatus';
 
 const tableColumnClasses = [
   classNames('col-md-5', 'col-sm-5', 'col-xs-8'),
@@ -76,7 +60,7 @@ const NodesTableRow: React.FC<NodesTableRowProps> = ({ obj: node, index, key, st
   return (
     <TableRow id={nodeUID} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind="Node" name={nodeName} title={nodeUID} />
+        <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <NodeStatus node={node} />
@@ -94,7 +78,7 @@ const NodesTableRow: React.FC<NodesTableRowProps> = ({ obj: node, index, key, st
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <NodeKebab node={node} />
+        <ResourceKebab actions={menuActions} kind={referenceForModel(NodeModel)} resource={node} />
       </TableData>
     </TableRow>
   );
