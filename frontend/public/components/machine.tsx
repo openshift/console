@@ -12,7 +12,7 @@ import {
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
-import NodeIPList from '../../packages/console-app/src/components/nodes/NodeIPList';
+import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,

@@ -1,1 +1,1 @@
-import '@console/internal/components/app';
+import '../../../public/components/app';
