@@ -52,8 +52,8 @@ window.monaco.editor.defineTheme('console', {
   },
 });
 
-const generateObjToLoad = (kind, templateName, namespace = 'default') => {
-  const sampleObj = safeLoad(yamlTemplates.getIn([kind, templateName]));
+const generateObjToLoad = (kind, id, yaml, namespace = 'default') => {
+  const sampleObj = safeLoad(yaml ? yaml : yamlTemplates.getIn([kind, id]));
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
@@ -388,16 +388,15 @@ export const EditYAML = connect(stateToProps)(
       saveAs(blob, filename);
     }
 
-    loadSampleYaml_(templateName = 'default', kind = referenceForModel(this.props.model)) {
-      const sampleObj = generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace);
+    loadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
+      const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
       this.setState({ sampleObj });
       this.loadYaml(true, sampleObj);
     }
 
-    downloadSampleYaml_(templateName = 'default', kind = referenceForModel(this.props.model)) {
-      const data = safeDump(
-        generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace),
-      );
+    downloadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
+      const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
+      const data = safeDump(sampleObj);
       this.download(data);
     }
 

@@ -53,6 +53,7 @@ describe('featureReducer', () => {
         [FLAGS.CONSOLE_CLI_DOWNLOAD]: false,
         [FLAGS.CONSOLE_NOTIFICATION]: false,
         [FLAGS.CONSOLE_EXTERNAL_LOG_LINK]: false,
+        [FLAGS.CONSOLE_YAML_SAMPLE]: false,
       }),
     );
   });
