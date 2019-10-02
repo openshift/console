@@ -183,7 +183,7 @@ const OverviewResourceQuotas = ({ ns }) => {
     },
   ];
   return (
-    <Firehose forceUpdate resources={quotaResources}>
+    <Firehose resources={quotaResources}>
       <ResourceQuotas />
     </Firehose>
   );

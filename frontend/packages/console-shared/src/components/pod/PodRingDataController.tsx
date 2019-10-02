@@ -72,7 +72,7 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
   }
 
   return (
-    <Firehose resources={resources} forceUpdate>
+    <Firehose resources={resources}>
       <Controller render={render} kind={kind} />
     </Firehose>
   );

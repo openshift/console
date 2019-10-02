@@ -11,7 +11,6 @@ import { FirehoseResource } from '../../../public/components/utils';
 // TODO(alecmerdler): Use these once `Firehose` is converted to TypeScript
 type FirehoseProps = {
   expand?: boolean;
-  forceUpdate?: boolean;
   resources: FirehoseResource[];
 
   // Provided by `connect`
@@ -116,7 +115,7 @@ describe(Firehose.displayName, () => {
       wrapper
         .instance()
         .shouldComponentUpdate(
-          { inFlight: true, loaded: true } as FirehoseProps,
+          { ...wrapper.instance().props, inFlight: true, loaded: true } as FirehoseProps,
           wrapper.instance().state,
           null,
         ),
