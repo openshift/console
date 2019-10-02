@@ -13,7 +13,9 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { DATA_RESILIENCE_QUERIES, getGaugeValue } from '../../../../utils/object-service-dashboard';
+import { DataResiliencQueries } from '../../../../queries';
+import { getGaugeValue } from '../../../../selectors';
+
 import './data-resiliency-card.scss';
 
 const getFormattedEta = (eta: number): string => {
@@ -65,30 +67,28 @@ const DataResiliency: React.FC<DashboardItemProps> = ({
   prometheusResults,
 }) => {
   React.useEffect(() => {
-    Object.keys(DATA_RESILIENCE_QUERIES).forEach((key) =>
-      watchPrometheus(DATA_RESILIENCE_QUERIES[key]),
-    );
+    Object.keys(DataResiliencQueries).forEach((key) => watchPrometheus(DataResiliencQueries[key]));
     return () =>
-      Object.keys(DATA_RESILIENCE_QUERIES).forEach((key) =>
-        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES[key]),
+      Object.keys(DataResiliencQueries).forEach((key) =>
+        stopWatchPrometheusQuery(DataResiliencQueries[key]),
       );
   }, [watchPrometheus, stopWatchPrometheusQuery]);
 
   const rebuildProgressQueryResult = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+    DataResiliencQueries.REBUILD_PROGRESS_QUERY,
     'data',
   ]) as PrometheusResponse;
   const rebuildProgressQueryResultError = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+    DataResiliencQueries.REBUILD_PROGRESS_QUERY,
     'loadError',
   ]);
 
   const etaQueryResult = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
+    DataResiliencQueries.REBUILD_TIME_QUERY,
     'data',
   ]) as PrometheusResponse;
   const etaQueryResultError = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
+    DataResiliencQueries.REBUILD_TIME_QUERY,
     'loadError',
   ]);
 

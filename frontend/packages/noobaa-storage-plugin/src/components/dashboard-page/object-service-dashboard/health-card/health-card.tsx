@@ -19,11 +19,8 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import { PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
-import {
-  getGaugeValue,
-  filterNooBaaAlerts,
-  HealthCardQueries,
-} from '../../../../utils/object-service-dashboard';
+import { HealthCardQueries } from '../../../../queries';
+import { filterNooBaaAlerts, getGaugeValue } from '../../../../selectors';
 import { NooBaaSystemModel } from '../../../../models';
 
 const noobaaSystemResource: FirehoseResource = {

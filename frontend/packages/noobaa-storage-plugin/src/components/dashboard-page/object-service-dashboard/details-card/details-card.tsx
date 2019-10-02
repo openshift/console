@@ -17,9 +17,8 @@ import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/model
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
-import { getMetric } from '../../../../utils/object-service-dashboard';
-
-const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
+import { DetailsCardQuery } from '../../../../queries';
+import { getMetric } from '../../../../selectors';
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),
@@ -47,19 +46,22 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchK8sResource(infrastructureResource);
-    watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
+    watchPrometheus(DetailsCardQuery.NOOBAA_SYSTEM_NAME_QUERY);
     return () => {
       stopWatchK8sResource(SubscriptionResource);
       stopWatchK8sResource(infrastructureResource);
-      stopWatchPrometheusQuery(NOOBAA_SYSTEM_NAME_QUERY);
+      stopWatchPrometheusQuery(DetailsCardQuery.NOOBAA_SYSTEM_NAME_QUERY);
     };
   }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
 
   const queryResult = prometheusResults.getIn([
-    NOOBAA_SYSTEM_NAME_QUERY,
+    DetailsCardQuery.NOOBAA_SYSTEM_NAME_QUERY,
     'data',
   ]) as PrometheusResponse;
-  const queryResultError = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'loadError']);
+  const queryResultError = prometheusResults.getIn([
+    DetailsCardQuery.NOOBAA_SYSTEM_NAME_QUERY,
+    'loadError',
+  ]);
 
   const systemName = getMetric(queryResult, 'system_name');
   const systemAddress = getMetric(queryResult, 'system_address');

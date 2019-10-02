@@ -11,20 +11,11 @@ import {
 import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric, getGaugeValue } from '../../../../utils/object-service-dashboard';
+import { BucketsCardQueries } from '../../../../queries';
+import { getMetric, getGaugeValue } from '../../../../selectors';
 import { NooBaaObjectBucketClaimModel } from '../../../../models';
 import { BucketsItem, BucketsType } from './buckets-card-item';
 import './buckets-card.scss';
-
-enum BucketsCardQueries {
-  BUCKETS_LINK_QUERY = 'NooBaa_system_info',
-  BUCKETS_COUNT = 'NooBaa_num_buckets',
-  BUCKET_OBJECTS_COUNT = 'NooBaa_num_objects',
-  BUCKET_CLAIMS_COUNT = 'NooBaa_num_buckets_claims',
-  BUCKET_CLAIMS_OBJECTS_COUNT = 'NooBaa_num_objects_buckets_claims',
-  UNHEALTHY_BUCKETS = 'NooBaa_num_unhealthy_buckets',
-  UNHEALTHY_BUCKETS_CLAIMS = 'NooBaa_num_unhealthy_bucket_claims',
-}
 
 const objectBucketClaimsResource: FirehoseResource = {
   kind: referenceForModel(NooBaaObjectBucketClaimModel),

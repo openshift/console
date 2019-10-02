@@ -10,16 +10,11 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric } from '../../../../utils/object-service-dashboard';
+import { ResourceProviderQueries } from '../../../../queries';
+import { getMetric } from '../../../../selectors';
 import { ResourceProvidersBody } from './resource-providers-card-body';
 import { ResourceProvidersItem, ProviderType } from './resource-providers-card-item';
 import './resource-providers-card.scss';
-
-const RESOURCE_PROVIDERS_QUERY = {
-  PROVIDERS_TYPES: ' NooBaa_cloud_types',
-  UNHEALTHY_PROVIDERS_TYPES: 'NooBaa_unhealthy_cloud_types',
-  RESOURCES_LINK_QUERY: 'NooBaa_system_info',
-};
 
 const getProviderType = (provider: ProviderPrometheusData): string =>
   _.get(provider, 'metric.type', null);
@@ -46,38 +41,38 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
   prometheusResults,
 }) => {
   React.useEffect(() => {
-    watchPrometheus(RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES);
-    watchPrometheus(RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES);
+    watchPrometheus(ResourceProviderQueries.PROVIDERS_TYPES);
+    watchPrometheus(ResourceProviderQueries.UNHEALTHY_PROVIDERS_TYPES);
     return () => {
-      stopWatchPrometheusQuery(RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES);
-      stopWatchPrometheusQuery(RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES);
+      stopWatchPrometheusQuery(ResourceProviderQueries.PROVIDERS_TYPES);
+      stopWatchPrometheusQuery(ResourceProviderQueries.UNHEALTHY_PROVIDERS_TYPES);
     };
   }, [watchPrometheus, stopWatchPrometheusQuery]);
 
   const providersTypesQueryResult = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES,
+    ResourceProviderQueries.PROVIDERS_TYPES,
     'data',
   ]) as PrometheusResponse;
   const providersTypesQueryResultError = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES,
+    ResourceProviderQueries.PROVIDERS_TYPES,
     'loadError',
   ]);
 
   const unhealthyProvidersTypesQueryResult = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES,
+    ResourceProviderQueries.UNHEALTHY_PROVIDERS_TYPES,
     'data',
   ]) as PrometheusResponse;
   const unhealthyProvidersTypesQueryResultError = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES,
+    ResourceProviderQueries.UNHEALTHY_PROVIDERS_TYPES,
     'loadError',
   ]);
 
   const resourcesLinksResponse = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.RESOURCES_LINK_QUERY,
+    ResourceProviderQueries.RESOURCES_LINK_QUERY,
     'data',
   ]) as PrometheusResponse;
   const resourcesLinksResponseError = prometheusResults.getIn([
-    RESOURCE_PROVIDERS_QUERY.RESOURCES_LINK_QUERY,
+    ResourceProviderQueries.RESOURCES_LINK_QUERY,
     'loadError',
   ]);
 

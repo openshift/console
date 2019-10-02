@@ -23,7 +23,8 @@ import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
 import { obcStatusFilter } from '../../constants/table-filters';
-import { isBound, getOBCPhase } from '../../selectors';
+import { getOBCPhase } from '../../selectors';
+import { isBound } from '../../utils/bucket-pages';
 import { menuActionCreator, menuActions } from './menu-actions';
 import { GetSecret } from './secret';
 

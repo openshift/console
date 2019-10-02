@@ -10,22 +10,19 @@ import {
 import { Dropdown } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import {
-  ObjectDashboardQuery,
-  ObjectCapacityQueries,
-} from '../../../../utils/object-service-dashboard';
+import { NoobaaQueries, UsageBreakdownQueries } from '../../../../queries';
 import { CapacityCardBody } from './capacity-card-body';
 
 import './capacity-card.scss';
 
 const CapacityDropdownType = {
-  [ObjectDashboardQuery.CAPACITY_USAGE_PROJECT_QUERY]: 'Projects',
-  [ObjectDashboardQuery.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: 'Bucket Class',
+  [NoobaaQueries.CAPACITY_USAGE_PROJECT_QUERY]: 'Projects',
+  [NoobaaQueries.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: 'Bucket Class',
 };
 
 const dataToMetricMap = {
-  [ObjectDashboardQuery.CAPACITY_USAGE_PROJECT_QUERY]: 'project',
-  [ObjectDashboardQuery.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: 'bucket_class',
+  [NoobaaQueries.CAPACITY_USAGE_PROJECT_QUERY]: 'project',
+  [NoobaaQueries.CAPACITY_USAGE_BUCKET_CLASS_QUERY]: 'bucket_class',
 };
 
 const CapacityDropDownValues = Object.keys(CapacityDropdownType);
@@ -38,31 +35,31 @@ const ObjectDashboardCapacityCard: React.FC<DashboardItemProps> = ({
   const [capacityUsageType, setCapacityUsageType] = React.useState(CapacityDropDownValues[0]);
 
   React.useEffect(() => {
-    ObjectCapacityQueries[capacityUsageType].forEach((m: string) => {
+    UsageBreakdownQueries[capacityUsageType].forEach((m: string) => {
       watchPrometheus(m);
     });
     return () => {
-      ObjectCapacityQueries[capacityUsageType].forEach((m: string) => {
+      UsageBreakdownQueries[capacityUsageType].forEach((m: string) => {
         stopWatchPrometheusQuery(m);
       });
     };
   }, [watchPrometheus, stopWatchPrometheusQuery, capacityUsageType]);
 
   const capacityUsageTop6AndOthers: PrometheusResponse = prometheusResults.getIn([
-    ObjectCapacityQueries[capacityUsageType][0],
+    UsageBreakdownQueries[capacityUsageType][0],
     'data',
   ]);
   const capacityUsageTop6AndOthersError = prometheusResults.getIn([
-    ObjectCapacityQueries[capacityUsageType][0],
+    UsageBreakdownQueries[capacityUsageType][0],
     'loadError',
   ]);
 
   const capacityUsageTotalResult: PrometheusResponse = prometheusResults.getIn([
-    ObjectCapacityQueries[capacityUsageType][1],
+    UsageBreakdownQueries[capacityUsageType][1],
     'data',
   ]);
   const capacityUsageTotalResultError = prometheusResults.getIn([
-    ObjectCapacityQueries[capacityUsageType][1],
+    UsageBreakdownQueries[capacityUsageType][1],
     'loadError',
   ]);
 

@@ -6,6 +6,7 @@ import {
   HumanizeResult,
 } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { DataConsumptionQueries, NoobaaQueries } from '../../../../queries';
 import {
   ACCOUNTS,
   BY_IOPS,
@@ -13,10 +14,8 @@ import {
   BY_PHYSICAL_VS_LOGICAL_USAGE,
   BY_EGRESS,
   PROVIDERS,
-  DATA_CONSUMPTION_QUERIES,
-  getGaugeValue,
-  ObjectServiceDashboardQuery,
-} from '../../../../utils/object-service-dashboard';
+} from '../../../../constants/constants';
+import { getGaugeValue } from '../../../../selectors';
 
 export const DataConsumersValue = {
   [PROVIDERS]: 'PROVIDERS_',
@@ -39,8 +38,8 @@ export const numberInWords: { [k: string]: string } = {
 
 export const getQueries: GetQueries = (metric, kpi) => {
   const queries =
-    DATA_CONSUMPTION_QUERIES[
-      ObjectServiceDashboardQuery[DataConsumersValue[metric] + DataConsumersSortByValue[kpi]]
+    DataConsumptionQueries[
+      NoobaaQueries[DataConsumersValue[metric] + DataConsumersSortByValue[kpi]]
     ];
   const keys = Object.keys(queries);
   return { queries, keys };
