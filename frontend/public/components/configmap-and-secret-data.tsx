@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
@@ -32,13 +33,14 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
       dl.push(<dt key={`${k}-k`}>{k}</dt>);
       dl.push(
         <dd key={`${k}-v`}>
-          <button
-            className="btn btn-link btn-link--no-btn-default-values"
+          <Button
+            className="pf-m-link--align-left"
             type="button"
             onClick={() => downloadBinary(k, value)}
+            variant="link"
           >
             Save File
-          </button>
+          </Button>
         </dd>,
       );
     });
@@ -93,7 +95,12 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
     <React.Fragment>
       <SectionHeading text="Data">
         {dl.length ? (
-          <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
+          <Button
+            type="button"
+            onClick={() => setReveal(!reveal)}
+            variant="link"
+            className="pf-m-link--align-right"
+          >
             {reveal ? (
               <React.Fragment>
                 <EyeSlashIcon className="co-icon-space-r" />
@@ -105,7 +112,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
                 Reveal Values
               </React.Fragment>
             )}
-          </button>
+          </Button>
         ) : null}
       </SectionHeading>
       {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label="Data" />}

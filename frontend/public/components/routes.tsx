@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Popover } from '@patternfly/react-core';
+import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
@@ -253,10 +253,11 @@ class TLSSettings extends React.Component<TLSDataProps, TLSDataState> {
         <dt className="co-m-route-tls-reveal__title">
           Key{' '}
           {tls.key && (
-            <button
-              className="btn btn-link co-m-route-tls-reveal__btn"
+            <Button
+              className="pf-m-link--align-left"
               type="button"
               onClick={this.toggleKey}
+              variant="link"
             >
               {showPrivateKey ? (
                 <React.Fragment>
@@ -269,7 +270,7 @@ class TLSSettings extends React.Component<TLSDataProps, TLSDataState> {
                   Reveal
                 </React.Fragment>
               )}
-            </button>
+            </Button>
           )}
         </dt>
         <dd>
@@ -361,9 +362,9 @@ const CustomRouteHelp: React.SFC<CustomRouteHelpProps> = ({ host, routerCanonica
       </div>
     }
   >
-    <button className="btn btn-link btn-link--no-btn-default-values" type="button">
+    <Button className="pf-m-link--align-left" type="button" variant="link">
       <QuestionCircleIcon /> Do you need to set up custom DNS?
-    </button>
+    </Button>
   </Popover>
 );
 
