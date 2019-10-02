@@ -26,6 +26,9 @@ import './_vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
+  canEdit = false,
+  editButtonId,
+  onEditClick,
   idValue,
   isNotAvail = false,
   valueClassName,
@@ -33,7 +36,9 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
 }) => {
   return (
     <>
-      <dt>{title}</dt>
+      <dt>
+        {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
+      </dt>
       <dd id={idValue} className={valueClassName}>
         {isNotAvail ? <span className="text-secondary">Not available</span> : children}
       </dd>
@@ -147,6 +152,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
 type VMDetailsItemProps = {
   title: string;
+  canEdit?: boolean;
+  editButtonId?: string;
+  onEditClick?: () => void;
   idValue?: string;
   isNotAvail?: boolean;
   valueClassName?: string;
