@@ -1,0 +1,21 @@
+reviewers:
+  - andrewballantyne
+  - abhinandan13jan
+  - debsmita1
+  - divyanshiGupta
+  - christianvogt
+  - gijohn
+  - joshuawilson
+  - invincibleJai
+  - karthikjeeyar
+  - nemesis09
+  - rohitkrai03
+  - sahil143
+  - vikram-raj
+approvers:
+  - christianvogt
+  - joshuawilson
+  - rohitkrai03
+labels:
+  - component/dev-console
+  - component/git-service
