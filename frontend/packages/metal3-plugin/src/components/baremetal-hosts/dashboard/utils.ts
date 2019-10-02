@@ -6,6 +6,7 @@ import { getHostStatus } from '../../../utils/host-status';
 import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../../constants';
 import { findNodeMaintenance, getHostMachine } from '../../../selectors';
 import { getHostFilterStatus } from '../table-filters';
+import { BareMetalHostKind } from '../../../types';
 
 const BMH_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.NOT_MAPPED]: HOST_SUCCESS_STATES,
@@ -13,7 +14,10 @@ const BMH_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.ERROR]: HOST_ERROR_STATES,
 };
 
-export const getBMHStatusGroups: StatusGroupMapper = (hosts, { machines, nodes, maintenances }) => {
+export const getBMHStatusGroups: StatusGroupMapper = (
+  hosts: BareMetalHostKind[],
+  { machines, nodes, maintenances },
+) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
       statusIDs: ['ready', 'provisioned'],

@@ -22,6 +22,7 @@ import {
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import { powerOffHostModal } from '../modals/PowerOffHostModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { BareMetalHostKind } from '../../types';
 
 type ActionArgs = {
   nodeName?: string;
@@ -32,7 +33,7 @@ type ActionArgs = {
 
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
@@ -43,7 +44,7 @@ export const SetNodeMaintenance = (
 
 export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => {
@@ -57,7 +58,7 @@ export const RemoveNodeMaintenance = (
   };
 };
 
-export const PowerOn = (kindObj: K8sKind, host: K8sResourceKind): KebabOption => {
+export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => {
   const title = 'Power on';
   return {
     hidden: [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
@@ -73,7 +74,7 @@ export const PowerOn = (kindObj: K8sKind, host: K8sResourceKind): KebabOption =>
 
 export const PowerOff = (
   kindObj: K8sKind,
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   resources: null,
   { hasNodeMaintenanceCapability, nodeName, status }: ActionArgs,
 ) => ({
@@ -87,7 +88,7 @@ export const PowerOff = (
 
 export const Delete = (
   kindObj: K8sKind,
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   resources: null,
   { status }: ActionArgs,
 ): KebabOption => {
@@ -123,7 +124,7 @@ type ExtraResources = {
 
 export const menuActionsCreator = (
   kindObj: K8sKind,
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   { machines, nodes, nodeMaintenances }: ExtraResources,
   { hasNodeMaintenanceCapability },
 ) => {

@@ -36,12 +36,13 @@ import {
   findNodeMaintenance,
   getHostBios,
 } from '../../selectors';
+import { BareMetalHostKind } from '../../types';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 
 type BareMetalHostDetailsProps = {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
   machines: MachineKind[];
   nodes: NodeKind[];
   nodeMaintenances: K8sResourceKind[];

@@ -1,3 +1,5 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
+
 export type BareMetalHostNIC = {
   ip: string;
   mac: string;
@@ -37,3 +39,49 @@ export type BareMetalHostBios = {
   vendor: string;
   version: string;
 };
+
+export type BareMetalHostKind = {
+  spec?: {
+    bmc: {
+      address: string;
+      credentialsName: string;
+    };
+    bootMACAddress: string;
+    consumerRef?: {
+      apiVersion: string;
+      kind: string;
+      name: string;
+      namespace: string;
+    };
+    image?: {
+      checksum: string;
+      url: string;
+    };
+    online: boolean;
+  };
+  status?: {
+    hardwareProfile: string;
+    poweredOn: boolean;
+    operationalStatus: string;
+    hardware?: {
+      cpu?: BareMetalHostCPU;
+      firmware?: {
+        bios: BareMetalHostBios;
+      };
+      hostname: string;
+      nics?: BareMetalHostNIC[];
+      ramMebibytes: number;
+      storage: BareMetalHostDisk[];
+      systemVendor: BareMetalHostSystemVendor;
+    };
+    provisioning?: {
+      ID: string;
+      image?: {
+        checksum: string;
+        url: string;
+      };
+      state: string;
+    };
+    errorMessage: string;
+  };
+} & K8sResourceKind;

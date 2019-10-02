@@ -2,9 +2,8 @@ import * as React from 'react';
 import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getHostNICs } from '../../selectors';
-import { BareMetalHostNIC } from '../../types';
+import { BareMetalHostNIC, BareMetalHostKind } from '../../types';
 
 const NICsTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -39,7 +38,7 @@ const NICsTableRow: React.FC<NICsTableRowProps> = ({ obj: nic, index, key, style
 };
 
 type BareMetalHostNICsProps = {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
 };
 
 const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host }) => {

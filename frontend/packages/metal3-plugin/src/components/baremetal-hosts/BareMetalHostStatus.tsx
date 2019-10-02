@@ -9,7 +9,6 @@ import {
   StatusIconAndText,
   getNamespace,
 } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RequireCreatePermission } from '@console/internal/components/utils';
 import {
   HOST_STATUS_DISCOVERED,
@@ -23,10 +22,11 @@ import { BareMetalHostModel } from '../../models';
 import { getHostErrorMessage } from '../../selectors';
 import { HostMultiStatus } from '../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
+import { BareMetalHostKind } from '../../types';
 
 // TODO(jtomasek): Update this with onClick handler once add discovered host functionality
 // is available
-export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
+export const AddDiscoveredHostButton: React.FC<{ host: BareMetalHostKind }> = (
   { host }, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
   const namespace = getNamespace(host);

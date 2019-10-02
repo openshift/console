@@ -18,7 +18,6 @@ import {
   getAlerts,
 } from '@console/internal/components/dashboard/health-card';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   HOST_STATUS_OK,
   HOST_HEALTH_OK,
@@ -27,6 +26,7 @@ import {
   HOST_HEALTH_LOADING,
 } from '../../../constants';
 import { getHostOperationalStatus } from '../../../selectors';
+import { BareMetalHostKind } from '../../../types';
 
 const getHostHealthState = (obj): HostHealthState => {
   const status = getHostOperationalStatus(obj);
@@ -105,5 +105,5 @@ type HostHealthState = {
 };
 
 type HealthCardProps = DashboardItemProps & {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
 };

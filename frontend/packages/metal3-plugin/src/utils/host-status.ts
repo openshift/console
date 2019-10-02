@@ -19,8 +19,9 @@ import {
   // HOST_STATUS_STARTING_MAINTENANCE,
 } from '../constants';
 import { HostMultiStatus } from '../components/types';
+import { BareMetalHostKind } from '../types';
 
-const getMaintenanceStatus = (maintenance: K8sResourceKind, host: K8sResourceKind) => {
+const getMaintenanceStatus = (maintenance: K8sResourceKind, host: BareMetalHostKind) => {
   if (maintenance) {
     if (getDeletetionTimestamp(maintenance)) {
       return {
@@ -48,7 +49,7 @@ const getMaintenanceStatus = (maintenance: K8sResourceKind, host: K8sResourceKin
   return null;
 };
 
-const getBareMetalHostStatus = (host: K8sResourceKind) => {
+const getBareMetalHostStatus = (host: BareMetalHostKind) => {
   const operationalStatus = getHostOperationalStatus(host);
   const provisioningState = getHostProvisioningState(host);
 
@@ -77,7 +78,7 @@ const getBareMetalHostStatus = (host: K8sResourceKind) => {
 };
 
 type HostStatusProps = {
-  host: K8sResourceKind;
+  host: BareMetalHostKind;
   machine?: MachineKind;
   node?: NodeKind;
   nodeMaintenance?: K8sResourceKind;

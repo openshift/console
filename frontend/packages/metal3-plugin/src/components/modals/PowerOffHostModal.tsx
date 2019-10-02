@@ -8,10 +8,10 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { powerOffHost } from '../../k8s/requests/host-power-operations';
 import { HOST_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY } from '../../constants';
+import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 
 type SafePowerOffDialogProps = { isUnderMaintenance: boolean };
@@ -78,7 +78,7 @@ const isPowerOffSafe = (status: string) => {
 };
 
 export type PowerOffHostModalProps = {
-  host: K8sResourceKind;
+  host: BareMetalHostKind;
   hasNodeMaintenanceCapability: boolean;
   nodeName: string;
   status: string;
