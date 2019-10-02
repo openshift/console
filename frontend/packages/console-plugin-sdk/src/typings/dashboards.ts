@@ -1,4 +1,4 @@
-import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
+import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { FirehoseResource, Humanize, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
@@ -16,7 +16,7 @@ import { LazyLoader } from './types';
 namespace ExtensionProperties {
   interface DashboardExtension {
     /** Name of feature flag for this item. */
-    required: string | string[];
+    required?: string | string[];
   }
 
   interface DashboardsOverviewHealthSubsystem extends DashboardExtension {
@@ -39,24 +39,34 @@ namespace ExtensionProperties {
      */
     fetch?: (url: string) => Promise<R>;
 
+    /** Additional resource which will be fetched and passed to healthHandler  */
+    additionalResource?: FirehoseResource;
+
     /** Resolve the subsystem's health */
-    healthHandler: (response: R, error: boolean) => SubsystemHealth;
+    healthHandler: URLHealthHandler<R>;
   }
 
   export interface DashboardsOverviewHealthPrometheusSubsystem
     extends DashboardsOverviewHealthSubsystem {
-    /** The Prometheus query */
-    query: string;
+    /** The Prometheus queries */
+    queries: string[];
 
-    /** Resource which will be fetched and passed to healthHandler  */
-    resource?: FirehoseResource;
+    /** Additional resource which will be fetched and passed to healthHandler  */
+    additionalResource?: FirehoseResource;
 
     /** Resolve the subsystem's health */
-    healthHandler: (
-      response: PrometheusResponse,
-      error: boolean,
-      resource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-    ) => SubsystemHealth;
+    healthHandler: PrometheusHealthHandler;
+
+    /**
+     * Loader for popup content. If defined health item will be represented as link
+     * which opens popup with given content.
+     */
+    popupComponent?: LazyLoader<any>;
+
+    /**
+     * Popup title
+     */
+    popupTitle?: string;
   }
 
   export interface DashboardsTab extends DashboardExtension {
@@ -288,3 +298,20 @@ export type K8sActivityProps = {
 export type PrometheusActivityProps = {
   results: PrometheusResponse[];
 };
+
+export type SubsystemHealth = {
+  message?: string;
+  state: HealthState;
+};
+
+export type URLHealthHandler<R> = (
+  response: R,
+  error: any,
+  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+) => SubsystemHealth;
+
+export type PrometheusHealthHandler = (
+  responses: PrometheusResponse[],
+  errors: any[],
+  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+) => SubsystemHealth;

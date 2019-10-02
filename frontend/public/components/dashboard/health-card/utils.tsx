@@ -1,17 +1,18 @@
-import * as _ from 'lodash-es';
-import { Alert } from '../../monitoring';
-import { ALERTS_KEY } from '../../../actions/dashboards';
-import { RequestMap } from '../../../reducers/dashboards';
+import { Alert, getAlerts as getPrometheusAlerts, PrometheusRulesResponse } from '../../monitoring';
 
-export const getAlertSeverity = (alert: Alert): string => _.get(alert, 'labels.severity');
-export const getAlertMessage = (alert: Alert): string => _.get(alert, 'annotations.message');
-export const getAlertDescription = (alert: Alert): string =>
-  _.get(alert, 'annotations.description');
+export const getAlertSeverity = (alert: Alert) =>
+  alert && alert.labels ? alert.labels.severity : null;
+export const getAlertMessage = (alert: Alert) =>
+  alert && alert.annotations ? alert.annotations.message : null;
+export const getAlertDescription = (alert: Alert) =>
+  alert && alert.annotations ? alert.annotations.description : null;
+export const getAlertTime = (alert: Alert) => (alert ? alert.activeAt : null);
+export const getAlertName = (alert: Alert) =>
+  alert && alert.labels ? alert.labels.alertname : null;
 
-export const filterAlerts = (alerts: Alert[]): Alert[] =>
-  alerts.filter((alert) => _.get(alert, 'labels.alertname') !== 'Watchdog');
-
-export const getAlerts = (alertsResults: RequestMap<Alert[]>): Alert[] => {
-  const alertsResponse = alertsResults ? alertsResults.getIn([ALERTS_KEY, 'data'], []) : [];
-  return Array.isArray(alertsResponse) ? filterAlerts(alertsResponse) : [];
-};
+export const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
+  alertsResults
+    ? getPrometheusAlerts(alertsResults.data)
+        .filter((a) => a.state === 'firing' && getAlertName(a) !== 'Watchdog')
+        .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
+    : [];
