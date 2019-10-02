@@ -33,8 +33,6 @@ type ConsumedExtensions =
   | ClusterServiceVersionAction;
 
 const CEPH_FLAG = 'CEPH';
-// keeping this for testing, will be removed once ocs operator available
-// const apiObjectRef = 'core.libopenstorage.org~v1alpha1~StorageCluster';
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -113,32 +111,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       tab: 'persistent-storage',
       position: GridPosition.MAIN,
-      span: 6,
-      loader: () =>
-        import(
-          './components/dashboard-page/storage-dashboard/capacity-card/capacity-card' /* webpackChunkName: "ceph-storage-capacity-card" */
-        ).then((m) => m.default),
-      required: CEPH_FLAG,
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      span: 6,
-      loader: () =>
-        import(
-          './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-storage-data-resiliency-card" */
-        ).then((m) => m.DataResiliencyWithResources),
-      required: CEPH_FLAG,
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/top-consumers-card/top-consumers-card' /* webpackChunkName: "ceph-storage-top-consumers-card" */
@@ -154,8 +126,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-storage-events-card" */
-        ).then((m) => m.default),
+          './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
+        ).then((m) => m.ActivityCard),
       required: CEPH_FLAG,
     },
   },

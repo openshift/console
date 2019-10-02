@@ -14,7 +14,6 @@ import {
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
-import './data-resiliency.scss';
 
 const getCapacityStats = (response) => {
   return _.get(response, 'data.result[0].value[1]');

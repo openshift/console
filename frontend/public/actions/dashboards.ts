@@ -16,7 +16,8 @@ export enum ActionType {
 }
 
 const REFRESH_TIMEOUT = 5000;
-
+window.SERVER_FLAGS.prometheusBaseURL =
+  'https://prometheus-k8s-openshift-monitoring.apps.anmoloct0903.devcluster.openshift.com';
 export const ALERTS_KEY = 'alerts';
 
 export const stopWatch = (type: RESULTS_TYPE, key: string) =>
