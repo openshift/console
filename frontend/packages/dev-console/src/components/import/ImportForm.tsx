@@ -126,6 +126,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         limitUnit: 'Mi',
       },
     },
+    trafficSplit: {
+      value: 'latest'
+    },
   };
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);

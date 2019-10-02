@@ -91,4 +91,7 @@ export const mockFormData: GitImportFormData = {
       limitUnit: 'MiB',
     },
   },
+  trafficSplit: {
+    value: 'latest'
+  },
 };
