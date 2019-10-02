@@ -1,13 +1,9 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-
-type NodeIP = {
-  type: string;
-  address: string;
-};
+import { NodeAddress } from '@console/shared';
 
 type NodeIPListProps = {
-  ips: NodeIP[];
+  ips: NodeAddress[];
   expand?: boolean;
 };
 

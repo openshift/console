@@ -7,6 +7,7 @@ import {
   getMachineRegion,
   getMachineRole,
   getMachineZone,
+  getMachineAddresses,
 } from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
@@ -151,7 +152,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
           )}
           <dt>Machine Addresses</dt>
           <dd>
-            <NodeIPList ips={_.get(obj, 'status.addresses')} expand />
+            <NodeIPList ips={getMachineAddresses(obj)} expand />
           </dd>
         </ResourceSummary>
       </div>

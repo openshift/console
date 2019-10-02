@@ -16,7 +16,7 @@ import {
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { Button, pluralize } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
-import { getNodeMachineNameAndNamespace } from '@console/shared';
+import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
 import NodeGraphs from './NodeGraphs';
@@ -53,7 +53,7 @@ const NodeDetails: React.FC<NodeDetailsProps> = ({ obj: node }) => {
               <dd>{_.get(node, 'spec.externalID', '-')}</dd>
               <dt>Node Addresses</dt>
               <dd>
-                <NodeIPList ips={_.get(node, 'status.addresses')} expand />
+                <NodeIPList ips={getNodeAddresses(node)} expand />
               </dd>
               <dt>Node Labels</dt>
               <dd>

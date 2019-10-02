@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { NodeKind } from '@console/internal/module/k8s';
+import { NodeAddress, NodeCondition } from '../types';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
@@ -17,6 +18,9 @@ export const getNodeRoles = (node: NodeKind): string[] => {
   );
 };
 
+export const getNodeAddresses = (node: NodeKind): NodeAddress[] =>
+  _.get(node, 'status.addresses', []);
+
 type NodeMachineAndNamespace = {
   name: string;
   namespace: string;
@@ -29,15 +33,6 @@ export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNa
 
 export const isNodeUnschedulable = (node: NodeKind): boolean =>
   _.get(node, 'spec.unschedulable', false);
-
-type NodeCondition = {
-  lastHeartbeatTime: string;
-  lastTransitionTime: string;
-  message: string;
-  reason: string;
-  status: string;
-  type: string;
-};
 
 export const isNodeReady = (node: NodeKind): boolean => {
   const conditions = _.get(node, 'status.conditions', []);

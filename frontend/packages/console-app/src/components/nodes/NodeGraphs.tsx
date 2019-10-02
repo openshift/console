@@ -8,6 +8,7 @@ import {
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { getNodeAddresses } from '@console/shared';
 
 type NodeGraphsProps = {
   node: NodeKind;
@@ -15,7 +16,7 @@ type NodeGraphsProps = {
 
 const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
   const instanceQuery = `{instance='${node.metadata.name}'}`;
-  const nodeIp = _.find<{ type: string; address: string }>(node.status.addresses, {
+  const nodeIp = _.find<{ type: string; address: string }>(getNodeAddresses(node), {
     type: 'InternalIP',
   });
   const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
