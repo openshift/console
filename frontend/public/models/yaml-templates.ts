@@ -1045,6 +1045,7 @@ spec:
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a lobortis justo, eu suscipit purus.
   links:
     - href: 'https://www.example.com'
+      text: Download Example CLI
 `,
   )
   .setIn(

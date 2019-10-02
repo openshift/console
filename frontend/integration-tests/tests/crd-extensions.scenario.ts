@@ -27,7 +27,7 @@ describe('CRD extensions', () => {
         displayName: name,
         description:
           'This is an example CLI download description that can include markdown such as paragraphs, unordered lists, code, [links](https://www.example.com), etc.',
-        links: [{ href: 'https://www.example.com' }],
+        links: [{ href: 'https://www.example.com', text: 'Example CLI Download' }],
       },
     };
 
