@@ -23,7 +23,6 @@ import {
   POD_PHASE_PENDING,
 } from '../pod/constants';
 import { NOT_HANDLED } from '../constants';
-import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants';
 import { VMKind } from '../../types';
 import {
   VM_STATUS_V2V_CONVERSION_ERROR,
@@ -193,7 +192,7 @@ export const getVMStatus = (
   pods: PodKind[],
   migrations: K8sResourceKind[],
 ): VMStatus => {
-  const launcherPod = findVMPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
+  const launcherPod = findVMPod(pods, vm);
   return (
     isV2VConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
     isBeingMigrated(vm, migrations) || //  -||-

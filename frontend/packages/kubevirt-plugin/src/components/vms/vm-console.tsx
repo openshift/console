@@ -5,7 +5,6 @@ import { getName, getNamespace } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodModel, ServiceModel } from '@console/internal/models';
-import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -39,7 +38,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   let rdp;
   if (isWindows(vm)) {
     const rdpService = findRDPService(vmi, services);
-    const launcherPod = findVMPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
+    const launcherPod = findVMPod(pods, vm);
     rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
   }
 
