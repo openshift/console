@@ -1,9 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup } from 'patternfly-react';
+import { ListGroup, Button } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
+import { trafficModalLauncher } from '../traffic-splitting/TrafficSplittingController';
+import { ServiceModel } from '../../models';
+import './RevisionsOverviewList.scss';
 
 export type RevisionsOverviewListProps = {
   revisions: K8sResourceKind[];
@@ -43,7 +46,18 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
 
 const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => (
   <>
-    <SidebarSectionHeading text="Revisions" />
+    <SidebarSectionHeading text="Revisions" className="revision-overview-list">
+      {/* add extra check, if sidebar is opened for a knative deployment */}
+      {service.kind === ServiceModel.kind && (
+        <Button
+          variant="secondry"
+          onClick={() => trafficModalLauncher({ obj: service })}
+          disabled={revisions.length === 0}
+        >
+          Set Traffic Distribution
+        </Button>
+      )}
+    </SidebarSectionHeading>
     {_.isEmpty(revisions) ? (
       <span className="text-muted">No Revisions found for this resource.</span>
     ) : (

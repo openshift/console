@@ -171,8 +171,9 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,
+  className,
 }) => (
-  <h2 className="sidebar__section-heading" style={style}>
+  <h2 className={`sidebar__section-heading ${className}`} style={style}>
     {text}
     {children}
   </h2>
@@ -260,6 +261,7 @@ export type SectionHeadingProps = {
 export type SidebarSectionHeadingProps = {
   children?: any;
   style?: any;
+  className?: string;
   text: string;
 };
 

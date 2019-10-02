@@ -43,11 +43,13 @@ export const getKnativeServiceData = (
   resources: TopologyDataResources,
 ): KnativeItem => {
   const configurations = getOwnedResources(resource, resources.configurations.data);
-  const ksroutes = getOwnedResources(resource, resources.ksroutes.data);
   const revisions =
     configurations && configurations.length
       ? getOwnedResources(configurations[0], resources.revisions.data)
       : undefined;
+  const ksroutes = resources.ksroutes
+    ? getOwnedResources(resource, resources.ksroutes.data)
+    : undefined;
   const knativedata = { configurations, revisions, ksroutes };
   return knativedata;
 };
