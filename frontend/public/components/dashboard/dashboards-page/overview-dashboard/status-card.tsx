@@ -5,9 +5,8 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
 } from '@console/plugin-sdk';
-import { Button } from 'patternfly-react';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -172,7 +171,7 @@ const ClusterAlerts = withDashboardResources(
       () => (
         <Button
           className="co-status-card__link-button"
-          bsStyle="link"
+          variant="link"
           onClick={() => clusterUpdateModal({ cv })}
         >
           View details
