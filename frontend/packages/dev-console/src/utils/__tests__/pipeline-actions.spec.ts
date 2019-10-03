@@ -32,30 +32,16 @@ export const actionPipelineRuns: PipelineRun[] = [
 
 describe('PipelineAction testing rerunPipeline create correct labels and callbacks', () => {
   it('expect label to be "Start Last Run" when latestRun is available', () => {
-    const rerunAction = rerunPipeline(actionPipelines[0], actionPipelineRuns[0]);
-    const rerunResult = rerunAction(PipelineModel, actionPipelines[1]);
-    expect(rerunResult.label).toBe('Start Last Run');
-    expect(rerunResult.callback).not.toBeNull();
-  });
-  it('expect label not to be "Start Last Run" when latestRun is unavailable', () => {
-    const rerunAction = rerunPipeline(actionPipelines[1], null);
-    const rerunResult = rerunAction(PipelineModel, actionPipelines[1]);
-    expect(rerunResult.label).not.toBe('Start Last Run');
-    expect(rerunResult.callback).toBeNull();
+    const rerunAction = rerunPipeline(PipelineModel, actionPipelines[0], actionPipelineRuns[0]);
+    expect(rerunAction.label).toBe('Start Last Run');
+    expect(rerunAction.callback).not.toBeNull();
   });
 });
 
 describe('PipelineAction testing stopPipelineRun create correct labels and callbacks', () => {
   it('expect label to be "Stop" when latest Run is running', () => {
-    const stopAction = stopPipelineRun(actionPipelineRuns[1]);
-    const stopResult = stopAction(PipelineRunModel, actionPipelineRuns[1]);
-    expect(stopResult.label).toBe('Stop');
-    expect(stopResult.callback).not.toBeNull();
-  });
-  it('expect label not to be "Stop" when latestRun is not running', () => {
-    const stopAction = stopPipelineRun(actionPipelineRuns[0]);
-    const stopResult = stopAction(PipelineRunModel, actionPipelineRuns[0]);
-    expect(stopResult.label).not.toBe('Stop');
-    expect(stopResult.callback).toBeNull();
+    const stopAction = stopPipelineRun(PipelineRunModel, actionPipelineRuns[1]);
+    expect(stopAction.label).toBe('Stop');
+    expect(stopAction.callback).not.toBeNull();
   });
 });

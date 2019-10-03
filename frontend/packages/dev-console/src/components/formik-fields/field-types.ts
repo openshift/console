@@ -6,6 +6,7 @@ export interface FieldProps {
   helpText?: string;
   required?: boolean;
   style?: React.CSSProperties;
+  isReadOnly?: boolean;
 }
 
 export interface InputFieldProps extends FieldProps {

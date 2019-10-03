@@ -20,7 +20,12 @@ interface PipelineRunRowProps {
 }
 
 const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style }) => {
-  const menuActions = [reRunPipelineRun(obj), stopPipelineRun(obj), Kebab.factory.Delete];
+  const pipelineRunStatus = pipelineRunFilterReducer(obj);
+  const menuActions = [
+    reRunPipelineRun,
+    ...(obj && pipelineRunStatus === 'Running' ? [stopPipelineRun] : []),
+    Kebab.factory.Delete,
+  ];
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
