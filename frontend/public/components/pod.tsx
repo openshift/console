@@ -38,6 +38,7 @@ import { requirePrometheus, Area } from './graphs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
+import { PodDashboard } from './pod-dashboard';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -403,6 +404,11 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
     {...props}
     menuActions={menuActions}
     pages={[
+      {
+        href: 'dashboard', // TODO: make it default once additional Cards are implemented
+        name: 'Dashboard',
+        component: PodDashboard,
+      },
       navFactory.details(Details),
       navFactory.editYaml(),
       navFactory.envEditor(PodEnvironmentComponent),
