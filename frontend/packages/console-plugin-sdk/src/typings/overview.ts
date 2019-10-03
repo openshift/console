@@ -18,7 +18,7 @@ namespace ExtensionProperties {
     required: string;
 
     /** util to check get resources. */
-    utils: (dc: K8sResourceKind, props: OverviewMainContentProps) => ResourceItem;
+    utils: (dc: K8sResourceKind, props: OverviewMainContentProps) => ResourceItem | undefined;
   }
 
   export interface OverviewResourceTab {
