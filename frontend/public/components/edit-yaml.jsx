@@ -234,7 +234,11 @@ export const EditYAML = connect(stateToProps)(
         namespace,
       };
       checkAccess(resourceAttributes, impersonate).then((resp) => {
-        this.setState({ notAllowed: !resp.status.allowed });
+        const notAllowed = !resp.status.allowed;
+        this.setState({ notAllowed });
+        if (this.monacoRef.current) {
+          this.monacoRef.current.editor.updateOptions({ readOnly: notAllowed });
+        }
       });
     }
 
