@@ -5,10 +5,14 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { UnknownIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { UnknownIcon, SyncAltIcon, InProgressIcon } from '@patternfly/react-icons';
 import { HealthState } from '../health-card/states';
+<<<<<<< HEAD:frontend/packages/console-shared/src/components/dashboard/status-card/HealthItem.tsx
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 
+=======
+import { DashboardCardPopupLink } from '../dashboard-card';
+>>>>>>> Removed health card:frontend/public/components/dashboard/status-card/health-item.tsx
 const healthStateMapping = {
   [HealthState.OK]: {
     icon: <GreenCheckCircleIcon />,
@@ -23,6 +27,9 @@ const healthStateMapping = {
   [HealthState.UPDATING]: {
     icon: <SyncAltIcon className="update-pending" />,
     message: 'Updating',
+  },
+  [HealthState.PROGRESS]: {
+    icon: <InProgressIcon />,
   },
   [HealthState.UNKNOWN]: {
     icon: <UnknownIcon className="text-secondary" />,

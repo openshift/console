@@ -5,4 +5,5 @@ export enum HealthState {
   LOADING = 'LOADING',
   UNKNOWN = 'UNKNOWN',
   UPDATING = 'UPDATING',
+  PROGRESS = 'PROGRESS',
 }

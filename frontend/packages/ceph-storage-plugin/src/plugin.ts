@@ -20,7 +20,7 @@ import {
   StorageDashboardQuery,
   STORAGE_HEALTH_QUERIES,
 } from './constants/queries';
-import { getCephHealthState } from './components/dashboard-page/storage-dashboard/health-card/utils';
+import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -101,8 +101,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/health-card/health-card' /* webpackChunkName: "ceph-storage-health-card" */
-        ).then((m) => m.default),
+          './components/dashboard-page/storage-dashboard/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
+        ).then((m) => m.StatusCard),
       required: CEPH_FLAG,
     },
   },
