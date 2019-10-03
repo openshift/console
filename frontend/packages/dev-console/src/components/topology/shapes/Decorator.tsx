@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { TooltipPosition } from '@patternfly/react-core';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../../utils/svg-utils';
-import DecoratorTooltip from '../SvgDecoratorTooltip';
 
 import './Decorator.scss';
 
@@ -13,8 +11,6 @@ type DecoratorTypes = {
   onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
   href?: string;
   external?: boolean;
-  title: string;
-  position?: TooltipPosition;
 };
 
 const FILTER_ID = 'DecoratorDropShadowFilterId';
@@ -27,32 +23,18 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   children,
   href,
   external,
-  title,
-  position = TooltipPosition.top,
 }) => {
-  const [hover, setHover] = React.useState(false);
-
   const decorator = (
     <g className="odc-decorator" transform={`translate(${x}, ${y})`} onClick={onClick}>
-      <g onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-        <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
-        <circle
-          className="odc-decorator__bg"
-          cx={0}
-          cy={0}
-          r={radius}
-          filter={createSvgIdUrl(FILTER_ID)}
-        />
-        {children}
-      </g>
-      <DecoratorTooltip
-        title={title}
-        x={0}
-        y={0}
-        radius={radius}
-        position={position}
-        active={hover}
+      <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
+      <circle
+        className="odc-decorator__bg"
+        cx={0}
+        cy={0}
+        r={radius}
+        filter={createSvgIdUrl(FILTER_ID)}
       />
+      {children}
     </g>
   );
   if (href) {
