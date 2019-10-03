@@ -7,8 +7,11 @@ import { Helmet } from 'react-helmet';
 import * as plugins from '../../../plugins';
 import { OverviewDashboard } from './overview-dashboard/overview-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
-import { Dashboard } from '../generic/dashboard';
-import { DashboardGrid, GridPosition, GridDashboardCard } from '../generic/grid';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid, {
+  GridPosition,
+  GridDashboardCard,
+} from '@console/shared/src/components/dashboard/DashboardGrid';
 import { DashboardsCard } from '@console/plugin-sdk';
 import {
   featureReducerName,

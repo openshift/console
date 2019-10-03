@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
-import {
-  DashboardCard,
-  DashboardCardHeader,
-  DashboardCardTitle,
-  DashboardCardBody,
-} from '@console/internal/components/dashboard/generic/dashboard-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { getName, getNamespace } from '@console/shared';
-import { InventoryBody } from '@console/internal/components/dashboard/generic/inventory-card/inventory-body';
-import { InventoryItem } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
+import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
+import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { resourcePath } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getNetworks, getDisks } from '../../../selectors/vm';

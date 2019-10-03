@@ -2,21 +2,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as plugins from '../../../../plugins';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-  DashboardCardPopupLink,
-} from '../../generic/dashboard-card';
-import {
-  AlertsBody,
-  AlertItem,
-  getAlerts,
-  HealthBody,
-  HealthItem,
-} from '../../generic/health-card';
-import { HealthState } from '../../generic/health-card/states';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import AlertsBody from '@console/shared/src/components/dashboard/health-card/AlertsBody';
+import AlertItem from '@console/shared/src/components/dashboard/health-card/AlertItem';
+import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
+import HealthBody from '@console/shared/src/components/dashboard/health-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/health-card/HealthItem';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
 import { coFetch } from '../../../../co-fetch';
 import { FLAGS } from '../../../../const';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -13,7 +13,7 @@ import {
   getNodeStatusGroups,
   getPVCStatusGroups,
   getPVStatusGroups,
-} from '@console/internal/components/dashboard/generic/inventory-card/utils';
+} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   NodeModel,
@@ -21,8 +21,8 @@ import {
   PersistentVolumeModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { InventoryBody } from '@console/internal/components/dashboard/generic/inventory-card/inventory-body';
-import { ResourceInventoryItem } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
+import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
+import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getCephNodes, getCephPVs, getCephPVCs, getCephSC } from '../../../selectors';
 
 const k8sResources: FirehoseResource[] = [

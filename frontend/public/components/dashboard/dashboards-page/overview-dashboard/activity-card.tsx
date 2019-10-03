@@ -1,22 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardLink,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
 import { FirehoseResource, FirehoseResult } from '../../../utils';
 import { EventKind } from '../../../../module/k8s';
-import {
-  ActivityBody,
+import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
-} from '../../generic/activity-card/activity-body';
+} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import * as plugins from '../../../../plugins';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';

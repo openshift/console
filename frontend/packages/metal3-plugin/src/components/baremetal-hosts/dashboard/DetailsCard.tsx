@@ -1,14 +1,10 @@
 import * as React from 'react';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/generic/dashboard-card';
-import {
-  DetailsBody,
-  DetailItem,
-} from '@console/internal/components/dashboard/generic/details-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import {
   DashboardItemProps,
   withDashboardResources,

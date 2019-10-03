@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import {
-  DashboardCard,
-  DashboardCardHeader,
-  DashboardCardBody,
-  DashboardCardTitle,
-  DashboardCardLink,
-} from '../../generic/dashboard-card';
-import { EventsBody } from '../../generic/events-card/events-body';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import EventsBody from '@console/shared/src/components/dashboard/events-card/EventsBody';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
 import { FirehoseResource, FirehoseResult } from '../../../utils';

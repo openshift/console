@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { OffIcon } from '@patternfly/react-icons';
 import { PodKind } from '@console/internal/module/k8s';
-import { StatusGroupMapper } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
-import { InventoryStatusGroup } from '@console/internal/components/dashboard/generic/inventory-card/status-group';
+import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getVMStatus } from '../../../statuses/vm/vm';
 import { VMKind } from '../../../types';
 import {

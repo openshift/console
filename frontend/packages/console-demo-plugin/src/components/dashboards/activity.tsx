@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {
+import ActivityItem, {
   ActivityProgress,
-  ActivityItem,
-} from '@console/internal/components/dashboard/generic/activity-card/activity-item';
+} from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { ResourceLink } from '@console/internal/components/utils';
 import { getNamespace, getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';

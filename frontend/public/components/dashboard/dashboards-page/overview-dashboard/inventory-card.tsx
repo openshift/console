@@ -2,28 +2,31 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import * as plugins from '../../../../plugins';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   ResourceInventoryItem,
   StatusGroupMapper,
-} from '../../generic/inventory-card/inventory-item';
+} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import { PodModel, NodeModel, PersistentVolumeClaimModel } from '../../../../models';
+import {
+  PodModel,
+  NodeModel,
+  PersistentVolumeClaimModel,
+  StorageClassModel,
+} from '../../../../models';
 import { K8sResourceKind, K8sKind, referenceForModel } from '../../../../module/k8s';
 import {
   getPodStatusGroups,
   getNodeStatusGroups,
   getPVCStatusGroups,
-} from '../../generic/inventory-card/utils';
+} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
-import { InventoryBody } from '../../generic/inventory-card/inventory-body';
+import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 
 const getItems = (flags: FlagsObject) =>

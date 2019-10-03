@@ -3,7 +3,7 @@ import { AddressBookIcon } from '@patternfly/react-icons';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
-} from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
+} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 
 export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
   'demo-inventory-group': {

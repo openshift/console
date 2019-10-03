@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Dashboard, DashboardGrid } from '@console/internal/components/dashboard/generic';
-import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { BareMetalHostKind } from '../../../types';
 import HealthCard from './HealthCard';
 import UtilizationCard from './UtilizationCard';
 import EventsCard from './EventsCard';

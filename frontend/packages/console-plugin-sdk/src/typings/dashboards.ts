@@ -1,14 +1,14 @@
-import { HealthState } from '@console/internal/components/dashboard/generic/health-card/states';
-import { GridPosition } from '@console/internal/components/dashboard/generic/grid';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FirehoseResource, Humanize, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
-} from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
+} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { ConsumerMutator } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/top-consumers-card';
-import { MetricType } from '@console/internal/components/dashboard/generic/top-consumers-card/metric-type';
+import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Extension } from './extension';
 import { LazyLoader } from './types';

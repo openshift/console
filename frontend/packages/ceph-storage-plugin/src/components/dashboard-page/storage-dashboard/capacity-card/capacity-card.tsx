@@ -1,16 +1,12 @@
 import * as React from 'react';
 import * as plugins from '@console/internal/plugins';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
-import {
-  CapacityBody,
-  CapacityItem,
-} from '@console/internal/components/dashboard/generic/capacity-card';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/generic/dashboard-card';
+import CapacityBody from '@console/shared/src/components/dashboard/capacity-card/CapacityBody';
+import CapacityItem from '@console/shared/src/components/dashboard/capacity-card/CapacityItem';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   DashboardItemProps,
   withDashboardResources,

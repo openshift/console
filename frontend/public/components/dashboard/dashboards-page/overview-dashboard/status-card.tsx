@@ -8,18 +8,18 @@ import {
 import { Button } from 'patternfly-react';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import {
-  DashboardCardHeader,
-  DashboardCard,
-  DashboardCardTitle,
-  DashboardCardBody,
-} from '../../generic/dashboard-card';
-import { AlertsBody } from '../../generic/status-card/status-body';
-import { HealthBody } from '../../generic/status-card/health-body';
-import { HealthItem } from '../../generic/status-card/health-item';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { getAlerts } from '../../generic/health-card';
-import { AlertItem, StatusItem } from '../../generic/status-card/alert-item';
+import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
+import AlertItem, {
+  StatusItem,
+} from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { ALERTS_KEY } from '../../../../actions/dashboards';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';

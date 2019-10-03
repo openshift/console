@@ -3,13 +3,12 @@ import * as _ from 'lodash-es';
 import { Grid, GridItem } from '@patternfly/react-core';
 
 import * as plugins from '../../../../plugins';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
-import { CapacityBody, CapacityItem } from '../../generic/capacity-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import CapacityBody from '@console/shared/src/components/dashboard/capacity-card/CapacityBody';
+import CapacityItem from '@console/shared/src/components/dashboard/capacity-card/CapacityItem';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import {
   humanizePercentage,

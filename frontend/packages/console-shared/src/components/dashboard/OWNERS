@@ -1,0 +1,9 @@
+reviewers:
+  - andybraren
+  - rawagner
+  - spadgett
+approvers:
+  - rawagner
+  - spadgett
+labels:
+  - component/dashboard

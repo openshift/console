@@ -2,19 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/generic/dashboard-card';
-import { EventsBody } from '@console/internal/components/dashboard/generic/events-card/events-body';
-import {
-  EventKind,
-  K8sResourceKind,
-  MachineKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import EventsBody from '@console/shared/src/components/dashboard/events-card/EventsBody';
+import { EventKind, MachineKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   DashboardItemProps,
   withDashboardResources,

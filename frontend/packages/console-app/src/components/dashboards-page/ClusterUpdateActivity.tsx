@@ -4,7 +4,7 @@ import {
   getClusterUpdateStatus,
   ClusterUpdateStatus,
 } from '@console/internal/module/k8s';
-import { ActivityItem } from '@console/internal/components/dashboard/generic/activity-card/activity-item';
+import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 
 export const isClusterUpdateActivity = (cv: ClusterVersionKind) =>
   getClusterUpdateStatus(cv) === ClusterUpdateStatus.Updating;

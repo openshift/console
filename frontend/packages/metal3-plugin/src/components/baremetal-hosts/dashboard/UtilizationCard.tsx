@@ -4,16 +4,12 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/generic/dashboard-card';
-import {
-  UtilizationBody,
-  UtilizationItem,
-} from '@console/internal/components/dashboard/generic/utilization-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import {
   FirehoseResource,

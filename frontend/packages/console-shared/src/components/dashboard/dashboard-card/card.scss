@@ -1,0 +1,52 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+$co-dashboard-card--line-height: 19px;
+
+.co-dashboard-card {
+  margin: 0;
+}
+
+.co-dashboard-card__body--no-padding {
+  margin-bottom: calc(-1 * var(--pf-c-card--child--PaddingBottom));
+  margin-left: calc(-1 * var(--pf-c-card--child--PaddingLeft));
+  margin-right: calc(-1 * var(--pf-c-card--child--PaddingRight));
+}
+
+.co-dashboard-card__body--top-margin {
+  margin-top: 1rem;
+}
+
+.co-dashboard-card__body--bottom-margin {
+  margin-bottom: 1rem;
+}
+
+.co-dashboard-card__button-link,
+.co-dashboard-card__link {
+  line-height: $co-dashboard-card--line-height !important;
+}
+
+.co-dashboard-card__header {
+  align-items: center;
+  border-bottom: 1px solid $pf-color-black-300;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--pf-c-card__header--not-last-child--PaddingBottom);
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
+}
+
+.co-dashboard-card__title {
+  font-size: 1rem;
+  line-height: $co-dashboard-card--line-height;
+  margin: 0;
+}
+
+.co-dashboard-icon {
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+}
+
+.co-dashboard-text--small {
+  font-size: 0.875rem;
+}

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import {
   DashboardItemProps,
@@ -11,8 +11,8 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
-import { UtilizationBody } from '@console/internal/components/dashboard/generic/utilization-card/utilization-body';
-import { UtilizationItem } from '@console/internal/components/dashboard/generic/utilization-card/utilization-item';
+import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from '../../../../constants';
 import {

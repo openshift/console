@@ -10,7 +10,7 @@ import {
   RoutePage,
   ClusterServiceVersionAction,
 } from '@console/plugin-sdk';
-import { GridPosition } from '@console/internal/components/dashboard/generic';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel } from '@console/internal/module/k8s';

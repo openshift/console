@@ -2,13 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import * as plugins from '../../../../plugins';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
-import { UtilizationItem, UtilizationBody } from '../../generic/utilization-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { getRangeVectorStats } from '../../../graphs/utils';
 import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils';

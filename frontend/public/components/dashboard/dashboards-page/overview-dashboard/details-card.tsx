@@ -2,13 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { getInfrastructurePlatform } from '@console/shared';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
-import { DetailsBody, DetailItem } from '../../generic/details-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { InfrastructureModel, ClusterVersionModel } from '../../../../models';
 import {

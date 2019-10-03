@@ -3,21 +3,22 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
 import * as plugins from '../../../../plugins';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '../../generic/dashboard-card';
-import { ConsumersBody, ConsumersFilter, metricTypeMap } from '../../generic/top-consumers-card';
-import { NODES, PODS } from '../../generic/top-consumers-card/strings';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import ConsumersBody from '@console/shared/src/components/dashboard/top-consumers-card/ConsumersBody';
+import ConsumersFilter, {
+  metricTypeMap,
+} from '@console/shared/src/components/dashboard/top-consumers-card/ConsumersFilter';
+import { NODES, PODS } from '@console/shared/src/components/dashboard/top-consumers-card/strings';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { Dropdown, ExternalLink, resourcePathFromModel } from '../../../utils';
 import { OverviewQuery, topConsumersQueries } from './queries';
 import { getInstantVectorStats } from '../../../graphs/utils';
 import { BarChart } from '../../../graphs/bar';
 import { DataPoint } from '../../../graphs';
-import { MetricType } from '../../generic/top-consumers-card/metric-type';
+import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { PodModel, NodeModel } from '../../../../models';
 import { K8sKind, referenceForModel, K8sResourceKind } from '../../../../module/k8s';
 import { MonitoringRoutes, connectToURLs } from '../../../../reducers/monitoring';
