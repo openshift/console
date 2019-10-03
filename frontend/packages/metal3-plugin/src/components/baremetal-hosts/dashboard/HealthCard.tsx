@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Gallery, GalleryItem } from '@patternfly/react-core';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -68,27 +69,24 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Health</DashboardCardTitle>
+        <DashboardCardTitle>Status</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <HealthItem state={health.state} message={health.message} />
+          <Gallery className="co-overview-status__health" gutter="md">
+            <GalleryItem>
+              <HealthItem state={health.state} details={health.message} />
+            </GalleryItem>
+          </Gallery>
         </HealthBody>
-      </DashboardCardBody>
-      {alerts.length > 0 && (
-        <>
-          <DashboardCardHeader className="co-health-card__alerts-border">
-            <DashboardCardTitle>Alerts</DashboardCardTitle>
-          </DashboardCardHeader>
-          <DashboardCardBody>
-            <AlertsBody>
-              {alerts.map((alert) => (
+        <AlertsBody>
+          {alerts.length !== 0
+            ? alerts.map((alert) => (
                 <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-              ))}
-            </AlertsBody>
-          </DashboardCardBody>
-        </>
-      )}
+              ))
+            : null}
+        </AlertsBody>
+      </DashboardCardBody>
     </DashboardCard>
   );
 };
