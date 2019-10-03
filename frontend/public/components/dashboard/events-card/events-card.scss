@@ -5,8 +5,9 @@
   overflow-y: auto;
 }
 
-.co-events-card__body-loading {
-  text-align: center;
+.co-events-card__body-empty {
+  display: flex;
+  justify-content: center;
 }
 
 .co-events-card__body-stream {
@@ -18,28 +19,6 @@
   padding: 0 1.5rem 15px 1.5rem;
 }
 
-.co-events-card__item-icon--error {
-  align-items: center;
-  display: flex;
-  font-size: 1.2rem;
-  margin-right: 0.3em;
-}
-
 .co-events-card__item-message {
-  margin-top: 0.5em;
   @include co-line-clamp(5);
-}
-
-.co-events-card__item-resourcelink {
-  display: block;
-  flex: 2 0 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.co-events-card__item-subheader {
-  display: flex;
-  justify-content: space-between;
-  white-space: pre;
 }
