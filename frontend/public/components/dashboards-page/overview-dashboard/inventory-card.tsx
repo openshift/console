@@ -13,7 +13,12 @@ import {
   StatusGroupMapper,
 } from '../../dashboard/inventory-card/inventory-item';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import { PodModel, NodeModel, PersistentVolumeClaimModel } from '../../../models';
+import {
+  PodModel,
+  NodeModel,
+  PersistentVolumeClaimModel,
+  StorageClassModel,
+} from '../../../models';
 import { K8sResourceKind, K8sKind, referenceForModel } from '../../../module/k8s';
 import {
   getPodStatusGroups,
@@ -122,6 +127,7 @@ export const InventoryCard = connectToFlags(
         <InventoryBody>
           <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
           <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
+          <ClusterInventoryItem model={StorageClassModel} />
           <ClusterInventoryItem
             model={PersistentVolumeClaimModel}
             mapper={getPVCStatusGroups}
@@ -145,7 +151,7 @@ export const InventoryCard = connectToFlags(
 
 type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
-  mapper: StatusGroupMapper;
+  mapper?: StatusGroupMapper;
   useAbbr?: boolean;
   additionalResources?: FirehoseResource[];
   expandedComponent?: LazyLoader<any>;
