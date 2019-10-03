@@ -128,8 +128,8 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
         onClick={onClick}
         variant="link"
       >
-        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
         {`CPU: ${cpu}, Memory: ${memory}`}
+        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
       </Button>
     );
   },
