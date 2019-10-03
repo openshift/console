@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace } from '@console/shared';
+import { getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { HostRowBundle } from '../types';
-import { getHostBMCAddress } from '../../selectors';
+import { getHostBMCAddress, getHostPowerStatus } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import NodeLink from './NodeLink';
 import BareMetalHostStatus from './BareMetalHostStatus';
@@ -93,6 +93,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <BareMetalHostStatus status={status} />
+        <SecondaryStatus status={getHostPowerStatus(host)} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <NodeLink nodeName={nodeName} />
