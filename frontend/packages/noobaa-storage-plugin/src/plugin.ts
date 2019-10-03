@@ -5,11 +5,28 @@ import {
   ModelDefinition,
   ModelFeatureFlag,
   Plugin,
+  ResourceClusterNavItem,
+  ResourceDetailsPage,
+  ResourceListPage,
+  ResourceNSNavItem,
+  RoutePage,
+  YAMLTemplate,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
+import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 
-type ConsumedExtensions = ModelFeatureFlag | ModelDefinition | DashboardsTab | DashboardsCard;
+type ConsumedExtensions =
+  | ModelFeatureFlag
+  | ModelDefinition
+  | DashboardsTab
+  | DashboardsCard
+  | ResourceNSNavItem
+  | ResourceClusterNavItem
+  | ResourceListPage
+  | ResourceDetailsPage
+  | YAMLTemplate
+  | RoutePage;
 
 const NOOBAA_FLAG = 'NOOBAA';
 
@@ -129,6 +146,78 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      section: 'Storage',
+      componentProps: {
+        name: 'Object Buckets',
+        resource: models.NooBaaObjectBucketModel.plural,
+        required: NOOBAA_FLAG,
+      },
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.NooBaaObjectBucketModel,
+      loader: () =>
+        import(
+          './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
+        ).then((m) => m.ObjectBucketsPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.NooBaaObjectBucketModel,
+      loader: () =>
+        import(
+          './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
+        ).then((m) => m.ObjectBucketDetailsPage),
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Storage',
+      componentProps: {
+        name: 'Object Bucket Claims',
+        resource: models.NooBaaObjectBucketClaimModel.plural,
+        required: NOOBAA_FLAG,
+      },
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
+        ).then((m) => m.ObjectBucketClaimsPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
+        ).then((m) => m.ObjectBucketClaimsDetailsPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/ns/:ns/${referenceForModel(models.NooBaaObjectBucketClaimModel)}/~new/form`,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/create-obc' /* webpackChunkName: "create-obc" */
+        ).then((m) => m.CreateOBCPage),
     },
   },
 ];

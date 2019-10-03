@@ -45,9 +45,22 @@ export const NooBaaObjectBucketClaimModel: K8sKind = {
   apiVersion: 'v1alpha1',
   apiGroup: 'objectbucket.io',
   plural: 'objectbucketclaims',
-  abbr: 'NOBC',
+  abbr: 'OBC',
   namespaced: true,
   kind: 'ObjectBucketClaim',
-  id: 'noobaaobjectbucketclaims',
+  id: 'objectbucketclaims',
+  crd: true,
+};
+
+export const NooBaaObjectBucketModel: K8sKind = {
+  label: 'Object Bucket',
+  labelPlural: 'Object Buckets',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'objectbucket.io',
+  plural: 'objectbuckets',
+  abbr: 'OB',
+  namespaced: false,
+  kind: 'ObjectBucket',
+  id: 'objectbucket',
   crd: true,
 };
