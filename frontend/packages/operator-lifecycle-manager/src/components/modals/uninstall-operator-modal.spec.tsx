@@ -52,18 +52,6 @@ describe(UninstallOperatorModal.name, () => {
     expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Remove');
   });
 
-  it('renders checkbox for setting cascading delete', () => {
-    expect(
-      wrapper
-        .find('.co-delete-modal-checkbox-label')
-        .find('input')
-        .props().checked,
-    ).toBe(true);
-    expect(wrapper.find('.co-delete-modal-checkbox-label').text()).toContain(
-      'Also completely remove the Operator from the selected namespace.',
-    );
-  });
-
   it('calls `props.k8sKill` to delete the subscription when form is submitted', (done) => {
     spyAndExpect(close)(null)
       .then(() => {
@@ -116,21 +104,7 @@ describe(UninstallOperatorModal.name, () => {
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
-  it('does not call `props.k8sKill` to delete `ClusterServiceVersion` if `state.deleteCSV` is false', (done) => {
-    wrapper.find('input').simulate('click');
-    wrapper = wrapper.setProps({ subscription: testSubscription });
-
-    spyAndExpect(close)(null)
-      .then(() => {
-        expect(k8sKill.calls.count()).toEqual(1);
-        done();
-      })
-      .catch((err) => fail(err));
-
-    wrapper.find('form').simulate('submit', new Event('submit'));
-  });
-
-  it('adds delete options with `propagationPolicy` if cascading delete checkbox is checked', (done) => {
+  it('adds delete options with `propagationPolicy`', (done) => {
     spyAndExpect(close)(null)
       .then(() => {
         expect(k8sKill.calls.argsFor(0)[3]).toEqual({

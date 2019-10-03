@@ -117,12 +117,18 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
         )}/yaml`,
       }
     : null;
-const uninstall = (sub: SubscriptionKind): KebabOption =>
+const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
   !_.isNil(sub)
     ? {
         label: 'Uninstall Operator',
         callback: () =>
-          createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: sub }),
+          createUninstallOperatorModal({
+            k8sKill,
+            k8sGet,
+            k8sPatch,
+            subscription: sub,
+            displayName,
+          }),
         accessReview: {
           group: SubscriptionModel.apiGroup,
           resource: SubscriptionModel.plural,
@@ -164,7 +170,10 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
       );
     const menuActions = [Kebab.factory.Edit].concat(
       !_.isNil(subscription)
-        ? [() => editSubscription(subscription), () => uninstall(subscription)]
+        ? [
+            () => editSubscription(subscription),
+            () => uninstall(subscription, obj.spec.displayName),
+          ]
         : [Kebab.factory.Delete],
     );
 
@@ -232,7 +241,7 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
   const { obj, index, key, style } = props;
 
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
-  const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
+  const menuActions = [Kebab.factory.Edit, () => uninstall(obj, obj.spec.displayName)];
   const subscriptionState = _.get(obj.status, 'state', 'Unknown');
 
   return (
