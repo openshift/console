@@ -146,9 +146,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(NodeModel), () =>
-    import('@console/app/src/components/nodes/NodeDetailPage' /* webpackChunkName: "node" */).then(
-      (m) => m.default,
-    ),
+    import(
+      '@console/app/src/components/nodes/NodeDetailPage' /* webpackChunkName: "node-detail" */
+    ).then((m) => m.default),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
     import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(
