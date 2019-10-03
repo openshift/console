@@ -13,6 +13,6 @@ export interface KebabActions extends Extension<ExtensionProperties.PluginKebabA
   type: 'KebabActions';
 }
 
-export function isKebabActions(e: Extension<any>): e is KebabActions {
+export function isKebabActions(e: Extension): e is KebabActions {
   return e.type === 'KebabActions';
 }

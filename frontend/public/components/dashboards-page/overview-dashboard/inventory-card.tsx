@@ -154,5 +154,5 @@ type ClusterInventoryItemProps = DashboardItemProps & {
   mapper?: StatusGroupMapper;
   useAbbr?: boolean;
   additionalResources?: FirehoseResource[];
-  expandedComponent?: LazyLoader<any>;
+  expandedComponent?: LazyLoader;
 };

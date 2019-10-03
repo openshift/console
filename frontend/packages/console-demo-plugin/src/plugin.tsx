@@ -49,7 +49,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsOverviewHealthURLSubsystem
   | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewInventoryItem

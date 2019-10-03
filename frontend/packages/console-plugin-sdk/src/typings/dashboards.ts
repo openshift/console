@@ -85,7 +85,7 @@ namespace ExtensionProperties {
     position: GridPosition;
 
     /** Loader for the corresponding dashboard card component. */
-    loader: LazyLoader<any>;
+    loader: LazyLoader;
 
     /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
     span?: DashboardCardSpan;
@@ -184,14 +184,14 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DashboardsOverviewHealthURLSubsystem<R>
+export interface DashboardsOverviewHealthURLSubsystem<R = any>
   extends Extension<ExtensionProperties.DashboardsOverviewHealthURLSubsystem<R>> {
   type: 'Dashboards/Overview/Health/URL';
 }
 
 export const isDashboardsOverviewHealthURLSubsystem = (
-  e: Extension<any>,
-): e is DashboardsOverviewHealthURLSubsystem<any> => e.type === 'Dashboards/Overview/Health/URL';
+  e: Extension,
+): e is DashboardsOverviewHealthURLSubsystem => e.type === 'Dashboards/Overview/Health/URL';
 
 export interface DashboardsOverviewHealthPrometheusSubsystem
   extends Extension<ExtensionProperties.DashboardsOverviewHealthPrometheusSubsystem> {
@@ -199,16 +199,16 @@ export interface DashboardsOverviewHealthPrometheusSubsystem
 }
 
 export const isDashboardsOverviewHealthPrometheusSubsystem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'Dashboards/Overview/Health/Prometheus';
 
 export type DashboardsOverviewHealthSubsystem =
-  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthPrometheusSubsystem;
 
 export const isDashboardsOverviewHealthSubsystem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) || isDashboardsOverviewHealthPrometheusSubsystem(e);
 
@@ -216,22 +216,20 @@ export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsT
   type: 'Dashboards/Tab';
 }
 
-export const isDashboardsTab = (e: Extension<any>): e is DashboardsTab =>
-  e.type === 'Dashboards/Tab';
+export const isDashboardsTab = (e: Extension): e is DashboardsTab => e.type === 'Dashboards/Tab';
 
 export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
   type: 'Dashboards/Card';
 }
 
-export const isDashboardsCard = (e: Extension<any>): e is DashboardsCard =>
-  e.type === 'Dashboards/Card';
+export const isDashboardsCard = (e: Extension): e is DashboardsCard => e.type === 'Dashboards/Card';
 
 export interface DashboardsOverviewQuery
   extends Extension<ExtensionProperties.DashboardsOverviewQuery> {
   type: 'Dashboards/Overview/Query';
 }
 
-export const isDashboardsOverviewQuery = (e: Extension<any>): e is DashboardsOverviewQuery =>
+export const isDashboardsOverviewQuery = (e: Extension): e is DashboardsOverviewQuery =>
   e.type === 'Dashboards/Overview/Query';
 
 export interface DashboardsOverviewUtilizationItem
@@ -240,7 +238,7 @@ export interface DashboardsOverviewUtilizationItem
 }
 
 export const isDashboardsOverviewUtilizationItem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewUtilizationItem => e.type === 'Dashboards/Overview/Utilization/Item';
 
 export interface DashboardsOverviewInventoryItem
@@ -249,7 +247,7 @@ export interface DashboardsOverviewInventoryItem
 }
 
 export const isDashboardsOverviewInventoryItem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewInventoryItem => e.type === 'Dashboards/Overview/Inventory/Item';
 
 export interface DashboardsInventoryItemGroup
@@ -257,9 +255,8 @@ export interface DashboardsInventoryItemGroup
   type: 'Dashboards/Inventory/Item/Group';
 }
 
-export const isDashboardsInventoryItemGroup = (
-  e: Extension<any>,
-): e is DashboardsInventoryItemGroup => e.type === 'Dashboards/Inventory/Item/Group';
+export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
+  e.type === 'Dashboards/Inventory/Item/Group';
 
 export interface DashboardsOverviewTopConsumerItem
   extends Extension<ExtensionProperties.DashboardsOverviewTopConsumerItem> {
@@ -267,7 +264,7 @@ export interface DashboardsOverviewTopConsumerItem
 }
 
 export const isDashboardsOverviewTopConsumerItem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewTopConsumerItem => e.type === 'Dashboards/Overview/TopConsumers/Item';
 
 export interface DashboardsOverviewResourceActivity

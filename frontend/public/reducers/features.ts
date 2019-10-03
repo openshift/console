@@ -14,6 +14,7 @@ import {
   ConsoleExternalLogLinkModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
+import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { FLAGS } from '../const';
@@ -81,13 +82,12 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
   }
 };
 
-export const stateToProps = (desiredFlags: string[], state) => {
-  const flags = desiredFlags.reduce(
-    (allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }),
-    {},
-  );
-  return { flags };
-};
+export const stateToFlagsObject = (state: RootState): FlagsObject =>
+  state[featureReducerName].toObject();
+
+export const stateToProps = (desiredFlags: string[], state: RootState): WithFlagsProps => ({
+  flags: _.pick(stateToFlagsObject(state), desiredFlags),
+});
 
 export type FlagsObject = { [key: string]: boolean };
 
@@ -102,9 +102,10 @@ export type ConnectToFlags = <P extends WithFlagsProps>(
 ) => React.ComponentType<Omit<P, keyof WithFlagsProps>> & {
   WrappedComponent: React.ComponentType<P>;
 };
+
 export const connectToFlags: ConnectToFlags = (...flags) =>
   connect(
-    (state) => stateToProps(flags, state),
+    (state: RootState) => stateToProps(flags, state),
     null,
     null,
     { areStatePropsEqual: _.isEqual },

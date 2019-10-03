@@ -17,10 +17,10 @@ export interface ModelFeatureFlag extends Extension<ExtensionProperties.ModelFea
 // TODO(vojtech): add ActionFeatureFlag
 export type FeatureFlag = ModelFeatureFlag;
 
-export const isModelFeatureFlag = (e: Extension<any>): e is ModelFeatureFlag => {
+export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag => {
   return e.type === 'FeatureFlag/Model';
 };
 
-export const isFeatureFlag = (e: Extension<any>): e is FeatureFlag => {
+export const isFeatureFlag = (e: Extension): e is FeatureFlag => {
   return isModelFeatureFlag(e);
 };

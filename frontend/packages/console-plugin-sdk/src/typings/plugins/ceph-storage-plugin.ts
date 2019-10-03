@@ -53,16 +53,16 @@ export interface DashboardsStorageCapacityDropdownItem
 }
 
 export const isDashboardsStorageTopConsumerUsed = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsStorageTopConsumerUsed => e.type === 'Dashboards/Storage/TopConsumers/Used';
 
 export const isDashboardsStorageTopConsumerRequested = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsStorageTopConsumerRequested =>
   e.type === 'Dashboards/Storage/TopConsumers/Requested';
 
 export const isDashboardsStorageCapacityDropdownItem = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsStorageCapacityDropdownItem =>
   e.type === 'Dashboards/Storage/Capacity/Dropdown/Item';
 

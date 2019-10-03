@@ -35,7 +35,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | ModelDefinition
   | RoutePage
-  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsStorageTopConsumerRequested

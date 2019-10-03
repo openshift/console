@@ -13,6 +13,6 @@ export interface DevCatalogModel extends Extension<ExtensionProperties.DevCatalo
   type: 'DevCatalogModel';
 }
 
-export const isDevCatalogModel = (e: Extension<any>): e is DevCatalogModel => {
+export const isDevCatalogModel = (e: Extension): e is DevCatalogModel => {
   return e.type === 'DevCatalogModel';
 };
