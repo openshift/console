@@ -2,7 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
-import { Alert, AlertActionLink } from '@patternfly/react-core';
+import { Alert, AlertActionLink, Button } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
 import { CompressIcon, ExpandIcon, DownloadIcon } from '@patternfly/react-icons';
 
@@ -101,14 +101,14 @@ const LogControls = ({
               </React.Fragment>
             );
           })}
-        <button className="btn btn-link" onClick={onDownload}>
+        <Button variant="link" onClick={onDownload}>
           <DownloadIcon className="co-icon-space-r" />
           Download
-        </button>
+        </Button>
         <span aria-hidden="true" className="co-action-divider hidden-xs">
           |
         </span>
-        <button className="btn btn-link" onClick={toggleFullscreen}>
+        <Button variant="link" className="pf-m-link--align-right" onClick={toggleFullscreen}>
           {isFullscreen ? (
             <React.Fragment>
               <CompressIcon className="co-icon-space-r" />
@@ -120,7 +120,7 @@ const LogControls = ({
               Expand
             </React.Fragment>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

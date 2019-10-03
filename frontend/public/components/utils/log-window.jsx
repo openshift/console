@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { pluralize } from './';
 import { STREAM_EOF, STREAM_PAUSED, STREAM_ACTIVE } from './resource-log';
 import { OutlinedPlayCircleIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 
 // Subtracted from log window height to prevent scroll bar from appearing when resume button is shown.
 // Added fullscreen fudge factor to account for fullscreen taking log contents outside of .co-m-pane__body div
@@ -133,10 +134,10 @@ export class LogWindow extends React.PureComponent {
           </div>
         </div>
         {status === STREAM_PAUSED && (
-          <button onClick={this._unpause} className="btn btn-block log-window__resume-btn">
+          <Button onClick={this._unpause} isBlock>
             <OutlinedPlayCircleIcon />
             {resumeText}
-          </button>
+          </Button>
         )}
       </div>
     );

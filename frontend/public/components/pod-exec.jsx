@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { ExpandIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
@@ -194,10 +195,14 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
             {!error && (
               <div className="co-toolbar__group co-toolbar__group--right">
                 <div className="co-toolbar__item">
-                  <button className="btn btn-link" onClick={() => this.setFullscreen(true)}>
+                  <Button
+                    variant="link"
+                    className="pf-m-link--align-right"
+                    onClick={() => this.setFullscreen(true)}
+                  >
                     <ExpandIcon className="co-icon-space-r" />
                     Expand
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

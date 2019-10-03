@@ -213,14 +213,15 @@ const ProjectLink = connect(
 )(({ project, setActiveNamespace }) => (
   <span className="co-resource-item co-resource-item--truncate">
     <ResourceIcon kind="Project" />
-    <button
+    <Button
       title={project.metadata.name}
       type="button"
-      className="co-resource-item__resource-name btn btn-link"
+      className="co-resource-item__resource-name"
       onClick={() => setActiveNamespace(project.metadata.name)}
+      variant="link"
     >
       {project.metadata.name}
-    </button>
+    </Button>
   </span>
 ));
 const projectHeaderWithoutActions = () => _.dropRight(ProjectTableHeader());
