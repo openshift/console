@@ -1,17 +1,18 @@
 export const DASH = '-';
-export const { STORAGE_CLASS = 'nfs-sc' } = process.env;
+export const { STORAGE_CLASS = 'rook-ceph-block' } = process.env;
 
 // TIMEOUTS
 const SEC = 1000;
-export const CLONE_VM_TIMEOUT_SECS = 300 * SEC;
+export const CLONE_VM_TIMEOUT_SECS = 360 * SEC;
 export const CLONED_VM_BOOTUP_TIMEOUT_SECS = 150 * SEC;
 export const PAGE_LOAD_TIMEOUT_SECS = 15 * SEC;
 export const TEMPLATE_ACTIONS_TIMEOUT_SECS = 90 * SEC;
 export const VM_ACTIONS_TIMEOUT_SECS = 250 * SEC;
-export const VM_BOOTUP_TIMEOUT_SECS = 200 * SEC;
-export const VM_MIGRATION_TIMEOUT_SECS = 190 * SEC;
+export const VM_BOOTUP_TIMEOUT_SECS = 230 * SEC;
+export const VM_MIGRATION_TIMEOUT_SECS = 260 * SEC;
 export const VM_STOP_TIMEOUT_SECS = 10 * SEC;
 export const VM_IP_ASSIGNMENT_TIMEOUT_SECS = 180 * SEC;
+export const VM_IMPORT_TIMEOUT_SECS = 80 * SEC;
 export const WINDOWS_IMPORT_TIMEOUT_SECS = 150 * SEC;
 export const VM_CREATE_AND_EDIT_TIMEOUT_SECS = 200 * SEC;
 

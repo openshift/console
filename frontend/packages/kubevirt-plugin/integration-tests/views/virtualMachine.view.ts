@@ -8,7 +8,7 @@ import {
   UNEXPECTED_ACTION_ERROR,
 } from '../tests/utils/consts';
 import { resourceTitle } from '../../../../integration-tests/views/crud.view';
-import { nameInput } from './wizard.view';
+import { nameInput as cloneDialogNameInput } from './cloneDialog.view';
 
 export const statusIcon = (status) => $(`.kubevirt-status__icon.${status}`);
 export const statusLink = $('a.kubevirt-status__link');
@@ -48,7 +48,8 @@ export const vmDetailTemplate = (namespace, vmName) =>
 export const vmDetailNamespace = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'namespace'));
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
-export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
+export const vmDetailNode = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'node')).$('a');
 export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
 export const vmDetailFlavorEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'flavor-edit'));
@@ -106,10 +107,9 @@ export async function waitForActionFinished(action: string, timeout?: number) {
       break;
     case 'Clone':
       await browser.wait(
-        until.presenceOf(nameInput),
+        until.presenceOf(cloneDialogNameInput),
         resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
       );
-      await browser.sleep(500); // Wait until the fade in effect is finished, otherwise we may misclick
       break;
     case 'Migrate':
       await waitForStatusIcon(

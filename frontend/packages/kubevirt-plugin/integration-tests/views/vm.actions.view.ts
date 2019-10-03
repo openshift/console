@@ -1,13 +1,12 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { rowForName, resourceRowsPresent } from '../../../../integration-tests/views/crud.view';
-import { waitForCount } from '../../../console-shared/src/test-utils/utils';
+import { waitForCount, click } from '../../../console-shared/src/test-utils/utils';
 
 const disabledDropdownButtons = $$('.pf-m-disabled');
 
-const listViewKebabDropdown = '.pf-c-dropdown__toggle';
-const listViewKebabDropdownMenu = '.pf-c-dropdown__menu';
-export const detailViewDropdown = '[data-test-id=actions-menu-button]';
-export const detailViewDropdownMenu = '[data-test-id=action-items]';
+const listViewKebabDropdown = '[data-test-id="kebab-button"]';
+export const detailViewDropdown = '[data-test-id="actions-menu-button"]';
+export const detailViewDropdownMenu = '[data-test-id="action-items"]';
 
 export async function confirmAction() {
   const dialogOverlay = $('.co-overlay');
@@ -25,18 +24,12 @@ export async function confirmAction() {
 /**
  * Selects option button from given dropdown element.
  */
-const selectDropdownItem = (getActionsDropdown, getActionsDropdownMenu) => async (
-  action: string,
-) => {
+const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser
     .wait(until.elementToBeClickable(getActionsDropdown()))
     .then(() => getActionsDropdown().click());
   await browser.wait(waitForCount(disabledDropdownButtons, 0));
-  const option = getActionsDropdownMenu()
-    .$$('button')
-    .filter((button) => button.getText().then((text) => text.startsWith(action)))
-    .first();
-  await browser.wait(until.elementToBeClickable(option)).then(() => option.click());
+  await click($(`[data-test-action="${action}"]`));
 };
 
 /**
@@ -48,8 +41,7 @@ export const listViewAction = (name) => async (action: string, confirm?: boolean
     rowForName(name)
       .$$(listViewKebabDropdown)
       .first();
-  const getActionsDropdownMenu = () => rowForName(name).$(listViewKebabDropdownMenu);
-  await selectDropdownItem(getActionsDropdown, getActionsDropdownMenu)(action);
+  await selectDropdownItem(getActionsDropdown)(action);
   if (confirm === true) {
     await confirmAction();
   }
@@ -60,8 +52,7 @@ export const listViewAction = (name) => async (action: string, confirm?: boolean
  */
 export const detailViewAction = async (action, confirm?) => {
   const getActionsDropdown = () => $(detailViewDropdown);
-  const getActionsDropdownMenu = () => $(detailViewDropdownMenu);
-  await selectDropdownItem(getActionsDropdown, getActionsDropdownMenu)(action);
+  await selectDropdownItem(getActionsDropdown)(action);
   await browser.wait(until.not(until.presenceOf($(detailViewDropdownMenu))));
   if (confirm === true) {
     await confirmAction();

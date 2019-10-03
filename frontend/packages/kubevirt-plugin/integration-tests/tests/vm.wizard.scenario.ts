@@ -10,7 +10,7 @@ import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS, TABS } from './utils/consts';
-import { multusNad } from './utils/mocks';
+import { multusNAD } from './utils/mocks';
 import {
   vmConfig,
   getProvisionConfigs,
@@ -24,11 +24,11 @@ describe('Kubevirt create VM using wizard', () => {
   const testDataVolume = getTestDataVolume(testName);
 
   beforeAll(async () => {
-    createResources([multusNad, testDataVolume]);
+    createResources([multusNAD, testDataVolume]);
   });
 
   afterAll(async () => {
-    deleteResources([multusNad, testDataVolume]);
+    deleteResources([multusNAD, testDataVolume]);
   });
 
   afterEach(() => {

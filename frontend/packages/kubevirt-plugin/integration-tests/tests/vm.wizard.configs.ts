@@ -1,6 +1,6 @@
 import { OrderedMap } from 'immutable';
 import {
-  basicVmConfig,
+  basicVMConfig,
   networkInterface,
   rootDisk,
   hddDisk,
@@ -18,9 +18,9 @@ export const vmConfig = (name: string, provisionConfig, testName: string) => {
     },
     namespace: testName,
     description: `Default description ${testName}`,
-    flavor: basicVmConfig.flavor,
-    operatingSystem: basicVmConfig.operatingSystem,
-    workloadProfile: basicVmConfig.workloadProfile,
+    flavor: basicVMConfig.flavor,
+    operatingSystem: basicVMConfig.operatingSystem,
+    workloadProfile: basicVMConfig.workloadProfile,
   };
 
   return {
@@ -42,7 +42,7 @@ export const getTestDataVolume = (testName: string) =>
   dataVolumeManifest({
     name: `toclone-${testName}`,
     namespace: testName,
-    sourceURL: basicVmConfig.sourceURL,
+    sourceURL: basicVMConfig.sourceURL,
     accessMode: resolveStorageDataAttribute(kubevirtStorage, 'accessMode'),
     volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
   });
@@ -67,7 +67,7 @@ export const getProvisionConfigs = (testName: string) =>
     .set(CONFIG_NAME_URL, {
       provision: {
         method: CONFIG_NAME_URL,
-        source: basicVmConfig.sourceURL,
+        source: basicVMConfig.sourceURL,
       },
       networkResources: [networkInterface],
       storageResources: [rootDisk],
@@ -75,7 +75,7 @@ export const getProvisionConfigs = (testName: string) =>
     .set(CONFIG_NAME_CONTAINER, {
       provision: {
         method: CONFIG_NAME_CONTAINER,
-        source: basicVmConfig.sourceContainer,
+        source: basicVMConfig.sourceContainer,
       },
       networkResources: [networkInterface],
       storageResources: [hddDisk],
