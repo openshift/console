@@ -24,10 +24,6 @@ $co-external-link-padding-right: 15px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  &--alt {
-    margin-left: 0;
-    margin-right: 0;
-  }
   &--group__body {
     margin-top: 0;
     padding-top: $grid-gutter-width;
@@ -57,6 +53,10 @@ $co-external-link-padding-right: 15px;
     margin-left: $grid-gutter-width;
     margin-right: $grid-gutter-width;
     margin-top: $grid-gutter-width;
+    &--alt {
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
 }
 
