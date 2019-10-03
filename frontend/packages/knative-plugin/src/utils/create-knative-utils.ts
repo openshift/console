@@ -142,6 +142,7 @@ export const knativeServingResources = (namespace: string): FirehoseResource[] =
       kind: referenceForModel(ServiceModel),
       namespace,
       prop: 'ksservices',
+      optional: true,
     },
   ];
   return knativeResource;
@@ -154,6 +155,7 @@ export const knativeServingResourcesRevision = (namespace: string): FirehoseReso
       kind: referenceForModel(RevisionModel),
       namespace,
       prop: 'revisions',
+      optional: true,
     },
   ];
   return knativeResource;
@@ -166,6 +168,7 @@ export const knativeServingResourcesConfigurations = (namespace: string): Fireho
       kind: referenceForModel(ConfigurationModel),
       namespace,
       prop: 'configurations',
+      optional: true,
     },
   ];
   return knativeResource;
@@ -178,6 +181,7 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
       kind: referenceForModel(RouteModel),
       namespace,
       prop: 'ksroutes',
+      optional: true,
     },
   ];
   return knativeResource;
