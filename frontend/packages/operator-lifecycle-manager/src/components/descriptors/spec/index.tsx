@@ -93,6 +93,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
   return (
     <div className="co-spec-descriptor--switch">
       <Switch
+        id={props.descriptor.path}
         isChecked={value}
         onChange={(val) => {
           setValue(val);
