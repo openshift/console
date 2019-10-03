@@ -10,13 +10,14 @@ import { DashboardCardHeader } from '@console/internal/components/dashboard/dash
 import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
 import { InventoryBody } from '@console/internal/components/dashboard/inventory-card/inventory-body';
 import { InventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
 import { getNamespace, getMachineInternalIP } from '@console/shared';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getHostMachineName } from '../../../selectors';
+import { BareMetalHostKind } from '../../../types';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
 
 const getResources = (namespace: string, machineName: string): FirehoseResource[] => [
@@ -95,5 +96,5 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
 export default withDashboardResources(InventoryCard);
 
 type InventoryCardProps = DashboardItemProps & {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
 };

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dashboard, DashboardGrid } from '@console/internal/components/dashboard';
-import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { BareMetalHostKind } from '../../../types';
 import HealthCard from './HealthCard';
 import UtilizationCard from './UtilizationCard';
 import EventsCard from './EventsCard';
@@ -32,7 +33,7 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
 };
 
 type BareMetalHostDashboardProps = {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
   machines: MachineKind[];
   nodes: NodeKind[];
 };

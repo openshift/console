@@ -3,13 +3,14 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PopoverStatus, getName } from '@console/shared';
 import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
 import { getNodeMaintenancePhase } from '../../selectors';
+import { BareMetalHostKind } from '../../types';
 import UnderMaintenancePopoverContent from './UnderMaintenancePopoverContent';
 import StartingMaintenancePopoverContent from './StartingMaintenancePopoverContent';
 
 type MaintenancePopoverProps = {
   title: string;
   maintenance: K8sResourceKind;
-  host: K8sResourceKind;
+  host: BareMetalHostKind;
 };
 
 const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({ title, maintenance, host }) => {

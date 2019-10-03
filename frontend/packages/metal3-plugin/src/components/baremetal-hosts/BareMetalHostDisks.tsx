@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import { getHostStorage } from '../../selectors';
-import { BareMetalHostDisk } from '../../types';
+import { BareMetalHostDisk, BareMetalHostKind } from '../../types';
 
 const DisksTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -40,7 +39,7 @@ const DisksTableRow: React.FC<DisksTableRowProps> = ({ obj, index, key, style })
 };
 
 type BareMetalHostDisksProps = {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
 };
 
 const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host }) => {

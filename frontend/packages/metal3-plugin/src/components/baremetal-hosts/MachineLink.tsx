@@ -4,13 +4,14 @@ import { AddCircleOIcon } from '@patternfly/react-icons';
 import { DASH, StatusIconAndText } from '@console/shared';
 import { MachineModel } from '@console/internal/models';
 import { ResourceLink, RequireCreatePermission } from '@console/internal/components/utils';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getHostMachineName } from '../../selectors';
 import { canHostAddMachine } from '../../utils/host-status';
 import { HostMultiStatus } from '../types';
+import { BareMetalHostKind } from '../../types';
 
 interface MachineCellProps {
-  host: K8sResourceKind;
+  host: BareMetalHostKind;
   status: HostMultiStatus;
 }
 

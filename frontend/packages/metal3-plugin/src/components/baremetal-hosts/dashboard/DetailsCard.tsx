@@ -11,10 +11,11 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { getName, getMachineNode } from '@console/shared';
-import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getHostMachine } from '../../../selectors';
 import NodeLink from '../NodeLink';
 import BareMetalHostRole from '../BareMetalHostRole';
+import { BareMetalHostKind } from '../../../types';
 
 const DetailsCard: React.FC<DetailsCardProps> = ({ obj, machines, nodes }) => {
   const machine = getHostMachine(obj, machines);
@@ -48,7 +49,7 @@ const DetailsCard: React.FC<DetailsCardProps> = ({ obj, machines, nodes }) => {
 export default withDashboardResources(DetailsCard);
 
 type DetailsCardProps = DashboardItemProps & {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
   machines: MachineKind[];
   nodes: NodeKind[];
 };

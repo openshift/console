@@ -20,11 +20,12 @@ import {
   humanizeBinaryBytesWithoutB,
   humanizeCpuCores,
 } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { getHostMachineName } from '../../../selectors';
+import { BareMetalHostKind } from '../../../types';
 import { getUtilizationQueries, HostQuery } from './queries';
 
 const getMachineResource = (namespace: string, name: string): FirehoseResource => ({
@@ -195,5 +196,5 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 export default withDashboardResources(UtilizationCard);
 
 type UtilizationCardProps = DashboardItemProps & {
-  obj: K8sResourceKind;
+  obj: BareMetalHostKind;
 };
