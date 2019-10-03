@@ -80,8 +80,9 @@ export const createRoute = (
 
   let targetPort;
   if (_.get(formData, 'build.strategy') === 'Docker') {
+    const port = _.get(formData, 'docker.containerPort');
     targetPort = makePortName({
-      containerPort: _.toInteger(_.get(formData, 'docker.containerPort')),
+      containerPort: _.toInteger(port),
       protocol: 'TCP',
     });
   } else {

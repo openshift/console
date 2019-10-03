@@ -9,7 +9,7 @@ describe('Shared submit utils', () => {
     it('should set the correct ports in service object', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
       const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
-      const PORT1 = { containerPort: 8081, protocol: 'TCP' };
+      const PORT = { containerPort: 8081, protocol: 'TCP' };
       let serviceObj;
 
       mockData.build.strategy = 'Docker';
@@ -17,9 +17,21 @@ describe('Shared submit utils', () => {
       serviceObj = createService(mockData);
       expect(serviceObj.spec.ports[0].port).toEqual(8080);
 
-      mockDeployImageData.image.ports = [PORT1];
+      mockDeployImageData.image.ports = [PORT];
       serviceObj = createService(mockDeployImageData);
       expect(serviceObj.spec.ports[0].port).toEqual(8081);
+    });
+
+    it('should match the previous snapshot created with git import data', () => {
+      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
+      const serviceObj = createService(mockData);
+      expect(serviceObj).toMatchSnapshot();
+    });
+
+    it('should match the previous snapshot created with deploy image data', () => {
+      const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
+      const serviceObj = createService(mockDeployImageData);
+      expect(serviceObj).toMatchSnapshot();
     });
   });
 
@@ -37,6 +49,20 @@ describe('Shared submit utils', () => {
       mockDeployImageData.route.targetPort = '8081-tcp';
       routeObj = createRoute(mockDeployImageData);
       expect(routeObj.spec.port.targetPort).toEqual('8081-tcp');
+    });
+
+    it('should match the previous snapshot with git import data', () => {
+      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
+      mockData.route.targetPort = '8081-tcp';
+      const routeObj = createRoute(mockData);
+      expect(routeObj).toMatchSnapshot();
+    });
+
+    it('should match the previous snapshot deploy image data', () => {
+      const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
+      mockDeployImageData.route.targetPort = '8080-tcp';
+      const routeObj = createRoute(mockDeployImageData);
+      expect(routeObj).toMatchSnapshot();
     });
   });
 });
