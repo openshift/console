@@ -11,13 +11,13 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { getLoadedData } from '../../../utils';
-import { asVM, getVMLikeModel, getDisks, getDataVolumeTemplates } from '../../../selectors/vm';
+import { asVM, getVMLikeModel } from '../../../selectors/vm';
 import { VMLikeEntityKind } from '../../../types';
-import { getSimpleName } from '../../../selectors/utils';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
+import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DiskModal } from './disk-modal';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
@@ -32,17 +32,7 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
     ? DataVolumeWrapper.initialize(dataVolume)
     : DataVolumeWrapper.EMPTY;
 
-  const usedDiskNames: Set<string> = new Set(
-    getDisks(vm)
-      .map(getSimpleName)
-      .filter((n) => n && n !== diskWrapper.getName()),
-  );
-
-  const usedPVCNames: Set<string> = new Set(
-    getDataVolumeTemplates(vm)
-      .map((dv) => getName(dv))
-      .filter((n) => n && n !== dataVolumeWrapper.getName()),
-  );
+  const combinedDiskFactory = CombinedDiskFactory.initializeFromVMLikeEntity(vmLikeFinal);
 
   const onSubmit = async (resultDisk, resultVolume, resultDataVolume) =>
     k8sPatch(
@@ -63,8 +53,8 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
   return (
     <DiskModal
       {...restProps}
-      usedDiskNames={usedDiskNames}
-      usedPVCNames={usedPVCNames}
+      usedDiskNames={combinedDiskFactory.getUsedDiskNames(diskWrapper.getName())}
+      usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
       vmName={getName(vm)}
       vmNamespace={getNamespace(vm)}
       disk={diskWrapper}

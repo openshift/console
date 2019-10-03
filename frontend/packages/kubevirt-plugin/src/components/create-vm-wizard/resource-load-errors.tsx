@@ -22,10 +22,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
   errors: [
     asError(state, wizardReduxID, VMWizardProps.commonTemplates),
     asError(state, wizardReduxID, VMWizardProps.userTemplates),
-    asError(state, wizardReduxID, VMWizardProps.networkAttachmentDefinitions),
-    asError(state, wizardReduxID, VMWizardProps.persistentVolumeClaims),
-    asError(state, wizardReduxID, VMWizardProps.dataVolumes),
-    asError(state, wizardReduxID, VMWizardProps.storageClasses),
     asError(state, wizardReduxID, VMWizardProps.virtualMachines, AlertVariant.warning), // for validation only
   ],
 });

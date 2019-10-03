@@ -7,7 +7,9 @@ import {
   VMSettingsField,
   VMWizardNetwork,
   VMWizardTab,
+  VMWizardStorage,
 } from '../types';
+import { DeviceType } from '../../../constants/vm';
 import { cleanup, updateAndValidateState } from './utils';
 import { getTabInitialState } from './initial-state';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,13 +86,31 @@ export const vmWizardActions: VMWizardActions = {
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.RemoveNIC](id, networkID)),
     ),
-  [ActionType.SetNetworks]: (id, networks: VMWizardNetwork[]) =>
+
+  [ActionType.UpdateStorage]: (id, storage: VMWizardStorage) =>
     withUpdateAndValidateState(id, (dispatch) =>
-      dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networks)),
+      dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, storage)),
     ),
-  [ActionType.SetStorages]: (id, value: any, isValid: boolean, isLocked: boolean) => (dispatch) => {
-    dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, value, isValid, isLocked));
-  },
+  [ActionType.RemoveStorage]: (id, storageID: string) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, storageID)),
+    ),
+  [ActionType.SetDeviceBootOrder]: (
+    id,
+    deviceID: string,
+    deviceType: DeviceType,
+    bootOrder: number,
+  ) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(
+        vmWizardInternalActions[InternalActionType.SetDeviceBootOrder](
+          id,
+          deviceID,
+          deviceType,
+          bootOrder,
+        ),
+      ),
+    ),
   [ActionType.SetResults]: (
     id,
     value: any,

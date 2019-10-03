@@ -13,25 +13,21 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
-import {
-  VMSettingsField,
-  VMWizardNetwork,
-  VMWizardNetworkWithWrappers,
-  VMWizardTab,
-} from '../../types';
+import { VMWizardNetworkWithWrappers, VMWizardTab } from '../../types';
 import { VMNicsTable } from '../../../vm-nics/vm-nics';
 import { nicTableColumnClasses } from '../../../vm-nics/utils';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { ADD_NETWORK_INTERFACE } from '../../strings/networking';
-import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
-import { ProvisionSource } from '../../../../types/vm';
+import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getNetworksWithWrappers } from '../../selectors/selectors';
 import { wrapWithProgress } from '../../../../utils/utils';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { DeviceType } from '../../../../constants/vm';
 import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 import { VMWizardNicRow } from './vm-wizard-nic-row';
 import { VMWizardNetworkBundle } from './types';
-import { PXENetworks } from './pxe-networks';
+import { NetworkBootSource } from './network-boot-source';
 
 import './networking-tab.scss';
 
@@ -50,15 +46,15 @@ const getNicsData = (networks: VMWizardNetworkWithWrappers[]): VMWizardNetworkBu
   });
 
 const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
-  isPXENICRequired,
+  isBootNICRequired,
   wizardReduxID,
   isLocked,
   setTabLocked,
   removeNIC,
-  updateNetworks,
+  onBootOrderChanged,
   networks,
 }) => {
-  const hasNetworks = networks.length > 0;
+  const showNetworks = networks.length > 0 || isBootNICRequired;
 
   const withProgress = wrapWithProgress(setTabLocked);
 
@@ -81,7 +77,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
             Network Interfaces
           </Title>
         </SplitItem>
-        {hasNetworks && (
+        {showNetworks && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
               {ADD_NETWORK_INTERFACE}
@@ -89,7 +85,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
           </SplitItem>
         )}
       </Split>
-      {hasNetworks && (
+      {showNetworks && (
         <>
           <div className="kubevirt-create-vm-modal__networking-tab-main">
             <VMNicsTable
@@ -99,18 +95,18 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
               row={VMWizardNicRow}
             />
           </div>
-          {isPXENICRequired && (
+          {isBootNICRequired && (
             <footer className="kubevirt-create-vm-modal__networking-tab-pxe">
-              <PXENetworks
+              <NetworkBootSource
                 isDisabled={isLocked}
                 networks={networks}
-                updateNetworks={updateNetworks}
+                onBootOrderChanged={onBootOrderChanged}
               />
             </footer>
           )}
         </>
       )}
-      {!hasNetworks && (
+      {!showNetworks && (
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.full}>
             <Title headingLevel="h5" size="lg">
@@ -128,12 +124,12 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
 
 type NetworkingTabComponentProps = {
   isLocked: boolean;
-  isPXENICRequired: boolean;
+  isBootNICRequired: boolean;
   wizardReduxID: string;
   networks: VMWizardNetworkWithWrappers[];
   removeNIC: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
-  updateNetworks: (networks: VMWizardNetwork[]) => void;
+  onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
@@ -141,9 +137,7 @@ const stateToProps = (state, { wizardReduxID }) => {
   return {
     isLocked: isStepLocked(stepData, VMWizardTab.NETWORKING),
     networks: getNetworksWithWrappers(state, wizardReduxID),
-    isPXENICRequired:
-      iGetVmSettingValue(state, wizardReduxID, VMSettingsField.PROVISION_SOURCE_TYPE) ===
-      ProvisionSource.PXE,
+    isBootNICRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.PXE,
   };
 };
 
@@ -156,8 +150,15 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   removeNIC: (id: string) => {
     dispatch(vmWizardActions[ActionType.RemoveNIC](wizardReduxID, id));
   },
-  updateNetworks: (networks: VMWizardNetwork[]) => {
-    dispatch(vmWizardActions[ActionType.SetNetworks](wizardReduxID, networks));
+  onBootOrderChanged: (deviceID: string, bootOrder: number) => {
+    dispatch(
+      vmWizardActions[ActionType.SetDeviceBootOrder](
+        wizardReduxID,
+        deviceID,
+        DeviceType.NIC,
+        bootOrder,
+      ),
+    );
   },
 });
 

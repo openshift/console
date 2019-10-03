@@ -25,7 +25,7 @@ export interface V1ObjectMeta {
    * @type {object}
    * @memberof V1ObjectMeta
    */
-  annotations?: object;
+  annotations?: { [key: string]: string };
   /**
    * The name of the cluster which the object belongs to. This is used to distinguish resources with same name and namespace in different clusters. This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
    * @type {string}
@@ -73,7 +73,7 @@ export interface V1ObjectMeta {
    * @type {object}
    * @memberof V1ObjectMeta
    */
-  labels?: object;
+  labels?: { [key: string]: string };
   /**
    * Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
    * @type {string}

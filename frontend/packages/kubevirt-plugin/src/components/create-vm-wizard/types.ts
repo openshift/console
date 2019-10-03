@@ -4,7 +4,13 @@ import { getStringEnumValues } from '../../utils/types';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
-import { UINetworkInterfaceValidation } from '../../utils/validations/vm';
+import { UIDiskValidation, UINetworkInterfaceValidation } from '../../utils/validations/vm';
+import { V1Disk } from '../../types/vm/disk/V1Disk';
+import { V1Volume } from '../../types/vm/disk/V1Volume';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 
 export enum VMWizardTab { // order important
   VM_SETTINGS = 'VM_SETTINGS',
@@ -21,10 +27,6 @@ export enum VMWizardProps {
   virtualMachines = 'virtualMachines',
   userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
-  networkAttachmentDefinitions = 'networkAttachmentDefinitions',
-  storageClasses = 'storageClasses',
-  persistentVolumeClaims = 'persistentVolumeClaims',
-  dataVolumes = 'dataVolumes',
 }
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
@@ -66,12 +68,8 @@ export type VMSettingsFieldType = {
 export type ChangedCommonDataProp =
   | VMWizardProps.activeNamespace
   | VMWizardProps.virtualMachines
-  | VMWizardProps.dataVolumes
   | VMWizardProps.userTemplates
-  | VMWizardProps.persistentVolumeClaims
-  | VMWizardProps.commonTemplates
-  | VMWizardProps.networkAttachmentDefinitions
-  | VMWizardProps.storageClasses;
+  | VMWizardProps.commonTemplates;
 
 export type CommonDataProp = VMWizardProps.isCreateTemplate | ChangedCommonDataProp;
 
@@ -80,11 +78,8 @@ export type ChangedCommonData = Set<ChangedCommonDataProp>;
 export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.activeNamespace,
   VMWizardProps.virtualMachines,
-  VMWizardProps.dataVolumes,
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
-  VMWizardProps.persistentVolumeClaims,
-  VMWizardProps.networkAttachmentDefinitions,
 ]);
 
 export type CommonData = {
@@ -127,4 +122,26 @@ export type VMWizardNetwork = {
 export type VMWizardNetworkWithWrappers = VMWizardNetwork & {
   networkInterfaceWrapper: NetworkInterfaceWrapper;
   networkWrapper: NetworkWrapper;
+};
+
+export enum VMWizardStorageType {
+  TEMPLATE = 'TEMPLATE',
+  PROVISION_SOURCE_TEMPLATE_DISK = 'PROVISION_SOURCE_TEMPLATE_DISK',
+  PROVISION_SOURCE_DISK = 'PROVISION_SOURCE_DISK',
+  UI_INPUT = 'UI_INPUT',
+}
+
+export type VMWizardStorage = {
+  id?: string;
+  type: VMWizardStorageType;
+  disk: V1Disk;
+  volume: V1Volume;
+  dataVolume?: V1alpha1DataVolume;
+  validation?: UIDiskValidation;
+};
+
+export type VMWizardStorageWithWrappers = VMWizardStorage & {
+  diskWrapper: DiskWrapper;
+  volumeWrapper: VolumeWrapper;
+  dataVolumeWrapper?: DataVolumeWrapper;
 };

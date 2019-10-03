@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {
+  Checkbox,
   FormSelect,
   FormSelectOption,
   TextArea,
   TextInput,
-  Checkbox,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
@@ -12,16 +12,24 @@ import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { vmWizardActions } from '../../redux/actions';
-import { VMSettingsField, VMSettingsRenderableField, VMWizardProps } from '../../types';
+import {
+  VMSettingsField,
+  VMSettingsRenderableField,
+  VMWizardProps,
+  VMWizardStorage,
+} from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
 import { getFieldId, getPlaceholder } from '../../utils/vm-settings-tab-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { FormFieldForm } from '../../form/form-field-form';
+import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
 import { OSFlavor } from './os-flavor';
 import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
+import { ContainerSource } from './container-source';
+import { URLSource } from './url-source';
 
 import './vm-settings-tab.scss';
 
@@ -35,7 +43,13 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
   onChange = (key) => (value) => this.props.onFieldChange(key, value);
 
   render() {
-    const { userTemplates, commonTemplates, dataVolumes, isReview } = this.props;
+    const {
+      userTemplates,
+      commonTemplates,
+      provisionSourceStorage,
+      updateStorage,
+      isReview,
+    } = this.props;
 
     return (
       <FormFieldForm isReview={isReview}>
@@ -45,7 +59,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
             userTemplates={userTemplates}
             commonTemplates={commonTemplates}
-            dataVolumes={dataVolumes}
             onChange={this.props.onFieldChange}
           />
         )}
@@ -67,22 +80,16 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             </FormSelect>
           </FormField>
         </FormFieldMemoRow>
-        <FormFieldMemoRow
+        <ContainerSource
           field={this.getField(VMSettingsField.CONTAINER_IMAGE)}
-          fieldType={FormFieldType.TEXT}
-        >
-          <FormField>
-            <TextInput onChange={this.onChange(VMSettingsField.CONTAINER_IMAGE)} />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
+          onProvisionSourceStorageChange={updateStorage}
+          provisionSourceStorage={provisionSourceStorage}
+        />
+        <URLSource
           field={this.getField(VMSettingsField.IMAGE_URL)}
-          fieldType={FormFieldType.TEXT}
-        >
-          <FormField>
-            <TextInput onChange={this.onChange(VMSettingsField.IMAGE_URL)} />
-          </FormField>
-        </FormFieldMemoRow>
+          onProvisionSourceStorageChange={updateStorage}
+          provisionSourceStorage={provisionSourceStorage}
+        />
         <OSFlavor
           userTemplates={userTemplates}
           commonTemplates={commonTemplates}
@@ -147,21 +154,25 @@ const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
-  dataVolumes: iGetCommonData(state, wizardReduxID, VMWizardProps.dataVolumes),
+  provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
 });
 
 type VMSettingsTabComponentProps = {
   onFieldChange: (key: VMSettingsRenderableField, value: string) => void;
+  updateStorage: (storage: VMWizardStorage) => void;
   vmSettings: any;
+  provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
   userTemplates: any;
-  dataVolumes: any;
   isReview: boolean;
 };
 
 const dispatchToProps = (dispatch, props) => ({
   onFieldChange: (key, value) =>
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
+  updateStorage: (storage: VMWizardStorage) => {
+    dispatch(vmWizardActions[ActionType.UpdateStorage](props.wizardReduxID, storage));
+  },
 });
 
 export const VMSettingsTab = connect(

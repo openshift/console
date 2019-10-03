@@ -1,7 +1,7 @@
 import { OrderedSet } from 'immutable';
 import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
 import { asHidden, asRequired } from '../../utils/utils';
-import { ProvisionSource } from '../../../../types/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 
 export const getInitialVmSettings = (common: CommonData) => {
   const {
@@ -12,8 +12,8 @@ export const getInitialVmSettings = (common: CommonData) => {
     ProvisionSource.PXE,
     ProvisionSource.URL,
     ProvisionSource.CONTAINER,
-    // ProvisionSource.CLONED_DISK, // TODO: uncomment when storage tab is implemented
-  ];
+    ProvisionSource.DISK,
+  ].map((source) => source.getValue());
 
   const fields = {
     [VMSettingsField.NAME]: {
@@ -28,8 +28,12 @@ export const getInitialVmSettings = (common: CommonData) => {
       isRequired: asRequired(true),
       sources: OrderedSet(provisionSources),
     },
-    [VMSettingsField.CONTAINER_IMAGE]: {},
-    [VMSettingsField.IMAGE_URL]: {},
+    [VMSettingsField.CONTAINER_IMAGE]: {
+      skipValidation: true, // validated in storage tab
+    },
+    [VMSettingsField.IMAGE_URL]: {
+      skipValidation: true, // validated in storage tab
+    },
     [VMSettingsField.OPERATING_SYSTEM]: {
       isRequired: asRequired(true),
     },

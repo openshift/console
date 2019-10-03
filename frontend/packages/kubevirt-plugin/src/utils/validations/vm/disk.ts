@@ -11,6 +11,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ValidationErrorType, ValidationObject } from '../types';
 import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
+import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -67,22 +68,22 @@ export const validateDisk = (
     }
   };
 
-  const type = StorageUISource.fromTypes(volume.getType(), dataVolume && dataVolume.getType());
+  const source = StorageUISource.fromTypes(volume.getType(), dataVolume && dataVolume.getType());
 
-  if (type) {
-    if (type.requiresURL()) {
+  if (source) {
+    if (source.requiresURL()) {
       const url = dataVolume && dataVolume.getURL();
       addRequired(url);
       validations.url = validateURL(url, { subject: 'URL' });
     }
 
-    if (type.requiresContainerImage()) {
+    if (source.requiresContainerImage()) {
       const container = volume.getContainerImage();
       addRequired(container);
       validations.container = validateTrim(container, { subject: 'Container' });
     }
 
-    if (type.requiresDatavolume()) {
+    if (source.requiresDatavolume()) {
       addRequired(dataVolume);
       if (!dataVolume || !dataVolume.hasSize()) {
         addRequired(null);
@@ -90,8 +91,12 @@ export const validateDisk = (
       }
     }
 
-    if (type.requiresPVC()) {
-      const pvcName = type.getPVCName(volume, dataVolume);
+    if (source.requiresPVC()) {
+      const pvcName = new CombinedDisk({
+        diskWrapper: disk,
+        volumeWrapper: volume,
+        dataVolumeWrapper: dataVolume,
+      }).getPVCName(source);
       addRequired(pvcName);
       validations.pvc = validatePVCName(pvcName, usedPVCNames);
     }

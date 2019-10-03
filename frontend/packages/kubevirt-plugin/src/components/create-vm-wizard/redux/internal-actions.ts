@@ -1,4 +1,5 @@
-import { VMSettingsField, VMWizardNetwork, VMWizardTab } from '../types';
+import { VMSettingsField, VMWizardNetwork, VMWizardStorage, VMWizardTab } from '../types';
+import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
 
@@ -107,6 +108,35 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.RemoveNIC,
   }),
+
+  [InternalActionType.UpdateStorage]: (id, storage: VMWizardStorage) => ({
+    payload: {
+      id,
+      storage,
+    },
+    type: InternalActionType.UpdateStorage,
+  }),
+  [InternalActionType.RemoveStorage]: (id, storageID: string) => ({
+    payload: {
+      id,
+      storageID,
+    },
+    type: InternalActionType.RemoveStorage,
+  }),
+  [InternalActionType.SetDeviceBootOrder]: (
+    id,
+    deviceID: string,
+    deviceType: DeviceType,
+    bootOrder: number,
+  ) => ({
+    payload: {
+      id,
+      deviceID,
+      deviceType,
+      bootOrder,
+    },
+    type: InternalActionType.SetDeviceBootOrder,
+  }),
   [InternalActionType.SetNetworks]: (id, networks: VMWizardNetwork[]) => ({
     payload: {
       id,
@@ -114,12 +144,10 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetNetworks,
   }),
-  [InternalActionType.SetStorages]: (id, value, isValid: boolean, isLocked: boolean) => ({
+  [InternalActionType.SetStorages]: (id, value: VMWizardStorage[]) => ({
     payload: {
       id,
       value,
-      isValid,
-      isLocked,
     },
     type: InternalActionType.SetStorages,
   }),

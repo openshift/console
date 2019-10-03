@@ -4,6 +4,7 @@ import { getFieldHelp, getFieldId, getFieldTitle } from '../utils/vm-settings-ta
 import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/vm-settings';
 import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
+import { ValidationObject } from '../../../utils/validations/types';
 import { FormFieldContext } from './form-field-context';
 import { FormFieldType } from './form-field';
 import { FormFieldReviewContext } from './form-field-review-context';
@@ -18,6 +19,7 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
   fieldType,
   children,
   loadingResources,
+  validation,
 }) => {
   const fieldKey = iGet(field, 'key');
 
@@ -41,9 +43,10 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
             }
             help={getFieldHelp(fieldKey, iGetFieldValue(field))}
             isRequired={isFieldRequired(field)}
-            validationMessage={iGetIn(field, ['validation', 'message'])}
-            validationType={iGetIn(field, ['validation', 'type'])}
+            validationMessage={validation ? undefined : iGetIn(field, ['validation', 'message'])}
+            validationType={validation ? undefined : iGetIn(field, ['validation', 'type'])}
             isLoading={loading}
+            validation={validation}
           >
             <FormFieldContext.Provider value={{ field, fieldType, isLoading: loading }}>
               {children}
@@ -60,6 +63,7 @@ type FieldFormRowProps = {
   fieldType: FormFieldType;
   children?: React.ReactNode;
   loadingResources?: { [k: string]: any };
+  validation?: ValidationObject;
 };
 
 export const FormFieldMemoRow = React.memo(
@@ -67,5 +71,7 @@ export const FormFieldMemoRow = React.memo(
   (prevProps, nextProps) =>
     prevProps.field === nextProps.field &&
     prevProps.fieldType === nextProps.fieldType &&
+    _.get(prevProps.validation, ['type']) === _.get(nextProps.validation, ['type']) &&
+    _.get(prevProps.validation, ['message']) === _.get(nextProps.validation, ['message']) &&
     isLoading(prevProps.loadingResources) === isLoading(nextProps.loadingResources),
 );

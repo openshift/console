@@ -1,5 +1,6 @@
 import { VMLikeEntityKind } from '../../types';
 import { ValidationObject } from '../../utils/validations/types';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 
 export type StorageSimpleData = {
   name?: string;
@@ -16,15 +17,11 @@ export type StorageSimpleDataValidation = {
 };
 
 export type StorageBundle = StorageSimpleData & {
-  disk: any;
-  volume: any;
-  dataVolume: any;
-  isEditingEnabled: boolean;
+  disk: CombinedDisk;
 };
 
 export type VMStorageRowActionOpts = {
   withProgress: (promise: Promise<any>) => void;
-  isEditingEnabled: boolean;
 };
 
 export type VMStorageRowCustomData = {

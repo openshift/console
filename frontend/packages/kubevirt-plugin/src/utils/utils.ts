@@ -30,7 +30,12 @@ export const wrapWithProgress = (setProgress: (inProgress: boolean) => void) => 
   promise: Promise<any>,
 ) => {
   setProgress(true);
-  promise.then(() => setProgress(false)).catch(() => setProgress(false));
+  promise
+    .then(() => setProgress(false))
+    .catch((reason) => {
+      setProgress(false);
+      throw reason;
+    });
 };
 
 export const getVMLikeModelName = (isCreateTemplate: boolean) =>

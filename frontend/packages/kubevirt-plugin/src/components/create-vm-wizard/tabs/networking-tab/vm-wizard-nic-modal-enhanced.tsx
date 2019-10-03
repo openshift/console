@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '../../../../models';
@@ -14,7 +14,6 @@ import {
   VMWizardProps,
 } from '../../types';
 import { NICModal } from '../../../modals/nic-modal';
-import { iFirehoseResultToJS } from '../../../../utils/immutable';
 import { NetworkType } from '../../../../constants/vm';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
@@ -24,6 +23,8 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
   const {
     id,
     type,
+    namespace,
+    hasNADs,
     addUpdateNIC,
     networks,
     networkInterfaceWrapper = NetworkInterfaceWrapper.EMPTY,
@@ -51,7 +52,7 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
     networkWrapper.isPodNetwork() ||
     !networks.find(({ networkWrapper: usedNetworkWrapper }) => usedNetworkWrapper.isPodNetwork());
 
-  return (
+  const modal = (
     <NICModal
       {...restProps}
       usedInterfacesNames={usedInterfacesNames}
@@ -63,21 +64,44 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
         addUpdateNIC({
           id,
           type: type || VMWizardNetworkType.UI_INPUT,
-          networkInterface: resultNetworkInterfaceWrapper.asResource(),
-          network: resultNetworkWrapper.asResource(),
+          networkInterface: NetworkInterfaceWrapper.mergeWrappers(
+            networkInterfaceWrapper,
+            resultNetworkInterfaceWrapper,
+          ).asResource(),
+          network: NetworkWrapper.mergeWrappers(networkWrapper, resultNetworkWrapper).asResource(),
         });
         return Promise.resolve();
       }}
     />
   );
+  if (!hasNADs) {
+    return modal;
+  }
+
+  return (
+    <Firehose
+      resources={[
+        {
+          kind: NetworkAttachmentDefinitionModel.kind,
+          isList: true,
+          namespace,
+          prop: 'nads',
+        },
+      ]}
+    >
+      {modal}
+    </Firehose>
+  );
 };
 
 type VMWizardNICModalProps = ModalComponentProps & {
   id?: string;
+  namespace: string;
   type?: VMWizardNetworkType;
   networkInterfaceWrapper?: NetworkInterfaceWrapper;
   networkWrapper?: NetworkWrapper;
   networks?: VMWizardNetworkWithWrappers[];
+  hasNADs: boolean;
   nads?: FirehoseResult<K8sResourceKind[]>;
   addUpdateNIC: (network: VMWizardNetwork) => void;
 };
@@ -87,9 +111,7 @@ const stateToProps = (state, { wizardReduxID }) => {
   return {
     hasNADs,
     networks: getNetworksWithWrappers(state, wizardReduxID),
-    nads: iFirehoseResultToJS(
-      iGetCommonData(state, wizardReduxID, VMWizardProps.networkAttachmentDefinitions),
-    ),
+    namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
   };
 };
 

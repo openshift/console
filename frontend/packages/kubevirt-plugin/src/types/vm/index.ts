@@ -92,12 +92,3 @@ export type V1Network = {
   pod?: {};
   genie?: {};
 };
-
-export enum ProvisionSource {
-  PXE = 'PXE',
-  CONTAINER = 'Container',
-  URL = 'URL',
-  IMPORT = 'Import',
-  CLONED_DISK = 'Cloned Disk', // PVC or upload image to PVC
-  UNKNOWN = 'Unknown',
-}

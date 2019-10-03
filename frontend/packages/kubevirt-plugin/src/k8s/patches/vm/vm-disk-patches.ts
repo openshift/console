@@ -118,7 +118,7 @@ export const getUpdateDiskPatches = async (
         .build(),
       finalDataVolume &&
         new PatchBuilder('/spec/dataVolumeTemplates')
-          .setListUpdate(finalDataVolume, dataVolumeTemplates, getSimpleName, oldDataVolumeName)
+          .setListUpdate(finalDataVolume, dataVolumeTemplates, getName, oldDataVolumeName)
           .build(),
     ].filter((patch) => patch);
   });

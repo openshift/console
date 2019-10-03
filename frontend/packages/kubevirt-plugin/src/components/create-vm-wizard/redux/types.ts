@@ -4,9 +4,11 @@ import {
   VMSettingsField,
   VMSettingsFieldType,
   VMWizardNetwork,
+  VMWizardStorage,
   VMWizardTab,
 } from '../types';
 import { ValidationObject } from '../../../utils/validations/types';
+import { DeviceType } from '../../../constants/vm';
 
 export enum ActionType {
   Create = 'KubevirtVMWizardExternalCreate',
@@ -16,8 +18,9 @@ export enum ActionType {
   SetTabLocked = 'KubevirtVMWizardExternalSetTabLocked',
   RemoveNIC = 'KubevirtVMWizardExternalRemoveNIC',
   UpdateNIC = 'KubevirtVMWizardExternalUpdateNIC',
-  SetNetworks = 'KubevirtVMWizardExternalSetNetworks',
-  SetStorages = 'KubevirtVMWizardExternalSetStorages',
+  SetDeviceBootOrder = 'KubevirtVMWizardExternalSetDeviceBootOrder',
+  RemoveStorage = 'KubevirtVMWizardExternalRemoveStorage',
+  UpdateStorage = 'KubevirtVMWizardExternalUpdateStorage',
   SetResults = 'KubevirtVMWizardExternalSetResults',
 }
 
@@ -25,17 +28,20 @@ export enum ActionType {
 export enum InternalActionType {
   Create = 'KubevirtVMWizardCreate',
   Dispose = 'KubevirtVMWizardDispose',
-  Update = 'KubevirtVMWizardUpdateInternal',
+  Update = 'KubevirtVMWizardUpdate',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
-  SetTabValidity = 'KubevirtVMWizardSetTabValidityInternal',
+  SetTabValidity = 'KubevirtVMWizardSetTabValidity',
   SetTabLocked = 'KubevirtVMWizardSetTabLocked',
-  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValueInternal',
-  SetInVmSettings = 'KubevirtVMWizardSetInVmSettingsInternal',
-  SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatchInternal',
-  UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsFieldInternal',
-  UpdateVmSettings = 'KubevirtVMWizardUpdateVmSettingsInternal',
+  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
+  SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',
+  SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatch',
+  UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsField',
+  UpdateVmSettings = 'KubevirtVMWizardUpdateVmSettings',
   RemoveNIC = 'KubevirtVMWizardRemoveNIC',
   UpdateNIC = 'KubevirtVMWizardUpdateNIC',
+  SetDeviceBootOrder = 'KubevirtVMWizardSetDeviceBootOrder',
+  RemoveStorage = 'KubevirtVMWizardRemoveStorage',
+  UpdateStorage = 'KubevirtVMWizardUpdateStorage',
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
@@ -55,8 +61,12 @@ export type WizardInternalAction = {
     tab?: VMWizardTab;
     batch?: ActionBatch;
     network?: VMWizardNetwork;
-    networks?: VMWizardNetwork[];
     networkID?: string;
+    storage?: VMWizardStorage;
+    storageID?: string;
+    deviceID?: string;
+    deviceType?: DeviceType;
+    bootOrder?: number;
   };
 };
 

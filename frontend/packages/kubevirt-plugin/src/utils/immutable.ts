@@ -25,6 +25,8 @@ export const hasTruthyValue = (obj) => !!(obj && !!obj.find((value) => value));
 export const iGet = (obj, key: string, defaultValue = undefined) =>
   obj ? obj.get(key, defaultValue) : defaultValue;
 
+export const toShallowJS = (obj, defaultValue = undefined) => (obj ? obj.toJSON() : defaultValue);
+
 export const iGetIn = (obj, path: string[], defaultValue = undefined) =>
   obj ? obj.getIn(path, defaultValue) : defaultValue;
 

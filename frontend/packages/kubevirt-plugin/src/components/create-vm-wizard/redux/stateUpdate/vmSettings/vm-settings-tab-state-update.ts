@@ -1,5 +1,6 @@
 import {
   hasVmSettingsChanged,
+  iGetProvisionSource,
   iGetVmSettingAttribute,
   iGetVmSettingValue,
 } from '../../../selectors/immutable/vm-settings';
@@ -12,16 +13,10 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../../selectors/immutable/selectors';
-import {
-  iGetIsLoaded,
-  iGetLoadedData,
-  immutableListToShallowJS,
-} from '../../../../../utils/immutable';
-import { ProvisionSource } from '../../../../../types/vm';
+import { iGetIsLoaded, iGetLoadedData } from '../../../../../utils/immutable';
 import { ignoreCaseSort } from '../../../../../utils/sort';
 import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
-import { iGetStorages } from '../../../selectors/immutable/storage';
-import { getInitialDisk } from '../../initial-state/storage-tab-initial-state';
+import { ProvisionSource } from '../../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 export const selectUserTemplateOnLoadedUpdater = ({
@@ -36,8 +31,7 @@ export const selectUserTemplateOnLoadedUpdater = ({
     iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized') ||
     !(
       changedCommonData.has(VMWizardProps.userTemplates) ||
-      changedCommonData.has(VMWizardProps.commonTemplates) ||
-      changedCommonData.has(VMWizardProps.dataVolumes)
+      changedCommonData.has(VMWizardProps.commonTemplates)
     )
   ) {
     return;
@@ -45,13 +39,8 @@ export const selectUserTemplateOnLoadedUpdater = ({
 
   const iUserTemplatesWrapper = iGetCommonData(state, id, VMWizardProps.userTemplates);
   const iCommonTemplatesWrapper = iGetCommonData(state, id, VMWizardProps.commonTemplates); // flavor prefill
-  const iDataVolumeWrapper = iGetCommonData(state, id, VMWizardProps.dataVolumes); // template prefill
 
-  if (
-    !iGetIsLoaded(iUserTemplatesWrapper) ||
-    !iGetIsLoaded(iCommonTemplatesWrapper) ||
-    !iGetIsLoaded(iDataVolumeWrapper)
-  ) {
+  if (!iGetIsLoaded(iUserTemplatesWrapper) || !iGetIsLoaded(iCommonTemplatesWrapper)) {
     return;
   }
 
@@ -120,55 +109,22 @@ export const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }:
   ) {
     return;
   }
-  const source = iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE);
+  const source = iGetProvisionSource(state, id);
   const isContainer = source === ProvisionSource.CONTAINER;
   const isUrl = source === ProvisionSource.URL;
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.CONTAINER_IMAGE]: {
-        value: isContainer ? undefined : null,
         isRequired: asRequired(isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
         isHidden: asHidden(!isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
       },
       [VMSettingsField.IMAGE_URL]: {
-        value: isUrl ? undefined : null,
         isRequired: asRequired(isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
         isHidden: asHidden(!isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
       },
     }),
   );
-};
-
-// TODO: move this logic to StorageTab?
-export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (
-    !hasVmSettingsChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.PROVISION_SOURCE_TYPE,
-      VMSettingsField.USER_TEMPLATE,
-    )
-  ) {
-    return;
-  }
-
-  const storageRowsUpdate = immutableListToShallowJS(iGetStorages(state, id)).filter(
-    (storage) => storage.templateStorage || !storage.rootStorage,
-  );
-  // template pre-fills its own storages
-  if (!iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE)) {
-    const storage = getInitialDisk(
-      iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE),
-    );
-    if (storage) {
-      storageRowsUpdate.push(storage);
-    }
-  }
-
-  dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, storageRowsUpdate));
 };
 
 export const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -200,7 +156,6 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,
-    prefillInitialDiskUpdater,
     flavorUpdater,
   ].forEach((updater) => {
     updater && updater(options);

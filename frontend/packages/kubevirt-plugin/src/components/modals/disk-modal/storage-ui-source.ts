@@ -2,8 +2,6 @@
 
 import { ValueEnum, VolumeType } from '../../../constants';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 
 export class StorageUISource extends ValueEnum<string> {
   static readonly BLANK = new StorageUISource(
@@ -83,15 +81,4 @@ export class StorageUISource extends ValueEnum<string> {
   requiresNamespace = () => this === StorageUISource.ATTACH_CLONED_DISK;
 
   isEditingSupported = () => !this.dataVolumeSourceType;
-
-  getPVCName = (volume: VolumeWrapper, dataVolume: DataVolumeWrapper) => {
-    if (this === StorageUISource.ATTACH_DISK) {
-      return volume.getPersistentVolumeClaimName();
-    }
-    if (this === StorageUISource.ATTACH_CLONED_DISK) {
-      return dataVolume.getPesistentVolumeClaimName();
-    }
-
-    return null;
-  };
 }

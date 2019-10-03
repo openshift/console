@@ -13,10 +13,13 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({ children, validation
   return (
     <>
       {children}
-      {validation && validation.type !== ValidationErrorType.TrivialError && (
+      {validation && (
         <div
           className={classNames({
-            'kubevirt-nic-row__cell--error': validation.type === ValidationErrorType.Error,
+            'kubevirt-validation-cell__cell--error': [
+              ValidationErrorType.Error,
+              ValidationErrorType.TrivialError,
+            ].includes(validation.type),
           })}
         >
           {validation.message}

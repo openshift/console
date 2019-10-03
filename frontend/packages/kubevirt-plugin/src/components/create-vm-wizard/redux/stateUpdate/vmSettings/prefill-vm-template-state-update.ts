@@ -1,26 +1,35 @@
-import { createBasicLookup } from '@console/shared/src';
+import { createBasicLookup, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../types';
-import { iGetVmSettingValue } from '../../../selectors/immutable/vm-settings';
+import { iGetProvisionSource, iGetVmSettingValue } from '../../../selectors/immutable/vm-settings';
 import {
   VMSettingsField,
   VMWizardNetwork,
   VMWizardNetworkType,
   VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
 } from '../../../types';
 import { iGetLoadedCommonData, iGetName } from '../../../selectors/immutable/selectors';
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../../utils/immutable';
-import { iGetNetworks as getDialogNetworks } from '../../../selectors/immutable/networks';
-import { iGetStorages } from '../../../selectors/immutable/storage';
+import { iGetNetworks } from '../../../selectors/immutable/networks';
 import { podNetwork } from '../../initial-state/networks-tab-initial-state';
 import { vmWizardInternalActions } from '../../internal-actions';
-import { CUSTOM_FLAVOR, NetworkInterfaceModel } from '../../../../../constants/vm';
+import {
+  CUSTOM_FLAVOR,
+  DiskBus,
+  DiskType,
+  NetworkInterfaceModel,
+} from '../../../../../constants/vm';
 import {
   DEFAULT_CPU,
   getCloudInitUserData,
   getCPU,
+  getDataVolumeTemplates,
+  getDisks,
   getInterfaces,
   getMemory,
   getNetworks,
+  getVolumes,
   hasAutoAttachPodInterface,
   parseCPU,
 } from '../../../../../selectors/vm';
@@ -30,20 +39,16 @@ import {
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
 } from '../../../../../selectors/vm-template/advanced';
-import { ProvisionSource, V1Network } from '../../../../../types/vm';
-import {
-  getTemplateProvisionSource,
-  getTemplateStorages,
-} from '../../../../../selectors/vm-template/combined';
+import { V1Network } from '../../../../../types/vm';
 import { getFlavors } from '../../../../../selectors/vm-template/combined-dependent';
 import { getSimpleName } from '../../../../../selectors/utils';
 import { getNextIDResolver } from '../../../../../utils/utils';
-
-// used by user template; currently we do not support PROVISION_SOURCE_IMPORT
-const provisionSourceDataFieldResolver = {
-  [ProvisionSource.CONTAINER]: VMSettingsField.CONTAINER_IMAGE,
-  [ProvisionSource.URL]: VMSettingsField.IMAGE_URL,
-};
+import { ProvisionSource } from '../../../../../constants/vm/provision-source';
+import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { V1Volume } from '../../../../../types/vm/disk/V1Volume';
+import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
+import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
+import { iGetStorages } from '../../../selectors/immutable/storage';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -60,23 +65,26 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   const vmSettingsUpdate = {};
 
   // filter out oldTemplates
-  let networksUpdate = immutableListToShallowJS<VMWizardNetwork>(
-    getDialogNetworks(state, id),
-  ).filter((network) => network.type !== VMWizardNetworkType.TEMPLATE);
+  let networksUpdate = immutableListToShallowJS<VMWizardNetwork>(iGetNetworks(state, id)).filter(
+    (network) => network.type !== VMWizardNetworkType.TEMPLATE,
+  );
   const getNextNetworkID = getNextIDResolver(networksUpdate);
 
-  const storageRowsUpdate = immutableListToShallowJS(iGetStorages(state, id)).filter(
-    (storage) => !(storage.templateStorage || storage.rootStorage),
+  const storagesUpdate = immutableListToShallowJS<VMWizardStorage>(iGetStorages(state, id)).filter(
+    (storage) =>
+      ![
+        VMWizardStorageType.PROVISION_SOURCE_DISK,
+        VMWizardStorageType.TEMPLATE,
+        VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
+      ].includes(storage.type),
   );
+  const getNextStorageID = getNextIDResolver(storagesUpdate);
 
   if (!networksUpdate.find((row) => !!row.network.pod)) {
     networksUpdate.unshift({ ...podNetwork, id: getNextNetworkID() });
   }
 
   if (iUserTemplate) {
-    const dataVolumes = immutableListToShallowJS(
-      iGetLoadedCommonData(state, id, VMWizardProps.userTemplates),
-    );
     const userTemplate = iUserTemplate.toJS();
 
     const vm = selectVM(userTemplate);
@@ -109,20 +117,14 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     }
 
     // update provision source
-    const provisionSource = getTemplateProvisionSource(userTemplate, dataVolumes);
-    if (provisionSource.type === ProvisionSource.UNKNOWN) {
-      vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = { value: null };
-    } else {
-      vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = { value: provisionSource.type };
-      const dataFieldName = provisionSourceDataFieldResolver[provisionSource.type];
-      if (dataFieldName) {
-        vmSettingsUpdate[dataFieldName] = { value: provisionSource.source };
-      }
-    }
+    const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate);
+    vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
+      value: provisionSourceDetails.type ? provisionSourceDetails.type.getValue() : null,
+    };
 
     const networkLookup = createBasicLookup<V1Network>(getNetworks(vm), getSimpleName);
     // prefill networks
-    const templateNetworks = getInterfaces(vm).map((intface) => ({
+    const templateNetworks: VMWizardNetwork[] = getInterfaces(vm).map((intface) => ({
       id: getNextNetworkID(),
       type: VMWizardNetworkType.TEMPLATE,
       network: networkLookup[getSimpleName(intface)],
@@ -142,12 +144,30 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     networksUpdate.push(...templateNetworks);
 
-    // prefill storage
-    const templateStorages = getTemplateStorages(userTemplate, dataVolumes).map((storage) => ({
-      templateStorage: storage,
-      rootStorage: storage.disk.bootOrder === 1 ? {} : undefined,
-    }));
-    storageRowsUpdate.push(...templateStorages);
+    const volumeLookup = createBasicLookup<V1Volume>(getVolumes(vm), getSimpleName);
+    const datavolumeTemplatesLookup = createBasicLookup(getDataVolumeTemplates(vm), getName);
+    // // prefill storage
+    const templateStorages: VMWizardStorage[] = getDisks(vm).map((disk) => {
+      const diskWrapper = DiskWrapper.initialize(disk);
+      const volume = volumeLookup[diskWrapper.getName()];
+      const volumeWrapper = VolumeWrapper.initialize(volume);
+      return {
+        id: getNextStorageID(),
+        type: diskWrapper.isFirstBootableDevice()
+          ? VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK
+          : VMWizardStorageType.TEMPLATE,
+        volume,
+        dataVolume: datavolumeTemplatesLookup[volumeWrapper.getDataVolumeName()],
+        disk:
+          diskWrapper.getType() === DiskType.DISK && !diskWrapper.getDiskBus()
+            ? DiskWrapper.mergeWrappers(
+                diskWrapper,
+                DiskWrapper.initializeFromSimpleData({ type: DiskType.DISK, bus: DiskBus.VIRTIO }),
+              ).asResource()
+            : disk,
+      };
+    });
+    storagesUpdate.unshift(...templateStorages);
   } else {
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
@@ -162,9 +182,14 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     if (flavors.length === 1) {
       vmSettingsUpdate[VMSettingsField.FLAVOR] = { value: flavors[0] };
     }
+
+    const newSourceStorage = getProvisionSourceStorage(iGetProvisionSource(state, id));
+    if (newSourceStorage) {
+      storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
+    }
   }
 
   dispatch(vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, vmSettingsUpdate));
   dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networksUpdate));
-  dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, storageRowsUpdate));
+  dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, storagesUpdate));
 };

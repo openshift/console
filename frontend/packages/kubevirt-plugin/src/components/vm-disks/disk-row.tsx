@@ -16,6 +16,7 @@ import { dimensifyRow } from '../../utils/table';
 import { ValidationCell } from '../table/validation-cell';
 import { VMNicRowActionOpts } from '../vm-nics/types';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import {
   StorageBundle,
   StorageSimpleData,
@@ -25,9 +26,7 @@ import {
 } from './types';
 
 const menuActionEdit = (
-  disk,
-  volume,
-  dataVolume,
+  disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
@@ -36,9 +35,9 @@ const menuActionEdit = (
     withProgress(
       diskModalEnhanced({
         vmLikeEntity,
-        disk,
-        volume,
-        dataVolume,
+        disk: disk.diskWrapper.asResource(),
+        volume: disk.volumeWrapper.asResource(),
+        dataVolume: disk.dataVolumeWrapper && disk.dataVolumeWrapper.asResource(),
       }).result,
     ),
   accessReview: asAccessReview(
@@ -49,9 +48,7 @@ const menuActionEdit = (
 });
 
 const menuActionDelete = (
-  disk,
-  volume,
-  dataVolume,
+  disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
@@ -60,7 +57,7 @@ const menuActionDelete = (
     withProgress(
       deleteDeviceModal({
         deviceType: DeviceType.DISK,
-        device: disk,
+        device: disk.diskWrapper.asResource(),
         vmLikeEntity,
       }).result,
     ),
@@ -72,9 +69,7 @@ const menuActionDelete = (
 });
 
 const getActions = (
-  disk,
-  volume,
-  dataVolume,
+  disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
   opts: VMStorageRowActionOpts,
 ) => {
@@ -82,11 +77,14 @@ const getActions = (
   if (isVMRunning(asVM(vmLikeEntity))) {
     return actions;
   }
-  if (opts.isEditingEnabled) {
+
+  const isTemplate = vmLikeEntity && !isVM(vmLikeEntity);
+  if (disk.getSource() && (isTemplate || disk.isEditingSupported())) {
     actions.push(menuActionEdit);
   }
+
   actions.push(menuActionDelete);
-  return actions.map((a) => a(disk, volume, dataVolume, vmLikeEntity, opts));
+  return actions.map((a) => a(disk, vmLikeEntity, opts));
 };
 
 export type VMDiskSimpleRowProps = {
@@ -145,27 +143,26 @@ export type VMDiskRowProps = {
 };
 
 export const DiskRow: React.FC<VMDiskRowProps> = ({
-  obj: { name, disk, volume, dataVolume, isEditingEnabled, ...restData },
+  obj: { disk, ...restData },
   customData: { isDisabled, withProgress, vmLikeEntity, columnClasses },
   index,
   style,
 }) => {
   return (
     <DiskSimpleRow
-      data={{ ...restData, name }}
+      data={restData}
       columnClasses={columnClasses}
       index={index}
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(disk, volume, dataVolume, vmLikeEntity, {
+          options={getActions(disk, vmLikeEntity, {
             withProgress,
-            isEditingEnabled,
           })}
           isDisabled={
             isDisabled || !!getDeletetionTimestamp(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))
           }
-          id={`kebab-for-${name}`}
+          id={`kebab-for-${disk.getName()}`}
         />
       }
     />

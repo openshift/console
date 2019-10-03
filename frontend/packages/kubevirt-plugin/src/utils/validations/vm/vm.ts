@@ -1,12 +1,11 @@
-import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { ValidationErrorType, ValidationObject } from '../types';
 import {
   getValidationObject,
   validateDNS1123SubdomainValue,
   validateEntityAlreadyExists,
 } from '../common';
-import { getTemplateProvisionSource } from '../../../selectors/vm-template/combined';
-import { ProvisionSource } from '../../../types/vm';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const validateVmLikeEntityName = (
   value: string,
@@ -28,11 +27,10 @@ export const validateVmLikeEntityName = (
 
 export const validateUserTemplateProvisionSource = (
   userTemplate: TemplateKind,
-  dataVolumes: K8sResourceKind[],
 ): ValidationObject => {
-  const provisionSource = getTemplateProvisionSource(userTemplate, dataVolumes);
+  const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate);
 
-  return provisionSource.type === ProvisionSource.UNKNOWN
-    ? getValidationObject(`Could not select Provision Source. ${provisionSource.error}`)
+  return provisionSourceDetails.error
+    ? getValidationObject(`Could not select Provision Source. ${provisionSourceDetails.error}`)
     : null;
 };

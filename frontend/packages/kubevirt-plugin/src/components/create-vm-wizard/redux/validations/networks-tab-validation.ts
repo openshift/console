@@ -1,13 +1,13 @@
-import { VMSettingsField, VMWizardTab } from '../../types';
+import { VMWizardTab } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
 import { validateNIC } from '../../../../utils/validations/vm';
 import { iGetIn } from '../../../../utils/immutable';
 import { iGetNetworks } from '../../selectors/immutable/networks';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
-import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
-import { ProvisionSource } from '../../../../types/vm';
+import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getNetworksWithWrappers } from '../../selectors/selectors';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 
 export const validateNetworks = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -63,10 +63,7 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
     iGetIn(iNetwork, ['validation', 'hasAllRequiredFilled']),
   );
 
-  if (
-    hasAllRequiredFilled &&
-    iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE) === ProvisionSource.PXE
-  ) {
+  if (hasAllRequiredFilled && iGetProvisionSource(state, id) === ProvisionSource.PXE) {
     hasAllRequiredFilled = !!iNetworks.find(
       (networkBundle) =>
         !iGetIn(networkBundle, ['network', 'pod']) &&

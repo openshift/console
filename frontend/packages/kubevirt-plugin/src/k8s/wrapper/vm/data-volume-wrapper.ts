@@ -5,8 +5,10 @@ import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-proper
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import {
+  getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
+  getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
 
 type CombinedTypeData = {
@@ -115,6 +117,8 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 
   getPesistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
 
+  getPesistentVolumeClaimNamespace = () => this.getIn(['spec', 'source', 'pvc', 'namespace']);
+
   getURL = () => this.getIn(['spec', 'source', 'http', 'url']);
 
   getSize = (): { value: number; unit: string } => {
@@ -125,5 +129,14 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
     };
   };
 
+  getReadabableSize = () => {
+    const { value, unit } = this.getSize();
+    return `${value} ${unit}`;
+  };
+
   hasSize = () => this.getSize().value > 0;
+
+  getAccessModes = () => getDataVolumeAccessModes(this.data);
+
+  getVolumeMode = () => getDataVolumeVolumeMode(this.data);
 }

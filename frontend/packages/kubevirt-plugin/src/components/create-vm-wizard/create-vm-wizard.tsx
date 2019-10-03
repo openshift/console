@@ -3,11 +3,7 @@ import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { createVm, createVmTemplate } from 'kubevirt-web-ui-components';
 import { Wizard } from '@patternfly/react-core';
-import {
-  PersistentVolumeClaimModel,
-  StorageClassModel,
-  TemplateModel,
-} from '@console/internal/models';
+import { TemplateModel } from '@console/internal/models';
 import {
   Firehose,
   history,
@@ -15,13 +11,15 @@ import {
   makeReduxID,
   units,
 } from '@console/internal/components/utils';
+import { k8sGet, TemplateKind } from '@console/internal/module/k8s';
 import { withReduxID } from '../../utils/redux/common';
+import { VirtualMachineModel } from '../../models';
 import {
-  DataVolumeModel,
-  NetworkAttachmentDefinitionModel,
-  VirtualMachineModel,
-} from '../../models';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VolumeType,
+} from '../../constants/vm';
 import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
@@ -35,6 +33,14 @@ import { getTemplateOperatingSystems } from '../../selectors/vm-template/advance
 import { ResultsWrapper } from '../../k8s/enhancedK8sMethods/types';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import {
+  getDefaultSCAccessMode,
+  getDefaultSCVolumeMode,
+} from '../../selectors/config-map/sc-defaults';
+import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-class';
 import {
   ChangedCommonData,
   CommonData,
@@ -43,6 +49,7 @@ import {
   VMSettingsField,
   VMWizardNetwork,
   VMWizardProps,
+  VMWizardStorage,
   VMWizardTab,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver } from './strings/strings';
@@ -56,6 +63,7 @@ import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
+import { StorageTab } from './tabs/storage-tab/storage-tab';
 
 import './create-vm-wizard.scss';
 
@@ -63,7 +71,19 @@ import './create-vm-wizard.scss';
 /** *
  * kubevirt-web-ui-components InterOP
  */
-const kubevirtInterOP = ({ activeNamespace, vmSettings, networks, storages, templates }) => {
+const kubevirtInterOP = async ({
+  activeNamespace,
+  vmSettings,
+  networks,
+  storages,
+  templates,
+}: {
+  activeNamespace: string;
+  vmSettings: any;
+  networks: VMWizardNetwork[];
+  storages: VMWizardStorage[];
+  templates: TemplateKind[];
+}) => {
   const clonedVMsettings = _.cloneDeep(vmSettings);
   const clonedNetworks = _.cloneDeep(networks);
   const clonedStorages = _.cloneDeep(storages);
@@ -92,10 +112,48 @@ const kubevirtInterOP = ({ activeNamespace, vmSettings, networks, storages, temp
     };
   });
 
+  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
+
+  const interOPStorages = clonedStorages.map(({ disk, volume, dataVolume }) => {
+    const diskWrapper = DiskWrapper.initialize(disk);
+    const volumeWrapper = VolumeWrapper.initialize(volume);
+    const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
+
+    return {
+      name: diskWrapper.getName(),
+      isBootable: diskWrapper.isFirstBootableDevice(),
+      storageType:
+        volumeWrapper.getType() === VolumeType.DATA_VOLUME && dataVolume ? 'datavolume' : undefined,
+      templateStorage: {
+        volume,
+        disk,
+        dataVolumeTemplate: dataVolumeWrapper
+          ? DataVolumeWrapper.mergeWrappers(
+              dataVolumeWrapper,
+              DataVolumeWrapper.initializeFromSimpleData({
+                accessModes:
+                  dataVolumeWrapper.getAccessModes() ||
+                  getDefaultSCAccessMode(
+                    storageClassConfigMap,
+                    dataVolumeWrapper.getStorageClassName(),
+                  ),
+                volumeMode:
+                  dataVolumeWrapper.getVolumeMode() ||
+                  getDefaultSCVolumeMode(
+                    storageClassConfigMap,
+                    dataVolumeWrapper.getStorageClassName(),
+                  ),
+              }),
+            ).asResource()
+          : undefined,
+      },
+    };
+  });
+
   return {
     interOPVMSettings: clonedVMsettings,
     interOPNetworks,
-    interOPStorages: clonedStorages,
+    interOPStorages,
   };
 };
 
@@ -131,7 +189,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     this.props.onClose();
   };
 
-  finish() {
+  finish = async () => {
     this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
     const create = this.props.isCreateTemplate ? createVmTemplate : createVm;
 
@@ -150,7 +208,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       ),
     );
 
-    const { interOPVMSettings, interOPNetworks, interOPStorages } = kubevirtInterOP({
+    const { interOPVMSettings, interOPNetworks, interOPStorages } = await kubevirtInterOP({
       vmSettings,
       networks,
       storages,
@@ -164,7 +222,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       interOPVMSettings,
       interOPNetworks,
       interOPStorages,
-      immutableListToShallowJS(iGetLoadedData(this.props[VMWizardProps.persistentVolumeClaims])),
+      [],
       units,
     )
       .then(() => getResults(enhancedK8sMethods))
@@ -173,7 +231,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
-  }
+  };
 
   render() {
     const { isCreateTemplate, reduxID, stepData } = this.props;
@@ -202,9 +260,15 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           </>
         ),
       },
-      // {
-      //   id: VMWizardTab.STORAGE,
-      // },
+      {
+        id: VMWizardTab.STORAGE,
+        component: (
+          <>
+            <ResourceLoadErrors wizardReduxID={reduxID} />
+            <StorageTab wizardReduxID={reduxID} />
+          </>
+        ),
+      },
       {
         id: VMWizardTab.REVIEW,
         component: <ReviewTab wizardReduxID={reduxID} />,
@@ -291,10 +355,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
     );
   },
   onClose: () => {
+    dispatch(vmWizardActions[ActionType.Dispose](props.reduxID, props));
     if (props.onClose) {
       props.onClose();
     }
-    dispatch(vmWizardActions[ActionType.Dispose](props.reduxID, props));
   },
 });
 
@@ -324,19 +388,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       namespace: 'openshift',
       prop: VMWizardProps.commonTemplates,
       matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-    }),
-    getResource(NetworkAttachmentDefinitionModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.networkAttachmentDefinitions,
-    }),
-    getResource(StorageClassModel, { prop: VMWizardProps.storageClasses }),
-    getResource(PersistentVolumeClaimModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.persistentVolumeClaims,
-    }),
-    getResource(DataVolumeModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.dataVolumes,
     }),
   ];
 

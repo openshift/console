@@ -1,8 +1,73 @@
 import * as _ from 'lodash';
-import { Map as ImmutableMap, fromJS } from 'immutable';
+import { fromJS, Map as ImmutableMap } from 'immutable';
 import { VMWizardTab } from '../types';
 import { iGet } from '../../../utils/immutable';
+import { DeviceType } from '../../../constants/vm';
 import { InternalActionType, WizardInternalAction } from './types';
+
+const sequentializeBootOrderIndexes = (state, dialogId: string) => {
+  const bootOrderIndexes = [
+    ...state
+      .getIn([dialogId, 'tabs', VMWizardTab.NETWORKING, 'value'])
+      .toArray()
+      .map((network) => network.getIn(['networkInterface', 'bootOrder'])),
+    ...state
+      .getIn([dialogId, 'tabs', VMWizardTab.STORAGE, 'value'])
+      .toArray()
+      .map((storage) => storage.getIn(['disk', 'bootOrder'])),
+  ]
+    .filter((bootOrder) => bootOrder != null)
+    .sort((a, b) => a - b);
+
+  return [DeviceType.NIC, DeviceType.DISK].reduce((newState, deviceType) => {
+    const tab = deviceType === DeviceType.DISK ? VMWizardTab.STORAGE : VMWizardTab.NETWORKING;
+    const deviceName = deviceType === DeviceType.DISK ? 'disk' : 'networkInterface';
+
+    return newState.updateIn([dialogId, 'tabs', tab, 'value'], (deviceWrappers) => {
+      return deviceWrappers.map((deviceWrapper) => {
+        const oldBootOrder = deviceWrapper.getIn([deviceName, 'bootOrder']);
+
+        if (oldBootOrder != null) {
+          const newBootOrder = bootOrderIndexes.indexOf(oldBootOrder) + 1;
+          if (newBootOrder !== oldBootOrder) {
+            return deviceWrapper.setIn([deviceName, 'bootOrder'], newBootOrder);
+          }
+        }
+        return deviceWrapper;
+      });
+    });
+  }, state);
+};
+
+const setDeviceBootOrder = (
+  state,
+  dialogId: string,
+  deviceID: string,
+  updatedDeviceType: DeviceType,
+  updatedDeviceBootOrder: number,
+) => {
+  const resultState = [DeviceType.NIC, DeviceType.DISK].reduce((newState, devType) => {
+    const tab = devType === DeviceType.DISK ? VMWizardTab.STORAGE : VMWizardTab.NETWORKING;
+    const deviceName = devType === DeviceType.DISK ? 'disk' : 'networkInterface';
+
+    return newState.updateIn([dialogId, 'tabs', tab, 'value'], (deviceWrappers) => {
+      return deviceWrappers.map((deviceWrapper) => {
+        const wrapperID = deviceWrapper.get('id');
+        const oldBootOrder = deviceWrapper.getIn([deviceName, 'bootOrder']);
+        const isUpdatedDevice = updatedDeviceType === devType && wrapperID === deviceID;
+        if (isUpdatedDevice || (oldBootOrder != null && updatedDeviceBootOrder <= oldBootOrder)) {
+          return deviceWrapper.setIn(
+            [deviceName, 'bootOrder'],
+            isUpdatedDevice ? updatedDeviceBootOrder : oldBootOrder + 1,
+          );
+        }
+        return deviceWrapper;
+      });
+    });
+  }, state);
+
+  return sequentializeBootOrderIndexes(resultState, dialogId);
+};
 
 // Merge deep in without updating the keys with undefined values
 const mergeDeepInSpecial = (state, path: string[], value) =>
@@ -39,7 +104,7 @@ const setObjectValues = (state, path, obj) => {
 const updateIDItemInList = (state, path, item?) => {
   const itemID = iGet(item, 'id');
   return state.updateIn(path, (items) => {
-    const networkIndex = item ? items.findIndex((t) => iGet(t, 'id') === itemID) : -1;
+    const networkIndex = itemID != null ? items.findIndex((t) => iGet(t, 'id') === itemID) : -1;
     if (networkIndex === -1) {
       const maxID = items.map((t) => iGet(t, 'id')).max() || 0;
       return items.push(item.set('id', _.toString(_.toSafeInteger(maxID) + 1)));
@@ -78,6 +143,26 @@ export default (state, action: WizardInternalAction) => {
         state,
         [dialogId, 'tabs', VMWizardTab.NETWORKING, 'value'],
         payload.networkID,
+      );
+    case InternalActionType.UpdateStorage:
+      return updateIDItemInList(
+        state,
+        [dialogId, 'tabs', VMWizardTab.STORAGE, 'value'],
+        fromJS(payload.storage),
+      );
+    case InternalActionType.RemoveStorage:
+      return removeIDItemFromList(
+        state,
+        [dialogId, 'tabs', VMWizardTab.STORAGE, 'value'],
+        payload.storageID,
+      );
+    case InternalActionType.SetDeviceBootOrder:
+      return setDeviceBootOrder(
+        state,
+        dialogId,
+        payload.deviceID,
+        payload.deviceType,
+        payload.bootOrder,
       );
     case InternalActionType.SetNetworks:
       return setTabKeys(state, VMWizardTab.NETWORKING, action);
