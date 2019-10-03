@@ -5,7 +5,7 @@ import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes, Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
-import { getPorts } from '../../../utils/imagestream-utils';
+import { getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { InputSearchField } from '../../formik-fields';
 import { secretModalLauncher } from '../CreateSecretModal';
 
@@ -65,10 +65,14 @@ const ImageSearch: React.FC = () => {
           !values.name && setFieldValue('name', getSuggestedName(name));
           !values.application.name &&
             setFieldValue('application.name', `${getSuggestedName(name)}-app`);
+          // set default port value
+          const targetPort = _.head(ports);
+          targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
         } else {
           setFieldValue('isSearchingForImage', false);
           setFieldValue('isi', {});
           setFieldError('isi.image', status.message);
+          setFieldValue('route.targetPort', null);
         }
       })
       .catch((error) => {
