@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { PrometheusHealthHandler, URLHealthHandler } from '@console/plugin-sdk';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+import { HealthState } from '@console/internal/components/dashboard/generic/health-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   ClusterVersionKind,
@@ -9,7 +9,7 @@ import {
 } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
-import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
+import { SubsystemHealth } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/health-card';
 
 export const fetchK8sHealth = async (url: string) => {
   const response = await coFetch(url);

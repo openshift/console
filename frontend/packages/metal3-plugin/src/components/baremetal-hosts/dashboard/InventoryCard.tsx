@@ -3,14 +3,14 @@ import * as _ from 'lodash';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
-import { InventoryBody } from '@console/internal/components/dashboard/inventory-card/inventory-body';
-import { InventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
-import { referenceForModel } from '@console/internal/module/k8s';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card';
+import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
+import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
+import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
+import { InventoryBody } from '@console/internal/components/dashboard/generic/inventory-card/inventory-body';
+import { InventoryItem } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
 import { getNamespace, getMachineInternalIP } from '@console/shared';

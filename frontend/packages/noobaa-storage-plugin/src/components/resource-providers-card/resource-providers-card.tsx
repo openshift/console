@@ -5,12 +5,12 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import { FieldLevelHelp } from '@console/internal/components/utils/index';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getMetric } from '../../utils';
 import { ResourceProvidersBody } from './resource-providers-card-body';

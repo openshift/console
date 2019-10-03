@@ -15,11 +15,11 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';

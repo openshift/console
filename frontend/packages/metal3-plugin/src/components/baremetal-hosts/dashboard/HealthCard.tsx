@@ -3,20 +3,20 @@ import * as _ from 'lodash';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
-import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
-import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card';
+import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
+import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
+import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
+import { HealthBody } from '@console/internal/components/dashboard/generic/health-card/health-body';
+import { HealthItem } from '@console/internal/components/dashboard/generic/health-card/health-item';
+import { HealthState } from '@console/internal/components/dashboard/generic/health-card/states';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import {
   AlertsBody,
   AlertItem,
   getAlerts,
-} from '@console/internal/components/dashboard/health-card';
+} from '@console/internal/components/dashboard/generic/health-card';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import {
   HOST_STATUS_OK,

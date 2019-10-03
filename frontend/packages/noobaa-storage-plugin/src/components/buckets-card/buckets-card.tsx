@@ -5,11 +5,11 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';

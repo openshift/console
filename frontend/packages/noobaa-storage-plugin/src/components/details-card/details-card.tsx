@@ -6,12 +6,15 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
-import { DetailsBody, DetailItem } from '@console/internal/components/dashboard/details-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
+import {
+  DetailsBody,
+  DetailItem,
+} from '@console/internal/components/dashboard/generic/details-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';

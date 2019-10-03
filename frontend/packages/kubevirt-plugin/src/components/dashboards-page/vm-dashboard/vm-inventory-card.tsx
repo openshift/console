@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   DashboardCard,
   DashboardCardHeader,
   DashboardCardTitle,
   DashboardCardBody,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import { getName, getNamespace } from '@console/shared';
-import { InventoryBody } from '@console/internal/components/dashboard/inventory-card/inventory-body';
-import { InventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+import { InventoryBody } from '@console/internal/components/dashboard/generic/inventory-card/inventory-body';
+import { InventoryItem } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
 import { resourcePath } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getNetworks, getDisks } from '../../../selectors/vm';

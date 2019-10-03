@@ -6,19 +6,19 @@ import {
   getAlerts,
   HealthBody,
   HealthItem,
-} from '@console/internal/components/dashboard/health-card';
+} from '@console/internal/components/dashboard/generic/health-card';
 import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+import { HealthState } from '@console/internal/components/dashboard/generic/health-card/states';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';

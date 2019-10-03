@@ -3,17 +3,17 @@ import * as _ from 'lodash';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import {
   UtilizationBody,
   UtilizationItem,
-} from '@console/internal/components/dashboard/utilization-card';
+} from '@console/internal/components/dashboard/generic/utilization-card';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import {
   FirehoseResource,

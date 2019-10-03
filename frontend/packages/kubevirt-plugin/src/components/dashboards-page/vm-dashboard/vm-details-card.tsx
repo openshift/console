@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   DashboardCard,
   DashboardCardHeader,
   DashboardCardTitle,
   DashboardCardBody,
   DashboardCardLink,
-} from '@console/internal/components/dashboard/dashboard-card';
-import { DetailsBody, DetailItem } from '@console/internal/components/dashboard/details-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
+import {
+  DetailsBody,
+  DetailItem,
+} from '@console/internal/components/dashboard/generic/details-card';
 import { getName, getNamespace, getUID, getCreationTimestamp, getNodeName } from '@console/shared';
 import {
   ResourceLink,

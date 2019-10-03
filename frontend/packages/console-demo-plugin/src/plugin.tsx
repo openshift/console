@@ -27,15 +27,15 @@ import {
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
-import { GridPosition } from '@console/internal/components/dashboard/grid';
+import { GridPosition } from '@console/internal/components/dashboard/generic/grid';
 import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
-import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
-import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
+import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
+import { MetricType } from '@console/internal/components/dashboard/generic/top-consumers-card/metric-type';
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
-import { getFooHealthState, getBarHealthState } from './dashboards/health';
-import { getRouteStatusGroups, DemoGroupIcon } from './dashboards/inventory';
+import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
+import { getRouteStatusGroups, DemoGroupIcon } from './components/dashboards/inventory';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -212,7 +212,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       tab: 'foo-tab',
       position: GridPosition.MAIN,
       loader: () =>
-        import('./dashboards/foo-card' /* webpackChunkName: "demo" */).then((m) => m.FooCard),
+        import('./components/dashboards/foo-card' /* webpackChunkName: "demo" */).then(
+          (m) => m.FooCard,
+        ),
       required: 'TEST_MODEL_FLAG',
     },
   },
@@ -243,9 +245,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: RouteModel,
       mapper: getRouteStatusGroups,
       expandedComponent: () =>
-        import('./dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */).then(
-          (m) => m.ExpandedRoutes,
-        ),
+        import(
+          './components/dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */
+        ).then((m) => m.ExpandedRoutes),
       required: 'TEST_MODEL_FLAG',
     },
   },
@@ -293,7 +295,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         _.get(resource, ['metadata', 'labels', 'node-role.kubernetes.io/master']) === '',
       getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
       loader: () =>
-        import('./dashboards/activity' /* webpackChunkName: "demo" */).then((m) => m.DemoActivity),
+        import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
+          (m) => m.DemoActivity,
+        ),
       required: 'TEST_MODEL_FLAG',
     },
   },
@@ -303,7 +307,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       queries: ['barQuery'],
       isActivity: () => true,
       loader: () =>
-        import('./dashboards/activity' /* webpackChunkName: "demo" */).then(
+        import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
           (m) => m.DemoPrometheusActivity,
         ),
       required: 'TEST_MODEL_FLAG',

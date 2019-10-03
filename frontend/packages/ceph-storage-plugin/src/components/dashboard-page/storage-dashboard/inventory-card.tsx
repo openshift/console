@@ -1,19 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
+import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card/card';
+import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
+import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
+import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
   getNodeStatusGroups,
   getPVCStatusGroups,
   getPVStatusGroups,
-} from '@console/internal/components/dashboard/inventory-card/utils';
+} from '@console/internal/components/dashboard/generic/inventory-card/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   NodeModel,
@@ -21,8 +21,8 @@ import {
   PersistentVolumeModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { InventoryBody } from '@console/internal/components/dashboard/inventory-card/inventory-body';
-import { ResourceInventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+import { InventoryBody } from '@console/internal/components/dashboard/generic/inventory-card/inventory-body';
+import { ResourceInventoryItem } from '@console/internal/components/dashboard/generic/inventory-card/inventory-item';
 import { getCephNodes, getCephPVs, getCephPVCs, getCephSC } from '../../../selectors';
 
 const k8sResources: FirehoseResource[] = [

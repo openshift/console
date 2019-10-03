@@ -7,13 +7,18 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
-import { EventsBody } from '@console/internal/components/dashboard/events-card/events-body';
-import { EventKind, MachineKind, referenceForModel } from '@console/internal/module/k8s';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
+import { EventsBody } from '@console/internal/components/dashboard/generic/events-card/events-body';
+import {
+  EventKind,
+  K8sResourceKind,
+  MachineKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';

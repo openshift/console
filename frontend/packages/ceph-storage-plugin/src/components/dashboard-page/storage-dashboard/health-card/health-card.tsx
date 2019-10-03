@@ -4,11 +4,11 @@ import {
   AlertsBody,
   AlertItem,
   getAlerts,
-} from '@console/internal/components/dashboard/health-card';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
+} from '@console/internal/components/dashboard/generic/health-card';
+import { DashboardCard } from '@console/internal/components/dashboard/generic/dashboard-card/card';
+import { DashboardCardBody } from '@console/internal/components/dashboard/generic/dashboard-card/card-body';
+import { DashboardCardHeader } from '@console/internal/components/dashboard/generic/dashboard-card/card-header';
+import { DashboardCardTitle } from '@console/internal/components/dashboard/generic/dashboard-card/card-title';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
@@ -16,10 +16,10 @@ import { PrometheusRulesResponse, alertURL } from '@console/internal/components/
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
-import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import { HealthBody } from '@console/internal/components/dashboard/generic/health-card/health-body';
+import { HealthItem } from '@console/internal/components/dashboard/generic/health-card/health-item';
+import { HealthState } from '@console/internal/components/dashboard/generic/health-card/states';
 import { STORAGE_HEALTH_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
 import { filterCephAlerts } from '../../../../selectors';
 import { cephClusterResource } from '../../../../constants/resources';

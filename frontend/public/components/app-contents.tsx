@@ -114,9 +114,9 @@ const AppContents = connect((state: RootState) => ({
               <LazyRoute
                 path="/dashboards"
                 loader={() =>
-                  import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(
-                    (m) => m.DashboardsPage,
-                  )
+                  import(
+                    './dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */
+                  ).then((m) => m.DashboardsPage)
                 }
               />
 

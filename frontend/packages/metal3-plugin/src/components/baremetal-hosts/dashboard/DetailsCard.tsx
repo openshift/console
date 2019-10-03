@@ -4,12 +4,15 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
-import { DetailsBody, DetailItem } from '@console/internal/components/dashboard/details-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
+import {
+  DetailsBody,
+  DetailItem,
+} from '@console/internal/components/dashboard/generic/details-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getName, getMachineNode } from '@console/shared';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getHostMachine } from '../../../selectors';

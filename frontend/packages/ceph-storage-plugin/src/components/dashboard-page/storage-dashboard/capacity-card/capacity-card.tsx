@@ -1,17 +1,20 @@
 import * as React from 'react';
 import * as plugins from '@console/internal/plugins';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
-import { CapacityBody, CapacityItem } from '@console/internal/components/dashboard/capacity-card';
+import {
+  CapacityBody,
+  CapacityItem,
+} from '@console/internal/components/dashboard/generic/capacity-card';
 import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+} from '@console/internal/components/dashboard/generic/dashboard-card';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   Dropdown,
   FieldLevelHelp,
@@ -22,7 +25,7 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   getFlagsForExtensions,
   isDashboardExtensionInUse,
-} from '@console/internal/components/dashboards-page/utils';
+} from '@console/internal/components/dashboard/utils';
 import {
   DashboardsStorageCapacityDropdownItem,
   isDashboardsStorageCapacityDropdownItem,

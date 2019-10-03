@@ -94,20 +94,20 @@
 @import "components/quota";
 @import "components/cluster-settings/cluster-settings";
 
-@import "components/dashboard/dashboard";
-@import "components/dashboard/dashboard-card/card";
-@import "components/dashboard/health-card/health-card";
-@import "components/dashboard/details-card/details-card";
-@import "components/dashboard/capacity-card/capacity-card";
-@import "components/dashboard/inventory-card/inventory-card";
-@import "components/dashboard/events-card/events-card";
-@import "components/dashboard/utilization-card/utilization-card";
-@import "components/dashboard/activity-card/activity-card";
-@import "components/dashboard/top-consumers-card/top-consumers-card";
-@import "components/dashboard/status-card/status-card";
+@import "components/dashboard/generic/dashboard";
+@import "components/dashboard/generic/dashboard-card/card";
+@import "components/dashboard/generic/health-card/health-card";
+@import "components/dashboard/generic/details-card/details-card";
+@import "components/dashboard/generic/capacity-card/capacity-card";
+@import "components/dashboard/generic/inventory-card/inventory-card";
+@import "components/dashboard/generic/events-card/events-card";
+@import "components/dashboard/generic/utilization-card/utilization-card";
+@import "components/dashboard/generic/activity-card/activity-card";
+@import "components/dashboard/generic/top-consumers-card/top-consumers-card";
+@import "components/dashboard/generic/status-card/status-card";
 
-@import "components/dashboards-page/overview-dashboard/top-consumers-card";
-@import "components/dashboards-page/overview-dashboard/capacity-card";
-@import "components/dashboards-page/overview-dashboard/status-card";
+@import "components/dashboard/dashboards-page/overview-dashboard/top-consumers-card";
+@import "components/dashboard/dashboards-page/overview-dashboard/capacity-card";
+@import "components/dashboard/dashboards-page/overview-dashboard/status-card";
 
 @import "components/nav/nav-header";
