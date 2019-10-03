@@ -70,8 +70,8 @@ const PVCTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Requested',
-      sortField: 'spec.resources.requests.storage',
+      title: 'Capacity',
+      sortField: 'status.capacity.storage',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
@@ -118,7 +118,7 @@ const PVCTableRow = ({ obj, index, key, style }) => {
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {_.get(obj, 'spec.resources.requests.storage', '-')}
+        {_.get(obj, 'status.capacity.storage', '-')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
@@ -133,7 +133,6 @@ const Details_ = ({ flags, obj: pvc }) => {
   const labelSelector = _.get(pvc, 'spec.selector');
   const storageClassName = _.get(pvc, 'spec.storageClassName');
   const volumeName = _.get(pvc, 'spec.volumeName');
-  const requestedStorage = _.get(pvc, 'spec.resources.requests.storage');
   const storage = _.get(pvc, 'status.capacity.storage');
   const accessModes = _.get(pvc, 'status.accessModes');
   const volumeMode = _.get(pvc, 'spec.volumeMode');
@@ -159,12 +158,10 @@ const Details_ = ({ flags, obj: pvc }) => {
               </dd>
               {storage && (
                 <React.Fragment>
-                  <dt>Size</dt>
+                  <dt>Capacity</dt>
                   <dd>{storage}</dd>
                 </React.Fragment>
               )}
-              <dt>Requested</dt>
-              <dd>{requestedStorage || '-'}</dd>
               {!_.isEmpty(accessModes) && (
                 <React.Fragment>
                   <dt>Access Modes</dt>
