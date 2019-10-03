@@ -12,8 +12,8 @@ import { menuActions } from './menu-actions';
 import NodeStatus from './NodeStatus';
 
 const tableColumnClasses = [
-  classNames('col-md-5', 'col-sm-5', 'col-xs-8'),
-  classNames('col-md-2', 'col-sm-3', 'col-xs-4'),
+  classNames('col-md-4', 'col-sm-4', 'col-xs-8'),
+  classNames('col-md-3', 'col-sm-4', 'col-xs-4'),
   classNames('col-md-2', 'col-sm-4', 'hidden-xs'),
   classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
