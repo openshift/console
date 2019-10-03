@@ -13,49 +13,49 @@ import BareMetalHostStatus from './BareMetalHostStatus';
 import BareMetalHostRole from './BareMetalHostRole';
 import { menuActions } from './host-menu-actions';
 
-const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
-  classNames('col-lg-2', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = {
+  name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
+  status: classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
+  node: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  role: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  kebab: Kebab.columnClass,
+};
 
 const HostsTableHeader = () => [
   {
     title: 'Name',
     sortField: 'host.metadata.name',
     transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
+    props: { className: tableColumnClasses.name },
   },
   {
     title: 'Status',
     sortField: 'status.status',
     transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
+    props: { className: tableColumnClasses.status },
   },
   {
     title: 'Node',
     sortField: 'node.metadata.name',
     transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
+    props: { className: tableColumnClasses.node },
   },
   {
     title: 'Role',
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
+    props: { className: tableColumnClasses.role },
   },
   {
     title: 'Management Address',
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
+    props: { className: tableColumnClasses.address },
   },
   {
     title: '',
-    props: { className: tableColumnClasses[5] },
+    props: { className: tableColumnClasses.kebab },
   },
 ];
 
@@ -84,25 +84,25 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+      <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={referenceForModel(BareMetalHostModel)}
           name={name}
           namespace={namespace}
         />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={tableColumnClasses.status}>
         <BareMetalHostStatus status={status} />
         <SecondaryStatus status={getHostPowerStatus(host)} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={tableColumnClasses.node}>
         <NodeLink nodeName={nodeName} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses.role}>
         <BareMetalHostRole machine={machine} node={node} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{address}</TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses.address}>{address}</TableData>
+      <TableData className={tableColumnClasses.kebab}>
         <Kebab
           options={menuActions.map((action) =>
             action(BareMetalHostModel, host, null, {
