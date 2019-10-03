@@ -675,6 +675,11 @@ export type ResourceAccessReviewResponse = {
   groups: string[];
 } & K8sResourceKind;
 
+export type UserKind = {
+  fullName?: string;
+  identities: string[];
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;

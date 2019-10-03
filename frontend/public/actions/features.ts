@@ -2,7 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { getInfrastructurePlatform } from '@console/shared/src/selectors';
-import { SelfSubjectAccessReviewModel, InfrastructureModel } from '../models';
+import { InfrastructureModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
 import { k8sBasePath, ClusterVersionKind, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
@@ -202,6 +202,14 @@ const ssarChecks = [
   {
     flag: FLAGS.CAN_LIST_PV,
     resourceAttributes: { resource: 'persistentvolumes', verb: 'list' },
+  },
+  {
+    flag: FLAGS.CAN_LIST_USERS,
+    resourceAttributes: {
+      group: UserModel.apiGroup,
+      resource: UserModel.plural,
+      verb: 'list',
+    },
   },
   {
     flag: FLAGS.CAN_LIST_CRD,

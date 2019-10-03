@@ -17,6 +17,7 @@ import {
   MachineConfigPoolModel,
   MachineModel,
   MachineSetModel,
+  UserModel,
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
@@ -208,6 +209,11 @@ const AdminNav = () => (
       />
       <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
       <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+      <ResourceClusterLink
+        resource={referenceForModel(UserModel)}
+        name="Users"
+        required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]}
+      />
       <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
       <ResourceNSLink
         resource="rolebindings"

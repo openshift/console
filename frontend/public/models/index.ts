@@ -682,6 +682,19 @@ export const APIServiceModel: K8sKind = {
   crd: true,
 };
 
+export const UserModel: K8sKind = {
+  label: 'User',
+  labelPlural: 'Users',
+  apiVersion: 'v1',
+  apiGroup: 'user.openshift.io',
+  plural: 'users',
+  abbr: 'U',
+  namespaced: false,
+  kind: 'User',
+  id: 'user',
+  crd: true,
+};
+
 // Cluster API resources
 // https://github.com/openshift/cluster-api
 export const MachineModel: K8sKind = {
