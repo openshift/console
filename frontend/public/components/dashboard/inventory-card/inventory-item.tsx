@@ -183,7 +183,7 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
       [kind, namespace],
     );
 
-    const groups = mapper(resources, additionalResources);
+    const groups = mapper ? mapper(resources, additionalResources) : {};
     const top3Groups = getTop3Groups(
       Object.keys(groups).filter((key) => groups[key].count > 0),
       flags,
@@ -260,7 +260,7 @@ export type ExpandedComponentProps = {
 type ResourceInventoryItemProps = WithFlagsProps & {
   resources: K8sResourceKind[];
   additionalResources?: { [key: string]: K8sResourceKind[] };
-  mapper: StatusGroupMapper;
+  mapper?: StatusGroupMapper;
   kind: K8sKind;
   useAbbr?: boolean;
   isLoading: boolean;
