@@ -102,7 +102,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
-        ).then((m) => m.StatusCard),
+        ).then((m) => m.default),
       required: CEPH_FLAG,
     },
   },

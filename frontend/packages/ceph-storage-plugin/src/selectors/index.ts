@@ -2,13 +2,10 @@ import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { OCS_OPERATOR } from '../constants';
 
 const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
-
-const getGaugeValue = (response: PrometheusResponse) => _.get(response, 'data.result[0].value[1]');
 
 export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'ceph');
