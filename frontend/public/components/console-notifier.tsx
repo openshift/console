@@ -14,10 +14,12 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
 
   return (
     <>
-      {_.map(_.get(obj, 'data'), (notification) =>
-        notification.spec.location === location ||
-        notification.spec.location === 'BannerTopBottom' ? (
-          <div
+      {_.map(_.get(obj, 'data'), (notification) => {
+        const notificationLocation = notification.spec.location || 'BannerTop';
+        if (notificationLocation !== location && notificationLocation !== 'BannerTopBottom') {
+          return null;
+        }
+        return <div
             key={notification.metadata.uid}
             className="co-global-notification"
             style={{
@@ -43,8 +45,7 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
               </p>
             </div>
           </div>
-        ) : null,
-      )}
+      } )}
     </>
   );
 };
