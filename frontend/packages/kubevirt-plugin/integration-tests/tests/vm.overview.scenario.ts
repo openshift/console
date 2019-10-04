@@ -7,17 +7,23 @@ import {
   createResource,
   deleteResource,
 } from '../../../console-shared/src/test-utils/utils';
-import { getVmManifest, basicVMConfig } from './utils/mocks';
+import { getVMManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { TABS, DASH, VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
+import {
+  TABS,
+  DASH,
+  VM_BOOTUP_TIMEOUT_SECS,
+  VM_ACTIONS,
+  COMMON_TEMPLATES_VERSION,
+} from './utils/consts';
 import { NodePortService } from './utils/types';
 
 describe('Test VM overview', () => {
   const vmName = `vm-${testName}`;
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmName, kind: 'vm', type: 'NodePort', namespace: testName };
-  const testVM = getVmManifest('Container', testName, vmName, cloudInit);
+  const testVM = getVMManifest('Container', testName, vmName, cloudInit);
   const vm = new VirtualMachine(testVM.metadata);
   const nodePortServices = new Set<NodePortService>();
   nodePortServices.add({
@@ -59,7 +65,7 @@ describe('Test VM overview', () => {
       description: testName,
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
-      template: 'rhel7-desktop-tiny',
+      template: `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
       bootOrder: ['rootdisk', 'nic0', 'cloudinitdisk'],
       flavor: basicVMConfig.flavor,
       ip: DASH,
@@ -93,7 +99,7 @@ describe('Test VM overview', () => {
   it(
     'Check VM details in overview when VM is running',
     async () => {
-      await vm.action('Start');
+      await vm.action(VM_ACTIONS.START);
       // Empty fields turn into non-empty
       expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(DASH);
       expect(

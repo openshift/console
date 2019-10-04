@@ -1,5 +1,6 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
 import { resourceRows } from '../../../../integration-tests/views/crud.view';
+import { click } from '../../../console-shared/src/test-utils/utils';
 
 export const createNic = $('#create-nic-btn');
 export const createDisk = $('#create-disk-btn');
@@ -35,13 +36,6 @@ export const tableRowForName = (name: string) =>
 const kebabForName = (name: string) => tableRowForName(name).$('[data-test-id=kebab-button]');
 export const selectKebabOption = async (name: string, option: string) => {
   await browser.wait(until.presenceOf(kebabForName(name)));
-  // open kebab dropdown
-  await kebabForName(name).click();
-  // select given option from opened dropdown
-  await tableRowForName(name)
-    .$('.dropdown-menu-right')
-    .$$('button')
-    .filter((link) => link.getText().then((text) => text.startsWith(option)))
-    .first()
-    .click();
+  await click(kebabForName(name)); // open kebab dropdown
+  await click($(`[data-test-action="${option}"]`));
 };

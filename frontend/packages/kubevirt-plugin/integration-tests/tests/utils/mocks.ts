@@ -1,6 +1,6 @@
 import { testName } from '../../../../../integration-tests/protractor.conf';
 import { CloudInitConfig } from './types';
-import { STORAGE_CLASS } from './consts';
+import { STORAGE_CLASS, COMMON_TEMPLATES_VERSION } from './consts';
 import { getRandomMacAddress } from './utils';
 
 export const multusNAD = {
@@ -85,7 +85,7 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
   customScript: basicVMConfig.cloudInitScript,
 };
 
-export function getVmManifest(
+export function getVMManifest(
   provisionSource: string,
   namespace: string,
   name?: string,
@@ -103,10 +103,10 @@ export function getVmManifest(
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
-      'vm.kubevirt.io/template': 'rhel7-desktop-tiny-v0.6.2',
+      'vm.kubevirt.io/template': `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
       'vm.kubevirt.io/template-namespace': 'openshift',
       'vm.kubevirt.io/template.revision': '1',
-      'vm.kubevirt.io/template.version': 'v0.6.2',
+      'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
       'workload.template.kubevirt.io/desktop': 'true',
     },
   };

@@ -6,6 +6,7 @@ import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   UNEXPECTED_ACTION_ERROR,
+  VM_ACTIONS,
 } from '../tests/utils/consts';
 import { resourceTitle } from '../../../../integration-tests/views/crud.view';
 import { nameInput as cloneDialogNameInput } from './cloneDialog.view';
@@ -48,8 +49,7 @@ export const vmDetailTemplate = (namespace, vmName) =>
 export const vmDetailNamespace = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'namespace'));
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
-export const vmDetailNode = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'node')).$('a');
+export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
 export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
 export const vmDetailFlavorEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'flavor-edit'));
@@ -89,10 +89,10 @@ export async function waitForStatusIcon(icon: string, timeout: number) {
 
 export async function waitForActionFinished(action: string, timeout?: number) {
   switch (action) {
-    case 'Start':
+    case VM_ACTIONS.START:
       await waitForStatusIcon(statusIcons.running, resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS));
       break;
-    case 'Restart':
+    case VM_ACTIONS.RESTART:
       await browser.wait(
         until.or(
           until.presenceOf(statusIcon(statusIcons.starting)),
@@ -102,16 +102,16 @@ export async function waitForActionFinished(action: string, timeout?: number) {
       );
       await waitForStatusIcon(statusIcons.running, resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS));
       break;
-    case 'Stop':
+    case VM_ACTIONS.STOP:
       await waitForStatusIcon(statusIcons.off, resolveTimeout(timeout, VM_STOP_TIMEOUT_SECS));
       break;
-    case 'Clone':
+    case VM_ACTIONS.CLONE:
       await browser.wait(
-        until.presenceOf(cloneDialogNameInput),
+        until.visibilityOf(cloneDialogNameInput),
         resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
       );
       break;
-    case 'Migrate':
+    case VM_ACTIONS.MIGRATE:
       await waitForStatusIcon(
         statusIcons.migrating,
         resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
@@ -121,10 +121,10 @@ export async function waitForActionFinished(action: string, timeout?: number) {
         resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
       );
       break;
-    case 'Cancel':
+    case VM_ACTIONS.CANCEL:
       await waitForStatusIcon(statusIcons.running, resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS));
       break;
-    case 'Delete':
+    case VM_ACTIONS.DELETE:
       // wait for redirect
       await browser.wait(
         until.textToBePresentInElement(resourceTitle, 'Virtual Machines'),

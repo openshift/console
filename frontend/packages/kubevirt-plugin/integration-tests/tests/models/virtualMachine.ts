@@ -17,6 +17,7 @@ import {
   WIZARD_TABLE_FIRST_ROW,
   TABS,
   VM_IMPORT_TIMEOUT_SECS,
+  VM_ACTIONS,
 } from '../utils/consts';
 import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
 import { tableRowForName } from '../../views/kubevirtDetailView.view';
@@ -44,11 +45,11 @@ export class VirtualMachine extends KubevirtDetailView {
     await this.navigateToTab(TABS.OVERVIEW);
 
     let confirmDialog = true;
-    if (['Clone'].includes(action)) {
+    if ([VM_ACTIONS.CLONE].includes(action)) {
       confirmDialog = false;
     }
 
-    await detailViewAction(`${action} Virtual Machine`, confirmDialog);
+    await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
       await vmView.waitForActionFinished(action, timeout);
     }
@@ -58,11 +59,11 @@ export class VirtualMachine extends KubevirtDetailView {
     await this.navigateToListView();
 
     let confirmDialog = true;
-    if (['Clone'].includes(action)) {
+    if ([VM_ACTIONS.CLONE].includes(action)) {
       confirmDialog = false;
     }
 
-    await listViewAction(this.name)(`${action} Virtual Machine`, confirmDialog);
+    await listViewAction(this.name)(action, confirmDialog);
   }
 
   async waitForMigrationComplete(fromNode: string, timeout: number) {

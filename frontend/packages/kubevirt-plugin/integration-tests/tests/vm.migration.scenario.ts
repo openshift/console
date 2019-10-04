@@ -13,19 +13,20 @@ import {
   waitForStringInElement,
 } from '../../../console-shared/src/test-utils/utils';
 import { getRandStr } from './utils/utils';
-import { getVmManifest } from './utils/mocks';
+import { getVMManifest } from './utils/mocks';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
+  VM_ACTIONS,
   TABS,
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Test VM Migration', () => {
-  const testVm = getVmManifest('URL', testName);
+  const testVm = getVMManifest('URL', testName);
   let vm: VirtualMachine;
 
   const MIGRATE_VM = 'Migrate Virtual Machine';
@@ -50,11 +51,11 @@ describe('Test VM Migration', () => {
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
-      await vm.action('Start');
+      await vm.action(VM_ACTIONS.START);
       expect(await getDetailActionDropdownOptions()).toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
-      await vm.action('Migrate', false);
+      await vm.action(VM_ACTIONS.MIGRATE, false);
       await waitForStatusIcon(statusIcons.migrating, PAGE_LOAD_TIMEOUT_SECS);
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
@@ -65,14 +66,14 @@ describe('Test VM Migration', () => {
   it(
     'Migrate already migrated VM',
     async () => {
-      await vm.action('Start');
+      await vm.action(VM_ACTIONS.START);
       let sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
-      await vm.action('Migrate');
+      await vm.action(VM_ACTIONS.MIGRATE);
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
       sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
-      await vm.action('Migrate');
+      await vm.action(VM_ACTIONS.MIGRATE);
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
       expect(statusIcon(statusIcons.running).isPresent()).toBeTruthy();
     },
@@ -83,14 +84,14 @@ describe('Test VM Migration', () => {
     'Cancel ongoing VM migration',
     async () => {
       await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
-      await vm.action('Start');
+      await vm.action(VM_ACTIONS.START);
       const sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
       // Start migration without waiting for it to finish
-      await vm.action('Migrate', false);
+      await vm.action(VM_ACTIONS.MIGRATE, false);
       await waitForStatusIcon(statusIcons.migrating, VM_MIGRATION_TIMEOUT_SECS);
 
-      await vm.action('Cancel', false);
+      await vm.action(VM_ACTIONS.CANCEL, false);
       await waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
       await browser.wait(
         waitForStringInElement(vmDetailNode(vm.namespace, vm.name), sourceNode),
