@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { isCephProvisioner } from '@console/shared/src/utils';
+import { filterScOnProvisioner } from '@console/shared';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
   AsyncComponent,
@@ -16,6 +17,7 @@ import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
+import { StorageClass } from '../storage-class-form';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
@@ -168,6 +170,8 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     return obj;
   };
 
+  onlyPvcSCs = (sc: StorageClass) => filterScOnProvisioner(sc, 'noobaa.io/obc');
+
   render() {
     const { accessMode, dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, allowedAccessModes } = this.state;
 
@@ -180,6 +184,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
             describedBy="storageclass-dropdown-help"
             required={false}
             name="storageClass"
+            filter={this.onlyPvcSCs}
           />
         </div>
         <label className="control-label co-required" htmlFor="pvc-name">
