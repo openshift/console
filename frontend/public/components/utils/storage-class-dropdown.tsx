@@ -41,7 +41,7 @@ export class StorageClassDropdownInner extends React.Component<
       title: {},
       defaultClass: '',
     };
-    const unorderedItems = {};
+    let unorderedItems = {};
     const noStorageClass = 'No default storage class';
     _.map(resources.StorageClass.data, (resource) => {
       unorderedItems[resource.metadata.name] = {
@@ -60,6 +60,16 @@ export class StorageClassDropdownInner extends React.Component<
         resource,
       };
     });
+
+    //Filter if user provides a custom function
+    if (nextProps.filter) {
+      unorderedItems = Object.keys(unorderedItems)
+        .filter((sc) => nextProps.filter(unorderedItems[sc]))
+        .reduce((acc, key) => {
+          acc[key] = unorderedItems[key];
+          return acc;
+        }, {});
+    }
 
     // Determine if there is a default storage class
     state.defaultClass = _.findKey(unorderedItems, 'default');
@@ -226,4 +236,5 @@ export type StorageClassDropdownInnerProps = {
   defaultClass: string;
   required?: boolean;
   hideClassName?: string;
+  filter?: (param) => boolean;
 };
