@@ -26,6 +26,7 @@ type FirehoseProps = {
     k8sKind: K8sKind,
   ) => void;
   watchK8sList: (id: string, query: any, k8sKind: K8sKind) => void;
+  [key: string]: any;
 };
 
 describe(Firehose.displayName, () => {
@@ -130,5 +131,62 @@ describe(Firehose.displayName, () => {
 
     expect(stopK8sWatch.calls.count()).toEqual(1);
     expect(watchK8sList.calls.count()).toEqual(2);
+  });
+
+  it('updates when props or state changes', () => {
+    wrapper = shallow(
+      <Component
+        resources={resources}
+        k8sModels={k8sModels}
+        loaded={true}
+        inFlight={false}
+        stopK8sWatch={stopK8sWatch}
+        watchK8sObject={watchK8sObject}
+        watchK8sList={watchK8sList}
+        fooProp="fooProp"
+      />,
+    );
+    expect(
+      wrapper
+        .instance()
+        .shouldComponentUpdate(
+          { ...wrapper.instance().props, fooProp: 'fooValue' },
+          wrapper.state(),
+          null,
+        ),
+    ).toBe(true);
+    expect(
+      wrapper
+        .instance()
+        .shouldComponentUpdate(
+          { ...wrapper.instance().props, barProp: 'barValue' },
+          wrapper.state(),
+          null,
+        ),
+    ).toBe(true);
+    const state = { firehoses: [] };
+    wrapper.setState(state);
+    expect(wrapper.instance().shouldComponentUpdate(wrapper.instance().props, state, null)).toBe(
+      false,
+    );
+    expect(
+      wrapper.instance().shouldComponentUpdate(wrapper.instance().props, { firehoses: [] }, null),
+    ).toBe(false);
+    expect(
+      wrapper
+        .instance()
+        .shouldComponentUpdate(wrapper.instance().props, { firehoses: [{ id: 'fooID' }] }, null),
+    ).toBe(true);
+
+    wrapper.setProps({ loaded: false });
+    expect(
+      wrapper
+        .instance()
+        .shouldComponentUpdate(
+          { ...wrapper.instance().props, inFlight: true },
+          wrapper.instance().state,
+          null,
+        ),
+    ).toBe(true);
   });
 });
