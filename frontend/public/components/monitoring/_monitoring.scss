@@ -106,6 +106,7 @@
 
 .query-browser__series-btn-wrap {
   border: 1px solid transparent;
+  border-radius: var(--pf-global--BorderRadius--sm);
   display: flex;
   height: 26px;
   padding: 2px;
@@ -118,6 +119,7 @@
 
 .query-browser__series-btn {
   border: 1px solid transparent;
+  border-radius: var(--pf-global--BorderRadius--sm);
   height: 20px;
   width: 20px;
   &--disabled {
