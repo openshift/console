@@ -26,8 +26,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const namespace = getNamespace(vm);
 
   // prefer vmi over vm if available (means: is running)
-  const nicCount = vmi ? getVMINetworks(vmi).length : getNetworks(vm).length;
-  const diskCount = vmi ? getVMIDisks(vmi).length : getDisks(vm).length;
+  const nicCount = vmi && vmi.spec ? getVMINetworks(vmi).length : getNetworks(vm).length;
+  const diskCount = vmi && vmi.spec ? getVMIDisks(vmi).length : getDisks(vm).length;
   // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
   const basePath = resourcePath(VirtualMachineModel.kind, name, namespace);
