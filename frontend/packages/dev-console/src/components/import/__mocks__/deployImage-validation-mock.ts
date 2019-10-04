@@ -1,6 +1,6 @@
 import { DeployImageFormData } from '../import-types';
 
-export const mockFormData: DeployImageFormData = {
+export const mockDeployImageFormData: DeployImageFormData = {
   project: {
     name: 'mock-project',
     displayName: '',

@@ -62,6 +62,7 @@ const ImageSearch: React.FC = () => {
           setFieldValue('isi.status', status);
           setFieldValue('isi.ports', ports);
           setFieldValue('image.ports', ports);
+          setFieldValue('image.tag', tag);
           !values.name && setFieldValue('name', getSuggestedName(name));
           !values.application.name &&
             setFieldValue('application.name', `${getSuggestedName(name)}-app`);
