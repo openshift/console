@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 
 import { Status, PodRingController, PodRing } from '@console/shared';
 import { DeploymentModel } from '../models';
@@ -7,11 +6,11 @@ import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8
 import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
-import { formatDuration } from './utils/datetime';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table } from './factory';
 import {
   AsyncComponent,
+  DetailsItem,
   Kebab,
   KebabAction,
   ContainerTable,
@@ -64,38 +63,43 @@ export const menuActions = [
 ];
 
 export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {
-  const isRecreate = deployment.spec.strategy.type === 'Recreate';
-  const progressDeadlineSeconds = _.get(deployment, 'spec.progressDeadlineSeconds');
   return (
     <dl className="co-m-pane__details">
-      <dt>Update Strategy</dt>
-      <dd>{deployment.spec.strategy.type || 'RollingUpdate'}</dd>
-      {isRecreate || <dt>Max Unavailable</dt>}
-      {isRecreate || (
-        <dd>
-          {deployment.spec.strategy.rollingUpdate.maxUnavailable || 1} of{' '}
-          {pluralize(deployment.spec.replicas, 'pod')}
-        </dd>
+      <DetailsItem label="Update Strategy" obj={deployment} path="spec.strategy.type" />
+      {deployment.spec.strategy.type === 'RollingUpdate' && (
+        <>
+          <DetailsItem
+            label="Max Unavailable"
+            obj={deployment}
+            path="spec.strategy.rollingUpdate.maxUnavailable"
+          >
+            {deployment.spec.strategy.rollingUpdate.maxUnavailable || 1} of{' '}
+            {pluralize(deployment.spec.replicas, 'pod')}
+          </DetailsItem>
+          <DetailsItem
+            label="Max Surge"
+            obj={deployment}
+            path="spec.strategy.rollingUpdate.maxSurge"
+          >
+            {deployment.spec.strategy.rollingUpdate.maxSurge || 1} greater than{' '}
+            {pluralize(deployment.spec.replicas, 'pod')}
+          </DetailsItem>
+        </>
       )}
-      {isRecreate || <dt>Max Surge</dt>}
-      {isRecreate || (
-        <dd>
-          {deployment.spec.strategy.rollingUpdate.maxSurge || 1} greater than{' '}
-          {pluralize(deployment.spec.replicas, 'pod')}
-        </dd>
-      )}
-      {progressDeadlineSeconds && <dt>Progress Deadline</dt>}
-      {progressDeadlineSeconds && (
-        <dd>
-          {/* Convert to ms for formatDuration */ formatDuration(progressDeadlineSeconds * 1000)}
-        </dd>
-      )}
-      <dt>Min Ready Seconds</dt>
-      <dd>
+      <DetailsItem
+        label="Progress Deadline Seconds"
+        obj={deployment}
+        path="spec.progressDeadlineSeconds"
+      >
+        {deployment.spec.progressDeadlineSeconds
+          ? pluralize(deployment.spec.progressDeadlineSeconds, 'second')
+          : 'Not Configured'}
+      </DetailsItem>
+      <DetailsItem label="Min Ready Seconds" obj={deployment} path="spec.minReadySeconds">
         {deployment.spec.minReadySeconds
           ? pluralize(deployment.spec.minReadySeconds, 'second')
           : 'Not Configured'}
-      </dd>
+      </DetailsItem>
     </dl>
   );
 };

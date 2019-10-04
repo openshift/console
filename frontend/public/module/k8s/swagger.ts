@@ -62,6 +62,64 @@ export const definitionFor = _.memoize((model: K8sKind): SwaggerDefinition => {
   return _.get(allDefinitions, key);
 }, referenceForModel);
 
+const getRef = (definition: SwaggerDefinition): string => {
+  const ref = definition.$ref || _.get(definition, 'items.$ref');
+  const re = /^#\/definitions\//;
+  // Only follow JSON pointers, not external URI references.
+  return ref && re.test(ref) ? ref.replace(re, '') : null;
+};
+
+// Get the path in the swagger document to additional property details.
+// This can be
+// - A reference to another top-level definition
+// - Inline property declartions
+// - Inline property declartions for array items
+export const getSwaggerPath = (
+  allProperties: SwaggerDefinitions,
+  currentPath: string[],
+  name: string,
+  followRef: boolean,
+): string[] => {
+  const nextPath = [...currentPath, 'properties', name];
+  const definition = _.get(allProperties, nextPath) as SwaggerDefinition;
+  if (!definition) {
+    return null;
+  }
+  const ref = getRef(definition);
+  return followRef && ref ? [ref] : nextPath;
+};
+
+const findDefinition = (kindObj: K8sKind, propertyPath: string[]): SwaggerDefinition => {
+  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
+  if (!allDefinitions) {
+    return null;
+  }
+
+  const rootPath = getDefinitionKey(kindObj, allDefinitions);
+  const path = propertyPath.reduce(
+    (currentPath: string[], nextProperty: string, i: number): string[] => {
+      if (!currentPath) {
+        return null;
+      }
+      // Don't follow the last reference since the description is not as good.
+      const followRef = i !== propertyPath.length - 1;
+      return getSwaggerPath(allDefinitions, currentPath, nextProperty, followRef);
+    },
+    [rootPath],
+  );
+
+  return path ? (_.get(allDefinitions, path) as SwaggerDefinition) : null;
+};
+
+export const getPropertyDescription = (
+  kindObj: K8sKind,
+  propertyPath: string | string[],
+): string => {
+  const path: string[] = _.toPath(propertyPath);
+  const definition = findDefinition(kindObj, path);
+  return definition ? definition.description : null;
+};
+
 export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
   const allDefinitions: SwaggerDefinitions = getStoredSwagger();
   if (!allDefinitions) {

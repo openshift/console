@@ -5,6 +5,7 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import {
   getDefinitionKey,
   getStoredSwagger,
+  getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
   SwaggerDefinitions,
@@ -71,25 +72,11 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // - A reference to another top-level definition
   // - Inline property declartions
   // - Inline property declartions for array items
-  const getDrilldownPath = (definition: SwaggerDefinition, name: string): string[] => {
-    const ref = getRef(definition);
+  const getDrilldownPath = (name: string): string[] => {
+    const path = getSwaggerPath(allDefinitions, currentPath, name, true);
     // Only allow drilldown if the reference has additional properties to explore.
-    if (
-      ref &&
-      (_.get(allDefinitions, [ref, 'properties']) || _.get(allDefinitions, [ref, 'items']))
-    ) {
-      return [ref];
-    }
-
-    if (definition.properties) {
-      return [...currentPath, 'properties', name];
-    }
-
-    if (_.get(definition, 'items.properties')) {
-      return [...currentPath, 'properties', name, 'items'];
-    }
-
-    return null;
+    const child = _.get(allDefinitions, path) as SwaggerDefinition;
+    return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
   };
 
   // Get the type to display for a property reference.
@@ -130,7 +117,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
       ) : (
         <ul className="co-resource-sidebar-list">
           {_.map(currentDefinition.properties, (definition: SwaggerDefinition, name: string) => {
-            const path = getDrilldownPath(definition, name);
+            const path = getDrilldownPath(name);
             const definitionType = definition.type || getTypeForRef(getRef(definition));
             return (
               <li key={name} className="co-resource-sidebar-item">
