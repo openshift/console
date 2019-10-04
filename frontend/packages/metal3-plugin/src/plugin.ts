@@ -67,7 +67,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: BareMetalHostModel,
       loader: async () =>
         (await import(
-          './components/baremetal-hosts/BareMetalHostDetailPage' /* webpackChunkName: "metal3-baremetalhost" */
+          './components/baremetal-hosts/BareMetalHostDetailsPage' /* webpackChunkName: "metal3-baremetalhost" */
         )).default,
     },
   },

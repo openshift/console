@@ -16,7 +16,8 @@ const pages = [
   )),
   events(ResourceEventStream),
 ];
-const NodeDetailPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => (
+const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => (
   <DetailsPage {...props} menuActions={menuActions} pages={pages} />
 );
-export default NodeDetailPage;
+
+export default NodeDetailsPage;

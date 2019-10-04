@@ -16,13 +16,13 @@ type NodeGraphsProps = {
 
 const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
   const instanceQuery = `{instance='${node.metadata.name}'}`;
-  const nodeIp = _.find<{ type: string; address: string }>(getNodeAddresses(node), {
+  const nodeIp = _.find(getNodeAddresses(node), {
     type: 'InternalIP',
   });
   const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
 
   return (
-    <React.Fragment>
+    <>
       <div className="row">
         <div className="col-md-12 col-lg-4">
           <Area
@@ -65,7 +65,7 @@ const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
           />
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

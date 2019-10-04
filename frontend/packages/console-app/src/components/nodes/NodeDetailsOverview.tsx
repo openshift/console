@@ -88,7 +88,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               )}
             </dd>
             {machine.name && (
-              <React.Fragment>
+              <>
                 <dt>Machine</dt>
                 <dd>
                   <ResourceLink
@@ -97,7 +97,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                     namespace={machine.namespace}
                   />
                 </dd>
-              </React.Fragment>
+              </>
             )}
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
