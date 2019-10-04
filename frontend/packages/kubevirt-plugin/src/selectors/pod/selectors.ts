@@ -1,10 +1,15 @@
 import { get } from 'lodash';
-import { getName, getNamespace } from '@console/shared/src/selectors';
+import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
 import { PodKind } from '@console/internal/module/k8s';
 import { getLabelValue } from '../selectors';
 import { VMKind } from '../../types';
 import { getDataVolumeTemplates } from '../vm';
-import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
+import {
+  CDI_KUBEVIRT_IO,
+  STORAGE_IMPORT_PVC_NAME,
+  VIRT_LAUNCHER_POD_PREFIX,
+} from '../../constants';
+import { buildOwnerReference, compareOwnerReference } from '../../utils';
 
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];
@@ -36,25 +41,32 @@ export const isPodSchedulable = (pod: PodKind) => {
   );
 };
 
-export const findPodWithOneOfStatuses = (pods: PodKind[], statuses: string[]) =>
-  pods.find((p) => {
-    const phase = getPodStatusPhase(p);
-    return statuses.some((status) => status === phase);
-  });
-
-export const findVMPod = (pods: PodKind[], vm: VMKind, podNamePrefix: string) => {
+export const findVMPod = (
+  pods: PodKind[],
+  vm: VMKind,
+  podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
+) => {
   if (!pods) {
     return null;
   }
-  const prefix = `${podNamePrefix}${getName(vm)}-`;
-  const prefixedPods = pods.filter(
-    (p) => getNamespace(p) === getNamespace(vm) && getName(p).startsWith(prefix),
-  );
 
-  return (
-    findPodWithOneOfStatuses(prefixedPods, ['Running', 'Pending']) ||
-    findPodWithOneOfStatuses(prefixedPods, ['Failed', 'Unknown']) // 2nd priority
-  );
+  const vmOwnerReference = buildOwnerReference(vm);
+  const prefix = `${podNamePrefix}${getName(vm)}-`;
+  const prefixedPods = pods.filter((p) => {
+    const podOwnerReferences = getOwnerReferences(p);
+    return (
+      getNamespace(p) === getNamespace(vm) &&
+      getName(p).startsWith(prefix) &&
+      podOwnerReferences &&
+      podOwnerReferences.some((podOwnerReference) =>
+        compareOwnerReference(podOwnerReference, vmOwnerReference),
+      )
+    );
+  });
+
+  return prefixedPods.sort((a: PodKind, b: PodKind) =>
+    a.metadata.creationTimestamp < b.metadata.creationTimestamp ? -1 : 1,
+  )[0];
 };
 
 export const getVMImporterPods = (
