@@ -764,7 +764,12 @@ const Query_: React.FC<QueryProps> = ({
         <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
         <QueryInput index={index} />
         <div title={switchLabel}>
-          <Switch aria-label={switchLabel} isChecked={isEnabled} onChange={toggleIsEnabled} />
+          <Switch
+            aria-label={switchLabel}
+            id={`query-switch-${index}`}
+            isChecked={isEnabled}
+            onChange={toggleIsEnabled}
+          />
         </div>
         <div className="dropdown-kebab-pf">
           <QueryKebab index={index} />
