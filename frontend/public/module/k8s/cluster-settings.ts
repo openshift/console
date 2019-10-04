@@ -20,7 +20,12 @@ export const getAvailableClusterUpdates = (cv: ClusterVersionKind): ClusterUpdat
   return _.get(cv, 'status.availableUpdates', []);
 };
 
-export const getAvailableClusterChannels = () => ({'nightly-4.1': 'nightly-4.1', 'prerelease-4.1': 'prerelease-4.1', 'stable-4.1': 'stable-4.1'});
+export const getAvailableClusterChannels = () => ({
+  'nightly-4.1': 'nightly-4.1',
+  'prerelease-4.1': 'prerelease-4.1',
+  'stable-4.1': 'stable-4.1',
+  'prerelease-4.2': 'prerelease-4.2',
+});
 
 export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
