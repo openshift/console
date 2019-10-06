@@ -42,6 +42,7 @@ export const WIZARD_TABLE_FIRST_ROW = 1;
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
+export const COMMON_TEMPLATES_VERSION = 'v0.6.2';
 
 // Tab names
 export const TABS = {
@@ -55,15 +56,18 @@ export const TABS = {
 Object.freeze(TABS);
 
 // Tab names
-export const VMACTIONS = {
-  START: 'Start',
-  STOP: 'Stop',
-  CLONE: 'Clone',
-  RESTART: 'Restart',
-  MIGRATE: 'Events',
-  DELETE: 'Delete',
+export const VM_ACTIONS = {
+  START: 'Start Virtual Machine',
+  STOP: 'Stop Virtual Machine',
+  CLONE: 'Clone Virtual Machine',
+  RESTART: 'Restart Virtual Machine',
+  MIGRATE: 'Migrate Virtual Machine',
+  CANCEL: 'Cancel Virtual Machine Migration',
+  EDIT_LABELS: 'Edit Labels',
+  EDIT_ANNOTATIONS: 'Edit Annotations',
+  DELETE: 'Delete Virtual Machine',
 };
-Object.freeze(VMACTIONS);
+Object.freeze(VM_ACTIONS);
 
 // Network tab columns in VM Wizard
 export const networkWizardTabCol = {

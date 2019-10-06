@@ -10,26 +10,26 @@ import {
   getDropdownOptions,
 } from '../../../console-shared/src/test-utils/utils';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
-import { multusNAD, hddDisk, networkInterface, getVmManifest } from './utils/mocks';
+import { multusNAD, hddDisk, networkInterface, getVMManifest } from './utils/mocks';
 import { getResourceObject } from './utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS, VM_ACTIONS_TIMEOUT_SECS, TABS } from './utils/consts';
+import { VM_BOOTUP_TIMEOUT_SECS, VM_ACTIONS_TIMEOUT_SECS, TABS, VM_ACTIONS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
-  const testVm = getVmManifest('Container', testName, `vm-disk-nic-${testName}`);
+  const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);
   const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async () => {
     createResources([multusNAD, testVm]);
-    await vm.action('Start');
+    await vm.action(VM_ACTIONS.START);
   }, VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(() => {
     deleteResources([multusNAD, testVm]);
   });
 
-  it(
-    'Add/remove disk on VM disks page',
+  xit(
+    'BZ(1753688) Add/remove disk on VM disks page',
     async () => {
       await vm.addDisk(hddDisk);
       expect(await vm.getAttachedDisks()).toContain(hddDisk);
@@ -37,7 +37,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       let vmi = await vm.navigateToVMI(TABS.OVERVIEW);
       expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
 
-      await vm.action('Restart');
+      await vm.action(VM_ACTIONS.RESTART);
 
       vmi = await vm.navigateToVMI(TABS.OVERVIEW);
       expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(true);
@@ -45,7 +45,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       await vm.removeDisk(hddDisk.name);
       expect(await vm.getAttachedDisks()).not.toContain(hddDisk);
 
-      await vm.action('Restart');
+      await vm.action(VM_ACTIONS.RESTART);
 
       vmi = await vm.navigateToVMI(TABS.OVERVIEW);
       expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
@@ -53,8 +53,8 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     VM_ACTIONS_TIMEOUT_SECS * 2, // VM is restarted twice
   );
 
-  xit(
-    'BZ(1732598) Add/remove nic on VM Network Interfaces page',
+  it(
+    'Add/remove nic on VM Network Interfaces page',
     async () => {
       await vm.addNIC(networkInterface);
 
@@ -62,7 +62,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
         false,
       );
 
-      await vm.action('Restart');
+      await vm.action(VM_ACTIONS.RESTART);
       expect(searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi')).toBe(
         true,
       );
@@ -70,7 +70,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       await vm.removeNIC(networkInterface.name);
       expect((await vm.getAttachedNICs()).includes(networkInterface)).toBe(false);
 
-      await vm.action('Restart');
+      await vm.action(VM_ACTIONS.RESTART);
 
       expect(searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi')).toBe(
         false,

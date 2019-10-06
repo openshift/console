@@ -9,7 +9,7 @@ import {
 import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS, TABS } from './utils/consts';
+import { VM_BOOTUP_TIMEOUT_SECS, CLONE_VM_TIMEOUT_SECS, TABS, VM_ACTIONS } from './utils/consts';
 import { multusNAD } from './utils/mocks';
 import {
   vmConfig,
@@ -86,7 +86,7 @@ describe('Kubevirt create VM using wizard', () => {
       await withResource(leakedResources, vm1.asResource(), async () => {
         await vm1.create(vm1Config);
         // Don't wait for the first VM to be running
-        await vm1.action('Start', false);
+        await vm1.action(VM_ACTIONS.START, false);
         await withResource(leakedResources, vm2.asResource(), async () => {
           await vm2.create(vm2Config);
           await vm1.navigateToTab(TABS.OVERVIEW);

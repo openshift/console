@@ -1,5 +1,5 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
-import { rowForName, resourceRowsPresent } from '../../../../integration-tests/views/crud.view';
+import { rowForName } from '../../../../integration-tests/views/crud.view';
 import { waitForCount, click } from '../../../console-shared/src/test-utils/utils';
 
 const disabledDropdownButtons = $$('.pf-m-disabled');
@@ -36,7 +36,6 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
  * Performs action for VM via list view kebab menu.
  */
 export const listViewAction = (name) => async (action: string, confirm?: boolean) => {
-  await resourceRowsPresent();
   const getActionsDropdown = () =>
     rowForName(name)
       .$$(listViewKebabDropdown)
