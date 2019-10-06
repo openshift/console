@@ -42,23 +42,20 @@ const getRevisions = (dc: K8sResourceKind, { revisions }): K8sResourceKind[] => 
   return revisionResource;
 };
 
-export const getKnativeServingRevisions = (dc: K8sResourceKind, props): KnativeItem => {
+export const getKnativeServingRevisions = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const revisions = getRevisions(dc, props);
-  return {
-    revisions,
-  };
+  return revisions.length > 0 ? { revisions } : undefined;
 };
 
-export const getKnativeServingConfigurations = (dc: K8sResourceKind, props): KnativeItem => {
+export const getKnativeServingConfigurations = (
+  dc: K8sResourceKind,
+  props,
+): KnativeItem | undefined => {
   const configurations = getConfigurations(dc, props);
-  return {
-    configurations,
-  };
+  return configurations.length > 0 ? { configurations } : undefined;
 };
 
-export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem => {
+export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const ksroutes = getKSRoute(dc, props);
-  return {
-    ksroutes,
-  };
+  return ksroutes.length > 0 ? { ksroutes } : undefined;
 };
