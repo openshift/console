@@ -11,7 +11,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 import { LongArrowAltUpIcon, LongArrowAltDownIcon } from '@patternfly/react-icons';
-
+import { getNodeRoles } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
@@ -37,7 +37,6 @@ import {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getTemplateInstanceStatus,
-  getNodeRoles,
 } from '../../module/k8s';
 
 import { tableFilters } from './table-filters';

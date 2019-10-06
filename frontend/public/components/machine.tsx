@@ -7,11 +7,12 @@ import {
   getMachineRegion,
   getMachineRole,
   getMachineZone,
+  getMachineAddresses,
 } from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
-import { NodeIPList } from './node';
+import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
@@ -151,7 +152,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
           )}
           <dt>Machine Addresses</dt>
           <dd>
-            <NodeIPList ips={_.get(obj, 'status.addresses')} expand={true} />
+            <NodeIPList ips={getMachineAddresses(obj)} expand />
           </dd>
         </ResourceSummary>
       </div>

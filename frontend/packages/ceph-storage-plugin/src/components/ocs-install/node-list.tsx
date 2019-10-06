@@ -9,7 +9,7 @@ import {
   TableVariant,
   TableGridBreakpoint,
 } from '@patternfly/react-table';
-import { getInfrastructurePlatform } from '@console/shared';
+import { getInfrastructurePlatform, getNodeRoles } from '@console/shared';
 import { tableFilters } from '@console/internal/components/factory/table-filters';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
@@ -21,7 +21,6 @@ import {
   ResourceLink,
 } from '@console/internal/components/utils/index';
 import {
-  getNodeRoles,
   k8sCreate,
   k8sPatch,
   k8sGet,

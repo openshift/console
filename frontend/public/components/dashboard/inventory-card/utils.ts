@@ -1,7 +1,8 @@
-import { podPhaseFilterReducer, nodeStatus } from '../../../module/k8s';
+import { podPhaseFilterReducer } from '../../../module/k8s';
 import { pvcPhase } from '../../persistent-volume-claim';
 import { StatusGroupMapper } from './inventory-item';
 import { InventoryStatusGroup } from './status-group';
+import { nodeStatus } from '@console/app/src/status/node';
 
 const POD_PHASE_GROUP_MAPPING = {
   [InventoryStatusGroup.NOT_MAPPED]: ['Running', 'Succeeded'],

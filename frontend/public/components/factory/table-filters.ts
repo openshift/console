@@ -1,13 +1,11 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
-
+import { nodeStatus } from '@console/app/src/status/node';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
-
 import {
   MachineKind,
-  nodeStatus,
   podPhaseFilterReducer,
   serviceCatalogStatus,
   serviceClassDisplayName,

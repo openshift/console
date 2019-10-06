@@ -12,14 +12,14 @@ import { menuActionsCreator } from './host-menu-actions';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostDetails from './BareMetalHostDetails';
 
-type BareMetalHostDetailPageProps = {
+type BareMetalHostDetailsPageProps = {
   namespace: string;
   name: string;
   match: any;
   hasNodeMaintenanceCapability: boolean;
 };
 
-const BareMetalHostDetailPage: React.FC<BareMetalHostDetailPageProps> = ({
+const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = ({
   hasNodeMaintenanceCapability,
   ...props
 }) => {
@@ -90,4 +90,4 @@ const mapStateToProps = ({ k8s }) => ({
   ]),
 });
 
-export default connect(mapStateToProps)(BareMetalHostDetailPage);
+export default connect(mapStateToProps)(BareMetalHostDetailsPage);

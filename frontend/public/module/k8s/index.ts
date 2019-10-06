@@ -3,7 +3,6 @@ import { EventInvolvedObject } from './event';
 
 export * from './job';
 export * from './k8s';
-export * from './node';
 export * from './pods';
 export * from './resource';
 export * from './service-catalog';

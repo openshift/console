@@ -23,7 +23,11 @@ const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.css' });
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 
 const config: Configuration = {
-  entry: ['./polyfills.js', '@console/app', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
+  entry: [
+    './polyfills.js',
+    './public/components/app.jsx',
+    'monaco-editor-core/esm/vs/editor/editor.worker.js',
+  ],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
