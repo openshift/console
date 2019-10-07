@@ -23,7 +23,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
     asError(state, wizardReduxID, VMWizardProps.commonTemplates),
     asError(state, wizardReduxID, VMWizardProps.userTemplates),
     asError(state, wizardReduxID, VMWizardProps.virtualMachines, AlertVariant.warning), // for validation only
-  ],
+  ].filter((err) => err && err.message),
 });
 
 export const ResourceLoadErrors = connect(stateToProps)(Errors);

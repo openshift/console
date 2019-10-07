@@ -15,6 +15,7 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 export enum VMWizardTab { // order important
   VM_SETTINGS = 'VM_SETTINGS',
   NETWORKING = 'NETWORKING',
+  ADVANCED_CLOUD_INIT = 'ADVANCED_CLOUD_INIT',
   STORAGE = 'STORAGE',
   REVIEW = 'REVIEW',
   RESULT = 'RESULT',
@@ -46,11 +47,10 @@ export enum VMSettingsField { // TODO refactor to NAME = 'NAME' format for easie
   CPU = 'cpu',
   WORKLOAD_PROFILE = 'workloadProfile',
   START_VM = 'startVM',
-  USE_CLOUD_INIT = 'cloudInit',
-  USE_CLOUD_INIT_CUSTOM_SCRIPT = 'useCloudInitCustomScript',
-  HOST_NAME = 'hostname',
-  AUTHKEYS = 'authKeys',
-  CLOUD_INIT_CUSTOM_SCRIPT = 'cloudInitCustomScript',
+}
+
+export enum CloudInitField {
+  IS_FORM = 'IS_FORM',
 }
 
 export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.PROVIDERS_DATA>;

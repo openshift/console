@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { createVm, createVmTemplate } from 'kubevirt-web-ui-components';
-import { Wizard } from '@patternfly/react-core';
+import { Wizard, WizardStep } from '@patternfly/react-core';
 import { TemplateModel } from '@console/internal/models';
 import {
   Firehose,
@@ -64,6 +64,7 @@ import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
 import { StorageTab } from './tabs/storage-tab/storage-tab';
+import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 
 import './create-vm-wizard.scss';
 
@@ -270,6 +271,20 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         ),
       },
       {
+        name: 'Advanced',
+        steps: [
+          {
+            id: VMWizardTab.ADVANCED_CLOUD_INIT,
+            component: (
+              <>
+                <ResourceLoadErrors wizardReduxID={reduxID} />
+                <CloudInitTab wizardReduxID={reduxID} />
+              </>
+            ),
+          },
+        ],
+      },
+      {
         id: VMWizardTab.REVIEW,
         component: <ReviewTab wizardReduxID={reduxID} />,
       },
@@ -282,6 +297,44 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     ];
 
     const isLocked = _.some(steps, ({ id }) => isStepLocked(stepData, id));
+
+    const calculateSteps = (initialSteps, initialAccumulator: WizardStep[] = []): WizardStep[] =>
+      initialSteps.reduce((stepAcc: WizardStep[], step: any) => {
+        const isFirstStep = _.isEmpty(stepAcc);
+        let innerSteps;
+        if (step.steps) {
+          // pass reference to last step but remove it afterwards
+          innerSteps = calculateSteps(step.steps, isFirstStep ? [] : [_.last(stepAcc)]);
+          if (!isFirstStep) {
+            innerSteps.shift();
+          }
+        }
+        let prevStep;
+        if (!isFirstStep) {
+          prevStep = _.last<WizardStep>(stepAcc);
+          while (prevStep.steps) {
+            prevStep = _.last(prevStep.steps);
+          }
+        }
+        const isPrevStepValid = isFirstStep || isStepValid(stepData, prevStep.id as VMWizardTab);
+        const canJumpToPrevStep = isFirstStep || prevStep.canJumpTo;
+
+        const calculatedStep = {
+          ...step,
+          name: TabTitleResolver[step.id] || step.name,
+          canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
+            ? step.id === VMWizardTab.RESULT
+            : !isLocked && isPrevStepValid && canJumpToPrevStep && step.id !== VMWizardTab.RESULT,
+          component: step.component,
+        };
+
+        if (innerSteps) {
+          calculatedStep.steps = innerSteps;
+        }
+
+        stepAcc.push(calculatedStep);
+        return stepAcc;
+      }, initialAccumulator);
 
     return (
       <div className="kubevirt-create-vm-modal__container">
@@ -299,24 +352,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
               this.finish();
             }
           }}
-          steps={steps.reduce((stepAcc, step, idx) => {
-            const prevStep = stepAcc[idx - 1];
-            const isPrevStepValid = idx === 0 ? true : isStepValid(stepData, prevStep.id);
-            const canJumpToPrevStep = idx === 0 ? true : prevStep.canJumpTo;
-
-            stepAcc.push({
-              ...step,
-              name: TabTitleResolver[step.id],
-              canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
-                ? step.id === VMWizardTab.RESULT
-                : !isLocked &&
-                  isPrevStepValid &&
-                  canJumpToPrevStep &&
-                  step.id !== VMWizardTab.RESULT,
-              component: step.component,
-            });
-            return stepAcc;
-          }, [])}
+          steps={calculateSteps(steps)}
           footer={<CreateVMWizardFooter wizardReduxID={reduxID} />}
         />
       </div>

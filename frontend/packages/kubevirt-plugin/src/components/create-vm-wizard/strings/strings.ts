@@ -13,6 +13,7 @@ export const TabTitleResolver = {
   [VMWizardTab.VM_SETTINGS]: 'General',
   [VMWizardTab.NETWORKING]: 'Networking',
   [VMWizardTab.STORAGE]: 'Storage',
+  [VMWizardTab.ADVANCED_CLOUD_INIT]: 'Cloud-init',
   [VMWizardTab.REVIEW]: 'Review',
   [VMWizardTab.RESULT]: 'Result',
 };

@@ -12,3 +12,6 @@ export const iGetProvisionSourceStorage = (state, id: string) =>
       VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
     ].includes(iGet(storage, 'type')),
   );
+
+export const iGetCloudInitNoCloudStorage = (state, id: string) =>
+  iGetStorages(state, id).find((storage) => iGetIn(storage, ['volume', 'cloudInitNoCloud']));

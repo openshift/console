@@ -48,11 +48,6 @@ export const getInitialVmSettings = (common: CommonData) => {
     [VMSettingsField.START_VM]: {
       isHidden: asHidden(isCreateTemplate, VMWizardProps.isCreateTemplate),
     },
-    [VMSettingsField.USE_CLOUD_INIT]: {},
-    [VMSettingsField.USE_CLOUD_INIT_CUSTOM_SCRIPT]: {},
-    [VMSettingsField.HOST_NAME]: {},
-    [VMSettingsField.AUTHKEYS]: {},
-    [VMSettingsField.CLOUD_INIT_CUSTOM_SCRIPT]: {},
   };
 
   Object.keys(fields).forEach((k) => {

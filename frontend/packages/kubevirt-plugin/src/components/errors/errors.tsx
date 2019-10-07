@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import './errors.scss';
 
 export type Error = {
-  message: string;
+  message?: string;
   variant?: AlertVariant;
   title: string;
   key: string;
@@ -19,22 +19,20 @@ export const Errors: React.FC<ErrorsProps> = ({ errors }) => {
   return (
     <>
       {errors &&
-        errors
-          .filter((e) => e && e.message)
-          .map(({ message, key, title, variant }, idx, arr) => (
-            <Alert
-              isInline
-              key={key}
-              variant={variant || AlertVariant.danger}
-              title={title}
-              className={classNames({
-                'kubevirt-errors__error-group--item': idx !== arr.length - 1,
-                'kubevirt-errors__error-group--end ': idx === arr.length - 1,
-              })}
-            >
-              {message}
-            </Alert>
-          ))}
+        errors.map(({ message, key, title, variant }, idx, arr) => (
+          <Alert
+            isInline
+            key={key}
+            variant={variant || AlertVariant.danger}
+            title={title}
+            className={classNames({
+              'kubevirt-errors__error-group--item': idx !== arr.length - 1,
+              'kubevirt-errors__error-group--end ': idx === arr.length - 1,
+            })}
+          >
+            {message}
+          </Alert>
+        ))}
     </>
   );
 };

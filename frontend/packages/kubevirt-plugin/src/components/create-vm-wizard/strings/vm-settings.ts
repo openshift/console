@@ -15,11 +15,6 @@ export const titleResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.CPU]: 'CPUs',
   [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
-  [VMSettingsField.USE_CLOUD_INIT]: 'Use cloud-init',
-  [VMSettingsField.USE_CLOUD_INIT_CUSTOM_SCRIPT]: 'Use custom script',
-  [VMSettingsField.HOST_NAME]: 'Hostname',
-  [VMSettingsField.AUTHKEYS]: 'Authenticated SSH Keys',
-  [VMSettingsField.CLOUD_INIT_CUSTOM_SCRIPT]: 'Custom Script',
 };
 
 export const placeholderResolver = {

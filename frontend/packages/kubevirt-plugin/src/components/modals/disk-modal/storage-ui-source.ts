@@ -26,6 +26,8 @@ export class StorageUISource extends ValueEnum<string> {
     undefined,
   );
 
+  static readonly OTHER = new StorageUISource('Other');
+
   private readonly volumeType: VolumeType;
   private readonly dataVolumeSourceType: DataVolumeSourceType;
 
@@ -43,7 +45,7 @@ export class StorageUISource extends ValueEnum<string> {
 
   protected constructor(
     value: string,
-    volumeType: VolumeType,
+    volumeType?: VolumeType,
     dataVolumeSourceType?: DataVolumeSourceType,
   ) {
     super(value);
@@ -61,6 +63,7 @@ export class StorageUISource extends ValueEnum<string> {
   static fromTypes = (volumeType: VolumeType, dataVolumeSourceType?: DataVolumeSourceType) =>
     StorageUISource.ALL.find(
       (storageUIType) =>
+        storageUIType !== StorageUISource.OTHER &&
         storageUIType.volumeType == volumeType && // eslint-disable-line eqeqeq
         storageUIType.dataVolumeSourceType == dataVolumeSourceType, // eslint-disable-line eqeqeq
     );
@@ -76,9 +79,11 @@ export class StorageUISource extends ValueEnum<string> {
 
   requiresURL = () => this === StorageUISource.URL;
 
+  requiresVolume = () => !!this.volumeType;
+
   requiresDatavolume = () => !!this.dataVolumeSourceType;
 
   requiresNamespace = () => this === StorageUISource.ATTACH_CLONED_DISK;
 
-  isEditingSupported = () => !this.dataVolumeSourceType;
+  isEditingSupported = () => !this.dataVolumeSourceType; // vm disks - do not support because pvc was already created from DV
 }

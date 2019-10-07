@@ -1,6 +1,7 @@
 import {
   ChangedCommonData,
   ChangedCommonDataProp,
+  CloudInitField,
   VMSettingsField,
   VMSettingsFieldType,
   VMWizardNetwork,
@@ -15,6 +16,7 @@ export enum ActionType {
   Dispose = 'KubevirtVMWiExternalDispose',
   UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
   SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
+  SetCloudInitFieldValue = 'KubevirtVMWizardExternalSetCloudInitFieldValue',
   SetTabLocked = 'KubevirtVMWizardExternalSetTabLocked',
   RemoveNIC = 'KubevirtVMWizardExternalRemoveNIC',
   UpdateNIC = 'KubevirtVMWizardExternalUpdateNIC',
@@ -33,6 +35,7 @@ export enum InternalActionType {
   SetTabValidity = 'KubevirtVMWizardSetTabValidity',
   SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
+  SetCloudInitFieldValue = 'KubevirtVMWizardSetCloudInitFieldValue',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',
   SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatch',
   UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsField',
@@ -57,7 +60,7 @@ export type WizardInternalAction = {
     isPending?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
-    key?: VMSettingsField;
+    key?: VMSettingsField | CloudInitField;
     tab?: VMWizardTab;
     batch?: ActionBatch;
     network?: VMWizardNetwork;

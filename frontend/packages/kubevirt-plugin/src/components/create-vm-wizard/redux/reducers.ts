@@ -192,6 +192,11 @@ export default (state, action: WizardInternalAction) => {
         [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
         fromJS(payload.value),
       );
+    case InternalActionType.SetCloudInitFieldValue:
+      return state.setIn(
+        [dialogId, 'tabs', VMWizardTab.ADVANCED_CLOUD_INIT, 'value', payload.key, 'value'],
+        fromJS(payload.value),
+      );
     case InternalActionType.SetInVmSettings:
       return state.setIn(
         [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', ...payload.path],

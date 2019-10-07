@@ -8,6 +8,7 @@ import {
   VMWizardNetwork,
   VMWizardTab,
   VMWizardStorage,
+  CloudInitField,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
 import { cleanup, updateAndValidateState } from './utils';
@@ -64,9 +65,13 @@ export const vmWizardActions: VMWizardActions = {
 
     dispatch(vmWizardInternalActions[InternalActionType.Dispose](id));
   },
-  [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) =>
+  [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
+    ),
+  [ActionType.SetCloudInitFieldValue]: (id, key: CloudInitField, value: any) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](id, key, value)),
     ),
   [ActionType.UpdateCommonData]: (id, commonData: CommonData, changedProps: ChangedCommonData) =>
     withUpdateAndValidateState(

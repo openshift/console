@@ -2,6 +2,7 @@ import { createBasicLookup, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../types';
 import { iGetProvisionSource, iGetVmSettingValue } from '../../../selectors/immutable/vm-settings';
 import {
+  CloudInitField,
   VMSettingsField,
   VMWizardNetwork,
   VMWizardNetworkType,
@@ -19,10 +20,10 @@ import {
   DiskBus,
   DiskType,
   NetworkInterfaceModel,
+  VolumeType,
 } from '../../../../../constants/vm';
 import {
   DEFAULT_CPU,
-  getCloudInitUserData,
   getCPU,
   getDataVolumeTemplates,
   getDisks,
@@ -46,9 +47,10 @@ import { getNextIDResolver } from '../../../../../utils/utils';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
 import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
 import { V1Volume } from '../../../../../types/vm/disk/V1Volume';
-import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
+import { MutableVolumeWrapper, VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
 import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
-import { iGetStorages } from '../../../selectors/immutable/storage';
+import { CloudInitDataHelper } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { getStorages } from '../../../selectors/selectors';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -62,6 +64,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       ? iUserTemplates.find((template) => iGetName(template) === userTemplateName)
       : null;
 
+  let isCloudInitForm = null;
   const vmSettingsUpdate = {};
 
   // filter out oldTemplates
@@ -70,13 +73,14 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   );
   const getNextNetworkID = getNextIDResolver(networksUpdate);
 
-  const storagesUpdate = immutableListToShallowJS<VMWizardStorage>(iGetStorages(state, id)).filter(
+  const storagesUpdate = getStorages(state, id).filter(
     (storage) =>
       ![
         VMWizardStorageType.PROVISION_SOURCE_DISK,
         VMWizardStorageType.TEMPLATE,
         VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-      ].includes(storage.type),
+      ].includes(storage.type) &&
+      VolumeWrapper.initialize(storage.volume).getType() !== VolumeType.CLOUD_INIT_NO_CLOUD,
   );
   const getNextStorageID = getNextIDResolver(storagesUpdate);
 
@@ -105,16 +109,6 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     // update workload profile
     const [workload] = getTemplateWorkloadProfiles([userTemplate]);
     vmSettingsUpdate[VMSettingsField.WORKLOAD_PROFILE] = { value: workload };
-
-    // update cloud-init
-    const cloudInitUserData = getCloudInitUserData(vm);
-    if (cloudInitUserData) {
-      vmSettingsUpdate[VMSettingsField.USE_CLOUD_INIT] = { value: true };
-      vmSettingsUpdate[VMSettingsField.USE_CLOUD_INIT_CUSTOM_SCRIPT] = { value: true };
-      vmSettingsUpdate[VMSettingsField.CLOUD_INIT_CUSTOM_SCRIPT] = {
-        value: cloudInitUserData || '',
-      };
-    }
 
     // update provision source
     const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate);
@@ -149,8 +143,23 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     // // prefill storage
     const templateStorages: VMWizardStorage[] = getDisks(vm).map((disk) => {
       const diskWrapper = DiskWrapper.initialize(disk);
-      const volume = volumeLookup[diskWrapper.getName()];
+      let volume = volumeLookup[diskWrapper.getName()];
       const volumeWrapper = VolumeWrapper.initialize(volume);
+
+      if (volumeWrapper.getType() === VolumeType.CLOUD_INIT_NO_CLOUD) {
+        const helper = new CloudInitDataHelper(volumeWrapper.getCloudInitNoCloud());
+        if (helper.includesOnlyFormValues()) {
+          isCloudInitForm = true;
+          helper.makeFormCompliant();
+          volume = new MutableVolumeWrapper(volume, { copy: true })
+            .replaceTypeData(helper.asCloudInitNoCloudSource())
+            .asMutableResource();
+          // do not overwrite with more cloud-init disks
+        } else if (isCloudInitForm == null) {
+          isCloudInitForm = false;
+        }
+      }
+
       return {
         id: getNextStorageID(),
         type: diskWrapper.isFirstBootableDevice()
@@ -192,4 +201,13 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   dispatch(vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, vmSettingsUpdate));
   dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, networksUpdate));
   dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, storagesUpdate));
+  if (isCloudInitForm != null) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](
+        id,
+        CloudInitField.IS_FORM,
+        isCloudInitForm,
+      ),
+    );
+  }
 };

@@ -1,4 +1,10 @@
-import { VMSettingsField, VMWizardNetwork, VMWizardStorage, VMWizardTab } from '../types';
+import {
+  CloudInitField,
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardStorage,
+  VMWizardTab,
+} from '../types';
 import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
@@ -56,13 +62,21 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabLocked,
   }),
-  [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => ({
+  [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) => ({
     payload: {
       id,
       key,
       value,
     },
     type: InternalActionType.SetVmSettingsFieldValue,
+  }),
+  [InternalActionType.SetCloudInitFieldValue]: (id, key: CloudInitField, value: any) => ({
+    payload: {
+      id,
+      key,
+      value,
+    },
+    type: InternalActionType.SetCloudInitFieldValue,
   }),
   [InternalActionType.UpdateVmSettingsField]: (id, key: VMSettingsField, value) => ({
     payload: {

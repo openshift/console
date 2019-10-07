@@ -66,7 +66,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const isEditing = disk !== DiskWrapper.EMPTY;
 
   const [source, setSource] = React.useState<StorageUISource>(
-    StorageUISource.fromTypes(volume.getType(), dataVolume.getType()) || StorageUISource.BLANK,
+    isEditing
+      ? StorageUISource.fromTypes(volume.getType(), dataVolume.getType()) || StorageUISource.OTHER
+      : StorageUISource.BLANK,
   );
 
   const [url, setURL] = React.useState<string>(dataVolume.getURL);
@@ -103,18 +105,22 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   });
 
   const resultDataVolumeName = prefixedID(vmName, name);
-  const resultVolume = VolumeWrapper.initializeFromSimpleData(
-    {
-      name,
-      type: source.getVolumeType(),
-      typeData: {
-        name: resultDataVolumeName,
-        claimName: pvcName,
-        image: containerImage,
+  let resultVolume;
+  if (source.requiresVolume()) {
+    // update just Disk for unknown sources
+    resultVolume = VolumeWrapper.initializeFromSimpleData(
+      {
+        name,
+        type: source.getVolumeType(),
+        typeData: {
+          name: resultDataVolumeName,
+          claimName: pvcName,
+          image: containerImage,
+        },
       },
-    },
-    { sanitizeTypeData: true },
-  );
+      { sanitizeTypeData: true },
+    );
+  }
 
   let resultDataVolume;
   if (source.requiresDatavolume()) {
@@ -192,17 +198,22 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onChange={onSourceChanged}
               value={asFormSelectValue(source)}
               id={asId('source')}
-              isDisabled={inProgress || disableSourceChange}
+              isDisabled={inProgress || disableSourceChange || source === StorageUISource.OTHER}
             >
-              {StorageUISource.getAll().map((uiType) => {
-                return (
-                  <FormSelectOption
-                    key={uiType.getValue()}
-                    value={uiType.getValue()}
-                    label={uiType.toString()}
-                  />
-                );
-              })}
+              {StorageUISource.getAll()
+                .filter(
+                  (storageUISource) =>
+                    storageUISource !== StorageUISource.OTHER || source === StorageUISource.OTHER,
+                )
+                .map((uiType) => {
+                  return (
+                    <FormSelectOption
+                      key={uiType.getValue()}
+                      value={uiType.getValue()}
+                      label={uiType.toString()}
+                    />
+                  );
+                })}
             </FormSelect>
           </FormRow>
           {source.requiresURL() && (
@@ -210,7 +221,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               <TextInput
                 isValid={!isValidationError(urlValidation)}
                 key="url"
-                isDisabled={inProgress || disableSourceChange}
+                isDisabled={inProgress}
                 isRequired
                 id={asId('url')}
                 value={url}
@@ -228,7 +239,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               <TextInput
                 isValid={!isValidationError(containerValidation)}
                 key="container"
-                isDisabled={inProgress || disableSourceChange}
+                isDisabled={inProgress}
                 isRequired
                 id={asId('container')}
                 value={containerImage}
@@ -240,7 +251,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="namespace"
               id={asId('namespace')}
-              isDisabled={inProgress || disableSourceChange}
+              isDisabled={inProgress}
               name={namespace}
               data={namespaces}
               model={NamespaceModel}
@@ -255,7 +266,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="pvc-select"
               id={asId('pvc')}
-              isDisabled={inProgress || !namespace || disableSourceChange}
+              isDisabled={inProgress || !namespace}
               name={pvcName}
               validation={pvcValidation}
               data={persistentVolumeClaims}

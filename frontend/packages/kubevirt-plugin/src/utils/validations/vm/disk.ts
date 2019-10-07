@@ -60,7 +60,7 @@ export const validateDisk = (
     container: null,
     pvc: null,
   };
-  let hasAllRequiredFilled = disk && disk.getName() && volume && volume.hasType();
+  let hasAllRequiredFilled = disk && disk.getName();
 
   const addRequired = (addon) => {
     if (hasAllRequiredFilled) {
@@ -68,9 +68,16 @@ export const validateDisk = (
     }
   };
 
-  const source = StorageUISource.fromTypes(volume.getType(), dataVolume && dataVolume.getType());
+  const source = StorageUISource.fromTypes(
+    volume && volume.getType(),
+    dataVolume && dataVolume.getType(),
+  );
 
   if (source) {
+    if (source.requiresVolume()) {
+      addRequired(volume && volume.hasType());
+    }
+
     if (source.requiresURL()) {
       const url = dataVolume && dataVolume.getURL();
       addRequired(url);

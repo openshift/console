@@ -26,9 +26,12 @@ export const iGet = (obj, key: string, defaultValue = undefined) =>
   obj ? obj.get(key, defaultValue) : defaultValue;
 
 export const toShallowJS = (obj, defaultValue = undefined) => (obj ? obj.toJSON() : defaultValue);
+export const toJS = (obj, defaultValue = undefined) => (obj ? obj.toJS() : defaultValue);
 
 export const iGetIn = (obj, path: string[], defaultValue = undefined) =>
   obj ? obj.getIn(path, defaultValue) : defaultValue;
+
+export const ihasIn = (obj, path: string[]) => obj && obj.hasIn(path);
 
 export const iGetIsLoaded = (result): boolean => iGet(result, 'loaded', false);
 
