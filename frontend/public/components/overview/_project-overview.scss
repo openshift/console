@@ -3,7 +3,7 @@
   .project-overview__additional-info {
     align-items: center;
     display: grid;
-    grid-column-gap: 3%;
+    grid-column-gap: 1%;
     grid-row-gap: 10px;
     grid-template-columns: auto minmax(min-content, 1fr) 85px;
     width: 100%;
@@ -12,7 +12,7 @@
     }
     @media (min-width: $screen-md-min) {
       grid-template-areas: "alert memory cpu status";
-      grid-template-columns: 27% 18% 18% 28%;
+      grid-template-columns: 23% 21% 25% 28%;
     }
   }
 
@@ -41,6 +41,7 @@
   }
 
   .project-overview__detail--status {
+    text-align: right;
     @media (min-width: $screen-md-min) {
       grid-area: status;
     }
@@ -115,29 +116,23 @@
   .project-overview__metric-unit {
     color: $color-text-muted;
     font-size: ($font-size-base - 1);
-    margin-left: 3px;
+    margin-left: 1px;
   }
 
   @media (min-width: $screen-md-min) {
     // Override Patternfly list view styles so that the additional info has a
     // little more space for alerts, metrics, and pod status.
     .list-view-pf-additional-info {
-      width: 60%;
+      width: 62%;
     }
 
     .list-view-pf-description {
-      flex-basis: 40%;
-      width: 40%;
+      flex-basis: 38%;
+      width: 38%;
     }
 
     .project-overview__detail--cpu,
     .project-overview__detail--memory {
-      text-align: right;
-    }
-
-    .project-overview__detail--status {
-      // Give enough margin for the chevron.
-      margin-right: 40px;
       text-align: right;
     }
   }
@@ -192,6 +187,8 @@
     }
     .project-overview__detail--status {
       grid-column: 2;
+      // Give enough margin for the chevron.
+      margin-right: 40px;
     }
   }
 }
