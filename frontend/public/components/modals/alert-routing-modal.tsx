@@ -7,6 +7,21 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { SecretModel } from '../../models';
 
+const updateAlertRoutingProperty = (
+  config: any,
+  propertyName: string,
+  newValue: string,
+  oldValue: string,
+) => {
+  if (!_.isEqual(newValue, oldValue)) {
+    if (_.isEmpty(newValue)) {
+      _.unset(config, ['route', propertyName]); // unset so global/default value will be used
+    } else {
+      _.set(config, ['route', propertyName], newValue);
+    }
+  }
+};
+
 export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
   config,
   secret,
@@ -18,23 +33,23 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    const configObj = _.cloneDeep(config);
-    _.set(
-      configObj,
-      ['route', 'group_by'],
-      event.target.elements['input-group-by'].value.split(','),
-    );
-    _.set(configObj, ['route', 'group_wait'], event.target.elements['input-group-wait'].value);
-    _.set(
-      configObj,
-      ['route', 'group_interval'],
-      event.target.elements['input-group-interval'].value,
-    );
-    _.set(
-      configObj,
-      ['route', 'repeat_interval'],
-      event.target.elements['input-repeat-interval'].value,
-    );
+    const configObj = !_.isEmpty(config) ? _.cloneDeep(config) : {};
+
+    let groupByNew = event.target.elements['input-group-by'].value.replace(/\s+/g, '');
+    const groupWaitNew = event.target.elements['input-group-wait'].value;
+    const groupIntervalNew = event.target.elements['input-group-interval'].value;
+    const repeatIntervalNew = event.target.elements['input-repeat-interval'].value;
+
+    const groupByOld = _.get(configObj, ['route', 'group_by'], []);
+    const groupWaitOld = _.get(configObj, ['route', 'group_wait'], '');
+    const groupIntervalOld = _.get(configObj, ['route', 'group_interval'], '');
+    const repeatIntervalOld = _.get(configObj, ['route', 'repeat_interval'], '');
+
+    groupByNew = groupByNew === '' ? [] : groupByNew.split(',');
+    updateAlertRoutingProperty(configObj, 'group_by', groupByNew, groupByOld);
+    updateAlertRoutingProperty(configObj, 'group_wait', groupWaitNew, groupWaitOld);
+    updateAlertRoutingProperty(configObj, 'group_interval', groupIntervalNew, groupIntervalOld);
+    updateAlertRoutingProperty(configObj, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
 
     let yamlStringData = '';
 
