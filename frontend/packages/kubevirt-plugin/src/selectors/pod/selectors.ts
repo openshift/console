@@ -9,7 +9,8 @@ import {
   STORAGE_IMPORT_PVC_NAME,
   VIRT_LAUNCHER_POD_PREFIX,
 } from '../../constants';
-import { buildOwnerReference, compareOwnerReference } from '../../utils';
+import { compareOwnerReference, buildOwnerReferenceForModel } from '../../utils';
+import { VirtualMachineInstanceModel } from '../../models';
 
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];
@@ -50,7 +51,12 @@ export const findVMPod = (
     return null;
   }
 
-  const vmOwnerReference = buildOwnerReference(vm);
+  // the UID is not set as we mimic VMI here
+  const vmOwnerReference = buildOwnerReferenceForModel(
+    VirtualMachineInstanceModel,
+    getName(vm),
+    null,
+  );
   const prefix = `${podNamePrefix}${getName(vm)}-`;
   const prefixedPods = pods.filter((p) => {
     const podOwnerReferences = getOwnerReferences(p);
