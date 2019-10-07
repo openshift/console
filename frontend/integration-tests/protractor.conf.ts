@@ -170,6 +170,7 @@ export const config: Config = {
     'kubevirt-plugin': suite([
       '../packages/kubevirt-plugin/integration-tests/tests/vm.wizard.scenario.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.actions.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.overview.scenario.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.migration.scenario.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.resources.scenario.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.clone.scenario.ts',
