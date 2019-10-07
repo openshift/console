@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
+import { Button } from '@patternfly/react-core';
 
 export class TogglePlay extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -15,7 +16,7 @@ export class TogglePlay extends React.Component {
       this.props.className,
       this.props.active ? 'co-toggle-play--active' : 'co-toggle-play--inactive',
     );
-    return <button className={klass} onClick={this.props.onClick} />;
+    return <Button variant="plain" className={klass} onClick={this.props.onClick} />;
   }
 }
 TogglePlay.propTypes = {

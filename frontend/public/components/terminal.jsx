@@ -4,6 +4,7 @@ import { Terminal as XTerminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';
 import * as full from 'xterm/lib/addons/fullscreen/fullscreen';
 import { CompressIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 
 XTerminal.applyAddon(fit);
 XTerminal.applyAddon(full);
@@ -121,13 +122,14 @@ export class Terminal extends React.Component {
       <div ref={this.outerRef} style={this.state} className={this.props.className}>
         <div ref={this.innerRef} className="console">
           {this.isFullscreen && (
-            <button
-              className="btn btn-link console-collapse-link"
+            <Button
+              className="console-collapse-link"
               onClick={() => this.setFullscreen(false)}
+              variant="link"
             >
               <CompressIcon className="co-icon-space-r" />
               Collapse
-            </button>
+            </Button>
           )}
         </div>
       </div>

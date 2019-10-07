@@ -31,16 +31,3 @@ $color-log-window-divider: $color-log-window-header-bg;
   white-space: pre;
   width: 0;
 }
-
-.log-window__resume-btn {
-  background-color: $color-log-window-header-bg;
-  color: $color-log-window-text;
-  padding: 4px 10px;
-}
-
-.log-window__resume-btn:hover,
-.log-window__resume-btn:focus,
-.log-window__resume-btn:active,
-{
-  color: $color-log-window-text;
-}

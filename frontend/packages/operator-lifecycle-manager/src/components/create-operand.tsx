@@ -675,9 +675,9 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           <label className="form-label">
             {_.startCase(group.split(SpecCapability.fieldGroup)[1])}
           </label>
-          <button className="btn btn-link" type="button" onClick={() => setExpand(!expand)}>
+          <Button type="button" onClick={() => setExpand(!expand)} variant="link">
             {expand ? 'Collapse' : 'Expand'}
-          </button>
+          </Button>
         </div>
         <div className="co-operand-field-group">
           {expand &&
