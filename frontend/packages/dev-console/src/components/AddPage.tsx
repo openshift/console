@@ -3,12 +3,11 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
 import { history, Firehose, FirehoseResource, HintBlock } from '@console/internal/components/utils';
-import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import ODCEmptyState from './EmptyState';
 import NamespacedPage from './NamespacedPage';
 import ProjectsExistWrapper from './ProjectsExistWrapper';
-import DefaultPage from './DefaultPage';
+import CreateProjectListPage from './projects/CreateProjectListPage';
 
 export interface AddPageProps {
   match: RMatch<{
@@ -28,11 +27,8 @@ interface EmptyStateLoaderProps {
   loadError?: string;
 }
 
-const openProjectModal = () =>
-  createProjectModal({
-    blocking: true,
-    onSubmit: (project) => history.push(`/add/ns/${project.metadata.name}`),
-  });
+const handleProjectCreate = (project: K8sResourceKind) =>
+  history.push(`/add/ns/${project.metadata.name}`);
 
 const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
   const [noWorkloads, setNoWorkloads] = React.useState(false);
@@ -122,17 +118,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
               namespace ? (
                 <RenderEmptyState namespace={namespace} />
               ) : (
-                <DefaultPage title="Add">
-                  Select a project to start adding to it or{' '}
-                  <button
-                    style={{ verticalAlign: 'baseline' }}
-                    type="button"
-                    className="btn btn-link btn-link--no-btn-default-values"
-                    onClick={openProjectModal}
-                  >
-                    create a project
-                  </button>
-                </DefaultPage>
+                <CreateProjectListPage onCreate={handleProjectCreate} title="Add" />
               )
             }
           </ProjectsExistWrapper>

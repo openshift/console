@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
 import { BuildConfigsPage } from '@console/internal/components/build-config';
 import { withStartGuide } from '../../../../public/components/start-guide';
-import DefaultPage from './DefaultPage';
+import ProjectListPage from './projects/ProjectListPage';
 
 export interface BuildConfigPageProps {
   match: RMatch<{
@@ -22,9 +22,9 @@ const BuildConfigPage: React.FC<BuildConfigPageProps> = ({ noProjectsAvailable, 
       {namespace ? (
         <BuildConfigsPage {...props} mock={noProjectsAvailable} />
       ) : (
-        <DefaultPage title="Build Configs">
+        <ProjectListPage title="Build Configs">
           Select a project to view the list of build configs
-        </DefaultPage>
+        </ProjectListPage>
       )}
     </React.Fragment>
   );
