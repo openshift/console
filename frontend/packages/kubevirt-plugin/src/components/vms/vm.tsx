@@ -3,25 +3,19 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
-  VmStatus,
-  // getSimpleVmStatus,
-  // VM_SIMPLE_STATUS_ALL,
-  // VM_SIMPLE_STATUS_TO_TEXT,
-  //  DASHES,
-} from 'kubevirt-web-ui-components';
-import { NamespaceModel, PodModel } from '@console/internal/models';
-import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
-import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import {
-  dimensifyHeader,
-  dimensifyRow,
   getName,
   getNamespace,
   getUID,
   createLookup,
   K8sEntityMap,
+  dimensifyHeader,
+  dimensifyRow,
 } from '@console/shared';
+import { NamespaceModel, PodModel } from '@console/internal/models';
+import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
+import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { VmStatus } from '../vm-status/vm-status';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,

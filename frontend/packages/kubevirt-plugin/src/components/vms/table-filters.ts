@@ -1,10 +1,7 @@
 import * as _ from 'lodash';
-import {
-  getSimpleVmStatus,
-  VM_SIMPLE_STATUS_ALL,
-  VM_SIMPLE_STATUS_TO_TEXT,
-} from 'kubevirt-web-ui-components';
+import { getSimpleVmStatus } from 'kubevirt-web-ui-components';
 import { Filter } from '@console/shared';
+import { VM_SIMPLE_STATUS_ALL, VM_SIMPLE_STATUS_TO_TEXT } from '../../statuses/vm/constants';
 
 export const vmStatusFilter: Filter = {
   type: 'vm-status',
