@@ -55,3 +55,16 @@ export type ProvisionConfig = {
   networkResources: NetworkResource[];
   storageResources: StorageResource[];
 };
+
+export type VMTemplateConfig = {
+  name: string;
+  namespace: string;
+  description: string;
+  provisionSource?: ProvisionOption;
+  operatingSystem?: string;
+  flavor?: string;
+  workloadProfile?: string;
+  cloudInit?: CloudInitConfig;
+  storageResources?: StorageResource[];
+  networkResources?: NetworkResource[];
+};
