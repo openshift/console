@@ -39,7 +39,7 @@ import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 import { PodDashboard } from './pod-dashboard';
-import { POD_DETAIL_DASHBOARD_HREF, POD_DETAIL_OVERVIEW_HREF } from './utils/href';
+import { POD_DETAIL_OVERVIEW_HREF } from './utils/href';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -406,7 +406,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
     menuActions={menuActions}
     pages={[
       {
-        href: POD_DETAIL_DASHBOARD_HREF,
+        href: '',
         name: 'Dashboard',
         component: PodDashboard,
       },
