@@ -13,13 +13,13 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Extension } from './extension';
 import { LazyLoader } from './types';
 
-namespace ExtensionProperties {
-  interface DashboardExtension {
-    /** Name of feature flag for this item. */
-    required?: string | string[];
-  }
+export interface DashboardsExtensionProperties {
+  /** Name of feature flag for this item. */
+  required?: string | string[];
+}
 
-  interface DashboardsOverviewHealthSubsystem extends DashboardExtension {
+namespace ExtensionProperties {
+  interface DashboardsOverviewHealthSubsystem extends DashboardsExtensionProperties {
     /** The subsystem's display name */
     title: string;
   }
@@ -69,7 +69,7 @@ namespace ExtensionProperties {
     popupTitle?: string;
   }
 
-  export interface DashboardsTab extends DashboardExtension {
+  export interface DashboardsTab extends DashboardsExtensionProperties {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
@@ -77,7 +77,7 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsCard extends DashboardExtension {
+  export interface DashboardsCard extends DashboardsExtensionProperties {
     /** The tab's ID where this card should be rendered */
     tab: string;
 
@@ -91,7 +91,7 @@ namespace ExtensionProperties {
     span?: DashboardCardSpan;
   }
 
-  export interface DashboardsOverviewQuery extends DashboardExtension {
+  export interface DashboardsOverviewQuery extends DashboardsExtensionProperties {
     /** The original Prometheus query key to replace */
     queryKey: OverviewQuery;
 
@@ -99,7 +99,7 @@ namespace ExtensionProperties {
     query: string;
   }
 
-  export interface DashboardsOverviewTopConsumerItem extends DashboardExtension {
+  export interface DashboardsOverviewTopConsumerItem extends DashboardsExtensionProperties {
     /** The k8s model of top consumer item */
     model: K8sKind;
 
@@ -116,7 +116,7 @@ namespace ExtensionProperties {
     mutator?: ConsumerMutator;
   }
 
-  export interface DashboardsOverviewInventoryItem extends DashboardExtension {
+  export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
     /** Resource which will be fetched and grouped by `mapper` function. */
     resource: FirehoseResource;
 
@@ -136,7 +136,7 @@ namespace ExtensionProperties {
     expandedComponent?: LazyLoader<ExpandedComponentProps>;
   }
 
-  export interface DashboardsInventoryItemGroup extends DashboardExtension {
+  export interface DashboardsInventoryItemGroup extends DashboardsExtensionProperties {
     /** The ID of status group. */
     id: string;
 
@@ -144,7 +144,7 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
   }
 
-  export interface DashboardsOverviewUtilizationItem extends DashboardExtension {
+  export interface DashboardsOverviewUtilizationItem extends DashboardsExtensionProperties {
     /** The utilization item title */
     title: string;
 
@@ -155,7 +155,7 @@ namespace ExtensionProperties {
     humanizeValue: Humanize;
   }
 
-  export interface DashboardsOverviewResourceActivity extends DashboardExtension {
+  export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
     /** Resource to watch */
     k8sResource: FirehoseResource;
 
@@ -172,7 +172,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<K8sActivityProps>;
   }
 
-  export interface DashboardsOverviewPrometheusActivity extends DashboardExtension {
+  export interface DashboardsOverviewPrometheusActivity extends DashboardsExtensionProperties {
     /** Queries to watch */
     queries: string[];
 
@@ -273,7 +273,7 @@ export interface DashboardsOverviewResourceActivity
 }
 
 export const isDashboardsOverviewResourceActivity = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewResourceActivity => e.type === 'Dashboards/Overview/Activity/Resource';
 
 export interface DashboardsOverviewPrometheusActivity
@@ -282,7 +282,7 @@ export interface DashboardsOverviewPrometheusActivity
 }
 
 export const isDashboardsOverviewPrometheusActivity = (
-  e: Extension<any>,
+  e: Extension,
 ): e is DashboardsOverviewPrometheusActivity =>
   e.type === 'Dashboards/Overview/Activity/Prometheus';
 

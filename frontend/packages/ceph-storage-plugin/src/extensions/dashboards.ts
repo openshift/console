@@ -1,12 +1,7 @@
-import { Extension } from '../extension';
+import { Extension, DashboardsExtensionProperties } from '@console/plugin-sdk';
 
 namespace ExtensionProperties {
-  interface DashboardExtension {
-    /** Name of feature flag for this item. */
-    required: string;
-  }
-
-  export interface DashboardsStorageTopConsumerUsed extends DashboardExtension {
+  export interface DashboardsStorageTopConsumerUsed extends DashboardsExtensionProperties {
     /** The name of the storage top consumer used */
     name: string;
 
@@ -17,7 +12,7 @@ namespace ExtensionProperties {
     query: string;
   }
 
-  export interface DashboardsStorageTopConsumerRequested extends DashboardExtension {
+  export interface DashboardsStorageTopConsumerRequested extends DashboardsExtensionProperties {
     /** The name of the storage top consumer requested  */
     name: string;
 
@@ -28,7 +23,7 @@ namespace ExtensionProperties {
     query: string;
   }
 
-  export interface DashboardsStorageCapacityDropdownItem extends DashboardExtension {
+  export interface DashboardsStorageCapacityDropdownItem extends DashboardsExtensionProperties {
     /** The name of the metric */
     metric: string;
 
@@ -52,6 +47,10 @@ export interface DashboardsStorageCapacityDropdownItem
   type: 'Dashboards/Storage/Capacity/Dropdown/Item';
 }
 
+export type DashboardsStorageTopConsumerExtension =
+  | DashboardsStorageTopConsumerUsed
+  | DashboardsStorageTopConsumerRequested;
+
 export const isDashboardsStorageTopConsumerUsed = (
   e: Extension,
 ): e is DashboardsStorageTopConsumerUsed => e.type === 'Dashboards/Storage/TopConsumers/Used';
@@ -65,7 +64,3 @@ export const isDashboardsStorageCapacityDropdownItem = (
   e: Extension,
 ): e is DashboardsStorageCapacityDropdownItem =>
   e.type === 'Dashboards/Storage/Capacity/Dropdown/Item';
-
-export type DashboardStorageExtension =
-  | DashboardsStorageTopConsumerRequested
-  | DashboardsStorageTopConsumerUsed;
