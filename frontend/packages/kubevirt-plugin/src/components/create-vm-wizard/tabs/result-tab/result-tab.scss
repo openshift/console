@@ -1,0 +1,18 @@
+.pf-c-wizard__main-body {
+  height: 100%;
+}
+
+.kubevirt-create-vm-modal__result-tab-outer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.kubevirt-create-vm-modal__result-tab-inner-container {
+  margin: auto;
+  width: 100%;
+}
+
+.kubevirt-create-vm-modal___result-tab-spacing {
+  margin-bottom: 1em;
+}

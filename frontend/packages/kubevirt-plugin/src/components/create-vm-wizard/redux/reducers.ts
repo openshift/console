@@ -15,7 +15,7 @@ const mergeDeepInSpecial = (state, path: string[], value) =>
     return value;
   });
 
-const TAB_UPDATE_KEYS = ['value', 'isValid', 'isLocked', 'hasAllRequiredFilled'];
+const TAB_UPDATE_KEYS = ['value', 'isValid', 'isLocked', 'isPending', 'hasAllRequiredFilled'];
 
 const setTabKeys = (state, tab: VMWizardTab, action: WizardInternalAction) =>
   TAB_UPDATE_KEYS.reduce((nextState, key) => {
@@ -67,8 +67,6 @@ export default (state, action: WizardInternalAction) => {
           [dialogId, 'tabs', payload.tab, 'hasAllRequiredFilled'],
           payload.hasAllRequiredFilled,
         );
-    case InternalActionType.SetTabLocked:
-      return state.setIn([dialogId, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
     case InternalActionType.SetVmSettingsFieldValue:
       return state.setIn(
         [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
