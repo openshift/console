@@ -1,6 +1,6 @@
 import { getName } from '@console/shared';
 import { getAddDiskPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
-import { Patch } from '@console/internal/module/k8s';
+import { ConfigMapKind, Patch } from '@console/internal/module/k8s';
 import {
   getDataVolumeTemplates,
   getDiskBootOrder,
@@ -59,8 +59,12 @@ export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patc
   });
 };
 
-export const getAddDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk: object): Patch[] => {
+export const getAddDiskPatches = (
+  vmLikeEntity: VMLikeEntityKind,
+  disk: object,
+  storageClassConfigMap: ConfigMapKind,
+): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
-    return getAddDiskPatch(vm, disk);
+    return getAddDiskPatch(vm, disk, storageClassConfigMap);
   });
 };
