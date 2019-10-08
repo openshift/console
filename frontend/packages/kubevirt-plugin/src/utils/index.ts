@@ -24,6 +24,9 @@ export const prefixedID = (idPrefix: string, id: string) =>
 
 export const joinIDs = (...ids: string[]) => ids.join('-');
 
+export const isLoaded = (result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>) =>
+  result && result.loaded;
+
 export const getLoadedData = (
   result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
   defaultValue = null,

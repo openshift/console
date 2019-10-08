@@ -30,11 +30,8 @@ export const getValidationObject = (
   type,
 });
 
-export const getValidationErrorType = (validationObject: ValidationObject): ValidationErrorType => {
-  return (
-    validationObject && validationObject.type === ValidationErrorType.Error && validationObject.type
-  );
-};
+export const isValidationError = (validationObject: ValidationObject) =>
+  !!validationObject && validationObject.type === ValidationErrorType.Error;
 
 export const getValidationErrorMessage = (validationObject: ValidationObject): string => {
   return (

@@ -1,55 +1,89 @@
 import * as _ from 'lodash';
-import { getAddNicPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
 import { Patch } from '@console/internal/module/k8s';
-import { getInterfaces, getNetworks, getNicBootOrder } from '../../../selectors/vm';
+import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
-import { VMLikeEntityKind } from '../../../types';
+import { V1Network, V1NetworkInterface, VMLikeEntityKind } from '../../../types';
+import { getSimpleName } from '../../../selectors/utils';
+import { PatchBuilder, PatchOperation } from '../../utils/patch';
+import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
+import { NetworkInterfaceWrapper } from '../../wrapper/vm/network-interface-wrapper';
+import { getShiftBootOrderPatches } from './utils';
 
 export const getRemoveNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
     const nicName = nic.name;
     const nics = getInterfaces(vm);
     const networks = getNetworks(vm);
+    const network = networks.find((n) => getSimpleName(n) === nicName);
+    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
+    const networkChoice = NetworkWrapper.initialize(network);
 
-    const nicIndex = nics.findIndex((d) => d.name === nicName);
-    const networkIndex = networks.findIndex((v) => v.name === nicName);
-
-    const patches: Patch[] = [];
-    if (nicIndex >= 0) {
-      patches.push({
-        op: 'remove',
-        path: `/spec/template/spec/domain/devices/interfaces/${nicIndex}`,
-      });
-    }
-
-    if (networkIndex >= 0) {
-      patches.push({
-        op: 'remove',
-        path: `/spec/template/spec/networks/${networkIndex}`,
-      });
-    }
+    const patches = [
+      new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
+        .setListRemove(nic, nics, getSimpleName)
+        .build(),
+      new PatchBuilder('/spec/template/spec/networks')
+        .setListRemove(network, networks, getSimpleName)
+        .build(),
+    ];
 
     // if pod network is deleted, we need to set autoattachPodInterface to false
-    if (_.get(nic, 'network.pod')) {
-      const op = _.has(vm, 'spec.domain.devices.autoattachPodInterface') ? 'replace' : 'add';
-      patches.push({
-        op,
-        path: '/spec/template/spec/domain/devices/autoattachPodInterface',
-        value: false,
-      });
+    if (networkChoice.isPodNetwork()) {
+      patches.push(
+        new PatchBuilder('/spec/template/spec/domain/devices/autoattachPodInterface')
+          .setOperation(PatchOperation.ADD)
+          .setValue(false)
+          .build(),
+      );
     }
 
-    const bootOrderIndex = getNicBootOrder(nic);
-    if (bootOrderIndex != null) {
-      return [...patches, ...getDeviceBootOrderPatch(vm, 'interfaces', nicName)];
+    if (networkInterfaceWrapper.hasBootOrder()) {
+      patches.push(
+        ...[
+          ...getShiftBootOrderPatches(
+            '/spec/template/spec/domain/devices/disks',
+            getDisks(vm),
+            null,
+            networkInterfaceWrapper.getBootOrder(),
+          ),
+          ...getShiftBootOrderPatches(
+            '/spec/template/spec/domain/devices/interfaces',
+            nics,
+            nicName,
+            networkInterfaceWrapper.getBootOrder(),
+          ),
+        ],
+      );
     }
 
-    return patches;
+    return _.compact(patches);
   });
 };
 
-export const getAddNicPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
+export const getAddNicPatches = (
+  vmLikeEntity: VMLikeEntityKind,
+  {
+    nic,
+    network,
+    oldNICName,
+    oldNetworkName,
+  }: { nic: V1NetworkInterface; network: V1Network; oldNICName: string; oldNetworkName: string },
+): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
-    return getAddNicPatch(vm, nic);
+    const nics = getInterfaces(vm, null);
+    const networks = getNetworks(vm, null);
+
+    return [
+      new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
+        .setListUpdate(nic, nics, (currentNIC) =>
+          currentNIC === nic ? oldNICName : getSimpleName(currentNIC),
+        )
+        .build(),
+      new PatchBuilder('/spec/template/spec/networks')
+        .setListUpdate(network, networks, (currentNetwork) =>
+          currentNetwork === network ? oldNetworkName : getSimpleName(currentNetwork),
+        )
+        .build(),
+    ].filter((patch) => patch);
   });
 };

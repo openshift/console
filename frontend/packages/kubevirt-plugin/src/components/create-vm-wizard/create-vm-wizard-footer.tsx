@@ -10,6 +10,8 @@ import {
   WizardStep,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
+import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
+import { getDialogUIError } from '../../utils/strings';
 import { ALL_VM_WIZARD_TABS, VMWizardProps, VMWizardTab } from './types';
 import {
   hasStepAllRequiredFilled,
@@ -37,22 +39,14 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   stepData,
   isCreateTemplate,
 }) => {
-  const [showError, setShowError] = React.useState(false);
-  const [prevIsValid, setPrevIsValid] = React.useState(false);
-
+  const [showError, setShowError, checkValidity] = useShowErrorToggler();
   return (
     <WizardContextConsumer>
       {({ onNext, onBack, onClose, activeStep, goToStepById }: WizardContext) => {
         const activeStepID = activeStep.id as VMWizardTab;
         const isLocked = _.some(ALL_VM_WIZARD_TABS, (id) => isStepLocked(stepData, id));
         const isValid = isStepValid(stepData, activeStepID);
-
-        if (isValid !== prevIsValid) {
-          setPrevIsValid(isValid);
-          if (isValid) {
-            setShowError(false);
-          }
-        }
+        checkValidity(isValid);
 
         const isFirstStep = activeStepID === VMWizardTab.VM_SETTINGS;
         const isFinishingStep = [VMWizardTab.REVIEW, VMWizardTab.RESULT].includes(activeStepID);
@@ -65,11 +59,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
           <footer className={css(styles.wizardFooter)}>
             {!isValid && showError && (
               <Alert
-                title={
-                  hasStepAllRequiredFilled(stepData, activeStepID)
-                    ? 'Please correct the invalid fields.'
-                    : 'Please fill in all required fields.'
-                }
+                title={getDialogUIError(hasStepAllRequiredFilled(stepData, activeStepID))}
                 isInline
                 variant="danger"
                 className="kubevirt-create-vm-modal__footer-error"

@@ -1,142 +1,104 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import * as _ from 'lodash';
 import { Table } from '@console/internal/components/factory';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { sortable } from '@patternfly/react-table';
 import { createBasicLookup } from '@console/shared';
 import { VMLikeEntityKind } from '../../types';
-import { getInterfaces, getNetworks, getVmPreferableNicBus, asVM } from '../../selectors/vm';
+import { getInterfaces, getNetworks, asVM } from '../../selectors/vm';
 import { dimensifyHeader } from '../../utils/table';
 import { VMLikeEntityTabProps } from '../vms/types';
+import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
+import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
+import { getSimpleName } from '../../selectors/utils';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NicRow } from './nic-row';
-import { NetworkBundle, NetworkRowType, VMNicRowProps } from './types';
-import { CreateNicRowConnected } from './create-nic-row';
-import { getInterfaceBinding, getNetworkName, nicTableColumnClasses } from './utils';
+import { NetworkBundle } from './types';
+import { nicTableColumnClasses } from './utils';
 
-export const VMNicRow: React.FC<VMNicRowProps> = (props) => {
-  switch (props.obj.networkType) {
-    case NetworkRowType.NETWORK_TYPE_VM:
-      return <NicRow {...props} key={NetworkRowType.NETWORK_TYPE_VM} />;
-    case NetworkRowType.NETWORK_TYPE_CREATE:
-      return <CreateNicRowConnected {...props} key={NetworkRowType.NETWORK_TYPE_CREATE} />;
-    default:
-      return null;
-  }
+const getNicsData = (vmLikeEntity: VMLikeEntityKind): NetworkBundle[] => {
+  const vm = asVM(vmLikeEntity);
+  const networkLookup = createBasicLookup(getNetworks(vm), getSimpleName);
+
+  return getInterfaces(vm).map((nic) => {
+    const network = networkLookup[nic.name];
+    const interfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
+    const networkWrapper = NetworkWrapper.initialize(network);
+    return {
+      nic,
+      network,
+      // for sorting
+      name: interfaceWrapper.getName(),
+      model: interfaceWrapper.getReadableModel(),
+      networkName: networkWrapper.getReadableName(),
+      interfaceType: interfaceWrapper.getTypeValue(),
+      macAddress: interfaceWrapper.getMACAddress(),
+    };
+  });
 };
 
-const getNicsData = (
-  vmLikeEntity: VMLikeEntityKind,
-  addNewNic: boolean,
-  rerenderFlag: boolean,
-): NetworkBundle[] => {
-  const vm = asVM(vmLikeEntity);
-  const networkLookup = createBasicLookup(getNetworks(vm), (network) => _.get(network, 'name'));
-
-  const nicsWithType = getInterfaces(vm).map((nic) => ({
-    ...nic, // for sorting
-    networkType: NetworkRowType.NETWORK_TYPE_VM,
-    networkName: getNetworkName(networkLookup[nic.name]),
-    binding: getInterfaceBinding(nic),
-    nic,
-  }));
-
-  return addNewNic
-    ? [{ networkType: NetworkRowType.NETWORK_TYPE_CREATE, rerenderFlag }, ...nicsWithType]
-    : nicsWithType;
-};
-
-export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
-  const [isCreating, setIsCreating] = useSafetyFirst(false);
-  const [createError, setCreateError] = useSafetyFirst(null);
-  const [rerenderFlag, setRerenderFlag] = useSafetyFirst(false); // TODO: HACK: fire changes in Virtualize Table for CreateNicRow. Remove after deprecating CreateNicRow
-
-  const vm = asVM(vmLikeEntity);
-  const preferableNicBus = getVmPreferableNicBus(vm);
-
-  return (
-    <div className="co-m-list">
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Button
-            bsStyle="primary"
-            id="create-nic-btn"
-            onClick={() => setIsCreating(true)}
-            disabled={isCreating}
-          >
-            Create Nic
-          </Button>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
-        {createError && (
-          <Alert
-            variant="danger"
-            title={createError}
-            className="kubevirt-vm-create-device-error"
-            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
-          />
-        )}
-        <Table
-          aria-label="VM Nics List"
-          data={getNicsData(vmLikeEntity, isCreating, rerenderFlag)}
-          Header={() =>
-            dimensifyHeader(
-              [
-                {
-                  title: 'Name',
-                  sortField: 'name',
-                  transforms: [sortable],
-                },
-                {
-                  title: 'Model',
-                  sortField: 'model',
-                  transforms: [sortable],
-                },
-                {
-                  title: 'Network',
-                  sortField: 'networkName',
-                  transforms: [sortable],
-                },
-                {
-                  title: 'Binding Method',
-                  sortField: 'binding',
-                  transforms: [sortable],
-                },
-                {
-                  title: 'MAC Address',
-                  sortField: 'macAddress',
-                  transforms: [sortable],
-                },
-                {
-                  title: '',
-                },
-              ],
-              nicTableColumnClasses,
-            )
+export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => (
+  <div className="co-m-list">
+    <div className="co-m-pane__filter-bar">
+      <div className="co-m-pane__filter-bar-group">
+        <Button
+          bsStyle="primary"
+          id="create-nic-btn"
+          onClick={() =>
+            nicModalEnhanced({
+              vmLikeEntity,
+            })
           }
-          Row={VMNicRow}
-          customData={{
-            vmLikeEntity,
-            vm,
-            preferableNicBus,
-            interfaceLookup: createBasicLookup(getInterfaces(vm), (intface) =>
-              _.get(intface, 'name'),
-            ),
-            onCreateRowDismiss: () => {
-              setIsCreating(false);
-            },
-            onCreateRowError: (error) => {
-              setIsCreating(false);
-              setCreateError(error);
-            },
-            forceRerender: () => setRerenderFlag(!rerenderFlag),
-          }}
-          virtualize
-          loaded
-        />
+        >
+          Create Network Interface
+        </Button>
       </div>
     </div>
-  );
-};
+    <div className="co-m-pane__body">
+      <Table
+        aria-label="VM Nics List"
+        data={getNicsData(vmLikeEntity)}
+        Header={() =>
+          dimensifyHeader(
+            [
+              {
+                title: 'Name',
+                sortField: 'name',
+                transforms: [sortable],
+              },
+              {
+                title: 'Model',
+                sortField: 'model',
+                transforms: [sortable],
+              },
+              {
+                title: 'Network',
+                sortField: 'networkName',
+                transforms: [sortable],
+              },
+              {
+                title: 'Type',
+                sortField: 'interfaceType',
+                transforms: [sortable],
+              },
+              {
+                title: 'MAC Address',
+                sortField: 'macAddress',
+                transforms: [sortable],
+              },
+              {
+                title: '',
+              },
+            ],
+            nicTableColumnClasses,
+          )
+        }
+        Row={NicRow}
+        customData={{
+          vmLikeEntity,
+        }}
+        virtualize
+        loaded
+      />
+    </div>
+  </div>
+);

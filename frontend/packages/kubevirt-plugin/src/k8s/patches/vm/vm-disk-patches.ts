@@ -3,7 +3,7 @@ import { getAddDiskPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-compon
 import { ConfigMapKind, Patch } from '@console/internal/module/k8s';
 import {
   getDataVolumeTemplates,
-  getDiskBootOrder,
+  getDeviceBootOrder,
   getDisks,
   getVolumeDataVolumeName,
   getVolumes,
@@ -50,7 +50,7 @@ export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patc
       }
     }
 
-    const bootOrderIndex = getDiskBootOrder(disk);
+    const bootOrderIndex = getDeviceBootOrder(disk);
     if (bootOrderIndex != null) {
       return [...patches, ...getDeviceBootOrderPatch(vm, 'disks', diskName)];
     }

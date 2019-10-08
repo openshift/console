@@ -1,4 +1,4 @@
-import { NetworkBinding, NetworkType, POD_NETWORK } from '../../../../constants/vm';
+import { NetworkInterfaceType, NetworkType, POD_NETWORK } from '../../../../constants/vm';
 
 export const podNetwork = {
   rootNetwork: {},
@@ -9,7 +9,7 @@ export const podNetwork = {
   editable: true,
   edit: false,
   networkType: NetworkType.POD,
-  binding: NetworkBinding.MASQUERADE,
+  binding: NetworkInterfaceType.MASQUERADE,
 };
 
 export const getNetworksInitialState = () => ({

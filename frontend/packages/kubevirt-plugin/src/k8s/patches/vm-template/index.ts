@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { TemplateKind, Patch } from '@console/internal/module/k8s';
 import { VMLikeEntityKind, VMKind } from '../../../types';
 import { isVM } from '../../../selectors/vm';
@@ -26,7 +27,7 @@ export const getVMLikePatches = (
     templatePrefix = getTemplatePatchPrefix(vmLikeEntity as TemplateKind, vm);
   }
 
-  const patches = vm ? patchesSupplier(vm) : [];
+  const patches = _.compact(vm ? patchesSupplier(vm) : []);
 
   return templatePrefix ? patches.map((p) => addPrefixToPatch(templatePrefix, p)) : patches;
 };
