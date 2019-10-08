@@ -7,4 +7,5 @@ export { default as SuccessStatus } from './SuccessStatus';
 export { default as ErrorStatus } from './ErrorStatus';
 export { default as InfoStatus } from './InfoStatus';
 export { default as ProgressStatus } from './ProgressStatus';
+export { default as SecondaryStatus } from './SecondaryStatus';
 export * from './Icons';

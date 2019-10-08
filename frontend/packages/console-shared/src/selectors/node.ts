@@ -40,3 +40,11 @@ export const isNodeReady = (node: NodeKind): boolean => {
 
   return readyState && readyState.status === 'True';
 };
+
+export const getNodeSecondaryStatus = (node: NodeKind): string[] => {
+  const states = [];
+  if (isNodeUnschedulable(node)) {
+    states.push('Scheduling disabled');
+  }
+  return states;
+};

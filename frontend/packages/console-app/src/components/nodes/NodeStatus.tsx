@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Status, isNodeUnschedulable } from '@console/shared';
+import { Status, SecondaryStatus, getNodeSecondaryStatus } from '@console/shared';
 import { NodeKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '../../status/node';
 
@@ -10,7 +10,7 @@ type NodeStatusProps = {
 const NodeStatus: React.FC<NodeStatusProps> = ({ node }) => (
   <>
     <Status status={nodeStatus(node)} />
-    {isNodeUnschedulable(node) && <small className="text-muted">Scheduling Disabled</small>}
+    <SecondaryStatus status={getNodeSecondaryStatus(node)} />
   </>
 );
 export default NodeStatus;
