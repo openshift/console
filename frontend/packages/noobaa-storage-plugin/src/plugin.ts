@@ -12,7 +12,7 @@ import {
   RoutePage,
   YAMLTemplate,
 } from '@console/plugin-sdk';
-import { GridPosition } from '@console/internal/components/dashboard/grid';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 

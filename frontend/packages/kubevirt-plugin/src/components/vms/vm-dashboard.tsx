@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Dashboard, DashboardGrid } from '@console/internal/components/dashboard';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { VMKind, VMIKind } from '../../types';
 import { VMDetailsCard, VMInventoryCard } from '../dashboards-page/vm-dashboard';

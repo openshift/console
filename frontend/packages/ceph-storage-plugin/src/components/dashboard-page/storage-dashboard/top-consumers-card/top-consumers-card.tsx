@@ -1,21 +1,21 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as plugins from '@console/internal/plugins';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '@console/internal/reducers/features';
 import {
   getFlagsForExtensions,
   isDashboardExtensionInUse,
-} from '@console/internal/components/dashboards-page/utils';
+} from '@console/internal/components/dashboard/utils';
 import {
   DashboardsStorageTopConsumerExtension,
   DashboardsStorageTopConsumerUsed,

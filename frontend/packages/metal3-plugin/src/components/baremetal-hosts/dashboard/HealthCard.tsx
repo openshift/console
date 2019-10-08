@@ -3,20 +3,18 @@ import * as _ from 'lodash';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
-import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
-import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import HealthBody from '@console/shared/src/components/dashboard/health-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/health-card/HealthItem';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
-import {
-  AlertsBody,
-  AlertItem,
-  getAlerts,
-} from '@console/internal/components/dashboard/health-card';
+import AlertsBody from '@console/shared/src/components/dashboard/health-card/AlertsBody';
+import AlertItem from '@console/shared/src/components/dashboard/health-card/AlertItem';
+import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import {
   HOST_STATUS_OK,

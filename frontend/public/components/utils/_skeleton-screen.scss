@@ -1,5 +1,4 @@
-$skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
-$skeleton-color: #eaedf1;
+@import '~@console/shared/src/styles/skeleton-screen';
 
 $skeleton-detail-bone-height: 24px;
 $skeleton-detail-bone: linear-gradient(white $skeleton-detail-bone-height, transparent 0);

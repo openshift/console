@@ -38,7 +38,7 @@ import { requirePrometheus, Area } from './graphs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
-import { PodDashboard } from './pod-dashboard';
+import { PodDashboard } from './dashboard/pod-dashboard/pod-dashboard';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);

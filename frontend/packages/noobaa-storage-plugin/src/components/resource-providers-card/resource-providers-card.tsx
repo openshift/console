@@ -1,16 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { FieldLevelHelp } from '@console/internal/components/utils/index';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getMetric } from '../../utils';
 import { ResourceProvidersBody } from './resource-providers-card-body';

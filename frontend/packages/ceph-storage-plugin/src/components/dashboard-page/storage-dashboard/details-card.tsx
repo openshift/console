@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
-import { DetailItem } from '@console/internal/components/dashboard/details-card/detail-item';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DetailsBody } from '@console/internal/components/dashboard/details-card/details-body';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';

@@ -3,13 +3,13 @@ import * as _ from 'lodash';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
-import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
-import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
-import { DashboardCardTitle } from '@console/internal/components/dashboard/dashboard-card/card-title';
-import { InventoryBody } from '@console/internal/components/dashboard/inventory-card/inventory-body';
-import { InventoryItem } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
+import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';

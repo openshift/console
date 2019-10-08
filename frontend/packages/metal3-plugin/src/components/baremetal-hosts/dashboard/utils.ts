@@ -1,5 +1,5 @@
-import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
-import { InventoryStatusGroup } from '@console/internal/components/dashboard/inventory-card/status-group';
+import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getMachineNode, getName } from '@console/shared/src/selectors';
 import { getHostStatus } from '../../../utils/host-status';

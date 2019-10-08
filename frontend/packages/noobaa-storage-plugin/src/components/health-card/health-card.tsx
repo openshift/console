@@ -1,24 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  AlertsBody,
-  AlertItem,
-  getAlerts,
-  HealthBody,
-  HealthItem,
-} from '@console/internal/components/dashboard/health-card';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+import AlertsBody from '@console/shared/src/components/dashboard/health-card/AlertsBody';
+import AlertItem from '@console/shared/src/components/dashboard/health-card/AlertItem';
+import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
+import HealthBody from '@console/shared/src/components/dashboard/health-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/health-card/HealthItem';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { HealthState } from '@console/internal/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';

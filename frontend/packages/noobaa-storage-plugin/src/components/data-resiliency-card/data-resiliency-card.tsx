@@ -2,17 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { pluralize, Progress } from '@patternfly/react-core';
 import { GreenCheckCircleIcon } from '@console/shared';
-import {
-  DashboardCard,
-  DashboardCardBody,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from '@console/internal/components/dashboard/dashboard-card';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { FieldLevelHelp } from '@console/internal/components/utils/index';
 import {
   DashboardItemProps,
   withDashboardResources,
-} from '@console/internal/components/dashboards-page/with-dashboard-resources';
+} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
