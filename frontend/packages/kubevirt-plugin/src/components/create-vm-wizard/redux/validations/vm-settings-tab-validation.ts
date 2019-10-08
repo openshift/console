@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import { List } from 'immutable';
+import { ValidationErrorType, ValidationObject } from '@console/shared';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
   hasVmSettingsChanged,
@@ -15,7 +16,6 @@ import {
   VmSettingsValidator,
 } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
-import { ValidationErrorType, ValidationObject } from '../../../../utils/validations/types';
 import {
   validateUserTemplateProvisionSource,
   validateVmLikeEntityName,

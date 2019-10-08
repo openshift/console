@@ -1,7 +1,10 @@
-import { getValidationObject, validateDNS1123SubdomainValue } from '../common';
-import { makeSentence } from '../../grammar';
+import {
+  asValidationObject,
+  makeSentence,
+  validateDNS1123SubdomainValue,
+  ValidationObject,
+} from '@console/shared';
 import { MAC_ADDRESS_INVALID_ERROR, NETWORK_MULTUS_NAME_EXISTS, NIC_NAME_EXISTS } from '../strings';
-import { ValidationObject } from '../types';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../constants/vm';
@@ -15,7 +18,7 @@ export const validateNicName = (
   let validation = validateDNS1123SubdomainValue(name, { subject });
 
   if (!validation && usedInterfacesNames && usedInterfacesNames.has(name)) {
-    validation = getValidationObject(NIC_NAME_EXISTS);
+    validation = asValidationObject(NIC_NAME_EXISTS);
   }
 
   return validation;
@@ -30,7 +33,7 @@ export const validateNetwork = (
     usedMultusNetworkNames &&
     usedMultusNetworkNames.has(network.getMultusNetworkName())
   ) {
-    return getValidationObject(NETWORK_MULTUS_NAME_EXISTS);
+    return asValidationObject(NETWORK_MULTUS_NAME_EXISTS);
   }
 
   return null;
@@ -38,7 +41,7 @@ export const validateNetwork = (
 
 export const validateMACAddress = (mac: string): ValidationObject => {
   const isValid = !mac || isValidMAC(mac);
-  return isValid ? null : getValidationObject(makeSentence(MAC_ADDRESS_INVALID_ERROR));
+  return isValid ? null : asValidationObject(makeSentence(MAC_ADDRESS_INVALID_ERROR));
 };
 
 export const validateNIC = (

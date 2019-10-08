@@ -1,5 +1,5 @@
 import { Patch } from '@console/internal/module/k8s';
-import { assureEndsWith } from '../../utils/grammar';
+import { assureEndsWith } from '@console/shared';
 
 export const patchSafeValue = (value: string): string => value.replace('/', '~1');
 

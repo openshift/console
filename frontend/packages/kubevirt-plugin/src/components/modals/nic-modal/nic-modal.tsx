@@ -12,12 +12,12 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ValidationErrorType } from '@console/shared';
 import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
 import { NetworkAttachmentDefinitionModel } from '../../../models';
 import { validateNIC } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
 import { FormRow } from '../../form/form-row';
-import { ValidationErrorType } from '../../../utils/validations/types';
 import { ignoreCaseSort } from '../../../utils/sort';
 import {
   asFormSelectValue,

@@ -1,34 +1,15 @@
-import { getName, getNamespace } from '@console/shared';
 import * as _ from 'lodash';
-import { addMissingSubject, joinGrammaticallyListOfItems, makeSentence } from '../grammar';
-import { parseUrl } from '../url';
 import {
-  DNS1123_END_ERROR,
-  DNS1123_START_END_ERROR,
-  DNS1123_START_ERROR,
-  DNS1123_TOO_LONG_ERROR,
-  EMPTY_ERROR,
-  END_WHITESPACE_ERROR,
-  START_WHITESPACE_ERROR,
-  URL_INVALID_ERROR,
-} from './strings';
-import { ValidationErrorType, ValidationObject } from './types';
-
-const alphanumericRegex = '[a-zA-Z0-9]';
-
-const DNS_1123_OFFENDING_CHARACTERS = {
-  ',': 'comma',
-  "'": 'apostrophe', // eslint-disable-line quotes
-  _: 'underscore',
-};
-
-export const getValidationObject = (
-  message: string,
-  type: ValidationErrorType = ValidationErrorType.Error,
-): ValidationObject => ({
-  message,
-  type,
-});
+  addMissingSubject,
+  getName,
+  getNamespace,
+  asValidationObject,
+  validateEmptyValue,
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/shared';
+import { parseUrl } from '../url';
+import { END_WHITESPACE_ERROR, START_WHITESPACE_ERROR, URL_INVALID_ERROR } from './strings';
 
 export const isValidationError = (validationObject: ValidationObject) =>
   !!validationObject && validationObject.type === ValidationErrorType.Error;
@@ -52,84 +33,7 @@ export const validateEntityAlreadyExists = (
   const exists =
     entities &&
     entities.some((entity) => getName(entity) === name && getNamespace(entity) === namespace);
-  return exists ? getValidationObject(addMissingSubject(errorMessage, subject)) : null;
-};
-
-export const validateEmptyValue = (
-  value: string,
-  { subject } = { subject: undefined },
-): ValidationObject => {
-  if (!value) {
-    return getValidationObject(
-      addMissingSubject(makeSentence(EMPTY_ERROR, false), subject),
-      ValidationErrorType.TrivialError,
-    );
-  }
-  return null;
-};
-
-// DNS-1123 subdomain
-export const validateDNS1123SubdomainValue = (
-  value: string,
-  { subject } = { subject: undefined },
-): ValidationObject => {
-  const emptyError = validateEmptyValue(value, { subject });
-  if (emptyError) {
-    return emptyError;
-  }
-
-  const forbiddenCharacters = new Set<string>();
-  const validationSentences = [];
-
-  if (value.length > 253) {
-    validationSentences.push(DNS1123_TOO_LONG_ERROR);
-  }
-
-  const startsWithAlphaNumeric = value.charAt(0).match(alphanumericRegex);
-  const endsWithAlphaNumeric = value.charAt(value.length - 1).match(alphanumericRegex);
-
-  if (!startsWithAlphaNumeric && !endsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_START_END_ERROR);
-  } else if (!startsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_START_ERROR);
-  } else if (!endsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_END_ERROR);
-  }
-
-  for (const c of value) {
-    if (c.toLowerCase() !== c) {
-      forbiddenCharacters.add('uppercase');
-    }
-
-    if (!c.match('[-a-zA-Z0-9]')) {
-      let offender;
-      if (c.match('\\s')) {
-        offender = 'whitespace';
-      } else {
-        offender = DNS_1123_OFFENDING_CHARACTERS[c] || `'${c}'`;
-      }
-
-      forbiddenCharacters.add(offender);
-    }
-  }
-
-  let result = null;
-
-  if (validationSentences.length > 0) {
-    result = makeSentence(joinGrammaticallyListOfItems(validationSentences), false);
-  }
-
-  if (forbiddenCharacters.size > 0) {
-    const forbiddenChars = joinGrammaticallyListOfItems(
-      [...forbiddenCharacters].sort((a, b) => b.length - a.length),
-    );
-    const forbiddenCharsSentence = makeSentence(`${forbiddenChars} characters are not allowed`);
-    result = result ? `${result} ${forbiddenCharsSentence}` : forbiddenCharsSentence;
-  }
-
-  return (
-    result && getValidationObject(addMissingSubject(result, subject), ValidationErrorType.Error)
-  );
+  return exists ? asValidationObject(addMissingSubject(errorMessage, subject)) : null;
 };
 
 export const validatePositiveInteger = (
@@ -140,7 +44,7 @@ export const validatePositiveInteger = (
   if (emptyError) {
     return emptyError;
   }
-  return isPositiveNumber(value) ? null : getValidationObject('must be positive integer');
+  return isPositiveNumber(value) ? null : asValidationObject('must be positive integer');
 };
 
 export const validateTrim = (
@@ -162,7 +66,7 @@ export const validateTrim = (
   }
 
   return resultErrror
-    ? getValidationObject(addMissingSubject(resultErrror, subject), ValidationErrorType.Error)
+    ? asValidationObject(addMissingSubject(resultErrror, subject), ValidationErrorType.Error)
     : null;
 };
 
@@ -175,7 +79,5 @@ export const validateURL = (
     return trimError;
   }
 
-  return parseUrl(value)
-    ? null
-    : getValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
+  return parseUrl(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
 };

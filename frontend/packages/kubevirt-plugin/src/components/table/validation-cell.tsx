@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { ValidationErrorType, ValidationObject } from '../../utils/validations/types';
+import { ValidationErrorType, ValidationObject } from '@console/shared';
 
 import './validation-cell.scss';
 

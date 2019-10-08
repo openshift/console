@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { ValidationErrorType } from '@console/shared';
 import { VMWizardStorageWithWrappers } from '../../types';
 import { FormRow } from '../../../form/form-row';
-import { ValidationErrorType } from '../../../../utils/validations/types';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
