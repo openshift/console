@@ -255,6 +255,14 @@ export const ReplicationControllersList = (props) => (
   />
 );
 
-export const ReplicationControllersPage = (props) => (
-  <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />
-);
+export const ReplicationControllersPage = (props) => {
+  const { canCreate = true } = props;
+  return (
+    <ListPage
+      canCreate={canCreate}
+      kind="ReplicationController"
+      ListComponent={ReplicationControllersList}
+      {...props}
+    />
+  );
+};
