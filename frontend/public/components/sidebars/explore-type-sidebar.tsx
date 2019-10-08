@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core';
 
 import {
   getDefinitionKey,
@@ -94,13 +94,14 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                 {isLast ? (
                   crumb
                 ) : (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link btn-link--no-btn-default-values"
                     onClick={(e) => breadcrumbClicked(e, i)}
+                    isInline
+                    variant="link"
                   >
                     {crumb}
-                  </button>
+                  </Button>
                 )}
               </BreadcrumbItem>
             );
@@ -135,13 +136,14 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   </p>
                 )}
                 {path && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link btn-link--no-btn-default-values"
                     onClick={(e) => drilldown(e, name, definition.description, path)}
+                    isInline
+                    variant="link"
                   >
                     View Details
-                  </button>
+                  </Button>
                 )}
               </li>
             );
