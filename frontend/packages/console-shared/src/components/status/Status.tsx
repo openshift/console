@@ -13,12 +13,10 @@ import ProgressStatus from './ProgressStatus';
 import ErrorStatus from './ErrorStatus';
 import SuccessStatus from './SuccessStatus';
 import InfoStatus from './InfoStatus';
+import { StatusComponentProps } from './types';
 
-export type StatusProps = {
-  status?: string;
-  title?: string;
-  iconOnly?: boolean;
-  noTooltip?: boolean;
+type StatusProps = StatusComponentProps & {
+  status: string;
 };
 
 const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip }) => {

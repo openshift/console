@@ -8,4 +8,5 @@ export { default as ErrorStatus } from './ErrorStatus';
 export { default as InfoStatus } from './InfoStatus';
 export { default as ProgressStatus } from './ProgressStatus';
 export { default as SecondaryStatus } from './SecondaryStatus';
+export { default as PendingStatus } from './PendingStatus';
 export * from './Icons';

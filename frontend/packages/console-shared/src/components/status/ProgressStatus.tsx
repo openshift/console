@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { InProgressIcon } from '@patternfly/react-icons';
-import StatusIconAndText from './StatusIconAndText';
+import { StatusComponentProps } from './types';
+import GenericStatus from './GenericStatus';
 
-type ProgressStatusProps = {
-  title?: string;
-  iconOnly?: boolean;
-  noTooltip?: boolean;
-};
-
-const ProgressStatus: React.FC<ProgressStatusProps> = (props) => (
-  <StatusIconAndText {...props} icon={<InProgressIcon />} />
+const ProgressStatus: React.FC<StatusComponentProps> = (props) => (
+  <GenericStatus {...props} Icon={InProgressIcon} />
 );
 
 export default ProgressStatus;
