@@ -9,17 +9,10 @@ import {
 } from '@patternfly/react-icons';
 import { DASH } from '../../constants';
 import StatusIconAndText from './StatusIconAndText';
-import ProgressStatus from './ProgressStatus';
-import ErrorStatus from './ErrorStatus';
-import SuccessStatus from './SuccessStatus';
-import InfoStatus from './InfoStatus';
+import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import { StatusComponentProps } from './types';
 
-type StatusProps = StatusComponentProps & {
-  status: string;
-};
-
-const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip }) => {
+export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip }) => {
   const statusProps = { title: title || status, iconOnly, noTooltip };
   switch (status) {
     case 'New':
@@ -78,4 +71,14 @@ const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTo
   }
 };
 
-export default Status;
+export const StatusIcon: React.FC<StatusIconProps> = ({ status }) => (
+  <Status status={status} iconOnly />
+);
+
+type StatusIconProps = {
+  status: string;
+};
+
+type StatusProps = StatusComponentProps & {
+  status: string;
+};

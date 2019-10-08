@@ -7,15 +7,11 @@ import {
 import {
   global_warning_color_100 as warningColor,
   global_danger_color_100 as dangerColor,
+  chart_color_green_400 as okColor,
 } from '@patternfly/react-tokens';
 
-type ColoredIconProps = {
-  className?: string;
-  alt?: string;
-};
-
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
-  <CheckCircleIcon color="var(--pf-chart-color-green-400)" className={className} alt={alt} />
+  <CheckCircleIcon color={okColor.value} className={className} alt={alt} />
 );
 
 export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
@@ -25,3 +21,8 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({ className
 export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
   <ExclamationTriangleIcon color={warningColor.value} className={className} alt={alt} />
 );
+
+type ColoredIconProps = {
+  className?: string;
+  alt?: string;
+};

@@ -2,11 +2,6 @@ import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import StatusIconAndText from './StatusIconAndText';
 
-type PopoverStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
-  activeIcon?: React.ReactElement;
-  hideHeader?: boolean;
-};
-
 const PopoverStatus: React.FC<PopoverStatusProps> = ({
   title,
   hideHeader,
@@ -37,6 +32,11 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
       </Button>
     </Popover>
   );
+};
+
+type PopoverStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
+  activeIcon?: React.ReactElement;
+  hideHeader?: boolean;
 };
 
 export default PopoverStatus;
