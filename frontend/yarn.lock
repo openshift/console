@@ -7248,7 +7248,7 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
-kubevirt-web-ui-components@~0.1.45:
+kubevirt-web-ui-components@0.1.45:
   version "0.1.45"
   resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.45.tgz#600569cec9662cd178f62e80f4621aee9d211696"
   integrity sha512-BLGbsYDR95WgGrT9RmrejRXCKdV0e7YBSN3RsuGzOMmXceWJ/VdlKFPFZUpCJ8g9BKqRxHMXFxBd3w/qRqQuNQ==
