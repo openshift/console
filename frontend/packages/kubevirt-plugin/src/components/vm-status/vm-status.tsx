@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { OffIcon, UnknownIcon, InProgressIcon, HourglassHalfIcon } from '@patternfly/react-icons';
 import {
-  OkIcon,
-  OffIcon,
-  UnknownIcon,
-  InProgressIcon,
-  HourglassHalfIcon,
-  ErrorCircleOIcon,
-} from '@patternfly/react-icons';
-import { PopoverStatus, StatusIconAndText, getNamespace, getName } from '@console/shared';
+  PopoverStatus,
+  StatusIconAndText,
+  getNamespace,
+  getName,
+  RedExclamationCircleIcon,
+  GreenCheckCircleIcon,
+} from '@console/shared';
 import { Progress, ProgressVariant, ProgressSize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
@@ -55,7 +55,7 @@ const getAdditionalImportText = (pod: PodKind): string => {
 };
 
 const VmStatusPopover: React.FC<VmStatusPopoverProps> = ({
-  IconComponent,
+  icon,
   title,
   message,
   children,
@@ -63,7 +63,7 @@ const VmStatusPopover: React.FC<VmStatusPopoverProps> = ({
   linkTo,
   linkMessage,
 }) => (
-  <PopoverStatus title={title} icon={<IconComponent />}>
+  <PopoverStatus title={title} icon={icon}>
     {message}
     {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
     {progress && (
@@ -87,13 +87,13 @@ const VmStatusPopover: React.FC<VmStatusPopoverProps> = ({
 );
 
 const VmStatusInProgress: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover IconComponent={InProgressIcon} {...props} />
+  <VmStatusPopover icon={<InProgressIcon />} {...props} />
 );
 const VmStatusPending: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover IconComponent={HourglassHalfIcon} {...props} />
+  <VmStatusPopover icon={<HourglassHalfIcon />} {...props} />
 );
 const VmStatusError: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover IconComponent={ErrorCircleOIcon} {...props} />
+  <VmStatusPopover icon={<RedExclamationCircleIcon />} {...props} />
 );
 
 export const VmStatus: React.FC<VmStatusProps> = ({ vm, pods, migrations, verbose = false }) => {
@@ -225,7 +225,7 @@ export const VmStatus: React.FC<VmStatusProps> = ({ vm, pods, migrations, verbos
         />
       );
     case VM_STATUS_RUNNING:
-      return <StatusIconAndText title="Running" icon={<OkIcon />} />;
+      return <StatusIconAndText title="Running" icon={<GreenCheckCircleIcon />} />;
     case VM_STATUS_OFF:
       return <StatusIconAndText title="Off" icon={<OffIcon />} />;
     default:
@@ -247,7 +247,7 @@ type VmStatusSpecificProps = {
 };
 
 type VmStatusPopoverProps = VmStatusSpecificProps & {
-  IconComponent: React.ComponentType<{}>;
+  icon: React.ReactElement;
 };
 
 type VmStatusProps = {
