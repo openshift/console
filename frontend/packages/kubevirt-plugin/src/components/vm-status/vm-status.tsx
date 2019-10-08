@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { OffIcon, UnknownIcon, InProgressIcon, HourglassHalfIcon } from '@patternfly/react-icons';
+import { OffIcon, UnknownIcon } from '@patternfly/react-icons';
 import {
   PopoverStatus,
   StatusIconAndText,
   getNamespace,
   getName,
-  RedExclamationCircleIcon,
-  GreenCheckCircleIcon,
+  ErrorStatus,
+  ProgressStatus,
+  PendingStatus,
+  SuccessStatus,
 } from '@console/shared';
 import { Progress, ProgressVariant, ProgressSize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -54,26 +56,19 @@ const getAdditionalImportText = (pod: PodKind): string => {
   return labelValue ? ` (${labelValue})` : null;
 };
 
-const VmStatusPopover: React.FC<VmStatusPopoverProps> = ({
-  icon,
-  title,
+const VmStatusPopoverContent: React.FC<VmStatusPopoverContentProps> = ({
   message,
   children,
   progress,
   linkTo,
   linkMessage,
 }) => (
-  <PopoverStatus title={title} icon={icon}>
+  <>
     {message}
     {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
     {progress && (
       <div className="kubevirt-vm-status__detail-section">
-        <Progress
-          value={progress}
-          title={title}
-          variant={ProgressVariant.info}
-          size={ProgressSize.sm}
-        />
+        <Progress value={progress} variant={ProgressVariant.info} size={ProgressSize.sm} />
       </div>
     )}
     {linkTo && (
@@ -83,17 +78,7 @@ const VmStatusPopover: React.FC<VmStatusPopoverProps> = ({
         </Link>
       </div>
     )}
-  </PopoverStatus>
-);
-
-const VmStatusInProgress: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover icon={<InProgressIcon />} {...props} />
-);
-const VmStatusPending: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover icon={<HourglassHalfIcon />} {...props} />
-);
-const VmStatusError: React.FC<VmStatusSpecificProps> = (props) => (
-  <VmStatusPopover icon={<RedExclamationCircleIcon />} {...props} />
+  </>
 );
 
 export const VmStatus: React.FC<VmStatusProps> = ({ vm, pods, migrations, verbose = false }) => {
@@ -113,119 +98,129 @@ export const VmStatus: React.FC<VmStatusProps> = ({ vm, pods, migrations, verbos
   switch (statusDetail.status) {
     case VM_STATUS_V2V_CONVERSION_PENDING:
       return (
-        <VmStatusPending
-          title="Import pending (VMware)"
-          message={IMPORTING_VMWARE_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-        >
-          {statusDetail.message}
-        </VmStatusPending>
+        <PendingStatus title="Import pending (VMware)">
+          <VmStatusPopoverContent
+            message={IMPORTING_VMWARE_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message}
+          </VmStatusPopoverContent>
+        </PendingStatus>
       );
     case VM_STATUS_V2V_CONVERSION_ERROR:
       return (
-        <VmStatusError
-          title="Import error (VMware)"
-          message={IMPORTING_ERROR_VMWARE_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-        >
-          {statusDetail.message}
-          {additionalText}
-        </VmStatusError>
+        <ErrorStatus title="Import error (VMware)">
+          <VmStatusPopoverContent
+            message={IMPORTING_ERROR_VMWARE_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message}
+            {additionalText}
+          </VmStatusPopoverContent>
+        </ErrorStatus>
       );
     case VM_STATUS_V2V_CONVERSION_IN_PROGRESS:
       return (
-        <VmStatusInProgress
-          title="Importing (VMware)"
-          message={IMPORTING_VMWARE_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-          progress={statusDetail.progress}
-        >
-          {additionalText}
-        </VmStatusInProgress>
+        <ProgressStatus title="Importing (VMware)">
+          <VmStatusPopoverContent
+            message={IMPORTING_VMWARE_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          >
+            {additionalText}
+          </VmStatusPopoverContent>
+        </ProgressStatus>
       );
     case VM_STATUS_POD_ERROR:
       return (
-        <VmStatusError
-          title="Pod error"
-          message={statusDetail.message}
-          linkMessage={VIEW_POD_OVERVIEW}
-          linkTo={linkToPodOverview}
-        />
+        <ErrorStatus title="Pod error">
+          <VmStatusPopoverContent
+            message={statusDetail.message}
+            linkMessage={VIEW_POD_OVERVIEW}
+            linkTo={linkToPodOverview}
+          />
+        </ErrorStatus>
       );
     case VM_STATUS_ERROR:
       return (
-        <VmStatusError
-          title="VM error"
-          message={statusDetail.message}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-        >
-          {additionalText}
-        </VmStatusError>
+        <ErrorStatus title="VM error">
+          <VmStatusPopoverContent
+            message={statusDetail.message}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {additionalText}
+          </VmStatusPopoverContent>
+        </ErrorStatus>
       );
     case VM_STATUS_IMPORT_ERROR:
       return (
-        <VmStatusError
-          title="Import error"
-          message={IMPORTING_ERROR_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-        >
-          {statusDetail.message}
-          {additionalText}
-        </VmStatusError>
+        <ErrorStatus title="Import error">
+          <VmStatusPopoverContent
+            message={IMPORTING_ERROR_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message}
+            {additionalText}
+          </VmStatusPopoverContent>
+        </ErrorStatus>
       );
     case VM_STATUS_IMPORTING:
       return (
-        <VmStatusInProgress
-          title="Importing"
-          message={IMPORTING_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-          progress={statusDetail.progress}
-        >
-          {additionalText}
-        </VmStatusInProgress>
+        <ProgressStatus title="Importing">
+          <VmStatusPopoverContent
+            message={IMPORTING_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          >
+            {additionalText}
+          </VmStatusPopoverContent>
+        </ProgressStatus>
       );
     case VM_STATUS_VMI_WAITING:
       return (
-        <VmStatusPending
-          title="Pending"
-          message={VMI_WAITING_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-        >
-          {statusDetail.message}
-        </VmStatusPending>
+        <PendingStatus title="Pending">
+          <VmStatusPopoverContent
+            message={VMI_WAITING_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message}
+          </VmStatusPopoverContent>
+        </PendingStatus>
       );
 
     case VM_STATUS_STARTING:
       return (
-        <VmStatusInProgress
-          title="Starting"
-          message={STARTING_MESSAGE}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-          progress={statusDetail.progress}
-        >
-          {statusDetail.message}
-        </VmStatusInProgress>
+        <ProgressStatus title="Starting">
+          <VmStatusPopoverContent
+            message={STARTING_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          >
+            {statusDetail.message}
+          </VmStatusPopoverContent>
+        </ProgressStatus>
       );
     case VM_STATUS_MIGRATING:
       return (
-        <VmStatusInProgress
-          title="Migrating"
-          message={statusDetail.message}
-          linkMessage={VIEW_VM_EVENTS}
-          linkTo={linkToVMEvents}
-          progress={statusDetail.progress}
-        />
+        <ProgressStatus title="Migrating">
+          <VmStatusPopoverContent
+            message={statusDetail.message}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          />
+        </ProgressStatus>
       );
     case VM_STATUS_RUNNING:
-      return <StatusIconAndText title="Running" icon={<GreenCheckCircleIcon />} />;
+      return <SuccessStatus title="Running" />;
     case VM_STATUS_OFF:
       return <StatusIconAndText title="Off" icon={<OffIcon />} />;
     default:
@@ -237,17 +232,12 @@ export const VmStatus: React.FC<VmStatusProps> = ({ vm, pods, migrations, verbos
   }
 };
 
-type VmStatusSpecificProps = {
-  title: string;
-  children?: React.ReactNode;
+type VmStatusPopoverContentProps = {
   message: string;
+  children?: React.ReactNode;
   progress?: number;
   linkTo?: string;
   linkMessage?: string;
-};
-
-type VmStatusPopoverProps = VmStatusSpecificProps & {
-  icon: React.ReactElement;
 };
 
 type VmStatusProps = {
