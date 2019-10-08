@@ -2,27 +2,27 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace } from '@console/shared';
+import { getName, getUID, getNamespace, DASH } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { BareMetalHostBundle } from '../types';
+import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
+import { MachineModel } from '@console/internal/models';
+import { BareMetalNodeBundle } from '../types';
 import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import BareMetalHostStatus from '../baremetal-hosts/BareMetalHostStatus';
-import NodeLink from '../baremetal-hosts/NodeLink';
-import BareMetalHostRole from '../baremetal-hosts/BareMetalHostRole';
 import { menuActions } from '../baremetal-hosts/host-menu-actions';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
   status: classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  node: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  role: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  role: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  machine: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   kebab: Kebab.columnClass,
 };
 
-const NodesTableHeader = () => [
+const BareMetalNodesTableHeader = () => [
   {
     title: 'Name',
     sortField: 'node.metadata.name',
@@ -36,16 +36,16 @@ const NodesTableHeader = () => [
     props: { className: tableColumnClasses.status },
   },
   {
-    title: 'Node',
-    sortField: 'node.metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.node },
-  },
-  {
     title: 'Role',
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
+  },
+  {
+    title: 'Machine',
+    sortField: "metadata.annotations['machine.openshift.io/machine']",
+    transforms: [sortable],
+    props: { className: tableColumnClasses.machine },
   },
   {
     title: 'Management Address',
@@ -59,8 +59,8 @@ const NodesTableHeader = () => [
   },
 ];
 
-type NodesTableRowProps = {
-  obj: BareMetalHostBundle;
+type BareMetalNodesTableRowProps = {
+  obj: BareMetalNodeBundle;
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
@@ -69,7 +69,7 @@ type NodesTableRowProps = {
   style: React.StyleHTMLAttributes<any>;
 };
 
-const NodesTableRow: React.FC<NodesTableRowProps> = ({
+const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
   obj: { host, node, nodeMaintenance, machine, status },
   customData: { hasNodeMaintenanceCapability },
   index,
@@ -98,11 +98,19 @@ const NodesTableRow: React.FC<NodesTableRowProps> = ({
       <TableData className={tableColumnClasses.status}>
         <BareMetalHostStatus status={status} />
       </TableData>
-      <TableData className={tableColumnClasses.node}>
-        <NodeLink nodeName={nodeName} />
-      </TableData>
       <TableData className={tableColumnClasses.role}>
-        <BareMetalHostRole machine={machine} node={node} />
+        <NodeRoles node={node} />
+      </TableData>
+      <TableData className={tableColumnClasses.machine}>
+        {machine ? (
+          <ResourceLink
+            kind={referenceForModel(MachineModel)}
+            name={getName(machine)}
+            namespace={getNamespace(machine)}
+          />
+        ) : (
+          DASH
+        )}
       </TableData>
       <TableData className={tableColumnClasses.address}>{address}</TableData>
       <TableData className={tableColumnClasses.kebab}>
@@ -124,7 +132,7 @@ const NodesTableRow: React.FC<NodesTableRowProps> = ({
 };
 
 type BareMetalNodesTableProps = React.ComponentProps<typeof Table> & {
-  data: BareMetalHostBundle[];
+  data: BareMetalNodeBundle[];
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
@@ -136,8 +144,8 @@ const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = (props) => {
       {...props}
       defaultSortField="node.metadata.name"
       aria-label="Nodes"
-      Header={NodesTableHeader}
-      Row={NodesTableRow}
+      Header={BareMetalNodesTableHeader}
+      Row={BareMetalNodesTableRow}
       virtualize
     />
   );

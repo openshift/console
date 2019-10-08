@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
-import { BareMetalHostBundle } from '../types';
+import { BareMetalNodeBundle } from '../types';
 import { getHostStatus } from '../../utils/host-status';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { hostStatusFilter } from '../baremetal-hosts/table-filters';
@@ -32,7 +32,7 @@ const flattenResources = (resources) => {
     const machinesByNodeName = createLookup(machines, getMachineNodeName);
 
     return nodesData.map(
-      (node): BareMetalHostBundle => {
+      (node): BareMetalNodeBundle => {
         const nodeName = getName(node);
         const machine = machinesByNodeName[nodeName];
         const host = hostsByMachineName[getName(machine)];
