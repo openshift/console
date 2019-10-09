@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getResiliencyProgress } from '../../../../selectors';
+import { getResiliencyProgress } from '../../../../utils';
 
 export const isDataResiliencyActivity = (results: PrometheusResponse): boolean => {
   const progress = getResiliencyProgress(results);

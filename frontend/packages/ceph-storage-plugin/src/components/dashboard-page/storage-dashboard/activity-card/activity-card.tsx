@@ -23,7 +23,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { CEPH_STORAGE_NAMESPACE } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
-import { isDataResiliencyActivity } from './activity';
+import { isDataResiliencyActivity } from './data-resiliency-activity';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
@@ -71,7 +71,7 @@ const OngoingActivity = withDashboardResources(
     if (isDataResiliencyActivity(resiliencyProgress)) {
       prometheusActivities.push({
         results: resiliencyProgress,
-        loader: () => import('./activity').then((m) => m.DataResiliencyActivity),
+        loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliencyActivity),
       });
     }
 
