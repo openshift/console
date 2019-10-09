@@ -79,7 +79,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
       <DashboardCardBody>
         <DetailsBody>
           <DetailItem key="service_name" title="Service Name" error={false} isLoading={false}>
-            OpenShift Container Storage
+            OpenShift Container Storage (OCS)
           </DetailItem>
           <DetailItem
             key="system_name"
