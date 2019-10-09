@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 import { Pod } from '../../types';
-import { calculateRadius, podStatus, getPodStatus, podColor } from '../../utils';
+import { calculateRadius, podStatus, getPodStatus } from '../../utils';
+import { podColor } from '../../constants';
 import './PodStatus.scss';
 
 const ANIMATION_DURATION = 350;

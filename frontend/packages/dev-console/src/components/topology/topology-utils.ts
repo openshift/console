@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, LabelSelector, modelFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
-import { sortBuilds } from '@console/internal/components/overview';
-import { ResourceProps, TransformPodData } from '@console/shared';
+import {
+  TransformResourceData,
+  OverviewItem,
+  isKnativeServing,
+  deploymentKindMap,
+} from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   edgesFromAnnotations,
@@ -11,11 +14,14 @@ import {
   updateResourceApplication,
   removeResourceConnection,
 } from '../../utils/application-utils';
-import { TopologyDataModel, TopologyDataResources, TopologyDataObject } from './topology-types';
-
-const isKnativeDeployment = (dc: ResourceProps): boolean => {
-  return !!(dc.metadata && dc.metadata.labels && dc.metadata.labels[KNATIVE_SERVING_LABEL]);
-};
+import {
+  TopologyDataModel,
+  TopologyDataResources,
+  TopologyDataObject,
+  Node,
+  Edge,
+  Group,
+} from './topology-types';
 
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
@@ -24,412 +30,249 @@ export const getEditURL = (gitURL: string, cheURL: string) => {
   return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
 };
 
-export class TransformTopologyData {
-  private topologyData: TopologyDataModel = {
+/**
+ * filter data based on the active application
+ * @param data
+ */
+export const filterBasedOnActiveApplication = (
+  data: K8sResourceKind[],
+  application: string,
+): K8sResourceKind[] => {
+  const PART_OF = 'app.kubernetes.io/part-of';
+  if (!application) {
+    return data;
+  }
+  return data.filter((dc) => {
+    return _.get(dc, ['metadata', 'labels', PART_OF]) === application;
+  });
+};
+
+/**
+ * get the route data
+ */
+const getRouteData = (ksroute: K8sResourceKind[]): string => {
+  return ksroute && ksroute.length > 0 && !_.isEmpty(ksroute[0].status)
+    ? ksroute[0].status.url
+    : null;
+};
+
+/**
+ * get routes url
+ */
+const getRoutesUrl = (routes: K8sResourceKind[], ksroute?: K8sResourceKind[]): string => {
+  if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
+    return getRouteWebURL(routes[0]);
+  }
+  return getRouteData(ksroute);
+};
+
+/**
+ * create instance of TransformResourceData, return object containing all methods
+ * @param resources
+ * @param utils
+ */
+const createInstanceForResource = (resources: TopologyDataResources, utils?: Function[]) => {
+  const transformResourceData = new TransformResourceData(resources, utils);
+
+  return {
+    deployments: transformResourceData.createDeploymentItems,
+    deploymentConfigs: transformResourceData.createDeploymentConfigItems,
+    daemonSets: transformResourceData.createDaemonSetItems,
+    statefulSets: transformResourceData.createStatefulSetItems,
+  };
+};
+
+/**
+ * create all data that need to be shown on a topology data
+ * @param dc resource item
+ * @param cheURL che link
+ */
+const createTopologyNodeData = (dc: OverviewItem, cheURL?: string): TopologyDataObject => {
+  const { obj: deploymentConfig } = dc;
+  const dcUID = _.get(deploymentConfig, 'metadata.uid');
+  const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
+  const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
+  const { buildConfigs } = dc;
+  return {
+    id: dcUID,
+    name:
+      _.get(deploymentConfig, 'metadata.name') || deploymentsLabels['app.kubernetes.io/instance'],
+    type: 'workload',
+    resources: { ...dc },
+    pods: dc.pods,
+    data: {
+      url: getRoutesUrl(dc.routes, _.get(dc, ['ksroutes'])),
+      kind: deploymentConfig.kind,
+      editUrl:
+        deploymentsAnnotations['app.openshift.io/edit-url'] ||
+        getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),
+      builderImage:
+        getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+        getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
+        getImageForIconClass(`icon-openshift`),
+      isKnativeResource: isKnativeServing(deploymentConfig, 'metadata.labels'),
+      donutStatus: {
+        pods: dc.pods,
+        build: _.get(buildConfigs[0], 'builds[0]'),
+      },
+    },
+  };
+};
+
+/**
+ * create node data for graphs
+ * @param dc resource
+ */
+const getTopologyNodeItem = (dc: K8sResourceKind): Node => {
+  const uid = _.get(dc, ['metadata', 'uid']);
+  const name = _.get(dc, ['metadata', 'name']);
+  const label = _.get(dc, ['metadata', 'labels', 'app.openshift.io/instance']);
+  return {
+    id: uid,
+    type: 'workload',
+    name: label || name,
+  };
+};
+
+/**
+ * create edge data for graph
+ * @param dc
+ * @param resources
+ */
+const getTopologyEdgeItems = (dc: K8sResourceKind, resources: K8sResourceKind[]): Edge[] => {
+  const annotations = _.get(dc, 'metadata.annotations');
+  const edges = [];
+  _.forEach(edgesFromAnnotations(annotations), (edge) => {
+    // handles multiple edges
+    const targetNode = _.get(
+      _.find(resources, (deployment) => {
+        const name =
+          _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
+          deployment.metadata.name;
+        return name === edge;
+      }),
+      ['metadata', 'uid'],
+    );
+    const uid = _.get(dc, ['metadata', 'uid']);
+    if (targetNode) {
+      edges.push({
+        id: `${uid}_${targetNode}`,
+        type: 'connects-to',
+        source: uid,
+        target: targetNode,
+      });
+    }
+  });
+  return edges;
+};
+
+/**
+ * create groups data for graph
+ * @param dc
+ * @param groups
+ */
+const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): Group[] => {
+  const labels = _.get(dc, ['metadata', 'labels']);
+  const uid = _.get(dc, ['metadata', 'uid']);
+  _.forEach(labels, (label, key) => {
+    if (key !== 'app.kubernetes.io/part-of') {
+      return;
+    }
+    // find and add the groups
+    const groupExists = _.some(groups, {
+      name: label,
+    });
+    if (!groupExists) {
+      groups.push({
+        id: `group:${label}`,
+        name: label,
+        nodes: [uid],
+      });
+    } else {
+      const gIndex = _.findIndex(groups, { name: label });
+      groups[gIndex].nodes.push(uid);
+    }
+  });
+  return groups;
+};
+
+/**
+ * Tranforms the k8s resources objects into topology data
+ * @param resources K8s resources
+ * @param transformBy contains all keys for resources that are allowed on topology
+ * @param application application name to filter groups
+ * @param cheURL che link
+ * @param utils
+ */
+export const transformTopologyData = (
+  resources: TopologyDataResources,
+  transformBy: string[],
+  application?: string,
+  cheURL?: string,
+  utils?: Function[],
+): TopologyDataModel => {
+  let topologyGraphAndNodeData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
   };
+  const transformResourceData = createInstanceForResource(resources, utils);
+  const allResources = _.cloneDeep(
+    _.concat(
+      resources.deploymentConfigs && resources.deploymentConfigs.data,
+      resources.deployments && resources.deployments.data,
+      resources.statefulSets && resources.statefulSets.data,
+      resources.daemonSets && resources.daemonSets.data,
+    ),
+  );
 
-  private selectorsByService;
-
-  private allServices;
-
-  private transformPodData;
-
-  constructor(
-    public resources: TopologyDataResources,
-    public application?: string,
-    public cheURL?: string,
-  ) {
-    if (this.resources.ksservices && this.resources.ksservices.data) {
-      this.allServices = _.keyBy(
-        [...this.resources.services.data, ...this.resources.ksservices.data],
-        'metadata.name',
-      );
-    } else {
-      this.allServices = _.keyBy(this.resources.services.data, 'metadata.name');
+  _.forEach(transformBy, (key) => {
+    if (!deploymentKindMap[key]) {
+      throw new Error(`Invalid target deployment resource: (${key})`);
     }
-    this.selectorsByService = this.getSelectorsByService();
-    this.transformPodData = new TransformPodData(this.resources);
-  }
+    if (!_.isEmpty(resources[key].data)) {
+      // filter data based on the active application
+      const resourceData = filterBasedOnActiveApplication(resources[key].data, application);
+      let nodesData = [];
+      let edgesData = [];
+      let groupsData = [];
+      const dataToShowOnNodes = {};
 
-  /**
-   * get the topology data
-   */
-  public getTopologyData() {
-    return this.topologyData;
-  }
-
-  /**
-   * get the route data
-   */
-  getRouteData(ksroute) {
-    return !_.isEmpty(ksroute.status) ? ksroute.status.url : null;
-  }
-
-  /**
-   * Tranforms the k8s resources objects into topology data
-   * @param targetDeployment
-   */
-  public transformDataBy(targetDeployment = 'deployments'): TransformTopologyData {
-    if (!this.transformPodData.deploymentKindMap[targetDeployment]) {
-      throw new Error(`Invalid target deployment resource: (${targetDeployment})`);
-    }
-    if (_.isEmpty(this.resources[targetDeployment].data)) {
-      return this;
-    }
-    const targetDeploymentsKind = this.transformPodData.deploymentKindMap[targetDeployment].dcKind;
-
-    // filter data based on the active application
-    const resourceData = this.filterBasedOnActiveApplication(this.resources[targetDeployment].data);
-
-    _.forEach(resourceData, (deploymentConfig) => {
-      deploymentConfig.kind = targetDeploymentsKind;
-      const dcUID = _.get(deploymentConfig, 'metadata.uid');
-
-      const replicationControllers = this.transformPodData.getReplicationControllers(
-        deploymentConfig,
-        targetDeployment,
-      );
-      const current = _.head(replicationControllers);
-      const previous = _.nth(replicationControllers, 1);
-      const currentPods = current
-        ? this.transformPodData.transformPods(
-            this.transformPodData.getPods(current, deploymentConfig),
-          )
-        : [];
-      const previousPods = previous
-        ? this.transformPodData.transformPods(
-            this.transformPodData.getPods(previous, deploymentConfig),
-          )
-        : [];
-      const services = this.getServices(deploymentConfig);
-      const routes = this.getRoutes(services);
-      const buildConfigs = this.getBuildConfigs(deploymentConfig);
-      const { builds } = buildConfigs;
-      // list of Knative resources
-      const ksroute = this.getKSRoute(deploymentConfig);
-      const configurations = this.getConfigurations(deploymentConfig);
-      const revisions = this.getRevisions(deploymentConfig);
-      // list of resources in the
-      const nodeResources = [
-        deploymentConfig,
-        current,
-        ...services,
-        ...routes,
-        buildConfigs,
-        ksroute,
-        configurations,
-        revisions,
-      ];
-      // populate the graph Data
-      this.createGraphData(deploymentConfig);
-      // add the lookup object
-      const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels') || {};
-      const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations') || {};
-      this.topologyData.topology[dcUID] = {
-        id: dcUID,
-        name:
-          _.get(deploymentConfig, 'metadata.name') ||
-          deploymentsLabels['app.kubernetes.io/instance'],
-
-        type: 'workload',
-        resources: _.map(nodeResources, (resource) => {
-          return {
-            ...resource,
-            name: _.get(resource, 'metadata.name'),
-          };
-        }),
-        pods: [...currentPods, ...previousPods],
-        data: {
-          url: this.getRoutesUrl(routes, ksroute),
-          kind: targetDeploymentsKind,
-          editUrl:
-            deploymentsAnnotations['app.openshift.io/edit-url'] ||
-            getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], this.cheURL),
-          builderImage:
-            getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
-            getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
-            getImageForIconClass(`icon-openshift`),
-          isKnativeResource: this.transformPodData.isKnativeServing(
-            deploymentConfig,
-            'metadata.labels',
-          ),
-          donutStatus: {
-            pods: [...currentPods, ...previousPods],
-            build: builds && builds[0],
-          },
+      transformResourceData[key](resourceData).forEach((item) => {
+        const { obj: deploymentConfig } = item;
+        const uid = _.get(deploymentConfig, ['metadata', 'uid']);
+        dataToShowOnNodes[uid] = createTopologyNodeData(item, cheURL);
+        if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
+          nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig)];
+          edgesData = [...edgesData, ...getTopologyEdgeItems(deploymentConfig, allResources)];
+          groupsData = [
+            ...getTopologyGroupItems(deploymentConfig, topologyGraphAndNodeData.graph.groups),
+          ];
+        }
+      });
+      const {
+        graph: { nodes, edges },
+        topology,
+      } = topologyGraphAndNodeData;
+      topologyGraphAndNodeData = {
+        graph: {
+          nodes: [...nodes, ...nodesData],
+          edges: [...edges, ...edgesData],
+          groups: [...groupsData],
         },
+        topology: { ...topology, ...dataToShowOnNodes },
       };
-    });
-    return this;
-  }
-
-  private getRoutesUrl(routes: ResourceProps[], ksroute: ResourceProps): string {
-    if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
-      return getRouteWebURL(routes[0]);
     }
-    return this.getRouteData(ksroute);
-  }
+  });
+  return topologyGraphAndNodeData;
+};
 
-  private getSelectorsByService() {
-    let allServices = _.keyBy(this.resources.services.data, 'metadata.name');
-    if (this.resources.ksservices && this.resources.ksservices.data) {
-      allServices = _.keyBy(
-        [...this.resources.services.data, ...this.resources.ksservices.data],
-        'metadata.name',
-      );
-    }
-    const selectorsByService = _.mapValues(allServices, (service) => {
-      return new LabelSelector(service.spec.selector);
-    });
-    return selectorsByService;
-  }
-
-  /**
-   * filter data based on the active application
-   * @param data
-   */
-  private filterBasedOnActiveApplication(data) {
-    const PART_OF = 'app.kubernetes.io/part-of';
-    if (!this.application) {
-      return data;
-    }
-    return data.filter((dc) => {
-      return _.get(dc, ['metadata', 'labels', PART_OF]) === this.application;
-    });
-  }
-
-  /**
-   * get the route information from the service
-   * @param service
-   */
-  private getRoutes(services: ResourceProps[]): ResourceProps[] {
-    // get the route
-    const route = {
-      kind: 'Route',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    return this.resources.routes.data
-      .filter((routeConfig) => {
-        const name = _.get(routeConfig, 'spec.to.name');
-        return _.some(services, { metadata: { name } });
-      })
-      .map((r) => _.extend({}, route, r));
-  }
-
-  /**
-   * get the knative route information from the service
-   * @param service
-   */
-  private getKSRoute(dc: ResourceProps): ResourceProps {
-    const route = {
-      kind: 'Route',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    const { ksroutes } = this.resources;
-    if (isKnativeDeployment(dc)) {
-      _.forEach(ksroutes && ksroutes.data, (routeConfig) => {
-        if (dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(routeConfig, 'metadata.name')) {
-          _.merge(route, routeConfig);
-        }
-      });
-    }
-    return route;
-  }
-
-  /**
-   * get the configuration information from the service
-   * @param replicationController
-   */
-  private getConfigurations(dc: ResourceProps): ResourceProps {
-    const configuration = {
-      kind: 'Configuration',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    const { configurations } = this.resources;
-    if (isKnativeDeployment(dc)) {
-      _.forEach(configurations && configurations.data, (config) => {
-        if (dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(config, 'metadata.name')) {
-          _.merge(configuration, config);
-        }
-      });
-    }
-    return configuration;
-  }
-
-  /**
-   * get the revision information from the service
-   * @param replicationController
-   */
-  private getRevisions(dc: ResourceProps): ResourceProps {
-    const revision = {
-      kind: 'Revision',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    const { revisions } = this.resources;
-    if (isKnativeDeployment(dc)) {
-      _.forEach(revisions && revisions.data, (revisionConfig) => {
-        if (dc.metadata.ownerReferences[0].uid === revisionConfig.metadata.uid) {
-          _.merge(revision, revisionConfig);
-        }
-      });
-    }
-    return revision;
-  }
-
-  private getBuildConfigs(
-    deploymentConfig: ResourceProps,
-  ): ResourceProps & { builds: K8sResourceKind[] } {
-    const buildConfig = {
-      kind: 'BuildConfig',
-      builds: [] as K8sResourceKind[],
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-
-    const bconfig = _.find(this.resources.buildconfigs.data, [
-      'metadata.labels["app.kubernetes.io/instance"]',
-      _.get(deploymentConfig, 'metadata.labels["app.kubernetes.io/instance"]'),
-    ]);
-    if (bconfig) {
-      const bc = _.merge(buildConfig, bconfig);
-      const builds = sortBuilds(this.getBuilds(bc));
-      return { ...bc, builds };
-    }
-    return buildConfig;
-  }
-
-  private getBuilds({ metadata: { uid } }: ResourceProps): ResourceProps[] {
-    const builds = {
-      kind: 'Builds',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    const bs = this.resources.builds.data.filter(({ metadata: { ownerReferences } }) => {
-      return _.some(ownerReferences, {
-        uid,
-        controller: true,
-      });
-    });
-    return bs ? _.map(bs, (build) => _.extend({}, build, { kind: 'Builds' })) : [builds];
-  }
-
-  /**
-   * fetches the service from the deploymentconfig
-   * @param deploymentConfig
-   */
-  private getServices(deploymentConfig: ResourceProps): ResourceProps[] {
-    const serviceModel = {
-      kind: 'Service',
-      metadata: {},
-      status: {},
-      spec: {},
-    };
-    const services: ResourceProps[] = [];
-    const configTemplate = _.get(deploymentConfig, 'spec.template');
-    _.each(this.selectorsByService, (selector, serviceName) => {
-      if (selector.matches(configTemplate)) {
-        services.push(_.extend({}, serviceModel, this.allServices[serviceName]));
-      }
-    });
-    return services;
-  }
-
-  /**
-   * create graph data from the deploymentconfig.
-   * @param deploymentConfig
-   */
-  private createGraphData(deploymentConfig) {
-    // Current Node data
-    const { metadata } = deploymentConfig;
-    const currentNode = {
-      id: metadata.uid,
-      type: 'workload',
-      name: (metadata.labels && metadata.labels['app.openshift.io/instance']) || metadata.name,
-    };
-
-    if (!_.some(this.topologyData.graph.nodes, { id: currentNode.id })) {
-      // add the node to graph
-      this.topologyData.graph.nodes.push(currentNode);
-      const labels = _.get(deploymentConfig, 'metadata.labels');
-      const annotations = _.get(deploymentConfig, 'metadata.annotations');
-      const totalDeployments = _.cloneDeep(
-        _.concat(
-          this.resources.deploymentConfigs && this.resources.deploymentConfigs.data,
-          this.resources.deployments && this.resources.deployments.data,
-          this.resources.statefulSets && this.resources.statefulSets.data,
-          this.resources.daemonSets && this.resources.daemonSets.data,
-        ),
-      );
-      // find and add the edges for a node
-      _.map(edgesFromAnnotations(annotations), (edge) => {
-        // handles multiple edges
-        const targetNode = _.get(
-          _.find(totalDeployments, (deployment) => {
-            const name =
-              _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
-              deployment.metadata.name;
-            return name === edge;
-          }),
-          'metadata.uid',
-        );
-        if (targetNode) {
-          this.topologyData.graph.edges.push({
-            id: `${currentNode.id}_${targetNode}`,
-            type: 'connects-to',
-            source: currentNode.id,
-            target: targetNode,
-          });
-        }
-      });
-
-      _.forEach(labels, (label, key) => {
-        if (key !== 'app.kubernetes.io/part-of') {
-          return;
-        }
-        // find and add the groups
-        const groupExists = _.some(this.topologyData.graph.groups, {
-          name: label,
-        });
-        if (!groupExists) {
-          this.topologyData.graph.groups.push({
-            id: `group:${label}`,
-            name: label,
-            nodes: [currentNode.id],
-          });
-        } else {
-          const gIndex = _.findIndex(this.topologyData.graph.groups, { name: label });
-          this.topologyData.graph.groups[gIndex].nodes.push(currentNode.id);
-        }
-      });
-    }
-  }
-}
-
-export const getResourceDeploymentObject = (topologyObject: TopologyDataObject): ResourceProps => {
+export const getResourceDeploymentObject = (
+  topologyObject: TopologyDataObject,
+): K8sResourceKind => {
   if (!topologyObject) {
     return null;
   }
-
-  return _.find(topologyObject.resources, (resource) => {
-    return (
-      resource.kind === 'Deployment' ||
-      resource.kind === 'DeploymentConfig' ||
-      resource.kind === 'DaemonSet' ||
-      resource.kind === 'StatefulSet'
-    );
-  });
+  return _.get(topologyObject, ['resources', 'obj']);
 };
 
 export const updateTopologyResourceApplication = (

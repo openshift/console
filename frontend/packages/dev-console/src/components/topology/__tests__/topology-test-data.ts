@@ -8,8 +8,8 @@ export const resources: TopologyDataResources = {
   services: { data: [] },
   routes: { data: [] },
   deployments: { data: [] },
-  replicasets: { data: [] },
-  buildconfigs: { data: [] },
+  replicaSets: { data: [] },
+  buildConfigs: { data: [] },
   builds: { data: [] },
   daemonSets: { data: [] },
   statefulSets: { data: [] },
@@ -892,7 +892,7 @@ export const sampleRoutes: Resource = {
   ],
 };
 
-const sampleBuildConfigs: Resource = {
+export const sampleBuildConfigs: Resource = {
   data: [
     {
       kind: 'BuildConfig',
@@ -972,7 +972,7 @@ const sampleBuildConfigs: Resource = {
   ],
 };
 
-const sampleBuilds: Resource = {
+export const sampleBuilds: Resource = {
   data: [
     {
       kind: 'Builds',
@@ -1068,7 +1068,7 @@ const sampleBuilds: Resource = {
   ],
 };
 
-const sampleDaemonSets = {
+export const sampleDaemonSets = {
   data: [
     {
       metadata: {
@@ -1143,7 +1143,7 @@ const sampleDaemonSets = {
   ],
 };
 
-const sampleStatefulSets: Resource = {
+export const sampleStatefulSets: Resource = {
   data: [
     {
       metadata: {
@@ -1288,11 +1288,11 @@ export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
   replicationControllers: sampleReplicationControllers,
-  replicasets: sampleReplicaSets,
+  replicaSets: sampleReplicaSets,
   pods: samplePods,
   services: sampleServices,
   routes: sampleRoutes,
-  buildconfigs: sampleBuildConfigs,
+  buildConfigs: sampleBuildConfigs,
   builds: sampleBuilds,
   daemonSets: sampleDaemonSets,
   statefulSets: sampleStatefulSets,

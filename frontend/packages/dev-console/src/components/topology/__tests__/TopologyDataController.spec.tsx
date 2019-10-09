@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import TopologyDataController, { TopologyDataControllerProps } from '../TopologyDataController';
+import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
 import { resources } from './topology-test-data';
 
 const TestInner = () => null;
@@ -17,7 +17,12 @@ describe('TopologyDataController', () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <TopologyDataController application={undefined} namespace="namespace" {...props} />,
+      <TopologyDataController
+        resourceList={[]}
+        application={undefined}
+        namespace="namespace"
+        {...props}
+      />,
     );
   });
 

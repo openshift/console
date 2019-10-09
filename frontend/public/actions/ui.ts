@@ -12,8 +12,7 @@ import {
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { OverviewItem } from '../components/overview';
-
+import { OverviewItem } from '@console/shared';
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',

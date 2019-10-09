@@ -5,8 +5,8 @@ import { ResourceSummary } from '../utils';
 import { menuActions, DaemonSetDetailsList } from '../daemon-set';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
-import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { OverviewItem } from '@console/shared';
 
 const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ item }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">

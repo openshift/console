@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import { OverviewItem } from '@console/internal/components/overview';
+import { OverviewItem } from '@console/shared';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import RevisionsOverviewList from './RevisionsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';

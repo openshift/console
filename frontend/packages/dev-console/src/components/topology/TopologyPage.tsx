@@ -12,7 +12,7 @@ import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import DefaultPage from '../DefaultPage';
 import { getCheURL } from './topology-utils';
-import TopologyDataController, { RenderProps } from './TopologyDataController';
+import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 
 interface StateProps {
@@ -82,7 +82,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
           <ProjectsExistWrapper title="Topology">
             {() => {
               return namespace ? (
-                <TopologyDataController
+                <ConnectedTopologyDataController
                   application={application}
                   namespace={namespace}
                   render={renderTopology}

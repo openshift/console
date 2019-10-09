@@ -2395,7 +2395,7 @@ export const MockGraphResources: TopologyDataResources = {
       },
     ],
   },
-  replicasets: {
+  replicaSets: {
     data: [
       {
         kind: 'ReplicaSet',
@@ -2464,7 +2464,7 @@ export const MockGraphResources: TopologyDataResources = {
       },
     ],
   },
-  buildconfigs: {
+  buildConfigs: {
     data: [
       {
         kind: 'buildconfig',
