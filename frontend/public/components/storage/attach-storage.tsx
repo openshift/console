@@ -72,13 +72,10 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     k8sGet(kindObj, resourceName, namespace).then(setObj);
   }, [kindObj, resourceName, namespace]);
 
-  if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
-    setError('Unsupported kind.');
-    return;
-  }
-
-  const updateVolumeName = (newClaimName: string) => {
-    // Check if there is already a volume for this PVC.
+  React.useEffect(() => {
+    // If the PVC or its name changes, check if there is already a volume with that name
+    const newClaimName =
+      showCreatePVC === 'existing' ? claimName : _.get(newPVCObj, 'metadata.name', '');
     const volumes = _.get(obj, 'spec.template.spec.volumes');
     const volume = _.find(volumes, {
       persistentVolumeClaim: {
@@ -90,7 +87,12 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     const newVolumeAlreadyMounted = !!volume;
     setVolumeName(newVolumeName);
     setVolumeAlreadyMounted(newVolumeAlreadyMounted);
-  };
+  }, [newPVCObj, obj, claimName, showCreatePVC]);
+
+  if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
+    setError('Unsupported kind.');
+    return;
+  }
 
   const handleShowCreatePVCChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setShowCreatePVC(event.currentTarget.value);
@@ -142,7 +144,6 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   };
 
   const handlePVCChange = (newClaimName: string) => {
-    updateVolumeName(newClaimName);
     setClaimName(newClaimName);
   };
 
@@ -222,11 +223,6 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     );
   };
 
-  const onPVCChange = (newPVC) => {
-    setNewPVCObj(newPVC);
-    updateVolumeName(_.get(newPVC, 'metadata.name', ''));
-  };
-
   const title = 'Add Storage';
   return (
     <div className="co-m-pane__body">
@@ -276,7 +272,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
         {showCreatePVC === 'new' && (
           <div className="co-form-subsection">
-            <CreatePVCForm onChange={onPVCChange} namespace={namespace} />
+            <CreatePVCForm onChange={setNewPVCObj} namespace={namespace} />
           </div>
         )}
 
