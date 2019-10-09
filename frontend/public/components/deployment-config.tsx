@@ -25,6 +25,7 @@ import {
   LoadingInline,
   getExtensionsKebabActionsForKind,
 } from './utils';
+import { ReplicationControllersPage } from './replication-controller';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
@@ -220,9 +221,32 @@ const environmentComponent = (props) => (
   />
 );
 
+const ReplicationControllersTab: React.FC<ReplicationControllersTabProps> = ({ obj }) => {
+  const {
+    metadata: { namespace, name },
+  } = obj;
+
+  // Hide the create button to avoid confusion when showing replication controllers for an object.
+  return (
+    <ReplicationControllersPage
+      showTitle={false}
+      namespace={namespace}
+      selector={{
+        'openshift.io/deployment-config.name': name,
+      }}
+      canCreate={false}
+    />
+  );
+};
+
 const pages = [
   navFactory.details(DeploymentConfigsDetails),
   navFactory.editYaml(),
+  {
+    href: 'replicationcontrollers',
+    name: 'Replication Controllers',
+    component: ReplicationControllersTab,
+  },
   navFactory.pods(),
   navFactory.envEditor(environmentComponent),
   navFactory.events(ResourceEventStream),
@@ -294,6 +318,10 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
   />
 );
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
+
+type ReplicationControllersTabProps = {
+  obj: K8sResourceKind;
+};
 
 type DeploymentConfigsPageProps = {
   filterLabel: string;

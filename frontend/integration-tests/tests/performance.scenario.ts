@@ -77,7 +77,7 @@ describe('Performance test', () => {
   });
 
   chunkedRoutes.forEach((route, routeName) => {
-    const chunkLimit = 15000;
+    const chunkLimit = 25000;
 
     const routeChunkFor = function() {
       const chunkName = arguments[0];

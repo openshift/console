@@ -23,6 +23,7 @@ import {
   WorkloadPausedAlert,
   LoadingInline,
 } from './utils';
+import { ReplicaSetsPage } from './replicaset';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
@@ -181,6 +182,23 @@ const environmentComponent = (props) => (
   />
 );
 
+const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
+  const {
+    metadata: { namespace },
+    spec: { selector },
+  } = obj;
+
+  // Hide the create button to avoid confusion when showing replica sets for an object.
+  return (
+    <ReplicaSetsPage
+      showTitle={false}
+      namespace={namespace}
+      selector={selector}
+      canCreate={false}
+    />
+  );
+};
+
 const { details, editYaml, pods, envEditor, events } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => (
   <DetailsPage
@@ -190,6 +208,11 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
     pages={[
       details(DeploymentDetails),
       editYaml(),
+      {
+        href: 'replicasets',
+        name: 'Replica Sets',
+        component: ReplicaSetsTab,
+      },
       pods(),
       envEditor(environmentComponent),
       events(ResourceEventStream),
@@ -253,6 +276,10 @@ export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => (
   />
 );
 DeploymentsPage.displayName = 'DeploymentsPage';
+
+type ReplicaSetsTabProps = {
+  obj: K8sResourceKind;
+};
 
 type DeploymentsPageProps = {
   showTitle?: boolean;

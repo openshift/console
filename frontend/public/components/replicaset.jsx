@@ -209,14 +209,17 @@ ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
 const ReplicaSetsList = (props) => (
   <Table
     {...props}
-    aria-label="Replicate Sets"
+    aria-label="Replica Sets"
     Header={ReplicaSetTableHeader}
     Row={ReplicaSetTableRow}
     virtualize
   />
 );
-const ReplicaSetsPage = (props) => (
-  <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />
-);
+const ReplicaSetsPage = (props) => {
+  const { canCreate = true } = props;
+  return (
+    <ListPage canCreate={canCreate} kind="ReplicaSet" ListComponent={ReplicaSetsList} {...props} />
+  );
+};
 
 export { ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage };
