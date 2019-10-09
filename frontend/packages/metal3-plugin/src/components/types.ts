@@ -1,19 +1,19 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../types';
 
+export type StatusProps = {
+  status: string;
+  title?: string;
+  [key: string]: any;
+};
+
 export type BareMetalHostBundle = {
   metadata?: { name: string };
   machine: MachineKind;
   node: NodeKind;
   host: BareMetalHostKind;
   nodeMaintenance: K8sResourceKind;
-  status: BareMetalHostStatus;
-};
-
-export type BareMetalHostStatus = {
-  status: string;
-  title: string;
-  [key: string]: any;
+  status: StatusProps;
 };
 
 export type BareMetalNodeBundle = {
@@ -23,5 +23,5 @@ export type BareMetalNodeBundle = {
   host: BareMetalHostKind;
   nodeMaintenance: K8sResourceKind;
   // TODO(jtomasek): replace with new BareMetalNodeStatus
-  status: BareMetalHostStatus;
+  status: StatusProps;
 };

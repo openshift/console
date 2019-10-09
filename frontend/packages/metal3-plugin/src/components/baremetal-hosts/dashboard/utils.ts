@@ -2,7 +2,7 @@ import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inve
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getMachineNode, getName } from '@console/shared/src/selectors';
-import { getHostStatus } from '../../../utils/host-status';
+import { getHostStatus } from '../../../status/host-status';
 import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../../constants';
 import { findNodeMaintenance, getHostMachine } from '../../../selectors';
 import { getHostFilterStatus } from '../table-filters';

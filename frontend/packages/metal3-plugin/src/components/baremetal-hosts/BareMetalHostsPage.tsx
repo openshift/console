@@ -8,7 +8,7 @@ import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
-import { getHostStatus } from '../../utils/host-status';
+import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostBundle } from '../types';
 import { hostStatusFilter } from './table-filters';
 import BareMetalHostsTable from './BareMetalHostsTable';

@@ -92,7 +92,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
         />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <BareMetalHostStatus status={status} />
+        <BareMetalHostStatus {...status} />
         <SecondaryStatus status={getHostPowerStatus(host)} />
       </TableData>
       <TableData className={tableColumnClasses.node}>

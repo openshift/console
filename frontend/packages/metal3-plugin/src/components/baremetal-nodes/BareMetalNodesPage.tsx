@@ -1,23 +1,24 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, NodeModel } from '@console/internal/models';
-import * as _ from 'lodash';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { BareMetalNodeBundle } from '../types';
-import { getHostStatus } from '../../utils/host-status';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { hostStatusFilter } from '../baremetal-hosts/table-filters';
+import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import BareMetalNodesTable from './BareMetalNodesTable';
 
 const flattenResources = (resources) => {
   // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
   // when resources are loaded
-  const loaded = _.every(resources, (resource) =>
-    resource.optional ? resource.loaded || !_.isEmpty(resource.loadError) : resource.loaded,
+  const loaded = _.every(
+    resources,
+    (resource) => resource.loaded || (resource.optional && !_.isEmpty(resource.loadError)),
   );
   const {
     hosts,
@@ -26,25 +27,24 @@ const flattenResources = (resources) => {
     nodeMaintenances,
   } = resources;
 
-  if (loaded) {
-    const maintenancesByNodeName = createLookup(nodeMaintenances, getNodeMaintenanceNodeName);
-    const hostsByMachineName = createLookup(hosts, getHostMachineName);
-    const machinesByNodeName = createLookup(machines, getMachineNodeName);
+  if (!loaded) return [];
 
-    return nodesData.map(
-      (node): BareMetalNodeBundle => {
-        const nodeName = getName(node);
-        const machine = machinesByNodeName[nodeName];
-        const host = hostsByMachineName[getName(machine)];
-        const nodeMaintenance = maintenancesByNodeName[nodeName];
-        const status = getHostStatus({ host, machine, node, nodeMaintenance });
-        // TODO(jtomasek): metadata.name is needed to make 'name' textFilter work.
-        // Remove it when it is possible to pass custom textFilter as a function
-        return { metadata: { name: nodeName }, host, machine, node, nodeMaintenance, status };
-      },
-    );
-  }
-  return [];
+  const maintenancesByNodeName = createLookup(nodeMaintenances, getNodeMaintenanceNodeName);
+  const hostsByMachineName = createLookup(hosts, getHostMachineName);
+  const machinesByNodeName = createLookup(machines, getMachineNodeName);
+
+  return nodesData.map(
+    (node): BareMetalNodeBundle => {
+      const nodeName = getName(node);
+      const machine = machinesByNodeName[nodeName];
+      const host = hostsByMachineName[getName(machine)];
+      const nodeMaintenance = maintenancesByNodeName[nodeName];
+      const status = bareMetalNodeStatus({ node, nodeMaintenance });
+      // TODO(jtomasek): metadata.name is needed to make 'name' textFilter work.
+      // Remove it when it is possible to pass custom textFilter as a function
+      return { metadata: { name: nodeName }, host, machine, node, nodeMaintenance, status };
+    },
+  );
 };
 
 type BareMetalNodesPageProps = {

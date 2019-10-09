@@ -20,7 +20,7 @@ import {
 } from '../../constants';
 import { BareMetalHostModel } from '../../models';
 import { getHostErrorMessage } from '../../selectors';
-import { BareMetalHostStatus } from '../types';
+import { StatusProps } from '../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
 import { BareMetalHostKind } from '../../types';
 
@@ -40,11 +40,7 @@ export const AddDiscoveredHostButton: React.FC<{ host: BareMetalHostKind }> = (
   );
 };
 
-type BareMetalHostStatusProps = {
-  status: BareMetalHostStatus;
-};
-
-const BareMetalHostStatus = ({ status: { status, title, ...props } }: BareMetalHostStatusProps) => {
+const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, ...props }) => {
   const statusTitle = title || status;
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:

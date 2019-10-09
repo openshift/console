@@ -21,7 +21,7 @@ import {
   getMachineRole,
   StatusIconAndText,
 } from '@console/shared';
-import { getHostStatus } from '../../utils/host-status';
+import { getHostStatus } from '../../status/host-status';
 import {
   getHostNICs,
   getHostDescription,
@@ -125,7 +125,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
           <dl>
             <dt>Status</dt>
             <dd>
-              <BareMetalHostStatus status={status} />
+              <BareMetalHostStatus {...status} />
             </dd>
             <dt>Power Status</dt>
             <dd>

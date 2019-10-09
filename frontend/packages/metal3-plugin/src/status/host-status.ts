@@ -8,7 +8,7 @@ import {
   HOST_STATUS_PROVISIONING,
   HOST_STATUS_PROVISIONING_ERROR,
 } from '../constants';
-import { BareMetalHostStatus } from '../components/types';
+import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
@@ -47,5 +47,7 @@ type HostStatusProps = {
   nodeMaintenance?: K8sResourceKind;
 };
 
-export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): BareMetalHostStatus =>
-  getNodeMaintenanceStatus(nodeMaintenance, host) || getBareMetalHostStatus(host);
+export const getHostStatus = ({ host, node, nodeMaintenance }: HostStatusProps): StatusProps => {
+  const maintenanceStatus = getNodeMaintenanceStatus(nodeMaintenance, node);
+  return maintenanceStatus ? { ...maintenanceStatus, host } : getBareMetalHostStatus(host);
+};

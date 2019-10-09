@@ -10,8 +10,8 @@ import { MachineModel } from '@console/internal/models';
 import { BareMetalNodeBundle } from '../types';
 import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
-import BareMetalHostStatus from '../baremetal-hosts/BareMetalHostStatus';
 import { menuActions } from '../baremetal-hosts/host-menu-actions';
+import BareMetalNodeStatus from './BareMetalNodeStatus';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -96,7 +96,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
         )}
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <BareMetalHostStatus status={status} />
+        <BareMetalNodeStatus {...status} />
       </TableData>
       <TableData className={tableColumnClasses.role}>
         <NodeRoles node={node} />

@@ -1,5 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getDeletetionTimestamp } from '@console/shared/src/selectors/common';
+import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
+import { getDeletetionTimestamp } from '@console/shared/src/selectors';
 import { getNodeMaintenancePhase } from '../selectors';
 import {
   HOST_STATUS_TITLES,
@@ -7,16 +7,19 @@ import {
   HOST_STATUS_STOPPING_MAINTENANCE,
   HOST_STATUS_STARTING_MAINTENANCE,
 } from '../constants';
-import { BareMetalHostKind } from '../types';
+import { StatusProps } from '../components/types';
 
-export const getNodeMaintenanceStatus = (maintenance: K8sResourceKind, host: BareMetalHostKind) => {
+export const getNodeMaintenanceStatus = (
+  maintenance: K8sResourceKind,
+  node: NodeKind,
+): StatusProps => {
   if (maintenance) {
     if (getDeletetionTimestamp(maintenance)) {
       return {
         status: HOST_STATUS_STOPPING_MAINTENANCE,
         title: HOST_STATUS_TITLES[HOST_STATUS_STOPPING_MAINTENANCE],
         maintenance,
-        host,
+        node,
       };
     }
     if (getNodeMaintenancePhase(maintenance) === 'Succeeded') {
@@ -24,14 +27,14 @@ export const getNodeMaintenanceStatus = (maintenance: K8sResourceKind, host: Bar
         status: HOST_STATUS_UNDER_MAINTENANCE,
         title: HOST_STATUS_TITLES[HOST_STATUS_UNDER_MAINTENANCE],
         maintenance,
-        host,
+        node,
       };
     }
     return {
       status: HOST_STATUS_STARTING_MAINTENANCE,
       title: HOST_STATUS_TITLES[HOST_STATUS_STARTING_MAINTENANCE],
       maintenance,
-      host,
+      node,
     };
   }
   return null;
