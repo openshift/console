@@ -5,14 +5,14 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import { CheckCircleIcon, QuestionIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon, UnknownIcon } from '@patternfly/react-icons';
 
 const AlertsBody: React.FC<AlertsBodyProps> = ({ isLoading, error, children, emptyMessage }) => {
   let body: React.ReactNode;
   if (error) {
     body = (
       <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
-        <EmptyStateIcon icon={QuestionIcon} />
+        <EmptyStateIcon className="co-status-card__alerts-icon" icon={UnknownIcon} />
         <EmptyStateBody>Alerts could not be loaded.</EmptyStateBody>
       </EmptyState>
     );
@@ -25,7 +25,7 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({ isLoading, error, children, emp
   } else if (!children) {
     body = (
       <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
-        <EmptyStateIcon icon={CheckCircleIcon} />
+        <EmptyStateIcon className="co-status-card__alerts-icon" icon={CheckCircleIcon} />
         <EmptyStateBody>{emptyMessage}</EmptyStateBody>
       </EmptyState>
     );

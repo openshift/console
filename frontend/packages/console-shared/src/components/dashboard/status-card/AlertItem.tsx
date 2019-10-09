@@ -48,7 +48,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
 
 const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const LinkComponent = React.useCallback(
-    () => <Link to={alertURL(alert, alert.rule.id)}>View more</Link>,
+    () => <Link to={alertURL(alert, alert.rule.id)}>View details</Link>,
     [alert],
   );
   return (
