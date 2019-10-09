@@ -19,6 +19,7 @@ import {
   DaemonSetModel,
   DeploymentConfigModel,
   DeploymentModel,
+  GroupModel,
   HorizontalPodAutoscalerModel,
   ImageStreamModel,
   ImageStreamTagModel,
@@ -226,6 +227,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(UserModel), () =>
     import('./user' /* webpackChunkName: "user" */).then((m) => m.UserDetailsPage),
+  )
+  .set(referenceForModel(GroupModel), () =>
+    import('./group' /* webpackChunkName: "group" */).then((m) => m.GroupDetailsPage),
   )
   .set(referenceForModel(AlertmanagerModel), () =>
     import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(
@@ -442,6 +446,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(UserModel), () =>
     import('./user' /* webpackChunkName: "user" */).then((m) => m.UserPage),
+  )
+  .set(referenceForModel(GroupModel), () =>
+    import('./group' /* webpackChunkName: "group" */).then((m) => m.GroupPage),
   )
   .set(referenceForModel(PrometheusModel), () =>
     import('./prometheus' /* webpackChunkName: "prometheus" */).then(

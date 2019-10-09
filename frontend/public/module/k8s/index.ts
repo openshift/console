@@ -692,6 +692,10 @@ export type UserKind = {
   identities: string[];
 } & K8sResourceKind;
 
+export type GroupKind = {
+  users: string[];
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;

@@ -26,7 +26,7 @@ const chunkedRoutes = OrderedMap<string, { section: string; name: string }>()
   .set('build-config', { section: 'Builds', name: 'Build Configs' })
   .set('image-stream', { section: 'Builds', name: 'Image Streams' })
   .set('node', { section: 'Compute', name: 'Nodes' })
-  .set('service-account', { section: 'Administration', name: 'Service Accounts' })
+  .set('service-account', { section: 'User Management', name: 'Service Accounts' })
   .set('limit-range', { section: 'Administration', name: 'Limit Ranges' })
   .set('custom-resource-definition', {
     section: 'Administration',

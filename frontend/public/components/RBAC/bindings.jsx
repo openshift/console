@@ -269,7 +269,30 @@ const roleResources = [
   { kind: 'ClusterRoleBinding', namespaced: false, optional: true },
 ];
 
-export const RoleBindingsPage = ({ namespace, showTitle = true, mock }) => (
+const rowFilters = [
+  {
+    type: 'role-binding-kind',
+    selected: ['cluster', 'namespace'],
+    reducer: bindingType,
+    items: ({ ClusterRoleBinding: data }) => {
+      const items = [
+        { id: 'namespace', title: 'Namespace Role Bindings' },
+        { id: 'system', title: 'System Role Bindings' },
+      ];
+      if (data && data.loaded && !data.loadError) {
+        items.unshift({ id: 'cluster', title: 'Cluster-wide Role Bindings' });
+      }
+      return items;
+    },
+  },
+];
+
+export const RoleBindingsPage = ({
+  namespace = undefined,
+  showTitle = true,
+  mock = false,
+  staticFilters = undefined,
+}) => (
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
@@ -281,23 +304,8 @@ export const RoleBindingsPage = ({ namespace, showTitle = true, mock }) => (
     ListComponent={BindingsList}
     namespace={namespace}
     resources={roleResources}
-    rowFilters={[
-      {
-        type: 'role-binding-kind',
-        selected: ['cluster', 'namespace'],
-        reducer: bindingType,
-        items: ({ ClusterRoleBinding: data }) => {
-          const items = [
-            { id: 'namespace', title: 'Namespace Role Bindings' },
-            { id: 'system', title: 'System Role Bindings' },
-          ];
-          if (data && data.loaded && !data.loadError) {
-            items.unshift({ id: 'cluster', title: 'Cluster-wide Role Bindings' });
-          }
-          return items;
-        },
-      },
-    ]}
+    rowFilters={staticFilters ? [] : rowFilters}
+    staticFilters={staticFilters}
     showTitle={showTitle}
     textFilter="role-binding"
     title="Role Bindings"
