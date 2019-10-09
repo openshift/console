@@ -32,7 +32,7 @@ export const getNetworks = (vm: VMKind, defaultValue = []) =>
 export const getVolumes = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.template.spec.volumes') == null ? defaultValue : vm.spec.template.spec.volumes;
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
-  _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplate;
+  _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
 
 export const getOperatingSystem = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
