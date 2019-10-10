@@ -21,9 +21,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
 }) => {
   const { radius, decoratorRadius } = calculateRadius(size);
   const {
-    data: {
-      donutStatus: { build },
-    },
+    data: { build },
   } = workload;
   const repoIcon = routeDecoratorIcon(workload.data.editUrl, decoratorRadius);
 
@@ -32,7 +30,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       x={x}
       y={y}
       outerRadius={radius}
-      innerRadius={radius * 0.55}
+      innerRadius={radius * 0.45}
       icon={workload.data.builderImage}
       label={workload.name}
       kind={workload.data.kind}

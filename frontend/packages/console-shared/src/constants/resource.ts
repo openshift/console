@@ -24,3 +24,16 @@ export const METRICS_POLL_INTERVAL = 30 * 1000;
 
 // Annotation key for image triggers
 export const TRIGGERS_ANNOTATION = 'image.openshift.io/triggers';
+
+export enum DEPLOYMENT_STRATEGY {
+  rolling = 'Rolling',
+  recreate = 'Recreate',
+}
+
+export enum DEPLOYMENT_PHASE {
+  running = 'Running',
+  pending = 'Pending',
+  complete = 'Complete',
+  failed = 'Failed',
+  cancelled = 'Cancelled',
+}

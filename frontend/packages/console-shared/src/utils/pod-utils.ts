@@ -7,7 +7,9 @@ import {
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
 import { podColor } from '../constants/pod';
-import { Pod, PodData } from '../types/pod';
+import { Pod } from '../types/pod';
+import { DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
+import { PodControllerOverviewItem } from '../types';
 
 export const podStatus = Object.keys(podColor);
 
@@ -145,65 +147,35 @@ export const isIdled = (deploymentConfig: K8sResourceKind): boolean => {
   );
 };
 
-const getOwnedResources = <T extends K8sResourceKind>(
-  owner: K8sResourceKind,
-  resources: T[],
-): T[] => {
-  if (owner && owner.metadata) {
-    const {
-      metadata: { uid },
-    } = owner;
-    return _.filter(resources, ({ metadata: { ownerReferences } }) => {
-      return _.some(ownerReferences, {
-        uid,
-        controller: true,
-      });
-    });
-  }
-  return [];
-};
-
-const getPodData = (
-  data: PodData,
-): { inProgressDeploymentData: Pod[] | null; completedDeploymentData: Pod[] | null } => {
-  // Scaling no. of pods
-  if (data.currentRCPhase === 'Complete' && data.currentAvailableReplicas !== data.totalReplicas) {
-    return { inProgressDeploymentData: null, completedDeploymentData: data.current };
-  }
-
-  // Deploy
-  if (data.strategy === 'Recreate') {
-    if (
-      data.previous.length === 0 &&
-      data.currentReplicas === data.totalReplicas &&
-      data.currentAvailableReplicas === data.totalReplicas
-    ) {
-      return { inProgressDeploymentData: null, completedDeploymentData: data.current };
-    }
-    return { inProgressDeploymentData: data.current, completedDeploymentData: data.previous };
-  }
-  // Rolling
-  if (data.previous.length > 0) {
-    return { inProgressDeploymentData: data.current, completedDeploymentData: data.previous };
-  }
-  return { inProgressDeploymentData: null, completedDeploymentData: data.current };
-};
-
-export const getDataBasedOnCurrentAndPreviousRC = (
-  d: K8sResourceKind,
-  current,
-  previous,
+export const getPodData = (
+  dc: K8sResourceKind,
   pods: Pod[],
-) => {
-  const currentPods = getOwnedResources(current, pods);
-  const previousPods = getOwnedResources(previous, pods);
-  return getPodData({
-    current: currentPods,
-    previous: previousPods,
-    strategy: _.get(d, 'spec.strategy'),
-    totalReplicas: _.get(d, 'spec.replicas'),
-    currentRCPhase: _.get(current, ['metadata', 'annotations', 'openshift.io/deployment.phase']),
-    currentReplicas: _.get(current, 'spec.replicas'),
-    currentAvailableReplicas: _.get(current, 'status.availableReplicas'),
-  });
+  current: PodControllerOverviewItem,
+  previous: PodControllerOverviewItem,
+  isRollingOut: boolean,
+): { inProgressDeploymentData: Pod[] | null; completedDeploymentData: Pod[] | null } => {
+  const strategy = _.get(dc, ['spec', 'strategy', 'type']);
+  const currentDeploymentphase = current && current.phase;
+  const currentPods = current && current.pods;
+  const previousPods = previous && previous.pods;
+
+  // DaemonSets and StatefulSets
+  if (!strategy) return { inProgressDeploymentData: null, completedDeploymentData: pods };
+
+  // Scaling no. of pods
+  if (currentDeploymentphase === DEPLOYMENT_PHASE.complete) {
+    return { inProgressDeploymentData: null, completedDeploymentData: currentPods };
+  }
+
+  // Deploy - Rolling - Recreate
+  if (
+    (strategy === DEPLOYMENT_STRATEGY.recreate || strategy === DEPLOYMENT_STRATEGY.rolling) &&
+    isRollingOut
+  ) {
+    return {
+      inProgressDeploymentData: currentPods,
+      completedDeploymentData: previousPods,
+    };
+  }
+  return { inProgressDeploymentData: null, completedDeploymentData: currentPods };
 };

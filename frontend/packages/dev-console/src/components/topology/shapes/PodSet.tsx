@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PodStatus, calculateRadius, getDataBasedOnCurrentAndPreviousRC } from '@console/shared';
+import { PodStatus, calculateRadius, getPodData } from '@console/shared';
 import { DonutStatusData } from '../topology-types';
 
 interface PodSetProps {
@@ -32,11 +32,12 @@ const PodSet: React.FC<PodSetProps> = ({ size, data }) => {
     podStatusInnerRadius,
     podStatusStrokeWidth,
   );
-  const { inProgressDeploymentData, completedDeploymentData } = getDataBasedOnCurrentAndPreviousRC(
+  const { inProgressDeploymentData, completedDeploymentData } = getPodData(
     data.dc,
+    data.pods,
     data.current,
     data.previous,
-    data.pods,
+    data.isRollingOut,
   );
   return (
     <React.Fragment>
