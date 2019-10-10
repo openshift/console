@@ -119,7 +119,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
+          './components/activity-card/activity-card' /* webpackChunkName: "object-service-activity-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
