@@ -32,6 +32,8 @@ const flattenResources = (resources) => {
 
     return hostsData.map(
       (host): BareMetalHostBundle => {
+        // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
+        // on machines
         const machine = getHostMachine(host, machinesData);
         const node = nodesByMachineName[getName(machine)];
         const nodeMaintenance = maintenancesByNodeName[getName(node)];
