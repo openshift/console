@@ -68,8 +68,8 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   white-space: nowrap;
 
   @media (min-width: $grid-float-breakpoint) {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
   }
 
   &__items {

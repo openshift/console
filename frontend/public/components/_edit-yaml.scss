@@ -24,7 +24,7 @@
   border-bottom: 1px solid #ddd;
   padding: 20px 15px;
   @media(min-width: $screen-sm-min) {
-    padding-left: 31px; // left alignment with namespace selector text
+    padding-left: $grid-gutter-width; // left alignment with namespace selector text
   }
 }
 

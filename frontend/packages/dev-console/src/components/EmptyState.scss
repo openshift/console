@@ -11,8 +11,11 @@
   }
 
   &__content {
-    padding: var(--pf-global--spacer--lg);
+    padding: 12px;
     display: flex;
     flex-wrap: wrap;
+    @media (min-width: 768px) {
+      padding: var(--pf-global--spacer--lg);
+    }
   }
 }

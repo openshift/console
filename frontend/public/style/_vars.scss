@@ -27,8 +27,8 @@ $font-size-h3: var(--pf-global--FontSize--lg);
 $font-size-h4: var(--pf-global--FontSize--md);
 $font-size-h5: var(--pf-global--FontSize--md);
 $font-size-h6: var(--pf-global--FontSize--md);
-// Patternfly 3 defaults to 40px, which leaves a lot more whitespace than we're used to.
-$grid-gutter-width: 30px;
+// Patternfly 4 defaults to 24px
+$grid-gutter-width: 24px; // match var(--pf-global--spacer--lg)
 // Use PatternFly 4 headings font styles in PatternFly 3.
 $headings-font-family: var(--pf-global--FontFamily--heading--sans-serif);
 $headings-font-weight: var(--pf-global--FontWeight--normal);
