@@ -5,54 +5,62 @@
   padding: 0;
 }
 
-.co-utilization-card__axis {
-  padding: 0 0.5rem;
+.co-utilization-card .co-u-hidden {
+  display: none;
 }
 
-.co-utilization-card__item {
-  border-bottom: 1px solid $pf-color-black-300;
-  font-size: 1.333em;
-  margin: 0;
+.co-utilization-card__body {
   padding: 0;
 }
 
-.co-utilization-card__item-chart {
-  padding: 0 0.5rem;
-  text-align: center;
+.co-utilization-card__item:not(:first-child) {
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 }
 
-.co-utilization-card__item-chart--narrow {
-  text-align: center;
+.co-utilization-card__item > * {
+  padding: var(--pf-global--spacer--md);
 }
 
-.co-utilization-card__item-chart--wide {
-  border-left: 1px solid $pf-color-black-300;
-}
-
-.co-utilization-card__item-current {
-  padding-right: var(--pf-c-card--child--PaddingRight);
-  text-align: right;
-}
-
-.co-utilization-card__item-row--narrow {
-  margin: 0;
-  padding: 0;
-}
-
-.co-utilization-card__item-title-row--narrow {
-  margin-top: 1em;
-}
-
-.co-utilization-card__item-title {
-  padding-left: var(--pf-c-card--child--PaddingLeft);
-}
-
-.co-utilization-card__item--wide {
-  align-items: center;
-  display: flex;
-}
-
-.co-utilization-card__current--max {
-  font-size: 90%;
+.co-utilization-card__item__text {
   color: var(--pf-global--Color--200);
+  font-size: var(--pf-global--FontSize--sm);
+}
+
+.co-utilization-card__item .pf-c-title {
+  margin-bottom: 0;
+}
+
+.co-utilization-card__item .co-utilization-card__item__chart.co-utilization-card__item__chart--times {
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md);
+}
+
+.co-utilization-card__item__chart .graph-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (min-width: 1200px) {
+  .co-utilization-card__item {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .co-utilization-card__item > *{
+    flex: 1 50%;
+  }
+
+  .co-utilization-card__item >*:nth-child(odd) {
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
+    border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    align-items: flex-start;
+  }
+
+  .co-utilization-card__item >*:nth-child(even) {
+    padding: 0 var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md);
+    align-items: center;
+  }
+
+  .co-utilization-card .co-u-visible-on-xl {
+    display: flex;
+  }
 }

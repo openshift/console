@@ -1,14 +1,10 @@
 import * as React from 'react';
-import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
-import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { Humanize } from '@console/internal/components/utils/types';
 import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
 
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({ title, data, humanizeValue, isLoading = false, query, error, max = null }) => {
-    const [containerRef, width] = useRefWidth();
-
     let current;
     if (data.length) {
       const latestData = data[data.length - 1];
@@ -38,45 +34,27 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         humanize={humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={80}
-        className="co-utilization-card__area-chart"
         chartStatus={chartStatus}
       />
     );
 
-    const rows =
-      width < parseInt(breakpointSM.value, 10) ? (
-        <div className="co-utilization-card__item">
-          <div className="row co-utilization-card__item-row--narrow co-utilization-card__item-title-row--narrow">
-            <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 co-utilization-card__item-title co-dashboard-text--small">
-              {title}
-            </div>
-            <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 co-utilization-card__item-current co-dashboard-text--small">
-              {current}
-              {humanMax}
-            </div>
-          </div>
-          <div className="row co-utilization-card__item-row--narrow">
-            <div className="co-utilization-card__item-chart co-utilization-card__item-chart--narrow">
-              {chart}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="row co-utilization-card__item co-utilization-card__item--wide">
-          <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3 co-utilization-card__item-title">
-            {title}
-          </div>
-          <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2 co-utilization-card__item-current">
+    return (
+      <div className="co-utilization-card__item">
+        <div className="co-utilization-card__item__section">
+          <div className="pf-l-level">
+            <h4 className="pf-c-title pf-m-md">{title}</h4>
             {current}
-            {humanMax}
           </div>
-          <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__item-chart co-utilization-card__item-chart--wide">
-            {chart}
+          <div className="pf-l-level">
+            <span className="co-utilization-card__item__text" />
+            <span className="co-utilization-card__item__text">
+              {humanMax && <span>of {humanMax}</span>}
+            </span>
           </div>
         </div>
-      );
-
-    return <div ref={containerRef}>{rows}</div>;
+        <div className="co-utilization-card__item__chart">{chart}</div>
+      </div>
+    );
   },
 );
 
