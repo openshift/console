@@ -10,7 +10,7 @@ import { RequestResultsPart } from './request-results-part';
 
 import './result-tab.scss';
 
-export const ResultTabComponent: React.FC<ResultTabComponentProps> = ({
+const ResultTabComponent: React.FC<ResultTabComponentProps> = ({
   wizardReduxID,
   isValid,
   isPending,

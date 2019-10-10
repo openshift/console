@@ -1,34 +1,50 @@
 import {
   ChangedCommonData,
   ChangedCommonDataProp,
+  CloudInitField,
   VMSettingsField,
   VMSettingsFieldType,
+  VMWizardNetwork,
+  VMWizardStorage,
   VMWizardTab,
 } from '../types';
 import { ValidationObject } from '../../../utils/validations/types';
+import { DeviceType } from '../../../constants/vm';
 
 export enum ActionType {
-  Create = 'KubevirtVMWizardCreate',
-  Dispose = 'KubevirtVMWizardDispose',
-  UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
-  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
-  SetNetworks = 'KubevirtVMWizardSetNetworks',
-  SetStorages = 'KubevirtVMWizardSetStorages',
-  SetResults = 'KubevirtVMWizardSetResults',
+  Create = 'KubevirtVMWizardExternalCreate',
+  Dispose = 'KubevirtVMWiExternalDispose',
+  UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
+  SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
+  SetCloudInitFieldValue = 'KubevirtVMWizardExternalSetCloudInitFieldValue',
+  SetTabLocked = 'KubevirtVMWizardExternalSetTabLocked',
+  RemoveNIC = 'KubevirtVMWizardExternalRemoveNIC',
+  UpdateNIC = 'KubevirtVMWizardExternalUpdateNIC',
+  SetDeviceBootOrder = 'KubevirtVMWizardExternalSetDeviceBootOrder',
+  RemoveStorage = 'KubevirtVMWizardExternalRemoveStorage',
+  UpdateStorage = 'KubevirtVMWizardExternalUpdateStorage',
+  SetResults = 'KubevirtVMWizardExternalSetResults',
 }
 
 // should not be called directly from outside redux code (e.g. stateUpdate)
 export enum InternalActionType {
   Create = 'KubevirtVMWizardCreate',
   Dispose = 'KubevirtVMWizardDispose',
-  Update = 'KubevirtVMWizardUpdateInternal',
+  Update = 'KubevirtVMWizardUpdate',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
-  SetTabValidity = 'KubevirtVMWizardSetTabValidityInternal',
-  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValueInternal',
-  SetInVmSettings = 'KubevirtVMWizardSetInVmSettingsInternal',
-  SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatchInternal',
-  UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsFieldInternal',
-  UpdateVmSettings = 'KubevirtVMWizardUpdateVmSettingsInternal',
+  SetTabValidity = 'KubevirtVMWizardSetTabValidity',
+  SetTabLocked = 'KubevirtVMWizardSetTabLocked',
+  SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
+  SetCloudInitFieldValue = 'KubevirtVMWizardSetCloudInitFieldValue',
+  SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',
+  SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatch',
+  UpdateVmSettingsField = 'KubevirtVMWizardUpdateVmSettingsField',
+  UpdateVmSettings = 'KubevirtVMWizardUpdateVmSettings',
+  RemoveNIC = 'KubevirtVMWizardRemoveNIC',
+  UpdateNIC = 'KubevirtVMWizardUpdateNIC',
+  SetDeviceBootOrder = 'KubevirtVMWizardSetDeviceBootOrder',
+  RemoveStorage = 'KubevirtVMWizardRemoveStorage',
+  UpdateStorage = 'KubevirtVMWizardUpdateStorage',
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
@@ -44,9 +60,16 @@ export type WizardInternalAction = {
     isPending?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
-    key?: VMSettingsField;
+    key?: VMSettingsField | CloudInitField;
     tab?: VMWizardTab;
     batch?: ActionBatch;
+    network?: VMWizardNetwork;
+    networkID?: string;
+    storage?: VMWizardStorage;
+    storageID?: string;
+    deviceID?: string;
+    deviceType?: DeviceType;
+    bootOrder?: number;
   };
 };
 

@@ -1,29 +1,31 @@
-import { EntityMap } from '@console/shared';
-import { VMLikeEntityKind, VMKind } from '../../types';
+import { VMLikeEntityKind } from '../../types';
+import { ValidationObject } from '../../utils/validations/types';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 
-export enum StorageRowType {
-  STORAGE_TYPE_VM = 'storage-type-vm',
-  STORAGE_TYPE_CREATE = 'storage-type-create',
-}
-
-export type StorageBundle = {
-  name: string;
-  size: string;
-  storageClass: string;
-  storageType: StorageRowType;
-  disk: any;
+export type StorageSimpleData = {
+  name?: string;
+  diskInterface?: string;
+  size?: string;
+  storageClass?: string;
 };
 
-export type VMDiskRowProps = {
-  obj: StorageBundle;
-  index: number;
-  style: object;
-  customData: {
-    vmLikeEntity: VMLikeEntityKind;
-    vm: VMKind;
-    diskLookup: EntityMap<any>;
-    onCreateRowDismiss: () => void;
-    onCreateRowError: (error: string) => void;
-    forceRerender: () => void;
-  };
+export type StorageSimpleDataValidation = {
+  name?: ValidationObject;
+  diskInterface?: ValidationObject;
+  size?: ValidationObject;
+  storageClass?: ValidationObject;
 };
+
+export type StorageBundle = StorageSimpleData & {
+  disk: CombinedDisk;
+};
+
+export type VMStorageRowActionOpts = {
+  withProgress: (promise: Promise<any>) => void;
+};
+
+export type VMStorageRowCustomData = {
+  vmLikeEntity: VMLikeEntityKind;
+  columnClasses: string[];
+  isDisabled: boolean;
+} & VMStorageRowActionOpts;

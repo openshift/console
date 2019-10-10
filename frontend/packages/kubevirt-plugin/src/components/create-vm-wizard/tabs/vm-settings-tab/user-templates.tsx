@@ -11,9 +11,9 @@ import { nullOnEmptyChange } from '../../utils/utils';
 import { iGetName } from '../../selectors/immutable/selectors';
 
 export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
-  ({ userTemplateField, userTemplates, commonTemplates, dataVolumes, onChange }) => {
+  ({ userTemplateField, userTemplates, commonTemplates, onChange }) => {
     const data = iGetLoadedData(userTemplates);
-    const names =
+    const names: string[] =
       data &&
       data
         .toIndexedSeq()
@@ -29,7 +29,6 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
         loadingResources={{
           userTemplates,
           commonTemplates,
-          dataVolumes,
         }}
       >
         <FormField isDisabled={!hasUserTemplates}>
@@ -46,8 +45,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
     );
   },
   (prevProps, nextProps) =>
-    iGetIsLoaded(prevProps.dataVolumes) === iGetIsLoaded(nextProps.dataVolumes) && // wait for dataVolumes; required when pre-filling template
-    iGetIsLoaded(prevProps.commonTemplates) === iGetIsLoaded(nextProps.commonTemplates) && // wait -||-
+    iGetIsLoaded(prevProps.commonTemplates) === iGetIsLoaded(nextProps.commonTemplates) && // wait for commonTemplates; required when pre-filling template
     prevProps.userTemplateField === nextProps.userTemplateField &&
     prevProps.userTemplates === nextProps.userTemplates,
 );
@@ -56,6 +54,5 @@ type UserTemplatesProps = {
   userTemplateField: any;
   userTemplates: any;
   commonTemplates: any;
-  dataVolumes: any;
   onChange: (key: string, value: string) => void;
 };

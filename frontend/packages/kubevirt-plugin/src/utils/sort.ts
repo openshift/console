@@ -30,9 +30,19 @@ export const flavorSort = (array = []) =>
     return resolvedFlavorA - resolvedFlavorB;
   });
 
-export const ignoreCaseSort = (array = [], byPath: string[] = undefined) =>
-  array.sort((a, b) =>
-    (byPath ? _.get(a, byPath, '') : a)
-      .toLowerCase()
-      .localeCompare((byPath ? _.get(b, byPath, '') : b).toLowerCase()),
-  );
+export const ignoreCaseSort = <T>(
+  array: T[] = [],
+  byPath: string[] = undefined,
+  byValueResolver: (item: T) => string = undefined,
+) => {
+  const resolve = (v) => {
+    const result = _.isFunction(byValueResolver)
+      ? byValueResolver(v)
+      : byPath
+      ? _.get(v, byPath, '')
+      : v;
+
+    return result == null ? '' : result.toLowerCase();
+  };
+  return array.sort((a, b) => resolve(a).localeCompare(resolve(b)));
+};

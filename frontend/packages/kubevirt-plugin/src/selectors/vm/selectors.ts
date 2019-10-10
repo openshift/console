@@ -7,7 +7,7 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
+import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -27,7 +27,7 @@ export const getInterfaces = (vm: VMKind, defaultValue = []): V1NetworkInterface
     ? defaultValue
     : vm.spec.template.spec.domain.devices.interfaces;
 
-export const getNetworks = (vm: VMKind, defaultValue = []) =>
+export const getNetworks = (vm: VMKind, defaultValue = []): V1Network[] =>
   _.get(vm, 'spec.template.spec.networks') == null ? defaultValue : vm.spec.template.spec.networks;
 export const getVolumes = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.template.spec.volumes') == null ? defaultValue : vm.spec.template.spec.volumes;

@@ -1,12 +1,27 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { iGet, iGetIn, iGetLoadedData } from '../../../../utils/immutable';
 import { getCreateVMWizards } from '../selectors';
-import { CommonDataProp } from '../../types';
+import { CommonDataProp, VMWizardTab } from '../../types';
+import { hasStepAllRequiredFilled, isStepValid } from './wizard-selectors';
 
 export const iGetCreateVMWizard = (state, reduxID: string) =>
   iGet(getCreateVMWizards(state), reduxID);
 export const iGetCreateVMWizardTabs = (state, reduxID: string) =>
   iGet(iGetCreateVMWizard(state, reduxID), 'tabs');
+
+export const checkTabValidityChanged = (
+  state,
+  reduxID: string,
+  tab: VMWizardTab,
+  nextIsValid,
+  nextHasAllRequiredFilled,
+) => {
+  const tabs = iGetCreateVMWizardTabs(state, reduxID);
+  return (
+    isStepValid(tabs, tab) !== nextIsValid ||
+    hasStepAllRequiredFilled(tabs, tab) !== nextHasAllRequiredFilled
+  );
+};
 
 export const iGetCommonData = (state, reduxID: string, key: CommonDataProp) => {
   const wizard = iGetCreateVMWizard(state, reduxID);

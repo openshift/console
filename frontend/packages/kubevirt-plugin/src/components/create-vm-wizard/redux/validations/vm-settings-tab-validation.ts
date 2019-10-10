@@ -2,10 +2,10 @@ import { isEmpty } from 'lodash';
 import { List } from 'immutable';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
-  iGetFieldKey,
-  iGetVmSettings,
   hasVmSettingsChanged,
+  iGetFieldKey,
   iGetFieldValue,
+  iGetVmSettings,
   isFieldRequired,
 } from '../../selectors/immutable/vm-settings';
 import {
@@ -24,19 +24,16 @@ import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
-import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
+import { concatImmutableLists } from '../../../../utils/immutable';
 import { getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import {
+  checkTabValidityChanged,
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
-import {
-  validatePositiveInteger,
-  validateTrim,
-  validateURL,
-} from '../../../../utils/validations/common';
+import { validatePositiveInteger } from '../../../../utils/validations/common';
 import { getValidationUpdate } from './utils';
 
 const validateVm: VmSettingsValidator = (field, options) => {
@@ -77,11 +74,7 @@ export const validateUserTemplate: VmSettingsValidator = (field, options) => {
     (template) => iGetName(template) === userTemplateName,
   );
 
-  const dataVolumes = immutableListToShallowJS(
-    iGetLoadedCommonData(state, id, VMWizardProps.userTemplates),
-  );
-
-  return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON(), dataVolumes);
+  return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };
 
 const asVMSettingsFieldValidator = (
@@ -110,18 +103,10 @@ const validationConfig: VMSettingsValidationConfig = {
     },
     validator: validateVm,
   },
-  [VMSettingsField.CONTAINER_IMAGE]: {
-    detectValueChanges: [VMSettingsField.CONTAINER_IMAGE],
-    validator: asVMSettingsFieldValidator(validateTrim),
-  },
   [VMSettingsField.USER_TEMPLATE]: {
     detectValueChanges: [VMSettingsField.USER_TEMPLATE],
-    detectCommonDataChanges: [VMWizardProps.userTemplates, VMWizardProps.dataVolumes],
+    detectCommonDataChanges: [VMWizardProps.userTemplates],
     validator: validateUserTemplate,
-  },
-  [VMSettingsField.IMAGE_URL]: {
-    detectValueChanges: [VMSettingsField.IMAGE_URL],
-    validator: asVMSettingsFieldValidator(validateURL),
   },
   [VMSettingsField.CPU]: {
     detectValueChanges: [VMSettingsField.CPU],
@@ -152,7 +137,7 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
 
   // check if all required fields are defined
   const hasAllRequiredFilled = vmSettings
-    .filter((field) => isFieldRequired(field))
+    .filter((field) => isFieldRequired(field) && !field.get('skipValidation'))
     .every((field) => field.get('value'));
   let isValid = hasAllRequiredFilled;
 
@@ -163,12 +148,14 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
     );
   }
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.SetTabValidity](
-      id,
-      VMWizardTab.VM_SETTINGS,
-      isValid,
-      hasAllRequiredFilled,
-    ),
-  );
+  if (checkTabValidityChanged(state, id, VMWizardTab.VM_SETTINGS, isValid, hasAllRequiredFilled)) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.SetTabValidity](
+        id,
+        VMWizardTab.VM_SETTINGS,
+        isValid,
+        hasAllRequiredFilled,
+      ),
+    );
+  }
 };

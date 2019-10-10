@@ -2,12 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { createVm, createVmTemplate } from 'kubevirt-web-ui-components';
-import { Wizard } from '@patternfly/react-core';
-import {
-  PersistentVolumeClaimModel,
-  StorageClassModel,
-  TemplateModel,
-} from '@console/internal/models';
+import { Wizard, WizardStep } from '@patternfly/react-core';
+import { TemplateModel } from '@console/internal/models';
 import {
   Firehose,
   history,
@@ -15,13 +11,15 @@ import {
   makeReduxID,
   units,
 } from '@console/internal/components/utils';
+import { k8sGet, TemplateKind } from '@console/internal/module/k8s';
 import { withReduxID } from '../../utils/redux/common';
+import { VirtualMachineModel } from '../../models';
 import {
-  DataVolumeModel,
-  NetworkAttachmentDefinitionModel,
-  VirtualMachineModel,
-} from '../../models';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VolumeType,
+} from '../../constants/vm';
 import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
@@ -33,13 +31,25 @@ import {
 } from '../../utils/immutable';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { ResultsWrapper } from '../../k8s/enhancedK8sMethods/types';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import {
+  getDefaultSCAccessMode,
+  getDefaultSCVolumeMode,
+} from '../../selectors/config-map/sc-defaults';
+import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-class';
 import {
   ChangedCommonData,
   CommonData,
   CreateVMWizardComponentProps,
   DetectCommonDataChanges,
   VMSettingsField,
+  VMWizardNetwork,
   VMWizardProps,
+  VMWizardStorage,
   VMWizardTab,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver } from './strings/strings';
@@ -47,13 +57,106 @@ import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
 import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
-import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
+import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
+import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
+import { StorageTab } from './tabs/storage-tab/storage-tab';
+import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 
 import './create-vm-wizard.scss';
+
+// TODO remove after moving create functions from kubevirt-web-ui-components
+/** *
+ * kubevirt-web-ui-components InterOP
+ */
+const kubevirtInterOP = async ({
+  activeNamespace,
+  vmSettings,
+  networks,
+  storages,
+  templates,
+}: {
+  activeNamespace: string;
+  vmSettings: any;
+  networks: VMWizardNetwork[];
+  storages: VMWizardStorage[];
+  templates: TemplateKind[];
+}) => {
+  const clonedVMsettings = _.cloneDeep(vmSettings);
+  const clonedNetworks = _.cloneDeep(networks);
+  const clonedStorages = _.cloneDeep(storages);
+
+  clonedVMsettings.namespace = { value: activeNamespace };
+  const operatingSystems = getTemplateOperatingSystems(templates);
+  const osField = clonedVMsettings[VMSettingsField.OPERATING_SYSTEM];
+  const osID = osField.value;
+  osField.value = operatingSystems.find(({ id }) => id === osID);
+
+  const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
+    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
+    const networkWrapper = NetworkWrapper.initialize(network);
+
+    return {
+      name: networkInterfaceWrapper.getName(),
+      mac: networkInterfaceWrapper.getMACAddress(),
+      binding: networkInterfaceWrapper.getTypeValue(),
+      isBootable: networkInterfaceWrapper.isFirstBootableDevice(),
+      network: networkWrapper.getReadableName(),
+      networkType: networkWrapper.getTypeValue(),
+      templateNetwork: {
+        network,
+        interface: networkInterface,
+      },
+    };
+  });
+
+  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
+
+  const interOPStorages = clonedStorages.map(({ disk, volume, dataVolume }) => {
+    const diskWrapper = DiskWrapper.initialize(disk);
+    const volumeWrapper = VolumeWrapper.initialize(volume);
+    const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
+
+    return {
+      name: diskWrapper.getName(),
+      isBootable: diskWrapper.isFirstBootableDevice(),
+      storageType:
+        volumeWrapper.getType() === VolumeType.DATA_VOLUME && dataVolume ? 'datavolume' : undefined,
+      templateStorage: {
+        volume,
+        disk,
+        dataVolumeTemplate: dataVolumeWrapper
+          ? DataVolumeWrapper.mergeWrappers(
+              dataVolumeWrapper,
+              DataVolumeWrapper.initializeFromSimpleData({
+                accessModes:
+                  dataVolumeWrapper.getAccessModes() ||
+                  getDefaultSCAccessMode(
+                    storageClassConfigMap,
+                    dataVolumeWrapper.getStorageClassName(),
+                  ),
+                volumeMode:
+                  dataVolumeWrapper.getVolumeMode() ||
+                  getDefaultSCVolumeMode(
+                    storageClassConfigMap,
+                    dataVolumeWrapper.getStorageClassName(),
+                  ),
+              }),
+            ).asResource()
+          : undefined,
+      },
+    };
+  });
+
+  return {
+    interOPVMSettings: clonedVMsettings,
+    interOPNetworks,
+    interOPStorages,
+  };
+};
 
 export class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
   private isClosed = false;
@@ -87,12 +190,18 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     this.props.onClose();
   };
 
-  finish() {
+  finish = async () => {
     this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
     const create = this.props.isCreateTemplate ? createVmTemplate : createVm;
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
     const vmSettings = iGetIn(this.props.stepData, [VMWizardTab.VM_SETTINGS, 'value']).toJS();
+    const networks = immutableListToShallowJS<VMWizardNetwork>(
+      iGetIn(this.props.stepData, [VMWizardTab.NETWORKING, 'value']),
+    );
+    const storages = immutableListToShallowJS(
+      iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']),
+    );
     const templates = immutableListToShallowJS(
       concatImmutableLists(
         iGetLoadedData(this.props[VMWizardProps.commonTemplates]),
@@ -100,26 +209,21 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       ),
     );
 
-    // TODO remove after moving create functions from kubevirt-web-ui-components
-    /** *
-     * BEGIN kubevirt-web-ui-components InterOP
-     */
-    vmSettings.namespace = { value: this.props.activeNamespace };
-    const operatingSystems = getTemplateOperatingSystems(templates);
-    const osField = vmSettings[VMSettingsField.OPERATING_SYSTEM];
-    const osID = osField.value;
-    osField.value = operatingSystems.find(({ id }) => id === osID);
-    /**
-     * END kubevirt-web-ui-components InterOP
-     */
+    const { interOPVMSettings, interOPNetworks, interOPStorages } = await kubevirtInterOP({
+      vmSettings,
+      networks,
+      storages,
+      templates,
+      activeNamespace: this.props.activeNamespace,
+    });
 
     create(
       enhancedK8sMethods,
       templates,
-      vmSettings,
-      iGetIn(this.props.stepData, [VMWizardTab.NETWORKS, 'value']).toJS(),
-      iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']).toJS(),
-      immutableListToShallowJS(iGetLoadedData(this.props[VMWizardProps.persistentVolumeClaims])),
+      interOPVMSettings,
+      interOPNetworks,
+      interOPStorages,
+      [],
       units,
     )
       .then(() => getResults(enhancedK8sMethods))
@@ -128,7 +232,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
-  }
+  };
 
   render() {
     const { isCreateTemplate, reduxID, stepData } = this.props;
@@ -148,12 +252,38 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           </>
         ),
       },
-      // {
-      //   id: VMWizardTab.NETWORKS,
-      // },
-      // {
-      //   id: VMWizardTab.STORAGE,
-      // },
+      {
+        id: VMWizardTab.NETWORKING,
+        component: (
+          <>
+            <ResourceLoadErrors wizardReduxID={reduxID} />
+            <NetworkingTab wizardReduxID={reduxID} />
+          </>
+        ),
+      },
+      {
+        id: VMWizardTab.STORAGE,
+        component: (
+          <>
+            <ResourceLoadErrors wizardReduxID={reduxID} />
+            <StorageTab wizardReduxID={reduxID} />
+          </>
+        ),
+      },
+      {
+        name: 'Advanced',
+        steps: [
+          {
+            id: VMWizardTab.ADVANCED_CLOUD_INIT,
+            component: (
+              <>
+                <ResourceLoadErrors wizardReduxID={reduxID} />
+                <CloudInitTab wizardReduxID={reduxID} />
+              </>
+            ),
+          },
+        ],
+      },
       {
         id: VMWizardTab.REVIEW,
         component: <ReviewTab wizardReduxID={reduxID} />,
@@ -167,6 +297,44 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     ];
 
     const isLocked = _.some(steps, ({ id }) => isStepLocked(stepData, id));
+
+    const calculateSteps = (initialSteps, initialAccumulator: WizardStep[] = []): WizardStep[] =>
+      initialSteps.reduce((stepAcc: WizardStep[], step: any) => {
+        const isFirstStep = _.isEmpty(stepAcc);
+        let innerSteps;
+        if (step.steps) {
+          // pass reference to last step but remove it afterwards
+          innerSteps = calculateSteps(step.steps, isFirstStep ? [] : [_.last(stepAcc)]);
+          if (!isFirstStep) {
+            innerSteps.shift();
+          }
+        }
+        let prevStep;
+        if (!isFirstStep) {
+          prevStep = _.last<WizardStep>(stepAcc);
+          while (prevStep.steps) {
+            prevStep = _.last(prevStep.steps);
+          }
+        }
+        const isPrevStepValid = isFirstStep || isStepValid(stepData, prevStep.id as VMWizardTab);
+        const canJumpToPrevStep = isFirstStep || prevStep.canJumpTo;
+
+        const calculatedStep = {
+          ...step,
+          name: TabTitleResolver[step.id] || step.name,
+          canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
+            ? step.id === VMWizardTab.RESULT
+            : !isLocked && isPrevStepValid && canJumpToPrevStep && step.id !== VMWizardTab.RESULT,
+          component: step.component,
+        };
+
+        if (innerSteps) {
+          calculatedStep.steps = innerSteps;
+        }
+
+        stepAcc.push(calculatedStep);
+        return stepAcc;
+      }, initialAccumulator);
 
     return (
       <div className="kubevirt-create-vm-modal__container">
@@ -184,24 +352,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
               this.finish();
             }
           }}
-          steps={steps.reduce((stepAcc, step, idx) => {
-            const prevStep = stepAcc[idx - 1];
-            const isPrevStepValid = idx === 0 ? true : isStepValid(stepData, prevStep.id);
-            const canJumpToPrevStep = idx === 0 ? true : prevStep.canJumpTo;
-
-            stepAcc.push({
-              ...step,
-              name: TabTitleResolver[step.id],
-              canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
-                ? step.id === VMWizardTab.RESULT
-                : !isLocked &&
-                  isPrevStepValid &&
-                  canJumpToPrevStep &&
-                  step.id !== VMWizardTab.RESULT,
-              component: step.component,
-            });
-            return stepAcc;
-          }, [])}
+          steps={calculateSteps(steps)}
           footer={<CreateVMWizardFooter wizardReduxID={reduxID} />}
         />
       </div>
@@ -240,10 +391,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
     );
   },
   onClose: () => {
+    dispatch(vmWizardActions[ActionType.Dispose](props.reduxID, props));
     if (props.onClose) {
       props.onClose();
     }
-    dispatch(vmWizardActions[ActionType.Dispose](props.reduxID, props));
   },
 });
 
@@ -273,19 +424,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       namespace: 'openshift',
       prop: VMWizardProps.commonTemplates,
       matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-    }),
-    getResource(NetworkAttachmentDefinitionModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.networkConfigs,
-    }),
-    getResource(StorageClassModel, { prop: VMWizardProps.storageClasses }),
-    getResource(PersistentVolumeClaimModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.persistentVolumeClaims,
-    }),
-    getResource(DataVolumeModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.dataVolumes,
     }),
   ];
 

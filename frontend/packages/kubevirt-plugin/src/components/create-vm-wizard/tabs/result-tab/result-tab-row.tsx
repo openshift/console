@@ -16,13 +16,7 @@ export const ResultTabRow: React.FC<ResultTabRowProps> = ({ title, content, isEr
         'kubevirt-create-vm-modal___result-tab-row-container--error': isError,
       })}
     >
-      <pre
-        className={classNames('kubevirt-create-vm-modal__result-tab-row', {
-          'kubevirt-create-vm-modal__result-tab-row--error': isError,
-        })}
-      >
-        {content}
-      </pre>
+      <pre className="kubevirt-create-vm-modal__result-tab-row">{content}</pre>
     </Expandable>
   );
 };

@@ -130,7 +130,7 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
               message: dataVolumesError,
               title: COULD_NOT_LOAD_DATA,
             },
-          ]}
+          ].filter((err) => err.message)}
         />
         {isVMRunning(vm) && (
           <Alert

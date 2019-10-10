@@ -58,10 +58,10 @@ export abstract class ObjectWithTypePropertyWrapper<
 
   hasType = (): boolean => !!this.getType();
 
-  protected getTypeData = (type: TYPE) =>
+  protected getTypeData = (type?: TYPE) =>
     this.getIn([...this.typeDataPath, (type || this.getType()).getValue()]);
 
-  protected setType = (type: TYPE, typeData?: any) => {
+  protected setType = (type?: TYPE, typeData?: any) => {
     const typeDataParent =
       this.typeDataPath.length === 0 ? this.data : this.getIn(this.typeDataPath);
     if (!typeDataParent) {

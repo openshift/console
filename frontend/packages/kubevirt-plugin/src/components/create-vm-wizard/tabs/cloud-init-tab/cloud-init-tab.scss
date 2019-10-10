@@ -1,0 +1,16 @@
+.kubevirt-create-vm-modal__cloud-init-base64 > input[type="checkbox"] {
+  margin: -0.1em 0 0 !important;
+}
+
+.kubevirt-create-vm-modal__cloud-init-custom-script-text-area {
+  height: 50vh !important;
+  resize: vertical;
+}
+
+.kubevirt-create-vm-modal__cloud-init-ssh-keys-text-area {
+  resize: vertical;
+}
+
+.kubevirt-create-vm-modal__cloud-init-ssh-keys-row {
+  padding-bottom: 1rem;
+}

@@ -8,21 +8,38 @@ import {
 } from '@console/internal/components/utils';
 import { getDeletetionTimestamp, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
-import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
-import { getDiskBus, isVM } from '../../selectors/vm';
+import { asVM, isVM, isVMRunning } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
-import { VMDiskRowProps } from './types';
+import { dimensifyRow } from '../../utils/table';
+import { ValidationCell } from '../table/validation-cell';
+import { VMNicRowActionOpts } from '../vm-nics/types';
+import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
+import {
+  StorageBundle,
+  StorageSimpleData,
+  StorageSimpleDataValidation,
+  VMStorageRowActionOpts,
+  VMStorageRowCustomData,
+} from './types';
 
-const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => ({
-  label: 'Delete',
+const menuActionEdit = (
+  disk: CombinedDisk,
+  vmLikeEntity: VMLikeEntityKind,
+  { withProgress }: VMNicRowActionOpts,
+): KebabOption => ({
+  label: 'Edit',
   callback: () =>
-    deleteDeviceModal({
-      deviceType: DeviceType.DISK,
-      device: disk,
-      vmLikeEntity,
-    }),
+    withProgress(
+      diskModalEnhanced({
+        vmLikeEntity,
+        disk: disk.diskWrapper.asResource(),
+        volume: disk.volumeWrapper.asResource(),
+        dataVolume: disk.dataVolumeWrapper && disk.dataVolumeWrapper.asResource(),
+      }).result,
+    ),
   accessReview: asAccessReview(
     isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
@@ -30,35 +47,124 @@ const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => 
   ),
 });
 
-const getActions = (vmLikeEntity: VMLikeEntityKind, disk) => {
-  const actions = [menuActionDelete];
-  return actions.map((a) => a(vmLikeEntity, disk));
+const menuActionDelete = (
+  disk: CombinedDisk,
+  vmLikeEntity: VMLikeEntityKind,
+  { withProgress }: VMNicRowActionOpts,
+): KebabOption => ({
+  label: 'Delete',
+  callback: () =>
+    withProgress(
+      deleteDeviceModal({
+        deviceType: DeviceType.DISK,
+        device: disk.diskWrapper.asResource(),
+        vmLikeEntity,
+      }).result,
+    ),
+  accessReview: asAccessReview(
+    isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
+    vmLikeEntity,
+    'patch',
+  ),
+});
+
+const getActions = (
+  disk: CombinedDisk,
+  vmLikeEntity: VMLikeEntityKind,
+  opts: VMStorageRowActionOpts,
+) => {
+  const actions = [];
+  if (isVMRunning(asVM(vmLikeEntity))) {
+    return actions;
+  }
+
+  const isTemplate = vmLikeEntity && !isVM(vmLikeEntity);
+  if (isTemplate || disk.isEditingSupported()) {
+    actions.push(menuActionEdit);
+  }
+
+  actions.push(menuActionDelete);
+  return actions.map((a) => a(disk, vmLikeEntity, opts));
 };
 
-export const DiskRow: React.FC<VMDiskRowProps> = ({
-  obj: { disk, size, storageClass },
-  customData: { vmLikeEntity },
+export type VMDiskSimpleRowProps = {
+  data: StorageSimpleData;
+  validation?: StorageSimpleDataValidation;
+  columnClasses: string[];
+  actionsComponent: React.ReactNode;
+  index: number;
+  style: object;
+};
+
+export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
+  data: { name, size, diskInterface, storageClass },
+  validation = {},
+  columnClasses,
+  actionsComponent,
   index,
   style,
 }) => {
-  const diskName = disk.name;
-  const sizeColumn = size === undefined ? <LoadingInline /> : size;
-  const storageColumn = storageClass === undefined ? <LoadingInline /> : storageClass;
+  const dimensify = dimensifyRow(columnClasses);
 
+  const isSizeLoading = size === undefined;
+  const isStorageClassLoading = size === undefined;
   return (
-    <TableRow id={diskName} index={index} trKey={diskName} style={style}>
-      <TableData>{diskName}</TableData>
-      <TableData>{sizeColumn || DASH}</TableData>
-      <TableData>{getDiskBus(disk, BUS_VIRTIO)}</TableData>
-      <TableData>{storageColumn || DASH}</TableData>
-      <TableData className={Kebab.columnClass}>
-        <Kebab
-          options={getActions(vmLikeEntity, disk)}
-          key={`kebab-for--${diskName}`}
-          isDisabled={getDeletetionTimestamp(vmLikeEntity)}
-          id={`kebab-for-${diskName}`}
-        />
+    <TableRow id={name} index={index} trKey={name} style={style}>
+      <TableData className={dimensify()}>
+        <ValidationCell validation={validation.name}>{name}</ValidationCell>
       </TableData>
+      <TableData className={dimensify()}>
+        {isSizeLoading && <LoadingInline />}
+        {!isSizeLoading && (
+          <ValidationCell validation={validation.size}>{size || DASH}</ValidationCell>
+        )}
+      </TableData>
+      <TableData className={dimensify()}>
+        <ValidationCell validation={validation.diskInterface}>{diskInterface}</ValidationCell>
+      </TableData>
+      <TableData className={dimensify()}>
+        {isStorageClassLoading && <LoadingInline />}
+        {!isStorageClassLoading && (
+          <ValidationCell validation={validation.storageClass}>
+            {storageClass || DASH}
+          </ValidationCell>
+        )}
+      </TableData>
+      <TableData className={dimensify(true)}>{actionsComponent}</TableData>
     </TableRow>
+  );
+};
+
+export type VMDiskRowProps = {
+  obj: StorageBundle;
+  customData: VMStorageRowCustomData;
+  index: number;
+  style: object;
+};
+
+export const DiskRow: React.FC<VMDiskRowProps> = ({
+  obj: { disk, ...restData },
+  customData: { isDisabled, withProgress, vmLikeEntity, columnClasses },
+  index,
+  style,
+}) => {
+  return (
+    <DiskSimpleRow
+      data={restData}
+      columnClasses={columnClasses}
+      index={index}
+      style={style}
+      actionsComponent={
+        <Kebab
+          options={getActions(disk, vmLikeEntity, {
+            withProgress,
+          })}
+          isDisabled={
+            isDisabled || !!getDeletetionTimestamp(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))
+          }
+          id={`kebab-for-${disk.getName()}`}
+        />
+      }
+    />
   );
 };

@@ -18,6 +18,10 @@ export const getValidationUpdate = (
 
     const field = fields.get(validationFieldKey);
 
+    if (field.get('skipValidation')) {
+      return updateAcc;
+    }
+
     const detectValues = _.isFunction(detectValueChanges)
       ? detectValueChanges(field, options)
       : detectValueChanges;

@@ -19,11 +19,6 @@ const idResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.CPU]: 'resources-cpu',
   [VMSettingsField.WORKLOAD_PROFILE]: 'workload-profile-dropdown',
   [VMSettingsField.START_VM]: 'start-vm',
-  [VMSettingsField.USE_CLOUD_INIT]: 'use-cloud-init',
-  [VMSettingsField.USE_CLOUD_INIT_CUSTOM_SCRIPT]: 'use-cloud-init-custom-script',
-  [VMSettingsField.HOST_NAME]: 'cloud-init-hostname',
-  [VMSettingsField.AUTHKEYS]: 'cloud-init-ssh',
-  [VMSettingsField.CLOUD_INIT_CUSTOM_SCRIPT]: 'cloud-init-custom-script',
 };
 
 export const getFieldId = (key: VMSettingsRenderableField) => idResolver[key];

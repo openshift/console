@@ -25,3 +25,10 @@ export const VM_DETAIL_OVERVIEW_HREF = 'overview';
 export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
 export const VM_DETAIL_CONSOLES_HREF = 'consoles';
+
+export const CLOUDINIT_DISK = 'cloudinitdisk';
+
+export enum DeviceType {
+  NIC = 'NIC',
+  DISK = 'DISK',
+}

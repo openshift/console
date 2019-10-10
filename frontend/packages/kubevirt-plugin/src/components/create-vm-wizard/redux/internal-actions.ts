@@ -1,4 +1,11 @@
-import { VMSettingsField, VMWizardTab } from '../types';
+import {
+  CloudInitField,
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardStorage,
+  VMWizardTab,
+} from '../types';
+import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
 
@@ -47,13 +54,29 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabValidity,
   }),
-  [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: string) => ({
+  [InternalActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isLocked,
+    },
+    type: InternalActionType.SetTabLocked,
+  }),
+  [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) => ({
     payload: {
       id,
       key,
       value,
     },
     type: InternalActionType.SetVmSettingsFieldValue,
+  }),
+  [InternalActionType.SetCloudInitFieldValue]: (id, key: CloudInitField, value: any) => ({
+    payload: {
+      id,
+      key,
+      value,
+    },
+    type: InternalActionType.SetCloudInitFieldValue,
   }),
   [InternalActionType.UpdateVmSettingsField]: (id, key: VMSettingsField, value) => ({
     payload: {
@@ -85,21 +108,60 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateVmSettings,
   }),
-  [InternalActionType.SetNetworks]: (id, value, isValid: boolean, isLocked: boolean) => ({
+  [InternalActionType.UpdateNIC]: (id, network: VMWizardNetwork) => ({
     payload: {
       id,
-      value,
-      isValid,
-      isLocked,
+      network,
+    },
+    type: InternalActionType.UpdateNIC,
+  }),
+  [InternalActionType.RemoveNIC]: (id, networkID: string) => ({
+    payload: {
+      id,
+      networkID,
+    },
+    type: InternalActionType.RemoveNIC,
+  }),
+
+  [InternalActionType.UpdateStorage]: (id, storage: VMWizardStorage) => ({
+    payload: {
+      id,
+      storage,
+    },
+    type: InternalActionType.UpdateStorage,
+  }),
+  [InternalActionType.RemoveStorage]: (id, storageID: string) => ({
+    payload: {
+      id,
+      storageID,
+    },
+    type: InternalActionType.RemoveStorage,
+  }),
+  [InternalActionType.SetDeviceBootOrder]: (
+    id,
+    deviceID: string,
+    deviceType: DeviceType,
+    bootOrder: number,
+  ) => ({
+    payload: {
+      id,
+      deviceID,
+      deviceType,
+      bootOrder,
+    },
+    type: InternalActionType.SetDeviceBootOrder,
+  }),
+  [InternalActionType.SetNetworks]: (id, networks: VMWizardNetwork[]) => ({
+    payload: {
+      id,
+      value: networks,
     },
     type: InternalActionType.SetNetworks,
   }),
-  [InternalActionType.SetStorages]: (id, value, isValid: boolean, isLocked: boolean) => ({
+  [InternalActionType.SetStorages]: (id, value: VMWizardStorage[]) => ({
     payload: {
       id,
       value,
-      isValid,
-      isLocked,
     },
     type: InternalActionType.SetStorages,
   }),

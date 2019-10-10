@@ -1,9 +1,10 @@
 import { getValidationObject, validateDNS1123SubdomainValue } from '../common';
 import { makeSentence } from '../../grammar';
-import { MAC_ADDRESS_INVALID_ERROR, NIC_NAME_EXISTS } from '../strings';
+import { MAC_ADDRESS_INVALID_ERROR, NETWORK_MULTUS_NAME_EXISTS, NIC_NAME_EXISTS } from '../strings';
 import { ValidationObject } from '../types';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
+import { NetworkType } from '../../../constants/vm';
 import { isValidMAC } from './validations';
 
 export const validateNicName = (
@@ -20,19 +21,41 @@ export const validateNicName = (
   return validation;
 };
 
+export const validateNetwork = (
+  network: NetworkWrapper,
+  usedMultusNetworkNames: Set<string>,
+): ValidationObject => {
+  if (
+    network.getType() === NetworkType.MULTUS &&
+    usedMultusNetworkNames &&
+    usedMultusNetworkNames.has(network.getMultusNetworkName())
+  ) {
+    return getValidationObject(NETWORK_MULTUS_NAME_EXISTS);
+  }
+
+  return null;
+};
+
 export const validateMACAddress = (mac: string): ValidationObject => {
-  const isValid = mac === '' || (mac && isValidMAC(mac));
+  const isValid = !mac || isValidMAC(mac);
   return isValid ? null : getValidationObject(makeSentence(MAC_ADDRESS_INVALID_ERROR));
 };
 
 export const validateNIC = (
   interfaceWrapper: NetworkInterfaceWrapper,
   network: NetworkWrapper,
-  { usedInterfacesNames }: { usedInterfacesNames?: Set<string> },
+  {
+    usedInterfacesNames,
+    usedMultusNetworkNames,
+  }: {
+    usedInterfacesNames?: Set<string>;
+    usedMultusNetworkNames?: Set<string>;
+  },
 ): UINetworkInterfaceValidation => {
   const validations = {
     name: validateNicName(interfaceWrapper && interfaceWrapper.getName(), usedInterfacesNames),
     macAddress: validateMACAddress(interfaceWrapper && interfaceWrapper.getMACAddress()),
+    network: validateNetwork(network, usedMultusNetworkNames),
   };
 
   const hasAllRequiredFilled =
@@ -55,6 +78,7 @@ export type UINetworkInterfaceValidation = {
   validations: {
     name?: ValidationObject;
     macAddress?: ValidationObject;
+    network?: ValidationObject;
   };
   isValid: boolean;
   hasAllRequiredFilled: boolean;

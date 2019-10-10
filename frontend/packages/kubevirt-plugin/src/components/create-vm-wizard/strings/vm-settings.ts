@@ -1,5 +1,5 @@
 import { VMSettingsField, VMSettingsRenderableFieldResolver } from '../types';
-import { ProvisionSource } from '../../../types/vm';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.NAME]: 'Name',
@@ -15,11 +15,6 @@ export const titleResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.CPU]: 'CPUs',
   [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
-  [VMSettingsField.USE_CLOUD_INIT]: 'Use cloud-init',
-  [VMSettingsField.USE_CLOUD_INIT_CUSTOM_SCRIPT]: 'Use custom script',
-  [VMSettingsField.HOST_NAME]: 'Hostname',
-  [VMSettingsField.AUTHKEYS]: 'Authenticated SSH Keys',
-  [VMSettingsField.CLOUD_INIT_CUSTOM_SCRIPT]: 'Custom Script',
 };
 
 export const placeholderResolver = {
@@ -32,17 +27,15 @@ export const placeholderResolver = {
 };
 
 const provisionSourceHelpResolver = {
-  [ProvisionSource.URL]:
-    'An external URL to the .iso, .img, .qcow2 or .raw that the virtual machine should be created from.',
-  [ProvisionSource.PXE]: 'Discover provisionable virtual machines over the network.',
-  [ProvisionSource.CONTAINER]:
-    'Ephemeral virtual machine disk image which will be pulled from container registry.',
-  [ProvisionSource.IMPORT]: 'Import a virtual machine from external service using a provider.',
-  [ProvisionSource.CLONED_DISK]: 'Select an existing PVC in Storage tab',
+  [ProvisionSource.URL.getValue()]: 'An external URL to the .iso, .img, .qcow2 or .raw that the virtual machine should be created from.',
+  [ProvisionSource.PXE.getValue()]: 'Discover provisionable virtual machines over the network.',
+  [ProvisionSource.CONTAINER.getValue()]: 'Ephemeral virtual machine disk image which will be pulled from container registry.',
+  [ProvisionSource.IMPORT.getValue()]: 'Import a virtual machine from external service using a provider.',
+  [ProvisionSource.DISK.getValue()]: 'Select an existing PVC in Storage tab',
 };
 
 export const helpResolver = {
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: ProvisionSource) =>
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: string) =>
     provisionSourceHelpResolver[sourceType],
   [VMSettingsField.PROVIDER]: (provider) => `Not Implemented for ${provider}!!!`,
   [VMSettingsField.FLAVOR]: () =>

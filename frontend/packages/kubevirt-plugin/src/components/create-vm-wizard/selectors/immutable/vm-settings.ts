@@ -1,5 +1,6 @@
 import { hasTruthyValue, iGet, iGetIn } from '../../../../utils/immutable';
 import { VMSettingsField, VMWizardTab } from '../../types';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { iGetCreateVMWizardTabs } from './selectors';
 
 export const VM_SETTINGS_METADATA_ID = 'VM_SETTINGS_METADATA_ID';
@@ -35,3 +36,6 @@ export const iGetVmSettingValue = (
   key: VMSettingsField,
   defaultValue = undefined,
 ) => iGetVmSettingAttribute(state, id, key, 'value', defaultValue);
+
+export const iGetProvisionSource = (state, id: string) =>
+  ProvisionSource.fromString(iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE));
