@@ -7,7 +7,7 @@ import {
 import {
   global_warning_color_100 as warningColor,
   global_danger_color_100 as dangerColor,
-  chart_color_green_400 as okColor,
+  global_success_color_200 as okColor,
 } from '@patternfly/react-tokens';
 
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
