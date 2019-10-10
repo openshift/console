@@ -2,6 +2,7 @@ import * as React from 'react';
 import { inject } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { augmentRunsToData, PropPipelineData, KeyedRuns } from '../../utils/pipeline-augment';
+import { ListFilterId, ListFilterLabels } from '../../utils/pipeline-utils';
 import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipeline-filter-reducer';
 
 interface ListPipelineData extends K8sKind {
@@ -10,12 +11,12 @@ interface ListPipelineData extends K8sKind {
 export const filters = [
   {
     type: 'pipeline-status',
-    selected: ['Running', 'Failed', 'Succeeded'],
+    selected: [ListFilterId.Succeeded, ListFilterId.Running, ListFilterId.Failed],
     reducer: pipelineFilterReducer,
     items: [
-      { id: 'Running', title: 'Running' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Succeeded', title: 'Succeeded' },
+      { id: ListFilterId.Succeeded, title: ListFilterLabels[ListFilterId.Succeeded] },
+      { id: ListFilterId.Running, title: ListFilterLabels[ListFilterId.Running] },
+      { id: ListFilterId.Failed, title: ListFilterLabels[ListFilterId.Failed] },
     ],
     filter: pipelineStatusFilter,
   },
