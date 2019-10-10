@@ -240,6 +240,8 @@ const Graph_: React.FC<GraphProps> = ({
     patchQuery(0, { query });
   }, [patchQuery, query]);
 
+  const queries = React.useMemo(() => [query], [query]);
+
   if (hideGraphs) {
     return null;
   }
@@ -254,7 +256,7 @@ const Graph_: React.FC<GraphProps> = ({
       defaultTimespan={timespan}
       filterLabels={filterLabels}
       GraphLink={GraphLink}
-      queries={[query]}
+      queries={queries}
     />
   );
 };
