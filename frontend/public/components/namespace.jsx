@@ -292,13 +292,14 @@ const ProjectList_ = (props) => {
   const ProjectEmptyMessage = () => (
     <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />
   );
+  const ProjectNotFoundMessage = () => <MsgBox title="No Projects Found" />;
   return (
     <Table
       {...props}
       aria-label="Projects"
       Header={ProjectTableHeader}
       Row={ProjectTableRow}
-      EmptyMsg={ProjectEmptyMessage}
+      EmptyMsg={props.data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
       virtualize
     />
   );
