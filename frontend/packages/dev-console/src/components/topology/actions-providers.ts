@@ -1,6 +1,7 @@
 import { KebabOption } from '@console/internal/components/utils';
 import { GraphElementType, TopologyDataMap } from './topology-types';
 import { workloadActions } from './actions/workloadActions';
+import { groupActions, getGroupComponents } from './actions/groupActions';
 
 export class ActionProviders {
   private readonly topology: TopologyDataMap;
@@ -22,8 +23,9 @@ export class ActionProviders {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   public getEdgeActions = (edgeId: string): KebabOption[] => null;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  public getGroupActions = (groupId: string): KebabOption[] => null;
+  public getGroupActions = (groupId: string): KebabOption[] => {
+    return groupActions(getGroupComponents(groupId, this.topology));
+  };
 
   public getActions = (type: GraphElementType, id: string) => {
     switch (type) {

@@ -3,9 +3,31 @@ import {
   K8sKind,
   k8sList,
   k8sPatch,
+  k8sKill,
   K8sResourceKind,
   modelFor,
 } from '@console/internal/module/k8s';
+import {
+  ImageStreamModel,
+  BuildConfigModel,
+  ServiceModel,
+  DeploymentConfigModel,
+  DeploymentModel,
+  RouteModel,
+  SecretModel,
+  DaemonSetModel,
+  StatefulSetModel,
+} from '@console/internal/models';
+import {
+  RevisionModel,
+  ConfigurationModel,
+  ServiceModel as KnativeServiceModel,
+  RouteModel as KnativeRouteModel,
+} from '@console/knative-plugin';
+import { checkAccess } from '@console/internal/components/utils';
+import { TopologyDataObject } from '../components/topology/topology-types';
+import { detectGitType } from '../components/import/import-validation-utils';
+import { GitTypes } from '../components/import/import-types';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -244,4 +266,93 @@ export const removeResourceConnection = (
 
     return Promise.all(patches);
   });
+};
+
+export const cleanUpWorkload = (
+  resource: K8sResourceKind,
+  workload: TopologyDataObject,
+): Promise<K8sResourceKind[]> => {
+  const reqs = [];
+  const webhooks = [];
+  let webhooksAvailable = true;
+  const deleteModels = [BuildConfigModel, DeploymentConfigModel, ServiceModel, RouteModel];
+  const knativeDeleteModels = [
+    ConfigurationModel,
+    RevisionModel,
+    KnativeServiceModel,
+    KnativeRouteModel,
+    BuildConfigModel,
+    ImageStreamModel,
+  ];
+  const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
+  const isKnativeResource = _.get(workload, 'data.isKnativeResource', false);
+  const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
+  const resourceData = _.cloneDeep(resource);
+  const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
+    const resp = await checkAccess({
+      group: model.apiGroup,
+      resource: model.plural,
+      verb: 'delete',
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+    });
+    if (resp.status.allowed) {
+      return k8sKill(model, obj);
+    }
+    return null;
+  };
+  const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
+    const req = safeKill(model, resourceObj);
+    req && reqs.push(req);
+  };
+  const batchDeleteRequests = (models: K8sKind[], resourceObj: K8sResourceKind): void => {
+    models.forEach((model) => deleteRequest(model, resourceObj));
+  };
+  if (isKnativeResource) {
+    // delete knative resources
+    const knativeRoute = _.find(workload.resources.ksroutes, { kind: 'Route' });
+    resourceData.metadata.name = _.get(knativeRoute, 'metadata.name', '');
+    batchDeleteRequests(knativeDeleteModels, resourceData);
+  } else {
+    // delete non knative resources
+    switch (resource.kind) {
+      case DeploymentModel.kind:
+        deleteRequest(DeploymentModel, resource);
+        webhooksAvailable = false;
+        break;
+      case DeploymentConfigModel.kind:
+        batchDeleteRequests(deleteModels, resource);
+        deleteRequest(ImageStreamModel, resource); // delete imageStream
+        break;
+      case DaemonSetModel.kind:
+        deleteRequest(DaemonSetModel, resource);
+        webhooksAvailable = false;
+        break;
+      case StatefulSetModel.kind:
+        deleteRequest(StatefulSetModel, resource);
+        webhooksAvailable = false;
+        break;
+      default:
+        webhooksAvailable = false;
+        break;
+    }
+  }
+  // Delete webhook secrets for both knative and non-knative resources
+  if (webhooksAvailable) {
+    webhooks.push('generic');
+    if (!isKnativeResource && gitType !== GitTypes.unsure) {
+      webhooks.push(gitType);
+    }
+  }
+  webhooks.forEach((hookName) => {
+    const obj = {
+      ...resource,
+      metadata: {
+        name: `${resourceData.metadata.name}-${hookName}-webhook-secret`,
+        namespace: resourceData.metadata.namespace,
+      },
+    };
+    deleteRequest(SecretModel, obj);
+  });
+  return Promise.all(reqs);
 };

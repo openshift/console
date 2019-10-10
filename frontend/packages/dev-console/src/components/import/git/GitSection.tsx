@@ -45,15 +45,19 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     const url = sampleRepo;
     const ref = getSampleRef(tag);
     const dir = getSampleContextDir(tag);
+    const gitType = detectGitType(url);
     const name = values.name || values.image.selected;
     values.name !== name && setFieldValue('name', name);
     !values.application.name && setFieldValue('application.name', `${name}-app`);
     setFieldValue('git.url', url);
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
+    setFieldValue('git.type', gitType);
+    setFieldTouched('git.url', true);
     validateForm();
   }, [
     sampleRepo,
+    setFieldTouched,
     setFieldValue,
     tag,
     validateForm,
