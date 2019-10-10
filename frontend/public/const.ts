@@ -43,9 +43,6 @@ export const RH_OPERATOR_SUPPORT_POLICY_LINK =
 // Package manifests for the OperatorHub use this label.
 export const OPERATOR_HUB_LABEL = 'openshift-marketplace';
 
-export const OC_DOWNLOAD_LINK = 'https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.2';
-export const ODO_DOWNLOAD_LINK = 'https://mirror.openshift.com/pub/openshift-v4/clients/odo/latest';
-
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   PROMETHEUS = 'PROMETHEUS',

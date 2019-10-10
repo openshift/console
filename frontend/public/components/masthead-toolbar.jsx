@@ -284,7 +284,9 @@ class MastheadToolbar_ extends React.Component {
   };
 
   _helpActions(additionalHelpActions) {
+    const { flags } = this.props;
     const helpActions = [];
+
     helpActions.push({
       name: '',
       isSection: true,
@@ -294,10 +296,14 @@ class MastheadToolbar_ extends React.Component {
           externalLink: true,
           href: openshiftHelpBase,
         },
-        {
-          label: 'Command Line Tools',
-          callback: this._onCommandLineTools,
-        },
+        ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
+          ? [
+              {
+                label: 'Command Line Tools',
+                callback: this._onCommandLineTools,
+              },
+            ]
+          : []),
         {
           label: 'About',
           callback: this._onAboutModal,
@@ -592,5 +598,10 @@ const mastheadToolbarStateToProps = ({ UI }) => ({
 });
 
 export const MastheadToolbar = connect(mastheadToolbarStateToProps)(
-  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(MastheadToolbar_),
+  connectToFlags(
+    FLAGS.AUTH_ENABLED,
+    FLAGS.CLUSTER_VERSION,
+    FLAGS.CONSOLE_CLI_DOWNLOAD,
+    FLAGS.OPENSHIFT,
+  )(MastheadToolbar_),
 );

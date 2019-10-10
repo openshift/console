@@ -41,7 +41,6 @@ import {
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
 import {
-  OC_DOWNLOAD_LINK,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
   NAMESPACE_LOCAL_STORAGE_KEY,
@@ -285,7 +284,7 @@ const ProjectList_ = (props) => {
         <ExternalLink href={openshiftHelpBase} text="documentation" />.
       </p>
       <p>
-        Download the <ExternalLink href={OC_DOWNLOAD_LINK} text="command-line tools" />.
+        Download the <Link to="/command-line-tools">command-line tools</Link>
       </p>
     </React.Fragment>
   );
