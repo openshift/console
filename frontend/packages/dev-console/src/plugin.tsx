@@ -103,7 +103,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Advanced',
       perspective: 'dev',
       componentProps: {
-        name: 'Projects',
+        name: 'Project Details',
         resource: 'projects',
         required: FLAGS.OPENSHIFT,
         testID: 'advanced-project-header',
@@ -255,6 +255,29 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
+      path: ['/k8s/cluster/projects'],
+      loader: async () =>
+        (await import(
+          './components/projects/details/AllProjectsDetailList' /* webpackChunkName: "all-projects-detail-list" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      path: ['/k8s/cluster/projects/:ns'],
+      loader: async () =>
+        (await import(
+          './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
         )).default,
     },
   },

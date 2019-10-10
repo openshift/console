@@ -4,7 +4,7 @@ import { Firehose } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../models';
-import DefaultPage from '../DefaultPage';
+import ProjectListPage from '../projects/ProjectListPage';
 import { filters } from './PipelineAugmentRuns';
 import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
 
@@ -36,9 +36,9 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       </Firehose>
     </FireMan>
   ) : (
-    <DefaultPage title="Pipelines" badge={<DevPreviewBadge />}>
+    <ProjectListPage title="Pipelines" badge={<DevPreviewBadge />}>
       Select a project to view the list of pipelines
-    </DefaultPage>
+    </ProjectListPage>
   );
 };
 
