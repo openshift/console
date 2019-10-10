@@ -7,7 +7,11 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
-import { getPluginIntegrationTestSuites } from '@console/plugin-sdk/src/codegen';
+import {
+  resolvePluginPackages,
+  reducePluginTestSuites,
+  mergeTestSuites,
+} from '@console/plugin-sdk/src/codegen';
 
 const tap = !!process.env.TAP;
 
@@ -33,89 +37,15 @@ const junitReporter = new JUnitXmlReporter({
 });
 const browserLogs: logging.Entry[] = [];
 
-const suite = (tests: string[]) =>
+const suite = (tests: string[]): string[] =>
   (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
     'tests/base.scenario.ts',
     ...tests,
   ]);
 
-export const config: Config = {
-  framework: 'jasmine',
-  directConnect: true,
-  skipSourceMapSupport: true,
-  jasmineNodeOpts: {
-    print: () => null,
-    defaultTimeoutInterval: 40000,
-  },
-  logLevel: tap ? 'ERROR' : 'INFO',
-  plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
-  capabilities: {
-    browserName: 'chrome',
-    acceptInsecureCerts: true,
-    chromeOptions: {
-      // A path to chrome binary, if undefined will use system chrome browser.
-      binary: process.env.CHROME_BINARY_PATH,
-      args: [
-        ...(process.env.NO_HEADLESS ? [] : ['--headless']),
-        '--disable-gpu',
-        '--no-sandbox',
-        '--window-size=1920,1200',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-raf-throttling',
-        // Avoid crashes when running in a container due to small /dev/shm size
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=715363
-        '--disable-dev-shm-usage',
-      ],
-      prefs: {
-        // eslint-disable-next-line camelcase
-        'profile.password_manager_enabled': false,
-        // eslint-disable-next-line camelcase
-        credentials_enable_service: false,
-        // eslint-disable-next-line camelcase
-        password_manager_enabled: false,
-      },
-    },
-  },
-  beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
-  onPrepare: () => {
-    const addReporter = (jasmine as any).getEnv().addReporter;
-    browser.waitForAngularEnabled(false);
-    addReporter(htmlReporter);
-    addReporter(junitReporter);
-    if (tap) {
-      addReporter(new TapReporter());
-    } else {
-      addReporter(new ConsoleReporter());
-    }
-  },
-  onComplete: async () => {
-    const consoleLogStream = createWriteStream(`${screenshotsDir}/browser.log`, { flags: 'a' });
-    browserLogs.forEach((log) => {
-      const { level, message } = log;
-      const messageStr = _.isArray(message) ? message.join(' ') : message;
-      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
-    });
-
-    const url = await browser.getCurrentUrl();
-    console.log('Last browser URL: ', url);
-
-    // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
-    // since we're using kubectl instead of oc.
-    const resource =
-      browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
-    await browser.close();
-    execSync(
-      `if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`,
-    );
-  },
-  afterLaunch: (exitCode) => {
-    failFast.clean();
-    return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
-  },
-  suites: {
-    ...getPluginIntegrationTestSuites(),
-    filter: suite(['tests/filter.scenario.ts']),
+// TODO(vojtech): move base Console test suites to console-app package
+const testSuites = {
+  filter: suite(['tests/filter.scenario.ts']),
     annotation: suite(['tests/modal-annotations.scenario.ts']),
     environment: suite(['tests/environment.scenario.ts']),
     secrets: suite(['tests/secrets.scenario.ts']),
@@ -206,7 +136,86 @@ export const config: Config = {
       'tests/devconsole/dev-perspective.scenario.ts',
       'tests/devconsole/git-import-flow.scenario.ts',
     ],
+};
+
+export const config: Config = {
+  framework: 'jasmine',
+  directConnect: true,
+  skipSourceMapSupport: true,
+  jasmineNodeOpts: {
+    print: () => null,
+    defaultTimeoutInterval: 40000,
   },
+  logLevel: tap ? 'ERROR' : 'INFO',
+  plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
+  capabilities: {
+    browserName: 'chrome',
+    acceptInsecureCerts: true,
+    chromeOptions: {
+      // A path to chrome binary, if undefined will use system chrome browser.
+      binary: process.env.CHROME_BINARY_PATH,
+      args: [
+        ...(process.env.NO_HEADLESS ? [] : ['--headless']),
+        '--disable-gpu',
+        '--no-sandbox',
+        '--window-size=1920,1200',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+        '--disable-raf-throttling',
+        // Avoid crashes when running in a container due to small /dev/shm size
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=715363
+        '--disable-dev-shm-usage',
+      ],
+      prefs: {
+        // eslint-disable-next-line camelcase
+        'profile.password_manager_enabled': false,
+        // eslint-disable-next-line camelcase
+        credentials_enable_service: false,
+        // eslint-disable-next-line camelcase
+        password_manager_enabled: false,
+      },
+    },
+  },
+  beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
+  onPrepare: () => {
+    const addReporter = (jasmine as any).getEnv().addReporter;
+    browser.waitForAngularEnabled(false);
+    addReporter(htmlReporter);
+    addReporter(junitReporter);
+    if (tap) {
+      addReporter(new TapReporter());
+    } else {
+      addReporter(new ConsoleReporter());
+    }
+  },
+  onComplete: async () => {
+    const consoleLogStream = createWriteStream(`${screenshotsDir}/browser.log`, { flags: 'a' });
+    browserLogs.forEach((log) => {
+      const { level, message } = log;
+      const messageStr = _.isArray(message) ? message.join(' ') : message;
+      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
+    });
+
+    const url = await browser.getCurrentUrl();
+    console.log('Last browser URL: ', url);
+
+    // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
+    // since we're using kubectl instead of oc.
+    const resource =
+      browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
+    await browser.close();
+    execSync(
+      `if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`,
+    );
+  },
+  afterLaunch: (exitCode) => {
+    failFast.clean();
+    return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
+  },
+  suites: mergeTestSuites(
+    testSuites,
+    reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
+  ),
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:

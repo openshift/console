@@ -1,38 +1,53 @@
-import { resolve } from 'path';
+import * as path from 'path';
 import * as _ from 'lodash';
-import {
-  PluginPackage,
-  filterActivePluginPackages,
-  resolvePluginPackages,
-} from './plugin-resolver';
-
-const consoleIntegrationTestPrefix = '@console/internal-integration-tests';
-
-const extractFullPath = (testPath: string, pluginPath: string) =>
-  testPath.startsWith(consoleIntegrationTestPrefix)
-    ? testPath.substring(`${consoleIntegrationTestPrefix}/`.length)
-    : resolve(`${pluginPath}/${testPath}`);
+import * as glob from 'glob';
+import { PluginPackage } from './plugin-resolver';
 
 /**
- * Return an object representing Protractor test suites collected from active plugins.
+ * Return Protractor `suites` object for the given plugin package.
  */
-export const getPluginIntegrationTestSuites = (
-  pluginPackages: PluginPackage[] = resolvePluginPackages(
-    process.cwd(),
-    filterActivePluginPackages,
-  ),
-) => {
-  const integrationTestSuites = (plugin: PluginPackage) =>
-    plugin.consolePlugin.integrationTestSuites &&
-    _.mapValues(
-      plugin.consolePlugin.integrationTestSuites,
-      (paths) => _.map(paths, (path) => extractFullPath(path, plugin._path)), // eslint-disable-line no-underscore-dangle
+export const getTestSuitesForPluginPackage = (
+  pkg: PluginPackage,
+  protractorConfDir: string,
+): TestSuitesObject => {
+  return _.mapValues(pkg.consolePlugin.integrationTestSuites || {}, (testPathGlobs) => {
+    const testFilePaths = _.flatten(
+      testPathGlobs.map((pathGlob) => glob.sync(pathGlob, { cwd: pkg._path, absolute: true })),
     );
-
-  const testSuites = pluginPackages.reduce(
-    (map, pkg) => Object.assign(map, integrationTestSuites(pkg)),
-    {},
-  );
-
-  return testSuites;
+    return testFilePaths.map((filePath) => path.relative(protractorConfDir, filePath));
+  });
 };
+
+/**
+ * Merge `source` into `target` and return the resulting object.
+ */
+export const mergeTestSuites = (
+  target: TestSuitesObject,
+  source: TestSuitesObject,
+): TestSuitesObject => {
+  const result = Object.assign({}, target);
+  _.forEach(source, (tests, suiteName) => {
+    if (!result[suiteName]) {
+      result[suiteName] = tests;
+    } else {
+      result[suiteName] = [...result[suiteName], ...tests];
+    }
+  });
+  return _.mapValues(result, _.uniq);
+};
+
+/**
+ * Accumulate plugin related `suites` objects into a single object.
+ */
+export const reducePluginTestSuites = (
+  pluginPackages: PluginPackage[],
+  protractorConfDir: string,
+  mapTests: (tests: string[]) => string[] = _.identity,
+): TestSuitesObject => {
+  return pluginPackages
+    .map((pkg) => getTestSuitesForPluginPackage(pkg, protractorConfDir))
+    .map((obj) => _.mapValues(obj, mapTests))
+    .reduce(mergeTestSuites, {});
+};
+
+type TestSuitesObject = { [suiteName: string]: string[] };

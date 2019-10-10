@@ -10,10 +10,7 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
-      "demo": [
-        "@console/internal-integration-tests/tests/base.scenario.ts",
-        "./integration-tests/tests/demo.scenario.ts"
-      ]
+      "demo": ["integration-tests/**/*.scenario.ts"]
     }
   }
 }

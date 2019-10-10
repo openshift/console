@@ -160,6 +160,7 @@
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "1.12.1",
     "file-loader": "1.x",
+    "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "0.x",
     "glob": "7.x",
     "glslify-loader": "1.x",

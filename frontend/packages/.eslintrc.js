@@ -1,8 +1,6 @@
 module.exports = {
   root: true,
-  extends: [
-    'plugin:console/react-typescript-prettier',
-  ],
+  extends: ['plugin:console/react-typescript-prettier'],
   rules: {
     'no-restricted-imports': [
       'error',

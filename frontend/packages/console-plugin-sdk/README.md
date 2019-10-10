@@ -83,16 +83,10 @@ The plugin entry module is loaded immediately upon Console startup, so it should
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed"
   },
-  "devDependencies": {
-    "@console/internal-integration-tests": "0.0.0-fixed"
-  },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
-      "demo": [
-        "@console/internal-integration-tests/tests/base.scenario.ts",
-        "./integration-tests/tests/demo.scenario.ts"
-      ]
+      "demo": ["integration-tests/**/*.scenario.ts"]
     }
   }
 }
@@ -197,10 +191,7 @@ and use common testing methods defined in the internal package by requiring it i
   "consolePlugin": {
     ...
     "integrationTestSuites": {
-      "demo": [
-        "@console/internal-integration-tests/tests/base.scenario.ts",
-        "./integration-tests/tests/demo.scenario.ts"
-      ]
+      "demo": ["integration-tests/**/*.scenario.ts"]
     }
   }
 }
