@@ -18,15 +18,15 @@ export enum StorageDashboardQuery {
   STORAGE_CLASSES_BY_USED = 'STORAGE_CLASSES_BY_USED',
   STORAGE_CEPH_CAPACITY_REQUESTED_QUERY = 'STORAGE_CEPH_CAPACITY_REQUESTED_QUERY',
   STORAGE_CEPH_CAPACITY_USED_QUERY = 'STORAGE_CEPH_CAPACITY_USED_QUERY',
+  RESILIENCY_PROGRESS = 'RESILIENCY_PROGRESS',
 }
 
 export const STORAGE_HEALTH_QUERIES = {
   [StorageDashboardQuery.CEPH_STATUS_QUERY]: 'ceph_health_status',
 };
 
-export const DATA_RESILIENCY_QUERIES = {
-  [StorageDashboardQuery.CEPH_PG_CLEAN_AND_ACTIVE_QUERY]: 'ceph_pg_clean and ceph_pg_active',
-  [StorageDashboardQuery.CEPH_PG_TOTAL_QUERY]: 'ceph_pg_total',
+export const DATA_RESILIENCY_QUERY = {
+  [StorageDashboardQuery.RESILIENCY_PROGRESS]: '(ceph_pg_clean and ceph_pg_active)/ceph_pg_total',
 };
 
 export const UTILIZATION_QUERY = {
