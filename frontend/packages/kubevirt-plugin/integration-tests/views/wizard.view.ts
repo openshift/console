@@ -53,11 +53,13 @@ export const createDisk = $('#create-storage-btn');
 export const errorMessage = $('.kubevirt-create-vm-wizard__result-tab-row--error');
 
 // Tables
-export const tableRowsCount = () => $$('.kubevirt-editable-table tbody tr').count();
+export const tableRows = $$('.kubevirt-editable-table tbody tr');
+export const tableRowsCount = () => tableRows.count();
 export const activateTableRow = (rowNumber: number) =>
   $$('.kubevirt-editable-table tbody tr')
     .get(rowNumber)
     .click();
+export const tableElementID = (type: string, rowNumber: string) => `#${type}-edit-${rowNumber}-row`;
 
 /**
  * Sets an attribute of a disk (name, size) on a given row.
@@ -71,20 +73,19 @@ export const setTableInputAttribute = async (
   attribute: string,
   value: string,
 ) => {
-  await fillInput($(`#${attribute}-edit-${rowNumber}-row`), value);
+  await fillInput($(tableElementID(attribute, rowNumber.toString())), value);
 };
 
 /**
- * Selects a dropdown attribute of an entity (disk, NIC) on a given row.
+ * Selects a value in Wizard NICs/Discs table dropdown on a given row.
  * @param {number}    rowNumber     Number of row to select, indexed from 1 for the first row.
- * @param {string}    tableType     Type of resource table (network, storage, ...).
- * @param {string}    attribute     Attribute name - size, name, mac.
+ * @param {string}    dropdownType  Type of resource table (network, storage, ...).
  * @param {string}    value         Value to set.
  */
 export const selectTableDropdownAttribute = async (
   rowNumber: number,
-  tableType: string,
+  dropdownType: string,
   value: string,
 ) => {
-  await selectDropdownOption(`#${tableType}-edit-${rowNumber.toString()}-row`, value);
+  await selectDropdownOption(tableElementID(dropdownType, rowNumber.toString()), value);
 };

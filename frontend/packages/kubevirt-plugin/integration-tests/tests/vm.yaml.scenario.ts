@@ -37,7 +37,6 @@ describe('Test VM creation from YAML', () => {
   beforeEach(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
     await isLoaded();
-
     await click(createItemButton);
     await click(createYAMLLink);
     await yamlPageIsLoaded();
