@@ -389,7 +389,7 @@ const getRolloutStatus = (
       phase !== DEPLOYMENT_PHASE.complete
     );
   }
-  return notFailedOrCancelled && !!previous;
+  return notFailedOrCancelled && previous && previous.pods.length > 0;
 };
 
 export class TransformResourceData {

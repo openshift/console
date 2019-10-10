@@ -158,7 +158,7 @@ export const getPodData = (
   const currentDeploymentphase = current && current.phase;
   const currentPods = current && current.pods;
   const previousPods = previous && previous.pods;
-
+  console.log('###########3', current, isRollingOut);
   // DaemonSets and StatefulSets
   if (!strategy) return { inProgressDeploymentData: null, completedDeploymentData: pods };
 
