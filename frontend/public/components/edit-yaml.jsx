@@ -369,7 +369,6 @@ export const EditYAML = connect(stateToProps)(
             const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
             this.setState({ success, error: null });
             this.loadYaml(true, o);
-            this.resize();
           })
           .catch((e) => this.handleError(e.message));
       });
