@@ -47,10 +47,11 @@ const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
 
 const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: 'Start Rollout',
-  callback: () => rollout(obj).catch(err => {
-    const error = err.message;
-    errorModal({error});
-  }),
+  callback: () =>
+    rollout(obj).catch((err) => {
+      const error = err.message;
+      errorModal({ error });
+    }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
