@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { AlertVariant, Popover } from '@patternfly/react-core';
+import { AlertVariant, Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
@@ -190,13 +190,10 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
         </div>
       }
     >
-      <button
-        className="btn btn-link btn-link--no-btn-default-values hidden-sm hidden-xs"
-        type="button"
-      >
+      <Button className="hidden-sm hidden-xs" type="button" variant="link">
         <QuestionCircleIcon className="co-icon-space-r" />
         Do you need to work with this Image Stream outside of the web console?
-      </button>
+      </Button>
     </Popover>
   );
 };

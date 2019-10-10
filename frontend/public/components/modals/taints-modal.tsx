@@ -134,14 +134,15 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
                     />
                   </div>
                   <div className="col-md-1 col-md-offset-0 col-sm-offset-10 col-xs-offset-10">
-                    <button
+                    <Button
                       type="button"
-                      className="pf-c-button pf-m-plain btn-link--inherit-color taint-modal__delete-icon"
+                      className="taint-modal__delete-icon"
                       onClick={() => this._remove(i)}
                       aria-label="Delete"
+                      variant="plain"
                     >
                       <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

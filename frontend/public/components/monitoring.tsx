@@ -1261,14 +1261,14 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
                   </label>
                 </div>
                 <div className="col-xs-1">
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link btn-link--inherit-color"
                     onClick={() => this.removeMatcher(i)}
                     aria-label="Remove matcher"
+                    variant="plain"
                   >
                     <MinusCircleIcon />
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
