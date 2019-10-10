@@ -19,6 +19,8 @@ const NameValueEditorComponent = (props) => (
   />
 );
 
+const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
+
 //See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
 const provisionerAccessModeMapping = {
   'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
@@ -52,6 +54,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
   const [useSelector, setUseSelector] = React.useState(false);
   const [nameValuePairs, setNameValuePairs] = React.useState([['', '']]);
+  const [storageProvisioner, setStorageProvisioner] = React.useState('');
   const accessModeRadios = [
     {
       value: 'ReadWriteOnce',
@@ -115,6 +118,14 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
       if (storageClass) {
         obj.spec.storageClassName = storageClass;
+
+        // should set block only for RBD + RWX
+        if (
+          _.endsWith(storageProvisioner, cephRBDProvisionerSuffix) &&
+          accessMode === 'ReadWriteMany'
+        ) {
+          obj.spec.volumeMode = 'Block';
+        }
       }
 
       return obj;
@@ -130,6 +141,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     requestSizeValue,
     requestSizeUnit,
     useSelector,
+    storageProvisioner,
   ]);
 
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
@@ -162,6 +174,10 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     //setting accessMode to default with the change to Storage Class selection
     setAllowedAccessModes(modes);
     setStorageClass(_.get(updatedStorageClass, 'metadata.name'));
+
+    if (updatedStorageClass) {
+      setStorageProvisioner(updatedStorageClass.provisioner);
+    }
   };
 
   const handleRequestSizeInputChange = (obj) => {
