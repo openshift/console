@@ -5,7 +5,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { UnknownIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { InProgressIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import { HealthState } from '../health-card/states';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 
@@ -23,6 +23,9 @@ const healthStateMapping = {
   [HealthState.UPDATING]: {
     icon: <SyncAltIcon className="update-pending" />,
     message: 'Updating',
+  },
+  [HealthState.PROGRESS]: {
+    icon: <InProgressIcon />,
   },
   [HealthState.UNKNOWN]: {
     icon: <UnknownIcon className="text-secondary" />,

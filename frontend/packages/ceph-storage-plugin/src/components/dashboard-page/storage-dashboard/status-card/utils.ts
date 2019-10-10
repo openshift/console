@@ -1,0 +1,45 @@
+import * as _ from 'lodash';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { PrometheusHealthHandler } from '@console/plugin-sdk';
+import { getResiliencyProgress } from '../../../../utils';
+
+const CephHealthStatus = [
+  {
+    state: HealthState.OK,
+  },
+  {
+    state: HealthState.WARNING,
+  },
+  {
+    state: HealthState.ERROR,
+  },
+  {
+    state: HealthState.UNKNOWN,
+  },
+];
+
+export const getCephHealthState: PrometheusHealthHandler = (responses = [], errors = []) => {
+  if (errors[0]) {
+    return CephHealthStatus[3];
+  }
+  if (!responses[0]) {
+    return { state: HealthState.LOADING };
+  }
+
+  const value = _.get(responses[0], 'data.result[0].value[1]');
+  return CephHealthStatus[value] || CephHealthStatus[3];
+};
+
+export const getDataResiliencyState: PrometheusHealthHandler = (responses = [], errors = []) => {
+  if (errors[0]) {
+    return { state: HealthState.UNKNOWN };
+  }
+  if (!responses[0]) {
+    return { state: HealthState.LOADING };
+  }
+  const progress = getResiliencyProgress(responses[0]);
+  if (progress && progress < 100) {
+    return { state: HealthState.PROGRESS };
+  }
+  return { state: HealthState.OK };
+};
