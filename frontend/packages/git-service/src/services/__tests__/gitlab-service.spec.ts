@@ -1,132 +1,118 @@
-import * as assert from 'assert';
-import { GitSource } from '../../types';
+import * as nock from 'nock';
+import { GitSource, BranchList, RepoFileList, BuildType, RepoLanguageList } from '../../types';
 import { GitlabService } from '../gitlab-service';
 import { DockerFileParser } from '../../utils';
 
 describe('Gitlab Service', () => {
-  it('should return ok on existing public gitlab repo', (done: any) => {
+  const nockBack = nock.back;
+  nockBack.setMode('record');
+
+  nockBack.fixtures = `${__dirname}/__nock-fixtures__/gitlab`;
+
+  it('should return ok on existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .isRepoReachable()
-      .then((isReachable: boolean) => {
-        expect(isReachable).toEqual(true);
-        done();
-      })
-      .catch((err: Error) => {
-        assert.fail(`Repo is existing${err.toString()}`);
-        done();
-      });
+
+    return nockBack('repo.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should list all branches of existing public gitlab repo', (done: any) => {
+  it('should list all branches of existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .getRepoBranchList()
-      .then((r: any) => {
-        assert.ok('List of branches', r);
-        done();
-      })
-      .catch((err: Error) => {
-        done(err);
-        assert.fail('Repo is existing');
-      });
+    return nockBack('branches.json').then(async ({ nockDone, context }) => {
+      const branchList: BranchList = await gitService.getRepoBranchList();
+      expect(branchList.branches.length).toBeGreaterThanOrEqual(1);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should list all files of existing public gitlab repo', (done: any) => {
+  it('should list all files of existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .getRepoFileList()
-      .then((r) => {
-        expect(r.files.length).toBeGreaterThanOrEqual(1);
-        done();
-      })
-      .catch((err: Error) => {
-        expect(err).toBeNull();
-        assert.fail('Failed to list files in the repo');
-        done(err);
-      });
+
+    return nockBack('files.json').then(async ({ nockDone, context }) => {
+      const fileList: RepoFileList = await gitService.getRepoFileList();
+      expect(fileList.files.length).toBeGreaterThanOrEqual(1);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should detect golang build type', (done: any) => {
+  it('should detect golang build type', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .detectBuildType()
-      .then((r) => {
-        expect(r.length).toBeGreaterThanOrEqual(1);
-        expect(r[0].buildType).toBe('golang');
-        done();
-      })
-      .catch((err: Error) => {
-        expect(err).toBeNull();
-        assert.fail('Failed to detect build type');
-        done(err);
-      });
+
+    return nockBack('files.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('golang');
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should detect Golang language', (done: any) => {
+  it('should detect Golang language', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .getRepoLanguageList()
-      .then((r) => {
-        expect(r.languages.length).toBeGreaterThanOrEqual(1);
-        expect(r.languages).toContain('Go');
-        done();
-      })
-      .catch((err: Error) => {
-        expect(err).toBeNull();
-        assert.fail('Failed to detect build type');
-        done(err);
-      });
+
+    return nockBack('languages.json').then(async ({ nockDone, context }) => {
+      const languageList: RepoLanguageList = await gitService.getRepoLanguageList();
+      expect(languageList.languages.length).toBeGreaterThanOrEqual(1);
+      expect(languageList.languages).toContain('Go');
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should return exposed container port', (done: any) => {
+  it('should detect Dockerfile', () => {
     const gitSource = { url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .getDockerfileContent()
-      .then((content: string) => {
-        const parser = new DockerFileParser(content);
-        const port = parser.getContainerPort();
-        expect(port).toEqual(5000);
-        done();
-      })
-      .catch((err: Error) => done(err));
+
+    return nockBack('dockerfile.json').then(async ({ nockDone, context }) => {
+      const isDockerfilePresent = await gitService.isDockerfilePresent();
+      expect(isDockerfilePresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should detect Dockerfile', (done: any) => {
+  it('should return exposed container port', () => {
     const gitSource = { url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .isDockerfilePresent()
-      .then((r: boolean) => {
-        expect(r).toBe(true);
-        done();
-      })
-      .catch((e: Error) => done(e));
+
+    return nockBack('dockerfile.json').then(async ({ nockDone, context }) => {
+      const dockerfileContent = await gitService.getDockerfileContent();
+      const parser = new DockerFileParser(dockerfileContent);
+      const port = parser.getContainerPort();
+      expect(port).toEqual(5000);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 
-  it('should not detect Dockerfile', (done: any) => {
+  it('should not detect Dockerfile', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
     const gitService = new GitlabService(gitSource);
-    return gitService
-      .isDockerfilePresent()
-      .then((r: boolean) => {
-        expect(r).toBe(false);
-        done();
-      })
-      .catch((e: Error) => done(e));
+
+    return nockBack('no-dockerfile.json').then(async ({ nockDone, context }) => {
+      const isDockerfilePresent = await gitService.isDockerfilePresent();
+      expect(isDockerfilePresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
   });
 });
