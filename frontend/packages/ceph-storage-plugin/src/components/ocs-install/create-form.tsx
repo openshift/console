@@ -26,10 +26,7 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = (props)
           <p className="co-m-pane__explanation">
             Selected nodes will be labeled with
             <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> to create the OCS
-            Service. These nodes will also be tainted with
-            <code>node.ocs.openshift.io/storage=true:NoSchedule</code> to dedicate these nodes to
-            allow only OCS components to be scheduled on them. Note: Ensure you have additional
-            worker nodes that are not tainted to run other workloads in your OpenShift cluster.
+            Service.
           </p>
           <Alert
             className="co-alert"
