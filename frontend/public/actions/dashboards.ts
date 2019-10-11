@@ -61,11 +61,16 @@ const fetchPeriodically: FetchPeriodically = async (dispatch, type, key, url, ge
   }
 };
 
-export const watchPrometheusQuery: WatchPrometheusQueryAction = (query) => (dispatch, getState) => {
+export const watchPrometheusQuery: WatchPrometheusQueryAction = (query, namespace) => (
+  dispatch,
+  getState,
+) => {
   const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.PROMETHEUS, query);
   dispatch(activateWatch(RESULTS_TYPE.PROMETHEUS, query));
   if (!isActive) {
-    const prometheusBaseURL = window.SERVER_FLAGS.prometheusBaseURL;
+    const prometheusBaseURL = namespace
+      ? window.SERVER_FLAGS.prometheusTenancyBaseURL
+      : window.SERVER_FLAGS.prometheusBaseURL;
     if (!prometheusBaseURL) {
       dispatch(
         setError(RESULTS_TYPE.PROMETHEUS, query, new Error('Prometheus URL is not available')),
@@ -117,7 +122,7 @@ export const stopWatchAlerts = () => stopWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY);
 type ThunkAction = (dispatch: Dispatch, getState: () => RootState) => void;
 
 export type WatchURLAction = (url: string, fetch?: Fetch) => ThunkAction;
-export type WatchPrometheusQueryAction = (query: string) => ThunkAction;
+export type WatchPrometheusQueryAction = (query: string, namespace?: string) => ThunkAction;
 export type WatchAlertsAction = () => ThunkAction;
 export type StopWatchURLAction = (url: string) => void;
 export type StopWatchPrometheusAction = (query: string) => void;

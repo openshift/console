@@ -66,7 +66,9 @@ const OngoingActivity = connectToFlags(
           watchK8sResource(uniqueResource(a.properties.k8sResource, index));
         });
         const prometheusActivities = getPrometheusActivities(flags);
-        prometheusActivities.forEach((a) => a.properties.queries.forEach(watchPrometheus));
+        prometheusActivities.forEach((a) =>
+          a.properties.queries.forEach((q) => watchPrometheus(q)),
+        );
         return () => {
           resourceActivities.forEach((a, index) => {
             stopWatchK8sResource(uniqueResource(a.properties.k8sResource, index));

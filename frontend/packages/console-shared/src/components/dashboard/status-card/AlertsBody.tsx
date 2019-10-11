@@ -42,6 +42,6 @@ export default AlertsBody;
 type AlertsBodyProps = {
   isLoading: boolean;
   error: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   emptyMessage: string;
 };

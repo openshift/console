@@ -20,8 +20,6 @@ import {
 import { ResourceEventStream } from './events';
 import { PersistentVolumeClaimModel } from '../models';
 
-export const pvcPhase = (pvc) => pvc.status.phase;
-
 const { common, ExpandPVC } = Kebab.factory;
 const menuActions = [
   ExpandPVC,
@@ -29,10 +27,7 @@ const menuActions = [
   ...common,
 ];
 
-const PVCStatus = ({ pvc }) => {
-  const phase = pvcPhase(pvc);
-  return <Status status={phase} />;
-};
+const PVCStatus = ({ pvc }) => <Status status={pvc.status.phase} />;
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
@@ -205,7 +200,7 @@ const filters = [
   {
     type: 'pvc-status',
     selected: allPhases,
-    reducer: pvcPhase,
+    reducer: (pvc) => pvc.status.phase,
     items: _.map(allPhases, (phase) => ({
       id: phase,
       title: phase,

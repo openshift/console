@@ -1,5 +1,4 @@
 import { podPhaseFilterReducer } from '@console/internal/module/k8s';
-import { pvcPhase } from '@console/internal/components/persistent-volume-claim';
 import { nodeStatus } from '@console/app/src/status/node';
 import { StatusGroupMapper } from './InventoryItem';
 import { InventoryStatusGroup } from './status-group';
@@ -59,6 +58,6 @@ export const getPodStatusGroups: StatusGroupMapper = (resources) =>
 export const getNodeStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'node-status');
 export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, pvcPhase, 'pvc-status');
+  getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, (pvc) => pvc.status.phase, 'pvc-status');
 export const getPVStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');
