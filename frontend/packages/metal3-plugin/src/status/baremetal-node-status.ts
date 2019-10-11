@@ -12,4 +12,4 @@ export const bareMetalNodeStatus = ({
   node,
   nodeMaintenance,
 }: BareMetalNodeStatusProps): StatusProps =>
-  getNodeMaintenanceStatus(nodeMaintenance, node) || { status: nodeStatus(node), node };
+  getNodeMaintenanceStatus(nodeMaintenance) || { status: nodeStatus(node), node };

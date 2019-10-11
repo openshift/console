@@ -47,7 +47,6 @@ type HostStatusProps = {
   nodeMaintenance?: K8sResourceKind;
 };
 
-export const getHostStatus = ({ host, node, nodeMaintenance }: HostStatusProps): StatusProps => {
-  const maintenanceStatus = getNodeMaintenanceStatus(nodeMaintenance, node);
-  return maintenanceStatus ? { ...maintenanceStatus, host } : getBareMetalHostStatus(host);
+export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): StatusProps => {
+  return getNodeMaintenanceStatus(nodeMaintenance) || getBareMetalHostStatus(host);
 };

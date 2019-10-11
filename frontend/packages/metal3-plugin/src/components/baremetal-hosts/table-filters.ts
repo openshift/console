@@ -8,6 +8,7 @@ import {
   HOST_STATUS_TITLES,
   HOST_STATUS_PROVISIONED,
   HOST_STATUS_EXTERNALLY_PROVISIONED,
+  NODE_STATUS_TITLES,
 } from '../../constants';
 import { BareMetalHostBundle } from '../types';
 
@@ -34,7 +35,7 @@ const hostStatesToFilterMap = Object.freeze({
   },
   other: {
     title: 'Other',
-    states: Object.keys(HOST_STATUS_TITLES),
+    states: [...Object.keys(HOST_STATUS_TITLES), ...Object.keys(NODE_STATUS_TITLES)],
   },
 });
 
