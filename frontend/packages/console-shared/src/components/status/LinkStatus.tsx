@@ -3,11 +3,6 @@ import * as History from 'history';
 import { Link } from 'react-router-dom';
 import StatusIconAndText from './StatusIconAndText';
 
-type LinkStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
-  linkTitle?: string;
-  linkTo?: History.LocationDescriptor;
-};
-
 const LinkStatus: React.FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) =>
   linkTo ? (
     <Link to={linkTo} title={linkTitle}>
@@ -16,5 +11,10 @@ const LinkStatus: React.FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) 
   ) : (
     <StatusIconAndText {...other} />
   );
+
+type LinkStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
+  linkTitle?: string;
+  linkTo?: History.LocationDescriptor;
+};
 
 export default LinkStatus;

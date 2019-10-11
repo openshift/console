@@ -2,13 +2,11 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { CamelCaseWrap } from '@console/internal/components/utils';
 import { DASH } from '../../constants';
+import { StatusComponentProps } from './types';
 
-type StatusIconAndTextProps = {
+type StatusIconAndTextProps = StatusComponentProps & {
   icon?: React.ReactElement;
-  title?: string;
   spin?: boolean;
-  iconOnly?: boolean;
-  noTooltip?: boolean;
 };
 
 const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
