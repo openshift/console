@@ -12,8 +12,8 @@ import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
-import { k8sGet } from '@console/internal/module/k8s';
-import { ConsoleExternalLogLinkModel } from '@console/internal/models';
+import { k8sGet, k8sList } from '@console/internal/module/k8s';
+import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { FLAGS } from '../../const';
 import { connectToFlags } from '../../reducers/features';
 
@@ -46,6 +46,7 @@ const LogControls = ({
   resource,
   containerName,
   podLogLinks,
+  namespaceUID,
 }) => {
   return (
     <div className="co-toolbar">
@@ -86,6 +87,7 @@ const LogControls = ({
               .replace('${resourceUID}', encodeURIComponent(resource.metadata.uid))
               .replace('${containerName}', encodeURIComponent(containerName))
               .replace('${resourceNamespace}', encodeURIComponent(namespace))
+              .replace('${resourceNamespaceUID}', encodeURIComponent(namespaceUID))
               .replace('${podLabels}', JSON.stringify(resource.metadata.labels));
             return (
               <React.Fragment key={link.metadata.uid}>
@@ -149,6 +151,7 @@ class ResourceLog_ extends React.Component {
       stale: false,
       status: STREAM_LOADING,
       isFullscreen: false,
+      namespaceUID: '',
     };
   }
 
@@ -169,8 +172,16 @@ class ResourceLog_ extends React.Component {
   }
 
   fetchLogLinks() {
-    k8sGet(ConsoleExternalLogLinkModel)
-      .then((podLogLinks) => this.setState({ podLogLinks: podLogLinks.items }))
+    const promises = [
+      k8sList(ConsoleExternalLogLinkModel),
+      k8sGet(ProjectModel, this.props.resource.metadata.namespace),
+    ];
+    Promise.all(promises)
+      .then(([podLogLinks, project]) => {
+        // Project UID and namespace UID are the same value. Use the projects
+        // API since normal OpenShift users can list projects.
+        this.setState({ podLogLinks, namespaceUID: project.metadata.uid });
+      })
       .catch((e) => this.setState({ error: e }));
   }
 
@@ -335,7 +346,16 @@ class ResourceLog_ extends React.Component {
 
   render() {
     const { resource, containerName, dropdown, bufferSize } = this.props;
-    const { error, lines, linesBehind, stale, status, isFullscreen, podLogLinks } = this.state;
+    const {
+      error,
+      lines,
+      linesBehind,
+      stale,
+      status,
+      isFullscreen,
+      podLogLinks,
+      namespaceUID,
+    } = this.state;
     const bufferFull = lines.length === bufferSize;
 
     return (
@@ -372,6 +392,7 @@ class ResourceLog_ extends React.Component {
             resource={resource}
             containerName={containerName}
             podLogLinks={podLogLinks}
+            namespaceUID={namespaceUID}
           />
           <LogWindow
             lines={lines}
