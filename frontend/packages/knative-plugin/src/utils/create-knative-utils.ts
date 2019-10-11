@@ -117,37 +117,6 @@ export const createKnativeService = (
   return k8sCreate(ServiceModel, knativeDeployResource);
 };
 
-export const knativeServingResources = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(RevisionModel),
-      namespace,
-      prop: 'revisions',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ConfigurationModel),
-      namespace,
-      prop: 'configurations',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(RouteModel),
-      namespace,
-      prop: 'ksroutes',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ServiceModel),
-      namespace,
-      prop: 'ksservices',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
 export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
   const knativeResource = [
     {
@@ -181,6 +150,22 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
       kind: referenceForModel(RouteModel),
       namespace,
       prop: 'ksroutes',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResources = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    ...knativeServingResourcesRevision(namespace),
+    ...knativeServingResourcesConfigurations(namespace),
+    ...knativeServingResourcesRoutes(namespace),
+    {
+      isList: true,
+      kind: referenceForModel(ServiceModel),
+      namespace,
+      prop: 'ksservices',
       optional: true,
     },
   ];
