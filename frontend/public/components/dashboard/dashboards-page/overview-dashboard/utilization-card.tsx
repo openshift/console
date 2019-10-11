@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 
 import * as plugins from '../../../../plugins';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
@@ -89,50 +88,48 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
       </DashboardCardHeader>
-      <DashboardCardBody>
-        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
-          <UtilizationItem
-            title="CPU"
-            data={cpuStats}
-            error={cpuUtilizationError}
-            isLoading={!cpuUtilization}
-            humanizeValue={humanizePercentage}
-            query={queries[OverviewQuery.CPU_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Memory"
-            data={memoryStats}
-            error={memoryUtilizationError}
-            isLoading={!memoryUtilization}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[OverviewQuery.MEMORY_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Disk Usage"
-            data={storageStats}
-            error={storageUtilizationError}
-            isLoading={!storageUtilization}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[OverviewQuery.STORAGE_UTILIZATION]}
-          />
-          {pluginItems.map(({ properties }, index) => {
-            const utilization = prometheusResults.getIn([properties.query, 'data']);
-            const utilizationError = prometheusResults.getIn([properties.query, 'loadError']);
-            const utilizationStats = getRangeVectorStats(utilization);
-            return (
-              <UtilizationItem
-                key={index}
-                title={properties.title}
-                data={utilizationStats}
-                error={utilizationError}
-                isLoading={!utilization}
-                humanizeValue={properties.humanizeValue}
-                query={properties.query}
-              />
-            );
-          })}
-        </UtilizationBody>
-      </DashboardCardBody>
+      <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
+        <UtilizationItem
+          title="CPU"
+          data={cpuStats}
+          error={cpuUtilizationError}
+          isLoading={!cpuUtilization}
+          humanizeValue={humanizePercentage}
+          query={queries[OverviewQuery.CPU_UTILIZATION]}
+        />
+        <UtilizationItem
+          title="Memory"
+          data={memoryStats}
+          error={memoryUtilizationError}
+          isLoading={!memoryUtilization}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[OverviewQuery.MEMORY_UTILIZATION]}
+        />
+        <UtilizationItem
+          title="Disk Usage"
+          data={storageStats}
+          error={storageUtilizationError}
+          isLoading={!storageUtilization}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[OverviewQuery.STORAGE_UTILIZATION]}
+        />
+        {pluginItems.map(({ properties }, index) => {
+          const utilization = prometheusResults.getIn([properties.query, 'data']);
+          const utilizationError = prometheusResults.getIn([properties.query, 'loadError']);
+          const utilizationStats = getRangeVectorStats(utilization);
+          return (
+            <UtilizationItem
+              key={index}
+              title={properties.title}
+              data={utilizationStats}
+              error={utilizationError}
+              isLoading={!utilization}
+              humanizeValue={properties.humanizeValue}
+              query={properties.query}
+            />
+          );
+        })}
+      </UtilizationBody>
     </DashboardCard>
   );
 };

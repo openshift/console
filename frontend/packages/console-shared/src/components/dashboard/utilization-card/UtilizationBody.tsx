@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ChartAxis } from '@patternfly/react-charts';
-import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import './utilization-card.scss';
 
@@ -30,33 +29,23 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
   );
 };
 
-const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
-  const [containerRef, width] = useRefWidth();
-
-  const axis =
-    width < parseInt(breakpointSM.value, 10) ? (
-      timestamps.length === 0 ? null : (
-        <div className="row co-utilization-card__item">
-          <div className="co-utilization-card__axis">
-            <UtilizationAxis timestamps={timestamps} />
-          </div>
-        </div>
-      )
-    ) : (
-      <div className="row co-utilization-card__item">
-        <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5" />
-        <div className="col-xs-7 col-sm-7 col-md-7 col-lg-7 co-utilization-card__axis">
-          {timestamps.length > 0 && <UtilizationAxis timestamps={timestamps} />}
-        </div>
+export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
+  const axis = (
+    <div className="co-utilization-card__item">
+      <div className="pf-l-level co-u-hidden co-u-visible-on-xl">
+        <span className="co-utilization-card__item__text">Resource</span>
+        <span className="co-utilization-card__item__text">Usage</span>
       </div>
-    );
+      <div className="co-utilization-card__item__chart co-utilization-card__item__chart--times">
+        <UtilizationAxis timestamps={timestamps} />
+      </div>
+    </div>
+  );
+
   return (
-    <div
-      className="co-dashboard-card__body--top-margin co-dashboard-card__body--no-padding co-utilization-card__body"
-      ref={containerRef}
-    >
+    <div className="co-utilization-card__body pf-l-grid">
       {axis}
-      <div>{children}</div>
+      {children}
     </div>
   );
 };
