@@ -16,6 +16,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   addLabel,
   headers,
   emptyValues,
+  isReadOnly,
 }) => (
   <FieldArray
     name={name}
@@ -37,11 +38,14 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                 name={name}
                 rowIndex={index}
                 onDelete={() => remove(index)}
+                isReadOnly={isReadOnly}
               >
                 {children}
               </MultiColumnFieldRow>
             ))}
-          <MultiColumnFieldFooter addLabel={addLabel} onAdd={() => push(emptyValues)} />
+          {!isReadOnly && (
+            <MultiColumnFieldFooter addLabel={addLabel} onAdd={() => push(emptyValues)} />
+          )}
         </FormGroup>
       );
     }}

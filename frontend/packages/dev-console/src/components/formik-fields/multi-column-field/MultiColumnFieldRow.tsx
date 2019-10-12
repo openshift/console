@@ -7,6 +7,7 @@ export interface MultiColumnFieldRowProps {
   rowIndex: number;
   children: React.ReactNode;
   onDelete: () => void;
+  isReadOnly?: boolean;
 }
 
 const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
@@ -14,6 +15,7 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   rowIndex,
   onDelete,
   children,
+  isReadOnly,
 }) => (
   <div className="odc-multi-column-field__row">
     {React.Children.map(children, (child: React.ReactElement) => {
@@ -25,10 +27,12 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
         </div>
       );
     })}
-    <div className="odc-multi-column-field__col--button">
-      <MinusCircleIcon aria-hidden="true" onClick={onDelete} />
-      <span className="sr-only">Delete</span>
-    </div>
+    {!isReadOnly && (
+      <div className="odc-multi-column-field__col--button">
+        <MinusCircleIcon aria-hidden="true" onClick={onDelete} />
+        <span className="sr-only">Delete</span>
+      </div>
+    )}
   </div>
 );
 

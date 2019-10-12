@@ -26,8 +26,10 @@ interface PipelineRowProps {
 
 const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => {
   const menuActions = [
-    startPipeline(obj, handlePipelineRunSubmit),
-    rerunPipeline(obj, obj.latestRun, handlePipelineRunSubmit),
+    () => startPipeline(PipelineModel, obj, handlePipelineRunSubmit),
+    ...(obj.latestRun && obj.latestRun.metadata
+      ? [() => rerunPipeline(PipelineModel, obj, obj.latestRun, handlePipelineRunSubmit)]
+      : []),
     Kebab.factory.Delete,
   ];
   return (

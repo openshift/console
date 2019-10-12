@@ -37,19 +37,20 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
           labelSelector: { 'tekton.dev/pipeline': res.metadata.name },
         })
           .then((listres) => {
+            const latestRun = getLatestRun({ data: listres }, 'creationTimestamp');
             this.setState({
               menuActions: [
-                startPipeline(res, handlePipelineRunSubmit),
-                rerunPipeline(
-                  res,
-                  getLatestRun({ data: listres }, 'creationTimestamp'),
-                  handlePipelineRunSubmit,
-                ),
+                () => startPipeline(PipelineModel, res, handlePipelineRunSubmit),
+                ...(latestRun && latestRun.metadata
+                  ? [() => rerunPipeline(PipelineModel, res, latestRun, handlePipelineRunSubmit)]
+                  : []),
                 Kebab.factory.Delete,
               ],
             });
           })
-          .catch((error) => this.setState({ errorCode: error.response.status }));
+          .catch((error) => {
+            this.setState({ errorCode: error.response.status });
+          });
       })
       .catch((error) => this.setState({ errorCode: error.response.status }));
   }
