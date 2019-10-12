@@ -53,7 +53,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      title: 'Persistent Storage',
+      title: 'OCS PV',
       required: CEPH_FLAG,
     },
   },
