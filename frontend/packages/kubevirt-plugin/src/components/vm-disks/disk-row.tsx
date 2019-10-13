@@ -33,6 +33,7 @@ const menuActionEdit = (
   callback: () =>
     withProgress(
       diskModalEnhanced({
+        blocking: true,
         vmLikeEntity,
         disk: disk.diskWrapper.asResource(),
         volume: disk.volumeWrapper.asResource(),

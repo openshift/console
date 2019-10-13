@@ -1,7 +1,9 @@
+import * as _ from 'lodash';
 import { Patch } from '@console/internal/module/k8s';
 import { assureEndsWith } from '@console/shared';
 
-export const patchSafeValue = (value: string): string => value.replace('/', '~1');
+export const patchSafeValue = (value: string): string =>
+  value.replace('~', '~0').replace('/', '~1');
 
 export enum PatchOperation {
   ADD = 'add',
@@ -15,6 +17,8 @@ export class PatchBuilder {
   private value: any;
 
   private valueIndex: number = -1;
+
+  private valueKey: string = '';
 
   private operation: PatchOperation;
 
@@ -93,6 +97,24 @@ export class PatchBuilder {
     return this;
   };
 
+  setObjectRemove = (key: string, object?: { [k: string]: any }) => {
+    if (_.has(object, [key])) {
+      this.value = undefined;
+      this.valueKey = key;
+      this.operation = PatchOperation.REMOVE;
+    } else {
+      this.valid = false;
+    }
+    return this;
+  };
+
+  setObjectUpdate = (key: string, value: any, object?: { [k: string]: any }) => {
+    this.value = value;
+    this.valueKey = key;
+    this.operation = _.has(object, [key]) ? PatchOperation.REPLACE : PatchOperation.ADD;
+    return this;
+  };
+
   isPatchValid = () => this.valid && !!(this.path && this.operation);
 
   build = (): Patch => {
@@ -100,9 +122,19 @@ export class PatchBuilder {
       return null;
     }
 
+    let resultPath;
+
+    if (this.valueIndex < 0) {
+      resultPath = this.valueKey
+        ? assureEndsWith(this.path, `/${patchSafeValue(this.valueKey)}`)
+        : this.path;
+    } else {
+      resultPath = `${assureEndsWith(this.path, '/')}${this.valueIndex}`;
+    }
+
     const result: any = {
       op: this.operation,
-      path: this.valueIndex < 0 ? this.path : `${assureEndsWith(this.path, '/')}${this.valueIndex}`,
+      path: resultPath,
     };
 
     if (this.operation !== PatchOperation.REMOVE) {

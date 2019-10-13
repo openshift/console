@@ -17,4 +17,6 @@ export abstract class ValueEnum<T> {
   getValue = () => this.value;
 
   toString = () => _.toString(this.value);
+
+  serialize = () => ({ value: this.value });
 }

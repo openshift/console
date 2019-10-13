@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import {
   concatImmutableLists,
+  iGetIsLoaded,
   iGetLoadedData,
   immutableListToShallowJS,
 } from '../../../../utils/immutable';
@@ -11,12 +12,15 @@ import { FormSelectPlaceholderOption } from '../../../form/form-select-placehold
 import {
   getFlavors,
   getOperatingSystems,
+  getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
 import { getPlaceholder } from '../../utils/vm-settings-tab-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
+import { getValidationObject } from '../../../../utils/validations/common';
+import { ValidationErrorType } from '../../../../utils/validations/types';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -47,11 +51,33 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 
     const flavors = flavorSort(getFlavors(vanillaTemplates, params));
 
+    const workloadProfiles = getWorkloadProfiles(vanillaTemplates, params);
+
+    let operatingSystemValidation;
+    let flavorValidation;
+
+    if (
+      iGetIsLoaded(commonTemplates) &&
+      iGetIsLoaded(userTemplate) &&
+      (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
+    ) {
+      const validation = getValidationObject(
+        'There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
+        ValidationErrorType.Info,
+      );
+      if (!operatinSystemField.get('validation')) {
+        operatingSystemValidation = validation;
+      } else if (!flavorField.get('validation')) {
+        flavorValidation = validation;
+      }
+    }
+
     return (
       <>
         <FormFieldRow
           field={operatinSystemField}
           fieldType={FormFieldType.SELECT}
+          validation={operatingSystemValidation}
           loadingResources={{
             userTemplates,
             commonTemplates,
@@ -72,6 +98,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
         <FormFieldRow
           field={flavorField}
           fieldType={FormFieldType.SELECT}
+          validation={flavorValidation}
           loadingResources={{
             userTemplates,
             commonTemplates,

@@ -20,14 +20,19 @@ export const FormRow: React.FC<FormRowProps> = ({
   if (isHidden) {
     return null;
   }
+  const type = (validation && validation.type) || validationType;
+  const message = (validation && validation.message) || validationMessage;
 
   return (
     <FormGroup
       label={title}
       isRequired={isRequired}
       fieldId={fieldId}
-      isValid={((validation && validation.type) || validationType) !== ValidationErrorType.Error}
-      helperTextInvalid={(validation && validation.message) || validationMessage}
+      isValid={type !== ValidationErrorType.Error}
+      helperTextInvalid={type === ValidationErrorType.Error ? message : undefined}
+      helperText={
+        type === ValidationErrorType.Info || type === ValidationErrorType.Warn ? message : undefined
+      }
     >
       {help && (
         <span className="kubevirt-form-row__icon-status-container">

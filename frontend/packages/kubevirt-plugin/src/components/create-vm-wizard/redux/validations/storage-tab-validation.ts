@@ -30,7 +30,13 @@ export const validateStorages = (options: UpdateOptions) => {
   const storages = getStoragesWithWrappers(state, id);
 
   const validatedStorages = storages.map(
-    ({ diskWrapper, volumeWrapper, dataVolumeWrapper, ...storageBundle }) => {
+    ({
+      diskWrapper,
+      volumeWrapper,
+      dataVolumeWrapper,
+      persistentVolumeClaimWrapper,
+      ...storageBundle
+    }) => {
       const otherStorageBundles = storages.filter((n) => n.id !== storageBundle.id); // to discard networks with a same name
       const usedDiskNames = new Set(otherStorageBundles.map(({ diskWrapper: dw }) => dw.getName()));
 
@@ -42,10 +48,16 @@ export const validateStorages = (options: UpdateOptions) => {
 
       return {
         ...storageBundle,
-        validation: validateDisk(diskWrapper, volumeWrapper, dataVolumeWrapper, {
-          usedDiskNames,
-          usedPVCNames,
-        }),
+        validation: validateDisk(
+          diskWrapper,
+          volumeWrapper,
+          dataVolumeWrapper,
+          persistentVolumeClaimWrapper,
+          {
+            usedDiskNames,
+            usedPVCNames,
+          },
+        ),
       };
     },
   );

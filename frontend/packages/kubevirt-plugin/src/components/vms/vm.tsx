@@ -139,20 +139,30 @@ const getCreateProps = ({
   hasCreateVMWizardsSupport: boolean;
 }) => {
   const items: any = {
-    wizard: 'Create with Wizard',
-    yaml: 'Create from YAML',
+    wizard: 'New with Wizard',
+    yaml: 'New from YAML',
   };
 
   if (hasCreateVMWizardsSupport) {
-    items.wizardNew = 'Create with New Wizard';
+    items.wizardNew = 'New with New Wizard';
+    items.wizardNewImport = 'Import with New Wizard';
   }
 
   return {
     items,
-    createLink: (itemName) =>
-      `/k8s/ns/${namespace || 'default'}/virtualmachines/${
-        !hasCreateVMWizardsSupport || itemName === 'yaml' ? '~new' : '~new-wizard'
-      }`, // covers 'yaml', new-wizard and default
+    createLink: (itemName) => {
+      const base = `/k8s/ns/${namespace || 'default'}/virtualmachines`;
+
+      switch (itemName) {
+        case 'wizardNew':
+          return hasCreateVMWizardsSupport ? `${base}/~new-wizard` : undefined;
+        case 'wizardNewImport':
+          return hasCreateVMWizardsSupport ? `${base}/~new-wizard?mode=import` : undefined;
+        case 'yaml':
+        default:
+          return `${base}/~new`;
+      }
+    },
     action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace) : null),
   };
 };

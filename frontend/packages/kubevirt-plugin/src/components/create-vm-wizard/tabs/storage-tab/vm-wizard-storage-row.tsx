@@ -11,19 +11,16 @@ import {
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 
 const menuActionEdit = (
-  { diskWrapper, volumeWrapper, dataVolumeWrapper, id, type }: VMWizardStorageWithWrappers,
+  storageWithWrappers: VMWizardStorageWithWrappers,
   { wizardReduxID, withProgress }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
   label: 'Edit',
   callback: () =>
     withProgress(
       vmWizardStorageModalEnhanced({
+        blocking: true,
         wizardReduxID,
-        id,
-        type,
-        diskWrapper,
-        volumeWrapper,
-        dataVolumeWrapper,
+        storage: storageWithWrappers,
       }).result,
     ),
 });
@@ -52,6 +49,7 @@ const getActions = (
     ![
       VMWizardStorageType.PROVISION_SOURCE_DISK,
       VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
+      VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
     ].includes(wizardNetworkData.type)
   ) {
     actions.push(menuActionRemove);

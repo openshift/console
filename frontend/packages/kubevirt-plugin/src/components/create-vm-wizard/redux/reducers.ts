@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { fromJS, Map as ImmutableMap } from 'immutable';
-import { VMWizardTab } from '../types';
+import { VMSettingsField, VMWizardTab } from '../types';
 import { iGet } from '../../../utils/immutable';
 import { DeviceType } from '../../../constants/vm';
 import { InternalActionType, WizardInternalAction } from './types';
@@ -125,41 +125,41 @@ export default (state, action: WizardInternalAction) => {
     return ImmutableMap();
   }
   const { payload } = action;
-  const dialogId = payload && payload.id;
+  const dialogID = payload && payload.id;
 
   switch (action.type) {
     case InternalActionType.Create:
-      return state.set(dialogId, fromJS(payload.value));
+      return state.set(dialogID, fromJS(payload.value));
     case InternalActionType.Dispose:
-      return state.delete(dialogId);
+      return state.delete(dialogID);
     case InternalActionType.UpdateNIC:
       return updateIDItemInList(
         state,
-        [dialogId, 'tabs', VMWizardTab.NETWORKING, 'value'],
+        [dialogID, 'tabs', VMWizardTab.NETWORKING, 'value'],
         fromJS(payload.network),
       );
     case InternalActionType.RemoveNIC:
       return removeIDItemFromList(
         state,
-        [dialogId, 'tabs', VMWizardTab.NETWORKING, 'value'],
+        [dialogID, 'tabs', VMWizardTab.NETWORKING, 'value'],
         payload.networkID,
       );
     case InternalActionType.UpdateStorage:
       return updateIDItemInList(
         state,
-        [dialogId, 'tabs', VMWizardTab.STORAGE, 'value'],
+        [dialogID, 'tabs', VMWizardTab.STORAGE, 'value'],
         fromJS(payload.storage),
       );
     case InternalActionType.RemoveStorage:
       return removeIDItemFromList(
         state,
-        [dialogId, 'tabs', VMWizardTab.STORAGE, 'value'],
+        [dialogID, 'tabs', VMWizardTab.STORAGE, 'value'],
         payload.storageID,
       );
     case InternalActionType.SetDeviceBootOrder:
       return setDeviceBootOrder(
         state,
-        dialogId,
+        dialogID,
         payload.deviceID,
         payload.deviceType,
         payload.bootOrder,
@@ -171,42 +171,69 @@ export default (state, action: WizardInternalAction) => {
     case InternalActionType.SetResults:
       return setTabKeys(state, VMWizardTab.RESULT, action);
     case InternalActionType.Update:
-      return mergeDeepInSpecial(state, [dialogId], fromJS(payload.value));
+      return mergeDeepInSpecial(state, [dialogID], fromJS(payload.value));
     case InternalActionType.UpdateCommonData:
       return setObjectValues(
-        setObjectValues(state, [dialogId, 'commonData', 'data'], payload.value.data),
-        [dialogId, 'commonData', 'dataIDReferences'],
+        setObjectValues(state, [dialogID, 'commonData', 'data'], payload.value.data),
+        [dialogID, 'commonData', 'dataIDReferences'],
         payload.value.dataIDReferences,
       );
     case InternalActionType.SetTabValidity:
       return state
-        .setIn([dialogId, 'tabs', payload.tab, 'isValid'], payload.isValid)
+        .setIn([dialogID, 'tabs', payload.tab, 'isValid'], payload.isValid)
         .setIn(
-          [dialogId, 'tabs', payload.tab, 'hasAllRequiredFilled'],
+          [dialogID, 'tabs', payload.tab, 'hasAllRequiredFilled'],
           payload.hasAllRequiredFilled,
         );
     case InternalActionType.SetTabLocked:
-      return state.setIn([dialogId, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
+      return state.setIn([dialogID, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
     case InternalActionType.SetVmSettingsFieldValue:
       return state.setIn(
-        [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
+        [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
+        fromJS(payload.value),
+      );
+    case InternalActionType.UpdateVMSettingsProviderField:
+      return mergeDeepInSpecial(
+        state,
+        [
+          dialogID,
+          'tabs',
+          VMWizardTab.VM_SETTINGS,
+          'value',
+          VMSettingsField.PROVIDERS_DATA,
+          payload.provider,
+          payload.key,
+        ],
+        fromJS(payload.value),
+      );
+    case InternalActionType.UpdateVMSettingsProvider:
+      return mergeDeepInSpecial(
+        state,
+        [
+          dialogID,
+          'tabs',
+          VMWizardTab.VM_SETTINGS,
+          'value',
+          VMSettingsField.PROVIDERS_DATA,
+          payload.provider,
+        ],
         fromJS(payload.value),
       );
     case InternalActionType.SetCloudInitFieldValue:
       return state.setIn(
-        [dialogId, 'tabs', VMWizardTab.ADVANCED_CLOUD_INIT, 'value', payload.key, 'value'],
+        [dialogID, 'tabs', VMWizardTab.ADVANCED_CLOUD_INIT, 'value', payload.key, 'value'],
         fromJS(payload.value),
       );
     case InternalActionType.SetInVmSettings:
       return state.setIn(
-        [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', ...payload.path],
+        [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', ...payload.path],
         fromJS(payload.value),
       );
     case InternalActionType.SetInVmSettingsBatch:
       return payload.batch.reduce(
         (nextState, { path, value }) =>
           nextState.setIn(
-            [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', ...path],
+            [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', ...path],
             fromJS(value),
           ),
         state,
@@ -214,13 +241,13 @@ export default (state, action: WizardInternalAction) => {
     case InternalActionType.UpdateVmSettingsField:
       return mergeDeepInSpecial(
         state,
-        [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key],
+        [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key],
         fromJS(payload.value),
       );
     case InternalActionType.UpdateVmSettings:
       return mergeDeepInSpecial(
         state,
-        [dialogId, 'tabs', VMWizardTab.VM_SETTINGS, 'value'],
+        [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value'],
         fromJS(payload.value),
       );
     default:

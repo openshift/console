@@ -13,6 +13,7 @@ import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { vmWizardActions } from '../../redux/actions';
 import {
+  VMImportProvider,
   VMSettingsField,
   VMSettingsRenderableField,
   VMWizardProps,
@@ -24,23 +25,26 @@ import { getFieldId, getPlaceholder } from '../../utils/vm-settings-tab-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { FormFieldForm } from '../../form/form-field-form';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { WorkloadProfile } from './workload-profile';
 import { OSFlavor } from './os-flavor';
 import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { URLSource } from './url-source';
+import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 
 import './vm-settings-tab.scss';
 
 export class VMSettingsTabComponent extends React.Component<VMSettingsTabComponentProps> {
-  getField = (key) => iGet(this.props.vmSettings, key);
+  getField = (key: VMSettingsField) => iGet(this.props.vmSettings, key);
 
-  getFieldAttribute = (key, attribute) => iGetIn(this.props.vmSettings, [key, attribute]);
+  getFieldAttribute = (key: VMSettingsField, attribute: string) =>
+    iGetIn(this.props.vmSettings, [key, attribute]);
 
-  getFieldValue = (key) => iGetIn(this.props.vmSettings, [key, 'value']);
+  getFieldValue = (key: VMSettingsField) => iGetIn(this.props.vmSettings, [key, 'value']);
 
-  onChange = (key) => (value) => this.props.onFieldChange(key, value);
+  onChange = (key: VMSettingsRenderableField) => (value) => this.props.onFieldChange(key, value);
 
   render() {
     const {
@@ -49,10 +53,36 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       provisionSourceStorage,
       updateStorage,
       isReview,
+      wizardReduxID,
     } = this.props;
 
     return (
       <FormFieldForm isReview={isReview}>
+        <FormFieldMemoRow
+          key={VMSettingsField.PROVIDER}
+          field={this.getField(VMSettingsField.PROVIDER)}
+          fieldType={FormFieldType.SELECT}
+        >
+          <FormField>
+            <FormSelect onChange={this.onChange(VMSettingsField.PROVIDER)}>
+              <FormSelectPlaceholderOption
+                placeholder={getPlaceholder(VMSettingsField.PROVIDER)}
+                isDisabled={!!this.getFieldValue(VMSettingsField.PROVIDER)}
+              />
+              {(this.getFieldAttribute(VMSettingsField.PROVIDER, 'providers') || []).map(
+                (provider) => (
+                  <FormSelectOption key={provider} value={provider} label={provider} />
+                ),
+              )}
+            </FormSelect>
+          </FormField>
+        </FormFieldMemoRow>
+        {ProvisionSource.fromString(this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE)) ===
+          ProvisionSource.IMPORT && (
+          <>
+            <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
+          </>
+        )}
         {!isReview && (
           <UserTemplates
             key={VMSettingsField.USER_TEMPLATE}
@@ -63,6 +93,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           />
         )}
         <FormFieldMemoRow
+          key={VMSettingsField.PROVISION_SOURCE_TYPE}
           field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
           fieldType={FormFieldType.SELECT}
         >
@@ -73,9 +104,9 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
                 isDisabled={!!this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE)}
               />
               {(this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, 'sources') || []).map(
-                (source) => {
-                  return <FormSelectOption key={source} value={source} label={source} />;
-                },
+                (source) => (
+                  <FormSelectOption key={source} value={source} label={source} />
+                ),
               )}
             </FormSelect>
           </FormField>
@@ -165,6 +196,7 @@ type VMSettingsTabComponentProps = {
   commonTemplates: any;
   userTemplates: any;
   isReview: boolean;
+  wizardReduxID: string;
 };
 
 const dispatchToProps = (dispatch, props) => ({

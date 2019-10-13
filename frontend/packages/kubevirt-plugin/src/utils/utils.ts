@@ -20,10 +20,10 @@ export const setNativeValue = (element, value) => {
 export const getFullResourceId = (obj) =>
   `${referenceForModel(obj)}~${getNamespace(obj)}~${getName(obj)}`;
 
-export const getNextIDResolver = (entities: { id?: string }[]) => {
-  let maxNetworkID =
+export const getNextIDResolver = (entities: { id?: string }[] = []) => {
+  let lastID =
     _.max(entities.map((entity) => (entity.id == null ? 0 : _.toSafeInteger(entity.id)))) || 0;
-  return () => _.toString(++maxNetworkID);
+  return () => _.toString(++lastID);
 };
 
 export const wrapWithProgress = (setProgress: (inProgress: boolean) => void) => (

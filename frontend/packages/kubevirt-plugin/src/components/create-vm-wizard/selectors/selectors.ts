@@ -13,6 +13,7 @@ import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 
 export const getCreateVMWizards = (state): Map<string, any> =>
   get(state, ['kubevirt', 'createVmWizards']);
@@ -37,12 +38,15 @@ export const getNetworksWithWrappers = (state, id: string): VMWizardNetworkWithW
   }));
 
 export const getStoragesWithWrappers = (state, id: string): VMWizardStorageWithWrappers[] =>
-  getStorages(state, id).map(({ disk, volume, dataVolume, ...rest }) => ({
+  getStorages(state, id).map(({ disk, volume, dataVolume, persistentVolumeClaim, ...rest }) => ({
     diskWrapper: DiskWrapper.initialize(disk),
     volumeWrapper: VolumeWrapper.initialize(volume),
     dataVolumeWrapper: dataVolume && DataVolumeWrapper.initialize(dataVolume),
+    persistentVolumeClaimWrapper:
+      persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim),
     disk,
     volume,
     dataVolume,
+    persistentVolumeClaim,
     ...rest,
   }));

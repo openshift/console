@@ -1,7 +1,19 @@
-import { VMSettingsField, VMSettingsRenderableFieldResolver } from '../types';
+import {
+  VMImportProvider,
+  VMSettingsField,
+  VMSettingsRenderableFieldResolver,
+  VMWareProviderField,
+} from '../types';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: VMSettingsRenderableFieldResolver = {
+  [VMWareProviderField.VCENTER]: 'vCenter instance',
+  [VMWareProviderField.HOSTNAME]: 'vCenter hostname',
+  [VMWareProviderField.USER_NAME]: 'Username',
+  [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: 'Password',
+  [VMWareProviderField.REMEMBER_PASSWORD]: 'Save as new vCenter instance secret',
+  [VMWareProviderField.STATUS]: '',
+  [VMWareProviderField.VM]: 'VM or Template to Import',
   [VMSettingsField.NAME]: 'Name',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
@@ -18,6 +30,8 @@ export const titleResolver: VMSettingsRenderableFieldResolver = {
 };
 
 export const placeholderResolver = {
+  [VMWareProviderField.VCENTER]: '--- Select vCenter Instance Secret ---',
+  [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.USER_TEMPLATE]: '--- Select Template ---',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
   [VMSettingsField.PROVIDER]: '--- Select Provider ---',
@@ -34,10 +48,25 @@ const provisionSourceHelpResolver = {
   [ProvisionSource.DISK.getValue()]: 'Select an existing PVC in Storage tab',
 };
 
+const providerHelpResolver = {
+  [VMImportProvider.VMWARE]:
+    'The virtual machine will be imported from a vCenter instance. Please provide connection details and select the virtual machine.',
+};
+
 export const helpResolver = {
+  [VMWareProviderField.VCENTER]: () =>
+    'Select secret containing connection details for a vCenter instance.',
+  [VMWareProviderField.HOSTNAME]: () =>
+    'Address to be used for connection to a vCenter instance. The "https://" protocol will be added automatically. Example: "my.domain.com:1234".',
+  [VMWareProviderField.USER_NAME]: () =>
+    'User name to be used for connection to a vCenter instance.',
+  [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: () =>
+    'User password to be used for connection to a vCenter instance.',
+  [VMWareProviderField.VM]: () =>
+    'Select a vCenter virtual machine to import. Loading of their list might take some time. The list will be enabled for selection once data are loaded.',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: string) =>
     provisionSourceHelpResolver[sourceType],
-  [VMSettingsField.PROVIDER]: (provider) => `Not Implemented for ${provider}!!!`,
+  [VMSettingsField.PROVIDER]: (provider) => providerHelpResolver[provider],
   [VMSettingsField.FLAVOR]: () =>
     'The combination of processing power and memory that will be provided to the virtual machine.',
   [VMSettingsField.MEMORY]: () =>

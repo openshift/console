@@ -13,7 +13,12 @@ const RequestResultsPartComponent: React.FC<RequestResultsPartComponentProps> = 
 }) => (
   <>
     {errorsFirstSort(requestResults).map(({ content: { data, type }, ...rest }, index) => (
-      <ResultTabRow key={`${index + 1}`} content={resultContentToString(data, type)} {...rest} />
+      <ResultTabRow
+        key={`${index + 1}`}
+        alignMiddle
+        content={resultContentToString(data, type)}
+        {...rest}
+      />
     ))}
   </>
 );

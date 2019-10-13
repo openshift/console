@@ -30,6 +30,7 @@ import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { isLoaded } from '../../../../utils';
 import { ADD_DISK } from '../../strings/storage';
 import { DeviceType } from '../../../../constants/vm';
+import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VmWizardStorageRow } from './vm-wizard-storage-row';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
@@ -44,13 +45,20 @@ const getStoragesData = (
   const pvcLookup = createLookup(pvcs, getName);
 
   return storages.map((wizardStorageData) => {
-    const { diskWrapper, volumeWrapper, dataVolumeWrapper } = wizardStorageData;
+    const {
+      diskWrapper,
+      volumeWrapper,
+      dataVolumeWrapper,
+      persistentVolumeClaimWrapper,
+    } = wizardStorageData;
+    const pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
 
     const combinedDisk = new CombinedDisk({
       diskWrapper,
       volumeWrapper,
       dataVolumeWrapper,
-      pvc: pvcLookup[volumeWrapper.getPersistentVolumeClaimName()],
+      persistentVolumeClaimWrapper:
+        persistentVolumeClaimWrapper || (pvc && PersistentVolumeClaimWrapper.initialize(pvc)),
       pvcsLoading: !isLoaded(pvcs),
     });
 
@@ -59,7 +67,7 @@ const getStoragesData = (
       // for sorting
       name: combinedDisk.getName(),
       diskInterface: combinedDisk.getDiskInterface(),
-      size: combinedDisk.getSize(),
+      size: combinedDisk.getReadableSize(),
       storageClass: combinedDisk.getStorageClassName(),
     };
   });
@@ -84,6 +92,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
     onClick: () =>
       withProgress(
         vmWizardStorageModalEnhanced({
+          blocking: true,
           wizardReduxID,
         }).result,
       ),

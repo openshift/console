@@ -2,10 +2,18 @@ import {
   VMSettingsField,
   VMSettingsRenderableField,
   VMSettingsRenderableFieldResolver,
+  VMWareProviderField,
 } from '../types';
 import { titleResolver, placeholderResolver, helpResolver } from '../strings/vm-settings';
 
 const idResolver: VMSettingsRenderableFieldResolver = {
+  [VMWareProviderField.VCENTER]: 'vcenter-instance-dropdown',
+  [VMWareProviderField.HOSTNAME]: 'vcenter-hostname-dropdown',
+  [VMWareProviderField.USER_NAME]: 'vcenter-username',
+  [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: 'vcenter-password',
+  [VMWareProviderField.REMEMBER_PASSWORD]: 'vcenter-remember-credentials',
+  [VMWareProviderField.STATUS]: 'vcenter-status',
+  [VMWareProviderField.VM]: 'vcenter-vm-dropdown',
   [VMSettingsField.NAME]: 'vm-name',
   [VMSettingsField.DESCRIPTION]: 'vm-description',
   [VMSettingsField.USER_TEMPLATE]: 'template-dropdown',
@@ -21,10 +29,15 @@ const idResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.START_VM]: 'start-vm',
 };
 
-export const getFieldId = (key: VMSettingsRenderableField) => idResolver[key];
-export const getFieldTitle = (key: VMSettingsRenderableField) => titleResolver[key];
-export const getPlaceholder = (key: VMSettingsRenderableField) => placeholderResolver[key];
-export const getFieldHelp = (key: VMSettingsRenderableField, value: string) => {
+export const getFieldId = (key: VMSettingsRenderableField | VMWareProviderField) => idResolver[key];
+export const getFieldTitle = (key: VMSettingsRenderableField | VMWareProviderField) =>
+  titleResolver[key];
+export const getPlaceholder = (key: VMSettingsRenderableField | VMWareProviderField) =>
+  placeholderResolver[key];
+export const getFieldHelp = (
+  key: VMSettingsRenderableField | VMWareProviderField,
+  value: string,
+) => {
   const resolveFunction = helpResolver[key];
   return resolveFunction ? resolveFunction(value) : null;
 };

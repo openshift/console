@@ -3,9 +3,6 @@ import { VMSettingsField, VMWizardTab } from '../../types';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { iGetCreateVMWizardTabs } from './selectors';
 
-export const VM_SETTINGS_METADATA_ID = 'VM_SETTINGS_METADATA_ID';
-export const VMWARE_PROVIDER_METADATA_ID = 'VMWARE_PROVIDER_METADATA_ID';
-
 export const iGetFieldValue = (field, defaultValue = undefined) =>
   iGet(field, 'value', defaultValue);
 export const iGetFieldKey = (field, defaultValue = undefined) => iGet(field, 'key', defaultValue);

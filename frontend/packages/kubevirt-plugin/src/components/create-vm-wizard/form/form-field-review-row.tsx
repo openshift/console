@@ -26,3 +26,5 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({ fieldTyp
     </>
   );
 };
+
+export const FormFieldReviewMemoRow = React.memo(FormFieldReviewRow);

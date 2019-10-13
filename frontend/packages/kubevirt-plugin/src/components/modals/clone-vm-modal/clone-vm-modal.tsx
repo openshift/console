@@ -113,6 +113,7 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
       <ModalTitle>Clone Virtual Machine</ModalTitle>
       <ModalBody>
         <Errors
+          endMargin
           errors={[
             {
               key: 'namespacesError',

@@ -37,3 +37,18 @@ export const getAnnotationKeySuffix = (
   ) as K8sResourceKind['metadata']['annotations'];
   return getValueByPrefix(annotations, annotationPrefix);
 };
+
+export const getStatusPhase = (entity: K8sResourceKind): string =>
+  entity && entity.status && entity.status.phase;
+
+export const getStatusConditions = (statusResource: K8sResourceKind, defaultValue = []) =>
+  _.get(statusResource, 'status.conditions') === undefined
+    ? defaultValue
+    : statusResource.status.conditions;
+
+export const getStatusConditionOfType = (statusResource: K8sResourceKind, type: string) =>
+  getStatusConditions(statusResource).find((condition) => condition.type === type);
+
+export const getConditionReason = (condition) => condition && condition.reason;
+export const isConditionStatusTrue = (condition) => (condition && condition.status) === 'True';
+export const isConditionReason = (condition, reason) => getConditionReason(condition) === reason;

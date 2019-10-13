@@ -39,7 +39,7 @@ const getStoragesData = ({
     // for sorting
     name: disk.getName(),
     diskInterface: disk.getDiskInterface(),
-    size: disk.getSize(),
+    size: disk.getReadableSize(),
     storageClass: disk.getStorageClassName(),
   }));
 };
@@ -118,6 +118,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             onClick={() =>
               withProgress(
                 diskModalEnhanced({
+                  blocking: true,
                   vmLikeEntity,
                 }).result,
               )

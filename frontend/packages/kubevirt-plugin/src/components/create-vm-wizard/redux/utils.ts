@@ -1,4 +1,5 @@
 import { VMWizardTab } from '../types';
+import { getProviders } from '../provider-definitions';
 import { UpdateOptions } from './types';
 import { updateVmSettingsState } from './stateUpdate/vmSettings/vm-settings-tab-state-update';
 import { updateStorageTabState } from './stateUpdate/vmSettings/storage-tab-state-update';
@@ -55,10 +56,6 @@ export const updateAndValidateState = (options: UpdateOptions) => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const cleanup = (options: UpdateOptions) => {
-  // TODO (suomiy): add providers
-  // getProviders().forEach((provider) => {
-  //   cleanupProvider(provider, options);
-  // });
+  getProviders().forEach((provider) => provider.cleanup(options));
 };

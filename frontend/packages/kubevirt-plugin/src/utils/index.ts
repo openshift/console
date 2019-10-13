@@ -73,8 +73,8 @@ export const buildOwnerReference = (
 
 export const buildOwnerReferenceForModel = (
   model: K8sKind,
-  name: string,
-  uid: string,
+  name?: string,
+  uid?: string,
 ): OwnerReference => ({
   apiVersion: `${model.apiGroup}/${model.apiVersion}`,
   kind: getKind(model),
@@ -82,18 +82,24 @@ export const buildOwnerReferenceForModel = (
   uid,
 });
 
-export const compareOwnerReference = (obj: OwnerReference, otherObj: OwnerReference) => {
+export const compareOwnerReference = (
+  obj: OwnerReference,
+  otherObj: OwnerReference,
+  compareModelOnly?: boolean,
+) => {
   if (obj === otherObj) {
     return true;
   }
   if (!obj || !otherObj) {
     return false;
   }
-  const isUIDEqual = obj.uid && otherObj.uid ? obj.uid === otherObj.uid : true;
+  const isUIDEqual = obj.uid && otherObj.uid ? compareModelOnly || obj.uid === otherObj.uid : true;
+  const isNameEqual = compareModelOnly || obj.name === otherObj.name;
+
   return (
     obj.apiVersion === otherObj.apiVersion &&
     obj.kind === otherObj.kind &&
-    obj.name === otherObj.name &&
+    isNameEqual &&
     isUIDEqual
   );
 };
