@@ -6,32 +6,26 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { EventKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import {
-  EventModel,
-  PersistentVolumeClaimModel,
-  PersistentVolumeModel,
-} from '@console/internal/models';
+import { EventModel } from '@console/internal/models';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getNamespace } from '@console/shared';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { CEPH_STORAGE_NAMESPACE } from '../../../../constants/index';
-import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
-import { isDataResiliencyActivity } from './data-resiliency-activity';
+import { DATA_RESILIENCE_QUERIES } from '../../queries';
+import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
+import { isDataResiliencyActivity } from '../../utils';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
-const ocsEventNamespaceKindFilter = (event: EventKind): boolean =>
-  getNamespace(event) === CEPH_STORAGE_NAMESPACE ||
+const noobaaEventsFilter = (event: EventKind): boolean =>
   _.get(event, 'involvedObject.kind') ===
-    (PersistentVolumeClaimModel.kind || PersistentVolumeModel.kind);
+  (NooBaaObjectBucketClaimModel.kind || NooBaaObjectBucketModel.kind);
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }: DashboardItemProps) => {
@@ -44,7 +38,7 @@ const RecentEvent = withDashboardResources(
     return (
       <RecentEventsBody
         events={resources.events as FirehoseResult<EventKind[]>}
-        filter={ocsEventNamespaceKindFilter}
+        filter={noobaaEventsFilter}
       />
     );
   },
@@ -53,49 +47,61 @@ const RecentEvent = withDashboardResources(
 const OngoingActivity = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
     React.useEffect(() => {
-      watchPrometheus(DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS]);
-      return () =>
-        stopWatchPrometheusQuery(DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS]);
+      watchPrometheus(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
+      watchPrometheus(DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY);
+      return () => {
+        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
+        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY);
+      };
     }, [watchPrometheus, stopWatchPrometheusQuery]);
 
-    const resiliencyProgress = prometheusResults.getIn([
-      DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
+    const progress = prometheusResults.getIn([
+      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
       'data',
     ]) as PrometheusResponse;
-    const resiliencyProgressError = prometheusResults.getIn([
-      DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
+    const progressError = prometheusResults.getIn([
+      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
       'loadError',
     ]);
-    const prometheusActivities = [];
-    const resourceActivities = [];
 
-    if (isDataResiliencyActivity(resiliencyProgress)) {
+    const eta = prometheusResults.getIn([
+      DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
+      'data',
+    ]) as PrometheusResponse;
+
+    const prometheusActivities = [];
+
+    if (isDataResiliencyActivity(progress)) {
       prometheusActivities.push({
-        results: resiliencyProgress,
-        loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliencyActivity),
+        results: [progress, eta],
+        loader: () =>
+          import('./data-resiliency-activity/data-resiliency-activity').then(
+            (m) => m.DataResiliencyActivity,
+          ),
       });
     }
 
     return (
       <OngoingActivityBody
-        loaded={resiliencyProgressError}
-        resourceActivities={resourceActivities}
+        loaded={progress || progressError}
         prometheusActivities={prometheusActivities}
       />
     );
   },
 );
 
-export const ActivityCard: React.FC<{}> = React.memo(() => (
+const ActivityCard: React.FC<{}> = () => (
   <DashboardCard>
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
     </DashboardCardHeader>
     <DashboardCardBody>
-      <ActivityBody className="ceph-activity-card__body">
+      <ActivityBody className="nb-activity-card__body">
         <OngoingActivity />
         <RecentEvent />
       </ActivityBody>
     </DashboardCardBody>
   </DashboardCard>
-));
+);
+
+export default ActivityCard;

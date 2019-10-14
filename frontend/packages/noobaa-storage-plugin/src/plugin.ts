@@ -119,19 +119,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
-        ).then((m) => m.default),
-      required: NOOBAA_FLAG,
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.RIGHT,
-      loader: () =>
-        import(
-          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
+          './components/activity-card/activity-card' /* webpackChunkName: "object-service-activity-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
