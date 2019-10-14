@@ -31,6 +31,9 @@ export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNa
   return { namespace, name };
 };
 
+export const getNodeMachineName = (node: NodeKind): string =>
+  getNodeMachineNameAndNamespace(node).name;
+
 export const isNodeUnschedulable = (node: NodeKind): boolean =>
   _.get(node, 'spec.unschedulable', false);
 
