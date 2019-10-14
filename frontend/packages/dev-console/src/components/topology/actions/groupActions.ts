@@ -28,7 +28,7 @@ const deleteGroup = (application: TopologyApplicationObject) => {
   // so currently picking the first resource to do the rbac checks (might change in future)
   const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
   return {
-    label: 'Delete Application Group',
+    label: 'Delete Application',
     callback: () => {
       const reqs = [];
       deleteApplicationModal({

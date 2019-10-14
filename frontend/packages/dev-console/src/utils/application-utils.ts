@@ -310,8 +310,8 @@ export const cleanUpWorkload = (
   };
   if (isKnativeResource) {
     // delete knative resources
-    const knativeRoute = _.find(workload.resources.ksroutes, { kind: 'Route' });
-    resourceData.metadata.name = _.get(knativeRoute, 'metadata.name', '');
+    const knativeService = _.find(workload.resources.ksservices, { kind: 'Service' });
+    resourceData.metadata.name = _.get(knativeService, 'metadata.name', '');
     batchDeleteRequests(knativeDeleteModels, resourceData);
   } else {
     // delete non knative resources

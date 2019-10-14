@@ -10,11 +10,12 @@ import {
 } from '@console/internal/components/factory/modal';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { InputField } from '../formik-fields';
 
 type DeleteApplicationModalProps = {
   initialApplication: string;
-  onSubmit: (values: FormikValues) => Promise<any>;
+  onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
   close?: () => void;
 };
@@ -35,14 +36,14 @@ const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicat
   const isValid = _.get(values, 'application.userInput') === initialApplication;
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Delete Application Group</ModalTitle>
+      <ModalTitle>Delete Application</ModalTitle>
       <ModalBody>
         <div className="co-delete-modal">
           <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
           <div>
             <p>
               This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines,
-              Storage/PVC&#39;s, secrets, configmaps will be deleted.
+              Storage/PVC&#39;s, secrets, and configmaps will be deleted.
             </p>
             <p>
               Confirm deletion by typing{' '}
@@ -57,6 +58,7 @@ const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicat
         submitDisabled={(status && !!status.submitError) || !isValid}
         cancel={cancel}
         inProgress={isSubmitting}
+        submitDanger
         errorMessage={status && status.submitError}
       />
     </form>
@@ -84,7 +86,6 @@ class DeleteApplicationModal extends PromiseComponent<
 
   render() {
     const { initialApplication } = this.props;
-
     const initialValues = {
       application: {
         name: initialApplication,

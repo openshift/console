@@ -6,30 +6,21 @@ type KnativeItem = {
   revisions?: K8sResourceKind[];
   configurations?: K8sResourceKind[];
   ksroutes?: K8sResourceKind[];
+  ksservices?: K8sResourceKind[];
 };
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
   return !!_.get(dc.metadata, `labels["${KNATIVE_SERVING_LABEL}"]`);
 };
 
-const getKSRoute = (dc: K8sResourceKind, { ksroutes }): K8sResourceKind[] => {
-  let routeResource = [];
+const getKsResource = (dc: K8sResourceKind, res: K8sResourceKind): K8sResourceKind[] => {
+  let ksResource = [];
   if (isKnativeDeployment(dc)) {
-    routeResource = _.filter(ksroutes.data, (routeConfig: K8sResourceKind) => {
-      return dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(routeConfig, 'metadata.name');
-    });
-  }
-  return routeResource;
-};
-
-const getConfigurations = (dc: K8sResourceKind, { configurations }): K8sResourceKind[] => {
-  let configurationResource = [];
-  if (isKnativeDeployment(dc)) {
-    configurationResource = _.filter(configurations.data, (config: K8sResourceKind) => {
+    ksResource = _.filter(res.data, (config: K8sResourceKind) => {
       return dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(config, 'metadata.name');
     });
   }
-  return configurationResource;
+  return ksResource;
 };
 
 const getRevisions = (dc: K8sResourceKind, { revisions }): K8sResourceKind[] => {
@@ -51,11 +42,17 @@ export const getKnativeServingConfigurations = (
   dc: K8sResourceKind,
   props,
 ): KnativeItem | undefined => {
-  const configurations = getConfigurations(dc, props);
-  return configurations.length > 0 ? { configurations } : undefined;
+  const configurations =
+    props && props.configurations ? getKsResource(dc, props.configurations) : undefined;
+  return configurations && configurations.length > 0 ? { configurations } : undefined;
 };
 
 export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const ksroutes = getKSRoute(dc, props);
-  return ksroutes.length > 0 ? { ksroutes } : undefined;
+  const ksroutes = props && props.ksroutes ? getKsResource(dc, props.ksroutes) : undefined;
+  return ksroutes && ksroutes.length > 0 ? { ksroutes } : undefined;
+};
+
+export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const ksservices = props && props.ksservices ? getKsResource(dc, props.ksservices) : undefined;
+  return ksservices && ksservices.length > 0 ? { ksservices } : undefined;
 };
