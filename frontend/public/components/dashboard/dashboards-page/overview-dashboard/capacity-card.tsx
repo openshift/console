@@ -109,7 +109,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const MemoryItem = (
     <CapacityItem
       title="Memory"
-      used={getLastStats(memoryUtilization, getRangeVectorStats)}
+      used={getLastStats(memoryUtilization, getInstantVectorStats)}
       total={getLastStats(memoryTotal, getInstantVectorStats)}
       formatValue={humanizeBinaryBytesWithoutB}
       isLoading={!(memoryUtilization && memoryTotal)}
