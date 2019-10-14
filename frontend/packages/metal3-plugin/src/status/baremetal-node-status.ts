@@ -1,6 +1,9 @@
 import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '@console/app/src/status/node';
+import { isNodeUnschedulable } from '@console/shared';
 import { StatusProps } from '../components/types';
+import { BareMetalHostKind } from '../types';
+import { isHostPoweredOn } from '../selectors';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
 type BareMetalNodeStatusProps = {
@@ -13,3 +16,22 @@ export const bareMetalNodeStatus = ({
   nodeMaintenance,
 }: BareMetalNodeStatusProps): StatusProps =>
   getNodeMaintenanceStatus(nodeMaintenance) || { status: nodeStatus(node), node };
+
+type BareMetalNodeSecondaryStatusProps = {
+  node: NodeKind;
+  host?: BareMetalHostKind;
+  nodeMaintenance?: K8sResourceKind;
+};
+
+export const baremetalNodeSecondaryStatus = ({
+  node,
+  host,
+  nodeMaintenance,
+}: BareMetalNodeSecondaryStatusProps): string[] => {
+  const states = [];
+  if (!nodeMaintenance && isNodeUnschedulable(node)) {
+    states.push('Scheduling disabled');
+  }
+  if (!isHostPoweredOn(host)) states.push('Host is powered off');
+  return states;
+};

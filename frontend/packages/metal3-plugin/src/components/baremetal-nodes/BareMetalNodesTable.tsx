@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace, DASH } from '@console/shared';
+import { getName, getUID, getNamespace, DASH, SecondaryStatus } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
@@ -11,6 +11,7 @@ import { BareMetalNodeBundle } from '../types';
 import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import { menuActions } from '../baremetal-hosts/host-menu-actions';
+import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
 
 const tableColumnClasses = {
@@ -97,6 +98,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
       </TableData>
       <TableData className={tableColumnClasses.status}>
         <BareMetalNodeStatus {...status} />
+        <SecondaryStatus status={baremetalNodeSecondaryStatus({ node, nodeMaintenance, host })} />
       </TableData>
       <TableData className={tableColumnClasses.role}>
         <NodeRoles node={node} />
