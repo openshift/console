@@ -5,7 +5,17 @@ import { DataPoint } from '@console/internal/components/graphs';
 import { ByteDataTypes } from 'packages/console-shared/src/graph-helper/data-utils';
 
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
-  ({ title, data, humanizeValue, isLoading = false, query, error, max = null, byteDataType }) => {
+  ({
+    title,
+    data,
+    humanizeValue,
+    isLoading = false,
+    query,
+    error,
+    max = null,
+    TopConsumerPopover,
+    byteDataType,
+  }) => {
     let current;
     if (data.length) {
       const latestData = data[data.length - 1];
@@ -45,7 +55,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         <div className="co-utilization-card__item__section">
           <div className="pf-l-level">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
-            {current}
+            {TopConsumerPopover && !error ? <TopConsumerPopover current={current} /> : current}
           </div>
           <div className="pf-l-level">
             <span className="co-utilization-card__item__text" />
@@ -71,4 +81,9 @@ type UtilizationItemProps = {
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;
+  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+};
+
+type TopConsumerPopoverProp = {
+  current: string;
 };

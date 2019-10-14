@@ -1,29 +1,49 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
-import * as plugins from '../../../../plugins';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import {
   ONE_HR,
   SIX_HR,
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { metricTypeMap } from '@console/shared/src/components/dashboard/top-consumers-card/ConsumersFilter';
+import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import { Dropdown } from '../../../utils/dropdown';
 import { getRangeVectorStats } from '../../../graphs/utils';
 import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils';
-import { OverviewQuery, utilizationQueries } from './queries';
+import { Dropdown } from '../../../utils/dropdown';
+import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import * as plugins from '../../../../plugins';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+
+const cpuQueriesPopup = [
+  top25ConsumerQueries[OverviewQuery.PODS_BY_CPU],
+  top25ConsumerQueries[OverviewQuery.NODES_BY_CPU],
+  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_CPU],
+];
+
+const memQueriesPopup = [
+  top25ConsumerQueries[OverviewQuery.PODS_BY_MEMORY],
+  top25ConsumerQueries[OverviewQuery.NODES_BY_MEMORY],
+  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
+];
+
+const storageQueriesPopup = [
+  top25ConsumerQueries[OverviewQuery.PODS_BY_STORAGE],
+  top25ConsumerQueries[OverviewQuery.NODES_BY_STORAGE],
+  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
+];
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
@@ -106,6 +126,42 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 
   const pluginItems = getItems(flags);
 
+  const cpuPopover = React.useCallback(
+    ({ current }) => (
+      <ConsumerPopover
+        title="CPU"
+        current={current}
+        query={cpuQueriesPopup}
+        humanize={metricTypeMap[MetricType.CPU].humanize}
+      />
+    ),
+    [],
+  );
+
+  const memPopover = React.useCallback(
+    ({ current }) => (
+      <ConsumerPopover
+        title="Memory"
+        current={current}
+        query={memQueriesPopup}
+        humanize={metricTypeMap[MetricType.MEMORY].humanize}
+      />
+    ),
+    [],
+  );
+
+  const storagePopover = React.useCallback(
+    ({ current }) => (
+      <ConsumerPopover
+        title="Disk Usage"
+        current={current}
+        query={storageQueriesPopup}
+        humanize={metricTypeMap[MetricType.STORAGE].humanize}
+      />
+    ),
+    [],
+  );
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -125,6 +181,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           isLoading={!cpuUtilization}
           humanizeValue={humanizePercentage}
           query={queries[OverviewQuery.CPU_UTILIZATION]}
+          TopConsumerPopover={cpuPopover}
         />
         <UtilizationItem
           title="Memory"
@@ -134,6 +191,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[OverviewQuery.MEMORY_UTILIZATION]}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          TopConsumerPopover={memPopover}
         />
         <UtilizationItem
           title="Disk Usage"
@@ -143,6 +201,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[OverviewQuery.STORAGE_UTILIZATION]}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          TopConsumerPopover={storagePopover}
         />
         {pluginItems.map(({ properties }, index) => {
           const utilization = prometheusResults.getIn([properties.query, 'data']);
