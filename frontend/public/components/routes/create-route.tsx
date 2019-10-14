@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Alert, ActionGroup, Button } from '@patternfly/react-core';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
@@ -10,6 +11,7 @@ import { ServiceModel, RouteModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 
 const UNNAMED_PORT_KEY = '#unnamed';
+const MAX_ALT_SERVICE_TARGET = 3;
 
 const getPortOptions = (service: K8sResourceKind) => {
   if (!service) {
@@ -45,6 +47,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     hostname: '',
     path: '',
     service: null,
+    weight: 100,
     targetPort: '',
     termination: '',
     insecureEdgeTerminationPolicy: '',
@@ -60,6 +63,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     services: [],
     labels: {},
     portOptions: {},
+    alternateServices: [],
   };
 
   componentDidMount() {
@@ -82,6 +86,13 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     this.setState({
       [name]: value,
     } as any);
+  };
+
+  handleWeightChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    const { value } = event.currentTarget;
+    this.setState({
+      weight: _.toInteger(value),
+    });
   };
 
   changeService = (serviceName: string) => {
@@ -152,6 +163,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       hostname,
       path,
       service,
+      weight,
       targetPort: selectedPort,
       termination,
       insecureEdgeTerminationPolicy,
@@ -161,6 +173,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       destinationCACertificate,
       secure,
       namespace,
+      alternateServices,
     } = this.state;
 
     const tls = secure
@@ -181,7 +194,17 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     const targetPort =
       selectedPort === UNNAMED_PORT_KEY ? _.get(service, 'spec.ports[0].port') : selectedPort;
 
-    const route = {
+    const alternateBackends = _.filter(alternateServices, 'name').map(
+      (serviceData: AlternateServiceEntryType) => {
+        return {
+          weight: serviceData.weight,
+          kind: 'Service',
+          name: serviceData.name,
+        };
+      },
+    );
+
+    const route: K8sResourceKind = {
       kind: 'Route',
       apiVersion: 'route.openshift.io/v1',
       metadata: {
@@ -193,6 +216,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         to: {
           kind: 'Service',
           name: serviceName,
+          weight,
         },
         tls,
         host: hostname,
@@ -202,6 +226,10 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         },
       },
     };
+
+    if (!_.isEmpty(alternateBackends)) {
+      route.spec.alternateBackends = alternateBackends;
+    }
 
     this.setState({ inProgress: true });
     k8sCreate(RouteModel, route).then(
@@ -217,14 +245,67 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     );
   };
 
+  addAltServiceEntry = () => {
+    this.setState(({ alternateServices }) => {
+      return {
+        alternateServices: [
+          ...alternateServices,
+          { name: null, weight: 100, key: _.uniqueId('alternate-backend-') },
+        ],
+      };
+    });
+  };
+
+  removeAltServiceEntry(alternateServiceIndex: number) {
+    this.setState(({ alternateServices }) => {
+      const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateServices];
+      updatedServiceEntriesArray.splice(alternateServiceIndex, 1);
+      return {
+        alternateServices: updatedServiceEntriesArray,
+      };
+    });
+  }
+
+  onDataChanged = (updatedEntry: AlternateServiceEntryGroupData, index: number) => {
+    this.setState(({ alternateServices }) => {
+      const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateServices];
+      const updatedEntryData: AlternateServiceEntryType = {
+        key: updatedServiceEntriesArray[index].key,
+        weight: updatedEntry.weight,
+        name: updatedEntry.name,
+      };
+      updatedServiceEntriesArray[index] = updatedEntryData;
+      return {
+        alternateServices: updatedServiceEntriesArray,
+      };
+    });
+  };
+
   render() {
     const title = 'Create Route';
-    const { loaded, services, service, portOptions, targetPort, termination } = this.state;
+    const {
+      loaded,
+      services,
+      service,
+      portOptions,
+      targetPort,
+      termination,
+      alternateServices,
+    } = this.state;
     const serviceOptions = {};
     _.each(
       _.sortBy(services, 'metadata.name'),
       ({ metadata: { name } }) =>
         (serviceOptions[name] = <ResourceName kind="Service" name={name} />),
+    );
+    const configuredServices = new Set<string>();
+    if (service) {
+      configuredServices.add(service.metadata.name);
+    }
+    _.each(alternateServices, ({ name }) => configuredServices.add(name));
+    const availableServiceOptions = _.pickBy(
+      serviceOptions,
+      (item, key) => !configuredServices.has(key),
     );
     const terminationTypes = {
       edge: 'Edge',
@@ -240,6 +321,32 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       None: 'None',
       Redirect: 'Redirect',
     };
+    const alternateServicesList = _.map(alternateServices, (entryData, index) => {
+      return (
+        <div className="co-add-remove-form__entry" key={entryData.key}>
+          {!_.isEmpty(alternateServices) && (
+            <div className="co-add-remove-form__link--remove-entry">
+              <Button
+                type="button"
+                onClick={() => this.removeAltServiceEntry(index)}
+                variant="link"
+              >
+                <MinusCircleIcon className="co-icon-space-r" />
+                Remove Alternate Service
+              </Button>
+            </div>
+          )}
+          <AlternateServicesGroup
+            index={index}
+            name={entryData.name}
+            weight={entryData.weight}
+            onChange={this.onDataChanged}
+            serviceOptions={serviceOptions}
+            availableServiceOptions={availableServiceOptions}
+          />
+        </div>
+      );
+    });
 
     return (
       <React.Fragment>
@@ -323,7 +430,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               )}
               {loaded && !_.isEmpty(serviceOptions) && (
                 <Dropdown
-                  items={serviceOptions}
+                  items={availableServiceOptions}
                   title={service ? serviceOptions[service.metadata.name] : 'Select a service'}
                   dropDownClassName="dropdown--full-width"
                   id="service"
@@ -335,6 +442,39 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
                 Service to route to.
               </div>
             </div>
+            {alternateServicesList.length > 0 && (
+              <React.Fragment>
+                <div className="form-group co-create-route__weight">
+                  <label htmlFor="weight">Weight</label>
+                  <input
+                    className="pf-c-form-control co-create-route__weight-label"
+                    type="number"
+                    onChange={this.handleWeightChange}
+                    value={this.state.weight}
+                    id="weight"
+                    aria-describedby="weight-help"
+                  />
+                  <div className="help-block" id="weight-help">
+                    A number between 0 and 255 that depicts relative weight compared with other
+                    targets.
+                  </div>
+                </div>
+                {alternateServicesList}
+              </React.Fragment>
+            )}
+            {alternateServicesList.length < MAX_ALT_SERVICE_TARGET &&
+              alternateServicesList.length + 1 < _.keys(serviceOptions).length &&
+              service && (
+                <Button
+                  className="pf-m-link--align-left co-create-route__add-service-btn"
+                  onClick={this.addAltServiceEntry}
+                  type="button"
+                  variant="link"
+                >
+                  <PlusCircleIcon className="co-icon-space-r" />
+                  Add Alternate Service
+                </Button>
+              )}
             <div className="form-group co-create-route__target-port">
               <label className="co-required" htmlFor="target-port">
                 Target Port
@@ -353,129 +493,129 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               <div className="help-block" id="target-port-help">
                 Target port for traffic.
               </div>
-            </div>
-            <label className="control-label">Security</label>
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={this.toggleSection}
-                  checked={this.state.secure}
-                  id="secure"
-                  name="secure"
-                  aria-describedby="secure-help"
-                />
-                Secure route
-              </label>
-              <div className="help-block" id="secure-help">
-                <p>
-                  Routes can be secured using several TLS termination types for serving
-                  certificates.
-                </p>
+              <label className="control-label">Security</label>
+              <div className="checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={this.toggleSection}
+                    checked={this.state.secure}
+                    id="secure"
+                    name="secure"
+                    aria-describedby="secure-help"
+                  />
+                  Secure route
+                </label>
+                <div className="help-block" id="secure-help">
+                  <p>
+                    Routes can be secured using several TLS termination types for serving
+                    certificates.
+                  </p>
+                </div>
               </div>
-            </div>
-            {this.state.secure && (
-              <div className="co-create-route__security">
-                <div className="form-group co-create-route__tls-termination">
-                  <label className="co-required" htmlFor="tls-termination">
-                    TLS Termination
-                  </label>
-                  <Dropdown
-                    items={terminationTypes}
-                    title="Select termination type"
-                    dropDownClassName="dropdown--full-width"
-                    id="tls-termination"
-                    onChange={this.changeTermination}
-                  />
-                </div>
-                <div className="form-group co-create-route__insecure-traffic">
-                  <label htmlFor="insecure-traffic">Insecure Traffic</label>
-                  <Dropdown
-                    items={
-                      termination === 'passthrough'
-                        ? passthroughInsecureTrafficTypes
-                        : insecureTrafficTypes
-                    }
-                    title="Select insecure traffic type"
-                    dropDownClassName="dropdown--full-width"
-                    id="insecure-traffic"
-                    onChange={this.changeInsecureTraffic}
-                    describedBy="insecure-traffic-help"
-                  />
-                  <div className="help-block" id="insecure-traffic-help">
-                    Policy for traffic on insecure schemes like HTTP.
+              {this.state.secure && (
+                <div className="co-create-route__security">
+                  <div className="form-group co-create-route__tls-termination">
+                    <label className="co-required" htmlFor="tls-termination">
+                      TLS Termination
+                    </label>
+                    <Dropdown
+                      items={terminationTypes}
+                      title="Select termination type"
+                      dropDownClassName="dropdown--full-width"
+                      id="tls-termination"
+                      onChange={this.changeTermination}
+                    />
                   </div>
-                </div>
-                {termination && termination !== 'passthrough' && (
-                  <React.Fragment>
-                    <h2 className="h3">Certificates</h2>
-                    <div className="help-block">
-                      <p>
-                        TLS certificates for edge and re-encrypt termination. If not specified, the
-                        router&apos;s default certificate is used.
-                      </p>
+                  <div className="form-group co-create-route__insecure-traffic">
+                    <label htmlFor="insecure-traffic">Insecure Traffic</label>
+                    <Dropdown
+                      items={
+                        termination === 'passthrough'
+                          ? passthroughInsecureTrafficTypes
+                          : insecureTrafficTypes
+                      }
+                      title="Select insecure traffic type"
+                      dropDownClassName="dropdown--full-width"
+                      id="insecure-traffic"
+                      onChange={this.changeInsecureTraffic}
+                      describedBy="insecure-traffic-help"
+                    />
+                    <div className="help-block" id="insecure-traffic-help">
+                      Policy for traffic on insecure schemes like HTTP.
                     </div>
-                    <div className="form-group co-create-route__certificate">
-                      <DroppableFileInput
-                        onChange={this.onCertificateChange}
-                        inputFileData={this.state.certificate}
-                        id="certificate"
-                        label="Certificate"
-                        inputFieldHelpText="The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
-                      />
-                    </div>
-                    <div className="form-group co-create-route__private-key">
-                      <DroppableFileInput
-                        onChange={this.onPrivateKeyChange}
-                        inputFileData={this.state.key}
-                        id="private-key"
-                        label="Private Key"
-                        inputFieldHelpText="The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
-                      />
-                    </div>
-                    <div className="form-group co-create-route__caCertificate">
-                      <DroppableFileInput
-                        onChange={this.onCaCertificateChange}
-                        inputFileData={this.state.caCertificate}
-                        id="ca-certificate"
-                        label="CA Certificate"
-                        inputFieldHelpText="The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
-                      />
-                    </div>
-                    {termination === 'reencrypt' && (
-                      <div className="form-group co-create-route__destinationCaCertificate">
+                  </div>
+                  {termination && termination !== 'passthrough' && (
+                    <React.Fragment>
+                      <h2 className="h3">Certificates</h2>
+                      <div className="help-block">
+                        <p>
+                          TLS certificates for edge and re-encrypt termination. If not specified,
+                          the router&apos;s default certificate is used.
+                        </p>
+                      </div>
+                      <div className="form-group co-create-route__certificate">
                         <DroppableFileInput
-                          onChange={this.onDestinationCACertificateChange}
-                          inputFileData={this.state.destinationCACertificate}
-                          id="destination-ca-certificate"
-                          label="Destination CA Certificate"
+                          onChange={this.onCertificateChange}
+                          inputFileData={this.state.certificate}
+                          id="certificate"
+                          label="Certificate"
+                          inputFieldHelpText="The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
                         />
                       </div>
-                    )}
-                  </React.Fragment>
-                )}
-              </div>
-            )}
-            <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button
-                  type="submit"
-                  isDisabled={
-                    !this.state.name ||
-                    !this.state.service ||
-                    !this.state.targetPort ||
-                    (this.state.secure && !this.state.termination)
-                  }
-                  id="save-changes"
-                  variant="primary"
-                >
-                  Create
-                </Button>
-                <Button onClick={history.goBack} id="cancel" variant="secondary">
-                  Cancel
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
+                      <div className="form-group co-create-route__private-key">
+                        <DroppableFileInput
+                          onChange={this.onPrivateKeyChange}
+                          inputFileData={this.state.key}
+                          id="private-key"
+                          label="Private Key"
+                          inputFieldHelpText="The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
+                        />
+                      </div>
+                      <div className="form-group co-create-route__caCertificate">
+                        <DroppableFileInput
+                          onChange={this.onCaCertificateChange}
+                          inputFileData={this.state.caCertificate}
+                          id="ca-certificate"
+                          label="CA Certificate"
+                          inputFieldHelpText="The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
+                        />
+                      </div>
+                      {termination === 'reencrypt' && (
+                        <div className="form-group co-create-route__destinationCaCertificate">
+                          <DroppableFileInput
+                            onChange={this.onDestinationCACertificateChange}
+                            inputFileData={this.state.destinationCACertificate}
+                            id="destination-ca-certificate"
+                            label="Destination CA Certificate"
+                          />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+                </div>
+              )}
+              <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+                <ActionGroup className="pf-c-form">
+                  <Button
+                    type="submit"
+                    isDisabled={
+                      !this.state.name ||
+                      !this.state.service ||
+                      !this.state.targetPort ||
+                      (this.state.secure && !this.state.termination)
+                    }
+                    id="save-changes"
+                    variant="primary"
+                  >
+                    Create
+                  </Button>
+                  <Button onClick={history.goBack} id="cancel" variant="secondary">
+                    Cancel
+                  </Button>
+                </ActionGroup>
+              </ButtonBar>
+            </div>
           </form>
         </div>
       </React.Fragment>
@@ -483,11 +623,84 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
   }
 }
 
+const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> = (props) => {
+  const [weight, setWeight] = React.useState(props.weight);
+  const [name, setName] = React.useState(props.name);
+
+  const onWeightChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    setWeight(_.toInteger(event.currentTarget.value));
+  };
+
+  const onServiceChange = (serviceName: string) => {
+    setName(serviceName);
+  };
+
+  React.useEffect(() => {
+    props.onChange({ name, weight }, props.index);
+  }, [name, weight]);
+
+  const { serviceOptions, availableServiceOptions, index } = props;
+
+  return (
+    <div className="co-m-pane__body-group">
+      <div className="form-group">
+        <label htmlFor={`${index}-alt-service`}>Alternate Service Target</label>
+        <Dropdown
+          items={availableServiceOptions}
+          title={name ? serviceOptions[name] : 'Select a service'}
+          dropDownClassName="dropdown--full-width"
+          id={`${index}-alt-service`}
+          onChange={onServiceChange}
+          describedby={`${index}-alt-service-help`}
+        />
+        <div className="help-block" id={`${index}-alt-service-help`}>
+          Alternate service to route to.
+        </div>
+      </div>
+      <div className="form-group">
+        <label htmlFor={`${index}-weight`}>Alternate Service Weight</label>
+        <input
+          className="pf-c-form-control co-create-route__weight-label"
+          id={`${index}-weight`}
+          type="number"
+          onChange={onWeightChange}
+          value={weight}
+          aria-describedby={`${index}-alt-weight-help`}
+        />
+        <div className="help-block" id={`${index}-alt-weight-help`}>
+          A number between 0 and 255 that depicts relative weight compared with other targets.
+        </div>
+      </div>
+    </div>
+  );
+};
+
+type AlternateServiceEntryType = {
+  name: string;
+  weight: number;
+  key: string;
+};
+
+type AlternateServiceEntryGroupData = {
+  weight: number;
+  name: string;
+};
+
+type AlternateServiceEntryGroupProps = {
+  name: string;
+  weight: number;
+  index: number;
+  onChange: Function;
+  serviceOptions: any;
+  availableServiceOptions: any;
+};
+
 export type CreateRouteState = {
   name: string;
   hostname: string;
   path: string;
   service: K8sResourceKind;
+  weight: number;
   targetPort: string;
   termination: string;
   insecureEdgeTerminationPolicy: string;
@@ -503,4 +716,5 @@ export type CreateRouteState = {
   services: K8sResourceKind[];
   labels: object;
   portOptions: any;
+  alternateServices: AlternateServiceEntryType[];
 };
