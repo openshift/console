@@ -9,9 +9,9 @@ import { MultiListPage } from '@console/internal/components/factory';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { BareMetalNodeBundle } from '../types';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
-import { hostStatusFilter } from '../baremetal-hosts/table-filters';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import BareMetalNodesTable from './BareMetalNodesTable';
+import { bareMetalNodeStatusFilter } from './table-filters';
 
 const flattenResources = (resources) => {
   // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
@@ -85,7 +85,7 @@ const BareMetalNodesPage: React.FC<BareMetalNodesPageProps> = ({
   return (
     <MultiListPage
       {...props}
-      rowFilters={[hostStatusFilter]}
+      rowFilters={[bareMetalNodeStatusFilter]}
       createButtonText="Add Host"
       resources={resources}
       flatten={flattenResources}
