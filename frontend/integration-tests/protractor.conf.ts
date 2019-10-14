@@ -175,6 +175,7 @@ export const config: Config = {
       '../packages/kubevirt-plugin/integration-tests/tests/vm.clone.scenario.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.detail.flavor.ts',
       '../packages/kubevirt-plugin/integration-tests/tests/vm.template.wizard.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/non-admin.scenario.ts',
     ]),
     all: suite([
       'tests/crud.scenario.ts',
