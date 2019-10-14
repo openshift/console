@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
-import { FormGroup, FormHelperText } from '@patternfly/react-core';
-import { CheckCircleIcon, StarIcon } from '@patternfly/react-icons';
+import { FormGroup, Alert } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { getFieldId } from '../../formik-fields/field-utils';
 import BuilderImageCard from './BuilderImageCard';
@@ -11,13 +11,11 @@ import './BuilderImageSelector.scss';
 
 export interface BuilderImageSelectorProps {
   loadingImageStream: boolean;
-  loadingRecommendedImage?: boolean;
   builderImages: NormalizedBuilderImages;
 }
 
 const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   loadingImageStream,
-  loadingRecommendedImage,
   builderImages,
 }) => {
   const [selected, { error: selectedError, touched: selectedTouched }] = useField('image.selected');
@@ -27,7 +25,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   const handleImageChange = React.useCallback(
     (image: string) => {
       setFieldValue('image.selected', image);
-      setFieldValue('image.tag', builderImages[image].recentTag.name);
+      setFieldValue('image.tag', _.get(builderImages, `${image}.recentTag.name`, ''));
       setFieldTouched('image.selected', true);
       setFieldTouched('image.tag', true);
       validateForm();
@@ -57,16 +55,23 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
       isValid={isValid}
       isRequired
     >
-      {loadingRecommendedImage && <LoadingInline />}
-      {values.image.recommended && (
-        <React.Fragment>
-          <CheckCircleIcon className="odc-builder-image-selector__success-icon" />
-          <FormHelperText>
-            Recommended builder images are represented by{' '}
-            <StarIcon style={{ color: 'var(--pf-global--success-color--100)' }} /> icon
-          </FormHelperText>
-        </React.Fragment>
+      {values.image.isRecommending && (
+        <>
+          <LoadingInline /> Detecting recommended builder images...
+        </>
       )}
+      {values.image.recommended && (
+        <Alert variant="success" title="Builder image(s) detected." isInline>
+          Recommended builder images are represented by{' '}
+          <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} /> icon.
+        </Alert>
+      )}
+      {values.image.couldNotRecommend && (
+        <Alert variant="warning" title="Unable to detect the builder image." isInline>
+          Select the most appropriate one from the list to continue.
+        </Alert>
+      )}
+      <br />
       {loadingImageStream ? (
         <LoadingInline />
       ) : (

@@ -19,6 +19,8 @@ export const mockFormData: GitImportFormData = {
     dir: '',
     showGitType: false,
     secret: '',
+    isUrlValidated: false,
+    isUrlValidating: false,
   },
   docker: {
     dockerfilePath: 'Dockerfile',
@@ -30,6 +32,8 @@ export const mockFormData: GitImportFormData = {
     tag: 'latest',
     tagObj: {},
     ports: [],
+    isRecommending: false,
+    couldNotRecommend: false,
   },
   route: {
     create: false,

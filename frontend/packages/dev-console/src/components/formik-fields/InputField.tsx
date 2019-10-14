@@ -4,7 +4,13 @@ import { FormGroup, TextInput } from '@patternfly/react-core';
 import { InputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const InputField: React.FC<InputFieldProps> = ({ label, helpText, required, ...props }) => {
+const InputField: React.FC<InputFieldProps> = ({
+  label,
+  helpText,
+  required,
+  onChange,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
   const fieldId = getFieldId(props.name, 'input');
   const isValid = !(touched && error);
@@ -25,7 +31,10 @@ const InputField: React.FC<InputFieldProps> = ({ label, helpText, required, ...p
         isValid={isValid}
         isRequired={required}
         aria-describedby={`${fieldId}-helper`}
-        onChange={(value, event) => field.onChange(event)}
+        onChange={(value, event) => {
+          field.onChange(event);
+          onChange && onChange(event);
+        }}
       />
     </FormGroup>
   );

@@ -54,6 +54,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       dir: '/',
       showGitType: false,
       secret: '',
+      isUrlValidated: false,
+      isUrlValidating: false,
     },
     docker: {
       dockerfilePath: 'Dockerfile',
@@ -65,6 +67,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       tag: '',
       tagObj: {},
       ports: [],
+      isRecommending: false,
+      couldNotRecommend: false,
     },
     route: {
       create: true,

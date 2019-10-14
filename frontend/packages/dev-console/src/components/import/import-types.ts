@@ -73,6 +73,8 @@ export interface ApplicationData {
 export interface ImageData {
   selected: string;
   recommended: string;
+  isRecommending: boolean;
+  couldNotRecommend: boolean;
   tag: string;
   tagObj: object;
   ports: ContainerPort[];
@@ -99,6 +101,8 @@ export interface GitData {
   dir: string;
   showGitType: boolean;
   secret: string;
+  isUrlValidated: boolean;
+  isUrlValidating: boolean;
 }
 
 export interface DockerData {

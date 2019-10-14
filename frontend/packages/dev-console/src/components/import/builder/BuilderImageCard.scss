@@ -24,10 +24,10 @@
 
   &__recommended {
     position: absolute;
-    color: var(--pf-global--success-color--100);
+    color: var(--pf-global--primary-color--100);
     font-size: var(--pf-global--FontSize--md);
-    top: 0px;
-    right: 3px;
+    top: 3px;
+    right: 6px;
   }
 
   &.is-selected,
