@@ -7,12 +7,12 @@ import { ResourceLink, RequireCreatePermission } from '@console/internal/compone
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getHostMachineName } from '../../selectors';
 import { canHostAddMachine } from '../../utils/host-status';
-import { HostMultiStatus } from '../types';
+import { BareMetalHostStatus } from '../types';
 import { BareMetalHostKind } from '../../types';
 
 interface MachineCellProps {
   host: BareMetalHostKind;
-  status: HostMultiStatus;
+  status: BareMetalHostStatus;
 }
 
 const MachineCell: React.FC<MachineCellProps> = ({ host, status }) => {

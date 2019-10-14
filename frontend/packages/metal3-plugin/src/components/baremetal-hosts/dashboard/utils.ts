@@ -45,14 +45,14 @@ export const getBMHStatusGroups: StatusGroupMapper = (
     const machine = getHostMachine(host, machines as MachineKind[]);
     const node = getMachineNode(machine, nodes as NodeKind[]);
     const nodeMaintenance = findNodeMaintenance(maintenances, getName(node));
-    const hostMultiStatus = getHostStatus({ host, nodeMaintenance });
+    const BareMetalHostStatus = getHostStatus({ host, nodeMaintenance });
 
     const status = getHostFilterStatus({
       machine,
       node,
       host,
       nodeMaintenance,
-      status: hostMultiStatus,
+      status: BareMetalHostStatus,
     });
     const group =
       Object.keys(BMH_STATUS_GROUP_MAPPER).find((key) =>

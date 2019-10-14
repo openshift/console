@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { HostRowBundle } from '../types';
+import { BareMetalHostBundle } from '../types';
 import { getHostBMCAddress, getHostPowerStatus } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import NodeLink from './NodeLink';
@@ -60,7 +60,7 @@ const HostsTableHeader = () => [
 ];
 
 type HostsTableRowProps = {
-  obj: HostRowBundle;
+  obj: BareMetalHostBundle;
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
@@ -121,7 +121,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
 };
 
 type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
-  data: HostRowBundle[];
+  data: BareMetalHostBundle[];
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };

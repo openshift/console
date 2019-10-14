@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
-import { HostRowBundle } from '../types';
+import { BareMetalHostBundle } from '../types';
 import { getHostStatus } from '../../utils/host-status';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { hostStatusFilter } from '../baremetal-hosts/table-filters';
@@ -32,7 +32,7 @@ const flattenResources = (resources) => {
     const machinesByNodeName = createLookup(machines, getMachineNodeName);
 
     return nodesData.map(
-      (node): HostRowBundle => {
+      (node): BareMetalHostBundle => {
         const nodeName = getName(node);
         const machine = machinesByNodeName[nodeName];
         const host = hostsByMachineName[getName(machine)];
@@ -82,18 +82,10 @@ const BareMetalNodesPage: React.FC<BareMetalNodesPageProps> = ({
     });
   }
 
-  // const createHostProps = {
-  //   to: `/k8s/ns/${props.namespace || 'default'}/${referenceForModel(
-  //     BareMetalHostModel,
-  //   )}/~new/form`,
-  // };
-
   return (
     <MultiListPage
       {...props}
       rowFilters={[hostStatusFilter]}
-      // canCreate
-      // createProps={createHostProps}
       createButtonText="Add Host"
       resources={resources}
       flatten={flattenResources}

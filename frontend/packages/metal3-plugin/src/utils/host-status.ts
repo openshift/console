@@ -18,7 +18,7 @@ import {
   HOST_STATUS_STARTING_MAINTENANCE,
   // HOST_STATUS_STARTING_MAINTENANCE,
 } from '../constants';
-import { HostMultiStatus } from '../components/types';
+import { BareMetalHostStatus } from '../components/types';
 import { BareMetalHostKind } from '../types';
 
 const getMaintenanceStatus = (maintenance: K8sResourceKind, host: BareMetalHostKind) => {
@@ -84,7 +84,7 @@ type HostStatusProps = {
   nodeMaintenance?: K8sResourceKind;
 };
 
-export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): HostMultiStatus =>
+export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): BareMetalHostStatus =>
   getMaintenanceStatus(nodeMaintenance, host) || getBareMetalHostStatus(host);
 
 export const canHostAddMachine = (status: string): boolean => [HOST_STATUS_READY].includes(status);
