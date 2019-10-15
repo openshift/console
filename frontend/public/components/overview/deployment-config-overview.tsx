@@ -15,7 +15,13 @@ const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetails
     <div className="overview__sidebar-pane-body resource-overview__body">
       {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
       <div className="resource-overview__pod-counts">
-        <PodRing pods={pods} obj={dc} resourceKind={DeploymentConfigModel} path="/spec/replicas" />
+        <PodRing
+          key={dc.metadata.uid}
+          pods={pods}
+          obj={dc}
+          resourceKind={DeploymentConfigModel}
+          path="/spec/replicas"
+        />
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
