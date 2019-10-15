@@ -113,6 +113,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
           render={(d) => {
             return d.loaded ? (
               <PodRing
+                key={deployment.metadata.uid}
                 pods={d.data[deployment.metadata.uid].pods}
                 obj={deployment}
                 resourceKind={DeploymentModel}

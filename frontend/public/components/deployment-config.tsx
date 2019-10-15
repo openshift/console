@@ -158,6 +158,7 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
           render={(d) => {
             return d.loaded ? (
               <PodRing
+                key={dc.metadata.uid}
                 pods={d.data[dc.metadata.uid].pods}
                 obj={dc}
                 resourceKind={DeploymentConfigModel}
