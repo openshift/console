@@ -347,52 +347,54 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   };
 
   const tick = () =>
-    Promise.all(_.map(queries, safeFetchQuery))
-      .then((responses: PrometheusResponse[]) => {
-        const newResults = _.map(responses, 'data.result');
-        const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
+    hideGraphs
+      ? undefined
+      : Promise.all(_.map(queries, safeFetchQuery))
+          .then((responses: PrometheusResponse[]) => {
+            const newResults = _.map(responses, 'data.result');
+            const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
 
-        if (numDataPoints > maxDataPointsHard && samples === minSamples) {
-          setIsDatasetTooBig(true);
-          return;
-        }
-        setIsDatasetTooBig(false);
+            if (numDataPoints > maxDataPointsHard && samples === minSamples) {
+              setIsDatasetTooBig(true);
+              return;
+            }
+            setIsDatasetTooBig(false);
 
-        const newSamples = _.clamp(
-          Math.floor((samples * maxDataPointsSoft) / numDataPoints),
-          minSamples,
-          maxSamples,
-        );
+            const newSamples = _.clamp(
+              Math.floor((samples * maxDataPointsSoft) / numDataPoints),
+              minSamples,
+              maxSamples,
+            );
 
-        // Change `samples` if either
-        //   - It will change by a proportion greater than `samplesLeeway`
-        //   - It will change to the upper or lower limit of its allowed range
-        if (
-          Math.abs(newSamples - samples) / samples > samplesLeeway ||
-          (newSamples !== samples && (newSamples === maxSamples || newSamples === minSamples))
-        ) {
-          setSamples(newSamples);
-        } else {
-          setResults(newResults);
-          _.each(newResults, (r, i) =>
-            patchQuery(i, {
-              series: r ? _.map(r, 'metric') : undefined,
-            }),
-          );
-          setUpdating(false);
-        }
-        setError(undefined);
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setError(err);
-          setUpdating(false);
-        }
-      });
+            // Change `samples` if either
+            //   - It will change by a proportion greater than `samplesLeeway`
+            //   - It will change to the upper or lower limit of its allowed range
+            if (
+              Math.abs(newSamples - samples) / samples > samplesLeeway ||
+              (newSamples !== samples && (newSamples === maxSamples || newSamples === minSamples))
+            ) {
+              setSamples(newSamples);
+            } else {
+              setResults(newResults);
+              _.each(newResults, (r, i) =>
+                patchQuery(i, {
+                  series: r ? _.map(r, 'metric') : undefined,
+                }),
+              );
+              setUpdating(false);
+            }
+            setError(undefined);
+          })
+          .catch((err) => {
+            if (err.name !== 'AbortError') {
+              setError(err);
+              setUpdating(false);
+            }
+          });
 
-  // If an end time was set, stop polling since we are no longer displaying the latest data. Otherwise use a polling
-  // interval relative to the graph's timespan, but not less than 5s.
-  const delay = endTime ? null : Math.max(span / 120, 5000);
+  // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is hidden. Otherwise
+  // use a polling interval relative to the graph's timespan, but not less than 5s.
+  const delay = endTime || hideGraphs ? null : Math.max(span / 120, 5000);
 
   usePoll(tick, delay, endTime, queries, samples, span);
 
