@@ -205,11 +205,7 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
       (status === ClusterUpdateStatus.ErrorRetrieving ||
         status === ClusterUpdateStatus.Failing ||
         status === ClusterUpdateStatus.Updating) ? (
-        <Button
-          variant="link"
-          className="btn-link--no-btn-default-values"
-          onClick={() => clusterUpdateModal({ cv })}
-        >
+        <Button variant="link" type="button" onClick={() => clusterUpdateModal({ cv })}>
           Update to another version
         </Button>
       ) : null}

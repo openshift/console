@@ -439,14 +439,15 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           </React.Fragment>
         );
         const dragButton = (
-          <button
+          <Button
             type="button"
-            className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon"
+            className="pairs-list__action-icon"
             tabIndex="-1"
-            disabled={disableReorder}
+            isDisabled={disableReorder}
+            variant="plain"
           >
             <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
-          </button>
+          </Button>
         );
 
         return connectDropTarget(
@@ -497,17 +498,18 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
               )}
               {!readOnly && (
                 <div className="col-xs-1 pairs-list__action">
-                  <button
+                  <Button
                     type="button"
                     data-test-id="pairs-list__delete-btn"
-                    className={classNames('pf-c-button', 'pf-m-plain', 'btn-link--inherit-color', {
+                    className={classNames({
                       'pairs-list__span-btns': allowSorting,
                     })}
                     onClick={this._onRemove}
-                    disabled={isEmpty}
+                    isDisabled={isEmpty}
+                    variant="plain"
                   >
                     {deleteIcon}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>,
@@ -592,19 +594,19 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
               )}
               ref={(node) => (this.node = node)}
             >
-              {!readOnly && (
-                <div className="col-xs-1 pairs-list__action">
-                  {connectDragSource(
-                    <button
+              {!readOnly &&
+                connectDragSource(
+                  <div className="col-xs-1 pairs-list__action">
+                    <Button
                       type="button"
-                      className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon"
+                      className="pairs-list__action-icon"
                       tabIndex="-1"
+                      variant="plain"
                     >
                       <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
-                    </button>,
-                  )}
-                </div>
-              )}
+                    </Button>
+                  </div>,
+                )}
               <div className="col-xs-5 pairs-list__value-pair-field">
                 <ValueFromPair
                   pair={pair[EnvFromPair.Resource]}
@@ -627,13 +629,14 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
-                  <button
+                  <Button
                     type="button"
-                    className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__span-btns"
+                    className="pairs-list__span-btns"
                     onClick={this._onRemove}
+                    variant="plain"
                   >
                     {deleteButton}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>,

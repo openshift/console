@@ -6,10 +6,6 @@ $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
   margin-left: 3px;
 }
 
-.btn-link--inherit-color {
-  color: inherit;
-}
-
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
@@ -133,6 +129,28 @@ h6 {
 
 .pf-c-button.pf-m-link--align-right {
   padding-right: 0;
+}
+
+.pf-c-button.pf-c-button--no-default-values {
+  border: 0;
+  font-size: unset;
+  font-weight: unset;
+  line-height: unset;
+  padding: 0;
+  text-align: unset;
+  white-space: normal;
+}
+
+.pf-c-button.co-p-has-sidebar__sidebar-close {
+  float: right;
+  font-size: 21px !important;
+  line-height: 1;
+  opacity: .35;
+  padding: 0;
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
 }
 
 .pf-c-button {

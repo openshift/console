@@ -94,7 +94,7 @@ const LogControls = ({
                 <ExternalLink
                   href={url}
                   text={link.spec.text}
-                  additionalClassName="co-external-link--within-toolbar btn btn-link"
+                  additionalClassName="co-external-link--within-toolbar"
                   dataTestID={link.metadata.name}
                 />
                 <span aria-hidden="true" className="co-action-divider hidden-xs">

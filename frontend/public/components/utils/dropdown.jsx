@@ -501,7 +501,7 @@ export class Dropdown extends DropdownMixin {
             >
               <div className="btn-dropdown__content-wrap">
                 <span className="pf-c-dropdown__toggle-text">
-                  {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
+                  {titlePrefix && `${titlePrefix}: `}
                   {title}
                 </span>
                 <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
@@ -570,7 +570,7 @@ export class Dropdown extends DropdownMixin {
             aria-describedby={describedBy}
           >
             <span className="pf-c-dropdown__toggle-text">
-              {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
+              {titlePrefix && `${titlePrefix}: `}
               {title}
             </span>
             <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
