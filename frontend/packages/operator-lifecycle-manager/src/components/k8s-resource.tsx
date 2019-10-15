@@ -49,11 +49,10 @@ export const ResourceTableHeader = () => [
 export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({
   obj,
   index,
-  key,
   style,
-  linkFor,
+  customData: { linkFor },
 }) => (
-  <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+  <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
     <TableData className={tableColumnClasses[0]}>{linkFor(obj)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
     <TableData className={tableColumnClasses[2]}>{_.get(obj.status, 'phase', 'Created')}</TableData>
@@ -68,7 +67,7 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => (
     {...props}
     aria-label="Operand Resources"
     Header={ResourceTableHeader}
-    Row={(rowProps) => <ResourceTableRow {...rowProps} linkFor={props.linkFor} />}
+    Row={ResourceTableRow}
     EmptyMsg={() => (
       <MsgBox
         title="No Resources Found"
@@ -96,7 +95,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     [kind: string]: { data: K8sResourceKind[] };
   }) => {
     return _.flatMap(resources, (resource, kind: string) =>
-      resource.data.map((item) => ({ ...item, kind })),
+      _.map(resource.data, (item) => ({ ...item, kind })),
     ).reduce(
       (owned, resource) => {
         return (resource.metadata.ownerReferences || []).some(
@@ -141,7 +140,8 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
       ]}
       flatten={flattenFor(props.obj)}
       namespace={props.obj.metadata.namespace}
-      ListComponent={(listProps) => <ResourceTable {...listProps} linkFor={linkFor} />}
+      ListComponent={ResourceTable}
+      customData={{ linkFor }}
     />
   );
 };
@@ -154,10 +154,12 @@ export type ResourcesProps = {
 
 export type ResourceTableRowProps = {
   obj: K8sResourceKind;
-  linkFor: (obj: K8sResourceKind) => JSX.Element;
   index: number;
   key?: string;
   style: object;
+  customData: {
+    linkFor: (obj: K8sResourceKind) => JSX.Element;
+  };
 };
 
 export type ResourceListProps = {};

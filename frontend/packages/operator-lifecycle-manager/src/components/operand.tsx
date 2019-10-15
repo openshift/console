@@ -466,6 +466,10 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   );
 });
 
+const ResourcesTab = (resourceProps) => (
+  <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
+);
+
 export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProps) => (
   <DetailsPage
     match={props.match}
@@ -505,9 +509,7 @@ export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProp
       {
         name: 'Resources',
         href: 'resources',
-        component: (resourcesProps) => (
-          <Resources {...resourcesProps} clusterServiceVersion={resourcesProps.csv} />
-        ),
+        component: ResourcesTab,
       },
     ]}
   />
