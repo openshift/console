@@ -64,3 +64,16 @@ export const PipelineResourceModel: K8sKind = {
   namespaced: true,
   crd: true,
 };
+
+export const PipelineConfigModel: K8sKind = {
+  apiGroup: 'operator.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Config',
+  plural: 'config',
+  abbr: 'PC',
+  kind: 'Config',
+  id: 'pipelineconfig',
+  labelPlural: 'Pipeline Config',
+  namespaced: true,
+  crd: true,
+};
