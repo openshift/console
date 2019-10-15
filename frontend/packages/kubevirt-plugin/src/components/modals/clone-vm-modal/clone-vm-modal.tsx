@@ -26,7 +26,7 @@ import {
 } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
-import { getName, getNamespace } from '@console/shared/src';
+import { getName, getNamespace, ValidationErrorType } from '@console/shared';
 import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
@@ -39,7 +39,6 @@ import {
   getVolumes,
   isVMRunning,
 } from '../../../selectors/vm';
-import { ValidationErrorType } from '../../../utils/validations/types';
 import { VIRTUAL_MACHINE_EXISTS } from '../../../utils/validations/strings';
 import { Errors } from '../../errors/errors';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';

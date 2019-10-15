@@ -1,7 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
+import { ValidationObject } from '@console/shared';
 import { UpdateOptions, VMSettingsValidationConfig } from '../types';
-import { ValidationObject } from '../../../../utils/validations/types';
 import { VMSettingsFieldType } from '../../types';
 
 export const getValidationUpdate = (

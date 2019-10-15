@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
-import PopoverStatus from '@console/shared/src/components/status/PopoverStatus';
 import { HelpIcon } from '@patternfly/react-icons';
-import { ValidationErrorType } from '../../utils/validations/types';
-
+import { LoadingInline } from '@console/internal/components/utils';
+import { PopoverStatus, ValidationErrorType } from '@console/shared';
 import './form-row.scss';
 
 export const FormRow: React.FC<FormRowProps> = ({

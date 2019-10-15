@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { inject } from '@console/internal/components/utils';
+import { ValidationErrorType } from '@console/shared';
 import { getPlaceholder, getFieldId, getFieldTitle } from '../utils/vm-settings-tab-utils';
 import { iGetIn } from '../../../utils/immutable';
 import {
@@ -9,7 +10,6 @@ import {
   isFieldDisabled,
   isFieldRequired,
 } from '../selectors/immutable/vm-settings';
-import { ValidationErrorType } from '../../../utils/validations/types';
 import { FormFieldContext } from './form-field-context';
 
 export enum FormFieldType {

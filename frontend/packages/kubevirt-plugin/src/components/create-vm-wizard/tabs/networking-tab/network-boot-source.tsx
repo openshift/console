@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { ValidationErrorType } from '@console/shared';
 import { VMWizardNetworkWithWrappers } from '../../types';
 import { PXE_INFO, PXE_NIC_NOT_FOUND_ERROR, SELECT_PXE_NIC } from '../../strings/networking';
 import { FormRow } from '../../../form/form-row';
-import { ValidationErrorType } from '../../../../utils/validations/types';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
 

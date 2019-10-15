@@ -1,3 +1,4 @@
+import { ValidationObject } from '@console/shared';
 import {
   ChangedCommonData,
   ChangedCommonDataProp,
@@ -8,7 +9,6 @@ import {
   VMWizardStorage,
   VMWizardTab,
 } from '../types';
-import { ValidationObject } from '../../../utils/validations/types';
 import { DeviceType } from '../../../constants/vm';
 
 export enum ActionType {

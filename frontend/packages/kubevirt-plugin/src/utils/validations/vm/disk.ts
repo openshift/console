@@ -1,14 +1,15 @@
 import {
-  getValidationObject,
+  addMissingSubject,
+  asValidationObject,
+  makeSentence,
   validateDNS1123SubdomainValue,
-  validateTrim,
-  validateURL,
-} from '../common';
-import { addMissingSubject, makeSentence } from '../../grammar';
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/shared';
+import { validateTrim, validateURL } from '../common';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
-import { ValidationErrorType, ValidationObject } from '../types';
 import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
@@ -21,7 +22,7 @@ const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationO
   }
 
   if (!validation && usedDiskNames && usedDiskNames.has(name)) {
-    validation = getValidationObject('Disk with this name already exists!');
+    validation = asValidationObject('Disk with this name already exists!');
   }
 
   return validation;
@@ -29,14 +30,14 @@ const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationO
 
 const validatePVCName = (pvcName: string, usedPVCNames: Set<string>): ValidationObject => {
   if (usedPVCNames && usedPVCNames.has(pvcName)) {
-    getValidationObject('PVC with this name is already used by this VM!');
+    asValidationObject('PVC with this name is already used by this VM!');
   }
 
   return null;
 };
 
 const getEmptyDiskSizeValidation = (): ValidationObject =>
-  getValidationObject(
+  asValidationObject(
     makeSentence(addMissingSubject(POSITIVE_SIZE_ERROR, 'Size')),
     ValidationErrorType.TrivialError,
   );
