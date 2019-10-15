@@ -1,8 +1,8 @@
 import { OrderedMap } from 'immutable';
-import { testName } from '../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   basicVMConfig,
-  networkInterface,
+  multusNetworkInterface,
   rootDisk,
   hddDisk,
   dataVolumeManifest,
@@ -76,7 +76,7 @@ export const getProvisionConfigs = () =>
         method: ProvisionConfigName.URL,
         source: basicVMConfig.sourceURL,
       },
-      networkResources: [networkInterface],
+      networkResources: [multusNetworkInterface],
       storageResources: [rootDisk],
     })
     .set(ProvisionConfigName.CONTAINER, {
@@ -84,20 +84,20 @@ export const getProvisionConfigs = () =>
         method: ProvisionConfigName.CONTAINER,
         source: basicVMConfig.sourceContainer,
       },
-      networkResources: [networkInterface],
+      networkResources: [multusNetworkInterface],
       storageResources: [hddDisk],
     })
     .set(ProvisionConfigName.PXE, {
       provision: {
         method: ProvisionConfigName.PXE,
       },
-      networkResources: [networkInterface],
+      networkResources: [multusNetworkInterface],
       storageResources: [rootDisk],
     })
     .set(ProvisionConfigName.DISK, {
       provision: {
         method: ProvisionConfigName.DISK,
       },
-      networkResources: [networkInterface],
+      networkResources: [multusNetworkInterface],
       storageResources: [getDiskToCloneFrom()],
     });

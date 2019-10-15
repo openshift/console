@@ -19,7 +19,7 @@ export class NetworkInterfaceDialog {
   }
 
   async selectType(type: string) {
-    await selectOptionByText(view.nicBinding, type);
+    await selectOptionByText(view.nicType, type);
   }
 
   async fillMAC(mac: string) {

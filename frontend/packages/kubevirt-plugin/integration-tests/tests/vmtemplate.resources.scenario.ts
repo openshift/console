@@ -6,7 +6,7 @@ import {
 import { get } from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from './utils/consts';
-import { basicVMConfig, multusNAD, hddDisk, networkInterface, rootDisk } from './utils/mocks';
+import { basicVMConfig, multusNAD, hddDisk, multusNetworkInterface, rootDisk } from './utils/mocks';
 import { getProvisionConfigs } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
@@ -70,7 +70,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
 
     beforeAll(async () => {
       await vmTemplate.addDisk(hddDisk);
-      await vmTemplate.addNIC(networkInterface);
+      await vmTemplate.addNIC(multusNetworkInterface);
       await vm.create(vmCfg);
     }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
@@ -83,7 +83,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     });
 
     it('Adds a NIC to a VM template', async () => {
-      expect(vm.getAttachedNICs()).toContain(networkInterface);
+      expect(vm.getAttachedNICs()).toContain(multusNetworkInterface);
     });
 
     xit('BZ(1779116) Clones disk defined in VM template', async () => {
@@ -97,7 +97,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
   describe('Test removing discs/nics from a VM template', () => {
     beforeAll(async () => {
       await vmTemplate.removeDisk(hddDisk.name);
-      await vmTemplate.removeNIC(networkInterface.name);
+      await vmTemplate.removeNIC(multusNetworkInterface.name);
       await vm.create(vmCfg);
     }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
@@ -110,7 +110,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     });
 
     it('Removes a NIC from VM template', async () => {
-      expect(vm.getAttachedNICs()).not.toContain(networkInterface);
+      expect(vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
     });
   });
 });

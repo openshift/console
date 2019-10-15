@@ -35,7 +35,7 @@ import {
 } from './utils/consts';
 import {
   basicVMConfig,
-  networkInterface,
+  multusNetworkInterface,
   multusNAD,
   getVMManifest,
   cloudInitCustomScriptConfig,
@@ -162,7 +162,7 @@ describe('Test clone VM.', () => {
     beforeAll(async () => {
       createResources([multusNAD, testVM, datavolumeClonerClusterRole, allowCloneRoleBinding]);
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
-      await vm.addNIC(networkInterface);
+      await vm.addNIC(multusNetworkInterface);
       await vm.action(VM_ACTION.Start);
     }, VM_IMPORT_TIMEOUT_SECS + VM_BOOTUP_TIMEOUT_SECS);
 
@@ -218,9 +218,9 @@ describe('Test clone VM.', () => {
       await clonedVM.navigateToTab(TAB.NetworkInterfaces);
       await browser.wait(until.and(waitForCount(resourceRows, 2)), PAGE_LOAD_TIMEOUT_SECS);
       const addedNIC = (await clonedVM.getAttachedNICs()).find(
-        (nic) => nic.name === networkInterface.name,
+        (nic) => nic.name === multusNetworkInterface.name,
       );
-      expect(addedNIC.mac === networkInterface.mac).toBe(false);
+      expect(addedNIC.mac === multusNetworkInterface.mac).toBe(false);
     });
 
     it('Cloned VM has vm.kubevirt.io/name label.', () => {

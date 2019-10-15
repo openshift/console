@@ -2,13 +2,20 @@
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
-import { appHost } from '@console/internal-integration-tests/protractor.conf';
+import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
   createYAMLButton,
   rowForName,
+  createItemButton,
+  createYAMLLink,
+  resourceTitle,
 } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import {
+  isLoaded as yamlPageIsLoaded,
+  saveButton,
+} from '@console/internal-integration-tests/views/yaml.view';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
 import { NodePortService } from './types';
 
@@ -52,6 +59,16 @@ export async function createProject(name: string) {
   }
 }
 
+export async function createExampleVMViaYAML() {
+  await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
+  await isLoaded();
+  await click(createItemButton);
+  await click(createYAMLLink);
+  await yamlPageIsLoaded();
+  await click(saveButton);
+  await browser.wait(until.presenceOf(resourceTitle));
+}
+
 export async function getInputValue(elem: any) {
   return elem.getAttribute('value');
 }
@@ -76,6 +93,9 @@ export async function getSelectOptions(selector: any): Promise<string[]> {
       .then((text) => options.push(text))
       .catch((err) => Promise.reject(err));
   });
+  if (options.length > 0 && options[0].startsWith('---')) {
+    return options.slice(1);
+  }
   return options;
 }
 

@@ -10,6 +10,7 @@ export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));
 export const createVirtualMachineButton = element(by.partialButtonText('Create Virtual Machine'));
+export const modalCancelButton = $('.modal-content').element(by.buttonText('Cancel'));
 
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');
@@ -56,4 +57,11 @@ export const waitForNoLoaders = async () => {
 export const clickKebabAction = async (resourceName: string, actionLabel: string) => {
   await click($(`[data-id="${resourceName}"]`).$('[data-test-id="kebab-button"]'));
   await click(actionForLabel(actionLabel));
+};
+
+export const tableRowAttribute = async (dataId: string, columnIndex: number): Promise<string> => {
+  return $(`tr[data-id="${dataId}"]`)
+    .$$('td')
+    .get(columnIndex)
+    .getText();
 };
