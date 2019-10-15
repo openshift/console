@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { TopologyApplicationObject } from './topology-types';
+import TopologyApplicationResources from './TopologyApplicationResources';
 
 export type TopologyApplicationPanelProps = {
   application: TopologyApplicationObject;
@@ -16,6 +17,7 @@ const TopologyApplicationPanel: React.FC<TopologyApplicationPanelProps> = ({ app
         </div>
       </h1>
     </div>
+    <TopologyApplicationResources resources={application.resources} group={application.name} />
     <div className="overview__sidebar-pane-body resource-overview__body" />
   </div>
 );
