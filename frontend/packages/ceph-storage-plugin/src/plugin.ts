@@ -113,7 +113,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/top-consumers-card/top-consumers-card' /* webpackChunkName: "ceph-storage-top-consumers-card" */
+          './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
         ).then((m) => m.default),
       required: CEPH_FLAG,
     },
@@ -128,18 +128,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
-      required: CEPH_FLAG,
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.RIGHT,
-      loader: () =>
-        import(
-          './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
-        ).then((m) => m.default),
       required: CEPH_FLAG,
     },
   },

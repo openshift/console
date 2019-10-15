@@ -10,7 +10,10 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
-import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
+import {
+  humanizeBinaryBytesWithoutB,
+  humanizeDecimalBytesPerSec,
+} from '@console/internal/components/utils';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
@@ -20,7 +23,7 @@ import {
   UTILIZATION_QUERY,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '../../../../constants/queries';
-import { humanizeIOPS, humanizeLatency } from './utils';
+import { getLatestValue, humanizeIOPS, humanizeLatency } from './utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -42,6 +45,26 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
     };
   }, [watchPrometheus, stopWatchPrometheusQuery, duration]);
 
+  const capacityUtilization = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'data',
+  ]) as PrometheusResponse;
+  const capacityUtilizationError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
+  ]);
+  const totalCapacity = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_TOTAL] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'data',
+  ]) as PrometheusResponse;
+  const totalCapacityError = prometheusResults.getIn([
+    UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_TOTAL] +
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    'loadError',
+  ]);
   const iopsUtilization = prometheusResults.getIn([
     UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY] +
       UTILIZATION_QUERY_HOUR_MAP[duration],
@@ -83,6 +106,8 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
     'loadError',
   ]);
 
+  const capacityStats = getRangeVectorStats(capacityUtilization);
+  const maxCapacityStats = getLatestValue(getRangeVectorStats(totalCapacity));
   const iopsStats = getRangeVectorStats(iopsUtilization);
   const latencyStats = getRangeVectorStats(latencyUtilization);
   const throughputStats = getRangeVectorStats(throughputUtilization);
@@ -101,6 +126,18 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <UtilizationBody timestamps={iopsStats.map((stat) => stat.x as Date)}>
+          <UtilizationItem
+            title="Used Capacity"
+            data={capacityStats}
+            humanizeValue={humanizeBinaryBytesWithoutB}
+            query={
+              UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
+              UTILIZATION_QUERY_HOUR_MAP[duration]
+            }
+            error={capacityUtilizationError || totalCapacityError}
+            isLoading={!capacityUtilization || !totalCapacityError}
+            max={maxCapacityStats}
+          />
           <UtilizationItem
             title="IOPS"
             data={iopsStats}
