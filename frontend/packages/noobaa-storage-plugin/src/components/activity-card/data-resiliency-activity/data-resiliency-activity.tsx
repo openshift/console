@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { formatDuration } from '@console/internal/components/utils/datetime';
-import { getGaugeValue } from '../../../utils';
+import { getGaugeValue, getResiliencyProgress } from '../../../utils';
+import { MAX_PROGRESS } from '../../../constants';
 import './data-resiliency-activity.scss';
 
-const getResiliencyProgress = (response: PrometheusResponse): number => {
+export const isDataResiliencyActivity = (response: PrometheusResponse): boolean => {
   const progress = getGaugeValue(response);
-  return Number(Number(progress).toFixed(1));
+  return progress < MAX_PROGRESS;
 };
 
 export const DataResiliencyActivity: React.FC<DataResiliencyProps> = ({ results }) => {
