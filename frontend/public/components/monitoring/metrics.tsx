@@ -714,6 +714,10 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
   const onSort = (e, i, direction) => setSortBy({ index: i, direction });
 
+  const tableRows = rows
+    .slice((page - 1) * perPage, page * perPage - 1)
+    .map((cells) => ({ cells }));
+
   return (
     <React.Fragment>
       <Table
@@ -721,7 +725,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
         cells={columns}
         gridBreakPoint={TableGridBreakpoint[breakPoint]}
         onSort={onSort}
-        rows={rows.slice((page - 1) * perPage, page * perPage - 1)}
+        rows={tableRows}
         sortBy={sortBy}
         variant={TableVariant.compact}
       >
