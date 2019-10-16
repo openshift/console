@@ -91,6 +91,7 @@ export const NameValueEditor = withDragDropContext(
       } = this.props;
       const pairElems = nameValuePairs.map((pair, i) => {
         const key = _.get(pair, [NameValueEditorPair.Index], i);
+        const isEmpty = nameValuePairs.length === 1 && nameValuePairs[0].every((value) => !value);
 
         return (
           <PairElement
@@ -107,6 +108,8 @@ export const NameValueEditor = withDragDropContext(
             rowSourceId={nameValueId}
             configMaps={configMaps}
             secrets={secrets}
+            isEmpty={isEmpty}
+            disableReorder={nameValuePairs.length === 1}
           />
         );
       });
@@ -426,12 +429,24 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           pair,
           configMaps,
           secrets,
+          isEmpty,
+          disableReorder,
         } = this.props;
         const deleteIcon = (
           <React.Fragment>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
             <span className="sr-only">Delete</span>
           </React.Fragment>
+        );
+        const dragButton = (
+          <button
+            type="button"
+            className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon"
+            tabIndex="-1"
+            disabled={disableReorder}
+          >
+            <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
+          </button>
         );
 
         return connectDropTarget(
@@ -445,15 +460,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
             >
               {allowSorting && !readOnly && (
                 <div className="col-xs-1 pairs-list__action">
-                  {connectDragSource(
-                    <button
-                      type="button"
-                      className="pf-c-button pf-m-plain btn-link--inherit-color pairs-list__action-icon"
-                      tabIndex="-1"
-                    >
-                      <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
-                    </button>,
-                  )}
+                  {disableReorder ? dragButton : connectDragSource(dragButton)}
                 </div>
               )}
               <div className="col-xs-5 pairs-list__name-field">
@@ -497,6 +504,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
                       'pairs-list__span-btns': allowSorting,
                     })}
                     onClick={this._onRemove}
+                    disabled={isEmpty}
                   >
                     {deleteIcon}
                   </button>
