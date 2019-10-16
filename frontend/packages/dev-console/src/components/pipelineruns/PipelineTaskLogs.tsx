@@ -1,5 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Button } from '@patternfly/react-core';
+import { saveAs } from 'file-saver';
+import { DownloadIcon } from '@patternfly/react-icons';
 import { K8sKind } from '@console/internal/module/k8s';
 import {
   ResourceLog,
@@ -125,42 +128,63 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
     }
   };
 
+  downloadLogs = () => {
+    let logString = _.get(this.scrollPane, ['current', 'innerText'], '');
+    // Removing 'Taskname' from file content and using it in 'filename' to keep it similar with resource-log
+    logString = logString.substring(logString.indexOf('\n') + 1);
+    const blob = new Blob([logString], {
+      type: 'text/plain;charset=utf-8',
+    });
+    saveAs(blob, `${this.props.taskName}.log`);
+  };
+
   render() {
     const { obj, taskName } = this.props;
     const { renderContainers, fetching, targetHeight } = this.state;
     const containerStatus = _.get(this.props, ['obj', 'data', 'status', 'containerStatuses'], []);
     return (
-      <div
-        className="odc-pipeline-task-logs__container"
-        onScroll={() =>
-          this.scrollUntouched && !this.isAutoScrolling && (this.scrollUntouched = false)
-        }
-        style={{ height: targetHeight }}
-        ref={this.scrollPane}
-      >
-        <div className="odc-pipeline-task-logs__taskName">
-          {taskName}
-          {fetching && (
-            <span className="odc-pipeline-task-logs__taskName--loading">
-              <LoadingInline />
-            </span>
+      <>
+        <div className="co-toolbar odc-pipeline-task-logs__toolbar">
+          <div className="co-toolbar__group co-toolbar__group--left" />
+          <div className="co-toolbar__group co-toolbar__group--right">
+            <Button variant="link" onClick={this.downloadLogs}>
+              <DownloadIcon className="co-icon-space-r" />
+              Download
+            </Button>
+          </div>
+        </div>
+        <div
+          className="odc-pipeline-task-logs__container"
+          onScroll={() =>
+            this.scrollUntouched && !this.isAutoScrolling && (this.scrollUntouched = false)
+          }
+          style={{ height: targetHeight }}
+          ref={this.scrollPane}
+        >
+          <div className="odc-pipeline-task-logs__taskName">
+            {taskName}
+            {fetching && (
+              <span className="odc-pipeline-task-logs__taskName--loading">
+                <LoadingInline />
+              </span>
+            )}
+          </div>
+          {renderContainers.length > 0 ? (
+            renderContainers.map((container, i) => (
+              <div className="odc-pipeline-task-logs__step" key={container.name}>
+                <p className="odc-pipeline-task-logs__stepname">{container.name}</p>
+                <ResourceLog
+                  resource={obj.data}
+                  containerName={container.name}
+                  resourceStatus={containerToLogSourceStatus(containerStatus[i])}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="odc-pipeline-task-logs__nosteps">No steps found</div>
           )}
         </div>
-        {renderContainers.length > 0 ? (
-          renderContainers.map((container, i) => (
-            <div className="odc-pipeline-task-logs__step" key={container.name}>
-              <p className="odc-pipeline-task-logs__stepname">{container.name}</p>
-              <ResourceLog
-                resource={obj.data}
-                containerName={container.name}
-                resourceStatus={containerToLogSourceStatus(containerStatus[i])}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="odc-pipeline-task-logs__nosteps">No steps found</div>
-        )}
-      </div>
+      </>
     );
   }
 }
