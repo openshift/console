@@ -152,7 +152,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Query',
     properties: {
       queryKey: OverviewQuery.STORAGE_UTILIZATION,
-      query: `${CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED]}[60m:5m]`,
+      query: `${CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED]}`,
       required: CEPH_FLAG,
     },
   },

@@ -19,14 +19,14 @@ export enum OverviewQuery {
 const overviewQueries = {
   [OverviewQuery.MEMORY_TOTAL]: 'sum(kube_node_status_capacity_memory_bytes)',
   [OverviewQuery.MEMORY_UTILIZATION]:
-    '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))[60m:5m]',
+    '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))',
   [OverviewQuery.NETWORK_TOTAL]: 'sum(avg by(instance)(node_network_speed_bytes))',
   [OverviewQuery.NETWORK_UTILIZATION]:
     'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
   [OverviewQuery.CPU_UTILIZATION]:
-    '(avg(instance:node_cpu_utilisation:rate1m{job="node-exporter"}) * 100)[60m:5m]',
+    '(avg(instance:node_cpu_utilisation:rate1m{job="node-exporter"}) * 100)',
   [OverviewQuery.STORAGE_UTILIZATION]:
-    '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
+    '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
   [OverviewQuery.PODS_BY_CPU]:
     'sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (pod, namespace))',
