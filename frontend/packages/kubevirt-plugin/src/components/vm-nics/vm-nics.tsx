@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Table } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
-import { createBasicLookup } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { createBasicLookup, dimensifyHeader } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMLikeEntityKind } from '../../types';
 import { getInterfaces, getNetworks, asVM } from '../../selectors/vm';
-import { dimensifyHeader } from '../../utils/table';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';

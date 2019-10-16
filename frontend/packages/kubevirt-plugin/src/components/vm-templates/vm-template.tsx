@@ -10,12 +10,11 @@ import {
 } from 'kubevirt-web-ui-components';
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
-import { getNamespace, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { dimensifyHeader, dimensifyRow, getNamespace, DASH } from '@console/shared';
 import { match } from 'react-router';
 import { connect } from 'react-redux';
-import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { openCreateVmWizard } from '../modals';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import { getCreateVMWizards } from '../create-vm-wizard/selectors/selectors';

@@ -6,13 +6,12 @@ import {
   KebabOption,
   LoadingInline,
 } from '@console/internal/components/utils';
-import { getDeletetionTimestamp, DASH } from '@console/shared';
+import { dimensifyRow, getDeletetionTimestamp, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
 import { asVM, isVM, isVMRunning } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
-import { dimensifyRow } from '../../utils/table';
 import { ValidationCell } from '../table/validation-cell';
 import { VMNicRowActionOpts } from '../vm-nics/types';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';

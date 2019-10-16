@@ -9,11 +9,19 @@ import {
   // VM_SIMPLE_STATUS_TO_TEXT,
   //  DASHES,
 } from 'kubevirt-web-ui-components';
-import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import {
+  dimensifyHeader,
+  dimensifyRow,
+  getName,
+  getNamespace,
+  getUID,
+  createLookup,
+  K8sEntityMap,
+} from '@console/shared';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -21,7 +29,6 @@ import {
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
-import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { getBasicID, getLoadedData, getResource } from '../../utils';
 import { openCreateVmWizard } from '../modals';
 import { getVMStatus } from '../../statuses/vm/vm';

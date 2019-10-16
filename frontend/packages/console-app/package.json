@@ -18,7 +18,8 @@
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
     "@console/kubevirt-plugin": "0.0.0-fixed",
-    "@console/operator-lifecycle-manager": "0.0.0-fixed"
+    "@console/operator-lifecycle-manager": "0.0.0-fixed",
+    "@console/network-attachment-definition-plugin": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx"

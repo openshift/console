@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { DASH, getDeletetionTimestamp } from '@console/shared/src';
 import { TemplateModel } from '@console/internal/models';
+import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VirtualMachineModel } from '../../models';
 import { asVM, isVM, isVMRunning } from '../../selectors/vm';
-import { dimensifyRow } from '../../utils/table';
 import { VMLikeEntityKind } from '../../types';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
 import { ValidationCell } from '../table/validation-cell';
