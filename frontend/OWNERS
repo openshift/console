@@ -1,5 +1,4 @@
 reviewers:
-  - alecmerdler
   - benjaminapetersen
   - dtaylor113
   - jcaianirh
@@ -11,7 +10,6 @@ reviewers:
   - TheRealJon
   - zherman0
 approvers:
-  - alecmerdler
   - benjaminapetersen
   - bparees
   - christianvogt
