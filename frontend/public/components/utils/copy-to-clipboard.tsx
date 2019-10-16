@@ -39,7 +39,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
 
 export type CopyToClipboardProps = {
   value: string;
-  visibleValue?: string;
+  visibleValue?: React.ReactNode;
 };
 
 CopyToClipboard.displayName = 'CopyToClipboard';

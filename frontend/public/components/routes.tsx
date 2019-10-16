@@ -8,18 +8,19 @@ import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-ico
 import { Status } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
-  Kebab,
   CopyToClipboard,
-  SectionHeading,
+  DetailsItem,
+  ExternalLink,
+  Kebab,
   ResourceKebab,
-  detailsPage,
-  navFactory,
   ResourceLink,
   ResourceSummary,
-  ExternalLink,
+  SectionHeading,
+  detailsPage,
+  navFactory,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKindReference, RouteKind, RouteIngress, RouteTarget } from '../module/k8s';
 import { RouteModel } from '../models';
 import { Conditions, conditionProps } from './conditions';
 
@@ -34,15 +35,17 @@ export type IngressStatusProps = {
   routerCanonicalHostname: string;
 };
 
-const getRouteHost = (route, onlyAdmitted) => {
-  let oldestAdmittedIngress = null;
+const getRouteHost = (route: RouteKind, onlyAdmitted: boolean): string => {
+  let oldestAdmittedIngress: RouteIngress;
+  let oldestTransitionTime: string;
   _.each(route.status.ingress, (ingress) => {
+    const admittedCondition = _.find(ingress.conditions, { type: 'Admitted', status: 'True' });
     if (
-      _.some(ingress.conditions, { type: 'Admitted', status: 'True' }) &&
-      (!oldestAdmittedIngress ||
-        oldestAdmittedIngress.lastTransitionTime > ingress.lastTransitionTime)
+      admittedCondition &&
+      (!oldestTransitionTime || oldestTransitionTime > admittedCondition.lastTransitionTime)
     ) {
       oldestAdmittedIngress = ingress;
+      oldestTransitionTime = admittedCondition.lastTransitionTime;
     }
   });
 
@@ -53,11 +56,11 @@ const getRouteHost = (route, onlyAdmitted) => {
   return onlyAdmitted ? null : route.spec.host;
 };
 
-const isWebRoute = (route) => {
+const isWebRoute = (route: RouteKind): boolean => {
   return !!getRouteHost(route, true) && _.get(route, 'spec.wildcardPolicy') !== 'Subdomain';
 };
 
-export const getRouteWebURL = (route) => {
+export const getRouteWebURL = (route: RouteKind): string => {
   const scheme = _.get(route, 'spec.tls.termination') ? 'https' : 'http';
   let url = `${scheme}://${getRouteHost(route, false)}`;
   if (route.spec.path) {
@@ -66,12 +69,12 @@ export const getRouteWebURL = (route) => {
   return url;
 };
 
-const getSubdomain = (route) => {
+const getSubdomain = (route: RouteKind): string => {
   const hostname = _.get(route, 'spec.host', '');
   return hostname.replace(/^[a-z0-9]([-a-z0-9]*[a-z0-9])\./, '');
 };
 
-const getRouteLabel = (route) => {
+const getRouteLabel = (route: RouteKind): string => {
   if (isWebRoute(route)) {
     return getRouteWebURL(route);
   }
@@ -91,7 +94,7 @@ const getRouteLabel = (route) => {
   return label;
 };
 
-export const RouteLocation: React.SFC<RouteHostnameProps> = ({ obj }) => (
+export const RouteLocation: React.FC<RouteHostnameProps> = ({ obj }) => (
   <div>
     {isWebRoute(obj) ? (
       <ExternalLink
@@ -106,7 +109,7 @@ export const RouteLocation: React.SFC<RouteHostnameProps> = ({ obj }) => (
 );
 RouteLocation.displayName = 'RouteLocation';
 
-export const routeStatus = (route) => {
+export const routeStatus = (route: RouteKind): string => {
   let atLeastOneAdmitted: boolean = false;
 
   if (!route.status || !route.status.ingress) {
@@ -123,7 +126,7 @@ export const routeStatus = (route) => {
   return atLeastOneAdmitted ? 'Accepted' : 'Rejected';
 };
 
-export const RouteStatus: React.SFC<RouteStatusProps> = ({ obj: route }) => {
+export const RouteStatus: React.FC<RouteStatusProps> = ({ obj: route }) => {
   const status: string = routeStatus(route);
   return <Status status={status} />;
 };
@@ -218,82 +221,74 @@ const RouteTableRow: React.FC<RouteTableRowProps> = ({ obj: route, index, key, s
 };
 RouteTableRow.displayName = 'RouteTableRow';
 type RouteTableRowProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
   index: number;
   key?: string;
   style: object;
 };
 
-class TLSSettings extends React.Component<TLSDataProps, TLSDataState> {
-  constructor(props) {
-    super(props);
-    this.state = { showPrivateKey: false };
-    this.toggleKey = this.toggleKey.bind(this);
+const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
+  const [showKey, setShowKey] = React.useState(false);
+  const { tls } = route.spec;
+  if (!tls) {
+    return <>TLS is not enabled.</>;
   }
 
-  toggleKey() {
-    this.setState({ showPrivateKey: !this.state.showPrivateKey });
-  }
-
-  render() {
-    const { showPrivateKey } = this.state;
-    const { tls } = this.props;
-    const visibleKeyValue = showPrivateKey ? tls.key : <MaskedData />;
-
-    return !tls ? (
-      'TLS is not enabled.'
-    ) : (
-      <dl>
-        <dt>Termination Type</dt>
-        <dd>{tls.termination}</dd>
-        <dt>Insecure Traffic</dt>
-        <dd>{tls.insecureEdgeTerminationPolicy || '-'}</dd>
-        <dt>Certificate</dt>
-        <dd>{tls.certificate ? <CopyToClipboard value={tls.certificate} /> : '-'}</dd>
-        <dt className="co-m-route-tls-reveal__title">
-          Key{' '}
-          {tls.key && (
-            <Button
-              className="pf-m-link--align-left"
-              type="button"
-              onClick={this.toggleKey}
-              variant="link"
-            >
-              {showPrivateKey ? (
-                <React.Fragment>
-                  <EyeSlashIcon className="co-icon-space-r" />
-                  Hide
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <EyeIcon className="co-icon-space-r" />
-                  Reveal
-                </React.Fragment>
-              )}
-            </Button>
-          )}
-        </dt>
-        <dd>
-          {tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue} /> : '-'}
-        </dd>
-        <dt>CA Certificate</dt>
-        <dd>{tls.caCertificate ? <CopyToClipboard value={tls.caCertificate} /> : '-'}</dd>
-        {tls.termination === 'reencrypt' && (
-          <React.Fragment>
-            <dt>Destination CA Cert</dt>
-            <dd>
-              {tls.destinationCACertificate ? (
-                <CopyToClipboard value={tls.destinationCACertificate} />
-              ) : (
-                '-'
-              )}
-            </dd>
-          </React.Fragment>
+  const visibleKeyValue = showKey ? tls.key : <MaskedData />;
+  return (
+    <dl>
+      <DetailsItem label="Termination Type" obj={route} path="spec.tls.termination" />
+      <DetailsItem
+        label="Insecure Traffic"
+        obj={route}
+        path="spec.tls.insecureEdgeTerminationPolicy"
+      />
+      <DetailsItem label="Certificate" obj={route} path="spec.tls.certificate">
+        {tls.certificate ? <CopyToClipboard value={tls.certificate} /> : '-'}
+      </DetailsItem>
+      <dt className="co-m-route-tls-reveal__title">
+        Key{' '}
+        {tls.key && (
+          <Button
+            className="pf-m-link--align-left"
+            type="button"
+            onClick={() => setShowKey(!showKey)}
+            variant="link"
+          >
+            {showKey ? (
+              <>
+                <EyeSlashIcon className="co-icon-space-r" />
+                Hide
+              </>
+            ) : (
+              <>
+                <EyeIcon className="co-icon-space-r" />
+                Reveal
+              </>
+            )}
+          </Button>
         )}
-      </dl>
-    );
-  }
-}
+      </dt>
+      <dd>{tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue} /> : '-'}</dd>
+      <DetailsItem label="CA Certificate" obj={route} path="spec.tls.caCertificate">
+        {tls.certificate ? <CopyToClipboard value={tls.caCertificate} /> : '-'}
+      </DetailsItem>
+      {tls.termination === 'reencrypt' && (
+        <DetailsItem
+          label="Destination CA Certificate"
+          obj={route}
+          path="spec.tls.destinationCACertificate"
+        >
+          {tls.destinationCACertificate ? (
+            <CopyToClipboard value={tls.destinationCACertificate} />
+          ) : (
+            '-'
+          )}
+        </DetailsItem>
+      )}
+    </dl>
+  );
+};
 
 const calcTrafficPercentage = (weight: number, route: any) => {
   if (!weight) {
@@ -313,11 +308,17 @@ const calcTrafficPercentage = (weight: number, route: any) => {
   return `${percentage.toFixed(1)}%`;
 };
 
-const getIngressStatusForHost = (hostname, ingresses): IngressStatusProps => {
+const getIngressStatusForHost = (
+  hostname: string,
+  ingresses: RouteIngress[],
+): IngressStatusProps => {
   return _.find(ingresses, { host: hostname }) as IngressStatusProps;
 };
 
-const showCustomRouteHelp = (ingress, annotations) => {
+const showCustomRouteHelp = (
+  ingress: RouteIngress,
+  annotations: RouteKind['metadata']['annotations'],
+) => {
   if (!ingress || !_.some(ingress.conditions, { type: 'Admitted', status: 'True' })) {
     return false;
   }
@@ -333,7 +334,7 @@ const showCustomRouteHelp = (ingress, annotations) => {
   return true;
 };
 
-const RouteTargetRow = ({ route, target }) => (
+const RouteTargetRow: React.FC<RouteTargetRowProps> = ({ route, target }) => (
   <tr>
     <td>
       <ResourceLink
@@ -348,9 +349,9 @@ const RouteTargetRow = ({ route, target }) => (
   </tr>
 );
 
-const CustomRouteHelp: React.SFC<CustomRouteHelpProps> = ({ host, routerCanonicalHostname }) => (
+const CustomRouteHelp: React.FC<CustomRouteHelpProps> = ({ host, routerCanonicalHostname }) => (
   <Popover
-    headerContent={<React.Fragment>Custom Route</React.Fragment>}
+    headerContent={<>Custom Route</>}
     bodyContent={
       <div>
         <p>
@@ -368,55 +369,60 @@ const CustomRouteHelp: React.SFC<CustomRouteHelpProps> = ({ host, routerCanonica
   </Popover>
 );
 
-const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ ingresses, annotations }) => (
-  <React.Fragment>
-    {_.map(ingresses, (ingress) => (
+const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => (
+  <>
+    {_.map(route.status.ingress, (ingress: RouteIngress) => (
       <div key={ingress.routerName} className="co-m-route-ingress-status">
         <SectionHeading text={`Router: ${ingress.routerName}`} />
         <dl>
-          <dt>Hostname</dt>
-          <dd>{ingress.host}</dd>
-          <dt>Wildcard Policy</dt>
-          <dd>{ingress.wildcardPolicy}</dd>
-          <dt>Canonical Router Hostname</dt>
-          <dd>{ingress.routerCanonicalHostname || '-'}</dd>
-          {showCustomRouteHelp(ingress, annotations) && (
-            <CustomRouteHelp
-              host={ingress.host}
-              routerCanonicalHostname={ingress.routerCanonicalHostname}
-            />
-          )}
+          <DetailsItem label="Host" obj={route} path="status.ingress.host">
+            {ingress.host}
+          </DetailsItem>
+          <DetailsItem label="Wildcard Policy" obj={route} path="status.ingress.wildcardPolicy">
+            {ingress.wildcardPolicy}
+          </DetailsItem>
+          <DetailsItem
+            label="Router Canonical Hostname"
+            obj={route}
+            path="status.ingress.routerCanonicalHostname"
+          >
+            {ingress.routerCanonicalHostname || '-'}
+            {showCustomRouteHelp(ingress, route.metadata.annotations) && (
+              <CustomRouteHelp
+                host={ingress.host}
+                routerCanonicalHostname={ingress.routerCanonicalHostname}
+              />
+            )}
+          </DetailsItem>
         </dl>
         <h3 className="co-section-heading-secondary">Conditions</h3>
         <Conditions conditions={ingress.conditions} />
       </div>
     ))}
-  </React.Fragment>
+  </>
 );
 
-const RouteDetails: React.SFC<RoutesDetailsProps> = ({ obj: route }) => {
+const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   const primaryIngressStatus: IngressStatusProps = getIngressStatusForHost(
     route.spec.host,
     route.status.ingress,
   );
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Route Overview" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={route}>
-              <dt>{route.spec.to.kind}</dt>
-              <dd>
+              <DetailsItem label={route.spec.to.kind} obj={route} path="spec.to.name">
                 <ResourceLink
                   kind={route.spec.to.kind}
                   name={route.spec.to.name}
                   namespace={route.metadata.namespace}
                   title={route.spec.to.name}
                 />
-              </dd>
-              <dt>Target Port</dt>
-              <dd>{_.get(route, 'spec.port.targetPort', '-')}</dd>
+              </DetailsItem>
+              <DetailsItem label="Target Port" obj={route} path="spec.port.targetPort" />
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
@@ -429,15 +435,16 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({ obj: route }) => {
               <dd>
                 <RouteStatus obj={route} />
               </dd>
-              <dt>Hostname</dt>
-              <dd>{route.spec.host}</dd>
-              <dt>Path</dt>
-              <dd>{route.spec.path || '-'}</dd>
+              <DetailsItem label="Host" obj={route} path="spec.host" />
+              <DetailsItem label="Path" obj={route} path="spec.path" />
               {primaryIngressStatus && (
-                <React.Fragment>
-                  <dt>Canonical Router Hostname</dt>
-                  <dd>{primaryIngressStatus.routerCanonicalHostname || '-'}</dd>
-                </React.Fragment>
+                <DetailsItem
+                  label="Router Canonical Hostname"
+                  obj={route}
+                  path="status.ingress.routerCanonicalHostname"
+                >
+                  {primaryIngressStatus.routerCanonicalHostname || '-'}
+                </DetailsItem>
               )}
               {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
                 <dd>
@@ -453,7 +460,7 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({ obj: route }) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="TLS Settings" />
-        <TLSSettings tls={route.spec.tls} />
+        <TLSSettings route={route} />
       </div>
       {!_.isEmpty(route.spec.alternateBackends) && (
         <div className="co-m-pane__body">
@@ -486,17 +493,14 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({ obj: route }) => {
         </div>
       ) : (
         <div className="co-m-pane__body">
-          <RouteIngressStatus
-            ingresses={route.status.ingress}
-            annotations={route.metadata.annotations}
-          />
+          <RouteIngressStatus route={route} />
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 
-export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = (props) => (
+export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={RoutesReference}
@@ -504,7 +508,7 @@ export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = (props) => (
     pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
   />
 );
-export const RoutesList: React.SFC = (props) => (
+export const RoutesList: React.FC = (props) => (
   <Table {...props} aria-label="Routes" Header={RouteTableHeader} Row={RouteTableRow} virtualize />
 );
 
@@ -521,7 +525,7 @@ const filters = [
   },
 ];
 
-export const RoutesPage: React.SFC<RoutesPageProps> = (props) => {
+export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/routes/~new/form`,
   };
@@ -539,41 +543,41 @@ export const RoutesPage: React.SFC<RoutesPageProps> = (props) => {
 };
 
 export type RouteHostnameProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
 };
 
 export type RouteStatusProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
+};
+
+export type RouteTargetRowProps = {
+  route: RouteKind;
+  target: RouteTarget;
+};
+
+export type TLSSettingsProps = {
+  route: RouteKind;
 };
 
 export type RouteHeaderProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
 };
 
 export type RoutesPageProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
   namespace: string;
 };
 
 export type RoutesDetailsProps = {
-  obj: K8sResourceKind;
+  obj: RouteKind;
 };
 
 export type RoutesDetailsPageProps = {
   match: any;
 };
 
-export type TLSDataProps = {
-  tls: any;
-};
-
-export type TLSDataState = {
-  showPrivateKey: boolean;
-};
-
 export type RouteIngressStatusProps = {
-  ingresses: IngressStatusProps[];
-  annotations: { [key: string]: string };
+  route: RouteKind;
 };
 
 export type CustomRouteHelpProps = {

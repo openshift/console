@@ -29,18 +29,28 @@ const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({ kin
   );
 };
 
-export const DetailsItem: React.FC<DetailsItemProps> = ({ label, obj, path, children }) => {
+export const DetailsItem: React.FC<DetailsItemProps> = ({
+  label,
+  obj,
+  path,
+  defaultValue = '-',
+  children,
+}) => {
   const reference: K8sResourceKindReference = referenceFor(obj);
   const model: K8sKind = modelFor(reference);
   const description: string = getPropertyDescription(model, path);
-  const value: React.ReactNode = children || _.get(obj, path) || '-';
+  const value: React.ReactNode = children || _.get(obj, path, defaultValue);
   return (
     <>
       <dt>
         {description ? (
           <Popover
             headerContent={<div>{label}</div>}
-            bodyContent={<LinkifyExternal>{description}</LinkifyExternal>}
+            bodyContent={
+              <LinkifyExternal>
+                <div className="co-pre-line">{description}</div>
+              </LinkifyExternal>
+            }
             footerContent={<PropertyPath kind={model.kind} path={path} />}
             maxWidth="30rem"
           >
@@ -61,5 +71,6 @@ export type DetailsItemProps = {
   label: string;
   obj: K8sResourceKind;
   path: string | string[];
+  defaultValue?: React.ReactNode;
   children?: React.ReactNode;
 };

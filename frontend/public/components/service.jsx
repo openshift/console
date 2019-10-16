@@ -5,15 +5,16 @@ import { sortable } from '@patternfly/react-table';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
+  DetailsItem,
   Kebab,
-  navFactory,
   LabelList,
-  ResourceKebab,
-  SectionHeading,
   ResourceIcon,
+  ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
   Selector,
+  navFactory,
 } from './utils';
 import { ServiceModel } from '../models';
 
@@ -233,8 +234,7 @@ const Details = ({ obj: s }) => (
       <div className="col-sm-6">
         <SectionHeading text="Service Overview" />
         <ResourceSummary resource={s} showPodSelector>
-          <dt>Session Affinity</dt>
-          <dd>{s.spec.sessionAffinity || '-'}</dd>
+          <DetailsItem label="Session Affinity" obj={s} path="spec.sessionAffinity" />
         </ResourceSummary>
       </div>
       <div className="col-sm-6">
@@ -244,10 +244,11 @@ const Details = ({ obj: s }) => (
           <dd className="service-ips">
             <ServiceAddress s={s} />
           </dd>
-          <dt>Service Port Mapping</dt>
-          <dd className="service-ips">
-            {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
-          </dd>
+          <DetailsItem label="Service Port Mapping" obj={s} path="spec.ports">
+            <div className="service-ips">
+              {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
+            </div>
+          </DetailsItem>
         </dl>
       </div>
     </div>

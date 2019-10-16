@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor, RouteKind } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   TransformResourceData,
@@ -59,7 +59,7 @@ const getRouteData = (ksroute: K8sResourceKind[]): string => {
 /**
  * get routes url
  */
-const getRoutesUrl = (routes: K8sResourceKind[], ksroute?: K8sResourceKind[]): string => {
+const getRoutesUrl = (routes: RouteKind[], ksroute?: K8sResourceKind[]): string => {
   if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
     return getRouteWebURL(routes[0]);
   }

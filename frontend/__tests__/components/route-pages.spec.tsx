@@ -3,11 +3,11 @@ import { shallow, mount } from 'enzyme';
 
 import { RouteLocation, RouteStatus } from '../../public/components/routes';
 import { ExternalLink } from '../../public/components/utils';
-import { K8sResourceKind } from '../../public/module/k8s';
+import { RouteKind } from '../../public/module/k8s';
 
 describe(RouteLocation.displayName, () => {
   it('renders a https link when TLS Settings', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
@@ -19,6 +19,11 @@ describe(RouteLocation.displayName, () => {
           termination: 'edge',
         },
         wildcardPolicy: 'None',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -42,7 +47,7 @@ describe(RouteLocation.displayName, () => {
   });
 
   it('renders a http link when no TLS Settings', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
@@ -51,6 +56,11 @@ describe(RouteLocation.displayName, () => {
       spec: {
         host: 'www.example.com',
         wildcardPolicy: 'None',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -73,8 +83,8 @@ describe(RouteLocation.displayName, () => {
     expect(wrapper.find(ExternalLink).props().href).toContain('http:');
   });
 
-  it('renders additional path in url', () => {
-    const route: K8sResourceKind = {
+  it('renders oldest admitted ingress', () => {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
@@ -84,6 +94,59 @@ describe(RouteLocation.displayName, () => {
         host: 'www.example.com',
         path: '\\mypath',
         wildcardPolicy: 'None',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
+      },
+      status: {
+        ingress: [
+          {
+            host: 'newer.example.com',
+            conditions: [
+              {
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2019-04-30T16:55:48Z',
+              },
+            ],
+          },
+          {
+            host: 'www.example.com',
+            conditions: [
+              {
+                type: 'Admitted',
+                status: 'True',
+                lastTransitionTime: '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    const wrapper = shallow(<RouteLocation obj={route} />);
+    expect(wrapper.find(ExternalLink).exists()).toBe(true);
+    expect(wrapper.find(ExternalLink).props().href).toContain('http://www.example.com');
+  });
+
+  it('renders additional path in url', () => {
+    const route: RouteKind = {
+      apiVersion: 'v1',
+      kind: 'Route',
+      metadata: {
+        name: 'example',
+      },
+      spec: {
+        host: 'www.example.com',
+        path: '\\mypath',
+        wildcardPolicy: 'None',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -107,7 +170,7 @@ describe(RouteLocation.displayName, () => {
   });
 
   it('renders Subdomain', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
@@ -116,6 +179,11 @@ describe(RouteLocation.displayName, () => {
       spec: {
         host: 'www.example.com',
         wildcardPolicy: 'Subdomain',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -139,7 +207,7 @@ describe(RouteLocation.displayName, () => {
   });
 
   it('renders non-admitted label', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
@@ -148,6 +216,11 @@ describe(RouteLocation.displayName, () => {
       spec: {
         host: 'www.example.com',
         wildcardPolicy: 'None',
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -173,11 +246,18 @@ describe(RouteLocation.displayName, () => {
 
 describe(RouteStatus.displayName, () => {
   it('renders Accepted status', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
         name: 'example',
+      },
+      spec: {
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -201,11 +281,18 @@ describe(RouteStatus.displayName, () => {
   });
 
   it('renders Rejected status', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
         name: 'example',
+      },
+      spec: {
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
       status: {
         ingress: [
@@ -229,11 +316,18 @@ describe(RouteStatus.displayName, () => {
   });
 
   it('renders Pending status', () => {
-    const route: K8sResourceKind = {
+    const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
       metadata: {
         name: 'example',
+      },
+      spec: {
+        to: {
+          kind: 'Service',
+          name: 'my-service',
+          weight: 100,
+        },
       },
     };
 

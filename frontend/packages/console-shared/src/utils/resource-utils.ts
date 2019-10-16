@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import {
   K8sResourceKind,
-  apiVersionForModel,
-  PodTemplate,
   LabelSelector,
   PodKind,
+  PodTemplate,
+  RouteKind,
+  apiVersionForModel,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -553,7 +554,7 @@ export class TransformResourceData {
     }
   };
 
-  getRoutesForServices = (services: K8sResourceKind[]): K8sResourceKind[] => {
+  getRoutesForServices = (services: K8sResourceKind[]): RouteKind[] => {
     const { routes } = this.resources;
     return _.filter(routes.data, (route) => {
       const name = _.get(route, 'spec.to.name');

@@ -10,7 +10,7 @@ import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
 import * as UIActions from '../../actions/ui';
-import { K8sResourceKind, PodKind } from '../../module/k8s';
+import { K8sResourceKind, PodKind, RouteKind } from '../../module/k8s';
 import { CloseButton, Dropdown, Firehose, StatusBox, FirehoseResult, MsgBox } from '../utils';
 
 import { ProjectOverview } from './project-overview';
@@ -564,7 +564,7 @@ type OverviewMainContentOwnProps = {
   project?: FirehoseResult<K8sResourceKind>;
   replicationControllers?: FirehoseResult;
   replicaSets?: FirehoseResult;
-  routes?: FirehoseResult;
+  routes?: FirehoseResult<RouteKind[]>;
   services?: FirehoseResult;
   selectedItem: OverviewItem;
   statefulSets?: FirehoseResult;

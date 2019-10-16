@@ -136,10 +136,8 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
 
 export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({ resource }) => (
   <dl>
-    <dt>Current Count</dt>
-    <dd>{resource.status.replicas || 0}</dd>
-    <dt>Desired Count</dt>
-    <dd>{resource.spec.replicas || 0}</dd>
+    <DetailsItem label="Current Count" obj={resource} path="status.replicas" defaultValue="0" />
+    <DetailsItem label="Desired Count" obj={resource} path="spec.replicas" defaultValue="0" />
   </dl>
 );
 
