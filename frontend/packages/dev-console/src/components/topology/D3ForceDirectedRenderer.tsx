@@ -581,6 +581,14 @@ export default class D3ForceDirectedRenderer extends React.Component<
             this.state.groupsById[this.state.groups[0]].nodes.length !== this.state.nodes.length,
         ),
     );
+    $group.on('contextmenu', this.onGroupContextMenu);
+  };
+
+  onGroupContextMenu = (d: ViewGroup) => {
+    const { contextMenu } = this.props;
+    if (contextMenu.open(GraphElementType.group, d.name, d3.event.pageX, d3.event.pageY)) {
+      d3.event.preventDefault();
+    }
   };
 
   private onGroupDragStart = (d: ViewGroup) => {

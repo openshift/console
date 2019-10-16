@@ -25,11 +25,13 @@ import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
+  knativeServingResourcesServices,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingRevisions,
+  getKnativeServingServices,
 } from './utils/get-knative-resources';
 
 type ConsumedExtensions =
@@ -162,6 +164,14 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: knativeServingResourcesRoutes,
       required: FLAG_KNATIVE_SERVING_ROUTE,
       utils: getKnativeServingRoutes,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResourcesServices,
+      required: FLAG_KNATIVE_SERVING_SERVICE,
+      utils: getKnativeServingServices,
     },
   },
   {

@@ -4,6 +4,7 @@ import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
+  getKnativeServingServices,
 } from '../get-knative-resources';
 import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
@@ -43,6 +44,18 @@ describe('Get knative resources', () => {
     });
     it('expect getKnativeServingRoutes to return route as undefined', () => {
       const knServingResource = getKnativeServingRoutes(deploymentData, MockResources);
+      expect(knServingResource).toBeUndefined();
+    });
+    it('expect getKnativeServingServices to return service data', () => {
+      const knServingResource = getKnativeServingServices(
+        deploymentKnativeData,
+        MockKnativeResources,
+      );
+      expect(knServingResource.ksservices).toBeDefined();
+      expect(knServingResource.ksservices).toHaveLength(1);
+    });
+    it('expect getKnativeServingServices to return service as undefined', () => {
+      const knServingResource = getKnativeServingServices(deploymentData, MockResources);
       expect(knServingResource).toBeUndefined();
     });
   });

@@ -33,6 +33,7 @@ export type OverviewItem = {
   status?: React.ReactNode;
   ksroutes?: K8sResourceKind[];
   configurations?: K8sResourceKind[];
+  ksservices?: K8sResourceKind[];
   revisions?: K8sResourceKind[];
 };
 

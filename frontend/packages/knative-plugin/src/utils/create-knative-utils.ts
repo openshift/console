@@ -143,11 +143,8 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
   return knativeResource;
 };
 
-export const knativeServingResources = (namespace: string): FirehoseResource[] => {
+export const knativeServingResourcesServices = (namespace: string): FirehoseResource[] => {
   const knativeResource = [
-    ...knativeServingResourcesRevision(namespace),
-    ...knativeServingResourcesConfigurations(namespace),
-    ...knativeServingResourcesRoutes(namespace),
     {
       isList: true,
       kind: referenceForModel(ServiceModel),

@@ -2,7 +2,7 @@ import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getKnativeServiceDepResource,
-  knativeServingResources,
+  knativeServingResourcesServices,
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
@@ -12,10 +12,13 @@ import { defaultData } from './knative-serving-data';
 describe('Create knative Utils', () => {
   describe('knative Serving Resources', () => {
     const SAMPLE_NAMESPACE = 'mynamespace';
-    it('expect knativeServingResource to return revision, service, configurations, routes with proper namespace', () => {
-      const knServingResource: FirehoseResource[] = knativeServingResources(SAMPLE_NAMESPACE);
-      expect(knServingResource).toHaveLength(4);
-      expect(knServingResource[0].namespace).toBe(SAMPLE_NAMESPACE);
+    it('expect knativeServingResource to return service with proper namespace', () => {
+      const serviceServingResource: FirehoseResource[] = knativeServingResourcesServices(
+        SAMPLE_NAMESPACE,
+      );
+      expect(serviceServingResource).toHaveLength(1);
+      expect(serviceServingResource[0].namespace).toBe(SAMPLE_NAMESPACE);
+      expect(serviceServingResource[0].prop).toBe('ksservices');
     });
 
     it('expect knativeServingResourcesRevision to return revision with proper namespace', () => {
