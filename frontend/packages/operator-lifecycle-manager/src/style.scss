@@ -195,3 +195,8 @@
   display: flex;
   justify-content: space-between;
 }
+
+.catalog-source__table-row--disabled {
+  background-color: var(--pf-global--BackgroundColor--200);
+  color: var(--pf-global--Color--400);
+}

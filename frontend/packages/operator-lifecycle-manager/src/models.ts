@@ -84,3 +84,15 @@ export const OperatorGroupModel: K8sKind = {
   crd: true,
   plural: 'operatorgroups',
 };
+
+export const OperatorHubModel: K8sKind = {
+  kind: 'OperatorHub',
+  label: 'OperatorHub',
+  labelPlural: 'OperatorHubs',
+  apiGroup: 'config.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'OH',
+  namespaced: false,
+  crd: true,
+  plural: 'operatorhubs',
+};
