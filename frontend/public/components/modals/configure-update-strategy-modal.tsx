@@ -8,7 +8,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { pluralize, withHandlePromise } from '../utils';
 import { RadioInput } from '../radio';
 
-const getNumberOrPercent = (value) => {
+export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
     return null;
   }

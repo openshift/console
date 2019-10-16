@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
-import { Tooltip } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { Button, Tooltip } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { Switch } from 'patternfly-react';
 
 import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
@@ -13,6 +13,7 @@ import { Selector, ResourceLink, LoadingInline } from '../../../utils';
 import { k8sPatch } from '../../../../module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
+import { configureUpdateStrategyModal } from './configure-update-strategy';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
   if (_.isEmpty(value) && !_.isNumber(value)) {
@@ -89,7 +90,24 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
   </React.Fragment>;
 };
 
-const UpdateStrategy: React.FC<SpecCapabilityProps> = (props) => <div>{_.get(props.value, 'type', 'None')}</div>;
+const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
+  <Button
+    type="button"
+    variant="link"
+    isInline
+    onClick={() =>
+      configureUpdateStrategyModal({
+        kindObj: model,
+        resource: obj,
+        specDescriptor: descriptor,
+        specValue: value,
+      })
+    }
+  >
+    {_.get(value, 'type', 'None')}
+    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+  </Button>
+);
 
 const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<SpecCapabilityProps>>()
   .set(SpecCapability.podCount, PodCount)
