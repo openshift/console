@@ -6,8 +6,8 @@
   padding: 4px;
 
   &__success-icon {
-    color: var(--pf-global--success-color--100);
+    color: var(--pf-global--success-color--200);
     font-size: var(--pf-global--FontSize--md);
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-global--spacer--lg);
   }
 }
