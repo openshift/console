@@ -46,7 +46,7 @@ const TYPES = {
   },
 };
 
-const getType = (name) => {
+export const getType = (name) => {
   const type = TYPES[name];
   if (!_.isPlainObject(type)) {
     return {
