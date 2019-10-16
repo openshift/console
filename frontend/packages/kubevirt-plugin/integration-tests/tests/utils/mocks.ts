@@ -30,7 +30,7 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
         dataSource: null,
         resources: {
           requests: {
-            storage: '5Gi',
+            storage: '1Gi',
           },
         },
         volumeMode,
