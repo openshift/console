@@ -167,7 +167,10 @@ export const getPipelineTasks = (
   // Step 2: Push all nodes without any dependencies in different stages
   tasks.forEach((task) => {
     if (!conditions.hasFromDependency(task) && !conditions.hasRunAfterDependency(task)) {
-      out.push([task]);
+      if (out.length === 0) {
+        out.push([]);
+      }
+      out[0].push(task);
     }
   });
 

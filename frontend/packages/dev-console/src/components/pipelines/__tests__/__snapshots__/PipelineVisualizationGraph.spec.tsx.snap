@@ -93,7 +93,7 @@ exports[`PipelineVisualizationGraph should match the previous pipelineRun snapsh
     className="odc-pipeline-vis-graph__stages"
   >
     <div
-      className="odc-pipeline-vis-graph__stage"
+      className="odc-pipeline-vis-graph__stage is-parallel"
     >
       <ul
         className="odc-pipeline-vis-graph__stage-column"
@@ -113,14 +113,6 @@ exports[`PipelineVisualizationGraph should match the previous pipelineRun snapsh
             32s
           </span>
         </li>
-      </ul>
-    </div>
-    <div
-      className="odc-pipeline-vis-graph__stage"
-    >
-      <ul
-        className="odc-pipeline-vis-graph__stage-column"
-      >
         <li
           className="odc-pipeline-vis-task"
         >
