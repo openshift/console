@@ -4,6 +4,7 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
 import {
+  DetailsItem,
   Kebab,
   LabelList,
   OwnerReferences,
@@ -22,11 +23,14 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
     return <Component {...props} />;
   };
 
-const getTolerations = (obj: K8sResourceKind): Toleration[] => {
+const getTolerationsPath = (obj: K8sResourceKind): string => {
   // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.
-  return obj.kind === 'Pod'
-    ? _.get(obj, 'spec.tolerations')
-    : _.get(obj, 'spec.template.spec.tolerations');
+  return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
+};
+
+const getNodeSelectorPath = (obj: K8sResourceKind): string => {
+  // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.
+  return obj.kind === 'Pod' ? 'spec.nodeSelector' : 'spec.template.spec.nodeSelector';
 };
 
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
@@ -41,7 +45,9 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
-  const tolerations = showTolerations ? getTolerations(resource) : null;
+  const nodeSelectorPath = getNodeSelectorPath(resource);
+  const tolerationsPath = getTolerationsPath(resource);
+  const tolerations: Toleration[] = _.get(resource, tolerationsPath);
 
   const canUpdate = useAccessReview({
     group: model.apiGroup,
@@ -53,43 +59,37 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
 
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
-      <dt>Name</dt>
-      <dd>{metadata.name || '-'}</dd>
-      {metadata.namespace ? <dt>Namespace</dt> : null}
-      {metadata.namespace ? (
-        <dd>
+      <DetailsItem label="Name" obj={resource} path="metadata.name" />
+      {metadata.namespace && (
+        <DetailsItem label="Namespace" obj={resource} path="metadata.namespace">
           <ResourceLink
             kind="Namespace"
             name={metadata.namespace}
             title={metadata.uid}
             namespace={null}
           />
-        </dd>
-      ) : null}
+        </DetailsItem>
+      )}
       {type ? <dt>Type</dt> : null}
       {type ? <dd>{type}</dd> : null}
-      <dt>Labels</dt>
-      <dd>
+      <DetailsItem label="Labels" obj={resource} path="metadata.labels">
         <LabelList kind={reference} labels={metadata.labels} />
-      </dd>
-      {showPodSelector && <dt>Pod Selector</dt>}
+      </DetailsItem>
       {showPodSelector && (
-        <dd>
+        <DetailsItem label="Pod Selector" obj={resource} path={podSelector}>
           <Selector
             selector={_.get(resource, podSelector)}
             namespace={_.get(resource, 'metadata.namespace')}
           />
-        </dd>
+        </DetailsItem>
       )}
-      {showNodeSelector && <dt>Node Selector</dt>}
       {showNodeSelector && (
-        <dd>
-          <Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} />
-        </dd>
+        <DetailsItem label="Node Selector" obj={resource} path={nodeSelectorPath}>
+          <Selector kind="Node" selector={_.get(resource, nodeSelectorPath)} />
+        </DetailsItem>
       )}
-      {showTolerations && <dt>Tolerations</dt>}
       {showTolerations && (
-        <dd>
+        <DetailsItem label="Tolerations" obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
               type="button"
@@ -103,11 +103,10 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
           ) : (
             pluralize(_.size(tolerations), 'Toleration')
           )}
-        </dd>
+        </DetailsItem>
       )}
-      {showAnnotations && <dt>Annotations</dt>}
       {showAnnotations && (
-        <dd>
+        <DetailsItem label="Annotations" obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
               data-test-id="edit-annotations"
@@ -122,17 +121,15 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
           ) : (
             pluralize(_.size(metadata.annotations), 'Annotation')
           )}
-        </dd>
+        </DetailsItem>
       )}
       {children}
-      <dt>Created At</dt>
-      <dd>
+      <DetailsItem label="Created At" obj={resource} path="metadata.creationTimestamp">
         <Timestamp timestamp={metadata.creationTimestamp} />
-      </dd>
-      <dt>Owner</dt>
-      <dd>
+      </DetailsItem>
+      <DetailsItem label="Owner" obj={resource} path="metadata.ownerReferences">
         <OwnerReferences resource={resource} />
-      </dd>
+      </DetailsItem>
     </dl>
   );
 };

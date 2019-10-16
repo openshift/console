@@ -17,25 +17,25 @@ import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   AsyncComponent,
+  DetailsItem,
   Kebab,
   NodeLink,
+  OwnerReferences,
   ResourceIcon,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
   ScrollToTopOnMount,
   SectionHeading,
-  Selector,
   Timestamp,
-  navFactory,
-  units,
   humanizeCpuCores,
   humanizeDecimalBytes,
-  OwnerReferences,
+  navFactory,
+  pluralize,
+  units,
 } from './utils';
 import { PodLogs } from './pod-logs';
 import { requirePrometheus, Area } from './graphs';
-import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 import { PodDashboard } from './dashboard/pod-dashboard/pod-dashboard';
@@ -275,39 +275,30 @@ const PodGraphs = requirePrometheus(({ pod }) => (
 export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
-  const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
   return (
     <dl className="co-m-pane__details">
       <dt>Status</dt>
       <dd>
         <PodStatus pod={pod} />
       </dd>
-      <dt>Restart Policy</dt>
-      <dd>{getRestartPolicyLabel(pod)}</dd>
-      {activeDeadlineSeconds && (
-        <React.Fragment>
-          <dt>Active Deadline</dt>
-          {/* Convert to ms for formatDuration */}
-          <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
-        </React.Fragment>
-      )}
-      <dt>Pod IP</dt>
-      <dd>{pod.status.podIP || '-'}</dd>
-      <dt>Node</dt>
-      <dd>
+      <DetailsItem label="Restart Policy" obj={pod} path="spec.restartPolicy">
+        {getRestartPolicyLabel(pod)}
+      </DetailsItem>
+      <DetailsItem label="Active Deadline Seconds" obj={pod} path="spec.activeDeadlineSeconds">
+        {pod.spec.progressDeadlineSeconds
+          ? pluralize(pod.spec.activeDeadlineSeconds, 'second')
+          : 'Not Configured'}
+      </DetailsItem>
+      <DetailsItem label="Pod IP" obj={pod} path="status.podIP" />
+      <DetailsItem label="Node" obj={pod} path="spec.nodeName">
         <NodeLink name={pod.spec.nodeName} />
-      </dd>
+      </DetailsItem>
     </dl>
   );
 };
 
 export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({ pod }) => (
-  <ResourceSummary resource={pod} showTolerations>
-    <dt>Node Selector</dt>
-    <dd>
-      <Selector kind="Node" selector={pod.spec.nodeSelector} />
-    </dd>
-  </ResourceSummary>
+  <ResourceSummary resource={pod} showNodeSelector showTolerations />
 );
 
 const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {

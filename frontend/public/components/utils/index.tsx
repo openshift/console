@@ -57,4 +57,5 @@ export * from './dom-utils';
 export * from './hint-block';
 export * from './owner-references';
 export * from './field-level-help';
+export * from './details-item';
 export * from './types';
