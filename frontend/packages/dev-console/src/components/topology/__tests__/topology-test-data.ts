@@ -42,6 +42,9 @@ export const sampleDeploymentConfigs: Resource = {
         },
       },
       spec: {
+        strategy: {
+          type: 'Rolling',
+        },
         template: {
           metadata: {
             creationTimestamp: null,

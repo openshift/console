@@ -1,10 +1,13 @@
-import { isIdled, isKnativeServing, getPodStatus } from '../pod-utils';
+import { isIdled, isKnativeServing, getPodStatus, getPodData } from '../pod-utils';
 import {
   deploymentConfig,
   notIdledDeploymentConfig,
   deployment,
   mockPod,
+  statefulSets,
+  allpods,
 } from '../__mocks__/pod-utils-test-data';
+import { PodControllerOverviewItem } from '../../types';
 
 describe('Pod Utils:', () => {
   it('isIdle should return true', () => {
@@ -31,5 +34,42 @@ describe('Pod Utils:', () => {
   it('getPodStatus should return `pending` phase', () => {
     const mData = { ...mockPod, status: { phase: 'Pending' } };
     expect(getPodStatus(mData)).toBe('Pending');
+  });
+
+  it('should return pods if there are no rolling strategy', () => {
+    const current: PodControllerOverviewItem = { pods: [], alerts: {}, revision: 0, obj: {} };
+    const previous: PodControllerOverviewItem = { pods: [], alerts: {}, revision: 0, obj: {} };
+    expect(getPodData(statefulSets, allpods, current, previous, false)).toEqual({
+      inProgressDeploymentData: null,
+      completedDeploymentData: allpods,
+    });
+  });
+
+  it('should return pods from current during scaling (Deployment anotation complete)', () => {
+    const current: PodControllerOverviewItem = {
+      pods: [],
+      alerts: {},
+      revision: 0,
+      obj: {},
+    };
+    const previous: PodControllerOverviewItem = { pods: allpods, alerts: {}, revision: 0, obj: {} };
+    expect(getPodData(deploymentConfig, allpods, current, previous, false)).toEqual({
+      inProgressDeploymentData: null,
+      completedDeploymentData: [],
+    });
+  });
+
+  it('should return pods in both `inProgressDeploymentData` `completedDeploymentData` during a rollout', () => {
+    const current: PodControllerOverviewItem = {
+      pods: [],
+      alerts: {},
+      revision: 0,
+      obj: {},
+    };
+    const previous: PodControllerOverviewItem = { pods: allpods, alerts: {}, revision: 0, obj: {} };
+    expect(getPodData(deploymentConfig, allpods, current, previous, true)).toEqual({
+      inProgressDeploymentData: [],
+      completedDeploymentData: allpods,
+    });
   });
 });

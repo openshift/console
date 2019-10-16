@@ -88,7 +88,7 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  * @param cheURL che link
  */
 const createTopologyNodeData = (dc: OverviewItem, cheURL?: string): TopologyDataObject => {
-  const { obj: deploymentConfig } = dc;
+  const { obj: deploymentConfig, current, previous, isRollingOut } = dc;
   const dcUID = _.get(deploymentConfig, 'metadata.uid');
   const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
@@ -111,9 +111,13 @@ const createTopologyNodeData = (dc: OverviewItem, cheURL?: string): TopologyData
         getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
         getImageForIconClass(`icon-openshift`),
       isKnativeResource: isKnativeServing(deploymentConfig, 'metadata.labels'),
+      build: _.get(buildConfigs[0], 'builds[0]'),
       donutStatus: {
         pods: dc.pods,
-        build: _.get(buildConfigs[0], 'builds[0]'),
+        current,
+        previous,
+        isRollingOut,
+        dc: deploymentConfig,
       },
     },
   };

@@ -6,18 +6,24 @@ import { LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import { PodRing, OverviewItem } from '@console/shared';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { OverviewItem } from '@console/shared';
 
 const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetailsProps> = ({
-  item: { obj: dc, pods: pods },
+  item: { obj: dc, pods: pods, current, previous, isRollingOut },
 }) => {
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
       <div className="resource-overview__pod-counts">
-        <PodRing
+        <PodRingSet
           key={dc.metadata.uid}
-          pods={pods}
+          podData={{
+            pods,
+            current,
+            previous,
+            isRollingOut,
+          }}
           obj={dc}
           resourceKind={DeploymentConfigModel}
           path="/spec/replicas"

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Status, calculateRadius, PodStatus } from '@console/shared';
+import { Status, calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -10,6 +10,7 @@ import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import KnativeIcon from './KnativeIcon';
+import PodSet from './PodSet';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,
@@ -18,22 +19,20 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   size,
   ...others
 }) => {
-  const { radius, podStatusOuterRadius, podStatusInnerRadius, decoratorRadius } = calculateRadius(
-    size,
-  );
+  const { radius, decoratorRadius } = calculateRadius(size);
   const {
     data: {
-      donutStatus: { build },
+      build,
+      donutStatus: { isRollingOut },
     },
   } = workload;
   const repoIcon = routeDecoratorIcon(workload.data.editUrl, decoratorRadius);
-
   return (
     <BaseNode
       x={x}
       y={y}
       outerRadius={radius}
-      innerRadius={radius * 0.55}
+      innerRadius={isRollingOut ? radius * 0.45 : radius * 0.55}
       icon={workload.data.builderImage}
       label={workload.name}
       kind={workload.data.kind}
@@ -103,14 +102,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
         ),
       ]}
     >
-      <PodStatus
-        x={-size / 2}
-        y={-size / 2}
-        innerRadius={podStatusInnerRadius}
-        outerRadius={podStatusOuterRadius}
-        data={workload.data.donutStatus.pods}
-        size={size}
-      />
+      <PodSet size={size} data={workload.data.donutStatus} />
       {workload.data.isKnativeResource && (
         <KnativeIcon
           x={-radius * 0.15}

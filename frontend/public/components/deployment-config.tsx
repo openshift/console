@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Status, PodRingController, PodRing } from '@console/shared';
+import { Status, PodRingController } from '@console/shared';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -11,14 +11,12 @@ import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table } from './factory';
 import {
   AsyncComponent,
-  history,
   Kebab,
   KebabAction,
   ContainerTable,
   navFactory,
   pluralize,
   ResourceSummary,
-  resourcePath,
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
@@ -28,6 +26,7 @@ import {
 import { ReplicationControllersPage } from './replication-controller';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -47,27 +46,13 @@ const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
   return k8sCreate(DeploymentConfigModel, req, opts);
 };
 
-const determineReplicationControllerName = (dc: K8sResourceKind): string => {
-  return `${dc.metadata.name}-${dc.status.latestVersion}`;
-};
-
 const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: 'Start Rollout',
   callback: () =>
-    rollout(obj)
-      .then((deployment) => {
-        history.push(
-          resourcePath(
-            'ReplicationController',
-            determineReplicationControllerName(deployment),
-            deployment.metadata.namespace,
-          ),
-        );
-      })
-      .catch((err) => {
-        const error = err.message;
-        errorModal({ error });
-      }),
+    rollout(obj).catch((err) => {
+      const error = err.message;
+      errorModal({ error });
+    }),
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
@@ -157,9 +142,9 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
           kind={dc.kind}
           render={(d) => {
             return d.loaded ? (
-              <PodRing
+              <PodRingSet
                 key={dc.metadata.uid}
-                pods={d.data[dc.metadata.uid].pods}
+                podData={d.data[dc.metadata.uid]}
                 obj={dc}
                 resourceKind={DeploymentConfigModel}
                 path="/spec/replicas"
