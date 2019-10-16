@@ -14,6 +14,7 @@ import {
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import * as models from './models';
 
 type ConsumedExtensions =
@@ -35,6 +36,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+        models.NooBaaBucketClassModel,
+      )}/~new`,
+      loader: () =>
+        import('./components/bucket-class/create-bc' /* webpackChunkName: "create-bc" */).then(
+          (m) => m.default,
+        ),
     },
   },
   {

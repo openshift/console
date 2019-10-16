@@ -1,0 +1,53 @@
+/* Step pages */
+.nb-create-bc-step-page {
+    display: block;
+    width: 100%;
+}
+
+.nb-bc-bs-table__data {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nb-create-bc-step-page-form {
+    display: block;
+    width:80%;
+    margin-right: auto;
+    margin-bottom:var(--pf-global--spacer--lg);
+}
+
+.nb-create-bc-step-page-form__element {
+    margin-top:var(--pf-global--spacer--md);
+    margin-bottom:var(--pf-global--spacer--md);
+}
+
+.nb-create-bc-step-page-form__element--light-text {
+    color:var(--pf-global--Color--400);
+}
+
+.nb-bc-step-page-form__element--short {
+    width:30%;
+    display:flex;
+    margin-top: var(--pf-global--spacer--md);
+}
+
+.nb-bc-bs-page__table--short {
+    width:90%;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Review page */
+.nb-create-bc-step-page-review__item {
+    margin-bottom: var(--pf-global--spacer--lg);
+    margin-top: var(--pf-global--spacer--lg);
+}
+
+.nb-create-bc-step-page-review__item-header {
+    color:var(--pf-global--Color--400);
+}
+
+.nb-create-bc-step-page-review__item-tier1 {
+    margin-bottom: var(--pf-global--spacer--lg);
+}
