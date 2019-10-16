@@ -78,7 +78,7 @@ const OngoingActivity = withDashboardResources(
 
     return (
       <OngoingActivityBody
-        loaded={resiliencyProgressError}
+        loaded={resiliencyProgress || resiliencyProgressError}
         resourceActivities={resourceActivities}
         prometheusActivities={prometheusActivities}
       />
