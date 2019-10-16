@@ -3,7 +3,6 @@ import { DetailsPage, DetailsPageProps } from '@console/internal/components/fact
 import { Kebab, navFactory } from '@console/internal/components/utils';
 import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
-import { DevPreviewBadge } from '@console/shared';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
   rerunPipeline,
@@ -94,7 +93,6 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             ),
           },
         ]}
-        badge={<DevPreviewBadge />}
       />
     );
   }

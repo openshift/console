@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
-import { DevPreviewBadge } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { runFilters } from '../pipelines/PipelineRuns';
 import { PipelineRunModel } from '../../models';
@@ -18,7 +17,6 @@ const PipelineRunResourceList: React.FC<PipelineRunResourceListProps> = ({ names
     namespace={namespace}
     ListComponent={PipelineRunsList}
     rowFilters={runFilters}
-    badge={<DevPreviewBadge />}
   />
 );
 

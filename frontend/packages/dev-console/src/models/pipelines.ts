@@ -1,4 +1,5 @@
 import { K8sKind } from '@console/internal/module/k8s';
+import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 
 export const PipelineModel: K8sKind = {
   apiGroup: 'tekton.dev',
@@ -11,6 +12,7 @@ export const PipelineModel: K8sKind = {
   id: 'pipeline',
   labelPlural: 'Pipelines',
   crd: true,
+  badge: BadgeType.DEV,
 };
 
 export const PipelineRunModel: K8sKind = {
@@ -24,6 +26,7 @@ export const PipelineRunModel: K8sKind = {
   id: 'pipelinerun',
   labelPlural: 'Pipeline Runs',
   crd: true,
+  badge: BadgeType.DEV,
 };
 
 export const TaskModel: K8sKind = {
@@ -37,6 +40,7 @@ export const TaskModel: K8sKind = {
   id: 'task',
   labelPlural: 'Tasks',
   crd: true,
+  badge: BadgeType.DEV,
 };
 
 export const TaskRunModel: K8sKind = {
@@ -50,6 +54,7 @@ export const TaskRunModel: K8sKind = {
   id: 'taskrun',
   labelPlural: 'Task Runs',
   crd: true,
+  badge: BadgeType.DEV,
 };
 
 export const PipelineResourceModel: K8sKind = {
@@ -63,4 +68,5 @@ export const PipelineResourceModel: K8sKind = {
   labelPlural: 'Pipeline Resources',
   namespaced: true,
   crd: true,
+  badge: BadgeType.DEV,
 };

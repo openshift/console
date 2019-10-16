@@ -9,6 +9,7 @@ import {
   GroupVersionKind,
   isGroupVersionKind,
   allModels,
+  getGroupVersionKind,
 } from './module/k8s';
 import { RootState } from './redux';
 
@@ -51,9 +52,21 @@ export const connectToPlural: ConnectToPlural = connect(
   ) => {
     const plural = props.plural || _.get(props, 'match.params.plural');
 
-    const kindObj = isGroupVersionKind(plural)
-      ? state.k8s.getIn(['RESOURCES', 'models']).get(plural)
-      : allModels().find((model) => model.plural === plural);
+    const groupVersionKind = getGroupVersionKind(plural);
+
+    let kindObj: K8sKind = null;
+    if (groupVersionKind) {
+      const [group, version, kind] = groupVersionKind;
+      kindObj = allModels().find((model) => {
+        return model.apiGroup === group && model.apiVersion === version && model.kind === kind;
+      });
+
+      if (!kindObj) {
+        kindObj = state.k8s.getIn(['RESOURCES', 'models']).get(plural);
+      }
+    } else {
+      kindObj = allModels().find((model) => model.plural === plural);
+    }
 
     const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
 
