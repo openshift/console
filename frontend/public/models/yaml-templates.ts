@@ -854,6 +854,18 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.GroupModel), 'default'],
+    `
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: example
+users:
+- user1
+- user2
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.ClusterServiceBrokerModel), 'default'],
     `
 apiVersion: servicecatalog.k8s.io/v1beta1

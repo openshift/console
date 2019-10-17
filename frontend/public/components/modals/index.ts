@@ -99,3 +99,13 @@ export const createAlertRoutingModal = (props) =>
   import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) =>
     m.createAlertRoutingModal(props),
   );
+
+export const addUsersModal = (props) =>
+  import('./add-users-modal' /* webpackChunkName: "add-users-modal" */).then((m) =>
+    m.addUsersModal(props),
+  );
+
+export const removeUserModal = (props) =>
+  import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
+    m.removeUserModal(props),
+  );

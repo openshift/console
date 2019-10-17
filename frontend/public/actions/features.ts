@@ -2,7 +2,12 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { getInfrastructurePlatform } from '@console/shared/src/selectors';
-import { InfrastructureModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
+import {
+  GroupModel,
+  InfrastructureModel,
+  SelfSubjectAccessReviewModel,
+  UserModel,
+} from '../models';
 import { k8sBasePath, ClusterVersionKind, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
@@ -208,6 +213,14 @@ const ssarChecks = [
     resourceAttributes: {
       group: UserModel.apiGroup,
       resource: UserModel.plural,
+      verb: 'list',
+    },
+  },
+  {
+    flag: FLAGS.CAN_LIST_GROUPS,
+    resourceAttributes: {
+      group: GroupModel.apiGroup,
+      resource: GroupModel.plural,
       verb: 'list',
     },
   },

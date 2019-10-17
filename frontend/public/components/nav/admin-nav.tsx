@@ -11,6 +11,7 @@ import {
   BuildModel,
   ChargebackReportModel,
   DeploymentConfigModel,
+  GroupModel,
   ImageStreamModel,
   MachineAutoscalerModel,
   MachineConfigModel,
@@ -199,6 +200,26 @@ const AdminNav = () => (
       />
     </NavSection>
 
+    <NavSection title="User Management">
+      <ResourceClusterLink
+        resource={referenceForModel(UserModel)}
+        name="Users"
+        required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]}
+      />
+      <ResourceClusterLink
+        resource={referenceForModel(GroupModel)}
+        name="Groups"
+        required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_GROUPS]}
+      />
+      <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+      <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
+      <ResourceNSLink
+        resource="rolebindings"
+        name="Role Bindings"
+        startsWith={rolebindingsStartsWith}
+      />
+    </NavSection>
+
     <NavSection title="Administration">
       <HrefLink
         href="/settings/cluster"
@@ -208,18 +229,6 @@ const AdminNav = () => (
         startsWith={clusterSettingsStartsWith}
       />
       <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-      <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-      <ResourceClusterLink
-        resource={referenceForModel(UserModel)}
-        name="Users"
-        required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]}
-      />
-      <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
-      <ResourceNSLink
-        resource="rolebindings"
-        name="Role Bindings"
-        startsWith={rolebindingsStartsWith}
-      />
       <ResourceNSLink
         resource="resourcequotas"
         name="Resource Quotas"

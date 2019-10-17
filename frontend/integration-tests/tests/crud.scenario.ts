@@ -42,7 +42,8 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('deploymentconfigs', { kind: 'DeploymentConfig' })
     .set('buildconfigs', { kind: 'BuildConfig' })
     .set('imagestreams', { kind: 'ImageStream' })
-    .set('routes', { kind: 'Route' });
+    .set('routes', { kind: 'Route' })
+    .set('groups', { kind: 'user.openshift.io~v1~Group', namespaced: false });
   const serviceCatalogObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>().set(
     'clusterservicebrokers',
     { kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false },
