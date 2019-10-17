@@ -36,7 +36,7 @@ then
 fi
 
 yarn install
-yarn run webdriver-update
+yarn run webdriver-update --versions.chrome=77.0.3865.120
 
 if [ $# -gt 0 ] && [ -n "$1" ];
 then

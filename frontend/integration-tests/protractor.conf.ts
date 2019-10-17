@@ -38,6 +38,7 @@ const junitReporter = new JUnitXmlReporter({
 const browserLogs: logging.Entry[] = [];
 
 const suite = (tests: string[]): string[] =>
+const suite = (tests: string[]) =>
   (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
     'tests/base.scenario.ts',
     ...tests,
@@ -46,6 +47,85 @@ const suite = (tests: string[]): string[] =>
 // TODO(vojtech): move base Console test suites to console-app package
 const testSuites = {
   filter: suite(['tests/filter.scenario.ts']),
+export const config: Config = {
+  framework: 'jasmine',
+  directConnect: true,
+  skipSourceMapSupport: true,
+  jasmineNodeOpts: {
+    print: () => null,
+    defaultTimeoutInterval: 40000,
+  },
+  logLevel: tap ? 'ERROR' : 'INFO',
+  plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
+  capabilities: {
+    browserName: 'chrome',
+    acceptInsecureCerts: true,
+    chromeOptions: {
+      // A path to chrome binary, if undefined will use system chrome browser.
+      binary: process.env.CHROME_BINARY_PATH,
+      args: [
+        ...(process.env.NO_HEADLESS ? [] : ['--headless']),
+        '--disable-gpu',
+        '--no-sandbox',
+        '--window-size=1920,1200',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+        '--disable-raf-throttling',
+        // Avoid crashes when running in a container due to small /dev/shm size
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=715363
+        '--disable-dev-shm-usage',
+      ],
+      prefs: {
+        // eslint-disable-next-line camelcase
+        'profile.password_manager_enabled': false,
+        // eslint-disable-next-line camelcase
+        credentials_enable_service: false,
+        // eslint-disable-next-line camelcase
+        password_manager_enabled: false,
+      },
+    },
+  },
+  beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
+  onPrepare: () => {
+    const addReporter = (jasmine as any).getEnv().addReporter;
+    browser.waitForAngularEnabled(false);
+    addReporter(htmlReporter);
+    addReporter(junitReporter);
+    if (tap) {
+      addReporter(new TapReporter());
+    } else {
+      addReporter(new ConsoleReporter());
+    }
+  },
+  onComplete: async () => {
+    const consoleLogStream = createWriteStream(`${screenshotsDir}/browser.log`, { flags: 'a' });
+    browserLogs.forEach((log) => {
+      const { level, message } = log;
+      const messageStr = _.isArray(message) ? message.join(' ') : message;
+      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
+    });
+
+    const url = await browser.getCurrentUrl();
+    console.log('Last browser URL: ', url);
+
+    // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
+    // since we're using kubectl instead of oc.
+    const resource =
+      browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
+    await browser.close();
+    execSync(
+      `if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`,
+    );
+  },
+  afterLaunch: (exitCode) => {
+    failFast.clean();
+    return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
+  },
+  suites: {
+    filter: suite(['tests/filter.scenario.ts']),
+    topology: [
+      'tests/devconsole/topology.scenario.ts',
+    ],
   annotation: suite(['tests/modal-annotations.scenario.ts']),
   environment: suite(['tests/environment.scenario.ts']),
   secrets: suite(['tests/secrets.scenario.ts']),
@@ -198,6 +278,96 @@ export const config: Config = {
     execSync(
       `if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`,
     );
+    annotation: suite(['tests/modal-annotations.scenario.ts']),
+    environment: suite(['tests/environment.scenario.ts']),
+    secrets: suite(['tests/secrets.scenario.ts']),
+    storage: suite(['tests/storage.scenario.ts']),
+    crud: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/environment.scenario.ts',
+    ]),
+    monitoring: suite(['tests/monitoring.scenario.ts']),
+    newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
+    olmFull: suite([
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
+    ]),
+    performance: suite(['tests/performance.scenario.ts']),
+    serviceCatalog: suite([
+      'tests/service-catalog/service-catalog.scenario.ts',
+      'tests/service-catalog/service-broker.scenario.ts',
+      'tests/service-catalog/service-class.scenario.ts',
+      'tests/service-catalog/service-binding.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
+    ]),
+    overview: suite(['tests/overview/overview.scenario.ts']),
+    crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
+    e2e: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
+    ]),
+    release: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+    ]),
+    'kubevirt-plugin': suite([
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.wizard.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.yaml.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.actions.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.migration.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.resources.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.clone.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.detail.flavor.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.template.wizard.scenario.ts',
+    ]),
+    all: suite([
+      'tests/crud.scenario.ts',
+      'tests/overview/overview.scenareio.ts',
+      'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
+      'tests/olm/**/*.scenario.ts',
+      'tests/service-catalog/**/*.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/operator-hub/operator-hub.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+    ]),
+    clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
+    login: ['tests/login.scenario.ts'],
+    devconsole: [
+      'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
+    ],
   },
   afterLaunch: (exitCode) => {
     failFast.clean();
