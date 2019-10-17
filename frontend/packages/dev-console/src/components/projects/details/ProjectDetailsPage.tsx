@@ -1,10 +1,24 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
+import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { ProjectsDetailsPage } from '@console/internal/components/namespace';
 import { ProjectModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
-import { PROJECT_LIST_URI, useActiveNamespace, UseActiveNamespaceProps } from './utils';
+import {
+  PROJECT_LIST_URI,
+  redirectURI,
+  useActiveNamespace,
+  UseActiveNamespaceProps,
+} from './utils';
+
+const handleNamespaceChange = (newNamespace: string): void => {
+  if (newNamespace === ALL_NAMESPACES_KEY) {
+    return;
+  }
+
+  history.push(redirectURI(newNamespace));
+};
 
 export const ProjectDetailsPage: React.FC<UseActiveNamespaceProps> = ({
   activeNamespace,
@@ -17,7 +31,11 @@ export const ProjectDetailsPage: React.FC<UseActiveNamespaceProps> = ({
   }
 
   return (
-    <NamespacedPage hideApplications variant={NamespacedPageVariants.light}>
+    <NamespacedPage
+      hideApplications
+      variant={NamespacedPageVariants.light}
+      onNamespaceChange={handleNamespaceChange}
+    >
       <ProjectsDetailsPage
         {...props}
         breadcrumbsFor={() => []}

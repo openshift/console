@@ -502,6 +502,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   render() {
     const {
       activeNamespace,
+      onNamespaceChange,
       setActiveNamespace,
       canListNS,
       useProjects,
@@ -545,6 +546,7 @@ class NamespaceBarDropdowns_ extends React.Component {
           onSubmit: (newProject) => setActiveNamespace(newProject.metadata.name),
         });
       } else {
+        onNamespaceChange && onNamespaceChange(newNamespace);
         setActiveNamespace(newNamespace);
       }
     };
@@ -580,11 +582,15 @@ const NamespaceBarDropdowns = connect(
   namespaceBarDropdownDispatchToProps,
 )(NamespaceBarDropdowns_);
 
-const NamespaceBar_ = ({ useProjects, children, disabled }) => {
+const NamespaceBar_ = ({ useProjects, children, disabled, onNamespaceChange }) => {
   return (
     <div className="co-namespace-bar">
       <Firehose resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}>
-        <NamespaceBarDropdowns useProjects={useProjects} disabled={disabled}>
+        <NamespaceBarDropdowns
+          useProjects={useProjects}
+          disabled={disabled}
+          onNamespaceChange={onNamespaceChange}
+        >
           {children}
         </NamespaceBarDropdowns>
       </Firehose>
@@ -598,7 +604,7 @@ const namespaceBarStateToProps = ({ k8s }) => {
     useProjects,
   };
 };
-/** @type {React.FC<{children?: ReactNode, disabled?: boolean}>} */
+/** @type {React.FC<{children?: ReactNode, disabled?: boolean, onNamespaceChange?: Function}>} */
 export const NamespaceBar = connect(namespaceBarStateToProps)(NamespaceBar_);
 
 export const NamespacesDetailsPage = (props) => (
