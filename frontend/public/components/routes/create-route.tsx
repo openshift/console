@@ -41,7 +41,7 @@ const DroppableFileInput = (props) => (
   />
 );
 
-export class CreateRoute extends React.Component<null, CreateRouteState> {
+export class CreateRoute extends React.Component<{}, CreateRouteState> {
   state = {
     name: '',
     hostname: '',
@@ -623,7 +623,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
   }
 }
 
-const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> = (props) => {
+export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> = (props) => {
   const [weight, setWeight] = React.useState(props.weight);
   const [name, setName] = React.useState(props.name);
 
