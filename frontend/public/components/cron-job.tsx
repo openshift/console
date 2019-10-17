@@ -2,7 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { CronJobKind } from '../module/k8s';
 import {
   ContainerTable,
   DetailsItem,
@@ -72,7 +74,17 @@ const CronJobTableHeader = () => {
 };
 CronJobTableHeader.displayName = 'CronJobTableHeader';
 
-const CronJobTableRow = ({ obj: cronjob, index, key, style }) => {
+const CronJobTableRow = ({
+  obj: cronjob,
+  index,
+  key,
+  style,
+}: {
+  obj: CronJobKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   return (
     <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -105,7 +117,7 @@ const CronJobTableRow = ({ obj: cronjob, index, key, style }) => {
 };
 CronJobTableRow.displayName = 'CronJobTableRow';
 
-const Details = ({ obj: cronjob }) => {
+const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
   return (
     <>
@@ -149,7 +161,7 @@ const Details = ({ obj: cronjob }) => {
                 path="spec.jobTemplate.spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? pluralize(job.spec.progressDeadlineSeconds, 'second')
+                  ? pluralize(job.spec.activeDeadlineSeconds, 'second')
                   : 'Not Configured'}
               </DetailsItem>
             </dl>
@@ -164,28 +176,43 @@ const Details = ({ obj: cronjob }) => {
   );
 };
 
-export const CronJobsList = (props) => (
+export const CronJobsList: React.FC = (props) => (
   <Table
     {...props}
-    aria-label="Cron Jobs"
+    aria-label={CronJobModel.labelPlural}
     Header={CronJobTableHeader}
     Row={CronJobTableRow}
     virtualize
   />
 );
 
-export const CronJobsPage = (props) => (
+export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
   <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
 );
 
-export const CronJobsDetailsPage = (props) => (
+export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    kind={kind}
     menuActions={menuActions}
     pages={[
-      navFactory.details(Details),
+      navFactory.details(CronJobDetails),
       navFactory.editYaml(),
       navFactory.events(ResourceEventStream),
     ]}
   />
 );
+
+type CronJobDetailsProps = {
+  obj: CronJobKind;
+};
+
+type CronJobsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type CronJobsDetailsPageProps = {
+  match: any;
+};

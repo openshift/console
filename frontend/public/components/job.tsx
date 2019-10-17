@@ -4,13 +4,14 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { getJobTypeAndCompletions } from '../module/k8s';
+import { getJobTypeAndCompletions, K8sKind, JobKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
   ContainerTable,
   DetailsItem,
   Kebab,
+  KebabAction,
   LabelList,
   ResourceKebab,
   ResourceLink,
@@ -23,7 +24,7 @@ import {
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 
-const ModifyJobParallelism = (kind, obj) => ({
+const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   label: 'Edit Parallelism',
   callback: () =>
     configureJobParallelismModal({
@@ -38,7 +39,7 @@ const ModifyJobParallelism = (kind, obj) => ({
     verb: 'patch',
   },
 });
-const menuActions = [
+const menuActions: KebabAction[] = [
   ModifyJobParallelism,
   ...Kebab.getExtensionsActionsForKind(JobModel),
   ...Kebab.factory.common,
@@ -95,7 +96,17 @@ const JobTableHeader = () => {
 };
 JobTableHeader.displayName = 'JobTableHeader';
 
-const JobTableRow = ({ obj: job, index, key, style }) => {
+const JobTableRow = ({
+  obj: job,
+  index,
+  key,
+  style,
+}: {
+  obj: JobKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   const { type, completions } = getJobTypeAndCompletions(job);
   return (
     <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
@@ -131,7 +142,7 @@ const JobTableRow = ({ obj: job, index, key, style }) => {
 };
 JobTableRow.displayName = 'JobTableRow';
 
-const Details = ({ obj: job }) => (
+const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
   <>
     <div className="co-m-pane__body">
       <div className="row">
@@ -146,7 +157,7 @@ const Details = ({ obj: job }) => (
               path="spec.activeDeadlineSeconds"
             >
               {job.spec.activeDeadlineSeconds
-                ? pluralize(job.spec.progressDeadlineSeconds, 'second')
+                ? pluralize(job.spec.activeDeadlineSeconds, 'second')
                 : 'Not Configured'}
             </DetailsItem>
           </ResourceSummary>
@@ -188,16 +199,39 @@ const Details = ({ obj: job }) => (
 );
 
 const { details, pods, editYaml, events } = navFactory;
-const JobsDetailsPage = (props) => (
+const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    kind={kind}
     menuActions={menuActions}
-    pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
+    pages={[details(JobDetails), editYaml(), pods(), events(ResourceEventStream)]}
   />
 );
-const JobsList = (props) => (
-  <Table {...props} aria-label="Jobs" Header={JobTableHeader} Row={JobTableRow} virtualize />
+const JobsList: React.FC = (props) => (
+  <Table
+    {...props}
+    aria-label={JobModel.labelPlural}
+    Header={JobTableHeader}
+    Row={JobTableRow}
+    virtualize
+  />
 );
 
-const JobsPage = (props) => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;
+const JobsPage: React.FC<JobsPageProps> = (props) => (
+  <ListPage ListComponent={JobsList} kind={kind} canCreate={true} {...props} />
+);
 export { JobsList, JobsPage, JobsDetailsPage };
+
+type JobsDetailsProps = {
+  obj: JobKind;
+};
+
+type JobsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type JobsDetailsPageProps = {
+  match: any;
+};
