@@ -59,7 +59,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/health-card/health-card' /* webpackChunkName: "object-service-health-card" */
+          './components/status-card/status-card' /* webpackChunkName: "object-service-status-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },

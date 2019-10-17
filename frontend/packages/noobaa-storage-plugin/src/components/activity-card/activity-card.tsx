@@ -18,7 +18,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
-import { isDataResiliencyActivity } from '../../utils';
+import { isDataResiliencyActivity } from './data-resiliency-activity/data-resiliency-activity';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };

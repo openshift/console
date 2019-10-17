@@ -14,7 +14,7 @@ export enum ObjectDataReductionQueries {
   LOGICAL_SAVINGS_QUERY = 'NooBaa_object_savings_logical_size',
 }
 
-export enum HealthCardQueries {
+export enum StatusCardQueries {
   BUCKETS_COUNT = 'NooBaa_num_buckets',
   UNHEALTHY_BUCKETS = 'NooBaa_num_unhealthy_buckets',
   POOLS_COUNT = 'NooBaa_num_pools',

@@ -1,0 +1,92 @@
+import * as _ from 'lodash';
+import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { PrometheusResponse } from '@console/internal/components/graphs';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { getGaugeValue, getResiliencyProgress } from '../../utils';
+
+const NooBaaStatus = [
+  {
+    state: HealthState.ERROR,
+    message: 'MCG is not running',
+  },
+  {
+    state: HealthState.ERROR,
+    message: 'All resources are unhealthy',
+  },
+  {
+    state: HealthState.WARNING,
+    message: 'Object Bucket has an issue',
+  },
+  {
+    state: HealthState.ERROR,
+    message: 'Many buckets have issues',
+  },
+  {
+    state: HealthState.WARNING,
+    message: 'Some buckets have issues',
+  },
+];
+
+export const getNooBaaState: GetObjectServiceStatus = (
+  prometheusResponses = [],
+  hasLoadError,
+  isLoading,
+  k8sResponse,
+) => {
+  const [buckets, unhealthyBuckets, pools, unhealthyPools] = prometheusResponses.map((r) =>
+    getGaugeValue(r),
+  );
+  const noobaaPhase = _.get(k8sResponse, 'data[0].status.phase');
+  const unhealthyBucketsRatio = unhealthyBuckets / buckets;
+
+  if (hasLoadError) {
+    return { state: HealthState.UNKNOWN };
+  }
+  if (isLoading) {
+    return { state: HealthState.LOADING };
+  }
+  if (noobaaPhase !== 'Ready') {
+    return NooBaaStatus[0];
+  }
+  if (Number(pools) === Number(unhealthyPools)) {
+    return NooBaaStatus[1];
+  }
+  if (Number(unhealthyBuckets) === 1) {
+    return NooBaaStatus[2];
+  }
+  if (unhealthyBucketsRatio >= 0.5) {
+    return NooBaaStatus[3];
+  }
+  if (unhealthyBucketsRatio >= 0.3) {
+    return NooBaaStatus[4];
+  }
+  return { state: HealthState.OK };
+};
+
+export const getDataResiliencyState: GetObjectServiceStatus = (
+  prometheusResponses,
+  hasLoadError,
+  isLoading,
+) => {
+  const progress = getResiliencyProgress(prometheusResponses[0]);
+
+  if (hasLoadError || !progress) {
+    return { state: HealthState.UNKNOWN };
+  }
+  if (isLoading) {
+    return { state: HealthState.LOADING };
+  }
+  if (progress < 100) {
+    return { state: HealthState.PROGRESS };
+  }
+  return { state: HealthState.OK };
+};
+
+export type ObjectServiceState = { state: HealthState; message?: string };
+
+type GetObjectServiceStatus = (
+  prometheusResponses: PrometheusResponse[],
+  hasLoadError: boolean,
+  isLoading: boolean,
+  k8sResponse?: FirehoseResult,
+) => ObjectServiceState;
