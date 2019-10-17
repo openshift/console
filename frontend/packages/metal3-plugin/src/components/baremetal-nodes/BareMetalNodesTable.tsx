@@ -6,12 +6,12 @@ import { getName, getUID, getNamespace, DASH, SecondaryStatus } from '@console/s
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
-import { MachineModel } from '@console/internal/models';
+import { MachineModel, NodeModel } from '@console/internal/models';
 import { BareMetalNodeBundle } from '../types';
 import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
-import { menuActions } from '../baremetal-hosts/host-menu-actions';
 import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status';
+import { menuActions } from './menu-actions';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
 
 const tableColumnClasses = {
@@ -118,12 +118,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
       <TableData className={tableColumnClasses.kebab}>
         <Kebab
           options={menuActions.map((action) =>
-            action(BareMetalHostModel, host, null, {
-              nodeMaintenance,
-              nodeName,
-              hasNodeMaintenanceCapability,
-              status: status.status,
-            }),
+            action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }),
           )}
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
