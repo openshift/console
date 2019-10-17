@@ -334,6 +334,14 @@ export const sampleServices: Resource = {
   ],
 };
 
+export const samplePipeline = {
+  data: [],
+};
+
+export const samplePipelineRun = {
+  data: [],
+};
+
 export const MockKnativeResources: TopologyDataResources = {
   deployments: sampleKnativeDeployments,
   deploymentConfigs: sampleKnativeDeploymentConfigs,
@@ -348,4 +356,6 @@ export const MockKnativeResources: TopologyDataResources = {
   ksroutes: sampleKnativeRoutes,
   configurations: sampleKnativeConfigurations,
   revisions: sampleKnativeRevisions,
+  pipelines: samplePipeline,
+  pipelineRuns: samplePipelineRun,
 };

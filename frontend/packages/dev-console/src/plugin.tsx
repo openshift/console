@@ -12,6 +12,7 @@ import {
   ResourceDetailsPage,
   Perspective,
   RoutePage,
+  OverviewCRD,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
@@ -19,6 +20,10 @@ import { FLAGS } from '@console/internal/const';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
+import {
+  tknPipelineAndPipelineRunsResources,
+  getPipelinesAndPipelineRunsForResource,
+} from './utils/pipeline-plugin-utils';
 
 const { PipelineModel, PipelineRunModel } = models;
 
@@ -32,7 +37,8 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | Perspective
   | RoutePage
-  | KebabActions;
+  | KebabActions
+  | OverviewCRD;
 
 const SHOW_PIPELINE = 'SHOW_PIPELINE';
 
@@ -157,6 +163,14 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/search',
         testID: 'advanced-search-header',
       },
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: tknPipelineAndPipelineRunsResources,
+      required: SHOW_PIPELINE,
+      utils: getPipelinesAndPipelineRunsForResource,
     },
   },
   {
