@@ -5,12 +5,14 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
+import {
+  getRangeVectorStats,
+  getInstantVectorStats,
+} from '@console/internal/components/graphs/utils';
 import {
   FirehoseResource,
   humanizeBinaryBytesWithoutB,
@@ -85,8 +87,13 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
     queries[HostQuery.MEMORY_UTILIZATION],
     'loadError',
   ]);
+  const memoryTotal = prometheusResults.getIn([queries[HostQuery.MEMORY_TOTAL], 'data']);
   const storageUtilization = prometheusResults.getIn([
     queries[HostQuery.STORAGE_UTILIZATION],
+    'data',
+  ]) as PrometheusResponse;
+  const storageTotal = prometheusResults.getIn([
+    queries[HostQuery.STORAGE_TOTAL],
     'data',
   ]) as PrometheusResponse;
   const storageUtilizationError = prometheusResults.getIn([
@@ -120,10 +127,15 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
+  const memoryTotalStats = getInstantVectorStats(memoryTotal);
   const storageStats = getRangeVectorStats(storageUtilization);
+  const storageTotalStats = getInstantVectorStats(storageTotal);
   const networkInStats = getRangeVectorStats(networkInUtilization);
   const networkOutStats = getRangeVectorStats(networkOutUtilization);
   const numberOfPodsStats = getRangeVectorStats(numberOfPods);
+
+  const memoryTotalValue = memoryTotalStats.length ? memoryTotalStats[0].y : null;
+  const storageTotalValue = storageTotalStats.length ? storageTotalStats[0].y : null;
 
   const itemIsLoading = (prometheusResult) =>
     !machineLoadError && (machineLoaded ? (machine ? !prometheusResult : false) : true);
@@ -133,58 +145,58 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
       </DashboardCardHeader>
-      <DashboardCardBody>
-        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
-          <UtilizationItem
-            title="CPU usage"
-            data={cpuStats}
-            error={cpuUtilizationError}
-            isLoading={itemIsLoading(cpuUtilization)}
-            humanizeValue={humanizeCpuCores}
-            query={queries[HostQuery.CPU_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Memory usage"
-            data={memoryStats}
-            error={memoryUtilizationError}
-            isLoading={itemIsLoading(memoryUtilization)}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[HostQuery.MEMORY_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Number of pods"
-            data={numberOfPodsStats}
-            error={numberOfPodsError}
-            isLoading={itemIsLoading(numberOfPods)}
-            humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
-            query={queries[HostQuery.NUMBER_OF_PODS]}
-          />
-          <UtilizationItem
-            title="Network In"
-            data={networkInStats}
-            error={networkInUtilizationError}
-            isLoading={itemIsLoading(networkInUtilization)}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Network Out"
-            data={networkOutStats}
-            error={networkOutUtilizationError}
-            isLoading={itemIsLoading(networkOutUtilization)}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
-          />
-          <UtilizationItem
-            title="Filesystem"
-            data={storageStats}
-            error={storageUtilizationError}
-            isLoading={itemIsLoading(storageUtilization)}
-            humanizeValue={humanizeBinaryBytesWithoutB}
-            query={queries[HostQuery.STORAGE_UTILIZATION]}
-          />
-        </UtilizationBody>
-      </DashboardCardBody>
+      <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
+        <UtilizationItem
+          title="CPU usage"
+          data={cpuStats}
+          error={cpuUtilizationError}
+          isLoading={itemIsLoading(cpuUtilization)}
+          humanizeValue={humanizeCpuCores}
+          query={queries[HostQuery.CPU_UTILIZATION]}
+        />
+        <UtilizationItem
+          title="Memory usage"
+          data={memoryStats}
+          error={memoryUtilizationError}
+          isLoading={itemIsLoading(memoryUtilization)}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[HostQuery.MEMORY_UTILIZATION]}
+          max={memoryTotalValue}
+        />
+        <UtilizationItem
+          title="Number of pods"
+          data={numberOfPodsStats}
+          error={numberOfPodsError}
+          isLoading={itemIsLoading(numberOfPods)}
+          humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
+          query={queries[HostQuery.NUMBER_OF_PODS]}
+        />
+        <UtilizationItem
+          title="Network In"
+          data={networkInStats}
+          error={networkInUtilizationError}
+          isLoading={itemIsLoading(networkInUtilization)}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
+        />
+        <UtilizationItem
+          title="Network Out"
+          data={networkOutStats}
+          error={networkOutUtilizationError}
+          isLoading={itemIsLoading(networkOutUtilization)}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
+        />
+        <UtilizationItem
+          title="Filesystem"
+          data={storageStats}
+          error={storageUtilizationError}
+          isLoading={itemIsLoading(storageUtilization)}
+          humanizeValue={humanizeBinaryBytesWithoutB}
+          query={queries[HostQuery.STORAGE_UTILIZATION]}
+          max={storageTotalValue}
+        />
+      </UtilizationBody>
     </DashboardCard>
   );
 };
