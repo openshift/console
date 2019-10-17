@@ -310,6 +310,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   filterLabels,
   GraphLink,
   hideGraphs,
+  namespace,
   patchQuery,
   queries,
 }) => {
@@ -338,6 +339,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     const url = getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
       endTime,
+      namespace,
       query,
       samples,
       timeout: '5s',
@@ -396,7 +398,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // use a polling interval relative to the graph's timespan, but not less than 5s.
   const delay = endTime || hideGraphs ? null : Math.max(span / 120, 5000);
 
-  usePoll(tick, delay, endTime, queries, samples, span);
+  usePoll(tick, delay, endTime, namespace, queries, samples, span);
 
   React.useEffect(() => setUpdating(true), [endTime, queries, samples, span]);
 
@@ -592,6 +594,7 @@ type QueryBrowserProps = {
   filterLabels?: Labels;
   GraphLink?: React.ComponentType<{}>;
   hideGraphs: boolean;
+  namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
   queries: string[];
 };

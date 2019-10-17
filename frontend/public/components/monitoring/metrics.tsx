@@ -33,7 +33,11 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import {
+  RedExclamationCircleIcon,
+  TechPreviewBadge,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 import { RootState } from '../../redux';
@@ -330,8 +334,8 @@ const SeriesButton = connect(
   }),
 )(SeriesButton_);
 
-const queryInputStateToProps = ({ UI }: RootState, { index }) => ({
-  metrics: UI.getIn(['queryBrowser', 'metrics']),
+const queryInputStateToProps = ({ UI }: RootState, { index, namespace }) => ({
+  metrics: namespace ? [] : UI.getIn(['queryBrowser', 'metrics']),
   text: UI.getIn(['queryBrowser', 'queries', index, 'text']),
 });
 
@@ -475,15 +479,17 @@ const QueryInput_: React.FC<QueryInputProps> = ({
     </div>
   );
 };
+
+const queryInputDispatchToProps = (dispatch, props) =>
+  Object.assign(
+    { runQueries: () => dispatch(UIActions.queryBrowserRunQueries()) },
+    queryDispatchToProps(dispatch, props),
+  );
+
 const QueryInput = connect(
   queryInputStateToProps,
-  queryDispatchToProps,
-)(
-  connect(
-    null,
-    { runQueries: UIActions.queryBrowserRunQueries },
-  )(QueryInput_),
-);
+  queryInputDispatchToProps,
+)(QueryInput_);
 
 const QueryKebab_: React.FC<QueryKebabProps> = ({
   deleteQuery,
@@ -562,6 +568,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   index,
   isEnabled,
   isExpanded,
+  namespace,
   query,
   series,
 }) => {
@@ -575,7 +582,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
   const tick = () => {
     if (query) {
-      safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query }))
+      safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, namespace, query }))
         .then((response) => {
           setData(_.get(response, 'data'));
           setError(undefined);
@@ -589,7 +596,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     }
   };
 
-  usePoll(tick, 15 * 1000, query);
+  usePoll(tick, 15 * 1000, namespace, query);
 
   React.useEffect(() => {
     setData(undefined);
@@ -751,6 +758,7 @@ const Query_: React.FC<QueryProps> = ({
   index,
   isExpanded,
   isEnabled,
+  namespace,
   patchQuery,
   toggleIsEnabled,
 }) => {
@@ -766,7 +774,7 @@ const Query_: React.FC<QueryProps> = ({
     >
       <div className="query-browser__query-controls">
         <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
-        <QueryInput index={index} />
+        <QueryInput index={index} namespace={namespace} />
         <div title={switchLabel}>
           <Switch
             aria-label={switchLabel}
@@ -779,7 +787,7 @@ const Query_: React.FC<QueryProps> = ({
           <QueryKebab index={index} />
         </div>
       </div>
-      <QueryTable index={index} />
+      <QueryTable index={index} namespace={namespace} />
     </div>
   );
 };
@@ -791,7 +799,11 @@ const Query = connect(
   queryDispatchToProps,
 )(Query_);
 
-const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, queries }) => {
+const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
+  namespace,
+  patchQuery,
+  queries,
+}) => {
   const isInitRef = React.useRef(true);
 
   // Initialize queries from URL parameters
@@ -845,6 +857,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
     <QueryBrowser
       defaultTimespan={30 * 60 * 1000}
       disabledSeries={disabledSeries}
+      namespace={namespace}
       queries={queryStrings}
     />
   );
@@ -879,10 +892,10 @@ const RunQueriesButton = connect(
   { runQueries: UIActions.queryBrowserRunQueries },
 )(RunQueriesButton_);
 
-const QueriesList_ = ({ count }) => (
+const QueriesList_ = ({ count, namespace }) => (
   <React.Fragment>
     {_.map(_.range(count), (i) => (
-      <Query index={i} key={i} />
+      <Query index={i} key={i} namespace={namespace} />
     ))}
   </React.Fragment>
 );
@@ -890,7 +903,13 @@ const QueriesList = connect(({ UI }: RootState) => ({
   count: UI.getIn(['queryBrowser', 'queries']).size,
 }))(QueriesList_);
 
-const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
+const TechPreview = () => (
+  <span className="query-browser__tech-preview">
+    <TechPreviewBadge />
+  </span>
+);
+
+const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespace }) => {
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
 
@@ -903,7 +922,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
         <h1 className="co-m-pane__heading">
           <span>
             Metrics
-            <HeaderPrometheusLink />
+            {namespace ? <TechPreview /> : <HeaderPrometheusLink />}
           </span>
           <div className="co-actions">
             <MetricsActionsMenu />
@@ -918,10 +937,10 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <QueryBrowserWrapper />
+            <QueryBrowserWrapper namespace={namespace} />
             <div className="query-browser__controls">
               <div className="query-browser__controls--left">
-                <MetricsDropdown />
+                {!namespace && <MetricsDropdown />}
               </div>
               <div className="query-browser__controls--right">
                 <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
@@ -930,14 +949,14 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
                 </ActionGroup>
               </div>
             </div>
-            <QueriesList />
+            <QueriesList namespace={namespace} />
           </div>
         </div>
       </div>
     </React.Fragment>
   );
 };
-export const QueryBrowserPage = withFallback(
+export const QueryBrowserPage: React.ComponentType<{ namespace?: string }> = withFallback(
   connect(
     null,
     { deleteAll: UIActions.queryBrowserDeleteAllQueries },
@@ -958,9 +977,11 @@ type MetricsDropdownProps = {
 
 type QueryBrowserPageProps = {
   deleteAll: () => never;
+  namespace?: string;
 };
 
 type QueryBrowserWrapperProps = {
+  namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
   queries: QueryObj[];
 };
@@ -986,6 +1007,7 @@ type QueryProps = {
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;
+  namespace?: string;
   patchQuery: (patch: QueryObj) => void;
   toggleIsEnabled: () => never;
 };
@@ -994,6 +1016,7 @@ type QueryTableProps = {
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;
+  namespace?: string;
   query: string;
   series: Labels[];
 };
