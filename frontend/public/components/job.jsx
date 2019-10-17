@@ -8,15 +8,17 @@ import { getJobTypeAndCompletions } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
-  Kebab,
   ContainerTable,
-  SectionHeading,
+  DetailsItem,
+  Kebab,
   LabelList,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
   Timestamp,
   navFactory,
+  pluralize,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
@@ -130,20 +132,23 @@ const JobTableRow = ({ obj: job, index, key, style }) => {
 JobTableRow.displayName = 'JobTableRow';
 
 const Details = ({ obj: job }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-md-6">
           <SectionHeading text="Job Overview" />
           <ResourceSummary resource={job} showPodSelector>
-            <dt>Desired Completions</dt>
-            <dd>{job.spec.completions || '-'}</dd>
-            <dt>Parallelism</dt>
-            <dd>{job.spec.parallelism || '-'}</dd>
-            <dt>Deadline</dt>
-            <dd>
-              {job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}
-            </dd>
+            <DetailsItem label="Desired Completions" obj={job} path="spec.completions" />
+            <DetailsItem label="Parallelism" obj={job} path="spec.parallelism" />
+            <DetailsItem
+              label="Active Deadline Seconds"
+              obj={job}
+              path="spec.activeDeadlineSeconds"
+            >
+              {job.spec.activeDeadlineSeconds
+                ? pluralize(job.spec.progressDeadlineSeconds, 'second')
+                : 'Not Configured'}
+            </DetailsItem>
           </ResourceSummary>
         </div>
         <div className="col-md-6">
@@ -157,20 +162,20 @@ const Details = ({ obj: job }) => (
                 <Status status="In Progress" />
               )}
             </dd>
-            <dt>Start Time</dt>
-            <dd>
+            <DetailsItem label="Start Time" obj={job} path="status.startTime">
               <Timestamp timestamp={job.status.startTime} />
-            </dd>
-            <dt>Completion Time</dt>
-            <dd>
+            </DetailsItem>
+            <DetailsItem label="Completion Time" obj={job} path="status.completionTime">
               <Timestamp timestamp={job.status.completionTime} />
-            </dd>
-            <dt>Succeeded Pods</dt>
-            <dd>{job.status.succeeded || 0}</dd>
-            <dt>Active Pods</dt>
-            <dd>{job.status.active || 0}</dd>
-            <dt>Failed Pods</dt>
-            <dd>{job.status.failed || 0}</dd>
+            </DetailsItem>
+            <DetailsItem
+              label="Succeeded Pods"
+              obj={job}
+              path="status.succeeded"
+              defaultValue="0"
+            />
+            <DetailsItem label="Active Pods" obj={job} path="status.active" defaultValue="0" />
+            <DetailsItem label="Failed Pods" obj={job} path="status.failed" defaultValue="0" />
           </dl>
         </div>
       </div>
@@ -179,7 +184,7 @@ const Details = ({ obj: job }) => (
       <SectionHeading text="Containers" />
       <ContainerTable containers={job.spec.template.spec.containers} />
     </div>
-  </React.Fragment>
+  </>
 );
 
 const { details, pods, editYaml, events } = navFactory;
