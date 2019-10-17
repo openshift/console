@@ -19,6 +19,7 @@ import {
   isDashboardsOverviewUtilizationItem,
   isOverviewResourceTab,
   isOverviewCRD,
+  isOverviewTabSection,
   isGlobalConfig,
   isClusterServiceVersionAction,
   isKebabActions,
@@ -99,6 +100,10 @@ export class ExtensionRegistry {
 
   public getOverviewResourceTabs() {
     return this.extensions.filter(isOverviewResourceTab);
+  }
+
+  public getOverviewTabSections() {
+    return this.extensions.filter(isOverviewTabSection);
   }
 
   public getOverviewCRDs() {

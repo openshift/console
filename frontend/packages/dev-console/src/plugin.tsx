@@ -14,6 +14,7 @@ import {
   RoutePage,
   OverviewCRD,
   YAMLTemplate,
+  OverviewTabSection,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
@@ -49,7 +50,8 @@ type ConsumedExtensions =
   | RoutePage
   | KebabActions
   | OverviewCRD
-  | YAMLTemplate;
+  | YAMLTemplate
+  | OverviewTabSection;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -259,6 +261,16 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: referenceForModel(ClusterTaskModel),
         required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+  },
+  {
+    type: 'Overview/Section',
+    properties: {
+      key: 'pipelines',
+      loader: () =>
+        import(
+          './components/pipelines/pipeline-overview/PipelineOverview' /* webpackChunkName: "pipeline-overview-list" */
+        ).then((m) => m.default),
     },
   },
   {
