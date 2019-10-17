@@ -5,7 +5,7 @@ import { VM_STATUS_IMPORTING, VM_STATUS_IMPORT_ERROR } from '../../statuses/vm/c
 import { VMKind } from '../../types';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getVMImporterPods } from '../../selectors/pod/selectors';
-import { VmStatus } from './vm-status';
+import { VMStatus } from './vm-status';
 
 const getId = (value) => `${getNamespace(value)}-${getName(value)}`;
 
@@ -21,14 +21,14 @@ export const VmStatuses: React.FC<VmStatusesProps> = (props) => {
         <>
           {importerPods.map((pod) => (
             <div key={getId(pod)}>
-              <VmStatus {...props} pods={[pod]} verbose />
+              <VMStatus {...props} pods={[pod]} verbose />
             </div>
           ))}
         </>
       );
     default:
+      return <VMStatus {...props} />;
   }
-  return <VmStatus {...props} />;
 };
 
 type VmStatusesProps = {
