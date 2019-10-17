@@ -20,7 +20,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 2. [go](https://golang.org/) >= 1.11+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. `jq` (for `contrib/environment.sh`)
-5. Google Chrome/Chromium == 76.x for integration tests
+5. Google Chrome/Chromium == 77.x for integration tests
 
 ### Build everything:
 

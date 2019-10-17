@@ -43,10 +43,9 @@ fi
 export BRIDGE_BASE_ADDRESS
 export BRIDGE_BASE_PATH
 
-# Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
 # get the branch base position for a specific chrmoe version using https://omahaproxy.appspot.com/
-export FORCE_CHROME_BRANCH_BASE="665006"
-export FORCE_CHROME_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
+export FORCE_CHROME_BRANCH_BASE="681094"
+export FORCE_CHROME_BRANCH_SHA256SUM="0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
 
 out=/out
 set +e
