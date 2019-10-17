@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 
 export type OverviewItemAlerts = {
@@ -28,7 +28,7 @@ export type OverviewItem = {
   obj: K8sResourceKind;
   pods?: PodKind[];
   previous?: PodControllerOverviewItem;
-  routes: K8sResourceKind[];
+  routes: RouteKind[];
   services: K8sResourceKind[];
   status?: React.ReactNode;
   ksroutes?: K8sResourceKind[];

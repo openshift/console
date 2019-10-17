@@ -372,6 +372,47 @@ export type CustomResourceDefinitionKind = {
   };
 } & K8sResourceKind;
 
+export type RouteTarget = {
+  kind: 'Service';
+  name: string;
+  weight: number;
+};
+
+export type RouteTLS = {
+  caCertificate?: string;
+  certificate?: string;
+  destinationCACertificate?: string;
+  insecureEdgeTerminationPolicy?: string;
+  key?: string;
+  termination: string;
+};
+
+export type RouteIngress = {
+  conditions: any[];
+  host?: string;
+  routerCanonicalHostname?: string;
+  routerName?: string;
+  wildcardPolicy?: string;
+};
+
+export type RouteKind = {
+  spec: {
+    alternateBackends?: RouteTarget[];
+    host?: string;
+    path?: string;
+    port?: {
+      targetPort: number | string;
+    };
+    subdomain?: string;
+    tls?: RouteTLS;
+    to: RouteTarget;
+    wildcardPolicy?: string;
+  };
+  status?: {
+    ingress: RouteIngress[];
+  };
+} & K8sResourceKind;
+
 export type TemplateParameter = {
   name: string;
   value?: string;

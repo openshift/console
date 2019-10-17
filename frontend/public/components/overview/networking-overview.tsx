@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { ListGroup } from 'patternfly-react';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { RouteLocation } from '../routes';
 import { ResourceLink, SidebarSectionHeading } from '../utils';
 
@@ -82,15 +82,15 @@ export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ routes,
 };
 
 type RoutesOverviewListProps = {
-  routes: K8sResourceKind[];
+  routes: RouteKind[];
 };
 
 type RoutesOverviewListItemProps = {
-  route: K8sResourceKind;
+  route: RouteKind;
 };
 
 type NetworkingOverviewProps = {
-  routes: K8sResourceKind[];
+  routes: RouteKind[];
   services: K8sResourceKind[];
 };
 

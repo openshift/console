@@ -11,17 +11,18 @@ import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table } from './factory';
 import {
   AsyncComponent,
+  ContainerTable,
+  DetailsItem,
   Kebab,
   KebabAction,
-  ContainerTable,
-  navFactory,
-  pluralize,
+  LoadingInline,
   ResourceSummary,
   SectionHeading,
-  togglePaused,
   WorkloadPausedAlert,
-  LoadingInline,
   getExtensionsKebabActionsForKind,
+  navFactory,
+  pluralize,
+  togglePaused,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
 
@@ -87,53 +88,71 @@ export const menuActions: KebabAction[] = [
 ];
 
 export const DeploymentConfigDetailsList = ({ dc }) => {
-  const reason = _.get(dc, 'status.details.message');
   const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
   const updatePeriod = _.get(dc, 'spec.strategy.rollingParams.updatePeriodSeconds');
   const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
-  const isRecreate = 'Recreate' === _.get(dc, 'spec.strategy.type');
   const triggers = _.map(dc.spec.triggers, 'type').join(', ');
   return (
     <dl className="co-m-pane__details">
-      <dt>Latest Version</dt>
-      <dd>{_.get(dc, 'status.latestVersion', '-')}</dd>
-      {reason && <dt>Reason</dt>}
-      {reason && <dd>{reason}</dd>}
-      <dt>Update Strategy</dt>
-      <dd>{_.get(dc, 'spec.strategy.type', 'Rolling')}</dd>
-      {timeout && <dt>Timeout</dt>}
-      {timeout && <dd>{pluralize(timeout, 'second')}</dd>}
-      {updatePeriod && <dt>Update Period</dt>}
-      {updatePeriod && <dd>{pluralize(updatePeriod, 'second')}</dd>}
-      {interval && <dt>Interval</dt>}
-      {interval && <dd>{pluralize(interval, 'second')}</dd>}
-      {isRecreate || <dt>Max Unavailable</dt>}
-      {isRecreate || (
-        <dd>
-          {_.get(dc, 'spec.strategy.rollingParams.maxUnavailable', 1)} of{' '}
-          {pluralize(dc.spec.replicas, 'pod')}
-        </dd>
+      <DetailsItem label="Latest Version" obj={dc} path="status.latestVersion" />
+      {_.get(dc, 'status.details.message') && (
+        <DetailsItem label="Reason" obj={dc} path="status.details.message" />
       )}
-      {isRecreate || <dt>Max Surge</dt>}
-      {isRecreate || (
-        <dd>
-          {_.get(dc, 'spec.strategy.rollingParams.maxSurge', 1)} greater than{' '}
-          {pluralize(dc.spec.replicas, 'pod')}
-        </dd>
+      <DetailsItem label="Update Strategy" obj={dc} path="spec.strategy.type" />
+      {dc.spec.strategy.type === 'RollingUpdate' && (
+        <>
+          {timeout && (
+            <DetailsItem label="Timeout" obj={dc} path="spec.strategy.rollingParams.timeoutSeconds">
+              {pluralize(timeout, 'second')}
+            </DetailsItem>
+          )}
+          {updatePeriod && (
+            <DetailsItem
+              label="Update Period"
+              obj={dc}
+              path="spec.strategy.rollingParams.updatePeriodSeconds"
+            >
+              {pluralize(updatePeriod, 'second')}
+            </DetailsItem>
+          )}
+          {interval && (
+            <DetailsItem
+              label="Interval"
+              obj={dc}
+              path="spec.strategy.rollingParams.intervalSeconds"
+            >
+              {pluralize(interval, 'second')}
+            </DetailsItem>
+          )}
+          <DetailsItem
+            label="Max Unavailable"
+            obj={dc}
+            path="spec.strategy.rollingParams.maxUnavailable"
+          >
+            {dc.spec.strategy.rollingUpdate.maxUnavailable || 1} of{' '}
+            {pluralize(dc.spec.replicas, 'pod')}
+          </DetailsItem>
+          <DetailsItem label="Max Surge" obj={dc} path="spec.strategy.rollingParams.maxSurge">
+            {dc.spec.strategy.rollingUpdate.maxSurge || 1} greater than{' '}
+            {pluralize(dc.spec.replicas, 'pod')}
+          </DetailsItem>
+        </>
       )}
-      <dt>Min Ready Seconds</dt>
-      <dd>
+      <DetailsItem label="Min Ready Seconds" obj={dc} path="spec.minReadySeconds">
         {dc.spec.minReadySeconds ? pluralize(dc.spec.minReadySeconds, 'second') : 'Not Configured'}
-      </dd>
-      {triggers && <dt>Triggers</dt>}
-      {triggers && <dd>{triggers}</dd>}
+      </DetailsItem>
+      {triggers && (
+        <DetailsItem label="Triggers" obj={dc} path="spec.triggers">
+          {triggers}
+        </DetailsItem>
+      )}
     </dl>
   );
 };
 
 export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Deployment Config Overview" />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
@@ -186,7 +205,7 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
         <SectionHeading text="Conditions" />
         <Conditions conditions={dc.status.conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
