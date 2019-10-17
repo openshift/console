@@ -42,7 +42,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     const topConsumerStatsResult = _.get(topConsumerStats, 'data.result', []);
     if (topConsumerStatsResult.length) {
       const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
-      const sortedResult = topConsumerStatsResult.sort(sortResources);
+      const sortedResult = sortResources(topConsumerStatsResult, metricType);
       const legends = topConsumerStatsResult.map((resource) => ({
         name: getMetricType(resource, metricType),
       }));

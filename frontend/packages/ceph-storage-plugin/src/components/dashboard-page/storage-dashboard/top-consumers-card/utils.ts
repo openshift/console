@@ -14,12 +14,23 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
   });
 };
 
-export const sortResources: SortResourcesProps = (a, b) => {
-  const aVal = _.get(a, 'values');
-  const bVal = _.get(b, 'values');
-  const x = _.get(a, ['values', aVal.length - 1, 1]);
-  const y = _.get(b, ['values', bVal.length - 1, 1]);
-  return y - x;
+export const sortResources = (stats: any, metricType: string) => {
+  return stats.sort(function(a, b) {
+    const aVal = _.get(a, 'values');
+    const bVal = _.get(b, 'values');
+    const x = _.get(a, ['values', aVal.length - 1, 1]);
+    const y = _.get(b, ['values', bVal.length - 1, 1]);
+    if (x === y) {
+      const aNameVal = _.get(a, 'metric');
+      const bNameVal = _.get(b, 'metric');
+      return aNameVal[metricType] < bNameVal[metricType]
+        ? -1
+        : aNameVal[metricType] > bNameVal[metricType]
+        ? 1
+        : 0;
+    }
+    return y - x;
+  });
 };
 
 type GetStats = (
@@ -27,8 +38,3 @@ type GetStats = (
   metric?: string,
   unit?: string,
 ) => DataPoint[][];
-
-type SortResourcesProps = (
-  a: PrometheusResponse['data']['result'],
-  b: PrometheusResponse['data']['result'],
-) => number;
