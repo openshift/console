@@ -16,6 +16,7 @@ import {
   GroupVersionKind,
   K8sKind,
   K8sResourceKind,
+  referenceFor,
   referenceForModel,
 } from '../../module/k8s';
 import { FirehoseResult } from '../utils';
@@ -27,24 +28,25 @@ import * as webAllowExternalImg from '../../imgs/network-policy-samples/5-web-al
 import * as webDbAllowAllNsImg from '../../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '../../imgs/network-policy-samples/7-web-allow-production.svg';
 
-const clusterRoleBindingSamples = [
+const getTargetResource = (model: K8sKind) => ({
+  apiVersion: apiVersionForModel(model),
+  kind: model.kind,
+});
+
+const clusterRoleBindingSamples: Sample[] = [
   {
     title: 'Allow reading Nodes in the core API groups (for ClusterRoleBinding)',
     description:
       'This "ClusterRole" is allowed to read the resource "nodes" in the core group (because a Node is cluster-scoped, this must be bound with a "ClusterRoleBinding" to be effective).',
     id: 'read-nodes',
-    targetResource: {
-      kind: referenceForModel(ClusterRoleModel),
-    },
+    targetResource: getTargetResource(ClusterRoleModel),
   },
   {
     title: '"GET/POST" requests to non-resource endpoint and all subpaths (for ClusterRoleBinding)',
     description:
       'This "ClusterRole" is allowed to "GET" and "POST" requests to the non-resource endpoint "/healthz" and all subpaths (must be in the "ClusterRole" bound with a "ClusterRoleBinding" to be effective).',
     id: 'get-and-post-to-non-resource-endpoints',
-    targetResource: {
-      kind: referenceForModel(ClusterRoleModel),
-    },
+    targetResource: getTargetResource(ClusterRoleModel),
   },
 ];
 
@@ -57,18 +59,14 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'A Dockerfile build performs an image build using a Dockerfile in the source repository or specified in build configuration.',
         id: 'docker-build',
-        targetResource: {
-          kind: referenceForModel(BuildConfigModel),
-        },
+        targetResource: getTargetResource(BuildConfigModel),
       },
       {
         title: 'Source-to-Image (S2I) build',
         description:
           'S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.',
         id: 's2i-build',
-        targetResource: {
-          kind: referenceForModel(BuildConfigModel),
-        },
+        targetResource: getTargetResource(BuildConfigModel),
       },
     ],
   )
@@ -82,9 +80,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'Deny traffic from other namespaces while allowing all traffic from the namespaces the Pod is living in.',
         id: 'deny-other-namespaces',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Limit',
@@ -93,9 +89,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'Allow inbound traffic from only certain Pods. One typical use case is to restrict the connections to a database only to the specific applications.',
         id: 'db-or-api-allow-app',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Allow',
@@ -104,9 +98,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'Define ingress rules for specific port numbers of an application. The rule applies to all port numbers if not specified.',
         id: 'api-allow-http-and-https',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Deny',
@@ -115,9 +107,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'A fundamental policy by blocking all cross-pod traffics expect whitelisted ones through the other Network Policies being deployed.',
         id: 'default-deny-all',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Allow',
@@ -126,9 +116,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'Allow external service from public Internet directly or through a Load Balancer to access the pod.',
         id: 'web-allow-external',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Allow',
@@ -137,9 +125,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'One typical use case is for a common database which is used by deployments in different namespaces.',
         id: 'web-db-allow-all-ns',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
       {
         highlightText: 'Allow',
@@ -148,9 +134,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         description:
           'Typical use case should be "only allow deployments in production namespaces to access the database" or "allow monitoring tools (in another namespace) to scrape metrics from current namespace."',
         id: 'web-allow-production',
-        targetResource: {
-          kind: referenceForModel(NetworkPolicyModel),
-        },
+        targetResource: getTargetResource(NetworkPolicyModel),
       },
     ],
   )
@@ -161,27 +145,21 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         title: 'Set compute resource quota',
         description: 'Limit the total amount of memory and CPU that can be used in a namespace.',
         id: 'rq-compute',
-        targetResource: {
-          kind: referenceForModel(ResourceQuotaModel),
-        },
+        targetResource: getTargetResource(ResourceQuotaModel),
       },
       {
         title: 'Set maximum count for any resource',
         description:
           'Restrict maximum count of each resource so users cannot create more than the allotted amount.',
         id: 'rq-counts',
-        targetResource: {
-          kind: referenceForModel(ResourceQuotaModel),
-        },
+        targetResource: getTargetResource(ResourceQuotaModel),
       },
       {
         title: 'Specify resource quotas for a given storage class',
         description:
           'Limit the size and number of persistent volume claims that can be created with a storage class.',
         id: 'rq-storageclass',
-        targetResource: {
-          kind: referenceForModel(ResourceQuotaModel),
-        },
+        targetResource: getTargetResource(ResourceQuotaModel),
       },
     ],
   )
@@ -192,36 +170,28 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         title: 'Allow reading the resource in API group',
         description: 'This "Role" is allowed to read the resource "Pods" in the core API group.',
         id: 'read-pods-within-ns',
-        targetResource: {
-          kind: referenceForModel(RoleModel),
-        },
+        targetResource: getTargetResource(RoleModel),
       },
       {
         title: 'Allow reading/writing the resource in API group',
         description:
           'This "Role" is allowed to read and write the "Deployments" in both the "extensions" and "apps" API groups.',
         id: 'read-write-deployment-in-ext-and-apps-apis',
-        targetResource: {
-          kind: referenceForModel(RoleModel),
-        },
+        targetResource: getTargetResource(RoleModel),
       },
       {
         title: 'Allow different access rights to different types of resource and API groups',
         description:
           'This "Role" is allowed to read "Pods" and read/write "Jobs" resources in API groups.',
         id: 'read-pods-and-read-write-jobs',
-        targetResource: {
-          kind: referenceForModel(RoleModel),
-        },
+        targetResource: getTargetResource(RoleModel),
       },
       {
         title: 'Allow reading a ConfigMap in a specific namespace (for RoleBinding)',
         description:
           'This "Role" is allowed to read a "ConfigMap" named "my-config" (must be bound with a "RoleBinding" to limit to a single "ConfigMap" in a single namespace).',
         id: 'read-configmap-within-ns',
-        targetResource: {
-          kind: referenceForModel(RoleModel),
-        },
+        targetResource: getTargetResource(RoleModel),
       },
       ...clusterRoleBindingSamples,
     ],
@@ -254,15 +224,8 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   loadSampleYaml,
   downloadSampleYaml,
 }) => {
-  const {
-    highlightText,
-    title,
-    img,
-    description,
-    id,
-    yaml,
-    targetResource: { kind },
-  } = sample;
+  const { highlightText, title, img, description, id, yaml, targetResource } = sample;
+  const reference = referenceFor(targetResource);
   return (
     <li className="co-resource-sidebar-item">
       <h3 className="h4">
@@ -270,7 +233,12 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
       </h3>
       {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
       <p>{description}</p>
-      <Button type="button" variant="link" isInline onClick={() => loadSampleYaml(id, yaml, kind)}>
+      <Button
+        type="button"
+        variant="link"
+        isInline
+        onClick={() => loadSampleYaml(id, yaml, reference)}
+      >
         <PasteIcon className="co-icon-space-r" />
         Try it
       </Button>
@@ -279,7 +247,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
         variant="link"
         isInline
         className="pull-right"
-        onClick={() => downloadSampleYaml(id, yaml, kind)}
+        onClick={() => downloadSampleYaml(id, yaml, reference)}
       >
         <DownloadIcon className="co-icon-space-r" />
         Download YAML
@@ -308,14 +276,14 @@ export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
 };
 
 type Sample = {
-  highlightText: string;
+  highlightText?: string;
   title: string;
-  img: string;
+  img?: string;
   description: string;
   id: string;
-  yaml: string;
+  yaml?: string;
   targetResource: {
-    apiVersion?: string;
+    apiVersion: string;
     kind: string;
   };
 };
