@@ -1,6 +1,5 @@
 .query-browser__toggle-graph {
-  padding-right: 0;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   float: right;
 }
 
@@ -10,16 +9,12 @@
 }
 
 .query-browser__clear-icon {
-  border: none;
-  color: $color-pf-black-600;
-  font-size: 18px;
-  height: 18px;
-  line-height: 18px;
-  padding: 0;
-  position: absolute;
-  right: 6px;
-  top: 6px;
-  width: 18px;
+  font-size: 18px !important;
+  padding: 4px !important;
+  position: absolute !important;
+  right: 0;
+  top: 0;
+  width: 30px;
 }
 
 .query-browser__dropdown--subtitle {
@@ -29,13 +24,10 @@
 .query-browser__expand-button {
   border: none;
   height: 30px;
-  margin-left: 18px;
-  padding: 0;
-  width: 30px;
+  padding: 0 14px !important; // align with series buttons
 }
 
 .query-browser__expand-icon {
-  color: $color-pf-black-600;
   font-size: 30px;
   vertical-align: middle;
 }
@@ -87,7 +79,7 @@
 
 .query-browser__query {
   line-height: 1;
-  margin: 0 15px;
+  margin: 0 15px 0 0;
   width: 100%;
 }
 
@@ -100,7 +92,7 @@
 }
 
 .query-browser__query-input {
-  padding-right: 24px !important;
+  padding-right: 28px !important;
   resize: vertical;
 }
 
@@ -121,9 +113,10 @@
   border: 1px solid transparent;
   border-radius: var(--pf-global--BorderRadius--sm);
   height: 20px;
+  padding: 0 !important;
   width: 20px;
   &--disabled {
-    border-color: #888;
+    border: 1px solid #888 !important;
   }
 }
 

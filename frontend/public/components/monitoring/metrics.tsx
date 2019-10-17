@@ -195,9 +195,14 @@ const ToggleGraph_ = ({ hideGraphs, toggle }) => {
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
   return (
-    <button type="button" className="btn btn-link query-browser__toggle-graph" onClick={toggle}>
-      {hideGraphs ? 'Show' : 'Hide'} Graph {icon}
-    </button>
+    <Button
+      type="button"
+      className="pf-m-link--align-right query-browser__toggle-graph"
+      onClick={toggle}
+      variant="link"
+    >
+      {icon} {hideGraphs ? 'Show' : 'Hide'} Graph
+    </Button>
   );
 };
 export const ToggleGraph = connect(
@@ -267,18 +272,19 @@ const MetricsDropdown = connect(
 const ExpandButton = ({ isExpanded, onClick }) => {
   const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
   return (
-    <button
+    <Button
       aria-label={title}
-      className="btn btn-link query-browser__expand-button"
+      className="query-browser__expand-button"
       onClick={onClick}
       title={title}
+      variant="plain"
     >
       {isExpanded ? (
         <AngleDownIcon className="query-browser__expand-icon" />
       ) : (
         <AngleRightIcon className="query-browser__expand-icon" />
       )}
-    </button>
+    </Button>
   );
 };
 
@@ -314,7 +320,7 @@ const SeriesButton_: React.FC<SeriesButtonProps> = ({
 
   return (
     <div className="query-browser__series-btn-wrap">
-      <button
+      <Button
         aria-label={title}
         className={classNames('query-browser__series-btn', {
           'query-browser__series-btn--disabled': isDisabled,
@@ -323,6 +329,7 @@ const SeriesButton_: React.FC<SeriesButtonProps> = ({
         style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
         title={title}
         type="button"
+        variant="plain"
       />
     </div>
   );
@@ -447,14 +454,15 @@ const QueryInput_: React.FC<QueryInputProps> = ({
         spellCheck={false}
         value={text}
       />
-      <button
-        className="btn btn-link query-browser__clear-icon"
+      <Button
+        className="query-browser__clear-icon"
         aria-label="Clear Query"
         onClick={onClear}
         type="button"
+        variant="plain"
       >
         <TimesIcon />
-      </button>
+      </Button>
       {!_.isEmpty(allSuggestions) && (
         <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
           {_.map(allSuggestions, (suggestions, title) => (
