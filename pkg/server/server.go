@@ -83,11 +83,12 @@ type Server struct {
 	LoadTestFactor       int
 	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
-	K8sClient                    *http.Client
-	PrometheusProxyConfig        *proxy.Config
-	PrometheusTenancyProxyConfig *proxy.Config
-	AlertManagerProxyConfig      *proxy.Config
-	MeteringProxyConfig          *proxy.Config
+	K8sClient                *http.Client
+	PrometheusProxyConfig    *proxy.Config
+	ThanosProxyConfig        *proxy.Config
+	ThanosTenancyProxyConfig *proxy.Config
+	AlertManagerProxyConfig  *proxy.Config
+	MeteringProxyConfig      *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -95,7 +96,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return s.PrometheusProxyConfig != nil && s.PrometheusTenancyProxyConfig != nil
+	return s.PrometheusProxyConfig != nil && s.ThanosTenancyProxyConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
@@ -202,22 +203,67 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
-		prometheusProxyAPIPath := prometheusProxyEndpoint + "/api/"
-		prometheusProxy := proxy.NewProxy(s.PrometheusProxyConfig)
-		handle(prometheusProxyAPIPath, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyAPIPath),
+		var (
+			labelSourcePath      = prometheusProxyEndpoint + "/api/v1/label/"
+			rulesSourcePath      = prometheusProxyEndpoint + "/api/v1/rules"
+			querySourcePath      = prometheusProxyEndpoint + "/api/v1/query"
+			queryRangeSourcePath = prometheusProxyEndpoint + "/api/v1/query_range"
+			targetAPIPath        = prometheusProxyEndpoint + "/api/"
+
+			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
+			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
+			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
+
+			prometheusProxy    = proxy.NewProxy(s.PrometheusProxyConfig)
+			thanosProxy        = proxy.NewProxy(s.ThanosProxyConfig)
+			thanosTenancyProxy = proxy.NewProxy(s.ThanosTenancyProxyConfig)
+		)
+
+		// global label, query, and query_range requests have to be proxied via thanos
+		handle(querySourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosProxy.ServeHTTP(w, r)
+			})),
+		)
+		handle(queryRangeSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosProxy.ServeHTTP(w, r)
+			})),
+		)
+		handle(labelSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosProxy.ServeHTTP(w, r)
+			})),
+		)
+
+		// alerting (rules) have to be proxied via cluster monitoring prometheus
+		handle(rulesSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				prometheusProxy.ServeHTTP(w, r)
 			})),
 		)
-		prometheusTenancyProxyAPIPath := prometheusTenancyProxyEndpoint + "/api/"
-		prometheusTenancyProxy := proxy.NewProxy(s.PrometheusTenancyProxyConfig)
-		handle(prometheusTenancyProxyAPIPath, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyAPIPath),
+
+		// tenancy queries and query ranges have to be proxied via thanos
+		handle(tenancyQuerySourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				prometheusTenancyProxy.ServeHTTP(w, r)
+				thanosTenancyProxy.ServeHTTP(w, r)
+			})),
+		)
+		handle(tenancyQueryRangeSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosTenancyProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
