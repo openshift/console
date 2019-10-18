@@ -3,6 +3,7 @@ import { FirehoseResult, KebabOption } from '@console/internal/components/utils'
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { DeploymentKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
+import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
 export interface TopologyDataResources {
   replicationControllers: FirehoseResult;
@@ -61,6 +62,11 @@ export interface TopologyDataModel {
   topology: TopologyDataMap;
 }
 
+export type TopologyOverviewItem = OverviewItem & {
+  pipelines: Pipeline[];
+  pipelineRuns: PipelineRun[];
+};
+
 export interface TopologyDataObject<D = {}> {
   id: string;
   name: string;
@@ -76,6 +82,11 @@ export interface TopologyApplicationObject {
   resources: TopologyDataObject[];
 }
 
+export interface ConnectedWorkloadPipeline {
+  pipeline: Pipeline;
+  pipelineRuns: PipelineRun[];
+}
+
 export interface WorkloadData {
   url?: string;
   editUrl?: string;
@@ -84,6 +95,7 @@ export interface WorkloadData {
   isKnativeResource?: boolean;
   build: K8sResourceKind;
   donutStatus: DonutStatusData;
+  connectedPipeline: ConnectedWorkloadPipeline;
 }
 
 export interface DonutStatusData {

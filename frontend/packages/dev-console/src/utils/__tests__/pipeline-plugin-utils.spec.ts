@@ -21,7 +21,7 @@ describe('pipeline-plugin-utils', () => {
       sampleDeploymentConfigs.data[0],
       MockResources,
     );
-    expect(pipelines).toHaveProperty('pipeline');
+    expect(pipelines).toHaveProperty('pipelines');
     expect(pipelines).toHaveProperty('pipelineRuns');
     expect(pipelines.pipelineRuns).toHaveLength(1);
   });

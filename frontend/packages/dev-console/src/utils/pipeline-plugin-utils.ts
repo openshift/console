@@ -28,7 +28,7 @@ export const tknPipelineAndPipelineRunsResources = (namespace: string): Firehose
 };
 
 type PipelineItem = {
-  pipeline: K8sResourceKind[];
+  pipelines: K8sResourceKind[];
   pipelineRuns: K8sResourceKind[];
 };
 
@@ -67,7 +67,7 @@ export const getPipelinesAndPipelineRunsForResource = (
   );
   if (!resourcePipeline) return null;
   return {
-    pipeline: [resourcePipeline],
+    pipelines: [resourcePipeline],
     pipelineRuns: getPipelineRunsForPipeline(resourcePipeline, props),
   };
 };
