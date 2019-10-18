@@ -17,6 +17,7 @@ import {
 } from '@patternfly/react-core';
 import * as plugins from '@console/internal/plugins';
 import { InventoryStatusGroup } from './status-group';
+import './inventory-card.scss';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.WARN]: <YellowExclamationTriangleIcon />,
@@ -101,7 +102,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         </AccordionItem>
       </Accordion>
     ) : (
-      <div className="co-inventory-card__item co-inventory-card__item--border">
+      <div className="co-inventory-card__item">
         <div className="co-inventory-card__item-title">
           {isLoading && !error && <div className="skeleton-inventory" />}
           {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}

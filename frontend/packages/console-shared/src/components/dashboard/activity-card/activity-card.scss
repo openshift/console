@@ -20,11 +20,12 @@
 }
 
 .co-activity-card__recent-accordion.pf-c-accordion {
+  box-shadow: none;
   padding-bottom: 0;
-  padding-top: 0;
+  padding: .75rem 0;
   h5 {
+    font-family: var(--pf-global--FontFamily--sans-serif);
     font-size: var(--pf-c-card__body--FontSize);
-    font-weight: var(--pf-global--FontWeight--normal);
     margin: 0;
   }
 
@@ -34,6 +35,7 @@
   }
 
   .co-recent-item__toggle.pf-c-accordion__toggle {
+    line-height: 18px; // so .co-m-resource-icon and text are on same baseline
     padding-left: var(--pf-c-card--child--PaddingLeft);
     padding-right: var(--pf-c-card--child--PaddingRight);
   }
@@ -41,10 +43,20 @@
   .co-recent-item--error {
     border-left-color: var(--pf-global--danger-color--100);
   }
+
+  .pf-c-accordion__toggle {
+    &,
+    &:active,
+    &:focus {
+      .pf-c-accordion__toggle-text {
+        font-weight: var(--pf-global--FontWeight--normal) !important;
+      }
+    }
+  }
 }
 
 .co-activity-card__recent-list {
-  padding-bottom: 0;
+  padding-bottom: 0 !important;
 }
 
 .co-activity-card__recent-title {
@@ -58,8 +70,7 @@
 }
 
 .co-activity-item__ongoing {
-  border-bottom: solid 1px $pf-color-black-300;
-  padding: 1rem var(--pf-c-card--child--PaddingRight) 1rem var(--pf-c-card--child--PaddingLeft);
+  margin: 1rem var(--pf-c-card--child--PaddingRight) 1rem var(--pf-c-card--child--PaddingLeft);
 }
 
 .co-activity-item__progress.pf-c-progress {
@@ -69,10 +80,6 @@
 
 .co-activity-item__title {
   padding-left: 0.3rem;
-}
-
-.co-recent-item__body {
-  border-bottom: solid 1px $pf-color-black-300;
 }
 
 .co-recent-item__content-header {
@@ -112,7 +119,6 @@
   align-items: center;
   display: flex;
   overflow: hidden;
-  font-weight: var(--pf-global--FontWeight--normal);
 }
 
 .co-recent-item__title-message-text {
@@ -121,8 +127,9 @@
 }
 
 .co-recent-item__title-timestamp {
+  min-width: 45px;
   padding-right: 0.3rem;
-  font-weight: var(--pf-global--FontWeight--normal);
+  text-align: left;
 }
 
 .skeleton-activity {

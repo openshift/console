@@ -80,7 +80,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ event
 
 export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => (
   <>
-    <div className="co-activity-card__recent-title">Recent events</div>
+    <div className="co-activity-card__recent-title">Recent Events</div>
     <RecentEventsBodyContent {...props} />
   </>
 );

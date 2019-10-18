@@ -21,7 +21,6 @@ import {
   PersistentVolumeModel,
   StorageClassModel,
 } from '@console/internal/models';
-import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getCephNodes, getCephPVs, getCephPVCs, getCephSC } from '../../../selectors';
 
@@ -82,34 +81,32 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <InventoryBody>
-          <ResourceInventoryItem
-            isLoading={!nodesLoaded}
-            error={!!nodesLoadError}
-            kind={NodeModel}
-            resources={getCephNodes(nodesData)}
-            mapper={getNodeStatusGroups}
-            showLink={false}
-          />
-          <ResourceInventoryItem
-            isLoading={!pvcsLoaded}
-            error={!!pvcsLoadError}
-            kind={PersistentVolumeClaimModel}
-            useAbbr
-            resources={getCephPVCs(filteredSCNames, pvcsData, pvsData)}
-            mapper={getPVCStatusGroups}
-            showLink={false}
-          />
-          <ResourceInventoryItem
-            isLoading={!pvsLoaded}
-            error={!!pvsLoadError}
-            kind={PersistentVolumeModel}
-            useAbbr
-            resources={getCephPVs(pvsData)}
-            mapper={getPVStatusGroups}
-            showLink={false}
-          />
-        </InventoryBody>
+        <ResourceInventoryItem
+          isLoading={!nodesLoaded}
+          error={!!nodesLoadError}
+          kind={NodeModel}
+          resources={getCephNodes(nodesData)}
+          mapper={getNodeStatusGroups}
+          showLink={false}
+        />
+        <ResourceInventoryItem
+          isLoading={!pvcsLoaded}
+          error={!!pvcsLoadError}
+          kind={PersistentVolumeClaimModel}
+          useAbbr
+          resources={getCephPVCs(filteredSCNames, pvcsData, pvsData)}
+          mapper={getPVCStatusGroups}
+          showLink={false}
+        />
+        <ResourceInventoryItem
+          isLoading={!pvsLoaded}
+          error={!!pvsLoadError}
+          kind={PersistentVolumeModel}
+          useAbbr
+          resources={getCephPVs(pvsData)}
+          mapper={getPVStatusGroups}
+          showLink={false}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );

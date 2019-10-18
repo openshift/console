@@ -7,11 +7,7 @@
   font-size: 1rem;
   justify-content: space-between;
   line-height: 1.5rem;
-  padding: 1rem var(--pf-c-card--child--PaddingRight) 1rem var(--pf-c-card--child--PaddingLeft);
-}
-
-.co-inventory-card__item--border {
-  border-bottom: 1px solid $pf-color-black-300;
+  padding: 1rem 0 0 0;
 }
 
 .co-inventory-card__item-status {
