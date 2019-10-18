@@ -4,24 +4,28 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { getJobTypeAndCompletions } from '../module/k8s';
+import { getJobTypeAndCompletions, K8sKind, JobKind } from '../module/k8s';
+import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
-  Kebab,
   ContainerTable,
-  SectionHeading,
+  DetailsItem,
+  Kebab,
+  KebabAction,
   LabelList,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
   Timestamp,
   navFactory,
+  pluralize,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 
-const ModifyJobParallelism = (kind, obj) => ({
+const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   label: 'Edit Parallelism',
   callback: () =>
     configureJobParallelismModal({
@@ -36,7 +40,7 @@ const ModifyJobParallelism = (kind, obj) => ({
     verb: 'patch',
   },
 });
-const menuActions = [
+const menuActions: KebabAction[] = [
   ModifyJobParallelism,
   ...Kebab.getExtensionsActionsForKind(JobModel),
   ...Kebab.factory.common,
@@ -93,7 +97,17 @@ const JobTableHeader = () => {
 };
 JobTableHeader.displayName = 'JobTableHeader';
 
-const JobTableRow = ({ obj: job, index, key, style }) => {
+const JobTableRow = ({
+  obj: job,
+  index,
+  key,
+  style,
+}: {
+  obj: JobKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   const { type, completions } = getJobTypeAndCompletions(job);
   return (
     <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
@@ -129,21 +143,24 @@ const JobTableRow = ({ obj: job, index, key, style }) => {
 };
 JobTableRow.displayName = 'JobTableRow';
 
-const Details = ({ obj: job }) => (
-  <React.Fragment>
+const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
+  <>
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-md-6">
           <SectionHeading text="Job Overview" />
           <ResourceSummary resource={job} showPodSelector>
-            <dt>Desired Completions</dt>
-            <dd>{job.spec.completions || '-'}</dd>
-            <dt>Parallelism</dt>
-            <dd>{job.spec.parallelism || '-'}</dd>
-            <dt>Deadline</dt>
-            <dd>
-              {job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}
-            </dd>
+            <DetailsItem label="Desired Completions" obj={job} path="spec.completions" />
+            <DetailsItem label="Parallelism" obj={job} path="spec.parallelism" />
+            <DetailsItem
+              label="Active Deadline Seconds"
+              obj={job}
+              path="spec.activeDeadlineSeconds"
+            >
+              {job.spec.activeDeadlineSeconds
+                ? pluralize(job.spec.activeDeadlineSeconds, 'second')
+                : 'Not Configured'}
+            </DetailsItem>
           </ResourceSummary>
         </div>
         <div className="col-md-6">
@@ -157,20 +174,20 @@ const Details = ({ obj: job }) => (
                 <Status status="In Progress" />
               )}
             </dd>
-            <dt>Start Time</dt>
-            <dd>
+            <DetailsItem label="Start Time" obj={job} path="status.startTime">
               <Timestamp timestamp={job.status.startTime} />
-            </dd>
-            <dt>Completion Time</dt>
-            <dd>
+            </DetailsItem>
+            <DetailsItem label="Completion Time" obj={job} path="status.completionTime">
               <Timestamp timestamp={job.status.completionTime} />
-            </dd>
-            <dt>Succeeded Pods</dt>
-            <dd>{job.status.succeeded || 0}</dd>
-            <dt>Active Pods</dt>
-            <dd>{job.status.active || 0}</dd>
-            <dt>Failed Pods</dt>
-            <dd>{job.status.failed || 0}</dd>
+            </DetailsItem>
+            <DetailsItem
+              label="Succeeded Pods"
+              obj={job}
+              path="status.succeeded"
+              defaultValue="0"
+            />
+            <DetailsItem label="Active Pods" obj={job} path="status.active" defaultValue="0" />
+            <DetailsItem label="Failed Pods" obj={job} path="status.failed" defaultValue="0" />
           </dl>
         </div>
       </div>
@@ -179,20 +196,47 @@ const Details = ({ obj: job }) => (
       <SectionHeading text="Containers" />
       <ContainerTable containers={job.spec.template.spec.containers} />
     </div>
-  </React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Conditions" />
+      <Conditions conditions={job.status.conditions} />
+    </div>
+  </>
 );
 
 const { details, pods, editYaml, events } = navFactory;
-const JobsDetailsPage = (props) => (
+const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    kind={kind}
     menuActions={menuActions}
-    pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
+    pages={[details(JobDetails), editYaml(), pods(), events(ResourceEventStream)]}
   />
 );
-const JobsList = (props) => (
-  <Table {...props} aria-label="Jobs" Header={JobTableHeader} Row={JobTableRow} virtualize />
+const JobsList: React.FC = (props) => (
+  <Table
+    {...props}
+    aria-label={JobModel.labelPlural}
+    Header={JobTableHeader}
+    Row={JobTableRow}
+    virtualize
+  />
 );
 
-const JobsPage = (props) => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;
+const JobsPage: React.FC<JobsPageProps> = (props) => (
+  <ListPage ListComponent={JobsList} kind={kind} canCreate={true} {...props} />
+);
 export { JobsList, JobsPage, JobsDetailsPage };
+
+type JobsDetailsProps = {
+  obj: JobKind;
+};
+
+type JobsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type JobsDetailsPageProps = {
+  match: any;
+};

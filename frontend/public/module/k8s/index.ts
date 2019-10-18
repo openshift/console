@@ -354,6 +354,60 @@ export type ConfigMapKind = {
   binaryData: { [key: string]: string };
 };
 
+export type JobTemplate = {
+  metadata: ObjectMetadata;
+  spec: {
+    activeDeadlineSeconds?: number;
+    backoffLimit?: number;
+    completions?: number;
+    manualSelector?: boolean;
+    parallelism?: boolean;
+    selector?: Selector;
+    template: PodTemplate;
+    ttlSecondsAfterFinished?: number;
+  };
+};
+
+export type JobKind = {
+  apiVersion: string;
+  kind: string;
+  status: {
+    active?: number;
+    completionTime?: string;
+    conditions?: any;
+    failed?: number;
+    startTime?: string;
+    succeeded?: number;
+  };
+} & JobTemplate;
+
+export type CronJobKind = {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMetadata;
+  spec: {
+    concurrencyPolicy?: string;
+    failedJobsHistoryLimit?: number;
+    jobTemplate: JobTemplate;
+    schedule: string;
+    startingDeadlineSeconds?: number;
+    successfulJobsHistoryLimit?: number;
+    suspend?: boolean;
+  };
+  status: {
+    active?: {
+      apiVersion?: string;
+      fieldPath?: string;
+      kind?: string;
+      name?: string;
+      namespace?: string;
+      resourceVersion?: string;
+      uid?: string;
+    }[];
+    lastScheduleTime?: string;
+  };
+};
+
 export type CustomResourceDefinitionKind = {
   spec: {
     version: string;

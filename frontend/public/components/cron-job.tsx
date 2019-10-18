@@ -2,16 +2,20 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { CronJobKind } from '../module/k8s';
 import {
-  Kebab,
   ContainerTable,
-  navFactory,
+  DetailsItem,
+  Kebab,
   ResourceKebab,
-  SectionHeading,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
   Timestamp,
+  navFactory,
+  pluralize,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
@@ -70,7 +74,17 @@ const CronJobTableHeader = () => {
 };
 CronJobTableHeader.displayName = 'CronJobTableHeader';
 
-const CronJobTableRow = ({ obj: cronjob, index, key, style }) => {
+const CronJobTableRow = ({
+  obj: cronjob,
+  index,
+  key,
+  style,
+}: {
+  obj: CronJobKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   return (
     <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -103,38 +117,53 @@ const CronJobTableRow = ({ obj: cronjob, index, key, style }) => {
 };
 CronJobTableRow.displayName = 'CronJobTableRow';
 
-const Details = ({ obj: cronjob }) => {
+const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
             <SectionHeading text="CronJob Overview" />
             <ResourceSummary resource={cronjob}>
-              <dt>Schedule</dt>
-              <dd>{cronjob.spec.schedule}</dd>
-              <dt>Concurrency Policy</dt>
-              <dd>{cronjob.spec.concurrencyPolicy || '-'}</dd>
-              <dt>Starting Deadline Seconds</dt>
-              <dd>{cronjob.spec.startingDeadlineSeconds || '-'}</dd>
-              <dt>Last Schedule Time</dt>
-              <dd>
+              <DetailsItem label="Schedule" obj={cronjob} path="spec.schedule" />
+              <DetailsItem label="Concurrency Policy" obj={cronjob} path="spec.concurrencyPolicy" />
+              <DetailsItem
+                label="Starting Deadline Seconds"
+                obj={cronjob}
+                path="spec.startingDeadlineSeconds"
+              >
+                {cronjob.spec.startingDeadlineSeconds
+                  ? pluralize(cronjob.spec.startingDeadlineSeconds, 'second')
+                  : 'Not Configured'}
+              </DetailsItem>
+              <DetailsItem label="Last Schedule Time" obj={cronjob} path="status.lastScheduleTime">
                 <Timestamp timestamp={cronjob.status.lastScheduleTime} />
-              </dd>
+              </DetailsItem>
             </ResourceSummary>
           </div>
           <div className="col-md-6">
             <SectionHeading text="Job Overview" />
             <dl className="co-m-pane__details">
-              <dt>Desired Completions</dt>
-              <dd>{job.spec.completions || '-'}</dd>
-              <dt>Parallelism</dt>
-              <dd>{job.spec.parallelism || '-'}</dd>
-              <dt>Deadline</dt>
-              <dd>
-                {job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}
-              </dd>
+              <DetailsItem
+                label="Desired Completions"
+                obj={cronjob}
+                path="spec.jobTemplate.spec.completions"
+              />
+              <DetailsItem
+                label="Parallelism"
+                obj={cronjob}
+                path="spec.jobTemplate.spec.parallelism"
+              />
+              <DetailsItem
+                label="Active Deadline Seconds"
+                obj={cronjob}
+                path="spec.jobTemplate.spec.activeDeadlineSeconds"
+              >
+                {job.spec.activeDeadlineSeconds
+                  ? pluralize(job.spec.activeDeadlineSeconds, 'second')
+                  : 'Not Configured'}
+              </DetailsItem>
             </dl>
           </div>
         </div>
@@ -143,32 +172,47 @@ const Details = ({ obj: cronjob }) => {
         <SectionHeading text="Containers" />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
-export const CronJobsList = (props) => (
+export const CronJobsList: React.FC = (props) => (
   <Table
     {...props}
-    aria-label="Cron Jobs"
+    aria-label={CronJobModel.labelPlural}
     Header={CronJobTableHeader}
     Row={CronJobTableRow}
     virtualize
   />
 );
 
-export const CronJobsPage = (props) => (
+export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
   <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
 );
 
-export const CronJobsDetailsPage = (props) => (
+export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    kind={kind}
     menuActions={menuActions}
     pages={[
-      navFactory.details(Details),
+      navFactory.details(CronJobDetails),
       navFactory.editYaml(),
       navFactory.events(ResourceEventStream),
     ]}
   />
 );
+
+type CronJobDetailsProps = {
+  obj: CronJobKind;
+};
+
+type CronJobsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type CronJobsDetailsPageProps = {
+  match: any;
+};
