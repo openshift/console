@@ -9,12 +9,12 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import HealthBody from '@console/shared/src/components/dashboard/health-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/health-card/HealthItem';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
-import AlertsBody from '@console/shared/src/components/dashboard/health-card/AlertsBody';
-import AlertItem from '@console/shared/src/components/dashboard/health-card/AlertItem';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import {
@@ -64,6 +64,7 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
   const health = getHostHealthState(obj);
 
   const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+  const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
   const alerts = filterAlerts(getAlerts(alertsResponse));
 
   return (
@@ -75,11 +76,15 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem state={health.state} details={health.message} />
+              <HealthItem title="Health" state={health.state} details={health.message} />
             </GalleryItem>
           </Gallery>
         </HealthBody>
-        <AlertsBody>
+        <AlertsBody
+          isLoading={!alertsResponse}
+          error={alertsResponseError}
+          emptyMessage="No alerts or messages"
+        >
           {alerts.length !== 0
             ? alerts.map((alert) => (
                 <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
