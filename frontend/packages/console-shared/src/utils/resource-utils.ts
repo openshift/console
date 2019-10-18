@@ -345,7 +345,9 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts
   }
 };
 
-const getAutoscaledPods = (rc): PodKind[] => {
+// FIXME: This is not returning an actual PodKind. It's returning the RC spec
+// and status, and status.phase is not valid.
+const getAutoscaledPods = (rc: K8sResourceKind): any[] => {
   return [
     {
       ..._.pick(rc, 'metadata', 'status', 'spec'),
@@ -362,12 +364,13 @@ const getIdledStatus = (
   if (pods && !pods.length && isIdled(dc)) {
     return {
       ...rc,
+      // FIXME: This is not a PodKind.
       pods: [
         {
           ..._.pick(rc.obj, 'metadata', 'status', 'spec'),
           status: { phase: 'Idle' },
         },
-      ] as PodKind[],
+      ] as any[],
     };
   }
   return rc;

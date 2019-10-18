@@ -78,9 +78,12 @@ export type MatchExpression =
   | { key: string; operator: 'Exists' | 'DoesNotExist' }
   | { key: string; operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals'; values: string[] };
 
+export type MatchLabels = {
+  [key: string]: string;
+};
+
 export type Selector = {
-  [key: string]: any;
-  matchLabels?: { [key: string]: string };
+  matchLabels?: MatchLabels;
   matchExpressions?: MatchExpression[];
 };
 
@@ -101,13 +104,23 @@ export type Toleration = {
   effect: TaintEffect;
 };
 
+// Properties common to (almost) all Kubernetes resources.
+export type K8sResourceCommon = {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMetadata;
+};
+
+// Generic, unknown kind. Avoid when possible since it allows any key in spec
+// or status, weakening type checking.
 export type K8sResourceKind = {
   apiVersion?: string;
   kind?: string;
   metadata?: ObjectMetadata;
+  // FIXME: This should not be in the generic `K8sResourceKind` definition.
   pipelineTaskName?: string;
   spec?: {
-    selector?: Selector;
+    selector?: Selector | MatchLabels;
     [key: string]: any;
   };
   status?: { [key: string]: any };
@@ -269,19 +282,8 @@ export type PodSpec = {
   [key: string]: any;
 };
 
-type PodPhase =
-  | 'Pending'
-  | 'Running'
-  | 'Succeeded'
-  | 'Failed'
-  | 'Empty'
-  | 'Warning'
-  | 'Unknown'
-  | 'Idle'
-  | 'Not Ready'
-  | 'Scaled to 0'
-  | 'Autoscaled to 0'
-  | 'Terminating';
+// https://github.com/kubernetes/api/blob/release-1.16/core/v1/types.go#L2411-L2432
+type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
 
 type ContainerStateValue = {
   reason?: string;
@@ -326,33 +328,39 @@ export type PodStatus = {
 };
 
 export type PodTemplate = {
+  metadata: ObjectMetadata;
   spec: PodSpec;
 };
 
 export type PodKind = {
   status: PodStatus;
-} & PodTemplate &
-  K8sResourceKind;
+} & K8sResourceCommon &
+  PodTemplate;
 
 export type StorageClassResourceKind = {
   provisioner: string;
   reclaimPolicy: string;
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type NodeKind = {
-  spec?: {
+  spec: {
     taints?: Taint[];
     unschedulable?: boolean;
   };
-} & K8sResourceKind;
+  status?: {
+    conditions?: any;
+    images?: {
+      names: string[];
+      sizeBytes?: number;
+    }[];
+    phase?: string;
+  };
+} & K8sResourceCommon;
 
 export type ConfigMapKind = {
-  apiVersion: string;
-  kind: string;
-  metadata: ObjectMetadata;
   data: { [key: string]: string };
   binaryData: { [key: string]: string };
-};
+} & K8sResourceCommon;
 
 export type CustomResourceDefinitionKind = {
   spec: {
@@ -371,7 +379,7 @@ export type CustomResourceDefinitionKind = {
       openAPIV3Schema: JSONSchema6;
     };
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type RouteTarget = {
   kind: 'Service';
@@ -412,7 +420,7 @@ export type RouteKind = {
   status?: {
     ingress: RouteIngress[];
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type TemplateParameter = {
   name: string;
@@ -428,7 +436,7 @@ export type TemplateKind = {
   objects: any[];
   parameters: TemplateParameter[];
   labels?: any[];
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 type TemplateInstanceObject = {
   ref: ObjectReference;
@@ -451,7 +459,7 @@ export type TemplateInstanceKind = {
     conditions: any[];
     objects: TemplateInstanceObject[];
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type MachineSpec = {
   providerSpec: {
@@ -482,11 +490,12 @@ export type MachineKind = {
       [key: string]: any;
     };
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type MachineSetKind = {
   spec: {
     replicas: number;
+    selector: any;
     template: {
       spec: MachineSpec;
     };
@@ -497,7 +506,7 @@ export type MachineSetKind = {
     readyReplicas: number;
     replicas: number;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type Patch = {
   op: string;
@@ -533,14 +542,14 @@ export type MachineDeploymentKind = {
     readyReplicas: number;
     replicas: number;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type MachineConfigKind = {
   spec: {
     osImageURL: string;
     config: any;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export enum MachineConfigPoolConditionType {
   Updated = 'Updated',
@@ -615,7 +624,7 @@ type ClusterVersionSpec = {
 export type ClusterVersionKind = {
   spec: ClusterVersionSpec;
   status: ClusterVersionStatus;
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type OperandVersion = {
   name: string;
@@ -636,7 +645,7 @@ export type ClusterOperator = {
     versions?: OperandVersion[];
     relatedObjects?: ClusterOperatorObjectReference[];
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type MappingMethodType = 'claim' | 'lookup' | 'add';
 
@@ -682,7 +691,7 @@ export type OAuthKind = {
       error: string;
     };
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type K8sVerb =
   | 'create'
@@ -704,6 +713,9 @@ export type AccessReviewResourceAttributes = {
 };
 
 export type SelfSubjectAccessReviewKind = {
+  apiVersion: string;
+  kind: string;
+  metadata?: ObjectMetadata;
   spec: {
     resourceAttributes?: AccessReviewResourceAttributes;
   };
@@ -713,30 +725,32 @@ export type SelfSubjectAccessReviewKind = {
     reason?: string;
     evaluationError?: string;
   };
-} & K8sResourceKind;
+};
 
 export type ResourceAccessReviewRequest = {
+  apiVersion: string;
+  kind: string;
   namespace?: string;
   resourceAPIVersion: string;
   resourceAPIGroup: string;
   resource: string;
   verb: K8sVerb;
-} & K8sResourceKind;
+};
 
 export type ResourceAccessReviewResponse = {
   namespace?: string;
   users: string[];
   groups: string[];
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type UserKind = {
   fullName?: string;
   identities: string[];
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type GroupKind = {
   users: string[];
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type K8sKind = {
   abbr: string;
@@ -792,7 +806,7 @@ export type GroupVersionKind = string;
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
 
-export type EventKind = K8sResourceKind & {
+export type EventKind = {
   count: number;
   type: string;
   involvedObject: EventInvolvedObject;
@@ -804,4 +818,4 @@ export type EventKind = K8sResourceKind & {
     component: string;
     host?: string;
   };
-};
+} & K8sResourceCommon;
