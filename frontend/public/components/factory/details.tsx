@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
-
+import { getBadgeFromType } from '@console/shared';
 import {
   Firehose,
   HorizontalNav,
@@ -44,7 +44,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         }
         resourceKeys={resourceKeys}
         customData={props.customData}
-        badge={props.badge}
+        badge={props.badge || getBadgeFromType(props.kindObj && props.kindObj.badge)}
         icon={props.icon}
       />
       <HorizontalNav

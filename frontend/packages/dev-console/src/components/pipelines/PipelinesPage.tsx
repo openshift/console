@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
-import { DevPreviewBadge } from '@console/shared';
+import { getBadgeFromType } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../models';
 import ProjectListPage from '../projects/ProjectListPage';
@@ -29,14 +29,14 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       textFilter="name"
       resources={resources}
       title={PipelineModel.labelPlural}
-      badge={<DevPreviewBadge />}
+      badge={getBadgeFromType(PipelineModel.badge)}
     >
       <Firehose resources={resources}>
         <PipelineAugmentRunsWrapper />
       </Firehose>
     </FireMan>
   ) : (
-    <ProjectListPage title="Pipelines" badge={<DevPreviewBadge />}>
+    <ProjectListPage title="Pipelines" badge={getBadgeFromType(PipelineModel.badge)}>
       Select a project to view the list of pipelines
     </ProjectListPage>
   );

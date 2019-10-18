@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router-dom';
-
+import { getBadgeFromType } from '@console/shared';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
@@ -53,6 +53,7 @@ export const ResourceListPage = connectToPlural(
           match={props.match}
           mock={noProjectsAvailable}
           namespace={ns}
+          badge={getBadgeFromType(kindObj.badge)}
         />
       </div>
     );
@@ -87,6 +88,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         kind={props.modelRef}
         kindObj={kindObj}
         name={name}
+        badge={getBadgeFromType(kindObj.badge)}
       />
     </React.Fragment>
   );

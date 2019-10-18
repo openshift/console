@@ -1,4 +1,5 @@
 import { K8sKind } from '@console/internal/module/k8s';
+import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 
 const apiVersion = `v1beta1`;
 
@@ -13,6 +14,7 @@ export const ConfigurationModel: K8sKind = {
   abbr: 'C',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
 };
 
 export const KnativeServingModel: K8sKind = {
@@ -26,6 +28,7 @@ export const KnativeServingModel: K8sKind = {
   abbr: 'KS',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
 };
 
 export const RevisionModel: K8sKind = {
@@ -39,6 +42,7 @@ export const RevisionModel: K8sKind = {
   abbr: 'R',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
 };
 
 export const RouteModel: K8sKind = {
@@ -52,6 +56,7 @@ export const RouteModel: K8sKind = {
   abbr: 'R',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
 };
 
 export const ServiceModel: K8sKind = {
@@ -65,4 +70,5 @@ export const ServiceModel: K8sKind = {
   abbr: 'S',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
 };

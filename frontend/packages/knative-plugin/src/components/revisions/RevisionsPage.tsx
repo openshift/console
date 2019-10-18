@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TechPreviewBadge } from '@console/shared';
 import { RevisionModel } from '../../models';
 import RevisionList from './RevisionList';
 
@@ -15,7 +14,6 @@ const RevisionsPage: React.FC<RevisionsPageProps> = ({ namespace }) => (
     canCreate={false}
     kind={referenceForModel(RevisionModel)}
     ListComponent={RevisionList}
-    badge={<TechPreviewBadge />}
   />
 );
 

@@ -23,6 +23,7 @@ import {
   PageHeading,
   RequireCreatePermission,
 } from '../utils';
+import { getBadgeFromType } from '@console/shared/src';
 
 /** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string}}>} */
 export const TextFilter = ({ label, onChange, defaultValue, style, className, value }) => {
@@ -418,7 +419,7 @@ export const ListPage = withFallback((props) => {
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
-      badge={badge}
+      badge={badge || getBadgeFromType(ko.badge)}
     />
   ));
 }, ErrorBoundaryFallback);

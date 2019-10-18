@@ -19,6 +19,16 @@ export const referenceForGroupVersionKind = (group: string) => (version: string)
   kind: string,
 ) => [group, version, kind].join('~');
 
+export const getGroupVersionKind = (
+  ref: GroupVersionKind | string,
+): [string, string, string] | undefined => {
+  const parts = ref.split('~');
+  if (parts.length !== 3) {
+    return undefined;
+  }
+  return parts as [string, string, string];
+};
+
 export const isGroupVersionKind = (ref: GroupVersionKind | string) => ref.split('~').length === 3;
 
 export const groupVersionFor = (apiVersion: string) => ({

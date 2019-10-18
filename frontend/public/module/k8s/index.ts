@@ -1,4 +1,5 @@
 import { JSONSchema6 } from 'json-schema';
+import { BadgeType } from '@console/shared';
 import { EventInvolvedObject } from './event';
 
 export * from './job';
@@ -755,6 +756,7 @@ export type K8sKind = {
   annotations?: { [key: string]: string };
   verbs?: K8sVerb[];
   shortNames?: string[];
+  badge?: BadgeType;
 };
 
 export type Cause = {

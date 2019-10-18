@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
-import { TechPreviewBadge } from '@console/shared';
+import {
+  FLAG_KNATIVE_SERVING_SERVICE,
+  ServiceModel,
+  KnativeServingModel,
+} from '@console/knative-plugin';
+import { getBadgeFromType } from '@console/shared';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -24,9 +28,7 @@ const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {
     const title = (
       <Split gutter="md">
         <SplitItem className="odc-form-section__heading">Serverless</SplitItem>
-        <SplitItem>
-          <TechPreviewBadge />
-        </SplitItem>
+        <SplitItem>{getBadgeFromType(KnativeServingModel.badge)}</SplitItem>
       </Split>
     );
     return (
