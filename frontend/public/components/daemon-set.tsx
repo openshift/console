@@ -2,10 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   AsyncComponent,
+  DetailsItem,
   Kebab,
+  KebabAction,
   ContainerTable,
   detailsPage,
   LabelList,
@@ -20,7 +24,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 
-export const menuActions = [
+export const menuActions: KebabAction[] = [
   Kebab.factory.AddStorage,
   ...Kebab.getExtensionsActionsForKind(DaemonSetModel),
   ...Kebab.factory.common,
@@ -77,7 +81,17 @@ const DaemonSetTableHeader = () => {
 };
 DaemonSetTableHeader.displayName = 'DaemonSetTableHeader';
 
-const DaemonSetTableRow = ({ obj: daemonset, index, key, style }) => {
+const DaemonSetTableRow = ({
+  obj: daemonset,
+  index,
+  key,
+  style,
+}: {
+  obj: K8sResourceKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   return (
     <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -118,17 +132,15 @@ const DaemonSetTableRow = ({ obj: daemonset, index, key, style }) => {
 };
 DaemonSetTableRow.displayName = 'DaemonSetTableRow';
 
-export const DaemonSetDetailsList = ({ ds }) => (
+export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => (
   <dl className="co-m-pane__details">
-    <dt>Current Count</dt>
-    <dd>{ds.status.currentNumberScheduled || '-'}</dd>
-    <dt>Desired Count</dt>
-    <dd>{ds.status.desiredNumberScheduled || '-'}</dd>
+    <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
+    <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
   </dl>
 );
 
-const Details = ({ obj: daemonset }) => (
-  <React.Fragment>
+const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => (
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="Daemon Set Overview" />
       <div className="row">
@@ -147,10 +159,10 @@ const Details = ({ obj: daemonset }) => (
     <div className="co-m-pane__body">
       <VolumesTable resource={daemonset} heading="Volumes" />
     </div>
-  </React.Fragment>
+  </>
 );
 
-const EnvironmentPage = (props) => (
+const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...props}
@@ -158,7 +170,7 @@ const EnvironmentPage = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = (props) => (
+const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
     rawEnvData={props.obj.spec.template.spec}
@@ -167,7 +179,7 @@ const environmentComponent = (props) => (
   />
 );
 const { details, pods, editYaml, envEditor, events } = navFactory;
-const DaemonSets = (props) => (
+export const DaemonSets: React.FC = (props) => (
   <Table
     {...props}
     aria-label="Daemon Sets"
@@ -177,20 +189,50 @@ const DaemonSets = (props) => (
   />
 );
 
-const DaemonSetsPage = (props) => (
-  <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />
+export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
+  <ListPage canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />
 );
-const DaemonSetsDetailsPage = (props) => (
+
+export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    kind={kind}
     menuActions={menuActions}
     pages={[
-      details(detailsPage(Details)),
+      details(detailsPage(DaemonSetDetails)),
       editYaml(),
       pods(),
-      envEditor(environmentComponent),
+      envEditor(EnvironmentTab),
       events(ResourceEventStream),
     ]}
   />
 );
-export { DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage };
+
+type DaemonSetDetailsListProps = {
+  ds: K8sResourceKind;
+};
+
+type EnvironmentPageProps = {
+  obj: K8sResourceKind;
+  rawEnvData: any;
+  envPath: string[];
+  readOnly: boolean;
+};
+
+type EnvironmentTabProps = {
+  obj: K8sResourceKind;
+};
+
+type DaemonSetDetailsProps = {
+  obj: K8sResourceKind;
+};
+
+type DaemonSetsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type DaemonSetsDetailsPageProps = {
+  match: any;
+};
