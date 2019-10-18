@@ -562,7 +562,7 @@ class NamespaceBarDropdowns_ extends React.Component {
           items={items}
           actionItems={defaultActionItem}
           titlePrefix={model.label}
-          title={<span className="btn-link__title">{title}</span>}
+          title={title}
           onChange={onChange}
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}

@@ -23,7 +23,7 @@ import { ClusterServiceClassInfo } from './cluster-service-class-info';
 const createInstance = (kindObj, serviceClass) => {
   if (!_.get(serviceClass, 'status.removedFromBrokerCatalog')) {
     return {
-      btnClass: 'btn-primary',
+      btnClass: 'pf-c-button pf-m-primary',
       callback: () => {
         history.push(
           `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}`,

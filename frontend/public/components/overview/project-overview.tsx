@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
-import { Tooltip } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 
 import {
   Status as TooltipStatus,
@@ -295,13 +295,15 @@ const ProjectOverviewListItem = connect<
     <h3 className="project-overview__item-heading">
       <span className="co-resource-item co-resource-item--truncate">
         <ResourceIcon kind={kind} />
-        <button
+        <Button
           type="button"
+          isInline
           onClick={onClick}
-          className="btn btn-link btn-link--truncated btn-link--no-btn-default-values co-resource-item__resource-name"
+          className="pf-c-button--no-default-values project-overview__item-heading--name"
+          variant="link"
         >
           {name}
-        </button>
+        </Button>
         {current && (
           <React.Fragment>
             ,&nbsp;

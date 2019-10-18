@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
+import { Button } from '@patternfly/react-core';
 
 import { filterList } from '../actions/k8s';
 import { getQueryArgument, setQueryArgument } from './utils';
@@ -32,14 +33,15 @@ export const CheckBoxControls = ({
       <div className="row-filter">
         {children}
         <div className="co-m-row-filter__controls">
-          <button
-            className="btn btn-link co-m-row-filter__selector"
+          <Button
+            className="co-m-row-filter__selector"
             disabled={allSelected}
             type="button"
             onClick={onSelectAll}
+            variant="link"
           >
             Select All Filters
-          </button>
+          </Button>
           <span className="co-m-row-filter__items">
             {itemCount === selectedCount ? (
               itemCount
