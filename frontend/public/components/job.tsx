@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
 import { getJobTypeAndCompletions, K8sKind, JobKind } from '../module/k8s';
+import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
@@ -194,6 +195,10 @@ const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
       <ContainerTable containers={job.spec.template.spec.containers} />
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Conditions" />
+      <Conditions conditions={job.status.conditions} />
     </div>
   </>
 );
