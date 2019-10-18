@@ -22,6 +22,15 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   }
 }
 
+.dropdown-button--icon-only {
+  height: 34.5px !important; // default form element height
+  margin-left: -1px;
+  min-width: auto !important;
+  .pf-c-dropdown__toggle-icon {
+    margin: 0 !important;
+  }
+}
+
 .dropdown__disabled {
   color: $dropdown-link-disabled-color;
   cursor: not-allowed;
