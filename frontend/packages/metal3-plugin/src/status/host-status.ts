@@ -13,7 +13,7 @@ import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
-const getBareMetalHostStatus = (host: BareMetalHostKind) => {
+export const getBareMetalHostStatus = (host: BareMetalHostKind) => {
   const operationalStatus = getHostOperationalStatus(host);
   const provisioningState = getHostProvisioningState(host);
 

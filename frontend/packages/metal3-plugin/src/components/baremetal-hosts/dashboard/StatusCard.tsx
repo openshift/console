@@ -17,37 +17,31 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
-import {
-  HOST_STATUS_OK,
-  HOST_HEALTH_OK,
-  HOST_STATUS_ERROR,
-  HOST_HEALTH_ERROR,
-  HOST_HEALTH_LOADING,
-} from '../../../constants';
-import { getHostOperationalStatus } from '../../../selectors';
+import { HOST_SUCCESS_STATES, HOST_ERROR_STATES, HOST_PROGRESS_STATES } from '../../../constants';
+import { getBareMetalHostStatus } from '../../../status/host-status';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
-const getHostHealthState = (obj): HostHealthState => {
-  const status = getHostOperationalStatus(obj);
+const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
+  const { status, title } = getBareMetalHostStatus(obj);
+  let state: HealthState = HealthState.UNKNOWN;
 
-  switch (status) {
-    case HOST_STATUS_OK:
-      return {
-        state: HealthState.OK,
-        message: HOST_HEALTH_OK,
-      };
-    case HOST_STATUS_ERROR:
-      return {
-        state: HealthState.ERROR,
-        message: HOST_HEALTH_ERROR,
-      };
-    default:
-      return {
-        state: HealthState.LOADING,
-        message: HOST_HEALTH_LOADING,
-      };
+  if (HOST_SUCCESS_STATES.includes(status)) {
+    state = HealthState.OK;
   }
+
+  if (HOST_ERROR_STATES.includes(status)) {
+    state = HealthState.ERROR;
+  }
+
+  if (HOST_PROGRESS_STATES.includes(status)) {
+    state = HealthState.PROGRESS;
+  }
+
+  return {
+    title,
+    state,
+  };
 };
 
 const filterAlerts = (alerts: Alert[]): Alert[] =>
@@ -76,7 +70,7 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem title="Health" state={health.state} details={health.message} />
+              <HealthItem title="" state={health.state} details={health.title} />
             </GalleryItem>
           </Gallery>
         </HealthBody>
@@ -100,7 +94,7 @@ export default withDashboardResources(HealthCard);
 
 type HostHealthState = {
   state: HealthState;
-  message: string;
+  title: string;
 };
 
 type HealthCardProps = DashboardItemProps & {
