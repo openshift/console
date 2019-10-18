@@ -1,8 +1,10 @@
-.odc-pipeline-task-logs{
+.odc-pipeline-task-logs {
+  &__toolbar {
+    margin-top: var(--pf-global--spacer--lg);
+  }
   &__container {
-  margin-top: var(--pf-global--spacer--lg);
-  background-color: #030303;
-  overflow-y: scroll;
+    background-color: #030303;
+    overflow-y: scroll;
   }
   &__taskName {
     background-color: rgb(41, 46, 52);
