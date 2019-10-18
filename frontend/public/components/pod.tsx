@@ -251,7 +251,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           title="CPU Usage"
           humanize={humanizeCpuCores}
           namespace={pod.metadata.namespace}
-          query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${
+          query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${
             pod.metadata.namespace
           }'}`}
         />
@@ -261,9 +261,9 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           title="Filesystem"
           humanize={humanizeDecimalBytes}
           namespace={pod.metadata.namespace}
-          query={`pod_name:container_fs_usage_bytes:sum{pod_name='${
-            pod.metadata.name
-          }',namespace='${pod.metadata.namespace}'}`}
+          query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${
+            pod.metadata.namespace
+          }'}`}
         />
       </div>
     </div>
