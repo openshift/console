@@ -1088,6 +1088,39 @@ spec:
   hrefTemplate: 'https://example.com/logs?resourceName=\${resourceName}&containerName=\${containerName}&resourceNamespace=\${resourceNamespace}&podLabels=\${podLabels}'
   text: Example Logs
 `,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ConsoleYAMLSampleModel), 'default'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: example
+spec:
+  targetResource:
+    apiVersion: batch/v1
+    kind: Job
+  title: 'Example Job'
+  description: 'An example Job YAML sample'
+  yaml: |
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: countdown
+    spec:
+      template:
+        metadata:
+          name: countdown
+        spec:
+          containers:
+          - name: counter
+            image: centos:7
+            command:
+            - "bin/bash"
+            - "-c"
+            - "for i in 9 8 7 6 5 4 3 2 1 ; do echo $i ; done"
+          restartPolicy: Never
+`,
   );
 
 const pluginTemplates = ImmutableMap<

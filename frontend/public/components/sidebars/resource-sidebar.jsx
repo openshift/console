@@ -1,9 +1,15 @@
 import * as React from 'react';
-import { CloseIcon, DownloadIcon, InfoCircleIcon, PasteIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash-es';
+import { Button } from '@patternfly/react-core';
+import { CloseIcon, InfoCircleIcon } from '@patternfly/react-icons';
 
-import { resourceSidebars } from './resource-sidebars';
+import { ResourceSidebarSamples, getResourceSidebarSamples } from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
-import { SimpleTabNav } from '../utils';
+import { Firehose, SimpleTabNav } from '../utils';
+import { connectToFlags } from '../../reducers/features';
+import { FLAGS } from '../../const';
+import { referenceForModel } from '../../module/k8s';
+import { ConsoleYAMLSampleModel } from '../../models';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
@@ -35,10 +41,10 @@ class ResourceSidebarWrapper extends React.Component {
     if (!showSidebar) {
       return (
         <div className="co-p-has-sidebar__sidebar--hidden hidden-sm hidden-xs">
-          <button className="btn btn-link" onClick={this.toggleSidebar}>
+          <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>
             <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
             {linkLabel}
-          </button>
+          </Button>
         </div>
       );
     }
@@ -49,9 +55,15 @@ class ResourceSidebarWrapper extends React.Component {
         style={{ height }}
       >
         <div className="co-m-pane__body">
-          <button type="button" className="close" aria-label="Close" onClick={this.toggleSidebar}>
+          <Button
+            type="button"
+            className="co-p-has-sidebar__sidebar-close"
+            variant="plain"
+            aria-label="Close"
+            onClick={this.toggleSidebar}
+          >
             <CloseIcon />
-          </button>
+          </Button>
           <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>
           {children}
         </div>
@@ -60,44 +72,35 @@ class ResourceSidebarWrapper extends React.Component {
   }
 }
 
-export const SampleYaml = ({ sample, loadSampleYaml, downloadSampleYaml }) => {
-  const { highlightText, header, subheader, img, details, templateName, kind } = sample;
-  return (
-    <li className="co-resource-sidebar-item">
-      <h5 className="co-resource-sidebar-item__header">
-        <span className="text-uppercase">{highlightText}</span> {header}{' '}
-        <span className="co-role-sidebar-subheader">{subheader}</span>
-      </h5>
-      {img && <img src={img} className="co-resource-sidebar-item__img" />}
-      <p className="co-resource-sidebar-item__details">{details}</p>
-      <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
-        <PasteIcon className="co-icon-space-r" />
-        Try it
-      </button>
-      <button
-        className="btn btn-link pull-right"
-        onClick={() => downloadSampleYaml(templateName, kind)}
-      >
-        <DownloadIcon className="co-icon-space-r" />
-        Download YAML
-      </button>
-    </li>
-  );
-};
-
 const ResourceSchema = ({ kindObj }) => (
   <ExploreType kindObj={kindObj} scrollTop={sidebarScrollTop} />
 );
 
-export const ResourceSidebar = (props) => {
-  const { downloadSampleYaml, height, isCreateMode, kindObj, loadSampleYaml } = props;
+const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml }) => (
+  <ResourceSidebarSamples
+    samples={samples}
+    kindObj={kindObj}
+    downloadSampleYaml={downloadSampleYaml}
+    loadSampleYaml={loadSampleYaml}
+  />
+);
+
+const ResourceSidebarContent = (props) => {
+  const {
+    downloadSampleYaml,
+    height,
+    isCreateMode,
+    kindObj,
+    loadSampleYaml,
+    yamlSamplesList,
+  } = props;
   if (!kindObj) {
     return null;
   }
 
-  const { kind, label } = kindObj;
-  const ResourceSamples = resourceSidebars.get(kind);
-  const showSamples = ResourceSamples && isCreateMode;
+  const { label } = kindObj;
+  const samples = getResourceSidebarSamples(kindObj, yamlSamplesList);
+  const showSamples = !_.isEmpty(samples) && isCreateMode;
 
   return (
     <ResourceSidebarWrapper
@@ -122,6 +125,7 @@ export const ResourceSidebar = (props) => {
             downloadSampleYaml,
             kindObj,
             loadSampleYaml,
+            samples,
           }}
           additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
         />
@@ -131,3 +135,22 @@ export const ResourceSidebar = (props) => {
     </ResourceSidebarWrapper>
   );
 };
+
+export const ResourceSidebar = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
+  const resources =
+    flags[FLAGS.CONSOLE_YAML_SAMPLE] && props.isCreateMode
+      ? [
+          {
+            kind: referenceForModel(ConsoleYAMLSampleModel),
+            isList: true,
+            prop: 'yamlSamplesList',
+          },
+        ]
+      : [];
+
+  return (
+    <Firehose resources={resources}>
+      <ResourceSidebarContent {...props} />
+    </Firehose>
+  );
+});

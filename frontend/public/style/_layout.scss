@@ -55,8 +55,8 @@ body,
 
   &__sidebar--hidden {
     position: absolute;
-    right: 23px;
-    top: 1px;
+    right: $grid-gutter-width;
+    top: 5px;
     z-index: 1;
   }
 }

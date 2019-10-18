@@ -906,3 +906,16 @@ export const ConsoleExternalLogLinkModel: K8sKind = {
   id: 'consoleexternalloglink',
   crd: true,
 };
+
+export const ConsoleYAMLSampleModel: K8sKind = {
+  label: 'Console YAML Sample',
+  labelPlural: 'Console YAML Samples',
+  apiVersion: 'v1',
+  apiGroup: 'console.openshift.io',
+  plural: 'consoleyamlsamples',
+  abbr: 'CYS',
+  namespaced: false,
+  kind: 'ConsoleYAMLSample',
+  id: 'consoleyamlsample',
+  crd: true,
+};

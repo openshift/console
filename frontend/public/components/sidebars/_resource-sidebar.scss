@@ -1,10 +1,6 @@
-.co-resource-sidebar-list {
-  padding-left: 15px;
-}
-
 .co-resource-sidebar-item {
   border-top: 1px solid #ccc;
-  padding: 20px 0;
+  padding: ($line-height-computed / 2) 0 $line-height-computed;
 
   &:first-child {
     border-top: 0;
@@ -12,19 +8,6 @@
   }
 }
 
-.co-resource-sidebar-item__details {
-  margin: 0;
-  padding: 25px 0;
-}
-
-.co-resource-sidebar-item__header {
-  font-size: ($font-size-base + 2);
-}
-
 .co-resource-sidebar-item__img {
-  padding: 20px 0;
-}
-
-.co-role-sidebar-subheader {
-  font-weight: var(--pf-global--FontWeight--normal);
+  margin: $line-height-computed 0;
 }

@@ -12,6 +12,7 @@ import {
   ConsoleCLIDownloadModel,
   ConsoleNotificationModel,
   ConsoleExternalLogLinkModel,
+  ConsoleYAMLSampleModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { RootState } from '../redux';
@@ -34,6 +35,7 @@ export const baseCRDs = {
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
   [referenceForModel(ConsoleNotificationModel)]: FLAGS.CONSOLE_NOTIFICATION,
   [referenceForModel(ConsoleExternalLogLinkModel)]: FLAGS.CONSOLE_EXTERNAL_LOG_LINK,
+  [referenceForModel(ConsoleYAMLSampleModel)]: FLAGS.CONSOLE_YAML_SAMPLE,
 };
 
 const CRDs = { ...baseCRDs };
