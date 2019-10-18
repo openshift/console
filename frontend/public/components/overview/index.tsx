@@ -245,7 +245,7 @@ class OverviewMainContent_ extends React.Component<
     const { metrics: previousMetrics, namespace } = this.props;
     const queries = {
       memory: `sum(container_memory_working_set_bytes{namespace='${namespace}',container='',pod!=''}) BY (pod, namespace)`,
-      cpu: `pod_name:container_cpu_usage:sum{namespace="${namespace}"}`,
+      cpu: `pod:container_cpu_usage:sum{namespace="${namespace}"}`,
     };
 
     const promises = _.map(queries, (query, name) => {
