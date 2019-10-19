@@ -303,6 +303,15 @@ const maxSamples = 300;
 // unless the number of samples would change by at least this proportion
 const samplesLeeway = 0.2;
 
+// Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost no benefit
+const minStep = 5 * 1000;
+
+// Don't allow zooming to less than this number of milliseconds
+const minSpan = 30 * 1000;
+
+// Don't poll more often than this number of milliseconds
+const minPollInterval = 10 * 1000;
+
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan,
   disabledSeries = [],
@@ -316,13 +325,17 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
 
+  const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
+
+  // Limit the number of samples so that the step size doesn't fall below minStep
+  const maxSamplesForSpan = _.clamp(Math.round(span / minStep), minSamples, maxSamples);
+
   const [xDomain, setXDomain] = React.useState();
   const [error, setError] = React.useState();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const [results, setResults] = React.useState();
-  const [samples, setSamples] = React.useState(maxSamples);
-  const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
+  const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
   const [x1, setX1] = React.useState(0);
   const [x2, setX2] = React.useState(0);
@@ -364,7 +377,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             const newSamples = _.clamp(
               Math.floor((samples * maxDataPointsSoft) / numDataPoints),
               minSamples,
-              maxSamples,
+              maxSamplesForSpan,
             );
 
             // Change `samples` if either
@@ -372,7 +385,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             //   - It will change to the upper or lower limit of its allowed range
             if (
               Math.abs(newSamples - samples) / samples > samplesLeeway ||
-              (newSamples !== samples && (newSamples === maxSamples || newSamples === minSamples))
+              (newSamples !== samples &&
+                (newSamples === maxSamplesForSpan || newSamples === minSamples))
             ) {
               setSamples(newSamples);
             } else {
@@ -394,8 +408,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           });
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is hidden. Otherwise
-  // use a polling interval relative to the graph's timespan, but not less than 5s.
-  const delay = endTime || hideGraphs ? null : Math.max(span / 120, 5000);
+  // use a polling interval relative to the graph's timespan.
+  const delay = endTime || hideGraphs ? null : Math.max(span / 120, minPollInterval);
 
   usePoll(tick, delay, endTime, namespace, queries, samples, span);
 
@@ -485,8 +499,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       let to = oldFrom + (span * xMax) / width;
       let newSpan = to - from;
 
-      // Don't allow zooming to less than 10 seconds
-      const minSpan = 10 * 1000;
       if (newSpan < minSpan) {
         newSpan = minSpan;
         const middle = (from + to) / 2;
@@ -524,7 +536,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       {_.isEmpty(graphData) && !updating && <GraphEmpty />}
       {!_.isEmpty(graphData) && (
         <React.Fragment>
-          {samples < maxSamples && (
+          {samples < maxSamplesForSpan && (
             <Alert
               isInline
               className="co-alert"
