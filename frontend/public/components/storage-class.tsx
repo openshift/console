@@ -4,13 +4,14 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
+  DetailsItem,
   Kebab,
-  detailsPage,
-  navFactory,
   ResourceKebab,
-  SectionHeading,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
+  detailsPage,
+  navFactory,
 } from './utils';
 import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { StorageClassModel } from '../models';
@@ -53,9 +54,9 @@ const StorageClassTableHeader = () => {
     },
     {
       title: (
-        <React.Fragment>
+        <>
           Reclaim <span className="hidden-sm">Policy</span>
-        </React.Fragment>
+        </>
       ),
       sortField: 'reclaimPolicy',
       transforms: [sortable],
@@ -98,27 +99,24 @@ type StorageClassTableRowProps = {
 };
 
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="StorageClass Overview" />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj}>
-            <dt>Provisioner</dt>
-            <dd>{obj.provisioner || '-'}</dd>
+            <DetailsItem label="Provisioner" obj={obj} path="provisioner" />
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
-          <dt>Reclaim Policy</dt>
-          <dd>{obj.reclaimPolicy || '-'}</dd>
+          <DetailsItem label="Reclaim Policy" obj={obj} path="reclaimPolicy" />
           <dt>Default Class</dt>
           <dd>{isDefaultClass(obj).toString()}</dd>
-          <dt>Volume Binding Mode</dt>
-          <dd>{obj.volumeBindingMode || '-'}</dd>
+          <DetailsItem label="Volume Binding Mode" obj={obj} path="volumeBindingMode" />
         </div>
       </div>
     </div>
-  </React.Fragment>
+  </>
 );
 
 export const StorageClassList: React.SFC = (props) => (
