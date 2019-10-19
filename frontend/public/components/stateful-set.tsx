@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table } from './factory';
 
@@ -8,6 +9,7 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import {
   AsyncComponent,
   Kebab,
+  KebabAction,
   ContainerTable,
   ResourceSummary,
   SectionHeading,
@@ -17,7 +19,7 @@ import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
 
 const { AddStorage, common } = Kebab.factory;
-export const menuActions = [
+export const menuActions: KebabAction[] = [
   AddStorage,
   ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
   ...common,
@@ -25,7 +27,17 @@ export const menuActions = [
 
 const kind = 'StatefulSet';
 
-const StatefulSetTableRow = ({ obj, index, key, style }) => {
+const StatefulSetTableRow = ({
+  obj,
+  index,
+  key,
+  style,
+}: {
+  obj: K8sResourceKind;
+  index: number;
+  key: string;
+  style: any;
+}) => {
   return (
     <WorkloadTableRow
       obj={obj}
@@ -44,8 +56,8 @@ const StatefulSetTableHeader = () => {
 };
 StatefulSetTableHeader.displayName = 'StatefulSetTableHeader';
 
-const Details = ({ obj: ss }) => (
-  <React.Fragment>
+const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="StatefulSet Overview" />
       <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
@@ -57,10 +69,10 @@ const Details = ({ obj: ss }) => (
     <div className="co-m-pane__body">
       <VolumesTable resource={ss} heading="Volumes" />
     </div>
-  </React.Fragment>
+  </>
 );
 
-const EnvironmentPage = (props) => (
+const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...props}
@@ -68,7 +80,7 @@ const EnvironmentPage = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = (props) => (
+const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
     rawEnvData={props.obj.spec.template.spec}
@@ -77,7 +89,7 @@ const environmentComponent = (props) => (
   />
 );
 
-export const StatefulSetsList = (props) => (
+export const StatefulSetsList: React.FC = (props) => (
   <Table
     {...props}
     aria-label="Stateful Sets"
@@ -86,18 +98,43 @@ export const StatefulSetsList = (props) => (
     virtualize
   />
 );
-export const StatefulSetsPage = (props) => (
+export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = (props) => (
   <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />
 );
 
 const pages = [
-  navFactory.details(Details),
+  navFactory.details(StatefulSetDetails),
   navFactory.editYaml(),
   navFactory.pods(),
-  navFactory.envEditor(environmentComponent),
+  navFactory.envEditor(EnvironmentTab),
   navFactory.events(ResourceEventStream),
 ];
 
-export const StatefulSetsDetailsPage = (props) => (
-  <DetailsPage {...props} menuActions={menuActions} pages={pages} />
+export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (props) => (
+  <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={pages} />
 );
+
+type EnvironmentPageProps = {
+  obj: K8sResourceKind;
+  rawEnvData: any;
+  envPath: string[];
+  readOnly: boolean;
+};
+
+type EnvironmentTabProps = {
+  obj: K8sResourceKind;
+};
+
+type StatefulSetDetailsProps = {
+  obj: K8sResourceKind;
+};
+
+type StatefulSetsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type StatefulSetsDetailsPageProps = {
+  match: any;
+};
