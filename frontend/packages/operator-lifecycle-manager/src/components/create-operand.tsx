@@ -191,9 +191,11 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
 };
 
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
-  const fields: OperandField[] = (!_.isEmpty(props.clusterServiceVersion)
+  const fields: OperandField[] = (!_.isEmpty(
+    props.clusterServiceVersion && props.providedAPI.specDescriptors,
+  )
     ? fieldsFor(props.providedAPI)
-    : []
+    : fieldsForOpenAPI(props.openAPI)
   )
     .map((field) => {
       const capabilities = field.capabilities || [];
