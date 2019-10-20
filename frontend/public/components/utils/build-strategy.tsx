@@ -2,22 +2,17 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
-import { ResourceLink } from './';
+import { DetailsItem, ResourceLink } from './';
 import { getStrategyType } from '../build';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
 export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, children }) => {
-  const strategy = _.get(resource, 'spec.strategy', {});
-  const git = _.get(resource, 'spec.source.git');
-  const gitRef = _.get(resource, 'spec.source.git.ref');
-  const contextDir = _.get(resource, 'spec.source.contextDir');
   const dockerfile = _.get(resource, 'spec.source.dockerfile');
-  const asFile = _.get(resource, 'spec.source.binary.asFile');
   const jenkinsfile = _.get(resource, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfile');
-  const jenkinsfilePath = _.get(resource, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfilePath');
   const strategyType = getStrategyType(resource.spec.strategy.type);
-  const buildFrom = _.get(resource, `spec.strategy[${strategyType}].from`);
+  const buildFromPath = ['spec', 'strategy', strategyType, 'from'];
+  const buildFrom = _.get(resource, buildFromPath);
   const outputTo = _.get(resource, 'spec.output.to');
   const commitMessage = _.get(resource, 'spec.revision.git.message');
   const commitHash = _.get(resource, 'spec.revision.git.commit');
@@ -29,81 +24,85 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   return (
     <dl className="co-m-pane__details">
       {children}
-      <dt>Type</dt>
-      <dd>{strategy.type}</dd>
-      {git && <dt>Git Repository</dt>}
-      {git && <dd>{git.uri}</dd>}
-      {gitRef && <dt>Git Ref</dt>}
-      {gitRef && <dd>{gitRef}</dd>}
-      {commitMessage && <dt>Git Commit</dt>}
+      <DetailsItem label="Type" obj={resource} path="spec.strategy.type" />
+      <DetailsItem label="Git Repository" obj={resource} path="spec.source.git.uri" hideEmpty />
+      <DetailsItem label="Git Ref" obj={resource} path="spec.source.git.ref" hideEmpty />
       {commitMessage && (
-        <dd>
+        <DetailsItem label="Git Commit" obj={resource} path="spec.revision.git.message">
           {commitMessage}
           <br />
           {commitHash && <code>{commitHash.substring(0, 7)}</code>}{' '}
           {commitAuthorName && `by ${commitAuthorName}`}
-        </dd>
+        </DetailsItem>
       )}
-      {asFile && <dt>Binary Input as File</dt>}
-      {asFile && <dd>{asFile}</dd>}
-      {contextDir && <dt>Context Dir</dt>}
-      {contextDir && <dd>{contextDir}</dd>}
-      {dockerfile && <dt>Dockerfile</dt>}
+      <DetailsItem label="Binary File" obj={resource} path="spec.source.binary.asFile" hideEmpty />
+      <DetailsItem label="Context Dir" obj={resource} path="spec.source.contextDir" hideEmpty />
       {dockerfile && (
-        <dd>
+        <DetailsItem label="Dockerfile" obj={resource} path="spec.source.dockerfile">
           <pre>{dockerfile}</pre>
-        </dd>
+        </DetailsItem>
       )}
-      {jenkinsfile && <dt>Jenkinsfile</dt>}
       {jenkinsfile && (
-        <dd>
+        <DetailsItem
+          label="Dockerfile"
+          obj={resource}
+          path="spec.strategy.jenkinsPipelineStrategy.jenkinsfile"
+        >
           <pre>{jenkinsfile}</pre>
-        </dd>
+        </DetailsItem>
       )}
-      {jenkinsfilePath && <dt>Jenkinsfile Path</dt>}
-      {jenkinsfilePath && <dd>{jenkinsfilePath}</dd>}
-      {buildFrom && (buildFrom.kind === 'ImageStreamTag' || buildFrom.kind === 'DockerImage') && (
-        <dt>Builder Image</dt>
-      )}
+      <DetailsItem
+        label="JenskinsFile Path"
+        obj={resource}
+        path="spec.strategy.jenkinsPipelineStrategy.jenkinsfilePath"
+        hideEmpty
+      />
       {buildFrom && buildFrom.kind === 'ImageStreamTag' && (
-        <dd>
+        <DetailsItem label="Build From" obj={resource} path={buildFromPath}>
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={buildFrom.name}
             namespace={buildFrom.namespace || resource.metadata.namespace}
             title={buildFrom.name}
           />
-        </dd>
+        </DetailsItem>
       )}
-      {buildFrom && buildFrom.kind === 'DockerImage' && <dd>{buildFrom.name}</dd>}
-      {outputTo && <dt>Output To</dt>}
+      {buildFrom && buildFrom.kind === 'DockerImage' && (
+        <DetailsItem label="Build From" obj={resource} path={buildFromPath}>
+          {buildFrom.name}
+        </DetailsItem>
+      )}
       {outputTo && (
-        <dd>
+        <DetailsItem label="Output To" obj={resource} path="spec.output.to">
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={outputTo.name}
             namespace={outputTo.namespace || resource.metadata.namespace}
             title={outputTo.name}
           />
-        </dd>
+        </DetailsItem>
       )}
-      {pushSecret && <dt>Push Secret</dt>}
       {pushSecret && (
-        <dd>
+        <DetailsItem label="Push Secret" obj={resource} path="spec.output.pushSecret">
           <ResourceLink
             kind="Secret"
             name={pushSecret.name}
             namespace={resource.metadata.namespace}
             title={pushSecret.name}
           />
-        </dd>
+        </DetailsItem>
       )}
-      <dt>Run Policy</dt>
-      <dd>{resource.spec.runPolicy || 'Serial'}</dd>
-      {resourceLimits && <dt>Resource Limits</dt>}
-      {resourceLimits && <dd>{_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}</dd>}
-      {triggers && <dt>Triggers</dt>}
-      {triggers && <dd>{triggers}</dd>}
+      <DetailsItem label="Run Policy" obj={resource} path="spec.runPolicy" hideEmpty />
+      {resourceLimits && (
+        <DetailsItem label="Resource Limits" obj={resource} path="spec.resources.limits">
+          {_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}
+        </DetailsItem>
+      )}
+      {triggers && (
+        <DetailsItem label="Triggers" obj={resource} path="spec.triggers">
+          {triggers}
+        </DetailsItem>
+      )}
     </dl>
   );
 };

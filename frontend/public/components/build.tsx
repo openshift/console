@@ -19,6 +19,7 @@ import {
   AsyncComponent,
   BuildHooks,
   BuildStrategy,
+  DetailsItem,
   history,
   humanizeCpuCores,
   humanizeDecimalBytes,
@@ -132,7 +133,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
   const namespace = build.metadata.namespace;
 
   return (
-    <React.Fragment>
+    <>
       <div className="row">
         <div className="col-md-12 col-lg-4">
           <Area
@@ -160,7 +161,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
         </div>
       </div>
       <br />
-    </React.Fragment>
+    </>
   );
 });
 
@@ -171,7 +172,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Build Overview" />
         <BuildGraphs build={build} />
@@ -185,38 +186,34 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={build}>
-              {triggeredBy && <dt>Triggered By</dt>}
-              {triggeredBy && <dd>{triggeredBy}</dd>}
-              {startTimestamp && <dt>Started</dt>}
-              {startTimestamp && (
-                <dd>
-                  <Timestamp timestamp={startTimestamp} />
-                </dd>
-              )}
+              <DetailsItem label="Triggered By" obj={build} path="spec.triggeredBy" hideEmpty>
+                {triggeredBy}
+              </DetailsItem>
+              <DetailsItem label="Started" obj={build} path="status.startTimestamp" hideEmpty>
+                <Timestamp timestamp={startTimestamp} />
+              </DetailsItem>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
             <BuildStrategy resource={build}>
-              <dt>Status</dt>
-              <dd>
+              <DetailsItem label="Status" obj={build} path="status.phase">
                 <Status status={build.status.phase} />
-              </dd>
-              {logSnippet && <dt>Log Snippet</dt>}
-              {logSnippet && (
-                <dd>
-                  <pre>{logSnippet}</pre>
-                </dd>
-              )}
-              {message && <dt>Reason</dt>}
-              {message && <dd>{message}</dd>}
-              {duration && <dt>Duration</dt>}
-              {duration && <dd>{duration}</dd>}
+              </DetailsItem>
+              <DetailsItem label="Log Snippet" obj={build} path="status.logSnippet" hideEmpty>
+                <pre>{logSnippet}</pre>
+              </DetailsItem>
+              <DetailsItem label="Message" obj={build} path="status.message" hideEmpty>
+                {message}
+              </DetailsItem>
+              <DetailsItem label="Duration" obj={build} path="status.duration" hideEmpty>
+                {duration}
+              </DetailsItem>
             </BuildStrategy>
           </div>
         </div>
       </div>
       <BuildHooks resource={build} />
-    </React.Fragment>
+    </>
   );
 };
 

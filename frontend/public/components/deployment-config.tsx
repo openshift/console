@@ -95,35 +95,34 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   return (
     <dl className="co-m-pane__details">
       <DetailsItem label="Latest Version" obj={dc} path="status.latestVersion" />
-      {_.get(dc, 'status.details.message') && (
-        <DetailsItem label="Reason" obj={dc} path="status.details.message" />
-      )}
+      <DetailsItem label="Message" obj={dc} path="status.details.message" hideEmpty />
       <DetailsItem label="Update Strategy" obj={dc} path="spec.strategy.type" />
       {dc.spec.strategy.type === 'RollingUpdate' && (
         <>
-          {timeout && (
-            <DetailsItem label="Timeout" obj={dc} path="spec.strategy.rollingParams.timeoutSeconds">
-              {pluralize(timeout, 'second')}
-            </DetailsItem>
-          )}
-          {updatePeriod && (
-            <DetailsItem
-              label="Update Period"
-              obj={dc}
-              path="spec.strategy.rollingParams.updatePeriodSeconds"
-            >
-              {pluralize(updatePeriod, 'second')}
-            </DetailsItem>
-          )}
-          {interval && (
-            <DetailsItem
-              label="Interval"
-              obj={dc}
-              path="spec.strategy.rollingParams.intervalSeconds"
-            >
-              {pluralize(interval, 'second')}
-            </DetailsItem>
-          )}
+          <DetailsItem
+            label="Timeout"
+            obj={dc}
+            path="spec.strategy.rollingParams.timeoutSeconds"
+            hideEmpty
+          >
+            {pluralize(timeout, 'second')}
+          </DetailsItem>
+          <DetailsItem
+            label="Update Period"
+            obj={dc}
+            path="spec.strategy.rollingParams.updatePeriodSeconds"
+            hideEmpty
+          >
+            {pluralize(updatePeriod, 'second')}
+          </DetailsItem>
+          <DetailsItem
+            label="Interval"
+            obj={dc}
+            path="spec.strategy.rollingParams.intervalSeconds"
+            hideEmpty
+          >
+            {pluralize(interval, 'second')}
+          </DetailsItem>
           <DetailsItem
             label="Max Unavailable"
             obj={dc}
@@ -141,11 +140,9 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       <DetailsItem label="Min Ready Seconds" obj={dc} path="spec.minReadySeconds">
         {dc.spec.minReadySeconds ? pluralize(dc.spec.minReadySeconds, 'second') : 'Not Configured'}
       </DetailsItem>
-      {triggers && (
-        <DetailsItem label="Triggers" obj={dc} path="spec.triggers">
-          {triggers}
-        </DetailsItem>
-      )}
+      <DetailsItem label="Triggers" obj={dc} path="spec.triggers" hideEmpty>
+        {triggers}
+      </DetailsItem>
     </dl>
   );
 };
