@@ -36,8 +36,8 @@ import {
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
-  const provisionConfigs = getProvisionConfigs(testName);
-  const testDataVolume = getTestDataVolume(testName);
+  const provisionConfigs = getProvisionConfigs();
+  const testDataVolume = getTestDataVolume();
 
   beforeAll(async () => {
     createResources([multusNAD, testDataVolume]);
@@ -58,10 +58,10 @@ describe('Kubevirt create VM using wizard', () => {
       `Create VM using ${configName}.`,
       async () => {
         const vm = new VirtualMachine(
-          vmConfig(configName.toLowerCase(), provisionConfig, testName),
+          vmConfig(configName.toLowerCase(), testName, provisionConfig),
         );
         await withResource(leakedResources, vm.asResource(), async () => {
-          await vm.create(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+          await vm.create(vmConfig(configName.toLowerCase(), testName, provisionConfig));
         });
       },
       specTimeout,
@@ -73,8 +73,8 @@ describe('Kubevirt create VM using wizard', () => {
     async () => {
       const testVMConfig = vmConfig(
         'windows10',
-        provisionConfigs.get(ProvisionConfigName.CONTAINER),
         testName,
+        provisionConfigs.get(ProvisionConfigName.CONTAINER),
       );
       testVMConfig.networkResources = [];
       testVMConfig.operatingSystem = OperatingSystem.WINDOWS_10;
@@ -122,8 +122,8 @@ describe('Kubevirt create VM using wizard', () => {
     async () => {
       const testVMConfig = vmConfig(
         'test-dv',
-        provisionConfigs.get(ProvisionConfigName.URL),
         testName,
+        provisionConfigs.get(ProvisionConfigName.URL),
       );
       testVMConfig.networkResources = [];
       const vm = new VirtualMachine(testVMConfig);
@@ -147,8 +147,8 @@ describe('Kubevirt create VM using wizard', () => {
     'Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
       const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
-      const vm1Config = vmConfig('vm1', clonedDiskProvisionConfig, testName);
-      const vm2Config = vmConfig('vm2', clonedDiskProvisionConfig, testName);
+      const vm1Config = vmConfig('vm1', testName, clonedDiskProvisionConfig);
+      const vm2Config = vmConfig('vm2', testName, clonedDiskProvisionConfig);
       vm1Config.startOnCreation = false;
       vm1Config.networkResources = [];
       const vm1 = new VirtualMachine(vm1Config);

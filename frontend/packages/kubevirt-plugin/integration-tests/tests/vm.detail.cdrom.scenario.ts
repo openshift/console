@@ -15,7 +15,7 @@ import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.co
 import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
-  const testDataVolume = getTestDataVolume(testName);
+  const testDataVolume = getTestDataVolume();
 
   beforeAll(async () => {
     createResources([testDataVolume]);
@@ -25,7 +25,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
     deleteResources([testDataVolume]);
   });
   const leakedResources = new Set<string>();
-  const provisionConfigs = getProvisionConfigs(testName);
+  const provisionConfigs = getProvisionConfigs();
 
   const configName = ProvisionConfigName.CONTAINER;
   const provisionConfig = provisionConfigs.get(configName);
@@ -36,10 +36,10 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   it(
     'creates new container CD, then removes it',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), provisionConfig, testName);
+      const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       vm1Config.startOnCreation = false;
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), testName, provisionConfig));
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(vm1Config);
         await vm.navigateToDetail();
@@ -66,10 +66,10 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   it(
     'creates two new container CDs, then ejects and changes them to URL, PVC',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), provisionConfig, testName);
+      const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       vm1Config.startOnCreation = false;
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), testName, provisionConfig));
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(vm1Config);
         await vm.navigateToDetail();

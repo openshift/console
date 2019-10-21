@@ -1,5 +1,4 @@
-/* eslint-disable no-undef, max-nested-callbacks */
-import { OrderedMap } from 'immutable';
+/* eslint-disable max-nested-callbacks */
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   removeLeakedResources,
@@ -7,16 +6,16 @@ import {
   deleteResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-import { NetworkResource, StorageResource, ProvisionOption } from './utils/types';
 import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
-import { basicVMConfig, rootDisk, networkInterface, multusNAD, hddDisk } from './utils/mocks';
-import { getTestDataVolume } from './vm.wizard.configs';
+import { basicVMConfig, multusNAD } from './utils/mocks';
+import { getTestDataVolume, getProvisionConfigs } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
 
 describe('Kubevirt create VM Template using wizard', () => {
   const leakedResources = new Set<string>();
-  const testDataVolume = getTestDataVolume(testName);
+  const provisionConfigs = getProvisionConfigs();
+  const testDataVolume = getTestDataVolume();
   const commonSettings = {
     cloudInit: {
       useCloudInit: false,
@@ -48,43 +47,11 @@ describe('Kubevirt create VM Template using wizard', () => {
     };
   };
 
-  const provisionConfigs = OrderedMap<
-    string,
-    {
-      provision: ProvisionOption;
-      networkResources: NetworkResource[];
-      storageResources: StorageResource[];
-    }
-  >()
-    .set('URL', {
-      provision: {
-        method: 'URL',
-        source: basicVMConfig.sourceURL,
-      },
-      networkResources: [networkInterface],
-      storageResources: [rootDisk],
-    })
-    .set('Container', {
-      provision: {
-        method: 'Container',
-        source: basicVMConfig.sourceContainer,
-      },
-      networkResources: [networkInterface],
-      storageResources: [hddDisk],
-    })
-    .set('PXE', {
-      provision: {
-        method: 'PXE',
-      },
-      networkResources: [networkInterface],
-      storageResources: [rootDisk],
-    });
-
-  beforeAll(async () => {
+  beforeAll(() => {
     createResources([multusNAD, testDataVolume]);
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     deleteResources([multusNAD, testDataVolume]);
   });
 

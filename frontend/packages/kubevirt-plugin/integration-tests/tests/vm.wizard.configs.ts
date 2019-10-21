@@ -1,4 +1,5 @@
 import { OrderedMap } from 'immutable';
+import { testName } from '../../../../integration-tests/protractor.conf';
 import {
   basicVMConfig,
   networkInterface,
@@ -16,14 +17,14 @@ import {
 import { resolveStorageDataAttribute, getResourceObject } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
-export const vmConfig = (name: string, provisionConfig, testName: string) => {
+export const vmConfig = (name: string, namespace: string, provisionConfig: ProvisionConfig) => {
   const commonSettings = {
     startOnCreation: true,
     cloudInit: {
       useCloudInit: false,
     },
-    namespace: testName,
-    description: `Default description ${testName}`,
+    namespace,
+    description: `Default description ${namespace}`,
     flavor: basicVMConfig.flavor,
     operatingSystem: basicVMConfig.operatingSystem,
     workloadProfile: basicVMConfig.workloadProfile,
@@ -31,7 +32,7 @@ export const vmConfig = (name: string, provisionConfig, testName: string) => {
 
   return {
     ...commonSettings,
-    name: `${name}-${testName}`,
+    name: `${name}-${namespace}`,
     provisionSource: provisionConfig.provision,
     storageResources: provisionConfig.storageResources,
     networkResources: provisionConfig.networkResources,
@@ -44,7 +45,7 @@ export const kubevirtStorage = getResourceObject(
   'configMap',
 );
 
-export const getTestDataVolume = (testName: string) =>
+export const getTestDataVolume = () =>
   dataVolumeManifest({
     name: `toclone-${testName}`,
     namespace: testName,
@@ -53,8 +54,8 @@ export const getTestDataVolume = (testName: string) =>
     volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
   });
 
-const getDiskToCloneFrom = (testName: string): StorageResource => {
-  const testDV = getTestDataVolume(testName);
+const getDiskToCloneFrom = (): StorageResource => {
+  const testDV = getTestDataVolume();
   return {
     name: testDV.metadata.name,
     size: testDV.spec.pvc.resources.requests.storage.slice(0, -2),
@@ -68,7 +69,7 @@ const getDiskToCloneFrom = (testName: string): StorageResource => {
   };
 };
 
-export const getProvisionConfigs = (testName: string) =>
+export const getProvisionConfigs = () =>
   OrderedMap<ProvisionConfigName, ProvisionConfig>()
     .set(ProvisionConfigName.URL, {
       provision: {
@@ -98,5 +99,5 @@ export const getProvisionConfigs = (testName: string) =>
         method: ProvisionConfigName.DISK,
       },
       networkResources: [networkInterface],
-      storageResources: [getDiskToCloneFrom(testName)],
+      storageResources: [getDiskToCloneFrom()],
     });
