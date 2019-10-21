@@ -7,14 +7,15 @@ import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
+  DetailsItem,
   Kebab,
-  SectionHeading,
   LabelList,
-  navFactory,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  SectionHeading,
   Timestamp,
+  navFactory,
 } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -23,7 +24,7 @@ const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalP
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
 
-const MetricsRow: React.SFC<MetricsRowProps> = ({ type, current, target }) => (
+const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <div className="row">
     <div className="col-xs-6">{type}</div>
     <div className="col-xs-3">{current || '-'}</div>
@@ -48,7 +49,7 @@ const externalRow = (metric, current, key) => {
 const objectRow = (metric, current, ns, key) => {
   const { object } = metric;
   const type = (
-    <React.Fragment>
+    <>
       {object.metricName} on
       <ResourceLink
         kind={object.target.kind}
@@ -56,7 +57,7 @@ const objectRow = (metric, current, ns, key) => {
         namespace={ns}
         title={object.target.name}
       />
-    </React.Fragment>
+    </>
   );
   const currentValue = _.get(current, 'object.currentValue');
   const targetValue = object.targetValue;
@@ -92,9 +93,9 @@ const resourceRow = (metric, current, key) => {
   const targetUtilization = metric.resource.targetAverageUtilization;
   const resourceLabel = `resource ${metric.resource.name}`;
   const type = targetUtilization ? (
-    <React.Fragment>
+    <>
       {resourceLabel}&nbsp;<span className="small text-muted">(as a percentage of request)</span>
-    </React.Fragment>
+    </>
   ) : (
     resourceLabel
   );
@@ -108,9 +109,9 @@ const resourceRow = (metric, current, key) => {
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
-const MetricsTable: React.SFC<MetricsTableProps> = ({ obj: hpa }) => {
+const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   return (
-    <React.Fragment>
+    <>
       <SectionHeading text="Metrics" />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
@@ -143,14 +144,14 @@ const MetricsTable: React.SFC<MetricsTableProps> = ({ obj: hpa }) => {
           })}
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
-export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalersDetailsProps> = ({
+export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersDetailsProps> = ({
   obj: hpa,
 }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="Horizontal Pod Autoscaler Overview" />
       <div className="row">
@@ -159,27 +160,21 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>Scale Target</dt>
-            <dd>
+            <DetailsItem label="Scale Target" obj={hpa} path="spec.scaleTargetRef">
               <ResourceLink
                 kind={hpa.spec.scaleTargetRef.kind}
                 name={hpa.spec.scaleTargetRef.name}
                 namespace={hpa.metadata.namespace}
                 title={hpa.spec.scaleTargetRef.name}
               />
-            </dd>
-            <dt>Min Pods</dt>
-            <dd>{hpa.spec.minReplicas}</dd>
-            <dt>Max Pods</dt>
-            <dd>{hpa.spec.maxReplicas}</dd>
-            <dt>Last Scale Time</dt>
-            <dd>
+            </DetailsItem>
+            <DetailsItem label="Min Replicas" obj={hpa} path="spec.minReplicas" />
+            <DetailsItem label="Max Replicas" obj={hpa} path="spec.maxReplicas" />
+            <DetailsItem label="Last Scale Time" obj={hpa} path="status.lastScaleTime">
               <Timestamp timestamp={hpa.status.lastScaleTime} />
-            </dd>
-            <dt>Current Pods</dt>
-            <dd>{hpa.status.currentReplicas}</dd>
-            <dt>Desired Pods</dt>
-            <dd>{hpa.status.desiredReplicas}</dd>
+            </DetailsItem>
+            <DetailsItem label="Current Replicas" obj={hpa} path="status.currentReplicas" />
+            <DetailsItem label="Desired Replicas" obj={hpa} path="status.desiredReplicas" />
           </dl>
         </div>
       </div>
@@ -191,7 +186,7 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
       <SectionHeading text="Conditions" />
       <Conditions conditions={hpa.status.conditions} />
     </div>
-  </React.Fragment>
+  </>
 );
 
 const pages = [
@@ -199,7 +194,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.SFC<
+export const HorizontalPodAutoscalersDetailsPage: React.FC<
   HorizontalPodAutoscalersDetailsPageProps
 > = (props) => (
   <DetailsPage
@@ -334,7 +329,7 @@ const HorizontalPodAutoscalersList: React.SFC = (props) => (
 );
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
-export const HorizontalPodAutoscalersPage: React.SFC<HorizontalPodAutoscalersPageProps> = (
+export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPageProps> = (
   props,
 ) => (
   <ListPage
