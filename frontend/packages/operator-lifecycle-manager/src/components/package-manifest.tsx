@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Link, match } from 'react-router-dom';
 import * as classNames from 'classnames';
+import { Button } from '@patternfly/react-core';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { StatusBox, MsgBox } from '@console/internal/components/utils';
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
@@ -93,9 +94,9 @@ export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = 
         {subscription ? subscriptionLink() : <span className="text-muted">None</span>}
         {canSubscribe && (
           <Link to={createSubscriptionLink()}>
-            <button className="btn btn-primary" type="button">
+            <Button variant="primary" type="button">
               Create<span className="visible-lg-inline"> Subscription</span>
-            </button>
+            </Button>
           </Link>
         )}
       </TableData>

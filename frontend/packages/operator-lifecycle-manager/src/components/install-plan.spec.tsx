@@ -381,7 +381,7 @@ describe(InstallPlanPreview.name, () => {
     row
       .find('td')
       .at(0)
-      .find('.btn-link')
+      .find('.pf-m-link')
       .simulate('click');
 
     expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(installPlan.status.plan[1].resource);
