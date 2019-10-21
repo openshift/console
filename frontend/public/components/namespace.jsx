@@ -214,6 +214,7 @@ const ProjectLink = connect(
   <span className="co-resource-item co-resource-item--truncate">
     <ResourceIcon kind="Project" />
     <Button
+      isInline
       title={project.metadata.name}
       type="button"
       className="co-resource-item__resource-name"
