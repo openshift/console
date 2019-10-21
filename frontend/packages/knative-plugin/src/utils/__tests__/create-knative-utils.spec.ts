@@ -94,5 +94,26 @@ describe('Create knative Utils', () => {
         knDeploymentResource.spec.template.metadata.annotations['autoscaling.knative.dev/minScale'],
       ).toBeUndefined();
     });
+
+    it('expect not to have cluster-local labels added if route is checked', () => {
+      defaultData.route.create = true;
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        defaultData,
+        'imgStream',
+      );
+      expect(knDeploymentResource.metadata.labels).toBeUndefined();
+    });
+
+    it('expect to have cluster-local added if route is not checked', () => {
+      defaultData.route.create = false;
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        defaultData,
+        'imgStream',
+      );
+      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toBeDefined();
+      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toEqual(
+        'cluster-local',
+      );
+    });
   });
 });
