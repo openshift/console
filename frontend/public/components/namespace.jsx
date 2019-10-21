@@ -8,7 +8,7 @@ import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
-import { Status } from '@console/shared';
+import { Status, getRequester } from '@console/shared';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
@@ -62,7 +62,6 @@ import { ProjectDashboard } from './dashboard/project-dashboard/project-dashboar
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
-const getRequester = (obj) => _.get(obj, ['metadata', 'annotations', 'openshift.io/requester']);
 const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
 
 export const deleteModal = (kind, ns) => {
