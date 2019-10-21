@@ -10,6 +10,12 @@ export const annotations = {
 
 export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
+const isDeployImageFormData = (
+  formData: DeployImageFormData | GitImportFormData,
+): formData is DeployImageFormData => {
+  return 'isi' in (formData as DeployImageFormData);
+};
+
 export const createService = (
   formData: DeployImageFormData | GitImportFormData,
   imageStreamData?: K8sResourceKind,
@@ -33,6 +39,11 @@ export const createService = (
   if (_.get(formData, 'build.strategy') === 'Docker') {
     const port = { containerPort: _.get(formData, 'docker.containerPort'), protocol: 'TCP' };
     ports = [port];
+  } else if (isDeployImageFormData(formData)) {
+    const {
+      isi: { ports: isiPorts },
+    } = formData;
+    ports = isiPorts;
   }
 
   const service: any = {
@@ -69,7 +80,7 @@ export const createRoute = (
     name,
     labels: userLabels,
     route: { hostname, secure, path, tls, targetPort: routeTargetPort },
-    image: { ports, tag: imageTag },
+    image: { ports: imagePorts, tag: imageTag },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
@@ -77,6 +88,14 @@ export const createRoute = (
 
   const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
   const defaultAnnotations = git ? getAppAnnotations(git.url, git.ref) : annotations;
+
+  let ports = imagePorts;
+  if (isDeployImageFormData(formData)) {
+    const {
+      isi: { ports: isiPorts },
+    } = formData;
+    ports = isiPorts;
+  }
 
   let targetPort;
   if (_.get(formData, 'build.strategy') === 'Docker') {
