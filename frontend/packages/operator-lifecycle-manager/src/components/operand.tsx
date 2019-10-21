@@ -15,38 +15,45 @@ import {
   TableData,
 } from '@console/internal/components/factory';
 import {
-  ResourceSummary,
-  StatusBox,
-  navFactory,
-  Timestamp,
+  FirehoseResult,
   LabelList,
-  MsgBox,
-  ResourceKebab,
+  LoadingBox,
   Kebab,
   KebabAction,
-  LoadingBox,
+  MsgBox,
+  navFactory,
+  ResourceKebab,
+  ResourceSummary,
+  StatusBox,
+  Timestamp,
 } from '@console/internal/components/utils';
 import { connectToModel, connectToPlural } from '@console/internal/kinds';
 import {
   apiVersionForReference,
-  kindForReference,
-  K8sResourceKind,
-  OwnerReference,
-  K8sKind,
-  referenceFor,
-  GroupVersionKind,
-  referenceForModel,
+  CustomResourceDefinitionKind,
   groupVersionFor,
+  GroupVersionKind,
+  K8sKind,
+  K8sResourceKind,
+  kindForReference,
+  nameForModel,
+  OwnerReference,
+  referenceFor,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
 import * as plugins from '@console/internal/plugins';
+import { SwaggerDefinition, definitionFor } from '@console/internal/module/k8s/swagger';
+import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind } from '../types';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
+import { OpenApiDescriptor, OpenApiSpecCapability } from './descriptors/openapi-spec/types';
+import { OpenAPIFieldsDescriptor } from './descriptors/openapi-spec';
 import { referenceForProvidedAPI, OperandLink } from './index';
 
 const csvName = () =>
@@ -337,6 +344,13 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
 
 export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
+  const openApiFields =
+    (_.get(props.customResourceDefinition, [
+      'spec',
+      'validation',
+      'openAPIV3Schema',
+    ]) as SwaggerDefinition) || definitionFor(props.kindObj);
+
   const isMainDescriptor = (descriptor: Descriptor) => {
     return ((descriptor['x-descriptors'] as StatusCapability[]) || []).some((type) => {
       switch (type) {
@@ -351,6 +365,9 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   const blockValue = (descriptor: Descriptor, block: { [key: string]: any }) =>
     !_.isEmpty(descriptor) ? _.get(block, descriptor.path, descriptor.value) : undefined;
 
+  const blockValueForOpenApi = (descriptor: OpenApiDescriptor, block: { [key: string]: any }) =>
+    !_.isEmpty(descriptor) ? _.get(block, descriptor.path) : undefined;
+
   const { kind, metadata, spec, status } = props.obj;
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
@@ -364,6 +381,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     'spec.customresourcedefinitions.required',
     [],
   );
+
   const thisDefinition = _.find(
     ownedDefinitions.concat(reqDefinitions),
     (def) => def.name.split('.')[0] === props.kindObj.plural,
@@ -394,12 +412,102 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     );
   });
 
+  const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
+    if (_.isEmpty(openAPI)) {
+      return [];
+    }
+
+    const fields: OperandField[] = _.flatten(
+      _.map(
+        _.get(openAPI, 'properties.spec.properties', {}),
+        (val, key: string): OperandField[] => {
+          const capabilitiesFor = (property): OpenApiSpecCapability[] => {
+            if (property.enum) {
+              return property.enum.map((i) => OpenApiSpecCapability.select.concat(i));
+            }
+            switch (property.type) {
+              case 'integer':
+                return [OpenApiSpecCapability.number];
+              case 'boolean':
+                return [OpenApiSpecCapability.booleanSwitch];
+              case 'string':
+              default:
+                return [OpenApiSpecCapability.text];
+            }
+          };
+
+          switch (val.type) {
+            case 'object':
+              if (
+                _.values(val.properties).some((nestedVal) =>
+                  ['object', 'array'].includes(nestedVal.type),
+                )
+              ) {
+                return null;
+              }
+              return _.map(
+                val.properties,
+                (nestedVal, nestedKey: string): OperandField => ({
+                  path: [key, nestedKey].join('.'),
+                  displayName: _.startCase(nestedKey),
+                  capabilities: [
+                    OpenApiSpecCapability.fieldGroup.concat(
+                      key,
+                    ) as OpenApiSpecCapability.fieldGroup,
+                    ...capabilitiesFor(nestedVal.type),
+                  ],
+                }),
+              );
+            case 'array':
+              if (
+                val.items.type !== 'object' ||
+                _.values(val.items.properties).some((itemVal) =>
+                  ['object', 'array'].includes(itemVal.type),
+                )
+              ) {
+                return null;
+              }
+              return _.map(
+                val.items.properties,
+                (itemVal, itemKey: string): OperandField => ({
+                  path: `${key}[0].${itemKey}`,
+                  displayName: _.startCase(itemKey),
+                  capabilities: [
+                    OpenApiSpecCapability.arrayFieldGroup.concat(
+                      key,
+                    ) as OpenApiSpecCapability.fieldGroup,
+                    ...capabilitiesFor(itemVal.type),
+                  ],
+                }),
+              );
+            case undefined:
+              return null;
+            default:
+              return [
+                {
+                  path: key,
+                  displayName: _.startCase(key),
+                  capabilities: capabilitiesFor(val),
+                },
+              ];
+          }
+        },
+      ),
+    );
+    return _.compact(fields);
+  };
+
+  const getOpenApiFields = fieldsForOpenAPI(openApiFields);
+  const filterDescriptors = _.differenceBy(getOpenApiFields, specDescriptors, 'path');
+  const filteredOpenApiFields = _.differenceBy(filterDescriptors, statusDescriptors, 'path');
+
   const details = (
     <div className="co-operand-details__section co-operand-details__section--info">
       <div className="row">
         <div className="col-xs-6">
           <ResourceSummary resource={props.obj} />
         </div>
+
         {currentStatus && (
           <div className="col-xs-6" key={currentStatus.path}>
             <StatusDescriptor
@@ -442,6 +550,19 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
               </div>
             );
           })}
+
+        {filteredOpenApiFields &&
+          filteredOpenApiFields.map((openApiDescriptor: OpenApiDescriptor) => (
+            <div key={openApiDescriptor.path} className="col-xs-6">
+              <OpenAPIFieldsDescriptor
+                namespace={metadata.namespace}
+                obj={props.obj}
+                model={props.kindObj}
+                value={blockValueForOpenApi(openApiDescriptor, spec)}
+                descriptor={openApiDescriptor}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -483,6 +604,13 @@ export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProp
         namespace: props.match.params.ns,
         isList: false,
         prop: 'csv',
+      },
+      {
+        kind: CustomResourceDefinitionModel.kind,
+        isList: false,
+        name: nameForModel(props.kindObj),
+        prop: 'customResourceDefinition',
+        optional: true,
       },
     ]}
     menuActions={getActions(props.modelRef)}
@@ -552,10 +680,13 @@ export type OperandDetailsProps = {
   appName: string;
   kindObj: K8sKind;
   clusterServiceVersion: ClusterServiceVersionKind;
+  customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
+  openAPI?: SwaggerDefinition;
 };
 
 export type OperandDetailsPageProps = {
   modelRef: GroupVersionKind;
+  kindObj: K8sKind;
   match: match<{
     name: string;
     ns: string;
@@ -576,6 +707,13 @@ export type OperandTableRowProps = {
   index: number;
   key?: string;
   style: object;
+};
+
+type OperandField = {
+  path: string;
+  displayName: string;
+  description?: string;
+  capabilities: OpenApiSpecCapability[];
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

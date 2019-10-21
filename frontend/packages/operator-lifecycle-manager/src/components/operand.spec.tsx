@@ -4,7 +4,12 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Table, DetailsPage, MultiListPage, ListPage } from '@console/internal/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '@console/internal/components/utils';
-import { referenceFor, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  K8sKind,
+  referenceFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import {
   testCRD,
   testResourceInstance,
@@ -245,6 +250,7 @@ describe('ResourcesList', () => {
 describe(OperandDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<OperandDetailsPageProps>;
   let match: RouterMatch<any>;
+  let kindObj: K8sKind;
 
   beforeEach(() => {
     match = {
@@ -254,10 +260,26 @@ describe(OperandDetailsPage.displayName, () => {
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
     };
 
+    kindObj = {
+      kind: 'CouchbaseCluster',
+      namespaced: true,
+      verbs: ['delete', 'deletecollection', 'get', 'list', 'patch', 'create', 'update', 'watch'],
+      shortNames: ['couchbase', 'cbc'],
+      label: 'CouchbaseCluster',
+      plural: 'couchbaseclusters',
+      apiVersion: 'v1',
+      abbr: 'CC',
+      apiGroup: 'couchbase.com',
+      labelPlural: 'CouchbaseClusters',
+      id: 'couchbasecluster',
+      crd: true,
+    };
+
     wrapper = shallow(
       <OperandDetailsPage.WrappedComponent
         modelRef={referenceFor(testResourceInstance)}
         match={match}
+        kindObj={kindObj}
       />,
     );
   });
