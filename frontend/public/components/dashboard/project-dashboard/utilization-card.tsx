@@ -7,6 +7,13 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import {
+  ONE_HR,
+  SIX_HR,
+  TWENTY_FOUR_HR,
+  UTILIZATION_QUERY_HOUR_MAP,
+} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
+import { Dropdown } from '../../utils/dropdown';
 import { humanizeCpuCores, humanizeDecimalBytes, humanizeNumber } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { PrometheusResponse } from '../../graphs';
@@ -14,11 +21,18 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { getUtilizationQueries, ProjectQueries } from './queries';
 
+const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
+const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+
 export const UtilizationCard = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
+    const [duration, setDuration] = React.useState(metricDurations[0]);
     const { obj } = React.useContext(ProjectDashboardContext);
     const projectName = getName(obj);
-    const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
+    const queries = React.useMemo(
+      () => getUtilizationQueries(projectName, UTILIZATION_QUERY_HOUR_MAP[duration]),
+      [projectName, duration],
+    );
     React.useEffect(() => {
       if (projectName) {
         _.values(queries).forEach((query) => watchPrometheus(query, projectName));
@@ -26,7 +40,7 @@ export const UtilizationCard = withDashboardResources(
           _.values(queries).forEach((query) => stopWatchPrometheusQuery(query));
         };
       }
-    }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName, duration]);
 
     const cpuUtilization = prometheusResults.getIn([
       queries[ProjectQueries.CPU_USAGE],
@@ -55,6 +69,12 @@ export const UtilizationCard = withDashboardResources(
       <DashboardCard>
         <DashboardCardHeader>
           <DashboardCardTitle>Utilization Card</DashboardCardTitle>
+          <Dropdown
+            items={metricDurationsOptions}
+            onChange={setDuration}
+            selectedKey={duration}
+            title={duration}
+          />
         </DashboardCardHeader>
         <DashboardCardBody>
           <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
