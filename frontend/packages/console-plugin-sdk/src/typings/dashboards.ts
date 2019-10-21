@@ -41,6 +41,17 @@ namespace ExtensionProperties {
 
     /** Resolve the subsystem's health */
     healthHandler: URLHealthHandler<R>;
+
+    /**
+     * Loader for popup content. If defined health item will be represented as link
+     * which opens popup with given content.
+     */
+    popupComponent?: LazyLoader<any>;
+
+    /**
+     * Popup title
+     */
+    popupTitle?: string;
   }
 
   export interface DashboardsOverviewHealthPrometheusSubsystem
