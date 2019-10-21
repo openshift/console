@@ -43,9 +43,11 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
   );
 
   return (
-    <div className="co-utilization-card__body pf-l-grid">
-      {axis}
-      {children}
+    <div className="co-dashboard-card__body--no-padding">
+      <div className="co-utilization-card__body pf-l-grid">
+        {axis}
+        {children}
+      </div>
     </div>
   );
 };
