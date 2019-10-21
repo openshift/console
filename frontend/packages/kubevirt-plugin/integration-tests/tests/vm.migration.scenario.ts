@@ -26,7 +26,7 @@ import {
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Test VM Migration', () => {
-  const testVm = getVMManifest('URL', testName);
+  let testVm;
   let vm: VirtualMachine;
 
   const MIGRATE_VM = 'Migrate Virtual Machine';
@@ -34,7 +34,7 @@ describe('Test VM Migration', () => {
   const VM_BOOT_AND_MIGRATE_TIMEOUT = VM_BOOTUP_TIMEOUT_SECS + VM_MIGRATION_TIMEOUT_SECS;
 
   beforeEach(async () => {
-    testVm.metadata.name = `migrationvm-${getRandStr(4)}`;
+    testVm = getVMManifest('URL', testName, `migrationvm-${getRandStr(4)}`);
     vm = new VirtualMachine(testVm.metadata);
     createResource(testVm);
     await vm.navigateToTab(TABS.OVERVIEW);

@@ -100,7 +100,8 @@ describe('Test VM actions', () => {
       createResource(testVM);
       addLeakableResource(leakedResources, testVM);
       await vm.navigateToTab(TABS.OVERVIEW);
-    });
+      await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+    }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
       'Starts VM',
