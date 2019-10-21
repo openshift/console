@@ -135,6 +135,10 @@ h6 {
   white-space: normal; // override default .pf-c-button to enable wrapping
 }
 
+.pf-c-button.pf-m-inline {
+  text-align: left; // override default .pf-c-button text centering
+}
+
 .pf-c-button.pf-m-link--align-left {
   padding-left: 0;
 }
