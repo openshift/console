@@ -1,13 +1,5 @@
 import * as React from 'react';
-import {
-  getOperatingSystemName,
-  getOperatingSystem,
-  getWorkloadProfile,
-  getVmTemplate,
-  VmStatuses,
-  BootOrder,
-  getBootableDevicesInOrder,
-} from 'kubevirt-web-ui-components';
+import { getVmTemplate, BootOrder, getBootableDevicesInOrder } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
@@ -21,6 +13,8 @@ import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
+import { VmStatuses } from '../vm-status';
+import { getOperatingSystemName, getOperatingSystem, getWorkloadProfile } from '../../selectors/vm';
 
 import './_vm-resource.scss';
 

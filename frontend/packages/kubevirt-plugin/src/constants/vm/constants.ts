@@ -32,3 +32,5 @@ export enum DeviceType {
   NIC = 'NIC',
   DISK = 'DISK',
 }
+
+export const VM_DETAIL_EVENTS_HREF = 'events';
