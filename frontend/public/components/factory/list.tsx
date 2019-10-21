@@ -29,6 +29,7 @@ import {
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
+  NodeKind,
   planExternalName,
   podPhase,
   podReadiness,
@@ -93,7 +94,7 @@ const sorts = {
   serviceCatalogStatus,
   jobCompletions: (job) => getJobTypeAndCompletions(job).completions,
   jobType: (job) => getJobTypeAndCompletions(job).type,
-  nodeReadiness: (node) => {
+  nodeReadiness: (node: NodeKind) => {
     let readiness = _.get(node, 'status.conditions');
     readiness = _.find(readiness, { type: 'Ready' });
     return _.get(readiness, 'status');
@@ -108,7 +109,7 @@ const sorts = {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getTemplateInstanceStatus,
-  nodeRoles: (node: K8sResourceKind): string => {
+  nodeRoles: (node: NodeKind): string => {
     const roles = getNodeRoles(node);
     return roles.sort().join(', ');
   },

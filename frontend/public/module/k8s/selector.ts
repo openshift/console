@@ -1,7 +1,8 @@
 import { createEquals, requirementFromString, requirementToString } from './selector-requirement';
-import { Selector, MatchExpression } from './index';
+import { Selector, MatchExpression, MatchLabels } from './index';
 
-const isOldFormat = (selector: Selector) => !selector.matchLabels && !selector.matchExpressions;
+const isOldFormat = (selector: Selector | MatchLabels) =>
+  !selector.matchLabels && !selector.matchExpressions;
 
 type Options = { undefinedWhenEmpty?: boolean; basic?: boolean };
 
