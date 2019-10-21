@@ -245,16 +245,22 @@ $ ./test-gui.sh <suite>
 
 #### Hacking Integration Tests
 
-To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` enviorment variable:
+To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` environment variable:
 
 ```
 $ NO_HEADLESS=true ./test-gui.sh <suite>
 ```
 
-To use a specific binary version of chrome, it is posible to set the `CHROME_BINARY_PATH` enviorment variable:
+To use a specific binary version of chrome, it is posible to set the `CHROME_BINARY_PATH` environment variable:
 
 ```
 $ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-gui.sh <suite>
+```
+
+To avoid skipping remaining portion of tests upon encountering the first failure, `NO_FAILFAST` environment variable can be used:
+
+```
+$ NO_FAILFAST=true ./test-gui.sh <suite>
 ```
 
 ##### Debugging Integration Tests
