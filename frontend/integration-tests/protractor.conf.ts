@@ -47,7 +47,7 @@ export const config: Config = {
     defaultTimeoutInterval: 40000,
   },
   logLevel: tap ? 'ERROR' : 'INFO',
-  plugins: [failFast.init()],
+  plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
   capabilities: {
     browserName: 'chrome',
     acceptInsecureCerts: true,
