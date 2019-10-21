@@ -210,20 +210,34 @@ export const ToggleGraph = connect(
   { toggle: UIActions.monitoringToggleGraphs },
 )(ToggleGraph_);
 
-const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetrics }) => {
-  const [items, setItems] = React.useState({});
+const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
+  insertText,
+  namespace,
+  setMetrics,
+}) => {
+  const [items, setItems] = React.useState();
   const [isError, setIsError] = React.useState(false);
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   React.useEffect(() => {
-    safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
-      .then(({ data }) => {
-        setItems(_.zipObject(data, data));
-        setMetrics(data);
+    const url = namespace
+      ? getPrometheusURL({
+          endpoint: PrometheusEndpoint.QUERY,
+          namespace,
+          query: `count({namespace="${namespace}"}) by (__name__)`,
+        })
+      : `${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`;
+    safeFetch(url)
+      .then((response) => {
+        const metrics = namespace
+          ? _.map(_.get(response, 'data.result'), 'metric.__name__').sort()
+          : _.get(response, 'data');
+        setItems(_.zipObject(metrics, metrics));
+        setMetrics(metrics);
       })
       .catch(() => setIsError(true));
-  }, [safeFetch, setMetrics]);
+  }, [namespace, safeFetch, setMetrics]);
 
   const onChange = (metric: string) => {
     // Replace the currently selected text with the metric
@@ -245,8 +259,14 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
         <RedExclamationCircleIcon /> Failed to load metrics list.
       </span>
     );
-  } else if (_.isEmpty(items)) {
+  } else if (items === undefined) {
     title = <LoadingInline />;
+  } else if (_.isEmpty(items)) {
+    title = (
+      <span>
+        <YellowExclamationTriangleIcon /> No metrics found.
+      </span>
+    );
   }
 
   return (
@@ -261,7 +281,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
     />
   );
 };
-const MetricsDropdown = connect(
+const MetricsDropdown: React.ComponentType<{ namespace?: string }> = connect(
   null,
   {
     insertText: UIActions.queryBrowserInsertText,
@@ -341,8 +361,8 @@ const SeriesButton = connect(
   }),
 )(SeriesButton_);
 
-const queryInputStateToProps = ({ UI }: RootState, { index, namespace }) => ({
-  metrics: namespace ? [] : UI.getIn(['queryBrowser', 'metrics']),
+const queryInputStateToProps = ({ UI }: RootState, { index }) => ({
+  metrics: UI.getIn(['queryBrowser', 'metrics']),
   text: UI.getIn(['queryBrowser', 'queries', index, 'text']),
 });
 
@@ -948,7 +968,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
             <QueryBrowserWrapper namespace={namespace} />
             <div className="query-browser__controls">
               <div className="query-browser__controls--left">
-                {!namespace && <MetricsDropdown />}
+                <MetricsDropdown namespace={namespace} />
               </div>
               <div className="query-browser__controls--right">
                 <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
@@ -980,6 +1000,7 @@ type MetricsActionsMenuProps = {
 
 type MetricsDropdownProps = {
   insertText: (index: number, newText: string, replaceFrom: number, replaceTo: number) => never;
+  namespace?: string;
   setMetrics: (metrics: string[]) => never;
 };
 
