@@ -15,21 +15,22 @@ import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
-  Kebab,
+  DetailsItem,
   Dropdown,
+  ExternalLink,
   Firehose,
+  Kebab,
   LabelList,
   LoadingInline,
-  navFactory,
-  ResourceKebab,
-  SectionHeading,
-  ResourceLink,
-  ResourceIcon,
-  ResourceSummary,
   MsgBox,
-  ExternalLink,
+  ResourceIcon,
+  ResourceKebab,
+  ResourceLink,
+  ResourceSummary,
+  SectionHeading,
   humanizeCpuCores,
   humanizeDecimalBytes,
+  navFactory,
   useAccessReview,
 } from './utils';
 import {
@@ -51,11 +52,6 @@ import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Overview } from './overview';
-import {
-  OverviewNamespaceDashboard,
-  ConsoleLinks,
-  getNamespaceDashboardConsoleLinks,
-} from './overview/namespace-overview';
 import { ProjectDashboard } from './dashboard/project-dashboard/project-dashboard';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
@@ -423,10 +419,9 @@ export const NamespaceSummary = ({ ns }) => {
       </div>
       <div className="col-sm-6 col-xs-12">
         <dl className="co-m-pane__details">
-          <dt>Status</dt>
-          <dd>
+          <DetailsItem label="Status" obj={ns} path="status.phase">
             <Status status={ns.status.phase} />
-          </dd>
+          </DetailsItem>
           {canListSecrets && (
             <>
               <dt>Default Pull Secret</dt>
@@ -445,30 +440,17 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const Details_ = ({ obj: ns, consoleLinks }) => {
-  const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
+const Details = ({ obj: ns }) => {
   return (
     <div>
       <div className="co-m-pane__body">
         <SectionHeading text={`${ns.kind} Overview`} />
         <NamespaceSummary ns={ns} />
       </div>
-      <ResourceUsage ns={ns} />
-      {!_.isEmpty(links) && (
-        <div className="co-m-pane__body">
-          <SectionHeading text="Launcher" />
-          <ConsoleLinks consoleLinks={links} />
-        </div>
-      )}
+      {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
     </div>
   );
 };
-
-const DetailsStateToProps = ({ UI }) => ({
-  consoleLinks: UI.get('consoleLinks'),
-});
-
-const Details = connect(DetailsStateToProps)(Details_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage namespace={metadata.name} showTitle={false} />
@@ -627,7 +609,7 @@ export const ProjectsDetailsPage = (props) => (
       {
         href: 'overview',
         name: 'Overview',
-        component: OverviewNamespaceDashboard,
+        component: Details,
       },
       navFactory.editYaml(),
       navFactory.workloads(Overview),
