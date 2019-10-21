@@ -9,6 +9,7 @@ import * as UIActions from '../actions/ui';
 import { UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
   KebabAction,
@@ -109,6 +110,13 @@ export const UserPage: React.FC<UserPageProps> = (props) => (
   />
 );
 
+const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
+  <RoleBindingsPage
+    showTitle={false}
+    staticFilters={[{ 'role-binding-user': obj.metadata.name }]}
+  />
+);
+
 const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   return (
     <div className="co-m-pane__body">
@@ -147,13 +155,21 @@ export const UserDetailsPage: React.FC<UserDetailsPageProps> = (props) => (
     {...props}
     kind={referenceForModel(UserModel)}
     menuActions={Kebab.factory.common}
-    pages={[navFactory.details(UserDetails), navFactory.editYaml()]}
+    pages={[
+      navFactory.details(UserDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
   />
 );
 
 type UserPageProps = {
   autoFocus?: boolean;
   showTitle?: boolean;
+};
+
+type RoleBindingsTabProps = {
+  obj: UserKind;
 };
 
 type UserDetailsProps = {
