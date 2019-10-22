@@ -36,3 +36,9 @@ export const getPodLabels = (name: string) => {
     deploymentconfig: name,
   };
 };
+
+export const getApplicationSelectorLabels = (name: string) => {
+  return {
+    'connects-to': name,
+  };
+};

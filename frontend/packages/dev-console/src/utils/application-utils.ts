@@ -6,6 +6,7 @@ import {
   k8sKill,
   K8sResourceKind,
   modelFor,
+  k8sCreate,
 } from '@console/internal/module/k8s';
 import {
   ImageStreamModel,
@@ -28,6 +29,8 @@ import { checkAccess } from '@console/internal/components/utils';
 import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
+import { ServiceBindingRequestModel } from '../models';
+import { getApplicationSelectorLabels } from './resource-label-utils';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -194,6 +197,59 @@ const updateItemAppConnectTo = (
   return k8sPatch(model, item, patch);
 };
 
+export const createAppBinding = (source: K8sResourceKind, target: K8sResourceKind) => {
+  const targetName = _.get(target, 'metadata.name');
+  const sourceName = source.metadata.name;
+  const { namespace } = source.metadata;
+  const targetGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
+  const targetKind = _.get(target, 'metadata.ownerReferences[0].kind');
+  const targetRefName = _.get(target, 'metadata.ownerReferences[0].name');
+
+  const applicationSelectorLabels = getApplicationSelectorLabels(targetName);
+
+  const serviceBindingRequest = {
+    apiVersion: 'apps.openshift.io/v1alpha1',
+    kind: 'ServiceBindingRequest',
+    metadata: {
+      name: `${sourceName}-${targetName}-sbr`,
+      namespace,
+    },
+    spec: {
+      applicationSelector: {
+        matchLabels: { ...applicationSelectorLabels },
+        group: 'apps.openshift.io',
+        version: 'v1',
+        resource: 'deploymentconfigs',
+      },
+      backingServiceSelector: {
+        group: targetGroup[0],
+        version: 'v1alpha1',
+        kind: targetKind,
+        resourceRef: targetRefName,
+      },
+    },
+  };
+
+  console.log(serviceBindingRequest, 'sbr');
+
+  const patch = [
+    {
+      path: '/metadata/labels',
+      op: 'add',
+      value: { ...source.metadata.labels, ...applicationSelectorLabels },
+    },
+  ];
+
+  k8sPatch(DeploymentConfigModel, source, patch)
+    .then((newObj) => {
+      console.log(newObj);
+      k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 // Create a connection from the source to the target replacing the connection to replacedTarget if provided
 export const createResourceConnection = (
   source: K8sResourceKind,
@@ -204,6 +260,7 @@ export const createResourceConnection = (
     return Promise.reject();
   }
 
+  createAppBinding(source, target);
   const connectValue =
     _.get(target, ['metadata', 'labels', 'app.kubernetes.io/instance']) || target.metadata.name;
 
