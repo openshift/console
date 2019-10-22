@@ -6,6 +6,7 @@ import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
+import Helmet from 'react-helmet';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { BareMetalNodeBundle } from '../types';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
@@ -83,16 +84,21 @@ const BareMetalNodesPage: React.FC<BareMetalNodesPageProps> = ({
   }
 
   return (
-    <MultiListPage
-      {...props}
-      rowFilters={[bareMetalNodeStatusFilter]}
-      createButtonText="Add Host"
-      resources={resources}
-      flatten={flattenResources}
-      ListComponent={BareMetalNodesTable}
-      customData={{ hasNodeMaintenanceCapability }}
-      title="Nodes"
-    />
+    <div className="co-m-list">
+      <Helmet>
+        <title>Nodes</title>
+      </Helmet>
+      <MultiListPage
+        {...props}
+        rowFilters={[bareMetalNodeStatusFilter]}
+        createButtonText="Add Host"
+        resources={resources}
+        flatten={flattenResources}
+        ListComponent={BareMetalNodesTable}
+        customData={{ hasNodeMaintenanceCapability }}
+        title="Nodes"
+      />
+    </div>
   );
 };
 
