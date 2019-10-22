@@ -41,6 +41,7 @@ type ConsumedExtensions =
   | OverviewCRD;
 
 const SHOW_PIPELINE = 'SHOW_PIPELINE';
+const ALLOW_SERVICE_BINDING = 'ALLOW_SERVICE_BINDING';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -54,6 +55,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.PipelineModel,
       flag: SHOW_PIPELINE,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ServiceBindingRequestModel,
+      flag: ALLOW_SERVICE_BINDING,
     },
   },
   {
