@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import {
   AutoSizer,
   CellMeasurer,
@@ -15,20 +14,10 @@ import { getNodeRoles } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import {
-  EmptyBox,
-  LabelList,
-  ResourceKebab,
-  ResourceLink,
-  resourcePath,
-  Selector,
-  StatusBox,
-} from '../utils';
+import { EmptyBox, StatusBox } from '../utils';
 import {
   getJobTypeAndCompletions,
   K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
   NodeKind,
   planExternalName,
   podPhase,
@@ -469,66 +458,6 @@ export const List = connect(
   },
 );
 
-export class ResourceRow extends React.Component<ResourceRowProps> {
-  shouldComponentUpdate(nextProps) {
-    if (_.size(nextProps) !== _.size(this.props)) {
-      return true;
-    }
-    for (const key of Object.keys(nextProps)) {
-      if (key === 'obj') {
-        const oldVersion = _.get(this.props.obj, 'metadata.resourceVersion');
-        const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
-        if (!oldVersion || !newVersion || oldVersion !== newVersion) {
-          return true;
-        }
-        continue;
-      }
-      if (nextProps[key] !== this.props[key]) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  render() {
-    return (
-      <div className="row co-resource-list__item" style={this.props.style}>
-        {this.props.children}
-      </div>
-    );
-  }
-}
-
-export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({ kind, actions, obj: o }) => (
-  <ResourceRow obj={o}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-      <ResourceLink
-        kind={kind}
-        name={o.metadata.name}
-        namespace={o.metadata.namespace}
-        title={o.metadata.uid}
-      />
-    </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
-      <ResourceLink kind="Namespace" name={o.metadata.namespace} title={o.metadata.namespace} />
-    </div>
-    <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
-      <LabelList kind={kind} labels={o.metadata.labels} />
-    </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-      <Link to={`${resourcePath(kind, o.metadata.name, o.metadata.namespace)}/pods`} title="pods">
-        {o.status.replicas || 0} of {o.spec.replicas} pods
-      </Link>
-    </div>
-    <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
-      <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
-    </div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={actions} kind={kind} resource={o} />
-    </div>
-  </ResourceRow>
-);
-
 export type ColHeadProps = {
   applySort?: Function;
   children?: string;
@@ -569,11 +498,6 @@ export type ListInnerProps = {
   virtualize?: boolean;
 };
 
-export type ResourceRowProps = {
-  obj: K8sResourceKind;
-  style?: React.StyleHTMLAttributes<any>;
-};
-
 export type RowsProps = {
   data?: any[];
   expand?: boolean;
@@ -583,12 +507,5 @@ export type RowsProps = {
   Row: React.ComponentType<any>;
 };
 
-export type WorkloadListRowProps = {
-  actions: any;
-  kind: K8sResourceKindReference;
-  obj: K8sResourceKind;
-};
-
 Rows.displayName = 'Rows';
 VirtualRows.displayName = 'VirtualRows';
-WorkloadListRow.displayName = 'WorkloadListRow';

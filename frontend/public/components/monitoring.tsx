@@ -29,7 +29,7 @@ import {
   SilenceStates,
 } from '../reducers/monitoring';
 import store from '../redux';
-import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
+import { Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
 import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
@@ -419,7 +419,7 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
     </div>
     <div className="co-m-table-grid__body">
       {_.sortBy(alerts, alertDescription).map((a, i) => (
-        <ResourceRow key={i} obj={a}>
+        <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-6">
             <Link className="co-resource-item" to={alertURL(a, ruleID)}>
               {alertDescription(a)}
@@ -437,7 +437,7 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
               <Kebab options={[silenceAlert(a)]} />
             </div>
           )}
-        </ResourceRow>
+        </div>
       ))}
     </div>
   </div>
@@ -960,7 +960,7 @@ const SilenceRow = ({ obj }) => {
   const state = silenceState(obj);
 
   return (
-    <ResourceRow obj={obj}>
+    <div className="row co-resource-list__item">
       <div className="col-sm-7 col-xs-8">
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
@@ -991,7 +991,7 @@ const SilenceRow = ({ obj }) => {
       <div className="dropdown-kebab-pf">
         <SilenceKebab silence={obj} />
       </div>
-    </ResourceRow>
+    </div>
   );
 };
 
