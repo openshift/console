@@ -315,7 +315,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       } else {
         setResults(newResults);
         _.each(newResults, (r, i) => patchQuery(i, {
-          query: queries[i],
           series: r ? _.map(r, 'metric') : undefined,
         }));
         setUpdating(false);
