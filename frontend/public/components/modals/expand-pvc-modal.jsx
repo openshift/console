@@ -43,9 +43,9 @@ class ExpandPVCModal extends PromiseComponent {
   render() {
     const { kind, resource } = this.props;
     const dropdownUnits = {
-      Mi: 'Mi',
-      Gi: 'Gi',
-      Ti: 'Ti',
+      Mi: 'MiB',
+      Gi: 'GiB',
+      Ti: 'TiB',
     };
     const { requestSizeUnit, requestSizeValue } = this.state;
     return (

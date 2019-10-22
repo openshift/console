@@ -11,7 +11,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
-import { humanizeBinaryBytesWithoutB, LoadingInline } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { getGraphVectorStats, getMetricType, sortResources } from './utils';
@@ -31,7 +31,7 @@ const chartLegendPropsValue = {
 const getMaxCapacity = (topConsumerStatsResult: PrometheusResponse['data']['result']) => {
   const resourceValues = _.flatMap(topConsumerStatsResult, (resource) => resource.values);
   const maxCapacity = _.maxBy(resourceValues, (value) => Number(value[1]));
-  return humanizeBinaryBytesWithoutB(Number(maxCapacity[1]));
+  return humanizeBinaryBytes(Number(maxCapacity[1]));
 };
 
 export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(

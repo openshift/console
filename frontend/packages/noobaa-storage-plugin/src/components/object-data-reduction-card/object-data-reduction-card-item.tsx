@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import {
   FieldLevelHelp,
-  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
   humanizePercentage,
   LoadingInline,
 } from '@console/internal/components/utils';
@@ -57,7 +57,7 @@ export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
       const savingsPercentage = logicalSize
         ? `(${humanizePercentage((100 * Number(savings)) / logicalSize).string})`
         : '';
-      stats = `${humanizeBinaryBytesWithoutB(savings).string} ${savingsPercentage}`;
+      stats = `${humanizeBinaryBytes(savings).string} ${savingsPercentage}`;
     }
     return (
       <ItemBody

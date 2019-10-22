@@ -13,7 +13,7 @@ import { withDashboardResources, DashboardItemProps } from '../../with-dashboard
 import {
   humanizePercentage,
   humanizeDecimalBytesPerSec,
-  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
   useRefWidth,
 } from '../../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../../graphs/utils';
@@ -111,7 +111,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       title="Memory"
       used={getLastStats(memoryUtilization, getInstantVectorStats)}
       total={getLastStats(memoryTotal, getInstantVectorStats)}
-      formatValue={humanizeBinaryBytesWithoutB}
+      formatValue={humanizeBinaryBytes}
       isLoading={!(memoryUtilization && memoryTotal)}
       error={memoryUtilizationError || memoryTotalError}
     />
@@ -122,7 +122,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       title="Storage"
       used={getLastStats(storageUsed, getRangeVectorStats)}
       total={getLastStats(storageTotal, getInstantVectorStats)}
-      formatValue={humanizeBinaryBytesWithoutB}
+      formatValue={humanizeBinaryBytes}
       isLoading={!(storageUsed && storageTotal)}
       error={storageUsedError || storageTotalError}
     />

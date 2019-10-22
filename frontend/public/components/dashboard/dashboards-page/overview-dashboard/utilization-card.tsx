@@ -17,7 +17,7 @@ import { metricTypeMap } from '@console/shared/src/components/dashboard/top-cons
 import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { getRangeVectorStats } from '../../../graphs/utils';
-import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils';
+import { humanizePercentage, humanizeBinaryBytes } from '../../../utils';
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
@@ -188,9 +188,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           data={memoryStats}
           error={memoryUtilizationError}
           isLoading={!memoryUtilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
           query={queries[OverviewQuery.MEMORY_UTILIZATION]}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
         />
         <UtilizationItem
@@ -198,9 +198,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           data={storageStats}
           error={storageUtilizationError}
           isLoading={!storageUtilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
           query={queries[OverviewQuery.STORAGE_UTILIZATION]}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
         />
         {pluginItems.map(({ properties }, index) => {

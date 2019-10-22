@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {
   Humanize,
-  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
   humanizeNumber,
   HumanizeResult,
 } from '@console/internal/components/utils';
@@ -100,12 +100,12 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       ];
       break;
     case 'ACCOUNTS_BY_LOGICAL_USAGE':
-      max = getMaxVal(result.logicalUsage, humanizeBinaryBytesWithoutB);
+      max = getMaxVal(result.logicalUsage, humanizeBinaryBytes);
       chartData = [
         getChartData(
           result.logicalUsage,
           metric,
-          humanizeBinaryBytesWithoutB,
+          humanizeBinaryBytes,
           max.unit,
           'Total Logical Used Capacity',
         ),
@@ -114,27 +114,27 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         {
           name: `Total Logical Used Capacity ${getLegendData(
             result.totalLogicalUsage,
-            humanizeBinaryBytesWithoutB,
+            humanizeBinaryBytes,
           )}`,
         },
       ];
       break;
     case 'PROVIDERS_BY_PHYSICAL_VS_LOGICAL_USAGE':
-      firstBarMax = getMaxVal(result.physicalUsage, humanizeBinaryBytesWithoutB);
-      secondBarMax = getMaxVal(result.logicalUsage, humanizeBinaryBytesWithoutB);
+      firstBarMax = getMaxVal(result.physicalUsage, humanizeBinaryBytes);
+      secondBarMax = getMaxVal(result.logicalUsage, humanizeBinaryBytes);
       max = firstBarMax.value > secondBarMax.value ? firstBarMax : secondBarMax;
       chartData = [
         getChartData(
           result.physicalUsage,
           metric,
-          humanizeBinaryBytesWithoutB,
+          humanizeBinaryBytes,
           max.unit,
           'Total Logical Used Capacity',
         ),
         getChartData(
           result.logicalUsage,
           metric,
-          humanizeBinaryBytesWithoutB,
+          humanizeBinaryBytes,
           max.unit,
           'Total Physical Used Capacity',
         ),
@@ -143,20 +143,20 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         {
           name: `Total Logical Used Capacity ${getLegendData(
             result.totalPhysicalUsage,
-            humanizeBinaryBytesWithoutB,
+            humanizeBinaryBytes,
           )}`,
         },
         {
           name: `Total Physical Used Capacity ${getLegendData(
             result.totalLogicalUsage,
-            humanizeBinaryBytesWithoutB,
+            humanizeBinaryBytes,
           )}`,
         },
       ];
       break;
     case 'PROVIDERS_BY_EGRESS':
-      max = getMaxVal(result.egress, humanizeBinaryBytesWithoutB);
-      chartData = [getChartData(result.egress, metric, humanizeBinaryBytesWithoutB, max.unit)];
+      max = getMaxVal(result.egress, humanizeBinaryBytes);
+      chartData = [getChartData(result.egress, metric, humanizeBinaryBytes, max.unit)];
       legendData = chartData[0].map((dataPoint) => ({
         name: `${dataPoint.x} ${dataPoint.y} ${max.unit}`,
       }));

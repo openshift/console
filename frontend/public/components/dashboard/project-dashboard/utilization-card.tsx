@@ -14,7 +14,7 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { Dropdown } from '../../utils/dropdown';
-import { humanizeCpuCores, humanizeDecimalBytes, humanizeNumber } from '../../utils';
+import { humanizeCpuCores, humanizeBinaryBytes, humanizeNumber } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { PrometheusResponse } from '../../graphs';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -90,7 +90,7 @@ export const UtilizationCard = withDashboardResources(
               title="Memory"
               data={memoryStats}
               isLoading={!projectName || !memoryUtilization}
-              humanizeValue={humanizeDecimalBytes}
+              humanizeValue={humanizeBinaryBytes}
               query={queries[ProjectQueries.MEMORY_USAGE]}
               error={memoryError}
             />
