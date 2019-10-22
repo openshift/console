@@ -101,7 +101,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
               containerComponent={
                 <ChartVoronoiContainer
                   labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
-                  labels={(datum) => `${datum.y} ${maxUnit}`}
+                  labels={({ datum }) => `${datum.y} ${maxUnit}`}
                   voronoiDimension="x"
                 />
               }
