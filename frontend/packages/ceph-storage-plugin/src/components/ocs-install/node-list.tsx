@@ -192,18 +192,20 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     setNodes(formattedNodes);
   };
 
-  const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
-    return selectedNodes.map((node: NodeKind) => {
-      const patch = [
-        {
-          op: 'add',
-          path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
-          value: '',
-        },
-      ];
-      return k8sPatch(NodeModel, node, patch);
-    });
-  };
+  if(!node.label) {
+    const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
+      return selectedNodes.map((node: NodeKind) => {
+        const patch = [
+          {
+            op: 'add',
+            path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
+            value: '',
+          },
+        ];
+        return k8sPatch(NodeModel, node, patch);
+      });
+    };
+  }
 
   // tainting the selected nodes
   // const makeTaintNodesRequest = (selectedNode: NodeKind[]): Promise<NodeKind>[] => {
@@ -232,7 +234,11 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     const selectedData: NodeKind[] = _.filter(nodes, 'selected');
     const promises = [];
 
-    promises.push(...makeLabelNodesRequest(selectedData));
+    if(selectedData.length !== 0) {
+        promises.push(...makeLabelNodesRequest(selectedData));
+    } else {
+        promises.push();
+    }
     // intentionally keeping the taint logic as its required in 4.3 and will be handled with checkbox selection
     // promises.push(...makeTaintNodesRequest(selectedData));
 
