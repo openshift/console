@@ -34,7 +34,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
           {fieldValue.length > 0 &&
             fieldValue.map((value, index) => (
               <MultiColumnFieldRow
-                key={`multi-column-field-row-${index.toString()}`} // There is no other usable value for key prop in this case.
+                key={`${index.toString()}`} // There is no other usable value for key prop in this case.
                 name={name}
                 toolTip={toolTip}
                 rowIndex={index}
