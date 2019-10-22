@@ -5,7 +5,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
-  RecentEventsBody,
+  RecentEventsBodyContent,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { getName, getNamespace } from '@console/shared';
 import { resourcePath, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
@@ -43,7 +43,7 @@ const RecentEvent = withDashboardResources(
       return null;
     }, [watchK8sResource, stopWatchK8sResource, vm]);
     return (
-      <RecentEventsBody
+      <RecentEventsBodyContent
         events={resources.events as FirehoseResult<EventKind[]>}
         filter={combinedVmFilter(vm)}
       />
