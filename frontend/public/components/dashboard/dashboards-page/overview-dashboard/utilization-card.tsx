@@ -7,13 +7,23 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import {
+  ONE_HR,
+  SIX_HR,
+  TWENTY_FOUR_HR,
+  UTILIZATION_QUERY_HOUR_MAP,
+} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
+import { Dropdown } from '../../../utils/dropdown';
 import { getRangeVectorStats } from '../../../graphs/utils';
 import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils';
 import { OverviewQuery, utilizationQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+
+const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
+const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
@@ -40,41 +50,53 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   prometheusResults,
   flags = {},
 }) => {
+  const [duration, setDuration] = React.useState(metricDurations[0]);
   React.useEffect(() => {
     const queries = getQueries(flags);
-    Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
+    Object.keys(queries).forEach((key) =>
+      watchPrometheus(queries[key] + UTILIZATION_QUERY_HOUR_MAP[duration]),
+    );
 
     const pluginItems = getItems(flags);
-    pluginItems.forEach((item) => watchPrometheus(item.properties.query));
+    pluginItems.forEach((item) =>
+      watchPrometheus(item.properties.query + UTILIZATION_QUERY_HOUR_MAP[duration]),
+    );
 
     return () => {
-      Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
-      pluginItems.forEach((item) => stopWatchPrometheusQuery(item.properties.query));
+      Object.keys(queries).forEach((key) =>
+        stopWatchPrometheusQuery(queries[key] + UTILIZATION_QUERY_HOUR_MAP[duration]),
+      );
+      pluginItems.forEach((item) =>
+        stopWatchPrometheusQuery(item.properties.query + UTILIZATION_QUERY_HOUR_MAP[duration]),
+      );
     };
     // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags)]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags), duration]);
 
   const queries = getQueries(flags);
-  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'data']);
+  const cpuUtilization = prometheusResults.getIn([
+    queries[OverviewQuery.CPU_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
+    'data',
+  ]);
   const cpuUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.CPU_UTILIZATION],
+    queries[OverviewQuery.CPU_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
     'loadError',
   ]);
   const memoryUtilization = prometheusResults.getIn([
-    queries[OverviewQuery.MEMORY_UTILIZATION],
+    queries[OverviewQuery.MEMORY_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
     'data',
   ]);
   const memoryUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.MEMORY_UTILIZATION],
+    queries[OverviewQuery.MEMORY_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
     'loadError',
   ]);
   const storageUtilization = prometheusResults.getIn([
-    queries[OverviewQuery.STORAGE_UTILIZATION],
+    queries[OverviewQuery.STORAGE_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
     'data',
   ]);
   const storageUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.STORAGE_UTILIZATION],
+    queries[OverviewQuery.STORAGE_UTILIZATION] + UTILIZATION_QUERY_HOUR_MAP[duration],
     'loadError',
   ]);
 
@@ -88,6 +110,12 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
+        <Dropdown
+          items={metricDurationsOptions}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
         <UtilizationItem

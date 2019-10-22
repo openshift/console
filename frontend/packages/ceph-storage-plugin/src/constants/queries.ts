@@ -1,5 +1,3 @@
-import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from './index';
-
 export enum StorageDashboardQuery {
   CEPH_STATUS_QUERY = 'CEPH_STATUS_QUERY',
   CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'CEPH_PG_CLEAN_AND_ACTIVE_QUERY',
@@ -40,12 +38,6 @@ export const UTILIZATION_QUERY = {
     '(sum(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])))',
   [StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY]:
     '(sum(ceph_pool_recovering_bytes_per_sec))',
-};
-
-export const UTILIZATION_QUERY_HOUR_MAP = {
-  [ONE_HR]: '[1h:10m]',
-  [SIX_HR]: '[6h:1h]',
-  [TWENTY_FOUR_HR]: '[24h:4h]',
 };
 
 export const CAPACITY_USAGE_QUERIES = {

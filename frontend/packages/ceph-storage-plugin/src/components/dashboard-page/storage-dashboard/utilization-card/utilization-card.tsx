@@ -17,12 +17,13 @@ import {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { ONE_HR, SIX_HR, TWENTY_FOUR_HR } from '../../../../constants';
 import {
-  StorageDashboardQuery,
-  UTILIZATION_QUERY,
+  ONE_HR,
+  SIX_HR,
+  TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
-} from '../../../../constants/queries';
+} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
+import { StorageDashboardQuery, UTILIZATION_QUERY } from '../../../../constants/queries';
 import { getLatestValue, humanizeIOPS, humanizeLatency } from './utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
