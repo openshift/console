@@ -18,7 +18,7 @@ export const getVMIDisks = (vmi: VMIKind): VMIKind['spec']['domain']['devices'][
     ? vmi.spec.domain.devices.disks
     : [];
 
-export const getVMIConditionByType = (
+export const getVMIConditionsByType = (
   vmi: VMIKind,
   condType: string,
 ): VMIKind['status']['conditions'] => {
