@@ -5,7 +5,7 @@ import {
   removeLeakedResources,
   createResources,
   deleteResources,
-  addLeakableResource,
+  withResource,
 } from '../../../console-shared/src/test-utils/utils';
 import { NetworkResource, StorageResource, ProvisionOption } from './utils/types';
 import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
@@ -100,11 +100,12 @@ describe('Kubevirt create VM Template using wizard', () => {
         );
         const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), vmTemplate));
 
-        addLeakableResource(leakedResources, vmTemplate.asResource());
-        addLeakableResource(leakedResources, vm.asResource());
-
-        await vmTemplate.create(vmTemplateConfig(configName.toLowerCase(), provisionConfig));
-        await vm.create(vmConfig(configName.toLowerCase(), vmTemplate));
+        await withResource(leakedResources, vmTemplate.asResource(), async () => {
+          await vmTemplate.create(vmTemplateConfig(configName.toLowerCase(), provisionConfig));
+          await withResource(leakedResources, vm.asResource(), async () => {
+            await vm.create(vmConfig(configName.toLowerCase(), vmTemplate));
+          });
+        });
       },
       VM_BOOTUP_TIMEOUT_SECS * 2,
     );
