@@ -6,12 +6,12 @@ export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
 };
 
-export type OverviewItem = {
+export type OverviewItem<T = K8sResourceKind> = {
   alerts?: OverviewItemAlerts;
   buildConfigs: BuildConfigOverviewItem[];
   current?: PodControllerOverviewItem;
   isRollingOut?: boolean;
-  obj: K8sResourceKind;
+  obj: T;
   pods?: PodKind[];
   previous?: PodControllerOverviewItem;
   routes: RouteKind[];

@@ -1,7 +1,10 @@
+import { ImagePullPolicy } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '../topology-types';
 
 export const MockGraphResources: TopologyDataResources = {
   deploymentConfigs: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'deploymentconfig',
@@ -126,7 +129,7 @@ export const MockGraphResources: TopologyDataResources = {
                     { name: 'OPCACHE_REVALIDATE_FREQ', value: '2' },
                   ],
                   ports: [{ containerPort: 8080, protocol: 'TCP' }],
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                   terminationMessagePolicy: 'File',
                   image: ' ',
                 },
@@ -235,7 +238,7 @@ export const MockGraphResources: TopologyDataResources = {
                     failureThreshold: 3,
                   },
                   ports: [{ containerPort: 8080, protocol: 'TCP' }],
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                   terminationMessagePolicy: 'File',
                   image: ' ',
                 },
@@ -358,7 +361,7 @@ export const MockGraphResources: TopologyDataResources = {
                     { name: 'MYSQL_DATABASE', value: 'default' },
                   ],
                   ports: [{ containerPort: 3306, protocol: 'TCP' }],
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                   volumeMounts: [{ name: 'data', mountPath: '/var/lib/mysql/data' }],
                   terminationMessagePolicy: 'File',
                   image: ' ',
@@ -453,7 +456,7 @@ export const MockGraphResources: TopologyDataResources = {
                   resources: {},
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                 },
               ],
               restartPolicy: 'Always',
@@ -494,6 +497,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   deployments: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'Deployment',
@@ -523,7 +528,7 @@ export const MockGraphResources: TopologyDataResources = {
                   resources: {},
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'Always',
+                  imagePullPolicy: ImagePullPolicy.Always,
                 },
               ],
               restartPolicy: 'Always',
@@ -569,6 +574,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   daemonSets: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'daemonset',
@@ -599,7 +606,7 @@ export const MockGraphResources: TopologyDataResources = {
                   resources: {},
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'Always',
+                  imagePullPolicy: ImagePullPolicy.Always,
                 },
               ],
               restartPolicy: 'Always',
@@ -625,9 +632,12 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   pods: {
+    loaded: true,
+    loadError: '',
     data: [
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-deployment-1-54b47fbb75-',
           annotations: {
@@ -673,7 +683,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -804,7 +814,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -888,7 +898,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-daemonset-1-',
           annotations: {
@@ -955,7 +966,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1033,7 +1044,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-daemonset-1-',
           annotations: {
@@ -1100,7 +1112,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1178,7 +1190,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           annotations: {
             'k8s.v1.cni.cncf.io/networks-status': '',
@@ -1227,7 +1240,7 @@ export const MockGraphResources: TopologyDataResources = {
                 capabilities: { drop: ['KILL', 'MKNOD', 'SETGID', 'SETUID'] },
                 runAsUser: 1000520000,
               },
-              imagePullPolicy: 'IfNotPresent',
+              imagePullPolicy: ImagePullPolicy.IfNotPresent,
               volumeMounts: [
                 {
                   name: 'deployer-token-x876x',
@@ -1326,7 +1339,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-daemonset-1-',
           annotations: {
@@ -1393,7 +1407,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1518,7 +1532,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1602,7 +1616,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-statefulset-1-',
           annotations: { 'openshift.io/scc': 'restricted' },
@@ -1648,7 +1663,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ name: 'web', containerPort: 80, protocol: 'TCP' }],
-              imagePullPolicy: 'IfNotPresent',
+              imagePullPolicy: ImagePullPolicy.IfNotPresent,
               volumeMounts: [
                 { name: 'www', mountPath: '/usr/share/nginx/html' },
                 {
@@ -1749,7 +1764,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1833,7 +1848,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-deployment-1-54b47fbb75-',
           annotations: {
@@ -1879,7 +1895,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -1963,7 +1979,8 @@ export const MockGraphResources: TopologyDataResources = {
         },
       },
       {
-        kind: 'pod',
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           generateName: 'test-deployment-1-54b47fbb75-',
           annotations: {
@@ -2009,7 +2026,7 @@ export const MockGraphResources: TopologyDataResources = {
                 runAsUser: 1000520000,
               },
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              imagePullPolicy: 'Always',
+              imagePullPolicy: ImagePullPolicy.Always,
               volumeMounts: [
                 {
                   name: 'default-token-5ffs4',
@@ -2095,6 +2112,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   replicationControllers: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'replicationcontroller',
@@ -2160,7 +2179,7 @@ export const MockGraphResources: TopologyDataResources = {
                   resources: {},
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                 },
               ],
               restartPolicy: 'Always',
@@ -2176,6 +2195,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   routes: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'route',
@@ -2291,6 +2312,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   services: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'service',
@@ -2396,6 +2419,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   replicaSets: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'ReplicaSet',
@@ -2443,7 +2468,7 @@ export const MockGraphResources: TopologyDataResources = {
                   resources: {},
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'Always',
+                  imagePullPolicy: ImagePullPolicy.Always,
                 },
               ],
               restartPolicy: 'Always',
@@ -2465,6 +2490,8 @@ export const MockGraphResources: TopologyDataResources = {
     ],
   },
   buildConfigs: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'buildconfig',
@@ -2566,8 +2593,10 @@ export const MockGraphResources: TopologyDataResources = {
       },
     ],
   },
-  builds: { data: [] },
+  builds: { loaded: true, loadError: '', data: [] },
   statefulSets: {
+    loaded: true,
+    loadError: '',
     data: [
       {
         kind: 'statefulset',
@@ -2596,7 +2625,7 @@ export const MockGraphResources: TopologyDataResources = {
                   volumeMounts: [{ name: 'www', mountPath: '/usr/share/nginx/html' }],
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
-                  imagePullPolicy: 'IfNotPresent',
+                  imagePullPolicy: ImagePullPolicy.IfNotPresent,
                 },
               ],
               restartPolicy: 'Always',

@@ -1,13 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { Dropdown, LoadingInline } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-
-type FirehoseList = {
-  data?: K8sResourceKind[];
-  [key: string]: any;
-};
+import { Dropdown, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 
 interface State {
   items: {};
@@ -38,7 +32,7 @@ interface ResourceDropdownProps {
   loaded?: boolean;
   loadError?: string;
   placeholder?: string;
-  resources?: FirehoseList[];
+  resources?: FirehoseResult[];
   selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: any) => boolean;

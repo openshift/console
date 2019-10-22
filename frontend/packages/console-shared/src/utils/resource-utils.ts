@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import {
+  DeploymentKind,
   K8sResourceKind,
   LabelSelector,
   PodKind,
@@ -614,9 +615,11 @@ export class TransformResourceData {
     });
   };
 
-  public createDeploymentItems = (deployments: K8sResourceKind[]): OverviewItem[] => {
+  public createDeploymentItems = (
+    deployments: DeploymentKind[],
+  ): OverviewItem<DeploymentKind>[] => {
     return _.map(deployments, (d) => {
-      const obj: K8sResourceKind = {
+      const obj: DeploymentKind = {
         ...d,
         apiVersion: apiVersionForModel(DeploymentModel),
         kind: DeploymentModel.kind,
