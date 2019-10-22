@@ -5,9 +5,14 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import { CheckCircleIcon, UnknownIcon } from '@patternfly/react-icons';
+import { UnknownIcon, CheckCircleIcon } from '@patternfly/react-icons';
 
-const AlertsBody: React.FC<AlertsBodyProps> = ({ isLoading, error, children, emptyMessage }) => {
+const AlertsBody: React.FC<AlertsBodyProps> = ({
+  isLoading = false,
+  error = false,
+  children,
+  emptyMessage,
+}) => {
   let body: React.ReactNode;
   if (error) {
     body = (
@@ -40,8 +45,8 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({ isLoading, error, children, emp
 export default AlertsBody;
 
 type AlertsBodyProps = {
-  isLoading: boolean;
-  error: boolean;
+  isLoading?: boolean;
+  error?: boolean;
   children?: React.ReactNode;
   emptyMessage: string;
 };
