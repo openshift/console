@@ -28,7 +28,7 @@ import { PrometheusRulesResponse } from '../monitoring';
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
   stopWatchURL: (url) => dispatch(stopWatchURL(url)),
-  watchPrometheusQuery: (query) => dispatch(watchPrometheusQuery(query)),
+  watchPrometheusQuery: (query, namespace) => dispatch(watchPrometheusQuery(query, namespace)),
   stopWatchPrometheusQuery: (query) => dispatch(stopWatchPrometheusQuery(query)),
   watchAlerts: () => dispatch(watchAlerts()),
   stopWatchAlerts: () => dispatch(stopWatchAlerts()),

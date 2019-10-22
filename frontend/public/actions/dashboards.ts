@@ -5,6 +5,7 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sBasePath } from '../module/k8s/k8s';
 import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboards';
 import { RootState } from '../redux';
+import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
 
 export enum ActionType {
   StopWatch = 'stopWatch',
@@ -76,7 +77,7 @@ export const watchPrometheusQuery: WatchPrometheusQueryAction = (query, namespac
         setError(RESULTS_TYPE.PROMETHEUS, query, new Error('Prometheus URL is not available')),
       );
     } else {
-      const url = `${prometheusBaseURL}/api/v1/query?query=${encodeURIComponent(query)}`;
+      const url = getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
       fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, query, url, getState, coFetchJSON);
     }
   }
