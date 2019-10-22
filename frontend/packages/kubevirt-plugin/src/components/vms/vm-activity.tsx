@@ -20,15 +20,8 @@ import { VirtualMachineModel } from '../../models';
 import { getVmEventsFilters } from '../../selectors/event';
 import { VMDashboardContext } from './vm-dashboard-context';
 
-const combinedVmFilter = (vm: VMKind) => {
-  const filters = getVmEventsFilters(vm);
-
-  return (event: EventKind): boolean =>
-    filters.some((filter) => {
-      const { name, namespace, kind } = event.involvedObject;
-      return filter({ name, namespace, kind });
-    });
-};
+const combinedVmFilter = (vm: VMKind): EventFilterFuncion => (event) =>
+  getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
 
 const getEventsResource = (namespace: string): FirehoseResource => ({
   isList: true,
@@ -79,6 +72,8 @@ export const VMActivityCard: React.FC = () => {
     </DashboardCard>
   );
 };
+
+type EventFilterFuncion = (event: EventKind) => boolean;
 
 type RecentEventProps = DashboardItemProps & {
   vm: VMKind;
