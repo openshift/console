@@ -1,56 +1,56 @@
-import { browser, ExpectedConditions as until, Key, by } from 'protractor';
+/*
+This template provides a starting point for the development of UI tests for
+the OpenShift Console. The template is a fully functioning test that can be
+extended in feature-specific tests.
 
-import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
-import * as crudView from '../../views/crud.view';
-import * as secretsView from '../../views/secrets.view';
+Test conventions:
+The use of browser.sleep() and xpath-base statements are discouraged in
+automated tests. It should be possible to have the browser wait for the
+presence of UI statements to wait for the presence of UI elements. It should
+also be possible tgo locate UI elements though css, id's, or data-test-id's.
+*/
 
-const BROWSER_TIMEOUT = 15000;
-const WORKLOAD_NAME = `filter-${testName}`;
-// const WORKLOAD_LABEL = `lbl-filter=${testName}`;
+/* Import required libraries */
+import { browser } from 'protractor';
+import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
+import {
+  switchPerspective,
+  Perspective,
+  sideHeader,
+} from '../../views/devconsole-view/dev-perspective.view';
 
+/* Provide details on the goals of the test */
 describe('details what are you doing', () => {
-  const secretName = 'test-secret';
 
-/* before everythying what will be executed */
+/* The beforeAll function is performed once, before all other actions are performed */
   beforeAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
-    await crudView.isLoaded();
-    // Wait until the resource is created and the details page loads before continuing.
+    await browser.get(`${appHost}/k8s/cluster/projects`);
   });
 
-/* before each it block what will be executed */
-  beforeEach(async() => secretsView.visitSecretDetailsPage(appHost, testName, secretName));
+/* The beforeEach function is performed before each test function */
+  beforeEach(async() => {
+  });
 
-/* after each it block what will be executed */
+/* The afterEach function is performed after each test function - at a minimum,
+it should check for errors and logs */
   afterEach(() => {
     checkLogs();
     checkErrors();
   });
 
-/* after everythying what will be executed */
+/* The afterEverything function is performed after all tests */
   afterAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
-    await crudView.isLoaded();
   });
 
-  it('Task details', async() => {
-    /* tasks to be accomplish like opening menu and selecting options etc. has to be executed over here*/
-    /* functions and elements from respective view file be used to accomplish the tasks*/
+  /* A sample test function - Note that the test functions use functions and elements
+  from the respctive view files */
+  it('Task details are provided here', async() => {
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
-    
-    // await browser.wait(until.elementToBeClickable(crudView.name), BROWSER_TIMEOUT);
-    await crudView.rowForName(name).element(by.linkText(name)).click();
+    await switchPerspective(Perspective.Administrator);
+    expect(sideHeader.getText()).toContain('Administrator');
+    await switchPerspective(Perspective.Developer);
+    expect(sideHeader.getText()).toContain('Developer');
 
-    //send keys function is method for sending one or more keystrokes to the active window
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await browser.wait(until.urlContains(`/${name}`));
-
-    //expectations for each scenario should be there
-    expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
-    expect(crudView.messageLbl.isPresent()).toBe(true);
   });
 
 });

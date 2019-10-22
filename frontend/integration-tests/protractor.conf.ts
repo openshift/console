@@ -199,6 +199,9 @@ export const config: Config = {
       'tests/devconsole/dev-perspective.scenario.ts',
       'tests/devconsole/git-import-flow.scenario.ts',
     ],
+    template: [
+      'tests/devconsole/template.scenario.ts',
+    ],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
