@@ -62,7 +62,7 @@ export const VMActivityCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
-        <DashboardCardLink to={viewEventsLink}>View events</DashboardCardLink>
+        <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
