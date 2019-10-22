@@ -26,7 +26,6 @@
     "eslint-plugin-react-hooks": "1.6.0",
     "eslint-plugin-sort-class-members": "1.4.0",
     "merge": "1.2.1",
-    "prettier": "1.17.1",
-    "typescript-eslint-parser": "22.0.0"
+    "prettier": "1.17.1"
   }
 }

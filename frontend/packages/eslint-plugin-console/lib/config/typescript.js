@@ -5,20 +5,18 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
 
+      parser: '@typescript-eslint/parser',
+
       parserOptions: {
         ecmaVersion: 2018,
         sourceType: 'module',
       },
 
-      // TODO update to new parser https://github.com/prettier/prettier-eslint/issues/201 is fixed
-      // parser: '@typescript-eslint/parser',
-      parser: 'typescript-eslint-parser',
-
       plugins: ['@typescript-eslint'],
 
       settings: {
         'import/parsers': {
-          'typescript-eslint-parser': ['.ts', '.tsx'],
+          '@typescript-eslint/parser': ['.ts', '.tsx'],
         },
         'import/resolver': {
           typescript: {},
@@ -41,6 +39,7 @@ module.exports = {
         '@typescript-eslint/unbound-method': 'off',
       }),
     },
+
     {
       files: ['*.tsx'],
       rules: {
