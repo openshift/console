@@ -69,18 +69,19 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
             />
           </div>
           <div className="col-md-1 col-sm-2 col-xs-2">
-            <button
+            <Button
               type="button"
-              className="pf-c-button pf-m-plain btn-link--inherit-color toleration-modal__delete-icon"
+              className="toleration-modal__delete-icon"
               onClick={() =>
                 props.onChangeMatchExpressions(
                   props.matchExpressions.filter((e, index) => index !== i),
                 )
               }
               aria-label="Delete"
+              variant="plain"
             >
               <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            </button>
+            </Button>
           </div>
         </div>
       ))}

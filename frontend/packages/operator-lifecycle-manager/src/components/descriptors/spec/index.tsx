@@ -110,10 +110,10 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
       {value !== props.value && !confirmed && (
         <React.Fragment>
           &nbsp;&nbsp;
-          <YellowExclamationTriangleIcon />
-          <button className="btn btn-link" type="button" onClick={update}>
+          <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
+            <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
             Confirm change
-          </button>
+          </Button>
         </React.Fragment>
       )}
     </div>
@@ -125,7 +125,7 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
 
   return (
     <React.Fragment>
-      <button className="btn btn-link" type="button" onClick={() => setReveal(!reveal)}>
+      <Button type="button" onClick={() => setReveal(!reveal)}>
         {reveal ? (
           <React.Fragment>
             <EyeSlashIcon className="co-icon-space-r" />
@@ -137,7 +137,7 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
             Reveal Values
           </React.Fragment>
         )}
-      </button>
+      </Button>
       <SecretValue value={props.value} encoded={false} reveal={reveal} />
     </React.Fragment>
   );

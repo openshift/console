@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { Tooltip } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import {
   NodeAffinity as NodeAffinityType,
   MatchExpression,
@@ -70,15 +70,15 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           (nodeSelector, i) => (
             <div key={JSON.stringify(nodeSelector)} className="co-affinity-term">
               {i > 0 && (
-                <button
+                <Button
                   type="button"
-                  className="btn btn-link co-affinity-term__remove"
-                  style={{ marginLeft: 'auto' }}
+                  className="co-affinity-term__remove"
                   onClick={() => props.onChangeAffinity(removeRequired(i))}
+                  variant="link"
                 >
                   <MinusCircleIcon className="co-icon-space-r" />
                   Remove Required
-                </button>
+                </Button>
               )}
               <MatchExpressions
                 matchExpressions={nodeSelector.matchExpressions || ([] as MatchExpression[])}
@@ -97,15 +97,14 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           ),
         )}
         <div className="row">
-          <button
+          <Button
             type="button"
-            className="btn btn-link"
-            style={{ marginLeft: '10px' }}
             onClick={() => props.onChangeAffinity(addRequired())}
+            variant="link"
           >
             <PlusCircleIcon className="co-icon-space-r" />
             Add Required
-          </button>
+          </Button>
         </div>
       </dd>
       <Tooltip content={preferredTooltip}>
@@ -116,14 +115,15 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           ({ weight, preference }, i) => (
             <div key={JSON.stringify(preference)} className="co-affinity-term">
               {i > 0 && (
-                <button
+                <Button
                   type="button"
-                  className="btn btn-link co-affinity-term__remove"
+                  className="co-affinity-term__remove"
                   onClick={() => props.onChangeAffinity(removePreferred(i))}
+                  variant="link"
                 >
                   <MinusCircleIcon className="co-icon-space-r" />
                   Remove Preferred
-                </button>
+                </Button>
               )}
               <label className="control-label co-required" htmlFor={`preference-${i}`}>
                 Weight
@@ -163,15 +163,14 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           ),
         )}
         <div className="row">
-          <button
+          <Button
             type="button"
-            className="btn btn-link"
-            style={{ marginLeft: '10px' }}
             onClick={() => props.onChangeAffinity(addPreference())}
+            variant="link"
           >
             <PlusCircleIcon className="co-icon-space-r" />
             Add Preferred
-          </button>
+          </Button>
         </div>
       </dd>
     </dl>
@@ -240,14 +239,15 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
         {affinity.requiredDuringSchedulingIgnoredDuringExecution.map((podAffinityTerm, i) => (
           <div key={JSON.stringify(podAffinityTerm)} className="co-affinity-term">
             {i > 0 && (
-              <button
+              <Button
                 type="button"
-                className="btn btn-link co-affinity-term__remove"
+                className="co-affinity-term__remove"
                 onClick={() => props.onChangeAffinity(removeRequired(i))}
+                variant="link"
               >
                 <MinusCircleIcon className="co-icon-space-r" />
                 Remove Preferred
-              </button>
+              </Button>
             )}
             <div className="co-affinity-term__topology">
               <div className="co-affinity-term__topology-input">
@@ -291,15 +291,14 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           </div>
         ))}
         <div className="row">
-          <button
+          <Button
             type="button"
-            className="btn btn-link"
-            style={{ marginLeft: '10px' }}
             onClick={() => props.onChangeAffinity(addRequired())}
+            variant="link"
           >
             <PlusCircleIcon className="co-icon-space-r" />
             Add Required
-          </button>
+          </Button>
         </div>
       </dd>
       <Tooltip content={preferredTooltip}>
@@ -310,14 +309,15 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           ({ weight, podAffinityTerm }, i) => (
             <div key={JSON.stringify(podAffinityTerm)} className="co-affinity-term">
               {i > 0 && (
-                <button
+                <Button
                   type="button"
-                  className="btn btn-link co-affinity-term__remove"
+                  className="co-affinity-term__remove"
                   onClick={() => props.onChangeAffinity(removePreferred(i))}
+                  variant="link"
                 >
                   <MinusCircleIcon className="co-icon-space-r" />
                   Remove Preferred
-                </button>
+                </Button>
               )}
               <div className="co-affinity-term__topology">
                 <div className="co-affinity-term__topology-input">
@@ -386,15 +386,14 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           ),
         )}
         <div className="row">
-          <button
+          <Button
             type="button"
-            className="btn btn-link"
-            style={{ marginLeft: '10px' }}
             onClick={() => props.onChangeAffinity(addPreference())}
+            variant="link"
           >
             <PlusCircleIcon className="co-icon-space-r" />
             Add Preferred
-          </button>
+          </Button>
         </div>
       </dd>
     </dl>

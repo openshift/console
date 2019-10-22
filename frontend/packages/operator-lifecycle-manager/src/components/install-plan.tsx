@@ -403,15 +403,15 @@ export class InstallPlanPreview extends React.Component<
                         ) : (
                           <React.Fragment>
                             <ResourceIcon kind={referenceForStepResource(step.resource)} />
-                            <button
-                              className="btn btn-link"
+                            <Button
                               type="button"
                               onClick={() =>
                                 installPlanPreviewModal({ stepResource: step.resource })
                               }
+                              variant="link"
                             >
                               {step.resource.name}
-                            </button>
+                            </Button>
                           </React.Fragment>
                         )}
                       </td>
