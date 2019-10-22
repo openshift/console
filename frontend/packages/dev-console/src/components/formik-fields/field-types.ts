@@ -52,6 +52,7 @@ export interface ResourceLimitFieldProps extends FieldProps {
 
 export interface MultiColumnFieldProps extends FieldProps {
   addLabel?: string;
+  toolTip?: string;
   emptyValues: { [name: string]: string };
   headers: string[];
   children: React.ReactNode;
