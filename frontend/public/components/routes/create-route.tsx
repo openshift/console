@@ -635,11 +635,10 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
     setName(serviceName);
   };
 
+  const { serviceOptions, availableServiceOptions, index, onChange } = props;
   React.useEffect(() => {
-    props.onChange({ name, weight }, props.index);
-  }, [name, weight]);
-
-  const { serviceOptions, availableServiceOptions, index } = props;
+    onChange({ name, weight }, index);
+  }, [index, name, onChange, weight]);
 
   return (
     <div className="co-m-pane__body-group">
