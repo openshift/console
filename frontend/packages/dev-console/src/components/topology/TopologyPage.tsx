@@ -7,11 +7,13 @@ import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { StatusBox, Firehose, HintBlock } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
+import { ListIcon } from '@patternfly/react-icons';
 import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
 import { ALLOW_SERVICE_BINDING } from '../../const';
+import TopologyToggleIcon from '../topology-list/TopologyToggleIcon';
 import { getCheURL } from './topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
@@ -31,7 +33,7 @@ export interface TopologyPageProps {
 
 type Props = TopologyPageProps & StateProps;
 
-const EmptyMsg = () => (
+export const EmptyMsg = () => (
   <EmptyState
     title="Topology"
     hintBlock={
@@ -85,7 +87,15 @@ const TopologyPage: React.FC<Props> = ({
       <Helmet>
         <title>Topology</title>
       </Helmet>
-      <NamespacedPage>
+      <NamespacedPage
+        toolbarOptions={
+          <TopologyToggleIcon
+            url={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/list`}
+            icon={<ListIcon size="md" />}
+            tooltipText="List View"
+          />
+        }
+      >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
             {() => {

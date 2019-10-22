@@ -298,6 +298,18 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
+      exact: true,
+      path: ['/topology/all-namespaces/list', '/topology/ns/:ns/list'],
+      loader: async () =>
+        (await import(
+          './components/topology-list/TopologyListPage' /* webpackChunkName: "topology-list-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       exact: true,
       path: ['/deploy-image/all-namespaces', '/deploy-image/ns/:ns'],
       loader: async () =>

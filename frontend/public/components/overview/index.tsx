@@ -77,7 +77,7 @@ const groupByLabel = (items: OverviewItem[], label: string): OverviewGroup[] => 
   return asOverviewGroups(byLabel);
 };
 
-const groupItems = (items: OverviewItem[], selectedGroup: string): OverviewGroup[] => {
+export const groupItems = (items: OverviewItem[], selectedGroup: string): OverviewGroup[] => {
   switch (selectedGroup) {
     case OverviewSpecialGroup.GROUP_BY_APPLICATION:
       return groupByApplication(items);

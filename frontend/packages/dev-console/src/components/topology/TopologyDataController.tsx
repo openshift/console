@@ -30,10 +30,10 @@ export interface ControllerProps {
 export interface TopologyDataControllerProps {
   namespace: string;
   render(RenderProps): React.ReactElement;
-  application: string;
-  knative: boolean;
-  cheURL: string;
-  serviceBinding: boolean;
+  application?: string;
+  knative?: boolean;
+  cheURL?: string;
+  serviceBinding?: boolean;
   resourceList: plugins.OverviewCRD[];
 }
 
