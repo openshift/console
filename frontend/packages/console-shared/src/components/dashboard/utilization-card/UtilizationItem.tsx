@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Humanize } from '@console/internal/components/utils/types';
 import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
+import { ByteDataTypes } from 'packages/console-shared/src/graph-helper/data-utils';
 
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
-  ({ title, data, humanizeValue, isLoading = false, query, error, max = null }) => {
+  ({ title, data, humanizeValue, isLoading = false, query, error, max = null, byteDataType }) => {
     let current;
     if (data.length) {
       const latestData = data[data.length - 1];
@@ -35,6 +36,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={80}
         chartStatus={chartStatus}
+        byteDataType={byteDataType}
       />
     );
 
@@ -68,4 +70,5 @@ type UtilizationItemProps = {
   query: string;
   error: boolean;
   max?: number;
+  byteDataType?: ByteDataTypes;
 };

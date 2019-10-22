@@ -13,6 +13,7 @@ import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils'
 import { OverviewQuery, utilizationQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
@@ -104,6 +105,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           isLoading={!memoryUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[OverviewQuery.MEMORY_UTILIZATION]}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
           title="Disk Usage"
@@ -112,6 +114,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           isLoading={!storageUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[OverviewQuery.STORAGE_UTILIZATION]}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         {pluginItems.map(({ properties }, index) => {
           const utilization = prometheusResults.getIn([properties.query, 'data']);

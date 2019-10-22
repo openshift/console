@@ -22,6 +22,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 import { getUtilizationQueries, HostQuery } from './queries';
@@ -162,6 +163,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.MEMORY_UTILIZATION]}
           max={memoryTotalValue}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
           title="Number of pods"
@@ -178,6 +180,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           isLoading={itemIsLoading(networkInUtilization)}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
           title="Network Out"
@@ -186,6 +189,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           isLoading={itemIsLoading(networkOutUtilization)}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
           title="Filesystem"
@@ -195,6 +199,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.STORAGE_UTILIZATION]}
           max={storageTotalValue}
+          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
       </UtilizationBody>
     </DashboardCard>

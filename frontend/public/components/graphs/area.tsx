@@ -12,7 +12,7 @@ import {
   global_warning_color_100 as warningColor,
   global_danger_color_100 as dangerColor,
 } from '@patternfly/react-tokens';
-
+import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { twentyFourHourTime } from '../utils/datetime';
 import { humanizeNumber, useRefWidth, Humanize } from '../utils';
 import { PrometheusEndpoint } from './helpers';
@@ -53,9 +53,30 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   xAxis = true,
   yAxis = true,
   chartStatus,
+  byteDataType = '',
 }) => {
   const [containerRef, width] = useRefWidth();
-  const getLabel = ({ datum: { x, y } }) => `${humanize(y).string} at ${formatDate(x)}`;
+  const [processedData, setProcessedData] = React.useState(data);
+  const [unit, setUnit] = React.useState('');
+
+  React.useEffect(() => {
+    if (byteDataType) {
+      const result = processFrame(data, byteDataType);
+      setProcessedData(result.processedData);
+      setUnit(result.unit);
+    } else {
+      setProcessedData(data);
+    }
+  }, [byteDataType, data]);
+
+  const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
+    humanize,
+    unit,
+  ]);
+  const getLabel = React.useCallback(
+    ({ datum: { x, y } }) => `${humanize(y, unit, unit).string} at ${formatDate(x)}`,
+    [humanize, unit, formatDate],
+  );
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
 
@@ -73,14 +94,8 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             padding={padding}
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
-            {yAxis && (
-              <ChartAxis
-                dependentAxis
-                tickCount={tickCount}
-                tickFormat={(tick) => humanize(tick).string}
-              />
-            )}
-            <ChartArea data={data} style={style} />
+            {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
+            <ChartArea data={processedData} style={style} />
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -125,6 +140,7 @@ type AreaChartProps = {
   yAxis?: boolean;
   padding?: object;
   chartStatus?: AreaChartStatus;
+  byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
 };
 
 type AreaProps = AreaChartProps & {
@@ -133,4 +149,5 @@ type AreaProps = AreaChartProps & {
   samples?: number;
   timeout?: string;
   timespan?: number;
+  byteDataType?: ByteDataTypes;
 };
