@@ -1661,6 +1661,7 @@ export type ListPageProps = {
     reducer: (any) => string;
     items: { id: string; title: string }[];
   };
+  showTitle?: boolean;
 };
 
 type AlertingPageProps = {

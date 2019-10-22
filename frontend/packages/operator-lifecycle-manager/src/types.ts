@@ -187,7 +187,7 @@ export type CatalogSourceKind = {
   kind: 'CatalogSource';
   spec: {
     name: string;
-    sourceType: 'internal';
+    sourceType: 'internal' | 'grpc' | 'configMap';
     configMap?: string;
     secrets?: string[];
     displayName?: string;

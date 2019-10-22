@@ -1,6 +1,10 @@
 // Use this file to override styles from 3rd party dependencies
 $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
+form.pf-c-form {
+  --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
+}
+
 // account for collapsing space between .btn
 .btn + .btn {
   margin-left: 3px;

@@ -199,4 +199,28 @@ export default [
         )).CreateSubscriptionYAML,
     },
   },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.OperatorHubModel,
+      loader: async () =>
+        (await import('./components/operator-hub/operator-hub-details')).OperatorHubDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/cluster/${referenceForModel(models.CatalogSourceModel)}/~new`,
+      loader: async () => (await import('./components/create-catalog-source')).CreateCatalogSource,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${referenceForModel(models.CatalogSourceModel)}/~new`,
+      loader: async () => (await import('./components/create-catalog-source')).CreateCatalogSource,
+    },
+  },
 ] as Plugin<ConsumedExtensions>;

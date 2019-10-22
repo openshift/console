@@ -1,3 +1,4 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PackageManifestKind, SubscriptionKind } from '../../types';
 
 export enum ProviderType {
@@ -48,4 +49,25 @@ export type OperatorHubCSVAnnotations = {
   description?: string;
   categories?: string;
   capabilities?: CapabilityLevel;
+};
+
+type OperatorHubSpec = {
+  sources?: {
+    name: string;
+    disabled: boolean;
+  }[];
+  disableAllDefaultSources?: boolean;
+};
+
+type OperatorHubStatus = {
+  sources: {
+    disabled: boolean;
+    name: string;
+    status: string;
+  }[];
+};
+
+export type OperatorHubKind = K8sResourceKind & {
+  spec: OperatorHubSpec;
+  status: OperatorHubStatus;
 };
