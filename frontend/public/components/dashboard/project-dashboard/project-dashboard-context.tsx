@@ -5,4 +5,5 @@ export const ProjectDashboardContext = React.createContext<ProjectDashboardConte
 
 type ProjectDashboardContext = {
   obj?: K8sResourceKind;
+  namespaceLinks?: K8sResourceKind[];
 };

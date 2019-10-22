@@ -1,0 +1,12 @@
+.co-launcher-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.co-launcher-card__item {
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
+.co-launcher-card__item:last-of-type {
+  padding-bottom: 0;
+}

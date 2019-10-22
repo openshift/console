@@ -9,23 +9,48 @@ import { UtilizationCard } from './utilization-card';
 import { InventoryCard } from './inventory-card';
 import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
+import { LauncherCard } from './launcher-card';
+import { connect } from 'react-redux';
+import { getNamespaceDashboardConsoleLinks } from '../../overview/namespace-overview';
+import { RootState } from '../../../redux';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
+const mapStateToProps = ({ UI }: RootState): ProjectDashboardReduxProps => ({
+  consoleLinks: UI.get('consoleLinks'),
+});
+
+const ProjectDashboard_: React.FC<ProjectDashboardReduxProps & ProjectDashboardProps> = ({
+  obj,
+  consoleLinks,
+}) => {
+  const namespaceLinks = getNamespaceDashboardConsoleLinks(obj, consoleLinks);
   const context = {
     obj,
+    namespaceLinks,
   };
 
   return (
     <ProjectDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+        <DashboardGrid
+          mainCards={mainCards}
+          leftCards={leftCards}
+          rightCards={namespaceLinks.length ? [{ Card: LauncherCard }, ...rightCards] : rightCards}
+        />
       </Dashboard>
     </ProjectDashboardContext.Provider>
   );
+};
+
+export const ProjectDashboard = connect<ProjectDashboardReduxProps, {}, ProjectDashboardProps>(
+  mapStateToProps,
+)(ProjectDashboard_);
+
+type ProjectDashboardReduxProps = {
+  consoleLinks: K8sResourceKind[];
 };
 
 type ProjectDashboardProps = {
