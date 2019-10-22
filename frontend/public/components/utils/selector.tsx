@@ -19,11 +19,7 @@ const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace
 
   return (
     <div className="co-m-requirement">
-      <Link
-        className={`co-m-requirement__link co-text-${kind.toLowerCase()}`}
-        to={to}
-        tabIndex={-1}
-      >
+      <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to}>
         <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
         <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
       </Link>
