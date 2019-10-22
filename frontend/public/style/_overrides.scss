@@ -432,3 +432,8 @@ h6 {
   // see https://github.com/xtermjs/xterm.js/issues/1974
   border-right: 1px solid transparent;
 }
+
+button.pf-c-dropdown__menu-item.pf-m-disabled  {
+  // enables tooltips for disabled menu items
+  pointer-events: auto;
+}
