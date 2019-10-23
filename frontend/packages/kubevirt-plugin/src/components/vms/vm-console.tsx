@@ -38,7 +38,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   let rdp;
   if (isWindows(vm)) {
     const rdpService = findRDPService(vmi, services);
-    const launcherPod = findVMPod(pods, vm);
+    const launcherPod = findVMPod(vm, pods);
     rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
   }
 
