@@ -14,7 +14,6 @@ import {
 import { Progress, ProgressVariant, ProgressSize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
-import { POD_DETAIL_OVERVIEW_HREF } from '@console/internal/components/utils/href';
 import { PodModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../../models';
 import { VM_DETAIL_EVENTS_HREF, CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
@@ -92,7 +91,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, pods, migrations, verbos
     PodModel.kind,
     getName(statusDetail.launcherPod),
     getNamespace(statusDetail.launcherPod),
-  )}/${POD_DETAIL_OVERVIEW_HREF}`;
+  )}`; // to default tab
   const additionalText = verbose ? getAdditionalImportText(statusDetail.pod) : null;
 
   switch (statusDetail.status) {
