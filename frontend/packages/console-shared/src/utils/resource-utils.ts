@@ -23,8 +23,9 @@ import {
   OverviewItemAlerts,
   PodControllerOverviewItem,
   OverviewItem,
-} from '../types/resource';
-import { PodRCData } from '../types';
+  PodRCData,
+  ExtPodKind,
+} from '../types';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
   DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
@@ -345,9 +346,7 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts
   }
 };
 
-// FIXME: This is not returning an actual PodKind. It's returning the RC spec
-// and status, and status.phase is not valid.
-const getAutoscaledPods = (rc: K8sResourceKind): any[] => {
+const getAutoscaledPods = (rc: K8sResourceKind): ExtPodKind[] => {
   return [
     {
       ..._.pick(rc, 'metadata', 'status', 'spec'),
@@ -370,7 +369,7 @@ const getIdledStatus = (
           ..._.pick(rc.obj, 'metadata', 'status', 'spec'),
           status: { phase: 'Idle' },
         },
-      ] as any[],
+      ],
     };
   }
   return rc;

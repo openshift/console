@@ -9,12 +9,12 @@ import {
 } from '@console/internal/module/k8s';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
 import { checkPodEditAccess } from '../../utils';
-import { Pod } from '../../types';
+import { ExtPodKind } from '../../types';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
 
 interface PodRingProps {
-  pods: Pod[];
+  pods: ExtPodKind[];
   obj: K8sResourceKind;
   rc?: K8sResourceKind;
   resourceKind: K8sKind;

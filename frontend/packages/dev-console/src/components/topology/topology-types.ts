@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 import { KebabOption } from '@console/internal/components/utils';
-import { Pod, Resource, OverviewItem, PodControllerOverviewItem } from '@console/shared';
+import { ExtPodKind, Resource, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
 
@@ -62,7 +62,7 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: OverviewItem;
-  pods: Pod[];
+  pods: ExtPodKind[];
   data: D;
 }
 
@@ -83,7 +83,7 @@ export interface WorkloadData {
 }
 
 export interface DonutStatusData {
-  pods: Pod[];
+  pods: ExtPodKind[];
   current: PodControllerOverviewItem;
   previous: PodControllerOverviewItem;
   dc: K8sResourceKind;

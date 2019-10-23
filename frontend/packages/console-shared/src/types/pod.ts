@@ -1,10 +1,4 @@
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { PodControllerOverviewItem } from './resource';
-
-export interface Pod extends PodKind {
-  id?: string;
-  name?: string;
-}
+import { K8sResourceKind, PodPhase } from '@console/internal/module/k8s';
 
 export interface Resource {
   data: K8sResourceKind[];
@@ -23,7 +17,7 @@ export interface PodRCData {
   previous: PodControllerOverviewItem;
   obj?: K8sResourceKind;
   isRollingOut: boolean;
-  pods: PodKind[];
+  pods: ExtPodKind[];
 }
 
 export interface PodRingResources {
@@ -36,9 +30,41 @@ export interface PodRingResources {
 
 export interface PodRingData {
   [key: string]: {
-    pods: PodKind[];
+    pods: ExtPodKind[];
     current: PodControllerOverviewItem;
     previous: PodControllerOverviewItem;
     isRollingOut: boolean;
   };
 }
+
+export type ExtPodPhase =
+  | 'Empty'
+  | 'Warning'
+  | 'Idle'
+  | 'Not Ready'
+  | 'Scaled to 0'
+  | 'Autoscaled to 0'
+  | 'Terminating';
+
+export type ExtPodStatus = {
+  phase: ExtPodPhase | PodPhase;
+};
+
+export type ExtPodKind = {
+  status: ExtPodStatus;
+} & K8sResourceKind;
+
+export type OverviewItemAlerts = {
+  [key: string]: {
+    message: string;
+    severity: string;
+  };
+};
+
+export type PodControllerOverviewItem = {
+  alerts: OverviewItemAlerts;
+  revision: number;
+  obj: K8sResourceKind;
+  phase?: string;
+  pods: ExtPodKind[];
+};

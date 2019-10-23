@@ -1,20 +1,6 @@
 import { K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
-
-export type OverviewItemAlerts = {
-  [key: string]: {
-    message: string;
-    severity: string;
-  };
-};
-
-export type PodControllerOverviewItem = {
-  alerts: OverviewItemAlerts;
-  revision: number;
-  obj: K8sResourceKind;
-  phase?: string;
-  pods: PodKind[];
-};
+import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 
 export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
