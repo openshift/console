@@ -176,6 +176,7 @@ const VirtualMachinesPageComponent: React.FC<VirtualMachinesPageProps> = (props)
   return (
     <MultiListPage
       {...props}
+      createButtonText="Create Virtual Machine"
       canCreate
       title={VirtualMachineModel.labelPlural}
       rowFilters={[vmStatusFilter]}
