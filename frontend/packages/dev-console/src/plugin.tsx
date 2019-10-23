@@ -197,7 +197,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
@@ -209,7 +209,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineRunModel.labelPlural,
         resource: referenceForModel(PipelineRunModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
@@ -221,7 +221,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineResourceModel.labelPlural,
         resource: referenceForModel(PipelineResourceModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
@@ -233,7 +233,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: TaskModel.labelPlural,
         resource: referenceForModel(TaskModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
@@ -245,7 +245,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: TaskRunModel.labelPlural,
         resource: referenceForModel(TaskRunModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
@@ -257,7 +257,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: ClusterTaskModel.labelPlural,
         resource: referenceForModel(ClusterTaskModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
       },
     },
   },
