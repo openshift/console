@@ -299,7 +299,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       perspective: 'dev',
-      path: ['/k8s/cluster/projects/:ns'],
+      path: ['/k8s/cluster/projects/:name'],
       loader: async () =>
         (await import(
           './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
