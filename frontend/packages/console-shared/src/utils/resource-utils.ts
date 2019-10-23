@@ -7,6 +7,7 @@ import {
   PodTemplate,
   RouteKind,
   apiVersionForModel,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -19,6 +20,7 @@ import {
 } from '@console/internal/models';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import {
   BuildConfigOverviewItem,
   OverviewItemAlerts,
@@ -106,6 +108,12 @@ export const getResourceList = (namespace: string, resList?: any) => {
       kind: 'StatefulSet',
       namespace,
       prop: 'statefulSets',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ClusterServiceVersionModel),
+      namespace,
+      prop: 'clusterServiceVersion',
     },
   ];
 

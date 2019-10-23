@@ -8,6 +8,9 @@ import {
   createResourceConnection,
   updateResourceApplication,
   removeResourceConnection,
+  createServiceBinding,
+  removeServiceBinding,
+  edgesFromLabels,
 } from '../../utils/application-utils';
 import {
   TopologyDataModel,
@@ -83,7 +86,11 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  * @param dc resource item
  * @param cheURL che link
  */
-const createTopologyNodeData = (dc: TopologyOverviewItem, cheURL?: string): TopologyDataObject => {
+const createTopologyNodeData = (
+  dc: OverviewItem,
+  operatorBackedServiceKinds: string[],
+  cheURL?: string,
+): TopologyDataObject => {
   const {
     obj: deploymentConfig,
     current,
@@ -96,6 +103,7 @@ const createTopologyNodeData = (dc: TopologyOverviewItem, cheURL?: string): Topo
   const dcUID = _.get(deploymentConfig, 'metadata.uid');
   const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
+  const nodeResourceKind = _.get(deploymentConfig, 'metadata.ownerReferences[0].kind');
   return {
     id: dcUID,
     name:
@@ -103,6 +111,9 @@ const createTopologyNodeData = (dc: TopologyOverviewItem, cheURL?: string): Topo
     type: 'workload',
     resources: { ...dc },
     pods: dc.pods,
+    operatorBackedService: !!_.find(operatorBackedServiceKinds, (k) => {
+      return k === nodeResourceKind;
+    }),
     data: {
       url: getRoutesUrl(dc.routes, _.get(dc, ['ksroutes'])),
       kind: deploymentConfig.kind,
@@ -152,8 +163,13 @@ const getTopologyNodeItem = (dc: K8sResourceKind): Node => {
  */
 const getTopologyEdgeItems = (dc: K8sResourceKind, resources: K8sResourceKind[]): Edge[] => {
   const annotations = _.get(dc, 'metadata.annotations');
+  const labels = _.get(dc, 'metadata.labels');
+  const annotationsEdges = edgesFromAnnotations(annotations);
+  const labelsEdges = edgesFromLabels(labels);
+  const allEdges = _.concat(annotationsEdges, labelsEdges);
   const edges = [];
-  _.forEach(edgesFromAnnotations(annotations), (edge) => {
+
+  _.forEach(allEdges, (edge) => {
     // handles multiple edges
     const targetNode = _.get(
       _.find(resources, (deployment) => {
@@ -222,6 +238,15 @@ export const transformTopologyData = (
   cheURL?: string,
   utils?: Function[],
 ): TopologyDataModel => {
+  const installedOperators =
+    resources.clusterServiceVersion && resources.clusterServiceVersion.data;
+  const operatorBackedServiceKinds = [];
+  _.forEach(installedOperators, (op) => {
+    _.get(op, 'spec.customresourcedefinitions.owned').map((service) =>
+      operatorBackedServiceKinds.push(service.kind),
+    );
+  });
+
   let topologyGraphAndNodeData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
@@ -251,7 +276,7 @@ export const transformTopologyData = (
       transformResourceData[key](resourceData).forEach((item) => {
         const { obj: deploymentConfig } = item;
         const uid = _.get(deploymentConfig, ['metadata', 'uid']);
-        dataToShowOnNodes[uid] = createTopologyNodeData(item, cheURL);
+        dataToShowOnNodes[uid] = createTopologyNodeData(item, operatorBackedServiceKinds, cheURL);
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
           nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig)];
           edgesData = [...edgesData, ...getTopologyEdgeItems(deploymentConfig, allResources)];
@@ -311,6 +336,10 @@ export const createTopologyResourceConnection = (
   const targetObj = getResourceDeploymentObject(target);
   const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
 
+  if (target.operatorBackedService) {
+    return createServiceBinding(sourceObj, targetObj);
+  }
+
   return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
 };
 
@@ -324,6 +353,10 @@ export const removeTopologyResourceConnection = (
 
   const sourceObj = getResourceDeploymentObject(source);
   const targetObj = getResourceDeploymentObject(target);
+
+  if (target.operatorBackedService) {
+    return removeServiceBinding(sourceObj, targetObj);
+  }
 
   return removeResourceConnection(sourceObj, targetObj);
 };

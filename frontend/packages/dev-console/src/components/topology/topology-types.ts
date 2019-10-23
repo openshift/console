@@ -25,6 +25,7 @@ export interface TopologyDataResources {
   pipelineRuns?: FirehoseResult;
   eventSourceCronjob?: FirehoseResult;
   eventSourceContainers?: FirehoseResult;
+  clusterServiceVersion?: FirehoseResult;
 }
 
 export interface Node {
@@ -74,6 +75,7 @@ export interface TopologyDataObject<D = {}> {
   resources: OverviewItem;
   pods: ExtPodKind[];
   data: D;
+  operatorBackedService: boolean;
 }
 
 export interface TopologyApplicationObject {
