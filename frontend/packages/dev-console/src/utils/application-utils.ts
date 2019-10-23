@@ -47,6 +47,20 @@ export const edgesFromAnnotations = (annotations): string[] => {
   return edges;
 };
 
+export const edgesFromLabels = (labels): string[] => {
+  let edges: string[] = [];
+  if (_.has(labels, ['connects-to'])) {
+    try {
+      edges = JSON.parse(labels['connects-to']);
+    } catch (e) {
+      // connects-to annotation should hold a JSON string value but failed to parse
+      // treat value as a comma separated list of strings
+      edges = labels['connects-to'].split(',').map((v) => v.trim());
+    }
+  }
+  return edges;
+};
+
 const listInstanceResources = (
   namespace: string,
   instanceName: string,
@@ -197,14 +211,20 @@ const updateItemAppConnectTo = (
   return k8sPatch(model, item, patch);
 };
 
-export const createAppBinding = (source: K8sResourceKind, target: K8sResourceKind) => {
-  const targetName = _.get(target, 'metadata.name');
-  const sourceName = source.metadata.name;
-  const { namespace } = source.metadata;
-  const targetGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
-  const targetKind = _.get(target, 'metadata.ownerReferences[0].kind');
-  const targetRefName = _.get(target, 'metadata.ownerReferences[0].name');
+export const createServiceBinding = (
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
 
+  const targetName = _.get(target, 'metadata.name');
+  const sourceName = _.get(source, 'metadata.name');
+  const namespace = _.get(source, 'metadata.namespace');
+  const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
+  const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
+  const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
   const applicationSelectorLabels = getApplicationSelectorLabels(targetName);
 
   const serviceBindingRequest = {
@@ -222,15 +242,13 @@ export const createAppBinding = (source: K8sResourceKind, target: K8sResourceKin
         resource: 'deploymentconfigs',
       },
       backingServiceSelector: {
-        group: targetGroup[0],
+        group: targetResourceGroup[0],
         version: 'v1alpha1',
-        kind: targetKind,
-        resourceRef: targetRefName,
+        kind: targetResourceKind,
+        resourceRef: targetResourceRefName,
       },
     },
   };
-
-  console.log(serviceBindingRequest, 'sbr');
 
   const patch = [
     {
@@ -240,13 +258,50 @@ export const createAppBinding = (source: K8sResourceKind, target: K8sResourceKin
     },
   ];
 
-  k8sPatch(DeploymentConfigModel, source, patch)
-    .then((newObj) => {
-      console.log(newObj);
-      k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+  return k8sPatch(modelFor(source.kind), source, patch)
+    .then(() => {
+      return k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
     })
     .catch((err) => {
-      console.log(err);
+      return Promise.reject(err);
+    });
+};
+
+export const removeServiceBinding = (
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+
+  const targetName = _.get(target, 'metadata.name');
+  const sourceName = _.get(source, 'metadata.name');
+  const namespace = _.get(source, 'metadata.namespace');
+  const labels = _.omit(source.metadata.labels, ['connects-to']);
+  const patch = [
+    {
+      path: '/metadata/labels',
+      op: 'add',
+      value: { ...labels },
+    },
+  ];
+
+  const serviceBindingRequest = {
+    apiVersion: 'apps.openshift.io/v1alpha1',
+    kind: 'ServiceBindingRequest',
+    metadata: {
+      name: `${sourceName}-${targetName}-sbr`,
+      namespace,
+    },
+  };
+
+  return k8sPatch(modelFor(source.kind), source, patch)
+    .then(() => {
+      return k8sKill(ServiceBindingRequestModel, serviceBindingRequest);
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };
 
@@ -260,7 +315,6 @@ export const createResourceConnection = (
     return Promise.reject();
   }
 
-  createAppBinding(source, target);
   const connectValue =
     _.get(target, ['metadata', 'labels', 'app.kubernetes.io/instance']) || target.metadata.name;
 
