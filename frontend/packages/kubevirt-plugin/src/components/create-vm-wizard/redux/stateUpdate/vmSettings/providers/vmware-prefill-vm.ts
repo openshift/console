@@ -122,6 +122,7 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
       importData: {
         fileName: _.get(device, ['Backing', 'FileName']),
         mountPath: `/data/vm/disk${idx + 1}`, // hardcoded
+        devicePath: `/data/vm/disk${idx + 1}`, // hardcoded
       },
     };
   });
@@ -147,7 +148,7 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
       unit: BinaryUnit.Gi,
     }).asResource(),
     importData: {
-      mountPath: CONVERSION_POD_TEMP_MOUNT_PATH, // hardcoded
+      mountPath: CONVERSION_POD_TEMP_MOUNT_PATH, // hardcoded; always Filesystem mode
     },
   });
 
