@@ -133,6 +133,9 @@ const menuActions = [CancelAction, ...replicaSetMenuActions];
 export const ReplicationControllersDetailsPage = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={(resource) =>
+      _.get(resource, ['metadata', 'annotations', 'openshift.io/deployment.phase'], null)
+    }
     menuActions={menuActions}
     pages={[
       details(Details),

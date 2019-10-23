@@ -503,6 +503,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
 export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={routeStatus}
     kind={RoutesReference}
     menuActions={menuActions}
     pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}

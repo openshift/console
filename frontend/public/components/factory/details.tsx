@@ -43,6 +43,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
             : breadcrumbsForDetailsPage(props.kindObj, props.match)
         }
         resourceKeys={resourceKeys}
+        getResourceStatus={props.getResourceStatus}
         customData={props.customData}
         badge={props.badge || getBadgeFromType(props.kindObj && props.kindObj.badge)}
         icon={props.icon}
@@ -84,6 +85,7 @@ export type DetailsPageProps = {
   customData?: any;
   badge?: React.ReactNode;
   icon?: React.ComponentType<{ obj: K8sResourceKind }>;
+  getResourceStatus?: (resource: K8sResourceKind) => string;
 };
 
 DetailsPage.displayName = 'DetailsPage';
