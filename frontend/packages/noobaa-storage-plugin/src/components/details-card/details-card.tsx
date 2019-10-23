@@ -20,6 +20,7 @@ import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
+const NOOBAA_DASHBOARD_LINK_QUERY = 'NooBaa_system_links';
 
 const infrastructureResource: FirehoseResource = {
   kind: referenceForModel(InfrastructureModel),
@@ -48,23 +49,31 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     watchK8sResource(SubscriptionResource);
     watchK8sResource(infrastructureResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
+    watchPrometheus(NOOBAA_DASHBOARD_LINK_QUERY);
     return () => {
       stopWatchK8sResource(SubscriptionResource);
       stopWatchK8sResource(infrastructureResource);
       stopWatchPrometheusQuery(NOOBAA_SYSTEM_NAME_QUERY);
+      stopWatchPrometheusQuery(NOOBAA_DASHBOARD_LINK_QUERY);
     };
   }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
 
-  const queryResult = prometheusResults.getIn([
+  const systemResult = prometheusResults.getIn([
     NOOBAA_SYSTEM_NAME_QUERY,
     'data',
   ]) as PrometheusResponse;
-  const queryResultError = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'loadError']);
+  const dashboardLinkResult = prometheusResults.getIn([
+    NOOBAA_DASHBOARD_LINK_QUERY,
+    'data',
+  ]) as PrometheusResponse;
+  const systemLoadError = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'loadError']);
+  const dashboardLinkLoadError = prometheusResults.getIn([
+    NOOBAA_DASHBOARD_LINK_QUERY,
+    'loadError',
+  ]);
 
-  const systemName = getMetric(queryResult, 'system_name');
-  const systemAddress = getMetric(queryResult, 'system_address');
-  const systemLink =
-    systemName && systemAddress ? `${systemAddress}fe/systems/${systemName}` : undefined;
+  const systemName = getMetric(systemResult, 'system_name');
+  const systemLink = getMetric(dashboardLinkResult, 'dashboard');
 
   const infrastructure = _.get(resources, 'infrastructure');
   const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
@@ -88,8 +97,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="system_name"
             title="System Name"
-            isLoading={!queryResult}
-            error={queryResultError || !systemLink}
+            isLoading={!systemResult || !dashboardLinkResult}
+            error={systemLoadError || dashboardLinkLoadError}
           >
             <ExternalLink href={systemLink} text={systemName} />
           </DetailItem>

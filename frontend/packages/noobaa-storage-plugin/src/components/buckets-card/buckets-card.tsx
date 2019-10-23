@@ -17,7 +17,7 @@ import { BucketsItem, BucketsType } from './buckets-card-item';
 import './buckets-card.scss';
 
 enum BucketsCardQueries {
-  BUCKETS_LINK_QUERY = 'NooBaa_system_info',
+  BUCKETS_LINK_QUERY = 'NooBaa_system_links',
   BUCKETS_COUNT = 'NooBaa_num_buckets',
   BUCKET_OBJECTS_COUNT = 'NooBaa_num_objects',
   BUCKET_CLAIMS_COUNT = 'NooBaa_num_buckets_claims',
@@ -106,19 +106,14 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   ]) as PrometheusResponse;
 
   const obcData = _.get(resources.obc, 'data', null) as K8sResourceKind[];
-  const noobaaSystemAddress = getMetric(bucketsLinksResponse, 'system_address');
-  const noobaaSystemName = getMetric(bucketsLinksResponse, 'system_name');
+  const noobaaBucketsLink = getMetric(bucketsLinksResponse, 'buckets');
   const obcCount = getGaugeValue(obcCountResponse);
   const unhealthyObcCount = getGaugeValue(unhealthyObcCountResponse);
 
   let resultantUnhealthyObcCount: number = null;
-  let link: string = null;
 
   if (obcCount && obcData && unhealthyObcCount)
     resultantUnhealthyObcCount = obcData.length - Number(obcCount) + Number(unhealthyObcCount);
-
-  if (noobaaSystemAddress && noobaaSystemName)
-    link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/buckets/data-buckets`;
 
   const bucketProps: BucketsType = {
     bucketsCount: getGaugeValue(obCountResponse),
@@ -141,8 +136,8 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <div className="co-dashboard-card__body--no-padding">
-          <BucketsItem title="ObjectBucket" {...bucketProps} link={link} />
-          <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={link} />
+          <BucketsItem title="ObjectBucket" {...bucketProps} link={noobaaBucketsLink} />
+          <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={noobaaBucketsLink} />
         </div>
       </DashboardCardBody>
     </DashboardCard>

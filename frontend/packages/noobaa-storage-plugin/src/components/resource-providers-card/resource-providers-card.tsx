@@ -18,7 +18,7 @@ import './resource-providers-card.scss';
 const RESOURCE_PROVIDERS_QUERY = {
   PROVIDERS_TYPES: ' NooBaa_cloud_types',
   UNHEALTHY_PROVIDERS_TYPES: 'NooBaa_unhealthy_cloud_types',
-  RESOURCES_LINK_QUERY: 'NooBaa_system_info',
+  RESOURCES_LINK_QUERY: 'NooBaa_system_links',
 };
 
 const getProviderType = (provider: ProviderPrometheusData): string =>
@@ -86,11 +86,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
     !!unhealthyProvidersTypesQueryResultError ||
     !!resourcesLinksResponseError;
 
-  const noobaaSystemAddress = getMetric(resourcesLinksResponse, 'system_address');
-  const noobaaSystemName = getMetric(resourcesLinksResponse, 'system_name');
-  let link: string = null;
-  if (noobaaSystemAddress && noobaaSystemName)
-    link = `${noobaaSystemAddress}fe/systems/${noobaaSystemName}/resources/cloud/`;
+  const noobaaResourcesLink = getMetric(resourcesLinksResponse, 'resources');
 
   const allProviders = createProvidersList(providersTypesQueryResult);
   const unhealthyProviders = createProvidersList(unhealthyProvidersTypesQueryResult);
@@ -117,7 +113,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
             <ResourceProvidersItem
               count={allProviders[provider]}
               key={provider}
-              link={link}
+              link={noobaaResourcesLink}
               title={provider}
               unhealthyProviders={unhealthyProviders}
             />
