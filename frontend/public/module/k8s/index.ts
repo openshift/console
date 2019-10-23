@@ -433,6 +433,9 @@ export type CustomResourceDefinitionKind = {
       openAPIV3Schema: JSONSchema6;
     };
   };
+  status?: {
+    conditions?: any[];
+  };
 } & K8sResourceCommon;
 
 export type RouteTarget = {
