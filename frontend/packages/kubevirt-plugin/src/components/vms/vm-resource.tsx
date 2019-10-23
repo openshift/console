@@ -13,7 +13,7 @@ import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
-import { VmStatuses } from '../vm-status';
+import { VMStatuses } from '../vm-status';
 import { getOperatingSystemName, getOperatingSystem, getWorkloadProfile } from '../../selectors/vm';
 
 import './_vm-resource.scss';
@@ -85,7 +85,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   return (
     <dl className="co-m-pane__details">
       <VMDetailsItem title="Status" idValue={prefixedID(id, 'vm-statuses')}>
-        <VmStatuses vm={vm} pods={pods} migrations={migrations} />
+        <VMStatuses vm={vm} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>

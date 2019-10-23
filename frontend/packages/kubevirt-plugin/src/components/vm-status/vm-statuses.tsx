@@ -7,7 +7,7 @@ import { getVMStatus } from '../../statuses/vm/vm';
 import { getVMImporterPods } from '../../selectors/pod/selectors';
 import { VMStatus } from './vm-status';
 
-export const VmStatuses: React.FC<VmStatusesProps> = (props) => {
+export const VMStatuses: React.FC<VMStatusesProps> = (props) => {
   const { vm, pods, migrations } = props;
   const statusDetail = getVMStatus(vm, pods, migrations);
   const importerPods = getVMImporterPods(pods, vm);
@@ -29,7 +29,7 @@ export const VmStatuses: React.FC<VmStatusesProps> = (props) => {
   }
 };
 
-type VmStatusesProps = {
+type VMStatusesProps = {
   vm: VMKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
