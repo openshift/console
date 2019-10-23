@@ -7,11 +7,14 @@ import {
   ExternalLink,
   Firehose,
   history,
-  LoadingBox,
   SectionHeading,
   StatusBox,
 } from '../utils';
-import { getAlertManagerConfig, patchAlertManagerConfig } from './alert-manager-utils';
+import {
+  getAlertManagerConfig,
+  patchAlertManagerConfig,
+  receiverTypes,
+} from './alert-manager-utils';
 import { K8sResourceKind } from '../../module/k8s';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
@@ -61,7 +64,7 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
           aria-describedby="integration-key-help"
           name="integrationKey"
           id="integration-key"
-          value={pagerDutyValues.integration_key}
+          value={pagerDutyValues.integrationKey}
           onChange={(e) => updatePagerDutyValues('integrationKey', e.target.value)}
         />
         <div className="help-block" id="integration-key-help">
@@ -72,25 +75,23 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
   );
 };
 
-const WebhookSubForm = ({ webhookUrl, setWebhookUrl }) => {
-  return (
-    <div className="form-group">
-      <label className="control-label co-required">URL</label>
-      <input
-        className="pf-c-form-control"
-        type="text"
-        aria-describedby="webhook-url-help"
-        name="webhookUrl"
-        id="webhook-url"
-        value={webhookUrl}
-        onChange={(e) => setWebhookUrl(e.target.value)}
-      />
-      <div className="help-block" id="webhook-url-help">
-        The endpoint to send HTTP POST requests to
-      </div>
+const WebhookSubForm = ({ webhookUrl, setWebhookUrl }) => (
+  <div className="form-group">
+    <label className="control-label co-required">URL</label>
+    <input
+      className="pf-c-form-control"
+      type="text"
+      aria-describedby="webhook-url-help"
+      name="webhookUrl"
+      id="webhook-url"
+      value={webhookUrl}
+      onChange={(e) => setWebhookUrl(e.target.value)}
+    />
+    <div className="help-block" id="webhook-url-help">
+      The endpoint to send HTTP POST requests to
     </div>
-  );
-};
+  </div>
+);
 
 const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) => {
   const setRouteLabel = (path: string, v: any): void => {
@@ -350,27 +351,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
     );
   };
 
-  const receiverTypes = {
-    pagerduty: 'PagerDuty',
-    webhook: 'Webhook Receiver',
-  };
-
-  const isFormValid = () => {
-    let isSubFormValid = false;
-
-    switch (receiverType) {
-      case 'pagerduty':
-        isSubFormValid = !_.isEmpty(pagerDutyValues.integrationKey);
-        break;
-      case 'webhook':
-        isSubFormValid = !_.isEmpty(webhookUrl);
-        break;
-      default:
-        isSubFormValid = false;
-    }
-
-    return !_.isEmpty(receiverType) && !_.isEmpty(receiverName) && isSubFormValid;
-  };
+  const isFormInvalid =
+    _.isEmpty(receiverName) ||
+    _.isEmpty(receiverType) ||
+    (receiverType === 'pagerduty' && _.isEmpty(pagerDutyValues.integrationKey)) ||
+    (receiverType === 'webhook' && _.isEmpty(webhookUrl));
 
   return (
     <div className="co-m-pane__body">
@@ -424,7 +409,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
 
         <ButtonBar errorMessage={errorMsg} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
-            <Button type="submit" variant="primary" id="save-changes" isDisabled={!isFormValid()}>
+            <Button type="submit" variant="primary" id="save-changes" isDisabled={isFormInvalid}>
               {saveButtonText}
             </Button>
             <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
@@ -437,45 +422,29 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
   );
 };
 
-export const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(
-  ({ obj, ...props }) => {
-    const [inProgress, setInProgress] = React.useState(true);
-
-    React.useEffect(() => {
-      if (inProgress && !_.isEmpty(obj.data)) {
-        setInProgress(false);
-      }
-    }, [inProgress, obj.data]);
-
-    if (inProgress) {
-      return <LoadingBox />;
-    }
-
-    return (
-      <StatusBox {...obj}>
-        <ReceiverBaseForm {...props} obj={obj.data} />
-      </StatusBox>
-    );
-  },
-);
-
-export const CreateReceiver = () => {
+const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
   return (
-    <Firehose
-      resources={[
-        {
-          kind: 'Secret',
-          name: 'alertmanager-main',
-          namespace: 'openshift-monitoring',
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <ReceiverWrapper titleVerb="Create" saveButtonText="Create" />
-    </Firehose>
+    <StatusBox {...obj}>
+      <ReceiverBaseForm {...props} obj={obj.data} />
+    </StatusBox>
   );
-};
+});
+
+export const CreateReceiver = () => (
+  <Firehose
+    resources={[
+      {
+        kind: 'Secret',
+        name: 'alertmanager-main',
+        namespace: 'openshift-monitoring',
+        isList: false,
+        prop: 'obj',
+      },
+    ]}
+  >
+    <ReceiverWrapper titleVerb="Create" saveButtonText="Create" />
+  </Firehose>
+);
 
 type ReceiverFormsWrapperProps = {
   titleVerb: string;

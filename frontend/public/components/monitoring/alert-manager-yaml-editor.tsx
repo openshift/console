@@ -4,7 +4,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { Base64 } from 'js-base64';
 import { K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, history, LoadingBox, StatusBox } from '../utils';
+import { ButtonBar, history, StatusBox } from '../utils';
 import { AsyncComponent } from '../utils/async';
 import { patchAlertManagerConfig } from './alert-manager-utils';
 
@@ -96,18 +96,6 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
 export const AlertManagerYAMLEditorWrapper: React.FC<
   AlertManagerYAMLEditorWrapperProps
 > = React.memo(({ obj, ...props }) => {
-  const [inProgress, setInProgress] = React.useState(true);
-
-  React.useEffect(() => {
-    if (inProgress && !_.isEmpty(obj.data)) {
-      setInProgress(false);
-    }
-  }, [inProgress, obj.data]);
-
-  if (inProgress) {
-    return <LoadingBox />;
-  }
-
   return (
     <StatusBox {...obj}>
       <AlertManagerYAMLEditor {...props} obj={obj.data} />

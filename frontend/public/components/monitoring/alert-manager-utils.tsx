@@ -34,3 +34,8 @@ export const patchAlertManagerConfig = (
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);
 };
+
+export const receiverTypes = {
+  pagerduty: 'PagerDuty',
+  webhook: 'Webhook Receiver',
+};

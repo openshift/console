@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { LoadingBox, MsgBox, SectionHeading, StatusBox } from '../utils';
+import { MsgBox, SectionHeading, StatusBox } from '../utils';
 import { createAlertRoutingModal } from '../modals';
 import { Table, TableData, TableRow, TextFilter } from '../factory';
 import * as classNames from 'classnames';
@@ -256,18 +256,6 @@ const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ o
 
 export const AlertManagerConfigWrapper: React.FC<AlertManagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
-    const [inProgress, setInProgress] = React.useState(true);
-
-    React.useEffect(() => {
-      if (inProgress && !_.isEmpty(obj.data)) {
-        setInProgress(false);
-      }
-    }, [inProgress, obj.data]);
-
-    if (inProgress) {
-      return <LoadingBox />;
-    }
-
     return (
       <StatusBox {...obj}>
         <AlertManagerConfiguration {...props} obj={obj.data} />
