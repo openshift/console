@@ -25,7 +25,7 @@ const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
   </div>
 );
 
-export const RecentEventsBody: React.FC<RecentEventsBodyProps> = ({ events, filter }) => {
+export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ events, filter }) => {
   const [expanded, setExpanded] = React.useState([]);
   const onToggle = React.useCallback(
     (uid: string) => {
@@ -46,41 +46,44 @@ export const RecentEventsBody: React.FC<RecentEventsBodyProps> = ({ events, filt
     [isExpanded, onToggle],
   );
 
-  let eventsBody: React.ReactNode;
   if (events && events.loadError) {
-    eventsBody = <ErrorLoadingEvents />;
-  } else if (!(events && events.loaded)) {
-    eventsBody = <div className="skeleton-activity" />;
-  } else {
-    const filteredEvents = filter ? events.data.filter(filter) : events.data;
-    const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);
-    eventsBody =
-      filteredEvents.length === 0 ? (
-        <Activity>
-          <div className="text-secondary">There are no recent events.</div>
-        </Activity>
-      ) : (
-        <Accordion
-          asDefinitionList={false}
-          headingLevel="h5"
-          className="co-activity-card__recent-accordion"
-        >
-          <EventStreamList
-            className="co-activity-card__recent-list"
-            events={sortedEvents}
-            EventComponent={eventItem}
-            scrollableElementId="activity-body"
-          />
-        </Accordion>
-      );
+    return <ErrorLoadingEvents />;
+  }
+  if (!(events && events.loaded)) {
+    return <div className="skeleton-activity" />;
+  }
+
+  const filteredEvents = filter ? events.data.filter(filter) : events.data;
+  const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);
+  if (filteredEvents.length === 0) {
+    return (
+      <Activity>
+        <div className="text-secondary">There are no recent events.</div>
+      </Activity>
+    );
   }
   return (
-    <>
-      <div className="co-activity-card__recent-title">Recent events</div>
-      {eventsBody}
-    </>
+    <Accordion
+      asDefinitionList={false}
+      headingLevel="h5"
+      className="co-activity-card__recent-accordion"
+    >
+      <EventStreamList
+        className="co-activity-card__recent-list"
+        events={sortedEvents}
+        EventComponent={eventItem}
+        scrollableElementId="activity-body"
+      />
+    </Accordion>
   );
 };
+
+export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => (
+  <>
+    <div className="co-activity-card__recent-title">Recent events</div>
+    <RecentEventsBodyContent {...props} />
+  </>
+);
 
 export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
   loaded,
