@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
+import { EventInvolvedObject } from '@console/internal/module/k8s';
 import { VMIKind, VMKind } from '../../types/vm';
 import {
   VirtualMachineInstanceMigrationModel,
@@ -9,64 +9,51 @@ import {
 } from '../../models';
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
 
-export const vmEventFilter = (vm: VMKind) => {
-  const vmName = getName(vm);
-  const vmNamespace = getNamespace(vm);
+type EventFilterFunction = (src: EventInvolvedObject) => boolean;
 
-  return (event) =>
-    _.isMatch(event, { name: vmName, namespace: vmNamespace, kind: VirtualMachineModel.kind });
-};
+const vmEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) =>
+  kind === VirtualMachineModel.kind && name === getName(vm) && namespace === getNamespace(vm);
 
-export const vmiEventFilter = (vm: VMKind | VMIKind) => {
-  const vmName = getName(vm);
-  const vmNamespace = getNamespace(vm);
+const vmiEventFilter = (vm: VMKind | VMIKind): EventFilterFunction => ({ kind, namespace, name }) =>
+  kind === VirtualMachineInstanceModel.kind &&
+  name === getName(vm) &&
+  namespace === getNamespace(vm);
 
-  return (event) =>
-    _.isMatch(event, {
-      name: vmName,
-      namespace: vmNamespace,
-      kind: VirtualMachineInstanceModel.kind,
-    });
-};
-
-export const launcherPodEventFilter = (vm: VMKind) => {
+const launcherPodEventFilter = (vm: VMKind): EventFilterFunction => {
   const podNameStart = `${VIRT_LAUNCHER_POD_PREFIX}${getName(vm)}-`;
-  const vmNamespace = getNamespace(vm);
 
   return ({ kind, namespace, name }) =>
-    kind === PodModel.kind && namespace === vmNamespace && name.startsWith(podNameStart);
+    kind === PodModel.kind && namespace === getNamespace(vm) && name.startsWith(podNameStart);
 };
 
-export const importerPodEventFilter = (vm: VMKind) => {
-  const vmName = getName(vm);
-  const vmNamespace = getNamespace(vm);
-
-  return ({ kind, namespace, name }) => {
-    // importer pod example importer-<diskName>-<vmname>-<generatedId>
-    // note: diskName and vmname may contain '-' which means pod name should have at least 4 parts
-    if (
-      kind === PodModel.kind &&
-      namespace === vmNamespace &&
-      name.startsWith('importer-') &&
-      name.split('-').length > 3
-    ) {
-      const importerDashIndex = name.indexOf('-');
-      const diskDashIndex = name.indexOf('-', importerDashIndex + 1);
-      const lastDashIndex = name.lastIndexOf('-');
-      // try to remove importer- and some part of <diskname>
-      const diskAndVmName = name.slice(diskDashIndex + 1, lastDashIndex);
-      return diskAndVmName.endsWith(vmName);
-    }
-    return false;
-  };
+const importerPodEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) => {
+  // importer pod example importer-<diskName>-<vmname>-<generatedId>
+  // note: diskName and vmname may contain '-' which means pod name should have at least 4 parts
+  if (
+    kind === PodModel.kind &&
+    namespace === getNamespace(vm) &&
+    name.startsWith('importer-') &&
+    name.split('-').length > 3
+  ) {
+    const importerDashIndex = name.indexOf('-');
+    const diskDashIndex = name.indexOf('-', importerDashIndex + 1);
+    const lastDashIndex = name.lastIndexOf('-');
+    // try to remove importer- and some part of <diskname>
+    const diskAndVmName = name.slice(diskDashIndex + 1, lastDashIndex);
+    return diskAndVmName.endsWith(getName(vm));
+  }
+  return false;
 };
 
-export const vmiMigrationEventFilter = (vm: VMKind) => {
-  const vmName = getName(vm);
-  const vmNamespace = getNamespace(vm);
+const vmiMigrationEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) =>
+  kind === VirtualMachineInstanceMigrationModel.kind &&
+  namespace === getNamespace(vm) &&
+  name === `${getName(vm)}-migration`;
 
-  return ({ kind, namespace, name }) =>
-    kind === VirtualMachineInstanceMigrationModel.kind &&
-    namespace === vmNamespace &&
-    name === `${vmName}-migration`;
-};
+export const getVmEventsFilters = (vm: VMKind): EventFilterFunction[] => [
+  vmiEventFilter(vm),
+  vmEventFilter(vm),
+  launcherPodEventFilter(vm),
+  importerPodEventFilter(vm),
+  vmiMigrationEventFilter(vm),
+];

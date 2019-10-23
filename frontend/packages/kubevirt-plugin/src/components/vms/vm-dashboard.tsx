@@ -5,10 +5,11 @@ import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { VMKind, VMIKind } from '../../types';
 import { VMDetailsCard, VMInventoryCard, VMStatusCard } from '../dashboards-page/vm-dashboard';
 import { VMDashboardContext } from './vm-dashboard-context';
+import { VMActivityCard } from './vm-activity';
 
 const mainCards = [{ Card: VMStatusCard }];
 const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];
-const rightCards = [];
+const rightCards = [{ Card: VMActivityCard }];
 
 export const VMDashboard: React.FC<VMDashboardProps> = (props) => {
   const { obj: vm, vmi, pods, migrations } = props;
