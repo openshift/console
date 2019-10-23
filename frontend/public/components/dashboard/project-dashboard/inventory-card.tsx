@@ -11,6 +11,8 @@ import {
   PersistentVolumeClaimModel,
   ServiceModel,
   RouteModel,
+  ConfigMapModel,
+  SecretModel,
 } from '../../../models';
 import {
   ResourceInventoryItem,
@@ -20,7 +22,7 @@ import {
   getPodStatusGroups,
   getPVCStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { FirehoseResult, FirehoseResource } from '../../utils';
+import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
 import { K8sKind } from '../../../module/k8s';
 import { getName } from '@console/shared';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -70,6 +72,12 @@ const ProjectInventoryItem = withDashboardResources(
 export const InventoryCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
+  const canListSecrets = useAccessReview({
+    group: SecretModel.apiGroup,
+    resource: SecretModel.plural,
+    namespace: projectName,
+    verb: 'list',
+  });
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -90,6 +98,8 @@ export const InventoryCard: React.FC = () => {
         />
         <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
         <ProjectInventoryItem projectName={projectName} model={RouteModel} />
+        <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
+        {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
       </DashboardCardBody>
     </DashboardCard>
   );
