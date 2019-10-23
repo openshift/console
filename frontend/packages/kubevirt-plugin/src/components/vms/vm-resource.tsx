@@ -16,7 +16,7 @@ import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { getOperatingSystemName, getOperatingSystem, getWorkloadProfile } from '../../selectors/vm';
 
-import './_vm-resource.scss';
+import './vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
