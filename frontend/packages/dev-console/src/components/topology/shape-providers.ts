@@ -9,6 +9,8 @@ export const nodeProvider: NodeProvider = (type) => {
   switch (type) {
     case 'workload':
       return WorkloadNode;
+    case 'revision':
+      return WorkloadNode;
     default:
       return DefaultNode;
   }
