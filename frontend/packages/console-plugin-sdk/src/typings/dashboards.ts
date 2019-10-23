@@ -7,8 +7,6 @@ import {
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
-import { ConsumerMutator } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/top-consumers-card';
-import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Extension } from './extension';
 import { LazyLoader } from './types';
@@ -97,23 +95,6 @@ namespace ExtensionProperties {
 
     /** The Prometheus query */
     query: string;
-  }
-
-  export interface DashboardsOverviewTopConsumerItem extends DashboardsExtensionProperties {
-    /** The k8s model of top consumer item */
-    model: K8sKind;
-
-    /** The name of the top consumer item */
-    name: string;
-
-    /** The name of the metric */
-    metric: string;
-
-    /** The queries which will be used to query prometheus */
-    queries: { [key in MetricType]?: string };
-
-    /** Function which can mutate results of parsed prometheus data */
-    mutator?: ConsumerMutator;
   }
 
   export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
@@ -257,15 +238,6 @@ export interface DashboardsInventoryItemGroup
 
 export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
   e.type === 'Dashboards/Inventory/Item/Group';
-
-export interface DashboardsOverviewTopConsumerItem
-  extends Extension<ExtensionProperties.DashboardsOverviewTopConsumerItem> {
-  type: 'Dashboards/Overview/TopConsumers/Item';
-}
-
-export const isDashboardsOverviewTopConsumerItem = (
-  e: Extension,
-): e is DashboardsOverviewTopConsumerItem => e.type === 'Dashboards/Overview/TopConsumers/Item';
 
 export interface DashboardsOverviewResourceActivity
   extends Extension<ExtensionProperties.DashboardsOverviewResourceActivity> {

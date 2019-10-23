@@ -20,7 +20,6 @@ import {
   DashboardsInventoryItemGroup,
   DashboardsOverviewQuery,
   DashboardsOverviewUtilizationItem,
-  DashboardsOverviewTopConsumerItem,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
@@ -30,7 +29,6 @@ import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
-import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
@@ -56,7 +54,6 @@ type ConsumedExtensions =
   | DashboardsInventoryItemGroup
   | DashboardsOverviewQuery
   | DashboardsOverviewUtilizationItem
-  | DashboardsOverviewTopConsumerItem
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewPrometheusActivity;
 
@@ -265,20 +262,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Foo',
       query: 'barQuery',
       humanizeValue: humanizeBinaryBytes,
-      required: 'TEST_MODEL_FLAG',
-    },
-  },
-  {
-    type: 'Dashboards/Overview/TopConsumers/Item',
-    properties: {
-      model: PodModel,
-      name: 'Prometheus',
-      metric: 'pod',
-      queries: {
-        [MetricType.CPU]: 'sort(topk(5, pod:container_cpu_usage:sum{pod=~"prometheus-.*"}))',
-      },
-      mutator: (data) =>
-        data.map((datum) => ({ ...datum, x: (datum.x as string).replace('prometheus-', '') })),
       required: 'TEST_MODEL_FLAG',
     },
   },
