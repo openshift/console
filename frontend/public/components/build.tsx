@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Alert } from '@patternfly/react-core';
 
 import { Status } from '@console/shared';
 import {
@@ -20,6 +21,7 @@ import {
   BuildHooks,
   BuildStrategy,
   DetailsItem,
+  ExternalLink,
   history,
   humanizeCpuCores,
   humanizeDecimalBytes,
@@ -165,6 +167,24 @@ const BuildGraphs = requirePrometheus(({ build }) => {
   );
 });
 
+export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
+  return (
+    <Alert isInline className="co-alert" variant="info" title="Pipeline build strategy deprecation">
+      With the release of
+      <ExternalLink
+        href="https://openshift.github.io/pipelines-docs/docs/docs/index.html"
+        text="OpenShift Pipelines based on Tekton"
+      />
+      , the pipelines build strategy has been deprecated. Users should either use Jenkins files
+      directly on Jenkins or use cloud-native CI/CD with Openshift Pipelines.
+      <ExternalLink
+        href="https://github.com/openshift/pipelines-tutorial/"
+        text="Try the OpenShift Pipelines tutorial"
+      />
+    </Alert>
+  );
+};
+
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
@@ -174,6 +194,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   return (
     <>
       <div className="co-m-pane__body">
+        {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
         <SectionHeading text="Build Overview" />
         <BuildGraphs build={build} />
         {hasPipeline && (
