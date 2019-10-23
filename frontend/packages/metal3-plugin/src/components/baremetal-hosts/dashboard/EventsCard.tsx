@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResource, FirehoseResult, ResourceLink } from '@console/internal/components/utils';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
-  OngoingActivityBody,
   RecentEventsBody,
+  Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import {
   EventKind,
   K8sResourceKind,
@@ -24,6 +25,7 @@ import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
+import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -87,6 +89,9 @@ const EventsCard: React.FC<EventsCardProps> = ({
 
   const filter = getHostEventsFilter(obj, _.get(resources.machine, 'data') as MachineKind);
 
+  const inProgress = isHostInProgressState(obj);
+  const hostStatus = getBareMetalHostStatus(obj);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -94,7 +99,24 @@ const EventsCard: React.FC<EventsCardProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
-          <OngoingActivityBody loaded />
+          <div className="co-activity-card__ongoing-title">Ongoing</div>
+          <div className="co-activity-card__ongoing-body">
+            {inProgress ? (
+              <Activity timestamp={obj.status.lastUpdated}>
+                <ActivityItem title={hostStatus.title}>
+                  <ResourceLink
+                    kind={BareMetalHostModel.kind}
+                    name={getName(obj)}
+                    namespace={getNamespace(obj)}
+                  />
+                </ActivityItem>
+              </Activity>
+            ) : (
+              <Activity>
+                <div className="text-secondary">There are no ongoing activities.</div>
+              </Activity>
+            )}
+          </div>
           <RecentEventsBody
             events={resources.events as FirehoseResult<EventKind[]>}
             filter={filter}

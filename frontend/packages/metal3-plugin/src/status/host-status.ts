@@ -8,6 +8,7 @@ import {
   HOST_STATUS_PROVISIONING,
   HOST_STATUS_PROVISIONING_ERROR,
   HOST_STATUS_DISCOVERED,
+  HOST_PROGRESS_STATES,
 } from '../constants';
 import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
@@ -53,3 +54,6 @@ type HostStatusProps = {
 export const getHostStatus = ({ host, nodeMaintenance }: HostStatusProps): StatusProps => {
   return getNodeMaintenanceStatus(nodeMaintenance) || getBareMetalHostStatus(host);
 };
+
+export const isHostInProgressState = (host: BareMetalHostKind): boolean =>
+  HOST_PROGRESS_STATES.includes(getBareMetalHostStatus(host).status);

@@ -14,7 +14,7 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import EventItem from './EventItem';
 import './activity-card.scss';
 
-const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
+export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
   <div className="co-activity-item__ongoing">
     {timestamp && (
       <span className="text-secondary">
