@@ -66,7 +66,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
             onClick={() => setIsCreating(true)}
             disabled={isCreating}
           >
-            Create Nic
+            Create NIC
           </Button>
         </div>
       </div>
