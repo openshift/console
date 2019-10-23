@@ -23,6 +23,7 @@ import { MaskedData } from './configmap-and-secret-data';
 import { K8sResourceKindReference, RouteKind, RouteIngress, RouteTarget } from '../module/k8s';
 import { RouteModel } from '../models';
 import { Conditions, conditionProps } from './conditions';
+import { RouteCharts } from './routes/route-charts';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
@@ -411,6 +412,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Route Overview" />
+        <RouteCharts namespace={route.metadata.namespace} route={route.metadata.name} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={route}>
