@@ -12,7 +12,7 @@ const getId = (value) => `${getNamespace(value)}-${getName(value)}`;
 export const VmStatuses: React.FC<VmStatusesProps> = (props) => {
   const { vm, pods, migrations } = props;
   const statusDetail = getVMStatus(vm, pods, migrations);
-  const importerPods = getVMImporterPods(pods, vm);
+  const importerPods = getVMImporterPods(vm, pods);
 
   switch (statusDetail.status) {
     case VM_STATUS_IMPORTING:

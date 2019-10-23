@@ -43,8 +43,8 @@ import {
 } from './constants';
 import { Status } from '..';
 
-const isBeingMigrated = (vm: VMKind, migrations: K8sResourceKind[]): VMStatus => {
-  const migration = findVMIMigration(migrations, vm);
+const isBeingMigrated = (vm: VMKind, migrations?: K8sResourceKind[]): VMStatus => {
+  const migration = findVMIMigration(vm, migrations);
   if (isMigrating(migration)) {
     return { status: VM_STATUS_MIGRATING, message: getMigrationStatusPhase(migration) };
   }
@@ -102,8 +102,8 @@ const isCreated = (vm: VMKind, launcherPod: PodKind = null): VMStatus => {
   return NOT_HANDLED;
 };
 
-const isBeingImported = (vm: VMKind, pods: PodKind[]): VMStatus => {
-  const importerPods = getVMImporterPods(pods, vm);
+const isBeingImported = (vm: VMKind, pods?: PodKind[]): VMStatus => {
+  const importerPods = getVMImporterPods(vm, pods);
   if (importerPods && importerPods.length > 0 && !isVMCreated(vm)) {
     const importerPodsStatuses = importerPods.map((pod) => {
       const podStatus = getPodStatus(pod);
@@ -140,7 +140,7 @@ const isBeingImported = (vm: VMKind, pods: PodKind[]): VMStatus => {
   return NOT_HANDLED;
 };
 
-const isV2VConversion = (vm: VMKind, pods: PodKind[]): VMStatus => {
+const isV2VConversion = (vm: VMKind, pods?: PodKind[]): VMStatus => {
   const conversionPod = findConversionPod(vm, pods);
   const podPhase = getPodStatusPhase(conversionPod);
   if (conversionPod && podPhase !== POD_PHASE_SUCEEDED) {
@@ -189,10 +189,10 @@ const isWaitingForVMI = (vm: VMKind): VMStatus => {
 
 export const getVMStatus = (
   vm: VMKind,
-  pods: PodKind[],
-  migrations: K8sResourceKind[],
+  pods?: PodKind[],
+  migrations?: K8sResourceKind[],
 ): VMStatus => {
-  const launcherPod = findVMPod(pods, vm);
+  const launcherPod = findVMPod(vm, pods);
   return (
     isV2VConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
     isBeingMigrated(vm, migrations) || //  -||-
@@ -205,7 +205,7 @@ export const getVMStatus = (
   );
 };
 
-export const getSimpleVMStatus = (vm: VMKind, pods: PodKind[], migrations: K8sResourceKind[]) => {
+export const getSimpleVMStatus = (vm: VMKind, pods?: PodKind[], migrations?: K8sResourceKind[]) => {
   const vmStatus = getVMStatus(vm, pods, migrations).status;
   return vmStatus === VM_STATUS_OFF || vmStatus === VM_STATUS_RUNNING
     ? vmStatus

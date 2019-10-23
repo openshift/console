@@ -43,8 +43,8 @@ export const isPodSchedulable = (pod: PodKind) => {
 };
 
 export const findVMPod = (
-  pods: PodKind[],
   vm: VMKind,
+  pods?: PodKind[],
   podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
 ) => {
   if (!pods) {
@@ -76,8 +76,8 @@ export const findVMPod = (
 };
 
 export const getVMImporterPods = (
-  pods: PodKind[],
   vm: VMKind,
+  pods?: PodKind[],
   pvcNameLabel = `${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`,
 ) => {
   if (!pods) {
