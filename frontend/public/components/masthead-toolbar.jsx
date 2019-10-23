@@ -29,8 +29,9 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import {
-  getAvailableClusterUpdates,
   clusterVersionReference,
+  getAvailableClusterUpdates,
+  getReportBugLink,
 } from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
 import { YellowExclamationTriangleIcon } from '@console/shared';
@@ -50,8 +51,8 @@ const SystemStatusButton = ({ statuspageData, className }) =>
     </ToolbarItem>
   ) : null;
 
-const UpdatesAvailableButton = ({ obj, onClick, systemStatusButtonPresent }) => {
-  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
+const UpdatesAvailableButton = ({ cv, onClick, systemStatusButtonPresent }) => {
+  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   return updatesAvailable ? (
     <ToolbarItem className={classNames({ 'hidden-sm': systemStatusButtonPresent })}>
       <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
@@ -61,7 +62,7 @@ const UpdatesAvailableButton = ({ obj, onClick, systemStatusButtonPresent }) => 
   ) : null;
 };
 
-class MastheadToolbar_ extends React.Component {
+class MastheadToolbarContents_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -205,9 +206,9 @@ class MastheadToolbar_ extends React.Component {
     history.push('/command-line-tools');
   }
 
-  _copyLoginCommand(e) {
+  _openLink(e, url) {
     e.preventDefault();
-    window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
+    window.open(url, '_blank').opener = null;
   }
 
   _getAdditionalLinks(links, type) {
@@ -284,8 +285,9 @@ class MastheadToolbar_ extends React.Component {
   };
 
   _helpActions(additionalHelpActions) {
-    const { flags } = this.props;
+    const { flags, cv } = this.props;
     const helpActions = [];
+    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data) : null;
 
     helpActions.push({
       name: '',
@@ -301,6 +303,15 @@ class MastheadToolbar_ extends React.Component {
               {
                 label: 'Command Line Tools',
                 callback: this._onCommandLineTools,
+              },
+            ]
+          : []),
+        ...(reportBugLink
+          ? [
+              {
+                label: reportBugLink.label,
+                externalLink: true,
+                callback: (e) => this._openLink(e, reportBugLink.href),
               },
             ]
           : []),
@@ -345,7 +356,7 @@ class MastheadToolbar_ extends React.Component {
       if (action.isSection) {
         return (
           <ApplicationLauncherGroup key={`group_${index}`} label={action.name}>
-            <React.Fragment>
+            <>
               {_.map(action.actions, (sectionAction) => {
                 return (
                   <ApplicationLauncherItem
@@ -362,14 +373,14 @@ class MastheadToolbar_ extends React.Component {
               {index < actions.length - 1 && (
                 <ApplicationLauncherSeparator key={`separator-${index}`} />
               )}
-            </React.Fragment>
+            </>
           </ApplicationLauncherGroup>
         );
       }
 
       return (
         <ApplicationLauncherGroup key={`group_${index}`}>
-          <React.Fragment>
+          <>
             <ApplicationLauncherItem
               key={action.label}
               icon={action.image}
@@ -382,7 +393,7 @@ class MastheadToolbar_ extends React.Component {
             {index < actions.length - 1 && (
               <ApplicationLauncherSeparator key={`separator-${index}`} />
             )}
-          </React.Fragment>
+          </>
         </ApplicationLauncherGroup>
       );
     });
@@ -423,7 +434,7 @@ class MastheadToolbar_ extends React.Component {
       if (window.SERVER_FLAGS.requestTokenURL) {
         userActions.push({
           label: 'Copy Login Command',
-          callback: this._copyLoginCommand,
+          callback: (e) => this._openLink(e, window.SERVER_FLAGS.requestTokenURL),
           externalLink: true,
         });
       }
@@ -511,30 +522,21 @@ class MastheadToolbar_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { flags, consoleLinks } = this.props;
-    const resources = [
-      {
-        kind: clusterVersionReference,
-        name: 'version',
-        isList: false,
-        prop: 'obj',
-      },
-    ];
+    const { consoleLinks, cv } = this.props;
     const launchActions = this._launchActions();
     return (
-      <React.Fragment>
+      <>
         <Toolbar>
           <ToolbarGroup className="hidden-xs">
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (updates button) */}
-            {flags[FLAGS.CLUSTER_VERSION] && (
-              <Firehose resources={resources}>
-                <UpdatesAvailableButton
-                  onClick={this._onClusterUpdatesAvailable}
-                  systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))}
-                />
-              </Firehose>
+            {cv && cv.data && (
+              <UpdatesAvailableButton
+                cv={cv.data}
+                onClick={this._onClusterUpdatesAvailable}
+                systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))}
+              />
             )}
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {!_.isEmpty(launchActions) && (
@@ -585,7 +587,7 @@ class MastheadToolbar_ extends React.Component {
           </ToolbarGroup>
         </Toolbar>
         <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -597,11 +599,26 @@ const mastheadToolbarStateToProps = ({ UI }) => ({
   consoleLinks: UI.get('consoleLinks'),
 });
 
-export const MastheadToolbar = connect(mastheadToolbarStateToProps)(
-  connectToFlags(
-    FLAGS.AUTH_ENABLED,
-    FLAGS.CLUSTER_VERSION,
-    FLAGS.CONSOLE_CLI_DOWNLOAD,
-    FLAGS.OPENSHIFT,
-  )(MastheadToolbar_),
+const MastheadToolbarContents = connect(mastheadToolbarStateToProps)(
+  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(
+    MastheadToolbarContents_,
+  ),
 );
+
+export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
+  const resources = flags[FLAGS.CLUSTER_VERSION]
+    ? [
+        {
+          kind: clusterVersionReference,
+          name: 'version',
+          isList: false,
+          prop: 'cv',
+        },
+      ]
+    : [];
+  return (
+    <Firehose resources={resources}>
+      <MastheadToolbarContents />
+    </Firehose>
+  );
+});
