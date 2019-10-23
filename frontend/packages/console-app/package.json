@@ -15,6 +15,7 @@
     "@console/knative-plugin": "0.0.0-fixed",
     "@console/kubevirt-plugin": "0.0.0-fixed",
     "@console/metal3-plugin": "0.0.0-fixed",
+    "@console/network-attachment-definition-plugin": "0.0.0-fixed",
     "@console/noobaa-storage-plugin": "0.0.0-fixed",
     "@console/operator-lifecycle-manager": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
