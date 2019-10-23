@@ -1,6 +1,10 @@
 import { isEmpty } from 'lodash';
 import { List } from 'immutable';
-import { asValidationObject, ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation';
+import {
+  asValidationObject,
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/shared/src/utils/validation';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
   hasVmSettingsChanged,
