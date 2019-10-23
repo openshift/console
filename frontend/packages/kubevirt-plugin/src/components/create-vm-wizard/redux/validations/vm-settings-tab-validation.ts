@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { List } from 'immutable';
-import { ValidationErrorType, ValidationObject } from '@console/shared';
+import { asValidationObject, ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
   hasVmSettingsChanged,
@@ -33,7 +33,7 @@ import {
   iGetName,
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
-import { getValidationObject, validatePositiveInteger } from '../../../../utils/validations/common';
+import { validatePositiveInteger } from '../../../../utils/validations/common';
 import { getValidationUpdate } from './utils';
 
 const validateVm: VmSettingsValidator = (field, options) => {
@@ -85,7 +85,7 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
     return null;
   }
 
-  return getValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
+  return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
 };
 
 const asVMSettingsFieldValidator = (

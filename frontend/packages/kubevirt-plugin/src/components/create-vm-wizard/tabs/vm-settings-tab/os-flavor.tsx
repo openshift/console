@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
   iGetIsLoaded,
@@ -19,8 +20,6 @@ import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
 import { getPlaceholder } from '../../utils/vm-settings-tab-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
-import { getValidationObject } from '../../../../utils/validations/common';
-import { ValidationErrorType } from '../../../../utils/validations/types';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -61,7 +60,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       iGetIsLoaded(userTemplate) &&
       (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
     ) {
-      const validation = getValidationObject(
+      const validation = asValidationObject(
         'There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
         ValidationErrorType.Info,
       );
