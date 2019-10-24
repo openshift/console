@@ -7,19 +7,27 @@ import UtilizationBody from '@console/shared/src/components/dashboard/utilizatio
 import { PodModel, ProjectModel } from '@console/internal/models';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import {
-  humanizeBinaryBytesWithoutB,
   humanizeBinaryBytes,
   humanizeCpuCores,
+  humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { getMachineNodeName } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
+import {
+  PrometheusUtilizationItem,
+  PrometheusMultilineUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   useMetricDuration,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
-import { getUtilizationQueries, HostQuery, getTopConsumerQueries } from './queries';
+import {
+  getUtilizationQueries,
+  HostQuery,
+  getTopConsumerQueries,
+  getMultilineUtilizationQueries,
+} from './queries';
 
 const UtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
@@ -29,6 +37,9 @@ const UtilizationCard: React.FC = () => {
   const nodeName = getMachineNodeName(machine);
 
   const queries = React.useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
+  const multilineQueries = React.useMemo(() => getMultilineUtilizationQueries(nodeName), [
+    nodeName,
+  ]);
 
   const humanizePods = React.useCallback(
     (v) => ({
@@ -136,8 +147,8 @@ const UtilizationCard: React.FC = () => {
           title="Memory usage"
           utilizationQuery={queries[HostQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.MEMORY_UTILIZATION].total}
-          humanizeValue={humanizeBinaryBytesWithoutB}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
           duration={duration}
         />
@@ -147,18 +158,10 @@ const UtilizationCard: React.FC = () => {
           humanizeValue={humanizePods}
           duration={duration}
         />
-        <PrometheusUtilizationItem
-          title="Network In"
-          utilizationQuery={queries[HostQuery.NETWORK_IN_UTILIZATION].utilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
-          duration={duration}
-        />
-        <PrometheusUtilizationItem
-          title="Network Out"
-          utilizationQuery={queries[HostQuery.NETWORK_OUT_UTILIZATION].utilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+        <PrometheusMultilineUtilizationItem
+          title="Network Transfer"
+          queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
+          humanizeValue={humanizeDecimalBytesPerSec}
           duration={duration}
         />
         <PrometheusUtilizationItem
@@ -166,7 +169,7 @@ const UtilizationCard: React.FC = () => {
           utilizationQuery={queries[HostQuery.STORAGE_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.STORAGE_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
           duration={duration}
         />

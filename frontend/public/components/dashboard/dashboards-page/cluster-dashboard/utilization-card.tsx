@@ -5,6 +5,8 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationItem, {
   TopConsumerPopoverProp,
+  MultilineUtilizationItem,
+  QueryWithDescription,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -20,7 +22,12 @@ import {
 } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import { Dropdown } from '../../../utils/dropdown';
-import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
+import {
+  OverviewQuery,
+  utilizationQueries,
+  top25ConsumerQueries,
+  multilineQueries,
+} from './queries';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
@@ -31,6 +38,7 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
+import { DataPoint } from '../../../graphs';
 
 const cpuQueriesPopup = [
   {
@@ -94,6 +102,42 @@ const podQueriesPopup = [
   },
   {
     query: top25ConsumerQueries[OverviewQuery.NODES_BY_PODS],
+    model: NodeModel,
+    metric: 'node',
+  },
+];
+
+const networkInQueriesPopup = [
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_NETWORK_IN],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.PODS_BY_NETWORK_IN],
+    model: PodModel,
+    metric: 'pod',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_NETWORK_IN],
+    model: NodeModel,
+    metric: 'node',
+  },
+];
+
+const networkOutQueriesPopup = [
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_NETWORK_OUT],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.PODS_BY_NETWORK_OUT],
+    model: PodModel,
+    metric: 'pod',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_NETWORK_OUT],
     model: NodeModel,
     metric: 'node',
   },
@@ -166,6 +210,71 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
   },
 );
 
+export const PrometheusMultilineUtilizationItem = withDashboardResources<
+  PrometheusMultilineUtilizationItemProps
+>(
+  ({
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    prometheusResults,
+    queries,
+    duration,
+    title,
+    TopConsumerPopovers,
+    humanizeValue,
+    byteDataType,
+  }) => {
+    React.useEffect(() => {
+      queries.forEach((q) => watchPrometheus(q.query, null, UTILIZATION_QUERY_HOUR_MAP[duration]));
+      return () => {
+        queries.forEach((q) =>
+          stopWatchPrometheusQuery(q.query, UTILIZATION_QUERY_HOUR_MAP[duration]),
+        );
+      };
+    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries]);
+    const stats = [];
+    let hasError = false;
+    let isLoading = false;
+    _.forEach(queries, (query) => {
+      const [response, responseError] = getPrometheusQueryResponse(
+        prometheusResults,
+        query.query,
+        UTILIZATION_QUERY_HOUR_MAP[duration],
+      );
+      if (responseError) {
+        hasError = true;
+        return false;
+      }
+      if (!response) {
+        isLoading = true;
+        return false;
+      }
+      stats.push(
+        getRangeVectorStats(response).map((dp) => {
+          dp.x.setSeconds(0, 0);
+          return {
+            ...dp,
+            description: query.desc,
+          } as DataPoint<Date>;
+        }),
+      );
+    });
+
+    return (
+      <MultilineUtilizationItem
+        title={title}
+        data={stats}
+        error={hasError}
+        isLoading={isLoading}
+        humanizeValue={humanizeValue}
+        byteDataType={byteDataType}
+        queries={queries}
+        TopConsumerPopovers={TopConsumerPopovers}
+      />
+    );
+  },
+);
+
 export const UtilizationCard = connectToFlags(
   ...plugins.registry.getGatingFlagNames([isDashboardsOverviewUtilizationItem]),
 )(({ flags }) => {
@@ -225,6 +334,32 @@ export const UtilizationCard = connectToFlags(
     [],
   );
 
+  const networkInPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="Network in"
+        current={current}
+        consumers={networkInQueriesPopup}
+        humanize={humanizeDecimalBytesPerSec}
+        position={PopoverPosition.top}
+      />
+    )),
+    [],
+  );
+
+  const networkOutPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="Network out"
+        current={current}
+        consumers={networkOutQueriesPopup}
+        humanize={humanizeDecimalBytesPerSec}
+        position={PopoverPosition.top}
+      />
+    )),
+    [],
+  );
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -259,12 +394,12 @@ export const UtilizationCard = connectToFlags(
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
         />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title="Network Transfer"
-          utilizationQuery={queries[OverviewQuery.NETWORK_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.NETWORK_UTILIZATION].total}
+          queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
           duration={duration}
           humanizeValue={humanizeDecimalBytesPerSec}
+          TopConsumerPopovers={[networkInPopover, networkOutPopover]}
         />
         <PrometheusUtilizationItem
           title="Pod count"
@@ -287,4 +422,13 @@ type PrometheusUtilizationItemProps = DashboardItemProps & {
   humanizeValue: Humanize;
   byteDataType?: ByteDataTypes;
   setTimestamps?: (timestamps: Date[]) => void;
+};
+
+type PrometheusMultilineUtilizationItemProps = DashboardItemProps & {
+  queries: QueryWithDescription[];
+  duration: string;
+  title: string;
+  TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProp>[];
+  humanizeValue: Humanize;
+  byteDataType?: ByteDataTypes;
 };

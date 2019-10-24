@@ -9,6 +9,7 @@ export enum HostQuery {
   STORAGE_TOTAL = 'STORAGE_TOTAL',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
+  NETWORK_UTILIZATION = 'NETWORK_UTILIZATION',
   NUMBER_OF_PODS = 'NUMBER_OF_PODS',
   NUMBER_OF_FANS = 'NUMBER_OF_FANS',
   NUMBER_OF_PSUS = 'NUMBER_OF_PSUS',
@@ -77,15 +78,22 @@ export const getUtilizationQueries = (nodeName: string): HostUtilizationQueryTyp
     utilization: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.STORAGE_UTILIZATION]),
     total: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.STORAGE_TOTAL]),
   },
-  [HostQuery.NETWORK_IN_UTILIZATION]: {
-    utilization: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NETWORK_IN_UTILIZATION]),
-  },
-  [HostQuery.NETWORK_OUT_UTILIZATION]: {
-    utilization: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NETWORK_OUT_UTILIZATION]),
-  },
   [HostQuery.NUMBER_OF_PODS]: {
     utilization: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NUMBER_OF_PODS]),
   },
+});
+
+export const getMultilineUtilizationQueries = (nodeName: string) => ({
+  [HostQuery.NETWORK_UTILIZATION]: [
+    {
+      query: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NETWORK_IN_UTILIZATION]),
+      desc: 'In',
+    },
+    {
+      query: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NETWORK_OUT_UTILIZATION]),
+      desc: 'In',
+    },
+  ],
 });
 
 type HostQueryType = {
