@@ -41,9 +41,8 @@ const top25Queries = {
 };
 
 const overviewQueries = {
-  [OverviewQuery.MEMORY_TOTAL]: 'sum(kube_node_status_capacity_memory_bytes)',
-  [OverviewQuery.MEMORY_UTILIZATION]:
-    '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))',
+  [OverviewQuery.MEMORY_TOTAL]: 'sum(node_memory_MemTotal_bytes)',
+  [OverviewQuery.MEMORY_UTILIZATION]: 'sum(node_memory_Active_bytes)',
   [OverviewQuery.NETWORK_TOTAL]: 'sum(avg by(instance)(node_network_speed_bytes))',
   [OverviewQuery.NETWORK_UTILIZATION]:
     'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
