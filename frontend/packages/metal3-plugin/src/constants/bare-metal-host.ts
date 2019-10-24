@@ -12,9 +12,6 @@ export const HOST_STATUS_PROVISIONING = 'provisioning';
 export const HOST_STATUS_DEPROVISIONING = 'deprovisioning';
 export const HOST_STATUS_MAKING_HOST_AVAILABLE = 'making host available';
 export const HOST_STATUS_MATCH_PROFILE = 'match profile';
-export const HOST_STATUS_STARTING_MAINTENANCE = 'starting maintenance';
-export const HOST_STATUS_UNDER_MAINTENANCE = 'under maintenance';
-export const HOST_STATUS_STOPPING_MAINTENANCE = 'stopping maintenance';
 export const HOST_STATUS_VALIDATION_ERROR = 'validation error';
 export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
 export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
@@ -43,9 +40,6 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_REGISTRATION_ERROR]: 'Registration error',
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
-  [HOST_STATUS_STARTING_MAINTENANCE]: 'Starting maintenance',
-  [HOST_STATUS_UNDER_MAINTENANCE]: 'Under maintenance',
-  [HOST_STATUS_STOPPING_MAINTENANCE]: 'Stopping maintenance',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
 };
 
@@ -78,8 +72,6 @@ export const HOST_PROGRESS_STATES = [
   HOST_STATUS_DEPROVISIONING,
   HOST_STATUS_MAKING_HOST_AVAILABLE,
   HOST_STATUS_REGISTERING,
-  HOST_STATUS_STARTING_MAINTENANCE,
-  HOST_STATUS_STOPPING_MAINTENANCE,
   HOST_STATUS_MATCH_PROFILE,
 ];
 

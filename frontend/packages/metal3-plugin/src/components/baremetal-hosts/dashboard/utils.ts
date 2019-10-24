@@ -1,10 +1,12 @@
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getMachineNode, getName } from '@console/shared/src/selectors';
-import { getHostStatus } from '../../../utils/host-status';
+import { getName } from '@console/shared/src/selectors/common';
+import { getNodeMachineName } from '@console/shared/src/selectors/node';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { getHostStatus } from '../../../status/host-status';
 import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../../constants';
-import { findNodeMaintenance, getHostMachine } from '../../../selectors';
+import { getHostMachine, getNodeMaintenanceNodeName } from '../../../selectors';
 import { getHostFilterStatus } from '../table-filters';
 import { BareMetalHostKind } from '../../../types';
 
@@ -41,18 +43,23 @@ export const getBMHStatusGroups: StatusGroupMapper = (
     },
   };
 
+  const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
+  const nodesByMachineName = createBasicLookup(nodes, getNodeMachineName);
+
   hosts.forEach((host) => {
+    // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
+    // on machines
     const machine = getHostMachine(host, machines as MachineKind[]);
-    const node = getMachineNode(machine, nodes as NodeKind[]);
-    const nodeMaintenance = findNodeMaintenance(maintenances, getName(node));
-    const hostMultiStatus = getHostStatus({ host, nodeMaintenance });
+    const node = nodesByMachineName[getName(machine)] as NodeKind;
+    const nodeMaintenance = maintenancesByNodeName[getName(node)];
+    const bareMetalHostStatus = getHostStatus({ host, nodeMaintenance });
 
     const status = getHostFilterStatus({
       machine,
       node,
       host,
       nodeMaintenance,
-      status: hostMultiStatus,
+      status: bareMetalHostStatus,
     });
     const group =
       Object.keys(BMH_STATUS_GROUP_MAPPER).find((key) =>

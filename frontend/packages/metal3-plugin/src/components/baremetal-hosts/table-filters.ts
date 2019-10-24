@@ -8,8 +8,9 @@ import {
   HOST_STATUS_TITLES,
   HOST_STATUS_PROVISIONED,
   HOST_STATUS_EXTERNALLY_PROVISIONED,
+  NODE_STATUS_TITLES,
 } from '../../constants';
-import { HostRowBundle } from '../types';
+import { BareMetalHostBundle } from '../types';
 
 const hostStatesToFilterMap = Object.freeze({
   registering: {
@@ -34,11 +35,11 @@ const hostStatesToFilterMap = Object.freeze({
   },
   other: {
     title: 'Other',
-    states: Object.keys(HOST_STATUS_TITLES),
+    states: [...Object.keys(HOST_STATUS_TITLES), ...Object.keys(NODE_STATUS_TITLES)],
   },
 });
 
-export const getHostFilterStatus = (bundle: HostRowBundle): string => {
+export const getHostFilterStatus = (bundle: BareMetalHostBundle): string => {
   return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 
@@ -47,7 +48,7 @@ export const hostStatusFilter: Filter = {
   selected: Object.keys(hostStatesToFilterMap),
   reducer: getHostFilterStatus,
   items: _.map(hostStatesToFilterMap, ({ title }, id) => ({ id, title })),
-  filter: (groups, bundle: HostRowBundle) => {
+  filter: (groups, bundle: BareMetalHostBundle) => {
     const status = getHostFilterStatus(bundle);
     return groups.selected.has(status) || !_.includes(groups.all, status);
   },

@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PopoverStatus, getName } from '@console/shared';
+import { PopoverStatus } from '@console/shared';
 import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
 import { getNodeMaintenancePhase } from '../../selectors';
-import { BareMetalHostKind } from '../../types';
 import UnderMaintenancePopoverContent from './UnderMaintenancePopoverContent';
 import StartingMaintenancePopoverContent from './StartingMaintenancePopoverContent';
 
 type MaintenancePopoverProps = {
   title: string;
   maintenance: K8sResourceKind;
-  host: BareMetalHostKind;
 };
 
-const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({ title, maintenance, host }) => {
+const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({ title, maintenance }) => {
   const phase = getNodeMaintenancePhase(maintenance);
-  const hostName = getName(host);
 
   return (
     <PopoverStatus
@@ -23,9 +20,9 @@ const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({ title, maintena
       title={title}
     >
       {phase === 'Succeeded' ? (
-        <UnderMaintenancePopoverContent maintenance={maintenance} hostName={hostName} />
+        <UnderMaintenancePopoverContent maintenance={maintenance} />
       ) : (
-        <StartingMaintenancePopoverContent maintenance={maintenance} hostName={hostName} />
+        <StartingMaintenancePopoverContent maintenance={maintenance} />
       )}
     </PopoverStatus>
   );

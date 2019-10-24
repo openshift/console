@@ -2,30 +2,31 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
+import { getName, getUID, getNamespace, DASH, SecondaryStatus } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { BareMetalHostBundle } from '../types';
-import { getHostBMCAddress, getHostPowerStatus } from '../../selectors';
+import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
+import { MachineModel } from '@console/internal/models';
+import { BareMetalNodeBundle } from '../types';
+import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
-import NodeLink from './NodeLink';
-import BareMetalHostStatus from './BareMetalHostStatus';
-import BareMetalHostRole from './BareMetalHostRole';
-import { menuActions } from './host-menu-actions';
+import { menuActions } from '../baremetal-hosts/host-menu-actions';
+import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status';
+import BareMetalNodeStatus from './BareMetalNodeStatus';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
   status: classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  node: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  role: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  role: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  machine: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   kebab: Kebab.columnClass,
 };
 
-const HostsTableHeader = () => [
+const BareMetalNodesTableHeader = () => [
   {
     title: 'Name',
-    sortField: 'host.metadata.name',
+    sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
@@ -36,16 +37,16 @@ const HostsTableHeader = () => [
     props: { className: tableColumnClasses.status },
   },
   {
-    title: 'Node',
-    sortField: 'node.metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.node },
-  },
-  {
     title: 'Role',
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
+  },
+  {
+    title: 'Machine',
+    sortField: "metadata.annotations['machine.openshift.io/machine']",
+    transforms: [sortable],
+    props: { className: tableColumnClasses.machine },
   },
   {
     title: 'Management Address',
@@ -59,8 +60,8 @@ const HostsTableHeader = () => [
   },
 ];
 
-type HostsTableRowProps = {
-  obj: BareMetalHostBundle;
+type BareMetalNodesTableRowProps = {
+  obj: BareMetalNodeBundle;
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
@@ -69,37 +70,49 @@ type HostsTableRowProps = {
   style: React.StyleHTMLAttributes<any>;
 };
 
-const HostsTableRow: React.FC<HostsTableRowProps> = ({
+const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
   obj: { host, node, nodeMaintenance, machine, status },
   customData: { hasNodeMaintenanceCapability },
   index,
   key,
   style,
 }) => {
-  const name = getName(host);
+  const nodeName = getName(node);
+  const hostName = getName(host);
   const namespace = getNamespace(host);
   const address = getHostBMCAddress(host);
-  const uid = getUID(host);
-  const nodeName = getName(node);
+  const uid = getUID(node);
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.name}>
-        <ResourceLink
-          kind={referenceForModel(BareMetalHostModel)}
-          name={name}
-          namespace={namespace}
-        />
+        {node ? (
+          <ResourceLink kind="Node" name={nodeName} />
+        ) : (
+          <ResourceLink
+            kind={referenceForModel(BareMetalHostModel)}
+            name={hostName}
+            namespace={namespace}
+          />
+        )}
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <BareMetalHostStatus {...status} />
-        <SecondaryStatus status={getHostPowerStatus(host)} />
-      </TableData>
-      <TableData className={tableColumnClasses.node}>
-        <NodeLink nodeName={nodeName} />
+        <BareMetalNodeStatus {...status} />
+        <SecondaryStatus status={baremetalNodeSecondaryStatus({ node, nodeMaintenance, host })} />
       </TableData>
       <TableData className={tableColumnClasses.role}>
-        <BareMetalHostRole machine={machine} node={node} />
+        <NodeRoles node={node} />
+      </TableData>
+      <TableData className={tableColumnClasses.machine}>
+        {machine ? (
+          <ResourceLink
+            kind={referenceForModel(MachineModel)}
+            name={getName(machine)}
+            namespace={getNamespace(machine)}
+          />
+        ) : (
+          DASH
+        )}
       </TableData>
       <TableData className={tableColumnClasses.address}>{address}</TableData>
       <TableData className={tableColumnClasses.kebab}>
@@ -120,22 +133,24 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
   );
 };
 
-type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
-  data: BareMetalHostBundle[];
+type BareMetalNodesTableProps = React.ComponentProps<typeof Table> & {
+  data: BareMetalNodeBundle[];
   customData: {
     hasNodeMaintenanceCapability: boolean;
   };
 };
 
-const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => (
-  <Table
-    {...props}
-    defaultSortField="host.metadata.name"
-    aria-label="Bare Metal Hosts"
-    Header={HostsTableHeader}
-    Row={HostsTableRow}
-    virtualize
-  />
-);
+const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = (props) => {
+  return (
+    <Table
+      {...props}
+      defaultSortField="node.metadata.name"
+      aria-label="Nodes"
+      Header={BareMetalNodesTableHeader}
+      Row={BareMetalNodesTableRow}
+      virtualize
+    />
+  );
+};
 
-export default BareMetalHostsTable;
+export default BareMetalNodesTable;

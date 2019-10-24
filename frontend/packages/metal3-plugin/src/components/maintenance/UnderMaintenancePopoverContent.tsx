@@ -7,12 +7,10 @@ import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {
   maintenance: K8sResourceKind;
-  hostName: string;
 };
 
 const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentProps> = ({
   maintenance,
-  hostName,
 }) => {
   const reason = getNodeMaintenanceReason(maintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(maintenance);
@@ -20,7 +18,7 @@ const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentPro
   return (
     <>
       <p>
-        This host is under maintenance. The cluster will automatically rebuild host&apos;s data 30
+        Node is under maintenance. The cluster will automatically rebuild node&apos;s data 30
         minutes after entering maintenance.
       </p>
       <dl>
@@ -32,11 +30,7 @@ const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentPro
         </dd>
       </dl>
       <br />
-      <Button
-        variant="link"
-        onClick={() => stopNodeMaintenanceModal(maintenance, hostName)}
-        isInline
-      >
+      <Button variant="link" onClick={() => stopNodeMaintenanceModal(maintenance)} isInline>
         Stop maintenance
       </Button>
     </>

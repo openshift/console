@@ -15,12 +15,13 @@ import {
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
   HOST_SUCCESS_STATES,
-  HOST_STATUS_UNDER_MAINTENANCE,
-  HOST_STATUS_STARTING_MAINTENANCE,
+  NODE_STATUS_UNDER_MAINTENANCE,
+  NODE_STATUS_STARTING_MAINTENANCE,
+  NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
 import { BareMetalHostModel } from '../../models';
 import { getHostErrorMessage } from '../../selectors';
-import { HostMultiStatus } from '../types';
+import { StatusProps } from '../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
 import { BareMetalHostKind } from '../../types';
 
@@ -40,20 +41,14 @@ export const AddDiscoveredHostButton: React.FC<{ host: BareMetalHostKind }> = (
   );
 };
 
-type BareMetalHostStatusProps = {
-  status: HostMultiStatus;
-};
-
-const BareMetalHostStatus = ({ status: { status, title, ...props } }: BareMetalHostStatusProps) => {
+const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, ...props }) => {
   const statusTitle = title || status;
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
       return <AddDiscoveredHostButton host={props.host} />;
-    case [HOST_STATUS_STARTING_MAINTENANCE, HOST_STATUS_UNDER_MAINTENANCE].includes(status):
-      return (
-        <MaintenancePopover title={statusTitle} maintenance={props.maintenance} host={props.host} />
-      );
-    case HOST_PROGRESS_STATES.includes(status):
+    case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
+      return <MaintenancePopover title={statusTitle} maintenance={props.maintenance} />;
+    case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
       return <ProgressStatus title={statusTitle} />;
     case HOST_ERROR_STATES.includes(status):
       return <ErrorStatus title={statusTitle}>{getHostErrorMessage(props.host)}</ErrorStatus>;

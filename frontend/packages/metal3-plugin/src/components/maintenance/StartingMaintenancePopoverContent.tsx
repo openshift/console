@@ -14,12 +14,10 @@ import MaintenancePopoverPodList from './MaintenancePopoverPodList';
 
 type StartingMaintenancePopoverContentProps = {
   maintenance: K8sResourceKind;
-  hostName: string;
 };
 
 const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverContentProps> = ({
   maintenance,
-  hostName,
 }) => {
   const reason = getNodeMaintenanceReason(maintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(maintenance);
@@ -29,8 +27,8 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
   return (
     <>
       <p>
-        This host is entering maintenance. The cluster will automatically rebuild host&apos;s data
-        30 minutes after entering maintenance.
+        Node is entering maintenance. The cluster will automatically rebuild node&apos;s data 30
+        minutes after entering maintenance.
       </p>
       <dl>
         <dt>Maintenance reason:</dt>
@@ -59,11 +57,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
         <MaintenancePopoverPodList pods={pendingPods} />
       </Expandable>
       <br />
-      <Button
-        variant="link"
-        onClick={() => stopNodeMaintenanceModal(maintenance, hostName)}
-        isInline
-      >
+      <Button variant="link" onClick={() => stopNodeMaintenanceModal(maintenance)} isInline>
         Stop
       </Button>
     </>

@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/factory';
 import { getName } from '@console/shared';
 import { powerOffHost } from '../../k8s/requests/host-power-operations';
-import { HOST_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY } from '../../constants';
+import { NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY } from '../../constants';
 import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 
@@ -73,7 +73,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
 };
 
 const isPowerOffSafe = (status: string) => {
-  const safeStates = [HOST_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY];
+  const safeStates = [NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY];
   return safeStates.includes(status);
 };
 
@@ -120,7 +120,7 @@ const PowerOffHostModal = withHandlePromise(
     };
 
     const title = `Shut down`;
-    const isUnderMaintenance = status === HOST_STATUS_UNDER_MAINTENANCE;
+    const isUnderMaintenance = status === NODE_STATUS_UNDER_MAINTENANCE;
     return (
       <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>

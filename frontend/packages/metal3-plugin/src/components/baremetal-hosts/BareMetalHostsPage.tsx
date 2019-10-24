@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { getName, getMachineNode, createLookup } from '@console/shared';
+import { getName, createLookup, getNodeMachineName } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
-import { getHostStatus } from '../../utils/host-status';
-import { HostRowBundle } from '../types';
+import { getHostStatus } from '../../status/host-status';
+import { BareMetalHostBundle } from '../types';
 import { hostStatusFilter } from './table-filters';
 import BareMetalHostsTable from './BareMetalHostsTable';
 
@@ -22,17 +22,20 @@ const flattenResources = (resources) => {
   const {
     hosts: { data: hostsData },
     machines: { data: machinesData },
-    nodes: { data: nodesData },
+    nodes,
     nodeMaintenances,
   } = resources;
 
   if (loaded) {
     const maintenancesByNodeName = createLookup(nodeMaintenances, getNodeMaintenanceNodeName);
+    const nodesByMachineName = createLookup(nodes, getNodeMachineName);
 
     return hostsData.map(
-      (host): HostRowBundle => {
+      (host): BareMetalHostBundle => {
+        // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
+        // on machines
         const machine = getHostMachine(host, machinesData);
-        const node = getMachineNode(machine, nodesData);
+        const node = nodesByMachineName[getName(machine)];
         const nodeMaintenance = maintenancesByNodeName[getName(node)];
         const status = getHostStatus({ host, machine, node, nodeMaintenance });
         // TODO(jtomasek): metadata.name is needed to make 'name' textFilter work.

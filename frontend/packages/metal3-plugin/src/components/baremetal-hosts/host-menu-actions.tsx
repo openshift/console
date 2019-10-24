@@ -6,11 +6,11 @@ import {
   MachineKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import { getMachineNode, getMachineNodeName, getName } from '@console/shared';
+import { getMachineNode, getMachineNodeName } from '@console/shared';
 import { deleteModal } from '@console/internal/components/modals';
 import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../../selectors';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
-import { getHostStatus } from '../../utils/host-status';
+import { getHostStatus } from '../../status/host-status';
 import {
   HOST_POWER_STATUS_POWERING_OFF,
   HOST_POWER_STATUS_POWERED_ON,
@@ -47,16 +47,12 @@ export const RemoveNodeMaintenance = (
   host: BareMetalHostKind,
   resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
-): KebabOption => {
-  const hostName = getName(host);
-  return {
-    hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-    label: 'Stop maintenance',
-    callback: () => stopNodeMaintenanceModal(nodeMaintenance, hostName),
-    accessReview:
-      nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
-  };
-};
+): KebabOption => ({
+  hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
+  label: 'Stop maintenance',
+  callback: () => stopNodeMaintenanceModal(nodeMaintenance),
+  accessReview: nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
+});
 
 export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => {
   const title = 'Power on';
