@@ -10,7 +10,6 @@ import {
   removeResourceConnection,
   createServiceBinding,
   removeServiceBinding,
-  edgesFromLabels,
 } from '../../utils/application-utils';
 import {
   TopologyDataModel,
@@ -111,9 +110,7 @@ const createTopologyNodeData = (
     type: 'workload',
     resources: { ...dc },
     pods: dc.pods,
-    operatorBackedService: !!_.find(operatorBackedServiceKinds, (k) => {
-      return k === nodeResourceKind;
-    }),
+    operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
       url: getRoutesUrl(dc.routes, _.get(dc, ['ksroutes'])),
       kind: deploymentConfig.kind,
@@ -163,13 +160,9 @@ const getTopologyNodeItem = (dc: K8sResourceKind): Node => {
  */
 const getTopologyEdgeItems = (dc: K8sResourceKind, resources: K8sResourceKind[]): Edge[] => {
   const annotations = _.get(dc, 'metadata.annotations');
-  const labels = _.get(dc, 'metadata.labels');
-  const annotationsEdges = edgesFromAnnotations(annotations);
-  const labelsEdges = edgesFromLabels(labels);
-  const allEdges = _.concat(annotationsEdges, labelsEdges);
   const edges = [];
 
-  _.forEach(allEdges, (edge) => {
+  _.forEach(edgesFromAnnotations(annotations), (edge) => {
     // handles multiple edges
     const targetNode = _.get(
       _.find(resources, (deployment) => {
@@ -238,14 +231,18 @@ export const transformTopologyData = (
   cheURL?: string,
   utils?: Function[],
 ): TopologyDataModel => {
+  console.log(resources, 'res');
   const installedOperators =
     resources.clusterServiceVersion && resources.clusterServiceVersion.data;
   const operatorBackedServiceKinds = [];
-  _.forEach(installedOperators, (op) => {
-    _.get(op, 'spec.customresourcedefinitions.owned').map((service) =>
-      operatorBackedServiceKinds.push(service.kind),
-    );
-  });
+
+  if (installedOperators) {
+    _.forEach(installedOperators, (op) => {
+      _.get(op, 'spec.customresourcedefinitions.owned').map((service) =>
+        operatorBackedServiceKinds.push(service.kind),
+      );
+    });
+  }
 
   let topologyGraphAndNodeData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },
@@ -327,6 +324,7 @@ export const createTopologyResourceConnection = (
   source: TopologyDataObject,
   target: TopologyDataObject,
   replaceTarget: TopologyDataObject = null,
+  serviceBindingFlag: boolean,
 ): Promise<any> => {
   if (!source || !target || source === target) {
     return Promise.reject();
@@ -336,7 +334,7 @@ export const createTopologyResourceConnection = (
   const targetObj = getResourceDeploymentObject(target);
   const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
 
-  if (target.operatorBackedService) {
+  if (serviceBindingFlag && target.operatorBackedService) {
     return createServiceBinding(sourceObj, targetObj);
   }
 

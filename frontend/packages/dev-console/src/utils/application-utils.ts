@@ -7,6 +7,8 @@ import {
   K8sResourceKind,
   modelFor,
   k8sCreate,
+  K8sVerb,
+  LabelSelector,
 } from '@console/internal/module/k8s';
 import {
   ImageStreamModel,
@@ -30,7 +32,6 @@ import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
-import { getApplicationSelectorLabels } from './resource-label-utils';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -47,18 +48,30 @@ export const edgesFromAnnotations = (annotations): string[] => {
   return edges;
 };
 
-export const edgesFromLabels = (labels): string[] => {
-  let edges: string[] = [];
-  if (_.has(labels, ['connects-to'])) {
-    try {
-      edges = JSON.parse(labels['connects-to']);
-    } catch (e) {
-      // connects-to annotation should hold a JSON string value but failed to parse
-      // treat value as a comma separated list of strings
-      edges = labels['connects-to'].split(',').map((v) => v.trim());
-    }
-  }
-  return edges;
+export const edgesFromServiceBinding = (source: K8sResourceKind) => {
+  const edges: string[] = [];
+  return k8sList(ServiceBindingRequestModel, { ns: source.metadata.namespace })
+    .then((sbrs) => {
+      _.forEach(sbrs, (sbr) => {
+        let edgeExists = false;
+        if (_.get(sbr, 'spec.applicationSelector.resourceRef') === source.metadata.name) {
+          edgeExists = true;
+        } else {
+          const matchLabels = _.has(sbr, 'spec.applicationSelector.matchLabels');
+          if (matchLabels) {
+            const sbrSelector = new LabelSelector(sbr.spec.applicationSelector);
+            if (sbrSelector.matches(source)) {
+              edgeExists = true;
+            }
+          }
+        }
+        edgeExists && edges.push(sbr.spec.backingServiceSelector.resourceRef);
+      });
+      return edges;
+    })
+    .catch(() => {
+      return null;
+    });
 };
 
 const listInstanceResources = (
@@ -211,6 +224,22 @@ const updateItemAppConnectTo = (
   return k8sPatch(model, item, patch);
 };
 
+export const checkServiceBindingPermissions = async (
+  namespace: string,
+  action: K8sVerb,
+  name?: string,
+) => {
+  const access = await checkAccess({
+    group: ServiceBindingRequestModel.apiGroup,
+    resource: ServiceBindingRequestModel.plural,
+    verb: action,
+    name,
+    namespace,
+  });
+
+  return access.status.allowed;
+};
+
 export const createServiceBinding = (
   source: K8sResourceKind,
   target: K8sResourceKind,
@@ -225,45 +254,44 @@ export const createServiceBinding = (
   const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
   const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
   const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
-  const applicationSelectorLabels = getApplicationSelectorLabels(targetName);
+  const sbrName = `${sourceName}-${targetName}-sbr`;
 
   const serviceBindingRequest = {
     apiVersion: 'apps.openshift.io/v1alpha1',
     kind: 'ServiceBindingRequest',
     metadata: {
-      name: `${sourceName}-${targetName}-sbr`,
+      name: sbrName,
       namespace,
     },
     spec: {
       applicationSelector: {
-        matchLabels: { ...applicationSelectorLabels },
+        resourceRef: sourceName,
         group: 'apps.openshift.io',
         version: 'v1',
-        resource: 'deploymentconfigs',
+        resource: modelFor(source.kind).plural,
       },
       backingServiceSelector: {
         group: targetResourceGroup[0],
-        version: 'v1alpha1',
+        version: targetResourceGroup[1],
         kind: targetResourceKind,
         resourceRef: targetResourceRefName,
       },
     },
   };
 
-  const patch = [
-    {
-      path: '/metadata/labels',
-      op: 'add',
-      value: { ...source.metadata.labels, ...applicationSelectorLabels },
-    },
-  ];
-
-  return k8sPatch(modelFor(source.kind), source, patch)
-    .then(() => {
-      return k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+  return checkServiceBindingPermissions(namespace, 'create')
+    .then((isAllowed) => {
+      if (isAllowed) {
+        return k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+      }
+      const err: Error = {
+        name: 'Service Binding Creation',
+        message: 'You do not have permission to create this servive binding',
+      };
+      throw err;
     })
     .catch((err) => {
-      return Promise.reject(err);
+      throw err;
     });
 };
 
@@ -274,34 +302,33 @@ export const removeServiceBinding = (
   if (!source || !target || source === target) {
     return Promise.reject();
   }
-
   const targetName = _.get(target, 'metadata.name');
   const sourceName = _.get(source, 'metadata.name');
   const namespace = _.get(source, 'metadata.namespace');
-  const labels = _.omit(source.metadata.labels, ['connects-to']);
-  const patch = [
-    {
-      path: '/metadata/labels',
-      op: 'add',
-      value: { ...labels },
-    },
-  ];
+  const sbrName = `${sourceName}-${targetName}-sbr`;
 
   const serviceBindingRequest = {
     apiVersion: 'apps.openshift.io/v1alpha1',
     kind: 'ServiceBindingRequest',
     metadata: {
-      name: `${sourceName}-${targetName}-sbr`,
+      name: sbrName,
       namespace,
     },
   };
 
-  return k8sPatch(modelFor(source.kind), source, patch)
-    .then(() => {
-      return k8sKill(ServiceBindingRequestModel, serviceBindingRequest);
+  return checkServiceBindingPermissions(namespace, 'delete', sbrName)
+    .then((isAllowed) => {
+      if (isAllowed) {
+        return k8sKill(ServiceBindingRequestModel, serviceBindingRequest);
+      }
+      const err: Error = {
+        name: 'Service Binding Deletion',
+        message: 'You do not have permission to remvove this servive binding',
+      };
+      throw err;
     })
     .catch((err) => {
-      return Promise.reject(err);
+      throw err;
     });
 };
 

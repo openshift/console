@@ -24,6 +24,7 @@ import {
   tknPipelineAndPipelineRunsResources,
   getPipelinesAndPipelineRunsForResource,
 } from './utils/pipeline-plugin-utils';
+import { SHOW_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
 
 const { PipelineModel, PipelineRunModel } = models;
 
@@ -39,9 +40,6 @@ type ConsumedExtensions =
   | RoutePage
   | KebabActions
   | OverviewCRD;
-
-const SHOW_PIPELINE = 'SHOW_PIPELINE';
-const ALLOW_SERVICE_BINDING = 'ALLOW_SERVICE_BINDING';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

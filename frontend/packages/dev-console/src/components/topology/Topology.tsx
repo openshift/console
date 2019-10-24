@@ -29,6 +29,7 @@ type State = {
 
 export interface TopologyProps {
   data: TopologyDataModel;
+  serviceBinding: boolean;
 }
 
 const getSelectedItem = (
@@ -96,13 +97,19 @@ export default class Topology extends React.Component<TopologyProps, State> {
   ): Promise<any> => {
     const {
       data: { topology },
+      serviceBinding,
     } = this.props;
     const sourceItem: TopologyDataObject = topology[sourceNodeId];
     const targetItem: TopologyDataObject = topology[targetNodeId];
     const replaceTargetItem: TopologyDataObject =
       replaceTargetNodeId && topology[replaceTargetNodeId];
 
-    return createTopologyResourceConnection(sourceItem, targetItem, replaceTargetItem);
+    return createTopologyResourceConnection(
+      sourceItem,
+      targetItem,
+      replaceTargetItem,
+      serviceBinding,
+    );
   };
 
   onRemoveConnection = (sourceNodeId: string, targetNodeId: string): void => {
