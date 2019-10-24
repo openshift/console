@@ -15,6 +15,12 @@ module.exports = {
 
   plugins: ['react-hooks'],
 
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+
   rules: merge(
     require('./rules/react'),
     require('./rules/react-hooks'),
