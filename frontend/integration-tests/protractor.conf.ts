@@ -155,6 +155,10 @@ export const config: Config = {
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
       'tests/crd-extensions.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
     ]),
     release: suite([
       'tests/crud.scenario.ts',
