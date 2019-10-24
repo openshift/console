@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { PipelineRunDetails } from './PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 
@@ -10,7 +9,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => (
     {...props}
     pages={[
       navFactory.details(PipelineRunDetails),
-      navFactory.editYaml(viewYamlComponent),
+      navFactory.editYaml(),
       {
         href: 'logs',
         path: 'logs/:name?',

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Kebab, navFactory } from '@console/internal/components/utils';
-import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -64,7 +63,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
         menuActions={this.state.menuActions}
         pages={[
           navFactory.details(PipelineDetails),
-          navFactory.editYaml(viewYamlComponent),
+          navFactory.editYaml(),
           {
             href: 'Runs',
             name: 'Pipeline Runs',
