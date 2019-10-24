@@ -9,7 +9,7 @@ const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   const klass = classNames('co-m-label', { 'co-m-label--expand': expand });
 
   return (
-    <Link className={`co-text-${kindForReference(kind.toLowerCase())}`} to={href} tabIndex={-1}>
+    <Link className={`co-text-${kindForReference(kind.toLowerCase())}`} to={href}>
       <div className={klass}>
         <span className="co-m-label__key">{name}</span>
         {value && <span className="co-m-label__eq">=</span>}
