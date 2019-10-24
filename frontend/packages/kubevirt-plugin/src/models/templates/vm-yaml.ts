@@ -23,7 +23,7 @@ spec:
                 bus: virtio
           interfaces:
           - name: default
-            bridge: {}
+            masquerade: {}
         resources:
           requests:
             memory: 64M
