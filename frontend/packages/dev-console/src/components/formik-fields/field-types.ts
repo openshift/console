@@ -83,5 +83,5 @@ export interface SecretKeyRef {
 }
 
 export interface RadioButtonProps extends FieldProps {
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; displayField?: React.ReactElement }[];
 }

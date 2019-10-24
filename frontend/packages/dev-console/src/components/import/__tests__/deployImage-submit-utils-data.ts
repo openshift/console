@@ -13,6 +13,12 @@ export const defaultData: DeployImageFormData = {
   },
   name: '',
   searchTerm: '',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     name: '',
     image: {},
@@ -94,6 +100,12 @@ export const dataWithTargetPort: DeployImageFormData = {
   application: { initial: '', name: 'helloworld-go-app', selectedKey: 'helloworld-go-app' },
   name: 'helloworld-go',
   searchTerm: 'docker.io/mgencur/helloworld-go',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     name: 'docker.io/mgencur/helloworld-go',
     image: {
@@ -187,6 +199,12 @@ export const dataWithPorts: DeployImageFormData = {
   application: { initial: '', name: 'helloworld-go-app', selectedKey: 'helloworld-go-app' },
   name: 'test-admin-console',
   searchTerm: 'rohitkrai03/test-admin-console',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     name: 'rohitkrai03/test-admin-console',
     image: {
@@ -388,6 +406,12 @@ export const dataWithoutPorts: DeployImageFormData = {
   application: { initial: '', name: 'helloworld-go-app', selectedKey: '#CREATE_APPLICATION_KEY#' },
   name: 'helloworld-go',
   searchTerm: 'docker.io/mgencur/helloworld-go',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     name: 'docker.io/mgencur/helloworld-go',
     image: {

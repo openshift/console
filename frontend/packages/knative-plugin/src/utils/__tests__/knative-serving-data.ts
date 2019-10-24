@@ -15,6 +15,12 @@ export const defaultData: DeployImageFormData = {
   },
   name: '',
   searchTerm: '',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     name: '',
     image: {},
