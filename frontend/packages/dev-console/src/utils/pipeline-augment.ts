@@ -65,11 +65,8 @@ export interface Pipeline extends K8sResourceKind {
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef?: { name: string };
-    params: Param[];
-    trigger: {
-      type: string;
-    };
-    resources: PipelineResource[];
+    params?: Param[];
+    resources?: PipelineResource[];
     serviceAccount?: string;
   };
   status?: {
