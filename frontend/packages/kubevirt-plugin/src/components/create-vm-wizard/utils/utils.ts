@@ -4,7 +4,6 @@ import { VMSettingsField } from '../types';
 import { ResultContentType } from '../../../k8s/enhancedK8sMethods/types';
 
 export const VM_SETTINGS_METADATA_ID = 'VM_SETTINGS_METADATA_ID';
-export const VMWARE_PROVIDER_METADATA_ID = 'VMWARE_PROVIDER_METADATA_ID';
 
 export const asRequired = (value: any, key: string = VM_SETTINGS_METADATA_ID) => ({
   [key]: !!value,
@@ -22,8 +21,10 @@ export const nullOnEmptyChange = (
 export const resultContentToString = (data, type: ResultContentType) => {
   switch (type) {
     case ResultContentType.YAML:
-      return safeDump(data);
-    case ResultContentType.JSON:
+      try {
+        return safeDump(data);
+      } catch (ignored) {} // eslint-disable-line no-empty
+    case ResultContentType.JSON: // eslint-disable-line no-fallthrough
       return JSON.stringify(data, null, 1);
     case ResultContentType.Other:
     default:

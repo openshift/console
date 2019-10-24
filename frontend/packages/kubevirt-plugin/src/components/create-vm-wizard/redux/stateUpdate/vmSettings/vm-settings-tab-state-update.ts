@@ -17,6 +17,7 @@ import { iGetIsLoaded, iGetLoadedData } from '../../../../../utils/immutable';
 import { ignoreCaseSort } from '../../../../../utils/sort';
 import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
+import { getProviders } from '../../../provider-definitions';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 export const selectUserTemplateOnLoadedUpdater = ({
@@ -153,6 +154,9 @@ export const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptio
 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
+    ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
+      ? getProviders().map((provider) => provider.getStateUpdater)
+      : []),
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,

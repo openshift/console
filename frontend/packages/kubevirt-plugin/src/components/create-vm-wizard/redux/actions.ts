@@ -9,6 +9,8 @@ import {
   VMWizardTab,
   VMWizardStorage,
   CloudInitField,
+  VMWareProviderField,
+  VMImportProvider,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
 import { cleanup, updateAndValidateState } from './utils';
@@ -69,15 +71,34 @@ export const vmWizardActions: VMWizardActions = {
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
     ),
+  [ActionType.UpdateVmSettingsProviderField]: (
+    id,
+    provider: VMImportProvider,
+    key: VMWareProviderField | any,
+    value: any,
+  ) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(
+        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProviderField](
+          id,
+          provider,
+          key,
+          value,
+        ),
+      ),
+    ),
   [ActionType.SetCloudInitFieldValue]: (id, key: CloudInitField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](id, key, value)),
     ),
-  [ActionType.UpdateCommonData]: (id, commonData: CommonData, changedProps: ChangedCommonData) =>
+  [ActionType.UpdateCommonData]: (id, commonData: CommonData, changedProps?: ChangedCommonData) =>
     withUpdateAndValidateState(
       id,
-      (dispatch) =>
-        dispatch(vmWizardInternalActions[InternalActionType.UpdateCommonData](id, commonData)),
+      (dispatch) => {
+        if (commonData) {
+          dispatch(vmWizardInternalActions[InternalActionType.UpdateCommonData](id, commonData));
+        }
+      },
       changedProps,
     ),
   [ActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => (dispatch) => {

@@ -23,25 +23,28 @@ import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskModal } from '../../../modals/disk-modal';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
+import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 
 const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
-    id,
-    type,
+    storage,
     namespace: vmNamespace,
     useProjects,
     addUpdateStorage,
     storages,
+    ...restProps
+  } = props;
+  const {
+    type,
     diskWrapper = DiskWrapper.EMPTY,
     volumeWrapper = VolumeWrapper.EMPTY,
     dataVolumeWrapper,
-    ...restProps
-  } = props;
+    persistentVolumeClaimWrapper,
+    ...storageRest
+  } = storage || {};
+
   const filteredStorages = storages.filter(
-    (storage) =>
-      storage &&
-      storage.diskWrapper.getName() &&
-      storage.diskWrapper.getName() !== diskWrapper.getName(),
+    (s) => s && s.diskWrapper.getName() && s.diskWrapper.getName() !== diskWrapper.getName(),
   );
 
   const usedDiskNames: Set<string> = new Set(
@@ -88,13 +91,19 @@ const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
         disk={diskWrapper}
         volume={volumeWrapper}
         dataVolume={dataVolumeWrapper}
+        persistentVolumeClaim={persistentVolumeClaimWrapper}
         disableSourceChange={[
           VMWizardStorageType.PROVISION_SOURCE_DISK,
           VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
         ].includes(type)}
-        onSubmit={(resultDiskWrapper, resultVolumeWrapper, resultDataVolumeWrapper) => {
+        onSubmit={(
+          resultDiskWrapper,
+          resultVolumeWrapper,
+          resultDataVolumeWrapper,
+          resultPersistentVolumeClaim,
+        ) => {
           addUpdateStorage({
-            id,
+            ...storageRest,
             type: type || VMWizardStorageType.UI_INPUT,
             disk: DiskWrapper.mergeWrappers(diskWrapper, resultDiskWrapper).asResource(),
             volume: VolumeWrapper.mergeWrappers(volumeWrapper, resultVolumeWrapper).asResource(),
@@ -103,6 +112,12 @@ const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
               DataVolumeWrapper.mergeWrappers(
                 dataVolumeWrapper,
                 resultDataVolumeWrapper,
+              ).asResource(),
+            persistentVolumeClaim:
+              resultPersistentVolumeClaim &&
+              PersistentVolumeClaimWrapper.mergeWrappers(
+                persistentVolumeClaimWrapper,
+                resultPersistentVolumeClaim,
               ).asResource(),
           });
           return Promise.resolve();
@@ -113,13 +128,9 @@ const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
 };
 
 type VMWizardStorageModalProps = ModalComponentProps & {
-  id?: string;
+  storage?: VMWizardStorageWithWrappers;
   namespace: string;
   useProjects?: boolean;
-  type?: VMWizardStorageType;
-  diskWrapper?: DiskWrapper;
-  volumeWrapper?: VolumeWrapper;
-  dataVolumeWrapper?: DataVolumeWrapper;
   storages: VMWizardStorageWithWrappers[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
 };

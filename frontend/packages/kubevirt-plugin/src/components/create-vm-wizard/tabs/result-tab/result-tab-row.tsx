@@ -4,7 +4,12 @@ import { Expandable } from '@patternfly/react-core';
 
 import './result-tab-row.scss';
 
-export const ResultTabRow: React.FC<ResultTabRowProps> = ({ title, content, isError }) => {
+export const ResultTabRow: React.FC<ResultTabRowProps> = ({
+  title,
+  content,
+  isError,
+  alignMiddle,
+}) => {
   if (!title && !content) {
     return null;
   }
@@ -12,7 +17,8 @@ export const ResultTabRow: React.FC<ResultTabRowProps> = ({ title, content, isEr
   return (
     <Expandable
       toggleText={title || ''}
-      className={classNames('kubevirt-create-vm-modal___result-tab-row-container', {
+      className={classNames({
+        'kubevirt-create-vm-modal___result-tab-row-container': alignMiddle,
         'kubevirt-create-vm-modal___result-tab-row-container--error': isError,
       })}
     >
@@ -25,4 +31,5 @@ type ResultTabRowProps = {
   title: string;
   content: string;
   isError: boolean;
+  alignMiddle?: boolean;
 };

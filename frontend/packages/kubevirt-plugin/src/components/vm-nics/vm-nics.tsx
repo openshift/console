@@ -110,6 +110,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
             onClick={() =>
               withProgress(
                 nicModalEnhanced({
+                  blocking: true,
                   vmLikeEntity,
                 }).result,
               )

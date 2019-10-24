@@ -1,6 +1,10 @@
 import { isEmpty } from 'lodash';
 import { List } from 'immutable';
-import { ValidationErrorType, ValidationObject } from '@console/shared';
+import {
+  asValidationObject,
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/shared/src/utils/validation';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
   hasVmSettingsChanged,
@@ -24,7 +28,7 @@ import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
-import { concatImmutableLists } from '../../../../utils/immutable';
+import { concatImmutableLists, iGet } from '../../../../utils/immutable';
 import { getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import {
   checkTabValidityChanged,
@@ -62,7 +66,7 @@ const validateVm: VmSettingsValidator = (field, options) => {
   );
 };
 
-export const validateUserTemplate: VmSettingsValidator = (field, options) => {
+const validateUserTemplate: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
   const state = getState();
 
@@ -75,6 +79,17 @@ export const validateUserTemplate: VmSettingsValidator = (field, options) => {
   );
 
   return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
+};
+
+export const validateOperatingSystem: VmSettingsValidator = (field) => {
+  const os = iGetFieldValue(field);
+  const guestFullName = iGet(field, 'guestFullName');
+
+  if (os || !guestFullName) {
+    return null;
+  }
+
+  return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
 };
 
 const asVMSettingsFieldValidator = (
@@ -107,6 +122,10 @@ const validationConfig: VMSettingsValidationConfig = {
     detectValueChanges: [VMSettingsField.USER_TEMPLATE],
     detectCommonDataChanges: [VMWizardProps.userTemplates],
     validator: validateUserTemplate,
+  },
+  [VMSettingsField.OPERATING_SYSTEM]: {
+    detectValueChanges: [VMSettingsField.OPERATING_SYSTEM],
+    validator: validateOperatingSystem,
   },
   [VMSettingsField.CPU]: {
     detectValueChanges: [VMSettingsField.CPU],

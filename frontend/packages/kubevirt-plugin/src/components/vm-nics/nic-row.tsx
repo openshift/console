@@ -27,6 +27,7 @@ const menuActionEdit = (
   callback: () =>
     withProgress(
       nicModalEnhanced({
+        blocking: true,
         vmLikeEntity,
         nic,
         network,

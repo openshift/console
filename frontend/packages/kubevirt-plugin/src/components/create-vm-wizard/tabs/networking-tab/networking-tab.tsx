@@ -63,6 +63,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
     onClick: () =>
       withProgress(
         vmWizardNicModalEnhanced({
+          blocking: true,
           wizardReduxID,
         }).result,
       ),

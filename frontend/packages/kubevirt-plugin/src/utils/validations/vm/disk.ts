@@ -13,6 +13,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
+import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -46,6 +47,7 @@ export const validateDisk = (
   disk: DiskWrapper,
   volume: VolumeWrapper,
   dataVolume: DataVolumeWrapper,
+  persistentVolumeClaimWrapper: PersistentVolumeClaimWrapper,
   {
     usedDiskNames,
     usedPVCNames,
@@ -72,6 +74,7 @@ export const validateDisk = (
   const source = StorageUISource.fromTypes(
     volume && volume.getType(),
     dataVolume && dataVolume.getType(),
+    !!persistentVolumeClaimWrapper,
   );
 
   if (source) {
@@ -93,7 +96,23 @@ export const validateDisk = (
 
     if (source.requiresDatavolume()) {
       addRequired(dataVolume);
-      if (!dataVolume || !dataVolume.hasSize()) {
+    }
+
+    if (source.requiresNewPVC()) {
+      addRequired(persistentVolumeClaimWrapper);
+    }
+
+    if (source.requiresSize()) {
+      let missingSize;
+      if (source.requiresDatavolume()) {
+        missingSize = !dataVolume || !dataVolume.hasSize();
+      }
+      if (source.requiresNewPVC()) {
+        missingSize =
+          missingSize || !persistentVolumeClaimWrapper || !persistentVolumeClaimWrapper.hasSize();
+      }
+
+      if (missingSize) {
         addRequired(null);
         validations.size = getEmptyDiskSizeValidation();
       }
@@ -104,6 +123,7 @@ export const validateDisk = (
         diskWrapper: disk,
         volumeWrapper: volume,
         dataVolumeWrapper: dataVolume,
+        persistentVolumeClaimWrapper,
       }).getPVCName(source);
       addRequired(pvcName);
       validations.pvc = validatePVCName(pvcName, usedPVCNames);

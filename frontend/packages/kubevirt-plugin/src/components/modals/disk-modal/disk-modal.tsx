@@ -38,6 +38,7 @@ import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow, BinaryUnit } from '../../form/size-unit-form-row';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
+import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { StorageUISource } from './storage-ui-source';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
@@ -65,10 +66,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
   const isEditing = disk !== DiskWrapper.EMPTY;
 
+  const combinedDisk = new CombinedDisk({
+    diskWrapper: disk,
+    volumeWrapper: volume,
+    dataVolumeWrapper: dataVolume,
+    persistentVolumeClaimWrapper: props.persistentVolumeClaim,
+  });
+  const combinedDiskSize = combinedDisk.getSize();
+
   const [source, setSource] = React.useState<StorageUISource>(
-    isEditing
-      ? StorageUISource.fromTypes(volume.getType(), dataVolume.getType()) || StorageUISource.OTHER
-      : StorageUISource.BLANK,
+    isEditing ? combinedDisk.getSource() || StorageUISource.OTHER : StorageUISource.BLANK,
   );
 
   const [url, setURL] = React.useState<string>(dataVolume.getURL);
@@ -77,13 +84,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     volume.getContainerImage() || '',
   );
 
-  const [pvcName, setPVCName] = React.useState<string>(
-    new CombinedDisk({
-      diskWrapper: disk,
-      volumeWrapper: volume,
-      dataVolumeWrapper: dataVolume,
-    }).getPVCName(source),
-  );
+  const [pvcName, setPVCName] = React.useState<string>(combinedDisk.getPVCName(source));
 
   const [name, setName] = React.useState<string>(
     disk.getName() || getSequenceName('disk', usedDiskNames),
@@ -92,11 +93,15 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getDiskBus() || (isEditing ? null : DiskBus.VIRTIO),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
-    dataVolume.getStorageClassName(),
+    combinedDisk.getStorageClassName(),
   );
 
-  const [size, setSize] = React.useState<string>(`${dataVolume.getSize().value}`);
-  const [unit, setUnit] = React.useState<string>(dataVolume.getSize().unit || BinaryUnit.Gi);
+  const [size, setSize] = React.useState<string>(
+    combinedDiskSize ? `${combinedDiskSize.value}` : '',
+  );
+  const [unit, setUnit] = React.useState<string>(
+    (combinedDiskSize && combinedDiskSize.unit) || BinaryUnit.Gi,
+  );
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -137,6 +142,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     );
   }
 
+  let resultPersistentVolumeClaim;
+  if (source.requiresNewPVC()) {
+    resultPersistentVolumeClaim = PersistentVolumeClaimWrapper.initializeFromSimpleData({
+      name,
+      storageClassName: storageClassName || undefined,
+      size,
+      unit,
+    });
+  }
+
   const {
     validations: {
       name: nameValidation,
@@ -147,7 +162,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     },
     isValid,
     hasAllRequiredFilled,
-  } = validateDisk(resultDisk, resultVolume, resultDataVolume, { usedDiskNames, usedPVCNames });
+  } = validateDisk(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim, {
+    usedDiskNames,
+    usedPVCNames,
+  });
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
 
@@ -156,11 +174,23 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
     if (isValid) {
       // eslint-disable-next-line promise/catch-or-return
-      handlePromise(onSubmit(resultDisk, resultVolume, resultDataVolume)).then(close);
+      handlePromise(
+        onSubmit(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim),
+      ).then(close);
     } else {
       setShowUIError(true);
     }
   };
+
+  const onNameChanged = React.useCallback(
+    (v) => {
+      if (source.requiresNewPVC()) {
+        setPVCName(v);
+      }
+      setName(v);
+    },
+    [setName, setPVCName, source],
+  );
 
   const onSourceChanged = (uiSource) => {
     if (disableSourceChange) {
@@ -195,15 +225,20 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         <Form>
           <FormRow title="Source" fieldId={asId('source')} isRequired>
             <FormSelect
-              onChange={onSourceChanged}
+              onChange={
+                disableSourceChange || !source.canBeChangedToThisSource()
+                  ? undefined
+                  : onSourceChanged
+              }
               value={asFormSelectValue(source)}
               id={asId('source')}
-              isDisabled={inProgress || disableSourceChange || source === StorageUISource.OTHER}
+              isDisabled={inProgress || disableSourceChange || !source.canBeChangedToThisSource()}
             >
               {StorageUISource.getAll()
                 .filter(
                   (storageUISource) =>
-                    storageUISource !== StorageUISource.OTHER || source === StorageUISource.OTHER,
+                    storageUISource.canBeChangedToThisSource() ||
+                    !source.canBeChangedToThisSource(),
                 )
                 .map((uiType) => {
                   return (
@@ -290,20 +325,21 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isRequired
               id={asId('name')}
               value={name}
-              onChange={React.useCallback((v) => setName(v), [setName])}
+              onChange={onNameChanged}
             />
           </FormRow>
-          {source.requiresDatavolume() && (
+          {source.requiresSize() && (
             <SizeUnitFormRow
               key="size-row"
               id={asId('size-row')}
               size={size}
               unit={unit as BinaryUnit}
+              units={source.getAllowedUnits()}
               validation={sizeValidation}
-              isDisabled={inProgress}
+              isDisabled={inProgress || !source.isSizeEditingSupported()}
               isRequired
-              onSizeChanged={setSize}
-              onUnitChanged={setUnit}
+              onSizeChanged={source.isSizeEditingSupported() ? setSize : undefined}
+              onUnitChanged={source.isSizeEditingSupported() ? setUnit : undefined}
             />
           )}
           <FormRow title="Interface" fieldId={asId('interface')} isRequired>
@@ -316,14 +352,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isDisabled={inProgress}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {DiskBus.getAll().map((b) => {
-                return (
-                  <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
-                );
-              })}
+              {DiskBus.getAll().map((b) => (
+                <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
+              ))}
             </FormSelect>
           </FormRow>
-          {source.requiresDatavolume() && (
+          {source.requiresStorageClass() && (
             <K8sResourceSelectRow
               key="storage-class"
               id={asId('storage-class')}
@@ -358,10 +392,12 @@ export type DiskModalProps = {
   disableSourceChange?: boolean;
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;
+  persistentVolumeClaim?: PersistentVolumeClaimWrapper;
   onSubmit: (
     disk: DiskWrapper,
     volume: VolumeWrapper,
     dataVolume: DataVolumeWrapper,
+    persistentVolumeClaim: PersistentVolumeClaimWrapper,
   ) => Promise<any>;
   namespaces?: FirehoseResult<K8sResourceKind[]>;
   storageClasses?: FirehoseResult<K8sResourceKind[]>;

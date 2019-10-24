@@ -244,6 +244,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
     <div>
       {!isEditable && (
         <Errors
+          endMargin
           errors={[
             {
               title: 'Cloud-init volume exists but is not editable.',

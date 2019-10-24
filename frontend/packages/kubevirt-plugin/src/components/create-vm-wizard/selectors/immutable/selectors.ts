@@ -42,6 +42,7 @@ export const iGetCommonData = (state, reduxID: string, key: CommonDataProp) => {
 
 export const iGetName = (o) =>
   iGetIn(o, ['metadata', 'name']) as K8sResourceKind['metadata']['name'];
+export const iGetUID = (o) => iGetIn(o, ['metadata', 'uid']) as K8sResourceKind['metadata']['uid'];
 export const iGetNamespace = (o) =>
   iGetIn(o, ['metadata', 'namespace']) as K8sResourceKind['metadata']['namespace'];
 
@@ -58,6 +59,7 @@ export const immutableListToShallowMetadataJS = (list, defaultValue = []) =>
         metadata: {
           name: iGetName(p),
           namespace: iGetNamespace(p),
+          uid: iGetUID(p),
         },
       }))
     : defaultValue;

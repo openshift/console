@@ -8,6 +8,7 @@ import { VMWizardProps, VMWizardStorageWithWrappers } from '../../types';
 import { getStoragesWithWrappers } from '../../selectors/selectors';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
+import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { ReviewList } from './review-list';
 
 const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
@@ -20,19 +21,23 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     <ReviewList
       title="Storage"
       className={className}
-      items={storages.map(({ id, diskWrapper, volumeWrapper, dataVolumeWrapper }) => {
-        const combinedDisk = new CombinedDisk({
-          diskWrapper,
-          volumeWrapper,
-          dataVolumeWrapper,
-          pvc: pvcLookup[volumeWrapper.getPersistentVolumeClaimName()],
-        });
+      items={storages.map(
+        ({ id, diskWrapper, volumeWrapper, dataVolumeWrapper, persistentVolumeClaimWrapper }) => {
+          const pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
+          const combinedDisk = new CombinedDisk({
+            diskWrapper,
+            volumeWrapper,
+            dataVolumeWrapper,
+            persistentVolumeClaimWrapper:
+              persistentVolumeClaimWrapper || (pvc && PersistentVolumeClaimWrapper.initialize(pvc)),
+          });
 
-        return {
-          id,
-          value: combinedDisk.toString(),
-        };
-      })}
+          return {
+            id,
+            value: combinedDisk.toString(),
+          };
+        },
+      )}
     />
   );
 };

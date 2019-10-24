@@ -19,6 +19,7 @@ const asError = (state, id: string, key: CommonDataProp, variant?: AlertVariant)
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
+  endMargin: true,
   errors: [
     asError(state, wizardReduxID, VMWizardProps.commonTemplates),
     asError(state, wizardReduxID, VMWizardProps.userTemplates),
