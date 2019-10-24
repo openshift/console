@@ -131,14 +131,46 @@ export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
   return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
 };
 
-// example link: https://access.redhat.com/downloads/content/290/ver=4.1/rhel---7/4.1.13/x86_64/product-errata
-export const getErrataLink = (cv: ClusterVersionKind): string => {
-  const version: string = _.get(cv, 'status.history[0].version');
-  if (!version) {
+type ParsedVersion = {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease: string[];
+};
+
+const getCurrentVersion = (cv: ClusterVersionKind): string => {
+  return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
+};
+
+export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href: string } => {
+  const version: string = getCurrentVersion(cv);
+  const parsed: ParsedVersion = semver.parse(version);
+  if (!parsed) {
     return null;
   }
 
-  const parsed = semver.parse(version);
+  // Show a Bugzilla link for prerelease versions and a support case link for supported versions.
+  const { major, minor, patch, prerelease } = parsed;
+  const environment = encodeURIComponent(`Version: ${version}\nCluster ID: ${cv.spec.clusterID}`);
+  return _.isEmpty(prerelease)
+    ? {
+        label: 'Open Support Case',
+        href: `https://access.redhat.com/support/cases/#/case/new?product=OpenShift%20Container%20Platform&version=${major}.${minor}&clusterId=${
+          cv.spec.clusterID
+        }`,
+      }
+    : {
+        label: 'Report Bug',
+        href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${major}.${minor}.${
+          patch ? 'z' : '0'
+        }&cf_environment=${environment}`,
+      };
+};
+
+// example link: https://access.redhat.com/downloads/content/290/ver=4.1/rhel---7/4.1.13/x86_64/product-errata
+export const getErrataLink = (cv: ClusterVersionKind): string => {
+  const version: string = getCurrentVersion(cv);
+  const parsed: ParsedVersion = semver.parse(version);
   if (!parsed) {
     return null;
   }
