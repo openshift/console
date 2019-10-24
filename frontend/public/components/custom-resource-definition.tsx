@@ -7,32 +7,35 @@ import { BanIcon } from '@patternfly/react-icons';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   AsyncComponent,
+  DetailsItem,
   Kebab,
+  KebabAction,
   navFactory,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
 } from './utils';
-import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
+import { CustomResourceDefinitionKind, K8sKind, referenceForCRD } from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
+import { Conditions } from './conditions';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
 
-const crdInstancesPath = (crd) =>
+const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
   _.get(crd, 'spec.scope') === 'Namespaced'
     ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
     : `/k8s/cluster/${referenceForCRD(crd)}`;
 
-const instances = (kind, obj) => ({
+const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   label: 'View Instances',
   href: crdInstancesPath(obj),
 });
 
-const menuActions = [
+const menuActions: KebabAction[] = [
   instances,
   ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
   ...common,
@@ -85,12 +88,24 @@ const CRDTableHeader = () => {
 };
 CRDTableHeader.displayName = 'CRDTableHeader';
 
-const isEstablished = (conditions) => {
+const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
   return condition && condition.status === 'True';
 };
 
-const namespaced = (crd) => crd.spec.scope === 'Namespaced';
+const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Namespaced';
+
+const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
+  return crd.status && isEstablished(crd.status.conditions) ? (
+    <span>
+      <GreenCheckCircleIcon alt="true" />
+    </span>
+  ) : (
+    <span>
+      <BanIcon alt="false" />
+    </span>
+  );
+};
 
 const CRDTableRow: React.FC<CRDTableRowProps> = ({ obj: crd, index, key, style }) => {
   return (
@@ -111,15 +126,7 @@ const CRDTableRow: React.FC<CRDTableRowProps> = ({ obj: crd, index, key, style }
       <TableData className={tableColumnClasses[2]}>{crd.spec.version}</TableData>
       <TableData className={tableColumnClasses[3]}>{namespaced(crd) ? 'Yes' : 'No'}</TableData>
       <TableData className={tableColumnClasses[4]}>
-        {isEstablished(crd.status.conditions) ? (
-          <span>
-            <GreenCheckCircleIcon />
-          </span>
-        ) : (
-          <span>
-            <BanIcon />
-          </span>
-        )}
+        <Established crd={crd} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
@@ -129,18 +136,41 @@ const CRDTableRow: React.FC<CRDTableRowProps> = ({ obj: crd, index, key, style }
 };
 CRDTableRow.displayName = 'CRDTableRow';
 type CRDTableRowProps = {
-  obj: K8sResourceKind;
+  obj: CustomResourceDefinitionKind;
   index: number;
   key?: string;
   style: object;
 };
 
-const Details = ({ obj: crd }) => {
+const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
   return (
-    <div className="co-m-pane__body">
-      <SectionHeading text="Custom Resource Definition Overview" />
-      <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
-    </div>
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Custom Resource Definition Overview" />
+        <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
+            </div>
+            <div className="col-sm-6">
+              <dl className="co-m-pane__details">
+                <dt>Established</dt>
+                <dd>
+                  <Established crd={crd} />
+                </dd>
+                <DetailsItem label="Group" obj={crd} path="spec.group" />
+                <DetailsItem label="Version" obj={crd} path="spec.version" />
+                <DetailsItem label="Scope" obj={crd} path="spec.scope" />
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={crd.status.conditions} />
+      </div>
+    </>
   );
 };
 
@@ -181,9 +211,12 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     canCreate={true}
   />
 );
-export const CustomResourceDefinitionsDetailsPage = (props) => (
+export const CustomResourceDefinitionsDetailsPage: React.FC<
+  CustomResourceDefinitionsDetailsPageProps
+> = (props) => (
   <DetailsPage
     {...props}
+    kind="CustomResourceDefinition"
     menuActions={menuActions}
     pages={[
       navFactory.details(Details),
@@ -204,3 +237,7 @@ type InstancesProps = {
 
 CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
 CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
+
+type CustomResourceDefinitionsDetailsPageProps = {
+  match: any;
+};
