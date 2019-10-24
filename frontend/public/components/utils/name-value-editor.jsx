@@ -439,15 +439,17 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           </React.Fragment>
         );
         const dragButton = (
-          <Button
-            type="button"
-            className="pairs-list__action-icon"
-            tabIndex="-1"
-            isDisabled={disableReorder}
-            variant="plain"
-          >
-            <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
-          </Button>
+          <div>
+            <Button
+              type="button"
+              className="pairs-list__action-icon"
+              tabIndex="-1"
+              isDisabled={disableReorder}
+              variant="plain"
+            >
+              <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
+            </Button>
+          </div>
         );
 
         return connectDropTarget(
