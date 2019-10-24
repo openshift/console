@@ -17,7 +17,7 @@ describe('Shared submit utils', () => {
       serviceObj = createService(mockData);
       expect(serviceObj.spec.ports[0].port).toEqual(8080);
 
-      mockDeployImageData.image.ports = [PORT];
+      mockDeployImageData.isi.ports = [PORT];
       serviceObj = createService(mockDeployImageData);
       expect(serviceObj.spec.ports[0].port).toEqual(8081);
     });
@@ -45,6 +45,11 @@ describe('Shared submit utils', () => {
       mockData.docker.containerPort = 8080;
       routeObj = createRoute(mockData);
       expect(routeObj.spec.port.targetPort).toEqual('8080-tcp');
+
+      const PORT = { containerPort: 8082, protocol: 'TCP' };
+      mockDeployImageData.isi.ports = [PORT];
+      routeObj = createRoute(mockDeployImageData);
+      expect(routeObj.spec.port.targetPort).toEqual('8082-tcp');
 
       mockDeployImageData.route.targetPort = '8081-tcp';
       routeObj = createRoute(mockDeployImageData);
