@@ -854,10 +854,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) && (
             <Alert
               isInline
-              className="co-alert co-break-word"
+              className="co-alert co-break-word co-alert--scrollable"
               variant="danger"
-              title={error || 'Fix above errors'}
-            />
+              title="Error"
+            >
+              {error || 'Fix above errors'}
+            </Alert>
           )}
           <div style={{ paddingBottom: '30px' }}>
             <ActionGroup className="pf-c-form">
