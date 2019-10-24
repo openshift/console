@@ -119,7 +119,7 @@ export const getResourceList = (namespace: string, resList?: any) => {
   return { resources, utils };
 };
 
-const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
+export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
   if (!resource.spec.paused) {
     return {};
   }
@@ -131,7 +131,7 @@ const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts =
   };
 };
 
-const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): OverviewItemAlerts => {
+export const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): OverviewItemAlerts => {
   const buildAlerts = {};
   const addAlert = (build: K8sResourceKind, buildPhase: string) =>
     _.set(buildAlerts, `${build.metadata.uid}--build${buildPhase}`, {
@@ -480,7 +480,7 @@ export class TransformResourceData {
     );
   };
 
-  getReplicaSetsForResource = (deployment: K8sResourceKind): PodControllerOverviewItem[] => {
+  public getReplicaSetsForResource = (deployment: K8sResourceKind): PodControllerOverviewItem[] => {
     const replicaSets = this.getActiveReplicaSets(deployment);
     return sortReplicaSetsByRevision(replicaSets).map((rs) =>
       getIdledStatus(this.toReplicaSetItem(rs), deployment),
@@ -492,7 +492,7 @@ export class TransformResourceData {
     return getOwnedResources(buildConfig, builds.data);
   };
 
-  getBuildConfigsForResource = (resource: K8sResourceKind): BuildConfigOverviewItem[] => {
+  public getBuildConfigsForResource = (resource: K8sResourceKind): BuildConfigOverviewItem[] => {
     const buildConfigs = _.get(this.resources, ['buildConfigs', 'data']);
     const currentNamespace = resource.metadata.namespace;
     const nativeTriggers = _.get(resource, 'spec.triggers');
@@ -556,7 +556,7 @@ export class TransformResourceData {
     }
   };
 
-  getRoutesForServices = (services: K8sResourceKind[]): RouteKind[] => {
+  public getRoutesForServices = (services: K8sResourceKind[]): RouteKind[] => {
     const { routes } = this.resources;
     return _.filter(routes.data, (route) => {
       const name = _.get(route, 'spec.to.name');
@@ -564,7 +564,7 @@ export class TransformResourceData {
     });
   };
 
-  getServicesForResource = (resource: K8sResourceKind): K8sResourceKind[] => {
+  public getServicesForResource = (resource: K8sResourceKind): K8sResourceKind[] => {
     const { services } = this.resources;
     const template: PodTemplate = this.getPodTemplate(resource);
     return _.filter(services.data, (service: K8sResourceKind) => {
