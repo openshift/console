@@ -4,10 +4,50 @@ import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/
 import { DataPoint } from '@console/internal/components/graphs';
 import { ByteDataTypes } from 'packages/console-shared/src/graph-helper/data-utils';
 
+const getCurrentData = (
+  humanizeValue: Humanize,
+  data?: DataPoint[],
+  dataUnits?: string,
+): string => {
+  let current: string;
+  if (data && data.length > 0) {
+    const latestData = data[data.length - 1];
+    current = humanizeValue(latestData.y).string;
+    if (dataUnits) {
+      current += ` ${dataUnits}`;
+    }
+  }
+
+  return current;
+};
+
+const getHumanMax = (
+  humanizeValue: Humanize,
+  data: DataPoint[],
+  current?: string,
+  max?: number,
+) => {
+  let humanMax: string;
+  let chartStatus: AreaChartStatus;
+  if (current && max) {
+    humanMax = humanizeValue(max).string;
+    const percentage = (100 * data[data.length - 1].y) / max;
+
+    if (percentage >= 90) {
+      chartStatus = AreaChartStatus.ERROR;
+    } else if (percentage >= 75) {
+      chartStatus = AreaChartStatus.WARNING;
+    }
+  }
+
+  return { humanMax, chartStatus };
+};
+
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({
     title,
     data,
+    dataUnits,
     humanizeValue,
     isLoading = false,
     query,
@@ -16,29 +56,20 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     TopConsumerPopover,
     byteDataType,
   }) => {
-    let current;
-    if (data.length) {
-      const latestData = data[data.length - 1];
-      current = humanizeValue(latestData.y).string;
-    }
+    const multiData =
+      !data || Array.isArray(data[0]) ? (data as DataPoint[][]) : [data as DataPoint[]]; // add dimension for single-line
 
-    let humanMax;
-    let chartStatus;
-
-    if (current && max) {
-      humanMax = humanizeValue(max).string;
-      const percentage = (100 * data[data.length - 1].y) / max;
-
-      if (percentage >= 90) {
-        chartStatus = AreaChartStatus.ERROR;
-      } else if (percentage >= 75) {
-        chartStatus = AreaChartStatus.WARNING;
-      }
-    }
+    const current = multiData.map((singleLine, index) =>
+      getCurrentData(humanizeValue, singleLine, dataUnits && dataUnits[index]),
+    );
+    const maxWithStatus = multiData.map((singleLine, index) =>
+      getHumanMax(humanizeValue, singleLine, current[index], max),
+    );
+    const chartStatus = maxWithStatus.map((val) => val.chartStatus);
 
     const chart = (
       <AreaChart
-        data={error ? [] : data}
+        data={error ? [[]] : multiData}
         loading={!error && isLoading}
         query={query}
         xAxis={false}
@@ -50,17 +81,24 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       />
     );
 
+    let currentValue;
+    if (TopConsumerPopover && !error) {
+      currentValue = current.map((curr) => <TopConsumerPopover current={curr} />);
+    } else {
+      currentValue = current.map((curr) => <div>{curr}</div>);
+    }
+
     return (
       <div className="co-utilization-card__item">
         <div className="co-utilization-card__item__section">
           <div className="pf-l-level">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
-            {TopConsumerPopover && !error ? <TopConsumerPopover current={current} /> : current}
+            <div>{currentValue}</div>
           </div>
           <div className="pf-l-level">
             <span className="co-utilization-card__item__text" />
             <span className="co-utilization-card__item__text">
-              {humanMax && <span>of {humanMax}</span>}
+              {maxWithStatus.map((val) => val.humanMax && <span>of {val.humanMax}</span>)}
             </span>
           </div>
         </div>
@@ -69,12 +107,14 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
   },
 );
+UtilizationItem.displayName = 'UtilizationItem';
 
 export default UtilizationItem;
 
 type UtilizationItemProps = {
   title: string;
-  data?: DataPoint[];
+  data?: DataPoint[] | DataPoint[][];
+  dataUnits?: string[];
   isLoading: boolean;
   humanizeValue: Humanize;
   query: string;

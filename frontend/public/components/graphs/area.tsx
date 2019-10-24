@@ -7,6 +7,7 @@ import {
   ChartThemeVariant,
   ChartVoronoiContainer,
   getCustomTheme,
+  ChartGroup,
 } from '@patternfly/react-charts';
 import {
   global_warning_color_100 as warningColor,
@@ -78,11 +79,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     [humanize, unit, formatDate],
   );
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
-  const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
-      {data.length ? (
+      {data && data[0] && data[0].length ? (
         <PrometheusGraphLink query={query}>
           <Chart
             containerComponent={container}
@@ -95,7 +95,18 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
-            <ChartArea data={processedData} style={style} />
+            <ChartGroup>
+              {processedData.map((datum, index) => (
+                <ChartArea
+                  data={datum}
+                  style={
+                    chartStatus[index]
+                      ? { data: { fill: chartStatusColors[chartStatus[index]] } }
+                      : null
+                  }
+                />
+              ))}
+            </ChartGroup>
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -121,7 +132,7 @@ export const Area: React.FC<AreaProps> = ({
     timeout,
     timespan,
   });
-  const data = getRangeVectorStats(response);
+  const data = [getRangeVectorStats(response)]; // single line only
   return <AreaChart data={data} loading={loading} query={query} {...rest} />;
 };
 
@@ -135,11 +146,11 @@ type AreaChartProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
-  data?: DataPoint[];
+  data?: DataPoint[][];
   xAxis?: boolean;
   yAxis?: boolean;
   padding?: object;
-  chartStatus?: AreaChartStatus;
+  chartStatus?: AreaChartStatus[];
   byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
 };
 

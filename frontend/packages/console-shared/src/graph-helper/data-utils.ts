@@ -6,9 +6,11 @@ const log = (x: number, y: number) => {
   return Math.log(y) / Math.log(x);
 };
 
-const frequentUnit = (dataPoints: DataPoint[], type) => {
+const frequentUnit = (dataPoints: DataPoint[][], type) => {
   // Reduces the dataset to the most frequently used unit
-  const [bestLevel] = dataPoints.reduce(
+  const flatten = dataPoints.reduce((acc, arr) => acc.concat(arr), []);
+
+  const [bestLevel] = flatten.reduce(
     (acc, point) => {
       const [maxUnit, maxCount, counts] = acc;
       // Appropriate power level for the datapoint
@@ -29,22 +31,24 @@ const frequentUnit = (dataPoints: DataPoint[], type) => {
 };
 
 // Array based procssor
-export const processFrame = (dataPoints: DataPoint[], typeName: string): ProcessFrameResult => {
+export const processFrame = (dataPoints: DataPoint[][], typeName: string): ProcessFrameResult => {
   const type = getType(typeName);
   let unit = null;
-  if (dataPoints) {
+  if (dataPoints && dataPoints[0]) {
     // Get the appropriate unit and convert the dataset to that level
     unit = frequentUnit(dataPoints, type);
     const frameLevel = type.units.indexOf(unit);
-    dataPoints.forEach((point) => {
-      point.y /= type.divisor ** frameLevel;
-    });
+    dataPoints.forEach((arr) =>
+      arr.forEach((point) => {
+        point.y /= type.divisor ** frameLevel;
+      }),
+    );
   }
   return { processedData: dataPoints, unit };
 };
 
 export type ProcessFrameResult = {
-  processedData: DataPoint[];
+  processedData: DataPoint[][];
   unit: string;
 };
 
