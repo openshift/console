@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
-import { LoadingBox, PageHeading, ExternalLink } from '@console/internal/components/utils';
+import {
+  LoadingBox,
+  PageHeading,
+  ExternalLink,
+  StatusBox,
+} from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import { filterRoleBindings, getUserRoleBindings } from './project-access-form-utils';
@@ -27,8 +32,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
   if (!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) {
     return <LoadingBox />;
   }
-
-  const noProjectsAvailable = !_.isEmpty(roleBindings.loadError);
 
   const filteredRoleBindings = filterRoleBindings(roleBindings, Roles);
 
@@ -118,12 +121,10 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
         .
       </PageHeading>
       <hr />
-      {noProjectsAvailable ? (
-        <div className="cos-status-box">
-          <div className="text-center">No Role Bindings Found</div>
-        </div>
-      ) : (
-        <div className="co-m-pane__body">
+      <div className="co-m-pane__body">
+        {roleBindings.loadError ? (
+          <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
+        ) : (
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
@@ -131,8 +132,8 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
             validationSchema={validationSchema}
             render={(props) => <ProjectAccessForm {...props} />}
           />
-        </div>
-      )}
+        )}
+      </div>
     </React.Fragment>
   );
 };
