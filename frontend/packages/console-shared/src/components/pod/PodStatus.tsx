@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
-import { Pod } from '../../types';
+import { ExtPodKind } from '../../types';
 import { calculateRadius, podStatus, getPodStatus } from '../../utils';
 import { podColor } from '../../constants';
 import './PodStatus.scss';
@@ -21,7 +21,7 @@ type PodStatusProps = {
   standalone?: boolean;
   x?: number;
   y?: number;
-  data: Pod[];
+  data: ExtPodKind[];
   showTooltip?: boolean;
   title?: string;
   subTitle?: string;

@@ -283,7 +283,7 @@ export type PodSpec = {
 };
 
 // https://github.com/kubernetes/api/blob/release-1.16/core/v1/types.go#L2411-L2432
-type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
+export type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
 
 type ContainerStateValue = {
   reason?: string;
