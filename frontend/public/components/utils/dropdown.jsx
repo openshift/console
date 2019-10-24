@@ -35,9 +35,9 @@ export class DropdownMixin extends React.PureComponent {
     this.hide(event);
   }
 
-  componentWillReceiveProps({ selectedKey }) {
+  componentWillReceiveProps({ selectedKey, items }) {
     if (selectedKey !== this.props.selectedKey) {
-      this.setState({ selectedKey });
+      this.setState({ selectedKey, title: items[selectedKey] });
     }
   }
 

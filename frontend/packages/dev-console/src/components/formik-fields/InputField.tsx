@@ -31,6 +31,7 @@ const InputField: React.FC<InputFieldProps> = ({
         isValid={isValid}
         isRequired={required}
         aria-describedby={`${fieldId}-helper`}
+        value={field.value || ''}
         onChange={(value, event) => {
           field.onChange(event);
           onChange && onChange(event);

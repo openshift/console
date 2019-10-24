@@ -33,6 +33,7 @@ const InputSearchField: React.FC<SearchInputFieldProps> = ({
           isValid={isValid}
           isRequired={required}
           aria-describedby={`${fieldId}-helper`}
+          value={field.value || ''}
           onChange={(value, event) => field.onChange(event)}
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.keyCode === 13) {
