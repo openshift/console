@@ -24,7 +24,7 @@ export const getKnativeServiceDepResource = (
     project: { name: namespace },
     serverless: { scaling },
     limits,
-    route: { unknownTargetPort },
+    route: { unknownTargetPort, create },
     labels,
     image: { tag: imageTag },
   } = formData;
@@ -52,6 +52,7 @@ export const getKnativeServiceDepResource = (
     metadata: {
       name,
       namespace,
+      ...(!create && { labels: { 'serving.knative.dev/visibility': `cluster-local` } }),
     },
     spec: {
       template: {
