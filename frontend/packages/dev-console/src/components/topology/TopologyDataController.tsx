@@ -53,7 +53,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
   return (
-    <Firehose resources={resources} forceUpdate>
+    <Firehose resources={resources}>
       <Controller application={application} cheURL={cheURL} render={render} utils={utils} />
     </Firehose>
   );

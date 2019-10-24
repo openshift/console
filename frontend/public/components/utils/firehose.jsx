@@ -149,8 +149,12 @@ export const Firehose = connect(
       shallowMapEquals(next.k8sModels, prev.k8sModels),
   },
 )(
-  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, forceUpdate?: boolean}>} */
+  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>}>} */
   class Firehose extends React.Component {
+    state = {
+      firehoses: [],
+    };
+
     // TODO: Convert this to `componentDidMount`
     // eslint-disable-next-line camelcase
     UNSAFE_componentWillMount() {
@@ -161,17 +165,23 @@ export const Firehose = connect(
       this.clear();
     }
 
-    shouldComponentUpdate(nextProps) {
-      const { forceUpdate = false } = this.props;
-      if (nextProps.inFlight !== this.props.inFlight && nextProps.loaded) {
-        return forceUpdate;
+    shouldComponentUpdate(nextProps, nextState) {
+      if (
+        Object.keys(nextProps).length === Object.keys(this.props).length &&
+        Object.keys(nextProps)
+          .filter((key) => key !== 'inFlight')
+          .every((key) => nextProps[key] === this.props[key]) &&
+        (nextState === this.state ||
+          (nextState.firehoses.length === 0 && this.state.firehoses.length === 0))
+      ) {
+        return this.props.loaded ? false : this.props.inFlight !== nextProps.inFlight;
       }
       return true;
     }
 
     componentDidUpdate(prevProps) {
       const discoveryComplete =
-        !this.props.inFlight && !this.props.loaded && this.firehoses.length === 0;
+        !this.props.inFlight && !this.props.loaded && this.state.firehoses.length === 0;
       const resourcesChanged =
         _.intersectionWith(prevProps.resources, this.props.resources, _.isEqual).length !==
         this.props.resources.length;
@@ -185,10 +195,9 @@ export const Firehose = connect(
     start() {
       const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = this.props;
 
-      if (inFlight && _.some(resources, ({ kind }) => !k8sModels.get(kind))) {
-        this.firehoses = [];
-      } else {
-        this.firehoses = resources
+      let firehoses = [];
+      if (!(inFlight && _.some(resources, ({ kind }) => !k8sModels.get(kind)))) {
+        firehoses = resources
           .map((resource) => {
             const query = makeQuery(
               resource.namespace,
@@ -209,20 +218,20 @@ export const Firehose = connect(
           });
       }
 
-      this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) =>
+      firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) =>
         isList
           ? watchK8sList(id, query, k8sKind)
           : watchK8sObject(id, name, namespace, query, k8sKind),
       );
+      this.setState({ firehoses });
     }
 
     clear() {
-      this.firehoses.forEach(({ id }) => this.props.stopK8sWatch(id));
-      this.firehoses = [];
+      this.state.firehoses.forEach(({ id }) => this.props.stopK8sWatch(id));
     }
 
     render() {
-      const reduxes = this.firehoses.map(({ id, prop, isList, filters, optional }) => ({
+      const reduxes = this.state.firehoses.map(({ id, prop, isList, filters, optional }) => ({
         reduxID: id,
         prop,
         isList,
@@ -231,7 +240,7 @@ export const Firehose = connect(
       }));
       const children = inject(this.props.children, _.omit(this.props, ['children', 'resources']));
 
-      return this.props.loaded || this.firehoses.length > 0 ? (
+      return this.props.loaded || this.state.firehoses.length > 0 ? (
         <ConnectToState reduxes={reduxes}>{children}</ConnectToState>
       ) : null;
     }
@@ -248,7 +257,6 @@ Firehose.contextTypes = {
 Firehose.propTypes = {
   children: PropTypes.node,
   expand: PropTypes.bool,
-  forceUpdate: PropTypes.bool,
   resources: PropTypes.arrayOf(
     PropTypes.shape({
       kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,

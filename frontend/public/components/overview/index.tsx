@@ -465,7 +465,7 @@ const Overview_: React.SFC<OverviewProps> = ({
     <div className={className}>
       <div className="overview__main-column" ref={ref} style={{ height }}>
         <div className="overview__main-column-section">
-          <Firehose resources={mock ? [] : resources} forceUpdate>
+          <Firehose resources={mock ? [] : resources}>
             <OverviewMainContent
               mock={mock}
               namespace={namespace}
