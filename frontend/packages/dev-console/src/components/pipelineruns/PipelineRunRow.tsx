@@ -47,9 +47,6 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
       </TableData>
       <TableData className={tableColumnClasses[4]}>-</TableData>
       <TableData className={tableColumnClasses[5]}>
-        {obj.spec && obj.spec.trigger && obj.spec.trigger.type ? obj.spec.trigger.type : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={pipelinerunReference} resource={obj} />
       </TableData>
     </TableRow>
