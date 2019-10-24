@@ -14,7 +14,31 @@ export enum OverviewQuery {
   NODES_BY_MEMORY = 'NODES_BY_MEMORY',
   NODES_BY_STORAGE = 'NODES_BY_STORAGE',
   NODES_BY_NETWORK = 'NODES_BY_NETWORK',
+  PROJECTS_BY_CPU = 'PROJECTS_BY_CPU',
+  PROJECTS_BY_MEMORY = 'PROJECTS_BY_MEMORY',
+  PROJECTS_BY_STORAGE = 'PROJECTS_BY_STORAGE',
+  PROJECTS_BY_NETWORK = 'PROJECTS_BY_NETWORK',
 }
+
+const top25Queries = {
+  [OverviewQuery.PODS_BY_CPU]:
+    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (pod, namespace)))',
+  [OverviewQuery.PODS_BY_MEMORY]:
+    'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (pod, namespace)))',
+  [OverviewQuery.PODS_BY_STORAGE]:
+    'topk(25, sort_desc(avg by (pod, namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m]))))',
+  [OverviewQuery.NODES_BY_CPU]: 'topk(5,sort_desc(instance:node_cpu_utilisation:rate1m))',
+  [OverviewQuery.NODES_BY_MEMORY]:
+    'topk(25,sort_desc(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"}))',
+  [OverviewQuery.NODES_BY_STORAGE]:
+    'topk(25, sort_desc(avg by (instance) (instance_device:node_disk_io_time_seconds:rate1m)))',
+  [OverviewQuery.PROJECTS_BY_CPU]:
+    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (namespace)))',
+  [OverviewQuery.PROJECTS_BY_MEMORY]:
+    'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (namespace)))',
+  [OverviewQuery.PROJECTS_BY_STORAGE]:
+    'topk(25, sort_desc(avg by (namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m]))))',
+};
 
 const overviewQueries = {
   [OverviewQuery.MEMORY_TOTAL]: 'sum(kube_node_status_capacity_memory_bytes)',
@@ -71,4 +95,19 @@ export const topConsumersQueries = {
   [OverviewQuery.NODES_BY_MEMORY]: overviewQueries[OverviewQuery.NODES_BY_MEMORY],
   [OverviewQuery.NODES_BY_STORAGE]: overviewQueries[OverviewQuery.NODES_BY_STORAGE],
   [OverviewQuery.NODES_BY_NETWORK]: overviewQueries[OverviewQuery.NODES_BY_NETWORK],
+  [OverviewQuery.PROJECTS_BY_CPU]: overviewQueries[OverviewQuery.PROJECTS_BY_CPU],
+  [OverviewQuery.PROJECTS_BY_MEMORY]: overviewQueries[OverviewQuery.PROJECTS_BY_MEMORY],
+  [OverviewQuery.PROJECTS_BY_STORAGE]: overviewQueries[OverviewQuery.PROJECTS_BY_STORAGE],
+};
+
+export const top25ConsumerQueries = {
+  [OverviewQuery.PODS_BY_CPU]: top25Queries[OverviewQuery.PODS_BY_CPU],
+  [OverviewQuery.PODS_BY_MEMORY]: top25Queries[OverviewQuery.PODS_BY_MEMORY],
+  [OverviewQuery.PODS_BY_STORAGE]: top25Queries[OverviewQuery.PODS_BY_STORAGE],
+  [OverviewQuery.NODES_BY_CPU]: top25Queries[OverviewQuery.NODES_BY_CPU],
+  [OverviewQuery.NODES_BY_MEMORY]: top25Queries[OverviewQuery.NODES_BY_MEMORY],
+  [OverviewQuery.NODES_BY_STORAGE]: top25Queries[OverviewQuery.NODES_BY_STORAGE],
+  [OverviewQuery.PROJECTS_BY_CPU]: top25Queries[OverviewQuery.PROJECTS_BY_CPU],
+  [OverviewQuery.PROJECTS_BY_MEMORY]: top25Queries[OverviewQuery.PROJECTS_BY_MEMORY],
+  [OverviewQuery.PROJECTS_BY_STORAGE]: top25Queries[OverviewQuery.PROJECTS_BY_STORAGE],
 };
