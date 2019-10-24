@@ -4,6 +4,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
+import { Dropdown } from '@console/internal/components/utils/dropdown';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -13,6 +14,12 @@ import {
   getRangeVectorStats,
   getInstantVectorStats,
 } from '@console/internal/components/graphs/utils';
+import {
+  ONE_HR,
+  SIX_HR,
+  TWENTY_FOUR_HR,
+  UTILIZATION_QUERY_HOUR_MAP,
+} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import {
   FirehoseResource,
   humanizeBinaryBytesWithoutB,
@@ -26,6 +33,9 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 import { getUtilizationQueries, HostQuery } from './queries';
+
+const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
+const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const getMachineResource = (namespace: string, name: string): FirehoseResource => ({
   isList: false,
@@ -44,6 +54,8 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const [duration, setDuration] = React.useState(metricDurations[0]);
+
   const namespace = getNamespace(obj);
   const machineName = getHostMachineName(obj);
 
@@ -62,16 +74,16 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   React.useEffect(() => {
     if (machineName) {
-      const queries = getUtilizationQueries(hostName, hostIP);
+      const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
       Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
       return () => {
         Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
       };
     }
     return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, machineName, hostName, hostIP]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, machineName, hostName, hostIP, duration]);
 
-  const queries = getUtilizationQueries(hostName, hostIP);
+  const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
   const cpuUtilization = prometheusResults.getIn([
     queries[HostQuery.CPU_UTILIZATION],
     'data',
@@ -145,6 +157,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <Dropdown
+          items={metricDurationsOptions}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
         <UtilizationItem
