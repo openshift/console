@@ -1,5 +1,5 @@
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
+import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '../formik-fields/field-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import classNames from 'classnames';
-import { K8sActivityProps, PrometheusActivityProps } from '@console/plugin-sdk';
-import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
+import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
 import { Accordion } from '@patternfly/react-core';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { AsyncComponent } from '@console/internal/components/utils/async';

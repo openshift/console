@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective } from '@console/plugin-sdk/src/typings';
+import { Perspective } from '@console/plugin-sdk';
 import * as plugins from '../../plugins';
 import { RootState } from '../../redux';
 import { stateToFlagsObject, FlagsObject } from '../../reducers/features';

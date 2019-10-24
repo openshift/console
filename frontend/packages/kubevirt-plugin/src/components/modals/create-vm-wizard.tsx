@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import {
-  CreateVmWizard,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_TYPE_BASE,
@@ -18,6 +17,7 @@ import { k8sCreate, k8sGet, k8sPatch, k8sKill } from '@console/internal/module/k
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { VirtualMachineModel, DataVolumeModel, V2VVMwareModel } from '../../models';
 import { getResource } from '../../utils';
+import { CreateVMWizard } from '../create-vm-wizard/create-vm-wizard';
 import { createModalResourceLauncher } from './modal-resource-launcher';
 
 const mapStateToProps = ({ k8s }) => {
@@ -27,7 +27,7 @@ const mapStateToProps = ({ k8s }) => {
   return { isV2vVmwareCrd: !kindsInFlight && !!k8sModels.get(V2VVMwareModel.kind) };
 };
 
-const CreateVmWizardDecorated = connect(mapStateToProps)(CreateVmWizard);
+const CreateVmWizardDecorated = connect(mapStateToProps)(CreateVMWizard);
 
 export const openCreateVmWizard = (activeNamespace, createTemplate = false) => {
   const resources = [
