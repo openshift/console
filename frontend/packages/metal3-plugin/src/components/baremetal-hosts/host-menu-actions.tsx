@@ -18,6 +18,8 @@ import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_STATUS_READY,
   HOST_STATUS_REGISTRATION_ERROR,
+  HOST_STATUS_ERROR,
+  HOST_STATUS_DISCOVERED,
 } from '../../constants';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import { powerOffHostModal } from '../modals/PowerOffHostModal';
@@ -90,7 +92,12 @@ export const Delete = (
 ): KebabOption => {
   const title = 'Delete Bare Metal Host';
   return {
-    hidden: ![HOST_STATUS_READY, HOST_STATUS_REGISTRATION_ERROR].includes(status),
+    hidden: ![
+      HOST_STATUS_READY,
+      HOST_STATUS_REGISTRATION_ERROR,
+      HOST_STATUS_ERROR,
+      HOST_STATUS_DISCOVERED,
+    ].includes(status),
     label: title,
     callback: () =>
       deleteModal({

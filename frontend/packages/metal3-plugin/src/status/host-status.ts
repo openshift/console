@@ -7,6 +7,7 @@ import {
   HOST_STATUS_ERROR,
   HOST_STATUS_PROVISIONING,
   HOST_STATUS_PROVISIONING_ERROR,
+  HOST_STATUS_DISCOVERED,
 } from '../constants';
 import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
@@ -29,6 +30,8 @@ const getBareMetalHostStatus = (host: BareMetalHostKind) => {
       default:
         hostStatus = HOST_STATUS_ERROR;
     }
+  } else if (operationalStatus === HOST_STATUS_DISCOVERED) {
+    hostStatus = HOST_STATUS_DISCOVERED;
   } else {
     hostStatus = provisioningState;
   }
