@@ -26,7 +26,6 @@ import {
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
-import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 
 const getItems = (flags: FlagsObject) =>
@@ -122,26 +121,24 @@ export const InventoryCard = connectToFlags(
         <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <InventoryBody>
-          <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
-          <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
-          <ClusterInventoryItem model={StorageClassModel} />
+        <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
+        <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
+        <ClusterInventoryItem model={StorageClassModel} />
+        <ClusterInventoryItem
+          model={PersistentVolumeClaimModel}
+          mapper={getPVCStatusGroups}
+          useAbbr
+        />
+        {items.map((item) => (
           <ClusterInventoryItem
-            model={PersistentVolumeClaimModel}
-            mapper={getPVCStatusGroups}
-            useAbbr
+            key={item.properties.model.kind}
+            model={item.properties.model}
+            mapper={item.properties.mapper}
+            additionalResources={item.properties.additionalResources}
+            useAbbr={item.properties.useAbbr}
+            expandedComponent={item.properties.expandedComponent}
           />
-          {items.map((item) => (
-            <ClusterInventoryItem
-              key={item.properties.model.kind}
-              model={item.properties.model}
-              mapper={item.properties.mapper}
-              additionalResources={item.properties.additionalResources}
-              useAbbr={item.properties.useAbbr}
-              expandedComponent={item.properties.expandedComponent}
-            />
-          ))}
-        </InventoryBody>
+        ))}
       </DashboardCardBody>
     </DashboardCard>
   );

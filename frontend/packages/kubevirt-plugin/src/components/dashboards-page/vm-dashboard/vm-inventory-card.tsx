@@ -6,7 +6,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { getName, getNamespace } from '@console/shared';
-import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { resourcePath } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
@@ -44,20 +43,18 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={isLoading}>
-        <InventoryBody>
-          <InventoryItem
-            isLoading={isLoading}
-            title="NIC"
-            count={nicCount}
-            TitleComponent={NicsTitle}
-          />
-          <InventoryItem
-            isLoading={isLoading}
-            title="Disk"
-            count={diskCount}
-            TitleComponent={DisksTitle}
-          />
-        </InventoryBody>
+        <InventoryItem
+          isLoading={isLoading}
+          title="NIC"
+          count={nicCount}
+          TitleComponent={NicsTitle}
+        />
+        <InventoryItem
+          isLoading={isLoading}
+          title="Disk"
+          count={diskCount}
+          TitleComponent={DisksTitle}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );

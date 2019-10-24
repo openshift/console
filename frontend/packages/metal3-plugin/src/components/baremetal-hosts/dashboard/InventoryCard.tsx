@@ -8,7 +8,6 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
@@ -80,14 +79,12 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <InventoryBody>
-          <InventoryItem
-            isLoading={!podData}
-            title="Pod"
-            count={podCount}
-            error={podQueryError || podError || !podStats.length}
-          />
-        </InventoryBody>
+        <InventoryItem
+          isLoading={!podData}
+          title="Pod"
+          count={podCount}
+          error={podQueryError || podError || !podStats.length}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );

@@ -5,7 +5,6 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import InventoryBody from '@console/shared/src/components/dashboard/inventory-card/InventoryBody';
 import {
   PodModel,
   DeploymentModel,
@@ -77,22 +76,20 @@ export const InventoryCard: React.FC = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <InventoryBody>
-          <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
-          <ProjectInventoryItem
-            projectName={projectName}
-            model={PodModel}
-            mapper={getPodStatusGroups}
-          />
-          <ProjectInventoryItem
-            projectName={projectName}
-            model={PersistentVolumeClaimModel}
-            mapper={getPVCStatusGroups}
-            useAbbr
-          />
-          <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
-          <ProjectInventoryItem projectName={projectName} model={RouteModel} />
-        </InventoryBody>
+        <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
+        <ProjectInventoryItem
+          projectName={projectName}
+          model={PodModel}
+          mapper={getPodStatusGroups}
+        />
+        <ProjectInventoryItem
+          projectName={projectName}
+          model={PersistentVolumeClaimModel}
+          mapper={getPVCStatusGroups}
+          useAbbr
+        />
+        <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
+        <ProjectInventoryItem projectName={projectName} model={RouteModel} />
       </DashboardCardBody>
     </DashboardCard>
   );
