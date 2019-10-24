@@ -188,7 +188,7 @@ export const VolumesTable = (props) => {
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
   return (
-    <React.Fragment>
+    <>
       {props.heading && <SectionHeading text={props.heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
         <EmptyBox label="Volumes" />
@@ -204,7 +204,7 @@ export const VolumesTable = (props) => {
           virtualize
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -118,29 +118,25 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
             title={from.name}
           />
         )}
-        {from && !referencesTag && <React.Fragment>{from.name}</React.Fragment>}
+        {from && !referencesTag && <>{from.name}</>}
         {!from && <span className="text-muted">pushed image</span>}
       </span>
       <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
         {!imageStreamStatus && dockerRepositoryCheck && (
-          <React.Fragment>
+          <>
             <YellowExclamationTriangleIcon />
             &nbsp;Unable to resolve
-          </React.Fragment>
+          </>
         )}
-        {!imageStreamStatus && !dockerRepositoryCheck && !from && (
-          <React.Fragment>Not synced yet</React.Fragment>
-        )}
+        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>Not synced yet</>}
         {/* We have no idea why in this case  */}
-        {!imageStreamStatus && !dockerRepositoryCheck && from && (
-          <React.Fragment>Unresolved</React.Fragment>
-        )}
-        {imageStreamStatus && image && <React.Fragment>{image}</React.Fragment>}
+        {!imageStreamStatus && !dockerRepositoryCheck && from && <>Unresolved</>}
+        {imageStreamStatus && image && <>{image}</>}
         {imageStreamStatus && !image && (
-          <React.Fragment>
+          <>
             <YellowExclamationTriangleIcon />
             &nbsp;There is no image associated with this tag
-          </React.Fragment>
+          </>
         )}
       </span>
       <div className="col-md-3 hidden-sm hidden-xs">
@@ -165,7 +161,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
 
   return (
     <Popover
-      headerContent={<React.Fragment>Image registry commands</React.Fragment>}
+      headerContent={<>Image registry commands</>}
       className="co-example-docker-command__popover"
       bodyContent={
         <div>

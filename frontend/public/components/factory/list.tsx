@@ -423,7 +423,7 @@ export const List = connect(
       ]);
       const ListRows = virtualize ? VirtualRows : Rows;
       const children = (
-        <React.Fragment>
+        <>
           <Header
             {...componentProps}
             applySort={_.partial(sortList, listId)}
@@ -440,7 +440,7 @@ export const List = connect(
             mock={mock}
             Row={Row}
           />
-        </React.Fragment>
+        </>
       );
 
       return (

@@ -36,7 +36,7 @@ export const CreateOCSService: React.FC<CreateOCSServiceProps> = React.memo((pro
   }, [props.match.params.appName, props.match.params.ns]);
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-create-operand__header">
         <div className="co-create-operand__header-buttons">
           {clusterServiceVersion !== null && (
@@ -58,7 +58,7 @@ export const CreateOCSService: React.FC<CreateOCSServiceProps> = React.memo((pro
         sample={sample}
         clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
       />
-    </React.Fragment>
+    </>
   );
 });
 

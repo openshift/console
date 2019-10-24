@@ -133,14 +133,14 @@ OBCTableRow.displayName = 'OBCTableRow';
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const storageClassName = _.get(obj, 'spec.storageClassName');
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Object Bucket Claim Overview" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />
             {isBound(obj) && (
-              <React.Fragment>
+              <>
                 <dt>Secret</dt>
                 <dd>
                   <ResourceLink
@@ -150,7 +150,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                     namespace={obj.metadata.namespace}
                   />
                 </dd>
-              </React.Fragment>
+              </>
             )}
           </div>
           <div className="col-sm-6">
@@ -167,7 +167,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               )}
             </dd>
             {isBound(obj) && (
-              <React.Fragment>
+              <>
                 <dt>Object Bucket</dt>
                 <dd>
                   <ResourceLink
@@ -175,13 +175,13 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                     name={obj.spec.ObjectBucketName}
                   />
                 </dd>
-              </React.Fragment>
+              </>
             )}
           </div>
         </div>
       </div>
       <GetSecret obj={obj} />
-    </React.Fragment>
+    </>
   );
 };
 

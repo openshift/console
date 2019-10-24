@@ -125,7 +125,7 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({ pods, obj }) => {
   pods.sort(podCompare);
 
   return (
-    <React.Fragment>
+    <>
       <SidebarSectionHeading text="Pods">
         {_.size(pods) > podsShown && (
           <Link
@@ -141,7 +141,7 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({ pods, obj }) => {
       ) : (
         <PodsOverviewList pods={_.take(pods, podsShown)} />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

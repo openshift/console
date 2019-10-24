@@ -116,7 +116,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
     const tipContent = (
       <div className="odc-pod-status-tooltip">
         {vData[tipIndex] && (
-          <React.Fragment>
+          <>
             <span
               className="odc-pod-status-tooltip__status-box"
               style={{ background: podColor[vData[tipIndex].x] }}
@@ -127,7 +127,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
                 {Math.round(vData[tipIndex].y)}
               </span>
             )}
-          </React.Fragment>
+          </>
         )}
       </div>
     );

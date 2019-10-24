@@ -19,7 +19,7 @@ export interface ResourceSectionProps {
 const PipelineResourceSection: React.FC<ResourceSectionProps> = ({ resources }) => {
   return (
     resources.types.length > 0 && (
-      <React.Fragment>
+      <>
         {resources.types.map((type) => (
           <FieldArray
             name={type}
@@ -46,7 +46,7 @@ const PipelineResourceSection: React.FC<ResourceSectionProps> = ({ resources }) 
             }
           />
         ))}
-      </React.Fragment>
+      </>
     )
   );
 };

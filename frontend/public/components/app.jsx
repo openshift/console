@@ -102,7 +102,7 @@ class App extends React.PureComponent {
     const { productName } = getBrandingDetails();
 
     return (
-      <React.Fragment>
+      <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <ConsoleNotifier location="BannerTop" />
         <Page
@@ -118,7 +118,7 @@ class App extends React.PureComponent {
           <AppContents />
         </Page>
         <ConsoleNotifier location="BannerBottom" />
-      </React.Fragment>
+      </>
     );
   }
 }

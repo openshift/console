@@ -33,7 +33,7 @@ export class OperatorHubCommunityProviderModal extends React.Component<
 
   render() {
     const { ignoreWarnings } = this.state;
-    const submitButtonContent = <React.Fragment>Continue</React.Fragment>;
+    const submitButtonContent = <>Continue</>;
     return (
       <form onSubmit={this.submit} className="modal-content co-modal-ignore-warning">
         <ModalTitle>Show Community Operator</ModalTitle>

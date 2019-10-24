@@ -118,7 +118,7 @@ const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
         <span className="co-m-label__key">{key}</span>
         <span className="co-m-label__eq">=</span>
         <span className="co-m-label__value">{value}</span>
-        {count < _.size(labels) && <React.Fragment>,&nbsp;</React.Fragment>}
+        {count < _.size(labels) && <>,&nbsp;</>}
       </React.Fragment>
     );
   });
@@ -247,10 +247,10 @@ const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ o
   }
 
   return (
-    <React.Fragment>
+    <>
       <AlertRouting secret={secret} config={config} />
       <Receivers config={config} />
-    </React.Fragment>
+    </>
   );
 };
 

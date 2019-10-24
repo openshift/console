@@ -12,10 +12,10 @@ const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
   return (
     <FormSection title="Routing">
       {route.create && (
-        <React.Fragment>
+        <>
           <CreateRoute />
           <SecureRoute />
-        </React.Fragment>
+        </>
       )}
     </FormSection>
   );

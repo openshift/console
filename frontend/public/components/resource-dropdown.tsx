@@ -44,7 +44,7 @@ const blacklistResources = ImmutableSet([
 ]);
 
 const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup }) => (
-  <React.Fragment>
+  <>
     <span className="co-resource-item">
       <span className="co-resource-icon--fixed-width">
         <ResourceIcon kind={referenceForModel(model)} />
@@ -52,16 +52,16 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup }) => (
       <span className="co-resource-item__resource-name">
         {model.kind}
         {showGroup && (
-          <React.Fragment>
+          <>
             &nbsp;
             <div className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
               {model.apiGroup || 'core'}/{model.apiVersion}
             </div>
-          </React.Fragment>
+          </>
         )}
       </span>
     </span>
-  </React.Fragment>
+  </>
 );
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
@@ -108,7 +108,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const allItems = (showAll
     ? OrderedMap({
         all: (
-          <React.Fragment>
+          <>
             <span className="co-resource-item">
               <span className="co-resource-icon--fixed-width">
                 <ResourceIcon kind="All" />
@@ -116,7 +116,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               <span className="co-resource-item__resource-name">All Types</span>
             </span>
             {/* <ResourceIcon kind="All" /> */}
-          </React.Fragment>
+          </>
         ),
       }).concat(items)
     : items

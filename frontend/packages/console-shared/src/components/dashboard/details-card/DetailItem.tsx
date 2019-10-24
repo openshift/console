@@ -12,10 +12,10 @@ const DetailItem: React.FC<DetailItemProps> = React.memo(
       status = children;
     }
     return (
-      <React.Fragment>
+      <>
         <dt className="co-details-card__item-title">{title}</dt>
         <dd className="co-details-card__item-value">{status}</dd>
-      </React.Fragment>
+      </>
     );
   },
 );

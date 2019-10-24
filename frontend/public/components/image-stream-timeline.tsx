@@ -16,7 +16,7 @@ const ImageStreamTimelineItem: React.FC<ImageStreamTimelineItemProps> = ({
 }) => {
   const referenceAndSHA = _.split(tag.dockerImageReference, '@');
   return (
-    <React.Fragment>
+    <>
       <li>
         <div className="co-images-stream-tag-timeline__item-row">
           <span className="co-images-stream-tag-timeline__circle-icon">
@@ -42,7 +42,7 @@ const ImageStreamTimelineItem: React.FC<ImageStreamTimelineItemProps> = ({
           </div>
         </div>
       </li>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -89,7 +89,7 @@ export const ImageStreamTimeline: React.FC<ImageStreamTimelineProps> = ({
   });
 
   return (
-    <React.Fragment>
+    <>
       <ul className="co-images-stream-tag-timeline">
         {timeline}
         <div>
@@ -98,7 +98,7 @@ export const ImageStreamTimeline: React.FC<ImageStreamTimelineProps> = ({
           </span>
         </div>
       </ul>
-    </React.Fragment>
+    </>
   );
 };
 

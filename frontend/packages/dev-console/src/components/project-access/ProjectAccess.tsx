@@ -107,7 +107,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
   };
 
   return (
-    <React.Fragment>
+    <>
       <PageHeading title="Project Access">
         Project Access allows you to add or remove a user&apos;s access to the project. More
         advanced management of role-based access control appear in{' '}
@@ -134,7 +134,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
           />
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

@@ -30,7 +30,7 @@ const SourceSecretSelector: React.FC = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <FormGroup
         fieldId={getFieldId('source-secret', 'dropdown')}
         label="Source Secret"
@@ -51,7 +51,7 @@ const SourceSecretSelector: React.FC = () => {
           onChange={handleDropdownChange}
         />
       </FormGroup>
-    </React.Fragment>
+    </>
   );
 };
 

@@ -15,10 +15,10 @@ const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ match }) => {
     namespace,
   };
   return (
-    <React.Fragment>
+    <>
       <NamespaceBar />
       <RenderProjectAccessPage {...props} />
-    </React.Fragment>
+    </>
   );
 };
 

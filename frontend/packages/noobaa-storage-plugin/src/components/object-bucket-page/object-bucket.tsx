@@ -99,7 +99,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
     _.get(obj, 'spec.claimRef.namespace'),
   ];
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Object Bucket Overview" />
         <div className="row">
@@ -132,7 +132,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

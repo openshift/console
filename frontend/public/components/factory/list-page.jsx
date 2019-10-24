@@ -259,7 +259,7 @@ export const FireMan_ = connect(
       }
 
       return (
-        <React.Fragment>
+        <>
           {title && <PageHeading title={title} badge={badge} />}
           {/* Show help text above the filter bar if there's a create button. */}
           {helpText && createLink && (
@@ -294,7 +294,7 @@ export const FireMan_ = connect(
               applyFilter: this.applyFilter,
             })}
           </div>
-        </React.Fragment>
+        </>
       );
     }
   },

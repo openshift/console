@@ -63,7 +63,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   ];
 
   return (
-    <React.Fragment>
+    <>
       {projectsAvailable && applicationsAvailable && (
         <FormGroup
           fieldId={fieldId}
@@ -95,7 +95,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           helpText="A unique name given to the application grouping to label your resources."
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

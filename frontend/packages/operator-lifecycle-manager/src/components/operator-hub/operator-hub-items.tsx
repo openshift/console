@@ -299,7 +299,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   };
 
   return (
-    <React.Fragment>
+    <>
       <TileViewPage
         items={props.items}
         itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, ({ name }) => name.toLowerCase())}
@@ -325,7 +325,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           />
         )}
       </Modal>
-    </React.Fragment>
+    </>
   );
 };
 

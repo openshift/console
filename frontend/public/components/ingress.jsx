@@ -197,7 +197,7 @@ const RulesRows = (props) => {
 };
 
 const Details = ({ obj: ingress }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="Ingress Overview" />
       <ResourceSummary resource={ingress}>
@@ -217,7 +217,7 @@ const Details = ({ obj: ingress }) => (
         <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
       </div>
     </div>
-  </React.Fragment>
+  </>
 );
 
 const IngressesDetailsPage = (props) => (

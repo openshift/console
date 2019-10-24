@@ -22,7 +22,7 @@ export const WorkloadPausedAlert = ({ model, obj }) => {
       isInline
       className="co-alert"
       variant="info"
-      title={<React.Fragment>{obj.metadata.name} is paused</React.Fragment>}
+      title={<>{obj.metadata.name} is paused</>}
       action={
         <AlertActionLink
           onClick={() =>

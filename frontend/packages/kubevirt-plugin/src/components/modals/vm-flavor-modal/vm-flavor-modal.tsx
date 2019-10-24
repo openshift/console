@@ -113,7 +113,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
           </FormGroup>
 
           {flavor === CUSTOM_FLAVOR && (
-            <React.Fragment>
+            <>
               <FormGroup label="CPUs" isRequired fieldId={getId('cpu')}>
                 <TextInput
                   isRequired
@@ -134,7 +134,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
                   aria-label="Memory"
                 />
               </FormGroup>
-            </React.Fragment>
+            </>
           )}
         </Form>
       </ModalBody>

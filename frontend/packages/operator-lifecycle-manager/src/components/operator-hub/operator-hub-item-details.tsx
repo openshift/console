@@ -84,7 +84,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     }?showDelete=true`;
 
   return (
-    <React.Fragment>
+    <>
       <Modal.Header>
         <Modal.CloseButton onClick={closeOverlay} />
         <CatalogItemHeader
@@ -132,7 +132,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
           </div>
         </div>
       </Modal.Body>
-    </React.Fragment>
+    </>
   );
 };
 

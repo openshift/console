@@ -53,10 +53,10 @@ const LogControls = ({
       <div className="co-toolbar__group co-toolbar__group--left">
         <div className="co-toolbar__item">
           {status === STREAM_LOADING && (
-            <React.Fragment>
+            <>
               <LoadingInline />
               &nbsp;
-            </React.Fragment>
+            </>
           )}
           {[STREAM_ACTIVE, STREAM_PAUSED].includes(status) && (
             <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming} />
@@ -112,15 +112,15 @@ const LogControls = ({
         </span>
         <Button variant="link" className="pf-m-link--align-right" onClick={toggleFullscreen}>
           {isFullscreen ? (
-            <React.Fragment>
+            <>
               <CompressIcon className="co-icon-space-r" />
               Collapse
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               <ExpandIcon className="co-icon-space-r" />
               Expand
-            </React.Fragment>
+            </>
           )}
         </Button>
       </div>
@@ -359,7 +359,7 @@ class ResourceLog_ extends React.Component {
     const bufferFull = lines.length === bufferSize;
 
     return (
-      <React.Fragment>
+      <>
         {error && (
           <Alert
             isInline
@@ -403,7 +403,7 @@ class ResourceLog_ extends React.Component {
             updateStatus={this._updateStatus}
           />
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

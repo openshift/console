@@ -73,7 +73,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
   const namespace = match.params.ns;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>Topology</title>
       </Helmet>
@@ -98,7 +98,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
           </ProjectsExistWrapper>
         </Firehose>
       </NamespacedPage>
-    </React.Fragment>
+    </>
   );
 };
 

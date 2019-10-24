@@ -297,7 +297,7 @@ const Details = ({ obj: rq }) => {
   const showChartRow = hasComputeResources(resourceTypes);
   const scopes = _.get(rq, ['spec', 'scopes']);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Resource Quota Overview" />
         {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
@@ -349,7 +349,7 @@ const Details = ({ obj: rq }) => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

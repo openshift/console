@@ -31,7 +31,7 @@ export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
         {children}
       </a>
     ) : (
-      <React.Fragment>{children}</React.Fragment>
+      <>{children}</>
     );
   },
 );

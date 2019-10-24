@@ -22,9 +22,9 @@ const getPortOptions = (service: K8sResourceKind) => {
   const portOptions = ports.reduce(
     (acc, { name = UNNAMED_PORT_KEY, port, targetPort, protocol }) => {
       acc[name] = (
-        <React.Fragment>
+        <>
           {port} &rarr; {targetPort} ({protocol})
-        </React.Fragment>
+        </>
       );
       return acc;
     },
@@ -349,7 +349,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
     });
 
     return (
-      <React.Fragment>
+      <>
         <div className="co-m-pane__body co-m-pane__form">
           <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
             <div className="co-m-pane__name">{title}</div>
@@ -443,7 +443,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
               </div>
             </div>
             {alternateServicesList.length > 0 && (
-              <React.Fragment>
+              <>
                 <div className="form-group co-create-route__weight">
                   <label htmlFor="weight">Weight</label>
                   <input
@@ -460,7 +460,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                   </div>
                 </div>
                 {alternateServicesList}
-              </React.Fragment>
+              </>
             )}
             {alternateServicesList.length < MAX_ALT_SERVICE_TARGET &&
               alternateServicesList.length + 1 < _.keys(serviceOptions).length &&
@@ -546,7 +546,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                     </div>
                   </div>
                   {termination && termination !== 'passthrough' && (
-                    <React.Fragment>
+                    <>
                       <h2 className="h3">Certificates</h2>
                       <div className="help-block">
                         <p>
@@ -591,7 +591,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                           />
                         </div>
                       )}
-                    </React.Fragment>
+                    </>
                   )}
                 </div>
               )}
@@ -618,7 +618,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
             </div>
           </form>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

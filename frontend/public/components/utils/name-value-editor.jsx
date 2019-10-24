@@ -114,7 +114,7 @@ export const NameValueEditor = withDragDropContext(
         );
       });
       return (
-        <React.Fragment>
+        <>
           <div className="row pairs-list__heading">
             {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header" />}
             <div className="col-xs-5 text-secondary text-uppercase">{nameString}</div>
@@ -140,7 +140,7 @@ export const NameValueEditor = withDragDropContext(
                     {addString}
                   </Button>
                   {addConfigMapSecret && (
-                    <React.Fragment>
+                    <>
                       <Button
                         className="pf-m-link--align-left"
                         onClick={this._appendConfigMapOrSecret}
@@ -153,13 +153,13 @@ export const NameValueEditor = withDragDropContext(
                         />
                         Add from Config Map or Secret
                       </Button>
-                    </React.Fragment>
+                    </>
                   )}
                 </div>
               )}
             </div>
           </div>
-        </React.Fragment>
+        </>
       );
     }
   },
@@ -276,7 +276,7 @@ export const EnvFromEditor = withDragDropContext(
       });
 
       return (
-        <React.Fragment>
+        <>
           <div className="row pairs-list__heading">
             {!readOnly && <div className="col-xs-1 co-empty__header" />}
             <div className="col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
@@ -298,7 +298,7 @@ export const EnvFromEditor = withDragDropContext(
               )}
             </div>
           </div>
-        </React.Fragment>
+        </>
       );
     }
   },
@@ -433,10 +433,10 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           disableReorder,
         } = this.props;
         const deleteIcon = (
-          <React.Fragment>
+          <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
             <span className="sr-only">Delete</span>
-          </React.Fragment>
+          </>
         );
         const dragButton = (
           <div>
@@ -581,10 +581,10 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           secrets,
         } = this.props;
         const deleteButton = (
-          <React.Fragment>
+          <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
             <span className="sr-only">Delete</span>
-          </React.Fragment>
+          </>
         );
 
         return connectDropTarget(

@@ -95,7 +95,7 @@ ConfigMapTableRow.displayName = 'ConfigMapTableRow';
 
 const ConfigMapDetails = ({ obj: configMap }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Config Map Overview" />
         <ResourceSummary resource={configMap} />
@@ -108,7 +108,7 @@ const ConfigMapDetails = ({ obj: configMap }) => {
         <SectionHeading text="Binary Data" />
         <ConfigMapBinaryData data={configMap.binaryData} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

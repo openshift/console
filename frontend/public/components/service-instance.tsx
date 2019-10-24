@@ -161,7 +161,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({ obj: s
   const dashboardURL = _.get(si, 'status.dashboardURL');
 
   return (
-    <React.Fragment>
+    <>
       <ServiceInstanceMessage obj={si} />
       <div className="co-m-pane__body">
         <SectionHeading text="Service Instance Overview" />
@@ -191,12 +191,12 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({ obj: s
               <dt>Plan</dt>
               <dd>{plan || '-'}</dd>
               {dashboardURL && (
-                <React.Fragment>
+                <>
                   <dt>Dashboard</dt>
                   <dd>
                     <ExternalLink href={dashboardURL} text="View Dashboard" />
                   </dd>
-                </React.Fragment>
+                </>
               )}
             </dl>
           </div>
@@ -208,7 +208,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({ obj: s
       </div>
       {!_.isEmpty(si.spec.parametersFrom) && <ServiceCatalogParametersSecrets obj={si} />}
       {!_.isEmpty(parameters) && <ServiceCatalogParameters parameters={parameters} />}
-    </React.Fragment>
+    </>
   );
 };
 

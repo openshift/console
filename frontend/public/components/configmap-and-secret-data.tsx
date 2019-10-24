@@ -7,10 +7,10 @@ import { Button } from '@patternfly/react-core';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
 export const MaskedData: React.FC<{}> = () => (
-  <React.Fragment>
+  <>
     <span className="sr-only">Value hidden</span>
     <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
-  </React.Fragment>
+  </>
 );
 
 const downloadBinary = (key, value) => {
@@ -92,7 +92,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) 
     });
 
   return (
-    <React.Fragment>
+    <>
       <SectionHeading text={title}>
         {dl.length ? (
           <Button
@@ -102,21 +102,21 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) 
             className="pf-m-link--align-right"
           >
             {reveal ? (
-              <React.Fragment>
+              <>
                 <EyeSlashIcon className="co-icon-space-r" />
                 Hide Values
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 <EyeIcon className="co-icon-space-r" />
                 Reveal Values
-              </React.Fragment>
+              </>
             )}
           </Button>
         ) : null}
       </SectionHeading>
       {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label="Data" />}
-    </React.Fragment>
+    </>
   );
 };
 SecretData.displayName = 'SecretData';

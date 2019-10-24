@@ -255,7 +255,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getAWSPlacement(obj);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Set Overview" />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
@@ -269,26 +269,26 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
             />
           </dd>
           {machineRole && (
-            <React.Fragment>
+            <>
               <dt>Machine Role</dt>
               <dd>{machineRole}</dd>
-            </React.Fragment>
+            </>
           )}
           {region && (
-            <React.Fragment>
+            <>
               <dt>Region</dt>
               <dd>{region}</dd>
-            </React.Fragment>
+            </>
           )}
           {availabilityZone && (
-            <React.Fragment>
+            <>
               <dt>Availability Zone</dt>
               <dd>{availabilityZone}</dd>
-            </React.Fragment>
+            </>
           )}
         </ResourceSummary>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

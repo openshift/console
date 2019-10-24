@@ -135,7 +135,7 @@ const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
     },
     impersonate,
   );
-  return isAllowed ? <React.Fragment>{children}</React.Fragment> : null;
+  return isAllowed ? <>{children}</> : null;
 };
 export const RequireCreatePermission = connect(impersonateStateToProps)(RequireCreatePermission_);
 RequireCreatePermission.displayName = 'RequireCreatePermission';

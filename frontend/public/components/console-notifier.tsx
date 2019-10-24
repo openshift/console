@@ -13,7 +13,7 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
   }
 
   return (
-    <React.Fragment>
+    <>
       {_.map(_.get(obj, 'data'), (notification) =>
         notification.spec.location === location ||
         notification.spec.location === 'BannerTopBottom' ? (
@@ -45,7 +45,7 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
           </div>
         ) : null,
       )}
-    </React.Fragment>
+    </>
   );
 };
 ConsoleNotifier_.displayName = 'ConsoleNotifier_';

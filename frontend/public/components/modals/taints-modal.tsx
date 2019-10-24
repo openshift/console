@@ -87,7 +87,7 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
           {_.isEmpty(taints) ? (
             <EmptyBox label="Taints" />
           ) : (
-            <React.Fragment>
+            <>
               <div className="row taint-modal__heading hidden-sm hidden-xs">
                 <div className="col-sm-4 text-secondary text-uppercase">Key</div>
                 <div className="col-sm-3 text-secondary text-uppercase">Value</div>
@@ -146,7 +146,7 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
                   </div>
                 </div>
               ))}
-            </React.Fragment>
+            </>
           )}
           <Button
             className="pf-m-link--align-left"

@@ -159,7 +159,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) =
             />
           </div>
           {!saveAsDefaultReceiver && (
-            <React.Fragment>
+            <>
               <div className="col-xs-3">
                 <label className="co-no-bold">
                   <input
@@ -181,7 +181,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) =
                   <MinusCircleIcon />
                 </button>
               </div>
-            </React.Fragment>
+            </>
           )}
         </div>
       ))}

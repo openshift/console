@@ -67,7 +67,7 @@ export default (props) => {
     switch (elemType) {
       case ELEMENT_TYPES.TEXTAREA:
         children = (
-          <React.Fragment>
+          <>
             <label
               className={classNames('control-label', {
                 'co-required': parameter.required,
@@ -91,12 +91,12 @@ export default (props) => {
               }
             />
             <HelpBlock>{validationMsg || null}</HelpBlock>
-          </React.Fragment>
+          </>
         );
         break;
       case ELEMENT_TYPES.CHECKBOX:
         children = (
-          <React.Fragment>
+          <>
             <div className="checkbox">
               <label>
                 <input
@@ -119,12 +119,12 @@ export default (props) => {
               </label>
             </div>
             <HelpBlock>{validationMsg || null}</HelpBlock>
-          </React.Fragment>
+          </>
         );
         break;
       case ELEMENT_TYPES.DROPDOWN:
         children = (
-          <React.Fragment>
+          <>
             <label className={classNames('control-label', { 'co-required': parameter.required })}>
               {_.get(parameter, 'name', key)}
             </label>
@@ -145,13 +145,13 @@ export default (props) => {
               }
             />
             <HelpBlock>{validationMsg || null}</HelpBlock>
-          </React.Fragment>
+          </>
         );
         break;
       case ELEMENT_TYPES.TEXT:
       default:
         children = (
-          <React.Fragment>
+          <>
             <label
               className={classNames('control-label', {
                 'co-required': parameter.required,
@@ -175,7 +175,7 @@ export default (props) => {
               }
             />
             <HelpBlock>{validationMsg || null}</HelpBlock>
-          </React.Fragment>
+          </>
         );
     }
 
@@ -190,5 +190,5 @@ export default (props) => {
     );
   });
 
-  return <React.Fragment>{dynamicContent}</React.Fragment>;
+  return <>{dynamicContent}</>;
 };

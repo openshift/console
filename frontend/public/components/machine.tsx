@@ -120,35 +120,35 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Overview" />
         <ResourceSummary resource={obj}>
           {nodeName && (
-            <React.Fragment>
+            <>
               <dt>Node</dt>
               <dd>
                 <NodeLink name={nodeName} />
               </dd>
-            </React.Fragment>
+            </>
           )}
           {machineRole && (
-            <React.Fragment>
+            <>
               <dt>Machine Role</dt>
               <dd>{machineRole}</dd>
-            </React.Fragment>
+            </>
           )}
           {region && (
-            <React.Fragment>
+            <>
               <dt>Region</dt>
               <dd>{region}</dd>
-            </React.Fragment>
+            </>
           )}
           {zone && (
-            <React.Fragment>
+            <>
               <dt>Availability Zone</dt>
               <dd>{zone}</dd>
-            </React.Fragment>
+            </>
           )}
           <dt>Machine Addresses</dt>
           <dd>
@@ -160,7 +160,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
         <SectionHeading text="Conditions" />
         <Conditions conditions={_.get(obj, 'status.providerStatus.conditions')} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

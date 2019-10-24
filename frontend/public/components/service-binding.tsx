@@ -48,7 +48,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({ obj: sb 
   const notReady = serviceCatalogStatus(sb) === 'Not Ready' ? true : false;
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         {notReady && (
           <Alert
@@ -95,7 +95,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({ obj: sb 
       </div>
       {!_.isEmpty(sb.spec.parametersFrom) && <ServiceCatalogParametersSecrets obj={sb} />}
       {!_.isEmpty(sbParameters) && <ServiceCatalogParameters parameters={sbParameters} />}
-    </React.Fragment>
+    </>
   );
 };
 

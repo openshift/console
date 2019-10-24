@@ -109,7 +109,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
   obj: serviceBroker,
 }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Service Broker Overview" />
         <div className="row">
@@ -137,10 +137,10 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
               <dt>Relist Behavior</dt>
               <dd>{serviceBroker.spec.relistBehavior}</dd>
               {serviceBroker.spec.relistBehavior === 'Duration' && (
-                <React.Fragment>
+                <>
                   <dt>Relist Duration</dt>
                   <dd>{serviceBroker.spec.relistDuration || '-'}</dd>
-                </React.Fragment>
+                </>
               )}
             </dl>
           </div>
@@ -150,7 +150,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
         <SectionHeading text="Conditions" />
         <Conditions conditions={serviceBroker.status.conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

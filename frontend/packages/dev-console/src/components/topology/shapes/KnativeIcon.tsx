@@ -13,7 +13,7 @@ type KnativeIconProps = {
 const FILTER_ID = 'KnativeIconOutlineFilterId';
 
 const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
-  <React.Fragment>
+  <>
     <SvgDefs id={FILTER_ID}>
       <filter id={FILTER_ID}>
         <feOffset result="nw" in="SourceAlpha" dx="-0.5" dy="-0.5" />
@@ -42,7 +42,7 @@ const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
       xlinkHref={getImageForIconClass('icon-knative')}
       filter={createSvgIdUrl(FILTER_ID)}
     />
-  </React.Fragment>
+  </>
 );
 
 export default React.memo(KnativeIcon);

@@ -150,11 +150,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   }
 
   if (!loaded) {
-    return skeleton ? (
-      <React.Fragment>{skeleton}</React.Fragment>
-    ) : (
-      <LoadingBox className="loading-box loading-box__loading" />
-    );
+    return skeleton ? <>{skeleton}</> : <LoadingBox className="loading-box loading-box__loading" />;
   }
   return <Data {...dataProps} />;
 };

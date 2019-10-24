@@ -131,7 +131,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   const objects = _.get(obj, 'status.objects', []);
   const conditions = _.get(obj, 'status.conditions', []);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Template Instance Overview" />
         <div className="co-m-pane__body-group">
@@ -146,7 +146,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
                   <Status status={status} />
                 </dd>
                 {secretName && (
-                  <React.Fragment>
+                  <>
                     <dt>Parameters</dt>
                     <dd>
                       <ResourceLink
@@ -155,7 +155,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
                         namespace={obj.metadata.namespace}
                       />
                     </dd>
-                  </React.Fragment>
+                  </>
                 )}
                 <dt>Requester</dt>
                 <dd>{requester || '-'}</dd>
@@ -197,7 +197,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
         <SectionHeading text="Conditions" />
         <Conditions conditions={conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

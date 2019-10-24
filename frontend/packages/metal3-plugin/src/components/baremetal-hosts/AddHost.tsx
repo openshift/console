@@ -102,7 +102,7 @@ const AddHost: React.FC = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body co-m-pane__form">
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">{title}</div>
@@ -198,7 +198,7 @@ const AddHost: React.FC = () => {
           </ButtonBar>
         </form>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

@@ -225,7 +225,7 @@ const HealthCard_ = connect(mapStateToProps)(
         </DashboardCardBody>
 
         {alerts.length > 0 && (
-          <React.Fragment>
+          <>
             <DashboardCardHeader className="co-health-card__alerts-border">
               <DashboardCardTitle>Alerts</DashboardCardTitle>
             </DashboardCardHeader>
@@ -236,7 +236,7 @@ const HealthCard_ = connect(mapStateToProps)(
                 ))}
               </AlertsBody>
             </DashboardCardBody>
-          </React.Fragment>
+          </>
         )}
       </DashboardCard>
     );

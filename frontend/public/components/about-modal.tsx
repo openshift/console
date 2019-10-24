@@ -38,25 +38,25 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
   const errataLink = getErrataLink(clusterVersion);
   return (
-    <React.Fragment>
+    <>
       {clusterVersion && hasAvailableUpdates(clusterVersion) && (
         <Alert
           className="co-alert co-about-modal__alert"
           variant="info"
           title={
-            <React.Fragment>
+            <>
               Update available.{' '}
               <Link to="/settings/cluster" onClick={closeAboutModal}>
                 View Cluster Settings
               </Link>
-            </React.Fragment>
+            </>
           }
         />
       )}
       <TextContent>
         <TextList component="dl">
           {openshiftVersion && (
-            <React.Fragment>
+            <>
               <TextListItem component="dt">OpenShift Version</TextListItem>
               <TextListItem component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
@@ -66,27 +66,27 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
                   </div>
                 )}
               </TextListItem>
-            </React.Fragment>
+            </>
           )}
           <TextListItem component="dt">Kubernetes Version</TextListItem>
           <TextListItem component="dd" className="co-select-to-copy">
             {kubernetesVersion}
           </TextListItem>
           {channel && (
-            <React.Fragment>
+            <>
               <TextListItem component="dt">Channel</TextListItem>
               <TextListItem component="dd" className="co-select-to-copy">
                 {channel}
               </TextListItem>
-            </React.Fragment>
+            </>
           )}
           {clusterID && (
-            <React.Fragment>
+            <>
               <TextListItem component="dt">Cluster ID</TextListItem>
               <TextListItem component="dd" className="co-select-to-copy">
                 {clusterID}
               </TextListItem>
-            </React.Fragment>
+            </>
           )}
           <TextListItem component="dt">API Server</TextListItem>
           <TextListItem component="dd" className="co-select-to-copy">
@@ -94,7 +94,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
           </TextListItem>
         </TextList>
       </TextContent>
-    </React.Fragment>
+    </>
   );
 };
 AboutModalItems.displayName = 'AboutModalItems';

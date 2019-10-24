@@ -178,7 +178,7 @@ const Details = ({ obj: serviceaccount }) => {
   const filters = { selector: { field: 'metadata.name', values: new Set(_.map(secrets, 'name')) } };
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Service Account Overview" />
         <ResourceSummary resource={serviceaccount} />
@@ -194,7 +194,7 @@ const Details = ({ obj: serviceaccount }) => {
         autoFocus={false}
         showTitle={false}
       />
-    </React.Fragment>
+    </>
   );
 };
 

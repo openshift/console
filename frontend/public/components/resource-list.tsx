@@ -77,7 +77,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   const componentLoader = resourceDetailsPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>{`${name} · Details`}</title>
       </Helmet>
@@ -90,7 +90,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         name={name}
         badge={getBadgeFromType(kindObj.badge)}
       />
-    </React.Fragment>
+    </>
   );
 });
 

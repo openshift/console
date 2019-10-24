@@ -15,7 +15,7 @@ export interface BuildConfigPageProps {
 const BuildConfigPage: React.FC<BuildConfigPageProps> = ({ noProjectsAvailable, ...props }) => {
   const namespace = props.match.params.ns;
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>Builds</title>
       </Helmet>
@@ -26,7 +26,7 @@ const BuildConfigPage: React.FC<BuildConfigPageProps> = ({ noProjectsAvailable, 
           Select a project to view the list of build configs
         </ProjectListPage>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

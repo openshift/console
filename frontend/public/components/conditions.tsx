@@ -27,7 +27,7 @@ export const Conditions: React.SFC<ConditionsProps> = ({ conditions }) => {
   ));
 
   return (
-    <React.Fragment>
+    <>
       {conditions ? (
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
@@ -44,7 +44,7 @@ export const Conditions: React.SFC<ConditionsProps> = ({ conditions }) => {
           <div className="text-center">No Conditions Found</div>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 
