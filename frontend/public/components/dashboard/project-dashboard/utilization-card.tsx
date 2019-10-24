@@ -68,7 +68,7 @@ export const UtilizationCard = withDashboardResources(
     return (
       <DashboardCard>
         <DashboardCardHeader>
-          <DashboardCardTitle>Utilization Card</DashboardCardTitle>
+          <DashboardCardTitle>Utilization</DashboardCardTitle>
           <Dropdown
             items={metricDurationsOptions}
             onChange={setDuration}
