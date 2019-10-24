@@ -5,6 +5,8 @@ import {
   RouteModel,
   RevisionModel,
   ServiceModel,
+  EventSourceCronJobModel,
+  EventSourceContainerModel,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
@@ -289,6 +291,54 @@ export const sampleKnativeServices: FirehoseResult = {
   ],
 };
 
+export const sampleEventSourceCronjob: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceCronJobModel.apiGroup}/${EventSourceCronJobModel.apiVersion}`,
+      kind: EventSourceCronJobModel.kind,
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1alpha1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+    },
+  ],
+};
+
+export const sampleEventSourceContainers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceContainerModel.apiGroup}/${EventSourceContainerModel.apiVersion}`,
+      kind: EventSourceContainerModel.kind,
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1alpha1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+    },
+  ],
+};
+
 export const sampleServices: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -398,4 +448,6 @@ export const MockKnativeResources: TopologyDataResources = {
   revisions: sampleKnativeRevisions,
   pipelines: samplePipeline,
   pipelineRuns: samplePipelineRun,
+  eventSourceCronjob: sampleEventSourceCronjob,
+  eventSourceContainers: sampleEventSourceContainers,
 };

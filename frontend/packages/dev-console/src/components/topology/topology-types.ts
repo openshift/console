@@ -22,6 +22,8 @@ export interface TopologyDataResources {
   statefulSets?: FirehoseResult;
   pipelines?: FirehoseResult;
   pipelineRuns?: FirehoseResult;
+  eventSourceCronjob?: FirehoseResult;
+  eventSourceContainers?: FirehoseResult;
 }
 
 export interface Node {
