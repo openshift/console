@@ -175,11 +175,11 @@ export const ResourceUsageRow = ({ quota, resourceType }) => {
   );
 };
 
-const NoQuotaGuage = ({ title }) => (
-  <GaugeChart error="No Quota" thresholds={[{ value: 100 }]} title={title} />
+const NoQuotaGuage = ({ title, className }) => (
+  <GaugeChart error="No Quota" thresholds={[{ value: 100 }]} title={title} className={className} />
 );
 
-export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
+export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }) => {
   const resourceTypesSet = new Set(resourceTypes);
   return (
     <div className="co-resource-quota-chart-row">
@@ -194,6 +194,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
             }}
             thresholds={gaugeChartThresholds}
             title="CPU Request"
+            className={chartClassName}
           />
         </div>
       ) : (
@@ -207,11 +208,12 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
             data={{ y: getResourceUsage(quota, 'limits.cpu').percent }}
             thresholds={gaugeChartThresholds}
             title="CPU Limit"
+            className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title="CPU Limit" />
+          <NoQuotaGuage title="CPU Limit" className={chartClassName} />
         </div>
       )}
       {resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory') ? (
@@ -225,11 +227,12 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
             }}
             thresholds={gaugeChartThresholds}
             title="Memory Request"
+            className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title="Memory Request" />
+          <NoQuotaGuage title="Memory Request" className={chartClassName} />
         </div>
       )}
       {resourceTypesSet.has('limits.memory') ? (
@@ -238,11 +241,12 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes }) => {
             data={{ y: getResourceUsage(quota, 'limits.memory').percent }}
             thresholds={gaugeChartThresholds}
             title="Memory Limit"
+            className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title="Memory Limit" />
+          <NoQuotaGuage title="Memory Limit" className={chartClassName} />
         </div>
       )}
     </div>
