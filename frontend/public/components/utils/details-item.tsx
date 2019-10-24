@@ -34,8 +34,13 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   obj,
   path,
   defaultValue = '-',
+  hideEmpty,
   children,
 }) => {
+  if (hideEmpty && _.isEmpty(_.get(obj, path))) {
+    return null;
+  }
+
   const reference: K8sResourceKindReference = referenceFor(obj);
   const model: K8sKind = modelFor(reference);
   const description: string = getPropertyDescription(model, path);
@@ -72,5 +77,6 @@ export type DetailsItemProps = {
   obj: K8sResourceKind;
   path: string | string[];
   defaultValue?: React.ReactNode;
+  hideEmpty?: boolean;
   children?: React.ReactNode;
 };
