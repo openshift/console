@@ -143,6 +143,7 @@ Object {
               "generation": 2,
               "labels": Object {
                 "app": "nodejs",
+                "app.kubernetes.io/instance": "nodejs",
               },
               "name": "nodejs",
               "namespace": "testproject1",
@@ -368,6 +369,7 @@ Object {
             "generation": 2,
             "labels": Object {
               "app": "nodejs",
+              "app.kubernetes.io/instance": "nodejs",
             },
             "name": "nodejs",
             "namespace": "testproject1",

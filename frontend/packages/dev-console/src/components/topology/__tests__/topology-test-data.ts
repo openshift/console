@@ -13,6 +13,8 @@ export const resources: TopologyDataResources = {
   builds: { data: [] },
   daemonSets: { data: [] },
   statefulSets: { data: [] },
+  pipelineRuns: { data: [] },
+  pipelines: { data: [] },
 };
 
 export const topologyData: TopologyDataModel = {
@@ -35,6 +37,7 @@ export const sampleDeploymentConfigs: Resource = {
         creationTimestamp: '2019-04-22T11:58:33Z',
         labels: {
           app: 'nodejs',
+          'app.kubernetes.io/instance': 'nodejs',
         },
         annotations: {
           'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
@@ -1287,6 +1290,114 @@ export const sampleStatefulSets: Resource = {
     },
   ],
 };
+
+export const samplePipeline = {
+  data: [
+    {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'Pipeline',
+      metadata: {
+        creationTimestamp: '2019-10-18T10:06:37Z',
+        generation: 1,
+        name: 'hello-world-pipeline',
+        namespace: 't-s',
+        resourceVersion: '371236',
+        selfLink: '/apis/tekton.dev/v1alpha1/namespaces/t-s/pipelines/hello-world-pipeline',
+        uid: '73d7842d-975f-44ab-99e4-727b7cf097b6',
+        labels: {
+          'app.kubernetes.io/instance': 'nodejs',
+        },
+      },
+      spec: {
+        tasks: [
+          {
+            name: 'hello-world',
+            taskRef: {
+              name: 'hello-world',
+            },
+          },
+        ],
+      },
+    },
+  ],
+};
+
+export const samplePipelineRun = {
+  data: [
+    {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'PipelineRun',
+      metadata: {
+        creationTimestamp: '2019-10-18T10:07:28Z',
+        generation: 1,
+        labels: {
+          'tekton.dev/pipeline': 'hello-world-pipeline',
+        },
+        name: 'hello-world-pipeline',
+        namespace: 't-s',
+        resourceVersion: '371822',
+        selfLink: '/apis/tekton.dev/v1alpha1/namespaces/t-s/pipelineruns/hello-world-pipeline',
+        uid: 'a049c81e-ba40-4248-ac54-a2728893afcb',
+      },
+      spec: {
+        pipelineRef: {
+          name: 'hello-world-pipeline',
+        },
+        podTemplate: {},
+        timeout: '1h0m0s',
+      },
+      status: {
+        completionTime: '2019-10-18T10:08:00Z',
+        conditions: [
+          {
+            lastTransitionTime: '2019-10-18T10:08:00Z',
+            message: 'All Tasks have completed executing',
+            reason: 'Succeeded',
+            status: 'True',
+            type: 'Succeeded',
+          },
+        ],
+        startTime: '2019-10-18T10:07:28Z',
+        taskRuns: {
+          'hello-world-pipeline-hello-world-6mbs6': {
+            pipelineTaskName: 'hello-world',
+            status: {
+              completionTime: '2019-10-18T10:08:00Z',
+              conditions: [
+                {
+                  lastTransitionTime: '2019-10-18T10:08:00Z',
+                  message: 'All Steps have completed executing',
+                  reason: 'Succeeded',
+                  status: 'True',
+                  type: 'Succeeded',
+                },
+              ],
+              podName: 'hello-world-pipeline-hello-world-6mbs6-pod-ab38ef',
+              startTime: '2019-10-18T10:07:28Z',
+              steps: [
+                {
+                  container: 'step-echo',
+                  imageID:
+                    'docker.io/library/ubuntu@sha256:1bbdea4846231d91cce6c7ff3907d26fca444fd6b7e3c282b90c7fe4251f9f86',
+                  name: 'echo',
+                  terminated: {
+                    containerID:
+                      'cri-o://14b1d028e46e921b5fa3445def9fbeb35403ae3332da347d62c01807717eba49',
+                    exitCode: 0,
+                    finishedAt: '2019-10-18T10:07:59Z',
+                    reason: 'Completed',
+                    startedAt: '2019-10-18T10:07:57Z',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
@@ -1299,4 +1410,6 @@ export const MockResources: TopologyDataResources = {
   builds: sampleBuilds,
   daemonSets: sampleDaemonSets,
   statefulSets: sampleStatefulSets,
+  pipelines: samplePipeline,
+  pipelineRuns: samplePipelineRun,
 };

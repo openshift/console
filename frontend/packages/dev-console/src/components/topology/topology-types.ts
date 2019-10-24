@@ -20,6 +20,8 @@ export interface TopologyDataResources {
   revisions?: Resource;
   ksservices?: Resource;
   statefulSets?: Resource;
+  pipelines?: Resource;
+  pipelineRuns?: Resource;
 }
 
 export interface Node {
