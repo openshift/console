@@ -17,8 +17,13 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
-import { HOST_SUCCESS_STATES, HOST_ERROR_STATES, HOST_PROGRESS_STATES } from '../../../constants';
 import { getBareMetalHostStatus } from '../../../status/host-status';
+import {
+  HOST_SUCCESS_STATES,
+  HOST_ERROR_STATES,
+  HOST_PROGRESS_STATES,
+  HOST_HARDWARE_ERROR_STATES,
+} from '../../../constants';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
@@ -44,6 +49,20 @@ const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
   };
 };
 
+const getHostHardwareHealthState = (obj): HostHealthState => {
+  const { status, title } = getBareMetalHostStatus(obj);
+
+  return HOST_HARDWARE_ERROR_STATES.includes(status)
+    ? {
+        state: HealthState.ERROR,
+        title,
+      }
+    : {
+        title: '',
+        state: HealthState.OK,
+      };
+};
+
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
@@ -56,6 +75,7 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
   }, [watchAlerts, stopWatchAlerts]);
 
   const health = getHostHealthState(obj);
+  const hwHealth = getHostHardwareHealthState(obj);
 
   const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
   const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
@@ -70,7 +90,10 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem title="" state={health.state} details={health.title} />
+              <HealthItem title="Status" state={health.state} details={health.title} />
+            </GalleryItem>
+            <GalleryItem>
+              <HealthItem title="Hardware" state={hwHealth.state} details={hwHealth.title} />
             </GalleryItem>
           </Gallery>
         </HealthBody>
