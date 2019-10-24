@@ -136,7 +136,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
               UTILIZATION_QUERY_HOUR_MAP[duration]
             }
             error={capacityUtilizationError || totalCapacityError}
-            isLoading={!capacityUtilization || !totalCapacityError}
+            isLoading={!capacityUtilization || !totalCapacity}
             max={maxCapacityStats}
           />
           <UtilizationItem
