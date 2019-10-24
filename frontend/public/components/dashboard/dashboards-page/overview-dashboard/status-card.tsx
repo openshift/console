@@ -167,6 +167,7 @@ const ClusterAlerts = withDashboardResources(
     const alerts = getAlerts(alertsResponse);
 
     const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
+    const cvLoaded = _.get(resources.cv, 'loaded');
     const LinkComponent = React.useCallback(
       () => (
         <Button
@@ -186,7 +187,7 @@ const ClusterAlerts = withDashboardResources(
 
     return (
       <AlertsBody
-        isLoading={!alertsResponse}
+        isLoading={!(alertsResponse && cvLoaded)}
         error={alertsResponseError}
         emptyMessage="No cluster alerts or messages"
       >
