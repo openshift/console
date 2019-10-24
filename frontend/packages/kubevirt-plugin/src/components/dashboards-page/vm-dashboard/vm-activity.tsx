@@ -15,10 +15,10 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { VMKind } from '../../types';
-import { VirtualMachineModel } from '../../models';
-import { getVmEventsFilters } from '../../selectors/event';
-import { VMDashboardContext } from './vm-dashboard-context';
+import { VMKind } from '../../../types';
+import { VirtualMachineModel } from '../../../models';
+import { getVmEventsFilters } from '../../../selectors/event';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 
 const combinedVmFilter = (vm: VMKind): EventFilterFuncion => (event) =>
   getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
