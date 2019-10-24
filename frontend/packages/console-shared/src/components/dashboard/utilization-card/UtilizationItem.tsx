@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Humanize } from '@console/internal/components/utils/types';
 import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
@@ -13,13 +14,32 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     query,
     error,
     max = null,
+    multiLineMap,
     TopConsumerPopover,
     byteDataType,
   }) => {
     let current;
-    if (data.length) {
+    let multiLineCurrent;
+    let multiLine;
+    if (data && data.length) {
       const latestData = data[data.length - 1];
       current = humanizeValue(latestData.y).string;
+    }
+
+    if (multiLineMap && multiLineMap.length) {
+      const filterData = multiLineMap.filter(
+        (dataObj) => dataObj.data && _.get(dataObj, 'data.length'),
+      );
+      multiLine = multiLineMap.map((dataObj) => dataObj.data && _.get(dataObj, 'data'));
+      if (filterData.length) {
+        const multiLineLatestData = filterData.map((dataObj) => {
+          const latestData = dataObj.data[dataObj.data.length - 1];
+          return [humanizeValue(latestData.y).string, dataObj.type];
+        });
+        [current, multiLineCurrent] = multiLineLatestData.map(
+          (dataObj) => `${dataObj[0]} ${dataObj[1]}`,
+        );
+      }
     }
 
     let humanMax;
@@ -47,6 +67,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         height={80}
         chartStatus={chartStatus}
         byteDataType={byteDataType}
+        multiLine={multiLine}
       />
     );
 
@@ -56,6 +77,16 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           <div className="pf-l-level">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {TopConsumerPopover && !error ? <TopConsumerPopover current={current} /> : current}
+          </div>
+          <div className="pf-l-level">
+            <span className="co-utilization-card__item__text__size" />
+            <span className="co-utilization-card__item__text__size">
+              {TopConsumerPopover && !error ? (
+                <TopConsumerPopover current={multiLineCurrent} />
+              ) : (
+                multiLineCurrent
+              )}
+            </span>
           </div>
           <div className="pf-l-level">
             <span className="co-utilization-card__item__text" />
@@ -75,6 +106,10 @@ export default UtilizationItem;
 type UtilizationItemProps = {
   title: string;
   data?: DataPoint[];
+  multiLineMap?: {
+    data?: DataPoint[];
+    type?: string;
+  }[];
   isLoading: boolean;
   humanizeValue: Humanize;
   query: string;

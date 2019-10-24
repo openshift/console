@@ -1,8 +1,10 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   Chart,
   ChartArea,
   ChartAxis,
+  ChartGroup,
   ChartThemeColor,
   ChartThemeVariant,
   ChartVoronoiContainer,
@@ -54,20 +56,26 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   yAxis = true,
   chartStatus,
   byteDataType = '',
+  multiLine,
 }) => {
+  const finalData = data ? [data] : multiLine;
   const [containerRef, width] = useRefWidth();
-  const [processedData, setProcessedData] = React.useState(data);
+  const [processedData, setProcessedData] = React.useState(finalData);
   const [unit, setUnit] = React.useState('');
 
   React.useEffect(() => {
     if (byteDataType) {
-      const result = processFrame(data, byteDataType);
-      setProcessedData(result.processedData);
-      setUnit(result.unit);
+      const processing = finalData.reduce((acc, frame) => {
+        acc.push(...frame);
+        return acc;
+      }, []);
+      const unit = processFrame(processing, byteDataType).unit;
+      setProcessedData(finalData);
+      setUnit(unit);
     } else {
-      setProcessedData(data);
+      setProcessedData(finalData);
     }
-  }, [byteDataType, data]);
+  }, [byteDataType, multiLine, data, finalData]);
 
   const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
@@ -79,10 +87,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   );
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
-
+  const filterData = processedData.filter((d) => d.length);
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
-      {data.length ? (
+      {filterData.length ? (
         <PrometheusGraphLink query={query}>
           <Chart
             containerComponent={container}
@@ -95,7 +103,11 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
-            <ChartArea data={processedData} style={style} />
+            <ChartGroup>
+              {filterData.map((datum, i) => (
+                <ChartArea key={i} data={datum} style={style} />
+              ))}
+            </ChartGroup>
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -141,6 +153,7 @@ type AreaChartProps = {
   padding?: object;
   chartStatus?: AreaChartStatus;
   byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
+  multiLine?: DataPoint[][];
 };
 
 type AreaProps = AreaChartProps & {
