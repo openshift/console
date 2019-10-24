@@ -1,22 +1,23 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { safeLoad } from 'js-yaml';
-import { Base64 } from 'js-base64';
 import * as fuzzy from 'fuzzysearch';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { LoadingBox, MsgBox, SectionHeading, StatusBox } from '../utils';
+import { MsgBox, SectionHeading, StatusBox } from '../utils';
 import { createAlertRoutingModal } from '../modals';
 import { Table, TableData, TableRow, TextFilter } from '../factory';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
+  Alert,
   Button,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
+import { getAlertManagerConfig } from './alert-manager-utils';
 
 const AlertRouting: React.FC<AlertManagerProps> = ({ config, secret }) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
@@ -94,7 +95,7 @@ const getRoutingLabels = (routes, parentLabels) => {
   let results = [];
   let labels = {};
   for (const obj of routes) {
-    labels = _.merge({}, parentLabels, obj.match || obj.match_re);
+    labels = _.merge({}, parentLabels, obj.match, obj.match_re);
     results.push({ receiver: obj.receiver, labels });
     if (obj.routes) {
       results = results.concat(getRoutingLabels(obj.routes, labels));
@@ -153,7 +154,7 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
   const { route, filterValue } = props;
   const { receiver: defaultReceiver, routes } = route;
 
-  const routingLabels = getRoutingLabels(routes, {});
+  const routingLabels = _.isEmpty(routes) ? [] : getRoutingLabels(routes, {});
   if (defaultReceiver) {
     routingLabels.push({ receiver: defaultReceiver, labels: { default: 'all' } });
   }
@@ -197,6 +198,13 @@ const Receivers: React.FC<AlertManagerProps> = ({ config }) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Receivers" />
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
+        <div className="co-m-pane__filter-bar-group">
+          <Link className="co-m-primary-action" to="/monitoring/alertmanagerconfig/receivers/~new">
+            <Button variant="primary" id="create-receiver">
+              Create Receiver
+            </Button>
+          </Link>
+        </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter
             defaultValue=""
@@ -219,47 +227,35 @@ const Receivers: React.FC<AlertManagerProps> = ({ config }) => {
 };
 
 const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ obj: secret }) => {
-  const alertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  let errorMsg;
-  let yamlStringData;
-  let config;
+  const [errorMsg, setErrorMsg] = React.useState('');
+  let config: AlertManagerConfig;
+  if (!errorMsg) {
+    config = getAlertManagerConfig(secret, setErrorMsg);
+  }
 
-  if (!_.isEmpty(alertManagerYaml)) {
-    yamlStringData = Base64.decode(alertManagerYaml);
-    try {
-      config = safeLoad(yamlStringData);
-    } catch (e) {
-      errorMsg = `Error parsing YAML: ${e}`;
-    }
+  if (errorMsg) {
+    return (
+      <Alert
+        isInline
+        className="co-alert co-alert--scrollable"
+        variant="danger"
+        title="An error occurred"
+      >
+        <div className="co-pre-line">{errorMsg}</div>
+      </Alert>
+    );
   }
 
   return (
-    <div className="co-m-pane__body">
-      {errorMsg && <span>{errorMsg}</span>}
-      {!errorMsg && (
-        <React.Fragment>
-          <AlertRouting secret={secret} config={config} />
-          <Receivers config={config} />
-        </React.Fragment>
-      )}
-    </div>
+    <React.Fragment>
+      <AlertRouting secret={secret} config={config} />
+      <Receivers config={config} />
+    </React.Fragment>
   );
 };
 
 export const AlertManagerConfigWrapper: React.FC<AlertManagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
-    const [inProgress, setInProgress] = React.useState(true);
-
-    React.useEffect(() => {
-      if (inProgress && !_.isEmpty(obj.data)) {
-        setInProgress(false);
-      }
-    }, [inProgress, obj.data]);
-
-    if (inProgress) {
-      return <LoadingBox />;
-    }
-
     return (
       <StatusBox {...obj}>
         <AlertManagerConfiguration {...props} obj={obj.data} />
@@ -291,7 +287,7 @@ type AlertManagerRoute = {
   repeatInterval?: string;
   match?: labels[];
   matchRe?: labels[];
-  routes?: AlertManagerRoute;
+  routes?: AlertManagerRoute[];
 };
 
 type RoutesByReceivers = {
@@ -299,15 +295,17 @@ type RoutesByReceivers = {
   labels: { [key: string]: string };
 };
 
-type AlertManagerReceiver = {
+export type AlertManagerReceiver = {
   name: string;
 };
 
+export type AlertManagerConfig = {
+  route: AlertManagerRoute;
+  receivers: AlertManagerReceiver[];
+};
+
 type AlertManagerProps = {
-  config: {
-    route: AlertManagerRoute;
-    receivers: AlertManagerReceiver[];
-  };
+  config: AlertManagerConfig;
   secret?: K8sResourceKind;
 };
 

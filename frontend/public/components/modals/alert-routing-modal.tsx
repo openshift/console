@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Base64 } from 'js-base64';
-import { safeDump } from 'js-yaml';
 import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { SecretModel } from '../../models';
+import { K8sResourceKind } from '../../module/k8s';
+import { AlertManagerConfig } from '../monitoring/alert-manager-config';
+import { patchAlertManagerConfig } from '../monitoring/alert-manager-utils';
 
 const updateAlertRoutingProperty = (
   config: any,
@@ -33,36 +32,25 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    const configObj = !_.isEmpty(config) ? _.cloneDeep(config) : {};
 
     let groupByNew = event.target.elements['input-group-by'].value.replace(/\s+/g, '');
     const groupWaitNew = event.target.elements['input-group-wait'].value;
     const groupIntervalNew = event.target.elements['input-group-interval'].value;
     const repeatIntervalNew = event.target.elements['input-repeat-interval'].value;
 
-    const groupByOld = _.get(configObj, ['route', 'group_by'], []);
-    const groupWaitOld = _.get(configObj, ['route', 'group_wait'], '');
-    const groupIntervalOld = _.get(configObj, ['route', 'group_interval'], '');
-    const repeatIntervalOld = _.get(configObj, ['route', 'repeat_interval'], '');
+    const groupByOld = _.get(config, ['route', 'group_by'], []);
+    const groupWaitOld = _.get(config, ['route', 'group_wait'], '');
+    const groupIntervalOld = _.get(config, ['route', 'group_interval'], '');
+    const repeatIntervalOld = _.get(config, ['route', 'repeat_interval'], '');
 
     groupByNew = groupByNew === '' ? [] : groupByNew.split(',');
-    updateAlertRoutingProperty(configObj, 'group_by', groupByNew, groupByOld);
-    updateAlertRoutingProperty(configObj, 'group_wait', groupWaitNew, groupWaitOld);
-    updateAlertRoutingProperty(configObj, 'group_interval', groupIntervalNew, groupIntervalOld);
-    updateAlertRoutingProperty(configObj, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
+    updateAlertRoutingProperty(config, 'group_by', groupByNew, groupByOld);
+    updateAlertRoutingProperty(config, 'group_wait', groupWaitNew, groupWaitOld);
+    updateAlertRoutingProperty(config, 'group_interval', groupIntervalNew, groupIntervalOld);
+    updateAlertRoutingProperty(config, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
 
-    let yamlStringData = '';
-
-    try {
-      yamlStringData = safeDump(configObj);
-    } catch (e) {
-      setErrorMessage(`Error getting YAML: ${e}`);
-      return;
-    }
     setInProgress(true);
-    k8sPatch(SecretModel, secret, [
-      { op: 'replace', path: '/data/alertmanager.yaml', value: Base64.encode(yamlStringData) },
-    ]).then(close, (err) => {
+    patchAlertManagerConfig(secret, config).then(close, (err) => {
       setErrorMessage(err.message);
       setInProgress(false);
     });
@@ -174,6 +162,6 @@ export const createAlertRoutingModal = createModalLauncher<AlertRoutingModalProp
 export type AlertRoutingModalProps = {
   cancel: () => void;
   close: () => void;
-  config: any;
+  config: AlertManagerConfig;
   secret: K8sResourceKind;
 };

@@ -3,10 +3,10 @@ import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { Base64 } from 'js-base64';
-import { k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { SecretModel } from '../../models';
-import { ButtonBar, history, LoadingBox, StatusBox } from '../utils';
+import { K8sResourceKind } from '../../module/k8s';
+import { ButtonBar, history, StatusBox } from '../utils';
 import { AsyncComponent } from '../utils/async';
+import { patchAlertManagerConfig } from './alert-manager-utils';
 
 const DroppableFileInput = (props) => (
   <AsyncComponent
@@ -20,30 +20,27 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
   onCancel = history.goBack,
 }) => {
   const secret: K8sResourceKind = obj;
-  const alertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  const initErrorMsg = _.isEmpty(alertManagerYaml)
+  const encodedAlertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
+  const initErrorMsg = _.isEmpty(encodedAlertManagerYaml)
     ? 'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"'
     : null;
 
   const [errorMsg, setErrorMsg] = React.useState(initErrorMsg);
   const [successMsg, setSuccessMsg] = React.useState();
   const [inProgress, setInProgress] = React.useState(false);
-  const [yamlStringData, setYamlStringData] = React.useState(
-    !_.isEmpty(alertManagerYaml) ? Base64.decode(alertManagerYaml) : '',
+  const [alertManagerYamlStr, setAlertManagerYamlStr] = React.useState(
+    !_.isEmpty(encodedAlertManagerYaml) ? Base64.decode(encodedAlertManagerYaml) : '',
   );
 
   const save = (e) => {
     e.preventDefault();
-    if (_.isEmpty(yamlStringData)) {
+    if (_.isEmpty(alertManagerYamlStr)) {
       setErrorMsg('Alertmanager configuration cannot be empty.');
       setSuccessMsg('');
       return;
     }
     setInProgress(true);
-    const patch = [
-      { op: 'replace', path: '/data/alertmanager.yaml', value: Base64.encode(yamlStringData) },
-    ];
-    k8sPatch(SecretModel, secret, patch).then(
+    patchAlertManagerConfig(secret, alertManagerYamlStr).then(
       (newSecret) => {
         setSuccessMsg(
           `${newSecret.metadata.name} has been updated to version ${
@@ -74,8 +71,8 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
           <div className="co-alert-manager-yaml__form">
             <div className="form-group">
               <DroppableFileInput
-                onChange={setYamlStringData}
-                inputFileData={yamlStringData}
+                onChange={setAlertManagerYamlStr}
+                inputFileData={alertManagerYamlStr}
                 inputFieldHelpText="Drag and drop file with your value here or browse to upload it."
               />
             </div>
@@ -99,18 +96,6 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
 export const AlertManagerYAMLEditorWrapper: React.FC<
   AlertManagerYAMLEditorWrapperProps
 > = React.memo(({ obj, ...props }) => {
-  const [inProgress, setInProgress] = React.useState(true);
-
-  React.useEffect(() => {
-    if (inProgress && !_.isEmpty(obj.data)) {
-      setInProgress(false);
-    }
-  }, [inProgress, obj.data]);
-
-  if (inProgress) {
-    return <LoadingBox />;
-  }
-
   return (
     <StatusBox {...obj}>
       <AlertManagerYAMLEditor {...props} obj={obj.data} />
