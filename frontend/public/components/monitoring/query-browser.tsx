@@ -296,7 +296,7 @@ const maxDataPointsSoft = 6000;
 const maxDataPointsHard = 10000;
 
 // Min and max number of data samples per data series
-const minSamples = 20;
+const minSamples = 10;
 const maxSamples = 300;
 
 // We don't want to refresh all the graph data for just a small adjustment in the number of samples, so don't update
