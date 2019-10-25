@@ -16,7 +16,7 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) =
   }
 
   return (
-    <React.Fragment>
+    <>
       <FormSection title="Builder" fullWidth>
         <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
       </FormSection>
@@ -28,7 +28,7 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) =
           />
         </FormSection>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

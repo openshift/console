@@ -70,7 +70,7 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
   }
 
   if (props.simple) {
-    return <React.Fragment>{timestamp}</React.Fragment>;
+    return <>{timestamp}</>;
   }
 
   return (

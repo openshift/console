@@ -96,7 +96,7 @@ const TaskComponent: React.FC<TaskProps> = ({
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRun, namespace)}/logs/${name}`
     : undefined;
   const visTask = (
-    <React.Fragment>
+    <>
       <div className="odc-pipeline-vis-task__connector" />
       <Tooltip
         position="bottom"
@@ -127,7 +127,7 @@ const TaskComponent: React.FC<TaskProps> = ({
           )}
         </div>
       </Tooltip>
-    </React.Fragment>
+    </>
   );
   return (
     <li className={cx('odc-pipeline-vis-task')}>

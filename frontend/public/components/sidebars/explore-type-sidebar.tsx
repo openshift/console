@@ -84,7 +84,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     _.get(allDefinitions, [ref, 'format']) || _.get(allDefinitions, [ref, 'type']);
 
   return (
-    <React.Fragment>
+    <>
       {!_.isEmpty(breadcrumbs) && (
         <Breadcrumb className="pf-c-breadcrumb--no-padding-top">
           {breadcrumbs.map((crumb, i) => {
@@ -127,7 +127,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   &nbsp;
                   <small>
                     <span className="co-break-word">{definitionType}</span>
-                    {required.has(name) && <React.Fragment> &ndash; required</React.Fragment>}
+                    {required.has(name) && <> &ndash; required</>}
                   </small>
                 </h5>
                 {definition.description && (
@@ -150,7 +150,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           })}
         </ul>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

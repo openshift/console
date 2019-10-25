@@ -93,12 +93,12 @@ TableRowForKind.displayName = 'TableRowForKind';
 const DetailsForKind = (kind) =>
   function DetailsForKind_({ obj }) {
     return (
-      <React.Fragment>
+      <>
         <div className="co-m-pane__body">
           <SectionHeading text={`${kindForReference(kind)} Overview`} />
           <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
         </div>
-      </React.Fragment>
+      </>
     );
   };
 

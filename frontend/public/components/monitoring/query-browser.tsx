@@ -100,7 +100,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     };
 
     return (
-      <React.Fragment>
+      <>
         <TextInput
           aria-label="graph timespan"
           className="query-browser__span-text"
@@ -124,7 +124,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
         >
           Reset Zoom
         </Button>
-      </React.Fragment>
+      </>
     );
   },
 );
@@ -536,7 +536,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       {error && <Error error={error} />}
       {_.isEmpty(graphData) && !updating && <GraphEmpty />}
       {!_.isEmpty(graphData) && (
-        <React.Fragment>
+        <>
           {samples < maxSamplesForSpan && (
             <Alert
               isInline
@@ -561,7 +561,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               <Graph data={graphData} disableTooltips={isZooming} xDomain={xDomain} span={span} />
             </div>
           </div>
-        </React.Fragment>
+        </>
       )}
     </div>
   );

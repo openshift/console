@@ -39,7 +39,7 @@ const Details = ({ obj: replicationController }) => {
     'openshift.io/deployment.phase',
   ]);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Replication Controller Overview" />
         <div className="row">
@@ -51,19 +51,19 @@ const Details = ({ obj: replicationController }) => {
               showTolerations
             >
               {revision && (
-                <React.Fragment>
+                <>
                   <dt>Deployment Revision</dt>
                   <dd>{revision}</dd>
-                </React.Fragment>
+                </>
               )}
             </ResourceSummary>
           </div>
           <div className="col-md-6">
             {phase && (
-              <React.Fragment>
+              <>
                 <dt>Phase</dt>
                 <dd>{phase}</dd>
-              </React.Fragment>
+              </>
             )}
             <ResourcePodCount resource={replicationController} />
           </div>
@@ -76,7 +76,7 @@ const Details = ({ obj: replicationController }) => {
       <div className="co-m-pane__body">
         <VolumesTable resource={replicationController} heading="Volumes" />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

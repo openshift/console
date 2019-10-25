@@ -702,13 +702,13 @@ const QueryTable_: React.FC<QueryTableProps> = ({
         ..._.map(allLabelKeys, (k) => metric[k]),
         {
           title: (
-            <React.Fragment>
+            <>
               {_.map(values, ([time, v]) => (
                 <div key={time}>
                   {v}&nbsp;@{time}
                 </div>
               ))}
-            </React.Fragment>
+            </>
           ),
         },
       ];
@@ -754,7 +754,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     .map((cells) => ({ cells }));
 
   return (
-    <React.Fragment>
+    <>
       <Table
         aria-label="query results table"
         cells={columns}
@@ -774,7 +774,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
         setPage={setPage}
         setPerPage={setPerPage}
       />
-    </React.Fragment>
+    </>
   );
 };
 const QueryTable = connect(
@@ -921,11 +921,11 @@ const RunQueriesButton = connect(
 )(RunQueriesButton_);
 
 const QueriesList_ = ({ count, namespace }) => (
-  <React.Fragment>
+  <>
     {_.map(_.range(count), (i) => (
       <Query index={i} key={i} namespace={namespace} />
     ))}
-  </React.Fragment>
+  </>
 );
 const QueriesList = connect(({ UI }: RootState) => ({
   count: UI.getIn(['queryBrowser', 'queries']).size,
@@ -942,7 +942,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
   React.useEffect(() => deleteAll, [deleteAll]);
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>Metrics</title>
       </Helmet>
@@ -981,7 +981,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 export const QueryBrowserPage: React.ComponentType<{ namespace?: string }> = withFallback(

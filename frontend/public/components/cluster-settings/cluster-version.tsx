@@ -12,7 +12,7 @@ const clusterVersionReference: K8sResourceKindReference = referenceForModel(Clus
 const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) => {
   const conditions = _.get(obj, 'status.conditions', []);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Cluster Version Overview" />
         <ResourceSummary resource={obj} />
@@ -21,7 +21,7 @@ const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) =
         <SectionHeading text="Conditions" />
         <Conditions conditions={conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

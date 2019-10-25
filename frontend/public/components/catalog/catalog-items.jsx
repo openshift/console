@@ -224,7 +224,7 @@ export class CatalogTileViewPage extends React.Component {
     const { detailsItem } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <TileViewPage
           items={items}
           itemsSorter={(itemsToSort) =>
@@ -251,7 +251,7 @@ export class CatalogTileViewPage extends React.Component {
             <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
           )}
         </Modal>
-      </React.Fragment>
+      </>
     );
   }
 }

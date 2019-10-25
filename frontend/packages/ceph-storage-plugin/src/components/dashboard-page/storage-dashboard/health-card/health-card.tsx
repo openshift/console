@@ -78,7 +78,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
         </HealthBody>
       </DashboardCardBody>
       {alerts.length > 0 && (
-        <React.Fragment>
+        <>
           <DashboardCardHeader className="co-health-card__alerts-border">
             <DashboardCardTitle>Alerts</DashboardCardTitle>
           </DashboardCardHeader>
@@ -89,7 +89,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
               ))}
             </AlertsBody>
           </DashboardCardBody>
-        </React.Fragment>
+        </>
       )}
     </DashboardCard>
   );

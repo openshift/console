@@ -107,7 +107,7 @@ DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
 const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Deployment Overview" />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
@@ -165,7 +165,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         <SectionHeading text="Conditions" />
         <Conditions conditions={deployment.status.conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 DeploymentDetails.displayName = 'DeploymentDetails';

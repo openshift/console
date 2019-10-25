@@ -536,11 +536,11 @@ export default class D3ForceDirectedRenderer extends React.Component<
     if (sourceGroup) {
       const title = targetGroup ? 'Move Component Node' : 'Remove Component Node from Application';
       const message = (
-        <React.Fragment>
+        <>
           Are you sure you want to {targetGroup ? 'move' : 'remove'} <strong>{d.name}</strong> from{' '}
           {groupsById[sourceGroup].name}
           {targetGroup ? ` to ${targetGroupName}` : ''}?
-        </React.Fragment>
+        </>
       );
       const btnText = targetGroup ? 'Move' : 'Remove';
 
@@ -1127,10 +1127,10 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
   renderDragItems(edges, nodes) {
     return (
-      <React.Fragment>
+      <>
         {_.map(edges, (edgeId) => this.renderEdge(edgeId))}
         {_.map(nodes, (nodeId) => this.renderNode(nodeId))}
-      </React.Fragment>
+      </>
     );
   }
 

@@ -159,7 +159,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     });
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>{title}</title>
         </Helmet>
@@ -226,7 +226,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
             </div>
           </div>
         </StatusBox>
-      </React.Fragment>
+      </>
     );
   }
 }

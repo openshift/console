@@ -44,14 +44,14 @@ const getErrMessage = () => {
 };
 
 const ErrorComponent: React.SFC<ErrorComponentProps> = ({ title, message, errMessage }) => (
-  <React.Fragment>
+  <>
     <PageHeading detail={true} title="Error" />
     <div className="co-m-pane__body">
       <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
       {message && <div className="text-center">{message}</div>}
       {errMessage && <div className="text-center text-muted">{errMessage}</div>}
     </div>
-  </React.Fragment>
+  </>
 );
 
 export const ErrorPage: React.SFC<ErrorPageProps> = () => (

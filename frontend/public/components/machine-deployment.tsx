@@ -122,7 +122,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
   const { minReadySeconds, progressDeadlineSeconds } = obj.spec;
   const rollingUpdateStrategy = _.get(obj, 'spec.strategy.rollingUpdate');
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Deployment Overview" />
         <MachineCounts resourceKind={MachineDeploymentModel} resource={obj} />
@@ -138,22 +138,22 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
                 />
               </dd>
               {machineRole && (
-                <React.Fragment>
+                <>
                   <dt>Machine Role</dt>
                   <dd>{machineRole}</dd>
-                </React.Fragment>
+                </>
               )}
               {region && (
-                <React.Fragment>
+                <>
                   <dt>Region</dt>
                   <dd>{region}</dd>
-                </React.Fragment>
+                </>
               )}
               {availabilityZone && (
-                <React.Fragment>
+                <>
                   <dt>Availability Zone</dt>
                   <dd>{availabilityZone}</dd>
-                </React.Fragment>
+                </>
               )}
             </ResourceSummary>
           </div>
@@ -162,7 +162,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
               <dt>Strategy</dt>
               <dd>{_.get(obj, 'spec.strategy.type') || '-'}</dd>
               {rollingUpdateStrategy && (
-                <React.Fragment>
+                <>
                   <dt>Max Unavailable</dt>
                   <dd>
                     {rollingUpdateStrategy.maxUnavailable || 0} of{' '}
@@ -173,7 +173,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
                     {rollingUpdateStrategy.maxSurge || 1} greater than{' '}
                     {pluralize(obj.spec.replicas, 'machine')}
                   </dd>
-                </React.Fragment>
+                </>
               )}
               <dt>Min Ready Seconds</dt>
               <dd>{minReadySeconds ? pluralize(minReadySeconds, 'second') : 'Not Configured'}</dd>
@@ -189,7 +189,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

@@ -48,9 +48,9 @@ const getIcon = (status: OperatorStatus) => {
 const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({ status }) => {
   const icon = getIcon(status);
   return (
-    <React.Fragment>
+    <>
       {icon} {status}
-    </React.Fragment>
+    </>
   );
 };
 
@@ -162,7 +162,7 @@ const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({ cv }) =>
     K8sResourceConditionStatus.True,
   );
   return (
-    <React.Fragment>
+    <>
       {updateCondition && (
         <div className="co-m-pane__body co-m-pane__body--section-heading">
           <Alert isInline className="co-alert" variant="info" title="Cluster update in progress.">
@@ -170,12 +170,12 @@ const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({ cv }) =>
           </Alert>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 
 export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = (props) => (
-  <React.Fragment>
+  <>
     <UpdateInProgressAlert cv={props.cv} />
     <ListPage
       {...props}
@@ -185,7 +185,7 @@ export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = (props) 
       canCreate={false}
       rowFilters={filters}
     />
-  </React.Fragment>
+  </>
 );
 
 const OperandVersions: React.SFC<OperandVersionsProps> = ({ versions }) => {
@@ -221,7 +221,7 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj })
   const operatorVersion =
     versions.length === 1 && versions[0].name === 'operator' ? versions[0].version : null;
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Cluster Operator Overview" />
         <div className="row">
@@ -231,10 +231,10 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj })
           <div className="col-sm-6">
             <dl>
               {operatorVersion && (
-                <React.Fragment>
+                <>
                   <dt>Version</dt>
                   <dd>{operatorVersion}</dd>
-                </React.Fragment>
+                </>
               )}
               <dt>Status</dt>
               <dd>
@@ -254,7 +254,7 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj })
         <SectionHeading text="Operand Versions" />
         <OperandVersions versions={versions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

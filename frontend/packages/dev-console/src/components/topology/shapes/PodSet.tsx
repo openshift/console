@@ -40,7 +40,7 @@ const PodSet: React.FC<PodSetProps> = ({ size, data }) => {
     data.isRollingOut,
   );
   return (
-    <React.Fragment>
+    <>
       <PodStatus
         key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
         x={-size / 2}
@@ -60,7 +60,7 @@ const PodSet: React.FC<PodSetProps> = ({ size, data }) => {
           size={size}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

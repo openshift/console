@@ -21,7 +21,7 @@ export const getNumberOrPercent = (value) => {
 
 export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (props) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-form-row">
         <p>How should the pods be replaced when a new revision is created?</p>
       </div>
@@ -123,7 +123,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
           />
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

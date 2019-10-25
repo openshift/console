@@ -131,7 +131,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         )}
         {loading && <LoadingBox />}
         {!loading && (
-          <React.Fragment>
+          <>
             <p className="co-m-pane__explanation">
               Edit the following resources to manage the configuration of your cluster.
             </p>
@@ -147,7 +147,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
                 ))}
               </div>
             </div>
-          </React.Fragment>
+          </>
         )}
       </div>
     );

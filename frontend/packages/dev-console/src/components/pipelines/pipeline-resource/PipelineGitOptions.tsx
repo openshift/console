@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '../../formik-fields';
 
 const PipelineGitOptions: React.FC = () => (
-  <React.Fragment>
+  <>
     <InputField
       type={TextInputTypes.text}
       name="params.url"
@@ -17,7 +17,7 @@ const PipelineGitOptions: React.FC = () => (
       label="Revision"
       helpText="Please provide Revisions. i.e master"
     />
-  </React.Fragment>
+  </>
 );
 
 export default PipelineGitOptions;

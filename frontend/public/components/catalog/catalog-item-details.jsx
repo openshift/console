@@ -70,7 +70,7 @@ export class CatalogTileDetails extends React.Component {
     ));
 
     return (
-      <React.Fragment>
+      <>
         <Modal.Header>
           <Modal.CloseButton onClick={closeOverlay} />
           <CatalogItemHeader
@@ -108,19 +108,19 @@ export class CatalogTileDetails extends React.Component {
                   {longDescription && <p>{longDescription}</p>}
                   {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
                   {documentationUrl && (
-                    <React.Fragment>
+                    <>
                       <h2 className="h5">Documentation</h2>
                       <p>{documentationUrlLink}</p>
-                    </React.Fragment>
+                    </>
                   )}
                   {!_.isEmpty(plans) && (
-                    <React.Fragment>
+                    <>
                       <h2 className="h5">Service Plans</h2>
                       <ul>{planItems}</ul>
-                    </React.Fragment>
+                    </>
                   )}
                   {kind === 'ImageStream' && (
-                    <React.Fragment>
+                    <>
                       <hr />
                       <p>The following resources will be created:</p>
                       <ul>
@@ -151,14 +151,14 @@ export class CatalogTileDetails extends React.Component {
                           expose your workload outside the cluster.
                         </li>
                       </ul>
-                    </React.Fragment>
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </div>
         </Modal.Body>
-      </React.Fragment>
+      </>
     );
   }
 }

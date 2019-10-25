@@ -43,7 +43,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         stack={error.stack}
       />
     ) : (
-      <React.Fragment>{this.props.children}</React.Fragment>
+      <>{this.props.children}</>
     );
   }
 }

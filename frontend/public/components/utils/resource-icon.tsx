@@ -23,12 +23,12 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({ className, kind }) 
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
   const rendered = (
-    <React.Fragment>
+    <>
       <span className="sr-only">{kindStr}</span>
       <span className={klass} title={kindStr}>
         {iconLabel}
       </span>
-    </React.Fragment>
+    </>
   );
   if (kindObj) {
     MEMO[memoKey] = rendered;

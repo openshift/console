@@ -454,13 +454,13 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
           {details}
         </div>
       ) : (
-        <React.Fragment>
+        <>
           <div className="co-m-pane__body">
             {header}
             {primaryDescriptor}
           </div>
           <div className="co-m-pane__body">{details}</div>
-        </React.Fragment>
+        </>
       )}
     </div>
   );

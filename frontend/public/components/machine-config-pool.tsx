@@ -67,7 +67,7 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
       <dt>Max Unavailable Machines</dt>
       <dd>{maxUnavailable}</dd>
       {configuration && (
-        <React.Fragment>
+        <>
           <dt>Current Configuration</dt>
           <dd>
             {configuration.name ? (
@@ -93,7 +93,7 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
                 ))
               : '-'}
           </dd>
-        </React.Fragment>
+        </>
       )}
     </dl>
   );
@@ -180,7 +180,7 @@ const MachineConfigList: React.SFC<MachineConfigListProps> = ({ obj }) => (
 const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Config Pool Overview " />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
@@ -198,7 +198,7 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
         <SectionHeading text="Conditions" />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

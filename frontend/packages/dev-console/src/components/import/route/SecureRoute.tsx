@@ -15,7 +15,7 @@ const SecureRoute: React.FC = () => {
     },
   } = useFormikContext<FormikValues>();
   return (
-    <React.Fragment>
+    <>
       <CheckboxField
         name="route.secure"
         label="Secure Route"
@@ -23,7 +23,7 @@ const SecureRoute: React.FC = () => {
         helpText="Routes can be secured using several TLS termination types for serving certificates."
       />
       {secure && (
-        <React.Fragment>
+        <>
           <DropdownField
             name="route.tls.termination"
             label="TLS Termination"
@@ -44,7 +44,7 @@ const SecureRoute: React.FC = () => {
             fullWidth
           />
           {tls.termination && tls.termination !== 'passthrough' && (
-            <React.Fragment>
+            <>
               <h3>Certificates</h3>
               <FormHelperText isHidden={false}>
                 TLS certificates for edge and re-encrypt termination. If not specified, the
@@ -72,11 +72,11 @@ const SecureRoute: React.FC = () => {
                   helpText="The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
                 />
               )}
-            </React.Fragment>
+            </>
           )}
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

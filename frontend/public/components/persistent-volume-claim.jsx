@@ -133,7 +133,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const volumeMode = _.get(pvc, 'spec.volumeMode');
   const conditions = _.get(pvc, 'status.conditions');
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="PersistentVolumeClaim Overview" />
         <div className="row">
@@ -152,16 +152,16 @@ const Details_ = ({ flags, obj: pvc }) => {
                 <PVCStatus pvc={pvc} />
               </dd>
               {storage && (
-                <React.Fragment>
+                <>
                   <dt>Capacity</dt>
                   <dd>{storage}</dd>
-                </React.Fragment>
+                </>
               )}
               {!_.isEmpty(accessModes) && (
-                <React.Fragment>
+                <>
                   <dt>Access Modes</dt>
                   <dd>{accessModes.join(', ')}</dd>
-                </React.Fragment>
+                </>
               )}
               <dt>Volume Mode</dt>
               <dd>{volumeMode || 'Filesystem'}</dd>
@@ -174,12 +174,12 @@ const Details_ = ({ flags, obj: pvc }) => {
                 )}
               </dd>
               {volumeName && canListPV && (
-                <React.Fragment>
+                <>
                   <dt>Persistent Volume</dt>
                   <dd>
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </dd>
-                </React.Fragment>
+                </>
               )}
             </dl>
           </div>
@@ -189,7 +189,7 @@ const Details_ = ({ flags, obj: pvc }) => {
         <SectionHeading text="Conditions" />
         <Conditions conditions={conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

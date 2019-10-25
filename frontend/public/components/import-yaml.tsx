@@ -6,7 +6,7 @@ export const ImportYamlPage = () => {
   const title = 'Import YAML';
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -16,6 +16,6 @@ export const ImportYamlPage = () => {
         download={false}
         header={title}
       />
-    </React.Fragment>
+    </>
   );
 };

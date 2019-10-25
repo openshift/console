@@ -37,7 +37,7 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ templ
   }
 
   return (
-    <React.Fragment>
+    <>
       <hr />
       <p>The following resources will be created:</p>
       <ul>
@@ -45,7 +45,7 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ templ
           <li key={kind}>{kind}</li>
         ))}
       </ul>
-    </React.Fragment>
+    </>
   );
 };
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
@@ -336,7 +336,7 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   ];
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -346,7 +346,7 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
           <TemplateForm preselectedNamespace={preselectedNamespace} {...props as any} />
         </Firehose>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

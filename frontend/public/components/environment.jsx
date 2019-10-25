@@ -517,7 +517,7 @@ export const EnvironmentPage = connect(stateToProps)(
         />
       ));
       const containerVars = (
-        <React.Fragment>
+        <>
           {readOnly && !_.isEmpty(owners) && (
             <div className="co-toolbar__group co-toolbar__group--left">
               <Alert
@@ -526,8 +526,7 @@ export const EnvironmentPage = connect(stateToProps)(
                 variant="info"
                 title="Environment variables set from parent"
               >
-                View environment for resource{' '}
-                {owners.length > 1 ? <React.Fragment>owners: {owners}</React.Fragment> : owners}
+                View environment for resource {owners.length > 1 ? <>owners: {owners}</> : owners}
               </Alert>
             </div>
           )}
@@ -592,7 +591,7 @@ export const EnvironmentPage = connect(stateToProps)(
               />
             </div>
           )}
-        </React.Fragment>
+        </>
       );
 
       return (

@@ -76,9 +76,9 @@ const Probe: React.FC<ProbeProps> = ({ probe, podIP }) => {
   const isMultiline = value.indexOf('\n') !== -1;
   const formattedValue = isMultiline ? <pre>{value}</pre> : <code>{value}</code>;
   return (
-    <React.Fragment>
+    <>
       {label} {formattedValue}
-    </React.Fragment>
+    </>
   );
 };
 Probe.displayName = 'Probe';

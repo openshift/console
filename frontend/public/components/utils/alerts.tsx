@@ -22,12 +22,12 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant })
       variant={variant}
       className="co-alert"
       title={
-        <React.Fragment>
+        <>
           {`There are ${alertCount} ${variant} alerts.`}
           <Button type="button" onClick={() => setExpanded(!expanded)} variant="link">
             {expanded ? 'Hide' : 'Show'} Details
           </Button>
-        </React.Fragment>
+        </>
       }
     >
       {expanded && alertContent}

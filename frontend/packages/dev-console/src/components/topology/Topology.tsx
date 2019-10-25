@@ -113,10 +113,10 @@ export default class Topology extends React.Component<TopologyProps, State> {
     const targetItem: TopologyDataObject = topology[targetNodeId];
 
     const message = (
-      <React.Fragment>
+      <>
         Are you sure you want to remove the connection from <strong>{sourceItem.name}</strong> to{' '}
         <strong>{targetItem.name}</strong>?
-      </React.Fragment>
+      </>
     );
 
     confirmModal({

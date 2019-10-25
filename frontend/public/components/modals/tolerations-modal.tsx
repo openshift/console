@@ -122,7 +122,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
           {_.isEmpty(tolerations) ? (
             <EmptyBox label="Tolerations" />
           ) : (
-            <React.Fragment>
+            <>
               <div className="row toleration-modal__heading hidden-sm hidden-xs">
                 <div className="col-md-4 text-secondary text-uppercase">Key</div>
                 <div className="col-md-2 text-secondary text-uppercase">Operator</div>
@@ -219,7 +219,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                   </div>
                 );
               })}
-            </React.Fragment>
+            </>
           )}
           <Button
             className="pf-m-link--align-left"

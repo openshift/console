@@ -165,11 +165,11 @@ const ResourceQuotas: React.SFC<QuotaBoxesProps> = ({ resourceQuotas }) => {
   );
 
   return (
-    <React.Fragment>
+    <>
       {_.map(resourceQuotaRows, (quotaRow, index) => (
         <div key={index}>{quotaRow}</div>
       ))}
-    </React.Fragment>
+    </>
   );
 };
 

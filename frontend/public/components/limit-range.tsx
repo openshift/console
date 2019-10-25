@@ -140,7 +140,7 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit })
   });
 
   return (
-    <React.Fragment>
+    <>
       {_.map(resources, (resourceLimit, resource) => (
         <LimitRangeDetailsRow
           key={resource}
@@ -149,7 +149,7 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit })
           limit={resourceLimit}
         />
       ))}
-    </React.Fragment>
+    </>
   );
 };
 
@@ -182,13 +182,13 @@ export const LimitRangeDetailsList = (resource) => {
 };
 
 const Details = ({ obj: rq }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="Limit Range Overview" />
       <ResourceSummary resource={rq} />
     </div>
     <LimitRangeDetailsList resource={rq} />
-  </React.Fragment>
+  </>
 );
 
 export const LimitRangeDetailsPage = (props) => (

@@ -943,7 +943,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
     ]) as SwaggerDefinition) || definitionFor(props.operandModel);
 
   return (
-    <React.Fragment>
+    <>
       {props.loaded && (
         <div className="co-create-operand__header">
           <div className="co-create-operand__header-buttons">
@@ -1003,7 +1003,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
             />
           ))}
       </StatusBox>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -1012,7 +1012,7 @@ const stateToProps = ({ k8s }: RootState, props: Omit<CreateOperandPageProps, 'o
 });
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => (
-  <React.Fragment>
+  <>
     <Helmet>
       <title>{`Create ${kindForReference(props.match.params.plural)}`}</title>
     </Helmet>
@@ -1039,7 +1039,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
         <CreateOperand {...props as any} operandModel={props.operandModel} match={props.match} />
       </Firehose>
     )}
-  </React.Fragment>
+  </>
 ));
 
 export type CreateOperandProps = {

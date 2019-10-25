@@ -57,7 +57,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   }, [selectedImageTag, setFieldValue, setFieldError, imageName, imageStreamNamespace, imageTag]);
 
   return (
-    <React.Fragment>
+    <>
       <DropdownField
         name="image.tag"
         label="Builder Image Version"
@@ -67,7 +67,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
         required
       />
       {imageTag && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -47,7 +47,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({
   const [hover, setHover] = React.useState(false);
 
   return (
-    <React.Fragment>
+    <>
       <g
         data-test-id="connects-to-handler"
         onMouseEnter={() => setHover(true)}
@@ -103,7 +103,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({
           onMouseLeave={() => setHover(false)}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

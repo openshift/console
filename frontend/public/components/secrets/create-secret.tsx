@@ -188,7 +188,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
 
     renderBody = () => {
       return (
-        <React.Fragment>
+        <>
           <fieldset disabled={!this.props.isCreate}>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="secret-name">
@@ -218,7 +218,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
             secretType={this.state.secret.type}
             isCreate={this.props.isCreate}
           />
-        </React.Fragment>
+        </>
       );
     };
 
@@ -341,7 +341,7 @@ export class ImageSecretForm extends React.Component<ImageSecretFormProps, Image
     };
     const data = _.get(this.state.stringData, this.state.dataKey);
     return (
-      <React.Fragment>
+      <>
         {this.props.isCreate && (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
@@ -367,7 +367,7 @@ export class ImageSecretForm extends React.Component<ImageSecretFormProps, Image
             onDisable={this.onFormDisable}
           />
         )}
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -642,7 +642,7 @@ class CreateConfigSubform extends React.Component<
       );
     });
     return (
-      <React.Fragment>
+      <>
         {secretEntriesList}
         <Button
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
@@ -653,7 +653,7 @@ class CreateConfigSubform extends React.Component<
           <PlusCircleIcon className="co-icon-space-r" />
           Add Credentials
         </Button>
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -691,7 +691,7 @@ class UploadConfigSubform extends React.Component<
   }
   render() {
     return (
-      <React.Fragment>
+      <>
         <DroppableFileInput
           onChange={this.onFileChange}
           inputFileData={this.state.configFile}
@@ -706,7 +706,7 @@ class UploadConfigSubform extends React.Component<
             Configuration file should be in JSON format.
           </div>
         )}
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -805,7 +805,7 @@ export class SourceSecretForm extends React.Component<
       [SecretType.sshAuth]: 'SSH Key',
     };
     return (
-      <React.Fragment>
+      <>
         {this.props.isCreate ? (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
@@ -827,7 +827,7 @@ export class SourceSecretForm extends React.Component<
         ) : (
           <SSHAuthSubform onChange={this.onDataChanged} stringData={this.state.stringData} />
         )}
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -854,7 +854,7 @@ export class BasicAuthSubform extends React.Component<
   }
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="form-group">
           <label className="control-label" htmlFor="username">
             Username
@@ -895,7 +895,7 @@ export class BasicAuthSubform extends React.Component<
             </p>
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -1071,7 +1071,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
       );
     });
     return (
-      <React.Fragment>
+      <>
         {secretEntriesList}
         <Button
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
@@ -1082,7 +1082,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
           <PlusCircleIcon className="co-icon-space-r" />
           Add Key/Value
         </Button>
-      </React.Fragment>
+      </>
     );
   }
 }

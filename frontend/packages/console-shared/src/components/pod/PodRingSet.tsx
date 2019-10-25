@@ -41,7 +41,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
         />
       </SplitItem>
       {inProgressDeploymentData && (
-        <React.Fragment>
+        <>
           <SplitItem>
             <Bullseye>
               <LongArrowAltRightIcon size="xl" color={color200.value} />
@@ -57,7 +57,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
               enableScaling={false}
             />
           </SplitItem>
-        </React.Fragment>
+        </>
       )}
     </Split>
   );

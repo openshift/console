@@ -48,7 +48,7 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
 
     if (flags.SHOW_OPENSHIFT_START_GUIDE) {
       return (
-        <React.Fragment>
+        <>
           <StartGuide startGuide={<OpenShiftGettingStarted />} />
           {// Whitelist certain resource kinds that should not be disabled when no projects are available.
           // Disabling should also be optional
@@ -59,7 +59,7 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
               <WrappedComponent {...rest} noProjectsAvailable />
             </Disabled>
           )}
-        </React.Fragment>
+        </>
       );
     }
     return <WrappedComponent {...rest} />;
