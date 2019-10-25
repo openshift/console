@@ -411,9 +411,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // use a polling interval relative to the graph's timespan.
   const delay = endTime || hideGraphs ? null : Math.max(span / 120, minPollInterval);
 
-  usePoll(tick, delay, endTime, namespace, queries, samples, span);
+  const queriesKey = _.reject(queries, _.isEmpty).join();
+  usePoll(tick, delay, endTime, namespace, queriesKey, samples, span);
 
-  React.useEffect(() => setUpdating(true), [endTime, queries, samples, span]);
+  React.useEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
   const graphData: GraphDataPoint[][] = React.useMemo(
     () =>
