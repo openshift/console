@@ -298,26 +298,24 @@ const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionK
     );
   });
 
+const NoOperatorsMatchFilterMsg = () => <MsgBox title="No Operators Found" />;
+
+const noDataDetail = (
+  <>
+    <div>
+      No Operators are available for project{' '}
+      <span className="co-clusterserviceversion-empty__state__namespace">
+        {UIActions.getActiveNamespace()}
+      </span>
+    </div>
+    <div>
+      Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
+    </div>
+  </>
+);
+const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
+
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Operators match filter" detail="" />;
-
-  const allItemsFilteredDetail = (
-    <>
-      <div>
-        No Operators are available for project{' '}
-        <span className="co-clusterserviceversion-empty__state__namespace">
-          {UIActions.getActiveNamespace()}
-        </span>
-      </div>
-      <div>
-        Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
-      </div>
-    </>
-  );
-  const AllItemsFilteredMsg = () => (
-    <MsgBox title="No Operators Found" detail={allItemsFilteredDetail} />
-  );
-
   return (
     <Table
       {...props}
@@ -333,8 +331,8 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
           <FailedSubscriptionTableRow {...rowProps} />
         )
       }
-      EmptyMsg={EmptyMsg}
-      AllItemsFilteredMsg={AllItemsFilteredMsg}
+      EmptyMsg={NoOperatorsMatchFilterMsg}
+      NoDataEmptyMsg={NoDataEmptyMsg}
       virtualize
     />
   );

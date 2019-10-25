@@ -336,7 +336,7 @@ export type TableProps = {
   Rows?: (...args) => any[];
   'aria-label': string;
   virtualize?: boolean;
-  AllItemsFilteredMsg?: React.ComponentType<{}>;
+  NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   loaded?: boolean;
   reduxID?: string;
@@ -369,7 +369,7 @@ export const Table = connect<
       customData: PropTypes.any,
       data: PropTypes.array,
       unfilteredData: PropTypes.array,
-      AllItemsFilteredMsg: PropTypes.func,
+      NoDataEmptyMsg: PropTypes.func,
       EmptyMsg: PropTypes.func,
       expand: PropTypes.bool,
       fieldSelector: PropTypes.string,
@@ -590,7 +590,7 @@ export type TableInnerProps = {
   defaultSortField?: string;
   defaultSortFunc?: string;
   unfilteredData?: any[];
-  AllItemsFilteredMsg?: React.ComponentType<{}>;
+  NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   expand?: boolean;
   fieldSelector?: string;
