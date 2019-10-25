@@ -194,14 +194,16 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
 
   const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
     return selectedNodes.map((node: NodeKind) => {
-      const patch = [
-        {
-          op: 'add',
-          path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
-          value: '',
-        },
-      ];
-      return k8sPatch(NodeModel, node, patch);
+      if (!node.metadata.labels['cluster.ocs.openshift.io/openshift-storage']) {
+        const patch = [
+          {
+            op: 'add',
+            path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
+            value: '',
+          },
+        ];
+        return k8sPatch(NodeModel, node, patch);
+      }
     });
   };
 
@@ -233,20 +235,22 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     const promises = [];
 
     promises.push(...makeLabelNodesRequest(selectedData));
+
     // intentionally keeping the taint logic as its required in 4.3 and will be handled with checkbox selection
     // promises.push(...makeTaintNodesRequest(selectedData));
 
     const ocsObj = _.cloneDeep(ocsRequestData);
     ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
-    promises.push(k8sCreate(OCSServiceModel, ocsObj));
 
     Promise.all(promises)
       .then(() => {
-        history.push(
-          `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
-            ocsProps.clusterServiceVersion.metadata.name
-          }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
-        );
+        k8sCreate(OCSServiceModel, ocsObj).then(() => {
+          history.push(
+            `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
+              ocsProps.clusterServiceVersion.metadata.name
+            }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
+          );
+        });
       })
       .catch((err) => {
         setProgress(false);
