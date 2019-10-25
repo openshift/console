@@ -36,7 +36,12 @@ export function getDefaultPerspective() {
   return activePerspective || undefined;
 }
 
-const defaultQueryBrowserQuery = ImmutableMap({ isEnabled: true, isExpanded: true });
+const newQueryBrowserQuery = () =>
+  ImmutableMap({
+    id: _.uniqueId('query-browser-query'),
+    isEnabled: true,
+    isExpanded: true,
+  });
 
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
@@ -75,7 +80,7 @@ export default (state: UIState, action: UIAction): UIState => {
       consoleLinks: [],
       queryBrowser: ImmutableMap({
         metrics: [],
-        queries: ImmutableList([defaultQueryBrowserQuery]),
+        queries: ImmutableList([newQueryBrowserQuery()]),
       }),
     });
   }
@@ -174,16 +179,16 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
         ['queryBrowser', 'queries'],
-        state.getIn(['queryBrowser', 'queries']).push(defaultQueryBrowserQuery),
+        state.getIn(['queryBrowser', 'queries']).push(newQueryBrowserQuery()),
       );
 
     case ActionType.QueryBrowserDeleteAllQueries:
-      return state.setIn(['queryBrowser', 'queries'], ImmutableList([defaultQueryBrowserQuery]));
+      return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
 
     case ActionType.QueryBrowserDeleteQuery: {
       let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
       if (queries.size === 0) {
-        queries = queries.push(defaultQueryBrowserQuery);
+        queries = queries.push(newQueryBrowserQuery());
       }
       return state.setIn(['queryBrowser', 'queries'], queries);
     }

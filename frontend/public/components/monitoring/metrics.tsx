@@ -127,7 +127,7 @@ let focusedQuery;
 
 const queryDispatchToProps = (dispatch, { index }) => ({
   deleteQuery: () => dispatch(UIActions.queryBrowserDeleteQuery(index)),
-  patchQuery: (v) => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
+  patchQuery: (v: QueryObj) => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
   toggleIsEnabled: () => dispatch(UIActions.queryBrowserToggleIsEnabled(index)),
 });
 
@@ -437,7 +437,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   // Order autocompletion suggestions so that exact matches (token as a substring) are first, then fuzzy matches after
   // Exact matches are sorted first by how early the token appears and secondarily by string length (shortest first)
   // Fuzzy matches are sorted by string length (shortest first)
-  const isMatch = (v) => fuzzyCaseInsensitive(token, v);
+  const isMatch = (v: string) => fuzzyCaseInsensitive(token, v);
   const matchScore = (v: string): number => {
     const i = v.toLowerCase().indexOf(token);
     return i === -1 ? Infinity : i;
@@ -783,6 +783,7 @@ const QueryTable = connect(
 )(QueryTable_);
 
 const Query_: React.FC<QueryProps> = ({
+  id,
   index,
   isExpanded,
   isEnabled,
@@ -806,7 +807,7 @@ const Query_: React.FC<QueryProps> = ({
         <div title={switchLabel}>
           <Switch
             aria-label={switchLabel}
-            id={`query-switch-${index}`}
+            id={id}
             isChecked={isEnabled}
             onChange={toggleIsEnabled}
           />
@@ -821,6 +822,7 @@ const Query_: React.FC<QueryProps> = ({
 };
 const Query = connect(
   ({ UI }: RootState, { index }) => ({
+    id: UI.getIn(['queryBrowser', 'queries', index, 'id']),
     isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
     isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   }),
@@ -920,15 +922,17 @@ const RunQueriesButton = connect(
   { runQueries: UIActions.queryBrowserRunQueries },
 )(RunQueriesButton_);
 
-const QueriesList_ = ({ count, namespace }) => (
+const QueriesList_ = ({ ids, namespace }) => (
   <>
-    {_.map(_.range(count), (i) => (
-      <Query index={i} key={i} namespace={namespace} />
+    {_.map(ids, (id, i) => (
+      <Query index={i} key={id} namespace={namespace} />
     ))}
   </>
 );
 const QueriesList = connect(({ UI }: RootState) => ({
-  count: UI.getIn(['queryBrowser', 'queries']).size,
+  ids: UI.getIn(['queryBrowser', 'queries'])
+    .map((q) => q.get('id'))
+    .toArray(),
 }))(QueriesList_);
 
 const TechPreview = () => (
@@ -1033,6 +1037,7 @@ type QueryKebabProps = {
 };
 
 type QueryProps = {
+  id: string;
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;
