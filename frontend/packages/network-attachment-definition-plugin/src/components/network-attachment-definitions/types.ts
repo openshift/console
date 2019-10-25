@@ -18,5 +18,6 @@ export type NetworkAttachmentDefinitionsRowProps = {
 
 export type NetworkAttachmentDefinitionsPageProps = {
   filterLabel: string;
-  namespace: string;
+  namespace?: string;
+  match: any;
 };

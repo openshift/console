@@ -12,7 +12,7 @@ metadata:
   name: example
 spec:
   config: '{
-    "cniVersion": "0.3.0",
+    "cniVersion": "0.3.1",
     "name": "a-bridge-network",
     "type": "bridge",
     "bridge": "br0",
