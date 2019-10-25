@@ -5,6 +5,7 @@ import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { ServiceBindingRequestModel } from '../../models';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
 import { transformTopologyData } from './topology-utils';
 
@@ -59,12 +60,24 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   serviceBinding,
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
-  resources.push({
-    isList: true,
-    kind: referenceForModel(ClusterServiceVersionModel),
-    namespace,
-    prop: 'clusterServiceVersion',
-  });
+  if (serviceBinding) {
+    resources.push(
+      {
+        isList: true,
+        kind: referenceForModel(ClusterServiceVersionModel),
+        namespace,
+        prop: 'clusterServiceVersion',
+        optional: true,
+      },
+      {
+        isList: true,
+        kind: referenceForModel(ServiceBindingRequestModel),
+        namespace,
+        prop: 'serviceBindingRequests',
+        optional: true,
+      },
+    );
+  }
   return (
     <Firehose resources={resources}>
       <Controller

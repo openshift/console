@@ -26,6 +26,7 @@ export interface TopologyDataResources {
   eventSourceCronjob?: FirehoseResult;
   eventSourceContainers?: FirehoseResult;
   clusterServiceVersion?: FirehoseResult;
+  serviceBindingRequests?: FirehoseResult;
 }
 
 export interface Node {
@@ -39,6 +40,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
+  data?: { sbr?: K8sResourceKind };
 }
 
 export interface Group {

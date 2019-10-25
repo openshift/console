@@ -10,6 +10,7 @@ import {
   removeResourceConnection,
   createServiceBinding,
   removeServiceBinding,
+  edgesFromServiceBinding,
 } from '../../utils/application-utils';
 import {
   TopologyDataModel,
@@ -86,7 +87,7 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  * @param cheURL che link
  */
 const createTopologyNodeData = (
-  dc: OverviewItem,
+  dc: TopologyOverviewItem,
   operatorBackedServiceKinds: string[],
   cheURL?: string,
 ): TopologyDataObject => {
@@ -158,7 +159,11 @@ const getTopologyNodeItem = (dc: K8sResourceKind): Node => {
  * @param dc
  * @param resources
  */
-const getTopologyEdgeItems = (dc: K8sResourceKind, resources: K8sResourceKind[]): Edge[] => {
+const getTopologyEdgeItems = (
+  dc: K8sResourceKind,
+  resources: K8sResourceKind[],
+  sbrs: K8sResourceKind[],
+): Edge[] => {
   const annotations = _.get(dc, 'metadata.annotations');
   const edges = [];
 
@@ -183,6 +188,32 @@ const getTopologyEdgeItems = (dc: K8sResourceKind, resources: K8sResourceKind[])
       });
     }
   });
+
+  _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
+    // handles multiple edges
+    const targetNode = _.get(
+      _.find(resources, (deployment) => {
+        const targetFound =
+          _.get(deployment, 'metadata.ownerReferences[0].name') ===
+            sbr.spec.backingServiceSelector.resourceRef &&
+          _.get(deployment, 'metadata.ownerReferences[0].kind') ===
+            sbr.spec.backingServiceSelector.kind;
+        return targetFound;
+      }),
+      ['metadata', 'uid'],
+    );
+    const uid = _.get(dc, ['metadata', 'uid']);
+    if (targetNode) {
+      edges.push({
+        id: `${uid}_${targetNode}`,
+        type: 'service-binding',
+        source: uid,
+        target: targetNode,
+        data: { sbr },
+      });
+    }
+  });
+
   return edges;
 };
 
@@ -231,10 +262,9 @@ export const transformTopologyData = (
   cheURL?: string,
   utils?: Function[],
 ): TopologyDataModel => {
-  console.log(resources, 'res');
-  const installedOperators =
-    resources.clusterServiceVersion && resources.clusterServiceVersion.data;
+  const installedOperators = _.get(resources, 'clusterServiceVersion.data');
   const operatorBackedServiceKinds = [];
+  const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
 
   if (installedOperators) {
     _.forEach(installedOperators, (op) => {
@@ -276,7 +306,10 @@ export const transformTopologyData = (
         dataToShowOnNodes[uid] = createTopologyNodeData(item, operatorBackedServiceKinds, cheURL);
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
           nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig)];
-          edgesData = [...edgesData, ...getTopologyEdgeItems(deploymentConfig, allResources)];
+          edgesData = [
+            ...edgesData,
+            ...getTopologyEdgeItems(deploymentConfig, allResources, serviceBindingRequests),
+          ];
           groupsData = [
             ...getTopologyGroupItems(deploymentConfig, topologyGraphAndNodeData.graph.groups),
           ];
@@ -344,6 +377,8 @@ export const createTopologyResourceConnection = (
 export const removeTopologyResourceConnection = (
   source: TopologyDataObject,
   target: TopologyDataObject,
+  sbr: K8sResourceKind,
+  edgeType: string,
 ): Promise<any> => {
   if (!source || !target) {
     return Promise.reject();
@@ -352,8 +387,8 @@ export const removeTopologyResourceConnection = (
   const sourceObj = getResourceDeploymentObject(source);
   const targetObj = getResourceDeploymentObject(target);
 
-  if (target.operatorBackedService) {
-    return removeServiceBinding(sourceObj, targetObj);
+  if (edgeType === 'service-binding') {
+    return removeServiceBinding(sbr);
   }
 
   return removeResourceConnection(sourceObj, targetObj);
