@@ -204,6 +204,17 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
         ];
         return k8sPatch(NodeModel, node, patch);
       }
+      //yarn run lint test fails if else condition is not there. Should it be added?
+      // else {
+      //   const patch = [
+      //     {
+      //       op: 'add',
+      //       path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
+      //       value: node.metadata.labels['cluster.ocs.openshift.io/openshift-storage']
+      //     },
+      //   ];
+      //   return k8sPatch(NodeModel, node, patch)
+      // }
     });
   };
 
@@ -242,6 +253,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
     const ocsObj = _.cloneDeep(ocsRequestData);
     ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
 
+    // Nested Promises failing lint test as well
     Promise.all(promises)
       .then(() => {
         k8sCreate(OCSServiceModel, ocsObj).then(() => {
@@ -250,6 +262,10 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
               ocsProps.clusterServiceVersion.metadata.name
             }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
           );
+        })
+        .catch((err) => {
+          setProgress(false);
+          setError(err.message);
         });
       })
       .catch((err) => {
