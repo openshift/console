@@ -89,7 +89,7 @@ describe('TopologyUtils ', () => {
   });
 
   it('should return empty pod list in TopologyData in case of no pods', () => {
-    const knativeMockResp = { ...MockResources, pods: { data: [] } };
+    const knativeMockResp = { ...MockResources, pods: { loaded: true, loadError: '', data: [] } };
     const { topologyTransformedData, keys } = getTranformedTopologyData(knativeMockResp, [
       'deploymentConfigs',
       'deployments',
@@ -101,7 +101,10 @@ describe('TopologyUtils ', () => {
 
   it('should return a Idle pod status in a non-serverless application', () => {
     // simulate pod are scaled to zero in nodejs deployment.
-    const mockResources = { ..._.cloneDeep(MockResources), pods: { data: [] } };
+    const mockResources = {
+      ..._.cloneDeep(MockResources),
+      pods: { loaded: true, loadError: '', data: [] },
+    };
     mockResources.deploymentConfigs.data[0].metadata.annotations = {
       'idling.alpha.openshift.io/idled-at': '2019-04-22T11:58:33Z',
     };
@@ -116,7 +119,7 @@ describe('TopologyUtils ', () => {
   });
 
   it('should return false for non knative resource', () => {
-    const mockResources = { ...MockResources, pods: { data: [] } };
+    const mockResources = { ...MockResources, pods: { loaded: true, loadError: '', data: [] } };
     const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
       'deploymentConfigs',
       'deployments',

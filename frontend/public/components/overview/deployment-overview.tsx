@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { DeploymentModel } from '../../models';
+import { DeploymentKind } from '../../module/k8s';
 import { DeploymentDetailsList, menuActions } from '../deployment';
 import { LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
 
@@ -74,9 +75,9 @@ export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({ ite
 );
 
 type DeploymentOverviewDetailsProps = {
-  item: OverviewItem;
+  item: OverviewItem<DeploymentKind>;
 };
 
 type DeploymentOverviewProps = {
-  item: OverviewItem;
+  item: OverviewItem<DeploymentKind>;
 };

@@ -1,27 +1,27 @@
 import { ComponentType } from 'react';
-import { KebabOption } from '@console/internal/components/utils';
-import { ExtPodKind, Resource, OverviewItem, PodControllerOverviewItem } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { FirehoseResult, KebabOption } from '@console/internal/components/utils';
+import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
+import { DeploymentKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
 
 export interface TopologyDataResources {
-  replicationControllers: Resource;
-  pods: Resource;
-  deploymentConfigs: Resource;
-  services: Resource;
-  routes: Resource;
-  deployments: Resource;
-  replicaSets: Resource;
-  buildConfigs: Resource;
-  builds: Resource;
-  daemonSets?: Resource;
-  ksroutes?: Resource;
-  configurations?: Resource;
-  revisions?: Resource;
-  ksservices?: Resource;
-  statefulSets?: Resource;
-  pipelines?: Resource;
-  pipelineRuns?: Resource;
+  replicationControllers: FirehoseResult;
+  pods: FirehoseResult<PodKind[]>;
+  deploymentConfigs: FirehoseResult;
+  services: FirehoseResult;
+  routes: FirehoseResult;
+  deployments: FirehoseResult<DeploymentKind[]>;
+  replicaSets: FirehoseResult;
+  buildConfigs: FirehoseResult;
+  builds: FirehoseResult;
+  daemonSets?: FirehoseResult;
+  ksroutes?: FirehoseResult;
+  configurations?: FirehoseResult;
+  revisions?: FirehoseResult;
+  ksservices?: FirehoseResult;
+  statefulSets?: FirehoseResult;
+  pipelines?: FirehoseResult;
+  pipelineRuns?: FirehoseResult;
 }
 
 export interface Node {

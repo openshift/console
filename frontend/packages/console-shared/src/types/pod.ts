@@ -1,15 +1,12 @@
-import { K8sResourceKind, PodPhase } from '@console/internal/module/k8s';
-
-export interface Resource {
-  data: K8sResourceKind[];
-}
+import { DeploymentKind, K8sResourceKind, PodKind, PodPhase } from '@console/internal/module/k8s';
+import { FirehoseResult } from '@console/internal/components/utils';
 
 export interface PodDataResources {
-  replicationControllers: Resource;
-  replicaSets: Resource;
-  pods: Resource;
-  deploymentConfigs?: Resource;
-  deployments?: Resource;
+  replicationControllers: FirehoseResult;
+  replicaSets: FirehoseResult;
+  pods: FirehoseResult<PodKind[]>;
+  deploymentConfigs?: FirehoseResult;
+  deployments?: FirehoseResult<DeploymentKind[]>;
 }
 
 export interface PodRCData {
@@ -21,11 +18,11 @@ export interface PodRCData {
 }
 
 export interface PodRingResources {
-  pods: Resource;
-  replicaSets: Resource;
-  replicationControllers: Resource;
-  deployments?: Resource;
-  deploymentConfigs?: Resource;
+  pods: FirehoseResult<PodKind[]>;
+  replicaSets: FirehoseResult;
+  replicationControllers: FirehoseResult;
+  deployments?: FirehoseResult<DeploymentKind[]>;
+  deploymentConfigs?: FirehoseResult;
 }
 
 export interface PodRingData {
