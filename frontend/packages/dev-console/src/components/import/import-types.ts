@@ -41,6 +41,7 @@ export interface DeployImageFormData {
   image: ImageStreamImageData;
   isSearchingForImage: boolean;
   serverless?: ServerlessData;
+  pipeline?: PipelineData;
   labels: { [name: string]: string };
   env: { [name: string]: string };
   route: RouteData;
@@ -56,6 +57,7 @@ export interface GitImportFormData {
   git: GitData;
   docker: DockerData;
   serverless?: ServerlessData;
+  pipeline?: PipelineData;
   image: ImageData;
   route: RouteData;
   build: BuildData;
@@ -152,6 +154,12 @@ export interface DeploymentData {
 export interface ServerlessData {
   enabled: boolean;
   scaling: ServerlessScaling;
+}
+
+export interface PipelineData {
+  enabled: boolean;
+  template?: K8sResourceKind;
+  taskRefs?: string[];
 }
 
 export interface ServerlessScaling {

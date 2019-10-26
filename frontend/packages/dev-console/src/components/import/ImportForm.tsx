@@ -94,6 +94,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         concurrencylimit: '',
       },
     },
+    pipeline: {
+      enabled: false,
+    },
     build: {
       env: [],
       triggers: {

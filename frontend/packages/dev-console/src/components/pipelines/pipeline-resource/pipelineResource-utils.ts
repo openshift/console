@@ -22,7 +22,7 @@ export const createPipelineResource = (
   params: ParamData,
   type: string,
   namespace: string,
-  secretResp: K8sResourceKind,
+  secretResp?: K8sResourceKind,
 ): Promise<K8sResourceKind> => {
   const resourceName = `${type}-${getRandomChars(6)}`;
   const pipelineResource: K8sResourceKind = {
