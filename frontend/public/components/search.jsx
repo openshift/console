@@ -77,7 +77,7 @@ class SearchPage_ extends React.PureComponent {
     const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>Search</title>
         </Helmet>
@@ -101,7 +101,7 @@ class SearchPage_ extends React.PureComponent {
           namespace={namespace}
           mock={noProjectsAvailable}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

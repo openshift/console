@@ -24,7 +24,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
   });
 
   return (
-    <React.Fragment>
+    <>
       <div
         className={classNames(
           'co-m-horizontal-nav__menu',
@@ -48,7 +48,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
           group={group}
         />
       ))}
-    </React.Fragment>
+    </>
   );
 };
 

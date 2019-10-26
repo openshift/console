@@ -114,10 +114,10 @@ const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({
           <dd>{serviceClass.spec.externalName || '-'}</dd>
         </ResourceSummary>
         {serviceClass.status.removedFromBrokerCatalog && (
-          <React.Fragment>
+          <>
             <dt>Removed From Catalog</dt>
             <dd>{serviceClass.status.removedFromBrokerCatalog}</dd>
-          </React.Fragment>
+          </>
         )}
       </div>
     </div>

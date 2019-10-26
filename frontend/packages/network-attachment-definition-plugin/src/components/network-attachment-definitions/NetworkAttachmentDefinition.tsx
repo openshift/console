@@ -119,14 +119,24 @@ NetworkAttachmentDefinitionsList.displayName = 'NetworkAttachmentDefinitionsList
 
 export const NetworkAttachmentDefinitionsPage: React.FC<NetworkAttachmentDefinitionsPageProps> = (
   props,
-) => (
-  <ListPage
-    {...props}
-    title={NetworkAttachmentDefinitionModel.labelPlural}
-    kind={NetworkAttachmentDefinitionModel.kind}
-    ListComponent={NetworkAttachmentDefinitionsList}
-    filterLabel={props.filterLabel}
-    canCreate
-  />
-);
+) => {
+  const namespace = props.namespace || props.match.params.ns || 'default';
+  const createProps = {
+    to: `/k8s/ns/${namespace}/networkattachmentdefinitions/~new/form`,
+  };
+
+  return (
+    <ListPage
+      {...props}
+      title={NetworkAttachmentDefinitionModel.labelPlural}
+      kind={NetworkAttachmentDefinitionModel.kind}
+      ListComponent={NetworkAttachmentDefinitionsList}
+      filterLabel={props.filterLabel}
+      canCreate
+      createProps={createProps}
+    />
+  );
+};
 NetworkAttachmentDefinitionsPage.displayName = 'NetworkAttachmentDefinitionsPage';
+
+export default NetworkAttachmentDefinitionsPage;

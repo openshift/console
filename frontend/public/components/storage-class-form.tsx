@@ -760,7 +760,7 @@ export class StorageClassForm_ extends React.Component<
       }
 
       const children = parameter.values ? (
-        <React.Fragment>
+        <>
           <label
             className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}
           >
@@ -774,11 +774,11 @@ export class StorageClassForm_ extends React.Component<
             onChange={(event) => this.setParameterHandler(key, event, false)}
           />
           <HelpBlock>{validationMsg ? validationMsg : null}</HelpBlock>
-        </React.Fragment>
+        </>
       ) : (
-        <React.Fragment>
+        <>
           {isCheckbox ? (
-            <React.Fragment>
+            <>
               <div className="checkbox">
                 <label>
                   <input
@@ -791,9 +791,9 @@ export class StorageClassForm_ extends React.Component<
                   {_.get(parameter, 'name', key)}
                 </label>
               </div>
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               <label
                 className={classNames('control-label', {
                   'co-required': this.paramIsRequired(key),
@@ -807,10 +807,10 @@ export class StorageClassForm_ extends React.Component<
                 value={_.get(this.state, `newStorageClass.parameters.${key}.value`, '')}
                 onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
               />
-            </React.Fragment>
+            </>
           )}
           <HelpBlock>{validationMsg ? validationMsg : parameter.hintText}</HelpBlock>
-        </React.Fragment>
+        </>
       );
 
       return (
@@ -829,7 +829,7 @@ export class StorageClassForm_ extends React.Component<
     });
 
     return (
-      <React.Fragment>
+      <>
         {dynamicContent}
 
         <FormGroup controlId={'provisioner-parameters-custom'}>
@@ -849,7 +849,7 @@ export class StorageClassForm_ extends React.Component<
             updateParentData={this.updateCustomParams}
           />
         </FormGroup>
-      </React.Fragment>
+      </>
     );
   };
 

@@ -3,6 +3,7 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../../../types';
+import { getHostMachine } from '../../../selectors';
 import HealthCard from './HealthCard';
 import UtilizationCard from './UtilizationCard';
 import EventsCard from './EventsCard';
@@ -14,9 +15,11 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
   machines,
   nodes,
 }) => {
+  const machine = getHostMachine(obj, machines);
+
   const mainCards = [
     { Card: () => <HealthCard obj={obj} /> },
-    { Card: () => <UtilizationCard obj={obj} /> },
+    { Card: () => <UtilizationCard obj={obj} machine={machine} /> },
   ];
   const leftCards = [
     {

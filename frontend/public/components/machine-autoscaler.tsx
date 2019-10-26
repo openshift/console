@@ -28,7 +28,7 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
   const targetKind: string = _.get(obj, 'spec.scaleTargetRef.kind');
   const targetName: string = _.get(obj, 'spec.scaleTargetRef.name');
   if (!targetAPIVersion || !targetKind || !targetName) {
-    return <React.Fragment>-</React.Fragment>;
+    return <>-</>;
   }
 
   const groupVersion = groupVersionFor(targetAPIVersion);
@@ -140,7 +140,7 @@ const MachineAutoscalerList: React.FC = (props) => (
 
 const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Autoscaler Overview" />
         <ResourceSummary resource={obj}>
@@ -154,7 +154,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
           <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
         </ResourceSummary>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

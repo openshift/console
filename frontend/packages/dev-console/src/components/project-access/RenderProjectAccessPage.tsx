@@ -14,9 +14,9 @@ const RenderProjectAccessPage: React.FC<RenderProjectAccessPageProps> = ({ names
     namespace,
   };
   return (
-    <React.Fragment>
+    <>
       {namespace ? (
-        <React.Fragment>
+        <>
           <Firehose
             resources={[
               {
@@ -30,13 +30,13 @@ const RenderProjectAccessPage: React.FC<RenderProjectAccessPageProps> = ({ names
           >
             <ProjectAccess {...props} />
           </Firehose>
-        </React.Fragment>
+        </>
       ) : (
         <ProjectListPage title="Project Access">
           Select a project to view the list of users with access to the project.
         </ProjectListPage>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

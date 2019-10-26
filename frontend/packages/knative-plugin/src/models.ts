@@ -72,3 +72,29 @@ export const ServiceModel: K8sKind = {
   crd: true,
   badge: BadgeType.TECH,
 };
+
+export const EventSourceCronJobModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'CronJobSource',
+  label: 'CronJob Source',
+  labelPlural: 'CronJob Sources',
+  plural: 'cronjobsources',
+  id: 'cronjobsource',
+  abbr: 'CJS',
+  namespaced: true,
+  crd: true,
+};
+
+export const EventSourceContainerModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'ContainerSource',
+  label: 'Container Source',
+  labelPlural: 'Container Sources',
+  plural: 'containersources',
+  id: 'containersource',
+  abbr: 'CS',
+  namespaced: true,
+  crd: true,
+};

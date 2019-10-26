@@ -87,17 +87,17 @@ export const AccessDenied: React.FC<AccessDeniedProps> = ({ message }) => (
 AccessDenied.displayName = 'AccessDenied';
 
 const Data: React.FC<DataProps> = ({
-  AllItemsFilteredMsg,
+  NoDataEmptyMsg,
   EmptyMsg,
   label,
   data,
   unfilteredData,
   children,
 }) => {
-  if (AllItemsFilteredMsg && _.isEmpty(unfilteredData)) {
+  if (NoDataEmptyMsg && _.isEmpty(unfilteredData)) {
     return (
       <div className="loading-box loading-box__loaded">
-        {AllItemsFilteredMsg ? <AllItemsFilteredMsg /> : <EmptyBox label={label} />}
+        {NoDataEmptyMsg ? <NoDataEmptyMsg /> : <EmptyBox label={label} />}
       </div>
     );
   }
@@ -150,11 +150,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   }
 
   if (!loaded) {
-    return skeleton ? (
-      <React.Fragment>{skeleton}</React.Fragment>
-    ) : (
-      <LoadingBox className="loading-box loading-box__loading" />
-    );
+    return skeleton ? <>{skeleton}</> : <LoadingBox className="loading-box loading-box__loading" />;
   }
   return <Data {...dataProps} />;
 };
@@ -195,7 +191,7 @@ type AccessDeniedProps = {
 };
 
 type DataProps = {
-  AllItemsFilteredMsg?: React.ComponentType;
+  NoDataEmptyMsg?: React.ComponentType;
   EmptyMsg?: React.ComponentType;
   label?: string;
   unfilteredData?: any;
@@ -210,7 +206,7 @@ type StatusBoxProps = {
   data?: any;
   unfilteredData?: any;
   skeleton?: React.ReactNode;
-  AllItemsFilteredMsg?: React.ComponentType;
+  NoDataEmptyMsg?: React.ComponentType;
   EmptyMsg?: React.ComponentType;
   children?: React.ReactNode;
 };

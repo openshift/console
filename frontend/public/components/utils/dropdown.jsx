@@ -373,7 +373,7 @@ export class Dropdown extends DropdownMixin {
     if (actionItems) {
       const { selectedKey, keyboardHoverKey, noSelection } = this.props;
       return (
-        <React.Fragment>
+        <>
           {actionItems.map((ai) => (
             <DropDownRow
               className={classNames({ active: ai.actionKey === selectedKey && !noSelection })}
@@ -388,7 +388,7 @@ export class Dropdown extends DropdownMixin {
           <li className="co-namespace-selector__divider">
             <div className="dropdown-menu__divider" />
           </li>
-        </React.Fragment>
+        </>
       );
     }
     return null;

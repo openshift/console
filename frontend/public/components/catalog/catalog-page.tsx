@@ -352,7 +352,7 @@ export const Catalog = connectToFlags<CatalogProps>(
 export const CatalogPage = withStartGuide(({ match, noProjectsAvailable }) => {
   const namespace = _.get(match, 'params.ns');
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>Developer Catalog</title>
       </Helmet>
@@ -364,7 +364,7 @@ export const CatalogPage = withStartGuide(({ match, noProjectsAvailable }) => {
         </p>
         <Catalog namespace={namespace} mock={noProjectsAvailable} />
       </div>
-    </React.Fragment>
+    </>
   );
 });
 

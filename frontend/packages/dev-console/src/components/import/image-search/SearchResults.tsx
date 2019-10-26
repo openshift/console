@@ -14,7 +14,7 @@ const SearchResults: React.FC = () => {
   const { values } = useFormikContext<FormikValues>();
 
   const ImagePorts = ({ ports }) => (
-    <React.Fragment>
+    <>
       {_.size(ports) > 1 ? 'Ports ' : 'Port '}
       {_.map(ports, (port) => `${port.containerPort}/${port.protocol.toUpperCase()}`).join(
         ', ',
@@ -24,7 +24,7 @@ const SearchResults: React.FC = () => {
         Other containers can access this service through the hostname{' '}
         <strong>{values.name || '<name>'}</strong>.
       </div>
-    </React.Fragment>
+    </>
   );
 
   return !_.isEmpty(values.isi.image) ? (

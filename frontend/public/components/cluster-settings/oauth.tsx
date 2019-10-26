@@ -67,15 +67,15 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind })
   const { identityProviders, tokenConfig } = obj.spec;
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="OAuth Overview" />
         <ResourceSummary resource={obj}>
           {tokenConfig && (
-            <React.Fragment>
+            <>
               <dt>Access Token Max Age</dt>
               <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
-            </React.Fragment>
+            </>
           )}
         </ResourceSummary>
       </div>
@@ -94,7 +94,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind })
         />
         <IdentityProviders identityProviders={identityProviders} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

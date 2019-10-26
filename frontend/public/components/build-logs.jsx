@@ -18,10 +18,10 @@ const PipelineLogMessage = ({ build }) => {
     : 'A link to the Jenkins pipeline build logs will appear below when the build starts';
 
   const detail = (
-    <React.Fragment>
+    <>
       <p>{message}</p>
       <BuildPipelineLogLink obj={build} />
-    </React.Fragment>
+    </>
   );
 
   return <MsgBox title="See Jenkins Log" detail={detail} />;

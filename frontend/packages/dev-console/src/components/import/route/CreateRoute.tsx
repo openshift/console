@@ -15,15 +15,15 @@ const CreateRoute: React.FC = () => {
   const portOptions = ports.reduce((acc, port) => {
     const name = makePortName(port);
     acc[name] = (
-      <React.Fragment>
+      <>
         {port.containerPort} &rarr; {port.containerPort} ({port.protocol})
-      </React.Fragment>
+      </>
     );
     return acc;
   }, {});
 
   return (
-    <React.Fragment>
+    <>
       <InputField
         type={TextInputTypes.text}
         name="route.hostname"
@@ -55,7 +55,7 @@ const CreateRoute: React.FC = () => {
           fullWidth
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

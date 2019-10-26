@@ -22,7 +22,7 @@ const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
   group,
 }) => {
   return (
-    <React.Fragment>
+    <>
       {!_.isEmpty(resourcesData) ? (
         <div className="overview__sidebar-pane-body">
           <SidebarSectionHeading text={title}>
@@ -40,7 +40,7 @@ const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
           <TopologyApplicationResourceList resources={_.take(resourcesData, MAX_RESOURCES)} />
         </div>
       ) : null}
-    </React.Fragment>
+    </>
   );
 };
 

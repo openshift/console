@@ -107,7 +107,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
   const namespace = match.params.ns;
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>+Add</title>
       </Helmet>
@@ -124,7 +124,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
           </ProjectsExistWrapper>
         </Firehose>
       </NamespacedPage>
-    </React.Fragment>
+    </>
   );
 };
 

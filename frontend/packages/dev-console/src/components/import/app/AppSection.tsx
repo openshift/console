@@ -16,7 +16,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable })
   return (
     <FormSection title="General">
       {noProjectsAvailable && (
-        <React.Fragment>
+        <>
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-name"
@@ -36,7 +36,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable })
             name="project.description"
             label="Project Description"
           />
-        </React.Fragment>
+        </>
       )}
       {!initialApplication.value && (
         <ApplicationSelector namespace={project.name} noProjectsAvailable={noProjectsAvailable} />

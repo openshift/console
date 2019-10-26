@@ -98,10 +98,11 @@ export type Taint = {
 export type TolerationOperator = 'Exists' | 'Equal';
 
 export type Toleration = {
+  effect: TaintEffect;
   key?: string;
   operator: TolerationOperator;
+  tolerationSeconds?: number;
   value?: string;
-  effect: TaintEffect;
 };
 
 // Properties common to (almost) all Kubernetes resources.
@@ -129,11 +130,11 @@ export type K8sResourceKind = {
 };
 
 export type VolumeMount = {
-  name: string;
-  readOnly: boolean;
   mountPath: string;
-  subPath?: string;
   mountPropagation?: 'None' | 'HostToContainer' | 'Bidirectional';
+  name: string;
+  readOnly?: boolean;
+  subPath?: string;
   subPathExpr?: string;
 };
 
@@ -336,6 +337,35 @@ export type PodKind = {
   status: PodStatus;
 } & K8sResourceCommon &
   PodTemplate;
+
+export type DeploymentKind = {
+  spec: {
+    minReadySeconds?: number;
+    paused?: boolean;
+    progressDeadlineSeconds?: number;
+    replicas?: number;
+    revisionHistoryLimit?: number;
+    selector: Selector;
+    strategy?: {
+      rollingUpdate?: {
+        maxSurge: number | string;
+        maxUnavailable: number | string;
+      };
+      type?: string;
+    };
+    template: PodTemplate;
+  };
+  status?: {
+    availableReplicas?: number;
+    collisionCount?: number;
+    conditions?: any[];
+    observedGeneration?: number;
+    readyReplicas?: number;
+    replicas?: number;
+    unavailableReplicas?: number;
+    updatedReplicas?: number;
+  };
+} & K8sResourceCommon;
 
 export type StorageClassResourceKind = {
   provisioner: string;

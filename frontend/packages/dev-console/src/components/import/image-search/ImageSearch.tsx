@@ -89,7 +89,7 @@ const ImageSearch: React.FC = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <InputSearchField
         type={TextInputTypes.text}
         data-test-id="deploy-image-search-term"
@@ -124,7 +124,7 @@ const ImageSearch: React.FC = () => {
           action={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Status, PodRingController } from '@console/shared';
 import { DeploymentModel } from '../models';
-import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -29,7 +29,7 @@ import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
 
-const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind) => ({
+const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) => ({
   label: 'Edit Update Strategy',
   callback: () => configureUpdateStrategyModal({ deployment }),
   accessReview: {
@@ -41,7 +41,7 @@ const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind)
   },
 });
 
-const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
+const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
   label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
   accessReview: {
@@ -107,7 +107,7 @@ DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
 const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Deployment Overview" />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
@@ -165,7 +165,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         <SectionHeading text="Conditions" />
         <Conditions conditions={deployment.status.conditions} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 DeploymentDetails.displayName = 'DeploymentDetails';
@@ -227,11 +227,11 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
 type DeploymentDetailsListProps = {
-  deployment: K8sResourceKind;
+  deployment: DeploymentKind;
 };
 
 type DeploymentDetailsProps = {
-  obj: K8sResourceKind;
+  obj: DeploymentKind;
 };
 
 const kind = 'Deployment';
@@ -250,7 +250,7 @@ const DeploymentTableRow: React.FC<DeploymentTableRowProps> = ({ obj, index, key
 };
 DeploymentTableRow.displayName = 'DeploymentTableRow';
 type DeploymentTableRowProps = {
-  obj: K8sResourceKind;
+  obj: DeploymentKind;
   index: number;
   key: string;
   style: object;
@@ -283,7 +283,7 @@ export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => (
 DeploymentsPage.displayName = 'DeploymentsPage';
 
 type ReplicaSetsTabProps = {
-  obj: K8sResourceKind;
+  obj: DeploymentKind;
 };
 
 type DeploymentsPageProps = {

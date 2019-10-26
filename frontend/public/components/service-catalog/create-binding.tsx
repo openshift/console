@@ -123,7 +123,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
     }
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>{title}</title>
         </Helmet>
@@ -188,7 +188,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

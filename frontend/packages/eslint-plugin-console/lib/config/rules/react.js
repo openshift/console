@@ -6,6 +6,9 @@ module.exports = {
   // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
   'react/jsx-filename-extension': ['error', { extensions: ['.jsx'] }],
 
+  // Enforce shorthand React fragment syntax
+  'react/jsx-fragments': 'error',
+
   // Turning off because sometimes you just want to use 'this.state.foo' or 'this.props.children'
   'react/destructuring-assignment': 'off',
 

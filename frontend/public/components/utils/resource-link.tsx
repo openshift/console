@@ -114,12 +114,12 @@ export const ResourceLink = connectToModel(
 const NodeLink_: React.FC<NodeLinkProps> = (props) => {
   const { name, flags } = props;
   if (!name) {
-    return <React.Fragment>-</React.Fragment>;
+    return <>-</>;
   }
   return flags[FLAGS.CAN_LIST_NODE] ? (
     <ResourceLink kind="Node" name={name} title={name} />
   ) : (
-    <React.Fragment>{name}</React.Fragment>
+    <>{name}</>
   );
 };
 

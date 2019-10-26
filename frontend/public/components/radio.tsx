@@ -11,7 +11,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
     'inline',
   ]);
   const inputElement = (
-    <React.Fragment>
+    <>
       <label
         className={classNames({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}
       >
@@ -20,7 +20,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
       </label>
       {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
       {props.children}
-    </React.Fragment>
+    </>
   );
 
   return props.inline ? inputElement : <div className="radio">{inputElement}</div>;

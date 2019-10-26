@@ -16,7 +16,7 @@ export interface MetricsPageProps {
 const MetricsPage: React.FC<MetricsPageProps> = ({ match }) => {
   const namespace = match.params.ns;
   return (
-    <React.Fragment>
+    <>
       <NamespaceBar />
       <Helmet>
         <title>Metrics</title>
@@ -28,7 +28,7 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ match }) => {
           Select a project to view metrics
         </ProjectListPage>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

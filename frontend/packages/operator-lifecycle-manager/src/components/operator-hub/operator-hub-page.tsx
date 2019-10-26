@@ -121,7 +121,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
 
 export const OperatorHubPage = withFallback(
   (props: OperatorHubPageProps) => (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>OperatorHub</title>
       </Helmet>
@@ -171,7 +171,7 @@ export const OperatorHubPage = withFallback(
           </Firehose>
         </div>
       </div>
-    </React.Fragment>
+    </>
   ),
   ErrorBoundaryFallback,
 );

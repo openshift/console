@@ -98,9 +98,9 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
 }) => {
   const phaseFor = (phase: InstallPlanKind['status']['phase']) =>
     phase === 'RequiresApproval' ? (
-      <React.Fragment>
+      <>
         <YellowExclamationTriangleIcon /> {phase}
-      </React.Fragment>
+      </>
     ) : (
       phase
     );
@@ -134,10 +134,10 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
                   title={csvName}
                 />
               ) : (
-                <React.Fragment>
+                <>
                   <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
                   {csvName}
-                </React.Fragment>
+                </>
               )}
             </li>
           ))}
@@ -231,7 +231,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
 
   return (
-    <React.Fragment>
+    <>
       {needsApproval && (
         <div className="co-m-pane__body">
           <HintBlock title="Review Manual Install Plan">
@@ -271,10 +271,10 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
                         title={csvName}
                       />
                     ) : (
-                      <React.Fragment>
+                      <>
                         <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
                         {csvName}
-                      </React.Fragment>
+                      </>
                     )}
                   </dd>
                 ))}
@@ -294,7 +294,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -331,15 +331,15 @@ export class InstallPlanPreview extends React.Component<
         .catch((error) => this.setState({ error }));
 
     const stepStatus = (status: Step['status']) => (
-      <React.Fragment>
+      <>
         {status === 'Present' && <GreenCheckCircleIcon className="co-icon-space-r" />}
         {status === 'Created' && <AddCircleOIcon className="co-icon-space-r" />}
         {status}
-      </React.Fragment>
+      </>
     );
 
     return plan.length > 0 ? (
-      <React.Fragment>
+      <>
         {this.state.error && (
           <div className="co-clusterserviceversion-detail__error-box">{this.state.error}</div>
         )}
@@ -401,7 +401,7 @@ export class InstallPlanPreview extends React.Component<
                             title={step.resource.name}
                           />
                         ) : (
-                          <React.Fragment>
+                          <>
                             <ResourceIcon kind={referenceForStepResource(step.resource)} />
                             <Button
                               type="button"
@@ -412,7 +412,7 @@ export class InstallPlanPreview extends React.Component<
                             >
                               {step.resource.name}
                             </Button>
-                          </React.Fragment>
+                          </>
                         )}
                       </td>
                       <td>{step.resource.kind}</td>
@@ -425,7 +425,7 @@ export class InstallPlanPreview extends React.Component<
             </div>
           </div>
         ))}
-      </React.Fragment>
+      </>
     ) : (
       <div className="co-m-pane__body">
         <MsgBox

@@ -298,26 +298,24 @@ const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionK
     );
   });
 
+const NoOperatorsMatchFilterMsg = () => <MsgBox title="No Operators Found" />;
+
+const noDataDetail = (
+  <>
+    <div>
+      No Operators are available for project{' '}
+      <span className="co-clusterserviceversion-empty__state__namespace">
+        {UIActions.getActiveNamespace()}
+      </span>
+    </div>
+    <div>
+      Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
+    </div>
+  </>
+);
+const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
+
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Operators match filter" detail="" />;
-
-  const allItemsFilteredDetail = (
-    <React.Fragment>
-      <div>
-        No Operators are available for project{' '}
-        <span className="co-clusterserviceversion-empty__state__namespace">
-          {UIActions.getActiveNamespace()}
-        </span>
-      </div>
-      <div>
-        Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
-      </div>
-    </React.Fragment>
-  );
-  const AllItemsFilteredMsg = () => (
-    <MsgBox title="No Operators Found" detail={allItemsFilteredDetail} />
-  );
-
   return (
     <Table
       {...props}
@@ -333,8 +331,8 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
           <FailedSubscriptionTableRow {...rowProps} />
         )
       }
-      EmptyMsg={EmptyMsg}
-      AllItemsFilteredMsg={AllItemsFilteredMsg}
+      EmptyMsg={NoOperatorsMatchFilterMsg}
+      NoDataEmptyMsg={NoDataEmptyMsg}
       virtualize
     />
   );
@@ -357,7 +355,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
   );
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -398,7 +396,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
         helpText={helpText}
         showTitle={false}
       />
-    </React.Fragment>
+    </>
   );
 };
 
@@ -489,7 +487,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   const { spec, metadata, status } = props.obj;
 
   return (
-    <React.Fragment>
+    <>
       <ScrollToTopOnMount />
 
       <div className="co-m-pane__body">
@@ -579,7 +577,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 </dd>
               ))}
               {_.get(spec.install.spec, 'permissions') && (
-                <React.Fragment>
+                <>
                   <dt>Operator Service Accounts</dt>
                   {spec.install.spec.permissions.map(({ serviceAccountName }) => (
                     <dd key={serviceAccountName}>
@@ -590,7 +588,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                       />
                     </dd>
                   ))}
-                </React.Fragment>
+                </>
               )}
               <dt>Operator Group</dt>
               {_.get(status, 'reason') === CSVConditionReason.CSVReasonCopied ? (
@@ -618,7 +616,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
           }))}
         />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

@@ -104,10 +104,10 @@ const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({
               />
             </dd>
             {servicePlan.status.removedFromBrokerCatalog && (
-              <React.Fragment>
+              <>
                 <dt>Removed From Catalog</dt>
                 <dd>{servicePlan.status.removedFromBrokerCatalog}</dd>
-              </React.Fragment>
+              </>
             )}
           </dl>
         </div>

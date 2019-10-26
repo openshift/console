@@ -13,12 +13,12 @@ const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, 
     {error || _.isNil(status) ? (
       <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Unavailable</span>
     ) : Number(status) > 0 ? (
-      <React.Fragment>
+      <>
         <a href={link} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
           <RedExclamationCircleIcon className="co-dashboard-icon nb-bucket-card__status-icon" />
           <span className="nb-buckets-card__row-status-item-text">{status}</span>
         </a>
-      </React.Fragment>
+      </>
     ) : null}
   </div>
 ));

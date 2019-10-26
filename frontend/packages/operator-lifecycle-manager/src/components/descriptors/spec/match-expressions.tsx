@@ -22,7 +22,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
     );
 
   return (
-    <React.Fragment>
+    <>
       <div className="row toleration-modal__heading hidden-sm hidden-xs">
         <div className="col-md-4 text-secondary text-uppercase">Key</div>
         <div className="col-md-2 text-secondary text-uppercase">Operator</div>
@@ -99,7 +99,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
           Add More
         </Button>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

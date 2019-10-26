@@ -1,17 +1,22 @@
-import { Resource } from '@console/shared';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
 import {
   ConfigurationModel,
   RouteModel,
   RevisionModel,
   ServiceModel,
+  EventSourceCronJobModel,
+  EventSourceContainerModel,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
-export const sampleKnativeDeployments = {
+export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
+  loaded: true,
+  loadError: '',
   data: [
     {
+      apiVersion: 'apps/v1',
       kind: 'Deployment',
-      name: 'overlayimage-9jsl8-deployment',
       metadata: {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
@@ -65,7 +70,9 @@ export const sampleKnativeDeployments = {
               'traffic.sidecar.istio.io/includeOutboundIPRanges': '172.30.0.0/16',
             },
           },
-          spec: {},
+          spec: {
+            containers: [],
+          },
         },
         strategy: {
           type: 'RollingUpdate',
@@ -82,9 +89,12 @@ export const sampleKnativeDeployments = {
   ],
 };
 
-export const sampleKnativeReplicaSets: Resource = {
+export const sampleKnativeReplicaSets: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
+      apiVersion: 'apps/v1',
       kind: 'ReplicaSet',
       metadata: {
         annotations: {
@@ -120,7 +130,13 @@ export const sampleKnativeReplicaSets: Resource = {
           'serving.knative.dev/service': 'overlayimage',
         },
       },
-      spec: {},
+      spec: {
+        template: {
+          spec: {
+            containers: [],
+          },
+        },
+      },
       status: {
         replicas: 0,
         observedGeneration: 1,
@@ -129,31 +145,45 @@ export const sampleKnativeReplicaSets: Resource = {
   ],
 };
 
-export const sampleKnativePods: Resource = {
+export const sampleKnativePods: FirehoseResult<PodKind[]> = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-export const sampleKnativeReplicationControllers: Resource = {
+export const sampleKnativeReplicationControllers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-export const sampleKnativeDeploymentConfigs: Resource = {
+export const sampleKnativeDeploymentConfigs: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-export const sampleRoutes: Resource = {
+export const sampleRoutes: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-const sampleKnativeBuildConfigs: Resource = {
+const sampleKnativeBuildConfigs: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-const sampleKnativeBuilds: Resource = {
+const sampleKnativeBuilds: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-const sampleKnativeConfigurations: Resource = {
+const sampleKnativeConfigurations: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
@@ -179,7 +209,9 @@ const sampleKnativeConfigurations: Resource = {
   ],
 };
 
-const sampleKnativeRevisions: Resource = {
+const sampleKnativeRevisions: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
@@ -206,7 +238,9 @@ const sampleKnativeRevisions: Resource = {
   ],
 };
 
-export const sampleKnativeRoutes = {
+export const sampleKnativeRoutes: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
@@ -232,7 +266,9 @@ export const sampleKnativeRoutes = {
   ],
 };
 
-export const sampleKnativeServices: Resource = {
+export const sampleKnativeServices: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
@@ -255,7 +291,57 @@ export const sampleKnativeServices: Resource = {
   ],
 };
 
-export const sampleServices: Resource = {
+export const sampleEventSourceCronjob: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceCronJobModel.apiGroup}/${EventSourceCronJobModel.apiVersion}`,
+      kind: EventSourceCronJobModel.kind,
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1alpha1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+    },
+  ],
+};
+
+export const sampleEventSourceContainers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceContainerModel.apiGroup}/${EventSourceContainerModel.apiVersion}`,
+      kind: EventSourceContainerModel.kind,
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1alpha1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+    },
+  ],
+};
+
+export const sampleServices: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'Service',
@@ -334,11 +420,15 @@ export const sampleServices: Resource = {
   ],
 };
 
-export const samplePipeline = {
+export const samplePipeline: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
-export const samplePipelineRun = {
+export const samplePipelineRun: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [],
 };
 
@@ -358,4 +448,6 @@ export const MockKnativeResources: TopologyDataResources = {
   revisions: sampleKnativeRevisions,
   pipelines: samplePipeline,
   pipelineRuns: samplePipelineRun,
+  eventSourceCronjob: sampleEventSourceCronjob,
+  eventSourceContainers: sampleEventSourceContainers,
 };

@@ -97,7 +97,7 @@ export const NameKeyDropdownPair = ({
   const spacerBefore = getSpacer(firstConfigMap, firstSecret);
   const items = _.assign({}, cmItems, secretItems);
   return (
-    <React.Fragment>
+    <>
       <Dropdown
         menuClassName="value-from__menu dropdown-menu--text-wrap"
         className="value-from"
@@ -129,19 +129,19 @@ export const NameKeyDropdownPair = ({
           onChange={(val) => onChange({ [refProperty]: { name, key: val } })}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 
 const FieldRef = ({ data: { fieldPath } }) => (
-  <React.Fragment>
+  <>
     <div className="pairs-list__value-ro-field">
       <input type="text" className="pf-c-form-control" value="FieldRef" disabled />
     </div>
     <div className="pairs-list__value-ro-field">
       <input type="text" className="pf-c-form-control" value={fieldPath} disabled />
     </div>
-  </React.Fragment>
+  </>
 );
 
 const ConfigMapSecretKeyRef = ({
@@ -161,14 +161,14 @@ const ConfigMapSecretKeyRef = ({
 
   if (disabled) {
     return (
-      <React.Fragment>
+      <>
         <div className="pairs-list__value-ro-field">
           <input type="text" className="pf-c-form-control" value={`${name} - ${kind}`} disabled />
         </div>
         <div className="pairs-list__value-ro-field">
           <input type="text" className="pf-c-form-control" value={key} disabled />
         </div>
-      </React.Fragment>
+      </>
     );
   }
   return NameKeyDropdownPair({
@@ -227,7 +227,7 @@ const ConfigMapSecretRef = ({
 };
 
 const ResourceFieldRef = ({ data: { containerName, resource } }) => (
-  <React.Fragment>
+  <>
     <div className="pairs-list__value-ro-field">
       <input
         type="text"
@@ -239,7 +239,7 @@ const ResourceFieldRef = ({ data: { containerName, resource } }) => (
     <div className="pairs-list__value-ro-field">
       <input type="text" className="pf-c-form-control value-from" value={resource} disabled />
     </div>
-  </React.Fragment>
+  </>
 );
 
 const keyStringToComponent = {

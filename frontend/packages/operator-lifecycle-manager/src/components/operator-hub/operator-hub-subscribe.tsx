@@ -256,7 +256,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   return (
     <div className="row">
       <div className="col-xs-6">
-        <React.Fragment>
+        <>
           <div className="form-group">
             <h5 className="co-required">Installation Mode</h5>
             <div>
@@ -339,7 +339,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               onChange={(e) => setApproval(e.currentTarget.value)}
             />
           </div>
-        </React.Fragment>
+        </>
         <div className="co-form-section__separator" />
         {formError()}
         <ActionGroup className="pf-c-form">
@@ -395,7 +395,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   });
 
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>OperatorHub Subscription</title>
       </Helmet>
@@ -450,7 +450,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
           />
         </Firehose>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

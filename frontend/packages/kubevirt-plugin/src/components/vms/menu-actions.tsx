@@ -22,10 +22,10 @@ type ActionArgs = {
 };
 
 const getVMActionMessage = (vm, action: VMActionType) => (
-  <React.Fragment>
+  <>
     Are you sure you want to {action} <strong>{getName(vm)}</strong> in namespace{' '}
     <strong>{getNamespace(vm)}</strong>?
-  </React.Fragment>
+  </>
 );
 
 export const menuActionStart = (
@@ -97,9 +97,9 @@ const menuActionMigrate = (
       confirmModal({
         title,
         message: (
-          <React.Fragment>
+          <>
             Do you wish to migrate <strong>{getName(vmi)}</strong> vmi to another node?
-          </React.Fragment>
+          </>
         ),
         btnText: 'Migrate',
         executeFn: () => startVMIMigration(vmi),
@@ -120,10 +120,10 @@ const menuActionCancelMigration = (
       confirmModal({
         title,
         message: (
-          <React.Fragment>
+          <>
             Are you sure you want to cancel <strong>{getMigrationVMIName(migration)}</strong>{' '}
             migration in <strong>{getNamespace(migration)}</strong> namespace?
-          </React.Fragment>
+          </>
         ),
         btnText: 'Cancel Migration',
         executeFn: () => cancelMigration(migration),

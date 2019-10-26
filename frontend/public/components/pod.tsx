@@ -212,7 +212,7 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   containers,
   pod,
 }) => (
-  <React.Fragment>
+  <>
     <SectionHeading text={heading} />
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
@@ -230,11 +230,11 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
         ))}
       </div>
     </div>
-  </React.Fragment>
+  </>
 );
 
 const PodGraphs = requirePrometheus(({ pod }) => (
-  <React.Fragment>
+  <>
     <div className="row">
       <div className="col-md-12 col-lg-4">
         <Area
@@ -269,7 +269,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
     </div>
 
     <br />
-  </React.Fragment>
+  </>
 ));
 
 export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
@@ -327,7 +327,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   );
 
   return (
-    <React.Fragment>
+    <>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         <SectionHeading text="Pod Overview" />
@@ -362,7 +362,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <div className="co-m-pane__body">
         <VolumesTable resource={pod} heading="Volumes" />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

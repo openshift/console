@@ -132,7 +132,7 @@ const Metrics: React.SFC<MetricsProps> = ({ metrics, item }) => {
   const formattedMiB = formatBytesAsMiB(totalBytes);
   const formattedCores = formatCores(totalCores);
   return (
-    <React.Fragment>
+    <>
       <div className="project-overview__detail project-overview__detail--memory">
         <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
           <span>
@@ -151,7 +151,7 @@ const Metrics: React.SFC<MetricsProps> = ({ metrics, item }) => {
           </span>
         </MetricsTooltip>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -305,10 +305,10 @@ const ProjectOverviewListItem = connect<
           {name}
         </Button>
         {current && (
-          <React.Fragment>
+          <>
             ,&nbsp;
             <ControllerLink controller={current} />
-          </React.Fragment>
+          </>
         )}
         {deletionTimestamp && <ResourceItemDeleting />}
       </span>

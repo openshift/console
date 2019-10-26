@@ -44,7 +44,7 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
     ...props,
     resources: { pipeline: { data: resourceData } },
   });
-  return <React.Fragment>{children}</React.Fragment>;
+  return <>{children}</>;
 };
 
 export default PipelineAugmentRuns;

@@ -5,6 +5,8 @@ import {
   RevisionModel,
   ConfigurationModel,
   RouteModel,
+  EventSourceCronJobModel,
+  EventSourceContainerModel,
 } from '@console/knative-plugin';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import {
@@ -151,6 +153,32 @@ export const knativeServingResourcesServices = (namespace: string): FirehoseReso
       kind: referenceForModel(ServiceModel),
       namespace,
       prop: 'ksservices',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesCronJob = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceCronJobModel),
+      namespace,
+      prop: 'eventSourceCronjob',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesContainer = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceContainerModel),
+      namespace,
+      prop: 'eventSourceContainers',
       optional: true,
     },
   ];

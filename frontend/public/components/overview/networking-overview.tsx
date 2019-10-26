@@ -63,7 +63,7 @@ const RoutesOverviewList: React.SFC<RoutesOverviewListProps> = ({ routes }) => (
 
 export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ routes, services }) => {
   return (
-    <React.Fragment>
+    <>
       <SidebarSectionHeading text="Services" />
       {_.isEmpty(services) ? (
         <span className="text-muted">No Services found for this resource.</span>
@@ -77,7 +77,7 @@ export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ routes,
       ) : (
         <RoutesOverviewList routes={routes} />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

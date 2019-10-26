@@ -20,18 +20,24 @@ import {
   FLAG_KNATIVE_SERVING_REVISION,
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
+  FLAG_EVENT_SOURCE_CRONJOB,
+  FLAG_EVENT_SOURCE_CONTAINER,
 } from './const';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
   knativeServingResourcesServices,
+  eventSourceResourcesCronJob,
+  eventSourceResourcesContainer,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingRevisions,
   getKnativeServingServices,
+  getEventSourceCronjob,
+  getEventSourceContainer,
 } from './utils/get-knative-resources';
 
 type ConsumedExtensions =
@@ -85,6 +91,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceModel,
       flag: FLAG_KNATIVE_SERVING_SERVICE,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceCronJobModel,
+      flag: FLAG_EVENT_SOURCE_CRONJOB,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceContainerModel,
+      flag: FLAG_EVENT_SOURCE_CONTAINER,
     },
   },
   {
@@ -172,6 +192,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: knativeServingResourcesServices,
       required: FLAG_KNATIVE_SERVING_SERVICE,
       utils: getKnativeServingServices,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesCronJob,
+      required: FLAG_EVENT_SOURCE_CRONJOB,
+      utils: getEventSourceCronjob,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesContainer,
+      required: FLAG_EVENT_SOURCE_CONTAINER,
+      utils: getEventSourceContainer,
     },
   },
   {

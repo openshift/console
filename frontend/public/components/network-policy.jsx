@@ -177,7 +177,7 @@ const Details_ = ({ obj: np }) => {
   const networkPolicyDocs =
     'https://kubernetes.io/docs/concepts/services-networking/network-policies/';
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Namespace Overview" />
         <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
@@ -208,7 +208,7 @@ const Details_ = ({ obj: np }) => {
           </div>
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

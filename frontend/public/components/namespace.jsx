@@ -276,7 +276,7 @@ export const ProjectsTable = (props) => (
 
 const ProjectList_ = (props) => {
   const ProjectEmptyMessageDetail = (
-    <React.Fragment>
+    <>
       <p className="co-pre-line">
         {props.createProjectMessage || 'Create a project for your application.'}
       </p>
@@ -287,7 +287,7 @@ const ProjectList_ = (props) => {
       <p>
         Download the <Link to="/command-line-tools">command-line tools</Link>
       </p>
-    </React.Fragment>
+    </>
   );
   const ProjectEmptyMessage = () => (
     <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />
@@ -428,12 +428,12 @@ export const NamespaceSummary = ({ ns }) => {
             <Status status={ns.status.phase} />
           </dd>
           {canListSecrets && (
-            <React.Fragment>
+            <>
               <dt>Default Pull Secret</dt>
               <dd>
                 <PullSecret namespace={ns} />
               </dd>
-            </React.Fragment>
+            </>
           )}
           <dt>Network Policies</dt>
           <dd>

@@ -17,7 +17,8 @@ export const KubeAdminNotifier = connect(userStateToProps)(({ user }) => {
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
           You are logged in as a temporary administrative user. Update the{' '}
-          <Link to={oAuthResourcePath}>cluster OAuth configuration</Link> to allow others to log in.
+          <Link to={oAuthResourcePath}>cluster OAuth configuration</Link> to allow others to
+          log&nbsp;in.
         </p>
       </div>
     </div>

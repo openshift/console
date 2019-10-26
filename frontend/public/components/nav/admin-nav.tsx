@@ -77,7 +77,7 @@ const MonitoringNavSection_ = ({ grafanaURL, canAccess, kibanaURL }) => {
 const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
 const AdminNav = () => (
-  <React.Fragment>
+  <>
     <NavSection title="Home">
       <HrefLink
         href="/dashboards"
@@ -250,7 +250,7 @@ const AdminNav = () => (
         required={FLAGS.CAN_LIST_CRD}
       />
     </NavSection>
-  </React.Fragment>
+  </>
 );
 
 export default AdminNav;

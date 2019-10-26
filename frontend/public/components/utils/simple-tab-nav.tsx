@@ -49,7 +49,7 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
     const Component = selectedTab.component;
 
     return (
-      <React.Fragment>
+      <>
         <div className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
           <ul className="co-m-horizontal-nav__menu-primary">
             {_.map(tabs, (tab) => (
@@ -63,7 +63,7 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
           </ul>
         </div>
         <Component {...tabProps} />
-      </React.Fragment>
+      </>
     );
   }
 }

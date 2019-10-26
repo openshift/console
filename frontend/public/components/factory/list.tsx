@@ -374,7 +374,7 @@ export const List = connect(
     static propTypes = {
       data: PropTypes.array,
       unfilteredData: PropTypes.array,
-      AllItemsFilteredMsg: PropTypes.func,
+      NoDataEmptyMsg: PropTypes.func,
       EmptyMsg: PropTypes.func,
       expand: PropTypes.bool,
       fieldSelector: PropTypes.string,
@@ -423,7 +423,7 @@ export const List = connect(
       ]);
       const ListRows = virtualize ? VirtualRows : Rows;
       const children = (
-        <React.Fragment>
+        <>
           <Header
             {...componentProps}
             applySort={_.partial(sortList, listId)}
@@ -440,7 +440,7 @@ export const List = connect(
             mock={mock}
             Row={Row}
           />
-        </React.Fragment>
+        </>
       );
 
       return (
@@ -476,7 +476,7 @@ export type ListInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
-  AllItemsFilteredMsg?: React.ComponentType<{}>;
+  NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   expand?: boolean;
   fieldSelector?: string;

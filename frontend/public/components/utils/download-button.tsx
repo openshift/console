@@ -21,7 +21,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <Button
         variant="primary"
         style={{ marginBottom: 10 }}
@@ -29,7 +29,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
         type="button"
         onClick={() => download()}
       >
-        <DownloadIcon /> Download{inFlight && <React.Fragment>ing...</React.Fragment>}
+        <DownloadIcon /> Download{inFlight && <>ing...</>}
       </Button>
       {error && (
         <Alert
@@ -39,7 +39,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
           title={error.toString()}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

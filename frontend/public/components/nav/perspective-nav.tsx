@@ -22,7 +22,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   const renderedSections: string[] = [];
 
   return (
-    <React.Fragment>
+    <>
       {_.compact(
         plugins.registry
           .getNavItems()
@@ -39,7 +39,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
             return createLink(item, true);
           }),
       )}
-    </React.Fragment>
+    </>
   );
 };
 

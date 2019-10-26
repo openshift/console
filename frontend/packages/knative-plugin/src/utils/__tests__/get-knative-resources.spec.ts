@@ -5,8 +5,14 @@ import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingServices,
+  getEventSourceCronjob,
+  getEventSourceContainer,
 } from '../get-knative-resources';
-import { deploymentData, deploymentKnativeData } from './knative-serving-data';
+import {
+  deploymentData,
+  deploymentKnativeData,
+  deploymentKnativeEventData,
+} from './knative-serving-data';
 
 describe('Get knative resources', () => {
   describe('knative Serving Resources', () => {
@@ -57,6 +63,30 @@ describe('Get knative resources', () => {
     it('expect getKnativeServingServices to return service as undefined', () => {
       const knServingResource = getKnativeServingServices(deploymentData, MockResources);
       expect(knServingResource).toBeUndefined();
+    });
+    it('expect getEventSourceCronjob to return event source data', () => {
+      const knEventResource = getEventSourceCronjob(
+        deploymentKnativeEventData,
+        MockKnativeResources,
+      );
+      expect(knEventResource.eventSourceCronjob).toBeDefined();
+      expect(knEventResource.eventSourceCronjob).toHaveLength(1);
+    });
+    it('expect getEventSourceCronjob to return event source as undefined', () => {
+      const knEventResource = getKnativeServingServices(deploymentData, MockResources);
+      expect(knEventResource).toBeUndefined();
+    });
+    it('expect getEventSourceContainer to return event source data', () => {
+      const knEventResource = getEventSourceContainer(
+        deploymentKnativeEventData,
+        MockKnativeResources,
+      );
+      expect(knEventResource.eventSourceContainers).toBeDefined();
+      expect(knEventResource.eventSourceContainers).toHaveLength(1);
+    });
+    it('expect getEventSourceContainer to return event source as undefined', () => {
+      const knEventResource = getEventSourceContainer(deploymentData, MockResources);
+      expect(knEventResource).toBeUndefined();
     });
   });
 });

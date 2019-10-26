@@ -31,7 +31,7 @@ const KnativeOverview: React.FC<KnativeOverviewProps> = ({
   revisions,
 }) => {
   return (
-    <React.Fragment>
+    <>
       <SidebarSectionHeading text="Revisions" />
       {_.isEmpty(revisions) ? (
         <span className="text-muted">No Revisions found for this resource.</span>
@@ -52,7 +52,7 @@ const KnativeOverview: React.FC<KnativeOverviewProps> = ({
       ) : (
         <ConfigurationsOverviewList configurations={configurations} />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

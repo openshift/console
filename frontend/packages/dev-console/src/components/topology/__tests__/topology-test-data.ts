@@ -1,20 +1,21 @@
-import { Resource } from '@console/shared';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 
 export const resources: TopologyDataResources = {
-  replicationControllers: { data: [] },
-  pods: { data: [] },
-  deploymentConfigs: { data: [] },
-  services: { data: [] },
-  routes: { data: [] },
-  deployments: { data: [] },
-  replicaSets: { data: [] },
-  buildConfigs: { data: [] },
-  builds: { data: [] },
-  daemonSets: { data: [] },
-  statefulSets: { data: [] },
-  pipelineRuns: { data: [] },
-  pipelines: { data: [] },
+  replicationControllers: { loaded: true, loadError: '', data: [] },
+  pods: { loaded: true, loadError: '', data: [] },
+  deploymentConfigs: { loaded: true, loadError: '', data: [] },
+  services: { loaded: true, loadError: '', data: [] },
+  routes: { loaded: true, loadError: '', data: [] },
+  deployments: { loaded: true, loadError: '', data: [] },
+  replicaSets: { loaded: true, loadError: '', data: [] },
+  buildConfigs: { loaded: true, loadError: '', data: [] },
+  builds: { loaded: true, loadError: '', data: [] },
+  daemonSets: { loaded: true, loadError: '', data: [] },
+  statefulSets: { loaded: true, loadError: '', data: [] },
+  pipelineRuns: { loaded: true, loadError: '', data: [] },
+  pipelines: { loaded: true, loadError: '', data: [] },
 };
 
 export const topologyData: TopologyDataModel = {
@@ -22,7 +23,9 @@ export const topologyData: TopologyDataModel = {
   topology: {},
 };
 
-export const sampleDeploymentConfigs: Resource = {
+export const sampleDeploymentConfigs: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'DeploymentConfig',
@@ -70,11 +73,12 @@ export const sampleDeploymentConfigs: Resource = {
     },
   ],
 };
-export const sampleDeployments = {
+export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'Deployment',
-      name: 'analytics-deployment',
       apiVersion: 'apps/v1',
       metadata: {
         annotations: {
@@ -117,7 +121,9 @@ export const sampleDeployments = {
               'app.kubernetes.io/version': '1.0',
             },
           },
-          spec: {},
+          spec: {
+            containers: [],
+          },
         },
         strategy: {
           type: 'RollingUpdate',
@@ -132,8 +138,8 @@ export const sampleDeployments = {
       status: {},
     },
     {
+      apiVersion: 'apps/v1',
       kind: 'Deployment',
-      name: 'wit-deployment',
       metadata: {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
@@ -175,7 +181,9 @@ export const sampleDeployments = {
               'app.kubernetes.io/version': '1.0',
             },
           },
-          spec: {},
+          spec: {
+            containers: [],
+          },
         },
         strategy: {
           type: 'RollingUpdate',
@@ -192,9 +200,12 @@ export const sampleDeployments = {
   ],
 };
 
-export const samplePods: Resource = {
+export const samplePods: FirehoseResult<PodKind[]> = {
+  loaded: true,
+  loadError: '',
   data: [
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'analytics-deployment-59dd7c47d4-',
@@ -234,6 +245,7 @@ export const samplePods: Resource = {
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'analytics-deployment-59dd7c47d4-',
@@ -266,7 +278,7 @@ export const samplePods: Resource = {
         },
       },
       spec: {
-        constainers: [],
+        containers: [],
       },
 
       status: {
@@ -274,6 +286,7 @@ export const samplePods: Resource = {
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'analytics-deployment-59dd7c47d4-',
@@ -306,7 +319,7 @@ export const samplePods: Resource = {
         },
       },
       spec: {
-        constainers: [],
+        containers: [],
       },
 
       status: {
@@ -314,6 +327,7 @@ export const samplePods: Resource = {
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'nodejs-1-',
@@ -354,6 +368,7 @@ export const samplePods: Resource = {
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         annotations: {
@@ -379,13 +394,16 @@ export const samplePods: Resource = {
           'openshift.io/build.name': 'nodejs-1',
         },
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
 
       status: {
         phase: 'Succeeded',
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'wit-deployment-656cc8b469-',
@@ -417,13 +435,16 @@ export const samplePods: Resource = {
           'pod-template-hash': '2127746025',
         },
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
 
       status: {
         phase: 'Running',
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'wit-deployment-656cc8b469-',
@@ -455,12 +476,15 @@ export const samplePods: Resource = {
           'pod-template-hash': '2127746025',
         },
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
       status: {
         phase: 'Running',
       },
     },
     {
+      apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
         generateName: 'wit-deployment-656cc8b469-',
@@ -492,7 +516,9 @@ export const samplePods: Resource = {
           'pod-template-hash': '2127746025',
         },
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
       status: {
         phase: 'Running',
       },
@@ -529,7 +555,9 @@ export const samplePods: Resource = {
           'pod-template-generation': '1',
         },
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
       status: {
         phase: 'Pending',
         startTime: '2019-07-15T09:50:59Z',
@@ -566,7 +594,9 @@ export const samplePods: Resource = {
           },
         ],
       },
-      spec: {},
+      spec: {
+        containers: [],
+      },
       status: {
         phase: 'Running',
         startTime: '2019-07-24T10:14:56Z',
@@ -575,9 +605,12 @@ export const samplePods: Resource = {
   ],
 };
 
-export const sampleReplicationControllers: Resource = {
+export const sampleReplicationControllers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
+      apiVersion: 'v1',
       kind: 'ReplicationController',
       metadata: {
         annotations: {
@@ -619,7 +652,9 @@ export const sampleReplicationControllers: Resource = {
   ],
 };
 
-export const sampleReplicaSets: Resource = {
+export const sampleReplicaSets: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'ReplicaSet',
@@ -710,7 +745,9 @@ export const sampleReplicaSets: Resource = {
   ],
 };
 
-export const sampleServices: Resource = {
+export const sampleServices: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'Service',
@@ -805,7 +842,9 @@ export const sampleServices: Resource = {
     },
   ],
 };
-export const sampleRoutes: Resource = {
+export const sampleRoutes: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'Route',
@@ -898,7 +937,9 @@ export const sampleRoutes: Resource = {
   ],
 };
 
-export const sampleBuildConfigs: Resource = {
+export const sampleBuildConfigs: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'BuildConfig',
@@ -978,7 +1019,9 @@ export const sampleBuildConfigs: Resource = {
   ],
 };
 
-export const sampleBuilds: Resource = {
+export const sampleBuilds: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       kind: 'Builds',
@@ -1074,7 +1117,9 @@ export const sampleBuilds: Resource = {
   ],
 };
 
-export const sampleDaemonSets = {
+export const sampleDaemonSets: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       metadata: {
@@ -1144,12 +1189,14 @@ export const sampleDaemonSets = {
         numberUnavailable: 1,
       },
       kind: 'DaemonSet',
-      name: 'daemonset-testing',
+      apiVersion: 'apps/v1',
     },
   ],
 };
 
-export const sampleStatefulSets: Resource = {
+export const sampleStatefulSets: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       metadata: {
@@ -1291,7 +1338,9 @@ export const sampleStatefulSets: Resource = {
   ],
 };
 
-export const samplePipeline = {
+export const samplePipeline: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: 'tekton.dev/v1alpha1',
@@ -1322,7 +1371,9 @@ export const samplePipeline = {
   ],
 };
 
-export const samplePipelineRun = {
+export const samplePipelineRun: FirehoseResult = {
+  loaded: true,
+  loadError: '',
   data: [
     {
       apiVersion: 'tekton.dev/v1alpha1',

@@ -20,68 +20,36 @@ import {
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
-import {
-  FirehoseResource,
-  humanizeBinaryBytesWithoutB,
-  humanizeCpuCores,
-} from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel } from '@console/internal/models';
+import { humanizeBinaryBytesWithoutB, humanizeCpuCores } from '@console/internal/components/utils';
+import { MachineKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getNamespace, getMachineNodeName, getMachineInternalIP } from '@console/shared';
+import { getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 import { getUtilizationQueries, HostQuery } from './queries';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
-const getMachineResource = (namespace: string, name: string): FirehoseResource => ({
-  isList: false,
-  namespace,
-  name,
-  kind: referenceForModel(MachineModel),
-  prop: 'machine',
-});
-
 const UtilizationCard: React.FC<UtilizationCardProps> = ({
-  obj,
+  machine,
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
-  watchK8sResource,
-  stopWatchK8sResource,
-  resources,
 }) => {
   const [duration, setDuration] = React.useState(metricDurations[0]);
-
-  const namespace = getNamespace(obj);
-  const machineName = getHostMachineName(obj);
-
-  React.useEffect(() => {
-    const machineResource = getMachineResource(namespace, machineName);
-    watchK8sResource(machineResource);
-    return () => stopWatchK8sResource(machineResource);
-  }, [watchK8sResource, stopWatchK8sResource, namespace, machineName]);
-
-  const machineLoaded = _.get(resources.machine, 'loaded');
-  const machineLoadError = _.get(resources.machine, 'loadError');
-  const machine = _.get(resources.machine, 'data', null);
 
   const hostName = getMachineNodeName(machine);
   const hostIP = getMachineInternalIP(machine);
 
   React.useEffect(() => {
-    if (machineName) {
-      const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
-      Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
-      return () => {
-        Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
-      };
-    }
+    const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
+    Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
+    return () => {
+      Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
+    };
     return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, machineName, hostName, hostIP, duration]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, hostName, hostIP, duration]);
 
   const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
   const cpuUtilization = prometheusResults.getIn([
@@ -150,9 +118,6 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const memoryTotalValue = memoryTotalStats.length ? memoryTotalStats[0].y : null;
   const storageTotalValue = storageTotalStats.length ? storageTotalStats[0].y : null;
 
-  const itemIsLoading = (prometheusResult) =>
-    !machineLoadError && (machineLoaded ? (machine ? !prometheusResult : false) : true);
-
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -169,7 +134,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="CPU usage"
           data={cpuStats}
           error={cpuUtilizationError}
-          isLoading={itemIsLoading(cpuUtilization)}
+          isLoading={!cpuUtilization}
           humanizeValue={humanizeCpuCores}
           query={queries[HostQuery.CPU_UTILIZATION]}
         />
@@ -177,7 +142,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="Memory usage"
           data={memoryStats}
           error={memoryUtilizationError}
-          isLoading={itemIsLoading(memoryUtilization)}
+          isLoading={!memoryUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.MEMORY_UTILIZATION]}
           max={memoryTotalValue}
@@ -187,7 +152,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="Number of pods"
           data={numberOfPodsStats}
           error={numberOfPodsError}
-          isLoading={itemIsLoading(numberOfPods)}
+          isLoading={!numberOfPods}
           humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
           query={queries[HostQuery.NUMBER_OF_PODS]}
         />
@@ -195,7 +160,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="Network In"
           data={networkInStats}
           error={networkInUtilizationError}
-          isLoading={itemIsLoading(networkInUtilization)}
+          isLoading={!networkInUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
@@ -204,7 +169,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="Network Out"
           data={networkOutStats}
           error={networkOutUtilizationError}
-          isLoading={itemIsLoading(networkOutUtilization)}
+          isLoading={!networkOutUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
@@ -213,7 +178,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           title="Filesystem"
           data={storageStats}
           error={storageUtilizationError}
-          isLoading={itemIsLoading(storageUtilization)}
+          isLoading={!storageUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
           query={queries[HostQuery.STORAGE_UTILIZATION]}
           max={storageTotalValue}
@@ -228,4 +193,5 @@ export default withDashboardResources(UtilizationCard);
 
 type UtilizationCardProps = DashboardItemProps & {
   obj: BareMetalHostKind;
+  machine: MachineKind;
 };

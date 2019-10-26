@@ -172,9 +172,9 @@ const AlertState: React.SFC<AlertStateProps> = ({ state }) => {
     [AlertStates.Pending]: <OutlinedBellIcon className="alert-pending" />,
   }[state];
   return icon ? (
-    <React.Fragment>
+    <>
       {icon} {_.startCase(state)}
-    </React.Fragment>
+    </>
   ) : null;
 };
 
@@ -186,9 +186,9 @@ const SilenceState = ({ silence }) => {
     [SilenceStates.Expired]: <BanIcon className="text-muted" data-test-id="ban-icon" />,
   }[state];
   return icon ? (
-    <React.Fragment>
+    <>
       {icon} {_.startCase(state)}
-    </React.Fragment>
+    </>
   ) : null;
 };
 
@@ -211,10 +211,10 @@ const AlertStateDescription = ({ alert }) => {
 
 const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
-    <React.Fragment>
+    <>
       <dt>{title}</dt>
       <dd>{children}</dd>
-    </React.Fragment>
+    </>
   );
 
 const Label = ({ k, v }) => (
@@ -297,7 +297,7 @@ const AlertsDetailsPage = withFallback(
     const state = alertState(alert);
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>{`${alertname} · Details`}</title>
         </Helmet>
@@ -345,10 +345,10 @@ const AlertsDetailsPage = withFallback(
                       )}
                     </dd>
                     {severity && (
-                      <React.Fragment>
+                      <>
                         <dt>Severity</dt>
                         <dd>{_.startCase(severity)}</dd>
-                      </React.Fragment>
+                      </>
                     )}
                     <dt>State</dt>
                     <dd>
@@ -404,7 +404,7 @@ const AlertsDetailsPage = withFallback(
             </div>
           )}
         </StatusBox>
-      </React.Fragment>
+      </>
     );
   }),
 );
@@ -458,7 +458,7 @@ const AlertRulesDetailsPage = withFallback(
     const { severity } = labels as any;
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>{`${name || AlertRuleResource.label} · Details`}</title>
         </Helmet>
@@ -490,10 +490,10 @@ const AlertRulesDetailsPage = withFallback(
                     <dt>Name</dt>
                     <dd>{name}</dd>
                     {severity && (
-                      <React.Fragment>
+                      <>
                         <dt>Severity</dt>
                         <dd>{_.startCase(severity)}</dd>
-                      </React.Fragment>
+                      </>
                     )}
                     <Annotation title="Description">{annotations.description}</Annotation>
                     <Annotation title="Summary">{annotations.summary}</Annotation>
@@ -503,10 +503,10 @@ const AlertRulesDetailsPage = withFallback(
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     {_.isInteger(duration) && (
-                      <React.Fragment>
+                      <>
                         <dt>For</dt>
                         <dd>{formatPrometheusDuration(duration * 1000)}</dd>
-                      </React.Fragment>
+                      </>
                     )}
                     <dt>Expression</dt>
                     <dd>
@@ -540,7 +540,7 @@ const AlertRulesDetailsPage = withFallback(
             </div>
           </div>
         </StatusBox>
-      </React.Fragment>
+      </>
     );
   }),
 );
@@ -595,7 +595,7 @@ const SilencesDetailsPage = withFallback(
     } = silence || {};
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <title>{`${name || SilenceResource.label} · Details`}</title>
         </Helmet>
@@ -624,10 +624,10 @@ const SilencesDetailsPage = withFallback(
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     {name && (
-                      <React.Fragment>
+                      <>
                         <dt>Name</dt>
                         <dd>{name}</dd>
-                      </React.Fragment>
+                      </>
                     )}
                     <dt>Matchers</dt>
                     <dd>
@@ -679,7 +679,7 @@ const SilencesDetailsPage = withFallback(
             </div>
           </div>
         </StatusBox>
-      </React.Fragment>
+      </>
     );
   }),
 );
@@ -860,7 +860,7 @@ const MonitoringListPage = connect(filtersToProps)(
       } = this.props;
 
       return (
-        <React.Fragment>
+        <>
           <div className="co-m-nav-title">
             <PageDescription />
           </div>
@@ -903,7 +903,7 @@ const MonitoringListPage = connect(filtersToProps)(
               </div>
             </div>
           </div>
-        </React.Fragment>
+        </>
       );
     }
   },
@@ -1397,7 +1397,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
   const YAMLPath = '/monitoring/alertmanageryaml';
   const ConfigPath = '/monitoring/alertmanagerconfig';
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
@@ -1447,7 +1447,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
         <Route path={ConfigPath} exact component={AlertManagerConfig} />
         <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
       </Switch>
-    </React.Fragment>
+    </>
   );
 };
 

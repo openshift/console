@@ -98,7 +98,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                           {source.host}
                         </Link>
                       ) : (
-                        <React.Fragment>{source.host}</React.Fragment>
+                        <>{source.host}</>
                       )}
                     </span>
                   )}
@@ -137,7 +137,7 @@ export class EventsList extends React.Component {
     const { autoFocus = true, mock } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <div className="co-m-pane__filter-bar">
           <div className="co-m-pane__filter-bar-group">
             <ResourceListDropdown
@@ -170,7 +170,7 @@ export class EventsList extends React.Component {
           mock={mock}
           textFilter={textFilter}
         />
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -201,13 +201,13 @@ export const ErrorLoadingEvents = () => (
 );
 
 export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => (
-  <React.Fragment>
+  <>
     <Helmet>
       <title>Events</title>
     </Helmet>
     <PageHeading title="Events" />
     <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
-  </React.Fragment>
+  </>
 ));
 
 class EventStream extends React.Component {

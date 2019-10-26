@@ -51,7 +51,7 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
   );
 
   return (
-    <React.Fragment>
+    <>
       <FormGroup
         fieldId={fieldId}
         label={label}
@@ -92,7 +92,7 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
           />
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

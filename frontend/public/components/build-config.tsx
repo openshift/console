@@ -56,7 +56,7 @@ const menuActions = [
 ];
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => (
-  <React.Fragment>
+  <>
     <div className="co-m-pane__body">
       <SectionHeading text="Build Config Overview" />
       <div className="row">
@@ -70,7 +70,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
     </div>
     <WebhookTriggers resource={buildConfig} />
     <BuildHooks resource={buildConfig} />
-  </React.Fragment>
+  </>
 );
 
 const BuildsTabPage = ({ obj: buildConfig }) => (

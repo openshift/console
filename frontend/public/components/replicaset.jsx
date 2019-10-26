@@ -42,17 +42,17 @@ const Details = ({ obj: replicaSet }) => {
     'deployment.kubernetes.io/revision',
   ]);
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__body">
         <SectionHeading text="Replica Set Overview" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
-                <React.Fragment>
+                <>
                   <dt>Deployment Revision</dt>
                   <dd>{revision}</dd>
-                </React.Fragment>
+                </>
               )}
             </ResourceSummary>
           </div>
@@ -68,7 +68,7 @@ const Details = ({ obj: replicaSet }) => {
       <div className="co-m-pane__body">
         <VolumesTable resource={replicaSet} heading="Volumes" />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

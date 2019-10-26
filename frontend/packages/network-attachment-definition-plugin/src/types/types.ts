@@ -7,9 +7,9 @@ export type IPAMConfig = {
 };
 
 export type NetworkAttachmentDefinitionConfig = {
-  cniVersion?: string;
-  name?: string;
-  type?: string;
+  cniVersion: string;
+  name: string;
+  type: string;
   bridge?: string;
   isGateway?: true;
   ipam?: IPAMConfig;

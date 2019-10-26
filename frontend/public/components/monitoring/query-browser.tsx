@@ -100,7 +100,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     };
 
     return (
-      <React.Fragment>
+      <>
         <TextInput
           aria-label="graph timespan"
           className="query-browser__span-text"
@@ -124,7 +124,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
         >
           Reset Zoom
         </Button>
-      </React.Fragment>
+      </>
     );
   },
 );
@@ -411,9 +411,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // use a polling interval relative to the graph's timespan.
   const delay = endTime || hideGraphs ? null : Math.max(span / 120, minPollInterval);
 
-  usePoll(tick, delay, endTime, namespace, queries, samples, span);
+  const queriesKey = _.reject(queries, _.isEmpty).join();
+  usePoll(tick, delay, endTime, namespace, queriesKey, samples, span);
 
-  React.useEffect(() => setUpdating(true), [endTime, queries, samples, span]);
+  React.useEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
   const graphData: GraphDataPoint[][] = React.useMemo(
     () =>
@@ -535,7 +536,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       {error && <Error error={error} />}
       {_.isEmpty(graphData) && !updating && <GraphEmpty />}
       {!_.isEmpty(graphData) && (
-        <React.Fragment>
+        <>
           {samples < maxSamplesForSpan && (
             <Alert
               isInline
@@ -560,7 +561,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               <Graph data={graphData} disableTooltips={isZooming} xDomain={xDomain} span={span} />
             </div>
           </div>
-        </React.Fragment>
+        </>
       )}
     </div>
   );
