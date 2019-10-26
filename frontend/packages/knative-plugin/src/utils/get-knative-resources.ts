@@ -7,6 +7,8 @@ type KnativeItem = {
   configurations?: K8sResourceKind[];
   ksroutes?: K8sResourceKind[];
   ksservices?: K8sResourceKind[];
+  eventSourceCronjob?: K8sResourceKind[];
+  eventSourceContainers?: K8sResourceKind[];
 };
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
@@ -55,4 +57,28 @@ export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem
 export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const ksservices = props && props.ksservices ? getKsResource(dc, props.ksservices) : undefined;
   return ksservices && ksservices.length > 0 ? { ksservices } : undefined;
+};
+
+const getEventSourceResource = (
+  dc: K8sResourceKind,
+  eventSource: K8sResourceKind,
+): K8sResourceKind[] => {
+  let eventSourceResources = [];
+  const ownerUid = _.get(dc, ['metadata', 'ownerReferences', '0', 'uid'], null);
+  if (ownerUid) {
+    eventSourceResources = _.filter(eventSource.data, (config: K8sResourceKind) => {
+      return ownerUid === _.get(config, ['metadata', 'uid']);
+    });
+  }
+  return eventSourceResources;
+};
+
+export const getEventSourceCronjob = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceCronjob = getEventSourceResource(dc, props.eventSourceCronjob);
+  return eventSourceCronjob.length > 0 ? { eventSourceCronjob } : undefined;
+};
+
+export const getEventSourceContainer = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceContainers = getEventSourceResource(dc, props.eventSourceContainers);
+  return eventSourceContainers.length > 0 ? { eventSourceContainers } : undefined;
 };
