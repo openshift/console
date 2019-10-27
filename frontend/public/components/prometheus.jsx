@@ -96,7 +96,7 @@ const PrometheusTableHeader = () => {
 };
 PrometheusTableHeader.displayName = 'PrometheusTableHeader';
 
-export const PrometheusInstancesList = (props) => (
+const PrometheusInstancesList = (props) => (
   <Table
     {...props}
     aria-label="Promethesuses"

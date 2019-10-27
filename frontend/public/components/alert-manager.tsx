@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -7,16 +6,7 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableRow, TableData } from './factory';
-import {
-  SectionHeading,
-  LabelList,
-  navFactory,
-  ResourceLink,
-  Selector,
-  Firehose,
-  LoadingInline,
-  pluralize,
-} from './utils';
+import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
 
@@ -74,50 +64,6 @@ const { details, editYaml } = navFactory;
 
 export const AlertManagersDetailsPage = (props) => (
   <DetailsPage {...props} pages={[details(Details), editYaml()]} />
-);
-
-const AlertManagersNameList = (props) => {
-  if (props.loadError) {
-    return null;
-  }
-  return (
-    <div className="row co-m-form-row">
-      <div className="col-sm-8 col-md-9">
-        <div className="alert-manager-list">
-          {!props.loaded ? (
-            <LoadingInline />
-          ) : (
-            _.map(props.alertmanagers.data, (alertManager, i) => (
-              <div className="alert-manager-row" key={i}>
-                <ResourceLink
-                  kind={referenceForModel(AlertmanagerModel)}
-                  name={alertManager.metadata.name}
-                  namespace={alertManager.metadata.namespace}
-                  title={alertManager.metadata.uid}
-                />
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const AlertManagersListContainer = (props) => (
-  <Firehose
-    resources={[
-      {
-        kind: referenceForModel(AlertmanagerModel),
-        isList: true,
-        namespaced: true,
-        namespace: 'tectonic-system',
-        prop: 'alertmanagers',
-      },
-    ]}
-  >
-    <AlertManagersNameList {...props} />
-  </Firehose>
 );
 
 const tableColumnClasses = [
@@ -202,7 +148,7 @@ const AlertManagerTableHeader = () => {
 };
 AlertManagerTableHeader.displayName = 'AlertManagerTableHeader';
 
-export const AlertManagersList = (props) => (
+const AlertManagersList = (props) => (
   <Table
     {...props}
     aria-label="Alert Managers"
