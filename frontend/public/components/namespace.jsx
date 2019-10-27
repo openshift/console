@@ -9,6 +9,7 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import { Status, getRequester } from '@console/shared';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
@@ -28,8 +29,8 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  humanizeBinaryBytes,
   humanizeCpuCores,
-  humanizeDecimalBytes,
   navFactory,
   useAccessReview,
 } from './utils';
@@ -368,7 +369,8 @@ export const NamespaceLineCharts = ({ ns }) => (
     <div className="col-md-6 col-sm-12">
       <Area
         title="Memory Usage"
-        humanize={humanizeDecimalBytes}
+        humanize={humanizeBinaryBytes}
+        byteDataType={ByteDataTypes.BinaryBytes}
         namespace={ns.metadata.name}
         query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${
           ns.metadata.name
@@ -385,7 +387,7 @@ export const TopPodsBarChart = ({ ns }) => (
     query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${
       ns.metadata.name
     }"})))`}
-    humanize={humanizeDecimalBytes}
+    humanize={humanizeBinaryBytes}
     metric="pod"
   />
 );

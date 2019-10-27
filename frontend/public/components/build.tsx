@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   K8sResourceKindReference,
   referenceFor,
@@ -21,8 +22,8 @@ import {
   BuildStrategy,
   DetailsItem,
   history,
+  humanizeBinaryBytes,
   humanizeCpuCores,
-  humanizeDecimalBytes,
   Kebab,
   KebabAction,
   navFactory,
@@ -138,7 +139,8 @@ const BuildGraphs = requirePrometheus(({ build }) => {
         <div className="col-md-12 col-lg-4">
           <Area
             title="Memory Usage"
-            humanize={humanizeDecimalBytes}
+            humanize={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
             namespace={namespace}
             query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
           />
@@ -154,7 +156,8 @@ const BuildGraphs = requirePrometheus(({ build }) => {
         <div className="col-md-12 col-lg-4">
           <Area
             title="Filesystem"
-            humanize={humanizeDecimalBytes}
+            humanize={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
             namespace={namespace}
             query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
           />
