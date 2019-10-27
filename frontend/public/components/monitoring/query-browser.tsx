@@ -216,50 +216,59 @@ const graphContainer = (
   />
 );
 
-const Graph: React.FC<GraphProps> = React.memo(({ data, disableTooltips, span, xDomain }) => {
-  const [containerRef, width] = useRefWidth();
+const Graph: React.FC<GraphProps> = React.memo(
+  ({ allSeries, disabledSeries, disableTooltips, span, xDomain }) => {
+    const [containerRef, width] = useRefWidth();
 
-  // Set a reasonable Y-axis range based on the min and max values in the data
-  const findMin = (series) => _.minBy(series, 'y');
-  const findMax = (series) => _.maxBy(series, 'y');
-  let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
-  let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
-  if (minY === 0 && maxY === 0) {
-    minY = -1;
-    maxY = 1;
-  } else if (minY > 0 && maxY > 0) {
-    minY = 0;
-  } else if (minY < 0 && maxY < 0) {
-    maxY = 0;
-  }
+    // Remove any disabled series
+    const data = _.flatMap(allSeries, (series, i) => {
+      return _.map(series, ([metric, values]) => {
+        return _.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? [{}] : values;
+      });
+    });
 
-  const tickFormat =
-    Math.abs(maxY - minY) < 0.005 ? (v) => (v === 0 ? '0' : v.toExponential(1)) : formatValue;
+    // Set a reasonable Y-axis range based on the min and max values in the data
+    const findMin = (series) => _.minBy(series, 'y');
+    const findMax = (series) => _.maxBy(series, 'y');
+    let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
+    let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
+    if (minY === 0 && maxY === 0) {
+      minY = -1;
+      maxY = 1;
+    } else if (minY > 0 && maxY > 0) {
+      minY = 0;
+    } else if (minY < 0 && maxY < 0) {
+      maxY = 0;
+    }
 
-  return (
-    <div ref={containerRef} style={{ width: '100%' }}>
-      {width > 0 && (
-        <Chart
-          containerComponent={disableTooltips ? undefined : graphContainer}
-          domain={{ x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY] }}
-          domainPadding={{ y: 1 }}
-          height={200}
-          scale={{ x: 'time', y: 'linear' }}
-          theme={chartTheme}
-          width={width}
-        >
-          <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-          <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
-          <ChartGroup>
-            {_.map(data, (values, i) => (
-              <ChartLine key={i} data={values} />
-            ))}
-          </ChartGroup>
-        </Chart>
-      )}
-    </div>
-  );
-});
+    const tickFormat =
+      Math.abs(maxY - minY) < 0.005 ? (v) => (v === 0 ? '0' : v.toExponential(1)) : formatValue;
+
+    return (
+      <div ref={containerRef} style={{ width: '100%' }}>
+        {width > 0 && (
+          <Chart
+            containerComponent={disableTooltips ? undefined : graphContainer}
+            domain={{ x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY] }}
+            domainPadding={{ y: 1 }}
+            height={200}
+            scale={{ x: 'time', y: 'linear' }}
+            theme={chartTheme}
+            width={width}
+          >
+            <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
+            <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
+            <ChartGroup>
+              {_.map(data, (values, i) => (
+                <ChartLine key={i} data={values} />
+              ))}
+            </ChartGroup>
+          </Chart>
+        )}
+      </div>
+    );
+  },
+);
 
 const formatSeriesValues = (
   values: PrometheusValue[],
@@ -334,7 +343,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [error, setError] = React.useState();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
-  const [results, setResults] = React.useState();
+  const [graphData, setGraphData] = React.useState();
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
   const [x1, setX1] = React.useState(0);
@@ -390,7 +399,18 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             ) {
               setSamples(newSamples);
             } else {
-              setResults(newResults);
+              const newGraphData = _.map(newResults, (result) => {
+                return _.map(result, ({ metric, values }) => {
+                  // If filterLabels is specified, ignore all series that don't match
+                  // Ignore internal labels (start with "__")
+                  return filterLabels &&
+                    _.some(metric, (v, k) => filterLabels[k] !== v && !_.startsWith(k, '__'))
+                    ? []
+                    : [metric, formatSeriesValues(values, samples, span)];
+                });
+              });
+              setGraphData(_.reject(newGraphData, _.isEmpty));
+
               _.each(newResults, (r, i) =>
                 patchQuery(i, {
                   series: r ? _.map(r, 'metric') : undefined,
@@ -412,30 +432,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const delay = endTime || hideGraphs ? null : Math.max(span / 120, minPollInterval);
 
   const queriesKey = _.reject(queries, _.isEmpty).join();
-  usePoll(tick, delay, endTime, namespace, queriesKey, samples, span);
+  usePoll(tick, delay, endTime, filterLabels, namespace, queriesKey, samples, span);
 
   React.useEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
-
-  const graphData: GraphDataPoint[][] = React.useMemo(
-    () =>
-      _.flatten(
-        _.map(results, (result, responseIndex) => {
-          return _.map(result, ({ metric, values }) => {
-            // If filterLabels is specified, ignore all series that don't match
-            const isIgnored = filterLabels
-              ? // Ignore internal labels (start with "__")
-                _.some(metric, (v, k) => filterLabels[k] !== v && !_.startsWith(k, '__'))
-              : _.some(disabledSeries[responseIndex], (s) => _.isEqual(s, metric));
-
-            return isIgnored ? [{ x: null, y: null }] : formatSeriesValues(values, samples, span);
-          });
-        }),
-      ),
-    // Some of the hook dependencies are not included because we instead want those dependencies to trigger an Prometheus
-    // API call, which will update `results` and then trigger this hook
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [disabledSeries, filterLabels, results],
-  );
 
   const onSpanChange = React.useCallback((newSpan: number) => {
     setXDomain(undefined);
@@ -558,7 +557,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                   style={{ left: Math.min(x1, x2), width: Math.abs(x1 - x2) }}
                 />
               )}
-              <Graph data={graphData} disableTooltips={isZooming} xDomain={xDomain} span={span} />
+              <Graph
+                allSeries={graphData}
+                disabledSeries={disabledSeries}
+                disableTooltips={isZooming}
+                xDomain={xDomain}
+                span={span}
+              />
             </div>
           </div>
         </>
@@ -582,6 +587,8 @@ type GraphDataPoint = {
 
 export type Labels = { [key: string]: string };
 
+type Series = [Labels, GraphDataPoint[][]];
+
 export type QueryObj = {
   disabledSeries?: Labels[];
   isEnabled?: boolean;
@@ -594,7 +601,8 @@ export type QueryObj = {
 type PrometheusValue = [number, string];
 
 type GraphProps = {
-  data: GraphDataPoint[][];
+  allSeries: Series[];
+  disabledSeries?: Labels[][];
   disableTooltips: boolean;
   span: number;
   xDomain: AxisDomain;

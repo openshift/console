@@ -859,7 +859,9 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   // re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
-  const disabledSeriesMemoKey = JSON.stringify(_.map(queries, 'disabledSeries'));
+  const disabledSeriesMemoKey = JSON.stringify(
+    _.reject(_.map(queries, 'disabledSeries'), _.isEmpty),
+  );
   const disabledSeries = React.useMemo(() => _.map(queries, 'disabledSeries'), [
     disabledSeriesMemoKey,
   ]);
