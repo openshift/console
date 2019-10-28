@@ -31,10 +31,8 @@ export enum ObjectDataReductionQueries {
 }
 
 export enum StatusCardQueries {
-  BUCKETS_COUNT = 'NooBaa_num_buckets',
-  UNHEALTHY_BUCKETS = 'NooBaa_num_unhealthy_buckets',
-  POOLS_COUNT = 'NooBaa_num_pools',
-  UNHEALTHY_POOLS = 'NooBaa_num_unhealthy_pools',
+  HEALTH_QUERY = 'NooBaa_health_status',
+  REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress',
 }
 
 export const CAPACITY_BREAKDOWN_QUERIES = {
