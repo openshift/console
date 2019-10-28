@@ -17,9 +17,9 @@ import './top-consumer-popover.scss';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { getName, getNamespace } from '../../..';
 
-const dropdownKeys = ['By Pods', 'By Node', 'By Projects'];
-const models = [PodModel, NodeModel, ProjectModel];
-const dropdownItems = {
+const dropdownKeysDefault = ['By Pods', 'By Node', 'By Projects'];
+const modelsDefault = [PodModel, NodeModel, ProjectModel];
+const dropdownItemsDefault = {
   'By Pods': 'By Pods',
   'By Node': 'By Node',
   'By Projects': 'By Projects',
@@ -45,7 +45,6 @@ const getResourceToWatch = (model: K8sKind) => ({
 
 const PopoverBodyInternal = connectToURLs(MonitoringRoutes.Prometheus)(
   React.memo((props: React.PropsWithChildren<DashboardItemProps & PopoverBodyProps>) => {
-    const [selectedFilter, setSelectedFilter] = React.useState(dropdownKeys[0]);
     const { title, humanize, query, urls } = props;
     const {
       watchPrometheus,
@@ -54,8 +53,12 @@ const PopoverBodyInternal = connectToURLs(MonitoringRoutes.Prometheus)(
       watchK8sResource,
       stopWatchK8sResource,
       resources,
+      models = modelsDefault,
+      dropdownKeys = dropdownKeysDefault,
+      dropdownItems = dropdownItemsDefault,
     } = props;
 
+    const [selectedFilter, setSelectedFilter] = React.useState(dropdownKeys[0]);
     const popoverTitle = title ? `Top ${title} consumers` : `Top consumers`;
 
     React.useEffect(() => {
@@ -68,6 +71,8 @@ const PopoverBodyInternal = connectToURLs(MonitoringRoutes.Prometheus)(
         stopWatchK8sResource(k8sResource);
       };
     }, [
+      dropdownKeys,
+      models,
       query,
       selectedFilter,
       stopWatchK8sResource,
@@ -189,7 +194,13 @@ type ConsumerItemsProps = {
   query?: string;
 };
 
-type PopoverBodyProps = {
+type PopoverDropdownProps = {
+  dropdownKeys?: string[];
+  models?: K8sKind[];
+  dropdownItems?: object;
+};
+
+type PopoverBodyProps = PopoverDropdownProps & {
   title?: string;
   topConsumers?: DataPoint[][];
   error?: boolean;
@@ -198,7 +209,7 @@ type PopoverBodyProps = {
   urls?: string[];
 };
 
-export type ConsumerPopoverProps = {
+export type ConsumerPopoverProps = PopoverDropdownProps & {
   current: string;
   title: string;
   humanize: Humanize;
