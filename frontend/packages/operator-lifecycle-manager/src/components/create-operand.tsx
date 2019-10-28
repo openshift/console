@@ -951,7 +951,11 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
               breadcrumbs={[
                 {
                   name: props.clusterServiceVersion.data.spec.displayName,
-                  path: window.location.pathname.replace('/~new', ''),
+                  path: resourcePathFromModel(
+                    ClusterServiceVersionModel,
+                    props.clusterServiceVersion.data.metadata.name,
+                    props.clusterServiceVersion.data.metadata.namespace,
+                  ),
                 },
                 { name: `Create ${props.operandModel.label}`, path: window.location.pathname },
               ]}
