@@ -7,7 +7,8 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import { runStatus } from './pipeline-augment';
+import { getLatestRun, Pipeline, PipelineRun, runStatus } from './pipeline-augment';
+import { pipelineFilterReducer } from './pipeline-filter-reducer';
 
 interface Resources {
   inputs?: Resource[];
@@ -248,4 +249,44 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
     return LOG_SOURCE_TERMINATED;
   }
   return LOG_SOURCE_RUNNING;
+};
+
+type CurrentPipelineStatus = {
+  currentPipeline: Pipeline;
+  status: string;
+};
+
+/**
+ * Takes a pipeline and a series of matching pipeline runs and produces a current pipeline state.
+ */
+export const constructCurrentPipeline = (
+  pipeline: Pipeline,
+  pipelineRuns: PipelineRun[],
+): CurrentPipelineStatus => {
+  if (!pipeline || !pipelineRuns || pipelineRuns.length === 0) {
+    // Not enough data to build the current state
+    return null;
+  }
+
+  const latestRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
+
+  if (!latestRun) {
+    // Without the latestRun we will not have progress to show
+    return null;
+  }
+
+  const currentPipeline: Pipeline = {
+    ...pipeline,
+    latestRun,
+  };
+
+  let status: string = pipelineFilterReducer(currentPipeline);
+  if (status === '-') {
+    status = runStatus.Pending;
+  }
+
+  return {
+    currentPipeline,
+    status,
+  };
 };
