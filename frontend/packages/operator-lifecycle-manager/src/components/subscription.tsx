@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Button } from '@patternfly/react-core';
+import { Button, Alert } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   DetailsPage,
@@ -31,7 +31,13 @@ import {
   k8sUpdate,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon, GreenCheckCircleIcon } from '@console/shared';
+import {
+  YellowExclamationTriangleIcon,
+  GreenCheckCircleIcon,
+  getNamespace,
+  getName,
+  WarningStatus,
+} from '@console/shared';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -49,12 +55,58 @@ import {
   OperatorGroupKind,
   InstallPlanKind,
   InstallPlanPhase,
+  CatalogSourceKind,
 } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
-import { olmNamespace } from '.';
+
+export const catalogSourceForSubscription = (
+  catalogSources: CatalogSourceKind[] = [],
+  subscription: SubscriptionKind,
+): CatalogSourceKind =>
+  _.find(catalogSources, {
+    metadata: {
+      name: _.get(subscription, 'spec.source'),
+      namespace: _.get(subscription, 'spec.sourceNamespace'),
+    },
+  });
+
+export const installedCSVForSubscription = (
+  clusterServiceVersions: ClusterServiceVersionKind[] = [],
+  subscription: SubscriptionKind,
+): ClusterServiceVersionKind =>
+  _.find(clusterServiceVersions, {
+    metadata: {
+      name: _.get(subscription, 'status.installedCSV'),
+    },
+  });
+
+export const packageForSubscription = (
+  packageManifests: PackageManifestKind[] = [],
+  subscription: SubscriptionKind,
+): PackageManifestKind =>
+  _.find(packageManifests, {
+    metadata: {
+      name: _.get(subscription, 'spec.name'),
+    },
+    status: {
+      packageName: _.get(subscription, 'spec.name'),
+      catalogSource: _.get(subscription, 'spec.source'),
+      catalogSourceNamespace: _.get(subscription, 'spec.sourceNamespace'),
+    },
+  });
+
+export const installPlanForSubscription = (
+  installPlans: InstallPlanKind[] = [],
+  subscription: SubscriptionKind,
+): InstallPlanKind =>
+  _.find(installPlans, {
+    metadata: {
+      name: _.get(subscription, 'status.installPlan.name'),
+    },
+  });
 
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
@@ -247,27 +299,39 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
   );
 };
 
-export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
-  const { obj, installedCSV, pkg } = props;
-  const catalogNS = obj.spec.sourceNamespace || olmNamespace;
-
-  React.useEffect(() => {
-    if (props.showDelete) {
-      createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
-        .result.then(() => removeQueryArgument('showDelete'))
-        .catch(_.noop);
-    }
-  }, [obj, props.showDelete]);
+export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
+  catalogSources = [],
+  clusterServiceVersions = [],
+  installPlans = [],
+  obj,
+  packageManifests = [],
+}) => {
+  const catalogSource = catalogSourceForSubscription(catalogSources, obj);
+  const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
+  const installPlan = installPlanForSubscription(installPlans, obj);
+  const pkg = packageForSubscription(packageManifests, obj);
+  if (new URLSearchParams(window.location.search).has('showDelete')) {
+    createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
+      .result.then(() => removeQueryArgument('showDelete'))
+      .catch(_.noop);
+  }
 
   return (
     <div className="co-m-pane__body">
+      {!catalogSource && (
+        <Alert isInline className="co-alert" variant="warning" title="Catalog Source Removed">
+          The catalog source for this operator has been removed. The catalog source must be added
+          back in order for this opertor to receive any updates.
+        </Alert>
+      )}
       <SectionHeading text="Subscription Overview" />
       <div className="co-m-pane__body-group">
         <SubscriptionUpdates
+          catalogSource={catalogSource}
           pkg={pkg}
           obj={obj}
           installedCSV={installedCSV}
-          installPlan={props.installPlan}
+          installPlan={installPlan}
         />
       </div>
       <div className="co-m-pane__body-group">
@@ -279,12 +343,12 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
             <dl className="co-m-pane__details">
               <dt>Installed Version</dt>
               <dd>
-                {_.get(obj.status, 'installedCSV') && installedCSV ? (
+                {installedCSV ? (
                   <ResourceLink
                     kind={referenceForModel(ClusterServiceVersionModel)}
-                    name={obj.status.installedCSV}
-                    namespace={obj.metadata.namespace}
-                    title={obj.status.installedCSV}
+                    name={getName(installedCSV)}
+                    namespace={getNamespace(installedCSV)}
+                    title={getName(installedCSV)}
                   />
                 ) : (
                   'None'
@@ -294,21 +358,25 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
               <dd>{obj.spec.startingCSV || 'None'}</dd>
               <dt>Catalog Source</dt>
               <dd>
-                <ResourceLink
-                  kind={referenceForModel(CatalogSourceModel)}
-                  name={obj.spec.source}
-                  namespace={catalogNS}
-                  title={obj.spec.source}
-                />
+                {catalogSource ? (
+                  <ResourceLink
+                    kind={referenceForModel(CatalogSourceModel)}
+                    name={getName(catalogSource)}
+                    namespace={getNamespace(catalogSource)}
+                    title={getName(catalogSource)}
+                  />
+                ) : (
+                  'None'
+                )}
               </dd>
               <dt>Install Plan</dt>
               <dd>
-                {_.get(obj.status, 'installplan.name') ? (
+                {installPlan ? (
                   <ResourceLink
                     kind={referenceForModel(InstallPlanModel)}
-                    name={obj.status.installplan.name}
-                    namespace={obj.metadata.namespace}
-                    title={obj.status.installplan.name}
+                    name={getName(installPlan)}
+                    namespace={getNamespace(installPlan)}
+                    title={getName(installPlan)}
                   />
                 ) : (
                   'None'
@@ -351,7 +419,7 @@ export class SubscriptionUpdates extends React.Component<
   }
 
   render() {
-    const { obj, pkg, installedCSV } = this.props;
+    const { catalogSource, installedCSV, obj, pkg } = this.props;
 
     const k8sUpdateAndWait = (...args) =>
       k8sUpdate(...args).then(() => this.setState({ waitingForUpdate: true }));
@@ -406,36 +474,48 @@ export class SubscriptionUpdates extends React.Component<
           <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
             <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Upgrade Status</dt>
-              <dd>{subscriptionState(_.get(obj.status, 'state'))}</dd>
+              {catalogSource ? (
+                <dd>{subscriptionState(_.get(obj.status, 'state'))}</dd>
+              ) : (
+                <dd>
+                  <WarningStatus title="Cannot update" />
+                  <span className="text-muted">Catalog source was removed</span>
+                </dd>
+              )}
             </dl>
-            <div className="co-detail-table__bracket" />
-            <div className="co-detail-table__breakdown">
-              {_.get(obj.status, 'installedCSV') && installedCSV ? (
-                <Link
-                  to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
-                    ClusterServiceVersionModel,
-                  )}/${_.get(obj.status, 'installedCSV')}`}
-                >
-                  1 installed
-                </Link>
-              ) : (
-                <span>0 installed</span>
-              )}
-              {_.get(obj.status, 'state') === SubscriptionState.SubscriptionStateUpgradePending &&
-              _.get(obj.status, 'installplan') &&
-              this.props.installPlan ? (
-                <Link
-                  to={`/k8s/ns/${obj.metadata.namespace}/${InstallPlanModel.plural}/${_.get(
-                    obj.status,
-                    'installplan.name',
-                  )}`}
-                >
-                  <span>{installPlanPhase(this.props.installPlan)}</span>
-                </Link>
-              ) : (
-                <span>0 installing</span>
-              )}
-            </div>
+            {catalogSource && (
+              <>
+                <div className="co-detail-table__bracket" />
+                <div className="co-detail-table__breakdown">
+                  {_.get(obj.status, 'installedCSV') && installedCSV ? (
+                    <Link
+                      to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                        ClusterServiceVersionModel,
+                      )}/${_.get(obj.status, 'installedCSV')}`}
+                    >
+                      1 installed
+                    </Link>
+                  ) : (
+                    <span>0 installed</span>
+                  )}
+                  {_.get(obj.status, 'state') ===
+                    SubscriptionState.SubscriptionStateUpgradePending &&
+                  _.get(obj.status, 'installplan') &&
+                  this.props.installPlan ? (
+                    <Link
+                      to={`/k8s/ns/${obj.metadata.namespace}/${InstallPlanModel.plural}/${_.get(
+                        obj.status,
+                        'installplan.name',
+                      )}`}
+                    >
+                      <span>{installPlanPhase(this.props.installPlan)}</span>
+                    </Link>
+                  ) : (
+                    <span>0 installing</span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -443,71 +523,41 @@ export class SubscriptionUpdates extends React.Component<
   }
 }
 
-export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => {
-  type PkgFor = (pkgs: PackageManifestKind[]) => (obj: SubscriptionKind) => PackageManifestKind;
-  const pkgFor: PkgFor = (pkgs) => (obj) =>
-    _.find(
-      pkgs,
-      (pkg) => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source,
-    );
-
-  type InstalledCSV = (
-    clusterServiceVersions?: ClusterServiceVersionKind[],
-  ) => (obj: SubscriptionKind) => ClusterServiceVersionKind;
-  const installedCSV: InstalledCSV = (clusterServiceVersions) => (obj) =>
-    clusterServiceVersions.find((csv) => csv.metadata.name === _.get(obj, 'status.installedCSV'));
-
-  type DetailsProps = {
-    clusterServiceVersions?: ClusterServiceVersionKind[];
-    packageManifests?: PackageManifestKind[];
-    installPlans?: InstallPlanKind[];
-    obj: SubscriptionKind;
-  };
-
-  return (
-    <DetailsPage
-      {...props}
-      namespace={props.match.params.ns}
-      kind={referenceForModel(SubscriptionModel)}
-      name={props.match.params.name}
-      pages={[
-        navFactory.details((detailsProps: DetailsProps) => (
-          <SubscriptionDetails
-            obj={detailsProps.obj}
-            pkg={pkgFor(detailsProps.packageManifests)(detailsProps.obj)}
-            installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)}
-            showDelete={new URLSearchParams(window.location.search).has('showDelete')}
-            installPlan={(detailsProps.installPlans || []).find(
-              (ip) => ip.metadata.name === _.get(detailsProps.obj.status, 'installplan.name'),
-            )}
-          />
-        )),
-        navFactory.editYaml(),
-      ]}
-      resources={[
-        {
-          kind: referenceForModel(PackageManifestModel),
-          isList: true,
-          namespace: props.namespace,
-          prop: 'packageManifests',
-        },
-        {
-          kind: referenceForModel(InstallPlanModel),
-          isList: true,
-          namespace: props.namespace,
-          prop: 'installPlans',
-        },
-        {
-          kind: referenceForModel(ClusterServiceVersionModel),
-          namespace: props.namespace,
-          isList: true,
-          prop: 'clusterServiceVersions',
-        },
-      ]}
-      menuActions={menuActions}
-    />
-  );
-};
+export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => (
+  <DetailsPage
+    {...props}
+    namespace={props.match.params.ns}
+    kind={referenceForModel(SubscriptionModel)}
+    name={props.match.params.name}
+    pages={[navFactory.details(SubscriptionDetails), navFactory.editYaml()]}
+    resources={[
+      {
+        kind: referenceForModel(PackageManifestModel),
+        isList: true,
+        namespace: props.namespace,
+        prop: 'packageManifests',
+      },
+      {
+        kind: referenceForModel(InstallPlanModel),
+        isList: true,
+        namespace: props.namespace,
+        prop: 'installPlans',
+      },
+      {
+        kind: referenceForModel(ClusterServiceVersionModel),
+        namespace: props.namespace,
+        isList: true,
+        prop: 'clusterServiceVersions',
+      },
+      {
+        kind: referenceForModel(CatalogSourceModel),
+        isList: true,
+        prop: 'catalogSources',
+      },
+    ]}
+    menuActions={menuActions}
+  />
+);
 
 export type SubscriptionsPageProps = {
   namespace?: string;
@@ -522,6 +572,7 @@ export type SubscriptionsListProps = {
 };
 
 export type SubscriptionUpdatesProps = {
+  catalogSource: CatalogSourceKind;
   obj: SubscriptionKind;
   pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
@@ -535,11 +586,11 @@ export type SubscriptionUpdatesState = {
 };
 
 export type SubscriptionDetailsProps = {
+  catalogSources?: CatalogSourceKind[];
+  clusterServiceVersions?: ClusterServiceVersionKind[];
+  installPlans?: InstallPlanKind[];
   obj: SubscriptionKind;
-  pkg: PackageManifestKind;
-  installedCSV?: ClusterServiceVersionKind;
-  showDelete?: boolean;
-  installPlan?: InstallPlanKind;
+  packageManifests: PackageManifestKind[];
 };
 
 export type SubscriptionDetailsPageProps = {
