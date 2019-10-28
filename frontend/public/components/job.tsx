@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -143,6 +144,11 @@ const JobTableRow = ({
 };
 JobTableRow.displayName = 'JobTableRow';
 
+const jobStatus = (job: JobKind): string => {
+  const conditions = _.get(job, 'status.conditions', null);
+  return conditions && conditions.length > 0 ? conditions[0].type : 'In Progress';
+};
+
 const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
   <>
     <div className="co-m-pane__body">
@@ -168,11 +174,7 @@ const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
           <dl className="co-m-pane__details">
             <dt>Status</dt>
             <dd>
-              {job.status.conditions ? (
-                <Status status={job.status.conditions[0].type} />
-              ) : (
-                <Status status="In Progress" />
-              )}
+              <Status status={jobStatus(job)} />
             </dd>
             <DetailsItem label="Start Time" obj={job} path="status.startTime">
               <Timestamp timestamp={job.status.startTime} />
@@ -207,6 +209,7 @@ const { details, pods, editYaml, events } = navFactory;
 const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={jobStatus}
     kind={kind}
     menuActions={menuActions}
     pages={[details(JobDetails), editYaml(), pods(), events(ResourceEventStream)]}

@@ -12,23 +12,28 @@ export const pipelineFilterReducer = (pipeline): string => {
   return pipeline.latestRun.status.succeededCondition;
 };
 
-export const pipelineRunFilterReducer = (pipelineRun): string => {
+export const pipelineRunStatus = (pipelineRun): string => {
   if (
     !pipelineRun ||
     !pipelineRun.status ||
     !pipelineRun.status.conditions ||
     pipelineRun.status.conditions.length === 0
   ) {
-    return '-';
+    return null;
   }
   const condition = pipelineRun.status.conditions.find((c) => c.type === 'Succeeded');
   return !condition || !condition.status
-    ? '-'
+    ? null
     : condition.status === 'True'
     ? 'Succeeded'
     : condition.status === 'False'
     ? 'Failed'
     : 'Running';
+};
+
+export const pipelineRunFilterReducer = (pipelineRun): string => {
+  const status = pipelineRunStatus(pipelineRun);
+  return status || '-';
 };
 
 export const pipelineStatusFilter = (filters, pipeline) => {

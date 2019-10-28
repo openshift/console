@@ -395,6 +395,7 @@ const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj }) => (
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={podPhase}
     menuActions={menuActions}
     pages={[
       navFactory.details(Details),

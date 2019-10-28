@@ -3,6 +3,7 @@ import { navFactory } from '@console/internal/components/utils';
 import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
+import { nodeStatus } from '../../status/node';
 import NodeDetails from './NodeDetails';
 import { menuActions } from './menu-actions';
 
@@ -17,7 +18,7 @@ const pages = [
   events(ResourceEventStream),
 ];
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => (
-  <DetailsPage {...props} menuActions={menuActions} pages={pages} />
+  <DetailsPage {...props} getResourceStatus={nodeStatus} menuActions={menuActions} pages={pages} />
 );
 
 export default NodeDetailsPage;

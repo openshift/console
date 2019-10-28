@@ -144,4 +144,12 @@
   &__resource-name {
     min-width: 0; // required so co-break-word works
   }
+  &__resource-status {
+    padding-left: 8px;
+    white-space: nowrap;
+
+    &-badge {
+      vertical-align: middle;
+    }
+  }
 }
