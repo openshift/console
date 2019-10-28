@@ -173,8 +173,77 @@ export const OperandTableHeader = () => {
   ];
 };
 
+export enum OperatorStatusType {
+  phase = 'phase',
+  status = 'status',
+  state = 'state',
+  conditions = 'conditions',
+}
+
+export const OperatorStatusTypeText = {
+  [OperatorStatusType.phase]: 'Phase:',
+  [OperatorStatusType.status]: 'Status:',
+  [OperatorStatusType.state]: 'State:',
+  [OperatorStatusType.conditions]: 'Condition:',
+};
+
+export type ConditionType = {
+  type: string;
+  status: string;
+  reason?: string;
+  message?: string;
+  lastUpdateTime?: string;
+  lastTransitionTime?: string;
+};
+
+const DeriveIconFromStatusCondition = (conditionStatus: [ConditionType]) => {
+  let statusIcon;
+  if (!_.isEmpty(conditionStatus)) {
+    if (_.has(conditionStatus[0], 'type')) {
+      statusIcon = <Status status={conditionStatus[0].type} />;
+    }
+  }
+  return statusIcon;
+};
+
+const DeriveIconFromStatus = (status: string) => {
+  let statusIcon;
+  if (!_.isEmpty(status)) {
+    statusIcon =
+      status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />;
+  }
+  return statusIcon;
+};
+
+export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({
+  statusObject,
+}) => {
+  let iconAndText = <div className="text-muted">Unknown</div>;
+  if (_.isEmpty(statusObject)) {
+    return iconAndText;
+  }
+  _.find(Object.keys(OperatorStatusType), (key) => {
+    if (_.has(statusObject, key)) {
+      const status = statusObject[key];
+      const statusIcon =
+        key === OperatorStatusType.conditions
+          ? DeriveIconFromStatusCondition(status)
+          : DeriveIconFromStatus(status);
+      if (statusIcon) {
+        return (iconAndText = (
+          <span className="co-icon-and-text">
+            {OperatorStatusTypeText[key]}&nbsp;{statusIcon}
+          </span>
+        ));
+      }
+    }
+    return false;
+  });
+
+  return iconAndText;
+};
+
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, key, style }) => {
-  const status = _.get(obj.status, 'phase');
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -187,13 +256,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
         {obj.kind}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {_.isEmpty(status) ? (
-          <div className="text-muted">Unknown</div>
-        ) : (
-          <>
-            {status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />}
-          </>
-        )}
+        <OperandStatusIconAndText statusObject={obj.status} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
@@ -557,6 +620,10 @@ export type OperandListProps = {
   reduxIDs?: string[];
   rowSplitter?: any;
   staticFilters?: any;
+};
+
+export type OperandStatusIconAndTextProps = {
+  statusObject: K8sResourceKind['status'];
 };
 
 export type OperandHeaderProps = {

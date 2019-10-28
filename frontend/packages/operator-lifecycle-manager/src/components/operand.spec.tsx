@@ -27,6 +27,10 @@ import {
   OperandDetailsPage,
   ProvidedAPIPage,
   ProvidedAPIPageProps,
+  OperandStatusIconAndText,
+  OperandStatusIconAndTextProps,
+  OperatorStatusTypeText,
+  OperatorStatusType,
 } from './operand';
 import { Resources } from './k8s-resource';
 import { StatusDescriptor } from './descriptors/status';
@@ -83,7 +87,9 @@ describe(OperandTableRow.displayName, () => {
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
 
-    expect(col.shallow().text()).toEqual('Unknown');
+    expect(col.find(OperandStatusIconAndText).props().statusObject).toEqual(
+      testResourceInstance.status,
+    );
   });
 
   it('renders column for resource status if unknown', () => {
@@ -92,7 +98,7 @@ describe(OperandTableRow.displayName, () => {
     wrapper.setProps({ obj });
     const col = wrapper.childAt(3);
 
-    expect(col.shallow().text()).toEqual('Unknown');
+    expect(col.find(OperandStatusIconAndText).props().statusObject).toEqual(null);
   });
 
   it('renders column for resource version', () => {
@@ -491,5 +497,39 @@ describe(ProvidedAPIPage.displayName, () => {
     );
 
     expect(wrapper.find(ListPage).props().canCreate).toBe(false);
+  });
+});
+
+describe('OperandStatusIconAndText', () => {
+  let wrapper: ShallowWrapper<OperandStatusIconAndTextProps>;
+
+  it('dispalys the correct status and status type for a status value of running', () => {
+    const obj = {
+      status: {
+        status: 'Running',
+      },
+    };
+    wrapper = shallow(<OperandStatusIconAndText statusObject={obj.status} />);
+    expect(wrapper.childAt(0).text()).toEqual(OperatorStatusTypeText[OperatorStatusType.status]);
+    expect(wrapper.childAt(2).props().title).toEqual('Running');
+  });
+
+  it('displays the correct status and status type for a phase value of running', () => {
+    const obj = {
+      status: {
+        phase: 'Running',
+      },
+    };
+    wrapper = shallow(<OperandStatusIconAndText statusObject={obj.status} />);
+    expect(wrapper.childAt(0).text()).toEqual(OperatorStatusTypeText[OperatorStatusType.phase]);
+    expect(wrapper.childAt(2).props().title).toEqual('Running');
+  });
+
+  it('displays Unknown for a missing or unknown status object', () => {
+    const obj = {
+      status: {},
+    };
+    wrapper = shallow(<OperandStatusIconAndText statusObject={obj.status} />);
+    expect(wrapper.find('.text-muted').text()).toEqual('Unknown');
   });
 });
