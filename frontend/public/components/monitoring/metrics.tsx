@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   ActionGroup,
+  Alert,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -782,6 +783,15 @@ const QueryTable = connect(
   queryDispatchToProps,
 )(QueryTable_);
 
+const NamespaceAlert = () => (
+  <Alert
+    isInline
+    className="co-alert"
+    title="Queries entered here are limited to the data available in the currently selected project."
+    variant="info"
+  />
+);
+
 const Query_: React.FC<QueryProps> = ({
   index,
   isExpanded,
@@ -868,26 +878,31 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     patchQuery(index, { isEnabled: true, query: text, text });
   };
 
-  return queryStrings.join('') === '' ? (
-    <div className="query-browser__wrapper graph-empty-state">
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-        <Title size="sm">No Query Entered</Title>
-        <EmptyStateBody>
-          Enter a query in the box below to explore metrics for this cluster.
-        </EmptyStateBody>
-        <Button onClick={insertExampleQuery} variant="primary">
-          Insert Example Query
-        </Button>
-      </EmptyState>
-    </div>
-  ) : (
-    <QueryBrowser
-      defaultTimespan={30 * 60 * 1000}
-      disabledSeries={disabledSeries}
-      namespace={namespace}
-      queries={queryStrings}
-    />
+  return (
+    <>
+      {namespace && <NamespaceAlert />}
+      {queryStrings.join('') === '' ? (
+        <div className="query-browser__wrapper graph-empty-state">
+          <EmptyState variant={EmptyStateVariant.full}>
+            <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+            <Title size="sm">No Query Entered</Title>
+            <EmptyStateBody>
+              Enter a query in the box below to explore metrics for this cluster.
+            </EmptyStateBody>
+            <Button onClick={insertExampleQuery} variant="primary">
+              Insert Example Query
+            </Button>
+          </EmptyState>
+        </div>
+      ) : (
+        <QueryBrowser
+          defaultTimespan={30 * 60 * 1000}
+          disabledSeries={disabledSeries}
+          namespace={namespace}
+          queries={queryStrings}
+        />
+      )}
+    </>
   );
 };
 const QueryBrowserWrapper = connect(
