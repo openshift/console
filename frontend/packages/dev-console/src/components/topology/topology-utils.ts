@@ -4,6 +4,10 @@ import { getRouteWebURL } from '@console/internal/components/routes';
 import { TransformResourceData, isKnativeServing, deploymentKindMap } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
+  filterDeploymentsFromKnative,
+  tranformKnNodeData,
+} from '@console/knative-plugin/src/utils/knative-topology-utils';
+import {
   edgesFromAnnotations,
   createResourceConnection,
   updateResourceApplication,
@@ -279,7 +283,59 @@ export const transformTopologyData = (
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
   };
+
+  const getKnativeTopologyData = (knativeResources: K8sResourceKind[], type: string) => {
+    if (knativeResources && knativeResources.length) {
+      const knativeResourceData = tranformKnNodeData(
+        knativeResources,
+        type,
+        topologyGraphAndNodeData,
+        resources,
+        operatorBackedServiceKinds,
+        utils,
+        cheURL,
+        application,
+      );
+      const {
+        graph: { nodes, edges },
+        topology,
+      } = topologyGraphAndNodeData;
+      topologyGraphAndNodeData = {
+        graph: {
+          nodes: [...nodes, ...knativeResourceData.nodesData],
+          edges: [...edges, ...knativeResourceData.edgesData],
+          groups: [...knativeResourceData.groupsData],
+        },
+        topology: { ...topology, ...knativeResourceData.dataToShowOnNodes },
+      };
+    }
+  };
+
+  const knSvcResources = _.get(resources, ['ksservices', 'data'], []);
+  knSvcResources.length && getKnativeTopologyData(knSvcResources, 'knservice');
+
+  const knRevResources = _.get(resources, ['revisions', 'data'], []);
+  knRevResources.length && getKnativeTopologyData(knRevResources, 'revision');
+
+  // Only try to merge the Events if there are Events to merge.
+  const getKnativeEventSources = (): K8sResourceKind[] | null => {
+    if (
+      resources.eventSourceCronjob.data.length > 0 &&
+      resources.eventSourceContainers.data.length > 0
+    ) {
+      const allEventSourcesResources = _.merge(
+        resources.eventSourceCronjob && resources.eventSourceCronjob.data,
+        resources.eventSourceContainers && resources.eventSourceContainers.data,
+      );
+      return allEventSourcesResources;
+    }
+    return null;
+  };
+  const knEventSources = getKnativeEventSources();
+  knEventSources && knEventSources.length && getKnativeTopologyData(knEventSources, 'eventsource');
+
   const transformResourceData = createInstanceForResource(resources, utils);
+
   const allResources = _.cloneDeep(
     _.concat(
       resources.deploymentConfigs && resources.deploymentConfigs.data,
@@ -330,6 +386,15 @@ export const transformTopologyData = (
       };
     }
   });
+
+  let filteredTopologyGraphAndNodeData: TopologyDataModel;
+  if (knSvcResources.length > 0) {
+    filteredTopologyGraphAndNodeData = filterDeploymentsFromKnative(
+      topologyGraphAndNodeData,
+      'revision',
+    );
+    return filteredTopologyGraphAndNodeData;
+  }
   return topologyGraphAndNodeData;
 };
 

@@ -227,6 +227,54 @@ export const filterKnativeBasedOnActiveApplication = (
   });
 };
 
+export const filterDeploymentsFromKnative = (
+  data: TopologyDataModel,
+  type: string,
+): TopologyDataModel => {
+  const graphData: TopologyDataModel = data;
+  const deploymentName: string[] = new Array(0);
+  const deploymentUID: string[] = new Array(0);
+  // Find the Revisions since their name will match the Deployment and make a list of Deployment names.
+  for (const node of graphData.graph.nodes) {
+    if (node.type === type) {
+      deploymentName.push(`${node.name}-deployment`);
+    }
+  }
+  // Iterate through the list of Deployments and remove them from the Graph.
+  if (deploymentName.length > 0) {
+    for (const d of deploymentName) {
+      for (let i = 0; i < graphData.graph.nodes.length; i++) {
+        if (graphData.graph.nodes[i].name === d) {
+          deploymentUID.push(graphData.graph.nodes[i].id);
+          graphData.graph.nodes.splice(i, 1);
+          break;
+        }
+      }
+    }
+    // Remove references to the Deployment nodes from the Groups and Edges.
+    for (const id of deploymentUID) {
+      /* eslint-disable @typescript-eslint/prefer-for-of */
+      for (let i = 0; i < graphData.graph.groups.length; i++) {
+        for (let j = 0; j < graphData.graph.groups[i].nodes.length; j++) {
+          if (graphData.graph.groups[i].nodes[j] === id) {
+            graphData.graph.groups[i].nodes.splice(j, 1);
+            break;
+          }
+        }
+      }
+      for (let i = 0; i < graphData.graph.edges.length; i++) {
+        if (graphData.graph.edges[i].source === id || graphData.graph.edges[i].target === id) {
+          graphData.graph.edges.splice(i, 1);
+        }
+      }
+      /* eslint-ensable @typescript-eslint/prefer-for-of */
+      // Remove nodes from the Topology
+      delete graphData.topology[`${id}`];
+    }
+  }
+  return graphData;
+};
+
 /**
  * create all data that need to be shown on a topology data for knative service
  */
