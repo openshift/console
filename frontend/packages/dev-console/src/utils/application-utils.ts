@@ -6,6 +6,8 @@ import {
   k8sKill,
   K8sResourceKind,
   modelFor,
+  k8sCreate,
+  LabelSelector,
 } from '@console/internal/module/k8s';
 import {
   ImageStreamModel,
@@ -28,6 +30,7 @@ import { checkAccess } from '@console/internal/components/utils';
 import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
+import { ServiceBindingRequestModel } from '../models';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -42,6 +45,31 @@ export const edgesFromAnnotations = (annotations): string[] => {
   }
 
   return edges;
+};
+
+export const edgesFromServiceBinding = (
+  source: K8sResourceKind,
+  sbrs: K8sResourceKind[],
+): K8sResourceKind[] => {
+  const sourceBindings = [];
+  _.forEach(sbrs, (sbr) => {
+    let edgeExists = false;
+    if (_.get(sbr, 'spec.applicationSelector.resource') === modelFor(source.kind).plural) {
+      if (_.get(sbr, 'spec.applicationSelector.resourceRef') === source.metadata.name) {
+        edgeExists = true;
+      } else {
+        const matchLabels = _.has(sbr, 'spec.applicationSelector.matchLabels');
+        if (matchLabels) {
+          const sbrSelector = new LabelSelector(sbr.spec.applicationSelector);
+          if (sbrSelector.matches(source)) {
+            edgeExists = true;
+          }
+        }
+      }
+    }
+    edgeExists && sourceBindings.push(sbr);
+  });
+  return sourceBindings;
 };
 
 const listInstanceResources = (
@@ -192,6 +220,53 @@ const updateItemAppConnectTo = (
   const patch = [{ path: '/metadata/annotations', op, value: _.fromPairs(tags) }];
 
   return k8sPatch(model, item, patch);
+};
+
+export const createServiceBinding = (
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+): Promise<any> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+
+  const targetName = _.get(target, 'metadata.name');
+  const sourceName = _.get(source, 'metadata.name');
+  const namespace = _.get(source, 'metadata.namespace');
+  const sourceGroup = _.split(_.get(source, 'apiVersion'), '/');
+  const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
+  const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
+  const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
+  const sbrName = `${sourceName}-${source.kind}-${targetName}-${target.kind}`;
+
+  const serviceBindingRequest = {
+    apiVersion: 'apps.openshift.io/v1alpha1',
+    kind: 'ServiceBindingRequest',
+    metadata: {
+      name: sbrName,
+      namespace,
+    },
+    spec: {
+      applicationSelector: {
+        resourceRef: sourceName,
+        group: sourceGroup[0],
+        version: sourceGroup[1],
+        resource: modelFor(source.kind).plural,
+      },
+      backingServiceSelector: {
+        group: targetResourceGroup[0],
+        version: targetResourceGroup[1],
+        kind: targetResourceKind,
+        resourceRef: targetResourceRefName,
+      },
+    },
+  };
+
+  return k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+};
+
+export const removeServiceBinding = (sbr: K8sResourceKind): Promise<any> => {
+  return k8sKill(ServiceBindingRequestModel, sbr);
 };
 
 // Create a connection from the source to the target replacing the connection to replacedTarget if provided

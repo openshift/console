@@ -11,6 +11,7 @@ import EmptyState from '../EmptyState';
 import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
+import { ALLOW_SERVICE_BINDING } from '../../const';
 import { getCheURL } from './topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
@@ -19,6 +20,7 @@ interface StateProps {
   activeApplication: string;
   knative: boolean;
   cheURL: string;
+  serviceBinding: boolean;
 }
 
 export interface TopologyPageProps {
@@ -43,7 +45,7 @@ const EmptyMsg = () => (
   />
 );
 
-export function renderTopology({ loaded, loadError, data }: RenderProps) {
+export function renderTopology({ loaded, loadError, serviceBinding, data }: RenderProps) {
   return (
     <StatusBox
       data={data ? data.graph.nodes : null}
@@ -63,13 +65,19 @@ export function renderTopology({ loaded, loadError, data }: RenderProps) {
           bottom: 0,
         }}
       >
-        <Topology data={data} />
+        <Topology data={data} serviceBinding={serviceBinding} />
       </div>
     </StatusBox>
   );
 }
 
-const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheURL }) => {
+const TopologyPage: React.FC<Props> = ({
+  match,
+  activeApplication,
+  knative,
+  cheURL,
+  serviceBinding,
+}) => {
   const namespace = match.params.ns;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
   return (
@@ -88,6 +96,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
                   render={renderTopology}
                   knative={knative}
                   cheURL={cheURL}
+                  serviceBinding={serviceBinding}
                 />
               ) : (
                 <ProjectListPage title="Topology">
@@ -104,12 +113,15 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication, knative, cheU
 
 const getKnativeStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(FLAG_KNATIVE_SERVING_SERVICE);
 
+const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
+
 const mapStateToProps = (state: RootState): StateProps => {
   const consoleLinks = state.UI.get('consoleLinks');
   return {
     activeApplication: getActiveApplication(state),
     knative: getKnativeStatus(state),
     cheURL: getCheURL(consoleLinks),
+    serviceBinding: getServiceBindingStatus(state),
   };
 };
 

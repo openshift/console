@@ -85,7 +85,7 @@ export interface D3ForceDirectedRendererProps {
     targetNodeId: string,
     replaceTargetNodeId?: string,
   ): Promise<any>;
-  onRemoveConnection?(sourceNodeId: string, targetNodeId: string): void;
+  onRemoveConnection?(sourceNodeId: string, targetNodeId: string, edgeType: string): void;
 }
 
 function getEdgeId(d: Edge): string {
@@ -1120,7 +1120,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         dragActive={this.isDragActive()}
         isDragging={viewEdge.source.id === dragNodeId || viewEdge.target.id === dragNodeId}
         onTargetArrowEnter={this.onMoveConnectionEnter}
-        onRemove={() => onRemoveConnection(viewEdge.source.id, viewEdge.target.id)}
+        onRemove={() => onRemoveConnection(viewEdge.source.id, viewEdge.target.id, viewEdge.type)}
       />
     );
   }

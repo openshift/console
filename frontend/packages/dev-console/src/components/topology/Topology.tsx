@@ -29,6 +29,7 @@ type State = {
 
 export interface TopologyProps {
   data: TopologyDataModel;
+  serviceBinding: boolean;
 }
 
 const getSelectedItem = (
@@ -96,21 +97,36 @@ export default class Topology extends React.Component<TopologyProps, State> {
   ): Promise<any> => {
     const {
       data: { topology },
+      serviceBinding,
     } = this.props;
     const sourceItem: TopologyDataObject = topology[sourceNodeId];
     const targetItem: TopologyDataObject = topology[targetNodeId];
     const replaceTargetItem: TopologyDataObject =
       replaceTargetNodeId && topology[replaceTargetNodeId];
 
-    return createTopologyResourceConnection(sourceItem, targetItem, replaceTargetItem);
+    return createTopologyResourceConnection(
+      sourceItem,
+      targetItem,
+      replaceTargetItem,
+      serviceBinding,
+    );
   };
 
-  onRemoveConnection = (sourceNodeId: string, targetNodeId: string): void => {
+  onRemoveConnection = (sourceNodeId: string, targetNodeId: string, edgeType: string): void => {
     const {
-      data: { topology },
+      data: {
+        topology,
+        graph: { edges },
+      },
     } = this.props;
     const sourceItem: TopologyDataObject = topology[sourceNodeId];
     const targetItem: TopologyDataObject = topology[targetNodeId];
+    const sbr = _.get(
+      _.find(edges, (edge) => {
+        return edge.id === `${sourceNodeId}_${targetNodeId}`;
+      }),
+      'data.sbr',
+    );
 
     const message = (
       <>
@@ -124,10 +140,12 @@ export default class Topology extends React.Component<TopologyProps, State> {
       message,
       btnText: 'Remove',
       executeFn: () => {
-        return removeTopologyResourceConnection(sourceItem, targetItem).catch((err) => {
-          const error = err.message;
-          errorModal({ error });
-        });
+        return removeTopologyResourceConnection(sourceItem, targetItem, sbr, edgeType).catch(
+          (err) => {
+            const error = err.message;
+            errorModal({ error });
+          },
+        );
       },
     });
   };

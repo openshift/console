@@ -38,7 +38,7 @@ export interface GraphProps {
     targetNodeId: string,
     replaceTargetNodeId?: string,
   ): Promise<any>;
-  onRemoveConnection(sourceNodeId: string, targetNodeId: string): void;
+  onRemoveConnection(sourceNodeId: string, targetNodeId: string, edgeType: string): void;
   graphApiRef?(GraphApi): void;
 }
 
