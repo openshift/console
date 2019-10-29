@@ -139,12 +139,7 @@ export const startPipeline: KebabAction = (
   },
 });
 
-export const rerunPipeline: KebabAction = (
-  kind: K8sKind,
-  pipeline: Pipeline,
-  pipelineRun: PipelineRun,
-  onSubmit?: (pipelineRun: PipelineRun) => void,
-) => {
+export const rerunPipeline: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     label: 'Start Last Run',
@@ -156,14 +151,14 @@ export const rerunPipeline: KebabAction = (
             apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
             kind: 'Pipeline',
             metadata: {
-              name: pipeline ? pipeline.metadata.name : pipelineRun.spec.pipelineRef.name,
-              namespace: pipeline ? pipeline.metadata.namespace : pipelineRun.metadata.namespace,
+              name: pipelineRun.spec.pipelineRef.name,
+              namespace: pipelineRun.metadata.namespace,
             },
           },
           pipelineRun,
         ),
       )
-        .then(onSubmit)
+        .then(handlePipelineRunSubmit)
         .catch((err) => errorModal({ error: err.message }));
     },
     accessReview: {
