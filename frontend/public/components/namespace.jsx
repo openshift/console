@@ -455,7 +455,7 @@ const Details = ({ obj: ns }) => {
 };
 
 const RolesPage = ({ obj: { metadata } }) => (
-  <RoleBindingsPage namespace={metadata.name} showTitle={false} />
+  <RoleBindingsPage fixNamespace roleKind="Role" namespace={metadata.name} showTitle={false} />
 );
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);

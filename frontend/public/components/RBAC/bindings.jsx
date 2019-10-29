@@ -292,11 +292,17 @@ export const RoleBindingsPage = ({
   showTitle = true,
   mock = false,
   staticFilters = undefined,
+  fixNamespace = false,
+  roleKind = null,
 }) => (
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
-    createProps={{ to: '/k8s/cluster/rolebindings/~new' }}
+    createProps={{
+      to: `/k8s/cluster/rolebindings/~new${fixNamespace === true ? `?namespace=${namespace}` : ''}${
+        roleKind !== null ? `&&rolekind=${roleKind}` : ''
+      }`,
+    }}
     mock={mock}
     filterLabel="by role or subject"
     flatten={flatten}
@@ -631,6 +637,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
+  const namespace = searchParams.get('namespace');
   const metadata = { namespace: UIActions.getActiveNamespace() };
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
@@ -639,7 +646,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   });
   const fixed = {
     kind: params.ns || roleKind === 'Role' || !clusterAllowed ? 'RoleBinding' : undefined,
-    metadata: { namespace: params.ns },
+    metadata: { namespace },
     roleRef: { kind: roleKind, name: roleName },
   };
   return (
