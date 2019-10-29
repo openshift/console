@@ -16,6 +16,7 @@ import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const getMachineResource = (name: string, namespace: string): FirehoseResource => ({
@@ -49,11 +50,11 @@ const hostEventsFilter = (
   machesInvolvedObject(NodeModel.kind, getMachineNodeName(machine), null, event);
 
 const EventsCard: React.FC<EventsCardProps> = ({
-  obj,
   watchK8sResource,
   stopWatchK8sResource,
   resources,
 }) => {
+  const { obj } = React.useContext(BareMetalHostDashboardContext);
   const machineName = getHostMachineName(obj);
   const namespace = getNamespace(obj);
   React.useEffect(() => {
