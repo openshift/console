@@ -56,7 +56,7 @@ type DashboardCardButtonLinkProps = {
 type DashboardCardPopupLinkProps = {
   children?: React.ReactNode;
   popupTitle: string;
-  linkTitle: string;
+  linkTitle: React.ReactNode;
   className?: string;
   onShow?: () => void;
   onHide?: () => void;
