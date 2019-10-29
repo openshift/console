@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { history, resourcePathFromModel, KebabAction } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sUpdate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
-import { PipelineModel, PipelineRunModel } from '../models';
+import { PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
 import { Pipeline, PipelineRun } from './pipeline-augment';
@@ -17,10 +17,13 @@ export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
     ),
   );
 };
-export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun): PipelineRun => {
-  if (!pipeline || !pipeline.metadata || !pipeline.metadata.name || !pipeline.metadata.namespace) {
+export const getPipelineRunData = (
+  pipeline: Pipeline = null,
+  latestRun?: PipelineRun,
+): PipelineRun => {
+  if (!pipeline && !latestRun) {
     // eslint-disable-next-line no-console
-    console.error('Unable to create new PipelineRun. Missing "metadata" in ', pipeline);
+    console.error('Missing parameters, unable to create new PipelineRun');
     return null;
   }
 
@@ -32,28 +35,30 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
     resourceRef: resource.resourceRef,
   }));
 
+  const pipelineName = pipeline ? pipeline.metadata.name : latestRun.spec.pipelineRef.name;
+
   return {
     apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
     kind: PipelineRunModel.kind,
     metadata: {
-      name: `${pipeline.metadata.name}-${getRandomChars(6)}`,
-      namespace: pipeline.metadata.namespace,
+      name: `${pipelineName}-${getRandomChars(6)}`,
+      namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
       labels:
         latestRun && latestRun.metadata && latestRun.metadata.labels
           ? latestRun.metadata.labels
           : {
-              'tekton.dev/pipeline': pipeline.metadata.name,
+              'tekton.dev/pipeline': pipelineName,
             },
     },
     spec: {
       pipelineRef: {
-        name: pipeline.metadata.name,
+        name: pipelineName,
       },
       resources,
       params:
         latestRun && latestRun.spec && latestRun.spec.params
           ? latestRun.spec.params
-          : pipeline.spec && pipeline.spec.params
+          : pipeline && pipeline.spec && pipeline.spec.params
           ? pipeline.spec.params
           : null,
       serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
@@ -85,20 +90,7 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
       console.error('Improper PipelineRun metadata');
       return;
     }
-    k8sCreate(
-      PipelineRunModel,
-      getPipelineRunData(
-        {
-          apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
-          kind: 'Pipeline',
-          metadata: {
-            name: pipelineRun.spec.pipelineRef.name,
-            namespace: pipelineRun.metadata.namespace,
-          },
-        },
-        pipelineRun,
-      ),
-    );
+    k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun));
   },
   accessReview: {
     group: kind.apiGroup,
@@ -139,31 +131,13 @@ export const startPipeline: KebabAction = (
   },
 });
 
-export const rerunPipeline: KebabAction = (
-  kind: K8sKind,
-  pipeline: Pipeline,
-  pipelineRun: PipelineRun,
-  onSubmit?: (pipelineRun: PipelineRun) => void,
-) => {
+export const rerunPipeline: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     label: 'Start Last Run',
     callback: () => {
-      k8sCreate(
-        PipelineRunModel,
-        getPipelineRunData(
-          {
-            apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
-            kind: 'Pipeline',
-            metadata: {
-              name: pipeline ? pipeline.metadata.name : pipelineRun.spec.pipelineRef.name,
-              namespace: pipeline ? pipeline.metadata.namespace : pipelineRun.metadata.namespace,
-            },
-          },
-          pipelineRun,
-        ),
-      )
-        .then(onSubmit)
+      k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun))
+        .then(handlePipelineRunSubmit)
         .catch((err) => errorModal({ error: err.message }));
     },
     accessReview: {
