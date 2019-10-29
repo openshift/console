@@ -24,13 +24,13 @@ import {
 } from '@console/noobaa-storage-plugin/src/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
-import { getOBPhase } from '../../utils';
+import { getPhase } from '../../utils';
 import { obStatusFilter } from '../../table-filters';
 
 const kind = referenceForModel(NooBaaObjectBucketModel);
 const menuActions = [...Kebab.factory.common];
 
-const OBStatus: React.FC<OBStatusProps> = ({ ob }) => <Status status={getOBPhase(ob)} />;
+const OBStatus: React.FC<OBStatusProps> = ({ ob }) => <Status status={getPhase(ob)} />;
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),

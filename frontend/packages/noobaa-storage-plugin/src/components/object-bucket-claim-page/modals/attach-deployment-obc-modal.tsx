@@ -110,7 +110,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
     e.preventDefault();
     handlePromise(k8sPatch(DeploymentModel, requestDeployment, getPatches()))
       .then((res) => {
-        history.push(resourceObjPath(res, referenceFor(res)));
+        history.push(`${resourceObjPath(res, referenceFor(res))}/environment`);
         close();
       })
       .catch(() => {

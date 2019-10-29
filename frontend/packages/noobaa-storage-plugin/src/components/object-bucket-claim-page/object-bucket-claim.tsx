@@ -26,15 +26,13 @@ import {
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { obcStatusFilter } from '../../table-filters';
-import { isBound, getOBCPhase } from '../../utils';
+import { isBound, getPhase } from '../../utils';
 import { menuActionCreator, menuActions } from './menu-actions';
 import { GetSecret } from './secret';
 
 const kind = referenceForModel(NooBaaObjectBucketClaimModel);
 
-export const OBCStatus: React.FC<OBCStatusProps> = ({ obc }) => (
-  <Status status={getOBCPhase(obc)} />
-);
+export const OBCStatus: React.FC<OBCStatusProps> = ({ obc }) => <Status status={getPhase(obc)} />;
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-2', 'col-sm-4', 'col-xs-6'),
@@ -61,7 +59,7 @@ const OBCTableHeader = () => {
     },
     {
       title: 'Status',
-      sortField: 'status.Phase',
+      sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -86,6 +84,7 @@ const OBCTableHeader = () => {
 OBCTableHeader.displayName = 'OBCTableHeader';
 
 const OBCTableRow: React.FC<OBCTableRowProps> = ({ obj, index, key, style }) => {
+  const storageClassName = _.get(obj, 'spec.storageClassName');
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -119,7 +118,7 @@ const OBCTableRow: React.FC<OBCTableRowProps> = ({ obj, index, key, style }) => 
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {_.get(obj, 'spec.storageClassName', '-')}
+        {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
