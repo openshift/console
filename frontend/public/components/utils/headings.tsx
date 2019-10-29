@@ -91,9 +91,10 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceTitle = titleFunc && data ? titleFunc(data) : title;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
+  const hasData = !_.isEmpty(data);
   const showActions =
-    (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
-  const resourceStatus = getResourceStatus && getResourceStatus(data);
+    (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'deletionTimestamp');
+  const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   return (
     <div
       className={classNames(
