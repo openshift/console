@@ -145,8 +145,7 @@ const JobTableRow = ({
 JobTableRow.displayName = 'JobTableRow';
 
 const jobStatus = (job: JobKind): string => {
-  const conditions = _.get(job, 'status.conditions', null);
-  return conditions && conditions.length > 0 ? conditions[0].type : 'In Progress';
+  return job && job.status ? _.get(job, 'status.conditions[0].type', 'In Progress') : null;
 };
 
 const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
