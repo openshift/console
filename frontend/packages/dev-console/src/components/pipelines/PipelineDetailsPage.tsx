@@ -40,7 +40,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               menuActions: [
                 () => startPipeline(PipelineModel, res, handlePipelineRunSubmit),
                 ...(latestRun && latestRun.metadata
-                  ? [() => rerunPipeline(PipelineModel, res, latestRun, handlePipelineRunSubmit)]
+                  ? [() => rerunPipeline(PipelineRunModel, res, latestRun, handlePipelineRunSubmit)]
                   : []),
                 Kebab.factory.Delete,
               ],

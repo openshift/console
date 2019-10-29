@@ -6,6 +6,7 @@ import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
 import { Pipeline, PipelineRun } from './pipeline-augment';
+import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   history.push(
@@ -141,22 +142,35 @@ export const startPipeline: KebabAction = (
 export const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipeline: Pipeline,
-  latestRun: PipelineRun,
+  pipelineRun: PipelineRun,
   onSubmit?: (pipelineRun: PipelineRun) => void,
 ) => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     label: 'Start Last Run',
     callback: () => {
-      k8sCreate(PipelineRunModel, getPipelineRunData(pipeline, latestRun))
+      k8sCreate(
+        PipelineRunModel,
+        getPipelineRunData(
+          {
+            apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
+            kind: 'Pipeline',
+            metadata: {
+              name: pipeline ? pipeline.metadata.name : pipelineRun.spec.pipelineRef.name,
+              namespace: pipeline ? pipeline.metadata.namespace : pipelineRun.metadata.namespace,
+            },
+          },
+          pipelineRun,
+        ),
+      )
         .then(onSubmit)
         .catch((err) => errorModal({ error: err.message }));
     },
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
-      name: pipeline.metadata.name,
-      namespace: pipeline.metadata.namespace,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
       verb: 'create',
     },
   };
@@ -172,6 +186,7 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
         spec: { ...pipelineRun.spec, status: 'PipelineRunCancelled' },
       });
     },
+    hidden: !(pipelineRun && pipelineRunFilterReducer(pipelineRun) === 'Running'),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
