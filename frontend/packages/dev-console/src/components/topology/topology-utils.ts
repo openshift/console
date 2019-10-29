@@ -58,7 +58,7 @@ const getRouteData = (ksroute: K8sResourceKind[]): string => {
 /**
  * get routes url
  */
-const getRoutesUrl = (routes: RouteKind[], ksroute?: K8sResourceKind[]): string => {
+export const getRoutesUrl = (routes: RouteKind[], ksroute?: K8sResourceKind[]): string => {
   if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
     return getRouteWebURL(routes[0]);
   }
@@ -86,10 +86,11 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  * @param dc resource item
  * @param cheURL che link
  */
-const createTopologyNodeData = (
+export const createTopologyNodeData = (
   dc: TopologyOverviewItem,
   operatorBackedServiceKinds: string[],
   cheURL?: string,
+  type?: string,
 ): TopologyDataObject => {
   const {
     obj: deploymentConfig,
@@ -108,7 +109,7 @@ const createTopologyNodeData = (
     id: dcUID,
     name:
       _.get(deploymentConfig, 'metadata.name') || deploymentsLabels['app.kubernetes.io/instance'],
-    type: 'workload',
+    type: type || 'workload',
     resources: { ...dc },
     pods: dc.pods,
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
@@ -222,7 +223,7 @@ const getTopologyEdgeItems = (
  * @param dc
  * @param groups
  */
-const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): Group[] => {
+export const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): Group[] => {
   const labels = _.get(dc, ['metadata', 'labels']);
   const uid = _.get(dc, ['metadata', 'uid']);
   _.forEach(labels, (label, key) => {

@@ -171,7 +171,7 @@ export const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): Overvie
   return buildAlerts;
 };
 
-const getOwnedResources = <T extends K8sResourceKind>(
+export const getOwnedResources = <T extends K8sResourceKind>(
   { metadata: { uid } }: K8sResourceKind,
   resources: T[],
 ): T[] => {

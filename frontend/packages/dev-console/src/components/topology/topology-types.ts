@@ -66,8 +66,8 @@ export interface TopologyDataModel {
 }
 
 export type TopologyOverviewItem = OverviewItem & {
-  pipelines: Pipeline[];
-  pipelineRuns: PipelineRun[];
+  pipelines?: Pipeline[];
+  pipelineRuns?: PipelineRun[];
 };
 
 export interface TopologyDataObject<D = {}> {
@@ -75,7 +75,7 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: OverviewItem;
-  pods: ExtPodKind[];
+  pods?: ExtPodKind[];
   data: D;
   operatorBackedService: boolean;
 }

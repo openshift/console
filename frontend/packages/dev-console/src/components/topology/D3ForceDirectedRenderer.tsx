@@ -1255,7 +1255,7 @@ class EdgeWrapper extends React.Component<EdgeWrapperProps> {
   componentDidUpdate(prevProps: EdgeWrapperProps) {
     if (prevProps.view !== this.props.view) {
       // we need to update the data so that d3 apis get the correct new edge
-      this.$targetArrow.datum(this.props.view);
+      this.$targetArrow && this.$targetArrow.datum(this.props.view);
     }
   }
 

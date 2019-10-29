@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KNATIVE_SERVING_LABEL } from '../const';
 
-type KnativeItem = {
+export type KnativeItem = {
   revisions?: K8sResourceKind[];
   configurations?: K8sResourceKind[];
   ksroutes?: K8sResourceKind[];
