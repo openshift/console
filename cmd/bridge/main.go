@@ -320,7 +320,7 @@ func main() {
 				Endpoint:        offClusterPrometheusURL,
 			}
 
-			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-thanos-prometheus", *fK8sModeOffClusterThanos)
+			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
 			offClusterThanosURL.Path = "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,

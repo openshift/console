@@ -1,4 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { pipelineTestData, PipelineExampleNames, DataState } from '../../test/pipeline-data';
 
 export const mockPipelinesJSON: K8sResourceKind[] = [
   {
@@ -229,3 +230,13 @@ export const mockPipelinesJSON: K8sResourceKind[] = [
     },
   },
 ];
+
+const specificPipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
+export const constructPipelineData = {
+  pipeline: specificPipelineData.pipeline,
+  pipelineRuns: [
+    specificPipelineData.pipelineRuns[DataState.SUCCESS],
+    specificPipelineData.pipelineRuns[DataState.IN_PROGRESS],
+    specificPipelineData.pipelineRuns[DataState.CANCELLED],
+  ],
+};

@@ -38,7 +38,7 @@ export const SetNodeMaintenance = (
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-  label: 'Start maintenance',
+  label: 'Start node maintenance',
   callback: () => startNodeMaintenanceModal({ nodeName }),
 });
 
@@ -49,7 +49,7 @@ export const RemoveNodeMaintenance = (
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-  label: 'Stop maintenance',
+  label: 'Stop node maintenance',
   callback: () => stopNodeMaintenanceModal(nodeMaintenance),
   accessReview: nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
 });

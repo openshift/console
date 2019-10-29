@@ -24,10 +24,6 @@ $co-external-link-padding-right: 15px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  &--group__body {
-    margin-top: 0;
-    padding-top: $grid-gutter-width;
-  }
   &--with-help-text {
     align-items: baseline;
     flex-wrap: nowrap;

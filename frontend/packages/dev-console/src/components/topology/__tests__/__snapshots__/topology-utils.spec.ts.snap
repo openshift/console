@@ -44,6 +44,10 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "connectedPipeline": Object {
+          "pipeline": undefined,
+          "pipelineRuns": Array [],
+        },
         "donutStatus": Object {
           "current": Object {
             "alerts": Object {},
@@ -554,6 +558,10 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "connectedPipeline": Object {
+          "pipeline": undefined,
+          "pipelineRuns": Array [],
+        },
         "donutStatus": Object {
           "current": Object {
             "alerts": Object {},
@@ -1522,6 +1530,10 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "connectedPipeline": Object {
+          "pipeline": undefined,
+          "pipelineRuns": Array [],
+        },
         "donutStatus": Object {
           "current": Object {
             "alerts": Object {},

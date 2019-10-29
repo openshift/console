@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   ActionGroup,
+  Alert,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -127,7 +128,7 @@ let focusedQuery;
 
 const queryDispatchToProps = (dispatch, { index }) => ({
   deleteQuery: () => dispatch(UIActions.queryBrowserDeleteQuery(index)),
-  patchQuery: (v) => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
+  patchQuery: (v: QueryObj) => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
   toggleIsEnabled: () => dispatch(UIActions.queryBrowserToggleIsEnabled(index)),
 });
 
@@ -274,7 +275,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
       autocompleteFilter={fuzzyCaseInsensitive}
       disabled={isError}
       id="metrics-dropdown"
-      items={items}
+      items={items || {}}
       menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
       onChange={onChange}
       title={title}
@@ -437,7 +438,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   // Order autocompletion suggestions so that exact matches (token as a substring) are first, then fuzzy matches after
   // Exact matches are sorted first by how early the token appears and secondarily by string length (shortest first)
   // Fuzzy matches are sorted by string length (shortest first)
-  const isMatch = (v) => fuzzyCaseInsensitive(token, v);
+  const isMatch = (v: string) => fuzzyCaseInsensitive(token, v);
   const matchScore = (v: string): number => {
     const i = v.toLowerCase().indexOf(token);
     return i === -1 ? Infinity : i;
@@ -782,7 +783,17 @@ const QueryTable = connect(
   queryDispatchToProps,
 )(QueryTable_);
 
+const NamespaceAlert = () => (
+  <Alert
+    isInline
+    className="co-alert"
+    title="Queries entered here are limited to the data available in the currently selected project."
+    variant="info"
+  />
+);
+
 const Query_: React.FC<QueryProps> = ({
+  id,
   index,
   isExpanded,
   isEnabled,
@@ -806,7 +817,7 @@ const Query_: React.FC<QueryProps> = ({
         <div title={switchLabel}>
           <Switch
             aria-label={switchLabel}
-            id={`query-switch-${index}`}
+            id={id}
             isChecked={isEnabled}
             onChange={toggleIsEnabled}
           />
@@ -821,6 +832,7 @@ const Query_: React.FC<QueryProps> = ({
 };
 const Query = connect(
   ({ UI }: RootState, { index }) => ({
+    id: UI.getIn(['queryBrowser', 'queries', index, 'id']),
     isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
     isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   }),
@@ -849,7 +861,9 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   // re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
-  const disabledSeriesMemoKey = JSON.stringify(_.map(queries, 'disabledSeries'));
+  const disabledSeriesMemoKey = JSON.stringify(
+    _.reject(_.map(queries, 'disabledSeries'), _.isEmpty),
+  );
   const disabledSeries = React.useMemo(() => _.map(queries, 'disabledSeries'), [
     disabledSeriesMemoKey,
   ]);
@@ -868,26 +882,31 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     patchQuery(index, { isEnabled: true, query: text, text });
   };
 
-  return queryStrings.join('') === '' ? (
-    <div className="query-browser__wrapper graph-empty-state">
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-        <Title size="sm">No Query Entered</Title>
-        <EmptyStateBody>
-          Enter a query in the box below to explore metrics for this cluster.
-        </EmptyStateBody>
-        <Button onClick={insertExampleQuery} variant="primary">
-          Insert Example Query
-        </Button>
-      </EmptyState>
-    </div>
-  ) : (
-    <QueryBrowser
-      defaultTimespan={30 * 60 * 1000}
-      disabledSeries={disabledSeries}
-      namespace={namespace}
-      queries={queryStrings}
-    />
+  return (
+    <>
+      {namespace && <NamespaceAlert />}
+      {queryStrings.join('') === '' ? (
+        <div className="query-browser__wrapper graph-empty-state">
+          <EmptyState variant={EmptyStateVariant.full}>
+            <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+            <Title size="sm">No Query Entered</Title>
+            <EmptyStateBody>
+              Enter a query in the box below to explore metrics for this cluster.
+            </EmptyStateBody>
+            <Button onClick={insertExampleQuery} variant="primary">
+              Insert Example Query
+            </Button>
+          </EmptyState>
+        </div>
+      ) : (
+        <QueryBrowser
+          defaultTimespan={30 * 60 * 1000}
+          disabledSeries={disabledSeries}
+          namespace={namespace}
+          queries={queryStrings}
+        />
+      )}
+    </>
   );
 };
 const QueryBrowserWrapper = connect(
@@ -920,15 +939,17 @@ const RunQueriesButton = connect(
   { runQueries: UIActions.queryBrowserRunQueries },
 )(RunQueriesButton_);
 
-const QueriesList_ = ({ count, namespace }) => (
+const QueriesList_ = ({ ids, namespace }) => (
   <>
-    {_.map(_.range(count), (i) => (
-      <Query index={i} key={i} namespace={namespace} />
+    {_.map(ids, (id, i) => (
+      <Query index={i} key={id} namespace={namespace} />
     ))}
   </>
 );
 const QueriesList = connect(({ UI }: RootState) => ({
-  count: UI.getIn(['queryBrowser', 'queries']).size,
+  ids: UI.getIn(['queryBrowser', 'queries'])
+    .map((q) => q.get('id'))
+    .toArray(),
 }))(QueriesList_);
 
 const TechPreview = () => (
@@ -1033,6 +1054,7 @@ type QueryKebabProps = {
 };
 
 type QueryProps = {
+  id: string;
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;

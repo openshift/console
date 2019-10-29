@@ -118,8 +118,6 @@ export type K8sResourceKind = {
   apiVersion?: string;
   kind?: string;
   metadata?: ObjectMetadata;
-  // FIXME: This should not be in the generic `K8sResourceKind` definition.
-  pipelineTaskName?: string;
   spec?: {
     selector?: Selector | MatchLabels;
     [key: string]: any;

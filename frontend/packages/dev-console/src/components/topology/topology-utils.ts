@@ -1,12 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, modelFor, RouteKind } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import {
-  TransformResourceData,
-  OverviewItem,
-  isKnativeServing,
-  deploymentKindMap,
-} from '@console/shared';
+import { TransformResourceData, isKnativeServing, deploymentKindMap } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   edgesFromAnnotations,
@@ -21,6 +16,7 @@ import {
   Node,
   Edge,
   Group,
+  TopologyOverviewItem,
 } from './topology-types';
 
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
@@ -87,12 +83,19 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  * @param dc resource item
  * @param cheURL che link
  */
-const createTopologyNodeData = (dc: OverviewItem, cheURL?: string): TopologyDataObject => {
-  const { obj: deploymentConfig, current, previous, isRollingOut } = dc;
+const createTopologyNodeData = (dc: TopologyOverviewItem, cheURL?: string): TopologyDataObject => {
+  const {
+    obj: deploymentConfig,
+    current,
+    previous,
+    isRollingOut,
+    buildConfigs,
+    pipelines = [],
+    pipelineRuns = [],
+  } = dc;
   const dcUID = _.get(deploymentConfig, 'metadata.uid');
   const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
-  const { buildConfigs } = dc;
   return {
     id: dcUID,
     name:
@@ -112,6 +115,10 @@ const createTopologyNodeData = (dc: OverviewItem, cheURL?: string): TopologyData
         getImageForIconClass(`icon-openshift`),
       isKnativeResource: isKnativeServing(deploymentConfig, 'metadata.labels'),
       build: _.get(buildConfigs[0], 'builds[0]'),
+      connectedPipeline: {
+        pipeline: pipelines[0],
+        pipelineRuns,
+      },
       donutStatus: {
         pods: dc.pods,
         current,

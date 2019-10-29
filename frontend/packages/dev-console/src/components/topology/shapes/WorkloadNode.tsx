@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Status, calculateRadius } from '@console/shared';
+import { calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BuildModel } from '@console/internal/models';
 import { routeDecoratorIcon } from '../../import/render-utils';
 import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import KnativeIcon from './KnativeIcon';
 import PodSet from './PodSet';
+import BuildDecorator from './build-decorator/BuildDecorator';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,
@@ -22,7 +20,6 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   const { radius, decoratorRadius } = calculateRadius(size);
   const {
     data: {
-      build,
       donutStatus: { isRollingOut },
     },
   } = workload;
@@ -68,38 +65,13 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
             </Decorator>
           </Tooltip>
         ),
-        build && (
-          <Tooltip
-            key="build"
-            content={`${build.metadata.name} ${build.status && build.status.phase}`}
-            position={TooltipPosition.left}
-          >
-            <Link
-              to={`${resourcePathFromModel(
-                BuildModel,
-                build.metadata.name,
-                build.metadata.namespace,
-              )}/logs`}
-              className="odc-decorator__link"
-            >
-              <Decorator
-                x={-radius + decoratorRadius * 0.7}
-                y={radius - decoratorRadius * 0.7}
-                radius={decoratorRadius}
-              >
-                <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                  <foreignObject
-                    width={decoratorRadius}
-                    height={decoratorRadius}
-                    style={{ fontSize: decoratorRadius }}
-                  >
-                    <Status status={build.status.phase} iconOnly noTooltip />
-                  </foreignObject>
-                </g>
-              </Decorator>
-            </Link>
-          </Tooltip>
-        ),
+        <BuildDecorator
+          key="build"
+          workloadData={workload.data}
+          x={-radius + decoratorRadius * 0.7}
+          y={radius - decoratorRadius * 0.7}
+          radius={decoratorRadius}
+        />,
       ]}
     >
       <PodSet size={size} data={workload.data.donutStatus} />

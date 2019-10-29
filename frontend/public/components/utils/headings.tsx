@@ -2,7 +2,15 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
+import {
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  SplitItem,
+  Split,
+} from '@patternfly/react-core';
+import { Status } from '@console/shared';
 import {
   ActionsMenu,
   ResourceIcon,
@@ -72,6 +80,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     style,
     customData,
     badge,
+    getResourceStatus = (resource) => _.get(resource, ['status', 'phase'], null),
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -84,6 +93,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const showActions =
     (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
+  const resourceStatus = getResourceStatus && getResourceStatus(data);
   return (
     <div
       className={classNames(
@@ -111,6 +121,13 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             <span data-test-id="resource-title" className="co-resource-item__resource-name">
               {resourceTitle}
             </span>
+            {resourceStatus && (
+              <span className="co-resource-item__resource-status">
+                <Badge className="co-resource-item__resource-status-badge" isRead>
+                  <Status status={resourceStatus} />
+                </Badge>
+              </span>
+            )}
           </div>
         )}
         {!breadcrumbsFor && badge}
@@ -214,6 +231,7 @@ export type PageHeadingProps = {
   customData?: any;
   badge?: React.ReactNode;
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
+  getResourceStatus?: (resource: K8sResourceKind) => string;
 };
 
 export type ResourceOverviewHeadingProps = {

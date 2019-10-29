@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Status, ErrorStatus } from '@console/shared';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
 import {
@@ -28,8 +29,8 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   Timestamp,
+  humanizeBinaryBytes,
   humanizeCpuCores,
-  humanizeDecimalBytes,
   navFactory,
   pluralize,
   units,
@@ -38,7 +39,6 @@ import { PodLogs } from './pod-logs';
 import { requirePrometheus, Area } from './graphs';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
-import { PodDashboard } from './dashboard/pod-dashboard/pod-dashboard';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -239,7 +239,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
       <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
-          humanize={humanizeDecimalBytes}
+          humanize={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           namespace={pod.metadata.namespace}
           query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${
             pod.metadata.namespace
@@ -259,7 +260,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
       <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
-          humanize={humanizeDecimalBytes}
+          humanize={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           namespace={pod.metadata.namespace}
           query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${
             pod.metadata.namespace
@@ -393,13 +395,9 @@ const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj }) => (
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={podPhase}
     menuActions={menuActions}
     pages={[
-      {
-        href: 'dashboard', // TODO: make it default once additional Cards are implemented
-        name: 'Dashboard',
-        component: PodDashboard,
-      },
       navFactory.details(Details),
       navFactory.editYaml(),
       navFactory.envEditor(PodEnvironmentComponent),

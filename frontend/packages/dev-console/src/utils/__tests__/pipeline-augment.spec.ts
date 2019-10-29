@@ -1,3 +1,4 @@
+import { pipelineTestData, DataState, PipelineExampleNames } from '../../test/pipeline-data';
 import {
   getResources,
   augmentRunsToData,
@@ -7,12 +8,7 @@ import {
   getRunStatusColor,
   runStatus,
 } from '../pipeline-augment';
-import {
-  testData,
-  taskStatusData,
-  DataState,
-  PipelineExampleNames,
-} from './pipeline-augment-test-data';
+import { testData } from './pipeline-augment-test-data';
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {
   it('expect resources to be null for no data', () => {
@@ -125,7 +121,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
   describe('Successfully completed Pipelines', () => {
     // Simply put, when a pipeline run is finished successfully, all tasks must have succeeded
     it('expect a simple pipeline to have task-count equal to Succeeded states', () => {
-      const simpleTestData = taskStatusData[PipelineExampleNames.SIMPLE_PIPELINE];
+      const simpleTestData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 
       const taskCount = getExpectedTaskCount(simpleTestData.pipeline);
       const taskStatus = getTaskStatus(
@@ -138,7 +134,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     });
 
     it('expect a complex pipeline to have task-count equal to Succeeded states', () => {
-      const complexTestData = taskStatusData[PipelineExampleNames.COMPLEX_PIPELINE];
+      const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 
       const taskCount = getExpectedTaskCount(complexTestData.pipeline);
       const taskStatus = getTaskStatus(
@@ -160,7 +156,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       status.Succeeded + status.Running + status.Pending;
 
     it('expect a simple pipeline to have task-count equal to Pending, Running and Succeeded states', () => {
-      const simpleTestData = taskStatusData[PipelineExampleNames.SIMPLE_PIPELINE];
+      const simpleTestData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 
       const taskCount = getExpectedTaskCount(simpleTestData.pipeline);
       const taskStatus = getTaskStatus(
@@ -173,7 +169,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     });
 
     it('expect a complex pipeline to have task-count equal to Pending, Running and Succeeded states', () => {
-      const complexTestData = taskStatusData[PipelineExampleNames.COMPLEX_PIPELINE];
+      const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 
       const taskCount = getExpectedTaskCount(complexTestData.pipeline);
       const taskStatus = getTaskStatus(
@@ -191,7 +187,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     const sumFailedTaskStatus = (status: TaskStatus): number => status.Failed + status.Cancelled;
 
     it('expect a partial pipeline to have task-count equal to Failed and Cancelled states', () => {
-      const partialTestData = taskStatusData[PipelineExampleNames.PARTIAL_PIPELINE];
+      const partialTestData = pipelineTestData[PipelineExampleNames.PARTIAL_PIPELINE];
 
       const taskCount = getExpectedTaskCount(partialTestData.pipeline);
       const taskStatus = getTaskStatus(
@@ -204,7 +200,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     });
 
     it('expect a cancelled complex pipeline to have task-count equal to Failed and Cancelled states', () => {
-      const complexTestData = taskStatusData[PipelineExampleNames.COMPLEX_PIPELINE];
+      const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 
       const taskCount = getExpectedTaskCount(complexTestData.pipeline);
       const taskStatus = getTaskStatus(

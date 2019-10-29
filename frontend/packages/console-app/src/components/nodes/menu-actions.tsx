@@ -1,10 +1,10 @@
 import { K8sKind, NodeKind } from '@console/internal/module/k8s';
-import { Kebab } from '@console/internal/components/utils';
+import { Kebab, KebabAction } from '@console/internal/components/utils';
 import { isNodeUnschedulable } from '@console/shared';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
 
-export const MarkAsUnschedulable = (kind: K8sKind, obj: NodeKind) => ({
+export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
   label: 'Mark as Unschedulable',
   hidden: isNodeUnschedulable(obj),
   callback: () => createConfigureUnschedulableModal({ resource: obj }),
@@ -17,7 +17,7 @@ export const MarkAsUnschedulable = (kind: K8sKind, obj: NodeKind) => ({
   },
 });
 
-export const MarkAsSchedulable = (kind: K8sKind, obj: NodeKind) => ({
+export const MarkAsSchedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
   label: 'Mark as Schedulable',
   hidden: !isNodeUnschedulable(obj),
   callback: () => makeNodeSchedulable(obj),

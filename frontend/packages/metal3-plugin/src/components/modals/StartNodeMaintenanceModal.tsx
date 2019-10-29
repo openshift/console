@@ -40,12 +40,12 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
       <ModalTitle>{action}</ModalTitle>
       <ModalBody>
         <p>
-          All managed workloads will be moved off of this host. New workloads and data will not be
-          added to this host until maintenance is stopped.
+          All managed workloads will be moved off of this node. New workloads and data will not be
+          added to this node until maintenance is stopped.
         </p>
         <p>
-          If the host does not exit maintenance within <strong>30 minutes</strong>, the cluster will
-          automatically rebuild the host&apos;s data using replicated copies
+          If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster will
+          automatically rebuild the node&apos;s data using replicated copies
         </p>
         <div className="form-group">
           <label htmlFor="node-maintenance-reason">Reason</label>
