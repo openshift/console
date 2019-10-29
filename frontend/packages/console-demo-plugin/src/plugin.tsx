@@ -28,7 +28,7 @@ import {
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
+import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { FooBarModel } from './models';
@@ -264,7 +264,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       title: 'Foo',
       query: 'barQuery',
-      humanizeValue: humanizeBinaryBytesWithoutB,
+      humanizeValue: humanizeBinaryBytes,
       required: 'TEST_MODEL_FLAG',
     },
   },

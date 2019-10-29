@@ -11,7 +11,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import {
-  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
@@ -130,7 +130,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           <UtilizationItem
             title="Used Capacity"
             data={capacityStats}
-            humanizeValue={humanizeBinaryBytesWithoutB}
+            humanizeValue={humanizeBinaryBytes}
             query={
               UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
               UTILIZATION_QUERY_HOUR_MAP[duration]

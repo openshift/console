@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   humanizeSeconds,
-  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils/units';
 import { Humanize } from '@console/internal/components/utils/types';
@@ -21,7 +21,7 @@ export const metricTypeMap: MetricTypeMap = {
   },
   [MetricType.MEMORY]: {
     description: MEMORY_DESC,
-    humanize: humanizeBinaryBytesWithoutB,
+    humanize: humanizeBinaryBytes,
   },
   [MetricType.STORAGE]: {
     description: STORAGE_DESC,

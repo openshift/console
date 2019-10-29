@@ -70,9 +70,9 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     },
   ];
   const dropdownUnits = {
-    Mi: 'Mi',
-    Gi: 'Gi',
-    Ti: 'Ti',
+    Mi: 'MiB',
+    Gi: 'GiB',
+    Ti: 'TiB',
   };
   const { namespace, onChange } = props;
 

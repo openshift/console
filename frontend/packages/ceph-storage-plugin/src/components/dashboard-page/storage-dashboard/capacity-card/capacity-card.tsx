@@ -11,11 +11,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import {
-  Dropdown,
-  FieldLevelHelp,
-  humanizeBinaryBytesWithoutB,
-} from '@console/internal/components/utils';
+import { Dropdown, FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getInstantVectorStats, GetStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
@@ -130,7 +126,7 @@ export const CapacityCard: React.FC<DashboardItemProps & WithFlagsProps> = ({
             used={statUsed}
             total={statTotal}
             error={storageTotalError || storageUsedError}
-            formatValue={humanizeBinaryBytesWithoutB}
+            formatValue={humanizeBinaryBytes}
             isLoading={!(storageUsed && storageTotal)}
           />
         </CapacityBody>
