@@ -273,10 +273,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PodModel,
       name: 'Prometheus',
-      metric: 'pod_name',
+      metric: 'pod',
       queries: {
-        [MetricType.CPU]:
-          'sort(topk(5, pod_name:container_cpu_usage:sum{pod_name=~"prometheus-.*"}))',
+        [MetricType.CPU]: 'sort(topk(5, pod:container_cpu_usage:sum{pod=~"prometheus-.*"}))',
       },
       mutator: (data) =>
         data.map((datum) => ({ ...datum, x: (datum.x as string).replace('prometheus-', '') })),

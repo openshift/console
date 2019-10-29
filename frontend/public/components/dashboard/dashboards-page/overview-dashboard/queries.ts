@@ -22,7 +22,7 @@ export enum OverviewQuery {
 
 const top25Queries = {
   [OverviewQuery.PODS_BY_CPU]:
-    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (pod, namespace)))',
+    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (pod, namespace)))',
   [OverviewQuery.PODS_BY_MEMORY]:
     'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (pod, namespace)))',
   [OverviewQuery.PODS_BY_STORAGE]:
@@ -33,7 +33,7 @@ const top25Queries = {
   [OverviewQuery.NODES_BY_STORAGE]:
     'topk(25, sort_desc(avg by (instance) (instance_device:node_disk_io_time_seconds:rate1m)))',
   [OverviewQuery.PROJECTS_BY_CPU]:
-    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (namespace)))',
+    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_MEMORY]:
     'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_STORAGE]:
@@ -52,7 +52,7 @@ const overviewQueries = {
     '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
   [OverviewQuery.PODS_BY_CPU]:
-    'sort_desc(sum(rate(container_cpu_usage_seconds_total{container_name="",pod!=""}[5m])) BY (pod, namespace))',
+    'sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (pod, namespace))',
   [OverviewQuery.PODS_BY_MEMORY]:
     'sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (pod, namespace))',
   [OverviewQuery.PODS_BY_STORAGE]:
