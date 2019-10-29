@@ -87,7 +87,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
   const firehoseResources = _.get(providedAPI, 'resources', defaultResources.map((kind) => ({
     kind,
   })) as CRDDescription['resources']).map(
-    (ref): FirehoseResource => ({ kind: ref.kind, namespaced: true, prop: ref.kind }),
+    (ref): FirehoseResource => ({ kind: ref.kind, namespaced: false, prop: ref.kind }),
   );
 
   // NOTE: This is us building the `ownerReferences` graph client-side
