@@ -21,7 +21,12 @@ import {
   SectionHeading,
   WebhookTriggers,
 } from './utils';
-import { BuildsPage, BuildEnvironmentComponent, BuildStrategyType } from './build';
+import {
+  BuildsPage,
+  BuildEnvironmentComponent,
+  BuildStrategyType,
+  PipelineBuildStrategyAlert,
+} from './build';
 import { fromNow } from './utils/datetime';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel } from '../models';
@@ -55,23 +60,28 @@ const menuActions = [
   ...Kebab.factory.common,
 ];
 
-export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Build Config Overview" />
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={buildConfig} />
-        </div>
-        <div className="col-sm-6">
-          <BuildStrategy resource={buildConfig} />
+export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
+  const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
+
+  return (
+    <>
+      <div className="co-m-pane__body">
+        {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
+        <SectionHeading text="Build Config Overview" />
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={buildConfig} />
+          </div>
+          <div className="col-sm-6">
+            <BuildStrategy resource={buildConfig} />
+          </div>
         </div>
       </div>
-    </div>
-    <WebhookTriggers resource={buildConfig} />
-    <BuildHooks resource={buildConfig} />
-  </>
-);
+      <WebhookTriggers resource={buildConfig} />
+      <BuildHooks resource={buildConfig} />
+    </>
+  );
+};
 
 const BuildsTabPage = ({ obj: buildConfig }) => (
   <BuildsPage
