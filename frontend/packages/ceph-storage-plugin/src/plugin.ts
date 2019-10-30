@@ -6,9 +6,9 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
   Plugin,
-  DashboardsOverviewQuery,
   RoutePage,
   ClusterServiceVersionAction,
+  DashboardsOverviewUtilizationItem,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
@@ -28,7 +28,7 @@ type ConsumedExtensions =
   | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewQuery
+  | DashboardsOverviewUtilizationItem
   | RoutePage
   | ClusterServiceVersionAction;
 
@@ -154,18 +154,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Query',
+    type: 'Dashboards/Overview/Utilization/Item',
     properties: {
-      queryKey: OverviewQuery.STORAGE_TOTAL,
-      query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
-      required: CEPH_FLAG,
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Query',
-    properties: {
-      queryKey: OverviewQuery.STORAGE_UTILIZATION,
-      query: `${CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED]}`,
+      id: OverviewQuery.STORAGE_UTILIZATION,
+      query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
+      totalQuery: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
       required: CEPH_FLAG,
     },
   },

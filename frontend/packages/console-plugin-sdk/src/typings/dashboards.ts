@@ -1,12 +1,11 @@
 import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { FirehoseResource, Humanize, FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { Extension } from './extension';
 import { LazyLoader } from './types';
@@ -89,14 +88,6 @@ namespace ExtensionProperties {
     span?: DashboardCardSpan;
   }
 
-  export interface DashboardsOverviewQuery extends DashboardsExtensionProperties {
-    /** The original Prometheus query key to replace */
-    queryKey: OverviewQuery;
-
-    /** The Prometheus query */
-    query: string;
-  }
-
   export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
     /** Resource which will be fetched and grouped by `mapper` function. */
     resource: FirehoseResource;
@@ -126,14 +117,14 @@ namespace ExtensionProperties {
   }
 
   export interface DashboardsOverviewUtilizationItem extends DashboardsExtensionProperties {
-    /** The utilization item title */
-    title: string;
+    /** The utilization item to be replaced */
+    id: string;
 
     /** The Prometheus utilization query */
     query: string;
 
-    /** Function which will be used to format data from prometheus */
-    humanizeValue: Humanize;
+    /** The Prometheus total query */
+    totalQuery: string;
   }
 
   export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
@@ -204,14 +195,6 @@ export interface DashboardsCard extends Extension<ExtensionProperties.Dashboards
 }
 
 export const isDashboardsCard = (e: Extension): e is DashboardsCard => e.type === 'Dashboards/Card';
-
-export interface DashboardsOverviewQuery
-  extends Extension<ExtensionProperties.DashboardsOverviewQuery> {
-  type: 'Dashboards/Overview/Query';
-}
-
-export const isDashboardsOverviewQuery = (e: Extension): e is DashboardsOverviewQuery =>
-  e.type === 'Dashboards/Overview/Query';
 
 export interface DashboardsOverviewUtilizationItem
   extends Extension<ExtensionProperties.DashboardsOverviewUtilizationItem> {
