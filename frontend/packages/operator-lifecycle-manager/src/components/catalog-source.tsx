@@ -5,6 +5,7 @@ import { match } from 'react-router-dom';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { ListPageProps } from '@console/internal/components/monitoring';
 import { sortable } from '@patternfly/react-table';
+import { Button } from '@patternfly/react-core';
 import { withFallback } from '@console/internal/components/utils/error-boundary';
 import {
   K8sResourceKind,
@@ -34,6 +35,7 @@ import {
   MultiListPage,
 } from '@console/internal/components/factory';
 import { ConfigMapModel } from '@console/internal/models';
+import { PopoverStatus } from '@console/shared';
 import {
   SubscriptionModel,
   CatalogSourceModel,
@@ -327,50 +329,48 @@ const CatalogSourceTableRow: React.FC<CatalogSourceTableRowProps> = ({
   index,
   key,
   style,
-}) => {
-  return (
-    <TableRow
-      className={disabled && 'catalog-source__table-row--disabled'}
-      id={source ? source.metadata.uid : index}
-      index={index}
-      style={style}
-      trKey={key}
-    >
-      <TableData className={tableColumnClasses[0]}>
-        {source ? (
-          <ResourceLink
-            kind={catalogSourceModelReference}
-            name={source.metadata.name}
-            namespace={source.metadata.namespace}
-            title={source.metadata.name}
-          />
-        ) : (
-          name
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>{publisher}</TableData>
-      <TableData className={tableColumnClasses[2]}>{availability}</TableData>
-      <TableData className={tableColumnClasses[3]}>{endpoint}</TableData>
-      <TableData className={tableColumnClasses[4]}>{operatorCount || '-'}</TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {isDefault ? (
-          <DefaultSourceKebab
-            kind={OperatorHubModel}
-            operatorHub={operatorHub}
-            sourceName={name}
-            sourceDisabled={disabled}
-          />
-        ) : (
-          <ResourceKebab
-            actions={[Kebab.factory.Edit, deleteModal]}
-            kind={catalogSourceModelReference}
-            resource={source}
-          />
-        )}
-      </TableData>
-    </TableRow>
-  );
-};
+}) => (
+  <TableRow
+    className={disabled && 'catalog-source__table-row--disabled'}
+    id={source ? source.metadata.uid : index}
+    index={index}
+    style={style}
+    trKey={key}
+  >
+    <TableData className={tableColumnClasses[0]}>
+      {source ? (
+        <ResourceLink
+          kind={catalogSourceModelReference}
+          name={source.metadata.name}
+          namespace={source.metadata.namespace}
+          title={source.metadata.name}
+        />
+      ) : (
+        name
+      )}
+    </TableData>
+    <TableData className={tableColumnClasses[1]}>{publisher}</TableData>
+    <TableData className={tableColumnClasses[2]}>{availability}</TableData>
+    <TableData className={tableColumnClasses[3]}>{endpoint}</TableData>
+    <TableData className={tableColumnClasses[4]}>{operatorCount || '-'}</TableData>
+    <TableData className={tableColumnClasses[5]}>
+      {isDefault ? (
+        <DefaultSourceKebab
+          kind={OperatorHubModel}
+          operatorHub={operatorHub}
+          sourceName={name}
+          sourceDisabled={disabled}
+        />
+      ) : (
+        <ResourceKebab
+          actions={[Kebab.factory.Edit, deleteModal]}
+          kind={catalogSourceModelReference}
+          resource={source}
+        />
+      )}
+    </TableData>
+  </TableRow>
+);
 
 const CatalogSourceList: React.FC<TableProps> = (props) => (
   <Table
@@ -381,33 +381,65 @@ const CatalogSourceList: React.FC<TableProps> = (props) => (
   />
 );
 
+const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) => {
+  const [visible, setVisible] = React.useState<boolean>(null);
+  const close = React.useCallback(() => {
+    setVisible(false);
+  }, []);
+  const onClickEnable = React.useCallback(
+    () =>
+      enableSource(OperatorHubModel, operatorHub, sourceName)
+        .callback()
+        .then(close),
+    [close, operatorHub, sourceName],
+  );
+  return (
+    <PopoverStatus title="Disabled" isVisible={visible} shouldClose={close}>
+      <p>
+        Operators provided by this source will not appear in OperatorHub and any operators installed
+        from this source will not receive updates unitl this source is re-enabled.
+      </p>
+      <Button isInline variant="link" onClick={onClickEnable}>
+        Enable source
+      </Button>
+    </PopoverStatus>
+  );
+};
+
 const flatten = ({
   catalogSources,
   operatorHub,
   packageManifests,
 }: FlattenArgType): CatalogSourceTableRowObj[] => {
-  const defaultSources = _.map(operatorHub.status.sources, (defaultSource) => {
-    const catalogSource = _.find(catalogSources.data, {
-      metadata: { name: defaultSource.name, namespace: DEFAULT_SOURCE_NAMESPACE },
-    });
-    const catalogSourceExists = !_.isEmpty(catalogSource);
-    return {
-      availability: catalogSourceExists ? 'Cluster wide' : 'Disabled',
-      disabled: !catalogSourceExists,
-      isDefault: true,
-      name: defaultSource.name,
-      namespace: DEFAULT_SOURCE_NAMESPACE,
-      operatorHub,
-      ...(catalogSourceExists && {
-        source: catalogSource,
-        endpoint: getEndpoint(catalogSource),
-        operatorCount: getOperatorCount(catalogSource, packageManifests.data),
-        publisher: catalogSource.spec.publisher,
-      }),
-    };
-  });
+  const defaultSources: CatalogSourceTableRowObj[] = _.map(
+    operatorHub.status.sources,
+    (defaultSource) => {
+      const catalogSource = _.find(catalogSources.data, {
+        metadata: { name: defaultSource.name, namespace: DEFAULT_SOURCE_NAMESPACE },
+      });
+      const catalogSourceExists = !_.isEmpty(catalogSource);
+      return {
+        availability: catalogSourceExists ? (
+          'Cluster wide'
+        ) : (
+          <DisabledPopover operatorHub={operatorHub} sourceName={defaultSource.name} />
+        ),
+        disabled: !catalogSourceExists,
+        isDefault: true,
+        name: defaultSource.name,
+        namespace: DEFAULT_SOURCE_NAMESPACE,
+        operatorHub,
+        ...(catalogSourceExists && {
+          source: catalogSource,
+          endpoint: getEndpoint(catalogSource),
+          operatorCount: getOperatorCount(catalogSource, packageManifests.data),
+          publisher: catalogSource.spec.publisher,
+        }),
+      };
+    },
+  );
 
-  const customSources = _.map(catalogSources.data, (source) => ({
+  const customSources: CatalogSourceTableRowObj[] = _.map(catalogSources.data, (source) => ({
     availability:
       source.metadata.namespace === DEFAULT_SOURCE_NAMESPACE
         ? 'Cluster wide'
@@ -452,23 +484,6 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
   />
 );
 
-type DefaultSourceKebabProps = {
-  kind: K8sKind;
-  operatorHub: OperatorHubKind;
-  sourceName: string;
-  sourceDisabled: boolean;
-};
-
-type FlattenArgType = {
-  catalogSources: { data: CatalogSourceKind[] };
-  packageManifests: { data: PackageManifestKind[] };
-  operatorHub: OperatorHubKind;
-};
-
-export type CatalogSourceListPageProps = {
-  obj: K8sResourceKind;
-} & ListPageProps;
-
 type CatalogSourceTableRowObj = {
   availability: React.ReactNode;
   disabled?: boolean;
@@ -487,6 +502,24 @@ type CatalogSourceTableRowProps = {
   key: string;
 } & TableRowProps;
 
+type DefaultSourceKebabProps = {
+  kind: K8sKind;
+  operatorHub: OperatorHubKind;
+  sourceName: string;
+  sourceDisabled: boolean;
+};
+
+type DisabledPopoverProps = {
+  operatorHub: OperatorHubKind;
+  sourceName: string;
+};
+
+type FlattenArgType = {
+  catalogSources: { data: CatalogSourceKind[] };
+  packageManifests: { data: PackageManifestKind[] };
+  operatorHub: OperatorHubKind;
+};
+
 export type CatalogSourceDetailsProps = {
   obj: CatalogSourceKind;
   subscriptions: SubscriptionKind[];
@@ -497,6 +530,10 @@ export type CatalogSourceDetailsProps = {
 export type CatalogSourceDetailsPageProps = {
   match: match<{ ns?: string; name: string }>;
 };
+
+export type CatalogSourceListPageProps = {
+  obj: K8sResourceKind;
+} & ListPageProps;
 
 export type CreateSubscriptionYAMLProps = {
   match: match<{ ns: string; pkgName: string }>;
