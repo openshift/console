@@ -3,7 +3,7 @@ import { $, $$, element, by } from 'protractor';
 export const catalogTiles = $$('.catalog-tile-pf');
 export const catalogTileFor = (name: string) =>
   element(by.cssContainingText('.catalog-tile-pf-title', name));
-export const catalogTileById = (id: string) => $(`[data-test=${id}]`);
+export const catalogTileByID = (id: string) => $(`[data-test=${id}]`);
 
 // FilterSidePanel views
 export const filterSectionFor = (group: string) => $(`[data-test-group-name=${group}]`);
