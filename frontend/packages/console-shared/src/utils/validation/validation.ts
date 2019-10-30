@@ -8,7 +8,7 @@ import {
   EMPTY_ERROR,
 } from './strings';
 
-const alphanumericRegex = '[a-zA-Z0-9]';
+const alphanumericRegex = /[a-zA-Z0-9]/;
 
 const DNS_1123_OFFENDING_CHARACTERS = {
   ',': 'comma',
