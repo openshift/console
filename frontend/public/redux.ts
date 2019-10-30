@@ -1,11 +1,4 @@
-import {
-  applyMiddleware,
-  combineReducers,
-  createStore,
-  compose,
-  Reducer,
-  ReducersMapObject,
-} from 'redux';
+import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
 
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
@@ -44,7 +37,7 @@ export type RootState = {
   [monitoringReducerName]: MonitoringState;
   dashboards: DashboardsState;
   plugins?: {
-    [namespace: string]: Reducer;
+    [namespace: string]: any;
   };
 };
 
@@ -81,13 +74,10 @@ const addPluginListener = () => {
         .getReduxReducers()
         .filter((e) => registry.isExtensionInUse(e, flagsObject));
 
-      const pluginReducers: ReducersMapObject = pluginReducerExtensions.reduce(
-        (map, e) => {
-          map[e.properties.namespace] = e.properties.reducer;
-          return map;
-        },
-        {} as RootState['plugins'],
-      );
+      const pluginReducers: ReducersMapObject = pluginReducerExtensions.reduce((map, e) => {
+        map[e.properties.namespace] = e.properties.reducer;
+        return map;
+      }, {});
 
       const nextReducers: ReducersMapObject<RootState> = _.isEmpty(pluginReducers)
         ? baseReducers
