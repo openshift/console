@@ -4,6 +4,7 @@ import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGri
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../../../types';
 import { getHostMachine } from '../../../selectors';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import HealthCard from './HealthCard';
 import UtilizationCard from './UtilizationCard';
 import EventsCard from './EventsCard';
@@ -16,23 +17,23 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
   nodes,
 }) => {
   const machine = getHostMachine(obj, machines);
+  const context = {
+    obj,
+    machine,
+    machines,
+    nodes,
+  };
 
-  const mainCards = [
-    { Card: () => <HealthCard obj={obj} /> },
-    { Card: () => <UtilizationCard obj={obj} machine={machine} /> },
-  ];
-  const leftCards = [
-    {
-      Card: () => <DetailsCard obj={obj} machines={machines} nodes={nodes} />,
-    },
-    { Card: () => <InventoryCard obj={obj} /> },
-  ];
-  const rightCards = [{ Card: () => <EventsCard obj={obj} /> }];
+  const mainCards = [{ Card: HealthCard }, { Card: UtilizationCard }];
+  const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
+  const rightCards = [{ Card: EventsCard }];
 
   return (
-    <Dashboard>
-      <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
-    </Dashboard>
+    <BareMetalHostDashboardContext.Provider value={context}>
+      <Dashboard>
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+      </Dashboard>
+    </BareMetalHostDashboardContext.Provider>
   );
 };
 

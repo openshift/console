@@ -27,31 +27,37 @@ import { getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { BareMetalHostKind } from '../../../types';
 import { getUtilizationQueries, HostQuery } from './queries';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const UtilizationCard: React.FC<UtilizationCardProps> = ({
-  machine,
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
   const [duration, setDuration] = React.useState(metricDurations[0]);
 
+  const { machine } = React.useContext(BareMetalHostDashboardContext);
   const hostName = getMachineNodeName(machine);
   const hostIP = getMachineInternalIP(machine);
 
-  React.useEffect(() => {
-    const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
-    Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
-    return () => {
-      Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
-    };
-    return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, hostName, hostIP, duration]);
+  const queries = React.useMemo(
+    () => getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]),
+    [hostName, hostIP, duration],
+  );
 
-  const queries = getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]);
+  React.useEffect(() => {
+    if (machine) {
+      Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
+      return () => {
+        Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
+      };
+    }
+    return undefined;
+  }, [watchPrometheus, stopWatchPrometheusQuery, queries, machine]);
+
   const cpuUtilization = prometheusResults.getIn([
     queries[HostQuery.CPU_UTILIZATION],
     'data',
