@@ -200,7 +200,15 @@ describe('Monitoring: YAML', () => {
   });
 
   it('displays the YAML page', async () => {
-    await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
+    await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
+    await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Global Configuration');
+    await crudView.isLoaded();
+    await monitoringView.wait(
+      until.elementToBeClickable(monitoringView.firstListLinkById('alertmanager')),
+    );
+    expect(monitoringView.firstListLinkById('alertmanager').getText()).toContain('Alertmanager');
+    await monitoringView.firstListLinkById('alertmanager').click();
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
     await crudView.isLoaded();
