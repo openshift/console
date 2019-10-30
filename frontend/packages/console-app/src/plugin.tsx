@@ -41,7 +41,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       icon: <CogsIcon />,
       getLandingPageURL: (flags) =>
         flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
-      getK8sLandingPageURL: () => '/dashboards',
+      getK8sLandingPageURL: () => '/search',
       default: true,
       getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
