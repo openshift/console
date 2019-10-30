@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   FieldLevelHelp,
   humanizeBinaryBytes,
@@ -10,12 +9,10 @@ import {
 const ItemBody: React.FC<ItemBodyProps> = React.memo(
   ({ title, stats, infoText, isLoading, error }) => {
     let status: React.ReactElement;
-    if (error) {
+    if (error || !stats) {
       status = <span className="co-dashboard-text--small text-muted">Unavailable</span>;
     } else if (isLoading) {
       status = <LoadingInline />;
-    } else if (!stats) {
-      status = <span className="co-dashboard-text--small text-muted">Unavailable</span>;
     } else {
       status = <span className="nb-object-data-reduction-card__row-status-item-text">{stats}</span>;
     }
@@ -35,7 +32,11 @@ export const EfficiencyItem: React.FC<EfficiencyItemProps> = React.memo(
   ({ efficiency, isLoading, error }) => {
     const infoText =
       'Efficiency ratio refers to the deduplication and compression process effectiveness.';
-    const stats: string = !_.isNil(efficiency) ? `${Number(efficiency).toFixed(1)}:1` : null;
+    let stats: string = efficiency;
+    if (efficiency) {
+      const formattedEfficiency = +Number(efficiency).toFixed(1);
+      stats = formattedEfficiency === 0 ? '1:1' : `${formattedEfficiency}:1`;
+    }
     return (
       <ItemBody
         title="Efficiency Ratio"
@@ -53,11 +54,13 @@ export const SavingsItem: React.FC<SavingsItemProps> = React.memo(
     const infoText =
       'Savings shows the uncompressed and non-deduped data that would have been stored without those techniques';
     let stats: string = null;
-    if (!_.isNil(savings)) {
-      const savingsPercentage = logicalSize
-        ? `(${humanizePercentage((100 * Number(savings)) / logicalSize).string})`
-        : '';
-      stats = `${humanizeBinaryBytes(savings).string} ${savingsPercentage}`;
+    const savingsValue = Number(savings);
+    if (savings && logicalSize) {
+      const savedBytes = humanizeBinaryBytes(savingsValue).string;
+      const savingsPercentage = `${savedBytes} (${
+        humanizePercentage((100 * savingsValue) / Number(logicalSize)).string
+      })`;
+      stats = savingsValue <= 0 ? 'No Savings' : savingsPercentage;
     }
     return (
       <ItemBody
@@ -87,7 +90,7 @@ type EfficiencyItemProps = {
 
 type SavingsItemProps = {
   savings: string;
-  logicalSize: number;
+  logicalSize: string;
   isLoading: boolean;
   error: boolean;
 };

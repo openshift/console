@@ -67,7 +67,7 @@ const DataReductionCard: React.FC<DashboardItemProps> = ({
 
   const savingsProps = {
     savings,
-    logicalSize: Number(logicalSize),
+    logicalSize,
     isLoading: !savingsQueryResult && !logicalSavingsQueryResult,
     error: !!savingsQueryResultError || !!logicalSavingsQueryResultError,
   };
