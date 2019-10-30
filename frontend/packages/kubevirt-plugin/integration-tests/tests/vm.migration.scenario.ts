@@ -1,5 +1,5 @@
 import { browser } from 'protractor';
-import { testName } from '../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { getDetailActionDropdownOptions } from '../views/vm.actions.view';
 import {
   statusIcon,

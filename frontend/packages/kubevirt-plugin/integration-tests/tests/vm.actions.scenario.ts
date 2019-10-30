@@ -1,5 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { appHost, testName } from '../../../../integration-tests/protractor.conf';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   resourceRows,
   resourceRowsPresent,

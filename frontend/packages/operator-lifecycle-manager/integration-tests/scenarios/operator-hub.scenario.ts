@@ -5,11 +5,11 @@ import {
   checkLogs,
   checkErrors,
   testName,
-} from '../../../../integration-tests/protractor.conf';
-import * as crudView from '../../../../integration-tests/views/crud.view';
-import * as catalogView from '../../../../integration-tests/views/catalog.view';
-import * as catalogPageView from '../../../../integration-tests/views/catalog-page.view';
-import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
+} from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
+import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
+import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 
 describe('Interacting with OperatorHub', () => {
   const catalogSource = {

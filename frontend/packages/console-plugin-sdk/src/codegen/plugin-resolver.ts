@@ -1,6 +1,8 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as glob from 'glob';
+import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
 
 // the name of Console application package
@@ -28,12 +30,13 @@ export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
  * Read package metadata and detect any plugins.
  */
 export const readPackages = (packageFiles: string[]) => {
-  const pkgList: Package[] = packageFiles.map((file) =>
-    readPkg.sync({
-      cwd: path.dirname(file),
-      normalize: true,
-    }),
-  );
+  const pkgList: Package[] = packageFiles.map((file) => {
+    const filePath = path.dirname(file);
+    return {
+      ...readPkg.sync({ cwd: filePath, normalize: true }),
+      _path: filePath,
+    };
+  });
 
   return {
     appPackage: pkgList.find((pkg) => pkg.name === consoleAppName),
@@ -57,10 +60,24 @@ export const filterActivePluginPackages: PluginPackageFilter = (appPackage, plug
 };
 
 /**
+ * Resolve Console monorepo root directory by traversing `package.json` files.
+ */
+export const getMonorepoRootDir = () => {
+  return findUp.sync(
+    (currentDir) => {
+      return fs.existsSync(path.join(currentDir, 'package.json'))
+        ? readPkg.sync({ cwd: currentDir, normalize: true }).name === '' && currentDir
+        : undefined;
+    },
+    { cwd: __dirname, type: 'directory' },
+  );
+};
+
+/**
  * Resolve Console plugin packages using the provided filter.
  */
 export const resolvePluginPackages = (
-  monorepoRootDir: string = process.cwd(),
+  monorepoRootDir: string = getMonorepoRootDir(),
   pluginFilter: PluginPackageFilter = filterActivePluginPackages,
 ) => {
   const packageFiles = glob.sync(consolePkgGlob, { cwd: monorepoRootDir, absolute: true });
@@ -88,11 +105,14 @@ export const resolvePluginPackages = (
   return pluginFilter(appPackage, pluginPackages);
 };
 
-export type Package = readPkg.NormalizedPackageJson;
+export type Package = readPkg.NormalizedPackageJson & {
+  _path: string;
+};
 
 export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
+    integrationTestSuites?: Record<string, string[]>;
   };
 };
 

@@ -13,6 +13,9 @@
     "kubevirt-web-ui-components": "0.1.48"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "kubevirt": ["integration-tests/**/*.scenario.ts"]
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { Plugin, HrefNavItem } from '../../typings';
 import { loadActivePlugins, getActivePluginsModule } from '../active-plugins';
 import { PluginPackage } from '../plugin-resolver';
-import { templatePackage } from './plugin-resolver.spec';
+import { getTemplatePackage } from './plugin-resolver.spec';
 
 describe('active-plugins', () => {
   describe('loadActivePlugins', () => {
@@ -39,13 +39,15 @@ describe('active-plugins', () => {
       expect(
         loadActivePlugins([
           {
-            ...templatePackage,
-            name: 'foo',
+            ...getTemplatePackage({
+              name: 'foo',
+            }),
             consolePlugin: { entry: 'src/plugin.ts' },
           },
           {
-            ...templatePackage,
-            name: 'bar-plugin',
+            ...getTemplatePackage({
+              name: 'bar-plugin',
+            }),
             consolePlugin: { entry: 'index.ts' },
           },
         ]),
@@ -66,13 +68,15 @@ describe('active-plugins', () => {
     it('returns module source that exports the list of active plugins', () => {
       const pluginPackages: PluginPackage[] = [
         {
-          ...templatePackage,
-          name: 'foo',
+          ...getTemplatePackage({
+            name: 'foo',
+          }),
           consolePlugin: { entry: 'src/plugin.ts' },
         },
         {
-          ...templatePackage,
-          name: 'bar-plugin',
+          ...getTemplatePackage({
+            name: 'bar-plugin',
+          }),
           consolePlugin: { entry: 'index.ts' },
         },
       ];

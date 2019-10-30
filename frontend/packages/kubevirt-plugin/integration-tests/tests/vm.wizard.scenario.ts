@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { testName } from '../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   removeLeakedResources,
   withResource,
