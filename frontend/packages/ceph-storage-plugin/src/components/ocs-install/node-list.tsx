@@ -9,7 +9,7 @@ import {
   TableVariant,
   TableGridBreakpoint,
 } from '@patternfly/react-table';
-import { getInfrastructurePlatform, getNodeRoles } from '@console/shared';
+import { getInfrastructurePlatform, getName, getNodeRoles } from '@console/shared';
 import { tableFilters } from '@console/internal/components/factory/table-filters';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
@@ -137,41 +137,46 @@ const stateToProps = (obj, { data = [], filters = {}, staticFilters = [{}] }) =>
   const newData = getFilteredRows(allFilters, data);
   return {
     data: newData,
+    unfilteredData: data,
+    isFiltered: !!_.get(filters, 'name'),
   };
 };
-
-const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProps }) => {
+const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
+  data,
+  unfilteredData,
+  isFiltered,
+  loaded,
+  ocsProps,
+}) => {
   const columns = getColumns();
   const [nodes, setNodes] = React.useState([]);
+  const [unfilteredNodes, setUnfilteredNodes] = React.useState([]);
   const [error, setError] = React.useState('');
   const [inProgress, setProgress] = React.useState(false);
   const [selectedNodesCnt, setSelectedNodesCnt] = React.useState(0);
 
   let storageClass = '';
 
+  // pre-selection of nodes
+  if (loaded && !unfilteredNodes.length) {
+    const formattedNodes: formattedNodeType[] = getRows(unfilteredData);
+    const preSelectedNodes = getPreSelectedNodes(formattedNodes);
+    setUnfilteredNodes(preSelectedNodes);
+    setNodes(preSelectedNodes);
+  }
+
   React.useEffect(() => {
-    const selectedNode = _.filter(nodes, 'selected').length;
+    const selectedNode = _.filter(unfilteredNodes, 'selected').length;
     setSelectedNodesCnt(selectedNode);
-  }, [nodes]);
 
-  React.useEffect(() => {
-    let formattedNodes = getRows(data);
-
-    // pre-selection of nodes
-    if (loaded && !nodes.length) {
-      formattedNodes = getPreSelectedNodes(formattedNodes);
-      setNodes(formattedNodes);
-    }
-    // for getting nodes
-    else if (formattedNodes.length) {
-      const nodesByID = _.keyBy(nodes, 'id');
-      _.each(formattedNodes, (n) => {
-        n.selected = _.get(nodesByID, [n.id, 'selected']);
+    if (isFiltered || nodes.length !== data.length) {
+      const unfilteredNodesByID = _.keyBy(unfilteredNodes, 'metadata.name');
+      const filterData = _.each(getRows(data), (n) => {
+        n.selected = _.get(unfilteredNodesByID, [n.id, 'selected'], false);
       });
-      setNodes(formattedNodes);
+      setNodes(filterData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loaded]);
+  }, [data, isFiltered, nodes, unfilteredNodes]);
 
   const onSelect = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -190,6 +195,13 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({ data, loaded, ocsProp
       formattedNodes[index].selected = isSelected;
     }
     setNodes(formattedNodes);
+    const nodesByID = _.keyBy(nodes, 'id');
+    const setSelectedUnfilteredNodes = _.each(unfilteredNodes, (n) => {
+      if (_.get(nodesByID, [n.id, 'id']) === n.metadata.name) {
+        n.selected = _.get(nodesByID, [getName(n), 'selected'], false);
+      }
+    });
+    setUnfilteredNodes(setSelectedUnfilteredNodes);
   };
 
   const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
@@ -325,13 +337,19 @@ export const NodeList = connect<{}, CustomNodeTableProps>(stateToProps)(CustomNo
 
 type CustomNodeTableProps = {
   data: NodeKind[];
+  unfilteredData: UnfilteredDataType[];
   loaded: boolean;
   ocsProps: ocsPropsType;
+  isFiltered: boolean;
 };
 
 type ocsPropsType = {
   namespace: string;
   clusterServiceVersion: K8sResourceKind;
+};
+
+type UnfilteredDataType = NodeKind & {
+  selected: boolean;
 };
 
 type formattedNodeType = {
