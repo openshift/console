@@ -27,6 +27,7 @@ export enum ActionType {
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
+  QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
   QueryBrowserInsertText = 'queryBrowserInsertText',
   QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
   QueryBrowserRunQueries = 'queryBrowserRunQueries',
@@ -246,6 +247,8 @@ export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) =>
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
+export const queryBrowserDismissNamespaceAlert = () =>
+  action(ActionType.QueryBrowserDismissNamespaceAlert);
 export const queryBrowserDeleteQuery = (index: number) =>
   action(ActionType.QueryBrowserDeleteQuery, { index });
 export const queryBrowserInsertText = (
@@ -301,6 +304,7 @@ const uiActions = {
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteQuery,
+  queryBrowserDismissNamespaceAlert,
   queryBrowserInsertText,
   queryBrowserPatchQuery,
   queryBrowserRunQueries,

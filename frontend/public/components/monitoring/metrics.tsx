@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import {
   ActionGroup,
   Alert,
+  AlertActionCloseButton,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -783,14 +784,23 @@ const QueryTable = connect(
   queryDispatchToProps,
 )(QueryTable_);
 
-const NamespaceAlert = () => (
-  <Alert
-    isInline
-    className="co-alert"
-    title="Queries entered here are limited to the data available in the currently selected project."
-    variant="info"
-  />
-);
+const NamespaceAlert_: React.FC<{ dismiss: () => undefined; isDismissed: boolean }> = ({
+  dismiss,
+  isDismissed,
+}) =>
+  isDismissed ? null : (
+    <Alert
+      action={<AlertActionCloseButton onClose={dismiss} />}
+      isInline
+      className="co-alert"
+      title="Queries entered here are limited to the data available in the currently selected project."
+      variant="info"
+    />
+  );
+const NamespaceAlert: React.ComponentType<{}> = connect(
+  ({ UI }: RootState) => ({ isDismissed: !!UI.getIn(['queryBrowser', 'dismissNamespaceAlert']) }),
+  { dismiss: UIActions.queryBrowserDismissNamespaceAlert },
+)(NamespaceAlert_);
 
 const Query_: React.FC<QueryProps> = ({
   id,
@@ -882,31 +892,26 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     patchQuery(index, { isEnabled: true, query: text, text });
   };
 
-  return (
-    <>
-      {namespace && <NamespaceAlert />}
-      {queryStrings.join('') === '' ? (
-        <div className="query-browser__wrapper graph-empty-state">
-          <EmptyState variant={EmptyStateVariant.full}>
-            <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-            <Title size="sm">No Query Entered</Title>
-            <EmptyStateBody>
-              Enter a query in the box below to explore metrics for this cluster.
-            </EmptyStateBody>
-            <Button onClick={insertExampleQuery} variant="primary">
-              Insert Example Query
-            </Button>
-          </EmptyState>
-        </div>
-      ) : (
-        <QueryBrowser
-          defaultTimespan={30 * 60 * 1000}
-          disabledSeries={disabledSeries}
-          namespace={namespace}
-          queries={queryStrings}
-        />
-      )}
-    </>
+  return queryStrings.join('') === '' ? (
+    <div className="query-browser__wrapper graph-empty-state">
+      <EmptyState variant={EmptyStateVariant.full}>
+        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+        <Title size="sm">No Query Entered</Title>
+        <EmptyStateBody>
+          Enter a query in the box below to explore metrics for this cluster.
+        </EmptyStateBody>
+        <Button onClick={insertExampleQuery} variant="primary">
+          Insert Example Query
+        </Button>
+      </EmptyState>
+    </div>
+  ) : (
+    <QueryBrowser
+      defaultTimespan={30 * 60 * 1000}
+      disabledSeries={disabledSeries}
+      namespace={namespace}
+      queries={queryStrings}
+    />
   );
 };
 const QueryBrowserWrapper = connect(
@@ -979,6 +984,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
         </h1>
       </div>
       <div className="co-m-pane__body">
+        {namespace && <NamespaceAlert />}
         <div className="row">
           <div className="col-xs-12">
             <ToggleGraph />
