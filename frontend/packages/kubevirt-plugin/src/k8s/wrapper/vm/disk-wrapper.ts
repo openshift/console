@@ -41,7 +41,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
 
   getName = () => this.get('name');
 
-  getDiskBus = (): DiskBus => DiskBus.fromString(this.getIn(['disk', 'bus']));
+  getDiskBus = (): DiskBus => DiskBus.fromString(this.getIn([this.getTypeValue(), 'bus']));
 
   getReadableDiskBus = () => {
     const diskBus = this.getDiskBus();

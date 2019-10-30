@@ -1,0 +1,9 @@
+.kubevirt-cdrom-modal__grid {
+  grid-column-gap: var(--pf-global--gutter);
+}
+
+.kubevirt-cdrom-modal__delete {
+  height: 60px;
+  display: flex;
+  align-items: flex-end;
+}

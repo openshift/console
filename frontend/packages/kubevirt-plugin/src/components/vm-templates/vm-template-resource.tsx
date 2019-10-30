@@ -14,11 +14,15 @@ import { ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
+import { getCDRoms } from '../../selectors/vm/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
+import { DiskSummary } from '../vm-disks/disk-summary';
+import { asVM } from '../../selectors/vm';
 import { VMTemplateLink } from './vm-template-link';
 
 import './_vm-template-resource.scss';
@@ -80,6 +84,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 }) => {
   const id = getBasicID(template);
   const sortedBootableDevices = getBootableDevicesInOrder(template);
+  const cds = getCDRoms(asVM(template));
   const flavorText = getFlavorText(template);
   const isProvisionSource =
     dataVolumes && !!_.get(getTemplateProvisionSource(template, dataVolumes), 'type');
@@ -92,6 +97,17 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         isNotAvail={sortedBootableDevices.length === 0}
       >
         <BootOrder bootableDevices={sortedBootableDevices} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="CD-ROMs"
+        canEdit={canUpdateTemplate}
+        editButtonId={prefixedID(id, 'cdrom-edit')}
+        onEditClick={() => VMCDRomModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
+        idValue={prefixedID(id, 'cdrom')}
+        isNotAvail={cds.length === 0}
+      >
+        <DiskSummary disks={cds} vm={asVM(template)} />
       </VMDetailsItem>
 
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>

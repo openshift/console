@@ -20,7 +20,7 @@ export const EditButton: React.FC<EditButtonProps> = (props) => {
 };
 
 type EditButtonProps = {
-  children: any;
+  children?: any;
   canEdit: boolean;
   onClick: React.MouseEventHandler;
   id?: string;

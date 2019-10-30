@@ -38,6 +38,7 @@ const getStoragesData = ({
     disk,
     // for sorting
     name: disk.getName(),
+    type: disk.getTypeValue(),
     diskInterface: disk.getDiskInterface(),
     size: disk.getReadableSize(),
     storageClass: disk.getStorageClassName(),
@@ -77,6 +78,11 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
             {
               title: 'Interface',
               sortField: 'diskInterface',
+              transforms: [sortable],
+            },
+            {
+              title: 'Type',
+              sortField: 'type',
               transforms: [sortable],
             },
             {
