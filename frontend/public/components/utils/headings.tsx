@@ -80,7 +80,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     style,
     customData,
     badge,
-    getResourceStatus = (resource) => _.get(resource, ['status', 'phase'], null),
+    getResourceStatus = (resource: K8sResourceKind): string =>
+      _.get(resource, ['status', 'phase'], null),
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -93,7 +94,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const hasData = !_.isEmpty(data);
   const showActions =
-    (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'deletionTimestamp');
+    (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   return (
     <div
