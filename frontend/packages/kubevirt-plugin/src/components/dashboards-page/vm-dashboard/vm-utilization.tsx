@@ -52,39 +52,39 @@ export const VMUtilizationCard = withDashboardResources(
     const { vm, pods } = React.useContext(VMDashboardContext);
     const vmName = getName(vm);
     const namespace = getNamespace(vm);
-    const launcherPod = findVMPod(vm, pods);
-    const queries = React.useMemo(
+    const launcherPodName = getName(findVMPod(vm, pods));
+    const { queries, queriesWithDuration } = React.useMemo(
       () =>
         getUtilizationQueries({
           vmName,
           namespace,
           duration: UTILIZATION_QUERY_HOUR_MAP[duration],
-          launcherPodName: getName(launcherPod),
+          launcherPodName,
         }),
-      [vmName, namespace, duration, launcherPod],
+      [vmName, namespace, duration, launcherPodName],
     );
     React.useEffect(() => {
-      _.values(queries).forEach((query) => watchPrometheus(query, namespace));
+      _.values(queriesWithDuration).forEach((query) => watchPrometheus(query, namespace));
       return () => {
-        _.values(queries).forEach((query) => stopWatchPrometheusQuery(query));
+        _.values(queriesWithDuration).forEach((query) => stopWatchPrometheusQuery(query));
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery, queries, namespace, duration]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, queriesWithDuration, namespace]);
 
     const [cpuUtilization, cpuError] = readPrometheusResult(
       prometheusResults,
-      queries[VMQueries.CPU_USAGE],
+      queriesWithDuration[VMQueries.CPU_USAGE],
     );
     const [memoryUtilization, memoryError] = readPrometheusResult(
       prometheusResults,
-      queries[VMQueries.MEMORY_USAGE],
+      queriesWithDuration[VMQueries.MEMORY_USAGE],
     );
     const [fsUtilization, fsError] = readPrometheusResult(
       prometheusResults,
-      queries[VMQueries.FILESYSTEM_USAGE],
+      queriesWithDuration[VMQueries.FILESYSTEM_USAGE],
     );
     const [netUtilizationInOut, netErrorInOut] = readPrometheusResult(
       prometheusResults,
-      queries[VMQueries.NETWORK_INOUT_USAGE],
+      queriesWithDuration[VMQueries.NETWORK_INOUT_USAGE],
     );
 
     const cpuStats = getRangeVectorStats(cpuUtilization);
