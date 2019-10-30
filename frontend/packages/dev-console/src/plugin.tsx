@@ -13,6 +13,7 @@ import {
   Perspective,
   RoutePage,
   OverviewCRD,
+  YAMLTemplate,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
@@ -25,6 +26,7 @@ import {
   getPipelinesAndPipelineRunsForResource,
 } from './utils/pipeline-plugin-utils';
 import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
+import { newPipelineTemplate } from './templates';
 
 const { PipelineModel, PipelineRunModel } = models;
 
@@ -39,7 +41,8 @@ type ConsumedExtensions =
   | Perspective
   | RoutePage
   | KebabActions
-  | OverviewCRD;
+  | OverviewCRD
+  | YAMLTemplate;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -351,6 +354,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: PipelineModel,
+      template: newPipelineTemplate,
     },
   },
 ];

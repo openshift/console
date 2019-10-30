@@ -5,7 +5,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
-import { ActionGroup, Alert, Button } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import {
   global_BackgroundColor_100 as lineNumberActiveForeground,
@@ -13,6 +13,7 @@ import {
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
 
+import { getBadgeFromType } from '@console/shared';
 import { ALL_NAMESPACES_KEY } from '../const';
 import {
   k8sCreate,
@@ -98,7 +99,6 @@ export const EditYAML = connect(stateToProps)(
       this.displayedVersion = '0';
       // Default cancel action is browser back navigation
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
-      this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
       this.editorDidMount = this.editorDidMount.bind(this);
 
@@ -242,11 +242,7 @@ export const EditYAML = connect(stateToProps)(
       });
     }
 
-    loadYaml(reload = false, obj = this.props.obj) {
-      if (this.state.initialized && !reload) {
-        return;
-      }
-
+    convertObjToYAMLString(obj) {
       let yaml = '';
       if (obj) {
         if (_.isString(obj)) {
@@ -261,8 +257,60 @@ export const EditYAML = connect(stateToProps)(
         }
       }
 
+      return yaml;
+    }
+
+    loadYaml(reload = false, obj = this.props.obj) {
+      if (this.state.initialized && !reload) {
+        return;
+      }
+
+      const yaml = this.convertObjToYAMLString(obj);
+
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({ yaml, initialized: true, stale: false });
+      this.resize();
+    }
+
+    addToYAML(id, obj) {
+      const yaml = this.convertObjToYAMLString(obj);
+
+      const selection = this.monacoRef.current.editor.getSelection();
+      const range = new window.monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.endLineNumber,
+        selection.endColumn,
+      );
+
+      // Grab the current position and indent every row to left-align the text at the same indentation
+      const indentSize = new Array(selection.startColumn).join(' ');
+      const lines = yaml.split('\n');
+      const lineCount = lines.length;
+      const indentedText = lines
+        .map((line, i) => {
+          if (i === 0) {
+            // Already indented, leave it alone
+            return line;
+          }
+          return `${indentSize}${line}`;
+        })
+        .join('\n');
+
+      // Grab the selection size of what we are about to add
+      const newContentSelection = new window.monaco.Selection(
+        selection.startLineNumber,
+        0,
+        selection.startLineNumber + lineCount - 1,
+        lines[lines.length - 1].length,
+      );
+
+      const op = { range, text: indentedText, forceMoveMarkers: true };
+      this.monacoRef.current.editor.executeEdits(id, [op], [newContentSelection]);
+      this.monacoRef.current.editor.focus();
+
+      this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
+      this.setState({ yaml: this.monacoRef.current.editor.getValue() });
       this.resize();
     }
 
@@ -388,11 +436,21 @@ export const EditYAML = connect(stateToProps)(
       saveAs(blob, filename);
     }
 
-    loadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
+    getYamlContent_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
       const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
       this.setState({ sampleObj });
-      this.loadYaml(true, sampleObj);
+      return sampleObj;
     }
+
+    insertYamlContent_ = (id, yaml, kind) => {
+      const content = this.getYamlContent_(id, yaml, kind);
+      this.addToYAML(id, content);
+    };
+
+    replaceYamlContent_ = (id, yaml, kind) => {
+      const content = this.getYamlContent_(id, yaml, kind);
+      this.loadYaml(true, content);
+    };
 
     downloadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
       const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
@@ -611,7 +669,12 @@ export const EditYAML = connect(stateToProps)(
           <div>
             {create && !this.props.hideHeader && (
               <div className="yaml-editor__header">
-                <h1 className="yaml-editor__header-text">{header}</h1>
+                <Split>
+                  <SplitItem isFilled>
+                    <h1 className="yaml-editor__header-text">{header}</h1>
+                  </SplitItem>
+                  <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
+                </Split>
                 <p className="help-block">
                   Create by manually entering YAML or JSON definitions, or by dragging and dropping
                   a file into the editor.
@@ -707,7 +770,8 @@ export const EditYAML = connect(stateToProps)(
                   isCreateMode={create}
                   kindObj={model}
                   height={height}
-                  loadSampleYaml={this.loadSampleYaml_}
+                  loadSampleYaml={this.replaceYamlContent_}
+                  insertSnippetYaml={this.insertYamlContent_}
                   downloadSampleYaml={this.downloadSampleYaml_}
                 />
               </div>
