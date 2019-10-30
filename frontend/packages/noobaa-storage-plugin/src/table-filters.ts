@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 import { Filter } from '@console/shared';
-import { getOBPhase, getOBCPhase } from './utils';
+import { getPhase } from './utils';
 
 const allPhases = ['Pending', 'Bound', 'Lost'];
 
 export const obcStatusFilter: Filter = {
   type: 'obc-status',
   selected: allPhases,
-  reducer: getOBCPhase,
+  reducer: getPhase,
   items: _.map(allPhases, (phase) => ({
     id: phase,
     title: phase,
@@ -16,7 +16,7 @@ export const obcStatusFilter: Filter = {
     if (!phases || !phases.selected) {
       return true;
     }
-    const phase = getOBCPhase(obc);
+    const phase = getPhase(obc);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 };
@@ -24,7 +24,7 @@ export const obcStatusFilter: Filter = {
 export const obStatusFilter: Filter = {
   type: 'ob-status',
   selected: allPhases,
-  reducer: getOBPhase,
+  reducer: getPhase,
   items: _.map(allPhases, (phase) => ({
     id: phase,
     title: phase,
@@ -33,7 +33,7 @@ export const obStatusFilter: Filter = {
     if (!phases || !phases.selected) {
       return true;
     }
-    const phase = getOBPhase(ob);
+    const phase = getPhase(ob);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 };
