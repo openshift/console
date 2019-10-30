@@ -5,28 +5,31 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
-import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { ActionGroup, Alert, Button, Split, SplitItem, Popover } from '@patternfly/react-core';
+import { DownloadIcon, InfoCircleIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   global_BackgroundColor_100 as lineNumberActiveForeground,
   global_BackgroundColor_300 as lineNumberForeground,
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
-
 import { getBadgeFromType } from '@console/shared';
-import { ALL_NAMESPACES_KEY } from '../const';
+
+import { connectToFlags } from '../reducers/features';
+import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
+import { FLAGS, ALL_NAMESPACES_KEY } from '../const';
 import {
+  referenceForModel,
   k8sCreate,
   k8sUpdate,
   referenceFor,
   groupVersionFor,
-  referenceForModel,
 } from '../module/k8s';
-import { checkAccess, history, Loading, resourceObjPath } from './utils';
+import { ConsoleYAMLSampleModel } from '../models';
+import { getResourceSidebarSamples } from './sidebars/resource-sidebar-samples';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
 
-import { getStoredSwagger } from '../module/k8s/swagger';
+import { definitionFor, getStoredSwagger } from '../module/k8s/swagger';
 import {
   MonacoToProtocolConverter,
   ProtocolToMonacoConverter,
@@ -75,7 +78,7 @@ const desktopGutter = 30;
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
 /** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}>} */
-export const EditYAML = connect(stateToProps)(
+const EditYAML_ = connect(stateToProps)(
   class EditYAML extends React.Component {
     constructor(props) {
       super(props);
@@ -87,6 +90,7 @@ export const EditYAML = connect(stateToProps)(
         stale: false,
         sampleObj: props.sampleObj,
         fileUpload: props.fileUpload,
+        showSidebar: props.create,
       };
       this.monacoRef = React.createRef();
       this.resize = () => {
@@ -643,21 +647,35 @@ export const EditYAML = connect(stateToProps)(
       });
     }
 
+    toggleSidebar = () => {
+      this.setState((state) => {
+        return { showSidebar: !state.showSidebar };
+      });
+      window.dispatchEvent(new Event('sidebar_toggle'));
+    };
+
     render() {
       if (!this.props.create && !this.props.obj) {
         return <Loading />;
       }
 
-      const { connectDropTarget, isOver, canDrop } = this.props;
+      const { connectDropTarget, isOver, canDrop, create, yamlSamplesList } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
       });
 
-      const { error, success, stale, yaml, height } = this.state;
-      const { create, obj, download = true, header } = this.props;
+      const { error, success, stale, yaml, height, showSidebar } = this.state;
+      const { obj, download = true, header } = this.props;
       const readOnly = this.props.readOnly || this.state.notAllowed;
       const options = { readOnly, scrollBeyondLastLine: false };
       const model = this.getModel(obj);
+      const { samples, snippets } = model
+        ? getResourceSidebarSamples(model, yamlSamplesList)
+        : { samples: [], snippets: [] };
+      const definition = model ? definitionFor(model) : { properties: [] };
+      const showSchema = definition && !_.isEmpty(definition.properties);
+      const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
+      const isMac = window.navigator.platform.includes('Mac');
       const editYamlComponent = (
         <div className="co-file-dropzone">
           {canDrop && (
@@ -685,6 +703,45 @@ export const EditYAML = connect(stateToProps)(
               <div className="co-p-has-sidebar">
                 <div className="co-p-has-sidebar__body">
                   <div className="yaml-editor" ref={(r) => (this.editor = r)}>
+                    <div className="yaml-editor__links">
+                      <div className="yaml-editor__link">
+                        <Popover
+                          aria-label="Shortcuts"
+                          bodyContent={
+                            <ul>
+                              <li>Use Ctrl + Space to activate auto complete.</li>
+                              <li>
+                                Use {isMac ? 'Command' : 'Ctrl'} + Shift + O for document outlining.
+                              </li>
+                              <li>Hover over a property to view a description.</li>
+                            </ul>
+                          }
+                          maxWidth="25rem"
+                          distance={18}
+                        >
+                          <Button type="button" variant="link" isInline>
+                            <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+                            Shortcuts
+                          </Button>
+                        </Popover>
+                      </div>
+                      {!showSidebar && hasSidebarContent && (
+                        <>
+                          <div className="co-action-divider--spaced">|</div>
+                          <div className="yaml-editor__link">
+                            <Button
+                              type="button"
+                              variant="link"
+                              isInline
+                              onClick={this.toggleSidebar}
+                            >
+                              <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+                              View sidebar
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                     <MonacoEditor
                       ref={this.monacoRef}
                       language="yaml"
@@ -766,14 +823,21 @@ export const EditYAML = connect(stateToProps)(
                     </div>
                   </div>
                 </div>
-                <ResourceSidebar
-                  isCreateMode={create}
-                  kindObj={model}
-                  height={height}
-                  loadSampleYaml={this.replaceYamlContent_}
-                  insertSnippetYaml={this.insertYamlContent_}
-                  downloadSampleYaml={this.downloadSampleYaml_}
-                />
+                {hasSidebarContent && (
+                  <ResourceSidebar
+                    isCreateMode={create}
+                    kindObj={model}
+                    height={height}
+                    loadSampleYaml={this.replaceYamlContent_}
+                    insertSnippetYaml={this.insertYamlContent_}
+                    downloadSampleYaml={this.downloadSampleYaml_}
+                    showSidebar={showSidebar}
+                    toggleSidebar={this.toggleSidebar}
+                    samples={samples}
+                    snippets={snippets}
+                    showSchema={showSchema}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -786,3 +850,22 @@ export const EditYAML = connect(stateToProps)(
     }
   },
 );
+
+export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
+  const resources =
+    flags[FLAGS.CONSOLE_YAML_SAMPLE] && props.create
+      ? [
+          {
+            kind: referenceForModel(ConsoleYAMLSampleModel),
+            isList: true,
+            prop: 'yamlSamplesList',
+          },
+        ]
+      : [];
+
+  return (
+    <Firehose resources={resources}>
+      <EditYAML_ {...props} />
+    </Firehose>
+  );
+});

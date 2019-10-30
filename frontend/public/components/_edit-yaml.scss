@@ -32,6 +32,20 @@
   margin: 0;
 }
 
+.yaml-editor__link {
+  display: inline-block;
+}
+
+.yaml-editor__links {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  z-index: 1;
+  @media(max-width: $screen-sm-max) {
+    display: none;
+  }
+}
+
 // This can't be customized in a theme, so use CSS.
 .yaml-editor .monaco-editor .margin .current-line {
   background-color: var(--pf-global--BackgroundColor--dark-200);
