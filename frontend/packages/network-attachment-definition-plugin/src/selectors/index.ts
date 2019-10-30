@@ -16,3 +16,6 @@ export const getConfigAsJSON = (
 export const getType = (config: NetworkAttachmentDefinitionConfig): string => {
   return _.get(config, 'type') === undefined ? null : config.type;
 };
+
+export const getDescription = (netAttachDef: NetworkAttachmentDefinitionKind): string =>
+  _.get(netAttachDef, 'metadata.annotations.description');
