@@ -139,16 +139,15 @@ export const Status = connectToFlags<StatusProps>(
 
 const StatusLink = connectToFlags<StatusLinkProps>(
   ...getFlagsForExtensions(plugins.registry.getDashboardsInventoryItemGroups()),
-)(({ groupID, count, statusIDs, kind, namespace, filterType, flags }) => {
+)(({ groupID, count, statusIDs, kind, namespace, filterType, flags, basePath }) => {
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
   }
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
+  const path = basePath || `/k8s/${namespacePath}/${kind.plural}`;
   const to =
-    filterType && statusItems.length > 0
-      ? `/k8s/${namespacePath}/${kind.plural}?rowFilter-${filterType}=${statusItems}`
-      : `/k8s/${namespacePath}/${kind.plural}`;
+    filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
   const statusGroupIcons = getStatusGroupIcons(flags);
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   return (
@@ -161,9 +160,12 @@ const StatusLink = connectToFlags<StatusLinkProps>(
   );
 });
 
-const ResourceTitleComponent = ({ kind, namespace, children }) => (
-  <Link to={resourcePathFromModel(kind, null, namespace)}>{children}</Link>
-);
+const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
+  kind,
+  namespace,
+  children,
+  basePath,
+}) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
 
 export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
   ...getFlagsForExtensions(plugins.registry.getDashboardsInventoryItemGroups()),
@@ -180,10 +182,13 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
     showLink = true,
     flags = {},
     ExpandedComponent,
+    basePath,
   }) => {
     const TitleComponent = React.useCallback(
-      (props) => <ResourceTitleComponent kind={kind} namespace={namespace} {...props} />,
-      [kind, namespace],
+      (props) => (
+        <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
+      ),
+      [kind, namespace, basePath],
     );
 
     const groups = mapper ? mapper(resources, additionalResources) : {};
@@ -210,6 +215,7 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
               count={groups[key].count}
               statusIDs={groups[key].statusIDs}
               filterType={groups[key].filterType}
+              basePath={basePath}
             />
           ) : (
             <Status key={key} groupID={key} count={groups[key].count} />
@@ -255,6 +261,7 @@ type StatusLinkProps = StatusProps & {
   kind: K8sKind;
   namespace?: string;
   filterType?: string;
+  basePath?: string;
 };
 
 export type ExpandedComponentProps = {
@@ -273,4 +280,11 @@ type ResourceInventoryItemProps = WithFlagsProps & {
   error: boolean;
   showLink?: boolean;
   ExpandedComponent?: React.ComponentType<{}>;
+  basePath?: string;
+};
+
+type ResourceTitleComponentComponent = {
+  kind: K8sKind;
+  namespace: string;
+  basePath?: string;
 };
