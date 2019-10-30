@@ -307,7 +307,6 @@ export const tranformKnNodeData = (
             cheURL,
             type,
           );
-          // groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
           break;
         }
         case nodeType.KnService: {
@@ -333,15 +332,17 @@ export const tranformKnNodeData = (
 };
 
 /**
- * Filter out deployments not created via revisions
+ * Filter out deployments not created via revisions/eventsources
  */
 export const filterNonKnativeDeployments = (resources: DeploymentKind[]): DeploymentKind[] => {
   const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
   const KNATIVE_EVENTS_CRONJOB = 'sources.eventing.knative.dev/cronJobSource';
-  return resources.filter((d) => {
+  const KNATIVE_EVENTS_CONTAINER = 'sources.eventing.knative.dev/containerSource';
+  return _.filter(resources, (d) => {
     return (
       !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CRONJOB])
+      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CRONJOB]) &&
+      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CONTAINER])
     );
   });
 };

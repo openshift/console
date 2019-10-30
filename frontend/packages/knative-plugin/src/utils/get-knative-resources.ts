@@ -1,6 +1,12 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { KNATIVE_SERVING_LABEL } from '../const';
+import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
+import {
+  KNATIVE_SERVING_LABEL,
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  KNATIVE_SERVING_APIGROUP,
+} from '../const';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -9,7 +15,13 @@ export type KnativeItem = {
   ksservices?: K8sResourceKind[];
   eventSourceCronjob?: K8sResourceKind[];
   eventSourceContainers?: K8sResourceKind[];
+  eventSourceApiserver?: K8sResourceKind[];
 };
+
+interface StateProps {
+  kindsInFlight: boolean;
+  knativeModels: K8sKind[];
+}
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
   return !!_.get(dc.metadata, `labels["${KNATIVE_SERVING_LABEL}"]`);
@@ -24,6 +36,20 @@ const getKsResource = (dc: K8sResourceKind, res: K8sResourceKind): K8sResourceKi
   }
   return ksResource;
 };
+const mapStateToProps = (state: RootState): StateProps => {
+  return {
+    kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
+    knativeModels: state.k8s
+      .getIn(['RESOURCES', 'models'])
+      .filter(
+        (model: K8sKind) =>
+          model.apiGroup === KNATIVE_SERVING_APIGROUP ||
+          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP,
+      ),
+  };
+};
+
+export const getKsResourceModel = (wrappedComponent) => connect(mapStateToProps)(wrappedComponent);
 
 const getRevisions = (dc: K8sResourceKind, { revisions }): K8sResourceKind[] => {
   let revisionResource = [];
@@ -81,4 +107,9 @@ export const getEventSourceCronjob = (dc: K8sResourceKind, props): KnativeItem |
 export const getEventSourceContainer = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const eventSourceContainers = getEventSourceResource(dc, props.eventSourceContainers);
   return eventSourceContainers.length > 0 ? { eventSourceContainers } : undefined;
+};
+
+export const getEventSourceApiserver = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceApiserver = getEventSourceResource(dc, props.eventSourceApiserver);
+  return eventSourceApiserver.length > 0 ? { eventSourceApiserver } : undefined;
 };

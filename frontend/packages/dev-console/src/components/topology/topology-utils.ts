@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, modelFor, RouteKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor, RouteKind, DeploymentKind } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { TransformResourceData, isKnativeServing, deploymentKindMap } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -288,12 +288,11 @@ export const transformTopologyData = (
   };
 
   /**
-   * START: Below code is just to test utils, needs to be uncommented to test and add import
-   * import { tranformKnNodeData } from '@console/knative-plugin/src/utils/knative-topology-utils';
+   * form data model specific to knative resources
    */
-  const getKnativeTopologyData = (knativeResources, type: string) => {
+  const getKnativeTopologyData = (knativeResources: K8sResourceKind[], type: string) => {
     if (knativeResources && knativeResources.length) {
-      const resData = tranformKnNodeData(
+      const knativeResourceData = tranformKnNodeData(
         knativeResources,
         type,
         topologyGraphAndNodeData,
@@ -309,32 +308,32 @@ export const transformTopologyData = (
       } = topologyGraphAndNodeData;
       topologyGraphAndNodeData = {
         graph: {
-          nodes: [...nodes, ...resData.nodesData],
-          edges: [...edges, ...resData.edgesData],
-          groups: [...resData.groupsData],
+          nodes: [...nodes, ...knativeResourceData.nodesData],
+          edges: [...edges, ...knativeResourceData.edgesData],
+          groups: [...knativeResourceData.groupsData],
         },
-        topology: { ...topology, ...resData.dataToShowOnNodes },
+        topology: { ...topology, ...knativeResourceData.dataToShowOnNodes },
       };
     }
   };
 
   const getKnativeEventSources = (): K8sResourceKind[] => {
-    const allEventSourcesResources = _.merge(
-      resources.eventSourceCronjob && resources.eventSourceCronjob.data,
-      resources.eventSourceContainers && resources.eventSourceContainers.data,
+    const allEventSourcesResources = _.concat(
+      _.get(resources, 'eventSourceCronjob.data', []),
+      _.get(resources, 'eventSourceContainers.data', []),
+      _.get(resources, 'eventSourceApiserver.data', []),
     );
     return allEventSourcesResources;
   };
 
-  const knSvcResources = _.get(resources, ['ksservices', 'data'], []);
+  const knSvcResources: K8sResourceKind[] = _.get(resources, ['ksservices', 'data'], []);
   knSvcResources.length && getKnativeTopologyData(knSvcResources, 'knative-service');
-  const knEventSources = getKnativeEventSources();
+  const knEventSources: K8sResourceKind[] = getKnativeEventSources();
   knEventSources.length && getKnativeTopologyData(knEventSources, 'event-source');
-  const knRevResources = _.get(resources, ['revisions', 'data'], []);
+  const knRevResources: K8sResourceKind[] = _.get(resources, ['revisions', 'data'], []);
   knRevResources.length && getKnativeTopologyData(knRevResources, 'knative-revision');
-  const deploymentResources = _.get(resources, ['deployments', 'data'], []);
+  const deploymentResources: DeploymentKind[] = _.get(resources, ['deployments', 'data'], []);
   resources.deployments.data = filterNonKnativeDeployments(deploymentResources);
-
   // END: kn call to form topology data
 
   const transformResourceData = createInstanceForResource(resources, utils);
