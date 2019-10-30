@@ -9,7 +9,7 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
 import { getName } from '@console/shared';
-import { powerOffHost } from '../../k8s/requests/host-power-operations';
+import { powerOffHost } from '../../k8s/requests/bare-metal-host';
 import { NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY } from '../../constants';
 import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
