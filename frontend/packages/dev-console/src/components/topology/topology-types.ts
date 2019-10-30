@@ -33,6 +33,8 @@ export interface Node {
   id: string;
   type?: string;
   name?: string;
+  children?: string[];
+  data?: {};
 }
 
 export interface Edge {

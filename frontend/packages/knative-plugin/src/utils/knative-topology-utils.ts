@@ -25,9 +25,14 @@ import { DeploymentModel } from '@console/internal/models';
 import { KnativeItem } from './get-knative-resources';
 
 export enum nodeType {
-  EventSource = 'eventsource',
-  KnService = 'knservice',
-  Revision = 'revision',
+  EventSource = 'event-source',
+  KnService = 'knative-service',
+  Revision = 'knative-revision',
+}
+
+export enum edgeType {
+  Traffic = 'revision-traffic',
+  EventSource = 'event-source-link',
 }
 
 /**
@@ -39,7 +44,10 @@ export const getKnativeServiceData = (
 ): KnativeItem => {
   const configurations = getOwnedResources(resource, resources.configurations.data);
   const ksroutes = getOwnedResources(resource, resources.ksroutes.data);
-  const revisions = getOwnedResources(configurations[0], resources.revisions.data);
+  const revisions =
+    configurations && configurations.length
+      ? getOwnedResources(configurations[0], resources.revisions.data)
+      : undefined;
   const knativedata = { configurations, revisions, ksroutes };
   return knativedata;
 };
@@ -107,7 +115,7 @@ export const getKnativeTopologyNodeItem = (
   const name = _.get(resource, ['metadata', 'name']);
   const label = _.get(resource, ['metadata', 'labels', 'app.openshift.io/instance']);
   const children = [];
-  if (type === 'knservice' && resources && resources.configurations) {
+  if (type === nodeType.KnService && resources && resources.configurations) {
     const configurations = getOwnedResources(resource, resources.configurations.data);
     const configUidData = _.get(configurations[0], ['metadata', 'uid']);
     const ChildData = _.filter(resources.revisions.data, {
@@ -139,7 +147,7 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
       if (resname === sinkSvc.name) {
         edges.push({
           id: `${uid}_${resUid}`,
-          type: 'connects-to-src',
+          type: edgeType.EventSource,
           source: uid,
           target: resUid,
         });
@@ -167,7 +175,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
     if (resUid) {
       edges.push({
         id: `${uid}_${resUid}`,
-        type: 'connects-to-traffic',
+        type: edgeType.Traffic,
         source: uid,
         target: resUid,
         data: { percent: trafficPercent },
@@ -233,6 +241,7 @@ export const filterKnativeBasedOnActiveApplication = (
 export const createTopologyServiceNodeData = (
   svcRes: OverviewItem,
   operatorBackedServiceKinds: string[],
+  type: string,
   cheURL?: string,
 ): TopologyDataObject => {
   const { obj: knativeSvc } = svcRes;
@@ -243,7 +252,7 @@ export const createTopologyServiceNodeData = (
   return {
     id: uid,
     name: _.get(knativeSvc, 'metadata.name') || labels['app.kubernetes.io/instance'],
-    type: 'eventsource',
+    type,
     resources: { ...svcRes },
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
@@ -298,13 +307,14 @@ export const tranformKnNodeData = (
             cheURL,
             type,
           );
-          groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
+          // groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
           break;
         }
         case nodeType.KnService: {
           dataToShowOnNodes[uidRes] = createTopologyServiceNodeData(
             item,
             operatorBackedServiceKinds,
+            type,
             cheURL,
           );
           edgesData = [...edgesData, ...getTrafficTopologyEdgeItems(res, resources.revisions)];
@@ -327,7 +337,11 @@ export const tranformKnNodeData = (
  */
 export const filterNonKnativeDeployments = (resources: DeploymentKind[]): DeploymentKind[] => {
   const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
+  const KNATIVE_EVENTS_CRONJOB = 'sources.eventing.knative.dev/cronJobSource';
   return resources.filter((d) => {
-    return !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION]);
+    return (
+      !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION]) &&
+      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CRONJOB])
+    );
   });
 };
