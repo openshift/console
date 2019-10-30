@@ -3,21 +3,17 @@ import { Progress, ProgressSize } from '@patternfly/react-core';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getResiliencyProgress } from '../../../../utils';
 
-export const isDataResiliencyActivity = (results: PrometheusResponse): boolean => {
-  const progress = getResiliencyProgress(results);
-  return progress && progress < 100;
-};
-
-export const DataResiliencyActivity: React.FC<DataResiliencyProps> = ({ results }) => {
-  const progress = getResiliencyProgress(results);
+export const DataResiliency: React.FC<DataResiliencyProps> = ({ results }) => {
+  const progress: number = getResiliencyProgress(results);
+  const formattedProgress = Math.round(progress * 100);
   return (
     <>
       <Progress
         className="co-activity-item__progress"
-        value={progress}
+        value={formattedProgress}
         size={ProgressSize.sm}
         title="Rebuilding data resiliency"
-        label={`${progress}%`}
+        label={`${formattedProgress}%`}
       />
     </>
   );

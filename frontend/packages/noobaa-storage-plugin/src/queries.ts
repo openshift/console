@@ -19,7 +19,7 @@ export enum ObjectDashboardQuery {
 }
 
 export enum DATA_RESILIENCE_QUERIES {
-  REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress',
+  REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress/100',
   REBUILD_TIME_QUERY = 'NooBaa_rebuild_time',
 }
 

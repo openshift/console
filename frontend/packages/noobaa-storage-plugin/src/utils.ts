@@ -21,8 +21,3 @@ export const getPhase = (obj: K8sResourceKind): string => {
 };
 
 export const isBound = (obj: K8sResourceKind): boolean => getPhase(obj) === 'Bound';
-
-export const getResiliencyProgress = (response: PrometheusResponse): number => {
-  const progress = getGaugeValue(response);
-  return Number(Number(progress).toFixed(1));
-};
