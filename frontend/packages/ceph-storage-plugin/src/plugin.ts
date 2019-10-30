@@ -113,6 +113,19 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
+          './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
+        ).then((m) => m.default),
+      required: CEPH_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.MAIN,
+      span: 6,
+      loader: () =>
+        import(
           './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
         ).then((m) => m.default),
       required: CEPH_FLAG,
