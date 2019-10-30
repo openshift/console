@@ -3,7 +3,7 @@ import { ExpandCollapse, LoadingInline } from '@console/internal/components/util
 import { useFormikContext, FormikValues } from 'formik';
 import { Alert } from '@patternfly/react-core';
 import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
-import { getPipelineTemplate, getPipelineTaskRefs } from './pipeline-template-utils';
+import { getPipelineTemplate } from './pipeline-template-utils';
 
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
@@ -20,14 +20,14 @@ const PipelineTemplate: React.FC = () => {
 
     const fetchPipelineTemplate = async () => {
       const pipelineTemplate = await getPipelineTemplate(image.selected);
-      if (!ignore && pipelineTemplate) {
-        const taskRefs = getPipelineTaskRefs(pipelineTemplate);
+
+      if (ignore) return;
+
+      if (pipelineTemplate) {
         setFieldValue('pipeline.template', pipelineTemplate);
-        setFieldValue('pipeline.taskRefs', taskRefs);
         setNoTemplateForRuntime(false);
       } else {
         setFieldValue('pipeline.template', null);
-        setFieldValue('pipeline.taskRefs', null);
         setNoTemplateForRuntime(true);
       }
     };
@@ -50,19 +50,15 @@ const PipelineTemplate: React.FC = () => {
     );
   }
 
-  return (
-    <>
-      {template ? (
-        <ExpandCollapse
-          textCollapsed={template.metadata.name}
-          textExpanded={template.metadata.name}
-        >
-          <PipelineVisualization pipeline={template} />
-        </ExpandCollapse>
-      ) : (
-        <LoadingInline />
-      )}
-    </>
+  return template ? (
+    <ExpandCollapse
+      textCollapsed="Show pipeline visualization"
+      textExpanded="Hide pipeline visualization"
+    >
+      <PipelineVisualization pipeline={template} />
+    </ExpandCollapse>
+  ) : (
+    <LoadingInline />
   );
 };
 

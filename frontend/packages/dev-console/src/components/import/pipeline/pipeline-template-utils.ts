@@ -1,13 +1,8 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, k8sList, k8sGet, k8sCreate } from '@console/internal/module/k8s';
-import { PipelineModel, TaskModel } from '../../../models';
+import { K8sResourceKind, k8sList, k8sCreate } from '@console/internal/module/k8s';
+import { PipelineModel } from '../../../models';
 import { GitImportFormData } from '../import-types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
-
-export const getPipelineTaskRefs = (pipeline: K8sResourceKind): string[] => {
-  const taskRefs = _.get(pipeline, 'spec.tasks');
-  return taskRefs && taskRefs.map((task) => _.get(task, 'taskRef.name'));
-};
 
 export const getPipelineTemplate = async (runtime: string): Promise<K8sResourceKind> => {
   const templates = await k8sList(PipelineModel, {
@@ -17,19 +12,7 @@ export const getPipelineTemplate = async (runtime: string): Promise<K8sResourceK
   return templates && templates[0];
 };
 
-export const copyPipelineTasks = (taskRefs: string[], namespace: string) => {
-  taskRefs.forEach(async (taskRef) => {
-    try {
-      const task = await k8sGet(TaskModel, taskRef, 'openshift');
-      task.metadata = { name: task.metadata.name, namespace };
-      await k8sCreate(TaskModel, task, namespace).catch(() => {});
-    } catch (err) {
-      throw err;
-    }
-  });
-};
-
-export const createGitResource = (url: string, ref: string = 'master', namespace: string) => {
+export const createGitResource = (url: string, namespace: string, ref: string = 'master') => {
   const params = { url, revision: ref };
   return createPipelineResource(params, 'git', namespace);
 };
@@ -57,9 +40,16 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
     labels: template.metadata.labels,
   };
 
+  template.spec.params = template.spec.params.map((param) => {
+    if (param.name === 'APP_NAME') {
+      param.default = name;
+    }
+
+    return param;
+  });
+
   try {
-    copyPipelineTasks(pipeline.taskRefs, namespace);
-    await createGitResource(git.url, git.ref, namespace);
+    await createGitResource(git.url, namespace, git.ref);
     await createImageResource(name, namespace);
   } catch (err) {
     throw err;

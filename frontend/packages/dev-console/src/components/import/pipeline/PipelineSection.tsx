@@ -16,11 +16,7 @@ type PipelineSectionProps = {
 const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
   const { values } = useFormikContext<FormikValues>();
 
-  if (!values.image.selected) {
-    return null;
-  }
-
-  if (flags[FLAG_OPENSHIFT_PIPELINE]) {
+  if (flags[FLAG_OPENSHIFT_PIPELINE] && values.image.selected) {
     const title = (
       <Split gutter="md">
         <SplitItem className="odc-form-section__heading">Pipeline</SplitItem>

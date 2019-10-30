@@ -159,7 +159,6 @@ export interface ServerlessData {
 export interface PipelineData {
   enabled: boolean;
   template?: K8sResourceKind;
-  taskRefs?: string[];
 }
 
 export interface ServerlessScaling {
