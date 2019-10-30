@@ -114,7 +114,9 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
     <dl className="olm-descriptor">
       <div style={{ width: 'max-content' }}>
         <Tooltip content={descriptor.description}>
-          <dt className="olm-descriptor__title">{descriptor.displayName}</dt>
+          <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
+            {descriptor.displayName}
+          </dt>
         </Tooltip>
       </div>
       <dd className="olm-descriptor__value">
