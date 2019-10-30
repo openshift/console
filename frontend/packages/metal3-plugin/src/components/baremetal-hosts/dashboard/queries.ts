@@ -31,7 +31,7 @@ const hostQueriesByHostName = {
     `instance:node_network_receive_bytes:rate:sum{instance=~'<%= host %>'}<%= duration %>`,
   ),
   [HostQuery.NETWORK_OUT_UTILIZATION]: _.template(
-    `instance:node_network_transmit_bytes:rate:sum{instance=~'<%= host %>'}<%= host %>`,
+    `instance:node_network_transmit_bytes:rate:sum{instance=~'<%= host %>'}<%= duration %>`,
   ),
   [HostQuery.NUMBER_OF_FANS]: _.template(`baremetal_fan_rpm`),
   [HostQuery.NUMBER_OF_PSUS]: _.template(`baremetal_current`),
