@@ -21,6 +21,7 @@ import {
   Humanize,
   humanizeSeconds,
   secondsToNanoSeconds,
+  units,
 } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { PrometheusResponse } from '../../graphs';
@@ -28,15 +29,31 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { PodModel } from '../../../models';
+import { PodModel, ResourceQuotaModel } from '../../../models';
+import { K8sResourceKind } from '../../../module/k8s';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
+const getResourceQuota = (namespace: string) => ({
+  kind: ResourceQuotaModel.kind,
+  namespace,
+  isList: true,
+  prop: 'resourceQuotas',
+});
+
 export const UtilizationCard = withDashboardResources(
-  ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
+  ({
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    prometheusResults,
+    watchK8sResource,
+    stopWatchK8sResource,
+    resources,
+  }: DashboardItemProps) => {
     const [duration, setDuration] = React.useState(metricDurations[0]);
     const { obj } = React.useContext(ProjectDashboardContext);
     const projectName = getName(obj);
@@ -52,6 +69,29 @@ export const UtilizationCard = withDashboardResources(
         };
       }
     }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName, duration]);
+
+    React.useEffect(() => {
+      const quotaResource = getResourceQuota(projectName);
+      watchK8sResource(quotaResource);
+      return () => stopWatchK8sResource(quotaResource);
+    }, [watchK8sResource, stopWatchK8sResource, projectName]);
+
+    const quotasData = _.get(resources.resourceQuotas, 'data', []) as K8sResourceKind[];
+    const quotasLoaded = _.get(resources.resourceQuotas, 'loaded');
+    const quotasLoadError = _.get(resources.resourceQuotas, 'loadError');
+
+    const projectQuota = quotasData.find((q) => !!_.get(q.spec, 'hard'));
+    let maxCPU: number;
+    let maxMemory: number;
+    let maxPods: number;
+    if (projectQuota) {
+      maxCPU =
+        units.dehumanize(projectQuota.spec.hard['limits.cpu'], 'numeric').value ||
+        projectQuota.spec.hard['limits.cpu']; //if cores do not have unit, dehumanize returns empty string
+      maxMemory = units.dehumanize(projectQuota.spec.hard['limits.memory'], 'binaryBytesWithoutB')
+        .value;
+      maxPods = projectQuota.spec.hard.pods;
+    }
 
     const cpuUtilization = prometheusResults.getIn([
       queries[ProjectQueries.CPU_USAGE],
@@ -130,28 +170,35 @@ export const UtilizationCard = withDashboardResources(
             <UtilizationItem
               title="CPU"
               data={cpuStats}
-              isLoading={!projectName || !cpuUtilization}
+              isLoading={!projectName || !cpuUtilization || !quotasLoaded}
               humanizeValue={humanizeCpuCores}
               query={queries[ProjectQueries.CPU_USAGE]}
-              error={cpuError}
+              error={cpuError || !!quotasLoadError}
               TopConsumerPopover={cpuPopover}
+              max={maxCPU}
+              maxSuffix="limit"
             />
             <UtilizationItem
               title="Memory"
               data={memoryStats}
-              isLoading={!projectName || !memoryUtilization}
+              isLoading={!projectName || !memoryUtilization || !quotasLoaded}
               humanizeValue={humanizeBinaryBytes}
+              byteDataType={ByteDataTypes.BinaryBytes}
               query={queries[ProjectQueries.MEMORY_USAGE]}
-              error={memoryError}
+              error={memoryError || !!quotasLoadError}
               TopConsumerPopover={memPopover}
+              max={maxMemory}
+              maxSuffix="limit"
             />
             <UtilizationItem
               title="Pod count"
               data={podCountStats}
-              isLoading={!projectName || !podCount}
+              isLoading={!projectName || !podCount || !quotasLoaded}
               humanizeValue={humanizeNumber}
               query={queries[ProjectQueries.POD_COUNT]}
-              error={podCountError}
+              error={podCountError || !!quotasLoadError}
+              max={maxPods}
+              maxSuffix="limit"
             />
           </UtilizationBody>
         </DashboardCardBody>

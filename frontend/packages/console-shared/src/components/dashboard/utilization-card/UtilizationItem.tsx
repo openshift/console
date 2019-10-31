@@ -15,6 +15,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     max = null,
     TopConsumerPopover,
     byteDataType,
+    maxSuffix,
   }) => {
     let current;
     if (data.length) {
@@ -66,7 +67,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           <div className="pf-l-level">
             <span className="co-utilization-card__item__text" />
             <span className="co-utilization-card__item__text">
-              {humanMax && <span>of {humanMax}</span>}
+              {humanMax && <span>of {maxSuffix ? `${humanMax} ${maxSuffix}` : humanMax}</span>}
             </span>
           </div>
         </div>
@@ -88,6 +89,7 @@ type UtilizationItemProps = {
   max?: number;
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+  maxSuffix?: string;
 };
 
 type TopConsumerPopoverProp = {
