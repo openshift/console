@@ -14,15 +14,26 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { Dropdown } from '../../utils/dropdown';
-import { humanizeCpuCores, humanizeBinaryBytes, humanizeNumber } from '../../utils';
+import {
+  humanizeCpuCores,
+  humanizeNumber,
+  humanizeBinaryBytes,
+  Humanize,
+  humanizeSeconds,
+  secondsToNanoSeconds,
+} from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { PrometheusResponse } from '../../graphs';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
-import { getUtilizationQueries, ProjectQueries } from './queries';
+import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import { PodModel } from '../../../models';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+
+const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 export const UtilizationCard = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
@@ -65,6 +76,44 @@ export const UtilizationCard = withDashboardResources(
     const memoryStats = getRangeVectorStats(memoryUtilization);
     const podCountStats = getRangeVectorStats(podCount);
 
+    const cpuPopover = React.useCallback(
+      ({ current }) => (
+        <ConsumerPopover
+          title="CPU"
+          current={current}
+          consumers={[
+            {
+              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_CPU],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+          humanize={humanizeFromSeconds}
+          namespace={projectName}
+        />
+      ),
+      [projectName],
+    );
+
+    const memPopover = React.useCallback(
+      ({ current }) => (
+        <ConsumerPopover
+          title="Memory"
+          current={current}
+          consumers={[
+            {
+              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_MEMORY],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+          humanize={humanizeBinaryBytes}
+          namespace={projectName}
+        />
+      ),
+      [projectName],
+    );
+
     return (
       <DashboardCard>
         <DashboardCardHeader>
@@ -85,6 +134,7 @@ export const UtilizationCard = withDashboardResources(
               humanizeValue={humanizeCpuCores}
               query={queries[ProjectQueries.CPU_USAGE]}
               error={cpuError}
+              TopConsumerPopover={cpuPopover}
             />
             <UtilizationItem
               title="Memory"
@@ -93,6 +143,7 @@ export const UtilizationCard = withDashboardResources(
               humanizeValue={humanizeBinaryBytes}
               query={queries[ProjectQueries.MEMORY_USAGE]}
               error={memoryError}
+              TopConsumerPopover={memPopover}
             />
             <UtilizationItem
               title="Pod count"

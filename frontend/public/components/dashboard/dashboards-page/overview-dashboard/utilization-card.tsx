@@ -27,26 +27,63 @@ import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducer
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
 import * as plugins from '../../../../plugins';
 import { Humanize } from '../../../utils/types';
+import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const cpuQueriesPopup = [
-  top25ConsumerQueries[OverviewQuery.PODS_BY_CPU],
-  top25ConsumerQueries[OverviewQuery.NODES_BY_CPU],
-  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_CPU],
+  {
+    query: top25ConsumerQueries[OverviewQuery.PODS_BY_CPU],
+    model: PodModel,
+    metric: 'pod',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_CPU],
+    model: NodeModel,
+    metric: 'instance',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_CPU],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
 ];
 
 const memQueriesPopup = [
-  top25ConsumerQueries[OverviewQuery.PODS_BY_MEMORY],
-  top25ConsumerQueries[OverviewQuery.NODES_BY_MEMORY],
-  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
+  {
+    query: top25ConsumerQueries[OverviewQuery.PODS_BY_MEMORY],
+    model: PodModel,
+    metric: 'pod',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_MEMORY],
+    model: NodeModel,
+    metric: 'instance',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
 ];
 
 const storageQueriesPopup = [
-  top25ConsumerQueries[OverviewQuery.PODS_BY_STORAGE],
-  top25ConsumerQueries[OverviewQuery.NODES_BY_STORAGE],
-  top25ConsumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
+  {
+    query: top25ConsumerQueries[OverviewQuery.PODS_BY_STORAGE],
+    model: PodModel,
+    metric: 'pod',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_STORAGE],
+    model: NodeModel,
+    metric: 'instance',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
 ];
 
 const getQueries = (flags: FlagsObject) => {
@@ -137,7 +174,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       <ConsumerPopover
         title="CPU"
         current={current}
-        query={cpuQueriesPopup}
+        consumers={cpuQueriesPopup}
         humanize={humanizeFromSeconds}
       />
     ),
@@ -149,7 +186,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       <ConsumerPopover
         title="Memory"
         current={current}
-        query={memQueriesPopup}
+        consumers={memQueriesPopup}
         humanize={humanizeBinaryBytes}
       />
     ),
@@ -161,7 +198,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
       <ConsumerPopover
         title="Disk Usage"
         current={current}
-        query={storageQueriesPopup}
+        consumers={storageQueriesPopup}
         humanize={humanizeFromSeconds}
       />
     ),

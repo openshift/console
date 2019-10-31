@@ -55,7 +55,13 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         <div className="co-utilization-card__item__section">
           <div className="pf-l-level">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
-            {TopConsumerPopover && !error ? <TopConsumerPopover current={current} /> : current}
+            {error || (!isLoading && !data.length) ? (
+              <div className="text-secondary">Not available</div>
+            ) : TopConsumerPopover ? (
+              <TopConsumerPopover current={current} />
+            ) : (
+              current
+            )}
           </div>
           <div className="pf-l-level">
             <span className="co-utilization-card__item__text" />

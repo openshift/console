@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
-import { PodModel, NodeModel, ProjectModel } from '@console/internal/models';
 import { K8sKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   withDashboardResources,
@@ -15,84 +14,87 @@ import './top-consumer-popover.scss';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { getName, getNamespace } from '../../..';
 
-const dropdownKeys = ['By Pods', 'By Node', 'By Projects'];
-const models = [PodModel, NodeModel, ProjectModel];
-const dropdownItems = {
-  'By Pods': 'By Pods',
-  'By Node': 'By Node',
-  'By Projects': 'By Projects',
-};
-const prometheusInstanceTypes = ['pod', 'instance', 'namespace'];
-
-const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo((props) => {
-  const { current, title, humanize, query } = props;
-  return (
-    <DashboardCardPopupLink popupTitle={`${title} breakdown`} linkTitle={current}>
-      <PopoverBody humanize={humanize} query={query} {...props} />
-    </DashboardCardPopupLink>
-  );
-});
+const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
+  ({ current, title, humanize, consumers, namespace }) => {
+    const [isOpen, setOpen] = React.useState(false);
+    return (
+      <DashboardCardPopupLink
+        popupTitle={`${title} breakdown`}
+        linkTitle={current}
+        onHide={React.useCallback(() => setOpen(false), [])}
+        onShow={React.useCallback(() => setOpen(true), [])}
+      >
+        <PopoverBody
+          humanize={humanize}
+          consumers={consumers}
+          namespace={namespace}
+          isOpen={isOpen}
+        />
+      </DashboardCardPopupLink>
+    );
+  },
+);
 
 export default ConsumerPopover;
 
-const getResourceToWatch = (model: K8sKind) => ({
+const getResourceToWatch = (model: K8sKind, namespace: string) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
-  prop: 'consumers',
+  namespace,
+  prop: 'k8sResources',
 });
 
 const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = React.memo((props) => {
-  const [selectedFilter, setSelectedFilter] = React.useState(dropdownKeys[0]);
-  const { title, humanize, query } = props;
   const {
+    humanize,
+    consumers,
+    namespace,
     watchPrometheus,
     stopWatchPrometheusQuery,
     prometheusResults,
     watchK8sResource,
     stopWatchK8sResource,
     resources,
+    isOpen,
   } = props;
-
-  const popoverTitle = title ? `Top ${title} consumers` : `Top consumers`;
-
+  const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
+  const { query, model, metric } = currentConsumer;
   React.useEffect(() => {
-    const selectedIndex = dropdownKeys.indexOf(selectedFilter);
-    const k8sResource = getResourceToWatch(models[selectedIndex]);
-    watchPrometheus(query[selectedIndex]);
+    if (!isOpen) {
+      return () => {};
+    }
+    const k8sResource = getResourceToWatch(model, namespace);
+    watchPrometheus(query, namespace);
     watchK8sResource(k8sResource);
     return () => {
-      stopWatchPrometheusQuery(query[selectedIndex]);
+      stopWatchPrometheusQuery(query);
       stopWatchK8sResource(k8sResource);
     };
   }, [
     query,
-    selectedFilter,
+    model,
     stopWatchK8sResource,
     stopWatchPrometheusQuery,
     watchK8sResource,
     watchPrometheus,
+    namespace,
+    isOpen,
   ]);
 
-  const selectedIndex = dropdownKeys.indexOf(selectedFilter);
-
-  const metricType = prometheusInstanceTypes[selectedIndex];
-  const model = models[selectedIndex];
-  const selectedQuery = query[selectedIndex];
-
   let top5Data = [];
-  const consumerData = _.get(resources, ['consumers', 'data']) as K8sResourceKind[];
-  const consumerLoaded = _.get(resources, ['consumers', 'loaded']);
-  const consumersLoadError = _.get(resources, ['consumers', 'loadError']);
+  const consumerData = _.get(resources, ['k8sResources', 'data']) as K8sResourceKind[];
+  const consumerLoaded = _.get(resources, ['k8sResources', 'loaded']);
+  const consumersLoadError = _.get(resources, ['k8sResources', 'loadError']);
 
-  const error = prometheusResults.getIn([selectedQuery, 'loadError']);
-  const data = prometheusResults.getIn([selectedQuery, 'data']) as PrometheusResponse;
-  const bodyData = getInstantVectorStats(data, metricType);
+  const error = prometheusResults.getIn([query, 'loadError']);
+  const data = prometheusResults.getIn([query, 'data']) as PrometheusResponse;
+  const bodyData = getInstantVectorStats(data, metric);
 
   if (consumerLoaded && !consumersLoadError) {
     for (const d of bodyData) {
       const consumerExists = consumerData.some(
         (consumer) =>
-          getName(consumer) === d.metric[metricType] &&
+          getName(consumer) === d.metric[metric] &&
           (model.namespaced ? getNamespace(consumer) === d.metric.namespace : true),
       );
       if (consumerExists) {
@@ -108,43 +110,59 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
 
   const monitoringParams = React.useMemo(() => {
     const params = new URLSearchParams();
-    params.set('query0', selectedQuery);
+    params.set('query0', currentConsumer.query);
     return params;
-  }, [selectedQuery]);
+  }, [currentConsumer.query]);
+
+  const dropdownItems = React.useMemo(
+    () =>
+      consumers.reduce((items, current) => {
+        items[referenceForModel(current.model)] = `By ${current.model.labelPlural}`;
+        return items;
+      }, {}),
+    [consumers],
+  );
+
+  const onDropdownChange = React.useCallback(
+    (key) => setCurrentConsumer(consumers.find((c) => referenceForModel(c.model) === key)),
+    [consumers],
+  );
 
   return (
     <div className="pf-c-popover__body co-utilization-card-popover__body">
-      <h4 className="co-utilizaiton-card-popover__title">{popoverTitle}</h4>
-      <Dropdown
-        className="co-utilization-card-popover__dropdown"
-        id="consumer-select"
-        name="selectConsumerType"
-        aria-label="Select consumer type"
-        items={dropdownItems}
-        onChange={setSelectedFilter}
-        selectedKey={selectedFilter}
-      />
-      {consumerLoaded && !error && top5Data.length > 0 ? (
+      <h4 className="co-utilizaiton-card-popover__title">
+        {consumers.length === 1
+          ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
+          : 'Top consumers'}
+      </h4>
+      {consumers.length > 1 && (
+        <Dropdown
+          className="co-utilization-card-popover__dropdown"
+          id="consumer-select"
+          name="selectConsumerType"
+          aria-label="Select consumer type"
+          items={dropdownItems}
+          onChange={onDropdownChange}
+          selectedKey={referenceForModel(model)}
+        />
+      )}
+      {consumerLoaded && data && !error ? (
         <>
           <ul
             className="co-utilization-card-popover__consumer-list"
             aria-label={`Top consumer by ${model.labelPlural}`}
           >
-            <ConsumerItems
-              items={top5Data}
-              model={models[selectedIndex]}
-              query={query[selectedIndex]}
-            />
+            <ConsumerItems items={top5Data} model={model} />
           </ul>
           <Link to={`/monitoring/query-browser?${monitoringParams.toString()}`}>View more</Link>
         </>
       ) : (
         <ul className="co-utilization-card-popover__consumer-list">
-          <li className="skeleton-activity" />
-          <li className="skeleton-activity" />
-          <li className="skeleton-activity" />
-          <li className="skeleton-activity" />
-          <li className="skeleton-activity" />
+          <li className="skeleton-consumer" />
+          <li className="skeleton-consumer" />
+          <li className="skeleton-consumer" />
+          <li className="skeleton-consumer" />
+          <li className="skeleton-consumer" />
         </ul>
       )}
     </div>
@@ -183,20 +201,21 @@ const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }
 type ConsumerItemsProps = {
   items?: DataPoint[];
   model?: K8sKind;
-  query?: string;
 };
 
 type PopoverBodyProps = {
-  title?: string;
   topConsumers?: DataPoint[][];
   error?: boolean;
   humanize: Humanize;
-  query?: string[];
+  consumers: { model: K8sKind; query: string; metric: string }[];
+  namespace?: string;
+  isOpen: boolean;
 };
 
 export type ConsumerPopoverProps = {
   current: string;
   title: string;
   humanize: Humanize;
-  query: string[];
+  consumers: { model: K8sKind; query: string; metric: string }[];
+  namespace?: string;
 };
