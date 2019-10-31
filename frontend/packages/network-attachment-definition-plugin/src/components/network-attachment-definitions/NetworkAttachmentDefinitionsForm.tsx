@@ -129,7 +129,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const namespace = _.get(match, 'params.ns', 'default');
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
-  const [loading, setLoading] = React.useState(loaded);
+  const [loading, setLoading] = React.useState(hasSriovNetNodePolicyCRD && !loaded);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [networkType, setNetworkType] = React.useState(null);
@@ -137,14 +137,18 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const [error, setError] = React.useState(null);
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
 
-  const networkTypeDropdownItems = React.useMemo(() => getNetworkTypes(hasSriovNetNodePolicyCRD), [
-    hasSriovNetNodePolicyCRD,
-  ]);
+  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD);
 
   const formIsValid = React.useMemo(
     () => validateForm(fieldErrors, name, networkType, typeParamsData, setError),
     [fieldErrors, name, networkType, typeParamsData],
   );
+
+  React.useEffect(() => setLoading(hasSriovNetNodePolicyCRD && !loaded), [
+    hasSriovNetNodePolicyCRD,
+    resources,
+    loaded,
+  ]);
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
@@ -261,27 +265,25 @@ const mapStateToProps = ({ k8s }) => {
   };
 };
 
-export const ConnectedNetworkAttachmentDefinitionForm = connect(mapStateToProps)(
-  NetworkAttachmentDefinitionFormBase,
-);
-
-const resources = [
+const networkAttachmentDefinitionFormResources = [
   {
     model: SriovNetworkNodePolicyModel,
     kind: SriovNetworkNodePolicyModel.kind,
-    namespace: 'sriov-network-operator',
     isList: true,
     prop: 'sriovnetworknodepolicies',
+    optional: true,
   },
 ];
 
-export default (props) => {
+export default connect(mapStateToProps)((props) => {
+  const { hasSriovNetNodePolicyCRD } = props;
+  const resources = hasSriovNetNodePolicyCRD ? networkAttachmentDefinitionFormResources : [];
   return (
     <Firehose resources={resources}>
-      <ConnectedNetworkAttachmentDefinitionForm {...props} />
+      <NetworkAttachmentDefinitionFormBase {...props} />
     </Firehose>
   );
-};
+});
 
 type FieldErrors = {
   nameValidationMsg?: string;
