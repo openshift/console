@@ -292,13 +292,13 @@ export const RoleBindingsPage = ({
   showTitle = true,
   mock = false,
   staticFilters = undefined,
-  createPath = undefined
+  createPath = '/k8s/cluster/rolebindings/~new',
 }) => (
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
     createProps={{
-      to: `/k8s/cluster/rolebindings/~new${createPath ? `${createPath}` : ''}`,
+      to: `${createPath}`,
     }}
     mock={mock}
     filterLabel="by role or subject"
