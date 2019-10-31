@@ -30,11 +30,7 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
     obj.metadata.namespace = match.params.ns || 'default';
 
     const netAttachDefTemplatePath = (o: K8sResourceKind) =>
-      resourcePathFromModel(
-        { ...NetworkAttachmentDefinitionModel, plural: 'network-attachment-definitions' },
-        getName(o),
-        getNamespace(o),
-      );
+      resourcePathFromModel(NetworkAttachmentDefinitionModel, getName(o), getNamespace(o));
     const DroppableEditYAML = () =>
       import('@console/internal/components/droppable-edit-yaml').then((c) => c.DroppableEditYAML);
 
