@@ -12,6 +12,11 @@ export const networkTypes = {
   'cnv-bridge': 'Linux bridge',
 };
 
+export enum NetworkTypes {
+  SRIOV = 'SR-IOV',
+  'CNV-Bridge' = 'Linux bridge',
+}
+
 export const networkTypeParams: NetworkTypeParamsList = {
   sriov: {
     resourceName: {

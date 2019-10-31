@@ -7,10 +7,15 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar, Dropdown, Firehose, history } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
-import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
+import {
+  HyperConvergedModel,
+  NetworkAttachmentDefinitionModel,
+  SriovNetworkNodePolicyModel,
+} from '../..';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
+  TypeParamsData,
 } from '../../types';
 import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
@@ -26,7 +31,7 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
   try {
     ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
   } catch (e) {
-    console.log(e); // eslint-disable-line no-console
+    console.error(e); // eslint-disable-line no-console
   }
 
   if (networkType === 'cnv-bridge') {
@@ -48,12 +53,10 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
 };
 
 const getResourceName = (networkType, typeParamsData): string => {
-  let resourceName = '';
-  if (networkType === 'cnv-bridge') {
-    resourceName = _.get(typeParamsData, 'bridge.value', '');
-  } else if (networkType === 'sriov') {
-    resourceName = _.get(typeParamsData, 'resourceName.value', '');
-  }
+  const resourceName =
+    networkType === 'cnv-bridge'
+      ? _.get(typeParamsData, 'bridge.value', '')
+      : _.get(typeParamsData, 'resourceName.value', '');
 
   return `bridge.network.kubevirt.io/${resourceName}`;
 };
@@ -125,10 +128,14 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
   setFieldErrors(fieldErrorsUpdate);
 };
 
-const getNetworkTypes = (hasSriovNetNodePolicyCRD) => {
+const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD) => {
   const types = _.clone(networkTypes);
   if (!hasSriovNetNodePolicyCRD) {
     delete types.sriov;
+  }
+
+  if (!hasHyperConvergedCRD) {
+    delete types['cnv-bridge'];
   }
 
   return types;
@@ -166,7 +173,7 @@ const validateForm = (fieldErrors, name, networkType, typeParamsData, setError) 
 };
 
 const NetworkAttachmentDefinitionFormBase = (props) => {
-  const { loaded, match, resources, hasSriovNetNodePolicyCRD } = props;
+  const { loaded, match, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
   const namespace = _.get(match, 'params.ns', 'default');
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
@@ -174,11 +181,11 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [networkType, setNetworkType] = React.useState(null);
-  const [typeParamsData, setTypeParamsData] = React.useState({}); // TODO add typing
+  const [typeParamsData, setTypeParamsData] = React.useState<TypeParamsData>({});
   const [error, setError] = React.useState(null);
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
 
-  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD);
+  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD, hasHyperConvergedCRD);
 
   const formIsValid = React.useMemo(
     () => validateForm(fieldErrors, name, networkType, typeParamsData, setError),
@@ -246,6 +253,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             dropDownClassName="dropdown--full-width"
             selectedKey={networkType}
             onChange={(e) => setNetworkType(e)}
+            disabled={_.isEmpty(networkTypeDropdownItems)}
           />
         </FormGroup>
 
@@ -303,6 +311,7 @@ const mapStateToProps = ({ k8s }) => {
 
   return {
     hasSriovNetNodePolicyCRD: !kindsInFlight && !!k8sModels.get(SriovNetworkNodePolicyModel.kind),
+    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(HyperConvergedModel.kind),
   };
 };
 

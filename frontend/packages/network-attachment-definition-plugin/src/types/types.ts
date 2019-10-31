@@ -11,6 +11,10 @@ export type IPAMConfig = {
   dataDir?: string;
 };
 
+export type NetworkAttachmentDefinitionPlugin = {
+  [key: string]: any;
+};
+
 export type NetworkAttachmentDefinitionConfig = {
   cniVersion: string;
   name: string;
@@ -18,7 +22,7 @@ export type NetworkAttachmentDefinitionConfig = {
   bridge?: string;
   isGateway?: true;
   ipam?: IPAMConfig;
-  plugins?: any[];
+  plugins?: NetworkAttachmentDefinitionPlugin[];
 };
 
 // The config is a JSON object with the NetworkAttachmentDefinitionConfig type stored as a string
@@ -29,3 +33,12 @@ export type NetworkAttachmentDefinitionSpec = {
 export type NetworkAttachmentDefinitionKind = {
   spec?: NetworkAttachmentDefinitionSpec;
 } & K8sResourceKind;
+
+export type TypeParamsDataItem = {
+  value?: any;
+  validationMsg?: string;
+};
+
+export type TypeParamsData = {
+  [key: string]: TypeParamsDataItem;
+};
