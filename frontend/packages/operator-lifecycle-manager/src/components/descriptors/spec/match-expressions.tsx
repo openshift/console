@@ -23,31 +23,29 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
 
   return (
     <>
-      <div className="row toleration-modal__heading hidden-sm hidden-xs">
+      <div className="row key-operator-value__heading hidden-sm hidden-xs">
         <div className="col-md-4 text-secondary text-uppercase">Key</div>
-        <div className="col-md-2 text-secondary text-uppercase">Operator</div>
+        <div className="col-md-3 text-secondary text-uppercase">Operator</div>
         <div className="col-md-3 text-secondary text-uppercase">Value</div>
-        <div className="col-md-1" />
       </div>
       {props.matchExpressions.map((expression, i) => (
-        <div className="row toleration-modal__row" key={JSON.stringify(expression)}>
-          <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
-            <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="row key-operator-value__row" key={JSON.stringify(expression)}>
+          <div className="col-md-4 col-xs-5 key-operator-value__name-field">
+            <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
               Key
             </div>
             <input
               type="text"
-              className="form-control"
+              className="pf-c-form-control"
               value={expression.key}
               onChange={(e) => changeKey(e.target.value, i)}
             />
           </div>
-          <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-            <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+          <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
+            <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
               Operator
             </div>
             <Dropdown
-              className="toleration-modal__dropdown"
               dropDownClassName="dropdown--full-width"
               items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
               onChange={(op: MatchExpression['operator']) => changeOperator(op, i)}
@@ -55,41 +53,39 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
               title={expression.operator}
             />
           </div>
-          <div className="clearfix visible-sm visible-xs" />
-          <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
-            <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+          <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
+            <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
               Value
             </div>
             <input
+              className="pf-c-form-control"
               type="text"
-              className="form-control"
               value={(expression as any).value || ''}
               onChange={(e) => changeValue(e.target.value, i)}
               readOnly={['Exists', 'DoesNotExist'].includes(expression.operator)}
             />
           </div>
-          <div className="col-md-1 col-sm-2 col-xs-2">
+          <div className="col-xs-1 key-operator-value__action key-operator-value__action--stacked">
+            <div className="key-operator-value__heading key-operator-value__heading-button hidden-md hidden-lg" />
             <Button
               type="button"
-              className="toleration-modal__delete-icon"
               onClick={() =>
                 props.onChangeMatchExpressions(
                   props.matchExpressions.filter((e, index) => index !== i),
                 )
               }
               aria-label="Delete"
+              className="key-operator-value__delete-button"
               variant="plain"
             >
-              <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+              <MinusCircleIcon />
             </Button>
           </div>
         </div>
       ))}
       <div className="row">
         <Button
-          className="pf-m-link--align-left"
           type="button"
-          style={{ marginLeft: '10px' }}
           onClick={() =>
             onChangeMatchExpressions(matchExpressions.concat({ key: '', operator: 'Exists' }))
           }

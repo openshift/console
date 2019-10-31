@@ -455,7 +455,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     }
     if (field.capabilities.includes(SpecCapability.password)) {
       return (
-        <div style={{ width: '50%' }}>
+        <div>
           <input
             className="pf-c-form-control"
             id={field.path}
@@ -477,7 +477,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       const model = modelFor(groupVersionKind);
 
       return (
-        <div style={{ width: '50%' }}>
+        <div>
           {!_.isUndefined(model) ? (
             <ListDropdown
               resources={[
@@ -555,7 +555,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     }
     if (field.capabilities.includes(SpecCapability.text)) {
       return (
-        <div style={{ width: '50%' }}>
+        <div>
           <input
             className="pf-c-form-control"
             id={field.path}
@@ -570,7 +570,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     }
     if (field.capabilities.includes(SpecCapability.number)) {
       return (
-        <div style={{ width: '50%' }}>
+        <div>
           <input
             className="pf-c-form-control"
             id={field.path}
@@ -675,7 +675,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   return (
     <div className="co-m-pane__body">
       <div className="row">
-        <form className="col-md-6" onSubmit={submit}>
+        <form className="col-md-8 col-lg-7" onSubmit={submit}>
           <Accordion asDefinitionList={false} className="co-create-operand__accordion">
             <div className="form-group">
               <label className="control-label co-required" htmlFor="name">
@@ -855,10 +855,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) && (
             <Alert
               isInline
-              className="co-alert co-break-word"
+              className="co-alert co-break-word co-alert--scrollable"
               variant="danger"
-              title={error || 'Fix above errors'}
-            />
+              title="Error"
+            >
+              {error || 'Fix above errors'}
+            </Alert>
           )}
           <div style={{ paddingBottom: '30px' }}>
             <ActionGroup className="pf-c-form">
@@ -871,7 +873,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             </ActionGroup>
           </div>
         </form>
-        <div className="col-md-6">
+        <div className="col-md-4 col-lg-5">
           {props.clusterServiceVersion && props.providedAPI && (
             <div style={{ marginBottom: '30px' }}>
               <ClusterServiceVersionLogo
