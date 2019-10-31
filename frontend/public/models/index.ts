@@ -828,6 +828,19 @@ export const ClusterVersionModel: K8sKind = {
   crd: true,
 };
 
+export const CSIDriverModel: K8sKind = {
+  label: 'CSIDriver',
+  labelPlural: 'CSIDrivers',
+  apiVersion: 'v1beta1',
+  apiGroup: 'storage.k8s.io',
+  plural: 'csidrivers',
+  abbr: 'CSI',
+  namespaced: false,
+  kind: 'CSIDriver',
+  id: 'csidriver',
+  crd: true,
+};
+
 export const ClusterAutoscalerModel: K8sKind = {
   label: 'Cluster Autoscaler',
   labelPlural: 'Cluster Autoscalers',
