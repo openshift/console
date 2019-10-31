@@ -11,7 +11,7 @@ import {
   buildImageVersion,
   createButton,
   builderImageVersionName,
-} from '../../views/devconsole-view/git-imort-flow';
+} from '../../views/devconsole-view/git-import-flow';
 import { newApplicationName, newAppName } from '../../views/devconsole-view/new-app-name.view';
 import {
   switchPerspective,

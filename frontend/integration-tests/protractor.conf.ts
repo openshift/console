@@ -127,6 +127,7 @@ const testSuites = {
     'tests/devconsole/dev-perspective.scenario.ts',
     'tests/devconsole/git-import-flow.scenario.ts',
   ],
+  topology: ['tests/devconsole/topology.scenario.ts'],
 };
 
 export const config: Config = {
