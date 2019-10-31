@@ -13,16 +13,20 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { metricTypeMap } from '@console/shared/src/components/dashboard/top-consumers-card/ConsumersFilter';
-import { MetricType } from '@console/shared/src/components/dashboard/top-consumers-card/metric-type';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { getRangeVectorStats } from '../../../graphs/utils';
-import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../../utils';
+import {
+  humanizePercentage,
+  humanizeBinaryBytes,
+  humanizeSeconds,
+  secondsToNanoSeconds,
+} from '../../../utils/units';
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
 import * as plugins from '../../../../plugins';
+import { Humanize } from '../../../utils/types';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -63,6 +67,8 @@ const getItems = (flags: FlagsObject) =>
   plugins.registry
     .getDashboardsOverviewUtilizationItems()
     .filter((e) => isDashboardExtensionInUse(e, flags));
+
+const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
@@ -132,7 +138,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="CPU"
         current={current}
         query={cpuQueriesPopup}
-        humanize={metricTypeMap[MetricType.CPU].humanize}
+        humanize={humanizeFromSeconds}
       />
     ),
     [],
@@ -144,7 +150,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="Memory"
         current={current}
         query={memQueriesPopup}
-        humanize={metricTypeMap[MetricType.MEMORY].humanize}
+        humanize={humanizeBinaryBytes}
       />
     ),
     [],
@@ -156,7 +162,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="Disk Usage"
         current={current}
         query={storageQueriesPopup}
-        humanize={metricTypeMap[MetricType.STORAGE].humanize}
+        humanize={humanizeFromSeconds}
       />
     ),
     [],
@@ -188,9 +194,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           data={memoryStats}
           error={memoryUtilizationError}
           isLoading={!memoryUtilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
           query={queries[OverviewQuery.MEMORY_UTILIZATION]}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
         />
         <UtilizationItem
@@ -198,9 +204,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           data={storageStats}
           error={storageUtilizationError}
           isLoading={!storageUtilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
           query={queries[OverviewQuery.STORAGE_UTILIZATION]}
-          byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
         />
         {pluginItems.map(({ properties }, index) => {

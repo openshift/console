@@ -78,7 +78,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: `/k8s/ns/:ns/${referenceForModel(BareMetalHostModel)}/~new/form`,
       loader: () =>
         import(
-          './components/baremetal-hosts/AddHost' /* webpackChunkName: "metal3-baremetalhost" */
+          './components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage' /* webpackChunkName: "metal3-baremetalhost" */
         ).then((m) => m.default),
     },
   },

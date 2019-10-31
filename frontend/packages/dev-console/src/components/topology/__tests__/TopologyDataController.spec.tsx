@@ -10,6 +10,7 @@ describe('TopologyDataController', () => {
     namespace: 'test',
     resources,
     knative: false,
+    serviceBinding: false,
     cheURL: 'https://test-che.test-cluster.com',
     render: () => <TestInner />,
   };

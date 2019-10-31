@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import {
   Plugin,
   ResourceNSNavItem,
+  ResourceDetailsPage,
   ResourceListPage,
   ModelFeatureFlag,
   YAMLTemplate,
@@ -13,6 +14,7 @@ import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
+  | ResourceDetailsPage
   | ResourceListPage
   | ModelFeatureFlag
   | YAMLTemplate
@@ -55,6 +57,16 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/network-attachment-definitions/NetworkAttachmentDefinition' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.NetworkAttachmentDefinitionsPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.NetworkAttachmentDefinitionModel,
+      loader: () =>
+        import(
+          './components/network-attachment-definitions/NetworkAttachmentDefinitionDetailsPage' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.NetworkAttachmentDefinitionsDetailsPage),
     },
   },
   {

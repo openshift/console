@@ -6,13 +6,13 @@ import {
   testName,
   checkLogs,
   checkErrors,
-} from '../../../../integration-tests/protractor.conf';
-import * as crudView from '../../../../integration-tests/views/crud.view';
-import * as catalogView from '../../../../integration-tests/views/catalog.view';
-import * as catalogPageView from '../../../../integration-tests/views/catalog-page.view';
+} from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
+import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
+import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
+import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorHubView from '../views/operator-hub.view';
-import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
-import * as yamlView from '../../../../integration-tests/views/yaml.view';
 
 describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
   const jaegerResources = new Set([
@@ -28,6 +28,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   const jaegerName = 'my-jaeger';
 
   const catalogNamespace = _.get(browser.params, 'globalCatalogNamespace', 'openshift-marketplace');
+  const jaegerTileID = `jaeger-console-e2e-${catalogNamespace}`;
   const globalOperatorsNamespace = _.get(
     browser.params,
     'globalOperatorsNamespace',
@@ -88,7 +89,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays subscription creation form for selected Operator', async () => {
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
-    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
+    await catalogPageView.catalogTileByID(jaegerTileID).click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
@@ -111,11 +112,11 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox('installState-installed');
 
-    expect(catalogPageView.catalogTileFor('Jaeger Tracing').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileByID(jaegerTileID).isDisplayed()).toBe(true);
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
-    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
+    await catalogPageView.catalogTileByID(jaegerTileID).click();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
@@ -235,7 +236,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
     await catalogPageView.clickFilterCheckbox('installState-installed');
-    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
+    await catalogPageView.catalogTileByID(jaegerTileID).click();
     await operatorHubView.operatorModalIsLoaded();
 
     expect(operatorHubView.operatorModalUninstallBtn.isDisplayed()).toBe(true);

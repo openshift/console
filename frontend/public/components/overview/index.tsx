@@ -254,7 +254,7 @@ class OverviewMainContent_ extends React.Component<
       )}`;
       return coFetchJSON(url).then(({ data: { result } }) => {
         const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
-          acc[metric.pod || metric.pod_name] = Number(value[1]);
+          acc[metric.pod] = Number(value[1]);
           return acc;
         }, {});
         return { [name]: byPod };

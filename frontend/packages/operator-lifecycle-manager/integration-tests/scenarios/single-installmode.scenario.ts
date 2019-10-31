@@ -6,13 +6,13 @@ import {
   testName,
   checkLogs,
   checkErrors,
-} from '../../../../integration-tests/protractor.conf';
-import * as crudView from '../../../../integration-tests/views/crud.view';
-import * as catalogView from '../../../../integration-tests/views/catalog.view';
-import * as catalogPageView from '../../../../integration-tests/views/catalog-page.view';
+} from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
+import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
+import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
+import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorHubView from '../views/operator-hub.view';
-import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
-import * as yamlView from '../../../../integration-tests/views/yaml.view';
 
 describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);

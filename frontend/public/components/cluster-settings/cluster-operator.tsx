@@ -263,6 +263,10 @@ export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPagePro
     {...props}
     kind={clusterOperatorReference}
     pages={[navFactory.details(ClusterOperatorDetails), navFactory.editYaml()]}
+    breadcrumbsFor={() => [
+      { name: 'Cluster Operators', path: '/settings/cluster/clusteroperators' },
+      { name: 'Cluster Operator Details', path: props.match.url },
+    ]}
   />
 );
 

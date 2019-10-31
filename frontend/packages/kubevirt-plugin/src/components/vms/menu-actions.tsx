@@ -13,6 +13,7 @@ import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm'
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getVMStatus } from '../../statuses/vm/vm';
 
 type ActionArgs = {
@@ -142,6 +143,15 @@ const menuActionClone = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs)
   };
 };
 
+const menuActionCdEdit = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+  return {
+    hidden: isVMImporting(vmStatus),
+    label: 'Edit CD-ROMs',
+    callback: () => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' }),
+    accessReview: asAccessReview(kindObj, vm, 'patch'),
+  };
+};
+
 export const menuActions = [
   menuActionStart,
   menuActionStop,
@@ -149,6 +159,7 @@ export const menuActions = [
   menuActionMigrate,
   menuActionCancelMigration,
   menuActionClone,
+  menuActionCdEdit,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   Kebab.factory.Delete,

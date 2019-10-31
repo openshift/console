@@ -382,3 +382,8 @@ export const convertToBaseValue = (value) => {
   // Unrecognized unit.
   return null;
 };
+
+export const secondsToNanoSeconds = (value) => {
+  const val = Number(value);
+  return Number.isFinite(val) ? val * 1000 ** 3 : 0;
+};

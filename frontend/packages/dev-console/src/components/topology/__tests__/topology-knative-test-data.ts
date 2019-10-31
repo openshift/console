@@ -198,6 +198,16 @@ const sampleKnativeConfigurations: FirehoseResult = {
           'serving.knative.dev/route': 'overlayimage',
           'serving.knative.dev/service': 'overlayimage',
         },
+        ownerReferences: [
+          {
+            apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+            kind: RouteModel.kind,
+            name: 'overlayimage',
+            uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
       },
       spec: {},
       status: {
@@ -228,6 +238,16 @@ const sampleKnativeRevisions: FirehoseResult = {
           'serving.knative.dev/configurationGeneration': '2',
           'serving.knative.dev/service': 'overlayimage',
         },
+        ownerReferences: [
+          {
+            apiVersion: `${ConfigurationModel.apiGroup}/${ConfigurationModel.apiVersion}`,
+            kind: RouteModel.kind,
+            name: 'overlayimage',
+            uid: '1317f615-9636-11e9-b134-06a61d886b62',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
       },
       spec: {},
       status: {
@@ -256,6 +276,16 @@ export const sampleKnativeRoutes: FirehoseResult = {
           'serving.knative.dev/route': 'overlayimage',
           'serving.knative.dev/service': 'overlayimage',
         },
+        ownerReferences: [
+          {
+            apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+            kind: RouteModel.kind,
+            name: 'overlayimage',
+            uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
       },
       spec: {},
       status: {
@@ -280,12 +310,27 @@ export const sampleKnativeServices: FirehoseResult = {
         uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
         resourceVersion: '1157349',
       },
-      spec: {},
+      spec: {
+        template: {
+          metadata: {
+            labels: {
+              'app.kubernetes.io/part-of': 'myapp',
+            },
+          },
+        },
+      },
       status: {
         observedGeneration: 1,
         url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
         latestCreatedRevisionName: 'overlayimage-fdqsf',
         latestReadyRevisionName: 'overlayimage-fdqsf',
+        traffic: [
+          {
+            latestRevision: true,
+            percent: 100,
+            revisionName: 'overlayimage-fdqsf',
+          },
+        ],
       },
     },
   ],

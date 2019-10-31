@@ -25,6 +25,8 @@ export interface TopologyDataResources {
   pipelineRuns?: FirehoseResult;
   eventSourceCronjob?: FirehoseResult;
   eventSourceContainers?: FirehoseResult;
+  clusterServiceVersion?: FirehoseResult;
+  serviceBindingRequests?: FirehoseResult;
 }
 
 export interface Node {
@@ -38,6 +40,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
+  data?: { sbr?: K8sResourceKind };
 }
 
 export interface Group {
@@ -63,8 +66,8 @@ export interface TopologyDataModel {
 }
 
 export type TopologyOverviewItem = OverviewItem & {
-  pipelines: Pipeline[];
-  pipelineRuns: PipelineRun[];
+  pipelines?: Pipeline[];
+  pipelineRuns?: PipelineRun[];
 };
 
 export interface TopologyDataObject<D = {}> {
@@ -72,8 +75,9 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: OverviewItem;
-  pods: ExtPodKind[];
+  pods?: ExtPodKind[];
   data: D;
+  operatorBackedService: boolean;
 }
 
 export interface TopologyApplicationObject {

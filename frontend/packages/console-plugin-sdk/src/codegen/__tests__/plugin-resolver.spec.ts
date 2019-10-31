@@ -1,3 +1,6 @@
+import * as path from 'path';
+import * as fs from 'fs';
+import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
 import {
   Package,
@@ -5,21 +8,28 @@ import {
   isPluginPackage,
   readPackages,
   filterActivePluginPackages,
+  getMonorepoRootDir,
 } from '../plugin-resolver';
 
-export const templatePackage: Package = Object.freeze({
-  name: 'test',
-  version: '0.0.0',
-  readme: '',
-  _id: '@',
-});
+export const getTemplatePackage = ({
+  name = 'test',
+  version = '0.0.0',
+  _path = '/test/packages/test-pkg',
+} = {}): Package =>
+  Object.freeze({
+    name,
+    version,
+    readme: '',
+    _id: `${name}@${version}`,
+    _path,
+  });
 
 describe('plugin-resolver', () => {
   describe('isPluginPackage', () => {
     it('returns false if package.consolePlugin is missing', () => {
       expect(
         isPluginPackage({
-          ...templatePackage,
+          ...getTemplatePackage(),
         }),
       ).toBe(false);
     });
@@ -27,7 +37,7 @@ describe('plugin-resolver', () => {
     it('returns false if package.consolePlugin.entry is missing', () => {
       expect(
         isPluginPackage({
-          ...templatePackage,
+          ...getTemplatePackage(),
           consolePlugin: {},
         }),
       ).toBe(false);
@@ -36,7 +46,7 @@ describe('plugin-resolver', () => {
     it('returns false if package.consolePlugin.entry is an empty string', () => {
       expect(
         isPluginPackage({
-          ...templatePackage,
+          ...getTemplatePackage(),
           consolePlugin: { entry: '' },
         }),
       ).toBe(false);
@@ -45,7 +55,7 @@ describe('plugin-resolver', () => {
     it('returns true if package.consolePlugin.entry is a non-empty string', () => {
       expect(
         isPluginPackage({
-          ...templatePackage,
+          ...getTemplatePackage(),
           consolePlugin: { entry: 'plugin.ts' },
         }),
       ).toBe(true);
@@ -64,42 +74,51 @@ describe('plugin-resolver', () => {
     });
 
     it('detects app and plugin packages by reading their metadata', () => {
+      const appPackagePath = '/test/packages/console-app';
       const appPackage: Package = {
-        ...templatePackage,
-        name: '@console/app',
+        ...getTemplatePackage({
+          name: '@console/app',
+          _path: appPackagePath,
+        }),
       };
 
+      const pluginPackagePath = '/test/packages/foo-plugin';
       const pluginPackage: PluginPackage = {
-        ...templatePackage,
-        name: '@console/foo-plugin',
+        ...getTemplatePackage({
+          name: '@console/foo-plugin',
+          _path: pluginPackagePath,
+        }),
         consolePlugin: { entry: 'plugin.ts' },
       };
 
+      const utilsPackagePath = '/test/packages/bar-utils';
       const utilsPackage: Package = {
-        ...templatePackage,
-        name: '@console/bar-utils',
+        ...getTemplatePackage({
+          name: '@console/bar-utils',
+          _path: utilsPackagePath,
+        }),
       };
 
       readPkgMock.mockImplementation(
         ({ cwd }): Package => {
-          if (cwd === '/test/packages/console-app') {
+          if (cwd === appPackagePath) {
             return appPackage;
           }
-          if (cwd === '/test/packages/foo-plugin') {
+          if (cwd === pluginPackagePath) {
             return pluginPackage;
           }
-          if (cwd === '/test/packages/bar-utils') {
+          if (cwd === utilsPackagePath) {
             return utilsPackage;
           }
-          throw new Error('invalid options');
+          throw new Error('invalid mock arguments');
         },
       );
 
       expect(
         readPackages([
-          '/test/packages/console-app/package.json',
-          '/test/packages/foo-plugin/package.json',
-          '/test/packages/bar-utils/package.json',
+          `${appPackagePath}/package.json`,
+          `${pluginPackagePath}/package.json`,
+          `${utilsPackagePath}/package.json`,
         ]),
       ).toEqual({
         appPackage,
@@ -111,8 +130,9 @@ describe('plugin-resolver', () => {
   describe('filterActivePluginPackages', () => {
     it('returns plugin packages listed in appPackage.dependencies', () => {
       const appPackage: Package = {
-        ...templatePackage,
-        name: 'app',
+        ...getTemplatePackage({
+          name: 'app',
+        }),
         dependencies: {
           foo: '0.1.2',
           bar: '1.2.3',
@@ -121,15 +141,17 @@ describe('plugin-resolver', () => {
 
       const pluginPackages: PluginPackage[] = [
         {
-          ...templatePackage,
-          name: 'bar',
-          version: '1.2.3',
+          ...getTemplatePackage({
+            name: 'bar',
+            version: '1.2.3',
+          }),
           consolePlugin: { entry: 'plugin.ts' },
         },
         {
-          ...templatePackage,
-          name: 'qux',
-          version: '2.3.4',
+          ...getTemplatePackage({
+            name: 'qux',
+            version: '2.3.4',
+          }),
           consolePlugin: { entry: 'plugin.ts' },
         },
       ];
@@ -139,8 +161,9 @@ describe('plugin-resolver', () => {
 
     it('should include appPackage as a valid plugin package', () => {
       const appPackage: PluginPackage = {
-        ...templatePackage,
-        name: 'app',
+        ...getTemplatePackage({
+          name: 'app',
+        }),
         dependencies: {},
         consolePlugin: { entry: 'plugin.ts' },
       };
@@ -150,8 +173,9 @@ describe('plugin-resolver', () => {
 
     it('should return appPackage as the first plugin package', () => {
       const appPackage: PluginPackage = {
-        ...templatePackage,
-        name: 'app',
+        ...getTemplatePackage({
+          name: 'app',
+        }),
         dependencies: {
           bar: '1.2.3',
           qux: '2.3.4',
@@ -161,15 +185,17 @@ describe('plugin-resolver', () => {
 
       const pluginPackages: PluginPackage[] = [
         {
-          ...templatePackage,
-          name: 'bar',
-          version: '1.2.3',
+          ...getTemplatePackage({
+            name: 'bar',
+            version: '1.2.3',
+          }),
           consolePlugin: { entry: 'plugin.ts' },
         },
         {
-          ...templatePackage,
-          name: 'qux',
-          version: '2.3.4',
+          ...getTemplatePackage({
+            name: 'qux',
+            version: '2.3.4',
+          }),
           consolePlugin: { entry: 'plugin.ts' },
         },
       ];
@@ -179,6 +205,22 @@ describe('plugin-resolver', () => {
         pluginPackages[0],
         pluginPackages[1],
       ]);
+    });
+  });
+
+  describe('getMonorepoRootDir', () => {
+    it('returns the location of Console monorepo root package', () => {
+      const currentPackageFile = findUp.sync('package.json', {
+        cwd: __dirname,
+      });
+      expect(fs.existsSync(currentPackageFile)).toBe(true);
+
+      const parentPackageFile = findUp.sync('package.json', {
+        cwd: path.join(path.dirname(currentPackageFile), '..'),
+      });
+      expect(fs.existsSync(parentPackageFile)).toBe(true);
+
+      expect(getMonorepoRootDir()).toEqual(path.dirname(parentPackageFile));
     });
   });
 });

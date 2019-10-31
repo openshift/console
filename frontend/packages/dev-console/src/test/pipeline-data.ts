@@ -60,8 +60,6 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
             { name: 'web-image', resourceRef: { name: 'mapit-image' } },
           ],
-          serviceAccount: '',
-          trigger: { type: 'manual' },
         },
         status: {
           conditions: [
@@ -105,8 +103,6 @@ export const pipelineTestData: PipelineTestData = {
               resourceRef: { name: 'mapit-image' },
             },
           ],
-          serviceAccount: '',
-          trigger: { type: 'manual' },
         },
         status: {
           conditions: [
@@ -166,8 +162,6 @@ export const pipelineTestData: PipelineTestData = {
         },
         spec: {
           pipelineRef: { name: 'partial-pipeline' },
-          serviceAccount: '',
-          trigger: { type: 'manual' },
         },
         status: {
           conditions: [
@@ -237,9 +231,7 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          serviceAccount: '',
           status: 'PipelineRunCancelled',
-          trigger: { type: 'manual' },
         },
         status: {
           conditions: [
@@ -272,8 +264,6 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          serviceAccount: '',
-          trigger: { type: 'manual' },
         },
         status: {
           taskRuns: {
@@ -300,8 +290,6 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          serviceAccount: '',
-          trigger: { type: 'manual' },
         },
         status: {
           taskRuns: {

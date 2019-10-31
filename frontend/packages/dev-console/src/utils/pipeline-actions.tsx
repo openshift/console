@@ -22,7 +22,15 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
     console.error('Unable to create new PipelineRun. Missing "metadata" in ', pipeline);
     return null;
   }
-  // TODO: Add serviceAccount for start scenario by fetching details from user
+
+  // Only pass fields name and resourceRef for backend validation
+  // Not to use the pipeline spec resource as fallback as it would fail validation
+  const runResources = _.get(latestRun, ['spec', 'resources'], []);
+  const resources = runResources.map((resource) => ({
+    name: resource.name,
+    resourceRef: resource.resourceRef,
+  }));
+
   return {
     apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
     kind: PipelineRunModel.kind,
@@ -40,21 +48,13 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
       pipelineRef: {
         name: pipeline.metadata.name,
       },
-      resources:
-        latestRun && latestRun.spec && latestRun.spec.resources
-          ? latestRun.spec.resources
-          : pipeline && pipeline.spec && pipeline.spec.resources
-          ? pipeline.spec.resources
-          : [],
+      resources,
       params:
         latestRun && latestRun.spec && latestRun.spec.params
           ? latestRun.spec.params
           : pipeline.spec && pipeline.spec.params
           ? pipeline.spec.params
           : null,
-      trigger: {
-        type: 'manual',
-      },
       serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
     },
   };

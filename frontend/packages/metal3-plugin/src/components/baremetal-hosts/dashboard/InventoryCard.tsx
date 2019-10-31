@@ -18,6 +18,7 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 import { getInventoryQueries, HostQuery, getHostQueryResultError } from './queries';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const getResources = (namespace: string, machineName: string): FirehoseResource[] => [
   {
@@ -30,7 +31,6 @@ const getResources = (namespace: string, machineName: string): FirehoseResource[
 ];
 
 const InventoryCard: React.FC<InventoryCardProps> = ({
-  obj,
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
@@ -38,6 +38,8 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const { obj } = React.useContext(BareMetalHostDashboardContext);
+
   const namespace = getNamespace(obj);
   const machineName = getHostMachineName(obj);
   const machine = _.get(resources.machine, 'data', null);

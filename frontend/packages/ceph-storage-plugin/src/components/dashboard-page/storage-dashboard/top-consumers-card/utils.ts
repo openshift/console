@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 
 export const getMetricType: GetMetricType = (resource, metricType) =>
@@ -12,7 +12,7 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
     return r.values.map((arr) => ({
       name: truncatedName,
       x: new Date(arr[0] * 1000),
-      y: Number(humanizeBinaryBytesWithoutB(arr[1], null, unit).value),
+      y: Number(humanizeBinaryBytes(arr[1], null, unit).value),
     }));
   });
 };

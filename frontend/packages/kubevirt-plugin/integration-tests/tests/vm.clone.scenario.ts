@@ -2,7 +2,7 @@
 import { execSync } from 'child_process';
 import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
-import { appHost, testName } from '../../../../integration-tests/protractor.conf';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   filterForName,
   isLoaded,

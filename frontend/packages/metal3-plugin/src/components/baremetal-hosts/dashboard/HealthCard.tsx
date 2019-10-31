@@ -25,6 +25,7 @@ import {
 } from '../../../constants';
 import { getHostOperationalStatus } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const getHostHealthState = (obj): HostHealthState => {
   const status = getHostOperationalStatus(obj);
@@ -51,12 +52,9 @@ const getHostHealthState = (obj): HostHealthState => {
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
-const HealthCard: React.FC<HealthCardProps> = ({
-  obj,
-  watchAlerts,
-  stopWatchAlerts,
-  alertsResults,
-}) => {
+const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, alertsResults }) => {
+  const { obj } = React.useContext(BareMetalHostDashboardContext);
+
   React.useEffect(() => {
     watchAlerts();
     return () => stopWatchAlerts();

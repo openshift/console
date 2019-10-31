@@ -9,9 +9,11 @@ spec:
         type: git
     params:
       - name: pathToDockerFile
+        type: string
         description: The path to the dockerfile to build
         default: /workspace/docker-source/Dockerfile
       - name: pathToContext
+        type: string
         description:
           The build context used by Kaniko
           (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
@@ -22,11 +24,17 @@ spec:
         type: image
   steps:
     - name: build-and-push
-      image: ubuntu
+      image: gcr.io/kaniko-project/executor:v0.13.0
+      # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
+      env:
+        - name: "DOCKER_CONFIG"
+          value: "/builder/home/.docker/"
       command:
-        - echo
+        - /kaniko/executor
       args:
-        - "Build and push"
+        - --dockerfile=$(inputs.params.pathToDockerFile)
+        - --destination=$(outputs.resources.builtImage.url)
+        - --context=$(inputs.params.pathToContext)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -41,390 +49,38 @@ spec:
         type: image
     params:
       - name: path
+        type: string
         description: Path to the manifest to apply
-      - name: yqArg
-        description:
-          Okay this is a hack, but I didn't feel right hard-coding `-d1` down
-          below
       - name: yamlPathToImage
+        type: string
         description:
           The path to the image to replace in the yaml manifest (arg to yq)
   steps:
     - name: replace-image
-      image: ubuntu
-      command:
-        - echo
+      image: mikefarah/yq
+      command: ["yq"]
       args:
-        - "replaced image"
-    - name: post-deploy
-      image: ubuntu
-      command:
-        - echo
+        - "w"
+        - "-i"
+        - "$(inputs.params.path)"
+        - "$(inputs.params.yamlPathToImage)"
+        - "$(inputs.resources.image.url)"
+    - name: run-kubectl
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
       args:
-        - "post-deploy"
+        - "apply"
+        - "-f"
+        - "$(inputs.params.path)"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: mvn-build
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  outputs:
-    resources:
-    - name: workspace-git
-      type: git
-  steps:
-  - name: build
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "build"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: buildah
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-    params:
-    - name: dockerfile
-      description: The path to the dockerfile to build
-      default: ./Dockerfile
-    - name: verifyTLS
-      description: Verify registry certificates
-      default: "true"
-  outputs:
-    resources:
-    - name: image
-      type: image
-  steps:
-  - name: build
-    image: quay.io/openshift-pipeline/buildah:testing
-    command:
-      - echo
-    args:
-      - "builadh"
-  - name: push
-    image: quay.io/openshift-pipeline/buildah:testing
-    command:
-      - echo
-    args:
-      - "push"
-  volumes:
-    - name: libcontainers
-      emptyDir: {}
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: mvn-test
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  steps:
-  - name: build
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "build"
-  - name: test
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "verify"
----
-
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: openshift-cli
-spec:
-  steps:
-  - name: oc
-    image: quay.io/openshift-pipeline/openshift-cli
-    command:
-      - echo
-    args:
-      - "oc"
----
-
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: static-analysis
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  steps:
-    - name: pmd
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "pmd"
-    - name: sonar
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "sonar"
-
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: build-docker-image-from-git-source
-spec:
-  inputs:
-    resources:
-      - name: docker-source
-        type: git
-    params:
-      - name: pathToDockerFile
-        description: The path to the dockerfile to build
-        default: /workspace/docker-source/Dockerfile
-      - name: pathToContext
-        description:
-          The build context used by Kaniko
-          (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-        default: /workspace/docker-source
-  outputs:
-    resources:
-      - name: builtImage
-        type: image
-  steps:
-    - name: build-and-push
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "Build and push"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: deploy-using-kubectl
-spec:
-  inputs:
-    resources:
-      - name: source
-        type: git
-      - name: image
-        type: image
-    params:
-      - name: path
-        description: Path to the manifest to apply
-      - name: yqArg
-        description:
-          Okay this is a hack, but I didn't feel right hard-coding `-d1` down
-          below
-      - name: yamlPathToImage
-        description:
-          The path to the image to replace in the yaml manifest (arg to yq)
-  steps:
-    - name: replace-image
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "replaced image"
-    - name: post-deploy
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "post-deploy"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: mvn-build
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  outputs:
-    resources:
-    - name: workspace-git
-      type: git
-  steps:
-  - name: build
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "build"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: buildah
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-    params:
-    - name: dockerfile
-      description: The path to the dockerfile to build
-      default: ./Dockerfile
-    - name: verifyTLS
-      description: Verify registry certificates
-      default: "true"
-  outputs:
-    resources:
-    - name: image
-      type: image
-  steps:
-  - name: build
-    image: quay.io/openshift-pipeline/buildah:testing
-    command:
-      - echo
-    args:
-      - "builadh"
-  - name: push
-    image: quay.io/openshift-pipeline/buildah:testing
-    command:
-      - echo
-    args:
-      - "push"
-  volumes:
-    - name: libcontainers
-      emptyDir: {}
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: mvn-test
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  steps:
-  - name: build
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "build"
-  - name: test
-    image: maven:3.6.0-jdk-8-slim
-    command:
-      - echo
-    args:
-      - "verify"
----
-
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: openshift-cli
-spec:
-  steps:
-  - name: oc
-    image: quay.io/openshift-pipeline/openshift-cli
-    command:
-      - echo
-    args:
-      - "oc"
----
-
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: static-analysis
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  steps:
-    - name: pmd
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "pmd"
-    - name: sonar
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "sonar"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: hello-world-1
+  name: echo-hello-world
 spec:
   steps:
     - name: echo
       image: ubuntu
-      command:
-        - echo
-      args:
-        - "hello world"
-    - name: echo2
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "step no 2"
-    - name: echo3
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "step no 3"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: hello-world-truncate-more-than-20-char
-spec:
-  steps:
-    - name: echo1
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "My name is Tom Cruise"
-    - name: echo2
-      image: ubuntu
-      command:
-        - echo
-      args:
-        - "My name is Scarlett Johansson"
----
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: hello-world-3
-spec:
-  steps:
-    - name: echo
       command:
         - echo
       args:

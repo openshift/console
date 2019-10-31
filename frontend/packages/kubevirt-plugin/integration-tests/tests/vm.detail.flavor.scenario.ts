@@ -1,5 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   withResource,
   selectDropdownOptionById,

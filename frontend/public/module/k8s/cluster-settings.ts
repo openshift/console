@@ -36,6 +36,9 @@ export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
 };
 
+export const getClusterVersionChannel = (cv: ClusterVersionKind): string =>
+  cv && cv.spec ? cv.spec.channel : undefined;
+
 export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
   const history: UpdateHistory[] = _.get(cv, 'status.history', []);
   const lastCompleted: UpdateHistory = history.find((update) => update.state === 'Completed');

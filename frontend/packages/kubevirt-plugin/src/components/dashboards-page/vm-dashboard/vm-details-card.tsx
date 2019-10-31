@@ -48,7 +48,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
       </DashboardCardHeader>
       <DashboardCardBody isLoading={false}>
         <DetailsBody>
-          <DetailItem title="Name" error={false} isLoading={!vm}>
+          <DetailItem title="Name" error={false} isLoading={!vm} valueClassName="co-select-to-copy">
             {name}
           </DetailItem>
           <DetailItem title="Namespace" error={false} isLoading={!vm}>
@@ -64,7 +64,12 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           >
             {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
           </DetailItem>
-          <DetailItem title="IP Address" error={!ipAddrs} isLoading={!vm}>
+          <DetailItem
+            title="IP Address"
+            error={!ipAddrs}
+            isLoading={!vm}
+            valueClassName="co-select-to-copy"
+          >
             {ipAddrs}
           </DetailItem>
         </DetailsBody>

@@ -1,11 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import {
-  selectDropdownOption,
-  click,
-  waitForCount,
-} from '../../../../console-shared/src/test-utils/utils';
-import { isLoaded, resourceRows } from '../../../../../integration-tests/views/crud.view';
+import { isLoaded, resourceRows } from '@console/internal-integration-tests/views/crud.view';
+import { selectDropdownOption, click, waitForCount } from '@console/shared/src/test-utils/utils';
 import { TABS, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import { StorageResource, NetworkResource } from '../utils/types';
 import { fillInput } from '../utils/utils';

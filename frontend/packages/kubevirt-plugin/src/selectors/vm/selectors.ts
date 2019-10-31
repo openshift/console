@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getName } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
   BUS_VIRTIO,
@@ -11,8 +12,13 @@ import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from 
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { getDataVolumeStorageSize, getDataVolumeStorageClassName } from '../dv/selectors';
 import { getDiskBus } from './disk';
-import { getVolumeCloudInitUserData } from './volume';
+import {
+  getVolumeContainerImage,
+  getVolumePersistentVolumeClaimName,
+  getVolumeCloudInitUserData,
+} from './volume';
 import { vCPUCount } from './cpu';
 
 export const getMemory = (vm: VMKind) =>
@@ -96,3 +102,32 @@ export const getCloudInitUserData = (vm: VMKind) =>
 
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
+
+export const getCDRoms = (vm: VMKind) => getDisks(vm).filter((device) => !!device.cdrom);
+
+export const getContainerImageByDisk = (vm: VMKind, name: string) =>
+  getVolumeContainerImage(getVolumes(vm).find((vol) => name === vol.name));
+
+export const getPVCSourceByDisk = (vm: VMKind, diskName: string) =>
+  getVolumePersistentVolumeClaimName(getVolumes(vm).find((vol) => vol.name === diskName));
+
+export const getURLSourceByDisk = (vm: VMKind, name: string) => {
+  const dvTemplate = getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(name));
+  return (
+    dvTemplate &&
+    dvTemplate.spec &&
+    dvTemplate.spec.source &&
+    dvTemplate.spec.source.http &&
+    dvTemplate.spec.source.http.url
+  );
+};
+
+export const getStorageSizeByDisk = (vm: VMKind, diskName: string) =>
+  getDataVolumeStorageSize(
+    getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(diskName)),
+  );
+
+export const getStorageClassNameByDisk = (vm: VMKind, diskName: string) =>
+  getDataVolumeStorageClassName(
+    getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(diskName)),
+  );

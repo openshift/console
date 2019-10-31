@@ -24,7 +24,12 @@ export const LoadError: React.FC<LoadErrorProps> = ({
     {canRetry && (
       <div className="text-center">
         Please{' '}
-        <Button type="button" onClick={window.location.reload.bind(window.location)} variant="link">
+        <Button
+          type="button"
+          onClick={window.location.reload.bind(window.location)}
+          variant="link"
+          isInline
+        >
           try again
         </Button>
         .

@@ -232,6 +232,7 @@ Object {
       },
       "id": "02f680df-680f-11e9-b69e-5254003f9382",
       "name": "nodejs",
+      "operatorBackedService": false,
       "pods": Array [
         Object {
           "apiVersion": "v1",
@@ -925,6 +926,7 @@ Object {
       },
       "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
       "name": "analytics-deployment",
+      "operatorBackedService": false,
       "pods": Array [
         Object {
           "apiVersion": "v1",
@@ -1895,6 +1897,7 @@ Object {
       },
       "id": "60a9b423-680d-11e9-8c69-5254003f9382",
       "name": "wit-deployment",
+      "operatorBackedService": false,
       "pods": Array [
         Object {
           "apiVersion": "v1",
