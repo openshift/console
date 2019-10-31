@@ -9,7 +9,7 @@ export const ELEMENT_TYPES = {
 
 export const networkTypes = {
   sriov: 'SR-IOV',
-  bridge: 'Linux bridge',
+  'cnv-bridge': 'Linux bridge',
 };
 
 export const networkTypeParams: NetworkTypeParamsList = {
@@ -30,8 +30,8 @@ export const networkTypeParams: NetworkTypeParamsList = {
       type: ELEMENT_TYPES.TEXTAREA,
     },
   },
-  bridge: {
-    bridgeName: {
+  'cnv-bridge': {
+    bridge: {
       name: 'Bridge Name',
       required: true,
       type: ELEMENT_TYPES.TEXT,

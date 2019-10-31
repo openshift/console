@@ -8,7 +8,10 @@ import { ButtonBar, Dropdown, Firehose, history } from '@console/internal/compon
 import { k8sCreate } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
-import { NetworkAttachmentDefinitionConfig } from '../../types';
+import {
+  NetworkAttachmentDefinitionAnnotations,
+  NetworkAttachmentDefinitionConfig,
+} from '../../types';
 import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
 
@@ -19,11 +22,40 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     cniVersion: '0.3.1',
   };
 
-  _.forOwn(typeParamsData, (val, key) => {
-    config[key] = _.get(val, 'value', null);
-  });
+  let ipam = {};
+  try {
+    ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
+  } catch (e) {
+    console.log(e); // eslint-disable-line no-console
+  }
+
+  if (networkType === 'cnv-bridge') {
+    const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
+    config.plugins = [
+      {
+        type: 'cnv-bridge',
+        bridge: _.get(typeParamsData, 'bridge.value', ''),
+        vlan: _.isEmpty(vlan) ? undefined : vlan,
+        ipam,
+      },
+      { type: 'cnv-tuning' },
+    ];
+  } else if (networkType === 'sriov') {
+    config.ipam = ipam;
+  }
 
   return config;
+};
+
+const getResourceName = (networkType, typeParamsData): string => {
+  let resourceName = '';
+  if (networkType === 'cnv-bridge') {
+    resourceName = _.get(typeParamsData, 'bridge.value', '');
+  } else if (networkType === 'sriov') {
+    resourceName = _.get(typeParamsData, 'resourceName.value', '');
+  }
+
+  return `bridge.network.kubevirt.io/${resourceName}`;
 };
 
 const createNetAttachDef = (
@@ -42,6 +74,14 @@ const createNetAttachDef = (
   setError(null);
 
   const config = JSON.stringify(buildConfig(name, networkType, typeParamsData));
+
+  const annotations: NetworkAttachmentDefinitionAnnotations = {
+    'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
+  };
+  if (description !== '') {
+    annotations.description = description;
+  }
+
   const newNetAttachDef = {
     apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${
       NetworkAttachmentDefinitionModel.apiVersion
@@ -51,7 +91,8 @@ const createNetAttachDef = (
       name,
       namespace,
       annotations: {
-        description,
+        'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
+        description: _.isEmpty(description) ? undefined : description,
       },
     },
     spec: {

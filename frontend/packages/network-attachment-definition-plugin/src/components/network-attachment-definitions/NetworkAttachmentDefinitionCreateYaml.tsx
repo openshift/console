@@ -31,7 +31,7 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
 
     const netAttachDefTemplatePath = (o: K8sResourceKind) =>
       resourcePathFromModel(
-        { ...NetworkAttachmentDefinitionModel, plural: 'networkattachmentdefinitions' },
+        { ...NetworkAttachmentDefinitionModel, plural: 'network-attachment-definitions' },
         getName(o),
         getNamespace(o),
       );
