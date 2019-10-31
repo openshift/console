@@ -98,7 +98,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
       const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
       const model = modelFor(reference);
       return {
-        kind: reference,
+        kind: model && !model.crd ? kind : reference,
         namespaced: model ? model.namespaced : true,
         prop: kind,
       };
@@ -127,6 +127,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
   // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
   const linkFor = (obj: K8sResourceKind) =>
+    obj.metadata.namespace &&
     _.get(providedAPI, 'resources', []).some(({ kind, name }) => name && kind === obj.kind) ? (
       <OperandLink obj={obj} />
     ) : (
