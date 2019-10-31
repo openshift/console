@@ -14,21 +14,13 @@ import {
 import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
 const NOOBAA_DASHBOARD_LINK_QUERY = 'NooBaa_system_links';
-
-const infrastructureResource: FirehoseResource = {
-  kind: referenceForModel(InfrastructureModel),
-  namespaced: false,
-  name: 'cluster',
-  isList: false,
-  prop: 'infrastructure',
-};
 
 const SubscriptionResource: FirehoseResource = {
   kind: referenceForModel(SubscriptionModel),
@@ -45,14 +37,25 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   prometheusResults,
   resources,
 }) => {
+  const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
+  const [infrastructureError, setInfrastructureError] = React.useState();
+  React.useEffect(() => {
+    const fetchInfrastructure = async () => {
+      try {
+        const infra = await k8sGet(InfrastructureModel, 'cluster');
+        setInfrastructure(infra);
+      } catch (error) {
+        setInfrastructureError(error);
+      }
+    };
+    fetchInfrastructure();
+  }, []);
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
-    watchK8sResource(infrastructureResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
     watchPrometheus(NOOBAA_DASHBOARD_LINK_QUERY);
     return () => {
       stopWatchK8sResource(SubscriptionResource);
-      stopWatchK8sResource(infrastructureResource);
       stopWatchPrometheusQuery(NOOBAA_SYSTEM_NAME_QUERY);
       stopWatchPrometheusQuery(NOOBAA_DASHBOARD_LINK_QUERY);
     };
@@ -75,10 +78,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const systemName = getMetric(systemResult, 'system_name');
   const systemLink = getMetric(dashboardLinkResult, 'dashboard');
 
-  const infrastructure = _.get(resources, 'infrastructure');
-  const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
-  const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
-  const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
 
   const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
@@ -105,8 +105,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="provider"
             title="Provider"
-            error={infrastructureLoaded && !infrastructurePlatform}
-            isLoading={!infrastructureLoaded}
+            error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+            isLoading={!infrastructure}
           >
             {infrastructurePlatform}
           </DetailItem>
