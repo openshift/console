@@ -1,4 +1,7 @@
-import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import {
+  DeployImageFormData,
+  Resources,
+} from '@console/dev-console/src/components/import/import-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel, EventSourceCronJobModel } from '@console/knative-plugin';
 
@@ -36,8 +39,8 @@ export const defaultData: DeployImageFormData = {
     ports: [],
   },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: {
       minpods: 1,
       maxpods: 5,
