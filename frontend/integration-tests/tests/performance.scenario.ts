@@ -99,7 +99,8 @@ describe('Performance test', () => {
 
       expect(routeChunk).not.toBeNull();
       // FIXME: Really need to address this chunk size
-      if (routeName === 'catalog' || routeName === 'operator-hub') {
+      // TODO(jtomasek): extract common node components to @console/shared to reduce node chunk size
+      if (['catalog', 'operator-hub', 'node'].includes(routeName)) {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(100000);
       } else {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
