@@ -18,12 +18,11 @@ import './breakdown-card.scss';
 
 const LinkableLegend: React.FC<LinkableLegendProps> = (props: LinkableLegendProps) => {
   const { metricModel, datum } = props;
+  const href = metricModel
+    ? resourcePathFromModel(metricModel, datum.link)
+    : '/dashboards/object-service';
   return (
-    <Link
-      to={resourcePathFromModel(metricModel, datum.link)}
-      target="_blank"
-      className="capacity-breakdown-card__legend-link"
-    >
+    <Link to={href} className="capacity-breakdown-card__legend-link">
       <ChartLabel
         {...props}
         lineHeight={1.3}
@@ -40,7 +39,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({ data, legends, m
   const chartData = data.map((d: StackDataPoint, index) => (
     <ChartBar
       key={d.id}
-      style={{ data: { stroke: 'white', strokeWidth: 0.7, ...isAvailableBar(index, data.length) } }}
+      style={{ data: { stroke: 'white', strokeWidth: 0.7, ...isAvailableBar(d.name) } }}
       cornerRadius={getBarRadius(index, data.length)}
       barWidth={20}
       padding={0}
