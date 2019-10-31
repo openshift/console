@@ -1,5 +1,10 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
+export type NetworkAttachmentDefinitionAnnotations = {
+  description?: string;
+  'k8s.v1.cni.cncf.io/resourceName': string;
+};
+
 export type IPAMConfig = {
   type?: string;
   subnet?: string;
@@ -13,7 +18,7 @@ export type NetworkAttachmentDefinitionConfig = {
   bridge?: string;
   isGateway?: true;
   ipam?: IPAMConfig;
-  plugins?: NetworkAttachmentDefinitionConfig[];
+  plugins?: any[];
 };
 
 // The config is a JSON object with the NetworkAttachmentDefinitionConfig type stored as a string
