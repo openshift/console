@@ -471,7 +471,11 @@ const DetailsStateToProps = ({ UI }) => ({
 const Details = connect(DetailsStateToProps)(Details_);
 
 const RolesPage = ({ obj: { metadata } }) => (
-  <RoleBindingsPage createPath={`?namespace=${metadata.name}&&rolekind=Role`} namespace={metadata.name} showTitle={false} />
+  <RoleBindingsPage
+    createPath={`/k8s/cluster/rolebindings/~new?namespace=${metadata.name}&&rolekind=Role`}
+    namespace={metadata.name}
+    showTitle={false}
+  />
 );
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);
