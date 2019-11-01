@@ -16,6 +16,8 @@ export type KnativeItem = {
   eventSourceCronjob?: K8sResourceKind[];
   eventSourceContainers?: K8sResourceKind[];
   eventSourceApiserver?: K8sResourceKind[];
+  eventSourceCamel?: K8sResourceKind[];
+  eventSourceKafka?: K8sResourceKind[];
 };
 
 interface StateProps {
@@ -112,4 +114,14 @@ export const getEventSourceContainer = (dc: K8sResourceKind, props): KnativeItem
 export const getEventSourceApiserver = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const eventSourceApiserver = getEventSourceResource(dc, props.eventSourceApiserver);
   return eventSourceApiserver.length > 0 ? { eventSourceApiserver } : undefined;
+};
+
+export const getEventSourceCamel = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceCamel = getEventSourceResource(dc, props.getEventSourceCamel);
+  return eventSourceCamel.length > 0 ? { eventSourceCamel } : undefined;
+};
+
+export const getEventSourceKafka = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceKafka = getEventSourceResource(dc, props.getEventSourceKafka);
+  return eventSourceKafka.length > 0 ? { eventSourceKafka } : undefined;
 };
