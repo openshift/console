@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar, Dropdown, Firehose, history } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
@@ -186,6 +186,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
 
   const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD, hasHyperConvergedCRD);
+  const noNetworkTypesAvailable = !hasSriovNetNodePolicyCRD && !hasHyperConvergedCRD;
 
   const formIsValid = React.useMemo(
     () => validateForm(fieldErrors, name, networkType, typeParamsData, setError),
@@ -200,107 +201,129 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
-      <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">Create Network Attachment Definition</div>
-        <div className="co-m-pane__heading-link">
+      {noNetworkTypesAvailable ? (
+        <Alert variant="info" className="co-alert" isInline title="Form not available">
+            This form is currently unavailable. To create a Network Attachment Definition please use
+            the
           <Link
             to={`/k8s/ns/${namespace}/networkattachmentdefinitions/~new`}
             id="yaml-link"
             replace
           >
-            Edit YAML
+            &nbsp;YAML editor.
           </Link>
-        </div>
-      </h1>
-      <Form>
-        <FormGroup
-          fieldId="basic-settings-name"
-          validationState={fieldErrors.nameValidationMsg ? 'error' : null}
-        >
-          <label className="control-label co-required" htmlFor="network-attachment-definition-name">
-            Name
-          </label>
-          <FormControl
-            type="text"
-            bsClass="pf-c-form-control"
-            placeholder={name}
-            id="network-attachment-definition-name"
-            onChange={(e) => handleNameChange(e.target.value, fieldErrors, setName, setFieldErrors)}
-            value={name}
-          />
-          <HelpBlock>{fieldErrors.nameValidationMsg || null}</HelpBlock>
-        </FormGroup>
+        </Alert>
+      ) : (
+        <>
+          <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+            <div className="co-m-pane__name">Create Network Attachment Definition</div>
 
-        <FormGroup fieldId="basic-settings-description">
-          <label htmlFor="network-attachment-definition-description">Description</label>
-          <FormControl
-            type="text"
-            bsClass="pf-c-form-control"
-            id="network-attachment-definition-description"
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-          />
-        </FormGroup>
-
-        <FormGroup fieldId="basic-settings-network-type">
-          <label className="control-label co-required" htmlFor="network-type">
-            Network Type
-          </label>
-          <Dropdown
-            id="network-type"
-            title="Network Type"
-            items={networkTypeDropdownItems}
-            dropDownClassName="dropdown--full-width"
-            selectedKey={networkType}
-            onChange={(e) => setNetworkType(e)}
-            disabled={_.isEmpty(networkTypeDropdownItems)}
-          />
-        </FormGroup>
-
-        <div className="co-form-subsection">
-          <NetworkTypeOptions
-            networkType={networkType}
-            setTypeParamsData={setTypeParamsData}
-            sriovNetNodePoliciesData={sriovNetNodePoliciesData}
-            typeParamsData={typeParamsData}
-          />
-        </div>
-
-        <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              id="save-changes"
-              isDisabled={!formIsValid}
-              onClick={(e) =>
-                createNetAttachDef(
-                  e,
-                  description,
-                  name,
-                  networkType,
-                  typeParamsData,
-                  namespace,
-                  setError,
-                  setLoading,
-                )
-              }
-              type="submit"
-              variant="primary"
+            <div className="co-m-pane__heading-link">
+              <Link
+                to={`/k8s/ns/${namespace}/networkattachmentdefinitions/~new`}
+                id="yaml-link"
+                replace
+              >
+                Edit YAML
+              </Link>
+            </div>
+          </h1>
+          <Form>
+            <FormGroup
+              fieldId="basic-settings-name"
+              validationState={fieldErrors.nameValidationMsg ? 'error' : null}
             >
-              Create
-            </Button>
-            <Button
-              id="cancel"
-              onClick={() =>
-                history.push(`/k8s/ns/${namespace || 'default'}/networkattachmentdefinitions`)
-              }
-              type="button"
-              variant="secondary"
-            >
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </Form>
+              <label
+                className="control-label co-required"
+                htmlFor="network-attachment-definition-name"
+              >
+                Name
+              </label>
+              <FormControl
+                type="text"
+                bsClass="pf-c-form-control"
+                placeholder={name}
+                id="network-attachment-definition-name"
+                onChange={(e) =>
+                  handleNameChange(e.target.value, fieldErrors, setName, setFieldErrors)
+                }
+                value={name}
+              />
+              <HelpBlock>{fieldErrors.nameValidationMsg || null}</HelpBlock>
+            </FormGroup>
+
+            <FormGroup fieldId="basic-settings-description">
+              <label htmlFor="network-attachment-definition-description">Description</label>
+              <FormControl
+                type="text"
+                bsClass="pf-c-form-control"
+                id="network-attachment-definition-description"
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+              />
+            </FormGroup>
+
+            <FormGroup fieldId="basic-settings-network-type">
+              <label className="control-label co-required" htmlFor="network-type">
+                Network Type
+              </label>
+              <Dropdown
+                id="network-type"
+                title="Network Type"
+                items={networkTypeDropdownItems}
+                dropDownClassName="dropdown--full-width"
+                selectedKey={networkType}
+                onChange={(e) => setNetworkType(e)}
+                disabled={_.isEmpty(networkTypeDropdownItems)}
+              />
+            </FormGroup>
+
+            <div className="co-form-subsection">
+              <NetworkTypeOptions
+                networkType={networkType}
+                setTypeParamsData={setTypeParamsData}
+                sriovNetNodePoliciesData={sriovNetNodePoliciesData}
+                typeParamsData={typeParamsData}
+              />
+            </div>
+
+            <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
+              <ActionGroup className="pf-c-form">
+                <Button
+                  id="save-changes"
+                  isDisabled={!formIsValid}
+                  onClick={(e) =>
+                    createNetAttachDef(
+                      e,
+                      description,
+                      name,
+                      networkType,
+                      typeParamsData,
+                      namespace,
+                      setError,
+                      setLoading,
+                    )
+                  }
+                  type="submit"
+                  variant="primary"
+                >
+                  Create
+                </Button>
+                <Button
+                  id="cancel"
+                  onClick={() =>
+                    history.push(`/k8s/ns/${namespace || 'default'}/networkattachmentdefinitions`)
+                  }
+                  type="button"
+                  variant="secondary"
+                >
+                  Cancel
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </Form>
+        </>
+      )}
     </div>
   );
 };
