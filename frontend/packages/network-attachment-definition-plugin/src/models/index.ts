@@ -23,3 +23,15 @@ export const SriovNetworkNodePolicyModel: K8sKind = {
   kind: 'SriovNetworkNodePolicy',
   id: 'sriov-network-node-policy',
 };
+
+export const HyperConvergedModel: K8sKind = {
+  label: 'HyperConverged Cluster',
+  labelPlural: 'HyperConverged Clusters',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'hco.kubevirt.io',
+  plural: 'hyperconverged',
+  namespaced: false,
+  abbr: 'SRNNPM', // TODO check on this
+  kind: 'hyperconverged',
+  id: 'hyperconverged',
+};

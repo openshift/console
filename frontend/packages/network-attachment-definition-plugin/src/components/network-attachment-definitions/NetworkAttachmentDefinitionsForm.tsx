@@ -7,8 +7,16 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { ButtonBar, Dropdown, Firehose, history } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
-import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
-import { NetworkAttachmentDefinitionConfig } from '../../types';
+import {
+  HyperConvergedModel,
+  NetworkAttachmentDefinitionModel,
+  SriovNetworkNodePolicyModel,
+} from '../..';
+import {
+  NetworkAttachmentDefinitionAnnotations,
+  NetworkAttachmentDefinitionConfig,
+  TypeParamsData,
+} from '../../types';
 import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
 
@@ -19,11 +27,38 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     cniVersion: '0.3.1',
   };
 
-  _.forOwn(typeParamsData, (val, key) => {
-    config[key] = _.get(val, 'value', null);
-  });
+  let ipam = {};
+  try {
+    ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
+  } catch (e) {
+    console.error(e); // eslint-disable-line no-console
+  }
+
+  if (networkType === 'cnv-bridge') {
+    const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
+    config.plugins = [
+      {
+        type: 'cnv-bridge',
+        bridge: _.get(typeParamsData, 'bridge.value', ''),
+        vlan: _.isEmpty(vlan) ? undefined : vlan,
+        ipam,
+      },
+      { type: 'cnv-tuning' },
+    ];
+  } else if (networkType === 'sriov') {
+    config.ipam = ipam;
+  }
 
   return config;
+};
+
+const getResourceName = (networkType, typeParamsData): string => {
+  const resourceName =
+    networkType === 'cnv-bridge'
+      ? _.get(typeParamsData, 'bridge.value', '')
+      : _.get(typeParamsData, 'resourceName.value', '');
+
+  return `bridge.network.kubevirt.io/${resourceName}`;
 };
 
 const createNetAttachDef = (
@@ -42,6 +77,14 @@ const createNetAttachDef = (
   setError(null);
 
   const config = JSON.stringify(buildConfig(name, networkType, typeParamsData));
+
+  const annotations: NetworkAttachmentDefinitionAnnotations = {
+    'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
+  };
+  if (description !== '') {
+    annotations.description = description;
+  }
+
   const newNetAttachDef = {
     apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${
       NetworkAttachmentDefinitionModel.apiVersion
@@ -51,7 +94,8 @@ const createNetAttachDef = (
       name,
       namespace,
       annotations: {
-        description,
+        'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
+        description: _.isEmpty(description) ? undefined : description,
       },
     },
     spec: {
@@ -84,10 +128,14 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
   setFieldErrors(fieldErrorsUpdate);
 };
 
-const getNetworkTypes = (hasSriovNetNodePolicyCRD) => {
+const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD) => {
   const types = _.clone(networkTypes);
   if (!hasSriovNetNodePolicyCRD) {
     delete types.sriov;
+  }
+
+  if (!hasHyperConvergedCRD) {
+    delete types['cnv-bridge'];
   }
 
   return types;
@@ -125,7 +173,7 @@ const validateForm = (fieldErrors, name, networkType, typeParamsData, setError) 
 };
 
 const NetworkAttachmentDefinitionFormBase = (props) => {
-  const { loaded, match, resources, hasSriovNetNodePolicyCRD } = props;
+  const { loaded, match, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
   const namespace = _.get(match, 'params.ns', 'default');
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
@@ -133,11 +181,11 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [networkType, setNetworkType] = React.useState(null);
-  const [typeParamsData, setTypeParamsData] = React.useState({}); // TODO add typing
+  const [typeParamsData, setTypeParamsData] = React.useState<TypeParamsData>({});
   const [error, setError] = React.useState(null);
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
 
-  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD);
+  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD, hasHyperConvergedCRD);
 
   const formIsValid = React.useMemo(
     () => validateForm(fieldErrors, name, networkType, typeParamsData, setError),
@@ -205,6 +253,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             dropDownClassName="dropdown--full-width"
             selectedKey={networkType}
             onChange={(e) => setNetworkType(e)}
+            disabled={_.isEmpty(networkTypeDropdownItems)}
           />
         </FormGroup>
 
@@ -262,6 +311,7 @@ const mapStateToProps = ({ k8s }) => {
 
   return {
     hasSriovNetNodePolicyCRD: !kindsInFlight && !!k8sModels.get(SriovNetworkNodePolicyModel.kind),
+    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(HyperConvergedModel.kind),
   };
 };
 
