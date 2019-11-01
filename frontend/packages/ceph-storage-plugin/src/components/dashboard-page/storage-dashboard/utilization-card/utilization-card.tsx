@@ -23,6 +23,7 @@ import {
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { StorageDashboardQuery, UTILIZATION_QUERY } from '../../../../constants/queries';
 import { getLatestValue, humanizeIOPS, humanizeLatency } from './utils';
 
@@ -131,6 +132,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             title="Used Capacity"
             data={capacityStats}
             humanizeValue={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
             query={
               UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
               UTILIZATION_QUERY_HOUR_MAP[duration]
