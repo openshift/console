@@ -7,6 +7,7 @@ import {
   RouteModel,
   EventSourceCronJobModel,
   EventSourceContainerModel,
+  EventSourceApiServerModel,
 } from '@console/knative-plugin';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import {
@@ -179,6 +180,19 @@ export const eventSourceResourcesContainer = (namespace: string): FirehoseResour
       kind: referenceForModel(EventSourceContainerModel),
       namespace,
       prop: 'eventSourceContainers',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesApiServer = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceApiServerModel),
+      namespace,
+      prop: 'eventSourceApiserver',
       optional: true,
     },
   ];

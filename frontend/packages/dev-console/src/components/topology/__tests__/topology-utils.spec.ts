@@ -128,12 +128,13 @@ describe('TopologyUtils ', () => {
   });
 
   it('should return a valid pod status for scale to 0', () => {
-    const { topologyTransformedData, keys } = getTranformedTopologyData(MockKnativeResources, [
+    const { topologyTransformedData } = getTranformedTopologyData(MockKnativeResources, [
       'deploymentConfigs',
       'deployments',
     ]);
     const status = getPodStatus(
-      (topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods[0],
+      (topologyTransformedData['02c34a0e-9638-11e9-b134-06a61d886b62'].data as WorkloadData)
+        .donutStatus.pods[0],
     );
     expect(podStatus.includes(status)).toBe(true);
     expect(status).toEqual('Autoscaled to 0');
@@ -165,30 +166,32 @@ describe('TopologyUtils ', () => {
   });
 
   it('should return knative routes for knative resource', () => {
-    const { topologyTransformedData, keys } = getTranformedTopologyData(MockKnativeResources, [
+    const { topologyTransformedData } = getTranformedTopologyData(MockKnativeResources, [
       'deploymentConfigs',
       'deployments',
     ]);
-    expect((topologyTransformedData[keys[0]].data as WorkloadData).url).toEqual(
-      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    );
+    expect(
+      (topologyTransformedData['cea9496b-8ce0-11e9-bb7b-0ebb55b110b8'].data as WorkloadData).url,
+    ).toEqual('http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com');
   });
 
   it('should return revision resources for knative workloads', () => {
-    const { topologyTransformedData, keys } = getTranformedTopologyData(MockKnativeResources, [
+    const { topologyTransformedData } = getTranformedTopologyData(MockKnativeResources, [
       'deploymentConfigs',
       'deployments',
     ]);
-    const revRes = topologyTransformedData[keys[0]].resources.revisions;
+    const revRes =
+      topologyTransformedData['cea9496b-8ce0-11e9-bb7b-0ebb55b110b8'].resources.revisions;
     expect(revRes.length).toEqual(1);
   });
 
   it('should return Configuration resources for knative workloads', () => {
-    const { topologyTransformedData, keys } = getTranformedTopologyData(MockKnativeResources, [
+    const { topologyTransformedData } = getTranformedTopologyData(MockKnativeResources, [
       'deploymentConfigs',
       'deployments',
     ]);
-    const configRes = topologyTransformedData[keys[0]].resources.configurations;
+    const configRes =
+      topologyTransformedData['cea9496b-8ce0-11e9-bb7b-0ebb55b110b8'].resources.configurations;
     expect(configRes).toHaveLength(1);
   });
 

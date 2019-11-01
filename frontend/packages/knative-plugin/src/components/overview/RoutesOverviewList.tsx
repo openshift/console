@@ -2,7 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import {
+  ResourceLink,
+  ExternalLink,
+  SidebarSectionHeading,
+} from '@console/internal/components/utils';
 import { RouteModel } from '@console/knative-plugin';
 
 export type RoutesOverviewListItemProps = {
@@ -29,11 +33,18 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
 };
 
 const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes }) => (
-  <ListGroup componentClass="ul">
-    {_.map(ksroutes, (route) => (
-      <RoutesOverviewListItem key={route.metadata.uid} route={route} />
-    ))}
-  </ListGroup>
+  <>
+    <SidebarSectionHeading text="Routes" />
+    {_.isEmpty(ksroutes) ? (
+      <span className="text-muted">No Routes found for this resource.</span>
+    ) : (
+      <ListGroup componentClass="ul">
+        {_.map(ksroutes, (route) => (
+          <RoutesOverviewListItem key={route.metadata.uid} route={route} />
+        ))}
+      </ListGroup>
+    )}
+  </>
 );
 
 export default RoutesOverviewList;

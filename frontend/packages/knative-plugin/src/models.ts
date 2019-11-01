@@ -98,3 +98,16 @@ export const EventSourceContainerModel: K8sKind = {
   namespaced: true,
   crd: true,
 };
+
+export const EventSourceApiServerModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'ApiServerSource',
+  label: 'ApiServerSource',
+  labelPlural: 'ApiServerSources',
+  plural: 'ApiServerSources',
+  id: 'apiserversource',
+  abbr: 'ASS',
+  namespaced: true,
+  crd: true,
+};

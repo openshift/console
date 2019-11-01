@@ -22,6 +22,7 @@ import {
   FLAG_KNATIVE_SERVING_SERVICE,
   FLAG_EVENT_SOURCE_CRONJOB,
   FLAG_EVENT_SOURCE_CONTAINER,
+  FLAG_EVENT_SOURCE_APISERVER,
 } from './const';
 import {
   knativeServingResourcesRevision,
@@ -30,6 +31,7 @@ import {
   knativeServingResourcesServices,
   eventSourceResourcesCronJob,
   eventSourceResourcesContainer,
+  eventSourceResourcesApiServer,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
@@ -38,6 +40,7 @@ import {
   getKnativeServingServices,
   getEventSourceCronjob,
   getEventSourceContainer,
+  getEventSourceApiserver,
 } from './utils/get-knative-resources';
 
 type ConsumedExtensions =
@@ -105,6 +108,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventSourceContainerModel,
       flag: FLAG_EVENT_SOURCE_CONTAINER,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceApiServerModel,
+      flag: FLAG_EVENT_SOURCE_APISERVER,
     },
   },
   {
@@ -208,6 +218,14 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: eventSourceResourcesContainer,
       required: FLAG_EVENT_SOURCE_CONTAINER,
       utils: getEventSourceContainer,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesApiServer,
+      required: FLAG_EVENT_SOURCE_APISERVER,
+      utils: getEventSourceApiserver,
     },
   },
   {
