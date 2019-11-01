@@ -13,8 +13,9 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { connect } from 'react-redux';
 import { RootState } from '../../../redux';
+import { ResourceQuotaCard } from './resource-quota-card';
 
-const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
+const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const rightCards = [{ Card: ActivityCard }];
 
