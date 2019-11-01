@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console */
 import { browser } from 'protractor';
-import { testName } from '../../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   errorMessage,
   filterForName,
   resourceRowsPresent,
-} from '../../../../../integration-tests/views/crud.view';
+} from '@console/internal-integration-tests/views/crud.view';
 import { VMTemplateConfig } from '../utils/types';
 import { WIZARD_CREATE_TEMPLATE_ERROR, WIZARD_TABLE_FIRST_ROW } from '../utils/consts';
 import { Wizard } from './wizard';

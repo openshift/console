@@ -1,12 +1,8 @@
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
-import {
-  asyncForEach,
-  createResource,
-  deleteResource,
-} from '../../../console-shared/src/test-utils/utils';
 import { getVMManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';

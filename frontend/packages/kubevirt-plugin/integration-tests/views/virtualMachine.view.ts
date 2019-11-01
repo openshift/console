@@ -1,5 +1,6 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
-import { resolveTimeout } from '../../../console-shared/src/test-utils/utils';
+import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { resolveTimeout } from '@console/shared/src/test-utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
@@ -8,7 +9,6 @@ import {
   UNEXPECTED_ACTION_ERROR,
   VM_ACTIONS,
 } from '../tests/utils/consts';
-import { resourceTitle } from '../../../../integration-tests/views/crud.view';
 import { nameInput as cloneDialogNameInput } from './cloneDialog.view';
 
 export const statusIcon = (status) => $(`.kubevirt-status__icon.${status}`);

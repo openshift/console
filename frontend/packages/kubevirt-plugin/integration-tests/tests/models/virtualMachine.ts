@@ -5,7 +5,7 @@ import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
   selectDropdownOption,
   waitForStringNotInElement,
-} from '../../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
 import * as vmView from '../../views/virtualMachine.view';
 import { errorMessage } from '../../views/wizard.view';
 import { VMConfig } from '../utils/types';
