@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
-import { KEY_CODES } from '@patternfly/react-core';
+import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import {
   annotationsModal,
@@ -59,10 +59,22 @@ const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string })
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
 export const KebabItem: React.FC<KebabItemProps> = (props) => {
-  return props.option.accessReview ? (
-    <KebabItemAccessReview {...props} />
+  let item;
+
+  if (props.option.accessReview) {
+    item = <KebabItemAccessReview {...props} />;
+  } else if (props.option.isDisabled) {
+    item = <KebabItemDisabled option={props.option} />;
+  } else {
+    item = <KebabItemEnabled {...props} />;
+  }
+
+  return props.option.tooltip ? (
+    <Tooltip position="left" content={props.option.tooltip}>
+      {item}
+    </Tooltip>
   ) : (
-    <KebabItemEnabled {...props} />
+    item
   );
 };
 
@@ -282,6 +294,8 @@ export type KebabOption = {
   href?: string;
   callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;
+  isDisabled?: boolean;
+  tooltip?: string;
 };
 export type KebabAction = (
   kind: K8sKind,
