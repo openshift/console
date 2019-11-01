@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { FormGroup, Switch } from '@patternfly/react-core';
-import { getFieldId } from '@console/dev-console/src/components/formik-fields/field-utils';
+import { getCheckboxFieldId } from '@console/dev-console/src/components/formik-fields/field-utils';
 import { CheckboxFieldProps } from '@console/dev-console/src/components/formik-fields/field-types';
 
 const SwitchField: React.FC<CheckboxFieldProps> = ({
@@ -10,12 +10,15 @@ const SwitchField: React.FC<CheckboxFieldProps> = ({
   formLabel,
   helpText,
   required,
+  value,
+  name,
   ...props
 }) => {
-  const [field, { touched, error }] = useField(props.name);
-  const fieldId = getFieldId(props.name, 'checkbox');
+  const [field, { touched, error }] = useField({ value, name, type: 'checkbox' });
+  const fieldId = getCheckboxFieldId(name, value);
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+  const { checked, ...restField } = field;
   return (
     <FormGroup
       fieldId={fieldId}
@@ -26,13 +29,16 @@ const SwitchField: React.FC<CheckboxFieldProps> = ({
       isRequired={required}
     >
       <Switch
-        {...field}
+        {...restField}
         {...props}
+        // TODO(jtomasek): value shoule be used from restField once the type is fixed on Formik side
+        // https://github.com/jaredpalmer/formik/issues/1961#issuecomment-555186737
+        value={(restField.value as unknown) as string}
         id={fieldId}
         label={label}
-        isChecked={field.value}
+        isChecked={checked}
         aria-describedby={`${fieldId}-helper`}
-        onChange={(value, event) => field.onChange(event)}
+        onChange={(val, event) => field.onChange(event)}
       />
     </FormGroup>
   );

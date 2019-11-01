@@ -27,6 +27,7 @@ export interface TextAreaProps extends FieldProps {
 
 export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
+  value?: string;
 }
 
 export interface SearchInputFieldProps extends InputFieldProps {

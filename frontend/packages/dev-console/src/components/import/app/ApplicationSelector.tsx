@@ -85,10 +85,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           />
         </FormGroup>
       )}
-      {(!applicationsAvailable || selectedKey.value === CREATE_APPLICATION_KEY) && (
+      {(!applicationsAvailable || (selectedKey.value as string) === CREATE_APPLICATION_KEY) && (
         <InputField
           type={TextInputTypes.text}
-          required={selectedKey.value === CREATE_APPLICATION_KEY}
+          required={(selectedKey.value as string) === CREATE_APPLICATION_KEY}
           name="application.name"
           label="Application Name"
           data-test-id="application-form-app-input"

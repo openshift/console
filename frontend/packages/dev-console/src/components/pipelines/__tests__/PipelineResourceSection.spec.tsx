@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as Renderer from 'react-test-renderer';
+import { Formik } from 'formik';
 import PipelineResourceSection, {
   ResourceSectionProps,
 } from '../pipeline-form/PipelineResourceSection';
@@ -34,7 +35,11 @@ describe('PipelineResourceSection component', () => {
   });
 
   it('It should match the previous pipeline snapshot', () => {
-    const tree = Renderer.create(<PipelineResourceSection resources={resources} />).toJSON();
+    const tree = Renderer.create(
+      <Formik onSubmit={() => {}} initialValues={{}}>
+        {() => <PipelineResourceSection resources={resources} />}
+      </Formik>,
+    ).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });
