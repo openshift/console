@@ -25,6 +25,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     let humanMax;
     let chartStatus;
 
+    let humanAvailable;
     if (current && max) {
       humanMax = humanizeValue(max).string;
       const percentage = (100 * data[data.length - 1].y) / max;
@@ -34,6 +35,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       } else if (percentage >= 75) {
         chartStatus = AreaChartStatus.WARNING;
       }
+
+      humanAvailable = humanizeValue(max - data[data.length - 1].y).string;
     }
 
     const chart = (
@@ -64,7 +67,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             )}
           </div>
           <div className="pf-l-level">
-            <span className="co-utilization-card__item__text" />
+            <span className="co-utilization-card__item__text">
+              {humanAvailable && <span>{humanAvailable} available</span>}
+            </span>
             <span className="co-utilization-card__item__text">
               {humanMax && <span>of {humanMax}</span>}
             </span>

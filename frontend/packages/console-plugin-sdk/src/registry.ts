@@ -16,7 +16,6 @@ import {
   isDashboardsTab,
   isDashboardsOverviewInventoryItem,
   isDashboardsInventoryItemGroup,
-  isDashboardsOverviewQuery,
   isDashboardsOverviewUtilizationItem,
   isOverviewResourceTab,
   isOverviewCRD,
@@ -84,10 +83,6 @@ export class ExtensionRegistry {
 
   public getDashboardsCards() {
     return this.extensions.filter(isDashboardsCard);
-  }
-
-  public getDashboardsOverviewQueries() {
-    return this.extensions.filter(isDashboardsOverviewQuery);
   }
 
   public getDashboardsOverviewUtilizationItems() {
