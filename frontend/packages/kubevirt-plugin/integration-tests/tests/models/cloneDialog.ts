@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click } from '../../../../console-shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { fillInput, selectSelectorOption } from '../utils/utils';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import * as cloneDialogView from '../../views/cloneDialog.view';

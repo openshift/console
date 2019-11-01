@@ -1,12 +1,12 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { OrderedMap } from 'immutable';
-import { testName } from '../../../../integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   removeLeakedResources,
   createResources,
   deleteResources,
   withResource,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
 import { NetworkResource, StorageResource, ProvisionOption } from './utils/types';
 import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
 import { basicVMConfig, rootDisk, networkInterface, multusNAD, hddDisk } from './utils/mocks';

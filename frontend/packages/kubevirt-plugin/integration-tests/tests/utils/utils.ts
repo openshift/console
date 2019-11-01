@@ -2,12 +2,12 @@
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
 import { $, $$, ElementFinder, browser, by, ExpectedConditions as until } from 'protractor';
-import { appHost } from '../../../../../integration-tests/protractor.conf';
+import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
   createYAMLButton,
   rowForName,
-} from '../../../../../integration-tests/views/crud.view';
+} from '@console/internal-integration-tests/views/crud.view';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
 import { NodePortService } from './types';
 

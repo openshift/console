@@ -8,9 +8,7 @@ import {
   isLoaded,
   resourceRowsPresent,
   resourceRows,
-} from '../../../../integration-tests/views/crud.view';
-import * as cloneDialogView from '../views/cloneDialog.view';
-import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
+} from '@console/internal-integration-tests/views/crud.view';
 import {
   removeLeakedResources,
   waitForCount,
@@ -21,7 +19,9 @@ import {
   createResource,
   addLeakableResource,
   removeLeakableResource,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
+import * as cloneDialogView from '../views/cloneDialog.view';
+import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
 import { getResourceObject, getRandStr, createProject } from './utils/utils';
 import {
