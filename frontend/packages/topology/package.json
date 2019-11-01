@@ -1,0 +1,37 @@
+{
+  "name": "@console/topology",
+  "version": "0.0.0-fixed",
+  "description": "Topology",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "mobx": "^5.14.2",
+    "mobx-react": "^6.1.4",
+    "mobx-react-lite": "^1.4.2",
+    "popper.js": "^1.15.0"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
+  },
+  "peerDependencies": {
+    "@types/dagre": "0.7.42",
+    "@types/webcola": "3.2.0",
+    "dagre": "0.8.2",
+    "webcola": "3.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@storybook/addon-actions": "^5.2.1",
+    "@storybook/addons": "^5.2.1",
+    "@storybook/react": "^5.2.1",
+    "@types/dagre": "0.7.42",
+    "babel-loader": "^8.0.6",
+    "dagre": "0.8.2",
+    "react-docgen-typescript-loader": "^3.2.1",
+    "webcola": "3.4.0"
+  },
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  }
+}
