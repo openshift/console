@@ -5,10 +5,13 @@ import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: [];
-    loaded: boolean;
-  };
+  projects?: FirehoseList;
+  imageStreams?: FirehoseList;
+}
+
+export interface ImageStreamProps {
+  projects?: K8sResourceKind[];
+  imageStreams: K8sResourceKind[];
 }
 
 export interface SourceToImageFormProps {
@@ -37,6 +40,12 @@ export interface DeployImageFormData {
   application: ApplicationData;
   name: string;
   searchTerm: string;
+  registry: string;
+  imageStream: {
+    image: string;
+    tag: string;
+    namespace: string;
+  };
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
   isSearchingForImage: boolean;
