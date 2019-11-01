@@ -122,6 +122,7 @@ export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
           props.obj,
         )}/${name}`}
         className="co-resource-item__resource-name"
+        data-test-operand-link={name}
       >
         {name}
       </Link>
