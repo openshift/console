@@ -226,7 +226,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert"
           variant="danger"
-          title={`Operator subscription for namespace &quot;${selectedTargetNamespace}&quot; already exists`}
+          title={`Operator subscription for namespace '${selectedTargetNamespace}' already exists`}
         />
       )) ||
       (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
