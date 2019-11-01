@@ -17,6 +17,7 @@ import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { GitImportFormData, ProjectData, GitTypes, GitReadableTypes } from './import-types';
+import { createPipelineForImportFlow } from './pipeline/pipeline-template-utils';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -286,6 +287,7 @@ export const createResources = async (
       triggers: { webhook: webhookTrigger },
     },
     git: { url: repository, type: gitType, ref },
+    pipeline,
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
 
@@ -326,8 +328,13 @@ export const createResources = async (
     }
   }
 
+  if (pipeline.enabled && pipeline.template && !dryRun) {
+    requests.push(createPipelineForImportFlow(formData));
+  }
+
   if (webhookTrigger) {
     requests.push(createWebhookSecret(formData, gitType, dryRun));
   }
+
   return Promise.all(requests);
 };
