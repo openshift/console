@@ -216,59 +216,57 @@ const graphContainer = (
   />
 );
 
-const Graph: React.FC<GraphProps> = React.memo(
-  ({ allSeries, disabledSeries, disableTooltips, span, xDomain }) => {
-    const [containerRef, width] = useRefWidth();
+const Graph: React.FC<GraphProps> = React.memo(({ allSeries, disabledSeries, span, xDomain }) => {
+  const [containerRef, width] = useRefWidth();
 
-    // Remove any disabled series
-    const data = _.flatMap(allSeries, (series, i) => {
-      return _.map(series, ([metric, values]) => {
-        return _.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? [{}] : values;
-      });
+  // Remove any disabled series
+  const data = _.flatMap(allSeries, (series, i) => {
+    return _.map(series, ([metric, values]) => {
+      return _.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? [{}] : values;
     });
+  });
 
-    // Set a reasonable Y-axis range based on the min and max values in the data
-    const findMin = (series) => _.minBy(series, 'y');
-    const findMax = (series) => _.maxBy(series, 'y');
-    let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
-    let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
-    if (minY === 0 && maxY === 0) {
-      minY = -1;
-      maxY = 1;
-    } else if (minY > 0 && maxY > 0) {
-      minY = 0;
-    } else if (minY < 0 && maxY < 0) {
-      maxY = 0;
-    }
+  // Set a reasonable Y-axis range based on the min and max values in the data
+  const findMin = (series) => _.minBy(series, 'y');
+  const findMax = (series) => _.maxBy(series, 'y');
+  let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
+  let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
+  if (minY === 0 && maxY === 0) {
+    minY = -1;
+    maxY = 1;
+  } else if (minY > 0 && maxY > 0) {
+    minY = 0;
+  } else if (minY < 0 && maxY < 0) {
+    maxY = 0;
+  }
 
-    const tickFormat =
-      Math.abs(maxY - minY) < 0.005 ? (v) => (v === 0 ? '0' : v.toExponential(1)) : formatValue;
+  const tickFormat =
+    Math.abs(maxY - minY) < 0.005 ? (v) => (v === 0 ? '0' : v.toExponential(1)) : formatValue;
 
-    return (
-      <div ref={containerRef} style={{ width: '100%' }}>
-        {width > 0 && (
-          <Chart
-            containerComponent={disableTooltips ? undefined : graphContainer}
-            domain={{ x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY] }}
-            domainPadding={{ y: 1 }}
-            height={200}
-            scale={{ x: 'time', y: 'linear' }}
-            theme={chartTheme}
-            width={width}
-          >
-            <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-            <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
-            <ChartGroup>
-              {_.map(data, (values, i) => (
-                <ChartLine key={i} data={values} />
-              ))}
-            </ChartGroup>
-          </Chart>
-        )}
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={containerRef} style={{ width: '100%' }}>
+      {width > 0 && (
+        <Chart
+          containerComponent={graphContainer}
+          domain={{ x: xDomain || [Date.now() - span, Date.now()], y: [minY, maxY] }}
+          domainPadding={{ y: 1 }}
+          height={200}
+          scale={{ x: 'time', y: 'linear' }}
+          theme={chartTheme}
+          width={width}
+        >
+          <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
+          <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
+          <ChartGroup>
+            {_.map(data, (values, i) => (
+              <ChartLine key={i} data={values} />
+            ))}
+          </ChartGroup>
+        </Chart>
+      )}
+    </div>
+  );
+});
 
 const formatSeriesValues = (
   values: PrometheusValue[],
@@ -321,6 +319,69 @@ const minSpan = 30 * 1000;
 // Don't poll more often than this number of milliseconds
 const minPollInterval = 10 * 1000;
 
+const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
+  allSeries,
+  disabledSeries,
+  onZoom,
+  span,
+  xDomain,
+}) => {
+  const [isZooming, setIsZooming] = React.useState(false);
+  const [x1, setX1] = React.useState(0);
+  const [x2, setX2] = React.useState(0);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    setIsZooming(true);
+    const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
+    setX1(x);
+    setX2(x);
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    setX2(e.clientX - e.currentTarget.getBoundingClientRect().left);
+  };
+
+  const onMouseUp = (e: React.MouseEvent) => {
+    setIsZooming(false);
+
+    const xMin = Math.min(x1, x2);
+    const xMax = Math.max(x1, x2);
+
+    // Don't do anything if a range was not selected (don't zoom if you just click the graph)
+    if (xMax === xMin) {
+      return;
+    }
+
+    const { width } = e.currentTarget.getBoundingClientRect();
+    const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
+    let from = oldFrom + (span * xMin) / width;
+    let to = oldFrom + (span * xMax) / width;
+    let newSpan = to - from;
+
+    if (newSpan < minSpan) {
+      newSpan = minSpan;
+      const middle = (from + to) / 2;
+      from = middle - newSpan / 2;
+      to = middle + newSpan / 2;
+    }
+    onZoom(from, to);
+  };
+
+  const handlers = isZooming ? { onMouseMove, onMouseUp } : { onMouseDown };
+
+  return (
+    <div className="query-browser__zoom" {...handlers}>
+      {isZooming && (
+        <div
+          className="query-browser__zoom-overlay"
+          style={{ left: Math.min(x1, x2), width: Math.abs(x1 - x2) }}
+        />
+      )}
+      <Graph allSeries={allSeries} disabledSeries={disabledSeries} span={span} xDomain={xDomain} />
+    </div>
+  );
+};
+
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan,
   disabledSeries = [],
@@ -342,12 +403,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [xDomain, setXDomain] = React.useState();
   const [error, setError] = React.useState();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
-  const [isZooming, setIsZooming] = React.useState(false);
   const [graphData, setGraphData] = React.useState();
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
-  const [x1, setX1] = React.useState(0);
-  const [x2, setX2] = React.useState(0);
 
   const endTime = _.get(xDomain, '[1]');
 
@@ -466,49 +524,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     );
   }
 
-  const onMouseDown = (e) => {
-    if (!isZooming) {
-      setIsZooming(true);
-      const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
-      setX1(x);
-      setX2(x);
-    }
-  };
-
-  const onMouseMove = (e) => {
-    if (isZooming) {
-      setX2(e.clientX - e.currentTarget.getBoundingClientRect().left);
-    }
-  };
-
-  const onMouseUp = (e) => {
-    if (isZooming) {
-      setIsZooming(false);
-
-      const xMin = Math.min(x1, x2);
-      const xMax = Math.max(x1, x2);
-
-      // Don't do anything if a range was not selected (don't zoom if you just click the graph)
-      if (xMax === xMin) {
-        return;
-      }
-
-      const { width } = e.currentTarget.getBoundingClientRect();
-      const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
-      let from = oldFrom + (span * xMin) / width;
-      let to = oldFrom + (span * xMax) / width;
-      let newSpan = to - from;
-
-      if (newSpan < minSpan) {
-        newSpan = minSpan;
-        const middle = (from + to) / 2;
-        from = middle - newSpan / 2;
-        to = middle + newSpan / 2;
-      }
-
-      setXDomain([from, to]);
-      setSpan(newSpan);
-    }
+  const onZoom = (from: number, to: number) => {
+    setXDomain([from, to]);
+    setSpan(to - from);
   };
 
   return (
@@ -545,26 +563,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             />
           )}
           <div className="graph-wrapper graph-wrapper--query-browser">
-            <div
-              className="query-browser__zoom"
-              onMouseDown={onMouseDown}
-              onMouseMove={onMouseMove}
-              onMouseUp={onMouseUp}
-            >
-              {isZooming && (
-                <div
-                  className="query-browser__zoom-overlay"
-                  style={{ left: Math.min(x1, x2), width: Math.abs(x1 - x2) }}
-                />
-              )}
-              <Graph
-                allSeries={graphData}
-                disabledSeries={disabledSeries}
-                disableTooltips={isZooming}
-                xDomain={xDomain}
-                span={span}
-              />
-            </div>
+            <ZoomableGraph
+              allSeries={graphData}
+              disabledSeries={disabledSeries}
+              onZoom={onZoom}
+              span={span}
+              xDomain={xDomain}
+            />
           </div>
         </>
       )}
@@ -603,9 +608,16 @@ type PrometheusValue = [number, string];
 type GraphProps = {
   allSeries: Series[];
   disabledSeries?: Labels[][];
-  disableTooltips: boolean;
   span: number;
-  xDomain: AxisDomain;
+  xDomain?: AxisDomain;
+};
+
+type ZoomableGraphProps = {
+  allSeries: Series[];
+  disabledSeries?: Labels[][];
+  onZoom: (from: number, to: number) => void;
+  span: number;
+  xDomain?: AxisDomain;
 };
 
 type QueryBrowserProps = {
