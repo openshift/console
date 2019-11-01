@@ -2,7 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { Button } from '@patternfly/react-core';
-import { DownloadIcon, PasteIcon } from '@patternfly/react-icons';
+import MonacoEditor from 'react-monaco-editor';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  DownloadIcon,
+  PasteIcon,
+} from '@patternfly/react-icons';
 
 import {
   BuildConfigModel,
@@ -216,7 +222,14 @@ export const getResourceSidebarSamples = (kindObj: K8sKind, yamlSamplesList: Fir
         };
       })
     : [];
-  return [...existingSamples, ...extensionSamples];
+
+  const allSamples = [...existingSamples, ...extensionSamples];
+
+  // For the time being, `snippets` are a superset of `samples`
+  const snippets = allSamples.filter((sample: Sample) => sample.snippet);
+  const samples = allSamples.filter((sample: Sample) => !sample.snippet);
+
+  return { snippets, samples };
 };
 
 const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
@@ -256,6 +269,85 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   );
 };
 
+const lineHeight = 18;
+const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
+  return (
+    <div style={{ paddingTop: 10 }}>
+      <MonacoEditor
+        height={Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}
+        language="yaml"
+        value={yaml}
+        options={{
+          lineHeight,
+          readOnly: true,
+          folding: false,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+        }}
+      />
+    </div>
+  );
+};
+
+const ResourceSidebarSnippet: React.FC<any> = ({ snippet, insertSnippetYaml }) => {
+  const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
+  const toggleYamlPreview = () => setYamlPreviewOpen(!yamlPreviewOpen);
+
+  const { highlightText, title, id, yaml, targetResource, description } = snippet;
+  const reference = referenceFor(targetResource);
+  return (
+    <li className="co-resource-sidebar-item">
+      <h3 className="h4">
+        <span className="text-uppercase">{highlightText}</span> {title}
+      </h3>
+      <p>{description}</p>
+      <Button
+        type="button"
+        variant="link"
+        isInline
+        onClick={() => insertSnippetYaml(id, yaml, reference)}
+      >
+        <PasteIcon className="co-icon-space-r" />
+        Insert Snippet
+      </Button>
+      <Button
+        type="button"
+        className="pull-right"
+        variant="link"
+        isInline
+        onClick={() => toggleYamlPreview()}
+      >
+        {yamlPreviewOpen ? (
+          <>
+            Hide YAML
+            <ChevronDownIcon className="co-icon-space-l" />
+          </>
+        ) : (
+          <>
+            Show YAML
+            <ChevronRightIcon className="co-icon-space-l" />
+          </>
+        )}
+      </Button>
+      {yamlPreviewOpen && <PreviewYAML yaml={yaml} />}
+    </li>
+  );
+};
+
+export const ResourceSidebarSnippets = ({ snippets, insertSnippetYaml }) => {
+  return (
+    <ul className="co-resource-sidebar-list" style={{ listStyle: 'none', paddingLeft: 0 }}>
+      {_.map(snippets, (snippet) => (
+        <ResourceSidebarSnippet
+          key={snippet.id}
+          snippet={snippet}
+          insertSnippetYaml={insertSnippetYaml}
+        />
+      ))}
+    </ul>
+  );
+};
+
 export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
   samples,
   loadSampleYaml,
@@ -282,6 +374,7 @@ type Sample = {
   description: string;
   id: string;
   yaml?: string;
+  snippet?: boolean;
   targetResource: {
     apiVersion: string;
     kind: string;

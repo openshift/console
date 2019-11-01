@@ -24,7 +24,9 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
   ];
   return namespace ? (
     <FireMan
-      canCreate={false}
+      canCreate
+      createButtonText={`Create ${PipelineModel.label}`}
+      createProps={{ to: `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/~new` }}
       filterLabel="by name"
       textFilter="name"
       resources={resources}
