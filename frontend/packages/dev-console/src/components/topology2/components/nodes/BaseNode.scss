@@ -1,15 +1,20 @@
-.odc-base-node {
+.odc2-base-node {
   cursor: pointer;
+
+  .odc2-m-drag-active & {
+    cursor: grab;
+  }
 
   &__bg {
     fill: var(--pf-global--BackgroundColor--light-100);
     &.is-highlight {
       stroke: var(--pf-global--active-color--400);
-      stroke-width: 4;
+      stroke-width: 4px;
     }
   }
 
   &__selection {
+    stroke-width: 2px;
     fill: none;
     stroke: var(--pf-global--active-color--300);
   }
@@ -24,10 +29,10 @@
   }
 }
 
-.odc-m-drag-active {
-  .odc-base-node__contents {
+.odc2-m-drag-active {
+  .odc2-base-node__contents {
     opacity: 0.3;
-    &.is-highlight {
+    &.is-dragging, &.is-hover {
       opacity: 1;
     }
   }

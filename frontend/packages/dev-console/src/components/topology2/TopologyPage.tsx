@@ -1,21 +1,19 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { matchPath, match as RMatch, Link } from 'react-router-dom';
-import { Tooltip } from '@patternfly/react-core';
-import { ListIcon, TopologyIcon } from '@patternfly/react-icons';
+import { match as RMatch } from 'react-router-dom';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
-import { StatusBox, Firehose, HintBlock, AsyncComponent } from '@console/internal/components/utils';
+import { StatusBox, Firehose, HintBlock } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import EmptyState from '../EmptyState';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import NamespacedPage from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
+import { getCheURL } from '../topology/topology-utils';
+import ConnectedTopologyDataController, { RenderProps } from '../topology/TopologyDataController';
 import { ALLOW_SERVICE_BINDING } from '../../const';
-import { getCheURL } from './topology-utils';
-import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 
 interface StateProps {
@@ -27,7 +25,7 @@ interface StateProps {
 
 export interface TopologyPageProps {
   match: RMatch<{
-    name?: string;
+    ns?: string;
   }>;
 }
 
@@ -80,58 +78,26 @@ const TopologyPage: React.FC<Props> = ({
   cheURL,
   serviceBinding,
 }) => {
-  const namespace = match.params.name;
+  const namespace = match.params.ns;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
-  const showListView = !!matchPath(match.path, {
-    path: '*/list',
-    exact: true,
-  });
   return (
     <>
       <Helmet>
         <title>Topology</title>
       </Helmet>
-      <NamespacedPage
-        variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
-        hideApplications={showListView}
-        toolbar={
-          <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
-            <Link
-              className="pf-c-button pf-m-plain"
-              to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                showListView ? '' : '/list'
-              }`}
-            >
-              {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-            </Link>
-          </Tooltip>
-        }
-      >
+      <NamespacedPage>
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
             {() => {
               return namespace ? (
-                showListView ? (
-                  <AsyncComponent
-                    mock={false}
-                    match={match}
-                    title=""
-                    loader={() =>
-                      import(
-                        '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
-                      ).then((m) => m.Overview)
-                    }
-                  />
-                ) : (
-                  <ConnectedTopologyDataController
-                    application={application}
-                    namespace={namespace}
-                    render={renderTopology}
-                    knative={knative}
-                    cheURL={cheURL}
-                    serviceBinding={serviceBinding}
-                  />
-                )
+                <ConnectedTopologyDataController
+                  application={application}
+                  namespace={namespace}
+                  render={renderTopology}
+                  knative={knative}
+                  cheURL={cheURL}
+                  serviceBinding={serviceBinding}
+                />
               ) : (
                 <ProjectListPage title="Topology">
                   Select a project to view the topology

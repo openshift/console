@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createSvgIdUrl, hullPath, Point } from '../../../utils/svg-utils';
+import { createSvgIdUrl, hullPath, PointTuple } from '@console/topology';
 import { DragConnectionProps } from '../topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 
@@ -17,7 +17,7 @@ export function dragConnectorEndPoint(
   dragX: number,
   dragY: number,
   isDragging: boolean,
-): Point {
+): PointTuple {
   const endPointX: number = size / 2 + END_OFFSET_X + (isDragging ? dragX - x : 0);
   const endPointY: number = size / 2 + END_OFFSET_Y + (isDragging ? dragY - y : 0);
   return [endPointX, endPointY];
@@ -32,12 +32,12 @@ export const DraggingCreateConnector: React.FC<DragConnectionProps> = ({
   isDragging,
   onHover,
 }) => {
-  const endPoint: Point = dragConnectorEndPoint(x, y, size, dragX, dragY, isDragging);
+  const endPoint: PointTuple = dragConnectorEndPoint(x, y, size, dragX, dragY, isDragging);
 
   // Get the start point which is on the edge of the node
   const length = Math.sqrt(endPoint[0] ** 2 + endPoint[1] ** 2);
   const ratio = size / 2 / length;
-  const startPoint: Point = [endPoint[0] * ratio, endPoint[1] * ratio];
+  const startPoint: PointTuple = [endPoint[0] * ratio, endPoint[1] * ratio];
 
   return (
     <g transform={`translate(${x}, ${y})`}>

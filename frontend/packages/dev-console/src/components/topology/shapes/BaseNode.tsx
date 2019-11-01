@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { createSvgIdUrl } from '@console/topology';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
-import { createSvgIdUrl } from '../../../utils/svg-utils';
 import SvgBoxedText from '../../svg/SvgBoxedText';
 
 import './BaseNode.scss';

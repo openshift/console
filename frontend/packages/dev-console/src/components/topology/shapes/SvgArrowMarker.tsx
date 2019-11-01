@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SvgDefs from '../../svg/SvgDefs';
+import { SVGDefs } from '@console/topology';
 
 type SvgArrowMarkerProps = {
   id: string;
@@ -9,7 +9,7 @@ type SvgArrowMarkerProps = {
 };
 
 const SvgArrowMarker: React.FC<SvgArrowMarkerProps> = ({ id, nodeSize, markerSize, className }) => (
-  <SvgDefs id={id}>
+  <SVGDefs id={id}>
     <marker
       id={id}
       markerWidth={markerSize}
@@ -21,7 +21,7 @@ const SvgArrowMarker: React.FC<SvgArrowMarkerProps> = ({ id, nodeSize, markerSiz
     >
       <path d={`M0,0 L0,${markerSize} L${markerSize},${markerSize / 2} z`} className={className} />
     </marker>
-  </SvgDefs>
+  </SVGDefs>
 );
 
 export default SvgArrowMarker;

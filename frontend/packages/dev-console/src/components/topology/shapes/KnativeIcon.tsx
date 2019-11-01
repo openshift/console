@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import SvgDefs from '../../svg/SvgDefs';
-import { createSvgIdUrl } from '../../../utils/svg-utils';
+import { createSvgIdUrl, SVGDefs } from '@console/topology';
 
 type KnativeIconProps = {
   x: number;
@@ -14,7 +13,7 @@ const FILTER_ID = 'KnativeIconOutlineFilterId';
 
 const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
   <>
-    <SvgDefs id={FILTER_ID}>
+    <SVGDefs id={FILTER_ID}>
       <filter id={FILTER_ID}>
         <feOffset result="nw" in="SourceAlpha" dx="-0.5" dy="-0.5" />
         <feOffset result="ne" in="SourceAlpha" dx="0.5" dy="-0.5" />
@@ -33,7 +32,7 @@ const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
           <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
-    </SvgDefs>
+    </SVGDefs>
     <image
       x={x}
       y={y}
