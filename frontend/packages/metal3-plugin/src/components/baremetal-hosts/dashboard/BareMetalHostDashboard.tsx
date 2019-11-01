@@ -5,7 +5,7 @@ import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../../../types';
 import { getHostMachine } from '../../../selectors';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
-import HealthCard from './HealthCard';
+import StatusCard from './StatusCard';
 import UtilizationCard from './UtilizationCard';
 import EventsCard from './EventsCard';
 import InventoryCard from './InventoryCard';
@@ -24,7 +24,7 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
     nodes,
   };
 
-  const mainCards = [{ Card: HealthCard }, { Card: UtilizationCard }];
+  const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
   const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
   const rightCards = [{ Card: EventsCard }];
 
