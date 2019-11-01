@@ -1,3 +1,4 @@
+/* eslint-disable no-console, promise/catch-or-return */
 import { ElementFinder, browser, ExpectedConditions as until, by, element, Key } from 'protractor';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
@@ -39,9 +40,9 @@ export const safeSendKeys = async function(
   uiElementName: string,
   newValue: string,
 ) {
-  /* Note on the use of the SenKeys Protractor function: There is a widely reported
+  /* Note on the use of the SendKeys Protractor function: There is a widely reported
      bug in SendKeys where the function randomly drops characters. Most of the
-     workrounds for this bug involve sending individual chacaters one-by-one,
+     workarounds for this bug involve sending individual characters one-by-one,
      separated by calls to browser.sleep() or calls to Browser.executeScript
      to bypass the Protractor API. In our testing, we found neither of these approaches
      to be acceptable as we do not want to introduce sleep statements and calls to
@@ -60,6 +61,7 @@ export const safeSendKeys = async function(
       console.info('sendKeys failed for ', uiElementName, ' - retry', insertedValue, newValue);
       await uiElement.sendKeys('text was', Key.chord(Key.CONTROL, 'a'), newValue);
 
+      // eslint-disable-next-line promise/no-nesting
       uiElement.getAttribute('value').then(async function(insertedValue2) {
         if (insertedValue2 !== newValue) {
           console.info(

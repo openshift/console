@@ -1,11 +1,15 @@
 import { browser } from 'protractor';
-import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
+import {
+  appHost,
+  checkLogs,
+  checkErrors,
+} from '@console/internal-integration-tests/protractor.conf';
 import {
   switchPerspective,
   Perspective,
   pageSidebar,
   sideHeader,
-} from '../../views/devconsole-view/dev-perspective.view';
+} from '../views/dev-perspective.view';
 
 describe('Application Launcher Menu', () => {
   beforeAll(async () => {

@@ -122,11 +122,6 @@ const testSuites = {
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
   login: ['tests/login.scenario.ts'],
-  // TODO(vojtech): move to dev-console package, with suite() mapper applied automatically
-  devconsole: [
-    'tests/devconsole/dev-perspective.scenario.ts',
-    'tests/devconsole/git-import-flow.scenario.ts',
-  ],
 };
 
 export const config: Config = {

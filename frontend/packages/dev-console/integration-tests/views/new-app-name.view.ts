@@ -1,4 +1,4 @@
-import { info } from 'console';
+/* eslint-disable no-console */
 
 export const newApplicationName = function(): string {
   const d = new Date();
@@ -7,8 +7,8 @@ export const newApplicationName = function(): string {
   const hour = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
   const minute = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
   const randomNumber = Math.round(Math.random() * 10000);
-  const appName: string = `testapp-${month}${day}-${hour}${minute}-${randomNumber}`;
-  info('New application name', appName);
+  const appName = `testapp-${month}${day}-${hour}${minute}-${randomNumber}`;
+  console.info('New application name', appName);
   return appName;
 };
 
@@ -19,7 +19,7 @@ export const newAppName = function(): string {
   const hour = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
   const minute = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
   const randomNumber = Math.round(Math.random() * 10000);
-  const nodeName: string = `app-${month}${day}-${hour}${minute}-${randomNumber}`;
-  info('New app name', nodeName);
+  const nodeName = `app-${month}${day}-${hour}${minute}-${randomNumber}`;
+  console.info('New app name', nodeName);
   return nodeName;
 };
