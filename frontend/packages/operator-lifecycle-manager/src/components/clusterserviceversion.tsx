@@ -8,7 +8,15 @@ import { Helmet } from 'react-helmet';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Alert, Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core';
 import * as UIActions from '@console/internal/actions/ui';
-import { SuccessStatus, ErrorStatus, ProgressStatus } from '@console/shared';
+import {
+  ErrorStatus,
+  getName,
+  ProgressStatus,
+  SuccessStatus,
+  WarningStatus,
+  getNamespace,
+  getUID,
+} from '@console/shared';
 import {
   DetailsPage,
   Table,
@@ -49,25 +57,51 @@ import {
   resourcePathFromModel,
   KebabOption,
   resourceObjPath,
+  KebabAction,
 } from '@console/internal/components/utils';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../models';
 import {
+  ClusterServiceVersionModel,
+  SubscriptionModel,
+  PackageManifestModel,
+  CatalogSourceModel,
+  InstallPlanModel,
+} from '../models';
+import {
+  APIServiceDefinition,
+  CatalogSourceKind,
   ClusterServiceVersionKind,
   ClusterServiceVersionPhase,
   CRDDescription,
-  APIServiceDefinition,
   CSVConditionReason,
-  SubscriptionKind,
+  InstallPlanKind,
   PackageManifestKind,
+  SubscriptionKind,
   SubscriptionState,
 } from '../types';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
-import { SubscriptionDetails } from './subscription';
+import { SubscriptionDetails, catalogSourceForSubscription } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
 
+const FAILED_SUBSCRIPTION_STATES = ['Unknown', SubscriptionState.SubscriptionStateFailed];
+
+const subscriptionForCSV = (
+  subscriptions: SubscriptionKind[],
+  csv: ClusterServiceVersionKind,
+): SubscriptionKind =>
+  _.find(subscriptions, {
+    metadata: {
+      namespace: _.get(csv, ['metadata', 'annotations', 'olm.operatorNamespace']),
+    },
+    status: {
+      installedCSV: getName(csv),
+    },
+  } as any); // 'as any' to supress typescript error caused by lodash
+
+const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
+const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
@@ -119,6 +153,7 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
         )}/yaml`,
       }
     : null;
+
 const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
   !_.isNil(sub)
     ? {
@@ -141,27 +176,56 @@ const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
       }
     : null;
 
-export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  (props) => {
-    const { obj, index, key, style, subscription } = props;
+const menuActionsForCSV = (
+  csv: ClusterServiceVersionKind,
+  subscription: SubscriptionKind,
+): KebabAction[] => {
+  return _.isEmpty(subscription)
+    ? [Kebab.factory.Edit, Kebab.factory.Delete]
+    : [
+        Kebab.factory.Edit,
+        () => editSubscription(subscription),
+        () => uninstall(subscription, _.get(csv, 'spec.displayName')),
+      ];
+};
 
-    const route = resourceObjPath(obj, referenceForModel(ClusterServiceVersionModel));
-    const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
-    const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
-    const subscriptionState = (state: SubscriptionState) => {
-      switch (state) {
-        case SubscriptionState.SubscriptionStateUpgradeAvailable:
-          return 'Upgrade available';
-        case SubscriptionState.SubscriptionStateUpgradePending:
-          return 'Upgrading';
-        case SubscriptionState.SubscriptionStateAtLatest:
-          return 'Up to date';
-        default:
-          return '';
-      }
-    };
-    const installStatus =
-      obj.status && obj.status.phase !== ClusterServiceVersionPhase.CSVPhaseFailed ? (
+const getSubscriptionState = (subscription: SubscriptionKind): string => {
+  const state: SubscriptionState = _.get(subscription, 'status.state');
+  switch (state) {
+    case SubscriptionState.SubscriptionStateUpgradeAvailable:
+      return 'Upgrade available';
+    case SubscriptionState.SubscriptionStateUpgradePending:
+      return 'Upgrading';
+    case SubscriptionState.SubscriptionStateAtLatest:
+      return 'Up to date';
+    default:
+      return '';
+  }
+};
+
+const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = ({
+  catalogSource,
+  obj,
+  subscription,
+}) => {
+  const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
+  const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
+  if (obj.metadata.deletionTimestamp) {
+    return <>Disabling</>;
+  }
+
+  if (_.isEmpty(catalogSource)) {
+    return (
+      <>
+        <WarningStatus title="Cannot update" />
+        <span className="text-muted">Catalog source was removed</span>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {_.get(obj, 'status.phase') !== ClusterServiceVersionPhase.CSVPhaseFailed ? (
         <span className={classNames({ 'co-icon-and-text': showSuccessIcon })}>
           {showSuccessIcon && <SuccessStatus title={statusString} />}
         </span>
@@ -169,53 +233,61 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
         <span className="co-error co-icon-and-text">
           <ErrorStatus title="Failed" />
         </span>
-      );
-    const menuActions = [Kebab.factory.Edit].concat(
-      !_.isNil(subscription)
-        ? [
-            () => editSubscription(subscription),
-            () => uninstall(subscription, obj.spec.displayName),
-          ]
-        : [Kebab.factory.Delete],
-    );
+      )}
+      {subscription && <span className="text-muted">{getSubscriptionState(subscription)}</span>}
+    </>
+  );
+};
 
+export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
+  ({ obj, key, subscription, catalogSource, ...rest }) => {
+    const { displayName, provider, version } = _.get(obj, 'spec');
+    const [icon] = _.get(obj, 'spec.icon', []);
+    const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
+    const namespace = getNamespace(obj);
+    const route = resourceObjPath(obj, referenceFor(obj));
+    const uid = getUID(obj);
     return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableRow id={uid} trKey={key} {...rest}>
+        {/* Name */}
         <TableData className={tableColumnClasses[0]}>
           <Link to={route} className="co-clusterserviceversion-link">
             <ClusterServiceVersionLogo
-              icon={_.get(obj, 'spec.icon', [])[0]}
-              displayName={obj.spec.displayName}
-              version={obj.spec.version}
-              provider={obj.spec.provider}
+              icon={icon}
+              displayName={displayName}
+              version={version}
+              provider={provider}
             />
           </Link>
         </TableData>
+
+        {/* Namespace */}
         <TableData className={tableColumnClasses[1]}>
-          <ResourceLink
-            kind="Namespace"
-            title={obj.metadata.namespace}
-            name={obj.metadata.namespace}
-          />
+          <ResourceLink kind="Namespace" title={namespace} name={namespace} />
         </TableData>
+
+        {/* Deployment */}
         <TableData className={tableColumnClasses[2]}>
           <ResourceLink
             kind="Deployment"
-            name={obj.spec.install.spec.deployments[0].name}
+            name={deploymentName}
             namespace={operatorNamespaceFor(obj)}
-            title={obj.spec.install.spec.deployments[0].name}
+            title={deploymentName}
           />
         </TableData>
+
+        {/* Status */}
         <TableData className={tableColumnClasses[3]}>
           <div className="co-clusterserviceversion-row__status">
-            {obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}
-            {subscription && (
-              <span className="text-muted">
-                {subscriptionState(_.get(subscription.status, 'state'))}
-              </span>
-            )}
+            <ClusterServiceVersionStatus
+              catalogSource={catalogSource}
+              obj={obj}
+              subscription={subscription}
+            />
           </div>
         </TableData>
+
+        {/* Provided APIs */}
         <TableData className={tableColumnClasses[4]}>
           {_.take(providedAPIsFor(obj), 4).map((desc) => (
             <div key={referenceForProvidedAPI(desc)}>
@@ -228,61 +300,97 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
             <Link
               to={`${route}/instances`}
               title={`View ${providedAPIsFor(obj).length - 4} more...`}
-            >{`View ${providedAPIsFor(obj).length - 4} more...`}</Link>
+            >
+              {`View ${providedAPIsFor(obj).length - 4} more...`}
+            </Link>
           )}
         </TableData>
+
+        {/* Kabob */}
         <TableData className={tableColumnClasses[5]}>
-          <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
+          <ResourceKebab
+            resource={obj}
+            kind={referenceFor(obj)}
+            actions={menuActionsForCSV(obj, subscription)}
+          />
         </TableData>
       </TableRow>
     );
   },
 );
 
-export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProps> = (props) => {
-  const { obj, index, key, style } = props;
-
-  const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
+export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProps> = ({
+  catalogSource,
+  key,
+  obj,
+  ...rest
+}) => {
+  const csvName = _.get(obj, 'spec.name');
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj, obj.spec.displayName)];
-  const subscriptionState = _.get(obj.status, 'state', 'Unknown');
+  const namespace = getNamespace(obj);
+  const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
+  const subscriptionState = _.get(obj, 'status.state', 'Unknown');
+  const uid = getUID(obj);
+  const getStatus = () => {
+    if (_.isEmpty(catalogSource)) {
+      return (
+        <>
+          <WarningStatus title="Cannot update" />
+          <span className="text-muted">Catalog source was removed.</span>
+        </>
+      );
+    }
+    if (FAILED_SUBSCRIPTION_STATES.includes(subscriptionState)) {
+      return (
+        <span className="co-icon-and-text co-error">
+          <ErrorStatus title={subscriptionState} />
+        </span>
+      );
+    }
+
+    if (subscriptionState === SubscriptionState.SubscriptionStateUpgradePending) {
+      return (
+        <span className="co-icon-and-text">
+          <ProgressStatus title={subscriptionState} />
+        </span>
+      );
+    }
+    return 'Unknown';
+  };
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={uid} trKey={key} {...rest}>
+      {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <Link to={route}>
           <ClusterServiceVersionLogo
             icon={null}
-            displayName={obj.spec.name}
+            displayName={csvName}
             version={null}
             provider={null}
           />
         </Link>
       </TableData>
+
+      {/* Namespace */}
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          title={obj.metadata.namespace}
-          name={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" title={namespace} name={namespace} />
       </TableData>
+
+      {/* Deployment */}
       <TableData className={tableColumnClasses[2]}>
         <span className="text-muted">None</span>
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {['Unknown', SubscriptionState.SubscriptionStateFailed].includes(subscriptionState) && (
-          <span className="co-icon-and-text co-error">
-            <ErrorStatus title={subscriptionState} />
-          </span>
-        )}
-        {subscriptionState === SubscriptionState.SubscriptionStateUpgradePending && (
-          <span className="co-icon-and-text">
-            <ProgressStatus title={subscriptionState} />
-          </span>
-        )}
-      </TableData>
+
+      {/* Status */}
+      <TableData className={tableColumnClasses[3]}>{getStatus()}</TableData>
+
+      {/* Provided APIs */}
       <TableData className={tableColumnClasses[4]}>
         <span className="text-muted">None</span>
       </TableData>
+
+      {/* Kabob */}
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
       </TableData>
@@ -290,13 +398,32 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
   );
 };
 
-const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionKind[]) =>
-  subs.find((sub) => {
-    return (
-      sub.metadata.namespace === (csv.metadata.annotations || {})['olm.operatorNamespace'] &&
-      _.get(sub.status, 'installedCSV') === csv.metadata.name
-    );
-  });
+const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
+  catalogSources = [],
+  obj,
+  subscriptions = [],
+  ...rest
+}) => {
+  const subscription = isCSV(obj)
+    ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
+    : (obj as SubscriptionKind);
+  const catalogSource = catalogSourceForSubscription(catalogSources, subscription);
+
+  return isCSV(obj) ? (
+    <ClusterServiceVersionTableRow
+      {...rest}
+      catalogSource={catalogSource}
+      obj={obj as ClusterServiceVersionKind}
+      subscription={subscription}
+    />
+  ) : (
+    <FailedSubscriptionTableRow
+      {...rest}
+      catalogSource={catalogSource}
+      obj={subscription as SubscriptionKind}
+    />
+  );
+};
 
 const NoOperatorsMatchFilterMsg = () => <MsgBox title="No Operators Found" />;
 
@@ -315,22 +442,23 @@ const noDataDetail = (
 );
 const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
 
-export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
+export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = ({
+  subscriptions,
+  catalogSources,
+  ...rest
+}) => {
   return (
     <Table
-      {...props}
+      {...rest}
       aria-label="Installed Operators"
       Header={ClusterServiceVersionTableHeader}
-      Row={(rowProps) =>
-        referenceFor(rowProps.obj) === referenceForModel(ClusterServiceVersionModel) ? (
-          <ClusterServiceVersionTableRow
-            {...rowProps}
-            subscription={subscriptionFor(rowProps.obj)(_.get(props.subscription, 'data', []))}
-          />
-        ) : (
-          <FailedSubscriptionTableRow {...rowProps} />
-        )
-      }
+      Row={(rowProps) => (
+        <InstalledOperatorTableRow
+          {...rowProps}
+          catalogSources={catalogSources.data}
+          subscriptions={subscriptions.data}
+        />
+      )}
       EmptyMsg={NoOperatorsMatchFilterMsg}
       NoDataEmptyMsg={NoDataEmptyMsg}
       virtualize
@@ -354,6 +482,26 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
     </p>
   );
 
+  const flatten = ({ clusterServiceVersions, subscriptions }) =>
+    [
+      ..._.get(clusterServiceVersions, 'data', []),
+      ..._.get(subscriptions, 'data', []).filter(
+        (sub) =>
+          ['', sub.metadata.namespace].includes(props.namespace) &&
+          _.isNil(_.get(sub, 'status.installedCSV')),
+      ),
+    ].filter(
+      (obj, i, all) =>
+        isSubscription(obj) ||
+        _.isUndefined(
+          all.find(({ metadata }) =>
+            [_.get(obj, 'status.currentCSV'), _.get(obj, 'spec.startingCSV')].includes(
+              metadata.name,
+            ),
+          ),
+        ),
+    );
+
   return (
     <>
       <Helmet>
@@ -366,31 +514,18 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
           {
             kind: referenceForModel(ClusterServiceVersionModel),
             namespace: props.namespace,
-            prop: 'clusterServiceVersion',
+            prop: 'clusterServiceVersions',
           },
-          { kind: referenceForModel(SubscriptionModel), prop: 'subscription', optional: true },
+          {
+            kind: referenceForModel(SubscriptionModel),
+            prop: 'subscriptions',
+          },
+          {
+            kind: referenceForModel(CatalogSourceModel),
+            prop: 'catalogSources',
+          },
         ]}
-        flatten={({ clusterServiceVersion, subscription }) =>
-          _.get(clusterServiceVersion, 'data', [] as ClusterServiceVersionKind[])
-            .concat(
-              _.get(subscription, 'data', [] as SubscriptionKind[]).filter(
-                (sub) =>
-                  ['', sub.metadata.namespace].includes(props.namespace) &&
-                  _.isNil(_.get((sub as SubscriptionKind).status, 'installedCSV')),
-              ),
-            )
-            .filter(
-              (obj, i, all) =>
-                referenceFor(obj) !== referenceForModel(SubscriptionModel) ||
-                _.isUndefined(
-                  all.find(({ metadata }) =>
-                    [_.get(obj.status, 'currentCSV'), _.get(obj.spec, 'startingCSV')].includes(
-                      metadata.name,
-                    ),
-                  ),
-                ),
-            )
-        }
+        flatten={flatten}
         namespace={props.namespace}
         ListComponent={ClusterServiceVersionList}
         helpText={helpText}
@@ -620,33 +755,24 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   );
 };
 
-export const CSVSubscription: React.FC<CSVSubscriptionProps> = (props) => {
+export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
+  obj,
+  subscriptions = [],
+  ...rest
+}) => {
   const EmptyMsg = () => (
     <MsgBox title="No Operator Subscription" detail="This Operator will not receive updates." />
   );
-  const subscription = props.subscription
-    .filter(
-      (sub) =>
-        sub.metadata.namespace === (props.obj.metadata.annotations || {})['olm.operatorNamespace'],
-    )
-    .find((sub) => _.get(sub.status, 'installedCSV') === props.obj.metadata.name);
+
+  const [subscription, setSubscription] = React.useState();
+
+  React.useEffect(() => {
+    setSubscription(subscriptionForCSV(subscriptions, obj));
+  }, [obj, subscriptions]);
 
   return (
     <StatusBox EmptyMsg={EmptyMsg} loaded data={subscription}>
-      <SubscriptionDetails
-        obj={subscription}
-        installedCSV={props.obj}
-        pkg={
-          !_.isNil(subscription)
-            ? props.packageManifest.find(
-                ({ status }) =>
-                  status.packageName === subscription.spec.name &&
-                  status.catalogSource === subscription.spec.source &&
-                  status.catalogSourceNamespace === subscription.spec.sourceNamespace,
-              )
-            : null
-        }
-      />
+      <SubscriptionDetails {...rest} obj={subscription} clusterServiceVersions={[obj]} />
     </StatusBox>
   );
 };
@@ -675,16 +801,20 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       })),
     );
   };
-  type ExtraResources = { subscription: SubscriptionKind[] };
-  const menuActions = (model, obj: ClusterServiceVersionKind, { subscription }: ExtraResources) =>
-    [Kebab.factory.Edit(model, obj)].concat(
-      !_.isNil(subscriptionFor(obj)(subscription))
-        ? [
-            editSubscription(subscriptionFor(obj)(subscription)),
-            uninstall(subscriptionFor(obj)(subscription)),
-          ]
-        : [Kebab.factory.Delete(model, obj)],
-    );
+  type ExtraResources = { subscriptions: SubscriptionKind[] };
+  const menuActions = (
+    model,
+    obj: ClusterServiceVersionKind,
+    { subscriptions }: ExtraResources,
+  ) => {
+    const subscription = subscriptionForCSV(subscriptions, obj);
+    return [
+      Kebab.factory.Edit(model, obj),
+      ...(_.isEmpty(subscription)
+        ? [Kebab.factory.Delete(model, obj)]
+        : [editSubscription(subscription), uninstall(subscription)]),
+    ];
+  };
 
   const canListSubscriptions = useAccessReview({
     group: SubscriptionModel.apiGroup,
@@ -717,8 +847,10 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
         { name: 'Operator Details', path: props.match.url },
       ]}
       resources={[
-        { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription' },
-        { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifest' },
+        { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
+        { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
+        { kind: referenceForModel(CatalogSourceModel), isList: true, prop: 'catalogSources' },
+        { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
       ]}
       icon={({ obj }) => (
         <ClusterServiceVersionLogo
@@ -737,6 +869,12 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   );
 };
 
+type ClusterServiceVersionStatusProps = {
+  catalogSource: CatalogSourceKind;
+  obj: ClusterServiceVersionKind;
+  subscription: SubscriptionKind;
+};
+
 export type ClusterServiceVersionsPageProps = {
   kind: string;
   namespace: string;
@@ -747,7 +885,8 @@ export type ClusterServiceVersionListProps = {
   loaded: boolean;
   loadError?: string;
   data: ClusterServiceVersionKind[];
-  subscription: FirehoseResult<SubscriptionKind[]>;
+  subscriptions: FirehoseResult<SubscriptionKind[]>;
+  catalogSources: FirehoseResult<CatalogSourceKind[]>;
 };
 
 export type CRDCardProps = {
@@ -774,25 +913,38 @@ export type ClusterServiceVersionDetailsProps = {
   obj: ClusterServiceVersionKind;
 };
 
-export type ClusterServiceVersionTableRowProps = {
-  obj: ClusterServiceVersionKind;
-  subscription: SubscriptionKind;
+type InstalledOperatorTableRowProps = {
+  catalogSources: CatalogSourceKind[];
   index: number;
   key?: string;
+  obj: ClusterServiceVersionKind | SubscriptionKind;
   style: object;
+  subscriptions: SubscriptionKind[];
+};
+
+export type ClusterServiceVersionTableRowProps = {
+  catalogSource: CatalogSourceKind;
+  index: number;
+  key?: string;
+  obj: ClusterServiceVersionKind;
+  style: object;
+  subscription: SubscriptionKind;
 };
 
 export type FailedSubscriptionTableRowProps = {
-  obj: SubscriptionKind;
+  catalogSource: CatalogSourceKind;
   index: number;
   key?: string;
+  obj: SubscriptionKind;
   style: object;
 };
 
 export type CSVSubscriptionProps = {
+  catalogSources: CatalogSourceKind[];
+  installPlans: InstallPlanKind[];
   obj: ClusterServiceVersionKind;
-  subscription: SubscriptionKind[];
-  packageManifest: PackageManifestKind[];
+  packageManifests: PackageManifestKind[];
+  subscriptions: SubscriptionKind[];
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
