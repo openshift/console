@@ -23,6 +23,8 @@ import {
   FLAG_EVENT_SOURCE_CRONJOB,
   FLAG_EVENT_SOURCE_CONTAINER,
   FLAG_EVENT_SOURCE_APISERVER,
+  FLAG_EVENT_SOURCE_CAMEL,
+  FLAG_EVENT_SOURCE_KAFKA,
 } from './const';
 import {
   knativeServingResourcesRevision,
@@ -32,6 +34,8 @@ import {
   eventSourceResourcesCronJob,
   eventSourceResourcesContainer,
   eventSourceResourcesApiServer,
+  eventSourceResourcesCamel,
+  eventSourceResourcesKafka,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
@@ -41,6 +45,8 @@ import {
   getEventSourceCronjob,
   getEventSourceContainer,
   getEventSourceApiserver,
+  getEventSourceCamel,
+  getEventSourceKafka,
 } from './utils/get-knative-resources';
 
 type ConsumedExtensions =
@@ -115,6 +121,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventSourceApiServerModel,
       flag: FLAG_EVENT_SOURCE_APISERVER,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceCamelModel,
+      flag: FLAG_EVENT_SOURCE_CAMEL,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceKafkaModel,
+      flag: FLAG_EVENT_SOURCE_KAFKA,
     },
   },
   {
@@ -226,6 +246,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: eventSourceResourcesApiServer,
       required: FLAG_EVENT_SOURCE_APISERVER,
       utils: getEventSourceApiserver,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesCamel,
+      required: FLAG_EVENT_SOURCE_CAMEL,
+      utils: getEventSourceCamel,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesKafka,
+      required: FLAG_EVENT_SOURCE_KAFKA,
+      utils: getEventSourceKafka,
     },
   },
   {
