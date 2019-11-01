@@ -8,6 +8,8 @@ import {
   EventSourceCronJobModel,
   EventSourceContainerModel,
   EventSourceApiServerModel,
+  EventSourceCamelModel,
+  EventSourceKafkaModel,
 } from '@console/knative-plugin';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import {
@@ -193,6 +195,32 @@ export const eventSourceResourcesApiServer = (namespace: string): FirehoseResour
       kind: referenceForModel(EventSourceApiServerModel),
       namespace,
       prop: 'eventSourceApiserver',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesCamel = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceCamelModel),
+      namespace,
+      prop: 'eventSourceCamel',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesKafka = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceKafkaModel),
+      namespace,
+      prop: 'eventSourceKafka',
       optional: true,
     },
   ];

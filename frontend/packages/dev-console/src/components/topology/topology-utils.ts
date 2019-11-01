@@ -322,6 +322,8 @@ export const transformTopologyData = (
       _.get(resources, 'eventSourceCronjob.data', []),
       _.get(resources, 'eventSourceContainers.data', []),
       _.get(resources, 'eventSourceApiserver.data', []),
+      _.get(resources, 'eventSourceCamel.data', []),
+      _.get(resources, 'eventSourcekafka.data', []),
     );
     return allEventSourcesResources;
   };
