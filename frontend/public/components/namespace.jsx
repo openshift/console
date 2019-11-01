@@ -456,7 +456,7 @@ const Details = ({ obj: ns }) => {
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
-    createPath={`/k8s/cluster/rolebindings/~new?namespace=${metadata.name}&&rolekind=Role`}
+    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new?rolekind=Role`}
     namespace={metadata.name}
     showTitle={false}
   />

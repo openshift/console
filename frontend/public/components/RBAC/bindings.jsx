@@ -298,7 +298,7 @@ export const RoleBindingsPage = ({
     canCreate={true}
     createButtonText="Create Binding"
     createProps={{
-      to: `${createPath}`,
+      to: createPath,
     }}
     mock={mock}
     filterLabel="by role or subject"
@@ -634,7 +634,6 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
-  const namespace = searchParams.get('namespace');
   const metadata = { namespace: UIActions.getActiveNamespace() };
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
@@ -643,7 +642,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   });
   const fixed = {
     kind: params.ns || roleKind === 'Role' || !clusterAllowed ? 'RoleBinding' : undefined,
-    metadata: { namespace },
+    metadata: { namespace: params.ns },
     roleRef: { kind: roleKind, name: roleName },
   };
   return (
