@@ -6,12 +6,7 @@ import {
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
 import { getDetailActionDropdownOptions } from '../views/vm.actions.view';
-import {
-  statusIcon,
-  statusIcons,
-  vmDetailNode,
-  waitForStatusIcon,
-} from '../views/virtualMachine.view';
+import { vmDetailNode } from '../views/virtualMachine.view';
 import { getRandStr } from './utils/utils';
 import { getVMManifest } from './utils/mocks';
 import {
@@ -20,8 +15,8 @@ import {
   VM_MIGRATION_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
-  VM_ACTIONS,
-  TABS,
+  VM_ACTION,
+  VM_STATUS,
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 
@@ -37,8 +32,7 @@ describe('Test VM Migration', () => {
     testVm = getVMManifest('URL', testName, `migrationvm-${getRandStr(4)}`);
     vm = new VirtualMachine(testVm.metadata);
     createResource(testVm);
-    await vm.navigateToTab(TABS.OVERVIEW);
-    await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
   }, VM_IMPORT_TIMEOUT_SECS);
 
   afterEach(() => {
@@ -51,12 +45,12 @@ describe('Test VM Migration', () => {
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
-      await vm.action(VM_ACTIONS.START);
+      await vm.action(VM_ACTION.Start);
       expect(await getDetailActionDropdownOptions()).toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
-      await vm.action(VM_ACTIONS.MIGRATE, false);
-      await waitForStatusIcon(statusIcons.migrating, PAGE_LOAD_TIMEOUT_SECS);
+      await vm.action(VM_ACTION.Migrate, false);
+      await vm.waitForStatus(VM_STATUS.Migrating, PAGE_LOAD_TIMEOUT_SECS);
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
     },
@@ -66,16 +60,16 @@ describe('Test VM Migration', () => {
   it(
     'Migrate already migrated VM',
     async () => {
-      await vm.action(VM_ACTIONS.START);
-      let sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
+      await vm.action(VM_ACTION.Start);
+      let sourceNode = await vm.getNode();
 
-      await vm.action(VM_ACTIONS.MIGRATE);
+      await vm.action(VM_ACTION.Migrate);
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
-      sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
+      sourceNode = await vm.getNode();
 
-      await vm.action(VM_ACTIONS.MIGRATE);
+      await vm.action(VM_ACTION.Migrate);
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
-      expect(statusIcon(statusIcons.running).isPresent()).toBeTruthy();
+      expect(vm.getStatus()).toEqual(VM_STATUS.Running);
     },
     VM_BOOT_AND_MIGRATE_TIMEOUT * 2,
   );
@@ -83,16 +77,16 @@ describe('Test VM Migration', () => {
   it(
     'Cancel ongoing VM migration',
     async () => {
-      await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
-      await vm.action(VM_ACTIONS.START);
-      const sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
+      await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+      await vm.action(VM_ACTION.Start);
+      const sourceNode = await vm.getNode();
 
       // Start migration without waiting for it to finish
-      await vm.action(VM_ACTIONS.MIGRATE, false);
-      await waitForStatusIcon(statusIcons.migrating, VM_MIGRATION_TIMEOUT_SECS);
+      await vm.action(VM_ACTION.Migrate, false);
+      await vm.waitForStatus(VM_STATUS.Migrating, VM_MIGRATION_TIMEOUT_SECS);
 
-      await vm.action(VM_ACTIONS.CANCEL, false);
-      await waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
+      await vm.action(VM_ACTION.Cancel, false);
+      await vm.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
       await browser.wait(
         waitForStringInElement(vmDetailNode(vm.namespace, vm.name), sourceNode),
         VM_MIGRATION_TIMEOUT_SECS,

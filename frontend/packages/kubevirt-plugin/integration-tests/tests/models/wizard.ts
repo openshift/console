@@ -1,24 +1,23 @@
-import { $, browser, ExpectedConditions as until } from 'protractor';
-import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { selectDropdownOption, click } from '@console/shared/src/test-utils/utils';
-import { fillInput } from '../utils/utils';
+import { browser, ExpectedConditions as until } from 'protractor';
+import { createItemButton } from '@console/internal-integration-tests/views/crud.view';
+import { click } from '@console/shared/src/test-utils/utils';
+import { fillInput, selectOptionByText } from '../utils/utils';
 import { CloudInitConfig, StorageResource, NetworkResource } from '../utils/types';
-import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
+import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
+import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
+import { DiskDialog } from '../dialogs/diskDialog';
 
 export class Wizard {
   async openWizard() {
     await click(createItemButton);
     await click(wizardView.createWithWizardLink);
-    await browser.sleep(500); // wait until the fade in effect is finished
-    await browser.wait(until.presenceOf(wizardView.nameInput), PAGE_LOAD_TIMEOUT_SECS);
+    await wizardView.waitForNoLoaders();
   }
 
-  async close() {
-    await click(wizardView.closeWizard, PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.invisibilityOf(wizardView.wizardHeader), PAGE_LOAD_TIMEOUT_SECS);
-    // Clone VM dialog uses fade in/fade out effect, wait until it disappears
-    await browser.wait(until.invisibilityOf($('div.fade')));
+  async next() {
+    await click(wizardView.nextButton);
+    await wizardView.waitForNoLoaders();
   }
 
   async fillName(name: string) {
@@ -29,28 +28,24 @@ export class Wizard {
     await fillInput(wizardView.descriptionInput, description);
   }
 
-  async selectNamespace(namespace: string) {
-    await selectDropdownOption(wizardView.namespaceDropdownId, namespace);
-  }
-
   async selectTemplate(template: string) {
-    await selectDropdownOption(wizardView.templateDropdownId, template);
+    await selectOptionByText(wizardView.templateSelect, template);
   }
 
   async selectOperatingSystem(operatingSystem: string) {
-    await selectDropdownOption(wizardView.operatingSystemDropdownId, operatingSystem);
+    await selectOptionByText(wizardView.operatingSystemSelect, operatingSystem);
   }
 
   async selectFlavor(flavor: string) {
-    await selectDropdownOption(wizardView.flavorDropdownId, flavor);
+    await selectOptionByText(wizardView.flavorSelect, flavor);
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectDropdownOption(wizardView.workloadProfileDropdownId, workloadProfile);
+    await selectOptionByText(wizardView.workloadProfileSelect, workloadProfile);
   }
 
   async selectProvisionSource(provisionOptions) {
-    await selectDropdownOption(wizardView.provisionSourceDropdownId, provisionOptions.method);
+    await selectOptionByText(wizardView.provisionSourceSelect, provisionOptions.method);
     if (Object.prototype.hasOwnProperty.call(provisionOptions, 'source')) {
       await fillInput(
         wizardView.provisionSources[provisionOptions.method],
@@ -63,72 +58,55 @@ export class Wizard {
     await click(wizardView.startVMOnCreation);
   }
 
-  async useCloudInit(cloudInitOptions: CloudInitConfig) {
-    await click(wizardView.useCloudInit);
+  async configureCloudInit(cloudInitOptions: CloudInitConfig) {
     if (cloudInitOptions.useCustomScript) {
-      await click(wizardView.useCustomScript);
-      await fillInput(wizardView.customCloudInitScript, cloudInitOptions.customScript);
+      await click(wizardView.cloudInitCustomScriptCheckbox);
+      await fillInput(wizardView.customCloudInitScriptTextArea, cloudInitOptions.customScript);
     } else {
       await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname);
-      await fillInput(wizardView.cloudInitSSH, cloudInitOptions.sshKey);
+      await fillInput(wizardView.cloudInitSSHKey, cloudInitOptions.sshKey);
     }
   }
 
-  async next() {
-    await isLoaded();
-    await click(wizardView.nextButton);
-    await isLoaded();
+  async addNIC(nic: NetworkResource) {
+    await click(wizardView.addNICButton);
+    const addNICDialog = new NetworkInterfaceDialog();
+    await addNICDialog.create(nic);
   }
 
-  async addNIC(NICConfig: NetworkResource) {
-    await click(wizardView.createNIC);
-    const { name, mac, networkDefinition, binding } = NICConfig;
-    const rowsCount = await this.getTableRowsCount();
-    // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
-    await wizardView.selectTableDropdownAttribute(rowsCount, 'network', networkDefinition);
-    await wizardView.selectTableDropdownAttribute(rowsCount, 'binding', binding);
-    await wizardView.setTableInputAttribute(rowsCount, 'name', name);
-    await wizardView.setTableInputAttribute(rowsCount, 'mac', mac);
-    await click(wizardView.apply);
+  async selectBootableNIC(networkDefinition: string) {
+    await selectOptionByText(wizardView.pxeBootSourceSelect, networkDefinition);
   }
 
-  async selectPxeNIC(networkDefinition: string) {
-    await selectDropdownOption(wizardView.pxeNICDropdownId, networkDefinition);
-  }
-
-  async getTableRowsCount() {
-    return wizardView.tableRowsCount();
+  async selectBootableDisk(diskName: string) {
+    await selectOptionByText(wizardView.storageBootSourceSelect, diskName);
   }
 
   async addDisk(disk: StorageResource) {
-    await click(wizardView.createDisk);
-    const rowsCount = await this.getTableRowsCount();
-    // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
-    await wizardView.selectTableDropdownAttribute(rowsCount, 'storage', disk.storageClass);
-    await wizardView.setTableInputAttribute(rowsCount, 'name', disk.name);
-    await wizardView.setTableInputAttribute(rowsCount, 'size', disk.size);
-    await click(wizardView.apply);
+    await click(wizardView.addDiskButton);
+    const addDiskDialog = new DiskDialog();
+    await addDiskDialog.create(disk);
   }
 
-  async attachDisk(disk: StorageResource) {
-    await click(wizardView.attachDisk);
-    const rowsCount = await this.getTableRowsCount();
-    await wizardView.selectTableDropdownAttribute(rowsCount, 'name-attach', disk.name);
-    await click(wizardView.apply);
+  /**
+   * Edits attributes of a disk. Returns new StorageResource with updated attributes.
+   * @param   {string}              name     Name of a disk to edit.
+   * @param   {StorageResource}     disk     Disk with the requested attributes.
+   */
+  async editDisk(name: string, disk: StorageResource) {
+    await wizardView.clickKebabAction(name, 'Edit');
+    const addDiskDialog = new DiskDialog();
+    await addDiskDialog.edit(disk);
   }
 
-  async editDiskAttribute(rowNumber: number, attribute: string, value: string) {
-    await wizardView.activateTableRow(rowNumber - 1);
-    if (attribute === 'storage') {
-      await wizardView.selectTableDropdownAttribute(rowNumber, attribute, value);
-    } else {
-      await wizardView.setTableInputAttribute(rowNumber, attribute, value);
-    }
-    await click(wizardView.apply);
+  async confirmAndCreate() {
+    await click(wizardView.createVirtualMachineButton);
   }
 
   async waitForCreation() {
-    await browser.wait(until.presenceOf(wizardView.provisionResultIcon));
-    await browser.wait(until.elementToBeClickable(wizardView.nextButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(
+      until.textToBePresentInElement(wizardView.creationStatus, WIZARD_CREATE_VM_SUCCESS),
+      PAGE_LOAD_TIMEOUT_SECS,
+    );
   }
 }

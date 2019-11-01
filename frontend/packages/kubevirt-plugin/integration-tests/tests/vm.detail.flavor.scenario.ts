@@ -6,9 +6,9 @@ import {
   click,
 } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, CONFIG_NAME_CONTAINER } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
-import { vmConfig, getProvisionConfigs, CONFIG_NAME_CONTAINER } from './vm.wizard.configs';
+import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import * as editFlavorView from './models/editFlavorView';
 import { fillInput } from './utils/utils';
 

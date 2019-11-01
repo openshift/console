@@ -6,15 +6,16 @@ import {
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
-import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
-  TABS,
-  VM_ACTIONS,
+  VM_ACTION,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
+  VM_STATUS,
+  CONFIG_NAME_DISK,
+  CONFIG_NAME_URL,
 } from './utils/consts';
 import { multusNAD } from './utils/mocks';
 import {
@@ -22,8 +23,6 @@ import {
   getProvisionConfigs,
   getTestDataVolume,
   kubevirtStorage,
-  CONFIG_NAME_CLONED_DISK,
-  CONFIG_NAME_URL,
 } from './vm.wizard.configs';
 
 describe('Kubevirt create VM using wizard', () => {
@@ -45,7 +44,7 @@ describe('Kubevirt create VM using wizard', () => {
 
   provisionConfigs.forEach((provisionConfig, configName) => {
     const specTimeout =
-      configName === CONFIG_NAME_CLONED_DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
+      configName === CONFIG_NAME_DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
       `Create VM using ${configName}.`,
       async () => {
@@ -85,7 +84,7 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
-      const clonedDiskProvisionConfig = provisionConfigs.get(CONFIG_NAME_CLONED_DISK);
+      const clonedDiskProvisionConfig = provisionConfigs.get(CONFIG_NAME_DISK);
       const vm1Config = vmConfig('vm1', clonedDiskProvisionConfig, testName);
       const vm2Config = vmConfig('vm2', clonedDiskProvisionConfig, testName);
       vm1Config.startOnCreation = false;
@@ -96,15 +95,14 @@ describe('Kubevirt create VM using wizard', () => {
       await withResource(leakedResources, vm1.asResource(), async () => {
         await vm1.create(vm1Config);
         // Don't wait for the first VM to be running
-        await vm1.action(VM_ACTIONS.START, false);
+        await vm1.action(VM_ACTION.Start, false);
         await withResource(leakedResources, vm2.asResource(), async () => {
           await vm2.create(vm2Config);
-          await vm1.navigateToTab(TABS.OVERVIEW);
-          await waitForStatusIcon(statusIcons.running, CLONED_VM_BOOTUP_TIMEOUT_SECS);
-
+          // Come back to the first VM and verify it is Running as well
+          await vm1.waitForStatus(VM_STATUS.Running, CLONED_VM_BOOTUP_TIMEOUT_SECS);
           // Verify that DV of VM created with Cloned disk method points to correct PVC
           const dvResource = getResourceObject(
-            `${vm1.name}-${testDataVolume.metadata.name}-clone`,
+            `${vm1.name}-${testDataVolume.metadata.name}`,
             vm1.namespace,
             'dv',
           );

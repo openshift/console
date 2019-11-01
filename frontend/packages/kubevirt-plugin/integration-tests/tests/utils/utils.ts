@@ -8,6 +8,7 @@ import {
   createYAMLButton,
   rowForName,
 } from '@console/internal-integration-tests/views/crud.view';
+import { click } from '@console/shared/src/test-utils/utils';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
 import { NodePortService } from './types';
 
@@ -55,10 +56,27 @@ export async function getInputValue(elem: ElementFinder) {
   return elem.getAttribute('value');
 }
 
-export async function selectSelectorOption(selectorId: string, option: string) {
-  await $(selectorId)
-    .all(by.css(`option[value="${option}"]`))
-    .click();
+export async function getSelectedOptionText(selector: ElementFinder) {
+  return selector.$('option:checked').getText();
+}
+
+export async function selectOptionByText(selector: ElementFinder, option: string) {
+  await click(selector.all(by.cssContainingText('option', option)).first());
+}
+
+export async function selectOptionByOptionValue(selector: ElementFinder, option: string) {
+  await click(selector.all(by.css(`option[value="${option}"]`)).first());
+}
+
+export async function getSelectOptions(selector: ElementFinder): Promise<string[]> {
+  const options = [];
+  await selector.$$('option').each((elem) => {
+    elem
+      .getText()
+      .then((text) => options.push(text))
+      .catch((err) => Promise.reject(err));
+  });
+  return options;
 }
 
 export function getRandStr(length: number) {

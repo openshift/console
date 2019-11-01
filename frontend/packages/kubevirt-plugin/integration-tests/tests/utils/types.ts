@@ -1,3 +1,5 @@
+import { DISK_SOURCE } from './consts';
+
 export type ProvisionOption = {
   method: string;
   source?: string;
@@ -5,16 +7,26 @@ export type ProvisionOption = {
 
 export type NetworkResource = {
   name: string;
+  model: string;
   mac: string;
-  binding: string;
-  networkDefinition: string;
+  network: string;
+  type: string;
+};
+
+export type DiskSourceConfig = {
+  PVCName?: string;
+  PVCNamespace?: string;
+  URL?: string;
+  container?: string;
 };
 
 export type StorageResource = {
   name: string;
-  size: string;
+  size?: string;
   storageClass: string;
-  attached?: boolean;
+  interface: string;
+  sourceConfig?: DiskSourceConfig;
+  source?: DISK_SOURCE;
 };
 
 export type CloudInitConfig = {
@@ -37,7 +49,6 @@ export type NodePortService = {
 
 export type VMConfig = {
   name: string;
-  namespace: string;
   description: string;
   template?: string;
   provisionSource?: ProvisionOption;
@@ -58,7 +69,6 @@ export type ProvisionConfig = {
 
 export type VMTemplateConfig = {
   name: string;
-  namespace: string;
   description: string;
   provisionSource?: ProvisionOption;
   operatingSystem?: string;

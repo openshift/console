@@ -1,13 +1,10 @@
-/* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console */
-import { browser } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
+/* eslint-disable no-await-in-loop */
 import {
-  errorMessage,
   filterForName,
   resourceRowsPresent,
 } from '@console/internal-integration-tests/views/crud.view';
 import { VMTemplateConfig } from '../utils/types';
-import { WIZARD_CREATE_TEMPLATE_ERROR, WIZARD_TABLE_FIRST_ROW } from '../utils/consts';
+import { CONFIG_NAME_PXE, CONFIG_NAME_URL } from '../utils/consts';
 import { Wizard } from './wizard';
 import { KubevirtDetailView } from './kubevirtDetailView';
 
@@ -18,7 +15,6 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
   async create({
     name,
-    namespace,
     description,
     provisionSource,
     operatingSystem,
@@ -33,49 +29,48 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     // Basic Settings for VM template
     const wizard = new Wizard();
     await wizard.openWizard();
-    await wizard.fillName(name);
-    await wizard.fillDescription(description);
-    if (!(await browser.getCurrentUrl()).includes(`${testName}/${this.kind}`)) {
-      await wizard.selectNamespace(namespace);
-    }
+
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);
     await wizard.selectFlavor(flavor);
     await wizard.selectWorkloadProfile(workloadProfile);
-    if (cloudInit.useCloudInit) {
-      await wizard.useCloudInit(cloudInit);
-    }
+    await wizard.fillName(name);
+    await wizard.fillDescription(description);
+
     await wizard.next();
 
     // Networking
     for (const resource of networkResources) {
       await wizard.addNIC(resource);
     }
+    if (provisionSource.method === CONFIG_NAME_PXE) {
+      // Select the last NIC as the source for booting
+      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
+    }
     await wizard.next();
 
     // Storage
     for (const resource of storageResources) {
-      if (resource.name === 'rootdisk' && provisionSource.method === 'URL') {
-        // Rootdisk is present by default, only edit specific properties
-        await wizard.editDiskAttribute(WIZARD_TABLE_FIRST_ROW, 'size', resource.size);
-        await wizard.editDiskAttribute(WIZARD_TABLE_FIRST_ROW, 'storage', resource.storageClass);
+      if (resource.name === 'rootdisk' && provisionSource.method === CONFIG_NAME_URL) {
+        await wizard.editDisk(resource.name, resource);
       } else {
         await wizard.addDisk(resource);
       }
     }
-
-    // Create VM template
     await wizard.next();
-    await wizard.waitForCreation();
 
-    // Check for errors and close wizard
-    if (await errorMessage.isPresent()) {
-      console.error(await errorMessage.getText());
-      throw new Error(WIZARD_CREATE_TEMPLATE_ERROR);
+    // Advanced - Cloud Init
+    if (cloudInit.useCloudInit) {
+      await wizard.configureCloudInit(cloudInit);
     }
     await wizard.next();
 
+    // Create VM template
+    await wizard.confirmAndCreate();
+    await wizard.waitForCreation();
+
     // Verify VM template is created
+    await this.navigateToListView();
     await filterForName(name);
     await resourceRowsPresent();
   }
