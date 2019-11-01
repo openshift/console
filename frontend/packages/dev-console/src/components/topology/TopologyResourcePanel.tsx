@@ -10,7 +10,9 @@ export type TopologyResourcePanelProps = {
 
 const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ item }) => {
   const resourceItemToShowOnSideBar = item && item.resources;
-  if (_.get(item, 'data.isKnativeResource', false)) {
+  // adds extra check, custom sidebar for all knative resources excluding deployment
+  const itemKind = _.get(item, 'data.kind', null);
+  if (_.get(item, 'data.isKnativeResource', false) && itemKind && itemKind !== 'Deployment') {
     return <KnativeOverviewPage item={item.resources} />;
   }
   return (
