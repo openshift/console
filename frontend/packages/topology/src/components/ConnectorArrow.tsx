@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import Point from '../geom/Point';
-import { Edge } from '../types';
 import { ConnectDragSource } from '../behavior/dnd-types';
+import './ConnectorArrow.scss';
 
 type ConnectorArrowProps = {
-  edge: Edge;
+  startPoint: Point;
+  endPoint: Point;
   className?: string;
   isTarget?: boolean;
   size?: number;
-  dragRef?: ConnectDragSource | undefined;
+  dragRef?: ConnectDragSource;
 };
 
 const pointsStringFromPoints = (points: [number, number][]): string => {
@@ -25,32 +25,34 @@ const pointsStringFromPoints = (points: [number, number][]): string => {
 };
 
 const ConnectorArrow: React.FC<ConnectorArrowProps> = ({
-  edge,
+  startPoint,
+  endPoint,
   className = '',
   isTarget = true,
   size = 10,
   dragRef,
 }) => {
-  const bendPoints = edge.getBendpoints();
-  const endPoint: [number, number] = isTarget
-    ? [edge.getEndPoint().x, edge.getEndPoint().y]
-    : [edge.getStartPoint().x, edge.getStartPoint().y];
-  const prevPoint: Point = isTarget
-    ? _.last(bendPoints) || edge.getStartPoint()
-    : _.head(bendPoints) || edge.getEndPoint();
-
-  if (!prevPoint || !endPoint) {
+  if (!startPoint || !endPoint) {
     return null;
   }
-  const length = Math.sqrt((endPoint[0] - prevPoint.x) ** 2 + (endPoint[1] - prevPoint.y) ** 2);
+  const arrowEndPoint: [number, number] = isTarget
+    ? [endPoint.x, endPoint.y]
+    : [startPoint.x, startPoint.y];
+  const prevPoint: [number, number] = isTarget
+    ? [startPoint.x, startPoint.y]
+    : [endPoint.x, endPoint.y];
+
+  const length = Math.sqrt(
+    (arrowEndPoint[0] - prevPoint[0]) ** 2 + (arrowEndPoint[1] - prevPoint[1]) ** 2,
+  );
   if (!length) {
     return null;
   }
 
   const ratio = (length - size) / length;
-  const startPoint: [number, number] = [
-    prevPoint.x + (endPoint[0] - prevPoint.x) * ratio,
-    prevPoint.y + (endPoint[1] - prevPoint.y) * ratio,
+  const arrowStartPoint: [number, number] = [
+    prevPoint[0] + (arrowEndPoint[0] - prevPoint[0]) * ratio,
+    prevPoint[1] + (arrowEndPoint[1] - prevPoint[1]) * ratio,
   ];
 
   const arrowPoints: [number, number][] = [[0, size / 2], [0, -size / 2], [size, 0]];
@@ -64,11 +66,12 @@ const ConnectorArrow: React.FC<ConnectorArrowProps> = ({
   ];
 
   const angleDeg =
-    180 - (Math.atan2(endPoint[1] - prevPoint.y, prevPoint.x - endPoint[0]) * 180) / Math.PI;
+    180 -
+    (Math.atan2(arrowEndPoint[1] - prevPoint[1], prevPoint[0] - arrowEndPoint[0]) * 180) / Math.PI;
 
   return (
     <g
-      transform={`translate(${startPoint[0]}, ${startPoint[1]}) rotate(${angleDeg})`}
+      transform={`translate(${arrowStartPoint[0]}, ${arrowStartPoint[1]}) rotate(${angleDeg})`}
       ref={dragRef}
       className={classNames('topology-connector-arrow', className)}
     >
@@ -78,4 +81,4 @@ const ConnectorArrow: React.FC<ConnectorArrowProps> = ({
   );
 };
 
-export default observer(ConnectorArrow);
+export default ConnectorArrow;

@@ -6,13 +6,13 @@ import BaseElement from './BaseElement';
 export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends BaseElement<E, D>
   implements Edge<E, D> {
   @observable.ref
-  private source: Node;
+  private source?: Node;
 
   @observable.ref
-  private target: Node;
+  private target?: Node;
 
   @observable.shallow
-  private bendpoints: Point[];
+  private bendpoints?: Point[];
 
   @observable.ref
   private startPoint?: Point;
@@ -22,20 +22,12 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
 
   @computed
   private get sourceAnchor(): Anchor {
-    const source = this.getSource();
-    if (!source) {
-      throw new Error('Cannot compute start point. Missing source.');
-    }
-    return source.getAnchor(AnchorEnd.source, this.getType());
+    return this.getSource().getAnchor(AnchorEnd.source, this.getType());
   }
 
   @computed
   private get targetAnchor(): Anchor {
-    const target = this.getTarget();
-    if (!target) {
-      throw new Error('Cannot compute start point. Missing target.');
-    }
-    return target.getAnchor(AnchorEnd.target, this.getType());
+    return this.getTarget().getAnchor(AnchorEnd.target, this.getType());
   }
 
   getKind(): ModelKind {
@@ -43,6 +35,9 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
   }
 
   getSource(): Node {
+    if (!this.source) {
+      throw new Error(`Edge with ID '${this.getId()}' has no source.`);
+    }
     return this.source;
   }
 
@@ -51,6 +46,9 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
   }
 
   getTarget(): Node {
+    if (!this.target) {
+      throw new Error(`Edge with ID '${this.getId()}' has no target.`);
+    }
     return this.target;
   }
 
@@ -67,10 +65,15 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
   }
 
   removeBendpoint(point: Point | number): void {
-    if (typeof point === 'number') {
-      this.bendpoints.splice(point, 1);
-    } else {
-      this.bendpoints.splice(this.bendpoints.indexOf(point));
+    if (this.bendpoints) {
+      if (typeof point === 'number') {
+        this.bendpoints.splice(point, 1);
+      } else {
+        const idx = this.bendpoints.indexOf(point);
+        if (idx !== -1) {
+          this.bendpoints.splice(idx, 1);
+        }
+      }
     }
   }
 

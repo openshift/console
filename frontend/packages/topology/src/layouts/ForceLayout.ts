@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
-import { action } from 'mobx';
+import { action, reaction, IReactionDisposer } from 'mobx';
 import { Edge, GraphElement, Graph, Layout, Node, GroupStyle, isGraph, isNode } from '../types';
 import { groupNodeElements, leafNodeElements } from '../utils/element-utils';
 import BaseEdge from '../elements/BaseEdge';
@@ -118,6 +118,10 @@ class D3Link implements d3.SimulationLinkDatum<D3Node> {
     this.edge = edge;
   }
 
+  get element(): Edge {
+    return this.edge;
+  }
+
   get source(): D3Node | string {
     return this.d3Source || this.edge.getSource().getId();
   }
@@ -156,7 +160,11 @@ export default class ForceLayout implements Layout {
 
   private simulation: d3.Simulation<D3Node, undefined>;
 
+  private forceLink: d3.ForceLink<D3Node, D3Link>;
+
   private options: ForceLayoutOptions;
+
+  private layoutReactionDisposers?: IReactionDisposer[];
 
   constructor(graph: Graph, options?: Partial<ForceLayoutOptions>) {
     this.graph = graph;
@@ -177,6 +185,42 @@ export default class ForceLayout implements Layout {
         .addEventListener<DragNodeEventListener>(DRAG_NODE_START_EVENT, this.handleDragStart)
         .addEventListener<DragNodeEventListener>(DRAG_NODE_END_EVENT, this.handleDragEnd);
     }
+
+    this.forceLink = d3
+      .forceLink<D3Node, D3Link>()
+      .id((e) => e.id)
+      .distance((d) => {
+        let distance =
+          this.options.linkDistance +
+          (d.source as D3Node).getRadius() +
+          (d.target as D3Node).getRadius();
+
+        if ((d.source as D3Node).element.getParent() !== (d.target as D3Node).element.getParent()) {
+          // find the group padding
+          distance += getGroupPadding((d.source as D3Node).element.getParent());
+          distance += getGroupPadding((d.target as D3Node).element.getParent());
+        }
+
+        return distance;
+      });
+    this.simulation = d3
+      .forceSimulation<D3Node>()
+      .force(
+        'collide',
+        d3.forceCollide<D3Node>().radius((d) => d.getRadius() + this.options.collideDistance),
+      )
+      .force('charge', d3.forceManyBody().strength(this.options.chargeStrength))
+      .force('link', this.forceLink)
+      .on(
+        'tick',
+        action(() => {
+          // speed up the simulation
+          for (let i = 0; i < this.options.simulationSpeed; i++) {
+            this.simulation.tick();
+          }
+          this.simulation.nodes().forEach((d) => d.update());
+        }),
+      );
   }
 
   destroy(): void {
@@ -186,6 +230,7 @@ export default class ForceLayout implements Layout {
         .removeEventListener(DRAG_NODE_START_EVENT, this.handleDragStart)
         .removeEventListener(DRAG_NODE_END_EVENT, this.handleDragEnd);
     }
+    this.stopListening();
   }
 
   getGroupNodes = (group: Node): D3Node[] => {
@@ -255,19 +300,87 @@ export default class ForceLayout implements Layout {
   };
 
   layout = () => {
-    const groups: GraphElement[] = groupNodeElements(this.graph.getNodes());
-    const nodes: D3Node[] = leafNodeElements(this.graph.getNodes()).map((e: Node) => new D3Node(e));
-    const edges: D3Link[] = this.graph
+    this.stopListening();
+
+    this.runLayout(true);
+
+    this.startListening();
+  };
+
+  private startListening(): void {
+    this.layoutReactionDisposers = [
+      reaction(() => leafNodeElements(this.graph.getNodes()), () => this.runLayout(false)),
+    ];
+  }
+
+  private stopListening(): void {
+    if (this.layoutReactionDisposers) {
+      this.layoutReactionDisposers.forEach((disposer) => disposer());
+      this.layoutReactionDisposers = undefined;
+    }
+  }
+
+  @action
+  private runLayout(initialRun: boolean): void {
+    const leafNodes = leafNodeElements(this.graph.getNodes());
+
+    if (!initialRun) {
+      if (leafNodes.length === this.simulation.nodes().length) {
+        const sa = leafNodes.sort((a, b) => a.getId().localeCompare(b.getId()));
+        const sb = this.simulation.nodes().sort((a, b) => a.id.localeCompare(b.id));
+        let isDifferent = false;
+        for (let i = 0; i < sa.length; i++) {
+          if (sa[i] !== sb[i].element) {
+            isDifferent = true;
+            break;
+          }
+        }
+        // no change in nodes
+        if (!isDifferent) {
+          return;
+        }
+      }
+
+      // check for node additions
+      const diff = _.differenceWith(
+        leafNodes,
+        this.simulation.nodes(),
+        (node, d3Node) => node === d3Node.element,
+      );
+
+      if (diff.length > 0) {
+        // position new nodes at center
+        const cx = this.graph.getBounds().width / 2;
+        const cy = this.graph.getBounds().height / 2;
+        diff.forEach((node) =>
+          node.setBounds(
+            node
+              .getBounds()
+              .clone()
+              .setCenter(cx, cy),
+          ),
+        );
+      }
+    }
+
+    // create datum
+    const groups = groupNodeElements(this.graph.getNodes());
+    const nodes = leafNodes.map((n) => new D3Node(n));
+    const edges = this.graph
       .getEdges()
       .filter(
         (e) =>
           nodes.find((n) => n.id === e.getSource().getId()) &&
           nodes.find((n) => n.id === e.getTarget().getId()),
       )
-      .map((e: Edge) => {
-        e.setBendpoints([]);
-        return new D3Link(e);
-      });
+      .map((e) => new D3Link(e));
+
+    // remove bendpoinits
+    edges.forEach((e) => {
+      if (e.element.getBendpoints().length > 0) {
+        e.element.setBendpoints([]);
+      }
+    });
 
     // Create faux edges for the grouped nodes to form group clusters
     groups.forEach((group: Node) => {
@@ -283,56 +396,27 @@ export default class ForceLayout implements Layout {
       }
     });
 
-    // force center
-    const cx = this.graph.getBounds().width / 2;
-    const cy = this.graph.getBounds().height / 2;
+    if (initialRun) {
+      // force center
+      const cx = this.graph.getBounds().width / 2;
+      const cy = this.graph.getBounds().height / 2;
 
-    _.forEach(nodes, (node: D3Node) => {
-      node.setPosition(cx, cy);
-    });
+      _.forEach(nodes, (node: D3Node) => {
+        node.setPosition(cx, cy);
+      });
+      this.simulation.force('center', d3.forceCenter(cx, cy));
+      this.simulation.alpha(1);
+    } else if (this.simulation.alpha() < 0.2) {
+      this.simulation.alpha(0.2);
+    }
 
-    // create force simulation
-    this.simulation = d3
-      .forceSimulation<D3Node>()
-      .force(
-        'collide',
-        d3.forceCollide<D3Node>().radius((d) => d.getRadius() + this.options.collideDistance),
-      )
-      .force('charge', d3.forceManyBody().strength(this.options.chargeStrength))
-      .force('center', d3.forceCenter(cx, cy))
-      .nodes(nodes)
-      .force(
-        'link',
-        d3
-          .forceLink<D3Node, D3Link>(edges)
-          .id((e) => e.id)
-          .distance((d) => {
-            let distance =
-              this.options.linkDistance +
-              (d.source as D3Node).getRadius() +
-              (d.target as D3Node).getRadius();
-
-            if (
-              (d.source as D3Node).element.getParent() !== (d.target as D3Node).element.getParent()
-            ) {
-              // find the group padding
-              distance += getGroupPadding((d.source as D3Node).element.getParent());
-              distance += getGroupPadding((d.target as D3Node).element.getParent());
-            }
-
-            return distance;
-          }),
-      )
-      .on(
-        'tick',
-        action(() => {
-          // speed up the simulation
-          for (let i = 0; i < this.options.simulationSpeed; i++) {
-            this.simulation.tick();
-          }
-          nodes.forEach((d) => d.update());
-        }),
-      )
-      .restart();
-  };
+    // first remove the links so that the layout doesn't error
+    this.forceLink.links([]);
+    // next set the new nodes
+    this.simulation.nodes(nodes);
+    // fonally set the new links
+    this.forceLink.links(edges);
+    // start
+    this.simulation.restart();
+  }
 }

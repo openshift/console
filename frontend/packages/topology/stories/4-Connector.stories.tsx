@@ -23,7 +23,7 @@ import {
   Layer,
 } from '../src';
 import defaultComponentFactory from './components/defaultComponentFactory';
-import DefaultEdge from './components/DeaultEdge';
+import DefaultEdge from './components/DefaultEdge';
 import DefaultNode from './components/DefaultNode';
 import NodeRect from './components/NodeRect';
 

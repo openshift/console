@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 import { GraphElement, ComponentFactory, ModelKind, GraphComponent } from '../../src';
 import Node from './DefaultNode';
-import Edge from './DeaultEdge';
+import Edge from './DefaultEdge';
 import MultiEdge from './MultiEdge';
 import Group from './DefaultGroup';
 import GroupHull from './GroupHull';

@@ -1,5 +1,11 @@
 .topology-default-create-connector {
-  &__marker {
+  .topology-connector-arrow {
+    stroke: var(--pf-global--active-color--400);
     fill: var(--pf-global--active-color--400);
+ }
+  &__line {
+    stroke: var(--pf-global--active-color--400);
+    stroke-width: 2px;
+    stroke-dasharray: 5px, 5px;
   }
 }
