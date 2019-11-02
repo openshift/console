@@ -1030,6 +1030,31 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.MachineHealthCheckModel), 'default'],
+    `
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineHealthCheck
+metadata:
+  name: example
+  namespace: openshift-machine-api
+spec:
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: my-cluster
+      machine.openshift.io/cluster-api-machine-role: worker
+      machine.openshift.io/cluster-api-machine-type: worker
+      machine.openshift.io/cluster-api-machineset: my-machine-set
+  unhealthyConditions:
+  - type:    "Ready"
+    status:  "Unknown"
+    timeout: "300s"
+  - type:    "Ready"
+    status:  "False"
+    timeout: "300s"
+  maxUnhealthy: "40%"
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.ConsoleLinkModel), 'default'],
     `
 apiVersion: console.openshift.io/v1

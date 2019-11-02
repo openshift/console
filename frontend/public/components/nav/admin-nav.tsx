@@ -16,6 +16,7 @@ import {
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
+  MachineHealthCheckModel,
   MachineModel,
   MachineSetModel,
   UserModel,
@@ -190,6 +191,14 @@ const AdminNav = () => (
         )}
         name="Machine Autoscalers"
         required={FLAGS.MACHINE_AUTOSCALER}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineHealthCheckModel),
+          'openshift-machine-api',
+        )}
+        name="Machine Health Checks"
+        required={FLAGS.MACHINE_HEALTH_CHECK}
       />
       <Separator required={FLAGS.MACHINE_CONFIG} />
       <ResourceClusterLink
