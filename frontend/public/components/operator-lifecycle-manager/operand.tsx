@@ -319,6 +319,10 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   </div>;
 });
 
+const ResourcesTab = (resourceProps) => (
+  <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
+);
+
 export const OperandDetailsPage: React.SFC<OperandDetailsPageProps> = (props) => <DetailsPage
   {...props}
   resources={[
@@ -333,7 +337,7 @@ export const OperandDetailsPage: React.SFC<OperandDetailsPageProps> = (props) =>
   pages={[
     navFactory.details((detailsProps) => <OperandDetails {...detailsProps} clusterServiceVersion={detailsProps.csv} appName={props.match.params.appName} />),
     navFactory.editYaml(),
-    {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={resourcesProps.csv} />},
+    {name: 'Resources', href: 'resources', component: ResourcesTab},
   ]}
 />;
 

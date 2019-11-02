@@ -36,7 +36,7 @@ export const ResourceTableHeader = () => [
   },
 ];
 
-export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({obj, index, key, style, linkFor}) => <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({obj, index, style, customData: { linkFor }}) => <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
   <TableData className={tableColumnClasses[0]}>
     {linkFor(obj)}
   </TableData>
@@ -55,7 +55,7 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => <Table
   {...props}
   aria-label="Operand Resources"
   Header={ResourceTableHeader}
-  Row={rowProps => <ResourceTableRow {...rowProps} linkFor={props.linkFor} />}
+  Row={ResourceTableRow}
   EmptyMsg={() => <MsgBox title="No Resources Found" detail="There are no Kubernetes resources used by this operand." />}
   virtualize />;
 
@@ -68,7 +68,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
   // NOTE: This is us building the `ownerReferences` graph client-side
   const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
-    return _.flatMap(resources, (resource, kind: string) => resource.data.map(item => ({...item, kind})))
+    return _.flatMap(resources, (resource, kind: string) => _.map(resource.data, item => ({...item, kind})))
       .reduce((owned, resource) => {
         return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
           ? owned.concat([resource])
@@ -92,7 +92,8 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     }]}
     flatten={flattenFor(props.obj)}
     namespace={props.obj.metadata.namespace}
-    ListComponent={listProps => <ResourceTable {...listProps} linkFor={linkFor} />}
+    ListComponent={ResourceTable}
+    customData={{ linkFor }}
   />;
 };
 
@@ -104,10 +105,12 @@ export type ResourcesProps = {
 
 export type ResourceTableRowProps = {
   obj: K8sResourceKind;
-  linkFor: (obj: K8sResourceKind) => JSX.Element;
   index: number;
   key?: string;
   style: object;
+  customData: {
+    linkFor: (obj: K8sResourceKind) => JSX.Element;
+  };
 };
 
 export type ResourceListProps = {
