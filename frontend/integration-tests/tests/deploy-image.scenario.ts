@@ -64,10 +64,21 @@ describe('Deploy Image', () => {
       );
       // Click the Deploy button now that the Search is done
       await element(by.css('[data-test-id="deploy-image-form-submit-btn"]')).click();
-      // Wait to be redirected to the Topology view
-      await browser.wait(until.presenceOf(element(by.css('.odc-graph'))));
-      // Confirm that a node is present in the topology
-      expect(element.all(by.css('.odc-base-node__bg')).isPresent());
+      // Wait for topology
+      await browser.wait(until.presenceOf(element(by.css('[data-test-id=topology]'))));
+      // Find all workload nodes in the topology
+      const nodes = element.all(
+        by.css('[data-test-id=topology] [data-kind=node][data-type=workload]'),
+      );
+      // Get the text of each node to match against the image name
+      let found = false;
+      nodes.each(async (n) => {
+        const text = await n.getText();
+        if (text.includes(imageName)) {
+          found = true;
+        }
+      });
+      expect(found);
     });
   });
 });
