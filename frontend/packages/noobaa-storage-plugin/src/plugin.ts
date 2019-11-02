@@ -121,6 +121,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
+          './components/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "object-service-capacity-breakdown-card" */
+        ).then((m) => m.default),
+      required: NOOBAA_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
           './components/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
         ).then((m) => m.default),
       required: NOOBAA_FLAG,
