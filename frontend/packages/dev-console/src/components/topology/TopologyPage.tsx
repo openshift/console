@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { match as RMatch } from 'react-router-dom';
+import { matchPath, match as RMatch, Link } from 'react-router-dom';
+import { Button, Tooltip } from '@patternfly/react-core';
+import { ListIcon, TopologyIcon } from '@patternfly/react-icons';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { StatusBox, Firehose, HintBlock } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
+import { Overview } from '@console/internal/components/overview';
 import EmptyState from '../EmptyState';
-import NamespacedPage from '../NamespacedPage';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
 import { ALLOW_SERVICE_BINDING } from '../../const';
@@ -25,7 +28,7 @@ interface StateProps {
 
 export interface TopologyPageProps {
   match: RMatch<{
-    ns?: string;
+    name?: string;
   }>;
 }
 
@@ -78,26 +81,49 @@ const TopologyPage: React.FC<Props> = ({
   cheURL,
   serviceBinding,
 }) => {
-  const namespace = match.params.ns;
+  const namespace = match.params.name;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
+  const showListView = matchPath(match.path, {
+    path: '*/list',
+    exact: true,
+  });
   return (
     <>
       <Helmet>
         <title>Topology</title>
       </Helmet>
-      <NamespacedPage>
+      <NamespacedPage
+        variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
+        toolbar={
+          <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
+            <Link
+              to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
+                showListView ? '' : '/list'
+              }`}
+            >
+              <Button variant="plain">
+                {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
+              </Button>
+            </Link>
+          </Tooltip>
+        }
+      >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
             {() => {
               return namespace ? (
-                <ConnectedTopologyDataController
-                  application={application}
-                  namespace={namespace}
-                  render={renderTopology}
-                  knative={knative}
-                  cheURL={cheURL}
-                  serviceBinding={serviceBinding}
-                />
+                showListView ? (
+                  <Overview mock={false} match={match} title="" />
+                ) : (
+                  <ConnectedTopologyDataController
+                    application={application}
+                    namespace={namespace}
+                    render={renderTopology}
+                    knative={knative}
+                    cheURL={cheURL}
+                    serviceBinding={serviceBinding}
+                  />
+                )
               ) : (
                 <ProjectListPage title="Topology">
                   Select a project to view the topology

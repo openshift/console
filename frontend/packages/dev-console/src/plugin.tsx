@@ -254,7 +254,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/topology/all-namespaces', '/topology/ns/:ns'],
+      path: [
+        '/topology/all-namespaces',
+        '/topology/ns/:name',
+        '/topology/all-namespaces/list',
+        '/topology/ns/:name/list',
+      ],
       loader: async () =>
         (await import(
           './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
