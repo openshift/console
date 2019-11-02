@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
+  isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
@@ -21,7 +22,6 @@ import AlertItem, {
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { ALERTS_KEY } from '../../../../actions/dashboards';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
-import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
 import * as plugins from '../../../../plugins';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { PrometheusResponse } from '../../../graphs';
@@ -33,7 +33,7 @@ import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 const getSubsystems = (flags: FlagsObject) =>
   plugins.registry
     .getDashboardsOverviewHealthSubsystems()
-    .filter((e) => isDashboardExtensionInUse(e, flags));
+    .filter((e) => plugins.registry.isExtensionInUse(e, flags));
 
 const URLHealthItem = withDashboardResources(
   ({
@@ -211,7 +211,7 @@ const ClusterAlerts = withDashboardResources(
 );
 
 export const StatusCard = connectToFlags(
-  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewHealthSubsystems()),
+  ...plugins.registry.getRequiredFlags([isDashboardsOverviewHealthSubsystem]),
 )(({ flags }) => {
   const subsystems = getSubsystems(flags);
   return (

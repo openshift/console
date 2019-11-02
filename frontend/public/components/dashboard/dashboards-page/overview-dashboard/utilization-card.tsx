@@ -13,6 +13,7 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
   humanizeBinaryBytes,
@@ -24,7 +25,6 @@ import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/util
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
-import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
 import * as plugins from '../../../../plugins';
 import { Humanize } from '../../../utils/types';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
@@ -90,7 +90,7 @@ const getQueries = (flags: FlagsObject) => {
   const pluginQueries = {};
   plugins.registry
     .getDashboardsOverviewUtilizationItems()
-    .filter((e) => isDashboardExtensionInUse(e, flags))
+    .filter((e) => plugins.registry.isExtensionInUse(e, flags))
     .forEach((pluginQuery) => {
       const id = pluginQuery.properties.id;
       if (!pluginQueries[id]) {
@@ -272,5 +272,5 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 };
 
 export const UtilizationCard = connectToFlags(
-  ...getFlagsForExtensions([...plugins.registry.getDashboardsOverviewUtilizationItems()]),
+  ...plugins.registry.getRequiredFlags([isDashboardsOverviewUtilizationItem]),
 )(withDashboardResources(UtilizationCard_));

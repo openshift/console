@@ -3,13 +3,13 @@ import { KebabAction } from '@console/internal/components/utils/kebab';
 import { Extension } from './extension';
 
 namespace ExtensionProperties {
-  export interface PluginKebabActions {
+  export interface KebabActions {
     // no kind should return any actions common for all kinds
     getKebabActionsForKind: (kind: K8sKind) => KebabAction[];
   }
 }
 
-export interface KebabActions extends Extension<ExtensionProperties.PluginKebabActions> {
+export interface KebabActions extends Extension<ExtensionProperties.KebabActions> {
   type: 'KebabActions';
 }
 

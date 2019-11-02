@@ -25,13 +25,12 @@ import {
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { connectToFlags, FlagsObject } from '../../../../reducers/features';
-import { getFlagsForExtensions, isDashboardExtensionInUse } from '../../utils';
-import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
+import { LazyLoader, isDashboardsOverviewInventoryItem } from '@console/plugin-sdk';
 
 const getItems = (flags: FlagsObject) =>
   plugins.registry
     .getDashboardsOverviewInventoryItems()
-    .filter((e) => isDashboardExtensionInUse(e, flags));
+    .filter((e) => plugins.registry.isExtensionInUse(e, flags));
 
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
@@ -112,7 +111,7 @@ const ClusterInventoryItem = withDashboardResources(
 );
 
 export const InventoryCard = connectToFlags(
-  ...getFlagsForExtensions(plugins.registry.getDashboardsOverviewInventoryItems()),
+  ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItem]),
 )(({ flags }) => {
   const items = getItems(flags);
   return (
