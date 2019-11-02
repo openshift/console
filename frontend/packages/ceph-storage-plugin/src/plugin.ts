@@ -123,7 +123,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       tab: 'persistent-storage',
       position: GridPosition.MAIN,
-      span: 6,
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
