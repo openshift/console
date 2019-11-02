@@ -98,7 +98,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="system_name"
             title="System Name"
             isLoading={!systemResult || !dashboardLinkResult}
-            error={systemLoadError || dashboardLinkLoadError}
+            error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
           >
             <ExternalLink href={systemLink} text={systemName} />
           </DetailItem>
