@@ -66,8 +66,28 @@ const URLHealthItem = withDashboardResources(
       : null;
     const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
 
+    const PopupComponentCallback = subsystem.popupComponent
+      ? React.useCallback(
+          () => (
+            <AsyncComponent
+              loader={subsystem.popupComponent}
+              healthResult={healthResult}
+              healthResultError={healthResultError}
+              k8sResult={k8sResult}
+            />
+          ),
+          [subsystem, healthResult, healthResultError, k8sResult],
+        )
+      : null;
+
     return (
-      <HealthItem title={subsystem.title} state={healthState.state} details={healthState.message} />
+      <HealthItem
+        title={subsystem.title}
+        state={healthState.state}
+        details={healthState.message}
+        popupTitle={subsystem.popupTitle}
+        PopupComponent={PopupComponentCallback}
+      />
     );
   },
 );
