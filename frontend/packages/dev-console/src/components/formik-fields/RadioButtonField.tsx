@@ -3,6 +3,7 @@ import { useField } from 'formik';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { RadioButtonProps } from './field-types';
 import { getFieldId } from './field-utils';
+import './RadioButtonField.scss';
 
 const RadioButtonField: React.FC<RadioButtonProps> = ({
   label,
@@ -32,7 +33,16 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
             key={option.value}
             id={getFieldId(option.value, 'radiobutton')}
             value={option.value}
-            label={option.label}
+            label={
+              option.helperText ? (
+                <>
+                  {option.label}
+                  <div className="odc-radio-button__helper-text">{option.helperText}</div>
+                </>
+              ) : (
+                option.label
+              )
+            }
             isChecked={field.value === option.value}
             isValid={isValid}
             aria-describedby={`${fieldId}-helper`}

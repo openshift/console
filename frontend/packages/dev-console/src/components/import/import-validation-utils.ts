@@ -14,6 +14,7 @@ import {
   dockerValidationSchema,
   buildValidationSchema,
   urlRegex,
+  resourcesValidationSchema,
 } from './validation-schema';
 
 export const validationSchema = yup.object().shape({
@@ -28,6 +29,7 @@ export const validationSchema = yup.object().shape({
   route: routeValidationSchema,
   limits: limitsValidationSchema,
   build: buildValidationSchema,
+  resources: resourcesValidationSchema,
 });
 
 export const detectGitType = (url: string): string => {
