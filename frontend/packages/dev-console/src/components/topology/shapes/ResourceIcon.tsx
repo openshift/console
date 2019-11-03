@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { get } from 'lodash';
+import { useSize } from '@console/topology';
 import { modelFor, kindToAbbr } from '@console/internal/module/k8s';
 import './ResourceIcon.scss';
 
@@ -9,30 +10,20 @@ export interface ResourceIconProps {
   kind: string;
 }
 
-function useClientRect() {
-  const [bb, setbb] = React.useState(null);
-  const ref = React.useCallback((node) => {
-    if (node !== null) {
-      setbb(node.getBoundingClientRect());
-    }
-  }, []);
-  return [bb, ref];
-}
-
 export function getKindStringAndAbbrivation(kind: string) {
   const kindObj = modelFor(kind);
   const kindStr = get(kindObj, 'kind', kind);
-  const KindAbbr = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
-  return { kindStr, KindAbbr };
+  const kindAbbr = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
+  return { kindStr, kindAbbr };
 }
 
 export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRef) => {
-  const { KindAbbr, kindStr } = getKindStringAndAbbrivation(kind);
-  const [bb, textRef] = useClientRect();
+  const { kindAbbr, kindStr } = getKindStringAndAbbrivation(kind);
+  const [textSize, textRef] = useSize([]);
 
   let rect = null;
-  if (bb) {
-    let { height } = bb;
+  if (textSize) {
+    let { height } = textSize;
     const paddingX = height / 2;
     const paddingY = height / 14;
     height += paddingY * 2;
@@ -40,9 +31,9 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
     rect = (
       <rect
         ref={iconRef}
-        x={x - paddingX - bb.width / 2}
-        width={bb.width + paddingX * 2}
-        y={y - paddingY - bb.height / 2}
+        x={x - paddingX - textSize.width / 2}
+        width={textSize.width + paddingX * 2}
+        y={y - paddingY - textSize.height / 2}
         height={height}
         rx={height / 2}
         ry={height / 2}
@@ -54,7 +45,7 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
       {rect}
       <title>{kindStr}</title>
       <text ref={textRef} x={x} y={y} textAnchor="middle" dy="0.35em">
-        {KindAbbr}
+        {kindAbbr}
       </text>
     </g>
   );

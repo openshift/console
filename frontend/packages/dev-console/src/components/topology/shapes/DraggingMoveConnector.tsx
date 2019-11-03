@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createSvgIdUrl } from '../../../utils/svg-utils';
+import { createSvgIdUrl } from '@console/topology';
 import { NodeProps } from '../topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 

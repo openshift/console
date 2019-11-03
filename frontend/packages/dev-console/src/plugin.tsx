@@ -328,7 +328,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/add', '/import', '/topology', '/deploy-image', '/metrics', '/project-access'],
+      path: [
+        '/add',
+        '/import',
+        '/topology',
+        '/topology1',
+        '/deploy-image',
+        '/metrics',
+        '/project-access',
+      ],
       component: NamespaceRedirect,
     },
   },
@@ -353,7 +361,23 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       loader: async () =>
         (await import(
-          './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          './components/topology2/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [
+        '/topology1/all-namespaces',
+        '/topology1/ns/:name',
+        '/topology1/all-namespaces/list',
+        '/topology1/ns/:name/list',
+      ],
+      loader: async () =>
+        (await import(
+          './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology1" */
         )).default,
     },
   },

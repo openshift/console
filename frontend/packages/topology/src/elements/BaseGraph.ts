@@ -10,12 +10,12 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
   private scale: number = 1;
 
   @observable
-  private layoutType: string | undefined;
+  private layoutType?: string;
 
   @observable.ref
   private bounds: Rect = new Rect();
 
-  private currentLayout: Layout | undefined;
+  private currentLayout?: Layout;
 
   isDetached(): boolean {
     return !this.getController();

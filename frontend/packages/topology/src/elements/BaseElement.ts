@@ -7,9 +7,9 @@ import { Translatable } from '../geom/types';
 export default abstract class BaseElement<E extends ElementModel = ElementModel, D = any>
   extends Stateful
   implements GraphElement<E, D> {
-  private id: string;
+  private id: string = '';
 
-  private type: string;
+  private type: string = '';
 
   @observable.ref
   private data?: D;

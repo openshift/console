@@ -10,7 +10,7 @@ import AbstractAnchor from './AbstractAnchor';
 
 export default class SVGAnchor extends AbstractAnchor {
   @observable.ref
-  private svgElement: SVGElement;
+  private svgElement?: SVGElement;
 
   setSVGElement(svgElement: SVGElement) {
     this.svgElement = svgElement;

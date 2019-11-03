@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TrashIcon } from '@patternfly/react-icons';
+import { boundingBoxForLine, PointTuple } from '@console/topology';
 import { EdgeProps } from '../topology-types';
-import { boundingBoxForLine, Point } from '../../../utils/svg-utils';
 import BaseEdge from './BaseEdge';
 import SvgArrowMarker from './SvgArrowMarker';
 
@@ -20,16 +20,19 @@ const arrowBoundingBox = (
   endX: number,
   endY: number,
   size: number,
-): [Point, Point, Point, Point] => {
+): [PointTuple, PointTuple, PointTuple, PointTuple] => {
   const length = Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
   if (!length) {
     return null;
   }
 
   let ratio = (length - size / 2) / length;
-  const endPoint: Point = [startX + (endX - startX) * ratio, startY + (endY - startY) * ratio];
+  const endPoint: PointTuple = [startX + (endX - startX) * ratio, startY + (endY - startY) * ratio];
   ratio = (length - size / 2 - 20) / length;
-  const startPoint: Point = [startX + (endX - startX) * ratio, startY + (endY - startY) * ratio];
+  const startPoint: PointTuple = [
+    startX + (endX - startX) * ratio,
+    startY + (endY - startY) * ratio,
+  ];
 
   return boundingBoxForLine(startPoint, endPoint, () => 10);
 };

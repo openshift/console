@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { mount, shallow } from 'enzyme';
+import { SVGDefsProvider } from '@console/topology';
 import BaseNode, { BaseNodeProps, State } from '../BaseNode';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 
-jest.mock('../../../svg/SvgDefs');
 jest.mock('@console/internal/components/catalog/catalog-item-icon', () => ({
   getImageForIconClass: (path: string) => (path === 'icon-unknown' ? null : path),
 }));
@@ -93,20 +93,28 @@ describe('BaseNode', () => {
     expect(wrapper.find('#second').exists()).toBeTruthy();
   });
 
+  // TODO need to mock SVGDefs
   it('should handle selection', () => {
     const onSelect = jest.fn();
     const fakeEvent = { stopPropagation: jest.fn() };
-    const wrapper = mount(<BaseNode outerRadius={100} onSelect={onSelect} />);
+    const wrapper = mount(
+      <SVGDefsProvider>
+        <BaseNode outerRadius={100} onSelect={onSelect} />
+      </SVGDefsProvider>,
+    );
     wrapper.find('circle').simulate('click', fakeEvent);
     expect(onSelect).toHaveBeenCalled();
     expect(fakeEvent.stopPropagation).toHaveBeenCalled();
   });
 
+  // TODO need to mock SVGDefs
   it('should ignore selectioon from attachments handle selection', () => {
     const onSelect = jest.fn();
     const fakeEvent = { stopPropagation: jest.fn() };
     const wrapper = mount(
-      <BaseNode outerRadius={100} onSelect={onSelect} attachments={<g id="attachment" />} />,
+      <SVGDefsProvider>
+        <BaseNode outerRadius={100} onSelect={onSelect} attachments={<g id="attachment" />} />
+      </SVGDefsProvider>,
     );
     wrapper.find('#attachment').simulate('click', fakeEvent);
     expect(onSelect).not.toHaveBeenCalled();

@@ -7,7 +7,7 @@ import {
   Point,
   Edge,
   useBendpoint,
-  ConnectorArrow,
+  EdgeConnectorArrow,
   WithRemoveConnectorProps,
 } from '../../src';
 
@@ -40,7 +40,7 @@ const Bendpoint: React.FC<BendpointProps> = observer(({ point }) => {
   );
 });
 
-const DeaultEdge: React.FC<EdgeProps> = ({
+const DefaultEdge: React.FC<EdgeProps> = ({
   element,
   sourceDragRef,
   targetDragRef,
@@ -69,11 +69,11 @@ const DeaultEdge: React.FC<EdgeProps> = ({
         {sourceDragRef && (
           <circle ref={sourceDragRef} r={8} cx={startPoint.x} cy={startPoint.y} fillOpacity={0} />
         )}
-        <ConnectorArrow dragRef={targetDragRef} edge={element} />
+        <EdgeConnectorArrow dragRef={targetDragRef} edge={element} />
       </Layer>
       {bendpoints && bendpoints.map((p, i) => <Bendpoint point={p} key={i.toString()} />)}
     </>
   );
 };
 
-export default observer(DeaultEdge);
+export default observer(DefaultEdge);

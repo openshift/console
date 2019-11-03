@@ -53,6 +53,7 @@ const VisualizationSurface: React.FC<VisualizationSurfaceProps> = ({ visualizati
         {({ measureRef }: { measureRef: React.LegacyRef<any> }) => (
           // render an outer div because react-measure doesn't seem to fire events properly on svg resize
           <div
+            data-test-id="topology"
             style={{
               width: '100%',
               height: '100%',
