@@ -59,12 +59,9 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
 };
 
 const getResourceName = (networkType, typeParamsData): string => {
-  const resourceName =
-    networkType === 'cnv-bridge'
-      ? _.get(typeParamsData, 'bridge.value', '')
-      : _.get(typeParamsData, 'resourceName.value', '');
-
-  return `bridge.network.kubevirt.io/${resourceName}`;
+  return networkType === 'cnv-bridge'
+    ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
+    : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
 
 const createNetAttachDef = (
