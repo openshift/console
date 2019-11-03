@@ -97,8 +97,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
-        ).then((m) => m.BucketsCard),
+          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+        ).then((m) => m.default),
       required: NOOBAA_FLAG,
     },
   },
@@ -109,8 +109,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
-        ).then((m) => m.ResourceProvidersCard),
+          './components/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
+        ).then((m) => m.BucketsCard),
       required: NOOBAA_FLAG,
     },
   },
@@ -142,11 +142,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'object-service',
-      position: GridPosition.RIGHT,
+      position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
-        ).then((m) => m.default),
+          './components/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
+        ).then((m) => m.ResourceProvidersCard),
       required: NOOBAA_FLAG,
     },
   },
