@@ -31,10 +31,10 @@ export const HyperConvergedModel: K8sKind = {
   labelPlural: 'HyperConverged Clusters',
   apiVersion: 'v1alpha1',
   apiGroup: 'hco.kubevirt.io',
-  plural: 'hyperconverged',
-  namespaced: false,
-  abbr: 'SRNNPM', // TODO check on this
-  kind: 'hyperconverged',
+  plural: 'hyperconvergeds',
+  namespaced: true,
+  abbr: 'HCO',
+  kind: 'HyperConverged',
   id: 'hyperconverged',
   crd: true,
 };
