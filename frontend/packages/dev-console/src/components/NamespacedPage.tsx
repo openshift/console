@@ -15,6 +15,7 @@ export interface NamespacedPageProps {
   hideApplications?: boolean;
   onNamespaceChange?: (newNamespace: string) => void;
   variant?: NamespacedPageVariants;
+  toolbar?: React.ReactNode;
 }
 
 const NamespacedPage: React.FC<NamespacedPageProps> = ({
@@ -23,10 +24,12 @@ const NamespacedPage: React.FC<NamespacedPageProps> = ({
   onNamespaceChange,
   hideApplications = false,
   variant = NamespacedPageVariants.default,
+  toolbar,
 }) => (
   <div className="odc-namespaced-page">
     <NamespaceBar disabled={disabled} onNamespaceChange={onNamespaceChange}>
       {!hideApplications && <ApplicationSelector disabled={disabled} />}
+      {toolbar && <div style={{ marginLeft: 'auto' }}>{toolbar}</div>}
     </NamespaceBar>
     <div
       className={cx('odc-namespaced-page__content', {
