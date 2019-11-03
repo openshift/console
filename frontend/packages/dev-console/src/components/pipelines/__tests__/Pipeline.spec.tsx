@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ListPage } from '@console/internal/components/factory';
-import PipelinePage from '../PipelinesPage';
+import { PipelinesPage } from '../PipelinesPage';
 import PipelineRuns from '../PipelineRuns';
 
 const pipelinePageProps = {
-  namespace: 'all-namespaces',
+  namespace: 'my-project',
+  perspective: 'dev',
 };
 
 const pipelineRunProps = {
@@ -16,7 +17,7 @@ const pipelineRunProps = {
   },
 };
 
-const pipelineWrapper = shallow(<PipelinePage {...pipelinePageProps} />);
+const pipelineWrapper = shallow(<PipelinesPage {...pipelinePageProps} />);
 const pipelineRunWrapper = shallow(<PipelineRuns {...pipelineRunProps} />);
 
 describe('Pipeline List', () => {

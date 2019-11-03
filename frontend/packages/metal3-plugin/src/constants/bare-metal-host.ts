@@ -84,6 +84,8 @@ export const HOST_SUCCESS_STATES = [
   HOST_STATUS_DEPROVISIONED,
 ];
 
+export const HOST_HARDWARE_ERROR_STATES = [HOST_STATUS_POWER_MANAGEMENT_ERROR];
+
 export const HOST_HEALTH_OK = 'Host is healthy';
 export const HOST_HEALTH_ERROR = 'Host is in an error state';
 export const HOST_HEALTH_LOADING = 'Loading host health data';

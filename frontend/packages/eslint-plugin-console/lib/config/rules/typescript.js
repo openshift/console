@@ -123,7 +123,7 @@ module.exports = {
   '@typescript-eslint/no-require-imports': 'error',
 
   // Disallow aliasing this
-  '@typescript-eslint/no-this-alias': 'error',
+  '@typescript-eslint/no-this-alias': ['error', { allowDestructuring: true }],
 
   // Disallow /// <reference path='' /> comments
   '@typescript-eslint/no-triple-slash-reference': 'error',

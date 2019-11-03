@@ -788,6 +788,19 @@ export const MachineAutoscalerModel: K8sKind = {
   crd: true,
 };
 
+export const MachineHealthCheckModel: K8sKind = {
+  label: 'Machine Health Check',
+  labelPlural: 'Machine Health Checks',
+  apiVersion: 'v1beta1',
+  apiGroup: 'machine.openshift.io',
+  plural: 'machinehealthchecks',
+  abbr: 'MHC',
+  namespaced: true,
+  kind: 'MachineHealthCheck',
+  id: 'machinehealthcheck',
+  crd: true,
+};
+
 // Openshift cluster resources
 export const ClusterOperatorModel: K8sKind = {
   label: 'Cluster Operator',

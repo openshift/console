@@ -12,6 +12,7 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
+  ReduxReducer,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
@@ -22,6 +23,7 @@ import {
   getVMStatusGroups,
   VMOffGroupIcon,
 } from './components/dashboards-page/overview-dashboard/inventory';
+import kubevirtReducer from './redux';
 
 import './style.scss';
 
@@ -36,7 +38,8 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsStorageCapacityDropdownItem;
+  | DashboardsStorageCapacityDropdownItem
+  | ReduxReducer;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -223,6 +226,14 @@ const plugin: Plugin<ConsumedExtensions> = [
         'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
         'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info{pod !~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
       ],
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'ReduxReducer',
+    properties: {
+      namespace: 'kubevirt',
+      reducer: kubevirtReducer,
       required: FLAG_KUBEVIRT,
     },
   },

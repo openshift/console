@@ -16,8 +16,8 @@ import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
 import { FlagsObject, featureReducerName } from '../../../reducers/features';
-import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
 import * as plugins from '../../../plugins';
+import { isDashboardsOverviewResourceActivity } from '@console/plugin-sdk';
 import { uniqueResource } from '../dashboards-page/overview-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -48,14 +48,14 @@ const RecentEvent = withDashboardResources(
 const getResourceActivities = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
   plugins.registry.getDashboardsOverviewResourceActivities().filter((e) => {
     const model = k8sModels.get(e.properties.k8sResource.kind);
-    return isDashboardExtensionInUse(e, flags) && model && model.namespaced;
+    return plugins.registry.isExtensionInUse(e, flags) && model && model.namespaced;
   });
 
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
-  flags: getFlagsForExtensions([
-    ...plugins.registry.getDashboardsOverviewResourceActivities(),
-  ]).reduce((allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }), {}),
+  flags: plugins.registry
+    .getRequiredFlags([isDashboardsOverviewResourceActivity])
+    .reduce((allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }), {}),
 });
 
 const OngoingActivity = connect(mapStateToProps)(

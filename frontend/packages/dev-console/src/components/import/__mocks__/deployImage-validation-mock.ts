@@ -13,6 +13,12 @@ export const mockDeployImageFormData: DeployImageFormData = {
   },
   name: 'test-app',
   searchTerm: 'test-app',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
   isi: {
     image: {
       dockerImageLayers: [

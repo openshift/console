@@ -23,7 +23,13 @@ import {
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
-import { StorageDashboardQuery, UTILIZATION_QUERY } from '../../../../constants/queries';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import {
+  StorageDashboardQuery,
+  UTILIZATION_QUERY,
+  utilizationPopoverQueryMap,
+} from '../../../../constants/queries';
 import { getLatestValue, humanizeIOPS, humanizeLatency } from './utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
@@ -107,6 +113,18 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
     'loadError',
   ]);
 
+  const storagePopover = React.useCallback(
+    ({ current }) => (
+      <ConsumerPopover
+        title="Used Capacity"
+        current={current}
+        consumers={utilizationPopoverQueryMap}
+        humanize={humanizeBinaryBytes}
+      />
+    ),
+    [],
+  );
+
   const capacityStats = getRangeVectorStats(capacityUtilization);
   const maxCapacityStats = getLatestValue(getRangeVectorStats(totalCapacity));
   const iopsStats = getRangeVectorStats(iopsUtilization);
@@ -131,6 +149,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             title="Used Capacity"
             data={capacityStats}
             humanizeValue={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
             query={
               UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED] +
               UTILIZATION_QUERY_HOUR_MAP[duration]
@@ -138,6 +157,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             error={capacityUtilizationError || totalCapacityError}
             isLoading={!capacityUtilization || !totalCapacity}
             max={maxCapacityStats}
+            TopConsumerPopover={storagePopover}
           />
           <UtilizationItem
             title="IOPS"

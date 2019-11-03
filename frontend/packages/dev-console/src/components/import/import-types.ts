@@ -1,14 +1,17 @@
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
+import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '../formik-fields/field-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: [];
-    loaded: boolean;
-  };
+  projects?: FirehoseList;
+  imageStreams?: FirehoseList;
+}
+
+export interface ImageStreamProps {
+  projects?: K8sResourceKind[];
+  imageStreams: K8sResourceKind[];
 }
 
 export interface SourceToImageFormProps {
@@ -37,10 +40,17 @@ export interface DeployImageFormData {
   application: ApplicationData;
   name: string;
   searchTerm: string;
+  registry: string;
+  imageStream: {
+    image: string;
+    tag: string;
+    namespace: string;
+  };
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
   isSearchingForImage: boolean;
   serverless?: ServerlessData;
+  pipeline?: PipelineData;
   labels: { [name: string]: string };
   env: { [name: string]: string };
   route: RouteData;
@@ -56,6 +66,7 @@ export interface GitImportFormData {
   git: GitData;
   docker: DockerData;
   serverless?: ServerlessData;
+  pipeline?: PipelineData;
   image: ImageData;
   route: RouteData;
   build: BuildData;
@@ -152,6 +163,11 @@ export interface DeploymentData {
 export interface ServerlessData {
   enabled: boolean;
   scaling: ServerlessScaling;
+}
+
+export interface PipelineData {
+  enabled: boolean;
+  template?: K8sResourceKind;
 }
 
 export interface ServerlessScaling {

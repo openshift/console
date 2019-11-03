@@ -1,5 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import {
   ButtonBar,
@@ -14,12 +17,15 @@ import {
   getAlertManagerConfig,
   patchAlertManagerConfig,
   receiverTypes,
+  getRouteLabelsForForm,
+  createReceiver,
+  createRoute,
+  isDefaultReceiverLabel,
+  addDefaultReceiverLabel,
+  removeDefaultReceiverLabel,
 } from './alert-manager-utils';
 import { K8sResourceKind } from '../../module/k8s';
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
 import { RadioInput } from '../radio';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { AlertManagerConfig, AlertManagerReceiver } from './alert-manager-config';
 
 const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
@@ -93,7 +99,8 @@ const WebhookSubForm = ({ webhookUrl, setWebhookUrl }) => (
   </div>
 );
 
-const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) => {
+// Label editor to edit, add or remove Routing Labels
+const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
   const setRouteLabel = (path: string, v: any): void => {
     const labels = _.clone(routeLabels);
     _.set(labels, path.split(', '), v);
@@ -134,58 +141,61 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) =
         <div className="col-xs-4">Label Name</div>
         <div className="col-xs-4">Label Value</div>
       </div>
-      {_.map(routeLabels, (routeLabel, i) => (
-        <div className="row form-group" key={i}>
-          <div className="col-xs-4">
-            <input
-              type="text"
-              className="pf-c-form-control"
-              onChange={onRoutingLabelChange(`${i}, name`)}
-              placeholder="Name"
-              value={routeLabel.name}
-              disabled={saveAsDefaultReceiver}
-              required
-            />
+      {_.map(routeLabels, (routeLabel, i) => {
+        const isDefaultReceiverRouteLabel = isDefaultReceiverLabel(routeLabel);
+        return (
+          <div className="row form-group" key={i}>
+            <div className="col-xs-4">
+              <input
+                type="text"
+                className="pf-c-form-control"
+                onChange={onRoutingLabelChange(`${i}, name`)}
+                placeholder="Name"
+                value={routeLabel.name}
+                disabled={isDefaultReceiverRouteLabel}
+                required
+              />
+            </div>
+            <div className="col-xs-4">
+              <input
+                type="text"
+                className="pf-c-form-control"
+                onChange={onRoutingLabelChange(`${i}, value`)}
+                placeholder="Value"
+                value={routeLabel.value}
+                disabled={isDefaultReceiverRouteLabel}
+                required
+              />
+            </div>
+            {!isDefaultReceiverRouteLabel && (
+              <>
+                <div className="col-xs-3">
+                  <label className="co-no-bold">
+                    <input
+                      type="checkbox"
+                      onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
+                      checked={routeLabel.isRegex}
+                    />
+                    &nbsp; Regular Expression
+                  </label>
+                </div>
+                <div className="col-xs-1">
+                  <button
+                    type="button"
+                    className="btn btn-link btn-link--inherit-color"
+                    onClick={() => removeRoutingLabel(_.toNumber(i))}
+                    aria-label="Remove Route Label"
+                    disabled={routeLabels.length <= 1}
+                  >
+                    <MinusCircleIcon />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          <div className="col-xs-4">
-            <input
-              type="text"
-              className="pf-c-form-control"
-              onChange={onRoutingLabelChange(`${i}, value`)}
-              placeholder="Value"
-              value={routeLabel.value}
-              disabled={saveAsDefaultReceiver}
-              required
-            />
-          </div>
-          {!saveAsDefaultReceiver && (
-            <>
-              <div className="col-xs-3">
-                <label className="co-no-bold">
-                  <input
-                    type="checkbox"
-                    onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
-                    checked={routeLabel.isRegex}
-                  />
-                  &nbsp; Regular Expression
-                </label>
-              </div>
-              <div className="col-xs-1">
-                <button
-                  type="button"
-                  className="btn btn-link btn-link--inherit-color"
-                  onClick={() => removeRoutingLabel(_.toNumber(i))}
-                  aria-label="Remove Route Label"
-                  disabled={routeLabels.length <= 1}
-                >
-                  <MinusCircleIcon />
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      ))}
-      {!saveAsDefaultReceiver && (
+        );
+      })}
+      {showAddLabel && (
         <Button
           className="pf-m-link--align-left"
           onClick={addRoutingLabel}
@@ -200,7 +210,12 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, saveAsDefaultReceiver }) =
   );
 };
 
-const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, saveButtonText }) => {
+const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
+  obj,
+  titleVerb,
+  saveButtonText,
+  editReceiverNamed,
+}) => {
   const secret: K8sResourceKind = obj; // Secret "alertmanager-main" which contains alertmanager.yaml config
   const [errorMsg, setErrorMsg] = React.useState('');
   const [inProgress, setInProgress] = React.useState(false);
@@ -208,135 +223,117 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
   if (!errorMsg) {
     config = getAlertManagerConfig(secret, setErrorMsg);
   }
-  const [receiverName, setReceiverName] = React.useState('');
-  const [receiverType, setReceiverType] = React.useState('');
-  const [webhookUrl, setWebhookUrl] = React.useState('');
-  const defaultPagerDutyValues = {
-    integrationType: 'events',
+
+  let initialReceiverName = '';
+  let initialReceiverType = '';
+  let initialPagerDutyValues = {
+    integrationType: 'events', // 'Events API v2'
     integrationKey: '',
   };
-  const [pagerDutyValues, setPagerDutyValues] = React.useState(defaultPagerDutyValues);
+  let initialWebhookUrl = '';
+
+  let receiverToEdit: AlertManagerReceiver;
+  if (editReceiverNamed) {
+    receiverToEdit = _.find(_.get(config, 'receivers'), { name: editReceiverNamed });
+    initialReceiverName = receiverToEdit ? receiverToEdit.name : '';
+    initialReceiverType = _.find(_.keys(receiverToEdit), (key) => _.includes(key, '_configs'));
+    if (initialReceiverType) {
+      const receiverConfig = _.get(receiverToEdit, `${initialReceiverType}[0]`);
+      switch (initialReceiverType) {
+        case 'pagerduty_configs':
+          initialPagerDutyValues = {
+            integrationType: _.get(receiverConfig, 'routing_key') ? 'events' : 'prometheus',
+            integrationKey:
+              _.get(receiverConfig, 'routing_key') || _.get(receiverConfig, 'service_key'),
+          };
+          break;
+        case 'webhook_configs':
+          initialWebhookUrl = _.get(receiverConfig, 'url');
+          break;
+        default:
+      }
+    }
+  }
+
+  const [receiverName, setReceiverName] = React.useState(initialReceiverName);
+  const [receiverType, setReceiverType] = React.useState(initialReceiverType);
+  const [webhookUrl, setWebhookUrl] = React.useState(initialWebhookUrl);
+  const [pagerDutyValues, setPagerDutyValues] = React.useState(initialPagerDutyValues);
 
   const { route } = config || {};
-  const { receiver: defaultReceiver } = route || {};
-  const saveAsDefaultReceiver = _.isUndefined(defaultReceiver);
-  const defaultRouteLabels = saveAsDefaultReceiver
-    ? [{ name: 'All (default receiver)', value: 'All (default receiver)', isRegex: false }]
-    : [{ name: '', value: '', isRegex: false }];
-  const [routeLabels, setRouteLabels] = React.useState(defaultRouteLabels);
+  const { receiver: defaultReceiver } = route || {}; // top level route.receiver is the default receiver for all alarms
+  // if no default receiver defined or editing the default receiver
+  const isDefaultReceiver = defaultReceiver === undefined || defaultReceiver === editReceiverNamed;
 
-  /**
-   * Converts array of labels:
-   * [
-   *   {
-   *     "name": "severity",
-   *     "value": "warning",
-   *     "isRegex": false
-   *   },
-   *   {
-   *    "name": "cluster",
-   *     "value": "myCluster",
-   *     "isRegex": false
-   *   }
-   * ]
-   * ...to single label object:
-   * {
-   *   "severity": "warning",
-   *   "cluster": "myCluster"
-   * }
-   */
-  const normalizeRouteLabels = (returnRegexMatches = false) => {
-    const matches = _.filter(routeLabels, (routeLabel) =>
-      returnRegexMatches ? routeLabel.isRegex : !routeLabel.isRegex,
-    );
-    const matchObj = _.map(matches, (label) => {
-      return { [label.name]: label.value };
-    });
-    return _.assign({}, ...matchObj);
-  };
+  let initialRouteLabels = [];
 
-  /**
-   * Returns new Route object
-   * Ex:
-   * {
-   *   receiver: myNewReceiver,
-   *   match: {
-   *     "severity": "warning",
-   *     "cluster": "myCluster"
-   *   }
-   *   match_re {
-   *     "service": "^(foo1|foo2|baz)$",
-   *   }
-   * }
-   */
-  const createRoute = (receiver: AlertManagerReceiver) => {
-    const matchLabels = normalizeRouteLabels();
-    const matchReLabels = normalizeRouteLabels(true);
+  if (isDefaultReceiver) {
+    // add 'All (default receiver)' label
+    initialRouteLabels = initialRouteLabels.concat(addDefaultReceiverLabel());
+  }
 
-    // construct new route object
-    const newRoute = { receiver: receiver.name };
-    if (!_.isEmpty(matchLabels)) {
-      _.set(newRoute, 'match', matchLabels);
+  let showAddLabel = true;
+  if (receiverToEdit) {
+    const receiverRouteLabels = getRouteLabelsForForm(receiverToEdit, route.routes);
+    if (!_.isEmpty(receiverRouteLabels)) {
+      initialRouteLabels = initialRouteLabels.concat(receiverRouteLabels);
+    } else if (isDefaultReceiver) {
+      showAddLabel = false; // if default receiver doesn't have any routing labels, keep it that way per best practices
     }
-    if (!_.isEmpty(matchReLabels)) {
-      _.set(newRoute, 'match_re', matchReLabels);
-    }
-    return newRoute;
-  };
+  } else if (isDefaultReceiver) {
+    showAddLabel = false; // creating a new default receiver
+  }
 
-  /**
-   * Returns new Receiver object
-   * Ex:
-   * {
-   *   name: MyNewReceiver
-   *   pagerduty_configs: {
-   *     routing_key: <integration_key>
-   *   }
-   * }
-   */
-  const createReceiver = () => {
-    const receiverConfigKey = `${receiverType}_configs`;
-    let receiverConfig;
-    switch (receiverType) {
-      case 'pagerduty':
-        // eslint-disable-next-line no-case-declarations
-        const pagerDutyIntegrationKeyName = `${
-          pagerDutyValues.integrationType === 'events' ? 'routing' : 'service'
-        }_key`;
-        receiverConfig = {
-          [pagerDutyIntegrationKeyName]: pagerDutyValues.integrationKey,
-        };
-        break;
-      case 'webhook':
-        receiverConfig = { url: webhookUrl };
-        break;
-      default:
-    }
-    return {
-      name: receiverName,
-      [receiverConfigKey]: [{ ...receiverConfig }],
-    };
-  };
+  if (!isDefaultReceiver && _.isEmpty(initialRouteLabels)) {
+    // add blank labels for (non-default) receiver with no prior routing labels
+    initialRouteLabels = initialRouteLabels.concat([{ name: '', value: '', isRegex: false }]);
+  }
+  const [routeLabels, setRouteLabels] = React.useState(initialRouteLabels);
 
   const save = (e) => {
     e.preventDefault();
 
-    // add new receiver to alert manager receivers
-    const newReceiver = createReceiver();
-    const receivers = _.get(config, 'receivers', []);
-    receivers.push(newReceiver);
-    _.set(config, 'receivers', receivers);
+    // Update Receivers
+    const newReceiver = createReceiver(receiverName, receiverType, pagerDutyValues, webhookUrl);
+    _.update(config, 'receivers', (receivers = []) => {
+      if (editReceiverNamed) {
+        const index = _.findIndex(receivers, { name: editReceiverNamed });
+        receivers.splice(index, 1, newReceiver);
+      } else {
+        receivers.push(newReceiver);
+      }
+      return receivers;
+    });
 
-    // set as default or create new route
-    if (saveAsDefaultReceiver) {
+    // Update Route & RouteLabels
+    if (isDefaultReceiver) {
       _.set(route, 'receiver', newReceiver.name);
-    } else if (!_.isEmpty(routeLabels)) {
-      const routes = _.get(route, 'routes', []);
-      const newRoute = createRoute(newReceiver);
-      routes.push(newRoute);
-      _.set(route, 'routes', routes);
     }
+    removeDefaultReceiverLabel(routeLabels);
+    const newRoute = _.isEmpty(routeLabels) ? undefined : createRoute(newReceiver, routeLabels);
+    _.update(route, 'routes', (routes = []) => {
+      if (editReceiverNamed) {
+        const index = _.findIndex(routes, { receiver: editReceiverNamed });
+        if (index !== -1) {
+          if (!newRoute) {
+            // no routing labels for receiver, remove old route
+            routes.splice(index, 1);
+          } else {
+            // update receiver's route with new route/labels
+            routes.splice(index, 1, newRoute);
+          }
+        } else if (newRoute) {
+          // receiver didn't have a prior route, so add new route
+          routes.push(newRoute);
+        }
+      } else if (newRoute) {
+        // add route for new receiver
+        routes.push(newRoute);
+      }
+      return routes;
+    });
 
+    // Update 'alertmanager-main' Secret with new alertmanager.yaml configuration
     setInProgress(true);
     patchAlertManagerConfig(secret, config).then(
       () => {
@@ -354,8 +351,8 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
   const isFormInvalid =
     _.isEmpty(receiverName) ||
     _.isEmpty(receiverType) ||
-    (receiverType === 'pagerduty' && _.isEmpty(pagerDutyValues.integrationKey)) ||
-    (receiverType === 'webhook' && _.isEmpty(webhookUrl));
+    (receiverType === 'pagerduty_configs' && _.isEmpty(pagerDutyValues.integrationKey)) ||
+    (receiverType === 'webhook_configs' && _.isEmpty(webhookUrl));
 
   return (
     <div className="co-m-pane__body">
@@ -363,7 +360,9 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
         <title>{titleVerb} Receiver</title>
       </Helmet>
       <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
-        <h1 className="co-m-pane__heading">Create {saveAsDefaultReceiver && 'Default'} Receiver</h1>
+        <h1 className="co-m-pane__heading">
+          {titleVerb} {isDefaultReceiver && 'Default'} Receiver
+        </h1>
         <div className="form-group">
           <label className="control-label co-required">Receiver Name</label>
           <input
@@ -389,13 +388,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
           />
         </div>
 
-        {receiverType === 'pagerduty' && (
+        {receiverType === 'pagerduty_configs' && (
           <PagerDutySubForm
             pagerDutyValues={pagerDutyValues}
             setPagerDutyValues={setPagerDutyValues}
           />
         )}
-        {receiverType === 'webhook' && (
+        {receiverType === 'webhook_configs' && (
           <WebhookSubForm webhookUrl={webhookUrl} setWebhookUrl={setWebhookUrl} />
         )}
 
@@ -403,7 +402,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({ obj, titleVerb, sav
           <RoutingLabels
             routeLabels={routeLabels}
             setRouteLabels={setRouteLabels}
-            saveAsDefaultReceiver={saveAsDefaultReceiver}
+            showAddLabel={showAddLabel}
           />
         )}
 
@@ -430,19 +429,25 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
   );
 });
 
+const resources = [
+  {
+    kind: 'Secret',
+    name: 'alertmanager-main',
+    namespace: 'openshift-monitoring',
+    isList: false,
+    prop: 'obj',
+  },
+];
+
 export const CreateReceiver = () => (
-  <Firehose
-    resources={[
-      {
-        kind: 'Secret',
-        name: 'alertmanager-main',
-        namespace: 'openshift-monitoring',
-        isList: false,
-        prop: 'obj',
-      },
-    ]}
-  >
+  <Firehose resources={resources}>
     <ReceiverWrapper titleVerb="Create" saveButtonText="Create" />
+  </Firehose>
+);
+
+export const EditReceiver = ({ match: { params } }) => (
+  <Firehose resources={resources}>
+    <ReceiverWrapper titleVerb="Edit" saveButtonText="Save" editReceiverNamed={params.name} />
   </Firehose>
 );
 
@@ -453,10 +458,12 @@ type ReceiverFormsWrapperProps = {
     data?: K8sResourceKind;
     [key: string]: any;
   };
+  editReceiverNamed?: string;
 };
 
 type ReceiverBaseFormProps = {
   obj?: K8sResourceKind;
   titleVerb: string;
   saveButtonText: string;
+  editReceiverNamed?: string;
 };

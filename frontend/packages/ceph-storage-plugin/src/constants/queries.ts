@@ -20,6 +20,7 @@ export enum StorageDashboardQuery {
   STORAGE_CEPH_CAPACITY_REQUESTED_QUERY = 'STORAGE_CEPH_CAPACITY_REQUESTED_QUERY',
   STORAGE_CEPH_CAPACITY_USED_QUERY = 'STORAGE_CEPH_CAPACITY_USED_QUERY',
   RESILIENCY_PROGRESS = 'RESILIENCY_PROGRESS',
+  NODES_BY_USED = 'NODES_BY_USED',
 }
 
 export const STORAGE_HEALTH_QUERIES = {
@@ -116,3 +117,27 @@ export const breakdownQueryMap = {
     },
   },
 };
+
+export const utilizationPopoverQueryMap = [
+  {
+    model: ProjectModel,
+    metric: 'namespace',
+    query: `(sort_desc(topk(25,(${
+      CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PROJECTS_BY_USED]
+    }))))`,
+  },
+  {
+    model: StorageClassModel,
+    metric: 'storageclass',
+    query: `(sort_desc(topk(25,(${
+      CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.STORAGE_CLASSES_BY_USED]
+    }))))`,
+  },
+  {
+    model: PodModel,
+    metric: 'pod',
+    query: `(sort_desc(topk(25, (${
+      CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PODS_BY_USED]
+    }))))`,
+  },
+];

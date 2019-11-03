@@ -4,6 +4,7 @@ export enum OverviewQuery {
   NETWORK_TOTAL = 'NETWORK_TOTAL',
   NETWORK_UTILIZATION = 'NETWORK_UTILIZATION',
   CPU_UTILIZATION = 'CPU_UTILIZATION',
+  CPU_TOTAL = 'CPU_TOTAL',
   STORAGE_UTILIZATION = 'STORAGE_UTILIZATION',
   STORAGE_TOTAL = 'STORAGE_TOTAL',
   PODS_BY_CPU = 'PODS_BY_CPU',
@@ -46,8 +47,8 @@ const overviewQueries = {
   [OverviewQuery.NETWORK_TOTAL]: 'sum(avg by(instance)(node_network_speed_bytes))',
   [OverviewQuery.NETWORK_UTILIZATION]:
     'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
-  [OverviewQuery.CPU_UTILIZATION]:
-    '(avg(instance:node_cpu_utilisation:rate1m{job="node-exporter"}) * 100)',
+  [OverviewQuery.CPU_UTILIZATION]: 'cluster:cpu_usage_cores:sum',
+  [OverviewQuery.CPU_TOTAL]: 'sum(cluster:capacity_cpu_cores:sum)',
   [OverviewQuery.STORAGE_UTILIZATION]:
     '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
@@ -80,9 +81,18 @@ export const capacityQueries = {
 };
 
 export const utilizationQueries = {
-  [OverviewQuery.CPU_UTILIZATION]: overviewQueries[OverviewQuery.CPU_UTILIZATION],
-  [OverviewQuery.MEMORY_UTILIZATION]: overviewQueries[OverviewQuery.MEMORY_UTILIZATION],
-  [OverviewQuery.STORAGE_UTILIZATION]: overviewQueries[OverviewQuery.STORAGE_UTILIZATION],
+  [OverviewQuery.CPU_UTILIZATION]: {
+    utilization: overviewQueries[OverviewQuery.CPU_UTILIZATION],
+    total: overviewQueries[OverviewQuery.CPU_TOTAL],
+  },
+  [OverviewQuery.MEMORY_UTILIZATION]: {
+    utilization: overviewQueries[OverviewQuery.MEMORY_UTILIZATION],
+    total: overviewQueries[OverviewQuery.MEMORY_TOTAL],
+  },
+  [OverviewQuery.STORAGE_UTILIZATION]: {
+    utilization: overviewQueries[OverviewQuery.STORAGE_UTILIZATION],
+    total: overviewQueries[OverviewQuery.STORAGE_TOTAL],
+  },
 };
 
 export const topConsumersQueries = {

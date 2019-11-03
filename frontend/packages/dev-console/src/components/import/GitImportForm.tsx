@@ -10,6 +10,7 @@ import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
 import DockerSection from './git/DockerSection';
+import PipelineSection from './pipeline/PipelineSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -30,6 +31,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
+    <PipelineSection />
     <ServerlessSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>

@@ -467,6 +467,15 @@ const AppContents = connect((state: RootState) => ({
                 }
               />
               <LazyRoute
+                path="/monitoring/alertmanagerconfig/receivers/:name/edit"
+                exact
+                loader={() =>
+                  import(
+                    './monitoring/alert-manager-receiver-forms' /* webpackChunkName: "monitoring" */
+                  ).then((m) => m.EditReceiver)
+                }
+              />
+              <LazyRoute
                 path="/monitoring"
                 loader={() =>
                   import('./monitoring' /* webpackChunkName: "monitoring" */).then(

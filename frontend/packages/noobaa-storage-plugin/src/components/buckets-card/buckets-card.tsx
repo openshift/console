@@ -135,10 +135,8 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>Buckets</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <div className="co-dashboard-card__body--no-padding">
-          <BucketsItem title="ObjectBucket" {...bucketProps} link={noobaaBucketsLink} />
-          <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={noobaaBucketsLink} />
-        </div>
+        <BucketsItem title="ObjectBucket" {...bucketProps} link={noobaaBucketsLink} />
+        <BucketsItem title="ObjectBucketClaim" {...bucketClaimProps} link={noobaaBucketsLink} />
       </DashboardCardBody>
     </DashboardCard>
   );

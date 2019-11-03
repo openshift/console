@@ -20,7 +20,7 @@
 }
 
 .co-utilization-card-popover__consumer-list__item {
-    margin-bottom: var(--pf-global--spacer--sm);
+    margin-bottom: var(--pf-global--spacer--sm) !important;
 }
 
 .co-utilization-card-popover__title, .co-utilization-card-popover__consumer-list__name, .co-utilization-card-popover__consumer-list__value, .co-utilization-card-popover__consumer-list__button {
@@ -39,7 +39,7 @@
     min-height: var(--pf-global--spacer--lg);
 }
 
-.skeleton-activity {
+.skeleton-consumer {
   animation: $skeleton-animation;
   background: $skeleton-color;
   height: var(--pf-global--spacer--md);

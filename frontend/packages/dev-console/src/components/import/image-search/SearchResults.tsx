@@ -74,9 +74,9 @@ const SearchResults: React.FC = () => {
                 This image will be deployed in Deployment Config{' '}
                 <strong>{values.name || '<name>'}</strong>.
               </li>
-              {values.ports && (
+              {values.isi.ports && (
                 <li>
-                  <ImagePorts ports={values.ports} />
+                  <ImagePorts ports={values.isi.ports} />
                 </li>
               )}
             </ul>

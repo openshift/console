@@ -18,7 +18,6 @@ import {
   DashboardsTab,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
-  DashboardsOverviewQuery,
   DashboardsOverviewUtilizationItem,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
@@ -27,7 +26,6 @@ import {
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -52,7 +50,6 @@ type ConsumedExtensions =
   | DashboardsCard
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsOverviewQuery
   | DashboardsOverviewUtilizationItem
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewPrometheusActivity;
@@ -216,22 +213,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Query',
-    properties: {
-      queryKey: OverviewQuery.STORAGE_TOTAL,
-      query: 'fooQuery',
-      required: 'TEST_MODEL_FLAG',
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Query',
-    properties: {
-      queryKey: OverviewQuery.STORAGE_UTILIZATION,
-      query: 'barQuery',
-      required: 'TEST_MODEL_FLAG',
-    },
-  },
-  {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       resource: {
@@ -259,9 +240,9 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Utilization/Item',
     properties: {
-      title: 'Foo',
+      id: OverviewQuery.STORAGE_UTILIZATION,
       query: 'barQuery',
-      humanizeValue: humanizeBinaryBytes,
+      totalQuery: 'fooQuery',
       required: 'TEST_MODEL_FLAG',
     },
   },

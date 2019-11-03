@@ -1,8 +1,11 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
 import { getBadgeFromType } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { getActivePerspective } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
 import { PipelineModel } from '../../models';
 import ProjectListPage from '../projects/ProjectListPage';
 import { filters } from './PipelineAugmentRuns';
@@ -12,7 +15,14 @@ interface PipelinesPageProps {
   namespace: string;
 }
 
-const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
+interface StateProps {
+  perspective: string;
+}
+
+export const PipelinesPage: React.FC<PipelinesPageProps & StateProps> = ({
+  namespace,
+  perspective,
+}) => {
   const resources = [
     {
       isList: true,
@@ -22,9 +32,11 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       filters: { ...filters },
     },
   ];
-  return namespace ? (
+  return namespace || perspective !== 'dev' ? (
     <FireMan
-      canCreate={false}
+      canCreate
+      createButtonText={`Create ${PipelineModel.label}`}
+      createProps={{ to: `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/~new` }}
       filterLabel="by name"
       textFilter="name"
       resources={resources}
@@ -42,4 +54,11 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
   );
 };
 
-export default PipelinesPage;
+const mapStateToProps = (state: RootState): StateProps => {
+  const perspective = getActivePerspective(state);
+  return {
+    perspective,
+  };
+};
+
+export default connect(mapStateToProps)(PipelinesPage);

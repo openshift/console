@@ -6,17 +6,15 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DeployImageFormData } from './import-types';
+import { DeployImageFormData, FirehoseList } from './import-types';
 import { createResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 
 export interface DeployImageProps {
   namespace: string;
-  projects?: {
-    loaded: boolean;
-    data: [];
-  };
+  projects?: FirehoseList;
+  imageStreams?: FirehoseList;
 }
 
 interface StateProps {
@@ -25,7 +23,7 @@ interface StateProps {
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
+const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, imageStreams }) => {
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -39,6 +37,12 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
     },
     name: '',
     searchTerm: '',
+    registry: 'external',
+    imageStream: {
+      image: '',
+      tag: '',
+      namespace: '',
+    },
     isi: {
       name: '',
       image: {},
@@ -142,7 +146,9 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={deployValidationSchema}
-      render={(props) => <DeployImageForm {...props} projects={projects} />}
+      render={(props) => (
+        <DeployImageForm {...props} projects={projects} imageStreams={imageStreams} />
+      )}
     />
   );
 };

@@ -17,6 +17,7 @@ import {
   annotations,
   dryRunOpt,
 } from '../../utils/shared-submit-utils';
+import { registryType } from '../../utils/imagestream-utils';
 import { DeployImageFormData } from './import-types';
 
 export const createImageStream = (
@@ -72,6 +73,7 @@ export const createDeploymentConfig = (
     deployment: { env, replicas, triggers },
     labels: userLabels,
     limits: { cpu, memory },
+    imageStream: { image: imgName, namespace: imgNamespace },
   } = formData;
 
   const defaultLabels = getAppLabels(name, application);
@@ -146,8 +148,8 @@ export const createDeploymentConfig = (
             containerNames: [name],
             from: {
               kind: 'ImageStreamTag',
-              name: `${name}:${tag}`,
-              namespace,
+              name: `${imgName || name}:${tag}`,
+              namespace: imgNamespace || namespace,
             },
           },
         },
@@ -189,12 +191,13 @@ export const createResources = async (
 ): Promise<K8sResourceKind[]> => {
   const formData = ensurePortExists(rawFormData);
   const {
+    registry,
     route: { create: canCreateRoute },
     isi: { ports, tag: imageStreamTag },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
-  requests.push(createImageStream(formData, dryRun));
+  registry === registryType.External && requests.push(createImageStream(formData, dryRun));
   if (!formData.serverless.enabled) {
     requests.push(createDeploymentConfig(formData, dryRun));
 

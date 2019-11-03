@@ -3,7 +3,11 @@ import * as _ from 'lodash-es';
 import { Button } from '@patternfly/react-core';
 import { CloseIcon, InfoCircleIcon } from '@patternfly/react-icons';
 
-import { ResourceSidebarSamples, getResourceSidebarSamples } from './resource-sidebar-samples';
+import {
+  ResourceSidebarSnippets,
+  ResourceSidebarSamples,
+  getResourceSidebarSamples,
+} from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
 import { Firehose, SimpleTabNav } from '../utils';
 import { connectToFlags } from '../../reducers/features';
@@ -85,6 +89,14 @@ const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml 
   />
 );
 
+const ResourceSnippets = ({ snippets, kindObj, insertSnippetYaml }) => (
+  <ResourceSidebarSnippets
+    snippets={snippets}
+    kindObj={kindObj}
+    insertSnippetYaml={insertSnippetYaml}
+  />
+);
+
 const ResourceSidebarContent = (props) => {
   const {
     downloadSampleYaml,
@@ -92,6 +104,7 @@ const ResourceSidebarContent = (props) => {
     isCreateMode,
     kindObj,
     loadSampleYaml,
+    insertSnippetYaml,
     yamlSamplesList,
   } = props;
   if (!kindObj) {
@@ -99,8 +112,34 @@ const ResourceSidebarContent = (props) => {
   }
 
   const { label } = kindObj;
-  const samples = getResourceSidebarSamples(kindObj, yamlSamplesList);
+  const { samples, snippets } = getResourceSidebarSamples(kindObj, yamlSamplesList);
   const showSamples = !_.isEmpty(samples) && isCreateMode;
+  const showSnippets = snippets.length > 0;
+
+  let tabs = [];
+  if (showSamples) {
+    tabs.push({
+      name: 'Samples',
+      component: ResourceSamples,
+    });
+  }
+  if (showSnippets) {
+    tabs.push({
+      name: 'Snippets',
+      component: ResourceSnippets,
+    });
+  }
+  if (tabs.length > 0) {
+    // TODO: Pre-determine if we have a schema
+    // Possible Related Bug: https://jira.coreos.com/browse/CONSOLE-1611
+    tabs = [
+      {
+        name: 'Schema',
+        component: ResourceSchema,
+      },
+      ...tabs,
+    ];
+  }
 
   return (
     <ResourceSidebarWrapper
@@ -109,23 +148,16 @@ const ResourceSidebarContent = (props) => {
       style={{ height }}
       startHidden={!isCreateMode}
     >
-      {showSamples ? (
+      {tabs.length > 0 ? (
         <SimpleTabNav
-          tabs={[
-            {
-              name: 'Schema',
-              component: ResourceSchema,
-            },
-            {
-              name: 'Samples',
-              component: ResourceSamples,
-            },
-          ]}
+          tabs={tabs}
           tabProps={{
             downloadSampleYaml,
             kindObj,
             loadSampleYaml,
+            insertSnippetYaml,
             samples,
+            snippets,
           }}
           additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
         />

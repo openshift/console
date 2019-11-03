@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
-import { modelFor } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { asAccessReview } from '@console/internal/components/utils';
 import { TopologyDataMap, TopologyApplicationObject } from '../topology-types';
 import { getResourceDeploymentObject } from '../topology-utils';
@@ -27,6 +27,9 @@ const deleteGroup = (application: TopologyApplicationObject) => {
   // accessReview needs a resource but group is not a k8s resource,
   // so currently picking the first resource to do the rbac checks (might change in future)
   const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
+  const resourceModel = modelFor(primaryResource.kind)
+    ? modelFor(primaryResource.kind)
+    : modelFor(referenceFor(primaryResource));
   return {
     label: 'Delete Application',
     callback: () => {
@@ -43,7 +46,7 @@ const deleteGroup = (application: TopologyApplicationObject) => {
         },
       });
     },
-    accessReview: asAccessReview(modelFor(primaryResource.kind), primaryResource, 'delete'),
+    accessReview: asAccessReview(resourceModel, primaryResource, 'delete'),
   };
 };
 

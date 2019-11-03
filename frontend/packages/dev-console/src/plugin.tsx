@@ -13,6 +13,8 @@ import {
   Perspective,
   RoutePage,
   OverviewCRD,
+  YAMLTemplate,
+  OverviewTabSection,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
@@ -24,9 +26,17 @@ import {
   tknPipelineAndPipelineRunsResources,
   getPipelinesAndPipelineRunsForResource,
 } from './utils/pipeline-plugin-utils';
-import { SHOW_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
+import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
+import { newPipelineTemplate } from './templates';
 
-const { PipelineModel, PipelineRunModel } = models;
+const {
+  ClusterTaskModel,
+  PipelineModel,
+  PipelineResourceModel,
+  PipelineRunModel,
+  TaskModel,
+  TaskRunModel,
+} = models;
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -39,7 +49,9 @@ type ConsumedExtensions =
   | Perspective
   | RoutePage
   | KebabActions
-  | OverviewCRD;
+  | OverviewCRD
+  | YAMLTemplate
+  | OverviewTabSection;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -52,7 +64,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Model',
     properties: {
       model: models.PipelineModel,
-      flag: SHOW_PIPELINE,
+      flag: FLAG_OPENSHIFT_PIPELINE,
     },
   },
   {
@@ -102,9 +114,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       componentProps: {
-        name: 'Pipelines',
+        name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
-        required: SHOW_PIPELINE,
+        required: FLAG_OPENSHIFT_PIPELINE,
         testID: 'pipeline-header',
       },
     },
@@ -175,8 +187,90 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: tknPipelineAndPipelineRunsResources,
-      required: SHOW_PIPELINE,
+      required: FLAG_OPENSHIFT_PIPELINE,
       utils: getPipelinesAndPipelineRunsForResource,
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineModel.labelPlural,
+        resource: referenceForModel(PipelineModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineRunModel.labelPlural,
+        resource: referenceForModel(PipelineRunModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: PipelineResourceModel.labelPlural,
+        resource: referenceForModel(PipelineResourceModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: TaskModel.labelPlural,
+        resource: referenceForModel(TaskModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: TaskRunModel.labelPlural,
+        resource: referenceForModel(TaskRunModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      perspective: 'admin',
+      section: 'Pipelines',
+      componentProps: {
+        name: ClusterTaskModel.labelPlural,
+        resource: referenceForModel(ClusterTaskModel),
+        required: FLAG_OPENSHIFT_PIPELINE,
+      },
+    },
+  },
+  {
+    type: 'Overview/Section',
+    properties: {
+      key: 'pipelines',
+      loader: () =>
+        import(
+          './components/pipelines/pipeline-overview/PipelineOverview' /* webpackChunkName: "pipeline-overview-list" */
+        ).then((m) => m.default),
     },
   },
   {
@@ -251,7 +345,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/topology/all-namespaces', '/topology/ns/:ns'],
+      path: [
+        '/topology/all-namespaces',
+        '/topology/ns/:name',
+        '/topology/all-namespaces/list',
+        '/topology/ns/:name/list',
+      ],
       loader: async () =>
         (await import(
           './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
@@ -351,6 +450,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: PipelineModel,
+      template: newPipelineTemplate,
     },
   },
 ];

@@ -123,6 +123,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
   },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/cluster/nodes/:name'],
+      loader: () =>
+        import(
+          './components/baremetal-nodes/BareMetalNodeDetailsPage' /* webpackChunkName: "node" */
+        ).then((m) => m.default),
+    },
+  },
 ];
 
 export default plugin;

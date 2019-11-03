@@ -15,7 +15,6 @@ import { DashboardItemProps, withDashboardResources } from '../../with-dashboard
 import { InfrastructureModel, ClusterVersionModel } from '../../../../models';
 import {
   referenceForModel,
-  K8sResourceKind,
   getOpenShiftVersion,
   getK8sGitVersion,
   ClusterVersionKind,
@@ -26,6 +25,8 @@ import {
   getClusterVersionChannel,
   ClusterUpdateStatus,
   getOCMLink,
+  k8sGet,
+  K8sResourceKind,
 } from '../../../../module/k8s';
 import { FLAGS } from '../../../../const';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
@@ -86,45 +87,48 @@ const clusterVersionResource: FirehoseResource = {
   prop: 'cv',
 };
 
-const infrastructureResource: FirehoseResource = {
-  kind: referenceForModel(InfrastructureModel),
-  namespaced: false,
-  name: 'cluster',
-  isList: false,
-  prop: 'infrastructure',
-};
-
 const mapStateToProps = (state: RootState) => ({
   openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
 });
 
 export const DetailsCard_ = connect(mapStateToProps)(
-  ({
-    watchURL,
-    stopWatchURL,
-    watchK8sResource,
-    stopWatchK8sResource,
-    resources,
-    urlResults,
-    openshiftFlag,
-  }: DetailsCardProps) => {
+  ({ watchK8sResource, stopWatchK8sResource, resources, openshiftFlag }: DetailsCardProps) => {
+    const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
+    const [infrastructureError, setInfrastructureError] = React.useState();
+    const [k8sVersion, setK8sVersion] = React.useState<Response>();
+    const [k8sVersionError, setK8sVersionError] = React.useState();
+
+    React.useEffect(() => {
+      const fetchInfrastructure = async () => {
+        try {
+          const infra = await k8sGet(InfrastructureModel, 'cluster');
+          setInfrastructure(infra);
+        } catch (error) {
+          setInfrastructureError(error);
+        }
+      };
+      fetchInfrastructure();
+    }, []);
     React.useEffect(() => {
       if (flagPending(openshiftFlag)) {
         return;
       }
       if (openshiftFlag) {
         watchK8sResource(clusterVersionResource);
-        watchK8sResource(infrastructureResource);
         return () => {
           stopWatchK8sResource(clusterVersionResource);
-          stopWatchK8sResource(infrastructureResource);
         };
       }
-      watchURL('version');
-      return () => {
-        stopWatchURL('version');
+      const fetchK8sVersion = async () => {
+        try {
+          const version = await fetch('version');
+          setK8sVersion(version);
+        } catch (error) {
+          setK8sVersionError(error);
+        }
       };
-    }, [openshiftFlag, watchK8sResource, stopWatchK8sResource, watchURL, stopWatchURL]);
+      fetchK8sVersion();
+    }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
 
     const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
     const clusterVersionError = _.get(resources.cv, 'loadError');
@@ -133,15 +137,10 @@ export const DetailsCard_ = connect(mapStateToProps)(
     const openShiftVersion = getOpenShiftVersion(clusterVersionData);
     const cvChannel = getClusterVersionChannel(clusterVersionData);
 
-    const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
-    const infrastructureError = _.get(resources.infrastructure, 'loadError');
-    const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
-    const infrastructurePlatform = getInfrastructurePlatform(infrastructureData);
-    const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructureData);
+    const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
+    const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
 
-    const kubernetesVersionData = urlResults.getIn(['version', 'data']);
-    const kubernetesVersionError = urlResults.getIn(['version', 'loadError']);
-    const k8sGitVersion = getK8sGitVersion(kubernetesVersionData);
+    const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
     return (
       <DashboardCard>
@@ -155,8 +154,8 @@ export const DetailsCard_ = connect(mapStateToProps)(
               <>
                 <DetailItem
                   title="Cluster API address"
-                  isLoading={!infrastructureLoaded && !infrastructureError}
-                  error={!!infrastructureError || !infrastuctureApiUrl}
+                  isLoading={!infrastructure && !infrastructureError}
+                  error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
                   valueClassName="co-select-to-copy"
                 >
                   {infrastuctureApiUrl}
@@ -171,8 +170,8 @@ export const DetailsCard_ = connect(mapStateToProps)(
                 </DetailItem>
                 <DetailItem
                   title="Provider"
-                  error={!!infrastructureError || (infrastructureLoaded && !infrastructurePlatform)}
-                  isLoading={!infrastructureLoaded}
+                  error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+                  isLoading={!infrastructure}
                   valueClassName="co-select-to-copy"
                 >
                   {infrastructurePlatform}
@@ -187,7 +186,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
                 <DetailItem
                   title="Update channel"
                   isLoading={!clusterVersionLoaded && !clusterVersionError}
-                  error={!!clusterVersionError || !cvChannel}
+                  error={!!clusterVersionError || (clusterVersionData && !cvChannel)}
                   valueClassName="co-select-to-copy"
                 >
                   {cvChannel}
@@ -197,8 +196,8 @@ export const DetailsCard_ = connect(mapStateToProps)(
               <DetailItem
                 key="kubernetes"
                 title="Kubernetes version"
-                error={!!kubernetesVersionError || (kubernetesVersionData && !k8sGitVersion)}
-                isLoading={!kubernetesVersionData}
+                error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
+                isLoading={!k8sVersion}
                 valueClassName="co-select-to-copy"
               >
                 {k8sGitVersion}

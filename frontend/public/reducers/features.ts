@@ -5,14 +5,15 @@ import * as _ from 'lodash-es';
 import {
   ChargebackReportModel,
   ClusterServiceClassModel,
-  MachineModel,
+  ConsoleCLIDownloadModel,
+  ConsoleExternalLogLinkModel,
+  ConsoleNotificationModel,
+  ConsoleYAMLSampleModel,
   MachineAutoscalerModel,
   MachineConfigModel,
+  MachineHealthCheckModel,
+  MachineModel,
   PrometheusModel,
-  ConsoleCLIDownloadModel,
-  ConsoleNotificationModel,
-  ConsoleExternalLogLinkModel,
-  ConsoleYAMLSampleModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { RootState } from '../redux';
@@ -26,16 +27,17 @@ export const defaults = _.mapValues(FLAGS, (flag) =>
 );
 
 export const baseCRDs = {
-  [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
-  [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
-  [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
-  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
-  [referenceForModel(ConsoleNotificationModel)]: FLAGS.CONSOLE_NOTIFICATION,
   [referenceForModel(ConsoleExternalLogLinkModel)]: FLAGS.CONSOLE_EXTERNAL_LOG_LINK,
+  [referenceForModel(ConsoleNotificationModel)]: FLAGS.CONSOLE_NOTIFICATION,
   [referenceForModel(ConsoleYAMLSampleModel)]: FLAGS.CONSOLE_YAML_SAMPLE,
+  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
+  [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
+  [referenceForModel(MachineHealthCheckModel)]: FLAGS.MACHINE_HEALTH_CHECK,
+  [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
+  [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
 };
 
 const CRDs = { ...baseCRDs };
