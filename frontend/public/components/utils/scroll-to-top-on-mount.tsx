@@ -6,7 +6,7 @@ import * as React from 'react';
 // back to the top of the navigated to page when pages share a resource.
 export class ScrollToTopOnMount extends React.Component {
   componentDidMount() {
-    document.getElementById('content-scrollable').scrollTo(0, 0);
+    document.getElementById('content-scrollable').scrollTop = 0;
   }
 
   render() {
@@ -15,4 +15,6 @@ export class ScrollToTopOnMount extends React.Component {
 }
 
 export const useScrollToTopOnMount = () =>
-  React.useEffect(() => document.getElementById('content-scrollable').scrollTo(0, 0), []);
+  React.useEffect(() => {
+    document.getElementById('content-scrollable').scrollTop = 0;
+  }, []);
