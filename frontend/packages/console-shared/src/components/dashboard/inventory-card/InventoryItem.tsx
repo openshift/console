@@ -12,6 +12,7 @@ import {
   AccordionContent,
 } from '@patternfly/react-core';
 import * as plugins from '@console/internal/plugins';
+import { pluralize } from '@console/internal/components/utils';
 import { isDashboardsInventoryItemGroup } from '@console/plugin-sdk';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
@@ -59,11 +60,19 @@ const getStatusGroupIcons = (flags: FlagsObject) => {
 };
 
 const InventoryItem: React.FC<InventoryItemProps> = React.memo(
-  ({ isLoading, title, count, children, error = false, TitleComponent, ExpandedComponent }) => {
+  ({
+    isLoading,
+    title,
+    titlePlural,
+    count,
+    children,
+    error = false,
+    TitleComponent,
+    ExpandedComponent,
+  }) => {
     const [expanded, setExpanded] = React.useState(false);
     const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
-    const pluralizedTitle = count !== 1 ? `${title}s` : title;
-    const titleMessage = isLoading || error ? pluralizedTitle : `${count} ${pluralizedTitle}`;
+    const titleMessage = isLoading || error ? title : pluralize(count, title, titlePlural);
     return ExpandedComponent ? (
       <Accordion
         asDefinitionList={false}
@@ -197,6 +206,7 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
       <InventoryItem
         isLoading={isLoading}
         title={useAbbr ? kind.abbr : kind.label}
+        titlePlural={useAbbr ? undefined : kind.labelPlural}
         count={resources.length}
         error={error}
         TitleComponent={showLink ? TitleComponent : null}
@@ -241,6 +251,7 @@ export type StatusGroupMapper = (
 type InventoryItemProps = {
   isLoading: boolean;
   title: string;
+  titlePlural?: string;
   count: number;
   children?: React.ReactNode;
   error?: boolean;
