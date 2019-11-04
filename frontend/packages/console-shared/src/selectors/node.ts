@@ -18,6 +18,9 @@ export const getNodeRoles = (node: NodeKind): string[] => {
   );
 };
 
+export const isLabelPresent = (node: NodeKind) =>
+  !!_.get(node, '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage');
+
 export const getNodeAddresses = (node: NodeKind): NodeAddress[] =>
   _.get(node, 'status.addresses', []);
 

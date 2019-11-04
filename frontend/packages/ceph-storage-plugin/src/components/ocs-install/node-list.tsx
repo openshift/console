@@ -34,6 +34,7 @@ import {
 import { NodeModel, InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { isDefaultClass } from '@console/internal/components/storage-class';
 import { OCSServiceModel } from '../../models';
+import { isLabelPresent } from '../../../../console-shared/src/selectors/node';
 import {
   infraProvisionerMap,
   minSelectedNode,
@@ -223,8 +224,10 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
   };
 
   const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
-    return selectedNodes.map((node: NodeKind) => {
-      if (!node.metadata.labels['cluster.ocs.openshift.io/openshift-storage']) {
+    const promises = [];
+    selectedNodes.map((node: NodeKind) => {
+      const nodeLabel = isLabelPresent(node);
+      if (!nodeLabel) {
         const patch = [
           {
             op: 'add',
@@ -234,18 +237,9 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
         ];
         return k8sPatch(NodeModel, node, patch);
       }
-      //yarn run lint test fails if else condition is not there. Should it be added?
-      // else {
-      //   const patch = [
-      //     {
-      //       op: 'add',
-      //       path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
-      //       value: node.metadata.labels['cluster.ocs.openshift.io/openshift-storage']
-      //     },
-      //   ];
-      //   return k8sPatch(NodeModel, node, patch)
-      // }
     });
+    promises.push(selectedNodes);
+    return promises;
   };
 
   // tainting the selected nodes
@@ -283,10 +277,29 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
     const ocsObj = _.cloneDeep(ocsRequestData);
     ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
 
-    // Nested Promises failing lint test as well
-    Promise.all(promises)
-      .then(() => {
-        k8sCreate(OCSServiceModel, ocsObj).then(() => {
+    if (promises) {
+      Promise.all(promises)
+        .then(() => {
+          k8sCreate(OCSServiceModel, ocsObj)
+            .then(() => {
+              history.push(
+                `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
+                  ocsProps.clusterServiceVersion.metadata.name
+                }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
+              );
+            })
+            .catch((err) => {
+              setProgress(false);
+              setError(err.message);
+            });
+        })
+        .catch((err) => {
+          setProgress(false);
+          setError(err.message);
+        });
+    } else {
+      k8sCreate(OCSServiceModel, ocsObj)
+        .then(() => {
           history.push(
             `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
               ocsProps.clusterServiceVersion.metadata.name
@@ -297,11 +310,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
           setProgress(false);
           setError(err.message);
         });
-      })
-      .catch((err) => {
-        setProgress(false);
-        setError(err.message);
-      });
+    }
   };
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
