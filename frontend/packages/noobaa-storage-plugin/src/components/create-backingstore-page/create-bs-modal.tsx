@@ -8,7 +8,7 @@ import {
 import CreateBackingStoreForm from './create-bs';
 import './create-bs.scss';
 
-const CreateBackingStoreFormModal: React.FC<ModalComponentProps> = (props) => {
+const CreateBackingStoreFormModal: React.FC<CreateBackingStoreFormModal> = (props) => {
   return (
     <div className="nb-create-bs__modal">
       <ModalTitle>Create new BackingStore</ModalTitle>
@@ -21,6 +21,10 @@ const CreateBackingStoreFormModal: React.FC<ModalComponentProps> = (props) => {
       </ModalBody>
     </div>
   );
+};
+
+type CreateBackingStoreFormModal = ModalComponentProps & {
+  namespace?: string;
 };
 
 export default createModalLauncher(CreateBackingStoreFormModal);

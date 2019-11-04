@@ -66,7 +66,12 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           google-cloud-storage, azure-blob, obc, PVC.
         </Alert>
       )}
-      <CreateBackingStoreForm cancel={onCancel} isPage namespace={ns} />
+      <CreateBackingStoreForm
+        cancel={onCancel}
+        isPage
+        namespace={ns}
+        className="nb-bs-page-form__short"
+      />
     </div>
   );
 };

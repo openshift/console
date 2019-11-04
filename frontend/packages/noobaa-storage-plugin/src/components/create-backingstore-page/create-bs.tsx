@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import * as _ from 'lodash';
 import {
@@ -106,6 +107,17 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
     },
   ];
 
+  const switchToSecret = () => {
+    setShowSecret(true);
+    dispatch({ type: 'setAccessKey', value: '' });
+    dispatch({ type: 'setSecretKey', value: '' });
+  };
+
+  const switchToCredentials = () => {
+    setShowSecret(false);
+    dispatch({ type: 'setSecretName', value: '' });
+  };
+
   return (
     <>
       {provider === 'AWS S3' && (
@@ -149,7 +161,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
               />
             </Firehose>
-            <Button variant="plain" onClick={() => setShowSecret(false)}>
+            <Button variant="plain" onClick={switchToCredentials}>
               Switch to Credentials
             </Button>
           </InputGroup>
@@ -165,7 +177,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 }}
                 aria-label="Access Key Field"
               />
-              <Button variant="plain" onClick={() => setShowSecret(true)}>
+              <Button variant="plain" onClick={switchToSecret}>
                 Switch to Secret
               </Button>
             </InputGroup>
@@ -242,13 +254,7 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
           <InputGroupText>
             <MinusIcon onClick={substract} />{' '}
           </InputGroupText>
-          <TextInput
-            onChange={(e) => {
-              dispatch({ type: 'setVolumes', value: Number(e) });
-            }}
-            value={state.numVolumes}
-            aria-label="Number of Volumes"
-          />
+          <TextInput value={state.numVolumes} aria-label="Number of Volumes" />
           <InputGroupText>
             <PlusIcon
               onClick={() => dispatch({ type: 'setVolumes', value: state.numVolumes + 1 })}
@@ -481,8 +487,28 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     providerDataReducer,
     initialState,
   );
+  const [disabled, setDisabled] = React.useState(true);
 
-  const { cancel, close, inProgress, errorMessage, handlePromise, isPage } = props;
+  // Basic validation of the form
+  React.useEffect(() => {
+    const secretLogic = !(
+      providerDataState.target.trim().length > 0 &&
+      ((providerDataState.accessKey.trim().length > 0 &&
+        providerDataState.secretKey.trim().length > 0) ||
+        providerDataState.secretName.length > 0)
+    );
+    if (namespace.length === 0 || bsName.trim().length === 0) {
+      setDisabled(true);
+    } else if (provider === 'AWS S3' && providerDataState.region.length === 0) {
+      setDisabled(true);
+    } else if (provider !== 'PVC' && secretLogic) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [bsName, namespace.length, provider, providerDataState]);
+
+  const { cancel, className, close, inProgress, errorMessage, handlePromise, isPage } = props;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -535,7 +561,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   };
 
   return (
-    <Form className="nb-bs-form" onSubmit={onSubmit}>
+    <Form className={classNames('nb-bs-form', className)} onSubmit={onSubmit}>
       <FormGroup label="Namespace" fieldId="namespace" className="nb-bs-form-entry" isRequired>
         <NsDropdown
           onChange={setNamespace}
@@ -548,7 +574,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         label="BackingStore Name"
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
-        helperText="A unique name for the backingStore within the project."
+        helperText="If not provided, a generic name will be generated."
       >
         <TextInput
           onChange={setBsName}
@@ -579,7 +605,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       {provider === 'PVC' && <PVCType state={providerDataState} dispatch={providerDataDispatch} />}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" isDisabled={disabled}>
             Create BackingStore
           </Button>
           <Button onClick={cancel} variant="secondary">
@@ -596,6 +622,7 @@ export default CreateBackingStoreForm;
 type CreateBackingStoreFormProps = ModalComponentProps & {
   isPage?: boolean;
   namespace?: string;
+  className?: string;
 };
 
 type S3EndpointTypeProps = {
