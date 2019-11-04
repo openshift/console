@@ -36,19 +36,28 @@ type ApplicationGroupProps = {
 const FILTER_ID = 'ApplicationGroupShadowFilterId';
 const FILTER_ID_HOVER = 'ApplicationGroupDropShadowFilterId--hover';
 
-type PointWithSize = PointTuple | [number, number, number];
+type PointWithSize = [number, number, number];
 
 // Return the point whose Y is the largest value.
-function findLowestPoint<P extends PointTuple>(points: P[]): P {
-  let lowestPoint = points[0];
+// If multiple points are found, compute the center X between them
+// export for testing only
+export function computeLabelLocation(points: PointWithSize[]): PointWithSize {
+  let lowPoints: PointWithSize[];
 
   _.forEach(points, (p) => {
-    if (p[1] > lowestPoint[1]) {
-      lowestPoint = p;
+    if (!lowPoints || p[1] > lowPoints[0][1]) {
+      lowPoints = [p];
+    } else if (p[1] === lowPoints[0][1]) {
+      lowPoints.push(p);
     }
   });
 
-  return _.clone(lowestPoint);
+  return [
+    (_.minBy(lowPoints, (p) => p[0])[0] + _.maxBy(lowPoints, (p) => p[0])[0]) / 2,
+    lowPoints[0][1],
+    // use the max size value
+    _.maxBy(lowPoints, (p) => p[2])[2],
+  ];
 }
 
 const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
@@ -64,22 +73,22 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
 }) => {
   const [groupHover, groupHoverRef] = useHover();
   const [groupLabelHover, groupLabelHoverRef] = useHover();
-  const [lowPoint, setLowPoint] = React.useState<[number, number]>([0, 0]);
-  const pathRef = React.useRef<string | null>(null);
+  const labelLocation = React.useRef<PointWithSize>();
+  const pathRef = React.useRef<string>();
   const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
 
   const hover = groupHover || groupLabelHover;
 
   // cast to number and coerce
   const padding = maxPadding(element.getStyle<GroupStyle>().padding);
-  const hullPadding = (point: PointWithSize) => (point[2] || 0) + padding;
+  const hullPadding = (point: PointWithSize | PointTuple) => (point[2] || 0) + padding;
 
-  if (!droppable || !pathRef.current) {
+  if (!droppable || !pathRef.current || !labelLocation.current) {
     const children = element.getNodes();
     if (children.length === 0) {
       return null;
     }
-    const points: PointWithSize[] = [];
+    const points: (PointWithSize | PointTuple)[] = [];
     _.forEach(children, (c) => {
       if (c.getNodeShape() === NodeShape.circle) {
         const { width, height } = c.getBounds();
@@ -95,20 +104,17 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
         points.push([x + width, y + height, 0] as PointWithSize);
       }
     });
-    const hullPoints: PointTuple[] | null =
+    const hullPoints: (PointWithSize | PointTuple)[] =
       points.length > 2 ? polygonHull(points as PointTuple[]) : (points as PointTuple[]);
     if (!hullPoints) {
       return null;
     }
 
     // change the box only when not dragging
-    pathRef.current = hullPath(hullPoints, hullPadding);
+    pathRef.current = hullPath(hullPoints as PointTuple[], hullPadding);
 
-    // Find the lowest point of the set in order to place the group label.
-    const lowestPoint = findLowestPoint(hullPoints);
-    if (lowestPoint[0] !== lowPoint[0] || lowestPoint[1] !== lowPoint[1]) {
-      setLowPoint(findLowestPoint(hullPoints));
-    }
+    // Compute the location of the group label.
+    labelLocation.current = computeLabelLocation(hullPoints as PointWithSize[]);
   }
 
   const pathClasses = classNames('odc2-application-group', {
@@ -134,8 +140,8 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
       <g ref={groupLabelHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
         <SvgBoxedText
           className="odc2-application-group__label"
-          x={lowPoint[0]}
-          y={lowPoint[1] + hullPadding(lowPoint) + 30}
+          x={labelLocation.current[0]}
+          y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
           paddingX={20}
           paddingY={5}
           truncate={16}
