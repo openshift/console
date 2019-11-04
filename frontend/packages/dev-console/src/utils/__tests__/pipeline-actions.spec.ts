@@ -1,6 +1,6 @@
 import {
   stopPipelineRun,
-  rerunPipeline,
+  rerunPipelineAndRedirect,
   reRunPipelineRun,
   startPipeline,
   getPipelineRunData,
@@ -40,7 +40,7 @@ export const actionPipelineRuns: PipelineRun[] = [
 
 describe('PipelineAction testing rerunPipeline create correct labels and callbacks', () => {
   it('expect label to be "Start Last Run" when latestRun is available', () => {
-    const rerunAction = rerunPipeline(PipelineRunModel, actionPipelineRuns[0]);
+    const rerunAction = rerunPipelineAndRedirect(PipelineRunModel, actionPipelineRuns[0]);
     expect(rerunAction.label).toBe('Start Last Run');
     expect(rerunAction.callback).not.toBeNull();
   });

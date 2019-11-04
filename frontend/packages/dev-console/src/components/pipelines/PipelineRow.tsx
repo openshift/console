@@ -7,7 +7,7 @@ import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../utils/pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import {
-  rerunPipeline,
+  rerunPipelineAndRedirect,
   startPipeline,
   handlePipelineRunSubmit,
 } from '../../utils/pipeline-actions';
@@ -28,7 +28,7 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
   const menuActions = [
     () => startPipeline(PipelineModel, obj, handlePipelineRunSubmit),
     ...(obj.latestRun && obj.latestRun.metadata
-      ? [() => rerunPipeline(PipelineRunModel, obj.latestRun)]
+      ? [() => rerunPipelineAndRedirect(PipelineRunModel, obj.latestRun)]
       : []),
     Kebab.factory.Delete,
   ];
