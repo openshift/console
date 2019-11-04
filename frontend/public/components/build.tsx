@@ -173,9 +173,9 @@ const BuildGraphs = requirePrometheus(({ build }) => {
 export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
   return (
     <Alert isInline className="co-alert" variant="info" title="Pipeline build strategy deprecation">
-      With the release of
+      With the release of{' '}
       <ExternalLink
-        href="https://openshift.github.io/pipelines-docs/docs/docs/index.html"
+        href="https://openshift.github.io/pipelines-docs/docs/"
         text="OpenShift Pipelines based on Tekton"
       />
       , the pipelines build strategy has been deprecated. Users should either use Jenkins files
