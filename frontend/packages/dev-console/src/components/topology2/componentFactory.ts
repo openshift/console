@@ -143,9 +143,7 @@ class ComponentFactory {
             withRemoveConnector(removeConnectorCallback)(ConnectsTo),
           );
         case TYPE_SERVICE_BINDING:
-          return withTargetDrag(edgeDragSourceSpec(this.hasServiceBinding))(
-            withRemoveConnector(removeConnectorCallback)(ServiceBinding),
-          );
+          return withRemoveConnector(removeConnectorCallback)(ServiceBinding);
         default:
           switch (kind) {
             case ModelKind.graph:
