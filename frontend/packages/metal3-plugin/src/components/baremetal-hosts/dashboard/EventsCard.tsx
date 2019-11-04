@@ -79,7 +79,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
           <div className="co-activity-card__ongoing-title">Ongoing</div>
           <div className="co-activity-card__ongoing-body">
             {inProgress ? (
-              <Activity timestamp={obj.status.lastUpdated}>
+              <Activity timestamp={null}>
                 <ActivityItem title={hostStatus.title}>
                   <ResourceLink
                     kind={BareMetalHostModel.kind}
