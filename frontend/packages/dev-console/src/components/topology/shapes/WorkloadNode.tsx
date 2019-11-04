@@ -4,11 +4,11 @@ import { calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { routeDecoratorIcon } from '../../import/render-utils';
 import { NodeProps, WorkloadData } from '../topology-types';
+import BuildDecorator from '../../topology2/components/nodes/build-decorators/BuildDecorator';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import KnativeIcon from './KnativeIcon';
 import PodSet from './PodSet';
-import BuildDecorator from './build-decorator/BuildDecorator';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,

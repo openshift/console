@@ -4,9 +4,9 @@ import {
   getTaskStatus,
   Pipeline,
   runStatus,
-} from '../../../../utils/pipeline-augment';
-import HorizontalStackedBars from '../../../charts/HorizontalStackedBars';
-import TaskStatusToolTip from '../../../pipelineruns/TaskStatusTooltip';
+} from '../../../../../utils/pipeline-augment';
+import HorizontalStackedBars from '../../../../charts/HorizontalStackedBars';
+import TaskStatusToolTip from '../../../../pipelineruns/TaskStatusTooltip';
 import './PipelineBuildDecoratorTooltip.scss';
 
 export interface PipelineBuildDecoratorTooltipProps {
