@@ -16,7 +16,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
   const provisionConfigs = getProvisionConfigs(testName);
 
-  const configName = CONFIG_NAME_CONTAINER;
+  const configName = CONFIG_NAME_CONTAINER.toLowerCase();
   const provisionConfig = provisionConfigs.get(configName);
 
   // not needed for testing flavor
@@ -26,10 +26,11 @@ describe('KubeVirt VM detail - edit flavor', () => {
   it(
     'changes tiny to large',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), provisionConfig, testName);
+      const vmName = `configName-${testName}`;
+      const vm1Config = vmConfig(vmName, provisionConfig, testName);
       vm1Config.startOnCreation = false;
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+      const vm = new VirtualMachine(vmConfig(vmName, provisionConfig, testName));
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(vm1Config);
         await vm.navigateToDetail();
@@ -71,10 +72,11 @@ describe('KubeVirt VM detail - edit flavor', () => {
   it(
     'changes tiny to custom',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), provisionConfig, testName);
+      const vmName = `configName-${testName}`;
+      const vm1Config = vmConfig(vmName, provisionConfig, testName);
       vm1Config.startOnCreation = false;
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+      const vm = new VirtualMachine(vmConfig(vmName, provisionConfig, testName));
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(vm1Config);
         await vm.navigateToDetail();

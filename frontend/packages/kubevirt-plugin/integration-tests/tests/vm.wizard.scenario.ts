@@ -49,11 +49,13 @@ describe('Kubevirt create VM using wizard', () => {
     it(
       `Create VM using ${configName}.`,
       async () => {
+        const name = configName.toLowerCase();
+        const vmName = `${name}-${testName}`;
         const vm = new VirtualMachine(
-          vmConfig(configName.toLowerCase(), provisionConfig, testName),
+          vmConfig(vmName, provisionConfig, testName),
         );
         await withResource(leakedResources, vm.asResource(), async () => {
-          await vm.create(vmConfig(configName.toLowerCase(), provisionConfig, testName));
+          await vm.create(vmConfig(vmName, provisionConfig, testName));
         });
       },
       specTimeout,
@@ -63,7 +65,8 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'Creates DV with correct accessMode/volumeMode',
     async () => {
-      const testVMConfig = vmConfig('test-dv', provisionConfigs.get(CONFIG_NAME_URL), testName);
+      const vmName = `test-dv-${testName}`;
+      const testVMConfig = vmConfig(vmName, provisionConfigs.get(CONFIG_NAME_URL), testName);
       testVMConfig.networkResources = [];
       const vm = new VirtualMachine(testVMConfig);
 
@@ -86,8 +89,10 @@ describe('Kubevirt create VM using wizard', () => {
     'Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
       const clonedDiskProvisionConfig = provisionConfigs.get(CONFIG_NAME_CLONED_DISK);
-      const vm1Config = vmConfig('vm1', clonedDiskProvisionConfig, testName);
-      const vm2Config = vmConfig('vm2', clonedDiskProvisionConfig, testName);
+      const vmName1 = `vm1-${testName}`
+      const vmName2 = `vm2-${testName}`;
+      const vm1Config = vmConfig(vmName1, clonedDiskProvisionConfig, testName);
+      const vm2Config = vmConfig(vmName2, clonedDiskProvisionConfig, testName);
       vm1Config.startOnCreation = false;
       vm1Config.networkResources = [];
       const vm1 = new VirtualMachine(vm1Config);

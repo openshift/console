@@ -25,7 +25,7 @@ export const vmConfig = (name: string, provisionConfig, testName: string) => {
 
   return {
     ...commonSettings,
-    name: `${name}-${testName}`,
+    name: name,
     provisionSource: provisionConfig.provision,
     storageResources: provisionConfig.storageResources,
     networkResources: provisionConfig.networkResources,
