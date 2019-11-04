@@ -13,7 +13,7 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
   }
   if (error || !hasProviders) {
     body = (
-      <div className="nb-resource-providers-card__not-available text-secondary">Unavailable</div>
+      <div className="nb-resource-providers-card__not-available text-secondary">Not available</div>
     );
   }
   return <>{body || children}</>;

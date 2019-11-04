@@ -33,7 +33,7 @@ const filterProviders = (allProviders: ProviderType): string[] => {
 const createProvidersList = (data: PrometheusResponse): ProviderType => {
   const providers = _.get(data, 'data.result', null);
   const providersList: ProviderType = {};
-  if (_.isNil(providers)) return null;
+  if (_.isNil(providers)) return {};
   providers.forEach((provider) => {
     providersList[getProviderType(provider)] = getProviderCount(provider);
   });
@@ -106,7 +106,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
       <DashboardCardBody>
         <ResourceProvidersBody
           isLoading={!error && !(providersTypesQueryResult && unhealthyProvidersTypesQueryResult)}
-          hasProviders={!_.isEmpty(allProviders) || !_.isNil(allProviders)}
+          hasProviders={!_.isEmpty(allProviders)}
           error={error}
         >
           {providerTypes.map((provider) => (
