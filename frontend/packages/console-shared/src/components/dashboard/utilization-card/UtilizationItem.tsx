@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Level } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils/types';
 import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
@@ -56,7 +57,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     return (
       <div className="co-utilization-card__item">
         <div className="co-utilization-card__item__section">
-          <div className="pf-l-level">
+          <Level>
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {error || (!isLoading && !data.length) ? (
               <div className="text-secondary">Not available</div>
@@ -65,15 +66,15 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             ) : (
               current
             )}
-          </div>
-          <div className="pf-l-level">
+          </Level>
+          <Level>
             <span className="co-utilization-card__item__text">
               {humanAvailable && <span>{humanAvailable} available</span>}
             </span>
             <span className="co-utilization-card__item__text">
               {humanMax && <span>of {humanMax}</span>}
             </span>
-          </div>
+          </Level>
         </div>
         <div className="co-utilization-card__item__chart">{chart}</div>
       </div>

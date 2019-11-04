@@ -13,6 +13,11 @@
   padding: 0;
 }
 
+.co-utilization-card-popover__consumer-link {
+  display: flex;
+  justify-content: space-between;
+}
+
 .co-utilization-card__item:not(:first-child) {
   border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 }
