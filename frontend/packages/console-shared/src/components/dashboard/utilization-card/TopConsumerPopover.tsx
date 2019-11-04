@@ -10,6 +10,7 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import './top-consumer-popover.scss';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { getName, getNamespace } from '../../..';
@@ -168,28 +169,26 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
     </div>
   );
 });
-
 const PopoverBody = withDashboardResources(PopoverBodyInternal);
 
 const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }) => {
   return items ? (
     <>
-      {items.map((item) => {
+      {items.map((item, index) => {
         const title = String(item.x);
         return (
           <>
-            <li
-              key={title}
-              className="pf-l-flex pf-m-justify-content-space-between co-utilization-card-popover__consumer-list__item"
-              aria-labelledby="list-item1"
-            >
-              <Link
-                className="co-utilization-card-popover__consumer-list__name"
-                to={resourcePathFromModel(model, title, item.metric.namespace)}
-              >
-                {title}
-              </Link>
-              <small className="co-utilization-card-popover__consumer-list__value">{item.y}</small>
+            <li key={title} aria-labelledby={`List Item ${index}`}>
+              <Flex breakpointMods={[{ modifier: 'justify-content-space-between' }] as any}>
+                <FlexItem className="co-utilization-card-popover__consumer-list__name">
+                  <Link to={resourcePathFromModel(model, title, item.metric.namespace)}>
+                    {title}
+                  </Link>
+                </FlexItem>
+                <FlexItem className="co-utilization-card-popover__consumer-list__value">
+                  <small>{item.y}</small>
+                </FlexItem>
+              </Flex>
             </li>
           </>
         );
