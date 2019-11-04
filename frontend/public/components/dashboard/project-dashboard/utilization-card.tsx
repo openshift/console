@@ -13,7 +13,12 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { Dropdown } from '../../utils/dropdown';
-import { humanizeCpuCores, humanizeNumber, humanizeBinaryBytes } from '../../utils';
+import {
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeDecimalBytesPerSec,
+  humanizeNumber,
+} from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
@@ -60,10 +65,22 @@ export const UtilizationCard = withDashboardResources(
       queries[ProjectQueries.POD_COUNT],
       UTILIZATION_QUERY_HOUR_MAP[duration],
     );
+    const [filesystemUtilization, filesystemError] = getPrometheusQueryResponse(
+      prometheusResults,
+      queries[ProjectQueries.FILESYSTEM_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    );
+    const [networkInOutUtilization, networkInOutError] = getPrometheusQueryResponse(
+      prometheusResults,
+      queries[ProjectQueries.NETWORK_IN_OUT_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    );
 
     const cpuStats = getRangeVectorStats(cpuUtilization);
     const memoryStats = getRangeVectorStats(memoryUtilization);
     const podCountStats = getRangeVectorStats(podCount);
+    const filesystemStats = getRangeVectorStats(filesystemUtilization);
+    const networInOutStats = getRangeVectorStats(networkInOutUtilization);
 
     const cpuPopover = React.useCallback(
       ({ current }) => (
@@ -103,6 +120,44 @@ export const UtilizationCard = withDashboardResources(
       [projectName],
     );
 
+    const filesystemPopover = React.useCallback(
+      ({ current }) => (
+        <ConsumerPopover
+          title="Filesystem"
+          current={current}
+          consumers={[
+            {
+              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_FILESYSTEM],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+          humanize={humanizeBinaryBytes}
+          namespace={projectName}
+        />
+      ),
+      [projectName],
+    );
+
+    const networkPopover = React.useCallback(
+      ({ current }) => (
+        <ConsumerPopover
+          title="Network"
+          current={current}
+          consumers={[
+            {
+              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_NETWORK],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+          humanize={humanizeDecimalBytesPerSec}
+          namespace={projectName}
+        />
+      ),
+      [projectName],
+    );
+
     return (
       <DashboardCard>
         <DashboardCardHeader>
@@ -133,6 +188,24 @@ export const UtilizationCard = withDashboardResources(
             byteDataType={ByteDataTypes.BinaryBytes}
             error={memoryError}
             TopConsumerPopover={memPopover}
+          />
+          <UtilizationItem
+            title="Filesystem"
+            data={filesystemStats}
+            isLoading={!projectName || !filesystemUtilization}
+            humanizeValue={humanizeBinaryBytes}
+            query={queries[ProjectQueries.FILESYSTEM_USAGE]}
+            error={filesystemError}
+            TopConsumerPopover={filesystemPopover}
+          />
+          <UtilizationItem
+            title="Network Transfer in/out"
+            data={networInOutStats}
+            isLoading={!projectName || !networkInOutUtilization}
+            humanizeValue={humanizeDecimalBytesPerSec}
+            query={queries[ProjectQueries.NETWORK_IN_OUT_USAGE]}
+            error={networkInOutError}
+            TopConsumerPopover={networkPopover}
           />
           <UtilizationItem
             title="Pod count"
