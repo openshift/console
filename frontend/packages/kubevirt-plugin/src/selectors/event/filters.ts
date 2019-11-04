@@ -50,10 +50,41 @@ const vmiMigrationEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, na
   namespace === getNamespace(vm) &&
   name === `${getName(vm)}-migration`;
 
+// Conversion pod name example: kubevirt-v2v-conversion-[vmName]-<generatedId>
+const V2V_CONVERSION_POD_NAME_PREFIX = 'kubevirt-v2v-conversion-';
+const v2vConversionPodEventFilter = (vm: VMKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) => {
+  /* Idea for improvement:
+       Find the conversion pod via provided event.involvedObject.uid and check it's ownerReference to VirtualMachine vm. 
+       This way, we would avoid false-positive matching which is possible when comparing just by name as implemented bellow.
+     When this can happen:
+       Conversion is started, the VM deleted and a new conversion for a VM of the same name is created again. The events will be merged together in that case.
+     Why not implemented properly now:
+       The list of pods is not available and it would be costly to fetch it just for the purpose of this comparision.
+       Please note, the conversion is one-time and occasional action and the list of events is for the last hour only.
+       If there is any other reason to fetch list of pods, fix here as described above.
+  */
+  if (
+    kind === PodModel.kind &&
+    namespace === getNamespace(vm) &&
+    name.startsWith(V2V_CONVERSION_POD_NAME_PREFIX)
+  ) {
+    const nameWithRandom = name.slice(V2V_CONVERSION_POD_NAME_PREFIX.length);
+    const lastDashIndex = nameWithRandom.lastIndexOf('-');
+    const vmName = nameWithRandom.slice(0, lastDashIndex);
+    return vmName === getName(vm);
+  }
+  return false;
+};
+
 export const getVmEventsFilters = (vm: VMKind): EventFilterFunction[] => [
   vmiEventFilter(vm),
   vmEventFilter(vm),
   launcherPodEventFilter(vm),
   importerPodEventFilter(vm),
   vmiMigrationEventFilter(vm),
+  v2vConversionPodEventFilter(vm),
 ];

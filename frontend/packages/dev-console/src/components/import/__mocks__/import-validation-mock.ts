@@ -1,4 +1,4 @@
-import { GitImportFormData } from '../import-types';
+import { GitImportFormData, Resources } from '../import-types';
 
 export const mockFormData: GitImportFormData = {
   name: 'test-app',
@@ -68,8 +68,8 @@ export const mockFormData: GitImportFormData = {
     replicas: 1,
   },
   labels: {},
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: {
       minpods: 0,
       maxpods: '',

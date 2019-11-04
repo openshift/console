@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { ConfigurationModel } from '@console/knative-plugin';
 
 export type ConfigurationsOverviewListProps = {
@@ -38,14 +38,21 @@ const ConfigurationsOverviewListItem: React.FC<ConfigurationsOverviewListItemPro
 const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
   configurations,
 }) => (
-  <ListGroup componentClass="ul">
-    {_.map(configurations, (configuration) => (
-      <ConfigurationsOverviewListItem
-        key={configuration.metadata.uid}
-        configuration={configuration}
-      />
-    ))}
-  </ListGroup>
+  <>
+    <SidebarSectionHeading text="Configurations" />
+    {_.isEmpty(configurations) ? (
+      <span className="text-muted">No Configurations found for this resource.</span>
+    ) : (
+      <ListGroup componentClass="ul">
+        {_.map(configurations, (configuration) => (
+          <ConfigurationsOverviewListItem
+            key={configuration.metadata.uid}
+            configuration={configuration}
+          />
+        ))}
+      </ListGroup>
+    )}
+  </>
 );
 
 export default ConfigurationsOverviewList;

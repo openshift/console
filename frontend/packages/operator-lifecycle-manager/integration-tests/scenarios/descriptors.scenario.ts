@@ -19,6 +19,7 @@ import {
 } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
+import * as operatorView from '../views/operator.view';
 import { SpecCapability, StatusCapability } from '../../src/components/descriptors/types';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {
@@ -375,7 +376,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays list containing operands', async () => {
     await crudView.resourceRowsPresent();
-    expect(crudView.rowForName(testCR.metadata.name).isDisplayed()).toBe(true);
+    expect(operatorView.operandLink(testCR.metadata.name).isDisplayed()).toBe(true);
   });
 
   it('displays detail view for operand', async () => {
@@ -395,17 +396,15 @@ describe('Using OLM descriptor components', () => {
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach((descriptor) => {
-    const label = element(by.cssContainingText('.olm-descriptor__title', descriptor.displayName));
-
     it(`displays spec descriptor for ${descriptor.displayName}`, async () => {
+      const label = operatorView.descriptorLabel(descriptor);
       expect(label.isDisplayed()).toBe(true);
     });
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors.forEach((descriptor) => {
-    const label = element(by.cssContainingText('.olm-descriptor__title', descriptor.displayName));
-
     it(`displays status descriptor for ${descriptor.displayName}`, async () => {
+      const label = operatorView.descriptorLabel(descriptor);
       expect(label.isDisplayed()).toBe(true);
     });
   });
@@ -491,11 +490,8 @@ describe('Using OLM descriptor components', () => {
     await browser.wait(until.presenceOf($('#metadata\\.name')));
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName(testCR.metadata.name)));
-    await crudView
-      .rowForName(testCR.metadata.name)
-      .element(by.linkText(testCR.metadata.name))
-      .click();
+    await browser.wait(until.visibilityOf(operatorView.operandLink(testCR.metadata.name)));
+    await operatorView.operandLink(testCR.metadata.name).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);

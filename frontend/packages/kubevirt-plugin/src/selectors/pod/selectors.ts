@@ -25,6 +25,9 @@ export const getPodStatusConditionOfType = (pod: PodKind, type: string) =>
 export const getPodFalseStatusConditions = (pod: PodKind) =>
   getPodStatusConditions(pod).filter((condition) => condition.status !== 'True');
 
+export const getPodContainerStatuses = (pod: PodKind) =>
+  get(pod, 'status.containerStatuses') as PodKind['status']['containerStatuses'];
+
 export const findPodFalseStatusConditionMessage = (pod: PodKind) => {
   const notReadyConditions = getPodFalseStatusConditions(pod);
   if (notReadyConditions.length > 0) {

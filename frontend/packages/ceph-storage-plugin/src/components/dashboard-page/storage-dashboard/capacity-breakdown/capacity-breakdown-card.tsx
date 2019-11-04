@@ -38,8 +38,9 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const queriesLoadError = queryKeys.some((q) =>
     prometheusResults.getIn([queries[q], 'loadError']),
   );
-  const queriesDataLoaded = results.some((q) => q);
-  const queriesLoaded = queriesDataLoaded || queriesLoadError;
+
+  const queriesDataLoaded = queryKeys.some((q) => !prometheusResults.getIn([queries[q], 'data']));
+
   const humanize = humanizeBinaryBytesWithoutB;
   const top5MetricsData = getInstantVectorStats(results[0], metric);
   const top5MetricsStats = getStackChartStats(top5MetricsData, humanize);
@@ -64,11 +65,12 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody classname="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody
-          isLoading={!queriesLoaded}
+          isLoading={queriesDataLoaded}
+          hasLoadError={queriesLoadError}
           metricTotal={metricTotal}
           top5MetricsStats={top5MetricsStats}
-          cephTotal={cephTotal}
-          cephUsed={cephUsed}
+          capacityTotal={cephTotal}
+          capacityUsed={cephUsed}
           metricModel={model}
           humanize={humanize}
         />

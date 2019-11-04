@@ -97,7 +97,7 @@ const ODCEmptyState: React.FC<Props> = ({
             href={`/deploy-image?preselected-ns=${activeNamespace}`}
             title="Container Image"
             iconClass="pficon-image"
-            description="Deploy an existing image from an image registry"
+            description="Deploy an existing image from an image registry or image stream tag"
           />
         )}
         <CatalogTile

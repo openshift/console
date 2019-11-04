@@ -7,7 +7,7 @@ import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
-import ServerlessSection from './serverless/ServerlessSection';
+import ResourceSection from './section/ResourceSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -18,14 +18,18 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   isSubmitting,
   dirty,
   projects,
+  imageStreams,
 }) => (
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
-    <ImageSearchSection />
+    <ImageSearchSection
+      projects={projects.loaded ? projects.data : []}
+      imageStreams={imageStreams.loaded ? imageStreams.data : []}
+    />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
-    <ServerlessSection />
+    <ResourceSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
       <ActionGroup className="pf-c-form">

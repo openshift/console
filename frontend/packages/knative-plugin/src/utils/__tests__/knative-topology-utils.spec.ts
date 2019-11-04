@@ -66,7 +66,7 @@ describe('knative topology utils', () => {
     expect(knEventEdge).toHaveLength(1);
     expect(knEventEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689');
     expect(knEventEdge[0].target).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
-    expect(knEventEdge[0].type).toBe('connects-to-src');
+    expect(knEventEdge[0].type).toBe('event-source-link');
   });
 
   it('expect getTrafficTopologyEdgeItems to return edge data for knative revisions with traffic split info', () => {
@@ -78,7 +78,7 @@ describe('knative topology utils', () => {
     expect(knRevisionsEdge).toHaveLength(1);
     expect(knRevisionsEdge[0].source).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
     expect(knRevisionsEdge[0].target).toBe('02c34a0e-9638-11e9-b134-06a61d886b62');
-    expect(knRevisionsEdge[0].type).toBe('connects-to-traffic');
+    expect(knRevisionsEdge[0].type).toBe('revision-traffic');
   });
 
   it('expect filterKnativeBasedOnActiveApplication to return resources based on active application', () => {

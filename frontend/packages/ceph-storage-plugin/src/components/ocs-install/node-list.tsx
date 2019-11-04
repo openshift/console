@@ -29,11 +29,17 @@ import {
   NodeKind,
   referenceForModel,
   StorageClassResourceKind,
+  Taint,
 } from '@console/internal/module/k8s';
 import { NodeModel, InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { isDefaultClass } from '@console/internal/components/storage-class';
 import { OCSServiceModel } from '../../models';
-import { infraProvisionerMap, minSelectedNode, ocsRequestData } from '../../constants/ocs-install';
+import {
+  infraProvisionerMap,
+  minSelectedNode,
+  ocsRequestData,
+  ocsTaint,
+} from '../../constants/ocs-install';
 
 import './ocs-install.scss';
 
@@ -77,36 +83,48 @@ const getColumns = () => {
   ];
 };
 
+const hasTaints = (node: NodeKind) => {
+  return !_.isEmpty(node.spec.taints);
+};
+
+const hasOCSTaint = (node: NodeKind) => {
+  const taints: Taint[] = node.spec.taints || [];
+  return taints.some((taint: Taint) => _.isEqual(taint, ocsTaint));
+};
+
 // return an empty array when there is no data
 const getRows = (nodes: NodeKind[]) => {
-  return nodes.map((node) => {
-    const roles = getNodeRoles(node).sort();
-    const obj = {
-      cells: [],
-      selected: false,
-      id: node.metadata.name,
-      metadata: _.clone(node.metadata),
-      spec: _.clone(node.spec),
-    };
-    obj.cells = [
-      {
-        title: <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />,
-      },
-      {
-        title: roles.join(', ') || '-',
-      },
-      {
-        title: _.get(node.metadata.labels, 'failure-domain.beta.kubernetes.io/zone') || '-',
-      },
-      {
-        title: `${humanizeCpuCores(_.get(node.status, 'capacity.cpu')).string || '-'}`,
-      },
-      {
-        title: `${getConvertedUnits(_.get(node.status, 'allocatable.memory'))}`,
-      },
-    ];
-    return obj;
-  });
+  return nodes
+    .filter((node) => hasOCSTaint(node) || !hasTaints(node))
+    .map((node) => {
+      const roles = getNodeRoles(node).sort();
+      const cells = [
+        {
+          title: <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />,
+        },
+        {
+          title: roles.join(', ') || '-',
+        },
+        {
+          title: _.get(node.metadata.labels, 'failure-domain.beta.kubernetes.io/zone') || '-',
+        },
+        {
+          title: `${humanizeCpuCores(_.get(node.status, 'capacity.cpu')).string || '-'}`,
+        },
+        {
+          title: `${getConvertedUnits(_.get(node.status, 'allocatable.memory'))}`,
+        },
+      ];
+      const obj = {
+        cells,
+        selected: false,
+        id: node.metadata.name,
+        metadata: _.clone(node.metadata),
+        spec: _.clone(node.spec),
+      };
+
+      return obj;
+    });
 };
 
 const getFilteredRows = (filters: {}, objects: any[]) => {

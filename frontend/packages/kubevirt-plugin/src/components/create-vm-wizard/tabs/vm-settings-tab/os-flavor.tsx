@@ -57,7 +57,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 
     if (
       iGetIsLoaded(commonTemplates) &&
-      iGetIsLoaded(userTemplate) &&
+      iGetIsLoaded(userTemplates) &&
       (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
     ) {
       const validation = asValidationObject(

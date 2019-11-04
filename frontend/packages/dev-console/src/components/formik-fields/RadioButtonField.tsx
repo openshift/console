@@ -3,6 +3,7 @@ import { useField } from 'formik';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { RadioButtonProps } from './field-types';
 import { getFieldId } from './field-utils';
+import './RadioButtonField.scss';
 
 const RadioButtonField: React.FC<RadioButtonProps> = ({
   label,
@@ -25,20 +26,38 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
       label={label}
     >
       {options.map((option) => (
-        <Radio
-          {...field}
-          {...props}
-          key={option.value}
-          id={getFieldId(option.value, 'radiobutton')}
-          value={option.value}
-          label={option.label}
-          isChecked={field.value === option.value}
-          isValid={isValid}
-          aria-describedby={`${fieldId}-helper`}
-          onChange={(val, event) => {
-            field.onChange(event);
-          }}
-        />
+        <>
+          <Radio
+            {...field}
+            {...props}
+            key={option.value}
+            id={getFieldId(option.value, 'radiobutton')}
+            value={option.value}
+            label={
+              option.helperText ? (
+                <>
+                  {option.label}
+                  <div className="odc-radio-button__helper-text">{option.helperText}</div>
+                </>
+              ) : (
+                option.label
+              )
+            }
+            isChecked={field.value === option.value}
+            isValid={isValid}
+            aria-describedby={`${fieldId}-helper`}
+            onChange={(val, event) => {
+              field.onChange(event);
+            }}
+          />
+          <br />
+          {option.displayField && field.value === option.value ? (
+            <>
+              {option.displayField}
+              <br />
+            </>
+          ) : null}
+        </>
       ))}
     </FormGroup>
   );

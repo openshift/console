@@ -9,18 +9,40 @@ import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
 import { resourceOverviewPages } from './resource-overview-pages';
 import { OverviewItem } from '@console/shared';
+import * as plugins from '../../plugins';
 
 const { common } = Kebab.factory;
 
-export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
-  item: { buildConfigs, routes, services, pods, obj },
-}) => (
-  <div className="overview__sidebar-pane-body">
-    <PodsOverview pods={pods} obj={obj} />
-    <BuildOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview services={services} routes={routes} />
-  </div>
+const getResourceTabSectionComp = (t) => (props) => (
+  <AsyncComponent {...props} loader={t.properties.loader} />
 );
+
+const getPluginTabSectionResource = (item) => {
+  return plugins.registry
+    .getOverviewTabSections()
+    .filter((section) => item[section.properties.key])
+    .map((section) => ({
+      Component: getResourceTabSectionComp(section),
+      key: section.properties.key,
+    }));
+};
+
+export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
+  item,
+}) => {
+  const { buildConfigs, routes, services, pods, obj } = item;
+  const pluginComponents = getPluginTabSectionResource(item);
+  return (
+    <div className="overview__sidebar-pane-body">
+      <PodsOverview pods={pods} obj={obj} />
+      <BuildOverview buildConfigs={buildConfigs} />
+      {pluginComponents.map(({ Component, key }) => (
+        <Component key={key} item={item} />
+      ))}
+      <NetworkingOverview services={services} routes={routes} />
+    </div>
+  );
+};
 
 export const DefaultOverviewPage = connectToModel(({ kindObj: kindObject, item }) => (
   <div className="overview__sidebar-pane resource-overview">

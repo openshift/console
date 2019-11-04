@@ -20,17 +20,27 @@ import {
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
-import { humanizeBinaryBytesWithoutB, humanizeCpuCores } from '@console/internal/components/utils';
+import { PodModel, ProjectModel } from '@console/internal/models';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import {
+  humanizeBinaryBytesWithoutB,
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeSeconds,
+  secondsToNanoSeconds,
+  Humanize,
+} from '@console/internal/components/utils';
 import { MachineKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { BareMetalHostKind } from '../../../types';
-import { getUtilizationQueries, HostQuery } from './queries';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
+import { getUtilizationQueries, HostQuery, getTopConsumerQueries } from './queries';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 const UtilizationCard: React.FC<UtilizationCardProps> = ({
   watchPrometheus,
@@ -124,6 +134,84 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const memoryTotalValue = memoryTotalStats.length ? memoryTotalStats[0].y : null;
   const storageTotalValue = storageTotalStats.length ? storageTotalStats[0].y : null;
 
+  const cpuPopover = React.useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      return (
+        <ConsumerPopover
+          title="CPU"
+          current={current}
+          humanize={humanizeFromSeconds}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_CPU],
+              model: PodModel,
+              metric: 'pod',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_CPU],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+          ]}
+        />
+      );
+    },
+    [hostIP, hostName],
+  );
+
+  const memPopover = React.useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      return (
+        <ConsumerPopover
+          title="Memory"
+          current={current}
+          humanize={humanizeBinaryBytes}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_MEMORY],
+              model: PodModel,
+              metric: 'pod',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_MEMORY],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+          ]}
+        />
+      );
+    },
+    [hostIP, hostName],
+  );
+
+  const storagePopover = React.useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      return (
+        <ConsumerPopover
+          title="Disk Usage"
+          current={current}
+          humanize={humanizeBinaryBytes}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_STORAGE],
+              model: PodModel,
+              metric: 'pod',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_STORAGE],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+          ]}
+        />
+      );
+    },
+    [hostIP, hostName],
+  );
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -143,6 +231,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           isLoading={!cpuUtilization}
           humanizeValue={humanizeCpuCores}
           query={queries[HostQuery.CPU_UTILIZATION]}
+          TopConsumerPopover={cpuPopover}
         />
         <UtilizationItem
           title="Memory usage"
@@ -153,6 +242,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           query={queries[HostQuery.MEMORY_UTILIZATION]}
           max={memoryTotalValue}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          TopConsumerPopover={memPopover}
         />
         <UtilizationItem
           title="Number of pods"
@@ -185,10 +275,11 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           data={storageStats}
           error={storageUtilizationError}
           isLoading={!storageUtilization}
-          humanizeValue={humanizeBinaryBytesWithoutB}
+          humanizeValue={humanizeBinaryBytes}
           query={queries[HostQuery.STORAGE_UTILIZATION]}
           max={storageTotalValue}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
+          TopConsumerPopover={storagePopover}
         />
       </UtilizationBody>
     </DashboardCard>

@@ -30,6 +30,7 @@ import {
   VM_STATUS_STARTING,
   VM_STATUS_MIGRATING,
   VM_STATUS_RUNNING,
+  VM_STATUS_STOPPING,
   VM_STATUS_OFF,
   VM_STATUS_ERROR,
 } from '../../statuses/vm/constants';
@@ -209,6 +210,17 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, pods, migrations, verbos
     case VM_STATUS_MIGRATING:
       return (
         <ProgressStatus title="Migrating">
+          <VMStatusPopoverContent
+            message={statusDetail.message}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          />
+        </ProgressStatus>
+      );
+    case VM_STATUS_STOPPING:
+      return (
+        <ProgressStatus title="Stopping">
           <VMStatusPopoverContent
             message={statusDetail.message}
             linkMessage={VIEW_VM_EVENTS}

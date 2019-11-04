@@ -126,3 +126,29 @@ export const getTagDataWithDisplayName = (
 
   return [imageTag, displayName];
 };
+
+export const getSuggestedName = (name: string): string | undefined => {
+  if (!name) {
+    return undefined;
+  }
+  const imageName: string = _.last(name.split('/'));
+  return _.first(imageName.split(/[^a-z0-9-]/));
+};
+
+export enum registryType {
+  External = 'external',
+  Internal = 'internal',
+}
+export enum builderImagesNamespace {
+  Openshift = 'openshift',
+}
+export const imageRegistryType = {
+  External: {
+    value: registryType.External,
+    label: 'Image name from external registry',
+  },
+  Internal: {
+    value: registryType.Internal,
+    label: 'Image name from internal registry',
+  },
+};

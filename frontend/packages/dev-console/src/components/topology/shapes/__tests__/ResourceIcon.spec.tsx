@@ -5,15 +5,15 @@ import { getKindStringAndAbbrivation, ResourceIcon } from '../ResourceIcon';
 describe(getKindStringAndAbbrivation.name, () => {
   it('should return correct name and its abbrivation for the given string', () => {
     expect(getKindStringAndAbbrivation('DeploymentConfig')).toEqual({
-      KindAbbr: 'DC',
+      kindAbbr: 'DC',
       kindStr: 'DeploymentConfig',
     });
     expect(getKindStringAndAbbrivation('Deployment')).toEqual({
-      KindAbbr: 'D',
+      kindAbbr: 'D',
       kindStr: 'Deployment',
     });
     expect(getKindStringAndAbbrivation('DaemonSet')).toEqual({
-      KindAbbr: 'DS',
+      kindAbbr: 'DS',
       kindStr: 'DaemonSet',
     });
   });

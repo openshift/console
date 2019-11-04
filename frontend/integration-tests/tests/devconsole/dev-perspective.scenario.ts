@@ -26,7 +26,7 @@ describe('Application Launcher Menu', () => {
     expect(pageSidebar.getText()).toContain('+Add');
     expect(pageSidebar.getText()).toContain('Builds');
     expect(pageSidebar.getText()).toContain('Advanced');
-    expect(pageSidebar.getText()).toContain('Projects');
+    expect(pageSidebar.getText()).toContain('Project Details');
     expect(pageSidebar.getText()).toContain('Project Access');
     expect(pageSidebar.getText()).toContain('Events');
     expect(pageSidebar.getText()).toContain('Search');

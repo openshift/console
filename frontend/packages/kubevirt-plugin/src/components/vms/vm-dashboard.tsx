@@ -8,10 +8,11 @@ import {
   VMInventoryCard,
   VMStatusCard,
   VMActivityCard,
+  VMUtilizationCard,
 } from '../dashboards-page/vm-dashboard';
 import { VMDashboardContext } from './vm-dashboard-context';
 
-const mainCards = [{ Card: VMStatusCard }];
+const mainCards = [{ Card: VMStatusCard }, { Card: VMUtilizationCard }];
 const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];
 const rightCards = [{ Card: VMActivityCard }];
 

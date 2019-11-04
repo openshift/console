@@ -192,6 +192,9 @@ export default (state: UIState, action: UIAction): UIState => {
       }
       return state.setIn(['queryBrowser', 'queries'], queries);
     }
+    case ActionType.QueryBrowserDismissNamespaceAlert:
+      return state.setIn(['queryBrowser', 'dismissNamespaceAlert'], true);
+
     case ActionType.QueryBrowserInsertText: {
       const { index, newText, replaceFrom, replaceTo } = action.payload;
       const oldText = state.getIn(['queryBrowser', 'queries', index, 'text'], '');

@@ -7,6 +7,7 @@ export interface FieldProps {
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
+  className?: string;
 }
 
 export interface InputFieldProps extends FieldProps {
@@ -83,5 +84,12 @@ export interface SecretKeyRef {
 }
 
 export interface RadioButtonProps extends FieldProps {
-  options: { value: string; label: string }[];
+  options: RadioOption[];
+}
+
+export interface RadioOption {
+  value: string;
+  label: React.ReactNode;
+  helperText?: React.ReactNode;
+  displayField?: React.ReactElement;
 }

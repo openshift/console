@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { convertToBaseValue } from '@console/internal/components/utils';
 import { isInteger } from '../../utils/yup-validation-util';
 import { CREATE_APPLICATION_KEY } from './app/ApplicationSelector';
+import { Resources } from './import-types';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
@@ -56,11 +57,15 @@ export const deploymentValidationSchema = yup.object().shape({
     }),
 });
 
-export const serverlessValidationSchema = yup.object().shape({
-  enabled: yup.boolean(),
-  scaling: yup.object().when('enabled', {
-    is: true,
-    then: yup.object({
+export const resourcesValidationSchema = yup
+  .string()
+  .oneOf([Resources.OpenShift, Resources.Kubernetes, Resources.KnativeService])
+  .required();
+
+export const serverlessValidationSchema = yup.object().when('resources', {
+  is: Resources.KnativeService,
+  then: yup.object().shape({
+    scaling: yup.object({
       minpods: yup
         .number()
         .transform((cv) => (_.isNaN(cv) ? undefined : cv))

@@ -8,7 +8,7 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import { GitImportFormData, FirehoseList, ImportData } from './import-types';
+import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createResources } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 
@@ -85,14 +85,17 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         privateKey: '',
       },
     },
+    resources: Resources.Kubernetes,
     serverless: {
-      enabled: false,
       scaling: {
         minpods: 0,
         maxpods: '',
         concurrencytarget: '',
         concurrencylimit: '',
       },
+    },
+    pipeline: {
+      enabled: false,
     },
     build: {
       env: [],

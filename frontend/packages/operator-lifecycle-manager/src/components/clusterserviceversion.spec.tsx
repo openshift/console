@@ -23,7 +23,13 @@ import {
 import * as rbac from '@console/internal/components/utils/rbac';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
-import { testClusterServiceVersion, testSubscription, testPackageManifest } from '../../mocks';
+import {
+  testClusterServiceVersion,
+  testSubscription,
+  testPackageManifest,
+  testCatalogSource,
+  testInstallPlan,
+} from '../../mocks';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 import { ClusterServiceVersionKind, CSVConditionReason } from '../types';
 import {
@@ -42,7 +48,7 @@ import {
   CSVSubscription,
   CSVSubscriptionProps,
 } from './clusterserviceversion';
-import { SubscriptionDetails } from './subscription';
+import { SubscriptionUpdates } from './subscription';
 import {
   ClusterServiceVersionLogo,
   ClusterServiceVersionLogoProps,
@@ -61,6 +67,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <ClusterServiceVersionTableRow
+        catalogSource={testCatalogSource}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
@@ -74,6 +81,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders a component wrapped in an `ErrorBoundary', () => {
     wrapper = shallow(
       <ClusterServiceVersionTableRow
+        catalogSource={testCatalogSource}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
@@ -208,7 +216,8 @@ describe(ClusterServiceVersionList.displayName, () => {
     const wrapper = shallow(
       <ClusterServiceVersionList
         data={[]}
-        subscription={{ loaded: true, data: [testSubscription], loadError: null }}
+        subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
+        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
         loaded
       />,
     );
@@ -420,7 +429,13 @@ describe(CSVSubscription.displayName, () => {
 
   it('renders `StatusBox` with correct props when Operator subscription does not exist', () => {
     wrapper = shallow(
-      <CSVSubscription obj={testClusterServiceVersion} packageManifest={[]} subscription={[]} />,
+      <CSVSubscription
+        obj={testClusterServiceVersion}
+        packageManifests={[]}
+        subscriptions={[]}
+        catalogSources={[]}
+        installPlans={[]}
+      />,
     );
 
     expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
@@ -439,15 +454,17 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={obj}
-        packageManifest={[testPackageManifest]}
-        subscription={[testSubscription, subscription]}
+        packageManifests={[testPackageManifest]}
+        subscriptions={[testSubscription, subscription]}
+        catalogSources={[testCatalogSource]}
+        installPlans={[testInstallPlan]}
       />,
     );
 
     expect(wrapper.find(StatusBox).props().data).toEqual(subscription);
-    expect(wrapper.find(SubscriptionDetails).props().obj).toEqual(subscription);
-    expect(wrapper.find(SubscriptionDetails).props().installedCSV).toEqual(obj);
-    expect(wrapper.find(SubscriptionDetails).props().pkg).toEqual(testPackageManifest);
+    expect(wrapper.find(SubscriptionUpdates).props().obj).toEqual(subscription);
+    expect(wrapper.find(SubscriptionUpdates).props().installedCSV).toEqual(obj);
+    expect(wrapper.find(SubscriptionUpdates).props().pkg).toEqual(testPackageManifest);
   });
 
   it('passes the matching `PackageManifest` if there are multiple with the same `metadata.name`', () => {
@@ -466,12 +483,14 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={obj}
-        packageManifest={[testPackageManifest, otherPkg]}
-        subscription={[testSubscription, subscription]}
+        packageManifests={[testPackageManifest, otherPkg]}
+        subscriptions={[testSubscription, subscription]}
+        catalogSources={[testCatalogSource]}
+        installPlans={[testInstallPlan]}
       />,
     );
 
-    expect(wrapper.find(SubscriptionDetails).props().pkg).toEqual(testPackageManifest);
+    expect(wrapper.find(SubscriptionUpdates).props().pkg).toEqual(testPackageManifest);
   });
 });
 

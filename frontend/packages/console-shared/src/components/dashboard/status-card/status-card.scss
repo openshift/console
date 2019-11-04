@@ -3,9 +3,14 @@
 
 .co-status-card__alerts-body {
   border-top: 1px solid $pf-color-black-300;
-  height: 300px;
+  max-height: 19rem;
+  min-height: 6rem;
   overflow-x: hidden;
   overflow-y: auto;
+
+  .pf-c-empty-state__icon {
+    margin-bottom: 0 !important;
+  }
 }
 
 .co-status-card__alerts-body--loading {

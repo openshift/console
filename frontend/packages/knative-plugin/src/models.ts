@@ -98,3 +98,42 @@ export const EventSourceContainerModel: K8sKind = {
   namespaced: true,
   crd: true,
 };
+
+export const EventSourceApiServerModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'ApiServerSource',
+  label: 'ApiServerSource',
+  labelPlural: 'ApiServerSources',
+  plural: 'ApiServerSources',
+  id: 'apiserversource',
+  abbr: 'ASS',
+  namespaced: true,
+  crd: true,
+};
+
+export const EventSourceCamelModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'CamelSource',
+  label: 'CamelSource',
+  labelPlural: 'CamelSources',
+  plural: 'camelsources',
+  id: 'camelsource',
+  abbr: 'CS',
+  namespaced: true,
+  crd: true,
+};
+
+export const EventSourceKafkaModel: K8sKind = {
+  apiGroup: 'sources.eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'KafkaSource',
+  label: 'KafkaSource',
+  labelPlural: 'KafkaSources',
+  plural: 'KafkaSources',
+  id: 'kafkasource',
+  abbr: 'KS',
+  namespaced: true,
+  crd: true,
+};

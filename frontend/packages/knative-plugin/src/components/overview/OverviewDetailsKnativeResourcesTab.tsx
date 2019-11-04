@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { OverviewItem } from '@console/shared';
+import { RevisionModel, ServiceModel } from '../../models';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import RevisionsOverviewList from './RevisionsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
@@ -11,47 +10,78 @@ export type KnativeOverviewProps = {
   ksroutes: K8sResourceKind[];
   configurations: K8sResourceKind[];
   revisions: K8sResourceKind[];
+  obj: K8sResourceKind;
 };
-
+export type KnativeRevisionResourceProps = {
+  ksroutes: K8sResourceKind[];
+  configurations: K8sResourceKind[];
+};
+export type KnativeServiceResourceProps = {
+  obj: K8sResourceKind;
+  revisions: K8sResourceKind[];
+  ksroutes: K8sResourceKind[];
+};
 export type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };
 
+const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: OverviewItem) => {
+  switch (obj.kind) {
+    case RevisionModel.kind:
+      return <KnativeRevisionResources ksroutes={ksroutes} configurations={configurations} />;
+    case ServiceModel.kind:
+      return <KnativeServicesResources ksroutes={ksroutes} obj={obj} revisions={revisions} />;
+    default:
+      return (
+        <KnativeOverview
+          ksroutes={ksroutes}
+          revisions={revisions}
+          configurations={configurations}
+          obj={obj}
+        />
+      );
+  }
+};
 const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabProps> = ({
-  item: { ksroutes, revisions, configurations },
-}) => (
-  <div className="overview__sidebar-pane-body">
-    <KnativeOverview ksroutes={ksroutes} configurations={configurations} revisions={revisions} />
-  </div>
-);
+  item,
+}) => <div className="overview__sidebar-pane-body"> {getSidebarResources(item)} </div>;
+
+const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
+  ksroutes,
+  configurations,
+}) => {
+  return (
+    <>
+      <KSRoutesOverviewList ksroutes={ksroutes} />
+      <ConfigurationsOverviewList configurations={configurations} />
+    </>
+  );
+};
+
+const KnativeServicesResources: React.FC<KnativeServiceResourceProps> = ({
+  revisions,
+  ksroutes,
+  obj,
+}) => {
+  return (
+    <>
+      <RevisionsOverviewList revisions={revisions} service={obj} />
+      <KSRoutesOverviewList ksroutes={ksroutes} />
+    </>
+  );
+};
 
 const KnativeOverview: React.FC<KnativeOverviewProps> = ({
   ksroutes,
   configurations,
   revisions,
+  obj,
 }) => {
   return (
     <>
-      <SidebarSectionHeading text="Revisions" />
-      {_.isEmpty(revisions) ? (
-        <span className="text-muted">No Revisions found for this resource.</span>
-      ) : (
-        <RevisionsOverviewList revisions={revisions} />
-      )}
-
-      <SidebarSectionHeading text="Routes" />
-      {_.isEmpty(ksroutes) ? (
-        <span className="text-muted">No Routes found for this resource.</span>
-      ) : (
-        <KSRoutesOverviewList ksroutes={ksroutes} />
-      )}
-
-      <SidebarSectionHeading text="Configurations" />
-      {_.isEmpty(configurations) ? (
-        <span className="text-muted">No Configurations found for this resource.</span>
-      ) : (
-        <ConfigurationsOverviewList configurations={configurations} />
-      )}
+      <RevisionsOverviewList revisions={revisions} service={obj} />
+      <KSRoutesOverviewList ksroutes={ksroutes} />
+      <ConfigurationsOverviewList configurations={configurations} />
     </>
   );
 };

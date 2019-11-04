@@ -7,7 +7,7 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
   children,
   error,
 }) => {
-  let body;
+  let body: React.ReactNode;
   if (isLoading) {
     body = <LoadingInline />;
   }
@@ -16,7 +16,7 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
       <div className="nb-resource-providers-card__not-available text-secondary">Unavailable</div>
     );
   }
-  return <div className="co-dashboard-card__body--no-padding">{body || children}</div>;
+  return <>{body || children}</>;
 };
 
 type ResourceProvidersBodyProps = {

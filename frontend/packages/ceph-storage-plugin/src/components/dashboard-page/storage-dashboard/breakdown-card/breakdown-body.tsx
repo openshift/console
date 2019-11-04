@@ -8,18 +8,19 @@ import { BreakdownChartLoading } from './breakdown-loading';
 import { TotalCapacityBody } from './breakdown-capacity';
 
 export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
-  cephUsed,
-  cephTotal,
+  top5MetricsStats,
+  metricTotal,
+  capacityUsed,
+  capacityTotal,
+  metricModel,
   humanize,
   isLoading,
-  metricModel,
-  metricTotal,
-  top5MetricsStats,
+  hasLoadError,
 }) => {
-  if (isLoading) {
+  if (isLoading && !hasLoadError) {
     return <BreakdownChartLoading />;
   }
-  if (!cephUsed || !cephTotal || !metricTotal || !top5MetricsStats.length) {
+  if (!capacityUsed || !top5MetricsStats.length || hasLoadError) {
     return (
       <EmptyState variant={EmptyStateVariant.full}>
         <Title className="graph-empty-state__title text-secondary" size="sm">
@@ -28,12 +29,29 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
       </EmptyState>
     );
   }
+  if (capacityUsed === '0') {
+    return (
+      <EmptyState variant={EmptyStateVariant.full}>
+        <Title className="graph-empty-state__title text-secondary" size="sm">
+          Not enough usage data
+        </Title>
+      </EmptyState>
+    );
+  }
 
-  const available = getCapacityValue(cephUsed, cephTotal, humanize);
-  const usedCapacity = `${humanize(cephUsed).string} used of ${humanize(cephTotal).string}`;
+  const available = getCapacityValue(capacityUsed, capacityTotal, humanize);
+  const usedCapacity = `${humanize(capacityUsed, null, 'GiB').string} used${
+    capacityTotal ? ` of ${humanize(capacityTotal).string}` : ''
+  }`;
   const availableCapacity = `${available.string} available`;
 
-  const chartData = addAvailable(top5MetricsStats, cephTotal, cephUsed, metricTotal, humanize);
+  const chartData = addAvailable(
+    top5MetricsStats,
+    capacityTotal,
+    capacityUsed,
+    metricTotal,
+    humanize,
+  );
 
   const legends = chartData.map((d: StackDataPoint) => ({
     name: [d.name, d.label],
@@ -42,7 +60,10 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     link: d.link,
   }));
 
-  legends.pop(); // Removes Legend for available
+  // Removes Legend for available
+  if (capacityTotal) {
+    legends.pop();
+  }
 
   return (
     <Grid>
@@ -51,10 +72,12 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
       </GridItem>
       <GridItem span={4} />
       <GridItem span={4}>
-        <TotalCapacityBody
-          value={availableCapacity}
-          className="capacity-breakdown-card__available-body text-secondary"
-        />
+        {capacityTotal && (
+          <TotalCapacityBody
+            value={availableCapacity}
+            className="capacity-breakdown-card__available-body text-secondary"
+          />
+        )}
       </GridItem>
       <GridItem span={12}>
         <BreakdownChart data={chartData} legends={legends} metricModel={metricModel} />
@@ -65,10 +88,11 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
 
 type BreakdownBodyProps = {
   isLoading: boolean;
+  hasLoadError: boolean;
   metricTotal: string;
   top5MetricsStats: StackDataPoint[];
-  cephUsed: string;
-  cephTotal: string;
+  capacityUsed: string;
+  capacityTotal?: string;
   metricModel: K8sKind;
   humanize: Humanize;
 };

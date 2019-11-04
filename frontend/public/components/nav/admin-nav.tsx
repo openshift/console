@@ -16,6 +16,7 @@ import {
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
+  MachineHealthCheckModel,
   MachineModel,
   MachineSetModel,
   UserModel,
@@ -114,7 +115,7 @@ const AdminNav = () => (
     </NavSection>
 
     {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
-         and admin-nav gets contributed through extensions. */}
+        and admin-nav gets contributed through extensions. */}
     <NavSection title="Serverless" />
 
     <NavSection title="Networking">
@@ -143,6 +144,10 @@ const AdminNav = () => (
         startsWith={imagestreamsStartsWith}
       />
     </NavSection>
+
+    {/* Temporary addition of Tekton Pipelines section until extensibility allows for section ordering
+        and admin-nav gets contributed through extensions. */}
+    <NavSection title="Pipelines" />
 
     <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
       <HrefLink
@@ -186,6 +191,14 @@ const AdminNav = () => (
         )}
         name="Machine Autoscalers"
         required={FLAGS.MACHINE_AUTOSCALER}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineHealthCheckModel),
+          'openshift-machine-api',
+        )}
+        name="Machine Health Checks"
+        required={FLAGS.MACHINE_HEALTH_CHECK}
       />
       <Separator required={FLAGS.MACHINE_CONFIG} />
       <ResourceClusterLink

@@ -20,7 +20,12 @@ import {
   KebabOption,
 } from './index';
 import { connectToModel } from '../../kinds';
-import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceForModel,
+} from '../../module/k8s';
 import { ResourceItemDeleting } from '../overview/project-overview';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
@@ -166,8 +171,9 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,
+  className,
 }) => (
-  <h2 className="sidebar__section-heading" style={style}>
+  <h2 className={`sidebar__section-heading ${className}`} style={style}>
     {text}
     {children}
   </h2>
@@ -185,7 +191,11 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         <div className="co-m-pane__name co-resource-item">
           <ResourceIcon className="co-m-resource-icon--lg" kind={kindObj.kind} />
           <Link
-            to={resourcePath(resource.kind, resource.metadata.name, resource.metadata.namespace)}
+            to={resourcePath(
+              kindObj.crd ? referenceForModel(kindObj) : resource.kind,
+              resource.metadata.name,
+              resource.metadata.namespace,
+            )}
             className="co-resource-item__resource-name"
           >
             {resource.metadata.name}
@@ -251,6 +261,7 @@ export type SectionHeadingProps = {
 export type SidebarSectionHeadingProps = {
   children?: any;
   style?: any;
+  className?: string;
   text: string;
 };
 

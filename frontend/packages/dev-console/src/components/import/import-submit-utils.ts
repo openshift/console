@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import {
   ImageStreamModel,
   BuildConfigModel,
+  DeploymentModel,
   DeploymentConfigModel,
   ProjectRequestModel,
   SecretModel,
@@ -16,7 +17,14 @@ import {
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
-import { GitImportFormData, ProjectData, GitTypes, GitReadableTypes } from './import-types';
+import {
+  GitImportFormData,
+  ProjectData,
+  GitTypes,
+  GitReadableTypes,
+  Resources,
+} from './import-types';
+import { createPipelineForImportFlow } from './pipeline/pipeline-template-utils';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -190,6 +198,79 @@ export const createBuildConfig = (
   return k8sCreate(BuildConfigModel, buildConfig, dryRun ? dryRunOpt : {});
 };
 
+export const createDeployment = (
+  formData: GitImportFormData,
+  imageStreamUrl: string,
+  imageStream: K8sResourceKind,
+  dryRun: boolean,
+): Promise<K8sResourceKind> => {
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: application },
+    image: { ports, tag },
+    deployment: { env, replicas },
+    labels: userLabels,
+    limits: { cpu, memory },
+    git: { url: repository, ref },
+  } = formData;
+
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
+  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const podLabels = getPodLabels(name);
+
+  const deployment = {
+    apiVersion: 'apps/v1',
+    kind: 'Deployment',
+    metadata: {
+      name,
+      namespace,
+      labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          app: name,
+        },
+      },
+      replicas,
+      template: {
+        metadata: {
+          labels: { ...userLabels, ...podLabels },
+        },
+        spec: {
+          containers: [
+            {
+              name,
+              image: `${imageStreamUrl}`,
+              ports,
+              env,
+              resources: {
+                ...((cpu.limit || memory.limit) && {
+                  limits: {
+                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+                  },
+                }),
+                ...((cpu.request || memory.request) && {
+                  requests: {
+                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+                  },
+                }),
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  return k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
+};
+
 export const createDeploymentConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
@@ -286,6 +367,7 @@ export const createResources = async (
       triggers: { webhook: webhookTrigger },
     },
     git: { url: repository, type: gitType, ref },
+    pipeline,
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
 
@@ -299,7 +381,7 @@ export const createResources = async (
 
   const defaultAnnotations = getAppAnnotations(repository, ref);
 
-  if (formData.serverless.enabled) {
+  if (formData.resources === Resources.KnativeService) {
     // knative service doesn't have dry run capability so returning the promises.
     if (dryRun) {
       return Promise.all(requests);
@@ -314,8 +396,19 @@ export const createResources = async (
     );
     return Promise.all([k8sCreate(KnServiceModel, knDeploymentResource)]);
   }
-
-  requests.push(createDeploymentConfig(formData, imageStream, dryRun));
+  if (formData.resources === Resources.Kubernetes) {
+    const imageStreamResponse = await requests.shift();
+    requests.push(
+      createDeployment(
+        formData,
+        imageStreamResponse.status.dockerImageRepository,
+        imageStream,
+        dryRun,
+      ),
+    );
+  } else if (formData.resources === Resources.OpenShift) {
+    requests.push(createDeploymentConfig(formData, imageStream, dryRun));
+  }
 
   if (!_.isEmpty(ports) || buildStrategy === 'Docker') {
     const service = createService(formData, imageStream);
@@ -326,8 +419,13 @@ export const createResources = async (
     }
   }
 
+  if (pipeline.enabled && pipeline.template && !dryRun) {
+    requests.push(createPipelineForImportFlow(formData));
+  }
+
   if (webhookTrigger) {
     requests.push(createWebhookSecret(formData, gitType, dryRun));
   }
+
   return Promise.all(requests);
 };

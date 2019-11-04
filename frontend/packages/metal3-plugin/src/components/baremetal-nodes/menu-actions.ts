@@ -3,11 +3,12 @@ import {
   MarkAsSchedulable,
   MarkAsUnschedulable,
 } from '@console/app/src/components/nodes/menu-actions';
-import { K8sKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, NodeKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import { NodeMaintenanceModel } from '../../models';
+import { findNodeMaintenance } from '../../selectors';
 
 type ActionArgs = {
   nodeMaintenance?: K8sResourceKind;
@@ -54,3 +55,24 @@ export const menuActions = [
   ModifyAnnotations,
   Edit,
 ];
+
+type ExtraResources = {
+  machines: MachineKind[];
+  hosts: NodeKind[];
+  nodeMaintenances: K8sResourceKind[];
+};
+
+export const menuActionsCreator = (
+  kindObj: K8sKind,
+  node: NodeKind,
+  { nodeMaintenances }: ExtraResources,
+  { hasNodeMaintenanceCapability },
+) => {
+  const nodeMaintenance = findNodeMaintenance(nodeMaintenances, getName(node));
+  return menuActions.map((action) => {
+    return action(kindObj, node, null, {
+      hasNodeMaintenanceCapability,
+      nodeMaintenance,
+    });
+  });
+};

@@ -3,9 +3,9 @@ import * as classNames from 'classnames';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 import { pointInSvgPath } from 'point-in-svg-path';
+import { createSvgIdUrl, hullPath, PointTuple } from '@console/topology';
 import { GroupElementInterface, GroupProps, ViewNode } from '../topology-types';
 import SvgBoxedText from '../../svg/SvgBoxedText';
-import { createSvgIdUrl, hullPath, Point } from '../../../utils/svg-utils';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 
 import './DefaultGroup.scss';
@@ -13,10 +13,10 @@ import './DefaultGroup.scss';
 const FILTER_ID = 'DefaultGroupShadowFilterId';
 const FILTER_ID_HOVER = 'DefaultGroupDropShadowFilterId--hover';
 
-type PointWithSize = Point & [number, number, number];
+type PointWithSize = PointTuple & [number, number, number];
 
 // Return the point whose Y is the largest value.
-function findLowestPoint<P extends Point>(points: P[]): P {
+function findLowestPoint<P extends PointTuple>(points: P[]): P {
   let lowestPoint = points[0];
 
   _.forEach(points, (p) => {
@@ -45,7 +45,7 @@ const getUpdatedStateValues = (nodes: ViewNode[]) => {
   });
 
   // Get the convex hull of all points.
-  const hullPoints: Point[] = points.length > 2 ? d3.polygonHull(points) : points;
+  const hullPoints: PointTuple[] = points.length > 2 ? d3.polygonHull(points) : points;
   const containerPath = hullPath(hullPoints, hullPadding);
 
   // Find the lowest point of the set in order to place the group label.
@@ -81,7 +81,7 @@ class DefaultGroup extends React.Component<GroupProps, DefaultGroupState>
     return null;
   }
 
-  public isPointInGroup = (point: Point): boolean => {
+  public isPointInGroup = (point: PointTuple): boolean => {
     const { containerPath } = this.state;
     return pointInSvgPath(containerPath, point[0], point[1]);
   };

@@ -11,7 +11,12 @@ import {
   OperatorGroupModel,
   InstallPlanModel,
 } from '../models';
-import { testSubscription, testClusterServiceVersion, testPackageManifest } from '../../mocks';
+import {
+  testSubscription,
+  testClusterServiceVersion,
+  testPackageManifest,
+  testCatalogSource,
+} from '../../mocks';
 import { SubscriptionKind, SubscriptionState } from '../types';
 import {
   SubscriptionTableHeader,
@@ -291,7 +296,13 @@ describe(SubscriptionUpdates.name, () => {
   let wrapper: ShallowWrapper<SubscriptionUpdatesProps, SubscriptionUpdatesState>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionUpdates obj={testSubscription} pkg={testPackageManifest} />);
+    wrapper = shallow(
+      <SubscriptionUpdates
+        catalogSource={testCatalogSource}
+        obj={testSubscription}
+        pkg={testPackageManifest}
+      />,
+    );
   });
 
   it('renders link to configure update channel', () => {
@@ -329,7 +340,9 @@ describe(SubscriptionDetails.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionDetails obj={testSubscription} pkg={testPackageManifest} />);
+    wrapper = shallow(
+      <SubscriptionDetails obj={testSubscription} packageManifests={[testPackageManifest]} />,
+    );
   });
 
   it('renders subscription update channel and approval component', () => {
@@ -339,7 +352,7 @@ describe(SubscriptionDetails.displayName, () => {
   it('renders link to `ClusterServiceVersion` if installed', () => {
     const obj = _.cloneDeep(testSubscription);
     obj.status = { installedCSV: testClusterServiceVersion.metadata.name };
-    wrapper = wrapper.setProps({ obj, installedCSV: testClusterServiceVersion });
+    wrapper = wrapper.setProps({ obj, clusterServiceVersions: [testClusterServiceVersion] });
 
     const link = wrapper
       .findWhere((node) => node.equals(<dt>Installed Version</dt>))

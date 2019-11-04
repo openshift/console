@@ -1,2 +1,3 @@
 export * from './NetworkAttachmentDefinition';
-export * from './NetworkAttachmentDefinitionsForm';
+export * from './NetworkAttachmentDefinitionDetails';
+export * from './NetworkAttachmentDefinitionDetailsPage';

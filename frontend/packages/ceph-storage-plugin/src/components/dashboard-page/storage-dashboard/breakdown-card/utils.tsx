@@ -6,15 +6,20 @@ import { Colors } from './bar-colors';
 const getTotal = (stats: StackDataPoint[]) =>
   stats.reduce((total, dataPoint) => total + dataPoint.y, 0);
 
-const addOthers = (stats: StackDataPoint[], totalUsed: string, humanize: Humanize) => {
+const addOthers = (
+  stats: StackDataPoint[],
+  metricTotal: string,
+  humanize: Humanize,
+): StackDataPoint => {
   const top5Total = getTotal(stats);
-  const others = Number(totalUsed) - top5Total;
+  const others = Number(metricTotal) - top5Total;
   const othersData = {
     x: '',
     y: others,
     name: 'Others',
     color: Colors.OTHER,
     label: humanize(others).string,
+    link: '',
     id: 6,
   };
   return othersData;
@@ -22,23 +27,32 @@ const addOthers = (stats: StackDataPoint[], totalUsed: string, humanize: Humaniz
 
 export const addAvailable = (
   stats: StackDataPoint[],
-  total: string,
-  used: string,
-  totalUsed: string,
+  capacityTotal: string,
+  capacityUsed: string,
+  metricTotal: string,
   humanize: Humanize,
 ) => {
-  const availableInBytes = Number(total) - Number(used);
-  let othersData = {};
+  let othersData: StackDataPoint;
+  let availableData: StackDataPoint;
+  let newChartData: StackDataPoint[] = [...stats];
   if (stats.length === 5) {
-    othersData = addOthers(stats, totalUsed, humanize);
+    othersData = addOthers(stats, metricTotal, humanize);
+    newChartData = [...stats, othersData] as StackDataPoint[];
   }
-  const availableData = {
-    x: '',
-    y: availableInBytes,
-    label: humanize(availableInBytes).string,
-    id: 7,
-  };
-  return _.isEmpty(othersData) ? [...stats, availableData] : [...stats, othersData, availableData];
+  if (capacityTotal) {
+    const availableInBytes = Number(capacityTotal) - Number(capacityUsed);
+    availableData = {
+      x: '',
+      y: availableInBytes,
+      name: 'Available',
+      link: '',
+      color: '',
+      label: humanize(availableInBytes).string,
+      id: 7,
+    };
+    newChartData = [...newChartData, availableData] as StackDataPoint[];
+  }
+  return newChartData;
 };
 
 export const getBarRadius = (index: number, length: number) => {
@@ -52,9 +66,9 @@ export const getBarRadius = (index: number, length: number) => {
   return barRadius;
 };
 
-export const isAvailableBar = (index: number, length: number) => {
+export const isAvailableBar = (name: string) => {
   let barColor = {};
-  if (index === length - 1) {
+  if (name === 'Available') {
     barColor = { fill: Colors.AVAILABLE };
   }
   return barColor;
