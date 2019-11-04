@@ -49,6 +49,7 @@ export interface DeployImageFormData {
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
   isSearchingForImage: boolean;
+  resources: Resources;
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   labels: { [name: string]: string };
@@ -69,6 +70,7 @@ export interface GitImportFormData {
   pipeline?: PipelineData;
   image: ImageData;
   route: RouteData;
+  resources: Resources;
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
@@ -161,7 +163,6 @@ export interface DeploymentData {
 }
 
 export interface ServerlessData {
-  enabled: boolean;
   scaling: ServerlessScaling;
 }
 
@@ -196,6 +197,12 @@ export enum ImportTypes {
   git = 'git',
   docker = 'docker',
   s2i = 's2i',
+}
+
+export enum Resources {
+  OpenShift = 'openshift',
+  Kubernetes = 'k8s',
+  KnativeService = 'knativeservice',
 }
 
 export interface ImportData {

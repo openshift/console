@@ -3,6 +3,10 @@
 
   &__bg {
     fill: var(--pf-global--BackgroundColor--light-100);
+    &.is-highlight {
+      stroke: var(--pf-global--active-color--400);
+      stroke-width: 4;
+    }
   }
 
   &__selection {
@@ -11,10 +15,10 @@
   }
 
   &__label {
-    cursor: default;
     fill: var(--pf-global--Color--light-100);
     font-size: var(--pf-global--FontSize--md);
     text {
+      pointer-events: none;
       fill: var(--pf-global--Color--300);
     }
   }
@@ -28,4 +32,3 @@
     }
   }
 }
-

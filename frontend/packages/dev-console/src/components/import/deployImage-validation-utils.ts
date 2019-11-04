@@ -8,6 +8,7 @@ import {
   limitsValidationSchema,
   routeValidationSchema,
   isiValidationSchema,
+  resourcesValidationSchema,
 } from './validation-schema';
 
 export const deployValidationSchema = yup.object().shape({
@@ -19,4 +20,5 @@ export const deployValidationSchema = yup.object().shape({
   deployment: deploymentValidationSchema,
   route: routeValidationSchema,
   limits: limitsValidationSchema,
+  resources: resourcesValidationSchema,
 });

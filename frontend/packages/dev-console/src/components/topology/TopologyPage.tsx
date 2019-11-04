@@ -2,14 +2,13 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { matchPath, match as RMatch, Link } from 'react-router-dom';
-import { Button, Tooltip } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon } from '@patternfly/react-icons';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
-import { StatusBox, Firehose, HintBlock } from '@console/internal/components/utils';
+import { StatusBox, Firehose, HintBlock, AsyncComponent } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
-import { Overview } from '@console/internal/components/overview';
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
@@ -83,7 +82,7 @@ const TopologyPage: React.FC<Props> = ({
 }) => {
   const namespace = match.params.name;
   const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
-  const showListView = matchPath(match.path, {
+  const showListView = !!matchPath(match.path, {
     path: '*/list',
     exact: true,
   });
@@ -94,16 +93,16 @@ const TopologyPage: React.FC<Props> = ({
       </Helmet>
       <NamespacedPage
         variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
+        hideApplications={showListView}
         toolbar={
           <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
             <Link
+              className="pf-c-button pf-m-plain"
               to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
                 showListView ? '' : '/list'
               }`}
             >
-              <Button variant="plain">
-                {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-              </Button>
+              {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
             </Link>
           </Tooltip>
         }
@@ -113,7 +112,16 @@ const TopologyPage: React.FC<Props> = ({
             {() => {
               return namespace ? (
                 showListView ? (
-                  <Overview mock={false} match={match} title="" />
+                  <AsyncComponent
+                    mock={false}
+                    match={match}
+                    title=""
+                    loader={() =>
+                      import(
+                        '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
+                      ).then((m) => m.Overview)
+                    }
+                  />
                 ) : (
                   <ConnectedTopologyDataController
                     application={application}

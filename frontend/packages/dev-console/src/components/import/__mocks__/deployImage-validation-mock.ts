@@ -1,4 +1,4 @@
-import { DeployImageFormData } from '../import-types';
+import { DeployImageFormData, Resources } from '../import-types';
 
 export const mockDeployImageFormData: DeployImageFormData = {
   project: {
@@ -73,8 +73,8 @@ export const mockDeployImageFormData: DeployImageFormData = {
     ports: [],
   },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: {
       minpods: 0,
       maxpods: '',

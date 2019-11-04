@@ -6,23 +6,23 @@
 
   &.is-hover {
     cursor: pointer;
-//    stroke-width: 7px;
+    //    stroke-width: 7px;
   }
 
-  &.is-highlight, &.is-selected {
+  &.is-highlight,
+  &.is-selected {
     fill: var(--pf-global--active-color--200);
     stroke: var(--pf-global--active-color--100);
   }
 
   &__label {
-    pointer-events: none;
-
     & rect {
       fill: var(--pf-global--Color--300);
     }
 
     & text {
       fill: #fff;
+      pointer-events: none;
       font-size: var(--pf-global--FontSize--sm);
     }
   }

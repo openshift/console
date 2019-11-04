@@ -6,7 +6,7 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DeployImageFormData, FirehoseList } from './import-types';
+import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
@@ -59,7 +59,6 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, 
     },
     isSearchingForImage: false,
     serverless: {
-      enabled: false,
       scaling: {
         minpods: 0,
         maxpods: '',
@@ -84,6 +83,7 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, 
         privateKey: '',
       },
     },
+    resources: Resources.Kubernetes,
     build: {
       env: [],
       triggers: {

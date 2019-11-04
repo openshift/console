@@ -6,6 +6,7 @@ import RouteSection from '../route/RouteSection';
 import ServerlessRouteSection from '../serverless/ServerlessRouteSection';
 import FormSection from '../section/FormSection';
 import RouteCheckbox from '../route/RouteCheckbox';
+import { Resources } from '../import-types';
 import LabelSection from './LabelSection';
 import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
@@ -32,7 +33,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
         onVisibleItemChange={handleVisibleItemChange}
       >
         <ProgressiveListItem name="Routing">
-          {values.serverless.enabled ? (
+          {values.resources === Resources.KnativeService ? (
             <ServerlessRouteSection route={values.route} />
           ) : (
             <RouteSection route={values.route} />
@@ -45,13 +46,17 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
           </ProgressiveListItem>
         )}
         {/* Hide Deployment for Serverless */}
-        {values.serverless.enabled ? null : (
-          <ProgressiveListItem name="Deployment Configuration">
+        {values.resources !== Resources.KnativeService && (
+          <ProgressiveListItem name="Deployment">
             <DeploymentConfigSection namespace={values.project.name} />
           </ProgressiveListItem>
         )}
         <ProgressiveListItem name="Scaling">
-          {values.serverless.enabled ? <ServerlessScalingSection /> : <ScalingSection />}
+          {values.resources === Resources.KnativeService ? (
+            <ServerlessScalingSection />
+          ) : (
+            <ScalingSection />
+          )}
         </ProgressiveListItem>
         <ProgressiveListItem name="Resource Limits">
           <ResourceLimitSection />

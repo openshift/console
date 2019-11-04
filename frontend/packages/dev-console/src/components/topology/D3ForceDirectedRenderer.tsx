@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
-import SvgDefsProvider from '../svg/SvgDefsProvider';
+import { SVGDefsProvider } from '@console/topology';
 import {
   ContextMenuProvider,
   DragConnectionProps,
@@ -1159,7 +1159,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
         onClick={this.deselect}
         className={className}
       >
-        <SvgDefsProvider>
+        <SVGDefsProvider>
           <g transform={zoomTransform && zoomTransform.toString()} ref={this.zoomGroup}>
             <g>{groups.map((groupId) => this.renderGroup(groupId))}</g>
             <g>
@@ -1176,7 +1176,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
               {this.renderMoveConnection()}
             </g>
           </g>
-        </SvgDefsProvider>
+        </SVGDefsProvider>
       </svg>
     );
   }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SvgDefs from './SvgDefs';
+import { SVGDefs } from '@console/topology';
 
 export interface SvgDropShadowFilterProps {
   // The unique ID that identifies the filter.
@@ -20,7 +20,7 @@ const SvgDropShadowFilter: React.FC<SvgDropShadowFilterProps> = ({
   floodColor = '#030303',
   floodOpacity = 0.2,
 }) => (
-  <SvgDefs id={id}>
+  <SVGDefs id={id}>
     <filter
       id={id}
       x={`-${stdDeviation * 12.5}%`}
@@ -36,7 +36,7 @@ const SvgDropShadowFilter: React.FC<SvgDropShadowFilterProps> = ({
         floodOpacity={floodOpacity}
       />
     </filter>
-  </SvgDefs>
+  </SVGDefs>
 );
 
 export default SvgDropShadowFilter;

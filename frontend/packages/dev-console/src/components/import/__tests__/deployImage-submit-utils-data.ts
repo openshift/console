@@ -1,4 +1,4 @@
-import { DeployImageFormData } from '../import-types';
+import { DeployImageFormData, Resources } from '../import-types';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -34,8 +34,8 @@ export const defaultData: DeployImageFormData = {
     ports: [],
   },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: {
       minpods: 0,
       maxpods: '',
@@ -163,8 +163,8 @@ export const dataWithTargetPort: DeployImageFormData = {
   },
   image: { name: '', image: {}, tag: '', status: { metadata: {}, status: '' }, ports: [] },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
   },
   route: {
@@ -370,8 +370,8 @@ export const dataWithPorts: DeployImageFormData = {
     ports: [{ containerPort: 8080, protocol: 'TCP' }],
   },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
   },
   route: {
@@ -469,8 +469,8 @@ export const dataWithoutPorts: DeployImageFormData = {
   },
   image: { name: '', image: {}, tag: '', status: { metadata: {}, status: '' }, ports: [] },
   isSearchingForImage: false,
+  resources: Resources.OpenShift,
   serverless: {
-    enabled: false,
     scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
   },
   route: {

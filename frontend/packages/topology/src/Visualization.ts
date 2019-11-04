@@ -27,7 +27,7 @@ export default class Visualization extends Stateful implements Controller {
   elements: { [id: string]: GraphElement } = {};
 
   @observable.ref
-  private graph: Graph | undefined;
+  private graph?: Graph;
 
   private layoutFactories: LayoutFactory[] = [];
 
@@ -94,6 +94,11 @@ export default class Visualization extends Stateful implements Controller {
       if (!isGraph(element) && !validIds.includes(element.getId())) {
         element.remove();
         this.removeElement(element);
+        // unparent all of the element's children such that they can be reparented
+        element
+          .getChildren()
+          .slice()
+          .forEach((child) => child.remove());
       }
     });
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { createSvgIdUrl } from '@console/topology';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
-import { createSvgIdUrl } from '../../../utils/svg-utils';
 
 import './Decorator.scss';
 
@@ -11,6 +11,7 @@ type DecoratorTypes = {
   onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
   href?: string;
   external?: boolean;
+  circleRef?: React.Ref<SVGCircleElement>;
 };
 
 const FILTER_ID = 'DecoratorDropShadowFilterId';
@@ -23,18 +24,20 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   children,
   href,
   external,
+  circleRef,
 }) => {
   const decorator = (
-    <g className="odc-decorator" transform={`translate(${x}, ${y})`} onClick={onClick}>
+    <g className="odc-decorator" onClick={onClick}>
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
       <circle
+        ref={circleRef}
         className="odc-decorator__bg"
-        cx={0}
-        cy={0}
+        cx={x}
+        cy={y}
         r={radius}
         filter={createSvgIdUrl(FILTER_ID)}
       />
-      {children}
+      <g transform={`translate(${x}, ${y})`}>{children}</g>
     </g>
   );
   if (href) {
