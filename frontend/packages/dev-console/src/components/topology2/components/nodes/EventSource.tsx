@@ -10,6 +10,7 @@ import {
   WithDragNodeProps,
   createSvgIdUrl,
 } from '@console/topology';
+import { getKnativeEventSourceIcon } from '@console/knative-plugin';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
@@ -65,8 +66,7 @@ const EventSource: React.FC<EventSourceProps> = ({
         y={height * 0.25}
         width={size * 0.5}
         height={size * 0.5}
-        // TODO replace with icon based on data
-        xlinkHref="static/assets/openshift.svg"
+        xlinkHref={getKnativeEventSourceIcon(data.kind)}
       />
       {(data.kind || element.getLabel()) && (
         <SvgBoxedText

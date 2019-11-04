@@ -9,7 +9,6 @@ import * as amqImg from '../../imgs/logos/amq.svg';
 import * as angularjsImg from '../../imgs/logos/angularjs.svg';
 import * as ansibleImg from '../../imgs/logos/ansible.svg';
 import * as apacheImg from '../../imgs/logos/apache.svg';
-import * as apiServerSourceImg from '../../imgs/logos/apiserversource.png';
 import * as beakerImg from '../../imgs/logos/beaker.svg';
 import * as capedwarfImg from '../../imgs/logos/capedwarf.svg';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
@@ -17,7 +16,6 @@ import * as cassandraImg from '../../imgs/logos/cassandra.svg';
 import * as clojureImg from '../../imgs/logos/clojure.svg';
 import * as codeigniterImg from '../../imgs/logos/codeigniter.svg';
 import * as cordovaImg from '../../imgs/logos/cordova.png';
-import * as cronJobSourceImg from '../../imgs/logos/cronjobsource.png';
 import * as datagridImg from '../../imgs/logos/datagrid.svg';
 import * as datavirtImg from '../../imgs/logos/datavirt.svg';
 import * as debianImg from '../../imgs/logos/debian.svg';
@@ -98,7 +96,6 @@ const logos = new Map()
   .set('icon-angularjs', angularjsImg)
   .set('icon-ansible', ansibleImg)
   .set('icon-apache', apacheImg)
-  .set('icon-apiserversource', apiServerSourceImg)
   .set('icon-beaker', beakerImg)
   .set('icon-capedwarf', capedwarfImg)
   .set('icon-catalog', catalogImg)
@@ -106,7 +103,6 @@ const logos = new Map()
   .set('icon-clojure', clojureImg)
   .set('icon-codeigniter', codeigniterImg)
   .set('icon-cordova', cordovaImg)
-  .set('icon-cronjobsource', cronJobSourceImg)
   .set('icon-datagrid', datagridImg)
   .set('icon-datavirt', datavirtImg)
   .set('icon-debian', debianImg)
