@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
@@ -125,36 +124,34 @@ export const UtilizationCard = withDashboardResources(
             title={duration}
           />
         </DashboardCardHeader>
-        <DashboardCardBody>
-          <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
-            <UtilizationItem
-              title="CPU"
-              data={cpuStats}
-              isLoading={!projectName || !cpuUtilization}
-              humanizeValue={humanizeCpuCores}
-              query={queries[ProjectQueries.CPU_USAGE]}
-              error={cpuError}
-              TopConsumerPopover={cpuPopover}
-            />
-            <UtilizationItem
-              title="Memory"
-              data={memoryStats}
-              isLoading={!projectName || !memoryUtilization}
-              humanizeValue={humanizeBinaryBytes}
-              query={queries[ProjectQueries.MEMORY_USAGE]}
-              error={memoryError}
-              TopConsumerPopover={memPopover}
-            />
-            <UtilizationItem
-              title="Pod count"
-              data={podCountStats}
-              isLoading={!projectName || !podCount}
-              humanizeValue={humanizeNumber}
-              query={queries[ProjectQueries.POD_COUNT]}
-              error={podCountError}
-            />
-          </UtilizationBody>
-        </DashboardCardBody>
+        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
+          <UtilizationItem
+            title="CPU"
+            data={cpuStats}
+            isLoading={!projectName || !cpuUtilization}
+            humanizeValue={humanizeCpuCores}
+            query={queries[ProjectQueries.CPU_USAGE]}
+            error={cpuError}
+            TopConsumerPopover={cpuPopover}
+          />
+          <UtilizationItem
+            title="Memory"
+            data={memoryStats}
+            isLoading={!projectName || !memoryUtilization}
+            humanizeValue={humanizeBinaryBytes}
+            query={queries[ProjectQueries.MEMORY_USAGE]}
+            error={memoryError}
+            TopConsumerPopover={memPopover}
+          />
+          <UtilizationItem
+            title="Pod count"
+            data={podCountStats}
+            isLoading={!projectName || !podCount}
+            humanizeValue={humanizeNumber}
+            query={queries[ProjectQueries.POD_COUNT]}
+            error={podCountError}
+          />
+        </UtilizationBody>
       </DashboardCard>
     );
   },
