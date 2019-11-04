@@ -2,8 +2,8 @@ import {
   DataState,
   PipelineExampleNames,
   pipelineTestData,
-} from '../../../../../test/pipeline-data';
-import { ConnectedWorkloadPipeline, WorkloadData } from '../../../topology-types';
+} from '../../../../../../test/pipeline-data';
+import { ConnectedWorkloadPipeline, WorkloadData } from '../../../../../topology/topology-types';
 
 export const bareMinimalWorkloadData: WorkloadData = {
   build: null,
