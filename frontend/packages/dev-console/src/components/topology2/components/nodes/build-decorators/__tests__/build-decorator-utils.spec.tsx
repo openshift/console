@@ -1,7 +1,7 @@
 import { Status } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BuildModel } from '@console/internal/models';
-import { PipelineRunModel } from '../../../../../models';
+import { PipelineRunModel } from '../../../../../../models';
 import { getBuildDecoratorParts } from '../build-decorator-utils';
 import PipelineBuildDecoratorTooltip from '../PipelineBuildDecoratorTooltip';
 import {
