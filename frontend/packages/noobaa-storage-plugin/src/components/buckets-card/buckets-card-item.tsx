@@ -11,7 +11,7 @@ const formatCount = (count: number) => {
 const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, link, error }) => (
   <div className="nb-buckets-card__row-status-item">
     {error || _.isNil(status) ? (
-      <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Unavailable</span>
+      <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Not available</span>
     ) : Number(status) > 0 ? (
       <>
         <a href={link} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">

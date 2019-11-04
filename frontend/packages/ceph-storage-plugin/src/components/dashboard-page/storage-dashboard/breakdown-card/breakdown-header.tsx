@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { MonitoringRoutes, connectToURLs } from '@console/internal/reducers/monitoring';
-import { ExternalLink } from '@console/internal/components/utils';
-import { getPrometheusExpressionBrowserURL } from '@console/internal/components/graphs/prometheus-graph';
+import { Link } from 'react-router-dom';
 
-const HeaderPrometheusViewLink: React.FC<HeaderPrometheusViewLinkProps> = ({ link, urls }) => (
-  <div className="capacity-breakdown-card__header-link">
-    <ExternalLink href={getPrometheusExpressionBrowserURL(urls, link)} text="View more" />
-  </div>
-);
+export const HeaderPrometheusViewLink: React.FC<HeaderPrometheusViewLinkProps> = ({ link }) => {
+  const params = new URLSearchParams();
+  params.set('query0', link);
+  return (
+    <div className="capacity-breakdown-card__header-link">
+      <Link to={`/monitoring/query-browser?${params}`}>View more</Link>
+    </div>
+  );
+};
 
-export default connectToURLs(MonitoringRoutes.Prometheus)(HeaderPrometheusViewLink);
-
-type HeaderPrometheusViewLinkProps = { link: string[]; urls: string[] };
+type HeaderPrometheusViewLinkProps = { link: string };
