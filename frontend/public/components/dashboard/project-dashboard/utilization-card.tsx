@@ -28,6 +28,7 @@ import { getName } from '@console/shared';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PodModel } from '../../../models';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -140,6 +141,7 @@ export const UtilizationCard = withDashboardResources(
             isLoading={!projectName || !memoryUtilization}
             humanizeValue={humanizeBinaryBytes}
             query={queries[ProjectQueries.MEMORY_USAGE]}
+            byteDataType={ByteDataTypes.BinaryBytes}
             error={memoryError}
             TopConsumerPopover={memPopover}
           />
