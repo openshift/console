@@ -1,5 +1,11 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, modelFor, RouteKind, DeploymentKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  modelFor,
+  RouteKind,
+  DeploymentKind,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { TransformResourceData, isKnativeServing, deploymentKindMap } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -392,9 +398,7 @@ export const transformTopologyData = (
   return topologyGraphAndNodeData;
 };
 
-export const getResourceDeploymentObject = (
-  topologyObject: TopologyDataObject,
-): K8sResourceKind => {
+export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K8sResourceKind => {
   if (!topologyObject) {
     return null;
   }
@@ -409,8 +413,15 @@ export const updateTopologyResourceApplication = (
     return Promise.reject();
   }
 
-  const resource = getResourceDeploymentObject(item);
-  return updateResourceApplication(modelFor(resource.kind), resource, application);
+  const resource = getTopologyResourceObject(item);
+
+  const resourceKind = modelFor(referenceFor(resource));
+  if (!resourceKind) {
+    return Promise.reject(
+      new Error(`Unable to update application, invalid resource type: ${resource.kind}`),
+    );
+  }
+  return updateResourceApplication(resourceKind, resource, application);
 };
 
 export const createTopologyResourceConnection = (
@@ -423,9 +434,9 @@ export const createTopologyResourceConnection = (
     return Promise.reject();
   }
 
-  const sourceObj = getResourceDeploymentObject(source);
-  const targetObj = getResourceDeploymentObject(target);
-  const replaceTargetObj = replaceTarget && getResourceDeploymentObject(replaceTarget);
+  const sourceObj = getTopologyResourceObject(source);
+  const targetObj = getTopologyResourceObject(target);
+  const replaceTargetObj = replaceTarget && getTopologyResourceObject(replaceTarget);
 
   if (serviceBindingFlag && target.operatorBackedService) {
     return createServiceBinding(sourceObj, targetObj);
@@ -444,8 +455,8 @@ export const removeTopologyResourceConnection = (
     return Promise.reject();
   }
 
-  const sourceObj = getResourceDeploymentObject(source);
-  const targetObj = getResourceDeploymentObject(target);
+  const sourceObj = getTopologyResourceObject(source);
+  const targetObj = getTopologyResourceObject(target);
 
   if (edgeType === 'service-binding') {
     return removeServiceBinding(sbr);

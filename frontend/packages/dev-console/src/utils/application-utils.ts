@@ -131,7 +131,12 @@ export const updateResourceApplication = (
   application: string,
 ): Promise<any> => {
   if (!resource) {
-    return Promise.reject();
+    return Promise.reject(new Error('Error: no resource provided to update application for.'));
+  }
+  if (!resourceKind) {
+    return Promise.reject(
+      new Error('Error: invalid resource kind provided for updating application.'),
+    );
   }
 
   const instanceName = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/instance']);

@@ -19,7 +19,7 @@ import EventSource from './components/nodes/EventSource';
 import EventSourceLink from './components/edges/EventSourceLink';
 import WorkloadNode from './components/nodes/WorkloadNode';
 import GraphComponent from './components/GraphComponent';
-import { workloadContextMenu, groupContextMenu } from './nodeContextMenu';
+import { workloadContextMenu, groupContextMenu, nodeContextMenu } from './nodeContextMenu';
 import {
   graphWorkloadDropTargetSpec,
   nodeDragSourceSpec,
@@ -80,7 +80,7 @@ class ComponentFactory {
           return withDragNode(nodeDragSourceSpec(type))(
             withSelection(false, true)(
               withContextMenu(
-                workloadContextMenu,
+                nodeContextMenu,
                 document.getElementById('modal-container'),
                 'odc2-topology-context-menu',
               )(KnativeService),
@@ -90,7 +90,7 @@ class ComponentFactory {
           return withDragNode(nodeDragSourceSpec(type))(
             withSelection(false, true)(
               withContextMenu(
-                workloadContextMenu,
+                nodeContextMenu,
                 document.getElementById('modal-container'),
                 'odc2-topology-context-menu',
               )(EventSource),
@@ -100,7 +100,7 @@ class ComponentFactory {
           return withDragNode(nodeDragSourceSpec(type))(
             withSelection(false, true)(
               withContextMenu(
-                workloadContextMenu,
+                nodeContextMenu,
                 document.getElementById('modal-container'),
                 'odc2-topology-context-menu',
               )(RevisionNode),

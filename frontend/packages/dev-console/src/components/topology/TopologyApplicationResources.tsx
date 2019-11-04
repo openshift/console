@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { modelFor } from '@console/internal/module/k8s';
 import ApplicationGroupResource from './ApplicationGroupResource';
 import { TopologyDataObject } from './topology-types';
-import { getResourceDeploymentObject } from './topology-utils';
+import { getTopologyResourceObject } from './topology-utils';
 
 import './TopologyApplicationResources.scss';
 
@@ -19,7 +19,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
 }) => {
   const resourcesData = {};
   _.forEach(resources, (res) => {
-    const a = getResourceDeploymentObject(res);
+    const a = getTopologyResourceObject(res);
     resourcesData[a.kind] = [...(resourcesData[a.kind] ? resourcesData[a.kind] : []), a];
   });
 
