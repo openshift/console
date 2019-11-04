@@ -245,7 +245,10 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const [icon] = _.get(obj, 'spec.icon', []);
     const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
     const namespace = getNamespace(obj);
-    const route = resourceObjPath(obj, referenceFor(obj));
+    const route =
+      _.get(obj, 'status.phase') === ClusterServiceVersionPhase.CSVPhaseFailed
+        ? `${resourceObjPath(obj, referenceFor(obj))}/subscription`
+        : resourceObjPath(obj, referenceFor(obj));
     const uid = getUID(obj);
     return (
       <TableRow id={uid} trKey={key} {...rest}>
