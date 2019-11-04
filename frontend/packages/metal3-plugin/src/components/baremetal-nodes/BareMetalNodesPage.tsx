@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
-import Helmet from 'react-helmet';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { BareMetalNodeBundle } from '../types';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';

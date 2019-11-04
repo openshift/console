@@ -5,18 +5,18 @@ import { navFactory, FirehoseResource } from '@console/internal/components/utils
 import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import NodeDetails from '@console/app/src/components/nodes/NodeDetails';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { connectToPlural } from '@console/internal/kinds';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { menuActionsCreator } from './menu-actions';
+import BareMetalNodeDetails from './BareMetalNodeDetails';
 
 const { details, editYaml, events, pods } = navFactory;
 
 const pages = [
-  details(NodeDetails),
+  details(BareMetalNodeDetails),
   editYaml(),
   pods(({ obj }) => (
     <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
