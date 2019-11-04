@@ -237,7 +237,9 @@ export const createServiceBinding = (
   const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
   const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
   const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
-  const sbrName = `${sourceName}-${source.kind}-${targetName}-${target.kind}`;
+  const sbrName = `${sourceName}-${modelFor(source.kind).abbr}-${targetName}-${
+    modelFor(target.kind).abbr
+  }`;
 
   const serviceBindingRequest = {
     apiVersion: 'apps.openshift.io/v1alpha1',
