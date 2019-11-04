@@ -129,8 +129,8 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
   );
 
   return (
-    <div className="pf-c-popover__body co-utilization-card-popover__body">
-      <h4 className="co-utilizaiton-card-popover__title">
+    <div className="co-utilization-card-popover__body">
+      <h4 className="co-utilization-card-popover__title">
         {consumers.length === 1
           ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
           : 'Top consumers'}
@@ -177,21 +177,17 @@ const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }
       {items.map((item) => {
         const title = String(item.x);
         return (
-          <>
-            <li
-              key={title}
-              className="pf-l-flex pf-m-justify-content-space-between co-utilization-card-popover__consumer-list__item"
-              aria-labelledby="list-item1"
-            >
+          <li key={title} className="co-utilization-card-popover__consumer-item">
+            <div className="co-utilization-card-popover__consumer-link">
               <Link
-                className="co-utilization-card-popover__consumer-list__name"
+                className="co-utilization-card-popover__consumer-name"
                 to={resourcePathFromModel(model, title, item.metric.namespace)}
               >
                 {title}
               </Link>
-              <small className="co-utilization-card-popover__consumer-list__value">{item.y}</small>
-            </li>
-          </>
+              <small className="co-utilization-card-popover__consumer-value">{item.y}</small>
+            </div>
+          </li>
         );
       })}
     </>
