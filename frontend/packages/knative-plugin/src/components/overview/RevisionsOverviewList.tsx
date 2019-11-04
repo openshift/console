@@ -52,7 +52,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
         <Button
           variant="secondry"
           onClick={() => trafficModalLauncher({ obj: service })}
-          disabled={revisions.length === 0}
+          disabled={!(revisions && revisions.length)}
         >
           Set Traffic Distribution
         </Button>
