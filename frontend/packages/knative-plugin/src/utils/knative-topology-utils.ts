@@ -64,7 +64,7 @@ const createKnativeDeploymentItems = (
 ): OverviewItem => {
   const transformResourceData = new TransformResourceData(resources, utils);
   const associatedDeployment = getOwnedResources(resource, resources.deployments.data);
-  if (associatedDeployment && associatedDeployment.length) {
+  if (!_.isEmpty(associatedDeployment)) {
     const depObj: K8sResourceKind = {
       ...associatedDeployment[0],
       apiVersion: apiVersionForModel(DeploymentModel),
@@ -99,10 +99,8 @@ const createKnativeDeploymentItems = (
     }
     return overviewItems;
   }
-  const services = transformResourceData.getServicesForResource(resource);
-  const routes = transformResourceData.getRoutesForServices(services);
   const knResources = getKnativeServiceData(resource, resources);
-  return { obj: resource, buildConfigs: [], routes, services, ...knResources };
+  return { obj: resource, buildConfigs: [], routes: [], services: [], ...knResources };
 };
 
 /**
