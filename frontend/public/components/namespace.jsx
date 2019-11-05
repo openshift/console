@@ -455,7 +455,11 @@ const Details = ({ obj: ns }) => {
 };
 
 const RolesPage = ({ obj: { metadata } }) => (
-  <RoleBindingsPage namespace={metadata.name} showTitle={false} />
+  <RoleBindingsPage
+    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new?rolekind=Role`}
+    namespace={metadata.name}
+    showTitle={false}
+  />
 );
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);

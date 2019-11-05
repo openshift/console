@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Status, calculateRadius } from '@console/shared';
+import { calculateRadius } from '@console/shared';
 import {
   Node,
   observer,
@@ -11,13 +11,11 @@ import {
 } from '@console/topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router-dom';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BuildModel } from '@console/internal/models';
 import Decorator from '../../../topology/shapes/Decorator';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import PodSet from '../../../topology/shapes/PodSet';
 import KnativeIcon from '../../../topology/shapes/KnativeIcon';
+import BuildDecorator from './build-decorators/BuildDecorator';
 import BaseNode from './BaseNode';
 
 export type WorkloadNodeProps = {
@@ -38,7 +36,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({ element, urlAnchorRef, ...r
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
   const size = Math.min(width, height);
-  const { build, donutStatus } = workloadData;
+  const { donutStatus } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
   const repoIcon = routeDecoratorIcon(workloadData.editUrl, decoratorRadius);
   const cx = width / 2;
@@ -85,38 +83,13 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({ element, urlAnchorRef, ...r
               </Decorator>
             </Tooltip>
           ),
-          build && (
-            <Tooltip
-              key="build"
-              content={`${build.metadata.name} ${build.status && build.status.phase}`}
-              position={TooltipPosition.left}
-            >
-              <Link
-                to={`${resourcePathFromModel(
-                  BuildModel,
-                  build.metadata.name,
-                  build.metadata.namespace,
-                )}/logs`}
-                className="odc2-decorator__link"
-              >
-                <Decorator
-                  x={cx - radius + decoratorRadius * 0.7}
-                  y={cy + radius - decoratorRadius * 0.7}
-                  radius={decoratorRadius}
-                >
-                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    <foreignObject
-                      width={decoratorRadius}
-                      height={decoratorRadius}
-                      style={{ fontSize: decoratorRadius }}
-                    >
-                      <Status status={build.status.phase} iconOnly noTooltip />
-                    </foreignObject>
-                  </g>
-                </Decorator>
-              </Link>
-            </Tooltip>
-          ),
+          <BuildDecorator
+            key="build"
+            workloadData={workloadData}
+            x={cx - radius + decoratorRadius * 0.7}
+            y={cy + radius - decoratorRadius * 0.7}
+            radius={decoratorRadius}
+          />,
         ]}
       >
         <PodSet size={size} x={cx} y={cy} data={workloadData.donutStatus} />
