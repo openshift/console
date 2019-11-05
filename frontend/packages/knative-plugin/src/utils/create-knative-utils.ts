@@ -57,7 +57,11 @@ export const getKnativeServiceDepResource = (
     metadata: {
       name,
       namespace,
-      ...(!create && { labels: { 'serving.knative.dev/visibility': `cluster-local` } }),
+      labels: {
+        ...defaultLabel,
+        ...labels,
+        ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
+      },
     },
     spec: {
       template: {
