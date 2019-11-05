@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
@@ -92,12 +93,19 @@ TableRowForKind.displayName = 'TableRowForKind';
 
 const DetailsForKind = (kind) =>
   function DetailsForKind_({ obj }) {
+    const conditions = obj.status && obj.status.conditions;
     return (
       <>
         <div className="co-m-pane__body">
           <SectionHeading text={`${kindForReference(kind)} Overview`} />
           <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
         </div>
+        {conditions && (
+          <div className="co-m-pane__body">
+            <SectionHeading text="Conditions" />
+            <Conditions conditions={conditions} />
+          </div>
+        )}
       </>
     );
   };
