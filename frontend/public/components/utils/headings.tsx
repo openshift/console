@@ -129,7 +129,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               {resourceTitle}
             </span>
             {resourceStatus && (
-              <span className="co-resource-item__resource-status">
+              <span className="co-resource-item__resource-status hidden-xs">
                 <Badge className="co-resource-item__resource-status-badge" isRead>
                   <Status status={resourceStatus} />
                 </Badge>
