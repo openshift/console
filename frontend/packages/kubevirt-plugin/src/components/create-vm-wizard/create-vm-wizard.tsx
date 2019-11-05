@@ -51,7 +51,7 @@ import {
   VMWizardStorageType,
   VMWizardTab,
 } from './types';
-import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver } from './strings/strings';
+import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
@@ -236,6 +236,17 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     this.props.onClose(disposeOnly);
   };
 
+  getWizardTitle() {
+    const { isCreateTemplate, isProviderImport } = this.props;
+    if (isCreateTemplate) {
+      return CREATE_VM_TEMPLATE;
+    }
+    if (isProviderImport) {
+      return IMPORT_VM;
+    }
+    return CREATE_VM;
+  }
+
   finish = async () => {
     this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
     const create = this.props.isCreateTemplate ? createVmTemplate : createVm;
@@ -281,8 +292,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
   };
 
   render() {
-    const { isCreateTemplate, reduxID, stepData } = this.props;
-    const createVMText = isCreateTemplate ? CREATE_VM_TEMPLATE : CREATE_VM;
+    const { reduxID, stepData } = this.props;
 
     if (this.isClosed) {
       return null;
@@ -386,7 +396,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       <div className="kubevirt-create-vm-modal__container">
         {!isStepValid(stepData, VMWizardTab.RESULT) && (
           <div className="yaml-editor__header">
-            <h1 className="yaml-editor__header-text">{createVMText}</h1>
+            <h1 className="yaml-editor__header-text">{this.getWizardTitle()}</h1>
           </div>
         )}
         <Wizard
