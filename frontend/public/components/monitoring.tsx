@@ -1410,34 +1410,42 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
       </div>
       <div className="co-m-horizontal-nav__menu">
         <ul className="co-m-horizontal-nav__menu-primary">
-          <li
-            className={classNames('co-m-horizontal-nav__menu-item', {
-              'co-m-horizontal-nav-item--active': match.url === alertPath,
-            })}
-          >
-            <Link to={alertPath}>Alerts</Link>
-          </li>
-          <li
-            className={classNames('co-m-horizontal-nav__menu-item', {
-              'co-m-horizontal-nav-item--active': match.url === silencePath,
-            })}
-          >
-            <Link to={silencePath}>Silences</Link>
-          </li>
-          <li
-            className={classNames('co-m-horizontal-nav__menu-item', {
-              'co-m-horizontal-nav-item--active': match.url === ConfigPath,
-            })}
-          >
-            <Link to={ConfigPath}>Configuration</Link>
-          </li>
-          <li
-            className={classNames('co-m-horizontal-nav__menu-item', {
-              'co-m-horizontal-nav-item--active': match.url === YAMLPath,
-            })}
-          >
-            <Link to={YAMLPath}>YAML</Link>
-          </li>
+          {(match.url === alertPath || match.url === silencePath) && (
+            <>
+              <li
+                className={classNames('co-m-horizontal-nav__menu-item', {
+                  'co-m-horizontal-nav-item--active': match.url === alertPath,
+                })}
+              >
+                <Link to={alertPath}>Alerts</Link>
+              </li>
+              <li
+                className={classNames('co-m-horizontal-nav__menu-item', {
+                  'co-m-horizontal-nav-item--active': match.url === silencePath,
+                })}
+              >
+                <Link to={silencePath}>Silences</Link>
+              </li>
+            </>
+          )}
+          {(match.url === ConfigPath || match.url === YAMLPath) && (
+            <>
+              <li
+                className={classNames('co-m-horizontal-nav__menu-item', {
+                  'co-m-horizontal-nav-item--active': match.url === ConfigPath,
+                })}
+              >
+                <Link to={ConfigPath}>Overview</Link>
+              </li>
+              <li
+                className={classNames('co-m-horizontal-nav__menu-item', {
+                  'co-m-horizontal-nav-item--active': match.url === YAMLPath,
+                })}
+              >
+                <Link to={YAMLPath}>YAML</Link>
+              </li>
+            </>
+          )}
           <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" />
         </ul>
       </div>

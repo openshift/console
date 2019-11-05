@@ -32,27 +32,18 @@ const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
 }));
 
 const ItemRow = ({ item }) => {
-  const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
-  const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
-  const menuItems = [
-    editYAMLMenuItem(item.kind, resourceLink),
-    viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
-    ...(item.kind === 'OAuth' ? oauthMenuItems : []),
-  ];
-  const description = getResourceDescription(item.model);
-
   return (
-    <div className="row co-resource-list__item" data-test-action={item.kind}>
+    <div className="row co-resource-list__item" data-test-action={item.label}>
       <div className="col-xs-10 col-sm-4">
-        <Link to={resourceLink} data-test-id={item.kind}>
-          {item.kind}
+        <Link to={item.path} data-test-id={item.id}>
+          {item.label}
         </Link>
       </div>
       <div className="hidden-xs col-sm-7">
-        <div className="co-line-clamp">{description || '-'}</div>
+        <div className="co-line-clamp">{item.description || '-'}</div>
       </div>
       <div className="dropdown-kebab-pf">
-        <Kebab options={menuItems} />
+        <Kebab options={item.menuItems} />
       </div>
     </div>
   );
@@ -90,10 +81,50 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         namespace: item.metadata.namespace,
         kind: item.kind,
       }));
-      const sortedResponses = _.sortBy(_.flatten(winnowedResponses), 'kind', 'asc');
+
+      const globalConfigs = this.getGlobalConfigs();
+      const usableConfigs = globalConfigs
+        .filter((item) => this.checkFlags(item))
+        .map((item) => item.properties);
+
+      const allItems = [...winnowedResponses, ...usableConfigs]
+        .map((item) => {
+          const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
+          const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+          return {
+            label: item.kind,
+            id: item.uid,
+            description: getResourceDescription(item.model),
+            path: resourceLink,
+            menuItems: [
+              editYAMLMenuItem(item.kind, resourceLink),
+              viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
+              ...(item.kind === 'OAuth' ? oauthMenuItems : []),
+            ],
+          };
+        })
+        .concat([
+          {
+            label: 'Alertmanager',
+            id: 'alertmanager',
+            description: 'Configure grouping and routing of alerts',
+            path: '/monitoring/alertmanagerconfig',
+            menuItems: [
+              {
+                label: 'Create Receiver',
+                href: '/monitoring/alertmanagerconfig/receivers/~new',
+              },
+              {
+                label: `Edit Configuration YAML`,
+                href: `/monitoring/alertmanageryaml`,
+              },
+            ],
+          },
+        ]);
+      const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
 
       this.setState({
-        items: sortedResponses,
+        items: sortedItems,
         loading: false,
       });
     });
@@ -113,15 +144,6 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
 
   render() {
     const { errorMessage, items, loading } = this.state;
-
-    const globalConfigs = this.getGlobalConfigs();
-    const usableConfigs = globalConfigs
-      .filter((item) => this.checkFlags(item))
-      .map((item) => item.properties);
-    const allItems = usableConfigs.length > 0 && items.concat(usableConfigs);
-    const sortedItems =
-      usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
-
     return (
       <div className="co-m-pane__body">
         {errorMessage && (
@@ -142,8 +164,8 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
                 <div />
               </div>
               <div className="co-m-table-grid__body">
-                {_.map(sortedItems, (item) => (
-                  <ItemRow item={item} key={item.uid} />
+                {_.map(items, (item) => (
+                  <ItemRow item={item} key={item.id} />
                 ))}
               </div>
             </div>

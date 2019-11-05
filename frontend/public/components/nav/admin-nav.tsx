@@ -44,9 +44,14 @@ const monitoringAlertsStartsWith = [
   'monitoring/alerts',
   'monitoring/alertrules',
   'monitoring/silences',
+];
+const clusterSettingsStartsWith = [
+  'settings/cluster',
+  'settings/idp',
+  'config.openshift.io',
+  'monitoring/alertmanagerconfig',
   'monitoring/alertmanageryaml',
 ];
-const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 const meteringStartsWith = ['metering.openshift.io'];
 const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
