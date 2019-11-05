@@ -44,6 +44,8 @@ namespace ExtensionProperties {
     path: string | string[];
     /** Perspective id to which this page belongs to. */
     perspective?: string;
+    /** Feature flags required for this extension to be effective. */
+    required?: string | string[];
   };
 }
 

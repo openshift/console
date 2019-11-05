@@ -66,6 +66,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/ocs-install/create-ocs-service' /* webpackChunkName: "ceph-ocs-service" */
         ).then((m) => m.CreateOCSService),
+      required: CEPH_FLAG,
     },
   },
   // Ceph Storage Dashboard Left cards

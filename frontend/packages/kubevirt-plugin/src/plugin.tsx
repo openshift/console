@@ -128,6 +128,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/vm-templates/vm-template' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VirtualMachineTemplatesPage,
         ),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -139,6 +140,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.CreateVMTemplateYAML),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -150,6 +152,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
         ).then((m) => m.CreateVMWizardPage),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -161,6 +164,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
         ).then((m) => m.CreateVMWizardPage),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
@@ -171,6 +175,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.VMTemplateDetailsPage),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
