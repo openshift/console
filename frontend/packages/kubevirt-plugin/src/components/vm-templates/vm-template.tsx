@@ -18,6 +18,8 @@ import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import { menuActions } from './menu-actions';
 import { VMTemplateLink } from './vm-template-link';
 
+import './vm-template.scss';
+
 const { kind } = TemplateModel;
 const selector = {
   matchLabels: { [TEMPLATE_TYPE_LABEL]: 'vm' },
@@ -111,13 +113,15 @@ VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
 const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (props) => {
   return (
-    <Table
-      {...props}
-      aria-label={VM_TEMPLATE_LABEL_PLURAL}
-      Header={VMTemplateTableHeader}
-      Row={VMTemplateTableRow}
-      virtualize
-    />
+    <div className="kubevirt-vm-template-list">
+      <Table
+        {...props}
+        aria-label={VM_TEMPLATE_LABEL_PLURAL}
+        Header={VMTemplateTableHeader}
+        Row={VMTemplateTableRow}
+        virtualize
+      />
+    </div>
   );
 };
 const getCreateProps = ({ namespace }: { namespace: string }) => {
