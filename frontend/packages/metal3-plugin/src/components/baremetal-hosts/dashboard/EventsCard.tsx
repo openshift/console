@@ -11,31 +11,18 @@ import ActivityBody, {
   Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import {
-  EventKind,
-  K8sResourceKind,
-  MachineKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
-import { getHostMachineName } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
-const getMachineResource = (name: string, namespace: string): FirehoseResource => ({
-  isList: false,
-  namespace,
-  name,
-  kind: referenceForModel(MachineModel),
-  prop: 'machine',
-});
 
 const matchesInvolvedObject = (
   kind: string,
@@ -69,25 +56,15 @@ const EventsCard: React.FC<EventsCardProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
-  const { obj } = React.useContext(BareMetalHostDashboardContext);
-  const machineName = getHostMachineName(obj);
-  const namespace = getNamespace(obj);
+  const { obj, machine } = React.useContext(BareMetalHostDashboardContext);
   React.useEffect(() => {
-    if (machineName) {
-      const machineResource = getMachineResource(machineName, namespace);
-      watchK8sResource(machineResource);
-    }
     watchK8sResource(eventsResource);
     return () => {
       stopWatchK8sResource(eventsResource);
-      if (machineName) {
-        const machineResource = getMachineResource(machineName, namespace);
-        stopWatchK8sResource(machineResource);
-      }
     };
-  }, [watchK8sResource, stopWatchK8sResource, machineName, namespace]);
+  }, [watchK8sResource, stopWatchK8sResource]);
 
-  const filter = getHostEventsFilter(obj, _.get(resources.machine, 'data') as MachineKind);
+  const filter = getHostEventsFilter(obj, machine);
 
   const inProgress = isHostInProgressState(obj);
   const hostStatus = getBareMetalHostStatus(obj);
@@ -102,7 +79,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
           <div className="co-activity-card__ongoing-title">Ongoing</div>
           <div className="co-activity-card__ongoing-body">
             {inProgress ? (
-              <Activity timestamp={obj.status.lastUpdated}>
+              <Activity timestamp={null}>
                 <ActivityItem title={hostStatus.title}>
                   <ResourceLink
                     kind={BareMetalHostModel.kind}
