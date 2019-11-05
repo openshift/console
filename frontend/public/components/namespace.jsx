@@ -53,7 +53,10 @@ import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Overview } from './overview';
-import { ProjectDashboard } from './dashboard/project-dashboard/project-dashboard';
+import {
+  getNamespaceDashboardConsoleLinks,
+  ProjectDashboard,
+} from './dashboard/project-dashboard/project-dashboard';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
@@ -442,7 +445,8 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const Details = ({ obj: ns }) => {
+const Details_ = ({ obj: ns, consoleLinks }) => {
+  const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
       <div className="co-m-pane__body">
@@ -450,9 +454,29 @@ const Details = ({ obj: ns }) => {
         <NamespaceSummary ns={ns} />
       </div>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
+      {!_.isEmpty(links) && (
+        <div className="co-m-pane__body">
+          <SectionHeading text="Launcher" />
+          <ul className="list-unstyled">
+            {_.map(_.sortBy(links, 'spec.text'), (link) => {
+              return (
+                <li key={link.metadata.uid}>
+                  <ExternalLink href={link.spec.href} text={link.spec.text} />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
+
+const DetailsStateToProps = ({ UI }) => ({
+  consoleLinks: UI.get('consoleLinks'),
+});
+
+const Details = connect(DetailsStateToProps)(Details_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
