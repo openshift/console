@@ -17,6 +17,7 @@ import { getCheURL } from '../topology/topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from '../topology/TopologyDataController';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import Topology from './Topology';
+import './TopologyPage.scss';
 
 interface StateProps {
   activeApplication: string;
@@ -56,17 +57,7 @@ export function renderTopology({ loaded, loadError, serviceBinding, data }: Rend
       loadError={loadError}
       EmptyMsg={EmptyMsg}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
+      <div className="odc-topology">
         <Topology data={data} serviceBinding={serviceBinding} />
       </div>
     </StatusBox>
