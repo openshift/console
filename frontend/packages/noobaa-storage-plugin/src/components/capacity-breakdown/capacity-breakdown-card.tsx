@@ -11,7 +11,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import HeaderPrometheusViewLink from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
+import { HeaderPrometheusViewLink } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
 import { getStackChartStats } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/utils';
 import { PROJECTS } from '../../constants/index';
@@ -46,7 +46,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top5MetricsData = getInstantVectorStats(results[0], metric);
   const top5MetricsStats = getStackChartStats(top5MetricsData, humanize);
   const objectUsed = _.get(results[1], 'data.result[0].value[1]');
-  const link = [`topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`];
+  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
   const ind = top5MetricsStats.findIndex((v) => v.name === 'Others');
   if (ind !== -1) {

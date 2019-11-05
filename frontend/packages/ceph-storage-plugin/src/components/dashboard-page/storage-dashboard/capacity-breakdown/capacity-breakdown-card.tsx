@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Dropdown, humanizeBinaryBytesWithoutB } from '@console/internal/components/utils';
+import { Dropdown, humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -13,7 +13,7 @@ import { getInstantVectorStats } from '@console/internal/components/graphs/utils
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../../../constants/queries';
 import { PROJECTS } from '../../../../constants/index';
 import { BreakdownCardBody } from '../breakdown-card/breakdown-body';
-import HeaderPrometheusViewLink from '../breakdown-card/breakdown-header';
+import { HeaderPrometheusViewLink } from '../breakdown-card/breakdown-header';
 import { getStackChartStats } from '../breakdown-card/utils';
 import './capacity-breakdown-card.scss';
 
@@ -41,13 +41,13 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
 
   const queriesDataLoaded = queryKeys.some((q) => !prometheusResults.getIn([queries[q], 'data']));
 
-  const humanize = humanizeBinaryBytesWithoutB;
+  const humanize = humanizeBinaryBytes;
   const top5MetricsData = getInstantVectorStats(results[0], metric);
   const top5MetricsStats = getStackChartStats(top5MetricsData, humanize);
   const metricTotal = _.get(results[1], 'data.result[0].value[1]');
   const cephTotal = _.get(results[2], 'data.result[0].value[1]');
   const cephUsed = _.get(results[3], 'data.result[0].value[1]');
-  const link = [`topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`];
+  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
   return (
     <DashboardCard>

@@ -10,7 +10,7 @@ const ItemBody: React.FC<ItemBodyProps> = React.memo(
   ({ title, stats, infoText, isLoading, error }) => {
     let status: React.ReactElement;
     if (error || !stats) {
-      status = <span className="co-dashboard-text--small text-muted">Unavailable</span>;
+      status = <span className="co-dashboard-text--small text-muted">Not available</span>;
     } else if (isLoading) {
       status = <LoadingInline />;
     } else {
