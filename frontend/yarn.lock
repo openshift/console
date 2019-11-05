@@ -10079,10 +10079,10 @@ klaw@^1.0.0:
   optionalDependencies:
     graceful-fs "^4.1.9"
 
-kubevirt-web-ui-components@0.1.49:
-  version "0.1.49"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.49.tgz#e83da995ff796bbf9c5060fa1dff3a94dbe83cc7"
-  integrity sha512-tmrLw+3ig2xKJkB8ZdiennZoOK/lMLOk5t/vT6HHC/7uDvEKGd6BQgdRkFst8g2iNEgKARjPL97E0bduy9ftKw==
+kubevirt-web-ui-components@0.1.50:
+  version "0.1.50"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.50.tgz#b4ab19796400faa44f97f4122979c2c107403b3a"
+  integrity sha512-NBz2xyrM7qsFy4ozngiuJq8RKQlHbzFMVuqL0SZ5NZz7jSr3WPEpLhgwac1g12LUF2lHP6VRGWvIfYtfGdZHsA==
   dependencies:
     "@patternfly/react-console" "1.x"
     babel-plugin-transform-es2015-modules-umd "6.24.1"
