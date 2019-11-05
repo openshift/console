@@ -151,13 +151,8 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   };
 
   const renderSideBar = () => {
-    if (selectedIds.length === 0) {
-      return null;
-    }
-    const selectedEntity = visRef.current.getElementById(selectedIds[0]);
-    if (!selectedEntity) {
-      return null;
-    }
+    const selectedEntity =
+      selectedIds.length === 0 ? null : visRef.current.getElementById(selectedIds[0]);
     return (
       <TopologySideBar show={!!selectedEntity} onClose={onSidebarClose}>
         {selectedEntity && selectedItemDetails()}
