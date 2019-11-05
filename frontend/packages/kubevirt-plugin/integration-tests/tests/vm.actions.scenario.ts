@@ -5,19 +5,19 @@ import {
   resourceRowsPresent,
   isLoaded,
   textFilter,
-} from '../../../../integration-tests/views/crud.view';
-import {
-  waitForActionFinished,
-  waitForStatusIcon,
-  statusIcons,
-} from '../views/virtualMachine.view';
+} from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
   createResource,
   removeLeakedResources,
   removeLeakableResource,
   waitForCount,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
+import {
+  waitForActionFinished,
+  waitForStatusIcon,
+  statusIcons,
+} from '../views/virtualMachine.view';
 import { getVMManifest } from './utils/mocks';
 import { fillInput } from './utils/utils';
 import {

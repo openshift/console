@@ -5,7 +5,7 @@ import {
   withResource,
   createResources,
   deleteResources,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
 import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';

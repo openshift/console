@@ -1,6 +1,6 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
-import { rowForName } from '../../../../integration-tests/views/crud.view';
-import { waitForCount, click } from '../../../console-shared/src/test-utils/utils';
+import { rowForName } from '@console/internal-integration-tests/views/crud.view';
+import { waitForCount, click } from '@console/shared/src/test-utils/utils';
 
 const disabledDropdownButtons = $$('.pf-m-disabled');
 

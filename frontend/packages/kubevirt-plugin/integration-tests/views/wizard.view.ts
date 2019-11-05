@@ -1,5 +1,5 @@
 import { $, $$ } from 'protractor';
-import { selectDropdownOption } from '../../../console-shared/src/test-utils/utils';
+import { selectDropdownOption } from '@console/shared/src/test-utils/utils';
 import { fillInput } from '../tests/utils/utils';
 
 // Wizard Common
