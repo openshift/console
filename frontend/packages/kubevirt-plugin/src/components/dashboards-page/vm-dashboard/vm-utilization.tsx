@@ -12,7 +12,6 @@ import {
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
@@ -111,17 +110,15 @@ export const VMUtilizationCard = withDashboardResources(
             title={duration}
           />
         </DashboardCardHeader>
-        <DashboardCardBody>
-          <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
-            <UtilizationItem
-              title="CPU"
-              data={cpuStats}
-              isLoading={!namespace || !cpuUtilization}
-              humanizeValue={humanizeCpuCores}
-              query={queries[VMQueries.CPU_USAGE]}
-              error={cpuError}
-            />
-          </UtilizationBody>
+        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
+          <UtilizationItem
+            title="CPU"
+            data={cpuStats}
+            isLoading={!namespace || !cpuUtilization}
+            humanizeValue={humanizeCpuCores}
+            query={queries[VMQueries.CPU_USAGE]}
+            error={cpuError}
+          />
           <UtilizationItem
             title="Memory"
             data={memoryStats}
@@ -146,7 +143,7 @@ export const VMUtilizationCard = withDashboardResources(
             query={queries[VMQueries.NETWORK_INOUT_USAGE]}
             error={netErrorInOut}
           />
-        </DashboardCardBody>
+        </UtilizationBody>
       </DashboardCard>
     );
   },
