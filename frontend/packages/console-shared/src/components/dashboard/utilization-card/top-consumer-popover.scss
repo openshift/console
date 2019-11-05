@@ -1,17 +1,35 @@
 @import '../../../styles/skeleton-screen';
 
-.co-utilization-card-popover__dropdown, .co-utilization-card-popover__dropdown .pf-c-dropdown__toggle {
-    width: 100%;
+.co-utilization-card-popover__body {
+    min-height: var(--pf-global--spacer--lg);
 }
 
-.co-utilization-card-popover__dropdown > div {
-    width:100%;
+.co-utilization-card-popover__consumer-item {
+    margin-bottom: var(--pf-global--spacer--sm) !important;
 }
+
 .co-utilization-card-popover__consumer-list {
-    margin-top: var(--pf-global--spacer--lg);
-    margin-bottom: var(--pf-global--spacer--md);
-    padding-left:0;
     list-style-type: none;
+    margin-bottom: var(--pf-global--spacer--md);
+    margin-top: var(--pf-global--spacer--lg);
+    padding-left:0;
+}
+
+.co-utilization-card-popover__consumer-name {
+    flex: 0 0 calc(70% - var(--pf-global--spacer--md));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.co-utilization-card-popover__consumer-value {
+    color: var(--pf-global--Color--200);
+    flex: 0 0 30%;
+    text-align: right;
+}
+
+.co-utilization-card-popover__dropdown, .co-utilization-card-popover__dropdown > div, .co-utilization-card-popover__dropdown .pf-c-dropdown__toggle {
+    width: 100%;
 }
 
 .co-utilization-card-popover__title {
@@ -19,24 +37,8 @@
     margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.co-utilization-card-popover__consumer-list__item {
-    margin-bottom: var(--pf-global--spacer--sm) !important;
-}
-
-.co-utilization-card-popover__title, .co-utilization-card-popover__consumer-list__name, .co-utilization-card-popover__consumer-list__value, .co-utilization-card-popover__consumer-list__button {
+.co-utilization-card-popover__title, .co-utilization-card-popover__consumer-name, .co-utilization-card-popover__consumer-value {
     font-size: var(--pf-global--FontSize--sm);
-}
-
-.co-utilization-card-popover__consumer-list__button-icon {
-    margin-left: var(--pf-global--spacer--xs);
-}
-
-.co-consumer__data-loading {
-    padding: var(--pf-global--spacer--lg);
-}
-
-.co-utilization-card-popover__body {
-    min-height: var(--pf-global--spacer--lg);
 }
 
 .skeleton-consumer {
@@ -53,17 +55,4 @@
     height: 100%;
     width: 100%;
   }
-}
-
-.co-utilization-card-popover__consumer-list__name {
-    overflow: hidden;
-    flex: 0 0 calc(70% - var(--pf-global--spacer--md));
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.co-utilization-card-popover__consumer-list__value {
-    color: var(--pf-global--Color--200);
-    flex: 0 0 30%;
-    text-align: right;
 }
