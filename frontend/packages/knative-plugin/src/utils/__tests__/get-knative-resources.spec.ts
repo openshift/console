@@ -7,6 +7,8 @@ import {
   getKnativeServingServices,
   getEventSourceCronjob,
   getEventSourceContainer,
+  getEventSourceCamel,
+  getEventSourceKafka,
 } from '../get-knative-resources';
 import {
   deploymentData,
@@ -86,6 +88,24 @@ describe('Get knative resources', () => {
     });
     it('expect getEventSourceContainer to return event source as undefined', () => {
       const knEventResource = getEventSourceContainer(deploymentData, MockResources);
+      expect(knEventResource).toBeUndefined();
+    });
+    it('expect getEventSourceCamel to return event source data', () => {
+      const knEventResource = getEventSourceCamel(deploymentKnativeEventData, MockKnativeResources);
+      expect(knEventResource.eventSourceCamel).toBeDefined();
+      expect(knEventResource.eventSourceCamel).toHaveLength(1);
+    });
+    it('expect getEventSourceCamel to return event source as undefined', () => {
+      const knEventResource = getEventSourceCamel(deploymentData, MockResources);
+      expect(knEventResource).toBeUndefined();
+    });
+    it('expect getEventSourceKafka to return event source data', () => {
+      const knEventResource = getEventSourceKafka(deploymentKnativeEventData, MockKnativeResources);
+      expect(knEventResource.eventSourceKafka).toBeDefined();
+      expect(knEventResource.eventSourceKafka).toHaveLength(1);
+    });
+    it('expect getEventSourceKafka to return event source as undefined', () => {
+      const knEventResource = getEventSourceKafka(deploymentData, MockResources);
       expect(knEventResource).toBeUndefined();
     });
   });
