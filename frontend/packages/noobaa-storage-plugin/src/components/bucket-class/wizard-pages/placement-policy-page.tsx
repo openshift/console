@@ -23,6 +23,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           isInline
           variant="info"
           title="What is a Placement Policy?"
+          className="nb-create-bc-step-page__info"
           action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>
@@ -41,7 +42,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
         </Alert>
       )}
       <Form className="nb-create-bc-step-page-form">
-        <Title size="xl" headingLevel="h2">
+        <Title size="xl" headingLevel="h2" className="nb-bc-step-page-form__title">
           Tier 1 - Policy Type
         </Title>
         <Radio
@@ -82,7 +83,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
       )}
       {showTier2 && (
         <Form className="nb-create-bc-step-page-form">
-          <Title headingLevel="h2" size="xl">
+          <Title headingLevel="h2" size="xl" className="nb-bc-step-page-form__title">
             Tier 2 - Policy type{' '}
             <Button
               variant="link"

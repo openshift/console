@@ -591,7 +591,7 @@ export default CreateBackingStoreForm;
 
 type CreateBackingStoreFormProps = ModalComponentProps & {
   isPage?: boolean;
-  namespace: string;
+  namespace?: string;
 };
 
 type S3EndpointTypeProps = {
