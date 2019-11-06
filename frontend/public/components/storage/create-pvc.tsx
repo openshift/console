@@ -313,8 +313,8 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
         setInProgress(false);
         history.push(resourceObjPath(resource, referenceFor(resource)));
       },
-      (err) => {
-        setError(err);
+      ({ message }: { message: string }) => {
+        setError(message || 'Could not create persistent volume claim.');
         setInProgress(false);
       },
     );
