@@ -66,7 +66,10 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
         throw new Error(`unknown key for reducer ${action.payload.flag}`);
       }
       return state.merge({ [action.payload.flag]: action.payload.value });
-
+    case ActionType.ClearSSARFlags:
+      return state.withMutations((s) =>
+        action.payload.flags.reduce((acc, curr) => acc.remove(curr), s),
+      );
     case K8sActionType.ReceivedResources:
       // Flip all flags to false to signify that we did not see them
       _.each(CRDs, (v) => (state = state.set(v, false)));
@@ -90,7 +93,10 @@ export const stateToFlagsObject = (state: RootState): FlagsObject =>
   state[featureReducerName].toObject();
 
 export const stateToProps = (desiredFlags: string[], state: RootState): WithFlagsProps => ({
-  flags: _.pick(stateToFlagsObject(state), desiredFlags),
+  flags: desiredFlags.reduce(
+    (allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }),
+    {},
+  ),
 });
 
 export type FlagsObject = { [key: string]: boolean };
