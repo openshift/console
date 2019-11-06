@@ -165,7 +165,7 @@ const ImageStream: React.FC<ImageStreamProps> = ({ imageStreams }) => {
         imageNamespace.value &&
         imageNamespace.value !== builderImagesNamespace.Openshift &&
         values.project.name !== imageNamespace.value && (
-          <div className="row">
+          <div className="row odc-imagestream-alert">
             <div className="col-lg-12">
               <Alert
                 variant="warning"
