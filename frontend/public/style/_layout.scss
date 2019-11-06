@@ -14,10 +14,18 @@ body,
 }
 
 #content-scrollable {
+  display: flex;
+  flex-direction: column;
   overflow-x: auto; // so catalog is scrollable at mobile
   overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+}
+
+.co-m-page__body {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
 }
 
 .co-p-has-sidebar {
