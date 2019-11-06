@@ -23,3 +23,10 @@
 .pf-c-wizard__toggle {
   z-index: calc(var(--pf-global--ZIndex--xs) - 1);
 }
+
+.pf-c-wizard__nav-item {
+  a:hover {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}

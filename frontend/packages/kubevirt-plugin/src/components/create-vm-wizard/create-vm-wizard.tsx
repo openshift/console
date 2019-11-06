@@ -401,6 +401,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         )}
         <Wizard
           isInPage
+          isCompactNav
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
           onNext={({ id }) => {
