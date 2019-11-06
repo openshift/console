@@ -16,6 +16,7 @@ const NET_ATTACH_DEF_OVERVIEW_HEADING = 'Network Attachment Definition Overview'
 export const prefixedID = (idPrefix: string, id: string) =>
   idPrefix && id ? `${idPrefix}-${id}` : null;
 
+// FIXME: Use DetailsItem from common console utils.
 export const DetailsItem: React.FC<DetailsItemProps> = ({
   title,
   isNotAvail = false,
@@ -40,6 +41,7 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
   const type = getType(getConfigAsJSON(netAttachDef));
   const id = getUID(netAttachDef);
 
+  // FIXME: This should use ResourceSummary like all other details pages.
   return (
     <>
       <DetailsItem title="Name" idValue={prefixedID(id, 'name')} isNotAvail={!name}>
@@ -62,22 +64,20 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
 };
 
 export const NetworkAttachmentDefinitionDetails: React.FC<NetAttachDefDetailsProps> = (props) => {
-  const { netAttachDef } = props;
+  const { obj: netAttachDef } = props;
 
   return (
-    <div className="co-m-pane__body">
-      <StatusBox data={netAttachDef} loaded={!!netAttachDef}>
-        <ScrollToTopOnMount />
-        <div className="co-m-pane__body">
-          <SectionHeading text={NET_ATTACH_DEF_OVERVIEW_HEADING} />
-          <div className="row">
-            <div className="col-sm-6">
-              <NetAttachDefinitionSummary netAttachDef={netAttachDef} />
-            </div>
+    <StatusBox data={netAttachDef} loaded={!!netAttachDef}>
+      <ScrollToTopOnMount />
+      <div className="co-m-pane__body">
+        <SectionHeading text={NET_ATTACH_DEF_OVERVIEW_HEADING} />
+        <div className="row">
+          <div className="col-sm-6">
+            <NetAttachDefinitionSummary netAttachDef={netAttachDef} />
           </div>
         </div>
-      </StatusBox>
-    </div>
+      </div>
+    </StatusBox>
   );
 };
 
@@ -86,7 +86,7 @@ type NetAttachDefinitionSummaryProps = {
 };
 
 type NetAttachDefDetailsProps = {
-  netAttachDef: NetworkAttachmentDefinitionKind;
+  obj: NetworkAttachmentDefinitionKind;
 };
 
 type DetailsItemProps = {

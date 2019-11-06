@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
@@ -82,7 +82,7 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
     <Firehose
       resources={[
         {
-          kind: NetworkAttachmentDefinitionModel.kind,
+          kind: referenceForModel(NetworkAttachmentDefinitionModel),
           isList: true,
           namespace,
           prop: 'nads',
@@ -107,7 +107,12 @@ type VMWizardNICModalProps = ModalComponentProps & {
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
-  const hasNADs = !!state.k8s.getIn(['RESOURCES', 'models', NetworkAttachmentDefinitionModel.kind]);
+  // FIXME: This should be a flag.
+  const hasNADs = !!state.k8s.getIn([
+    'RESOURCES',
+    'models',
+    referenceForModel(NetworkAttachmentDefinitionModel),
+  ]);
   return {
     hasNADs,
     networks: getNetworksWithWrappers(state, wizardReduxID),

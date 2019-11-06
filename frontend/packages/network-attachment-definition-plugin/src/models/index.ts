@@ -10,6 +10,7 @@ export const NetworkAttachmentDefinitionModel: K8sKind = {
   abbr: 'NAD',
   kind: 'NetworkAttachmentDefinition',
   id: 'network-attachment-definition',
+  crd: true,
 };
 
 export const SriovNetworkNodePolicyModel: K8sKind = {
@@ -22,6 +23,7 @@ export const SriovNetworkNodePolicyModel: K8sKind = {
   abbr: 'SRNNPM', // TODO check on this
   kind: 'SriovNetworkNodePolicy',
   id: 'sriov-network-node-policy',
+  crd: true,
 };
 
 export const HyperConvergedModel: K8sKind = {
@@ -34,4 +36,5 @@ export const HyperConvergedModel: K8sKind = {
   abbr: 'SRNNPM', // TODO check on this
   kind: 'hyperconverged',
   id: 'hyperconverged',
+  crd: true,
 };

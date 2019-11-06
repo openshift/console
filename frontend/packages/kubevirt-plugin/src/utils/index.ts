@@ -107,6 +107,7 @@ export const compareOwnerReference = (
 export const isCPUEqual = (a: CPU, b: CPU) =>
   a.sockets === b.sockets && a.cores === b.cores && a.threads === b.threads;
 
+// FIXME: Avoid this helper! The implementation is not correct. We should remove this.
 export const getResource = (
   model: K8sResourceKind,
   {
@@ -139,6 +140,9 @@ export const getResource = (
   const res: any = {
     // non-admin user cannot list namespaces (k8s wont return only namespaces available to user but 403 forbidden, ).
     // Instead we need to use ProjectModel which will return available projects (namespaces)
+    //
+    // FIXME: This is incorrect! `m.kind` is not unique. These model definitions should have `crd: true`, which will
+    // break this utility. We should be using `referenceForModel` and `crd: true` in our model definitions!
     kind: m.kind,
     model: m,
     namespaced,
