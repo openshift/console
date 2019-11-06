@@ -861,6 +861,9 @@ const MonitoringListPage = connect(filtersToProps)(
 
       return (
         <>
+          <Helmet>
+            <title>Alerting</title>
+          </Helmet>
           <div className="co-m-nav-title">
             <PageDescription />
           </div>
