@@ -32,7 +32,7 @@
 .odc2-m-drag-active {
   .odc2-base-node__contents {
     opacity: 0.3;
-    &.is-dragging, &.is-hover {
+    &.is-dragging, &.is-droppable {
       opacity: 1;
     }
   }

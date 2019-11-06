@@ -97,22 +97,13 @@ class ComponentFactory {
             ),
           );
         case TYPE_KNATIVE_REVISION:
-          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
-            withDndDrop<
-              any,
-              any,
-              { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-              NodeProps
-            >(nodeDropTargetSpec)(
-              withDragNode(nodeDragSourceSpec(type))(
-                withSelection(false, true)(
-                  withContextMenu(
-                    workloadContextMenu,
-                    document.getElementById('modal-container'),
-                    'odc2-topology-context-menu',
-                  )(RevisionNode),
-                ),
-              ),
+          return withDragNode(nodeDragSourceSpec(type))(
+            withSelection(false, true)(
+              withContextMenu(
+                workloadContextMenu,
+                document.getElementById('modal-container'),
+                'odc2-topology-context-menu',
+              )(RevisionNode),
             ),
           );
         case TYPE_REVISION_TRAFFIC:
