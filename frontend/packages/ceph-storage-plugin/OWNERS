@@ -1,14 +1,15 @@
 reviewers:
+  - a2batic
   - afreen23
+  - bipuladh
   - cloudbehl
   - gnehapk
-  - mareklibra
   - rawagner
 approvers:
   - afreen23
+  - bipuladh
   - cloudbehl
   - gnehapk
-  - mareklibra
   - rawagner
 labels:
   - component/ceph

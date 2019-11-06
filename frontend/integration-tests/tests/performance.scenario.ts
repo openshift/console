@@ -1,9 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { writeFileSync } from 'fs';
-import * as path from 'path';
 import { OrderedMap } from 'immutable';
 
-import { appHost, screenshotsDir } from '../protractor.conf';
+import { appHost } from '../protractor.conf';
 import * as sidenavView from '../views/sidenav.view';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
@@ -35,29 +33,6 @@ const chunkedRoutes = OrderedMap<string, { section: string; name: string }>()
   .set('operator-hub', { section: 'Operators', name: 'OperatorHub' });
 
 describe('Performance test', () => {
-  it('checks bundle size using ResourceTiming API', async () => {
-    const resources = await browser.executeScript<string[]>(() =>
-      performance
-        .getEntriesByType('resource')
-        .filter(
-          ({ name }) =>
-            name.endsWith('.js') && name.indexOf('main') > -1 && name.indexOf('runtime') === -1,
-        )
-        .map(({ name, decodedBodySize }: PerformanceResourceTiming) => ({
-          name: name.split('/').slice(-1)[0],
-          size: Math.floor(decodedBodySize / 1024),
-        }))
-        .reduce((acc, val) => acc.concat(`${val.name.split('-')[0]}: ${val.size} KB, `), ''),
-    );
-
-    writeFileSync(
-      path.resolve(__dirname, `../../${screenshotsDir}/bundle-analysis.txt`),
-      resources,
-    );
-
-    expect(resources.length).not.toEqual(0);
-  });
-
   it('downloads new bundle for YAML editor route', async () => {
     await browser.get(`${appHost}/k8s/ns/openshift-console/configmaps`);
     await crudView.isLoaded();

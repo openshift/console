@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Button, Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   DetailsPage,
@@ -172,7 +172,9 @@ const subscriptionState = (state: SubscriptionState) => {
         </span>
       );
     default:
-      return <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown'}</span>;
+      return (
+        <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown failure'}</span>
+      );
   }
 };
 
@@ -309,6 +311,9 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const catalogSource = catalogSourceForSubscription(catalogSources, obj);
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
+  const installStatusPhase = _.get(installPlan, 'status.phase');
+  const installStatusMessage = _.get(installPlan, 'status.message') || 'Unknown';
+
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
     createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
@@ -323,6 +328,14 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           The catalog source for this operator has been removed. The catalog source must be added
           back in order for this opertor to receive any updates.
         </Alert>
+      )}
+      {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
+        <Alert
+          isInline
+          className="co-alert"
+          variant="danger"
+          title={`${installStatusPhase}: ${installStatusMessage}`}
+        />
       )}
       <SectionHeading text="Subscription Overview" />
       <div className="co-m-pane__body-group">

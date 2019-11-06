@@ -10,7 +10,7 @@ import {
   ElementArrayFinder,
 } from 'protractor';
 import { By } from 'selenium-webdriver';
-import { config } from '../../../../integration-tests/protractor.conf';
+import { config } from '@console/internal-integration-tests/protractor.conf';
 
 export function resolveTimeout(timeout: number, defaultTimeout: number) {
   return timeout !== undefined ? timeout : defaultTimeout;

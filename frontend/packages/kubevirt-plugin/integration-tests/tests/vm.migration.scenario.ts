@@ -1,5 +1,10 @@
 import { browser } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import {
+  createResource,
+  deleteResource,
+  waitForStringInElement,
+} from '@console/shared/src/test-utils/utils';
 import { getDetailActionDropdownOptions } from '../views/vm.actions.view';
 import {
   statusIcon,
@@ -7,11 +12,6 @@ import {
   vmDetailNode,
   waitForStatusIcon,
 } from '../views/virtualMachine.view';
-import {
-  createResource,
-  deleteResource,
-  waitForStringInElement,
-} from '../../../console-shared/src/test-utils/utils';
 import { getRandStr } from './utils/utils';
 import { getVMManifest } from './utils/mocks';
 import {

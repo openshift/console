@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
 import { $, browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createNic, networkTypeDropdownId } from '../views/kubevirtDetailView.view';
 import {
   click,
   createResources,
   deleteResources,
   searchYAML,
   getDropdownOptions,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
+import { createNic, networkTypeDropdownId } from '../views/kubevirtDetailView.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { multusNAD, hddDisk, networkInterface, getVMManifest } from './utils/mocks';
 import { getResourceObject } from './utils/utils';

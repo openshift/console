@@ -5,20 +5,20 @@ import {
   createYAMLLink,
   resourceTitle,
   errorMessage,
-} from '../../../../integration-tests/views/crud.view';
+} from '@console/internal-integration-tests/views/crud.view';
 import {
   isLoaded as yamlPageIsLoaded,
   saveButton,
   cancelButton,
   setEditorContent,
-} from '../../../../integration-tests/views/yaml.view';
-import { appHost, testName } from '../../../../integration-tests/protractor.conf';
+} from '@console/internal-integration-tests/views/yaml.view';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
   withResource,
   createResource,
   deleteResource,
-} from '../../../console-shared/src/test-utils/utils';
+} from '@console/shared/src/test-utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import { VM_BOOTUP_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, VM_ACTIONS } from './utils/consts';
 import { getVMManifest, multusNAD } from './utils/mocks';

@@ -1,7 +1,7 @@
 import { browser } from 'protractor';
-import { appHost, testName } from '../../../../../integration-tests/protractor.conf';
-import { clickHorizontalTab } from '../../../../../integration-tests/views/horizontal-nav.view';
-import { isLoaded, resourceTitle } from '../../../../../integration-tests/views/crud.view';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
+import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { activeTab } from '../../views/detailView.view';
 import * as VmsListView from '../../views/vms.list.view';
 
