@@ -9,6 +9,7 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ResourceSection from './section/ResourceSection';
+import PipelineSection from './pipeline/PipelineSection';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
   values,
@@ -28,6 +29,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
+    <PipelineSection />
     <ResourceSection />
     <AdvancedSection values={values} />
     <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
