@@ -29,7 +29,6 @@ export const saveButton = $('button[type=submit]');
 export const modalConfirmButton = $('#confirm-action');
 
 // YAML form
-export const alertManagerYamlForm = $('.co-alert-manager-yaml__form');
 export const successAlert = $('.pf-m-success');
 export const helpText = $('.co-help-text');
 
@@ -39,6 +38,7 @@ export const alertRoutingEditButton = $('.co-alert-manager-config__edit-alert-ro
 export const disabledDeleteReceiverMenuItem = $(
   '.pf-c-dropdown__menu-item.pf-m-disabled[data-test-action="Delete Receiver"]',
 );
+
 const firstRow = element.all(by.css(`[data-test-rows="resource-row"]`)).first();
 
 export const openFirstRowKebabMenu = () => {

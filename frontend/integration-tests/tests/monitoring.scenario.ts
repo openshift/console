@@ -2,6 +2,7 @@ import { browser, ExpectedConditions as until } from 'protractor';
 
 import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
+import * as yamlView from '../views/yaml.view';
 import * as monitoringView from '../views/monitoring.view';
 import * as namespaceView from '../views/namespace.view';
 import * as sidenavView from '../views/sidenav.view';
@@ -199,14 +200,14 @@ describe('Alertmanager: YAML', () => {
     await firstElementByTestID('alertmanager').click();
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
-    await crudView.isLoaded();
-    expect(monitoringView.alertManagerYamlForm.isPresent()).toBe(true);
+    await yamlView.isLoaded();
+    expect(yamlView.yamlEditor.isPresent()).toBe(true);
   });
 
   it('saves Alertmanager YAML', async () => {
     expect(monitoringView.successAlert.isPresent()).toBe(false);
-    await monitoringView.saveButton.click();
-    await crudView.isLoaded();
+    await yamlView.saveButton.click();
+    await yamlView.isLoaded();
     expect(monitoringView.successAlert.isPresent()).toBe(true);
   });
 });
@@ -288,9 +289,7 @@ describe('Alertmanager: Configuration', () => {
     await firstElementByTestID('label-value-0').sendKeys('warning');
 
     await monitoringView.saveButton.click();
-
     await crudView.isLoaded();
-
     monitoringView.getFirstRowAsText().then((text) => {
       expect(text).toEqual('MyReceiver pagerduty severity = warning');
     });
@@ -359,19 +358,44 @@ describe('Alertmanager: Configuration', () => {
 receivers:
 - name: 'team-X-pager'
 - name: 'team-DB-pager'`;
-
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
-    await crudView.isLoaded();
-    await firstElementByTestID('alert-manager-yaml-textarea').clear();
-    await firstElementByTestID('alert-manager-yaml-textarea').sendKeys(yaml);
-    await monitoringView.saveButton.click();
-    await crudView.isLoaded();
+    await yamlView.isLoaded();
+    await yamlView.setEditorContent(yaml);
+    await yamlView.saveButton.click();
+    await yamlView.isLoaded();
     expect(monitoringView.successAlert.isPresent()).toBe(true);
 
     await horizontalnavView.clickHorizontalTab('Overview');
     await monitoringView.openFirstRowKebabMenu();
     expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
     expect(crudView.actionForLabel('Edit YAML').isPresent()).toBe(true); // should be 'Edit YAML' not 'Edit Receiver'
+  });
+
+  it('restores default/initial alertmanager.yaml', async () => {
+    // add receiver with sub-route
+    const defaultAlertmanagerYaml = `"global":
+  "resolve_timeout": "5m"
+"receivers":
+- "name": "null"
+"route":
+  "group_by":
+  - "job"
+  "group_interval": "5m"
+  "group_wait": "30s"
+  "receiver": "null"
+  "repeat_interval": "12h"
+  "routes":
+  - "match":
+      "alertname": "Watchdog"
+    "receiver": "null"`;
+
+    await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    await yamlView.setEditorContent(defaultAlertmanagerYaml);
+    await yamlView.saveButton.click();
+    await yamlView.isLoaded();
+    expect(monitoringView.successAlert.isPresent()).toBe(true);
   });
 });
