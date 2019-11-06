@@ -19,7 +19,7 @@ import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 const DetailsCard: React.FC<DetailsCardProps> = () => {
   const { obj, machine, node } = React.useContext(BareMetalHostDashboardContext);
   const hostName = getName(obj);
-  const nodeCell = <NodeLink nodeName={hostName} />;
+  const nodeCell = <NodeLink nodeName={getName(node)} />;
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;
 
   return (
