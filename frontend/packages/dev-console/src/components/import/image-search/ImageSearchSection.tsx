@@ -49,7 +49,7 @@ const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ projects, image
           },
           {
             label: imageRegistryType.Internal.label,
-            value: imageRegistryType.Internal.label,
+            value: imageRegistryType.Internal.value,
             displayField: <ImageStream projects={projects} imageStreams={imageStreams} />,
           },
         ]}
