@@ -261,6 +261,7 @@ export const createServiceBinding = (
         kind: targetResourceKind,
         resourceRef: targetResourceRefName,
       },
+      detectBindingResources: true,
     },
   };
 
