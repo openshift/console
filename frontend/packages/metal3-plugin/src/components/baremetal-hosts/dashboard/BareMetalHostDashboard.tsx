@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { getMachineNode } from '@console/shared/src/selectors/machine';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../../../types';
 import { getHostMachine } from '../../../selectors';
@@ -17,11 +18,11 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
   nodes,
 }) => {
   const machine = getHostMachine(obj, machines);
+  const node = getMachineNode(machine, nodes);
   const context = {
     obj,
     machine,
-    machines,
-    nodes,
+    node,
   };
 
   const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];

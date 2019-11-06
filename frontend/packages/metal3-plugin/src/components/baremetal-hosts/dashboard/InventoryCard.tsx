@@ -11,13 +11,13 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import InventoryItem, {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { MachineModel, PodModel, NodeModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PodModel, NodeModel } from '@console/internal/models';
 import { getNamespace, getMachineNodeName, getName } from '@console/shared';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { Link } from 'react-router-dom';
-import { getHostMachineName, getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
+import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
@@ -58,30 +58,11 @@ const PodInventoryItem = React.memo(
   ),
 );
 
-const InventoryCard: React.FC<DashboardItemProps> = ({
-  watchK8sResource,
-  stopWatchK8sResource,
-  resources,
-}) => {
-  const { obj } = React.useContext(BareMetalHostDashboardContext);
+const InventoryCard: React.FC = () => {
+  const { obj, machine } = React.useContext(BareMetalHostDashboardContext);
 
   const namespace = getNamespace(obj);
   const hostName = getName(obj);
-  const machineName = getHostMachineName(obj);
-
-  React.useEffect(() => {
-    const machineResource = {
-      isList: false,
-      namespace,
-      name: machineName,
-      kind: referenceForModel(MachineModel),
-      prop: 'machine',
-    };
-    watchK8sResource(machineResource);
-    return () => stopWatchK8sResource(machineResource);
-  }, [watchK8sResource, stopWatchK8sResource, namespace, machineName]);
-
-  const machine = _.get(resources.machine, 'data', null);
   const nodeName = getMachineNodeName(machine);
 
   const NICTitleComponent = React.useCallback(
