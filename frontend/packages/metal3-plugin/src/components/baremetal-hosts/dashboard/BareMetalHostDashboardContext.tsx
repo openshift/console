@@ -7,6 +7,5 @@ export const BareMetalHostDashboardContext = React.createContext<BareMetalDashbo
 type BareMetalDashboardContext = {
   obj?: BareMetalHostKind;
   machine?: MachineKind;
-  machines?: MachineKind[];
-  nodes?: NodeKind[];
+  node?: NodeKind;
 };
