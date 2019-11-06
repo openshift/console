@@ -20,7 +20,7 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   const { obj, machine, nodes } = React.useContext(BareMetalHostDashboardContext);
   const node = getMachineNode(machine, nodes);
   const hostName = getName(obj);
-  const nodeCell = <NodeLink nodeName={hostName} />;
+  const nodeCell = <NodeLink nodeName={getName(node)} />;
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;
 
   return (
