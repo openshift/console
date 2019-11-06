@@ -4,30 +4,34 @@
   display: none;
 }
 
+.add-capacity-modal__input--width {
+  max-width: 250px !important;
+}
+
+.add-capacity-modal__input .dropdown {
+  margin-left: var(--pf-global--spacer--md);
+}
+
+.add-capacity-modal__help-text-error {
+  color: $pf-color-red-100;  
+}
+
+.add-capacity-modal__help-text {
+  margin-top: -15px;
+}
+
 .add-capacity-modal--padding {
   .co-storage-class-dropdown {
     .dropdown {
-      width: 21.5rem;
+      width: 340px;
         button {
           width: 100%;
         }
-    }
-  }
-  .form-group input {
-    max-width: 17rem;
-    margin-right: 5px;
-  }
-  .toolTip_dropdown {
-    button {
-      position: absolute;
-      left: 6.6rem;
-      top: 8.5rem;
     }
   }
   padding-top: 2em;
 }
 
 .add-capacity-modal__span {
-  margin-left: 3em;
-  color: $pf-color-black-500;
+  margin-left: 3.5rem;
 }
