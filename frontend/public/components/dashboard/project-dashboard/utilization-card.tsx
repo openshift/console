@@ -13,14 +13,7 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { Dropdown } from '../../utils/dropdown';
-import {
-  humanizeCpuCores,
-  humanizeNumber,
-  humanizeBinaryBytes,
-  Humanize,
-  humanizeSeconds,
-  secondsToNanoSeconds,
-} from '../../utils';
+import { humanizeCpuCores, humanizeNumber, humanizeBinaryBytes } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { PrometheusResponse } from '../../graphs';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -32,8 +25,6 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
-
-const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 export const UtilizationCard = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
@@ -88,7 +79,7 @@ export const UtilizationCard = withDashboardResources(
               metric: 'pod',
             },
           ]}
-          humanize={humanizeFromSeconds}
+          humanize={humanizeCpuCores}
           namespace={projectName}
         />
       ),
