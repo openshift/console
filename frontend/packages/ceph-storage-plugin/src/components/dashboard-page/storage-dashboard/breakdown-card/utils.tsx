@@ -14,7 +14,7 @@ const addOthers = (
   const top5Total = getTotal(stats);
   const others = Number(metricTotal) - top5Total;
   const othersData = {
-    x: '',
+    x: '0',
     y: others,
     name: 'Others',
     color: Colors.OTHER,
@@ -42,7 +42,7 @@ export const addAvailable = (
   if (capacityTotal) {
     const availableInBytes = Number(capacityTotal) - Number(capacityUsed);
     availableData = {
-      x: '',
+      x: '0',
       y: availableInBytes,
       name: 'Available',
       link: '',
@@ -79,7 +79,7 @@ export const getStackChartStats: GetStackStats = (response, humanize) =>
     const capacity = humanize(r.y).string;
     return {
       // INFO: x value needs to be same for single bar stack chart
-      x: '',
+      x: '0',
       y: r.y,
       name: _.truncate(`${r.x}`, { length: 12 }),
       link: `${r.x}`,
