@@ -150,6 +150,9 @@
 
     &-badge {
       vertical-align: middle;
+      .co-icon-and-text__icon {
+        top: 2px;
+      }
     }
   }
 }
