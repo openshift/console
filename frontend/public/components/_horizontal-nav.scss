@@ -3,16 +3,22 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
 .co-m-horizontal-nav__menu {
   border-bottom: 1px solid $color-grey-background-border;
   display: flex;
+  list-style: none;
+  margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
   white-space: nowrap;
   @media (min-width: $grid-float-breakpoint) {
     padding-left: $co-m-horizontal-nav__menu-item-link-padding-lr;
-    padding-right: ($co-m-horizontal-nav__menu-item-link-padding-lr * 2);
   }
   &--within-sidebar {
     border-top: 1px solid $color-grey-background-border;
     margin-bottom: $grid-gutter-width;
     margin-left: -($grid-gutter-width / 2);
     margin-right: -($grid-gutter-width / 2);
+    overflow: visible; // so focus indicator is not clipped since these don't need to scroll
     @media (min-width: $grid-float-breakpoint) {
       margin-left: -($grid-gutter-width);
       margin-right: -($grid-gutter-width);
@@ -26,25 +32,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
     margin-left: 0;
     margin-right: 0;
     padding-left: 5px;
-    padding-right: 5px;
   }
-}
-
-.co-m-horizontal-nav__menu-primary {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.co-m-horizontal-nav__menu-secondary {
-  display: flex;
-  list-style: none;
-  margin: 0 0 -1px; // -1px bottom so co-m-horizontal-nav__menu-item *::after are fully visible
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0;
-  -webkit-overflow-scrolling: touch;
 }
 
 .co-m-horizontal-nav__menu-item {
@@ -67,7 +55,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
       }
     }
     &::after {
-      bottom: -1px;
+      bottom: 0;
       content: "";
       display: block;
       height: 2px;
@@ -85,9 +73,12 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
       }
     }
   }
-}
-
-.co-m-horizontal-nav__menu-item--divider {
-  border-left: 1px solid $color-grey-background-border;
-  margin: 0 10px;
+  &:last-child {
+    @media (min-width: $grid-float-breakpoint) {
+      a,
+      button {
+        margin-right: $co-m-horizontal-nav__menu-item-link-padding-lr;
+      }
+    }
+  }
 }

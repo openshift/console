@@ -82,12 +82,6 @@ describe('Cluster Settings page', () => {
       wrapper
         .find(HorizontalNav)
         .at(0)
-        .props().hideDivider,
-    ).toBe(true);
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
         .props().pages[0].name,
     ).toBe('Overview');
     expect(
