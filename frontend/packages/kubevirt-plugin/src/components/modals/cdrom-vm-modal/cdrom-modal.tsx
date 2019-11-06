@@ -37,6 +37,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     errorMessage,
     persistentVolumeClaims,
     storageClasses,
+    winToolsContainer,
     cancel,
     close,
   } = props;
@@ -153,7 +154,8 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const isFormInvalid =
     !!cdsValue.find((vol) => !vol.isURLValid) ||
     !!cdsValue.find((cd) => cd.type === StorageType.PVC && !cd.pvc) ||
-    !!cdsValue.find((cd) => cd.type === StorageType.URL && !cd.storageClass);
+    !!cdsValue.find((cd) => cd.type === StorageType.URL && !cd.storageClass) ||
+    !!cdsValue.find((cd) => cd.type === StorageType.WINTOOLS && !cd.windowsTools);
 
   return (
     <div className="modal-content">
@@ -175,6 +177,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
                 pvcs={persistentVolumeClaims}
                 usedPVCs={usedPVCs}
                 storageClasses={storageClasses}
+                winToolsContainer={winToolsContainer}
                 index={i}
                 isWindows={windowsBool}
                 inProgress={inProgress}
@@ -231,4 +234,5 @@ type CDRomModalProps = HandlePromiseProps &
     vmLikeEntity: VMLikeEntityKind;
     persistentVolumeClaims?: FirehoseResult<VMKind[]>;
     storageClasses?: FirehoseResult<VMKind[]>;
+    winToolsContainer: string;
   };

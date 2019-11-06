@@ -16,14 +16,8 @@ import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { VMKind } from '../../../types';
-import {
-  StorageType,
-  sourceDict,
-  CD,
-  CD_SIZE,
-  CD_STORAGE_CLASS,
-  WINTOOLS_CONTAINER_NAMES,
-} from './constants';
+import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
+import { StorageType, sourceDict, CD, CD_SIZE, CD_STORAGE_CLASS } from './constants';
 
 export const CDRomRow: React.FC<CDRomRowProps> = ({
   cd,
@@ -36,6 +30,7 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
   onDelete,
   isWindows,
   inProgress,
+  winToolsContainer,
 }) => {
   const {
     name,
@@ -50,7 +45,6 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
     ejected,
     isInVM,
   } = cd;
-  const { upstream } = WINTOOLS_CONTAINER_NAMES;
 
   if (isInVM && !ejected)
     return (
@@ -189,7 +183,12 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
               value={windowsTools}
               onChange={(v) => onChange(name, StorageType.WINTOOLS, v)}
             >
-              <FormSelectOption key={upstream} value={upstream} label={upstream} />
+              <FormSelectPlaceholderOption placeholder="--- Select Windows Tools Container ---" />
+              <FormSelectOption
+                key={winToolsContainer}
+                value={winToolsContainer}
+                label={winToolsContainer}
+              />
             </FormSelect>
           </FormGroup>
         )}
@@ -207,6 +206,7 @@ export type CDRomRowProps = {
   cd: CD;
   pvcs: FirehoseResult<VMKind[]>;
   storageClasses: FirehoseResult<VMKind[]>;
+  winToolsContainer: string;
   usedPVCs: string[];
   index: number;
   onChange: (cdName: string, key: string, value: string) => void;
