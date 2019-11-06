@@ -72,6 +72,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
           <div className="co-alert-manager-yaml__form">
             <div className="form-group">
               <DroppableFileInput
+                data-test-id="alert-manager-yaml-textarea"
                 onChange={setAlertManagerYamlStr}
                 inputFileData={alertManagerYamlStr}
                 inputFieldHelpText="Drag and drop file with your value here or browse to upload it."

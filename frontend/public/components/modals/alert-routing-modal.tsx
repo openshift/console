@@ -74,6 +74,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
                   type="text"
                   className="pf-c-form-control"
                   id="input-group-by"
+                  data-test-id="input-group-by"
                   defaultValue={_.get(config, ['route', 'group_by'])}
                   aria-describedby="input-group-by-help"
                 />
@@ -95,6 +96,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
                   type="text"
                   className="pf-c-form-control"
                   id="input-group-wait"
+                  data-test-id="input-group-wait"
                   defaultValue={_.get(config, ['route', 'group_wait'])}
                   aria-describedby="input-group-wait-help"
                 />
@@ -116,6 +118,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
                   type="text"
                   className="pf-c-form-control"
                   id="input-group-interval"
+                  data-test-id="input-group-interval"
                   defaultValue={_.get(config, ['route', 'group_interval'])}
                   aria-describedby="input-group-interval-help"
                 />
@@ -137,6 +140,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
                   type="text"
                   className="pf-c-form-control"
                   id="input-repeat-interval"
+                  data-test-id="input-repeat-interval"
                   defaultValue={_.get(config, ['route', 'repeat_interval'])}
                   aria-describedby="input-repeat-interval-help"
                 />

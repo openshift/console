@@ -33,7 +33,7 @@ const AlertRouting = () => {
     <div className="co-m-pane__body">
       <SectionHeading text="Alert Routing">
         <Button
-          className="btn-edit-alert-routing"
+          className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
           variant="secondary"
         >
@@ -43,16 +43,20 @@ const AlertRouting = () => {
       <div className="row">
         <div className="col-sm-6">
           <dt>Group By</dt>
-          <dd>{_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}</dd>
+          <dd data-test-id="group_by_value">{_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}</dd>
           <dt>Group Wait</dt>
-          <dd>{_.get(config, ['route', 'group_wait'], '-')}</dd>
+          <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
             <dt>Group Interval</dt>
-            <dd>{_.get(config, ['route', 'group_interval'], '-')}</dd>
+            <dd data-test-id="group_interval_value">
+              {_.get(config, ['route', 'group_interval'], '-')}
+            </dd>
             <dt>Repeat Interval</dt>
-            <dd>{_.get(config, ['route', 'repeat_interval'], '-')}</dd>
+            <dd data-test-id="repeat_interval_value">
+              {_.get(config, ['route', 'repeat_interval'], '-')}
+            </dd>
           </dl>
         </div>
       </div>
@@ -328,7 +332,7 @@ const Receivers = () => {
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
         <div className="co-m-pane__filter-bar-group">
           <Link className="co-m-primary-action" to="/monitoring/alertmanagerconfig/receivers/~new">
-            <Button variant="primary" id="create-receiver">
+            <Button variant="primary" data-test-id="create-receiver">
               Create Receiver
             </Button>
           </Link>

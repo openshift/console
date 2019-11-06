@@ -88,6 +88,9 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
             </p>
             {!hideContents && (
               <textarea
+                data-test-id={
+                  this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
+                }
                 className="pf-c-form-control co-file-dropzone__textarea"
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
