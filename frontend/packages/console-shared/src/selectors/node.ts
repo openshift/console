@@ -51,3 +51,8 @@ export const getNodeSecondaryStatus = (node: NodeKind): string[] => {
   }
   return states;
 };
+
+export const getNodeCPUCapacity = (node: NodeKind): string => _.get(node.status, 'capacity.cpu');
+
+export const getNodeAllocatableMemory = (node: NodeKind): string =>
+  _.get(node.status, 'allocatable.memory');
