@@ -36,7 +36,7 @@ export const getBuildDecoratorParts = (workloadData: WorkloadData): BuildDecorat
       currentPipeline.latestRun.metadata.namespace,
     )}/logs`;
   } else if (build) {
-    tooltipContent = `${build.metadata.name} ${build.status && build.status.phase}`;
+    tooltipContent = `Build ${build.status && build.status.phase}`;
     decoratorIcon = <Status status={build.status.phase} iconOnly noTooltip />;
     linkRef = `${resourcePathFromModel(
       BuildModel,
