@@ -131,13 +131,32 @@ export const startPipeline: KebabAction = (
   },
 });
 
-export const rerunPipeline: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
-  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+type RerunPipelineData = {
+  onComplete?: (pipelineRun: PipelineRun) => void;
+};
+const rerunPipeline: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRun,
+  resources: any,
+  customData: RerunPipelineData = {},
+) => {
+  const { onComplete } = customData;
+
+  const sharedProps = { label: 'Start Last Run', accessReview: {} };
+
+  if (
+    !pipelineRun ||
+    !_.has(pipelineRun, 'metadata.name') ||
+    !_.has(pipelineRun, 'metadata.namespace')
+  ) {
+    return sharedProps;
+  }
+
   return {
-    label: 'Start Last Run',
+    ...sharedProps,
     callback: () => {
       k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun))
-        .then(handlePipelineRunSubmit)
+        .then(typeof onComplete === 'function' ? onComplete : () => {})
         .catch((err) => errorModal({ error: err.message }));
     },
     accessReview: {
@@ -148,6 +167,14 @@ export const rerunPipeline: KebabAction = (kind: K8sKind, pipelineRun: PipelineR
       verb: 'create',
     },
   };
+};
+
+export const rerunPipelineAndStay: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
+  return rerunPipeline(kind, pipelineRun);
+};
+
+export const rerunPipelineAndRedirect: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
+  return rerunPipeline(kind, pipelineRun, null, { onComplete: handlePipelineRunSubmit });
 };
 
 export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {

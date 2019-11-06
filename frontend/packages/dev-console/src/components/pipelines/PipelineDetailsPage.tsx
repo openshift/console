@@ -4,7 +4,7 @@ import { Kebab, navFactory } from '@console/internal/components/utils';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
-  rerunPipeline,
+  rerunPipelineAndRedirect,
   startPipeline,
   handlePipelineRunSubmit,
 } from '../../utils/pipeline-actions';
@@ -40,7 +40,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               menuActions: [
                 () => startPipeline(PipelineModel, res, handlePipelineRunSubmit),
                 ...(latestRun && latestRun.metadata
-                  ? [() => rerunPipeline(PipelineRunModel, latestRun)]
+                  ? [() => rerunPipelineAndRedirect(PipelineRunModel, latestRun)]
                   : []),
                 Kebab.factory.Delete,
               ],
