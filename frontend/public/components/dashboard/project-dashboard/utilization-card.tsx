@@ -40,37 +40,44 @@ export const UtilizationCard = withDashboardResources(
     const [duration, setDuration] = React.useState(metricDurations[0]);
     const { obj } = React.useContext(ProjectDashboardContext);
     const projectName = getName(obj);
-    const queries = React.useMemo(
-      () => getUtilizationQueries(projectName, UTILIZATION_QUERY_HOUR_MAP[duration]),
-      [projectName, duration],
-    );
+    const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
     React.useEffect(() => {
       if (projectName) {
-        _.values(queries).forEach((query) => watchPrometheus(query, projectName));
+        _.values(queries).forEach((query) =>
+          watchPrometheus(query + UTILIZATION_QUERY_HOUR_MAP[duration], projectName),
+        );
         return () => {
-          _.values(queries).forEach((query) => stopWatchPrometheusQuery(query));
+          _.values(queries).forEach((query) =>
+            stopWatchPrometheusQuery(query + UTILIZATION_QUERY_HOUR_MAP[duration]),
+          );
         };
       }
     }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName, duration]);
 
     const cpuUtilization = prometheusResults.getIn([
-      queries[ProjectQueries.CPU_USAGE],
+      queries[ProjectQueries.CPU_USAGE] + UTILIZATION_QUERY_HOUR_MAP[duration],
       'data',
     ]) as PrometheusResponse;
-    const cpuError = prometheusResults.getIn([queries[ProjectQueries.CPU_USAGE], 'loadError']);
+    const cpuError = prometheusResults.getIn([
+      queries[ProjectQueries.CPU_USAGE] + UTILIZATION_QUERY_HOUR_MAP[duration],
+      'loadError',
+    ]);
     const memoryUtilization = prometheusResults.getIn([
-      queries[ProjectQueries.MEMORY_USAGE],
+      queries[ProjectQueries.MEMORY_USAGE] + UTILIZATION_QUERY_HOUR_MAP[duration],
       'data',
     ]) as PrometheusResponse;
     const memoryError = prometheusResults.getIn([
-      queries[ProjectQueries.MEMORY_USAGE],
+      queries[ProjectQueries.MEMORY_USAGE] + UTILIZATION_QUERY_HOUR_MAP[duration],
       'loadError',
     ]);
     const podCount = prometheusResults.getIn([
-      queries[ProjectQueries.POD_COUNT],
+      queries[ProjectQueries.POD_COUNT] + UTILIZATION_QUERY_HOUR_MAP[duration],
       'data',
     ]) as PrometheusResponse;
-    const podCountError = prometheusResults.getIn([queries[ProjectQueries.POD_COUNT], 'loadError']);
+    const podCountError = prometheusResults.getIn([
+      queries[ProjectQueries.POD_COUNT] + UTILIZATION_QUERY_HOUR_MAP[duration],
+      'loadError',
+    ]);
 
     const cpuStats = getRangeVectorStats(cpuUtilization);
     const memoryStats = getRangeVectorStats(memoryUtilization);

@@ -10,13 +10,13 @@ export enum ProjectQueries {
 
 const queries = {
   [ProjectQueries.CPU_USAGE]: _.template(
-    `namespace:container_cpu_usage:sum{namespace='<%= project %>'}<%= duration %>`,
+    `namespace:container_cpu_usage:sum{namespace='<%= project %>'}`,
   ),
   [ProjectQueries.MEMORY_USAGE]: _.template(
-    `sum by(namespace) (container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""})<%= duration %>`,
+    `sum by(namespace) (container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""})`,
   ),
   [ProjectQueries.POD_COUNT]: _.template(
-    `count(kube_pod_info{namespace='<%= project %>'}) by (namespace)<%= duration %>`,
+    `count(kube_pod_info{namespace='<%= project %>'}) by (namespace)`,
   ),
 };
 
@@ -29,10 +29,10 @@ const top25Queries = {
   ),
 };
 
-export const getUtilizationQueries = (project: string, duration: string) => ({
-  [ProjectQueries.CPU_USAGE]: queries[ProjectQueries.CPU_USAGE]({ project, duration }),
-  [ProjectQueries.MEMORY_USAGE]: queries[ProjectQueries.MEMORY_USAGE]({ project, duration }),
-  [ProjectQueries.POD_COUNT]: queries[ProjectQueries.POD_COUNT]({ project, duration }),
+export const getUtilizationQueries = (project: string) => ({
+  [ProjectQueries.CPU_USAGE]: queries[ProjectQueries.CPU_USAGE]({ project }),
+  [ProjectQueries.MEMORY_USAGE]: queries[ProjectQueries.MEMORY_USAGE]({ project }),
+  [ProjectQueries.POD_COUNT]: queries[ProjectQueries.POD_COUNT]({ project }),
 });
 
 export const getTopConsumerQueries = (project: string) => ({
