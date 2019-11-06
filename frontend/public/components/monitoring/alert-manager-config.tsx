@@ -22,6 +22,7 @@ import {
   patchAlertManagerConfig,
   receiverTypes,
 } from './alert-manager-utils';
+import { Helmet } from 'react-helmet';
 
 let secret: K8sResourceKind = null; // alertmanager-main Secret which holds alertmanager configuration yaml
 let config: AlertManagerConfig = null; // alertmanager configuration yaml as object
@@ -380,9 +381,14 @@ const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ o
 export const AlertManagerConfigWrapper: React.FC<AlertManagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
     return (
-      <StatusBox {...obj}>
-        <AlertManagerConfiguration {...props} obj={obj.data} />
-      </StatusBox>
+      <>
+        <Helmet>
+          <title>Alerting</title>
+        </Helmet>
+        <StatusBox {...obj}>
+          <AlertManagerConfiguration {...props} obj={obj.data} />
+        </StatusBox>
+      </>
     );
   },
 );
