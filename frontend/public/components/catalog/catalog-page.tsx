@@ -47,8 +47,10 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       projectTemplateMetadata,
       imageStreams,
       namespace,
+      loaded,
     } = this.props;
     if (
+      (!prevProps.loaded && loaded) ||
       !_.isEqual(namespace, prevProps.namespace) ||
       !_.isEqual(clusterServiceClasses, prevProps.clusterServiceClasses) ||
       !_.isEqual(templateMetadata, prevProps.templateMetadata) ||
