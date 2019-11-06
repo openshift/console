@@ -30,19 +30,6 @@ describe('TopologyUtils ', () => {
     expect(transformTopologyData(resources, ['deployments'])).toBeTruthy();
   });
 
-  it('should throw an error, if the invalid target deployment string is provided', () => {
-    const invalidTargetDeployment = ['dconfig']; // valid values are 'deployments' or 'deploymentConfigs'
-    expect(() => {
-      transformTopologyData(resources, invalidTargetDeployment);
-    }).toThrowError(`Invalid target deployment resource: (${invalidTargetDeployment})`);
-  });
-
-  it('should not throw an error, if the valid target deployment string is provided', () => {
-    const validTargetDeployment = ['deployments']; // valid values are 'deployments' or 'deploymentConfigs'
-    expect(() => {
-      transformTopologyData(resources, validTargetDeployment);
-    }).not.toThrowError(`Invalid target deployment resource: (${validTargetDeployment})`);
-  });
   it('should return graph and topology data', () => {
     expect(transformTopologyData(resources, ['deployments'])).toEqual(topologyData);
   });
