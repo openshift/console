@@ -13,6 +13,7 @@ import {
 import {
   BuildConfigModel,
   ClusterRoleModel,
+  ConsoleLinkModel,
   NetworkPolicyModel,
   ResourceQuotaModel,
   RoleModel,
@@ -202,7 +203,32 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
       ...clusterRoleBindingSamples,
     ],
   )
-  .setIn([referenceForModel(ClusterRoleModel)], clusterRoleBindingSamples);
+  .setIn([referenceForModel(ClusterRoleModel)], clusterRoleBindingSamples)
+  .setIn(
+    [referenceForModel(ConsoleLinkModel)],
+    [
+      {
+        title: 'Add a link to the user menu',
+        description: 'The user menu appears in the right side of the masthead below the username.',
+        id: 'cl-user-menu',
+        targetResource: getTargetResource(ConsoleLinkModel),
+      },
+      {
+        title: 'Add a link to the application menu',
+        description:
+          'The application menu appears in the masthead below the 9x9 grid icon.  Application menu links can include an optional image and section heading.',
+        id: 'cl-application-menu',
+        targetResource: getTargetResource(ConsoleLinkModel),
+      },
+      {
+        title: 'Add a link to the namespace dashboard',
+        description:
+          'Namespace dashboard links appear on the project dashboard and namespace overview pages in a section called "Launcher".  Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
+        id: 'cl-namespace-dashboard',
+        targetResource: getTargetResource(ConsoleLinkModel),
+      },
+    ],
+  );
 
 export const getResourceSidebarSamples = (kindObj: K8sKind, yamlSamplesList: FirehoseResult) => {
   const yamlSamplesData = !_.isEmpty(yamlSamplesList)

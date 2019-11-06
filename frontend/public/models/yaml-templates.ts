@@ -1064,7 +1064,52 @@ metadata:
 spec:
   href: 'https://www.example.com'
   location: HelpMenu
-  text: Additional help menu link
+  text: Help Menu Link
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-user-menu'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example-user-menu
+spec:
+  href: 'https://www.example.com'
+  location: UserMenu
+  text: User Menu Link
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-application-menu'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example-application-menu
+spec:
+  href: 'https://www.example.com'
+  location: ApplicationMenu
+  text: Application Menu Link
+  applicationMenu:
+    section: Example Section
+    imageURL: data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTE4LjkgMi4xdjIuMWgtMS43di0yLjFjMC0uMSAwLS4yLS4xLS4zcy0uMi0uMS0uMy0uMWgtMTQuN2MtLjEgMC0uMiAwLS4zLjEgMCAuMS0uMS4yLS4xLjN2MTQuNmMwIC4xIDAgLjIuMS4zcy4yLjEuMy4xaDIuMXYxLjdoLTIuMWMtLjYgMC0xLjEtLjItMS41LS42LS40LS40LS42LS45LS42LTEuNXYtMTQuNmMwLS41LjItMS4xLjYtMS41czEtLjYgMS41LS42aDE0LjZjLjYgMCAxLjEuMiAxLjUuNnMuNyAxIC43IDEuNXptNS4xIDUuMnYxNC42YzAgLjYtLjIgMS4xLS42IDEuNXMtMSAuNi0xLjUuNmgtMTQuNmMtLjYgMC0xLjEtLjItMS41LS42cy0uNi0uOS0uNi0xLjV2LTE0LjZjMC0uNi4yLTEuMS42LTEuNXMuOS0uNiAxLjUtLjZoMTQuNmMuNiAwIDEuMS4yIDEuNS42cy42LjkuNiAxLjV6bS0xLjcgMTQuNnYtMTQuNmMwLS4xIDAtLjItLjEtLjNzLS4yLS4xLS4zLS4xaC0xNC42Yy0uMSAwLS4yIDAtLjMuMXMtLjEuMi0uMS4zdjE0LjZjMCAuMSAwIC4yLjEuM3MuMi4xLjMuMWgxNC42Yy4xIDAgLjIgMCAuMy0uMXMuMS0uMi4xLS4zeiIvPjwvc3ZnPg==
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-namespace-dashboard'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example-namespace-dashboard
+spec:
+  href: 'https://www.example.com'
+  location: NamespaceDashboard
+  text: Namespace Dashboard Link
+  namespaceDashboard:
+    namespaces:
+      - default
 `,
   )
   .setIn(
