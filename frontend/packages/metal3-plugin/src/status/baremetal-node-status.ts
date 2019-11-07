@@ -32,6 +32,7 @@ export const baremetalNodeSecondaryStatus = ({
   if (!nodeMaintenance && isNodeUnschedulable(node)) {
     states.push('Scheduling disabled');
   }
-  if (!isHostPoweredOn(host)) states.push('Host is powered off');
+  // show host power status only if there is actual host associated to node
+  if (host && !isHostPoweredOn(host)) states.push('Host is powered off');
   return states;
 };
