@@ -50,7 +50,6 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   attachments,
   dragNodeRef,
   dndDropRef,
-  droppable,
   canDrop,
   dragging,
   edgeDragging,
@@ -65,17 +64,18 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const cy = element.getBounds().height / 2;
 
   const contentsClasses = classNames('odc2-base-node__contents', {
+    'is-hover': hover,
     'is-highlight': canDrop,
     'is-dragging': dragging || edgeDragging,
-    'is-hover': (hover && !droppable) || (dropTarget && canDrop),
+    'is-droppable': dropTarget && canDrop,
   });
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
   React.useLayoutEffect(() => {
     if (hover) {
-      onShowCreateConnector();
+      onShowCreateConnector && onShowCreateConnector();
     } else {
-      onHideCreateConnector();
+      onHideCreateConnector && onHideCreateConnector();
     }
   }, [hover, onShowCreateConnector, onHideCreateConnector]);
 
