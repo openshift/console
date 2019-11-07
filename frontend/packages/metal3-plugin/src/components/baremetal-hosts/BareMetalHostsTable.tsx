@@ -2,16 +2,17 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
+import { getName, getUID, getNamespace } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BareMetalHostBundle } from '../types';
-import { getHostBMCAddress, getHostPowerStatus } from '../../selectors';
+import { getHostBMCAddress } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import NodeLink from './NodeLink';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import BareMetalHostRole from './BareMetalHostRole';
 import { menuActions } from './host-menu-actions';
+import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -93,7 +94,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       </TableData>
       <TableData className={tableColumnClasses.status}>
         <BareMetalHostStatus {...status} />
-        <SecondaryStatus status={getHostPowerStatus(host)} />
+        <BareMetalHostSecondaryStatus host={host} />
       </TableData>
       <TableData className={tableColumnClasses.node}>
         <NodeLink nodeName={nodeName} />
