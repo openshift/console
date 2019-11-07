@@ -8,7 +8,7 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { parseUrl } from '../url';
+import { parseURL } from '../url';
 import { END_WHITESPACE_ERROR, START_WHITESPACE_ERROR, URL_INVALID_ERROR } from './strings';
 
 export const isValidationError = (validationObject: ValidationObject) =>
@@ -79,5 +79,5 @@ export const validateURL = (
     return trimError;
   }
 
-  return parseUrl(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
+  return parseURL(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
 };
