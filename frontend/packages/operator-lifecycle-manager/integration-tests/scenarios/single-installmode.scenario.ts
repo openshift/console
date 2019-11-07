@@ -12,12 +12,11 @@ import * as catalogView from '@console/internal-integration-tests/views/catalog.
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
+import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 
 describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
-  const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
-  const deleteRecoveryTime = 60000;
   const prometheusOperatorName = 'prometheus-operator';
 
   const catalogSource = {
@@ -109,7 +108,10 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
 
-    await browser.wait(until.visibilityOf(crudView.rowForOperator('Prometheus Operator')), 30000);
+    await browser.wait(
+      until.visibilityOf(operatorView.rowForOperator('Prometheus Operator')),
+      30000,
+    );
   });
 
   it('creates Prometheus Operator `Deployment`', async () => {
@@ -138,35 +140,10 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     ).toBeDefined();
   });
 
-  xit(
-    'recreates Prometheus Operator `Deployment` if manually deleted',
-    async () => {
-      await crudView.deleteRow('Deployment')(prometheusOperatorName);
-      await browser.wait(
-        until.textToBePresentInElement(
-          crudView.rowForName(prometheusOperatorName).$('a[title=pods]'),
-          '0 of 1 pods',
-        ),
-      );
-      await browser.wait(
-        until.textToBePresentInElement(
-          crudView.rowForName(prometheusOperatorName).$('a[title=pods]'),
-          '1 of 1 pods',
-        ),
-      );
-
-      expect(crudView.rowForName(prometheusOperatorName).isDisplayed()).toBe(true);
-    },
-    deleteRecoveryTime,
-  );
-
   it('displays metadata about Prometheus Operator in the "Overview" section', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await crudView
-      .rowForOperator('Prometheus Operator')
-      .$('.co-clusterserviceversion-logo')
-      .click();
+    await operatorView.rowForOperator('Prometheus Operator').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
@@ -204,10 +181,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async () => {
-    await crudView
-      .rowForName('example')
-      .element(by.linkText('example'))
-      .click();
+    await operatorView.operandLink('example').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
@@ -233,107 +207,6 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     });
   });
 
-  it('displays YAML editor for creating a new `Alertmanager` instance', async () => {
-    await $$('[data-test-id=breadcrumb-link-1]').click();
-    await crudView.isLoaded();
-    await element(by.linkText('All Instances')).click();
-    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
-    await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
-    await $$('.pf-c-dropdown__menu')
-      .first()
-      .element(by.buttonText('Alertmanager'))
-      .click();
-    await yamlView.isLoaded();
-
-    expect($('.co-create-operand__header').getText()).toContain('Create Alertmanager');
-  });
-
-  it('displays new `Alertmanager` that was created from YAML editor', async () => {
-    await $('#save-changes').click();
-    await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName('alertmanager-main')));
-
-    expect(crudView.rowForName('alertmanager-main').getText()).toContain('Alertmanager');
-  });
-
-  it('displays metadata about the created `Alertmanager` in its "Overview" section', async () => {
-    await crudView
-      .rowForName('alertmanager-main')
-      .element(by.linkText('alertmanager-main'))
-      .click();
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
-
-    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
-  });
-
-  it('displays the raw YAML for the `Alertmanager`', async () => {
-    await element(by.linkText('YAML')).click();
-    await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
-    await $('.yaml-editor__buttons')
-      .element(by.buttonText('Save'))
-      .click();
-    await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
-
-    expect(crudView.successMessage.getText()).toContain(
-      'alertmanager-main has been updated to version',
-    );
-  });
-
-  it('displays Kubernetes objects associated with the `Alertmanager` in its "Resources" section', async () => {
-    await element(by.linkText('Resources')).click();
-    await crudView.isLoaded();
-
-    alertmanagerResources.forEach((kind) => {
-      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
-    });
-  });
-
-  it('displays YAML editor for creating a new `ServiceMonitor` instance', async () => {
-    await $$('[data-test-id=breadcrumb-link-1]').click();
-    await crudView.isLoaded();
-    await element(by.linkText('All Instances')).click();
-    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
-    await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
-    await $$('.pf-c-dropdown__menu')
-      .first()
-      .element(by.buttonText('Service Monitor'))
-      .click();
-    await yamlView.isLoaded();
-
-    expect($('.co-create-operand__header').getText()).toContain('Create Service Monitor');
-  });
-
-  it('displays new `ServiceMonitor` that was created from YAML editor', async () => {
-    await $('#save-changes').click();
-    await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName('example')));
-
-    expect(crudView.rowForName('example').getText()).toContain('ServiceMonitor');
-  });
-
-  it('displays metadata about the created `ServiceMonitor` in its "Overview" section', async () => {
-    await crudView
-      .rowForName('example')
-      .element(by.linkText('example'))
-      .click();
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
-
-    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
-  });
-
-  it('displays the raw YAML for the `ServiceMonitor`', async () => {
-    await element(by.linkText('YAML')).click();
-    await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
-    await $('.yaml-editor__buttons')
-      .element(by.buttonText('Save'))
-      .click();
-    await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
-
-    expect(crudView.successMessage.getText()).toContain('example has been updated to version');
-  });
-
   it('displays button to uninstall the Operator', async () => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
@@ -350,8 +223,11 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
     await element(by.cssContainingText('#confirm-action', 'Remove')).click();
     await crudView.isLoaded();
-    await browser.wait(until.invisibilityOf(crudView.rowForOperator('Prometheus Operator')), 5000);
+    await browser.wait(
+      until.invisibilityOf(operatorView.rowForOperator('Prometheus Operator')),
+      5000,
+    );
 
-    expect(crudView.rowForOperator('Prometheus Operator').isPresent()).toBe(false);
+    expect(operatorView.rowForOperator('Prometheus Operator').isPresent()).toBe(false);
   });
 });

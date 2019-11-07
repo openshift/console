@@ -173,7 +173,10 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
       <TableData className={tableColumnClasses[1]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[2], 'co-break-word')}
+        data-test-operand-kind={obj.kind}
+      >
         {obj.kind}
       </TableData>
       <TableData className={tableColumnClasses[3]}>

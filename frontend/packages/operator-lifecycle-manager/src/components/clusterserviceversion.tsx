@@ -251,7 +251,11 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
       <TableRow id={uid} trKey={key} {...rest}>
         {/* Name */}
         <TableData className={tableColumnClasses[0]}>
-          <Link to={route} className="co-clusterserviceversion-link">
+          <Link
+            to={route}
+            className="co-clusterserviceversion-link"
+            data-test-operator-row={displayName}
+          >
             <ClusterServiceVersionLogo
               icon={icon}
               displayName={displayName}
