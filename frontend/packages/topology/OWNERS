@@ -3,4 +3,4 @@ reviewers:
 approvers:
   - christianvogt
 labels:
-  - component/topology
+  - component/dev-console
