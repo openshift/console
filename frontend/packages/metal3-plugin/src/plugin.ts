@@ -105,6 +105,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
           prop: 'maintenaces',
+          optional: true,
         },
       ],
       model: BareMetalHostModel,
