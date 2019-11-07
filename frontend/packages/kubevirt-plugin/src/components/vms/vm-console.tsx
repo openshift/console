@@ -31,7 +31,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   const migrations = getLoadedData(props.migrations);
 
   const onStartVm = () => {
-    const vmStatus = getVMStatus(vm, pods, migrations);
+    const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
     menuActionStart(VirtualMachineModel, vm, { vmStatus }).callback();
   };
 

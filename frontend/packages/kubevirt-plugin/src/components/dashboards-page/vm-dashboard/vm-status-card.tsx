@@ -20,7 +20,7 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <VMStatus vm={vm} pods={pods} migrations={migrations} />
+          <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
         </HealthBody>
         <VMAlerts vm={vm} vmi={vmi} />
       </DashboardCardBody>

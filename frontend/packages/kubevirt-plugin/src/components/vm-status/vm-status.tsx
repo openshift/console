@@ -34,7 +34,7 @@ import {
   VM_STATUS_OFF,
   VM_STATUS_ERROR,
 } from '../../statuses/vm/constants';
-import { VMKind } from '../../types';
+import { VMKind, VMIKind } from '../../types';
 
 import './vm-status.scss';
 
@@ -81,8 +81,14 @@ const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
   </>
 );
 
-export const VMStatus: React.FC<VMStatusProps> = ({ vm, pods, migrations, verbose = false }) => {
-  const statusDetail = getVMStatus(vm, pods, migrations);
+export const VMStatus: React.FC<VMStatusProps> = ({
+  vm,
+  vmi,
+  pods,
+  migrations,
+  verbose = false,
+}) => {
+  const statusDetail = getVMStatus({ vm, vmi, pods, migrations });
   const linkToVMEvents = `${resourcePath(
     VirtualMachineModel.kind,
     getName(vm),
@@ -252,6 +258,7 @@ type VMStatusPopoverContentProps = {
 
 type VMStatusProps = {
   vm: VMKind;
+  vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
   verbose?: boolean;
