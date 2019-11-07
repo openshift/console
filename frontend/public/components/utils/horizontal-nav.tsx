@@ -130,68 +130,29 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({ pages, basePath, hideDivider }) => {
-  // These tabs go before the divider
-  const before = ['', 'edit', 'yaml'];
-  const divider = (
-    <li
-      className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"
-      key="_divider"
-    />
-  );
+export const NavBar = withRouter<NavBarProps>(({ pages, basePath }) => {
   basePath = basePath.replace(/\/$/, '');
 
-  const primaryTabs = (
-    <ul className="co-m-horizontal-nav__menu-primary">
-      {pages
-        .filter(
-          ({ href }, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href')),
-        )
-        .map(({ name, href, path }) => {
-          const matchUrl = matchPath(location.pathname, {
-            path: `${basePath}/${path || href}`,
-            exact: true,
-          });
-          const klass = classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
-          });
-          return (
-            <li className={klass} key={name}>
-              <Link to={`${basePath}/${href}`}>{name}</Link>
-            </li>
-          );
-        })}
-      {!hideDivider && divider}
-    </ul>
+  const tabs = (
+    <>
+      {pages.map(({ name, href, path }) => {
+        const matchUrl = matchPath(location.pathname, {
+          path: `${basePath}/${path || href}`,
+          exact: true,
+        });
+        const klass = classNames('co-m-horizontal-nav__menu-item', {
+          'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
+        });
+        return (
+          <li className={klass} key={name}>
+            <Link to={`${basePath}/${href}`}>{name}</Link>
+          </li>
+        );
+      })}
+    </>
   );
 
-  const secondaryTabs = (
-    <ul className="co-m-horizontal-nav__menu-secondary">
-      {pages
-        .slice(React.Children.count(primaryTabs.props.children) - 1)
-        .map(({ name, href, path }) => {
-          const matchUrl = matchPath(location.pathname, {
-            path: `${basePath}/${path || href}`,
-            exact: true,
-          });
-          const klass = classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
-          });
-          return (
-            <li className={klass} key={name}>
-              <Link to={`${basePath}/${href}`}>{name}</Link>
-            </li>
-          );
-        })}
-    </ul>
-  );
-
-  return (
-    <div className="co-m-horizontal-nav__menu">
-      {primaryTabs}
-      {secondaryTabs}
-    </div>
-  );
+  return <ul className="co-m-horizontal-nav__menu">{tabs}</ul>;
 });
 NavBar.displayName = 'NavBar';
 
@@ -259,9 +220,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) =>
   return (
     <div className={props.className}>
       <div className="co-m-horizontal-nav">
-        {!props.hideNav && (
-          <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />
-        )}
+        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} />}
         {renderContent(routes)}
       </div>
     </div>
@@ -275,7 +234,6 @@ export type PodsComponentProps = {
 export type NavBarProps = {
   pages: Page[];
   basePath: string;
-  hideDivider?: boolean;
   history: History;
   location: Location<any>;
   match: match<any>;
@@ -290,7 +248,6 @@ export type HorizontalNavProps = {
   match: any;
   resourceKeys?: string[];
   hideNav?: boolean;
-  hideDivider?: boolean;
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
   customData?: any;

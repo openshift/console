@@ -25,7 +25,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
 
   return (
     <>
-      <div
+      <ul
         className={classNames(
           'co-m-horizontal-nav__menu',
           'co-m-horizontal-nav__menu--within-sidebar',
@@ -33,12 +33,10 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
           'odc-application-resource-tab',
         )}
       >
-        <ul className="co-m-horizontal-nav__menu-primary">
-          <li className="co-m-horizontal-nav__menu-item">
-            <button type="button">Resources</button>
-          </li>
-        </ul>
-      </div>
+        <li className="co-m-horizontal-nav__menu-item">
+          <button type="button">Resources</button>
+        </li>
+      </ul>
       {_.map(_.keys(resourcesData), (key) => (
         <ApplicationGroupResource
           key={`${group}-${key}`}

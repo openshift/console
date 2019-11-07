@@ -19,7 +19,7 @@ const pages = [
 export const ProvisionedServicesPage: React.SFC<ProvisionedServicesPageProps> = ({ match }) => (
   <>
     <PageHeading detail={true} title="Provisioned Services" />
-    <HorizontalNav pages={pages} match={match} hideDivider noStatusBox={true} />
+    <HorizontalNav pages={pages} match={match} noStatusBox={true} />
   </>
 );
 

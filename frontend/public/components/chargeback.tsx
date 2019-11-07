@@ -53,7 +53,6 @@ const ChargebackNavBar: React.SFC<{ match: { url: string } }> = (props) => (
         .split('/')
         .slice(0, -1)
         .join('/')}
-      hideDivider
     />
   </div>
 );
