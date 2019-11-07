@@ -306,6 +306,9 @@ export const sampleKnativeServices: FirehoseResult = {
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
       kind: ServiceModel.kind,
       metadata: {
+        labels: {
+          'app.kubernetes.io/part-of': 'myapp',
+        },
         name: 'overlayimage',
         namespace: 'testproject3',
         selfLink: '/api/v1/namespaces/testproject3/services/overlayimage',
