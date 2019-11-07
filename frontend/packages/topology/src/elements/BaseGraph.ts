@@ -17,10 +17,6 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
 
   private currentLayout?: Layout;
 
-  isDetached(): boolean {
-    return !this.getController();
-  }
-
   @computed
   private get edges(): Edge[] {
     return this.getChildren().filter(isEdge);
@@ -86,7 +82,11 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
 
   reset(): void {
     this.scale = 1;
-    this.getBounds().setLocation(0, 0);
+    this.setBounds(
+      this.getBounds()
+        .clone()
+        .setLocation(0, 0),
+    );
   }
 
   scaleBy(scale: number, location?: Point): void {
