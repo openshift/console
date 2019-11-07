@@ -247,3 +247,79 @@ export const constructPipelineData = {
     specificPipelineData.pipelineRuns[DataState.CANCELLED],
   ],
 };
+
+export const mockRunDurationTest = [
+  {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'simple-pipeline-aeocih',
+      namespace: 'tekton-pipelines',
+    },
+    spec: {
+      pipelineRef: {
+        name: 'simple-pipeline',
+      },
+    },
+    status: {
+      completionTime: '2019-10-29T11:57:53Z',
+      conditions: [
+        {
+          lastTransitionTime: '2019-10-29T11:57:53Z',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+    },
+  },
+  {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'simple-pipeline-aeocih',
+      namespace: 'tekton-pipelines',
+    },
+    spec: {
+      pipelineRef: {
+        name: 'simple-pipeline',
+      },
+    },
+    status: {
+      conditions: [
+        {
+          lastTransitionTime: '2019-10-29T11:57:53Z',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      startTime: '2019-10-29T11:56:40Z',
+    },
+  },
+  {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'simple-pipeline-aeocih',
+      namespace: 'tekton-pipelines',
+    },
+    spec: {
+      pipelineRef: {
+        name: 'simple-pipeline',
+      },
+    },
+    status: {
+      completionTime: '2019-10-29T11:57:53Z',
+      conditions: [
+        {
+          lastTransitionTime: '2019-10-29T11:57:53Z',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      startTime: '2019-10-29T11:56:40Z',
+    },
+  },
+];

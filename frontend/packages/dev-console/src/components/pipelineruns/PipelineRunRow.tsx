@@ -5,6 +5,7 @@ import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { reRunPipelineRun, stopPipelineRun } from '../../utils/pipeline-actions';
+import { pipelineRunDuration } from '../../utils/pipeline-utils';
 import { PipelineRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../models';
 import { tableColumnClasses } from './pipelinerun-table';
@@ -21,11 +22,13 @@ interface PipelineRunRowProps {
 
 const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style }) => {
   const pipelineRunStatus = pipelineRunFilterReducer(obj);
+
   const menuActions = [
     reRunPipelineRun,
     ...(obj && pipelineRunStatus === 'Running' ? [stopPipelineRun] : []),
     Kebab.factory.Delete,
   ];
+
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -45,7 +48,7 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
       <TableData className={tableColumnClasses[3]}>
         <LinkedPipelineRunTaskStatus pipelineRun={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>-</TableData>
+      <TableData className={tableColumnClasses[4]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={pipelinerunReference} resource={obj} />
       </TableData>
