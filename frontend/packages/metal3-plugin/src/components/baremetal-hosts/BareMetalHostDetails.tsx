@@ -35,8 +35,10 @@ import {
   getHostMachine,
   findNodeMaintenance,
   getHostBios,
+  getHostProvisioningState,
 } from '../../selectors';
 import { BareMetalHostKind } from '../../types';
+import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
@@ -67,6 +69,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const totalStorageCapacity = humanizeDecimalBytes(getHostTotalStorageCapacity(host)).string;
   const description = getHostDescription(host);
   const powerStatus = getHostPowerStatus(host);
+  const provisioningState = getHostProvisioningState(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
   const bios = getHostBios(host);
@@ -127,13 +130,18 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             <dd>
               <BareMetalHostStatus {...status} />
             </dd>
-            <dt>Power Status</dt>
-            <dd>
-              <StatusIconAndText
-                title={powerStatus}
-                icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
-              />
-            </dd>
+            {/* power status is not available until host registration/inspection is finished */}
+            {!HOST_REGISTERING_STATES.includes(provisioningState) && (
+              <>
+                <dt>Power Status</dt>
+                <dd>
+                  <StatusIconAndText
+                    title={powerStatus}
+                    icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
+                  />
+                </dd>
+              </>
+            )}
             {role && (
               <>
                 <dt>Role</dt>
