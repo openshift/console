@@ -163,12 +163,12 @@ const kubevirtInterOP = async ({
             ? DataVolumeWrapper.mergeWrappers(
                 dataVolumeWrapper,
                 DataVolumeWrapper.initializeFromSimpleData({
-                  accessModes:
-                    dataVolumeWrapper.getAccessModes() ||
+                  accessModes: dataVolumeWrapper.getAccessModes() || [
                     getDefaultSCAccessMode(
                       storageClassConfigMap,
                       dataVolumeWrapper.getStorageClassName(),
                     ),
+                  ],
                   volumeMode:
                     dataVolumeWrapper.getVolumeMode() ||
                     getDefaultSCVolumeMode(
