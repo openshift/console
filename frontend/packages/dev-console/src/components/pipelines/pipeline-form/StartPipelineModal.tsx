@@ -7,7 +7,13 @@ import {
 } from '@console/internal/components/factory/modal';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
-import { Pipeline, PipelineResource, Param, PipelineRun } from '../../../utils/pipeline-augment';
+import {
+  Pipeline,
+  PipelineResource,
+  PipelineParam,
+  PipelineRun,
+} from '../../../utils/pipeline-augment';
+import { getPipelineRunParams } from '../../../utils/pipeline-utils';
 import StartPipelineForm from './StartPipelineForm';
 import { startPipelineSchema } from './pipelineForm-validation-utils';
 
@@ -20,7 +26,7 @@ export interface StartPipelineModalProps {
 }
 export interface StartPipelineFormValues extends FormikValues {
   namespace: string;
-  parameters: Param[];
+  parameters: PipelineParam[];
   resources: PipelineResource[];
 }
 
@@ -32,8 +38,8 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
 }) => {
   const initialValues: StartPipelineFormValues = {
     namespace: pipeline.metadata.namespace,
-    parameters: _.get(pipeline.spec, 'params', []),
-    resources: _.get(pipeline.spec, 'resources', []),
+    parameters: _.get(pipeline, 'spec.params', []),
+    resources: _.get(pipeline, 'spec.resources', []),
   };
   initialValues.resources.map((resource: PipelineResource) =>
     _.merge(resource, { resourceRef: { name: '' } }),
@@ -41,12 +47,13 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
 
   const handleSubmit = (values: StartPipelineFormValues, actions): void => {
     actions.setSubmitting(true);
-    const pipelineRunData = {
+
+    const pipelineRunData: PipelineRun = {
       spec: {
         pipelineRef: {
           name: pipeline.metadata.name,
         },
-        params: values.parameters,
+        params: getPipelineRunParams(values.parameters),
         resources: values.resources,
       },
     };
