@@ -138,57 +138,73 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
         <ExternalLink href="https://github.com/google/re2/wiki/Syntax" text="regular expression" />.
       </p>
       <div className="row monitoring-grid-head text-secondary text-uppercase">
-        <div className="col-xs-4">Label Name</div>
-        <div className="col-xs-4">Label Value</div>
+        <div className="col-xs-5">Name</div>
+        <div className="col-xs-6">Value</div>
       </div>
       {_.map(routeLabels, (routeLabel, i) => {
         const isDefaultReceiverRouteLabel = isDefaultReceiverLabel(routeLabel);
         return (
           <div className="row form-group" key={i}>
-            <div className="col-xs-4">
-              <input
-                type="text"
-                className="pf-c-form-control"
-                onChange={onRoutingLabelChange(`${i}, name`)}
-                placeholder="Name"
-                value={routeLabel.name}
-                disabled={isDefaultReceiverRouteLabel}
-                required
-              />
-            </div>
-            <div className="col-xs-4">
-              <input
-                type="text"
-                className="pf-c-form-control"
-                onChange={onRoutingLabelChange(`${i}, value`)}
-                placeholder="Value"
-                value={routeLabel.value}
-                disabled={isDefaultReceiverRouteLabel}
-                required
-              />
+            <div className="col-xs-10">
+              <div className="row">
+                <div className="col-xs-6 pairs-list__name-field">
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      className="pf-c-form-control"
+                      onChange={onRoutingLabelChange(`${i}, name`)}
+                      placeholder="Name"
+                      value={routeLabel.name}
+                      disabled={isDefaultReceiverRouteLabel}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-xs-6 pairs-list__value-field">
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      className="pf-c-form-control"
+                      onChange={onRoutingLabelChange(`${i}, value`)}
+                      placeholder="Value"
+                      value={routeLabel.value}
+                      disabled={isDefaultReceiverRouteLabel}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              {!isDefaultReceiverRouteLabel && (
+                <>
+                  <div className="row">
+                    <div className="col-xs-12 col-sm-12">
+                      <div className="form-group">
+                        <label className="co-no-bold">
+                          <input
+                            type="checkbox"
+                            onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
+                            checked={routeLabel.isRegex}
+                          />
+                          &nbsp; Regular Expression
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             {!isDefaultReceiverRouteLabel && (
               <>
-                <div className="col-xs-3">
-                  <label className="co-no-bold">
-                    <input
-                      type="checkbox"
-                      onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
-                      checked={routeLabel.isRegex}
-                    />
-                    &nbsp; Regular Expression
-                  </label>
-                </div>
-                <div className="col-xs-1">
-                  <button
+                <div className="col-xs-2 pairs-list__action">
+                  <Button
                     type="button"
-                    className="btn btn-link btn-link--inherit-color"
                     onClick={() => removeRoutingLabel(_.toNumber(i))}
                     aria-label="Remove Route Label"
                     disabled={routeLabels.length <= 1}
+                    variant="plain"
                   >
                     <MinusCircleIcon />
-                  </button>
+                  </Button>
                 </div>
               </>
             )}
@@ -355,11 +371,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     (receiverType === 'webhook_configs' && _.isEmpty(webhookUrl));
 
   return (
-    <div className="co-m-pane__body">
+    <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
         <title>{titleVerb} Receiver</title>
       </Helmet>
-      <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
+      <form className="co-m-pane__body-group" onSubmit={save}>
         <h1 className="co-m-pane__heading">
           {titleVerb} {isDefaultReceiver && 'Default'} Receiver
         </h1>
