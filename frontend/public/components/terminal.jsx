@@ -38,12 +38,10 @@ export class Terminal extends React.Component {
   }
 
   enableiOSFix() {
-    document.getElementsByClassName('pf-c-page__main')[0].classList.add('default-overflow');
     document.getElementById('content-scrollable').classList.add('default-overflow');
   }
 
   disableiOSFix() {
-    document.getElementsByClassName('pf-c-page__main')[0].classList.remove('default-overflow');
     document.getElementById('content-scrollable').classList.remove('default-overflow');
   }
 

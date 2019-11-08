@@ -114,6 +114,7 @@ class App extends React.PureComponent {
               onPerspectiveSelected={this._onNavSelect}
             />
           }
+          mainContainerId="content-scrollable"
         >
           <AppContents />
         </Page>

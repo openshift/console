@@ -53,7 +53,6 @@ export * from './truncate-middle';
 export * from './expand-collapse';
 export * from './volume-type';
 export * from './skeleton-catalog';
-export * from './dom-utils';
 export * from './hint-block';
 export * from './owner-references';
 export * from './field-level-help';

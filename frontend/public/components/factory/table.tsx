@@ -6,7 +6,7 @@ import { getNodeRoles } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { EmptyBox, StatusBox } from '../utils';
 import {
   getJobTypeAndCompletions,
   NodeKind,
@@ -492,7 +492,6 @@ export const Table = connect<
 
     render() {
       const {
-        scrollElement,
         Rows,
         Row,
         expand,
@@ -514,7 +513,7 @@ export const Table = connect<
         'kindObj',
       ]);
       const ariaRowCount = componentProps.data && componentProps.data.length;
-      const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
+      const scrollNode = document.getElementsByClassName('pf-c-page__main-section')[0];
       const renderVirtualizedTable = (scrollContainer) => (
         <WindowScroller scrollElement={scrollContainer}>
           {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
@@ -557,12 +556,7 @@ export const Table = connect<
             <TableHeader />
             {!virtualize && <TableBody />}
           </PfTable>
-          {virtualize &&
-            (scrollNode ? (
-              renderVirtualizedTable(scrollNode)
-            ) : (
-              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-            ))}
+          {virtualize && renderVirtualizedTable(scrollNode)}
         </TableWrapper>
       );
       return (
