@@ -147,7 +147,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
           <div className="row form-group" key={i}>
             <div className="col-xs-10">
               <div className="row">
-                <div className="col-xs-6 pairs-list__name-field">
+                <div className="col-xs-4 pairs-list__name-field">
                   <div className="form-group">
                     <input
                       type="text"
@@ -160,7 +160,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
                     />
                   </div>
                 </div>
-                <div className="col-xs-6 pairs-list__value-field">
+                <div className="col-xs-4 pairs-list__value-field">
                   <div className="form-group">
                     <input
                       type="text"
@@ -173,25 +173,21 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
                     />
                   </div>
                 </div>
-              </div>
-              {!isDefaultReceiverRouteLabel && (
-                <>
-                  <div className="row">
-                    <div className="col-xs-12 col-sm-12">
-                      <div className="form-group">
-                        <label className="co-no-bold">
-                          <input
-                            type="checkbox"
-                            onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
-                            checked={routeLabel.isRegex}
-                          />
-                          &nbsp; Regular Expression
-                        </label>
-                      </div>
+                {!isDefaultReceiverRouteLabel && (
+                  <div className="col-xs-4">
+                    <div className="form-group co-alert-manager-routing-labels-useregex">
+                      <label className="co-no-bold">
+                        <input
+                          type="checkbox"
+                          onChange={(e) => onRoutingLabelRegexChange(e, _.toNumber(i))}
+                          checked={routeLabel.isRegex}
+                        />
+                        &nbsp; Regular Expression
+                      </label>
                     </div>
                   </div>
-                </>
-              )}
+                )}
+              </div>
             </div>
             {!isDefaultReceiverRouteLabel && (
               <>
