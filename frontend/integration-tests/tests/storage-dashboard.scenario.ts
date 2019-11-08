@@ -19,12 +19,12 @@ describe('Check data on Storage Dashboard.', () => {
   });
 
   it('Check that cluster name is correct', async() => {
-    const cephClusterName = execSync('oc describe cephcluster -n openshift-storage|sed -n "s/^Name: \\+//p"');
+    const cephClusterName = execSync("kubectl get cephcluster -n openshift-storage -o jsonpath='{.items..metadata.name}'");
     expect(clusterName.getText()).toEqual(cephClusterName.toString().trim());
   });
 
   it('Check the total number of OCS nodes', async() => {
-    const ocsNodesNumber = execSync('oc describe nodes|grep -c cluster.ocs.openshift.io/openshift-storage');
+    const ocsNodesNumber = execSync("kubectl get nodes -l cluster.ocs.openshift.io/openshift-storage -o json | jq '.items | length'");
     expect(allNodes.getText()).toEqual(`${ocsNodesNumber.toString().trim()} Nodes`);
   });
 
