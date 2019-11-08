@@ -5,6 +5,7 @@ export const CREATE_VM_TEMPLATE = `${CREATE_VM} Template`;
 export const IMPORT_VM = 'Import Virtual Machine';
 export const REVIEW_AND_CREATE = 'Review and create';
 export const NO_TEMPLATE = 'None';
+export const SELECT_TEMPLATE = '--- Select Template ---';
 export const NO_TEMPLATE_AVAILABLE = 'No template available';
 
 export const getCreateVMLikeEntityLabel = (isTemplate: boolean) =>
