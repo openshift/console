@@ -92,6 +92,10 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
           <TextListItem component="dd" className="co-select-to-copy">
             {window.SERVER_FLAGS.kubeAPIServerURL}
           </TextListItem>
+          <TextListItem component="dt">Console Version</TextListItem>
+          <TextListItem component="dd" className="co-select-to-copy">
+            {window.SERVER_FLAGS.consoleVersion}
+          </TextListItem>
         </TextList>
       </TextContent>
     </>
