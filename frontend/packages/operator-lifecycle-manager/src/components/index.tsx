@@ -21,7 +21,6 @@ import {
 } from '../types';
 import * as operatorLogo from '../operator.svg';
 
-export const olmNamespace = 'operator-lifecycle-manager';
 export const visibilityLabel = 'olm-visibility';
 
 type ProvidedAPIsFor = (

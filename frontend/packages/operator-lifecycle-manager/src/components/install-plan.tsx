@@ -37,13 +37,12 @@ import {
   SubscriptionModel,
   ClusterServiceVersionModel,
   InstallPlanModel,
-  CatalogSourceModel,
   OperatorGroupModel,
 } from '../models';
 import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
-import { olmNamespace, referenceForStepResource } from './index';
+import { referenceForStepResource } from './index';
 
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
@@ -279,15 +278,8 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
                   </dd>
                 ))}
                 <dt>Catalog Sources</dt>
-                {(_.get(obj.status, 'catalogSources') || []).map((catalogName) => (
-                  <dd key={catalogName}>
-                    <ResourceLink
-                      kind={referenceForModel(CatalogSourceModel)}
-                      name={catalogName}
-                      namespace={obj.spec.sourceNamespace || olmNamespace}
-                      title={catalogName}
-                    />
-                  </dd>
+                {(_.get(obj, 'status.catalogSources') || []).map((catalogName) => (
+                  <dd key={catalogName}>{catalogName}</dd>
                 ))}
               </dl>
             </div>
