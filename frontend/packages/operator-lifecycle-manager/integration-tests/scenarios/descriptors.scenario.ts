@@ -112,7 +112,7 @@ const inputValueFor = (capability: SpecCapability) => async (el: ElementFinder) 
         },
       };
     case SpecCapability.booleanSwitch:
-      return (await el.$('.pf-c-switch__input').getAttribute('checked')) !== 'false';
+      return (await el.$$('.pf-c-switch__input').getAttribute('checked')) !== 'false';
     case SpecCapability.password:
       return el.$('input').getAttribute('value');
     case SpecCapability.checkbox:
@@ -421,6 +421,12 @@ describe('Using OLM descriptor components', () => {
   });
 
   it('pre-populates form values using sample operand from ClusterServiceVersion', async () => {
+    $$('.pf-c-accordion__toggle').each(async (toggleBtn) => {
+      const toggleBtnClasses = await toggleBtn.getAttribute('class');
+      if (!toggleBtnClasses.includes('pf-m-expanded')) {
+        toggleBtn.click();
+      }
+    });
     $$('.co-create-operand__form-group').each(async (input) => {
       await browser
         .actions()
