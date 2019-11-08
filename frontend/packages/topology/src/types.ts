@@ -70,7 +70,7 @@ export interface GraphModel extends ElementModel {
   scale?: number;
 }
 
-export interface Anchor<E extends Node = Node> {
+export interface Anchor {
   getLocation(reference: Point): Point;
   getReferencePoint(): Point;
 }
@@ -156,15 +156,15 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
 }
 
 export const isGraph = (element: GraphElement): element is Graph => {
-  return element && element.getKind() === 'graph';
+  return element && element.getKind() === ModelKind.graph;
 };
 
 export const isNode = (element: GraphElement): element is Node => {
-  return element && element.getKind() === 'node';
+  return element && element.getKind() === ModelKind.node;
 };
 
 export const isEdge = (element: GraphElement): element is Edge => {
-  return element && element.getKind() === 'edge';
+  return element && element.getKind() === ModelKind.edge;
 };
 
 export type EventListener<Args extends any[] = any[]> = (...args: Args) => void;

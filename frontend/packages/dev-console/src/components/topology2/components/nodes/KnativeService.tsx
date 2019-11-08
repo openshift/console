@@ -12,13 +12,13 @@ import {
   useAnchor,
   WithDragNodeProps,
   Layer,
-  useSvgAnchor,
   useHover,
   createSvgIdUrl,
   useCombineRefs,
 } from '@console/topology';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import Decorator from '../../../topology/shapes/Decorator';
+import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
 import './KnativeService.scss';
@@ -31,6 +31,7 @@ export type EventSourceProps = {
   WithDragNodeProps &
   WithContextMenuProps;
 
+const DECORATOR_RADIUS = 13;
 const KnativeService: React.FC<EventSourceProps> = ({
   element,
   selected,
@@ -43,10 +44,18 @@ const KnativeService: React.FC<EventSourceProps> = ({
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
-  const trafficAnchor = useSvgAnchor(AnchorEnd.source, 'revision-traffic');
+  const { data } = element.getData();
+  const hasDataUrl = !!data.url;
+  useAnchor(
+    React.useCallback(
+      (node: Node) => new RevisionTrafficSourceAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
+      [hasDataUrl],
+    ),
+    AnchorEnd.source,
+    'revision-traffic',
+  );
   useAnchor(RectAnchor);
   const { x, y, width, height } = element.getBounds();
-  const { data } = element.getData();
 
   return (
     <g ref={hoverRef} onClick={onSelect} onContextMenu={onContextMenu}>
@@ -69,23 +78,14 @@ const KnativeService: React.FC<EventSourceProps> = ({
           )}
         />
       </Layer>
-      {data.url ? (
+      {hasDataUrl && (
         <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
-          <Decorator
-            circleRef={trafficAnchor}
-            x={x + width}
-            y={y}
-            radius={13}
-            href={data.url}
-            external
-          >
+          <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
             <g transform="translate(-6.5, -6.5)">
-              <ExternalLinkAltIcon style={{ fontSize: 13 }} alt="Open URL" />
+              <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} alt="Open URL" />
             </g>
           </Decorator>
         </Tooltip>
-      ) : (
-        <circle ref={trafficAnchor} cx={width} cy={0} r={0} fill="none" />
       )}
       {(data.kind || element.getLabel()) && (
         <SvgBoxedText
