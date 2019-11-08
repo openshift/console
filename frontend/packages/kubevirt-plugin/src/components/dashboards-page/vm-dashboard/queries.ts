@@ -37,24 +37,11 @@ const queries = {
 export const getUtilizationQueries = (props: {
   vmName: string;
   namespace: string;
-  duration: string;
   launcherPodName?: string;
-}) => {
-  const generic = {
-    [VMQueries.CPU_USAGE]: queries[VMQueries.CPU_USAGE](props),
-    [VMQueries.MEMORY_USAGE]: queries[VMQueries.MEMORY_USAGE](props),
-    [VMQueries.FILESYSTEM_USAGE]: queries[VMQueries.FILESYSTEM_USAGE](props),
-    [VMQueries.NETWORK_INOUT_USAGE]: queries[VMQueries.NETWORK_INOUT_USAGE](props),
-    // [VMQueries.NETWORK_OUT_USAGE]: queries[VMQueries.NETWORK_OUT_USAGE](props),
-  };
-
-  const queriesWithDuration = _.clone(generic);
-  Object.keys(queriesWithDuration).forEach((key) => {
-    queriesWithDuration[key] += props.duration;
-  });
-
-  return {
-    queriesWithDuration,
-    queries: generic,
-  };
-};
+}) => ({
+  [VMQueries.CPU_USAGE]: queries[VMQueries.CPU_USAGE](props),
+  [VMQueries.MEMORY_USAGE]: queries[VMQueries.MEMORY_USAGE](props),
+  [VMQueries.FILESYSTEM_USAGE]: queries[VMQueries.FILESYSTEM_USAGE](props),
+  [VMQueries.NETWORK_INOUT_USAGE]: queries[VMQueries.NETWORK_INOUT_USAGE](props),
+  // [VMQueries.NETWORK_OUT_USAGE]: queries[VMQueries.NETWORK_OUT_USAGE](props),
+});
