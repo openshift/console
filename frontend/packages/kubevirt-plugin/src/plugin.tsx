@@ -63,18 +63,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Workloads',
-      componentProps: {
-        name: 'Virtual Machines',
-        resource: models.VirtualMachineModel.plural,
-        required: FLAG_KUBEVIRT,
-      },
-      mergeAfter: 'Pods',
-    },
-  },
-  {
     // NOTE(yaacov): vmtemplates is a template resource with a selector.
     // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
     // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
@@ -86,7 +74,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: 'vmtemplates',
         required: FLAG_KUBEVIRT,
       },
-      mergeAfter: 'Virtual Machines',
+      mergeBefore: 'Deployments',
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Workloads',
+      componentProps: {
+        name: 'Virtual Machines',
+        resource: models.VirtualMachineModel.plural,
+        required: FLAG_KUBEVIRT,
+      },
+      mergeBefore: 'Virtual Machine Templates',
     },
   },
   {

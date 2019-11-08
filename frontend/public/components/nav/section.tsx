@@ -30,11 +30,11 @@ const navSectionStateToProps = (
 const mergePluginChild = (
   Children: React.ReactElement[],
   pluginChild: React.ReactElement,
-  mergeAfter?: string,
+  mergeBefore?: string,
 ) => {
-  const index = mergeAfter ? Children.findIndex((c) => c.props.name === mergeAfter) : -1;
+  const index = Children.findIndex((c) => c.props.name === mergeBefore);
   if (index >= 0) {
-    Children.splice(index + 1, 0, pluginChild);
+    Children.splice(index, 0, pluginChild);
   } else {
     Children.push(pluginChild);
   }
@@ -169,7 +169,7 @@ export const NavSection = connect(navSectionStateToProps)(
       this.getPluginNavItems(perspective, title).forEach((item) => {
         const pluginChild = this.mapChild(createLink(item));
         if (pluginChild) {
-          mergePluginChild(Children, pluginChild, item.properties.mergeAfter);
+          mergePluginChild(Children, pluginChild, item.properties.mergeBefore);
         }
       });
 
