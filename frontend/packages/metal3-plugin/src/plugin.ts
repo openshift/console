@@ -80,6 +80,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage' /* webpackChunkName: "metal3-baremetalhost" */
         ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },
   {
@@ -122,6 +123,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-nodes/BareMetalNodesPage' /* webpackChunkName: "node" */
         ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },
   {
@@ -133,6 +135,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-nodes/BareMetalNodeDetailsPage' /* webpackChunkName: "node" */
         ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },
 ];

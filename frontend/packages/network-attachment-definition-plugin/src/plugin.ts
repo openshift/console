@@ -78,6 +78,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/network-attachment-definitions/NetworkAttachmentDefinitionCreateYaml' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.default),
+      required: FLAG_NET_ATTACH_DEF,
     },
   },
   {
@@ -96,6 +97,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/network-attachment-definitions/NetworkAttachmentDefinitionsForm' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.default),
+      required: FLAG_NET_ATTACH_DEF,
     },
   },
   {
@@ -110,6 +112,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/network-attachment-definitions' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.NetworkAttachmentDefinitionsPage),
+      required: FLAG_NET_ATTACH_DEF,
     },
   },
 ];

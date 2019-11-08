@@ -1,14 +1,32 @@
 import * as _ from 'lodash';
-import { Plugin, ModelDefinition, ModelFeatureFlag } from '@console/plugin-sdk';
+import {
+  Plugin,
+  ModelDefinition,
+  ModelFeatureFlag,
+  HrefNavItem,
+  ResourceNSNavItem,
+  ResourceListPage,
+  ResourceDetailsPage,
+  RoutePage,
+  DevCatalogModel,
+} from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
 import { Flags } from './const';
 import './style.scss';
 
-type ConsumedExtensions = ModelDefinition | ModelFeatureFlag;
+type ConsumedExtensions =
+  | ModelDefinition
+  | ModelFeatureFlag
+  | HrefNavItem
+  | ResourceNSNavItem
+  | ResourceListPage
+  | ResourceDetailsPage
+  | RoutePage
+  | DevCatalogModel;
 
-export default [
+const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
     properties: {
@@ -223,4 +241,6 @@ export default [
       loader: async () => (await import('./components/create-catalog-source')).CreateCatalogSource,
     },
   },
-] as Plugin<ConsumedExtensions>;
+];
+
+export default plugin;

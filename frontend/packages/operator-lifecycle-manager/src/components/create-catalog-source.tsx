@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { match } from 'react-router-dom';
 import { ActionGroup, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
 import {
   ButtonBar,
@@ -30,7 +31,7 @@ const availabilityKinds = [
   },
 ];
 
-export const CreateCatalogSource: React.FC<HandlePromiseProps> = withHandlePromise(
+export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandlePromise(
   ({ handlePromise, inProgress, errorMessage }) => {
     const [availability, setAvailability] = React.useState(AvailabilityValue.ALL_NAMESPACES);
     const [image, setImage] = React.useState('');
@@ -162,3 +163,7 @@ export const CreateCatalogSource: React.FC<HandlePromiseProps> = withHandlePromi
     );
   },
 );
+
+type CreateCatalogSourceProps = HandlePromiseProps & {
+  match: match;
+};
