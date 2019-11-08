@@ -18,7 +18,7 @@ import * as utils from '@console/internal/components/utils';
 import { TopologyDataResources } from '../../components/topology/topology-types';
 import {
   transformTopologyData,
-  getResourceDeploymentObject,
+  getTopologyResourceObject,
 } from '../../components/topology/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
 import { MockResources } from '../../components/topology/__tests__/topology-test-data';
@@ -37,7 +37,7 @@ const getTopologyData = (mockData: TopologyDataResources, transformByProp: strin
   const result = transformTopologyData(mockData, transformByProp);
   const topologyTransformedData = result.topology;
   const keys = Object.keys(topologyTransformedData);
-  const resource = getResourceDeploymentObject(topologyTransformedData[keys[0]]);
+  const resource = getTopologyResourceObject(topologyTransformedData[keys[0]]);
   return { resource, topologyTransformedData, keys };
 };
 describe('ApplicationUtils ', () => {

@@ -14,7 +14,7 @@ import {
   CREATE_CONNECTOR_OPERATION,
 } from '@console/topology';
 import { createConnection, removeConnection, moveNodeToGroup } from './topology-utils';
-import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE } from './const';
+import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
 import './components/GraphComponent.scss';
 
 type GraphProps = {
@@ -133,7 +133,7 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   { dragEditInProgress: boolean },
   GraphProps
 > = {
-  accept: [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_CONNECTS_TO],
+  accept: [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE, TYPE_CONNECTS_TO],
   canDrop: (item, monitor, props) => {
     return monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element;
   },
@@ -148,7 +148,7 @@ const groupWorkoadDropTargetSpec: DropTargetSpec<
   { droppable: boolean; dropTarget: boolean; canDrop: boolean },
   any
 > = {
-  accept: [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE],
+  accept: [TYPE_WORKLOAD, TYPE_EVENT_SOURCE, TYPE_KNATIVE_SERVICE],
   canDrop: (item, monitor) => monitor.getOperation() === REGROUP_OPERATION,
   collect: (monitor) => ({
     droppable: monitor.isDragging() && monitor.getOperation() === REGROUP_OPERATION,

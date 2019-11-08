@@ -9,6 +9,7 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   GlobalConfig,
+  KebabActions,
   YAMLTemplate,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -48,6 +49,7 @@ import {
   getEventSourceCamel,
   getEventSourceKafka,
 } from './utils/get-knative-resources';
+import { getKebabActionsForKind } from './utils/kebab-actions';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -57,6 +59,7 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | OverviewCRD
   | ResourceListPage
+  | KebabActions
   | YAMLTemplate
   | ResourceDetailsPage;
 
@@ -319,6 +322,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceModel,
       template: yamlTemplates.getIn([models.ServiceModel, 'default']),
+    },
+  },
+  {
+    type: 'KebabActions',
+    properties: {
+      getKebabActionsForKind,
     },
   },
 ];

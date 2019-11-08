@@ -1,20 +1,22 @@
 import * as _ from 'lodash';
 import { K8sKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
+import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import {
-  DaemonSetModel,
-  DeploymentConfigModel,
-  DeploymentModel,
+  EventSourceApiServerModel,
+  EventSourceCamelModel,
+  EventSourceContainerModel,
+  EventSourceCronJobModel,
+  EventSourceKafkaModel,
   ServiceModel,
-  StatefulSetModel,
-} from '@console/internal/models';
-import { ModifyApplication } from '../actions/modify-application';
+} from '../models';
 
 const modifyApplicationRefs = [
-  referenceFor(DeploymentConfigModel),
-  referenceFor(DeploymentModel),
-  referenceFor(DaemonSetModel),
-  referenceFor(StatefulSetModel),
+  referenceFor(EventSourceApiServerModel),
+  referenceFor(EventSourceContainerModel),
+  referenceFor(EventSourceCronJobModel),
+  referenceFor(EventSourceCamelModel),
+  referenceFor(EventSourceKafkaModel),
   referenceFor(ServiceModel),
 ];
 

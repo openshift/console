@@ -3,6 +3,7 @@ import { ContextMenuItem, GraphElement, Node } from '@console/topology';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
 import { workloadActions } from '../topology/actions/workloadActions';
 import { groupActions } from '../topology/actions/groupActions';
+import { nodeActions } from '../topology/actions/nodeActions';
 import { TopologyApplicationObject } from '../topology/topology-types';
 
 const onKebabOptionClick = (option: KebabOption) => {
@@ -14,7 +15,7 @@ const onKebabOptionClick = (option: KebabOption) => {
   }
 };
 
-const ceateMenuItem = (action: KebabOption) => (
+const createMenuItem = (action: KebabOption) => (
   <ContextMenuItem
     className="odc2-topology-context-menu__kebab-wrapper"
     key={action.label}
@@ -25,7 +26,7 @@ const ceateMenuItem = (action: KebabOption) => (
 );
 
 const createMenuItems = (actions: KebabOption[]) =>
-  actions.filter((o) => !o.hidden).map(ceateMenuItem);
+  actions.filter((o) => !o.hidden).map(createMenuItem);
 
 const workloadContextMenu = (element: Node) => createMenuItems(workloadActions(element.getData()));
 
@@ -39,4 +40,6 @@ const groupContextMenu = (element: Node) => {
   return createMenuItems(groupActions(applicationData));
 };
 
-export { workloadContextMenu, groupContextMenu };
+const nodeContextMenu = (element: Node) => createMenuItems(nodeActions(element.getData()));
+
+export { workloadContextMenu, groupContextMenu, nodeContextMenu };
