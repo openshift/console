@@ -70,11 +70,11 @@ const VMRow: React.FC<VMRowProps> = ({
   const name = getName(vm);
   const namespace = getNamespace(vm);
   const uid = getUID(vm);
-  const vmStatus = getVMStatus(vm, pods, migrations);
   const lookupID = getBasicID(vm);
 
   const migration = migrationLookup[lookupID];
   const vmi = vmiLookup[lookupID];
+  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -85,7 +85,7 @@ const VMRow: React.FC<VMRowProps> = ({
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       <TableData className={dimensify()}>
-        <VMStatus vm={vm} pods={pods} migrations={migrations} />
+        <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </TableData>
       <TableData className={dimensify(true)}>
         <Kebab

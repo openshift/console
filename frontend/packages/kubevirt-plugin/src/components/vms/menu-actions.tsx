@@ -172,7 +172,7 @@ export const menuActionsCreator = (
   vm: VMKind,
   { vmi, pods, migrations }: ExtraResources,
 ) => {
-  const vmStatus = getVMStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const migration = findVMIMigration(vmi, migrations);
 
   return menuActions.map((action) => {

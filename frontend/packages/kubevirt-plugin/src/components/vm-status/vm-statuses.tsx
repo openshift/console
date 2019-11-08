@@ -2,14 +2,14 @@ import * as React from 'react';
 import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getUID } from '@console/shared';
 import { VM_STATUS_IMPORTING, VM_STATUS_IMPORT_ERROR } from '../../statuses/vm/constants';
-import { VMKind } from '../../types';
+import { VMKind, VMIKind } from '../../types';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getVMImporterPods } from '../../selectors/pod/selectors';
 import { VMStatus } from './vm-status';
 
 export const VMStatuses: React.FC<VMStatusesProps> = (props) => {
-  const { vm, pods, migrations } = props;
-  const statusDetail = getVMStatus(vm, pods, migrations);
+  const { vm, vmi, pods, migrations } = props;
+  const statusDetail = getVMStatus({ vm, vmi, pods, migrations });
   const importerPods = getVMImporterPods(vm, pods);
 
   switch (statusDetail.status) {
@@ -31,6 +31,7 @@ export const VMStatuses: React.FC<VMStatusesProps> = (props) => {
 
 type VMStatusesProps = {
   vm: VMKind;
+  vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
 };

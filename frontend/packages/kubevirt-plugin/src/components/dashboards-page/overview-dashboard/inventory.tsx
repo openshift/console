@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { OffIcon } from '@patternfly/react-icons';
-import { PodKind } from '@console/internal/module/k8s';
+import { getName } from '@console/shared/src/selectors/common';
+import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getVMStatus } from '../../../statuses/vm/vm';
-import { VMKind } from '../../../types';
+import { VMKind, VMIKind } from '../../../types';
 import {
   VM_STATUS_V2V_CONVERSION_ERROR,
   VM_STATUS_RUNNING,
@@ -41,7 +42,14 @@ const VM_STATUS_GROUP_MAPPER = {
   ],
 };
 
-export const getVMStatusGroups: StatusGroupMapper = (vms, { pods, migrations }) => {
+export const getVMStatusGroups: StatusGroupMapper = (
+  vms,
+  {
+    vmis,
+    pods,
+    migrations,
+  }: { vmis?: VMIKind[]; pods?: PodKind[]; migrations?: K8sResourceKind[] },
+) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
       statusIDs: [],
@@ -66,7 +74,8 @@ export const getVMStatusGroups: StatusGroupMapper = (vms, { pods, migrations }) 
     },
   };
   vms.forEach((vm: VMKind) => {
-    const { status } = getVMStatus(vm, pods as PodKind[], migrations);
+    const vmi = (vmis || []).find((instance) => getName(vm) === getName(instance));
+    const { status } = getVMStatus({ vm, vmi, pods, migrations });
     const group =
       Object.keys(VM_STATUS_GROUP_MAPPER).find((key) =>
         VM_STATUS_GROUP_MAPPER[key].includes(status),

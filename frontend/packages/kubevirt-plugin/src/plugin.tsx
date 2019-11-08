@@ -200,6 +200,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       additionalResources: [
         {
           isList: true,
+          kind: models.VirtualMachineInstanceModel.kind,
+          prop: 'vmis',
+        },
+        {
+          isList: true,
           kind: PodModel.kind,
           prop: 'pods',
         },

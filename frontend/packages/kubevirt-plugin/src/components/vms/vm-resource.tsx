@@ -82,7 +82,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   canUpdateVM,
 }) => {
   const id = getBasicID(vm);
-  const vmStatus = getVMStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const { launcherPod } = vmStatus;
   const cds = getCDRoms(vm);
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
@@ -94,7 +94,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   return (
     <dl className="co-m-pane__details">
       <VMDetailsItem title="Status" idValue={prefixedID(id, 'vm-statuses')}>
-        <VMStatuses vm={vm} pods={pods} migrations={migrations} />
+        <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>

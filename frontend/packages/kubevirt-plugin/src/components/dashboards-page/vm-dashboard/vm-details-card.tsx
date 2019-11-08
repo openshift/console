@@ -25,7 +25,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, pods, migrations } = vmDashboardContext;
 
-  const vmStatus = getVMStatus(vm, pods, migrations);
+  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const { launcherPod } = vmStatus;
 
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
