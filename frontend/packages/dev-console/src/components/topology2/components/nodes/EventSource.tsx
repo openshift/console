@@ -18,6 +18,7 @@ import './EventSource.scss';
 
 export type EventSourceProps = {
   element: Node;
+  dragging?: boolean;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithContextMenuProps;
@@ -28,6 +29,7 @@ const EventSource: React.FC<EventSourceProps> = ({
   onSelect,
   onContextMenu,
   dragNodeRef,
+  dragging,
 }) => {
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
@@ -47,7 +49,9 @@ const EventSource: React.FC<EventSourceProps> = ({
       <polygon
         className="odc-event-source__bg"
         ref={svgAnchorRef}
-        filter={createSvgIdUrl(hover ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID)}
+        filter={createSvgIdUrl(
+          hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+        )}
         points={`${width / 2}, ${(height - size) / 2} ${width - (width - size) / 2},${height /
           2} ${width / 2},${height - (height - size) / 2} ${(width - size) / 2},${height / 2}`}
       />

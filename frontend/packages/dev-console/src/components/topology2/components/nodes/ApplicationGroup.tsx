@@ -19,8 +19,9 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import SvgDropShadowFilter from '../../../svg/SvgDropShadowFilter';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
+import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
+
 import './ApplicationGroup.scss';
 
 type ApplicationGroupProps = {
@@ -28,13 +29,11 @@ type ApplicationGroupProps = {
   droppable?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
+  dragging?: boolean;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps;
-
-const FILTER_ID = 'ApplicationGroupShadowFilterId';
-const FILTER_ID_HOVER = 'ApplicationGroupDropShadowFilterId--hover';
 
 type PointWithSize = [number, number, number];
 
@@ -70,6 +69,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   canDrop,
   dropTarget,
   onContextMenu,
+  dragging,
 }) => {
   const [groupHover, groupHoverRef] = useHover();
   const [groupLabelHover, groupLabelHoverRef] = useHover();
@@ -125,13 +125,14 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
 
   return (
     <>
-      <SvgDropShadowFilter id={FILTER_ID} />
-      <SvgDropShadowFilter id={FILTER_ID_HOVER} dy={3} stdDeviation={7} floodOpacity={0.24} />
+      <NodeShadows />
       <Layer id="groups">
         <g ref={groupHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
           <path
             ref={refs}
-            filter={hover ? createSvgIdUrl(FILTER_ID_HOVER) : createSvgIdUrl(FILTER_ID)}
+            filter={createSvgIdUrl(
+              hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+            )}
             className={pathClasses}
             d={pathRef.current}
           />

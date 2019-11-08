@@ -13,9 +13,13 @@ import {
   WithDragNodeProps,
   Layer,
   useSvgAnchor,
+  useHover,
+  createSvgIdUrl,
+  useCombineRefs,
 } from '@console/topology';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import Decorator from '../../../topology/shapes/Decorator';
+import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
 import './KnativeService.scss';
 
@@ -36,16 +40,20 @@ const KnativeService: React.FC<EventSourceProps> = ({
   dragging,
   regrouping,
 }) => {
+  const [hover, hoverRef] = useHover();
+  const [innerHover, innerHoverRef] = useHover();
+  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const trafficAnchor = useSvgAnchor(AnchorEnd.source, 'revision-traffic');
   useAnchor(RectAnchor);
   const { x, y, width, height } = element.getBounds();
   const { data } = element.getData();
 
   return (
-    <g onClick={onSelect} onContextMenu={onContextMenu}>
+    <g ref={hoverRef} onClick={onSelect} onContextMenu={onContextMenu}>
+      <NodeShadows />
       <Layer id={dragging && regrouping ? undefined : 'groups2'}>
         <rect
-          ref={dragNodeRef}
+          ref={nodeRefs}
           className={cx('odc-knative-service', {
             'is-selected': selected,
             'is-dragging': dragging,
@@ -56,6 +64,9 @@ const KnativeService: React.FC<EventSourceProps> = ({
           height={height}
           rx="5"
           ry="5"
+          filter={createSvgIdUrl(
+            hover || innerHover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+          )}
         />
       </Layer>
       {data.url ? (
