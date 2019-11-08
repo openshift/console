@@ -2,9 +2,9 @@ import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { OCS_OPERATOR } from '../constants';
 
-const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
 export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
@@ -58,11 +58,4 @@ export const getOCSVersion = (items: FirehoseResult): string => {
     (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
   );
   return _.get(operator, 'status.currentCSV');
-};
-
-// To check if the provisioner is OCS based
-export const isCephProvisioner = (scProvisioner: string) => {
-  return cephStorageProvisioners.some((provisioner: string) =>
-    _.endsWith(scProvisioner, provisioner),
-  );
 };
