@@ -77,10 +77,6 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
     return p;
   }
 
-  isDetached(): boolean {
-    return !this.parent;
-  }
-
   getParent(): GraphElement {
     if (!this.parent) {
       throw new Error(`GraphElement with ID '${this.getId()}' has no parent.`);

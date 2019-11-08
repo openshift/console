@@ -80,7 +80,6 @@ export interface GraphElement<E extends ElementModel = ElementModel, D = any> ex
   getLabel(): string;
   setLabel(label: string): void;
   getOrderKey(): number[];
-  isDetached(): boolean;
   getController(): Controller;
   setController(controller?: Controller): void;
   getGraph(): Graph;
