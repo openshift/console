@@ -4,7 +4,6 @@ import {
   getOperatingSystemName,
   getOperatingSystem,
   getWorkloadProfile,
-  getVmTemplate,
   BootOrder,
   getBootableDevicesInOrder,
   TemplateSource,
@@ -17,6 +16,7 @@ import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms } from '../../selectors/vm/selectors';
+import { getVMTemplate } from '../../selectors/vm-template/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -32,7 +32,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
-  const base = getVmTemplate(template);
+  const base = getVMTemplate(template);
 
   const description = getDescription(template);
   const os = getOperatingSystemName(template) || getOperatingSystem(template);
