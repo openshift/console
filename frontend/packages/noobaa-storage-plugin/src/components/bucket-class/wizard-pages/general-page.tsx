@@ -33,7 +33,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         >
           <p>An MCG Bucket&apos;s data location is determined by a policy called a bucketClass</p>
           <ExternalLink
-            href="https://github.com/noobaa/noobaa-operator/blob/master/doc/backing-store-crd.md"
+            href="https://github.com/noobaa/noobaa-operator/blob/master/doc/bucket-class-crd.md"
             text="Learn More"
           />
         </Alert>

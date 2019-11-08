@@ -61,7 +61,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
       </div>
       {isLoading && <LoadingInline />}
       {!!error && (
-        <Alert variant="danger" title="Error">
+        <Alert variant="danger" title="Error" isInline>
           {error}
         </Alert>
       )}

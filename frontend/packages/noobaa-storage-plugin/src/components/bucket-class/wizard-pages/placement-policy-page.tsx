@@ -26,7 +26,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>
-            Data placement capabilities are builtas a multi-layer structure, here are the layers
+            Data placement capabilities are built as a multi-layer structure, here are the layers
             bottom up:
           </p>
           <ul>
@@ -34,8 +34,8 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
               Spread Tier - list of backing-stores, aggregates the storage of multiple stores.
             </li>
             <li>
-              Mirroring Tier - list of spread-layers, async-mirroring to all amrrors with locality
-              optimization
+              Mirroring Tier - list of spread-layers, async-mirroring to all mirrors with locality
+              optimization.
             </li>
           </ul>
         </Alert>
