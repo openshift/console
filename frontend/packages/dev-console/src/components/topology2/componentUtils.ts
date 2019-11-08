@@ -70,11 +70,14 @@ const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean =>
 
 const nodeDragSourceSpec = (
   type: string,
+  allowRegroup: boolean = true,
 ): DragSourceSpec<DragObjectWithType, Node, {}, NodeProps> => ({
   item: { type },
-  operation: {
-    [Modifiers.SHIFT]: REGROUP_OPERATION,
-  },
+  operation: allowRegroup
+    ? {
+        [Modifiers.SHIFT]: REGROUP_OPERATION,
+      }
+    : undefined,
   canCancel: false,
   end: (dropResult, monitor, props) => {
     if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {

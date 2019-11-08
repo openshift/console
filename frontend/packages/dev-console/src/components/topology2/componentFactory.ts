@@ -97,7 +97,7 @@ class ComponentFactory {
             ),
           );
         case TYPE_KNATIVE_REVISION:
-          return withDragNode(nodeDragSourceSpec(type))(
+          return withDragNode(nodeDragSourceSpec(type, false))(
             withSelection(false, true)(
               withContextMenu(
                 workloadContextMenu,
