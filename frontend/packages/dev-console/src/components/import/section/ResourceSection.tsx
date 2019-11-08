@@ -24,7 +24,7 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
   return (
     <>
       <p>
-        {k8sModel.apiGroup}/{k8sModel.label}
+        {k8sModel.apiGroup}/{k8sModel.kind}
       </p>
       <p>{helpText}</p>
     </>
