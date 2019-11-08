@@ -3,7 +3,11 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Modal } from 'patternfly-react';
-import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
+import {
+  CatalogItemHeader,
+  PropertiesSidePanel,
+  PropertyItem,
+} from '@patternfly/react-catalog-view-extension';
 
 import { normalizeIconClass } from './catalog-item-icon';
 import { ClusterServicePlanModel } from '../../models';

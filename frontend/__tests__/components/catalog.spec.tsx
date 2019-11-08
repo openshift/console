@@ -2,9 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { mount, ReactWrapper } from 'enzyme';
 
-import { CatalogTile } from '../../node_modules/patternfly-react-extensions/dist/js/components/CatalogTile';
-import { VerticalTabsTab } from '../../node_modules/patternfly-react-extensions/dist/js/components/VerticalTabs';
-import { FilterSidePanel } from '../../node_modules/patternfly-react-extensions/dist/js/components/FilterSidePanel';
+import {
+  CatalogTile,
+  FilterSidePanelCategoryItem,
+  VerticalTabsTab,
+} from '@patternfly/react-catalog-view-extension';
 
 import {
   CatalogListPage,
@@ -37,7 +39,7 @@ describe(CatalogTileViewPage.displayName, () => {
   });
 
   it('renders category filter controls', () => {
-    const filterItems = wrapper.find<any>(FilterSidePanel.CategoryItem);
+    const filterItems = wrapper.find<any>(FilterSidePanelCategoryItem);
 
     expect(filterItems.exists()).toBe(true);
     expect(filterItems.length).toEqual(4); // Filter by Types

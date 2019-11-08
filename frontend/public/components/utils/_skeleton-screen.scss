@@ -42,8 +42,8 @@ $skeleton-overview-title-position: 50px $skeleton-overview-tile-padding;
 $skeleton-overview-title-bone: linear-gradient(white $skeleton-overview-title-height, transparent 0);
 $skeleton-overview-title-width: 38%;
 
-$skeleton-tile-height: 230px; // $catalog-tile-pf-height
-$skeleton-tile-padding: 15px;
+$skeleton-tile-height: 290px; // height of catalog tiles
+$skeleton-tile-padding: 24px;
 $skeleton-tile-bone: linear-gradient($skeleton-color $skeleton-tile-height, transparent 0);
 
 $skeleton-tile-logo-bone: radial-gradient(circle 20px at center, #fff 100%, transparent 0);
@@ -92,18 +92,17 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 
 .skeleton-catalog--grid {
   align-content: flex-start;
-  border-top: 1px solid $skeleton-color;
   display: flex;
   flex-wrap: wrap;
-  margin: 100px ($grid-gutter-width / 2) 0 0;
-  padding-top: 30px;
+  margin: 117px 6px 6px 0;
+  padding: 30px 0 0 45px;
   &::before {
     content: '';
     background: $skeleton-color;
     display: block;
     height: 40px;
     position: absolute;
-    top: 20px;
+    top: 52px;
     width: 150px;
   }
 }
@@ -129,9 +128,10 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 }
 
 .skeleton-catalog--tile {
+  flex-grow: 1;
   height: $skeleton-tile-height;
-  margin: 0 15px 15px 0;
-  width: $catalog-tile-pf-width;
+  margin: 0 24px 24px 0;
+  min-width: 220px;
   &:empty::after {
     animation: $skeleton-animation;
     content:"";

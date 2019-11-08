@@ -2,7 +2,11 @@ import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { CatalogTile, FilterSidePanel, VerticalTabs } from 'patternfly-react-extensions';
+import {
+  CatalogTile,
+  VerticalTabsTab,
+  FilterSidePanelCategoryItem,
+} from '@patternfly/react-catalog-view-extension';
 import { Modal } from 'patternfly-react';
 import { MarkdownView } from '../clusterserviceversion';
 import {
@@ -128,7 +132,7 @@ describe(OperatorHubTileView.displayName, () => {
   });
 
   it('renders item filter controls', () => {
-    const filterItems = wrapper.find<any>(FilterSidePanel.CategoryItem);
+    const filterItems = wrapper.find<any>(FilterSidePanelCategoryItem);
 
     expect(filterItems.length).toBe(4); // Filter by Provider and Install State
     filterItems.forEach((filter) => {
@@ -139,21 +143,21 @@ describe(OperatorHubTileView.displayName, () => {
   it('updates filter counts on item changes', () => {
     wrapper.setProps(operatorHubTileViewPagePropsWithDummy);
     wrapper.update();
-    const filterItemsChanged = wrapper.find(FilterSidePanel.CategoryItem);
+    const filterItemsChanged = wrapper.find(FilterSidePanelCategoryItem);
 
     expect(filterItemsChanged.exists()).toBe(true);
     expect(filterItemsChanged.length).toEqual(5); // Filter by Provider and Install State
 
     wrapper.setProps(operatorHubTileViewPageProps);
     wrapper.update();
-    const filterItemsFinal = wrapper.find(FilterSidePanel.CategoryItem);
+    const filterItemsFinal = wrapper.find(FilterSidePanelCategoryItem);
 
     expect(filterItemsFinal.exists()).toBe(true);
     expect(filterItemsFinal.length).toEqual(4); // Filter by Provider and Install State
   });
 
   it('renders category tabs', () => {
-    const categories = wrapper.find(VerticalTabs.Tab);
+    const categories = wrapper.find(VerticalTabsTab);
 
     expect(categories.exists()).toBe(true);
     expect(categories.length).toBe(8);

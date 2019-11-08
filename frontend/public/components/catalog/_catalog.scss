@@ -114,18 +114,22 @@ $co-modal-ignore-warning-icon-width: 30px;
     margin-top: 5px;
   }
 
+  &__grid {
+    background-color: $color-pf-black-150;
+    padding: 30px;
+  }
+
   &__header {
-    border-bottom: 1px solid $color-pf-black-200;
-    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
+    margin: 0 ($grid-gutter-width / 2) 0 0;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 0 20px;
+    margin: 0 0 20px 30px;
   }
 
   &__input {
-    margin: 0 0 20px;
+    margin: 0 0 20px 30px;
     width: auto !important;
   }
 

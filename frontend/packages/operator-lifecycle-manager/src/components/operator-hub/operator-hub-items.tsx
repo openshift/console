@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import LazyLoad from 'react-lazyload';
 import { Modal } from 'patternfly-react';
-import { CatalogTile } from 'patternfly-react-extensions';
+import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { GreenCheckCircleIcon } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY } from '@console/internal/const';
@@ -287,6 +287,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     );
     return (
       <CatalogTile
+        className="co-catalog-tile"
         key={uid}
         title={name}
         badges={badges}
@@ -294,6 +295,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         vendor={vendor}
         description={description}
         onClick={() => openOverlay(item)}
+        maxDescriptionLength={installed ? 80 : 120}
         footer={
           installed ? (
             <span>
