@@ -102,9 +102,11 @@ export const useDndDrop = <
             return false;
           }
 
-          // translate to this element's coordinates
-          // assumes the node is not within an svg element containing another transform
-          const point = Point.singleUse(x, y);
+          // Rounding the coordinates due to an issue with `point-in-svg-path` returning false
+          // when the coordinates clearly are within the path.
+          const point = Point.singleUse(Math.round(x), Math.round(y));
+          // Translate to this element's coordinates.
+          // Assumes the node is not within an svg element containing another transform.
           elementRef.current.translateFromAbsolute(point);
 
           if (nodeRef.current instanceof SVGPathElement) {
