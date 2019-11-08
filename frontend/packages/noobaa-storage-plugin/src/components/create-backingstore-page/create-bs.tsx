@@ -22,12 +22,7 @@ import {
   resourceObjPath,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import {
-  apiVersionForModel,
-  k8sCreate,
-  K8sResourceKind,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import { apiVersionForModel, k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
 import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
 import { SecretModel } from '@console/internal/models';
@@ -59,6 +54,13 @@ const bucketNoobaaMap = {
   'AWS S3': 'targetBucket',
   'S3 Compatible': 'targetBucket',
   'Azure Blob': 'targetBlobContainer',
+};
+
+const typeNoobaaMap = {
+  'AWS S3': 'aws-s3',
+  'S3 Compatible': 's3-compatible',
+  'Azure Blob': 'azure-blob',
+  PVC: 'pv-pool',
 };
 
 const awsRegions = [
@@ -139,7 +141,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           <InputGroup>
             <Firehose resources={resources}>
               <ResourceDropdown
-                selectedKey=""
+                selectedKey={state.secretName}
                 placeholder="Select Secret"
                 className="nb-bs-form-entry__dropdown nb-bs-form-entry__dropdown--full-width"
                 buttonClassName="nb-bs-form-entry__dropdown"
@@ -164,7 +166,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 aria-label="Access Key Field"
               />
               <Button variant="plain" onClick={() => setShowSecret(true)}>
-                Swithc to Secret
+                Switch to Secret
               </Button>
             </InputGroup>
           </FormGroup>
@@ -179,6 +181,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 dispatch({ type: 'setSecretKey', value: e });
               }}
               aria-label="Secret Key Field"
+              type="password"
             />
           </FormGroup>
         </>
@@ -200,24 +203,29 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
 };
 
 const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
+  const [size, setSize] = React.useState('50');
+  const [, updateState] = React.useState();
   const units = {
     GiB: 'GiB',
     TiB: 'TiB',
   };
 
+  // Fix for updating the storage class by force rerender
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
+  React.useEffect(() => {
+    forceUpdate();
+  }, [forceUpdate, state.storageClass]);
+
   const onChange = (event) => {
     const { value, unit } = event;
-    const size = `${value} ${unit}`;
-    dispatch({ type: 'setVolumeSize', value: size });
-  };
-
-  const scChange = (sc: K8sResourceKind) => {
-    const name = getName(sc);
-    dispatch({ type: 'setStorageClass', value: name });
+    const input = `${value} ${unit}`;
+    setSize(value);
+    dispatch({ type: 'setVolumeSize', value: input });
   };
 
   const substract = () => {
-    if (state.numVolumes > 0) {
+    if (state.numVolumes > 1) {
       dispatch({ type: 'setVolumes', value: state.numVolumes - 1 });
     }
   };
@@ -259,11 +267,16 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
           onChange={onChange}
           dropdownUnits={units}
           defaultRequestSizeUnit="GiB"
-          defaultRequestSizeValue="50"
+          defaultRequestSizeValue={size}
         />
       </FormGroup>
       <FormGroup fieldId="storage-class" className="nb-bs-form-entry" isRequired>
-        <StorageClassDropdown onChange={scChange} defaultClass="ceph-rbd" />
+        <StorageClassDropdown
+          onChange={(sc) => dispatch({ type: 'setStorageClass', value: getName(sc) })}
+          defaultClass="ocs-storagecluster-ceph-rbd"
+          id="sc-dropdown"
+          required
+        />
       </FormGroup>
     </>
   );
@@ -385,7 +398,7 @@ const initialState: ProviderDataState = {
   gcpJSON: '',
   target: '',
   endpoint: '',
-  numVolumes: 0,
+  numVolumes: 1,
   volumeSize: '',
   storageClass: '',
 };
@@ -497,7 +510,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         name: bsName,
       },
       spec: {
-        type: provider,
+        type: typeNoobaaMap[provider],
         [providerNoobaaMap[provider]]: {
           [bucketNoobaaMap[provider]]: providerDataState.target,
           secret: {
@@ -513,16 +526,12 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       bsPayload.spec['region'] = providerDataState.region;
     }
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
-    handlePromise(Promise.all(promises))
-      .then((resource) => {
-        const lastIndex = resource.length - 1;
-        if (isPage)
-          history.push(resourceObjPath(resource[lastIndex], referenceFor(resource[lastIndex])));
-        else close();
-      })
-      .catch(() => {
-        close();
-      });
+    return handlePromise(Promise.all(promises)).then((resource) => {
+      const lastIndex = resource.length - 1;
+      if (isPage)
+        history.push(resourceObjPath(resource[lastIndex], referenceFor(resource[lastIndex])));
+      else close();
+    });
   };
 
   return (
@@ -549,12 +558,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         />
       </FormGroup>
 
-      <FormGroup
-        label="Provider"
-        fieldId="backingstore-name"
-        className="nb-bs-form-entry"
-        isRequired
-      >
+      <FormGroup label="Provider" fieldId="provider-name" className="nb-bs-form-entry" isRequired>
         <Dropdown
           className="nb-bs-form-entry__dropdown"
           buttonClassName="nb-bs-form-entry__dropdown"
