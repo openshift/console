@@ -10,7 +10,7 @@ import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
 } from '../const';
 import { allModels } from '../module/k8s/k8s-models';
-import { detectFeatures } from './features';
+import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { OverviewItem } from '@console/shared';
 export enum ActionType {
@@ -191,11 +191,13 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols));
+  dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
+  dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
