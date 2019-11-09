@@ -204,6 +204,13 @@ yarn run test-gui-openshift
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
+If you your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
+```
+yarn run webdriver-update --versions.chrome=77.0.3865.120
+```
+
+You can look up the version number you need at [omahaProxy.appspot.com](https://omahaproxy.appspot.com/).
+
 #### Using specific version of Chrome browser (Linux only)
 
 Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver supports specific Chrome versions.
