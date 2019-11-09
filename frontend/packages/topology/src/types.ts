@@ -204,3 +204,9 @@ export interface Controller extends WithState {
   fireEvent(type: string, ...args: any): void;
   getElements(): GraphElement[];
 }
+
+export type AddElementEventListener = EventListener<[GraphElement[]]>;
+export type RemoveElementEventListener = EventListener<[GraphElement[]]>;
+
+export const ADD_ELEMENT_EVENT = 'add-element';
+export const REMOVE_ELEMENT_EVENT = 'remove-element';

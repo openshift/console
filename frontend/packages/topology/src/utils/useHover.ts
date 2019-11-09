@@ -16,7 +16,7 @@ const useHover = <T extends Element>(
   );
 
   // The unset handle needs to be referred by listeners in different closures.
-  const unsetHandle = React.useRef<any>();
+  const unsetHandle = React.useRef<number>();
 
   const callbackRef = useCallbackRef(
     React.useCallback(
@@ -27,7 +27,7 @@ const useHover = <T extends Element>(
 
           const onMouseEnter = () => {
             if (delay != null) {
-              delayHandle = setTimeout(() => {
+              delayHandle = window.setTimeout(() => {
                 delayHandle = clearTimeout(unsetHandle.current);
                 setHover(true);
               }, delay);
@@ -54,7 +54,7 @@ const useHover = <T extends Element>(
               // This can happen with layers. Rendering a node to a new layer will unmount the old node
               // and remount a new node at the same location. This will prevent flickering and getting
               // stuck in a hover state.
-              unsetHandle.current = setTimeout(() => setHover(false), 0);
+              unsetHandle.current = window.setTimeout(() => setHover(false), 0);
             }
           };
         }
