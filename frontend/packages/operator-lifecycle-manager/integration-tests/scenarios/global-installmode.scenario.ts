@@ -12,6 +12,7 @@ import * as catalogView from '@console/internal-integration-tests/views/catalog.
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
+import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 
 describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
@@ -23,7 +24,6 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     'Secret',
     'ConfigMap',
   ]);
-  const deleteRecoveryTime = 60000;
   const jaegerOperatorName = 'jaeger-operator';
   const jaegerName = 'my-jaeger';
 
@@ -121,7 +121,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
 
-    await browser.wait(until.visibilityOf(crudView.rowForOperator('Jaeger Tracing')), 30000);
+    await browser.wait(until.visibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 30000);
   });
 
   it('creates Operator `Deployment`', async () => {
@@ -139,35 +139,10 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     expect(crudView.rowForName(jaegerOperatorName).isDisplayed()).toBe(true);
   });
 
-  xit(
-    'recreates Operator `Deployment` if manually deleted',
-    async () => {
-      await crudView.deleteRow('Deployment')(jaegerOperatorName);
-      await browser.wait(
-        until.textToBePresentInElement(
-          crudView.rowForName(jaegerOperatorName).$('a[title=pods]'),
-          '0 of 1 pods',
-        ),
-      );
-      await browser.wait(
-        until.textToBePresentInElement(
-          crudView.rowForName(jaegerOperatorName).$('a[title=pods]'),
-          '1 of 1 pods',
-        ),
-      );
-
-      expect(crudView.rowForName(jaegerOperatorName).isDisplayed()).toBe(true);
-    },
-    deleteRecoveryTime,
-  );
-
   it('displays metadata about Operator in the "Overview" section', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await crudView
-      .rowForOperator('Jaeger Tracing')
-      .$('.co-clusterserviceversion-logo')
-      .click();
+    await operatorView.rowForOperator('Jaeger Tracing').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
@@ -194,16 +169,13 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays new `Jaeger` that was created from YAML editor', async () => {
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName(jaegerName)));
+    await browser.wait(until.visibilityOf(operatorView.operandLink(jaegerName)));
 
-    expect(crudView.rowForName(jaegerName).getText()).toContain('Jaeger');
+    expect(operatorView.operandKind('Jaeger').isDisplayed()).toBe(true);
   });
 
   it('displays metadata about the created `Jaeger` in its "Overview" section', async () => {
-    await crudView
-      .rowForName(jaegerName)
-      .element(by.linkText(jaegerName))
-      .click();
+    await operatorView.operandLink(jaegerName).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
@@ -247,8 +219,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
     await element(by.cssContainingText('#confirm-action', 'Remove')).click();
     await crudView.isLoaded();
-    await browser.wait(until.invisibilityOf(crudView.rowForOperator('Jaeger Tracing')), 5000);
+    await browser.wait(until.invisibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 5000);
 
-    expect(crudView.rowForOperator('Jaeger Tracing').isPresent()).toBe(false);
+    expect(operatorView.rowForOperator('Jaeger Tracing').isPresent()).toBe(false);
   });
 });

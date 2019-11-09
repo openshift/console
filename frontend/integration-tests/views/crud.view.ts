@@ -37,15 +37,6 @@ export const rowForName = (name: string) =>
         .then((text) => text === name),
     )
     .first();
-export const rowForOperator = (name: string) =>
-  resourceRows
-    .filter((row) =>
-      row
-        .$('.co-clusterserviceversion-logo__name__clusterserviceversion')
-        .getText()
-        .then((text) => text === name),
-    )
-    .first();
 
 const navMenu = $('.co-m-horizontal-nav__menu');
 const isNavLoaded = () => browser.wait(until.presenceOf(navMenu));
