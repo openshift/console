@@ -1,5 +1,9 @@
 import { browser, $, ExpectedConditions as until } from 'protractor';
-import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
+import {
+  appHost,
+  checkLogs,
+  checkErrors,
+} from '@console/internal-integration-tests/protractor.conf';
 import {
   navigateImportFromGit,
   setBuilderImage,
@@ -11,13 +15,9 @@ import {
   buildImageVersion,
   createButton,
   builderImageVersionName,
-} from '../../views/devconsole-view/git-imort-flow';
-import { newApplicationName, newAppName } from '../../views/devconsole-view/new-app-name.view';
-import {
-  switchPerspective,
-  Perspective,
-  sideHeader,
-} from '../../views/devconsole-view/dev-perspective.view';
+} from '../views/git-import-flow.view';
+import { newApplicationName, newAppName } from '../views/new-app-name.view';
+import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 
 describe('git import flow', () => {
   let newApplication;

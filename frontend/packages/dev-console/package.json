@@ -3,6 +3,9 @@
   "version": "0.0.0-fixed",
   "description": "OpenShift Developer Perspective",
   "private": true,
+  "scripts": {
+    "lint": "yarn --cwd ../.. eslint packages/dev-console"
+  },
   "dependencies": {
     "@console/git-service": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
@@ -10,6 +13,9 @@
     "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "devconsole": ["integration-tests/**/*.scenario.ts"]
+    }
   }
 }
