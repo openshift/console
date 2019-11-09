@@ -1,36 +1,20 @@
 import * as React from 'react';
-import {
-  useAnchor,
-  AnchorEnd,
-  Anchor,
-  SVGAnchor,
-  EllipseAnchor,
-  observer,
-} from '@console/topology';
+import { useAnchor, AnchorEnd, Node, observer } from '@console/topology';
+import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 import WorkloadNode from './WorkloadNode';
 
+const DECORATOR_RADIUS = 13;
 const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadNode>> = (props) => {
-  const [trafficAnchor, setTrafficAnchor] = React.useState<Anchor>(
-    new EllipseAnchor(props.element),
-  );
-  const urlAnchorRefCallback = React.useCallback(
-    (node): void => {
-      if (node) {
-        const anchor = new SVGAnchor(props.element);
-        anchor.setSVGElement(node);
-        setTrafficAnchor(anchor);
-      } else {
-        setTrafficAnchor(new EllipseAnchor(props.element));
-      }
-    },
-    [props.element],
-  );
+  const hasDataUrl = !!props.element.getData().data.url;
   useAnchor(
-    React.useCallback(() => trafficAnchor, [trafficAnchor]),
+    React.useCallback(
+      (node: Node) => new RevisionTrafficTargetAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
+      [hasDataUrl],
+    ),
     AnchorEnd.target,
     'revision-traffic',
   );
-  return <WorkloadNode {...props} urlAnchorRef={urlAnchorRefCallback} />;
+  return <WorkloadNode {...props} />;
 };
 
 export default observer(RevisionNode);

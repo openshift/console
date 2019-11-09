@@ -1,14 +1,14 @@
 import Point from '../geom/Point';
 import { Anchor, Node } from '../types';
 
-export default abstract class AbstractAnchor<E extends Node = Node> implements Anchor<E> {
-  private owner: Node;
+export default abstract class AbstractAnchor<E extends Node = Node> implements Anchor {
+  private owner: E;
 
-  constructor(owner: Node) {
+  constructor(owner: E) {
     this.owner = owner;
   }
 
-  protected getOwner(): Node {
+  protected getOwner(): E {
     return this.owner;
   }
 
