@@ -1,9 +1,15 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
-import { Wizard } from '@patternfly/react-core';
-import { apiVersionForModel, k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import { Title, Wizard } from '@patternfly/react-core';
+import { apiVersionForModel, k8sCreate, k8sGet, referenceFor } from '@console/internal/module/k8s';
 import { history } from '@console/internal/components/utils/router';
-import { resourceObjPath } from '@console/internal/components/utils';
+import {
+  BreadCrumbs,
+  resourceObjPath,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { NooBaaBucketClassModel } from '../../models';
 import GeneralPage from './wizard-pages/general-page';
 import PlacementPolicyPage from './wizard-pages/placement-policy-page';
@@ -21,7 +27,16 @@ enum CreateStepsBC {
 
 const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { ns } = match.params;
+  const { ns, appName } = match.params;
+  const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
+
+  React.useEffect(() => {
+    k8sGet(ClusterServiceVersionModel, appName, ns)
+      .then((clusterServiceVersionObj) => {
+        setClusterServiceVersion(clusterServiceVersionObj);
+      })
+      .catch(() => setClusterServiceVersion(null));
+  }, [appName, ns]);
 
   const finalStep = () => {
     dispatch({ type: 'setIsLoading', value: true });
@@ -57,7 +72,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       })
       .catch((err) => {
         dispatch({ type: 'setIsLoading', value: false });
-        dispatch({ type: 'setError', value: err });
+        dispatch({ type: 'setError', value: err.message });
       });
   };
 
@@ -106,20 +121,48 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
 
   return (
     <>
-      <Wizard
-        isCompactNav
-        isInPage
-        isOpen
-        title="Create new Bucket Class"
-        description="NooBaaBucketClass is a CRD representing a class for buckets that defines policies for data placement and more"
-        steps={steps}
-        onSave={finalStep}
-        onClose={() => history.goBack()}
-      />
+      <div className="nb-create-bc-header">
+        <div className="nb-create-bc-header__breadcrumbs">
+          <BreadCrumbs
+            breadcrumbs={[
+              {
+                name: _.get(
+                  clusterServiceVersion,
+                  'spec.displayName',
+                  'Openshift Container Storage Operator',
+                ),
+                path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              },
+              { name: `Create ${NooBaaBucketClassModel.label}`, path: match.url },
+            ]}
+          />
+        </div>
+        <div className="nb-create-bc-header-title">
+          <Title size="2xl" headingLevel="h1" className="nb-create-bc-header-title__main">
+            Create new BucketClass
+          </Title>
+          <p className="nb-create-bc-header-title__info">
+            BucketClass is a CRD representing a class for buckets that defines tiering policies and
+            data placements for an OBC.
+          </p>
+        </div>
+      </div>
+      <div className="nb-create-bc-wizard">
+        <Wizard
+          isCompactNav
+          isInPage
+          isOpen
+          title="Create new Bucket Class"
+          description="NooBaaBucketClass is a CRD representing a class for buckets that defines policies for data placement and more"
+          steps={steps}
+          onSave={finalStep}
+          onClose={() => history.goBack()}
+        />
+      </div>
     </>
   );
 };
 
-type CreateBCProps = RouteComponentProps<{ ns?: string }>;
+type CreateBCProps = RouteComponentProps<{ ns?: string; appName?: string }>;
 
 export default CreateBucketClass;
