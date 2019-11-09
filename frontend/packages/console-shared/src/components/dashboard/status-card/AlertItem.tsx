@@ -36,7 +36,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           <div className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary">
             {timestamp && <Timestamp simple timestamp={timestamp} />}
           </div>
-          <span className="co-status-card__health-item-text">{message}</span>
+          <span className="co-status-card__health-item-text co-break-word">{message}</span>
         </div>
         <div className="co-status-card__alert-item-more">
           <LinkComponent />
