@@ -1,7 +1,18 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
-import { action, reaction, IReactionDisposer } from 'mobx';
-import { Edge, GraphElement, Graph, Layout, Node, GroupStyle, isGraph, isNode } from '../types';
+import { action } from 'mobx';
+import {
+  Edge,
+  GraphElement,
+  Graph,
+  Layout,
+  Node,
+  GroupStyle,
+  isGraph,
+  isNode,
+  ADD_ELEMENT_EVENT,
+  REMOVE_ELEMENT_EVENT,
+} from '../types';
 import { groupNodeElements, leafNodeElements } from '../utils/element-utils';
 import BaseEdge from '../elements/BaseEdge';
 import {
@@ -164,7 +175,9 @@ export default class ForceLayout implements Layout {
 
   private options: ForceLayoutOptions;
 
-  private layoutReactionDisposers?: IReactionDisposer[];
+  private scheduleHandle?: number;
+
+  private scheduleRestart = false;
 
   constructor(graph: Graph, options?: Partial<ForceLayoutOptions>) {
     this.graph = graph;
@@ -308,60 +321,44 @@ export default class ForceLayout implements Layout {
   };
 
   private startListening(): void {
-    this.layoutReactionDisposers = [
-      reaction(() => leafNodeElements(this.graph.getNodes()), () => this.runLayout(false)),
-    ];
+    this.graph.getController().addEventListener(ADD_ELEMENT_EVENT, this.handleAddedElements);
+    this.graph.getController().addEventListener(REMOVE_ELEMENT_EVENT, this.scheduleLayout);
   }
 
   private stopListening(): void {
-    if (this.layoutReactionDisposers) {
-      this.layoutReactionDisposers.forEach((disposer) => disposer());
-      this.layoutReactionDisposers = undefined;
-    }
+    clearTimeout(this.scheduleHandle);
+    this.graph.getController().removeEventListener(ADD_ELEMENT_EVENT, this.handleAddedElements);
+    this.graph.getController().removeEventListener(REMOVE_ELEMENT_EVENT, this.scheduleLayout);
   }
 
-  @action
-  private runLayout(initialRun: boolean): void {
-    const leafNodes = leafNodeElements(this.graph.getNodes());
+  private handleAddedElements = (elements: GraphElement[]): void => {
+    const cx = this.graph.getBounds().width / 2;
+    const cy = this.graph.getBounds().height / 2;
+    elements.filter(isNode).forEach((node) =>
+      node.setBounds(
+        node
+          .getBounds()
+          .clone()
+          .setCenter(cx, cy),
+      ),
+    );
+    this.scheduleRestart = true;
+    this.scheduleLayout();
+  };
 
-    if (!initialRun) {
-      if (leafNodes.length === this.simulation.nodes().length) {
-        const sa = leafNodes.sort((a, b) => a.getId().localeCompare(b.getId()));
-        const sb = this.simulation.nodes().sort((a, b) => a.id.localeCompare(b.id));
-        let isDifferent = false;
-        for (let i = 0; i < sa.length; i++) {
-          if (sa[i] !== sb[i].element) {
-            isDifferent = true;
-            break;
-          }
-        }
-        // no change in nodes
-        if (!isDifferent) {
-          return;
-        }
-      }
-
-      // check for node additions
-      const diff = _.differenceWith(
-        leafNodes,
-        this.simulation.nodes(),
-        (node, d3Node) => node === d3Node.element,
-      );
-
-      if (diff.length > 0) {
-        // position new nodes at center
-        const cx = this.graph.getBounds().width / 2;
-        const cy = this.graph.getBounds().height / 2;
-        diff.forEach((node) =>
-          node.setBounds(
-            node
-              .getBounds()
-              .clone()
-              .setCenter(cx, cy),
-          ),
-        );
-      }
+  private scheduleLayout = (): void => {
+    if (!this.scheduleHandle) {
+      this.scheduleHandle = window.setTimeout(() => {
+        delete this.scheduleHandle;
+        this.runLayout(false, this.scheduleRestart);
+        this.scheduleRestart = false;
+      }, 0);
     }
+  };
+
+  @action
+  private runLayout(initialRun: boolean, restart = true): void {
+    const leafNodes = leafNodeElements(this.graph.getNodes());
 
     // create datum
     const groups = groupNodeElements(this.graph.getNodes());
@@ -406,7 +403,7 @@ export default class ForceLayout implements Layout {
       });
       this.simulation.force('center', d3.forceCenter(cx, cy));
       this.simulation.alpha(1);
-    } else if (this.simulation.alpha() < 0.2) {
+    } else if (restart && this.simulation.alpha() < 0.2) {
       this.simulation.alpha(0.2);
     }
 
@@ -416,7 +413,9 @@ export default class ForceLayout implements Layout {
     this.simulation.nodes(nodes);
     // fonally set the new links
     this.forceLink.links(edges);
-    // start
-    this.simulation.restart();
+    if (initialRun || restart) {
+      // start
+      this.simulation.restart();
+    }
   }
 }
