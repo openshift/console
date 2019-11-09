@@ -4074,7 +4074,7 @@ bootstrap-slider@^9.9.0:
   version "9.10.0"
   resolved "https://registry.yarnpkg.com/bootstrap-slider/-/bootstrap-slider-9.10.0.tgz#1103d6bc00cfbfa8cfc9a2599ab518c55643da3f"
 
-bootstrap-switch@~3.3.4:
+bootstrap-switch@3.3.4, bootstrap-switch@~3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/bootstrap-switch/-/bootstrap-switch-3.3.4.tgz#70e0aeb2a877c0dc766991de108e2170fc29a2ff"
 
@@ -4085,6 +4085,11 @@ bootstrap-touchspin@~3.1.1:
 bootstrap@3.3.x, bootstrap@^3.3, bootstrap@~3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
+
+bootstrap@^3.4.1, bootstrap@~3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.4.1.tgz#c3a347d419e289ad11f4033e3c4132b87c081d72"
+  integrity sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==
 
 bootstrap@~3.4.0:
   version "3.4.0"
@@ -9761,6 +9766,11 @@ jquery-match-height@^0.7.2:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
+jquery@^3.4.1, jquery@~3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
+
 jquery@~3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
@@ -12045,24 +12055,32 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.18.4:
-  version "2.18.4"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.18.4.tgz#b6322b5f3b8c6b07c1bb0bb13b4db1c26086da17"
-  integrity sha512-TQ+rW2NGadPwUsSn39HMwMQSiz/ZoOar0KJndV88x7/AwZzyjIyZYfWVijX7AVlN94JaBtRUeexgMrh6aJF9yA==
+patternfly-bootstrap-treeview@~2.1.10:
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.10.tgz#f96043734bb4ecac951783e2745e3f9a8873ffd4"
+  integrity sha512-P9+iFu34CwX+R5Fd7/EWbxTug0q9mDj53PnZIIh5ie54KX2kD0+54lCWtpD9SVylDwDtDv3n3A6gbFVkx7HsuA==
+  dependencies:
+    bootstrap "^3.4.1"
+    jquery "^3.4.1"
+
+patternfly-react-extensions@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-3.0.2.tgz#f161a752be75f835a9a2ddfac2249c85d0fd71c3"
+  integrity sha512-MQxCOpFPr8Ruywmhj9pz3AmAwdgO6KtDBxZnt77jzFh1CV1sXV0vFCg2sjC0pZTGfMRHNbY9G9YJ3TLSuX7RVw==
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    patternfly "^3.58.0"
-    patternfly-react "^2.32.3"
+    patternfly "^3.59.4"
+    patternfly-react "^2.39.6"
     react-bootstrap "^0.32.1"
     react-click-outside "^3.0.1"
     react-diff-view "^1.8.1"
     react-ellipsis-with-tooltip "^1.0.8"
-    react-virtualized "9.x"
+    react-virtualized "^9.21.1"
     unidiff "^1.0.1"
 
-patternfly-react@2.32.3, patternfly-react@^2.32.3:
+patternfly-react@2.32.3:
   version "2.32.3"
   resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.32.3.tgz#a66d580c6e93cd061ade3e6059cd02af48b79a68"
   integrity sha512-PslQ8pS6VDyBSYP1+HXHeuZ8FTFToj9ZUqkMeXnTJHqCdWcuQTijBimQ4lAvxXFKAPO7cbcdIUWiO/95cAZvXQ==
@@ -12073,6 +12091,34 @@ patternfly-react@2.32.3, patternfly-react@^2.32.3:
     css-element-queries "^1.0.1"
     lodash "^4.17.11"
     patternfly "^3.58.0"
+    react-bootstrap "^0.32.1"
+    react-bootstrap-switch "^15.5.3"
+    react-bootstrap-typeahead "^3.4.1"
+    react-c3js "^0.1.20"
+    react-click-outside "^3.0.1"
+    react-collapse "^4.0.3"
+    react-debounce-input "^3.2.0"
+    react-ellipsis-with-tooltip "^1.0.8"
+    react-fontawesome "^1.6.1"
+    react-motion "^0.5.2"
+    reactabular-table "^8.14.0"
+    recompose "^0.26.0"
+    uuid "^3.3.2"
+  optionalDependencies:
+    sortabular "^1.5.1"
+    table-resolver "^3.2.0"
+
+patternfly-react@^2.39.6:
+  version "2.39.6"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.39.6.tgz#14f912f734c711e6f5bd4d714e80cdaeafbe6f4c"
+  integrity sha512-HgVrRQWgKyTCCXvQlz5MY5FZ80oBe4i0e47LdBU/s28N6I4xl8rKpekxE0QNx2dtOFev+nS2AwphagwihmkXIQ==
+  dependencies:
+    bootstrap-slider-without-jquery "^10.0.0"
+    breakjs "^1.0.0"
+    classnames "^2.2.5"
+    css-element-queries "^1.0.1"
+    lodash "^4.17.15"
+    patternfly "^3.59.4"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.4.1"
@@ -12152,6 +12198,38 @@ patternfly@^3.59.1:
     moment-timezone "^0.4.1"
     patternfly-bootstrap-combobox "~1.1.7"
     patternfly-bootstrap-treeview "~2.1.0"
+
+patternfly@^3.59.4:
+  version "3.59.4"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.4.tgz#455c8b73af5088893083467b8cd9918eee25000a"
+  integrity sha512-xkXTmmQFyscfQ/2Vbh8OUFQPPPCgncKb1FMwNwxUXgCjJRqohmkOAR8enMYGNVbFruzrZKxJVOdHnGduLlETDQ==
+  dependencies:
+    bootstrap "~3.4.1"
+    font-awesome "^4.7.0"
+    jquery "~3.4.1"
+  optionalDependencies:
+    "@types/c3" "^0.6.0"
+    bootstrap-datepicker "^1.7.1"
+    bootstrap-sass "^3.4.0"
+    bootstrap-select "1.12.2"
+    bootstrap-slider "^9.9.0"
+    bootstrap-switch "3.3.4"
+    bootstrap-touchspin "~3.1.1"
+    c3 "~0.4.11"
+    d3 "~3.5.17"
+    datatables.net "^1.10.15"
+    datatables.net-colreorder "^1.4.1"
+    datatables.net-colreorder-bs "~1.3.2"
+    datatables.net-select "~1.2.0"
+    drmonty-datatables-colvis "~1.1.2"
+    eonasdan-bootstrap-datetimepicker "^4.17.47"
+    font-awesome-sass "^4.7.0"
+    google-code-prettify "~1.0.5"
+    jquery-match-height "^0.7.2"
+    moment "^2.19.1"
+    moment-timezone "^0.4.1"
+    patternfly-bootstrap-combobox "~1.1.7"
+    patternfly-bootstrap-treeview "~2.1.10"
 
 pbkdf2@^3.0.3:
   version "3.0.16"
@@ -13342,6 +13420,11 @@ react-jsonschema-form@^1.0.4:
     core-js "^2.5.7"
     lodash.topath "^4.5.2"
     prop-types "^15.5.8"
+
+react-lazyload@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/react-lazyload/-/react-lazyload-2.6.2.tgz#6a1660de6e8653632797539189d19d64e924482c"
+  integrity sha512-zbFiwI3H7W0/Qvb6T/ew2NiGe2wj+soYNW7vv5Dte1eZuJDvvyUOHo8GpYfEeWoP5x4Rree2Hwop+lCISalBwg==
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
