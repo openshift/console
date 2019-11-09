@@ -16,6 +16,7 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
+      "e2e": ["integration-tests/**/*.scenario.ts"],
       "olmFull": ["integration-tests/**/*.scenario.ts"],
       "olmDescriptors": ["integration-tests/scenarios/descriptors.scenario.ts"],
       "olmOperatorHub": ["integration-tests/scenarios/operator-hub.scenario.ts"],

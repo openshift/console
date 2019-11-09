@@ -87,10 +87,6 @@ const testSuites = {
     'tests/performance.scenario.ts',
     'tests/monitoring.scenario.ts',
     'tests/crd-extensions.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
   ]),
   release: suite([
     'tests/crud.scenario.ts',
@@ -113,7 +109,6 @@ const testSuites = {
     'tests/filter.scenario.ts',
     'tests/modal-annotations.scenario.ts',
     'tests/deploy-image.scenario.ts',
-    'tests/operator-hub/operator-hub.scenario.ts',
     'tests/developer-catalog.scenario.ts',
     'tests/monitoring.scenario.ts',
     'tests/devconsole/dev-perspective.scenario.ts',
