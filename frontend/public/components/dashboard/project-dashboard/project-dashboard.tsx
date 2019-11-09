@@ -23,7 +23,7 @@ const mapStateToProps = ({ UI }: RootState): ProjectDashboardReduxProps => ({
   consoleLinks: UI.get('consoleLinks'),
 });
 
-const getNamespaceDashboardConsoleLinks = (
+export const getNamespaceDashboardConsoleLinks = (
   ns: K8sResourceKind,
   consoleLinks: K8sResourceKind[],
 ): K8sResourceKind[] => {
