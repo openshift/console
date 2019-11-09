@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import { ListPage, Table, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { dimensifyHeader, dimensifyRow, getName, getNamespace, getUID } from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
@@ -61,7 +62,7 @@ const NetworkAttachmentDefinitionsRow: React.FC<NetworkAttachmentDefinitionsRowP
     <TableRow id={metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
         <ResourceLink
-          kind={NetworkAttachmentDefinitionModel.kind}
+          kind={referenceForModel(NetworkAttachmentDefinitionModel)}
           name={name}
           namespace={namespace}
         />
@@ -75,7 +76,7 @@ const NetworkAttachmentDefinitionsRow: React.FC<NetworkAttachmentDefinitionsRowP
       <TableData className={dimensify(true)}>
         <ResourceKebab
           actions={menuActions}
-          kind={NetworkAttachmentDefinitionModel.kind}
+          kind={referenceForModel(NetworkAttachmentDefinitionModel)}
           resource={netAttachDef}
         />
       </TableData>
@@ -122,14 +123,14 @@ export const NetworkAttachmentDefinitionsPage: React.FC<NetworkAttachmentDefinit
 ) => {
   const namespace = props.namespace || props.match.params.ns || 'default';
   const createProps = {
-    to: `/k8s/ns/${namespace}/networkattachmentdefinitions/~new/form`,
+    to: `/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new/form`,
   };
 
   return (
     <ListPage
       {...props}
       title={NetworkAttachmentDefinitionModel.labelPlural}
-      kind={NetworkAttachmentDefinitionModel.kind}
+      kind={referenceForModel(NetworkAttachmentDefinitionModel)}
       ListComponent={NetworkAttachmentDefinitionsList}
       filterLabel={props.filterLabel}
       canCreate

@@ -4,8 +4,14 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { ButtonBar, Dropdown, Firehose, history } from '@console/internal/components/utils';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
+import {
+  ButtonBar,
+  Dropdown,
+  Firehose,
+  history,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import {
   HyperConvergedModel,
@@ -106,7 +112,7 @@ const createNetAttachDef = (
   k8sCreate(NetworkAttachmentDefinitionModel, newNetAttachDef)
     .then(() => {
       setLoading(false);
-      history.push(`/k8s/ns/${namespace || 'default'}/networkattachmentdefinitions`);
+      history.push(resourcePathFromModel(NetworkAttachmentDefinitionModel, name, namespace));
     })
     .catch((err) => {
       setError(err);
@@ -204,7 +210,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         <div className="co-m-pane__name">Create Network Attachment Definition</div>
         <div className="co-m-pane__heading-link">
           <Link
-            to={`/k8s/ns/${namespace}/networkattachmentdefinitions/~new`}
+            to={`/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new`}
             id="yaml-link"
             replace
           >
@@ -288,14 +294,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             >
               Create
             </Button>
-            <Button
-              id="cancel"
-              onClick={() =>
-                history.push(`/k8s/ns/${namespace || 'default'}/networkattachmentdefinitions`)
-              }
-              type="button"
-              variant="secondary"
-            >
+            <Button id="cancel" onClick={history.goBack} type="button" variant="secondary">
               Cancel
             </Button>
           </ActionGroup>
@@ -310,15 +309,17 @@ const mapStateToProps = ({ k8s }) => {
   const k8sModels = k8s.getIn(['RESOURCES', 'models']);
 
   return {
-    hasSriovNetNodePolicyCRD: !kindsInFlight && !!k8sModels.get(SriovNetworkNodePolicyModel.kind),
-    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(HyperConvergedModel.kind),
+    // FIXME: These should be feature flags.
+    hasSriovNetNodePolicyCRD:
+      !kindsInFlight && !!k8sModels.get(referenceForModel(SriovNetworkNodePolicyModel)),
+    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(referenceForModel(HyperConvergedModel)),
   };
 };
 
 const networkAttachmentDefinitionFormResources = [
   {
     model: SriovNetworkNodePolicyModel,
-    kind: SriovNetworkNodePolicyModel.kind,
+    kind: referenceForModel(SriovNetworkNodePolicyModel),
     isList: true,
     prop: 'sriovnetworknodepolicies',
     optional: true,

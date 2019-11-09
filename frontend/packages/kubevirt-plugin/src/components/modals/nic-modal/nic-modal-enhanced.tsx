@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sPatch, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
 import { getLoadedData, getResource } from '../../../utils';
@@ -122,7 +122,12 @@ type NICModalFirehoseProps = ModalComponentProps & {
 };
 
 const nicModalStateToProps = ({ k8s }) => {
-  const hasNADs = !!k8s.getIn(['RESOURCES', 'models', NetworkAttachmentDefinitionModel.kind]);
+  // FIXME: This should be a flag.
+  const hasNADs = !!k8s.getIn([
+    'RESOURCES',
+    'models',
+    referenceForModel(NetworkAttachmentDefinitionModel),
+  ]);
   return {
     hasNADs,
   };

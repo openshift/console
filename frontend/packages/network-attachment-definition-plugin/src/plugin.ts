@@ -9,6 +9,7 @@ import {
   ModelDefinition,
   RoutePage,
 } from '@console/plugin-sdk';
+import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
@@ -43,7 +44,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Networking',
       componentProps: {
         name: 'Network Attachment Definitions',
-        resource: models.NetworkAttachmentDefinitionModel.plural,
+        resource: referenceForModel(models.NetworkAttachmentDefinitionModel),
         required: FLAG_NET_ATTACH_DEF,
       },
       mergeAfter: 'Network Policies',
@@ -65,7 +66,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.NetworkAttachmentDefinitionModel,
       loader: () =>
         import(
-          './components/network-attachment-definitions/NetworkAttachmentDefinitionDetailsPage' /* webpackChunkName: "kubevirt" */
+          './components/network-attachment-definitions/NetworkAttachmentDefinitionDetailsPage' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.NetworkAttachmentDefinitionsDetailsPage),
     },
   },
@@ -73,7 +74,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/networkattachmentdefinitions/~new'],
+      path: [`/k8s/ns/:ns/${referenceForModel(models.NetworkAttachmentDefinitionModel)}/~new`],
       loader: () =>
         import(
           './components/network-attachment-definitions/NetworkAttachmentDefinitionCreateYaml' /* webpackChunkName: "network-attachment-definitions" */
@@ -92,26 +93,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/networkattachmentdefinitions/~new/form'],
+      path: [`/k8s/ns/:ns/${referenceForModel(models.NetworkAttachmentDefinitionModel)}/~new/form`],
       loader: () =>
         import(
           './components/network-attachment-definitions/NetworkAttachmentDefinitionsForm' /* webpackChunkName: "network-attachment-definitions" */
         ).then((m) => m.default),
-      required: FLAG_NET_ATTACH_DEF,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: [
-        '/k8s/ns/:ns/networkattachmentdefinitions',
-        '/k8s/all-namespaces/networkattachmentdefinitions',
-      ],
-      loader: () =>
-        import(
-          './components/network-attachment-definitions' /* webpackChunkName: "network-attachment-definitions" */
-        ).then((m) => m.NetworkAttachmentDefinitionsPage),
       required: FLAG_NET_ATTACH_DEF,
     },
   },
