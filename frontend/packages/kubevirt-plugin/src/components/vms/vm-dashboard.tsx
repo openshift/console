@@ -27,13 +27,11 @@ export const VMDashboard: React.FC<VMDashboardProps> = (props) => {
   };
 
   return (
-    <div className="co-m-pane__body">
-      <VMDashboardContext.Provider value={context}>
-        <Dashboard>
-          <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
-        </Dashboard>
-      </VMDashboardContext.Provider>
-    </div>
+    <VMDashboardContext.Provider value={context}>
+      <Dashboard>
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+      </Dashboard>
+    </VMDashboardContext.Provider>
   );
 };
 
