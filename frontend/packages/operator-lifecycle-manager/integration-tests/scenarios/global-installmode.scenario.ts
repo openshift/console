@@ -3,9 +3,10 @@ import { browser, $, element, ExpectedConditions as until, by } from 'protractor
 import * as _ from 'lodash';
 import {
   appHost,
-  testName,
-  checkLogs,
   checkErrors,
+  checkLogs,
+  retry,
+  testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
@@ -175,7 +176,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   });
 
   it('displays metadata about the created `Jaeger` in its "Overview" section', async () => {
-    await operatorView.operandLink(jaegerName).click();
+    await retry(() => operatorView.operandLink(jaegerName).click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
