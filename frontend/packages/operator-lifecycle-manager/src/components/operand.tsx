@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Status, SuccessStatus } from '@console/shared';
+import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
   MultiListPage,
@@ -25,6 +26,7 @@ import {
   Kebab,
   KebabAction,
   LoadingBox,
+  SectionHeading,
 } from '@console/internal/components/utils';
 import { connectToModel, connectToPlural } from '@console/internal/kinds';
 import {
@@ -355,6 +357,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     !_.isEmpty(descriptor) ? _.get(block, descriptor.path, descriptor.value) : undefined;
 
   const { kind, metadata, spec, status } = props.obj;
+  const conditions = status && status.conditions;
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
   const ownedDefinitions = _.get(
@@ -464,6 +467,12 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
           </div>
           <div className="co-m-pane__body">{details}</div>
         </>
+      )}
+      {conditions && (
+        <div className="co-m-pane__body">
+          <SectionHeading text="Conditions" />
+          <Conditions conditions={conditions} />
+        </div>
       )}
     </div>
   );
