@@ -37,6 +37,7 @@ export interface DropdownFieldProps extends FieldProps {
   title?: React.ReactNode;
   fullWidth?: boolean;
   disabled?: boolean;
+  onChange?: (value: string) => void;
 }
 
 export interface EnvironmentFieldProps extends FieldProps {

@@ -10,10 +10,9 @@ import SearchStatus from './SearchStatus';
 import SearchResults from './SearchResults';
 
 export interface ImageSearchSectionProps {
-  projects: K8sResourceKind[];
   imageStreams: K8sResourceKind[];
 }
-const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ projects, imageStreams }) => {
+const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ imageStreams }) => {
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const [registry, setRegistry] = React.useState(values.registry);
 
@@ -49,7 +48,7 @@ const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ projects, image
           {
             label: imageRegistryType.Internal.label,
             value: imageRegistryType.Internal.value,
-            activeChildren: <ImageStream projects={projects} imageStreams={imageStreams} />,
+            activeChildren: <ImageStream imageStreams={imageStreams} />,
           },
         ]}
       />

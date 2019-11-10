@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as semver from 'semver';
 import { ContainerPort, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   isBuilder,
@@ -9,6 +10,8 @@ import {
   getImageStreamIcon,
   getImageForIconClass,
 } from '@console/internal/components/catalog/catalog-item-icon';
+import { ProjectModel } from '@console/internal/models';
+import { FirehoseResource } from '@console/internal/components/utils';
 
 export interface ImageTag {
   name: string;
@@ -135,20 +138,77 @@ export const getSuggestedName = (name: string): string | undefined => {
   return _.first(imageName.split(/[^a-z0-9-]/));
 };
 
-export enum registryType {
+export enum RegistryType {
   External = 'external',
   Internal = 'internal',
 }
-export enum builderImagesNamespace {
+export enum BuilderImagesNamespace {
   Openshift = 'openshift',
 }
 export const imageRegistryType = {
   External: {
-    value: registryType.External,
+    value: RegistryType.External,
     label: 'Image name from external registry',
   },
   Internal: {
-    value: registryType.Internal,
+    value: RegistryType.Internal,
     label: 'Image name from internal registry',
   },
+};
+
+export const getSortedTags = (imageStream: K8sResourceKind) => {
+  return _.isArray(imageStream.status.tags) && imageStream.status.tags.length
+    ? imageStream.status.tags.sort(({ tag: a }, { tag: b }) => {
+        const v1 = semver.coerce(a);
+        const v2 = semver.coerce(b);
+        if (!v1 && !v2) {
+          return a.localeCompare(b);
+        }
+        if (!v1) {
+          return 1;
+        }
+        if (!v2) {
+          return -1;
+        }
+        return semver.rcompare(v1, v2);
+      })
+    : [];
+};
+export const getImageStreamTags = (imageStreams: K8sResourceKind[], name: string, ns: string) => {
+  const imageStream = _.find(imageStreams, (img) => {
+    return img.metadata.name === name && img.metadata.namespace === ns;
+  });
+  const sortedTags =
+    name && imageStream && !_.isEmpty(imageStream) ? getSortedTags(imageStream) : [];
+  return sortedTags.reduce((tags, { tag }) => {
+    tags[tag] = tag;
+    return tags;
+  }, {});
+};
+
+export const getImageStreamByNamespace = (imageStreams: K8sResourceKind[], ns: string) => {
+  const imageStreamsList = {};
+  const isBuilderImageNamespace = ns === BuilderImagesNamespace.Openshift;
+  const imgStreams = isBuilderImageNamespace
+    ? (normalizeBuilderImages(imageStreams) as NormalizedBuilderImages)
+    : (imageStreams as K8sResourceKind[]);
+  _.each(imgStreams, (img: BuilderImage | K8sResourceKind) => {
+    const { name, namespace } = isBuilderImageNamespace
+      ? (img as BuilderImage).obj.metadata
+      : (img as K8sResourceKind).metadata;
+    if (namespace === ns) {
+      imageStreamsList[name] = name;
+    }
+  });
+  return imageStreamsList;
+};
+
+export const getProjectResource = (): FirehoseResource[] => {
+  return [
+    {
+      isList: true,
+      kind: ProjectModel.kind,
+      prop: ProjectModel.id,
+    },
+  ];
 };

@@ -42,6 +42,7 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, 
       image: '',
       tag: '',
       namespace: '',
+      grantAccess: true,
     },
     isi: {
       name: '',
