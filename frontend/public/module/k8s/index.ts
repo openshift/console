@@ -559,6 +559,7 @@ export type MachineSpec = {
 export type MachineKind = {
   spec: MachineSpec;
   status?: {
+    phase?: string;
     addresses: {
       address?: string;
       type: string;

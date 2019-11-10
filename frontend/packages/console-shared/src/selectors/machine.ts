@@ -10,6 +10,9 @@ import { getName } from './common';
 export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string =>
   _.get(obj, ['metadata', 'labels', 'machine.openshift.io/cluster-api-machine-role']);
 
+export const getMachineInstanceType = (obj: MachineKind): string =>
+  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/instance-type']);
+
 export const getMachineRegion = (obj: MachineKind): string =>
   _.get(obj, ['metadata', 'labels', 'machine.openshift.io/region']);
 

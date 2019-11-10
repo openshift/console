@@ -3,11 +3,13 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import {
+  getMachineAddresses,
+  getMachineInstanceType,
   getMachineNodeName,
   getMachineRegion,
   getMachineRole,
   getMachineZone,
-  getMachineAddresses,
+  Status,
 } from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
@@ -15,6 +17,7 @@ import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
+  DetailsItem,
   Kebab,
   NodeLink,
   ResourceKebab,
@@ -30,9 +33,10 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...comm
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
@@ -59,20 +63,26 @@ const MachineTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
+      title: 'Phase',
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
       title: 'Region',
       sortField: "metadata.labels['machine.openshift.io/region']",
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[4] },
     },
     {
       title: 'Availability Zone',
       sortField: "metadata.labels['machine.openshift.io/zone']",
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[5] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
@@ -80,6 +90,7 @@ MachineTableHeader.displayName = 'MachineTableHeader';
 
 const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, style }) => {
   const nodeName = getMachineNodeName(obj);
+  const status = obj.status ? obj.status.phase : null;
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   return (
@@ -98,9 +109,12 @@ const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, styl
       <TableData className={tableColumnClasses[2]}>
         {nodeName ? <NodeLink name={nodeName} /> : '-'}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>{region || '-'}</TableData>
-      <TableData className={tableColumnClasses[4]}>{zone || '-'}</TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[3]}>
+        <Status status={status} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>{region || '-'}</TableData>
+      <TableData className={tableColumnClasses[5]}>{zone || '-'}</TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
     </TableRow>
@@ -117,44 +131,59 @@ type MachineTableRowProps = {
 const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
+  const instanceType = getMachineInstanceType(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   return (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Machine Overview" />
-        <ResourceSummary resource={obj}>
-          {nodeName && (
-            <>
-              <dt>Node</dt>
+        <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} />
+            </div>
+            <div className="col-sm-6">
+              <DetailsItem label="Status" obj={obj} path="status.phase" />
+              {nodeName && (
+                <>
+                  <dt>Node</dt>
+                  <dd>
+                    <NodeLink name={nodeName} />
+                  </dd>
+                </>
+              )}
+              {machineRole && (
+                <>
+                  <dt>Machine Role</dt>
+                  <dd>{machineRole}</dd>
+                </>
+              )}
+              {instanceType && (
+                <>
+                  <dt>Instance Type</dt>
+                  <dd>{instanceType}</dd>
+                </>
+              )}
+              {region && (
+                <>
+                  <dt>Region</dt>
+                  <dd>{region}</dd>
+                </>
+              )}
+              {zone && (
+                <>
+                  <dt>Availability Zone</dt>
+                  <dd>{zone}</dd>
+                </>
+              )}
+              <dt>Machine Addresses</dt>
               <dd>
-                <NodeLink name={nodeName} />
+                <NodeIPList ips={getMachineAddresses(obj)} expand />
               </dd>
-            </>
-          )}
-          {machineRole && (
-            <>
-              <dt>Machine Role</dt>
-              <dd>{machineRole}</dd>
-            </>
-          )}
-          {region && (
-            <>
-              <dt>Region</dt>
-              <dd>{region}</dd>
-            </>
-          )}
-          {zone && (
-            <>
-              <dt>Availability Zone</dt>
-              <dd>{zone}</dd>
-            </>
-          )}
-          <dt>Machine Addresses</dt>
-          <dd>
-            <NodeIPList ips={getMachineAddresses(obj)} expand />
-          </dd>
-        </ResourceSummary>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Conditions" />
