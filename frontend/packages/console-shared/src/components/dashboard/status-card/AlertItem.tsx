@@ -28,7 +28,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
 }) => {
   return (
     <div className="co-status-card__alert-item">
-      <div className="co-dashboard-icon">
+      <div className="co-status-card__alert-item-icon co-dashboard-icon">
         <Icon />
       </div>
       <div className="co-status-card__alert-item-text">
