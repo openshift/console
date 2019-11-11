@@ -70,6 +70,7 @@ class DeleteApplicationModal extends PromiseComponent<
   DeleteApplicationModalState
 > {
   private handleSubmit = (values, actions) => {
+    actions.setSubmitting(true);
     const { onSubmit, close } = this.props;
     onSubmit &&
       this.handlePromise(onSubmit(values))

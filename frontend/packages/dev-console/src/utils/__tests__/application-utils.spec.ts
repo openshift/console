@@ -9,8 +9,6 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import {
-  RevisionModel,
-  ConfigurationModel,
   ServiceModel as KnativeServiceModel,
   RouteModel as KnativeRouteModel,
 } from '@console/knative-plugin';
@@ -80,9 +78,7 @@ describe('ApplicationUtils ', () => {
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(7);
-        expect(removedModels).toContain(ConfigurationModel);
-        expect(removedModels).toContain(RevisionModel);
+        expect(spy.calls.count()).toEqual(5);
         expect(removedModels).toContain(KnativeServiceModel);
         expect(removedModels).toContain(KnativeRouteModel);
         expect(removedModels).toContain(BuildConfigModel);
