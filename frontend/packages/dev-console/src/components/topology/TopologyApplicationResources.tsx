@@ -41,7 +41,6 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
         <ApplicationGroupResource
           key={`${group}-${key}`}
           title={modelFor(key) ? modelFor(key).label : key}
-          kind={key}
           resourcesData={resourcesData[key]}
           group={group}
         />
