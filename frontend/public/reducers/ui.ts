@@ -36,7 +36,7 @@ export function getDefaultPerspective() {
   return activePerspective || undefined;
 }
 
-const newQueryBrowserQuery = () =>
+const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
   ImmutableMap({
     id: _.uniqueId('query-browser-query'),
     isEnabled: true,
@@ -204,12 +204,13 @@ export default (state: UIState, action: UIAction): UIState => {
           : oldText + newText;
       return state.setIn(['queryBrowser', 'queries', index, 'text'], text);
     }
-    case ActionType.QueryBrowserPatchQuery:
-      return state.mergeIn(
-        ['queryBrowser', 'queries', action.payload.index],
-        ImmutableMap(action.payload.patch),
-      );
-
+    case ActionType.QueryBrowserPatchQuery: {
+      const { index, patch } = action.payload;
+      const query = state.hasIn(['queryBrowser', 'queries', index])
+        ? ImmutableMap(patch)
+        : newQueryBrowserQuery().merge(patch);
+      return state.mergeIn(['queryBrowser', 'queries', index], query);
+    }
     case ActionType.QueryBrowserRunQueries: {
       const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
         const isEnabled = q.get('isEnabled');

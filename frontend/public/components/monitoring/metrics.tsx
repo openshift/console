@@ -829,6 +829,7 @@ const Query_: React.FC<QueryProps> = ({
             aria-label={switchLabel}
             id={id}
             isChecked={isEnabled}
+            key={id}
             onChange={toggleIsEnabled}
           />
         </div>
@@ -949,17 +950,15 @@ const RunQueriesButton = connect(
   { runQueries: UIActions.queryBrowserRunQueries },
 )(RunQueriesButton_);
 
-const QueriesList_ = ({ ids, namespace }) => (
+const QueriesList_ = ({ count, namespace }) => (
   <>
-    {_.map(ids, (id, i) => (
-      <Query index={i} key={id} namespace={namespace} />
+    {_.range(count).map((i) => (
+      <Query index={i} key={i} namespace={namespace} />
     ))}
   </>
 );
 const QueriesList = connect(({ UI }: RootState) => ({
-  ids: UI.getIn(['queryBrowser', 'queries'])
-    .map((q) => q.get('id'))
-    .toArray(),
+  count: UI.getIn(['queryBrowser', 'queries']).size,
 }))(QueriesList_);
 
 const TechPreview = () => (
