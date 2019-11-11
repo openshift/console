@@ -75,6 +75,9 @@
 
 .query-browser__pagination {
   margin-top: 15px;
+  ul {
+    list-style: none;
+  }
 }
 
 .query-browser__query {
