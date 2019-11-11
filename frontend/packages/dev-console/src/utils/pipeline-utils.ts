@@ -299,8 +299,11 @@ export const constructCurrentPipeline = (
 };
 
 export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineRunParam[] => {
-  return pipelineParams.map((param) => ({
-    name: param.name,
-    value: param.default,
-  }));
+  return (
+    pipelineParams &&
+    pipelineParams.map((param) => ({
+      name: param.name,
+      value: param.default,
+    }))
+  );
 };

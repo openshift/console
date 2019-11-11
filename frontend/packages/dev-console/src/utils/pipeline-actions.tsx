@@ -39,7 +39,7 @@ export const getPipelineRunData = (
   const pipelineName = pipeline ? pipeline.metadata.name : latestRun.spec.pipelineRef.name;
 
   const latestRunParams = _.get(latestRun, 'spec.params');
-  const pipelineParams = _.get(pipeline, 'spec.params', []);
+  const pipelineParams = _.get(pipeline, 'spec.params');
 
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
 
@@ -57,11 +57,11 @@ export const getPipelineRunData = (
             },
     },
     spec: {
-      ...(params && { params }),
       pipelineRef: {
         name: pipelineName,
       },
       resources,
+      ...(params && { params }),
       serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
     },
   };
