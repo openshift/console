@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { connect, Dispatch } from 'react-redux';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
@@ -10,9 +11,15 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import './top-consumer-popover.scss';
-import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
+import { featureReducerName } from '@console/internal/reducers/features';
+import { FLAGS } from '@console/internal/const';
+import { RootState } from '@console/internal/redux';
+import * as UIActions from '@console/internal/actions/ui';
+import { getActivePerspective } from '@console/internal/reducers/ui';
 import { getName, getNamespace } from '../../..';
+import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
+
+import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
   ({ current, title, humanize, consumers, namespace }) => {
@@ -44,7 +51,9 @@ const getResourceToWatch = (model: K8sKind, namespace: string) => ({
   prop: 'k8sResources',
 });
 
-const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = React.memo((props) => {
+const PopoverBodyInternal: React.FC<
+  DashboardItemProps & PopoverBodyProps & PopoverReduxProps
+> = React.memo((props) => {
   const {
     humanize,
     consumers,
@@ -56,6 +65,9 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
     stopWatchK8sResource,
     resources,
     isOpen,
+    canAccessMonitoring,
+    setActivePerspective,
+    activePerspective,
   } = props;
   const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
   const { query, model, metric } = currentConsumer;
@@ -128,6 +140,17 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
     [consumers],
   );
 
+  const monitoringURL =
+    canAccessMonitoring && activePerspective === 'admin'
+      ? `/monitoring/query-browser?${monitoringParams.toString()}`
+      : `/metrics/ns/${namespace}?${monitoringParams.toString()}`;
+
+  const viewMoreAction = React.useCallback(() => {
+    if (!canAccessMonitoring && activePerspective !== 'dev') {
+      setActivePerspective('dev');
+    }
+  }, [canAccessMonitoring, setActivePerspective, activePerspective]);
+
   return (
     <div className="co-utilization-card-popover__body">
       <h4 className="co-utilization-card-popover__title">
@@ -154,7 +177,9 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
           >
             <ConsumerItems items={top5Data} model={model} />
           </ul>
-          <Link to={`/monitoring/query-browser?${monitoringParams.toString()}`}>View more</Link>
+          <Link to={monitoringURL} onClick={viewMoreAction}>
+            View more
+          </Link>
         </>
       ) : (
         <ul className="co-utilization-card-popover__consumer-list">
@@ -169,7 +194,20 @@ const PopoverBodyInternal: React.FC<DashboardItemProps & PopoverBodyProps> = Rea
   );
 });
 
-const PopoverBody = withDashboardResources(PopoverBodyInternal);
+const mapStateToProps = (state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+  canAccessMonitoring:
+    !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  setActivePerspective: (id: string) => dispatch(UIActions.setActivePerspective(id)),
+});
+
+const PopoverBody = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withDashboardResources(PopoverBodyInternal));
 
 const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }) => {
   return items ? (
@@ -197,6 +235,12 @@ const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }
 type ConsumerItemsProps = {
   items?: DataPoint[];
   model?: K8sKind;
+};
+
+type PopoverReduxProps = {
+  activePerspective: string;
+  canAccessMonitoring: boolean;
+  setActivePerspective: (id: string) => void;
 };
 
 type PopoverBodyProps = {
