@@ -4,7 +4,7 @@ export const initialState = {
   namespace: 'openshift-storage',
   bucketClassName: '',
   description: '',
-  tier1Policy: '',
+  tier1Policy: 'Spread',
   tier2Policy: '',
   tier1BackingStore: [],
   tier2BackingStore: [],
