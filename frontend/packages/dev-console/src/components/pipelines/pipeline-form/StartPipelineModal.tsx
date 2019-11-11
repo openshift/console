@@ -48,9 +48,6 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
         },
         params: values.parameters,
         resources: values.resources,
-        trigger: {
-          type: 'manual',
-        },
       },
     };
     k8sCreate(PipelineRunModel, getPipelineRunData(pipeline, pipelineRunData))

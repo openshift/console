@@ -34,14 +34,8 @@ const PipelineRunHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Trigger',
-      sortField: 'spec.trigger.type',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
       title: '',
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
