@@ -5,7 +5,9 @@ import {
   getEventTopologyEdgeItems,
   getTrafficTopologyEdgeItems,
   NodeType,
+  filterRevisionsBaseOnTrafficStatus,
 } from '../knative-topology-utils';
+import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -64,5 +66,24 @@ describe('knative topology utils', () => {
     expect(knRevisionsEdge[0].source).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
     expect(knRevisionsEdge[0].target).toBe('02c34a0e-9638-11e9-b134-06a61d886b62');
     expect(knRevisionsEdge[0].type).toBe('revision-traffic');
+  });
+
+  it('should only return revisions which are in the service traffic status', () => {
+    expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, mockRevisions)).toHaveLength(1);
+    const mockRev = {
+      apiVersion: '',
+      kind: 'Revision',
+      metadata: { name: 'rev-4', namespace: '' },
+    };
+    const mockTraffic = { revisionName: 'rev-4', percent: 0, tag: 'foo', latestRevision: false };
+    mockServiceData.status.traffic.push(mockTraffic);
+    mockRevisions.push(mockRev);
+    expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, mockRevisions)).toHaveLength(2);
+  });
+
+  it('should return undefined if revisions or traffic status is not defined', () => {
+    const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
+    expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
+    expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, undefined)).toBeUndefined();
   });
 });
