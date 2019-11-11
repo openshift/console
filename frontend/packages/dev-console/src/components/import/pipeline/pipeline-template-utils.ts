@@ -40,13 +40,14 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
     labels: template.metadata.labels,
   };
 
-  template.spec.params = template.spec.params.map((param) => {
-    if (param.name === 'APP_NAME') {
-      param.default = name;
-    }
-
-    return param;
-  });
+  template.spec.params =
+    template.spec.params &&
+    template.spec.params.map((param) => {
+      if (param.name === 'APP_NAME') {
+        param.default = name;
+      }
+      return param;
+    });
 
   try {
     await createGitResource(git.url, namespace, git.ref);
