@@ -16,11 +16,11 @@ type NodeGraphsProps = {
 };
 
 const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
-  const instanceQuery = `{instance='${node.metadata.name}'}`;
+  const instanceQuery = `{instance="${node.metadata.name}"}`;
   const nodeIp = _.find(getNodeAddresses(node), {
     type: 'InternalIP',
   });
-  const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
+  const ipQuery = nodeIp && `{instance=~"${nodeIp.address}:.*"}`;
 
   return (
     <>
@@ -30,7 +30,7 @@ const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
             title="Memory Usage"
             humanize={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
-            query={`node_memory_Active_bytes${instanceQuery}`}
+            query={`node_memory_MemTotal_bytes${instanceQuery} - node_memory_MemAvailable_bytes${instanceQuery}`}
           />
         </div>
         <div className="col-md-12 col-lg-4">

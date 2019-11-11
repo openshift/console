@@ -15,18 +15,12 @@ import {
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import {
-  humanizeBinaryBytes,
-  humanizeCpuCores,
-  humanizeSeconds,
-  secondsToNanoSeconds,
-} from '../../../utils/units';
+import { humanizeBinaryBytes, humanizeCpuCores } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
-import { Humanize } from '../../../utils/types';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
@@ -102,8 +96,6 @@ const getQueries = (flags: FlagsObject) => {
     });
   return _.defaults(pluginQueries, utilizationQueries);
 };
-
-const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   watchPrometheus,
@@ -192,7 +184,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="CPU"
         current={current}
         consumers={cpuQueriesPopup}
-        humanize={humanizeFromSeconds}
+        humanize={humanizeCpuCores}
       />
     ),
     [],
@@ -216,7 +208,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="Disk Usage"
         current={current}
         consumers={storageQueriesPopup}
-        humanize={humanizeFromSeconds}
+        humanize={humanizeBinaryBytes}
       />
     ),
     [],

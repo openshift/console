@@ -22,10 +22,10 @@ const queries = {
 
 const top25Queries = {
   [ProjectQueries.PODS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="",namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
+    `topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!="",namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
   ),
   [ProjectQueries.PODS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!="",namespace='<%= project %>'}) BY (pod, namespace)))`,
+    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
   ),
 };
 

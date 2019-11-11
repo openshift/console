@@ -23,22 +23,23 @@ export enum OverviewQuery {
 
 const top25Queries = {
   [OverviewQuery.PODS_BY_CPU]:
-    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (pod, namespace)))',
+    'topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!=""}[5m])) BY (pod, namespace)))',
   [OverviewQuery.PODS_BY_MEMORY]:
-    'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (pod, namespace)))',
+    'topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!=""}[5m])) BY (pod, namespace)))',
   [OverviewQuery.PODS_BY_STORAGE]:
-    'topk(25, sort_desc(avg by (pod, namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m]))))',
-  [OverviewQuery.NODES_BY_CPU]: 'topk(5,sort_desc(instance:node_cpu_utilisation:rate1m))',
+    'topk(25, sort_desc(sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!=""}[5m])) BY (pod, namespace)))',
+  [OverviewQuery.NODES_BY_CPU]:
+    'topk(25, sort_desc(avg_over_time(instance:node_cpu:rate:sum[5m])))',
   [OverviewQuery.NODES_BY_MEMORY]:
-    'topk(25,sort_desc(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"}))',
+    'topk(25, sort_desc(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes))',
   [OverviewQuery.NODES_BY_STORAGE]:
-    'topk(25, sort_desc(avg by (instance) (instance_device:node_disk_io_time_seconds:rate1m)))',
+    'topk(25, sort_desc(avg_over_time(instance:node_filesystem_usage:sum[5m])))',
   [OverviewQuery.PROJECTS_BY_CPU]:
-    'topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (namespace)))',
+    'topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!=""}[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_MEMORY]:
-    'topk(25, sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (namespace)))',
+    'topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!=""}[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_STORAGE]:
-    'topk(25, sort_desc(avg by (namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m]))))',
+    'topk(25, sort_desc(sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!=""}[5m])) BY (namespace)))',
 };
 
 const overviewQueries = {
@@ -52,32 +53,6 @@ const overviewQueries = {
   [OverviewQuery.STORAGE_UTILIZATION]:
     '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
-  [OverviewQuery.PODS_BY_CPU]:
-    'sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (pod, namespace))',
-  [OverviewQuery.PODS_BY_MEMORY]:
-    'sort_desc(sum(container_memory_working_set_bytes{container="",pod!=""}) BY (pod, namespace))',
-  [OverviewQuery.PODS_BY_STORAGE]:
-    'sort_desc(avg by (pod, namespace)(irate(container_fs_io_time_seconds_total{container="POD", pod!=""}[1m])))',
-  [OverviewQuery.PODS_BY_NETWORK]:
-    'sort_desc(sum by (pod, namespace)(irate(container_network_receive_bytes_total{container="POD", pod!=""}[1m])' +
-    ' + irate(container_network_transmit_bytes_total{container="POD", pod!=""}[1m])))',
-  [OverviewQuery.NODES_BY_CPU]: 'sort_desc(instance:node_cpu_utilisation:rate1m)',
-  [OverviewQuery.NODES_BY_MEMORY]:
-    'sort_desc(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"})',
-  [OverviewQuery.NODES_BY_STORAGE]:
-    'sort_desc(avg by (instance) (instance_device:node_disk_io_time_seconds:rate1m))',
-  [OverviewQuery.NODES_BY_NETWORK]:
-    'sort_desc(sum by (instance) (instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m))',
-};
-
-export const capacityQueries = {
-  [OverviewQuery.MEMORY_TOTAL]: overviewQueries[OverviewQuery.MEMORY_TOTAL],
-  [OverviewQuery.MEMORY_UTILIZATION]: overviewQueries[OverviewQuery.MEMORY_UTILIZATION],
-  [OverviewQuery.NETWORK_TOTAL]: overviewQueries[OverviewQuery.NETWORK_TOTAL],
-  [OverviewQuery.NETWORK_UTILIZATION]: overviewQueries[OverviewQuery.NETWORK_UTILIZATION],
-  [OverviewQuery.CPU_UTILIZATION]: overviewQueries[OverviewQuery.CPU_UTILIZATION],
-  [OverviewQuery.STORAGE_UTILIZATION]: overviewQueries[OverviewQuery.STORAGE_UTILIZATION],
-  [OverviewQuery.STORAGE_TOTAL]: overviewQueries[OverviewQuery.STORAGE_TOTAL],
 };
 
 export const utilizationQueries = {
@@ -93,20 +68,6 @@ export const utilizationQueries = {
     utilization: overviewQueries[OverviewQuery.STORAGE_UTILIZATION],
     total: overviewQueries[OverviewQuery.STORAGE_TOTAL],
   },
-};
-
-export const topConsumersQueries = {
-  [OverviewQuery.PODS_BY_CPU]: overviewQueries[OverviewQuery.PODS_BY_CPU],
-  [OverviewQuery.PODS_BY_MEMORY]: overviewQueries[OverviewQuery.PODS_BY_MEMORY],
-  [OverviewQuery.PODS_BY_STORAGE]: overviewQueries[OverviewQuery.PODS_BY_STORAGE],
-  [OverviewQuery.PODS_BY_NETWORK]: overviewQueries[OverviewQuery.PODS_BY_NETWORK],
-  [OverviewQuery.NODES_BY_CPU]: overviewQueries[OverviewQuery.NODES_BY_CPU],
-  [OverviewQuery.NODES_BY_MEMORY]: overviewQueries[OverviewQuery.NODES_BY_MEMORY],
-  [OverviewQuery.NODES_BY_STORAGE]: overviewQueries[OverviewQuery.NODES_BY_STORAGE],
-  [OverviewQuery.NODES_BY_NETWORK]: overviewQueries[OverviewQuery.NODES_BY_NETWORK],
-  [OverviewQuery.PROJECTS_BY_CPU]: overviewQueries[OverviewQuery.PROJECTS_BY_CPU],
-  [OverviewQuery.PROJECTS_BY_MEMORY]: overviewQueries[OverviewQuery.PROJECTS_BY_MEMORY],
-  [OverviewQuery.PROJECTS_BY_STORAGE]: overviewQueries[OverviewQuery.PROJECTS_BY_STORAGE],
 };
 
 export const top25ConsumerQueries = {
