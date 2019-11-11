@@ -3,9 +3,10 @@ import { browser, $, $$, element, ExpectedConditions as until, by } from 'protra
 import * as _ from 'lodash';
 import {
   appHost,
-  testName,
-  checkLogs,
   checkErrors,
+  checkLogs,
+  retry,
+  testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
@@ -175,13 +176,13 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays new `Prometheus` that was created from YAML editor', async () => {
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName('example')));
+    await browser.wait(until.visibilityOf(operatorView.operandLink('example')));
 
-    expect(crudView.rowForName('example').getText()).toContain('Prometheus');
+    expect(operatorView.operandKind('Prometheus').isDisplayed()).toBe(true);
   });
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async () => {
-    await operatorView.operandLink('example').click();
+    await retry(() => operatorView.operandLink('example').click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);

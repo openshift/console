@@ -1,5 +1,6 @@
 import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
+import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
 import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
@@ -247,4 +248,21 @@ export const create = (obj) => {
   writeFileSync(filename, JSON.stringify(obj));
   execSync(`kubectl create -f ${filename}`);
   execSync(`rm ${filename}`);
+};
+
+// Retry an action to avoid StaleElementReferenceErrors.
+export const retry = async <T>(
+  fn: () => webdriverpromise.Promise<T>,
+  retries = 3,
+  interval = 1000,
+): webdriverpromise.Promise<T> => {
+  try {
+    return await fn();
+  } catch (e) {
+    if (!retries) {
+      throw e;
+    }
+    await new Promise((r) => setTimeout(r, interval));
+    return retry(fn, retries - 1, interval * 2);
+  }
 };

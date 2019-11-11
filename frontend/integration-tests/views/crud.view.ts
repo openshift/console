@@ -27,6 +27,9 @@ export const resourceRowsPresent = () =>
 
 export const resourceRows = $$('[data-test-rows="resource-row"]');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
+
+// FIXME: Avoid this helper since it can result in StaleElementReferenceErrors.
+// Prefer to use a `data-test-` attribute on the row.
 export const rowForName = (name: string) =>
   resourceRows
     .filter((row) =>
