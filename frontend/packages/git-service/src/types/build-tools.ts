@@ -52,6 +52,14 @@ export const NodeJS: BuildTool = {
   expectedFiles: ['app.json', 'package.json', 'gulpfile.js', 'Gruntfile.js'],
 };
 
+export const ModernWebApp: BuildTool = {
+  name: 'Modern Web App',
+  type: 'modern-webapp',
+  language: 'javascript',
+  expectedRegexps: RegExp([`app.json`, `package.json`, `gulpfile.js`, `Gruntfile.js`].join('|')),
+  expectedFiles: ['app.json', 'package.json', 'gulpfile.js', 'Gruntfile.js'],
+};
+
 export const PHP: BuildTool = {
   name: 'PHP',
   type: 'php',
@@ -84,4 +92,24 @@ export const Dotnet: BuildTool = {
   expectedFiles: ['project.json', 'app.csproj'],
 };
 
-export const BuildTools = [Dotnet, Golang, Gradle, Maven, NodeJS, Perl, PHP, Python, Ruby];
+export const BuildTools = [
+  Dotnet,
+  Golang,
+  Gradle,
+  Maven,
+  NodeJS,
+  ModernWebApp,
+  Perl,
+  PHP,
+  Python,
+  Ruby,
+];
+
+export const WebAppDependencies = [
+  'react',
+  'angular',
+  '@angular/core',
+  'vue',
+  'knockout',
+  'knockback',
+];

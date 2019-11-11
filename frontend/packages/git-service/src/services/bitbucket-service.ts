@@ -128,4 +128,19 @@ export class BitbucketService extends BaseService {
       return null;
     }
   };
+
+  getPackageJsonContent = async (): Promise<string | null> => {
+    try {
+      const resp = await this.client.repositories.readSrc({
+        username: this.metadata.owner,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        repo_slug: this.metadata.repoName,
+        path: 'package.json',
+        node: this.metadata.defaultBranch,
+      });
+      return resp.data as string;
+    } catch (e) {
+      return null;
+    }
+  };
 }

@@ -1,4 +1,4 @@
-import { detectBuildType } from '../utils';
+import { detectBuildType, isModernWebApp } from '../utils';
 import {
   BranchList,
   BuildType,
@@ -37,12 +37,19 @@ export abstract class BaseService {
   // Checks if dockerfile exist in the repo and returns dockerfile content
   abstract async getDockerfileContent(): Promise<string>;
 
+  abstract async getPackageJsonContent(): Promise<string>;
+
   // Detect build types for given gitsource, It runs regular expressions on file list
   // and returns list of build types matched.
   async detectBuildType(): Promise<BuildType[]> {
     try {
       const fileList = await this.getRepoFileList();
-      return detectBuildType(fileList.files);
+      let isWebApp = false;
+      if (fileList.files.includes('package.json')) {
+        const packageJsonContent = await this.getPackageJsonContent();
+        isWebApp = isModernWebApp(packageJsonContent);
+      }
+      return detectBuildType(fileList.files, isWebApp);
     } catch (e) {
       return [];
     }

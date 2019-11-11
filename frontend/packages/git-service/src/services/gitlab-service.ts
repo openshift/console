@@ -139,4 +139,17 @@ export class GitlabService extends BaseService {
       return null;
     }
   };
+
+  getPackageJsonContent = async (): Promise<string | null> => {
+    try {
+      const projectID = await this.getProjectId();
+      return await this.client.RepositoryFiles.showRaw(
+        projectID,
+        'package.json',
+        this.metadata.defaultBranch,
+      );
+    } catch (e) {
+      return null;
+    }
+  };
 }
