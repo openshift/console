@@ -121,6 +121,7 @@ export const deleteRow = (kind: string) => (name: string) =>
   });
 
 export const rowFilters = $$('.row-filter__box');
+export const rowFiltersPresent = () => browser.wait(until.presenceOf($('.row-filter__box')));
 export const rowFilterFor = (name: string) =>
   rowFilters.filter((el) => el.getText().then((text) => text.includes(name))).first();
 export const activeRowFilters = $$('.row-filter__box--active');
