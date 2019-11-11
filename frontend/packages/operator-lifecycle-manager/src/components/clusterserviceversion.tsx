@@ -24,6 +24,7 @@ import {
   TableData,
   MultiListPage,
 } from '@console/internal/components/factory';
+import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { withFallback } from '@console/internal/components/utils/error-boundary';
 import {
   modelFor,
@@ -431,26 +432,32 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
 
 const NoOperatorsMatchFilterMsg = () => <MsgBox title="No Operators Found" />;
 
-const noDataDetail = (
-  <>
-    <div>
-      No Operators are available for project{' '}
-      <span className="co-clusterserviceversion-empty__state__namespace">
-        {UIActions.getActiveNamespace()}
-      </span>
-    </div>
-    <div>
-      Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
-    </div>
-  </>
-);
-const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
-
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   ...rest
 }) => {
+  const ns = UIActions.getActiveNamespace();
+  const noDataDetail = (
+    <>
+      <div>
+        No Operators are available
+        {ns !== ALL_NAMESPACES_KEY && (
+          <>
+            {' '}
+            for project{' '}
+            <span className="co-clusterserviceversion-empty__state__namespace">{ns}</span>
+          </>
+        )}
+        .
+      </div>
+      <div>
+        Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
+      </div>
+    </>
+  );
+  const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
+
   return (
     <Table
       {...rest}
