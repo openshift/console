@@ -43,7 +43,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       section: 'Compute',
-      mergeAfter: 'Machine Autoscalers',
+      mergeAfter: 'Machine Health Checks',
       componentProps: {
         name: 'Bare Metal Hosts',
         resource: referenceForModel(BareMetalHostModel),
