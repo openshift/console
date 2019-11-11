@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getNamespace, getName } from '@console/shared/src/selectors';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../models';
 import { VMKind, VMLikeEntityKind } from '../../types';
@@ -11,7 +12,9 @@ import {
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
 
-export const getVMTemplate = (vm: VMLikeEntityKind): { name: string; namespace: string } => {
+export const getVMTemplateNamespacedName = (
+  vm: VMLikeEntityKind,
+): { name: string; namespace: string } => {
   if (!vm || !vm.metadata || !vm.metadata.labels) {
     return null;
   }
@@ -19,6 +22,17 @@ export const getVMTemplate = (vm: VMLikeEntityKind): { name: string; namespace: 
   const name = vm.metadata.labels['vm.kubevirt.io/template'];
   const namespace = vm.metadata.labels['vm.kubevirt.io/template-namespace'];
   return name && namespace ? { name, namespace } : null;
+};
+
+const getVMTemplate = (vm: VMLikeEntityKind, templates: TemplateKind[]): TemplateKind => {
+  const namespacedName = getVMTemplateNamespacedName(vm);
+  return namespacedName
+    ? templates.find(
+        (template) =>
+          getName(template) === namespacedName.name &&
+          getNamespace(template) === namespacedName.namespace,
+      )
+    : undefined;
 };
 
 export const selectVM = (vmTemplate: TemplateKind): VMKind =>
@@ -89,7 +103,7 @@ export const getTemplateForFlavor = (templates: TemplateKind[], vm: VMKind, flav
 };
 
 export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
-  const vmTemplate = getVMTemplate(vm);
+  const vmTemplate = getVMTemplate(vm, templates);
 
   const flavors = {
     // always listed

@@ -11,7 +11,7 @@ import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms } from '../../selectors/vm/selectors';
-import { getVMTemplate } from '../../selectors/vm-template/selectors';
+import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -45,7 +45,7 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
 };
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpdateVM }) => {
-  const template = getVMTemplate(vm);
+  const templateNamespacedName = getVMTemplateNamespacedName(vm);
 
   const id = getBasicID(vm);
   const description = getDescription(vm);
@@ -68,8 +68,12 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
         {os}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Template" idValue={prefixedID(id, 'template')} isNotAvail={!template}>
-        {template && <VMTemplateLink template={template} />}
+      <VMDetailsItem
+        title="Template"
+        idValue={prefixedID(id, 'template')}
+        isNotAvail={!templateNamespacedName}
+      >
+        {templateNamespacedName && <VMTemplateLink {...templateNamespacedName} />}
       </VMDetailsItem>
     </ResourceSummary>
   );
