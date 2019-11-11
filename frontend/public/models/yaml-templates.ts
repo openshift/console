@@ -348,7 +348,7 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: slow
   nfs:
     path: /tmp
