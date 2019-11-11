@@ -114,6 +114,7 @@ class App extends React.PureComponent {
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
           sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} />}
+          mainContainerId="content-scrollable"
         >
           <AppContents />
         </Page>

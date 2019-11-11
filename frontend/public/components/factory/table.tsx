@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { EmptyBox, StatusBox } from '../utils';
 import {
   getJobTypeAndCompletions,
   K8sResourceKind,
@@ -403,11 +403,11 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
     }
 
     render() {
-      const {scrollElement, Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData, gridBreakPoint = TableGridBreakpoint.none} = this.props;
+      const {Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, customData, gridBreakPoint = TableGridBreakpoint.none} = this.props;
       const {sortBy, columns} = this.state;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const ariaRowCount = componentProps.data && componentProps.data.length;
-      const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
+      const scrollNode = document.getElementsByClassName('pf-c-page__main-section')[0];
       const renderVirtualizedTable = (scrollContainer) => (
         <WindowScroller scrollElement={scrollContainer}>
           {({height, isScrolling, registerChild, onChildScroll, scrollTop}) => (
@@ -450,12 +450,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TablePro
               <TableBody />
             )}
           </PfTable>
-          {virtualize &&
-            (scrollNode ? (
-              renderVirtualizedTable(scrollNode)
-            ) : (
-              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-            ))}
+          {virtualize && renderVirtualizedTable(scrollNode)}
         </TableWrapper>
       );
       return <div className="co-m-table-grid co-m-table-grid--bordered">

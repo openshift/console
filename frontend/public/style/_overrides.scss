@@ -163,6 +163,8 @@ kbd {
   &__main {
     // `z-index: auto` is required for fullscreen terminal
     --pf-c-page__main--ZIndex: auto;
+    // make background white when dropdown at bottom of virtualized list is open
+    background-color: var(--pf-c-page__main-section--m-light--BackgroundColor);
     bottom: 0;
     position: absolute;
     left: 0;
