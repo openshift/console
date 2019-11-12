@@ -62,8 +62,8 @@ const PodRing: React.FC<PodRingProps> = ({
     handleScaling(clickCount + operation);
   };
 
-  const isKnative = _.get(obj, 'metadata.ownerReferences[0].kind') === 'Revision';
-  const isScalingAllowed = !isKnative && editable && enableScaling;
+  const isKnativeRevision = obj.kind === 'Revision';
+  const isScalingAllowed = !isKnativeRevision && editable && enableScaling;
   const resourceObj = rc || obj;
 
   return (
