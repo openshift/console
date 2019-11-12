@@ -31,9 +31,9 @@ import {
   Humanize,
 } from '@console/internal/components/utils';
 import { MachineKind } from '@console/internal/module/k8s';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getMachineNodeName, getMachineInternalIP } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import { getUtilizationQueries, HostQuery, getTopConsumerQueries } from './queries';
@@ -53,74 +53,66 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const hostName = getMachineNodeName(machine);
   const hostIP = getMachineInternalIP(machine);
 
-  const queries = React.useMemo(
-    () => getUtilizationQueries(hostName, hostIP, UTILIZATION_QUERY_HOUR_MAP[duration]),
-    [hostName, hostIP, duration],
-  );
+  const queries = React.useMemo(() => getUtilizationQueries(hostName, hostIP), [hostName, hostIP]);
 
   React.useEffect(() => {
     if (machine) {
-      Object.keys(queries).forEach((key) => watchPrometheus(queries[key]));
+      Object.keys(queries).forEach((key) => {
+        watchPrometheus(queries[key].utilization, null, UTILIZATION_QUERY_HOUR_MAP[duration]);
+        if (queries[key].total) {
+          watchPrometheus(queries[key].total);
+        }
+      });
       return () => {
-        Object.keys(queries).forEach((key) => stopWatchPrometheusQuery(queries[key]));
+        Object.keys(queries).forEach((key) => {
+          stopWatchPrometheusQuery(queries[key].utilization, UTILIZATION_QUERY_HOUR_MAP[duration]);
+          if (queries[key].total) {
+            stopWatchPrometheusQuery(queries[key].total);
+          }
+        });
       };
     }
     return undefined;
-  }, [watchPrometheus, stopWatchPrometheusQuery, queries, machine]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, queries, machine, duration]);
 
-  const cpuUtilization = prometheusResults.getIn([
-    queries[HostQuery.CPU_UTILIZATION],
-    'data',
-  ]) as PrometheusResponse;
-  const cpuUtilizationError = prometheusResults.getIn([
-    queries[HostQuery.CPU_UTILIZATION],
-    'loadError',
-  ]);
-  const memoryUtilization = prometheusResults.getIn([
-    queries[HostQuery.MEMORY_UTILIZATION],
-    'data',
-  ]) as PrometheusResponse;
-  const memoryUtilizationError = prometheusResults.getIn([
-    queries[HostQuery.MEMORY_UTILIZATION],
-    'loadError',
-  ]);
-  const memoryTotal = prometheusResults.getIn([queries[HostQuery.MEMORY_TOTAL], 'data']);
-  const storageUtilization = prometheusResults.getIn([
-    queries[HostQuery.STORAGE_UTILIZATION],
-    'data',
-  ]) as PrometheusResponse;
-  const storageTotal = prometheusResults.getIn([
-    queries[HostQuery.STORAGE_TOTAL],
-    'data',
-  ]) as PrometheusResponse;
-  const storageUtilizationError = prometheusResults.getIn([
-    queries[HostQuery.STORAGE_UTILIZATION],
-    'loadError',
-  ]);
-  const networkInUtilization = prometheusResults.getIn([
-    queries[HostQuery.NETWORK_IN_UTILIZATION],
-    'data',
-  ]) as PrometheusResponse;
-  const networkInUtilizationError = prometheusResults.getIn([
-    queries[HostQuery.NETWORK_IN_UTILIZATION],
-    'loadError',
-  ]);
-  const networkOutUtilization = prometheusResults.getIn([
-    queries[HostQuery.NETWORK_OUT_UTILIZATION],
-    'data',
-  ]) as PrometheusResponse;
-  const networkOutUtilizationError = prometheusResults.getIn([
-    queries[HostQuery.NETWORK_OUT_UTILIZATION],
-    'loadError',
-  ]);
-  const numberOfPods = prometheusResults.getIn([
-    queries[HostQuery.NUMBER_OF_PODS],
-    'data',
-  ]) as PrometheusResponse;
-  const numberOfPodsError = prometheusResults.getIn([
-    queries[HostQuery.NUMBER_OF_PODS],
-    'loadError',
-  ]);
+  const [cpuUtilization, cpuUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.CPU_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [memoryUtilization, memoryUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.MEMORY_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [memoryTotal, memoryTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.MEMORY_UTILIZATION].total,
+  );
+  const [storageUtilization, storageUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.STORAGE_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [storageTotal, storageTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.STORAGE_UTILIZATION].total,
+  );
+  const [networkInUtilization, networkInUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.NETWORK_IN_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [networkOutUtilization, networkOutUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.NETWORK_OUT_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [numberOfPods, numberOfPodsError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[HostQuery.NUMBER_OF_PODS].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
@@ -230,16 +222,16 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           error={cpuUtilizationError}
           isLoading={!cpuUtilization}
           humanizeValue={humanizeCpuCores}
-          query={queries[HostQuery.CPU_UTILIZATION]}
+          query={queries[HostQuery.CPU_UTILIZATION].utilization}
           TopConsumerPopover={cpuPopover}
         />
         <UtilizationItem
           title="Memory usage"
           data={memoryStats}
-          error={memoryUtilizationError}
-          isLoading={!memoryUtilization}
+          error={memoryUtilizationError || memoryTotalError}
+          isLoading={!memoryUtilization || !memoryTotal}
           humanizeValue={humanizeBinaryBytesWithoutB}
-          query={queries[HostQuery.MEMORY_UTILIZATION]}
+          query={queries[HostQuery.MEMORY_UTILIZATION].utilization}
           max={memoryTotalValue}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
           TopConsumerPopover={memPopover}
@@ -250,7 +242,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           error={numberOfPodsError}
           isLoading={!numberOfPods}
           humanizeValue={(v) => ({ string: `${v}`, value: v as number, unit: '' })}
-          query={queries[HostQuery.NUMBER_OF_PODS]}
+          query={queries[HostQuery.NUMBER_OF_PODS].utilization}
         />
         <UtilizationItem
           title="Network In"
@@ -258,7 +250,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           error={networkInUtilizationError}
           isLoading={!networkInUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
-          query={queries[HostQuery.NETWORK_IN_UTILIZATION]}
+          query={queries[HostQuery.NETWORK_IN_UTILIZATION].utilization}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
@@ -267,16 +259,16 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           error={networkOutUtilizationError}
           isLoading={!networkOutUtilization}
           humanizeValue={humanizeBinaryBytesWithoutB}
-          query={queries[HostQuery.NETWORK_OUT_UTILIZATION]}
+          query={queries[HostQuery.NETWORK_OUT_UTILIZATION].utilization}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
         />
         <UtilizationItem
           title="Filesystem"
           data={storageStats}
-          error={storageUtilizationError}
-          isLoading={!storageUtilization}
+          error={storageUtilizationError || storageTotalError}
+          isLoading={!storageUtilization || !storageTotal}
           humanizeValue={humanizeBinaryBytes}
-          query={queries[HostQuery.STORAGE_UTILIZATION]}
+          query={queries[HostQuery.STORAGE_UTILIZATION].utilization}
           max={storageTotalValue}
           byteDataType={ByteDataTypes.BinaryBytesWithoutB}
           TopConsumerPopover={storagePopover}

@@ -15,13 +15,13 @@ import {
 import { Dropdown } from '../../utils/dropdown';
 import { humanizeCpuCores, humanizeNumber, humanizeBinaryBytes } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
-import { PrometheusResponse } from '../../graphs';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PodModel } from '../../../models';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getPrometheusQueryResponse } from '../../../actions/dashboards';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -31,37 +31,35 @@ export const UtilizationCard = withDashboardResources(
     const [duration, setDuration] = React.useState(metricDurations[0]);
     const { obj } = React.useContext(ProjectDashboardContext);
     const projectName = getName(obj);
-    const queries = React.useMemo(
-      () => getUtilizationQueries(projectName, UTILIZATION_QUERY_HOUR_MAP[duration]),
-      [projectName, duration],
-    );
+    const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
     React.useEffect(() => {
       if (projectName) {
-        _.values(queries).forEach((query) => watchPrometheus(query, projectName));
+        _.values(queries).forEach((query) =>
+          watchPrometheus(query, projectName, UTILIZATION_QUERY_HOUR_MAP[duration]),
+        );
         return () => {
-          _.values(queries).forEach((query) => stopWatchPrometheusQuery(query));
+          _.values(queries).forEach((query) =>
+            stopWatchPrometheusQuery(query, UTILIZATION_QUERY_HOUR_MAP[duration]),
+          );
         };
       }
     }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName, duration]);
 
-    const cpuUtilization = prometheusResults.getIn([
+    const [cpuUtilization, cpuError] = getPrometheusQueryResponse(
+      prometheusResults,
       queries[ProjectQueries.CPU_USAGE],
-      'data',
-    ]) as PrometheusResponse;
-    const cpuError = prometheusResults.getIn([queries[ProjectQueries.CPU_USAGE], 'loadError']);
-    const memoryUtilization = prometheusResults.getIn([
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    );
+    const [memoryUtilization, memoryError] = getPrometheusQueryResponse(
+      prometheusResults,
       queries[ProjectQueries.MEMORY_USAGE],
-      'data',
-    ]) as PrometheusResponse;
-    const memoryError = prometheusResults.getIn([
-      queries[ProjectQueries.MEMORY_USAGE],
-      'loadError',
-    ]);
-    const podCount = prometheusResults.getIn([
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    );
+    const [podCount, podCountError] = getPrometheusQueryResponse(
+      prometheusResults,
       queries[ProjectQueries.POD_COUNT],
-      'data',
-    ]) as PrometheusResponse;
-    const podCountError = prometheusResults.getIn([queries[ProjectQueries.POD_COUNT], 'loadError']);
+      UTILIZATION_QUERY_HOUR_MAP[duration],
+    );
 
     const cpuStats = getRangeVectorStats(cpuUtilization);
     const memoryStats = getRangeVectorStats(memoryUtilization);

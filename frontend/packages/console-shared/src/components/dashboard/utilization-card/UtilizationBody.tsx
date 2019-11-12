@@ -10,23 +10,25 @@ const formatDate = (date: Date): string => {
   return `${date.getHours()}:${minutes}`;
 };
 
-const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps }) => {
+const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) => {
   const [containerRef, width] = useRefWidth();
   return (
     <div ref={containerRef}>
-      <ChartAxis
-        scale={{ x: 'time' }}
-        tickValues={timestamps}
-        tickFormat={formatDate}
-        orientation="top"
-        height={15}
-        width={width}
-        padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
-        style={{
-          axis: { visibility: 'hidden' },
-        }}
-        fixLabelOverlap
-      />
+      {!!timestamps.length && (
+        <ChartAxis
+          scale={{ x: 'time' }}
+          domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
+          tickFormat={formatDate}
+          orientation="top"
+          height={15}
+          width={width}
+          padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
+          style={{
+            axis: { visibility: 'hidden' },
+          }}
+          fixLabelOverlap
+        />
+      )}
     </div>
   );
 };

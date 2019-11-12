@@ -4,7 +4,6 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   Dropdown,
   humanizeDecimalBytes,
@@ -23,18 +22,13 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
+import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
 import { getUtilizationQueries, VMQueries } from './queries';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
-
-const readPrometheusResult = (prometheusResults, query) => {
-  const data = prometheusResults.getIn([query, 'data']) as PrometheusResponse;
-  const error = prometheusResults.getIn([query, 'loadError']);
-  return [data, error];
-};
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -52,38 +46,45 @@ export const VMUtilizationCard = withDashboardResources(
     const vmName = getName(vm);
     const namespace = getNamespace(vm);
     const launcherPodName = getName(findVMPod(vm, pods));
-    const { queries, queriesWithDuration } = React.useMemo(
+    const queries = React.useMemo(
       () =>
         getUtilizationQueries({
           vmName,
           namespace,
-          duration: UTILIZATION_QUERY_HOUR_MAP[duration],
           launcherPodName,
         }),
-      [vmName, namespace, duration, launcherPodName],
+      [vmName, namespace, launcherPodName],
     );
     React.useEffect(() => {
-      _.values(queriesWithDuration).forEach((query) => watchPrometheus(query, namespace));
+      _.values(queries).forEach((query) =>
+        watchPrometheus(query, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]),
+      );
       return () => {
-        _.values(queriesWithDuration).forEach((query) => stopWatchPrometheusQuery(query));
+        _.values(queries).forEach((query) =>
+          stopWatchPrometheusQuery(query, UTILIZATION_QUERY_HOUR_MAP[duration]),
+        );
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery, queriesWithDuration, namespace]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, queries, namespace, duration]);
 
-    const [cpuUtilization, cpuError] = readPrometheusResult(
+    const [cpuUtilization, cpuError] = getPrometheusQueryResponse(
       prometheusResults,
-      queriesWithDuration[VMQueries.CPU_USAGE],
+      queries[VMQueries.CPU_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
     );
-    const [memoryUtilization, memoryError] = readPrometheusResult(
+    const [memoryUtilization, memoryError] = getPrometheusQueryResponse(
       prometheusResults,
-      queriesWithDuration[VMQueries.MEMORY_USAGE],
+      queries[VMQueries.MEMORY_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
     );
-    const [fsUtilization, fsError] = readPrometheusResult(
+    const [fsUtilization, fsError] = getPrometheusQueryResponse(
       prometheusResults,
-      queriesWithDuration[VMQueries.FILESYSTEM_USAGE],
+      queries[VMQueries.FILESYSTEM_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
     );
-    const [netUtilizationInOut, netErrorInOut] = readPrometheusResult(
+    const [netUtilizationInOut, netErrorInOut] = getPrometheusQueryResponse(
       prometheusResults,
-      queriesWithDuration[VMQueries.NETWORK_INOUT_USAGE],
+      queries[VMQueries.NETWORK_INOUT_USAGE],
+      UTILIZATION_QUERY_HOUR_MAP[duration],
     );
 
     const cpuStats = getRangeVectorStats(cpuUtilization);

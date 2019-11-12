@@ -32,7 +32,6 @@ export const DATA_RESILIENCY_QUERY = {
 };
 
 export const UTILIZATION_QUERY = {
-  [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
   [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes',
   [StorageDashboardQuery.UTILIZATION_IOPS_QUERY]:
     '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_pool_rd[1m])))',
@@ -42,6 +41,10 @@ export const UTILIZATION_QUERY = {
     '(sum(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])))',
   [StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY]:
     '(sum(ceph_pool_recovering_bytes_per_sec))',
+};
+
+export const TOTAL_QUERY = {
+  [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
 };
 
 export const CAPACITY_USAGE_QUERIES = {
