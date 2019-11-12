@@ -9,6 +9,13 @@ export const mockPipelinesJSON: K8sResourceKind[] = [
       name: 'tutorial-pipeline',
     },
     spec: {
+      params: [
+        {
+          name: 'APP_NAME',
+          type: 'string',
+          default: 'default-app-name',
+        },
+      ],
       resources: [
         {
           name: 'source-repo',

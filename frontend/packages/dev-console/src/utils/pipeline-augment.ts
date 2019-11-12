@@ -107,13 +107,14 @@ export interface Param {
 
 export interface PipelineParam extends Param {
   default?: string;
+  description?: string;
 }
 
 export interface PipelineRunParam extends Param {
+  value: string;
   input?: string;
   output?: string;
   resource?: object;
-  value?: string;
 }
 
 interface FirehoseResource {

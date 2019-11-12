@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
@@ -8,6 +9,7 @@ import {
   getPipelineTasks,
   containerToLogSourceStatus,
   constructCurrentPipeline,
+  getPipelineRunParams,
 } from '../pipeline-utils';
 import { constructPipelineData, mockPipelinesJSON } from './pipeline-test-data';
 
@@ -43,6 +45,7 @@ describe('pipeline-utils ', () => {
     expect(constructCurrentPipeline(constructPipelineData.pipeline, [])).toBeNull();
     expect(constructCurrentPipeline(null, constructPipelineData.pipelineRuns)).toBeNull();
   });
+
   it('expect constructCurrentPipeline to produce a grouped pipeline with the latest run', () => {
     const data = constructCurrentPipeline(
       constructPipelineData.pipeline,
@@ -55,5 +58,12 @@ describe('pipeline-utils ', () => {
     expect(data.currentPipeline.latestRun).not.toBeNull();
     expect(data.status).not.toBeNull();
     expect(data.status).toBe('Pending');
+  });
+
+  it('should return correct params for a pipeline run', () => {
+    const pipelineParams = _.get(mockPipelinesJSON[0], 'spec.params');
+    const params = getPipelineRunParams(pipelineParams);
+    expect(params[0].name).toBe('APP_NAME');
+    expect(params[0].value).toBe('default-app-name');
   });
 });

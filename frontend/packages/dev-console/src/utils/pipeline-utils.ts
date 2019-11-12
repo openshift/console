@@ -7,7 +7,14 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import { getLatestRun, Pipeline, PipelineRun, runStatus } from './pipeline-augment';
+import {
+  getLatestRun,
+  Pipeline,
+  PipelineRun,
+  runStatus,
+  PipelineParam,
+  PipelineRunParam,
+} from './pipeline-augment';
 import { pipelineFilterReducer } from './pipeline-filter-reducer';
 
 interface Resources {
@@ -289,4 +296,14 @@ export const constructCurrentPipeline = (
     currentPipeline,
     status,
   };
+};
+
+export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineRunParam[] => {
+  return (
+    pipelineParams &&
+    pipelineParams.map((param) => ({
+      name: param.name,
+      value: param.default,
+    }))
+  );
 };
