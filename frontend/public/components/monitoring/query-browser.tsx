@@ -467,7 +467,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                     : [metric, formatSeriesValues(values, samples, span)];
                 });
               });
-              setGraphData(_.reject(newGraphData, _.isEmpty));
+              setGraphData(newGraphData);
 
               _.each(newResults, (r, i) =>
                 patchQuery(i, {
