@@ -32,7 +32,6 @@ export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = Rea
 
     return (
       <Popover
-        appendTo={() => document.getElementById('content-scrollable')}
         position={PopoverPosition.right}
         headerContent={popupTitle}
         bodyContent={children}
