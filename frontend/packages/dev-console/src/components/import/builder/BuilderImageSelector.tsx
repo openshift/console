@@ -38,7 +38,16 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
       const image = _.find(builderImages);
       handleImageChange(image.name);
     }
-  }, [builderImageCount, builderImages, handleImageChange, selected.value]);
+    if (!selected.value && values.image.recommended) {
+      handleImageChange(values.image.recommended);
+    }
+  }, [
+    builderImageCount,
+    builderImages,
+    handleImageChange,
+    selected.value,
+    values.image.recommended,
+  ]);
 
   if (builderImageCount === 1) {
     return null;
