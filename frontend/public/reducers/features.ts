@@ -124,4 +124,4 @@ export const connectToFlags: ConnectToFlags = (...flags) =>
   });
 
 // Flag detection is not complete if the flag's value is `undefined`.
-export const flagPending = (flag) => flag === undefined;
+export const flagPending = (flag: boolean) => flag === undefined;

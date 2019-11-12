@@ -75,8 +75,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test Href Link',
         href: '/test',
-        required: 'TEST_MODEL_FLAG',
       },
+    },
+    flags: {
+      required: ['TEST_MODEL_FLAG'],
     },
   },
   {
@@ -86,8 +88,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test ResourceNS Link',
         resource: 'pods',
-        required: 'TEST_MODEL_FLAG',
       },
+    },
+    flags: {
+      required: ['TEST_MODEL_FLAG'],
     },
   },
   {
@@ -97,8 +101,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test ResourceCluster Link',
         resource: 'projects',
-        required: [FLAGS.OPENSHIFT, 'TEST_MODEL_FLAG'],
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT, 'TEST_MODEL_FLAG'],
     },
   },
   {

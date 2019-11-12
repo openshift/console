@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlagsObject } from '@console/internal/reducers/features';
-import { Extension } from './extension';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface Perspective {
@@ -10,12 +10,12 @@ namespace ExtensionProperties {
     name: string;
     /** The perspective display icon. */
     icon: React.ReactElement;
+    /** Whether the perspective is the default. There can only be one default. */
+    default?: boolean;
     /** The function to get perspective landing page URL. */
     getLandingPageURL: GetLandingPage;
     /** The function to get perspective landing page URL for k8s. */
     getK8sLandingPageURL: GetLandingPage;
-    /** Whether the perspective is the default. There can only be one default. */
-    default?: boolean;
     /** The function to get redirect URL for import flow. */
     getImportRedirectURL: (project: string) => string;
   }

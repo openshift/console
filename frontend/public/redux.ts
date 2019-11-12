@@ -10,12 +10,12 @@ import { registry } from './plugins';
 import { isReduxReducer } from '@console/plugin-sdk';
 
 const composeEnhancers =
-  // eslint-disable-next-line no-undef
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 /**
  * This is the entirety of the `redux-thunk` library.
- * It hasn't changed since 2016 and has problems with it's TypeScript definitions (https://github.com/reduxjs/redux-thunk/issues/231), so just including it here.
+ * It hasn't changed since 2016 and has problems with it's TypeScript definitions
+ * (https://github.com/reduxjs/redux-thunk/issues/231), so just including it here.
  */
 function createThunkMiddleware(extraArgument?) {
   return ({ dispatch, getState }) => (next) => (action) => {
@@ -90,10 +90,9 @@ const addPluginListener = () => {
 
 addPluginListener();
 
-// eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== 'production') {
   // Expose Redux store for debugging
-  (window as any).store = store;
+  window.store = store;
 }
 
 export default store;

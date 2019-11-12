@@ -9,5 +9,9 @@
   },
   "dependencies": {
     "@console/shared": "0.0.0-fixed"
+  },
+  "devDependencies": {
+    "@types/js-combinatorics": "0.5.x",
+    "js-combinatorics": "0.5.x"
   }
 }

@@ -1,6 +1,6 @@
 import { K8sKind } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils/kebab';
-import { Extension } from './extension';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface KebabActions {

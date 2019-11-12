@@ -6,7 +6,6 @@ type AppHistory = History & { pushPath: History['push'] };
 let createHistory;
 
 try {
-  // eslint-disable-next-line no-undef
   if (process.env.NODE_ENV === 'test') {
     // Running in node. Can't use browser history
     createHistory = createMemoryHistory;

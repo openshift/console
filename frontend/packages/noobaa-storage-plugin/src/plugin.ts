@@ -200,8 +200,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Object Buckets',
         resource: models.NooBaaObjectBucketModel.plural,
-        required: NOOBAA_FLAG,
       },
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
     },
   },
   {
@@ -231,8 +233,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Object Bucket Claims',
         resource: models.NooBaaObjectBucketClaimModel.plural,
-        required: NOOBAA_FLAG,
       },
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
     },
   },
   {

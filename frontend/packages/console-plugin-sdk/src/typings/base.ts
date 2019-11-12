@@ -8,15 +8,27 @@
  * the broader category as well as any specialization(s), for example:
  *
  * - `ModelDefinition`
- * - `NavItem/Href`
- * - `Dashboards/Overview/Utilization`
+ * - `Page/Resource/List`
+ * - `Dashboards/Overview/Utilization/Item`
+ *
+ * Each extension may specify `flags` referencing Console feature flags which
+ * are required and/or disallowed in order to put this extension into effect.
  *
  * TODO(vojtech): write ESLint rule to guard against extension type duplicity
  */
 export type Extension<P = any> = {
   type: string;
   properties: P;
+  flags?: Partial<{
+    required: string[];
+    disallowed: string[];
+  }>;
 };
+
+/**
+ * An extension that is always effective, regardless of feature flags.
+ */
+export type AlwaysOnExtension<P = any> = Omit<Extension<P>, 'flags'>;
 
 /**
  * From plugin author perspective, a plugin is simply a list of extensions.
@@ -60,6 +72,16 @@ export type Extension<P = any> = {
 export type Plugin<E extends Extension> = E[];
 
 /**
+ * TS type guard to narrow type of the given extension to `E`.
+ */
+export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
+
+/**
+ * Common interface for loading async React components.
+ */
+export type LazyLoader<T extends {} = {}> = () => Promise<React.ComponentType<Partial<T>>>;
+
+/**
  * From Console application perspective, a plugin is a list of extensions
  * enhanced with additional data.
  */
@@ -68,4 +90,9 @@ export type ActivePlugin = {
   extensions: Extension[];
 };
 
-export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
+/**
+ * An extension enhanced with additional metadata at runtime.
+ */
+export type ExtensionWithMetadata = Extension & {
+  plugin: string;
+};

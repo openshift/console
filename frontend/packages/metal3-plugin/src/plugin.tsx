@@ -65,9 +65,11 @@ const plugin: Plugin<ConsumedExtensions> = [
           referenceForModel(BareMetalHostModel),
           'openshift-machine-api',
         ),
-        required: [FLAGS.BAREMETAL, METAL3_FLAG],
       },
       mergeBefore: 'ComputeSeparator',
+    },
+    flags: {
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },
   {

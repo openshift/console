@@ -6,7 +6,6 @@ import {
   ActivePlugin,
   isModelDefinition,
   isFeatureFlag,
-  isNavItem,
   isResourceListPage,
   isResourceDetailsPage,
   isPerspective,
@@ -31,6 +30,8 @@ import {
   isReduxReducer,
   isDashboardsOverviewInventoryItemReplacement,
 } from './typings';
+
+// TODO(vojtech): legacy, remove
 
 /**
  * Registry used to query for Console extensions.
@@ -69,10 +70,6 @@ export class ExtensionRegistry {
 
   public getFeatureFlags() {
     return this.extensions.filter(isFeatureFlag);
-  }
-
-  public getNavItems() {
-    return this.extensions.filter(isNavItem);
   }
 
   public getResourceListPages() {

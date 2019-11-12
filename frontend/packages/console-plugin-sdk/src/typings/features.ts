@@ -1,6 +1,6 @@
 import { Dispatch } from 'react-redux';
 import { K8sKind } from '@console/internal/module/k8s';
-import { Extension } from './extension';
+import { Extension, AlwaysOnExtension } from './base';
 
 namespace ExtensionProperties {
   interface FeatureFlag {
@@ -19,7 +19,7 @@ namespace ExtensionProperties {
   }
 }
 
-export interface ModelFeatureFlag extends Extension<ExtensionProperties.ModelFeatureFlag> {
+export interface ModelFeatureFlag extends AlwaysOnExtension<ExtensionProperties.ModelFeatureFlag> {
   type: 'FeatureFlag/Model';
 }
 

@@ -1,5 +1,5 @@
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { Extension } from './extension';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface ClusterServiceVersionAction {
