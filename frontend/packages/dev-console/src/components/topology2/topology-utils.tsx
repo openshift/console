@@ -34,6 +34,9 @@ const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
       type: d.type,
       label: dataModel.topology[d.id].name,
       data: dataModel.topology[d.id],
+      style: {
+        padding: [17, 22, 17, 22],
+      },
     };
   });
 

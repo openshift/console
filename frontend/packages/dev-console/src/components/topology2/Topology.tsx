@@ -21,7 +21,7 @@ import { TopologyDataModel, TopologyDataObject } from '../topology/topology-type
 import TopologyResourcePanel from '../topology/TopologyResourcePanel';
 import TopologyApplicationPanel from '../topology/TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
-import layoutFactory from './layoutFactory';
+import layoutFactory from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
 import { TYPE_APPLICATION_GROUP } from './const';
 
@@ -34,7 +34,7 @@ const graphModel: Model = {
   graph: {
     id: 'g1',
     type: 'graph',
-    layout: 'Force',
+    layout: 'Cola',
   },
 };
 
