@@ -632,7 +632,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     setData(undefined);
     setError(undefined);
     setPage(1);
-  }, [query]);
+  }, [namespace, query]);
 
   if (!isEnabled || !isExpanded || !query) {
     return null;
