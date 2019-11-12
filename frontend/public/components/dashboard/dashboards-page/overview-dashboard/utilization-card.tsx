@@ -22,6 +22,7 @@ import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queri
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
+import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -107,14 +108,14 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   React.useEffect(() => {
     const queries = getQueries(flags);
     Object.keys(queries).forEach((key) => {
-      watchPrometheus(queries[key].utilization + UTILIZATION_QUERY_HOUR_MAP[duration]);
+      watchPrometheus(queries[key].utilization, null, UTILIZATION_QUERY_HOUR_MAP[duration]);
       if (queries[key].total) {
         watchPrometheus(queries[key].total);
       }
     });
     return () => {
       Object.keys(queries).forEach((key) => {
-        stopWatchPrometheusQuery(queries[key].utilization + UTILIZATION_QUERY_HOUR_MAP[duration]);
+        stopWatchPrometheusQuery(queries[key].utilization, UTILIZATION_QUERY_HOUR_MAP[duration]);
         if (queries[key].total) {
           stopWatchPrometheusQuery(queries[key].total);
         }
@@ -125,51 +126,33 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   }, [watchPrometheus, stopWatchPrometheusQuery, JSON.stringify(flags), duration]);
 
   const queries = getQueries(flags);
-  const cpuUtilization = prometheusResults.getIn([
-    queries[OverviewQuery.CPU_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'data',
-  ]);
-  const cpuUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.CPU_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'loadError',
-  ]);
-  const cpuTotal = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION].total, 'data']);
-  const cpuTotalError = prometheusResults.getIn([
+  const [cpuUtilization, cpuUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.CPU_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [cpuTotal, cpuTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
     queries[OverviewQuery.CPU_UTILIZATION].total,
-    'loadError',
-  ]);
-  const memoryUtilization = prometheusResults.getIn([
-    queries[OverviewQuery.MEMORY_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'data',
-  ]);
-  const memoryUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.MEMORY_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'loadError',
-  ]);
-  const memoryTotal = prometheusResults.getIn([
+  );
+  const [memoryUtilization, memoryUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.MEMORY_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [memoryTotal, memoryTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
     queries[OverviewQuery.MEMORY_UTILIZATION].total,
-    'data',
-  ]);
-  const memoryTotalError = prometheusResults.getIn([
-    queries[OverviewQuery.MEMORY_UTILIZATION].total,
-    'loadError',
-  ]);
-  const storageUtilization = prometheusResults.getIn([
-    queries[OverviewQuery.STORAGE_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'data',
-  ]);
-  const storageUtilizationError = prometheusResults.getIn([
-    queries[OverviewQuery.STORAGE_UTILIZATION].utilization + UTILIZATION_QUERY_HOUR_MAP[duration],
-    'loadError',
-  ]);
-  const storageTotal = prometheusResults.getIn([
+  );
+  const [storageUtilization, storageUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.STORAGE_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [storageTotal, storageTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
     queries[OverviewQuery.STORAGE_UTILIZATION].total,
-    'data',
-  ]);
-  const storageTotalError = prometheusResults.getIn([
-    queries[OverviewQuery.STORAGE_UTILIZATION].total,
-    'loadError',
-  ]);
+  );
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const cpuMax = getInstantVectorStats(cpuTotal);

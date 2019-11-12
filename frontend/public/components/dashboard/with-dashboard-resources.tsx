@@ -18,6 +18,7 @@ import {
   WatchPrometheusQueryAction,
   watchURL,
   WatchURLAction,
+  getQueryKey,
 } from '../../actions/dashboards';
 import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
@@ -28,8 +29,10 @@ import { PrometheusRulesResponse } from '../monitoring';
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
   stopWatchURL: (url) => dispatch(stopWatchURL(url)),
-  watchPrometheusQuery: (query, namespace) => dispatch(watchPrometheusQuery(query, namespace)),
-  stopWatchPrometheusQuery: (query) => dispatch(stopWatchPrometheusQuery(query)),
+  watchPrometheusQuery: (query, namespace, timespan) =>
+    dispatch(watchPrometheusQuery(query, namespace, timespan)),
+  stopWatchPrometheusQuery: (query, timespan) =>
+    dispatch(stopWatchPrometheusQuery(query, timespan)),
   watchAlerts: () => dispatch(watchAlerts()),
   stopWatchAlerts: () => dispatch(stopWatchAlerts()),
 });
@@ -114,9 +117,15 @@ export const withDashboardResources = <P extends DashboardItemProps>(
         this.props.watchURL(url, fetch);
       };
 
-      watchPrometheus: WatchPrometheus = (query, namespace) => {
-        this.queries.push(query);
-        this.props.watchPrometheusQuery(query, namespace);
+      watchPrometheus: WatchPrometheus = (query, namespace, timespan) => {
+        this.queries.push(getQueryKey(query, timespan));
+        this.props.watchPrometheusQuery(query, namespace, timespan);
+      };
+
+      stopWatchPrometheusQuery: StopWatchPrometheus = (query, timespan) => {
+        const queryKey = getQueryKey(query, timespan);
+        this.queries = this.queries.filter((q) => q !== queryKey);
+        this.props.stopWatchPrometheusQuery(query, timespan);
       };
 
       watchAlerts: WatchAlerts = () => {
@@ -163,7 +172,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               watchURL={this.watchURL}
               stopWatchURL={this.props.stopWatchURL}
               watchPrometheus={this.watchPrometheus}
-              stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
+              stopWatchPrometheusQuery={this.stopWatchPrometheusQuery}
               watchAlerts={this.watchAlerts}
               stopWatchAlerts={this.stopWatchAlerts}
               urlResults={this.props[RESULTS_TYPE.URL]}
@@ -192,8 +201,8 @@ type DispatchToProps = (
 
 type WatchURL = (url: string, fetch?: Fetch) => void;
 type StopWatchURL = (url: string) => void;
-type WatchPrometheus = (query: string, namespace?: string) => void;
-type StopWatchPrometheus = (query: string) => void;
+type WatchPrometheus = (query: string, namespace?: string, timespan?: number) => void;
+type StopWatchPrometheus = (query: string, timespan?: number) => void;
 type WatchAlerts = () => void;
 type StopWatchAlerts = () => void;
 
