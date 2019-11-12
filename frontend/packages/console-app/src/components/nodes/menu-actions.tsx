@@ -17,9 +17,14 @@ export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) =
   },
 });
 
-export const MarkAsSchedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
+export const MarkAsSchedulable: KebabAction = (
+  kind: K8sKind,
+  obj: NodeKind,
+  resources: {},
+  { nodeMaintenance }, // NOTE: used by node actions in metal3-plugin
+) => ({
   label: 'Mark as Schedulable',
-  hidden: !isNodeUnschedulable(obj),
+  hidden: !isNodeUnschedulable(obj) || nodeMaintenance,
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
     group: kind.apiGroup,
