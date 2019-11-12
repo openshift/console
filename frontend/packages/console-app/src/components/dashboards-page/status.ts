@@ -36,7 +36,11 @@ export const getControlPlaneComponentHealth = (
   response: PrometheusResponse,
   error,
 ): SubsystemHealth => {
-  if (error) {
+  if (
+    error ||
+    (response &&
+      (response.status === 'success' && _.isNil(_.get(response, 'data.result[0].value[1]'))))
+  ) {
     return { state: HealthState.UNKNOWN, message: 'Not available' };
   }
   if (!response) {
