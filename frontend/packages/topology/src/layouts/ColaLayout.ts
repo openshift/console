@@ -2,34 +2,48 @@ import * as _ from 'lodash';
 import * as webcola from 'webcola';
 import * as d3 from 'd3';
 import { action } from 'mobx';
-import { Edge, GraphElement, Graph, Layout, Node } from '../types';
-import { leafNodeElements, groupNodeElements } from '../utils/element-utils';
-import BaseEdge from '../elements/BaseEdge';
+import {
+  Edge,
+  Graph,
+  Layout,
+  Node,
+  ADD_CHILD_EVENT,
+  REMOVE_CHILD_EVENT,
+  ElementChildEventListener,
+} from '../types';
+import { leafNodeElements, groupNodeElements, getGroupPadding } from '../utils/element-utils';
+import {
+  DRAG_MOVE_OPERATION,
+  DRAG_NODE_END_EVENT,
+  DRAG_NODE_START_EVENT,
+  DragEvent,
+  DragNodeEventListener,
+} from '../behavior';
+import { BaseEdge } from '../elements';
 
 class ColaNode implements webcola.Node {
-  private node: Node;
-
-  private nodeIndexx: number;
+  private readonly node: Node;
 
   private xx?: number;
 
   private yy?: number;
 
-  constructor(node: Node, index: number) {
+  public readonly distance: number;
+
+  public isFixed: boolean = false;
+
+  public index: number;
+
+  public parent: ColaGroup;
+
+  constructor(node: Node, index: number, distance: number) {
     this.node = node;
-    this.nodeIndexx = index;
+    this.index = index;
+    this.distance = distance;
   }
 
   get element(): Node {
     return this.node;
-  }
-
-  set nodeIndex(newIndex: number) {
-    this.nodeIndexx = newIndex;
-  }
-
-  get nodeIndex(): number {
-    return this.nodeIndexx;
   }
 
   get id(): string {
@@ -41,7 +55,9 @@ class ColaNode implements webcola.Node {
   }
 
   set x(x: number) {
-    this.xx = x;
+    if (!Number.isNaN(x)) {
+      this.xx = x;
+    }
   }
 
   get y(): number {
@@ -49,7 +65,17 @@ class ColaNode implements webcola.Node {
   }
 
   set y(y: number) {
-    this.yy = y;
+    if (!Number.isNaN(y)) {
+      this.yy = y;
+    }
+  }
+
+  get fx(): number | undefined {
+    return this.isFixed ? this.node.getBounds().getCenter().x : undefined;
+  }
+
+  get fy(): number | undefined {
+    return this.isFixed ? this.node.getBounds().getCenter().y : undefined;
   }
 
   setPosition(x: number, y: number) {
@@ -59,6 +85,14 @@ class ColaNode implements webcola.Node {
         .clone()
         .setCenter(x, y),
     );
+  }
+
+  get width(): number {
+    return this.node.getBounds().width + this.distance * 2;
+  }
+
+  get height(): number {
+    return this.node.getBounds().height + this.distance * 2;
   }
 
   update() {
@@ -74,43 +108,60 @@ class ColaNode implements webcola.Node {
     this.yy = undefined;
   }
 
-  getRadius(): number {
-    const { width, height } = this.node.getBounds();
-    return Math.max(width, height) / 2;
+  get radius(): number {
+    return Math.max(this.node.getBounds().width, this.node.getBounds().height) / 2;
+  }
+
+  get collisionRadius(): number {
+    return Math.max(this.width, this.height) / 2;
+  }
+}
+
+class ColaGroup implements webcola.Group {
+  private readonly node: Node;
+
+  public leaves: ColaNode[];
+
+  public groups: ColaGroup[];
+
+  public index: number;
+
+  public parent: ColaGroup;
+
+  public padding: number;
+
+  constructor(node: Node, index: number, padding: number) {
+    this.node = node;
+    this.padding = padding;
+  }
+
+  get element(): Node {
+    return this.node;
+  }
+
+  get id(): string {
+    return this.node.getId();
   }
 }
 
 class ColaLink implements webcola.Link<ColaNode | number> {
-  private edge: Edge;
+  private readonly edge: Edge;
 
-  private sourceIndex: number;
+  public source: ColaNode;
 
-  private targetIndex: number;
+  public target: ColaNode;
 
-  constructor(edge: Edge, sourceIndex: number, targetIndex: number) {
+  public name: string;
+
+  constructor(edge: Edge, source: ColaNode, target: ColaNode) {
     this.edge = edge;
-    this.sourceIndex = sourceIndex;
-    this.targetIndex = targetIndex;
+    this.source = source;
+    this.target = target;
+    this.name = `${source.element.getLabel()} -> ${target.element.getLabel()}`;
   }
 
   get element(): Edge {
     return this.edge;
-  }
-
-  get source(): number {
-    return this.sourceIndex;
-  }
-
-  set source(node: number) {
-    this.sourceIndex = node;
-  }
-
-  get target(): number {
-    return this.targetIndex;
-  }
-
-  set target(node: number) {
-    this.targetIndex = node;
   }
 
   get id(): string {
@@ -118,89 +169,455 @@ class ColaLink implements webcola.Link<ColaNode | number> {
   }
 }
 
-const getNodeIndex = (nodes: ColaNode[], id: string): number => {
-  const node = _.find(nodes, { id });
-  return node ? node.nodeIndex : -1;
+const getColaNode = (nodes: ColaNode[], node: Node): ColaNode | undefined => {
+  let colaNode = _.find(nodes, { id: node.getId() });
+  if (!colaNode && _.size(node.getChildren())) {
+    colaNode = _.find(nodes, { id: node.getChildren()[0].getId() });
+  }
+  return colaNode;
 };
 
-export default class ColaLayout implements Layout {
+const getFauxEdges = (groups: ColaGroup[], nodes: ColaNode[]): ColaLink[] => {
+  const fauxEdges: ColaLink[] = [];
+  groups.forEach((group: ColaGroup) => {
+    const groupNodes = group.element.getNodes();
+    for (let i = 0; i < groupNodes.length; i++) {
+      for (let j = i + 1; j < groupNodes.length; j++) {
+        const fauxEdge = new BaseEdge();
+        const source = getColaNode(nodes, groupNodes[i]);
+        const target = getColaNode(nodes, groupNodes[j]);
+        if (source && target) {
+          const link = new ColaLink(fauxEdge, source, target);
+          fauxEdge.setController(target.element.getController());
+          fauxEdges.push(link);
+        }
+      }
+    }
+  });
+
+  return fauxEdges;
+};
+
+type ColaLayoutOptions = {
+  linkDistance: number;
+  nodeDistance: number;
+  groupDistance: number;
+  collideDistance: number;
+  simulationSpeed: number;
+  chargeStrength: number;
+  layoutOnDrag: boolean;
+  maxTicks: number;
+  initialUnconstrainedIterations: number;
+  initialUserConstraintIterations: number;
+  initialAllConstraintsIterations: number;
+  gridSnapIterations: number;
+};
+
+class ColaLayout implements Layout {
   private graph: Graph;
 
-  constructor(graph: Graph) {
+  private d3Cola: any;
+
+  private forceLink: d3.ForceLink<ColaNode, ColaLink>;
+
+  private simulation: any;
+
+  private options: ColaLayoutOptions;
+
+  private scheduleHandle?: number;
+
+  private scheduleRestart = false;
+
+  private nodes: ColaNode[] = [];
+
+  private edges: ColaLink[] = [];
+
+  private groups: ColaGroup[] = [];
+
+  private nodesMap: { [id: string]: ColaNode } = {};
+
+  private tickCount = 0;
+
+  constructor(graph: Graph, options?: Partial<ColaLayoutOptions>) {
     this.graph = graph;
-  }
+    this.options = {
+      ...{
+        linkDistance: 30,
+        nodeDistance: 0,
+        groupDistance: 0,
+        collideDistance: 0,
+        simulationSpeed: 10,
+        chargeStrength: 0,
+        layoutOnDrag: true,
+        maxTicks: 200,
+        initialUnconstrainedIterations: 200,
+        initialUserConstraintIterations: 50,
+        initialAllConstraintsIterations: 150,
+        gridSnapIterations: 50,
+      },
+      ...options,
+    };
 
-  destroy(): void {}
+    graph
+      .getController()
+      .addEventListener<DragNodeEventListener>(DRAG_NODE_START_EVENT, this.handleDragStart)
+      .addEventListener<DragNodeEventListener>(DRAG_NODE_END_EVENT, this.handleDragEnd);
 
-  layout = () => {
-    const nodes: ColaNode[] = leafNodeElements(this.graph.getNodes()).map(
-      (e: Node, index) => new ColaNode(e, index),
-    );
-    const groups: GraphElement[] = groupNodeElements(this.graph.getNodes());
-    const edges: ColaLink[] = this.graph.getEdges().map((e: Edge) => {
-      e.setBendpoints([]);
-      const edge: ColaLink = new ColaLink(
-        e,
-        getNodeIndex(nodes, e.getSource().getId()),
-        getNodeIndex(nodes, e.getTarget().getId()),
-      );
-      return edge;
+    this.d3Cola = webcola.d3adaptor(d3);
+    this.d3Cola.handleDisconnected(true);
+    this.d3Cola.avoidOverlaps(true);
+    this.d3Cola.linkDistance(this.getLinkDistance);
+    this.d3Cola.on('tick', () => {
+      if (this.tickCount++ % this.options.simulationSpeed === 0) {
+        action(() => this.nodes.forEach((d) => d.update()))();
+      }
+      if (this.options.maxTicks >= 0 && this.tickCount > this.options.maxTicks) {
+        this.d3Cola.alpha(0);
+      }
+    });
+    this.d3Cola.on('end', () => {
+      action(() => {
+        this.nodes.forEach((d) => d.update());
+        if (this.options.layoutOnDrag) {
+          this.useForceSimulation();
+        }
+      })();
     });
 
-    // Create faux edges for the grouped nodes to form group clusters
-    groups.forEach((group: Node) => {
-      const groupNodes = group.getNodes().filter((node: Node) => !_.size(node.getNodes()));
-      for (let i = 0; i < groupNodes.length; i++) {
-        for (let j = i + 1; j < groupNodes.length; j++) {
-          const fauxEdge = new BaseEdge();
-          fauxEdge.setSource(groupNodes[i]);
-          fauxEdge.setTarget(groupNodes[j]);
-          fauxEdge.setController(groupNodes[i].getController());
-          const fauxLink: ColaLink = new ColaLink(
-            fauxEdge,
-            getNodeIndex(nodes, groupNodes[i].getId()),
-            getNodeIndex(nodes, groupNodes[j].getId()),
-          );
-          edges.push(fauxLink);
+    this.setupForceSimulation();
+  }
+
+  destroy(): void {
+    this.graph
+      .getController()
+      .removeEventListener(DRAG_NODE_START_EVENT, this.handleDragStart)
+      .removeEventListener(DRAG_NODE_END_EVENT, this.handleDragEnd);
+
+    this.stopListening();
+
+    this.d3Cola.alpha(0);
+    this.simulation.alpha(0);
+  }
+
+  handleDragStart = (element: Node, event: DragEvent, operation: string) => {
+    // Set the alpha to 0 to halt any ticks that may be occurring
+    this.d3Cola.alpha(0);
+
+    if (!this.options.layoutOnDrag) {
+      return;
+    }
+
+    if (operation !== DRAG_MOVE_OPERATION) {
+      this.simulation.stop();
+      return;
+    }
+
+    const id = element.getId();
+    let found = false;
+    const dragNode: ColaNode | undefined = this.nodes.find((node: ColaNode) => node.id === id);
+    if (dragNode) {
+      dragNode.isFixed = true;
+      found = true;
+    }
+    if (!found) {
+      const dragGroup: ColaGroup | undefined = this.groups.find(
+        (group: ColaGroup) => group.id === id,
+      );
+      if (dragGroup) {
+        const groupNodes = dragGroup.leaves;
+        groupNodes.forEach((node: ColaNode) => {
+          node.isFixed = true;
+        });
+        found = true;
+      }
+    }
+
+    if (found) {
+      this.simulation.alphaTarget(0.1).restart();
+    }
+  };
+
+  handleDragEnd = (element: Node, event: DragEvent, operation: string) => {
+    if (!this.options.layoutOnDrag) {
+      return;
+    }
+
+    if (operation !== DRAG_MOVE_OPERATION) {
+      this.simulation.restart();
+      return;
+    }
+
+    const id = element.getId();
+    const dragNode: ColaNode | undefined = this.nodes.find((node: ColaNode) => node.id === id);
+    if (dragNode) {
+      dragNode.isFixed = false;
+    } else {
+      const dragGroup: ColaGroup | undefined = this.groups.find(
+        (group: ColaGroup) => group.id === id,
+      );
+      if (dragGroup) {
+        const groupNodes = dragGroup.leaves;
+        groupNodes.forEach((node: ColaNode) => {
+          node.isFixed = false;
+        });
+      }
+    }
+    this.simulation.alphaTarget(0);
+  };
+
+  layout = () => {
+    this.stopListening();
+
+    this.runLayout(true);
+
+    this.startListening();
+  };
+
+  private startListening(): void {
+    this.graph.getController().addEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+    this.graph.getController().addEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+  }
+
+  private stopListening(): void {
+    clearTimeout(this.scheduleHandle);
+    this.graph.getController().removeEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+    this.graph.getController().removeEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+  }
+
+  private handleChildAdded: ElementChildEventListener = ({ child }): void => {
+    if (!this.nodesMap[child.getId()]) {
+      this.scheduleRestart = true;
+      this.scheduleLayout();
+    }
+  };
+
+  private handleChildRemoved: ElementChildEventListener = ({ child }): void => {
+    if (this.nodesMap[child.getId()]) {
+      this.scheduleRestart = true;
+      this.scheduleLayout();
+    }
+  };
+
+  private scheduleLayout = (): void => {
+    if (!this.scheduleHandle) {
+      this.scheduleHandle = window.setTimeout(() => {
+        delete this.scheduleHandle;
+        this.runLayout(false, this.scheduleRestart);
+        this.scheduleRestart = false;
+      }, 0);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getConstraints(nodes: ColaNode[], groups: ColaGroup[], edges: ColaLink[]): any[] {
+    return [];
+  }
+
+  protected getLinkDistance = (link: ColaLink): number => {
+    let distance = this.options.linkDistance + link.source.radius + link.target.radius;
+    if (link.source.element.getParent() !== link.target.element.getParent()) {
+      distance += getGroupPadding(link.source.element.getParent());
+      distance += getGroupPadding(link.target.element.getParent());
+    }
+    return distance;
+  };
+
+  protected getNodeDistance = (link: ColaLink): number => {
+    return Math.sqrt((link.source.x - link.target.x) ** 2 + (link.source.y - link.target.y) ** 2);
+  };
+
+  private setupForceSimulation(): void {
+    this.simulation = d3.forceSimulation<ColaNode>();
+    this.simulation.force(
+      'collide',
+      d3.forceCollide<ColaNode>().radius((d) => d.collisionRadius + this.options.collideDistance),
+    );
+    this.simulation.force('charge', d3.forceManyBody().strength(this.options.chargeStrength));
+    this.simulation.alpha(0);
+    this.forceLink = d3.forceLink<ColaNode, ColaLink>().id((e) => e.id);
+
+    this.simulation.force('link', this.forceLink);
+    this.simulation.on(
+      'tick',
+      action(() => {
+        // speed up the simulation
+        for (let i = 0; i < this.options.simulationSpeed; i++) {
+          this.simulation.tick();
         }
+        this.simulation.nodes().forEach((d: ColaNode) => d.update());
+      }),
+    );
+  }
+
+  private useForceSimulation(): void {
+    this.forceLink.distance(this.getNodeDistance);
+
+    this.simulation.nodes([...this.nodes]);
+    this.forceLink.links([...this.edges]);
+  }
+
+  private forceSimulateAdditions = (newNodes: ColaNode[]) => {
+    if (!newNodes || !newNodes.length) {
+      return;
+    }
+
+    // Fix the position of existing nodes
+    this.nodes
+      .filter((n) => !newNodes.includes(n))
+      .forEach((n) => {
+        n.isFixed = true;
+      });
+
+    // Set distance on new nodes based on any edges
+    this.forceLink.distance((e) => {
+      if (newNodes.includes(e.source) || newNodes.includes(e.target)) {
+        return this.getLinkDistance(e);
+      }
+      return this.getNodeDistance(e);
+    });
+
+    this.simulation.on(
+      'end',
+      action(() => {
+        this.nodes.forEach((n) => {
+          n.isFixed = false;
+        });
+        if (this.options.layoutOnDrag) {
+          this.useForceSimulation();
+        } else {
+          this.haltForceSimulation();
+        }
+        this.simulation.on('end');
+      }),
+    );
+
+    this.simulation.nodes([...this.nodes]);
+    this.forceLink.links([...this.edges]);
+    this.simulation.alpha(0.2).restart();
+  };
+
+  private haltForceSimulation(): void {
+    this.simulation.alpha(0);
+    this.simulation.nodes([]);
+    this.forceLink.links([]);
+  }
+
+  @action
+  private runLayout(initialRun: boolean, restart = true): void {
+    const leafNodes = leafNodeElements(this.graph.getNodes());
+
+    // create datum
+    let nodeIndex = 0;
+    this.nodes = leafNodes.map((n) => new ColaNode(n, nodeIndex++, this.options.nodeDistance));
+    this.edges = [];
+    this.graph.getEdges().forEach((e) => {
+      const source = getColaNode(this.nodes, e.getSource());
+      const target = getColaNode(this.nodes, e.getTarget());
+      if (source && target) {
+        // remove any bendpoints
+        if (e.getBendpoints().length > 0) {
+          e.setBendpoints([]);
+        }
+        this.edges.push(new ColaLink(e, source, target));
+      }
+    });
+    const groups = groupNodeElements(this.graph.getNodes());
+
+    // Turn empty groups into nodes
+    groups.forEach((group: Node) => {
+      if (group.getChildren().length === 0) {
+        this.nodes.push(new ColaNode(group, nodeIndex++, this.options.nodeDistance));
       }
     });
 
-    // force center
-    const cx = this.graph.getBounds().width / 2;
-    const cy = this.graph.getBounds().height / 2;
+    // Create groups only for those with children
+    this.groups = groups
+      .filter((g) => g.getChildren().length > 0)
+      .map((group: Node) => new ColaGroup(group, nodeIndex++, this.options.groupDistance));
 
-    _.forEach(nodes, (node: ColaNode) => {
-      node.setPosition(cx, cy);
+    this.groups.forEach((groupNode: ColaGroup) => {
+      const leaves: ColaNode[] = [];
+      const leafElements = groupNode.element
+        .getChildren()
+        .filter((node: Node) => !node.isGroup() || node.getChildren().length === 0);
+      leafElements.forEach((leaf: Node) => {
+        const colaLeaf = this.nodes.find((n) => n.id === leaf.getId());
+        if (colaLeaf) {
+          leaves.push(colaLeaf);
+          colaLeaf.parent = groupNode;
+        }
+      });
+      groupNode.leaves = leaves;
+      const childGroups: ColaGroup[] = [];
+      const groupElements = groupNode.element.getChildren().filter((node: Node) => node.isGroup());
+      groupElements.forEach((group: Node) => {
+        const colaGroup = this.groups.find((g) => g.id === group.getId());
+        if (colaGroup) {
+          childGroups.push(colaGroup);
+          colaGroup.parent = groupNode;
+        }
+      });
+      groupNode.groups = childGroups;
     });
 
-    let tickCount = 0;
-    const d3cola = webcola.d3adaptor(d3).linkDistance(30);
-    d3cola
-      .size([1000, 400])
-      .nodes(nodes)
-      .links(edges)
-      .linkDistance((link: ColaLink) => {
-        const source = _.find(nodes, (node: ColaNode) => node.nodeIndex === link.source);
-        const target = _.find(nodes, (node: ColaNode) => node.nodeIndex === link.target);
-        if (!source || !target) {
-          return 50;
-        }
+    this.d3Cola.size([this.graph.getBounds().width, this.graph.getBounds().height]);
 
-        return source.element.getParent() !== target.element.getParent() ? 100 : 50;
-      })
-      .on('tick', () => {
-        // speed up the simulation
-        if (++tickCount % 10 === 0) {
-          action(() => nodes.forEach((d) => d.update()))();
+    const newNodes: ColaNode[] = [];
+
+    if (initialRun) {
+      // initialize all node positions
+      const cx = this.graph.getBounds().width / 2;
+      const cy = this.graph.getBounds().height / 2;
+      this.nodes.forEach((node: ColaNode) => {
+        node.setPosition(cx, cy);
+      });
+      this.d3Cola.alpha(0.2);
+    } else {
+      // initialize new node positions
+      const cx = this.graph.getBounds().width / 2;
+      const cy = this.graph.getBounds().height / 2;
+      this.nodes.forEach((node) => {
+        if (!this.nodesMap[node.element.getId()]) {
+          node.setPosition(cx, cy);
+          newNodes.push(node);
         }
-      })
-      .on(
-        'end',
-        action(() => {
-          nodes.forEach((d) => d.update());
-        }),
-      )
-      .start(20, 0, 10);
-  };
+      });
+    }
+
+    // re-create the nodes map
+    this.nodesMap = this.nodes.reduce((acc, n) => (acc[n.element.getId()] = n && acc), {});
+
+    // Get any custom constraints
+    this.d3Cola.constraints(this.getConstraints(this.nodes, this.groups, this.edges));
+
+    // Add faux edges to keep grouped items together
+    this.edges.push(...getFauxEdges(this.groups, this.nodes));
+
+    this.d3Cola.nodes(this.nodes);
+    this.d3Cola.links(this.edges);
+    this.d3Cola.groups(this.groups);
+
+    if (restart && newNodes.length > 0) {
+      this.forceSimulateAdditions(newNodes);
+      return;
+    }
+
+    if (initialRun) {
+      // Reset the force simulation
+      this.haltForceSimulation();
+
+      // start
+      this.d3Cola.start(
+        this.options.initialUnconstrainedIterations,
+        this.options.initialUserConstraintIterations,
+        this.options.initialAllConstraintsIterations,
+        this.options.gridSnapIterations,
+      );
+    } else if (restart && this.options.layoutOnDrag) {
+      this.useForceSimulation();
+      this.simulation.alpha(0.2);
+    }
+  }
 }
+
+export { ColaLayout, ColaNode, ColaGroup, ColaLink, ColaLayoutOptions };

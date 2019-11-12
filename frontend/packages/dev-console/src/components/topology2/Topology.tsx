@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { action } from 'mobx';
 import {
@@ -16,12 +17,13 @@ import {
   SELECTION_EVENT,
   SelectionEventListener,
 } from '@console/topology';
+import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from '../topology/TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from '../topology/topology-types';
 import TopologyResourcePanel from '../topology/TopologyResourcePanel';
 import TopologyApplicationPanel from '../topology/TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
-import layoutFactory from './layoutFactory';
+import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
 import { TYPE_APPLICATION_GROUP } from './const';
 
@@ -34,13 +36,14 @@ const graphModel: Model = {
   graph: {
     id: 'g1',
     type: 'graph',
-    layout: 'Force',
+    layout: COLA_LAYOUT,
   },
 };
 
 const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
+  const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
 
@@ -100,6 +103,12 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
     };
   }, [selectedIds]);
 
+  React.useEffect(() => {
+    action(() => {
+      visRef.current.getGraph().setLayout(layout);
+    })();
+  }, [layout]);
+
   const onSidebarClose = () => {
     setSelectedIds([]);
   };
@@ -107,23 +116,55 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   const renderControlBar = () => {
     return (
       <TopologyControlBar
-        controlButtons={createTopologyControlButtons({
-          ...defaultControlButtonsOptions,
-          zoomInCallback: action(() => {
-            visRef.current.getGraph().scaleBy(4 / 3);
+        controlButtons={[
+          ...createTopologyControlButtons({
+            ...defaultControlButtonsOptions,
+            zoomInCallback: action(() => {
+              visRef.current.getGraph().scaleBy(4 / 3);
+            }),
+            zoomOutCallback: action(() => {
+              visRef.current.getGraph().scaleBy(0.75);
+            }),
+            fitToScreenCallback: action(() => {
+              visRef.current.getGraph().fit(80);
+            }),
+            resetViewCallback: action(() => {
+              visRef.current.getGraph().reset();
+              visRef.current.getGraph().layout();
+            }),
+            legend: false,
           }),
-          zoomOutCallback: action(() => {
-            visRef.current.getGraph().scaleBy(0.75);
-          }),
-          fitToScreenCallback: action(() => {
-            visRef.current.getGraph().fit(80);
-          }),
-          resetViewCallback: action(() => {
-            visRef.current.getGraph().reset();
-            visRef.current.getGraph().layout();
-          }),
-          legend: false,
-        })}
+          {
+            id: 'colaLayout',
+            icon: (
+              <span
+                className={classNames('odc-topology__layout-icon', {
+                  'm-active': layout === COLA_LAYOUT,
+                })}
+              >
+                <TopologyIcon />1
+              </span>
+            ),
+            tooltip: 'Layout 1',
+            ariaLabel: 'Layout 1',
+            callback: () => setLayout(COLA_LAYOUT),
+          },
+          {
+            id: 'colaForceLayout',
+            icon: (
+              <span
+                className={classNames('odc-topology__layout-icon', {
+                  'm-active': layout === COLA_FORCE_LAYOUT,
+                })}
+              >
+                <TopologyIcon />2
+              </span>
+            ),
+            tooltip: 'Layout 2',
+            ariaLabel: 'Layout 2',
+            callback: () => setLayout(COLA_FORCE_LAYOUT),
+          },
+        ]}
       />
     );
   };
