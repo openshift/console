@@ -12,6 +12,7 @@ export const getNodeMaintenanceLastError = (nodeMaintenance: K8sResourceKind): s
 export const getNodeMaintenancePendingPods = (nodeMaintenance: K8sResourceKind): string[] =>
   _.get(nodeMaintenance, 'status.pendingPods', []);
 export const getNodeMaintenanceProgressPercent = (nodeMaintenance: K8sResourceKind): number => {
+  if (!nodeMaintenance.status) return 0;
   const pendingPods = _.get(nodeMaintenance, 'status.pendingPods', []);
   const evictionPods = _.get(nodeMaintenance, 'status.evictionPods', 0);
   if (evictionPods === 0) return 100;
