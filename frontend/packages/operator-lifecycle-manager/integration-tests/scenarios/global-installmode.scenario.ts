@@ -88,6 +88,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   });
 
   it('displays subscription creation form for selected Operator', async () => {
+    await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
     await catalogPageView.catalogTileByID(jaegerTileID).click();
@@ -117,7 +118,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
-    await catalogPageView.catalogTileByID(jaegerTileID).click();
+    await retry(() => catalogPageView.catalogTileByID(jaegerTileID).click());
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
@@ -199,6 +200,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 
+    await crudView.rowFiltersPresent();
     jaegerResources.forEach((kind) => {
       expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
     });

@@ -70,6 +70,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it('displays subscription creation form for selected Operator', async () => {
+    await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
     await catalogPageView.catalogTileFor('Prometheus Operator').click();
@@ -104,7 +105,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
-    await catalogPageView.catalogTileFor('Prometheus Operator').click();
+    await retry(() => catalogPageView.catalogTileFor('Prometheus Operator').click());
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
@@ -203,6 +204,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 
+    await crudView.rowFiltersPresent();
     prometheusResources.forEach((kind) => {
       expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
     });
