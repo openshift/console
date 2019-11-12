@@ -1,25 +1,37 @@
 import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
+import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
 import { Alert, Expandable } from '@patternfly/react-core';
+import { PipelineModel } from '../../../models';
 import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
-import { getPipelineTemplate } from './pipeline-template-utils';
 
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   const {
-    values: { pipeline, image },
+    values: { pipeline, image, build },
     setFieldValue,
   } = useFormikContext<FormikValues>();
+
+  const isDockerStrategy = build.strategy === 'Docker';
+
+  const builderPipelineLabel = { 'pipeline.openshift.io/runtime': image.selected };
+  const dockerPipelineLabel = { 'pipeline.openshift.io/strategy': 'docker' };
+
+  const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
 
   React.useEffect(() => {
     let ignore = false;
 
     const fetchPipelineTemplate = async () => {
-      const pipelineTemplate = await getPipelineTemplate(image.selected);
+      const templates = await k8sList(PipelineModel, {
+        ns: 'openshift',
+        labelSelector,
+      });
+      const pipelineTemplate = templates && templates[0];
 
       if (ignore) return;
 
@@ -38,14 +50,16 @@ const PipelineTemplate: React.FC = () => {
     return () => {
       ignore = true;
     };
-  }, [image.selected, setFieldValue]);
+  }, [labelSelector, setFieldValue]);
 
   if (noTemplateForRuntime) {
     return (
       <Alert
         isInline
         variant="info"
-        title="There are no pipeline templates available for this runtime."
+        title={`There are no pipeline templates available for ${
+          isDockerStrategy ? 'dockerfile strategy' : 'this runtime'
+        }.`}
       />
     );
   }

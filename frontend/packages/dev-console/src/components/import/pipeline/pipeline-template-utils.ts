@@ -1,16 +1,8 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, k8sList, k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { GitImportFormData } from '../import-types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
-
-export const getPipelineTemplate = async (runtime: string): Promise<K8sResourceKind> => {
-  const templates = await k8sList(PipelineModel, {
-    ns: 'openshift',
-    labelSelector: { 'pipeline.openshift.io/runtime': runtime },
-  });
-  return templates && templates[0];
-};
 
 export const createGitResource = (url: string, namespace: string, ref: string = 'master') => {
   const params = { url, revision: ref };

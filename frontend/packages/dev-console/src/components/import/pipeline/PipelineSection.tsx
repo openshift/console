@@ -24,7 +24,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
     );
     return (
       <FormSection title={title}>
-        {values.image.selected ? (
+        {values.image.selected || values.build.strategy === 'Docker' ? (
           <PipelineTemplate />
         ) : (
           <Alert
