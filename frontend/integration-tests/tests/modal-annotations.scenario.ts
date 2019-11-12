@@ -2,7 +2,7 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 
-import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors, retry } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as modalAnnotationsView from '../views/modal-annotations.view';
 import * as yamlView from '../views/yaml.view';
@@ -66,9 +66,9 @@ describe('Modal Annotations', () => {
       const annKey = await item.getAttribute('value');
       if (annKey === annotationKey) {
         keyFound = keyFound + 1;
-        expect(modalAnnotationsView.annotationRowsValue.get(index).getAttribute('value')).toBe(
-          annotationValue,
-        );
+        expect(
+          retry(() => modalAnnotationsView.annotationRowsValue.get(index).getAttribute('value')),
+        ).toBe(annotationValue);
       }
     });
 
