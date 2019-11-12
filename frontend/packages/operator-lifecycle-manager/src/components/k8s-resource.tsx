@@ -42,6 +42,8 @@ export const ResourceTableHeader = () => [
   },
   {
     title: 'Status',
+    sortField: 'status.phase',
+    transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
   {
