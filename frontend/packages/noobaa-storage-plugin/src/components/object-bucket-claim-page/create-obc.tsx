@@ -18,7 +18,8 @@ import {
 } from '@console/internal/module/k8s';
 import { NooBaaObjectBucketClaimModel } from '@console/noobaa-storage-plugin/src/models';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { getName } from '@console/shared';
+import { StorageClass } from '@console/internal/components/storage-class-form';
+import { filterScOnProvisioner, getName } from '@console/shared';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
@@ -64,6 +65,11 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       });
   };
 
+  const showOnlyObcScs = React.useCallback(
+    (sc: StorageClass) => filterScOnProvisioner(sc, 'noobaa.io/obc'),
+    [],
+  );
+
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
@@ -107,6 +113,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 required
                 name="storageClass"
                 className="co-required"
+                filter={showOnlyObcScs}
               />
               <p className="help-block">
                 Defines the object-store service and the bucket provisioner.
