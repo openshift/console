@@ -6,7 +6,7 @@ import { categoryFilter } from '@console/internal/components/events';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { EventKind } from '@console/internal/module/k8s';
+import { EventKind, referenceFor } from '@console/internal/module/k8s';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&
@@ -54,7 +54,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
             <div className="co-recent-item__content-header">
               <ResourceLink
                 className="co-recent-item__content-resourcelink"
-                kind={involvedObject.kind}
+                kind={referenceFor(involvedObject)}
                 namespace={involvedObject.namespace}
                 name={involvedObject.name}
                 title={involvedObject.uid}
