@@ -1,10 +1,19 @@
 import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
-import { RevisionModel, ServiceModel } from '../../models';
+import {
+  RevisionModel,
+  ServiceModel,
+  EventSourceCronJobModel,
+  EventSourceContainerModel,
+  EventSourceApiServerModel,
+  EventSourceCamelModel,
+  EventSourceKafkaModel,
+} from '../../models';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import RevisionsOverviewList from './RevisionsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
+import EventSinkServicesOverviewList from './EventSinkServicesOverviewList';
 
 export type KnativeOverviewProps = {
   ksroutes: K8sResourceKind[];
@@ -31,6 +40,12 @@ const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: Overv
       return <KnativeRevisionResources ksroutes={ksroutes} configurations={configurations} />;
     case ServiceModel.kind:
       return <KnativeServicesResources ksroutes={ksroutes} obj={obj} revisions={revisions} />;
+    case EventSourceCronJobModel.kind:
+    case EventSourceContainerModel.kind:
+    case EventSourceApiServerModel.kind:
+    case EventSourceCamelModel.kind:
+    case EventSourceKafkaModel.kind:
+      return <EventSinkServicesOverviewList obj={obj} />;
     default:
       return (
         <KnativeOverview
