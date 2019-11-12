@@ -20,6 +20,7 @@ import {
   HOST_STATUS_REGISTRATION_ERROR,
   HOST_STATUS_ERROR,
   HOST_STATUS_DISCOVERED,
+  HOST_STATUS_AVAILABLE,
 } from '../../constants';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import { powerOffHostModal } from '../modals/PowerOffHostModal';
@@ -94,6 +95,7 @@ export const Delete = (
   return {
     hidden: ![
       HOST_STATUS_READY,
+      HOST_STATUS_AVAILABLE,
       HOST_STATUS_REGISTRATION_ERROR,
       HOST_STATUS_ERROR,
       HOST_STATUS_DISCOVERED,
