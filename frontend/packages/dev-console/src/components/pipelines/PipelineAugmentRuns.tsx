@@ -7,6 +7,7 @@ import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipelin
 
 interface ListPipelineData extends K8sKind {
   data: PropPipelineData[];
+  filters: {};
 }
 export const filters = [
   {
@@ -42,6 +43,7 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
 
   const children = inject(props.children, {
     ...props,
+    filters: props.pipeline.filters,
     resources: { pipeline: { data: resourceData } },
   });
   return <>{children}</>;
