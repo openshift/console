@@ -314,6 +314,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: TaskRunModel,
+      loader: async () =>
+        (await import(
+          './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
+        )).default,
+    },
+  },
+  {
     type: 'Perspective',
     properties: {
       id: 'dev',

@@ -14,8 +14,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  viewYamlComponent,
-  editYamlComponent,
 } from './utils';
 
 const { common } = Kebab.factory;
@@ -139,12 +137,7 @@ export const DefaultPage = (props) => (
 DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage = (props) => {
-  const pages = [
-    navFactory.details(DetailsForKind(props.kind)),
-    navFactory.editYaml(
-      kindForReference(props.kind) === 'TaskRun' ? viewYamlComponent : editYamlComponent,
-    ),
-  ];
+  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
