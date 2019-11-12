@@ -24,7 +24,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   projects,
 }) => (
   <Form onSubmit={handleSubmit}>
-    <GitSection builderImages={builderImages} />
+    <GitSection />
     <BuilderSection image={values.image} builderImages={builderImages} />
     <DockerSection buildStrategy={values.build.strategy} />
     <AppSection

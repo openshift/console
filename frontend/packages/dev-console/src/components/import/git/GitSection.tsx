@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { getGitService, GitProvider } from '@console/git-service';
@@ -8,22 +7,16 @@ import { CheckCircleIcon } from '@patternfly/react-icons';
 import { InputField, DropdownField } from '../../formik-fields';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
-import {
-  getSampleRepo,
-  getSampleRef,
-  getSampleContextDir,
-  NormalizedBuilderImages,
-} from '../../../utils/imagestream-utils';
+import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
 
 export interface GitSectionProps {
-  builderImages?: NormalizedBuilderImages;
   showSample?: boolean;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ builderImages, showSample }) => {
+const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
   const { values, setFieldValue, setFieldTouched, setFieldError, validateForm } = useFormikContext<
     FormikValues
   >();
@@ -61,10 +54,6 @@ const GitSection: React.FC<GitSectionProps> = ({ builderImages, showSample }) =>
         const buildTool = buildTools[0].buildType;
         setFieldValue('image.couldNotRecommend', false);
         setFieldValue('image.recommended', buildTool);
-        if (!values.image.selected) {
-          setFieldValue('image.selected', buildTool);
-          setFieldValue('image.tag', _.get(builderImages, `${buildTool}.recentTag.name`, ''));
-        }
       } else {
         setFieldValue('image.couldNotRecommend', true);
         setFieldValue('image.recommended', '');
@@ -78,14 +67,12 @@ const GitSection: React.FC<GitSectionProps> = ({ builderImages, showSample }) =>
 
     validateForm();
   }, [
-    builderImages,
     setFieldError,
     setFieldTouched,
     setFieldValue,
     validateForm,
     values.application.name,
     values.git,
-    values.image.selected,
     values.name,
   ]);
 
