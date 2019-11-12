@@ -7,6 +7,7 @@ import { K8sResourceKind } from '../../module/k8s';
 import { ButtonBar, history, StatusBox } from '../utils';
 import { AsyncComponent } from '../utils/async';
 import { patchAlertManagerConfig } from './alert-manager-utils';
+import { Helmet } from 'react-helmet';
 
 const DroppableFileInput = (props) => (
   <AsyncComponent
@@ -97,9 +98,14 @@ export const AlertManagerYAMLEditorWrapper: React.FC<
   AlertManagerYAMLEditorWrapperProps
 > = React.memo(({ obj, ...props }) => {
   return (
-    <StatusBox {...obj}>
-      <AlertManagerYAMLEditor {...props} obj={obj.data} />
-    </StatusBox>
+    <>
+      <Helmet>
+        <title>Alerting</title>
+      </Helmet>
+      <StatusBox {...obj}>
+        <AlertManagerYAMLEditor {...props} obj={obj.data} />
+      </StatusBox>
+    </>
   );
 });
 
