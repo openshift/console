@@ -8,7 +8,11 @@ type SecondaryStatusProps = {
 const SecondaryStatus: React.FC<SecondaryStatusProps> = ({ status }) => {
   const statusLabel = _.compact(_.concat([], status)).join(', ');
   if (statusLabel) {
-    return <small className="text-muted">{statusLabel}</small>;
+    return (
+      <div>
+        <small className="text-muted">{statusLabel}</small>
+      </div>
+    );
   }
   return null;
 };
