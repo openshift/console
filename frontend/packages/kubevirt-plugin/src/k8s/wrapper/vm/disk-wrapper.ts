@@ -25,7 +25,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
       },
       {
         initializeWithType: type,
-        initializeWithTypeData: type === DiskType.DISK && bus ? { bus: bus.getValue() } : undefined,
+        initializeWithTypeData: bus ? { bus: bus.getValue() } : undefined,
       },
     );
   };

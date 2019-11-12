@@ -33,7 +33,7 @@ import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { DiskBus } from '../../../constants/vm/storage';
+import { DiskBus, DiskType } from '../../../constants/vm/storage';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow, BinaryUnit } from '../../form/size-unit-form-row';
@@ -106,7 +106,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
     bus,
-    type: disk.getType(),
+    type: disk.getType() || DiskType.DISK,
   });
 
   const resultDataVolumeName = prefixedID(vmName, name);
