@@ -7,7 +7,7 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { TransformResourceData, isKnativeServing, deploymentKindMap } from '@console/shared';
+import { TransformResourceData, isKnativeServing } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   tranformKnNodeData,
@@ -355,9 +355,6 @@ export const transformTopologyData = (
   );
 
   _.forEach(transformBy, (key) => {
-    if (!deploymentKindMap[key]) {
-      throw new Error(`Invalid target deployment resource: (${key})`);
-    }
     if (!_.isEmpty(resources[key].data)) {
       // filter data based on the active application
       const resourceData = filterBasedOnActiveApplication(resources[key].data, application);
