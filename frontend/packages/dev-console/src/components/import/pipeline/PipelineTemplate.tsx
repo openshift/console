@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { ExpandCollapse, LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils';
 import { useFormikContext, FormikValues } from 'formik';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Expandable } from '@patternfly/react-core';
+import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
 import { getPipelineTemplate } from './pipeline-template-utils';
 
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   const {
-    values: {
-      pipeline: { template },
-      image,
-    },
+    values: { pipeline, image },
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
@@ -30,6 +30,7 @@ const PipelineTemplate: React.FC = () => {
         setFieldValue('pipeline.template', null);
         setNoTemplateForRuntime(true);
       }
+      setIsExpanded(false);
     };
 
     fetchPipelineTemplate();
@@ -44,19 +45,22 @@ const PipelineTemplate: React.FC = () => {
       <Alert
         isInline
         variant="info"
-        style={{ marginLeft: 'var(--pf-global--spacer--lg)' }}
-        title="Since there are no pipeline templates available for this runtime, a pipeline cannot be created."
+        title="There are no pipeline templates available for this runtime."
       />
     );
   }
 
-  return template ? (
-    <ExpandCollapse
-      textCollapsed="Show pipeline visualization"
-      textExpanded="Hide pipeline visualization"
-    >
-      <PipelineVisualization pipeline={template} />
-    </ExpandCollapse>
+  return pipeline.template ? (
+    <>
+      <CheckboxField label="Add pipeline" name="pipeline.enabled" />
+      <Expandable
+        toggleText={`${isExpanded ? 'Hide' : 'Show'} pipeline visualization`}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+      >
+        {isExpanded && <PipelineVisualization pipeline={pipeline.template} />}
+      </Expandable>
+    </>
   ) : (
     <LoadingInline />
   );
