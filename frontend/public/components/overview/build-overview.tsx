@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, ListGroup } from 'patternfly-react';
+import { ListGroup } from 'patternfly-react';
 import { SyncAltIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 import { Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
 import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
