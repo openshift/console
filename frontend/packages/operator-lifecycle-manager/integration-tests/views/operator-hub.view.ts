@@ -22,7 +22,7 @@ export const createSubscriptionFormName = $(
 );
 export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
 export const createSubscriptionFormLoaded = () =>
-  browser.wait(until.visibilityOf(createSubscriptionFormBtn));
+  browser.wait(until.visibilityOf(createSubscriptionFormBtn), 60000);
 export const createSubscriptionFormInstallMode = element(
   by.cssContainingText('h5', 'Installation Mode'),
 );
