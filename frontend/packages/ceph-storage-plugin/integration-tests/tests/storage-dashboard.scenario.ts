@@ -1,6 +1,6 @@
 import { browser } from 'protractor';
-import { appHost } from '../protractor.conf';
-import { dashboardIsLoaded } from '../views/dashboard-shared.view';
+import { appHost } from '@console/internal-integration-tests/protractor.conf';
+import { dashboardIsLoaded } from '../../../console-shared/src/test-views/dashboard-shared.view';
 import { serviceName, clusterHealth, clusterName, allNodes } from '../views/storage-dashboard.view';
 import { execSync } from 'child_process';
 
