@@ -518,7 +518,6 @@ This descriptor allows you to specify a set of fields together as a _group_. Nes
   <tr style="vertical-align:top">
     <td width="50%">CREATION VIEW
       <img src="img/15-1_fieldgroup-new.png" />
-      <p><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
       <img src="img/15-2_fieldgroup-dis.png" />
       <p><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
@@ -535,22 +534,22 @@ This descriptor allows you to specify a set of fields together as a _group_. Nes
 
 **x-descriptors**
 
-This descriptor allows you to specify a set of fields together as an _array item_. Nested fields of an array item will automatically be grouped using the CRD&#39;s OpenAPI validation. See example for Enmasse Operator:
+This descriptor allows you to specify a set of fields together as an _array item_. Nested fields of an array item will automatically be grouped using the CRD&#39;s OpenAPI validation. See example for Strimzi Operator:
 
 ```yaml
 …
-- description: The name of the required resource.
-  displayName: Name
-  path: requiredResources.items.name
+- description: The Broker ID to be assigned with the specified Storage Class.
+  displayName: Broker ID
+  path: kafka.storage.overrides[0].broker
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:Required Resources'
-    - 'urn:alm:descriptor:com.tectonic.ui:text'
-- description: The credit of the required resource.
-  displayName: Credit
-  path: requiredResources.items.credit
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:Required Resources'
+    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:overrides'
     - 'urn:alm:descriptor:com.tectonic.ui:number'
+- description: The Storage Class to be assigned.
+  displayName: Storage Class
+  path: kafka.storage.overrides[0].class
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:overrides'
+    - 'urn:alm:descriptor:io.kubernetes:StorageClass'
 …
 ```
 
@@ -610,16 +609,23 @@ This descriptor allows you to specify a set of predefined options (e.g. `enum:` 
 
 **x-descriptors**
 
-This descriptor allows you to specify fields as &quot;Advanced&quot; options and will be displayed at the latter section of the form. See example for Portworx Operator:
+This descriptor allows you to specify fields as &quot;Advanced&quot; options and will be displayed at the latter section of the form. See example for Business Automation Operator:
 
 ```yaml
 …
-- displayName: Update Strategy
-  description: The update strategy of the deployment
-  path: updateStrategy
+- description: Selected if the image registry is insecure.
+  displayName: Insecure
+  path: imageRegistry.insecure
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:advanced
-    - urn:alm:descriptor:com.tectonic.ui:updateStrategy
+    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+    - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+- description: >- Image registry's base 'url:port'. e.g. registry.example.com:5000.
+        Defaults to 'registry.redhat.io'.
+  displayName: Registry
+  path: imageRegistry.registry
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:text'
+    - 'urn:alm:descriptor:com.tectonic.ui:advanced'
 …
 ```
 
@@ -629,6 +635,7 @@ This descriptor allows you to specify fields as &quot;Advanced&quot; options and
     <td width="50%">CREATION VIEW
       <img src="img/18-1_advanced-new.png" /></td>
     <td width="50%">DISPLAY VIEW
+      <img src="img/18-2_advanced-dis.png" />
       <p><small><b>[TODO]</b><i> * Currently Missing.</i></small></p></td>
   </tr>
   <tr style="vertical-align:top">
