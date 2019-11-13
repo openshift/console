@@ -9,6 +9,8 @@
 @import '~patternfly/dist/sass/patternfly/icons';
 @import "~patternfly-react/dist/sass/patternfly-react";
 
+$co-affinity-row-margin: 15px;
+
 .co-clusterserviceversion-list {
   display: flex;
   flex-wrap: wrap;
@@ -62,8 +64,8 @@
 .co-clusterserviceversion-logo__name__clusterserviceversion {
   font-size: 15px;
   font-weight: var(--pf-global--FontWeight--normal);
-  margin-top: 0;
   margin-bottom: 5px;
+  margin-top: 0;
 }
 .co-m-pane__heading--logo
 .co-clusterserviceversion-logo__name__provider {
@@ -81,9 +83,9 @@
   margin-bottom: 15px;
 
   .pf-c-card {
-    width: 300px;
-    margin-right: 20px;
     margin-bottom: 20px;
+    margin-right: 20px;
+    width: 300px;
   }
 }
 
@@ -111,10 +113,10 @@
 }
 
 .co-catalogsource-list__section__packages {
+  align-items: flex-end;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
   margin-bottom: 20px;
 }
 
@@ -130,8 +132,8 @@
 }
 
 .co-spec-descriptor--switch {
-  display: flex;
   align-items: center;
+  display: flex;
   height: 25px;
 }
 
@@ -176,7 +178,7 @@
   border-bottom: 1px solid #ddd;
   padding: 10px 15px;
   @media(min-width: $screen-sm-min) {
-    padding: 10px 31px; // left alignment with namespace selector text
+    padding: 0 30px 15px;
   }
 }
 
@@ -194,7 +196,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
-  padding: 10px 0 5px 20px;
+  padding: 10px 0 5px 15px;
 }
 
 .co-affinity-term__remove {
@@ -203,14 +205,26 @@
 
 .co-affinity-term__topology {
   display: flex;
-  margin-bottom: 15px;
 }
+
+.co-affinity-term__topology-input,
+.co-affinity-term__weight-input {
+  margin-bottom: $co-affinity-row-margin;
+}
+
 
 .co-affinity-term__topology-input {
   display: flex;
   flex-direction: column;
   padding-right: 15px;
-  width: 50%;
+  width: 100%;
+}
+
+.co-affinity-term__weight-input {
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+  width: 100px;
 }
 
 .co-operand-field-group {
@@ -219,7 +233,7 @@
   flex-direction: column;
   margin-bottom: 15px;
   margin-left: 15px;
-  padding: 10px 0 5px 20px;
+  padding: 10px 15px 5px;
 }
 
 .co-operand-field-group-title {
@@ -231,4 +245,33 @@
 .catalog-source__table-row--disabled {
   background-color: var(--pf-global--BackgroundColor--200);
   color: var(--pf-global--Color--400);
+}
+
+.key-operator-value__action {
+  padding: 0;
+  width: 28px;
+}
+@media (max-width: $screen-sm-max) {
+  .key-operator-value__action--stacked,
+  .key-operator-value__value-field--stacked {
+    padding-top: 10px;
+  }
+}
+
+.key-operator-value__delete-button {
+  padding-left: 0 !important;
+}
+
+.key-operator-value__heading-button {
+  height: 23px; // for vertical alignment with input field; equals $pf-global--LineHeight--md
+}
+
+.key-operator-value__name-field,
+.key-operator-value__operator-field,
+.key-operator-value__value-field {
+  padding-right: 0 !important;
+}
+
+.key-operator-value__row {
+  padding-bottom: 15px;
 }

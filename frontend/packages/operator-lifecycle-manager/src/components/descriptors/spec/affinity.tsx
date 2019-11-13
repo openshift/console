@@ -125,27 +125,29 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
                   Remove Preferred
                 </Button>
               )}
-              <label className="control-label co-required" htmlFor={`preference-${i}`}>
-                Weight
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="number"
-                value={
-                  weight ||
-                  affinity.preferredDuringSchedulingIgnoredDuringExecution[i - 1].weight + 1
-                }
-                onChange={(e) =>
-                  props.onChangeAffinity(
-                    _.set(
-                      affinity,
-                      `preferredDuringSchedulingIgnoredDuringExecution[${i}].weight`,
-                      _.toInteger(e.target.value),
-                    ),
-                  )
-                }
-                required
-              />
+              <div className="co-affinity-term__weight-input">
+                <label className="control-label co-required" htmlFor={`preference-${i}`}>
+                  Weight
+                </label>
+                <input
+                  className="pf-c-form-control"
+                  type="number"
+                  value={
+                    weight ||
+                    affinity.preferredDuringSchedulingIgnoredDuringExecution[i - 1].weight + 1
+                  }
+                  onChange={(e) =>
+                    props.onChangeAffinity(
+                      _.set(
+                        affinity,
+                        `preferredDuringSchedulingIgnoredDuringExecution[${i}].weight`,
+                        _.toInteger(e.target.value),
+                      ),
+                    )
+                  }
+                  required
+                />
+              </div>
               <MatchExpressions
                 matchExpressions={preference.matchExpressions || ([] as MatchExpression[])}
                 onChangeMatchExpressions={(matchExpressions) =>
@@ -320,7 +322,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
                 </Button>
               )}
               <div className="co-affinity-term__topology">
-                <div className="co-affinity-term__topology-input">
+                <div className="co-affinity-term__weight-input">
                   <label className="control-label co-required" htmlFor={`preference-${i}`}>
                     Weight
                   </label>
