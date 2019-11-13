@@ -173,7 +173,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(operatorView.operandLink(jaegerName)));
 
-    expect(operatorView.operandKind('Jaeger').isDisplayed()).toBe(true);
+    const isDisplayed = retry(() => operatorView.operandKind('Jaeger').isDisplayed());
+    expect(isDisplayed).toBe(true);
   });
 
   it('displays metadata about the created `Jaeger` in its "Overview" section', async () => {

@@ -12,10 +12,11 @@ import { safeDump } from 'js-yaml';
 import { startCase, get, find, isUndefined } from 'lodash';
 import {
   appHost,
-  testName,
-  checkLogs,
   checkErrors,
+  checkLogs,
   create,
+  retry,
+  testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
@@ -412,7 +413,7 @@ describe('Using OLM descriptor components', () => {
   it('displays form for creating operand', async () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
-    await element(by.buttonText('Create App')).click();
+    await retry(() => element(by.buttonText('Create App')).click());
     await yamlView.isLoaded();
     await element(by.buttonText('Edit Form')).click();
     await browser.wait(until.presenceOf($('#metadata\\.name')));
