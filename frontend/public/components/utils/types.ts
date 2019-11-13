@@ -1,6 +1,13 @@
-import { K8sResourceKindReference, Selector, K8sResourceKind } from '../../module/k8s';
+import {
+  K8sResourceKindReference,
+  Selector,
+  K8sResourceKind,
+  K8sResourceCommon,
+} from '../../module/k8s';
 
-export type FirehoseResult<R extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]> = {
+export type FirehoseResult<
+  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]
+> = {
   loaded: boolean;
   loadError: string;
   data: R;
