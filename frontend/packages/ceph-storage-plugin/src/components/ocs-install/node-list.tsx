@@ -22,7 +22,7 @@ import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { history } from '@console/internal/components/utils/router';
 import {
   convertToBaseValue,
-  humanizeCpuCores,
+  humanizeCpuCoresLong,
   humanizeBinaryBytes,
   ResourceLink,
 } from '@console/internal/components/utils/index';
@@ -117,7 +117,7 @@ const getRows = (nodes: NodeKind[]) => {
           title: _.get(node.metadata.labels, 'failure-domain.beta.kubernetes.io/zone') || '-',
         },
         {
-          title: `${humanizeCpuCores(cpuCapacity).string || '-'}`,
+          title: `${humanizeCpuCoresLong(cpuCapacity).string || '-'}`,
         },
         {
           title: `${getConvertedUnits(allocatableMemory)}`,

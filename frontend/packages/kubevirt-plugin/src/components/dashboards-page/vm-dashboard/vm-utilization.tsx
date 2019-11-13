@@ -7,7 +7,8 @@ import {
 import {
   Dropdown,
   humanizeDecimalBytes,
-  humanizeCpuCores as humanizeCpuCoresUtil,
+  humanizeCpuCoresLong,
+  humanizeCpuCoresCompact,
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -29,15 +30,6 @@ import { getUtilizationQueries, VMQueries } from './queries';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
-
-// TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
-const humanizeCpuCores = (v) => {
-  const humanized = humanizeCpuCoresUtil(v);
-  // add space betwee value and unit
-  const val = humanized.string.match(/[\d.]+/) || [humanized.string];
-  humanized.string = `${val[0]} ${humanized.unit}`;
-  return humanized;
-};
 
 export const VMUtilizationCard = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
@@ -116,7 +108,8 @@ export const VMUtilizationCard = withDashboardResources(
             title="CPU"
             data={cpuStats}
             isLoading={!namespace || !cpuUtilization}
-            humanizeValue={humanizeCpuCores}
+            humanizeValue={humanizeCpuCoresLong}
+            humanizeValueCompact={humanizeCpuCoresCompact}
             query={queries[VMQueries.CPU_USAGE]}
             error={cpuError}
           />

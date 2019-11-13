@@ -20,9 +20,10 @@ import { withDashboardResources, DashboardItemProps } from '../with-dashboard-re
 import { Dropdown } from '../../utils/dropdown';
 import {
   humanizeBinaryBytes,
-  humanizeCpuCores,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
+  humanizeCpuCoresLong,
+  humanizeCpuCoresCompact,
 } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -95,7 +96,7 @@ export const UtilizationCard = withDashboardResources(
               metric: 'pod',
             },
           ]}
-          humanize={humanizeCpuCores}
+          humanize={humanizeCpuCoresLong}
           namespace={projectName}
           position={PopoverPosition.top}
         />
@@ -179,7 +180,8 @@ export const UtilizationCard = withDashboardResources(
             title="CPU"
             data={cpuStats}
             isLoading={!projectName || !cpuUtilization}
-            humanizeValue={humanizeCpuCores}
+            humanizeValue={humanizeCpuCoresLong}
+            humanizeValueCompact={humanizeCpuCoresCompact}
             query={queries[ProjectQueries.CPU_USAGE]}
             error={cpuError}
             TopConsumerPopover={cpuPopover}

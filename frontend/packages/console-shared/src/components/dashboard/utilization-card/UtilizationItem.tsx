@@ -9,6 +9,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     title,
     data,
     humanizeValue,
+    humanizeValueCompact,
     isLoading = false,
     query,
     error,
@@ -45,7 +46,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         loading={!error && isLoading}
         query={query}
         xAxis={false}
-        humanize={humanizeValue}
+        humanize={humanizeValueCompact || humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={70}
         chartStatus={chartStatus}
@@ -90,6 +91,7 @@ type UtilizationItemProps = {
   data?: DataPoint[];
   isLoading: boolean;
   humanizeValue: Humanize;
+  humanizeValueCompact?: Humanize;
   query: string;
   error: boolean;
   max?: number;

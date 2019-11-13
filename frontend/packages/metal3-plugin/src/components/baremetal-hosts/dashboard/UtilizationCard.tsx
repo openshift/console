@@ -25,7 +25,8 @@ import ConsumerPopover from '@console/shared/src/components/dashboard/utilizatio
 import {
   humanizeBinaryBytesWithoutB,
   humanizeBinaryBytes,
-  humanizeCpuCores,
+  humanizeCpuCoresCompact,
+  humanizeCpuCoresLong,
 } from '@console/internal/components/utils';
 import { MachineKind } from '@console/internal/module/k8s';
 import { getMachineNodeName } from '@console/shared';
@@ -128,7 +129,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         <ConsumerPopover
           title="CPU"
           current={current}
-          humanize={humanizeCpuCores}
+          humanize={humanizeCpuCoresLong}
           consumers={[
             {
               query: topConsumerQueries[HostQuery.PROJECTS_BY_CPU],
@@ -216,7 +217,8 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           data={cpuStats}
           error={cpuUtilizationError}
           isLoading={!cpuUtilization}
-          humanizeValue={humanizeCpuCores}
+          humanizeValue={humanizeCpuCoresLong}
+          humanizeValueCompact={humanizeCpuCoresCompact}
           query={queries[HostQuery.CPU_UTILIZATION].utilization}
           TopConsumerPopover={cpuPopover}
         />

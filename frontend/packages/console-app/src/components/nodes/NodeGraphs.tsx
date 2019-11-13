@@ -4,7 +4,7 @@ import { requirePrometheus } from '@console/internal/components/graphs';
 import { Area } from '@console/internal/components/graphs/area';
 import {
   humanizeBinaryBytes,
-  humanizeCpuCores,
+  humanizeCpuCoresLong,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
@@ -36,7 +36,7 @@ const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
         <div className="col-md-12 col-lg-4">
           <Area
             title="CPU Usage"
-            humanize={humanizeCpuCores}
+            humanize={humanizeCpuCoresLong}
             query={`instance:node_cpu:rate:sum${instanceQuery}`}
           />
         </div>

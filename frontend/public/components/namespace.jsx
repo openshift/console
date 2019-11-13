@@ -30,7 +30,7 @@ import {
   ResourceSummary,
   SectionHeading,
   humanizeBinaryBytes,
-  humanizeCpuCores,
+  humanizeCpuCoresLong,
   navFactory,
   useAccessReview,
 } from './utils';
@@ -348,7 +348,7 @@ export const NamespaceLineCharts = ({ ns }) => (
     <div className="col-md-6 col-sm-12">
       <Area
         title="CPU Usage"
-        humanize={humanizeCpuCores}
+        humanize={humanizeCpuCoresLong}
         namespace={ns.metadata.name}
         query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
       />

@@ -16,7 +16,11 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import { humanizeBinaryBytes, humanizeCpuCores } from '../../../utils/units';
+import {
+  humanizeBinaryBytes,
+  humanizeCpuCoresLong,
+  humanizeCpuCoresCompact,
+} from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
@@ -168,7 +172,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         title="CPU"
         current={current}
         consumers={cpuQueriesPopup}
-        humanize={humanizeCpuCores}
+        humanize={humanizeCpuCoresLong}
         position={PopoverPosition.top}
       />
     ),
@@ -218,7 +222,8 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           data={cpuStats}
           error={cpuUtilizationError || cpuTotalError}
           isLoading={!cpuUtilization || !cpuTotal}
-          humanizeValue={humanizeCpuCores}
+          humanizeValue={humanizeCpuCoresLong}
+          humanizeValueCompact={humanizeCpuCoresCompact}
           query={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
           TopConsumerPopover={cpuPopover}
           max={cpuMax.length ? cpuMax[0].y : null}

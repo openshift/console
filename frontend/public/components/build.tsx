@@ -25,7 +25,7 @@ import {
   ExternalLink,
   history,
   humanizeBinaryBytes,
-  humanizeCpuCores,
+  humanizeCpuCoresLong,
   Kebab,
   KebabAction,
   navFactory,
@@ -150,7 +150,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
         <div className="col-md-12 col-lg-4">
           <Area
             title="CPU Usage"
-            humanize={humanizeCpuCores}
+            humanize={humanizeCpuCoresLong}
             namespace={namespace}
             query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
           />
