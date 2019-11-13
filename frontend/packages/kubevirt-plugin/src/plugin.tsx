@@ -41,7 +41,7 @@ type ConsumedExtensions =
   | DashboardsStorageCapacityDropdownItem
   | ReduxReducer;
 
-const FLAG_KUBEVIRT = 'KUBEVIRT';
+export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

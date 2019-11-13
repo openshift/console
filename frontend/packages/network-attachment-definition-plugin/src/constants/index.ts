@@ -9,12 +9,12 @@ export const ELEMENT_TYPES = {
 
 export const networkTypes = {
   sriov: 'SR-IOV',
-  'cnv-bridge': 'Linux bridge',
+  'cnv-bridge': 'CNV Linux bridge',
 };
 
 export enum NetworkTypes {
   SRIOV = 'SR-IOV',
-  'CNV-Bridge' = 'Linux bridge',
+  'CNV-Bridge' = 'CNV Linux bridge',
 }
 
 export const networkTypeParams: NetworkTypeParamsList = {
@@ -45,10 +45,6 @@ export const networkTypeParams: NetworkTypeParamsList = {
       name: 'VLAN Tag Number',
       hintText: 'Ex: 100',
       type: ELEMENT_TYPES.TEXT,
-    },
-    ipam: {
-      name: 'IP Address Management',
-      type: ELEMENT_TYPES.TEXTAREA,
     },
   },
 };
