@@ -100,7 +100,27 @@ const createKnativeDeploymentItems = (
     return overviewItems;
   }
   const knResources = getKnativeServiceData(resource, resources);
-  return { obj: resource, buildConfigs: [], routes: [], services: [], ...knResources };
+  return {
+    obj: resource,
+    buildConfigs: [],
+    routes: [],
+    services: [],
+    ...knResources,
+  };
+};
+
+/**
+ * only get revision which are included in traffic data
+ */
+export const filterRevisionsBaseOnTrafficStatus = (
+  resource: K8sResourceKind,
+  revisions: K8sResourceKind[],
+): K8sResourceKind[] => {
+  if (!revisions || !resource.status.traffic) return undefined;
+  return resource.status.traffic.reduce((acc, curr) => {
+    const el = revisions.find((rev) => curr.revisionName === rev.metadata.name);
+    return el ? [...acc, el] : acc;
+  }, []);
 };
 
 /**
@@ -121,7 +141,7 @@ export const getKnativeTopologyNodeItems = (
         ownerReferences: [{ uid: configUidData }],
       },
     });
-    _.forEach(ChildData, (c) => {
+    _.forEach(filterRevisionsBaseOnTrafficStatus(resource, ChildData), (c) => {
       const uidRev = c.metadata.uid;
       children.push(uidRev);
       nodes.push(getTopologyNodeItem(c, NodeType.Revision));
