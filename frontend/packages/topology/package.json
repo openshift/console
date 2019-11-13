@@ -5,10 +5,10 @@
   "private": true,
   "main": "src/index.ts",
   "dependencies": {
+    "@console/shared": "0.0.0-fixed",
     "mobx": "^5.14.2",
     "mobx-react": "^6.1.4",
-    "mobx-react-lite": "^1.4.2",
-    "popper.js": "^1.15.0"
+    "mobx-react-lite": "^1.4.2"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx"
