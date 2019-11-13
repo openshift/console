@@ -6,7 +6,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { runStatus } from '../../utils/pipeline-augment';
-import { PipelineRunModel, TaskModel } from '../../models';
+import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../models';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import { ColoredStatusIcon } from './StatusIcon';
 import TaskComponentTaskStatus from './TaskComponentTaskStatus';
@@ -33,6 +33,7 @@ interface PipelineVisualizationTaskProp {
     name?: string;
     taskRef: {
       name: string;
+      kind?: string;
     };
     status?: TaskStatus;
   };
@@ -53,22 +54,33 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   if (pipelineRunStatus === runStatus.Failed) {
     if (
       task.status &&
-      (task.status.reason !== runStatus.Succeeded && task.status.reason !== runStatus.Failed)
+      task.status.reason !== runStatus.Succeeded &&
+      task.status.reason !== runStatus.Failed
     ) {
       taskStatus.reason = runStatus.Cancelled;
     }
   }
+  let resources;
+  if (task.taskRef.kind === ClusterTaskModel.kind) {
+    resources = [
+      {
+        kind: referenceForModel(ClusterTaskModel),
+        name: task.taskRef.name,
+        prop: 'task',
+      },
+    ];
+  } else {
+    resources = [
+      {
+        kind: referenceForModel(TaskModel),
+        name: task.taskRef.name,
+        namespace,
+        prop: 'task',
+      },
+    ];
+  }
   return (
-    <Firehose
-      resources={[
-        {
-          kind: referenceForModel(TaskModel),
-          name: task.taskRef.name,
-          namespace,
-          prop: 'task',
-        },
-      ]}
-    >
+    <Firehose resources={resources}>
       <TaskComponent
         pipelineRun={pipelineRun}
         name={task.name || ''}
