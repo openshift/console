@@ -1,12 +1,10 @@
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
-  getKnativeTopologyNodeItem,
+  getKnativeTopologyNodeItems,
   getEventTopologyEdgeItems,
   getTrafficTopologyEdgeItems,
-  filterKnativeBasedOnActiveApplication,
-  getTopologyServiceGroupItems,
-  nodeType,
+  NodeType,
 } from '../knative-topology-utils';
 
 describe('knative topology utils', () => {
@@ -23,38 +21,25 @@ describe('knative topology utils', () => {
     expect(knResource.revisions).toHaveLength(1);
   });
 
-  it('expect getKnativeTopologyNodeItem to return node data for service', () => {
-    const knServiceNode = getKnativeTopologyNodeItem(
+  it('expect getKnativeTopologyNodeItems to return node data for service', () => {
+    const knServiceNode = getKnativeTopologyNodeItems(
       MockKnativeResources.ksservices.data[0],
-      nodeType.KnService,
+      NodeType.KnService,
       MockKnativeResources,
     );
     expect(knServiceNode).toBeDefined();
-    expect(knServiceNode).toHaveProperty('children');
-    expect(knServiceNode.id).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
-    expect(knServiceNode.type).toBe(nodeType.KnService);
+    expect(knServiceNode).toHaveLength(2);
   });
 
-  it('expect getKnativeTopologyNodeItem to return node data for revision', () => {
-    const knServiceNode = getKnativeTopologyNodeItem(
-      MockKnativeResources.revisions.data[0],
-      nodeType.Revision,
-      MockKnativeResources,
-    );
-    expect(knServiceNode).toBeDefined();
-    expect(knServiceNode.id).toBe('02c34a0e-9638-11e9-b134-06a61d886b62');
-    expect(knServiceNode.type).toBe(nodeType.Revision);
-  });
-
-  it('expect getKnativeTopologyNodeItem to return node data for event sources', () => {
-    const knServiceNode = getKnativeTopologyNodeItem(
+  it('expect getKnativeTopologyNodeItems to return node data for event sources', () => {
+    const knServiceNode = getKnativeTopologyNodeItems(
       MockKnativeResources.eventSourceCronjob.data[0],
-      nodeType.EventSource,
+      NodeType.EventSource,
       MockKnativeResources,
     );
     expect(knServiceNode).toBeDefined();
-    expect(knServiceNode.id).toBe('1317f615-9636-11e9-b134-06a61d886b689');
-    expect(knServiceNode.type).toBe(nodeType.EventSource);
+    expect(knServiceNode[0].id).toBe('1317f615-9636-11e9-b134-06a61d886b689');
+    expect(knServiceNode[0].type).toBe(NodeType.EventSource);
   });
 
   it('expect getEventTopologyEdgeItems to return edge data for event sources', () => {
@@ -79,29 +64,5 @@ describe('knative topology utils', () => {
     expect(knRevisionsEdge[0].source).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
     expect(knRevisionsEdge[0].target).toBe('02c34a0e-9638-11e9-b134-06a61d886b62');
     expect(knRevisionsEdge[0].type).toBe('revision-traffic');
-  });
-
-  it('expect filterKnativeBasedOnActiveApplication to return resources based on active application', () => {
-    const activeApplications = filterKnativeBasedOnActiveApplication(
-      MockKnativeResources.ksservices.data,
-      'myapp',
-    );
-    expect(activeApplications).toBeDefined();
-    expect(activeApplications).toHaveLength(1);
-  });
-
-  it('expect filterKnativeBasedOnActiveApplication to return resources based on active application', () => {
-    const activeApplications = filterKnativeBasedOnActiveApplication(
-      MockKnativeResources.revisions.data,
-      'myapp',
-    );
-    expect(activeApplications).toBeDefined();
-    expect(activeApplications).toHaveLength(0);
-  });
-
-  it('expect getTopologyServiceGroupItems to form group data based on labels', () => {
-    const groupData = getTopologyServiceGroupItems(MockKnativeResources.ksservices.data[0], []);
-    expect(groupData).toBeDefined();
-    expect(groupData).toHaveLength(1);
   });
 });

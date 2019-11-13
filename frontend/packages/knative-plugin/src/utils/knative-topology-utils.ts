@@ -10,7 +10,6 @@ import {
 import {
   Node,
   Edge,
-  Group,
   TopologyDataResources,
   TopologyDataModel,
   TopologyDataObject,
@@ -20,17 +19,18 @@ import {
   createTopologyNodeData,
   getRoutesUrl,
   getEditURL,
+  getTopologyNodeItem,
 } from '@console/dev-console/src/components/topology/topology-utils';
 import { DeploymentModel } from '@console/internal/models';
 import { KnativeItem } from './get-knative-resources';
 
-export enum nodeType {
+export enum NodeType {
   EventSource = 'event-source',
   KnService = 'knative-service',
   Revision = 'knative-revision',
 }
 
-export enum edgeType {
+export enum EdgeType {
   Traffic = 'revision-traffic',
   EventSource = 'event-source-link',
 }
@@ -106,48 +106,52 @@ const createKnativeDeploymentItems = (
 /**
  * Form Node data for revisions/event/service sources
  */
-export const getKnativeTopologyNodeItem = (
+export const getKnativeTopologyNodeItems = (
   resource: K8sResourceKind,
   type: string,
   resources?: TopologyDataResources,
-): Node => {
-  const uid = _.get(resource, ['metadata', 'uid']);
-  const name = _.get(resource, ['metadata', 'name']);
-  const label = _.get(resource, ['metadata', 'labels', 'app.openshift.io/instance']);
-  const children = [];
-  if (type === nodeType.KnService && resources && resources.configurations) {
+): Node[] => {
+  const nodes = [];
+  const children: string[] = [];
+  if (type === NodeType.KnService && resources && resources.configurations) {
     const configurations = getOwnedResources(resource, resources.configurations.data);
     const configUidData = _.get(configurations[0], ['metadata', 'uid']);
     const ChildData = _.filter(resources.revisions.data, {
-      metadata: { ownerReferences: [{ uid: configUidData }] },
+      metadata: {
+        ownerReferences: [{ uid: configUidData }],
+      },
     });
     _.forEach(ChildData, (c) => {
-      children.push(_.get(c, ['metadata', 'uid']));
+      const uidRev = c.metadata.uid;
+      children.push(uidRev);
+      nodes.push(getTopologyNodeItem(c, NodeType.Revision));
     });
   }
-  return {
-    id: uid,
-    type,
-    name: label || name,
-    ...(children.length && { children }),
-  };
+  nodes.push(getTopologyNodeItem(resource, type, children));
+  return nodes;
 };
 
 /**
  * Form Edge data for event sources
  */
-export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): Edge[] => {
+export const getEventTopologyEdgeItems = (
+  resource: K8sResourceKind,
+  { data },
+  application?: string,
+): Edge[] => {
   const uid = _.get(resource, ['metadata', 'uid']);
   const sinkSvc = _.get(resource, ['spec', 'sink'], {});
   const edges = [];
   if (sinkSvc.kind === 'Service') {
     _.forEach(data, (res) => {
+      const PART_OF = 'app.kubernetes.io/part-of';
       const resname = _.get(res, ['metadata', 'name']);
       const resUid = _.get(res, ['metadata', 'uid']);
-      if (resname === sinkSvc.name) {
+      const appGroup = _.get(res, ['metadata', 'labels', PART_OF], null);
+      if (resname === sinkSvc.name && (!application || appGroup === application)) {
         edges.push({
           id: `${uid}_${resUid}`,
-          type: edgeType.EventSource,
+          type: EdgeType.EventSource,
           source: uid,
           target: resUid,
         });
@@ -175,7 +179,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
     if (resUid) {
       edges.push({
         id: `${uid}_${resUid}`,
-        type: edgeType.Traffic,
+        type: EdgeType.Traffic,
         source: uid,
         target: resUid,
         data: { percent: trafficPercent },
@@ -183,56 +187,6 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
     }
   });
   return edges;
-};
-
-/**
- * Form Group data for service sources
- */
-export const getTopologyServiceGroupItems = (
-  resource: K8sResourceKind,
-  groups: Group[],
-): Group[] => {
-  const labels = _.get(resource, ['spec', 'template', 'metadata', 'labels'], []);
-  const uid = _.get(resource, ['metadata', 'uid']);
-  _.forEach(labels, (label, key) => {
-    if (key !== 'app.kubernetes.io/part-of') {
-      return;
-    }
-    // find and add the groups
-    const groupExists = _.some(groups, {
-      name: label,
-    });
-    if (!groupExists) {
-      groups.push({
-        id: `group:${label}`,
-        name: label,
-        nodes: [uid],
-      });
-    } else {
-      const gIndex = _.findIndex(groups, { name: label });
-      groups[gIndex].nodes.push(uid);
-    }
-  });
-  return groups;
-};
-
-/**
- * Filter Knative resources based on part-of label
- */
-export const filterKnativeBasedOnActiveApplication = (
-  data: K8sResourceKind[],
-  application: string,
-): K8sResourceKind[] => {
-  const PART_OF = 'app.kubernetes.io/part-of';
-  if (!application) {
-    return data;
-  }
-  return data.filter((d) => {
-    return (
-      _.get(d, ['metadata', 'labels', PART_OF]) === application ||
-      _.get(d, ['spec', 'template', 'metadata', 'labels', PART_OF]) === application
-    );
-  });
 };
 
 /**
@@ -266,7 +220,6 @@ export const createTopologyServiceNodeData = (
   };
 };
 
-let groupsData = [];
 export const tranformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -279,47 +232,51 @@ export const tranformKnNodeData = (
 ) => {
   let nodesData = [];
   let edgesData = [];
+  let groupsData = [];
   const dataToShowOnNodes = {};
-  const resourceData = filterKnativeBasedOnActiveApplication(knResourcesData, application);
-  _.forEach(resourceData, (res) => {
-    const uid = _.get(res, ['metadata', 'uid']);
-    if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
-      nodesData = [...nodesData, getKnativeTopologyNodeItem(res, type, resources)];
+  _.forEach(knResourcesData, (res) => {
+    const { uid } = res.metadata;
+    if (
+      !_.some(topologyGraphAndNodeData.graph.nodes, { id: uid }) ||
+      !topologyGraphAndNodeData.topology[uid]
+    ) {
       const item = createKnativeDeploymentItems(res, resources, utils);
-      const { obj: knServiceData } = item;
-      const uidRes = _.get(knServiceData, ['metadata', 'uid']);
       switch (type) {
-        case nodeType.EventSource: {
-          dataToShowOnNodes[uidRes] = createTopologyNodeData(
+        case NodeType.EventSource: {
+          dataToShowOnNodes[uid] = createTopologyNodeData(
             item,
             operatorBackedServiceKinds,
             cheURL,
             type,
           );
-          edgesData = [...edgesData, ...getEventTopologyEdgeItems(res, resources.ksservices)];
+          nodesData = [...nodesData, ...getKnativeTopologyNodeItems(res, type, resources)];
+          edgesData = [
+            ...edgesData,
+            ...getEventTopologyEdgeItems(res, resources.ksservices, application),
+          ];
           groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
           break;
         }
-        case nodeType.Revision: {
-          dataToShowOnNodes[uidRes] = createTopologyNodeData(
+        case NodeType.Revision: {
+          dataToShowOnNodes[uid] = createTopologyNodeData(
             item,
             operatorBackedServiceKinds,
             cheURL,
             type,
           );
+          groupsData = [...topologyGraphAndNodeData.graph.groups];
           break;
         }
-        case nodeType.KnService: {
-          dataToShowOnNodes[uidRes] = createTopologyServiceNodeData(
+        case NodeType.KnService: {
+          dataToShowOnNodes[uid] = createTopologyServiceNodeData(
             item,
             operatorBackedServiceKinds,
             type,
             cheURL,
           );
+          nodesData = [...nodesData, ...getKnativeTopologyNodeItems(res, type, resources)];
           edgesData = [...edgesData, ...getTrafficTopologyEdgeItems(res, resources.revisions)];
-          groupsData = [
-            ...getTopologyServiceGroupItems(res, topologyGraphAndNodeData.graph.groups),
-          ];
+          groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
           break;
         }
         default:
