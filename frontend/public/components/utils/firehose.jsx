@@ -118,6 +118,7 @@ const stateToProps = ({ k8s }, { resources }) => {
     ImmutableMap(),
   );
   const loaded = (r) =>
+    r.optional ||
     k8s.getIn([
       makeReduxID(
         k8sModels.get(r.kind),
