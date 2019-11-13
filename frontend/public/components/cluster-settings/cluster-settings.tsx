@@ -274,10 +274,12 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
           </div>
         </div>
         <div className="co-m-pane__body-group">
-          <p className="co-m-pane__explanation">
-            View this cluster and manage subscription settings in{' '}
-            <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterID)} />.
-          </p>
+          {window.SERVER_FLAGS.branding !== 'okd' && (
+            <p className="co-m-pane__explanation">
+              View this cluster and manage subscription settings in{' '}
+              <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterID)} />.
+            </p>
+          )}
           <dl className="co-m-pane__details">
             <dt>Cluster ID</dt>
             <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
