@@ -25,11 +25,8 @@ const LinkableLegend: React.FC<LinkableLegendProps> = (props: LinkableLegendProp
     <Link to={href} className="capacity-breakdown-card__legend-link">
       <ChartLabel
         {...props}
-        lineHeight={1.3}
-        style={[
-          { ...datum.labels, fontSize: 8, padding: 0 },
-          { fill: 'black', fontSize: 8, padding: 0 },
-        ]}
+        lineHeight={1.2}
+        style={[{ ...datum.labels, fontSize: 9 }, { fill: 'black', fontSize: 8 }]}
       />
     </Link>
   );
@@ -41,49 +38,45 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({ data, legends, m
       key={d.id}
       style={{ data: { stroke: 'white', strokeWidth: 0.7, ...isAvailableBar(d.name) } }}
       cornerRadius={getBarRadius(index, data.length)}
-      barWidth={20}
+      barWidth={18}
       padding={0}
       data={[d]}
-      labelComponent={
-        <ChartTooltip constrainToVisibleArea style={{ fontSize: 8 }} pointerOrientation="left" />
-      }
+      labelComponent={<ChartTooltip dx={0} style={{ fontSize: 8, padding: 5 }} />}
     />
   ));
 
   return (
-    <Chart
-      legendPosition="bottom-left"
-      domain={{ x: [0, 0] }}
-      domainPadding={{ x: [0, 0] }}
-      maxDomain={{ x: 0 }}
-      legendComponent={
-        <ChartLegend
-          themeColor={ChartThemeColor.purple}
-          data={legends}
-          standalone={false}
-          labelComponent={<LinkableLegend metricModel={metricModel} />}
-          orientation="horizontal"
-          symbolSpacer={5}
-          gutter={-20}
-          style={{ labels: { padding: 0 } }}
-          padding={0}
+    <>
+      <Chart
+        legendPosition="bottom-left"
+        legendComponent={
+          <ChartLegend
+            themeColor={ChartThemeColor.multiOrdered}
+            data={legends}
+            y={40}
+            labelComponent={<LinkableLegend metricModel={metricModel} />}
+            orientation="horizontal"
+            symbolSpacer={5}
+            height={50}
+            style={{ labels: { fontSize: 8 } }}
+          />
+        }
+        height={60}
+        padding={{
+          bottom: 35,
+          top: 0,
+          right: 0,
+          left: 0,
+        }}
+        themeColor={ChartThemeColor.multiOrdered}
+      >
+        <ChartAxis
+          style={{ axis: { stroke: 'none' }, ticks: { stroke: 'none' } }}
+          tickFormat={() => ''}
         />
-      }
-      height={100}
-      padding={{
-        bottom: 75,
-        top: 0,
-      }}
-      themeColor={ChartThemeColor.multiOrdered}
-    >
-      <ChartAxis
-        style={{ axis: { stroke: 'none' }, ticks: { stroke: 'none' } }}
-        tickFormat={() => ''}
-      />
-      <ChartStack horizontal padding={{ bottom: 0 }}>
-        {chartData}
-      </ChartStack>
-    </Chart>
+        <ChartStack horizontal>{chartData}</ChartStack>
+      </Chart>
+    </>
   );
 };
 

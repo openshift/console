@@ -55,8 +55,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
 
   const legends = chartData.map((d: StackDataPoint) => ({
     name: [d.name, d.label],
-    symbol: { size: 3, padding: 0 }, // To be removed
-    labels: { fill: d.color, padding: 0 },
+    labels: { fill: d.color },
     link: d.link,
   }));
 
