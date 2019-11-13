@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { GraphElement as TopologyElement } from '../types';
 import ElementContext from '../utils/ElementContext';
 import ContextMenu from '../components/contextmenu/ContextMenu';
-import Portal from '../components/contextmenu/Portal';
 
 type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
 
@@ -13,7 +12,7 @@ export type WithContextMenuProps = {
 
 export const withContextMenu = <E extends TopologyElement>(
   actions: (element: E) => React.ReactElement[],
-  container?: React.ComponentProps<typeof Portal>['container'],
+  container?: Element | null | undefined | (() => Element),
   className?: string,
   atPoint: boolean = true,
 ) => <P extends WithContextMenuProps>(WrappedComponent: React.ComponentType<P>) => {
