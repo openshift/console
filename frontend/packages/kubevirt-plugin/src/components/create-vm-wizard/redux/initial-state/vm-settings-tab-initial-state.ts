@@ -59,6 +59,7 @@ export const getInitialVmSettings = (common: CommonData) => {
       isRequired: asRequired(true),
     },
     [VMSettingsField.START_VM]: {
+      value: false,
       isHidden: hiddenByProviderOrTemplate,
     },
     [VMSettingsField.PROVIDERS_DATA]: {
