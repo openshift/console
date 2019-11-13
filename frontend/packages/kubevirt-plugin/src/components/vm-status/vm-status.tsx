@@ -33,6 +33,7 @@ import {
   VM_STATUS_STOPPING,
   VM_STATUS_OFF,
   VM_STATUS_ERROR,
+  VM_STATUS_IMPORT_PENDING,
 } from '../../statuses/vm/constants';
 import { VMKind, VMIKind } from '../../types';
 
@@ -49,6 +50,7 @@ const IMPORTING_ERROR_MESSAGE = 'The virtual machine could not be imported.';
 const VMI_WAITING_MESSAGE = 'The virtual machine is waiting for resources to become available.';
 const STARTING_MESSAGE =
   'This virtual machine will start shortly. Preparing storage, networking, and compute resources.';
+const IMPORT_WAITING_MESSAGE = 'The importer pod is waiting for resources to become available.';
 
 const getAdditionalImportText = (pod: PodKind): string => {
   const labels = getLabels(pod, {});
@@ -107,6 +109,18 @@ export const VMStatus: React.FC<VMStatusProps> = ({
         <PendingStatus title="Import pending (VMware)">
           <VMStatusPopoverContent
             message={IMPORTING_VMWARE_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message}
+          </VMStatusPopoverContent>
+        </PendingStatus>
+      );
+    case VM_STATUS_IMPORT_PENDING:
+      return (
+        <PendingStatus title="Import pending">
+          <VMStatusPopoverContent
+            message={IMPORT_WAITING_MESSAGE}
             linkMessage={VIEW_VM_EVENTS}
             linkTo={linkToVMEvents}
           >

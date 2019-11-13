@@ -46,6 +46,7 @@ import {
   VM_SIMPLE_STATUS_OTHER,
   VM_STATUS_V2V_CONVERSION_PENDING,
   CONVERSION_PROGRESS_ANNOTATION,
+  VM_STATUS_IMPORT_PENDING,
 } from './constants';
 import { Status } from '..';
 
@@ -139,12 +140,18 @@ const isBeingImported = (vm: VMKind, pods?: PodKind[]): VMStatus => {
     const importerPodsStatuses = importerPods.map((pod) => {
       const podStatus = getPodStatus(pod);
       if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
+        let status = VM_STATUS_IMPORT_ERROR;
+        if (
+          podStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
+          getPodStatusPhase(pod) === POD_PHASE_PENDING
+        ) {
+          status = VM_STATUS_IMPORT_PENDING;
+        }
+
         return {
           ...podStatus,
-          message: POD_STATUS_NOT_SCHEDULABLE
-            ? 'Importer pod scheduling failed.'
-            : podStatus.message,
-          status: VM_STATUS_IMPORT_ERROR,
+          message: podStatus.message,
+          status,
           pod,
         };
       }
@@ -154,17 +161,17 @@ const isBeingImported = (vm: VMKind, pods?: PodKind[]): VMStatus => {
         pod,
       };
     });
-    const importErrorStatus = importerPodsStatuses.find(
-      (status) => status.status === VM_STATUS_IMPORT_ERROR,
+    const importErrorOrPendingStatus = importerPodsStatuses.find((status) =>
+      [VM_STATUS_IMPORT_PENDING, VM_STATUS_IMPORT_ERROR].includes(status.status),
     );
     const message = importerPodsStatuses
       .map((podStatus) => `${podStatus.pod.metadata.name}: ${podStatus.message}`)
       .join('\n\n');
 
     return {
-      status: importErrorStatus ? importErrorStatus.status : VM_STATUS_IMPORTING,
+      status: importErrorOrPendingStatus ? importErrorOrPendingStatus.status : VM_STATUS_IMPORTING,
       message,
-      pod: importErrorStatus ? importErrorStatus.pod : importerPods[0],
+      pod: importErrorOrPendingStatus ? importErrorOrPendingStatus.pod : importerPods[0],
       importerPodsStatuses,
     };
   }
