@@ -23,7 +23,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { CEPH_STORAGE_NAMESPACE } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
-import { isDataResiliencyActivity } from './data-resiliency-activity';
+import { getResiliencyProgress } from '../../../../utils';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -58,27 +58,27 @@ const OngoingActivity = withDashboardResources(
         stopWatchPrometheusQuery(DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS]);
     }, [watchPrometheus, stopWatchPrometheusQuery]);
 
-    const resiliencyProgress = prometheusResults.getIn([
+    const progressResponse = prometheusResults.getIn([
       DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
       'data',
     ]) as PrometheusResponse;
-    const resiliencyProgressError = prometheusResults.getIn([
+    const progressError = prometheusResults.getIn([
       DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
       'loadError',
     ]);
     const prometheusActivities = [];
     const resourceActivities = [];
 
-    if (isDataResiliencyActivity(resiliencyProgress)) {
+    if (getResiliencyProgress(progressResponse) < 1) {
       prometheusActivities.push({
-        results: resiliencyProgress,
-        loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliencyActivity),
+        results: progressResponse,
+        loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliency),
       });
     }
 
     return (
       <OngoingActivityBody
-        loaded={resiliencyProgress || resiliencyProgressError}
+        loaded={progressResponse || progressError}
         resourceActivities={resourceActivities}
         prometheusActivities={prometheusActivities}
       />

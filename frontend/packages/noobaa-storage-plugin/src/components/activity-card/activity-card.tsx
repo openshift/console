@@ -16,8 +16,8 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
+import { getResiliencyProgress } from '@console/ceph-storage-plugin/src/utils';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
-import { isDataResiliencyActivity } from './data-resiliency-activity/data-resiliency-activity';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -79,12 +79,12 @@ const OngoingActivity = withDashboardResources(
 
     const prometheusActivities = [];
 
-    if (isDataResiliencyActivity(progress)) {
+    if (getResiliencyProgress(progress) < 1) {
       prometheusActivities.push({
         results: [progress, eta],
         loader: () =>
           import('./data-resiliency-activity/data-resiliency-activity').then(
-            (m) => m.DataResiliencyActivity,
+            (m) => m.NoobaaDataResiliency,
           ),
       });
     }

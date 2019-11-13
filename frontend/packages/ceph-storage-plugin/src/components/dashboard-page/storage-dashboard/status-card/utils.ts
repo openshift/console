@@ -31,14 +31,17 @@ export const getCephHealthState: PrometheusHealthHandler = (responses = [], erro
 };
 
 export const getDataResiliencyState: PrometheusHealthHandler = (responses = [], errors = []) => {
+  const progress: number = getResiliencyProgress(responses[0]);
   if (errors[0]) {
     return { state: HealthState.UNKNOWN };
   }
   if (!responses[0]) {
     return { state: HealthState.LOADING };
   }
-  const progress = getResiliencyProgress(responses[0]);
-  if (progress && progress < 100) {
+  if (Number.isNaN(progress)) {
+    return { state: HealthState.UNKNOWN };
+  }
+  if (progress < 1) {
     return { state: HealthState.PROGRESS };
   }
   return { state: HealthState.OK };
