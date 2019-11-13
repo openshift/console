@@ -27,7 +27,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
 }) => {
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>Set traffic distrubution</ModalTitle>
+      <ModalTitle>Set Traffic Distribution</ModalTitle>
       <ModalBody>
         <p>Set traffic distribution for the Revisions of the Knative Service</p>
         <MultiColumnField
