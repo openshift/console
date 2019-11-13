@@ -26,11 +26,10 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
       label={label}
     >
       {options.map((option) => (
-        <>
+        <React.Fragment key={option.value}>
           <Radio
             {...field}
             {...props}
-            key={option.value}
             id={getFieldId(option.value, 'radiobutton')}
             value={option.value}
             label={
@@ -57,7 +56,7 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
               <br />
             </>
           ) : null}
-        </>
+        </React.Fragment>
       ))}
     </FormGroup>
   );
