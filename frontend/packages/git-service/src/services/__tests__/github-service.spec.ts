@@ -42,7 +42,7 @@ describe('Github Service', () => {
 
     const gitService = new GithubService(gitSource);
 
-    return nockBack('files.json').then(async ({ nockDone, context }) => {
+    return nockBack('files-golang.json').then(async ({ nockDone, context }) => {
       const fileList: RepoFileList = await gitService.getRepoFileList();
       expect(fileList.files.length).toBeGreaterThanOrEqual(1);
       context.assertScopesFinished();
@@ -55,10 +55,38 @@ describe('Github Service', () => {
 
     const gitService = new GithubService(gitSource);
 
-    return nockBack('files.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+    return nockBack('files-golang.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('golang');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should detect modern-webapp build type', () => {
+    const gitSource: GitSource = { url: 'https://github.com/nodeshift-starters/react-web-app' };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('files-modern-webapp.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('modern-webapp');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should detect nodejs build type', () => {
+    const gitSource: GitSource = { url: 'https://github.com/sclorg/nodejs-ex' };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('files-nodejs.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('nodejs');
       context.assertScopesFinished();
       nockDone();
     });

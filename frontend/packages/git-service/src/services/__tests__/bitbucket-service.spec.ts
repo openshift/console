@@ -28,7 +28,7 @@ describe('Bitbucket Service', () => {
     const gitService = new BitbucketService(gitSource);
 
     return nockBack('files.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toEqual(0);
       context.assertScopesFinished();
       nockDone();

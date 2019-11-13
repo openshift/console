@@ -53,7 +53,7 @@ describe('Gitlab Service', () => {
     const gitService = new GitlabService(gitSource);
 
     return nockBack('files.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('golang');
       context.assertScopesFinished();
