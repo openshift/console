@@ -179,7 +179,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(operatorView.operandLink('example')));
 
-    expect(operatorView.operandKind('Prometheus').isDisplayed()).toBe(true);
+    const isDisplayed = retry(() => operatorView.operandKind('Prometheus').isDisplayed());
+    expect(isDisplayed).toBe(true);
   });
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async () => {
