@@ -24,6 +24,7 @@ type PodStatusProps = {
   data: ExtPodKind[];
   showTooltip?: boolean;
   title?: string;
+  titleComponent?: React.ReactElement;
   subTitle?: string;
 };
 
@@ -98,6 +99,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       showTooltip = true,
       title = '',
       subTitle = '',
+      titleComponent,
     } = this.props;
     const { vData, updateOnEnd, tipIndex } = this.state;
 
@@ -113,58 +115,60 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
         ]
       : undefined;
 
-    const tipContent = (
-      <div className="odc-pod-status-tooltip">
-        {vData[tipIndex] && (
-          <>
-            <span
-              className="odc-pod-status-tooltip__status-box"
-              style={{ background: podColor[vData[tipIndex].x] }}
-            />
-            {vData[tipIndex].x}
-            {podStatusIsNumeric(vData[tipIndex].x) && (
-              <span key={3} className="odc-pod-status-tooltip__status-count">
-                {Math.round(vData[tipIndex].y)}
-              </span>
-            )}
-          </>
-        )}
-      </div>
-    );
-
-    return (
-      <Tooltip content={tipContent}>
-        <ChartDonut
-          events={tooltipEvent}
-          animate={{
-            duration: ANIMATION_DURATION,
-            onEnd: updateOnEnd ? this.doUpdate : undefined,
-          }}
-          standalone={standalone}
-          innerRadius={innerRadius}
-          radius={outerRadius}
-          groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
-          data={vData}
-          height={size}
-          width={size}
-          title={title}
-          subTitle={subTitle}
-          allowTooltip={false}
-          labels={() => null}
-          /*
+    const chartDonut = (
+      <ChartDonut
+        events={tooltipEvent}
+        animate={{
+          duration: ANIMATION_DURATION,
+          onEnd: updateOnEnd ? this.doUpdate : undefined,
+        }}
+        standalone={standalone}
+        innerRadius={innerRadius}
+        radius={outerRadius}
+        groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
+        data={vData}
+        height={size}
+        width={size}
+        title={title}
+        titleComponent={titleComponent}
+        subTitle={subTitle}
+        allowTooltip={false}
+        labels={() => null}
+        /*
             // @ts-ignore */
-          padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
-          style={{
-            data: {
-              fill: ({ datum }) => podColor[datum.x],
-              stroke: ({ datum }) =>
-                !podStatusIsNumeric(datum.x) && datum.y > 0 ? '#BBBBBB' : 'none',
-              strokeWidth: 1,
-            },
-          }}
-        />
-      </Tooltip>
+        padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
+        style={{
+          data: {
+            fill: ({ datum }) => podColor[datum.x],
+            stroke: ({ datum }) =>
+              !podStatusIsNumeric(datum.x) && datum.y > 0 ? '#BBBBBB' : 'none',
+            strokeWidth: 1,
+          },
+        }}
+      />
     );
+    if (showTooltip) {
+      const tipContent = (
+        <div className="odc-pod-status-tooltip">
+          {vData[tipIndex] && (
+            <>
+              <span
+                className="odc-pod-status-tooltip__status-box"
+                style={{ background: podColor[vData[tipIndex].x] }}
+              />
+              {vData[tipIndex].x}
+              {podStatusIsNumeric(vData[tipIndex].x) && (
+                <span key={3} className="odc-pod-status-tooltip__status-count">
+                  {Math.round(vData[tipIndex].y)}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      );
+      return <Tooltip content={tipContent}>{chartDonut}</Tooltip>;
+    }
+    return chartDonut;
   }
 }
 

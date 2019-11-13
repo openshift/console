@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup } from 'patternfly-react';
 import { Button } from '@patternfly/react-core';
+import { PodStatus } from '@console/shared';
+import { ChartLabel } from '@patternfly/react-charts';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   ResourceLink,
@@ -24,27 +26,60 @@ export type RevisionsOverviewListItemProps = {
 };
 
 const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
-  revision: {
-    metadata: { name, namespace },
-  },
-  service: {
-    status: { traffic },
-  },
+  revision,
+  service,
 }) => {
-  const getTraffic = (revision: string) => {
+  const {
+    metadata: { name, namespace },
+  } = revision;
+  const {
+    status: { traffic },
+  } = service;
+  const getTraffic = (revName: string) => {
     if (!traffic || !traffic.length) {
       return null;
     }
-    return `${_.get(_.find(traffic, { revisionName: revision }), 'percent', 0)}%`;
+    const trafficPercent = _.get(_.find(traffic, { revisionName: revName }), 'percent', null);
+    return trafficPercent ? `${trafficPercent}%` : null;
   };
+  const deploymentData = _.get(revision, 'resources.current.obj.metadata.ownerReferences[0]', {});
+  const current = _.get(revision, 'resources.current', null);
+  const availableReplicas = _.get(revision, 'resources.current.obj.status.availableReplicas', '0');
   return (
     <li className="list-group-item">
       <div className="row">
-        <div className="col-lg-8 col-md-8 col-sm-8">
+        <div className="col-sm-8 col-xs-9">
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </div>
-        <span className="col-lg-4 col-md-4 col-sm-4 text-right">{getTraffic(name)}</span>
+        <span className="col-sm-4 col-xs-3 text-right">{getTraffic(name)}</span>
       </div>
+      {deploymentData.name && (
+        <div className="odc-revision-deployment-list">
+          <div className="row">
+            <div className="col-sm-8 col-xs-9">
+              <ResourceLink
+                kind={deploymentData.kind}
+                name={deploymentData.name}
+                namespace={namespace}
+              />
+            </div>
+            <div className="col-sm-4 col-xs-3">
+              <div className="odc-revision-deployment-list__pod">
+                <PodStatus
+                  standalone
+                  data={current ? current.pods : []}
+                  size={25}
+                  innerRadius={8}
+                  outerRadius={12}
+                  title={availableReplicas}
+                  titleComponent={<ChartLabel style={{ fontSize: '10px' }} />}
+                  showTooltip={false}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </li>
   );
 };

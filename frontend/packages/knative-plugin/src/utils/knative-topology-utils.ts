@@ -48,10 +48,30 @@ export const getKnativeServiceData = (
     configurations && configurations.length
       ? getOwnedResources(configurations[0], resources.revisions.data)
       : undefined;
+  const revisionsDep = _.map(revisions, (revision) => {
+    if (resources.deployments) {
+      const transformResourceData = new TransformResourceData(resources);
+      const associatedDeployment = getOwnedResources(revision, resources.deployments.data);
+      if (!_.isEmpty(associatedDeployment)) {
+        const depObj: K8sResourceKind = {
+          ...associatedDeployment[0],
+          apiVersion: apiVersionForModel(DeploymentModel),
+          kind: DeploymentModel.kind,
+        };
+        const replicaSets = transformResourceData.getReplicaSetsForResource(depObj);
+        const [current, previous] = replicaSets;
+        const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+        const depResources = { pods, current };
+        const revisionDep = { ...revision, resources: depResources };
+        return revisionDep;
+      }
+    }
+    return revision;
+  });
   const ksroutes = resources.ksroutes
     ? getOwnedResources(resource, resources.ksroutes.data)
     : undefined;
-  const knativedata = { configurations, revisions, ksroutes };
+  const knativedata = { configurations, revisions: revisionsDep, ksroutes };
   return knativedata;
 };
 
