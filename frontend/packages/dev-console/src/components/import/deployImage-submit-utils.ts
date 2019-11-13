@@ -95,19 +95,40 @@ const getMetadata = (formData: DeployImageFormData) => {
 
 export const createDeployment = (
   formData: DeployImageFormData,
-  imageStreamName: string,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {
   const {
+    registry,
     project: { name: namespace },
     name,
-    isi: { ports },
+    isi: { image, ports },
     deployment: { env, replicas },
     labels: userLabels,
     limits: { cpu, memory },
+    imageStream: { image: imgName, namespace: imgNamespace, tag },
   } = formData;
 
+  const defaultAnnotations = {
+    ...annotations,
+    'alpha.image.policy.openshift.io/resolve-names': '*',
+    'image.openshift.io/triggers': JSON.stringify([
+      {
+        from: {
+          kind: 'ImageStreamTag',
+          name: `${imgName || name}:${tag}`,
+          namespace: imgNamespace || namespace,
+        },
+        fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+      },
+    ]),
+  };
+
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
+
+  const imageRef =
+    registry === registryType.External
+      ? `${imgName || name}:${tag}`
+      : _.get(image, 'dockerImageReference');
 
   const deployment = {
     kind: 'Deployment',
@@ -116,7 +137,7 @@ export const createDeployment = (
       name,
       namespace,
       labels,
-      annotations,
+      annotations: defaultAnnotations,
     },
     spec: {
       replicas,
@@ -135,7 +156,7 @@ export const createDeployment = (
           containers: [
             {
               name,
-              image: `${imageStreamName}`,
+              image: imageRef,
               ports,
               volumeMounts,
               env,
@@ -280,13 +301,10 @@ export const createResources = async (
 
   const requests: Promise<K8sResourceKind>[] = [];
   if (formData.resources !== Resources.KnativeService) {
+    registry === registryType.External && requests.push(createImageStream(formData, dryRun));
     if (formData.resources === Resources.Kubernetes) {
-      const imageStreamResponse = await createImageStream(formData, dryRun);
-      requests.push(
-        createDeployment(formData, imageStreamResponse.status.dockerImageRepository, dryRun),
-      );
+      requests.push(createDeployment(formData, dryRun));
     } else {
-      registry === registryType.External && requests.push(createImageStream(formData, dryRun));
       requests.push(createDeploymentConfig(formData, dryRun));
     }
     if (!_.isEmpty(ports)) {

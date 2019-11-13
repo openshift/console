@@ -200,7 +200,6 @@ export const createBuildConfig = (
 
 export const createDeployment = (
   formData: GitImportFormData,
-  imageStreamUrl: string,
   imageStream: K8sResourceKind,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {
@@ -217,7 +216,16 @@ export const createDeployment = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
-  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const annotations = {
+    ...getAppAnnotations(repository, ref),
+    'alpha.image.policy.openshift.io/resolve-names': '*',
+    'image.openshift.io/triggers': JSON.stringify([
+      {
+        from: { kind: 'ImageStreamTag', name: `${name}:latest` },
+        fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+      },
+    ]),
+  };
   const podLabels = getPodLabels(name);
 
   const deployment = {
@@ -227,7 +235,7 @@ export const createDeployment = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
+      annotations,
     },
     spec: {
       selector: {
@@ -244,7 +252,7 @@ export const createDeployment = (
           containers: [
             {
               name,
-              image: `${imageStreamUrl}`,
+              image: `${name}:latest`,
               ports,
               env,
               resources: {
@@ -397,15 +405,7 @@ export const createResources = async (
     return Promise.all([k8sCreate(KnServiceModel, knDeploymentResource)]);
   }
   if (formData.resources === Resources.Kubernetes) {
-    const imageStreamResponse = await requests.shift();
-    requests.push(
-      createDeployment(
-        formData,
-        imageStreamResponse.status.dockerImageRepository,
-        imageStream,
-        dryRun,
-      ),
-    );
+    requests.push(createDeployment(formData, imageStream, dryRun));
   } else if (formData.resources === Resources.OpenShift) {
     requests.push(createDeploymentConfig(formData, imageStream, dryRun));
   }
