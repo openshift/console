@@ -18,13 +18,13 @@ const PipelineTemplate: React.FC = () => {
 
   const isDockerStrategy = build.strategy === 'Docker';
 
-  const builderPipelineLabel = { 'pipeline.openshift.io/runtime': image.selected };
-  const dockerPipelineLabel = { 'pipeline.openshift.io/strategy': 'docker' };
-
-  const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
-
   React.useEffect(() => {
     let ignore = false;
+
+    const builderPipelineLabel = { 'pipeline.openshift.io/runtime': image.selected };
+    const dockerPipelineLabel = { 'pipeline.openshift.io/strategy': 'docker' };
+
+    const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
 
     const fetchPipelineTemplate = async () => {
       const templates = await k8sList(PipelineModel, {
@@ -50,7 +50,7 @@ const PipelineTemplate: React.FC = () => {
     return () => {
       ignore = true;
     };
-  }, [labelSelector, setFieldValue]);
+  }, [image.selected, isDockerStrategy, setFieldValue]);
 
   if (noTemplateForRuntime) {
     return (
