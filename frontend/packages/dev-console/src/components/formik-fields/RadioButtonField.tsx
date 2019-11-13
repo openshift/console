@@ -49,13 +49,9 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
               field.onChange(event);
             }}
           />
-          <br />
-          {option.displayField && field.value === option.value ? (
-            <>
-              {option.displayField}
-              <br />
-            </>
-          ) : null}
+          {option.displayField && field.value === option.value && (
+            <div className="odc-radio-button__displayed-field">{option.displayField}</div>
+          )}
         </React.Fragment>
       ))}
     </FormGroup>

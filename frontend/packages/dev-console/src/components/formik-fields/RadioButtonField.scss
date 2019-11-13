@@ -1,5 +1,9 @@
 .odc-radio-button {
   &__helper-text {
     padding: var(--pf-global--spacer--md) 0;
+    line-height: 1em;
+  }
+  &__displayed-field {
+    padding: var(--pf-global--spacer--sm) 0 var(--pf-global--spacer--sm) 0;
   }
 }
