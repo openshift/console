@@ -1,25 +1,37 @@
 import * as React from 'react';
-import { ExpandCollapse, LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils';
+import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Expandable } from '@patternfly/react-core';
+import { PipelineModel } from '../../../models';
+import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
-import { getPipelineTemplate } from './pipeline-template-utils';
 
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   const {
-    values: {
-      pipeline: { template },
-      image,
-    },
+    values: { pipeline, image, build },
     setFieldValue,
   } = useFormikContext<FormikValues>();
+
+  const isDockerStrategy = build.strategy === 'Docker';
+
+  const builderPipelineLabel = { 'pipeline.openshift.io/runtime': image.selected };
+  const dockerPipelineLabel = { 'pipeline.openshift.io/strategy': 'docker' };
+
+  const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
 
   React.useEffect(() => {
     let ignore = false;
 
     const fetchPipelineTemplate = async () => {
-      const pipelineTemplate = await getPipelineTemplate(image.selected);
+      const templates = await k8sList(PipelineModel, {
+        ns: 'openshift',
+        labelSelector,
+      });
+      const pipelineTemplate = templates && templates[0];
 
       if (ignore) return;
 
@@ -30,6 +42,7 @@ const PipelineTemplate: React.FC = () => {
         setFieldValue('pipeline.template', null);
         setNoTemplateForRuntime(true);
       }
+      setIsExpanded(false);
     };
 
     fetchPipelineTemplate();
@@ -37,26 +50,31 @@ const PipelineTemplate: React.FC = () => {
     return () => {
       ignore = true;
     };
-  }, [image.selected, setFieldValue]);
+  }, [labelSelector, setFieldValue]);
 
   if (noTemplateForRuntime) {
     return (
       <Alert
         isInline
         variant="info"
-        style={{ marginLeft: 'var(--pf-global--spacer--lg)' }}
-        title="Since there are no pipeline templates available for this runtime, a pipeline cannot be created."
+        title={`There are no pipeline templates available for ${
+          isDockerStrategy ? 'dockerfile strategy' : 'this runtime'
+        }.`}
       />
     );
   }
 
-  return template ? (
-    <ExpandCollapse
-      textCollapsed="Show pipeline visualization"
-      textExpanded="Hide pipeline visualization"
-    >
-      <PipelineVisualization pipeline={template} />
-    </ExpandCollapse>
+  return pipeline.template ? (
+    <>
+      <CheckboxField label="Add pipeline" name="pipeline.enabled" />
+      <Expandable
+        toggleText={`${isExpanded ? 'Hide' : 'Show'} pipeline visualization`}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+      >
+        {isExpanded && <PipelineVisualization pipeline={pipeline.template} />}
+      </Expandable>
+    </>
   ) : (
     <LoadingInline />
   );
