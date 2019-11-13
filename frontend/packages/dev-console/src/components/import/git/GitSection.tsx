@@ -55,7 +55,7 @@ const GitSection: React.FC<GitSectionProps> = ({ builderImages, showSample }) =>
     if (isReachable) {
       setFieldValue('git.isUrlValidated', true);
       setFieldValue('image.isRecommending', true);
-      const buildTools = await gitService.detectBuildType();
+      const buildTools = await gitService.detectBuildTypes();
       setFieldValue('image.isRecommending', false);
       if (buildTools.length > 0) {
         const buildTool = buildTools[0].buildType;

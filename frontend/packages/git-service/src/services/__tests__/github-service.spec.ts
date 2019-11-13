@@ -56,7 +56,7 @@ describe('Github Service', () => {
     const gitService = new GithubService(gitSource);
 
     return nockBack('files-golang.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('golang');
       context.assertScopesFinished();
@@ -70,7 +70,7 @@ describe('Github Service', () => {
     const gitService = new GithubService(gitSource);
 
     return nockBack('files-modern-webapp.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('modern-webapp');
       context.assertScopesFinished();
@@ -84,7 +84,7 @@ describe('Github Service', () => {
     const gitService = new GithubService(gitSource);
 
     return nockBack('files-nodejs.json').then(async ({ nockDone, context }) => {
-      const buildTypes: BuildType[] = await gitService.detectBuildType();
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('nodejs');
       context.assertScopesFinished();
