@@ -6,7 +6,7 @@ import {
   DropdownSeparator,
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Dropdown/dropdown';
-import Popper from './Popper';
+import { Popper } from '@console/shared';
 
 import './ContextMenu.scss';
 

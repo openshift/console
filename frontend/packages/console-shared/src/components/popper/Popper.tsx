@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PopperJS, { PopperOptions } from 'popper.js';
-import useCombineRefs from '../../utils/useCombineRefs';
+import { useCombineRefs } from '../../utils/useCombineRefs';
 import Portal from './Portal';
 
 // alignment with PopperJS reference API
@@ -52,7 +52,7 @@ type PopperProps = {
   container?: React.ComponentProps<typeof Portal>['container'];
   className?: string;
   open?: boolean;
-  onRequestClose?: () => void;
+  onRequestClose?: (e?: MouseEvent) => void;
   placement?:
     | 'bottom-end'
     | 'bottom-start'
@@ -69,7 +69,6 @@ type PopperProps = {
   popperOptions?: PopperOptions;
   popperRef?: React.Ref<PopperJS>;
   reference: Reference | (() => Reference);
-  returnFocus?: boolean;
 };
 
 const DEFAULT_POPPER_OPTIONS: PopperOptions = {};
@@ -89,9 +88,9 @@ const Popper: React.FC<PopperProps> = ({
 }) => {
   const controlled = typeof open === 'boolean';
   const openProp = controlled ? open : true;
-  const nodeRef = React.useRef<Element | null>(null);
-  const popperRef = React.useRef<PopperJS | null>(null);
-  const popperRefs = useCombineRefs<PopperJS | null>(popperRef, popperRefIn);
+  const nodeRef = React.useRef<Element>();
+  const popperRef = React.useRef<PopperJS>();
+  const popperRefs = useCombineRefs<PopperJS>(popperRef, popperRefIn);
   const [isOpen, setOpen] = React.useState(openProp);
 
   React.useEffect(() => {
@@ -110,7 +109,7 @@ const Popper: React.FC<PopperProps> = ({
   const onClickOutside = React.useCallback(
     (e: MouseEvent) => {
       if (nodeRef.current && e.target instanceof Node && !nodeRef.current.contains(e.target)) {
-        onRequestClose ? controlled && onRequestClose() : setOpen(false);
+        onRequestClose ? controlled && onRequestClose(e) : setOpen(false);
       }
     },
     [onRequestClose, controlled],
@@ -121,8 +120,7 @@ const Popper: React.FC<PopperProps> = ({
       popperRef.current.destroy();
       popperRefs(null);
       document.removeEventListener('keydown', onKeyDown, true);
-      document.removeEventListener('mousedown', onClickOutside, true);
-      document.removeEventListener('touchstart', onClickOutside, true);
+      document.removeEventListener('click', onClickOutside, true);
     }
   }, [onClickOutside, onKeyDown, popperRefs]);
 
@@ -155,8 +153,7 @@ const Popper: React.FC<PopperProps> = ({
       document.addEventListener('keydown', onKeyDown, true);
     }
     if (closeOnOutsideClick) {
-      document.addEventListener('mousedown', onClickOutside, true);
-      document.addEventListener('touchstart', onClickOutside, true);
+      document.addEventListener('click', onClickOutside, true);
     }
   }, [
     popperRefs,

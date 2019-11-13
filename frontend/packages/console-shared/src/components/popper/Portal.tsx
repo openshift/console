@@ -11,7 +11,7 @@ const getContainer = (container: GetContainer): Element | null | undefined =>
   typeof container === 'function' ? container() : container;
 
 const Portal: React.FC<PortalProps> = ({ children, container }) => {
-  const [containerNode, setContainerNode] = React.useState<Element | null>(null);
+  const [containerNode, setContainerNode] = React.useState<Element>();
 
   React.useLayoutEffect(() => {
     setContainerNode(getContainer(container) || document.body);

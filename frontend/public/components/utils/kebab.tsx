@@ -1,9 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
 import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
+import Popper from '@console/shared/src/components/popper/Popper';
 import {
   annotationsModal,
   configureReplicaCountModal,
@@ -14,7 +16,6 @@ import {
   deleteModal,
   expandPVCModal,
 } from '../modals';
-import { DropdownMixin } from './dropdown';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
   AccessReviewResourceAttributes,
@@ -78,10 +79,18 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
   );
 };
 
-export const KebabItems: React.SFC<KebabItemsProps> = ({ options, onClick, focusItem }) => {
+export const KebabItems: React.SFC<KebabItemsProps> = ({
+  className,
+  options,
+  onClick,
+  focusItem,
+}) => {
   const visibleOptions = _.reject(options, (o) => _.get(o, 'hidden', false));
   return (
-    <ul className="pf-c-dropdown__menu pf-m-align-right" data-test-id="action-items">
+    <ul
+      className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
+      data-test-id="action-items"
+    >
       {_.map(visibleOptions, (o, i) => (
         <li key={i}>
           <KebabItem
@@ -224,12 +233,21 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   );
 });
 
-export class Kebab extends DropdownMixin {
+export class Kebab extends React.Component<any, { active: boolean }> {
   static factory: KebabFactory = kebabFactory;
   static getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
   // public static columnClass: string = 'pf-c-table__action';
   public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';
+
+  private dropdownElement = React.createRef<HTMLButtonElement>();
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      active: false,
+    };
+  }
 
   onClick = (event, option: KebabOption) => {
     event.preventDefault();
@@ -238,11 +256,20 @@ export class Kebab extends DropdownMixin {
       option.callback();
     }
 
+    this.hide();
+
     if (option.href) {
       history.push(option.href);
     }
+  };
 
-    this.hide();
+  hide = () => {
+    this.dropdownElement.current && this.dropdownElement.current.focus();
+    this.setState({ active: false });
+  };
+
+  toggle = () => {
+    this.setState((state) => ({ active: !state.active }));
   };
 
   onHover = () => {
@@ -255,18 +282,28 @@ export class Kebab extends DropdownMixin {
     });
   };
 
+  handleRequestClose = (e?: MouseEvent) => {
+    if (
+      !e ||
+      !this.dropdownElement.current ||
+      !this.dropdownElement.current.contains(e.target as Node)
+    ) {
+      this.hide();
+    }
+  };
+
   render() {
     const { options, isDisabled } = this.props;
 
     return (
       <div
-        ref={this.dropdownElement}
         className={classNames({
           'dropdown pf-c-dropdown': true,
           'pf-m-expanded': this.state.active,
         })}
       >
         <button
+          ref={this.dropdownElement}
           type="button"
           aria-expanded={this.state.active}
           aria-haspopup="true"
@@ -280,9 +317,34 @@ export class Kebab extends DropdownMixin {
         >
           <EllipsisVIcon />
         </button>
-        {!isDisabled && this.state.active && (
-          <KebabItems options={options} onClick={this.onClick} />
-        )}
+        <Popper
+          open={!isDisabled && this.state.active}
+          placement="bottom-end"
+          closeOnEsc
+          closeOnOutsideClick
+          onRequestClose={this.handleRequestClose}
+          reference={() => this.dropdownElement.current}
+          popperOptions={{
+            modifiers: {
+              preventOverflow: {
+                boundariesElement: document.body,
+              },
+            },
+          }}
+        >
+          <FocusTrap
+            focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
+          >
+            <div className="pf-c-dropdown pf-m-expanded">
+              <KebabItems
+                options={options}
+                onClick={this.onClick}
+                className="oc-kebab__popper-items"
+                focusItem={options[0]}
+              />
+            </div>
+          </FocusTrap>
+        </Popper>
       </div>
     );
   }
@@ -330,6 +392,7 @@ export type KebabItemsProps = {
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
   isActionDropdown?: boolean;
   focusItem?: KebabOption;
+  className?: string;
 };
 
 export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
