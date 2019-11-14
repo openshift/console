@@ -89,7 +89,7 @@ const Popper: React.FC<PopperProps> = ({
   const controlled = typeof open === 'boolean';
   const openProp = controlled ? open : true;
   const nodeRef = React.useRef<Element>();
-  const popperRef = React.useRef<PopperJS>();
+  const popperRef = React.useRef<PopperJS>(null);
   const popperRefs = useCombineRefs<PopperJS>(popperRef, popperRefIn);
   const [isOpen, setOpen] = React.useState(openProp);
 
