@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
 import { TemplateKind } from '@console/internal/module/k8s';
+import {
+  CloudInitDataHelper,
+  CloudInitDataFormKeys,
+} from '../../k8s/wrapper/vm/cloud-init-data-helper';
 import { getAnnotation, getAnnotations, getLabels } from '../selectors';
 import {
   TEMPLATE_FLAVOR_LABEL,
@@ -9,6 +13,9 @@ import {
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
+import { getCloudInitVolume } from '../vm/selectors';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { selectVM } from './selectors';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -48,6 +55,19 @@ export const getTemplatesLabelValues = (templates: TemplateKind[], label: string
 
 export const getTemplateFlavors = (templates: TemplateKind[]) =>
   getTemplatesLabelValues(templates, TEMPLATE_FLAVOR_LABEL);
+
+export const getTemplateHostname = (template: TemplateKind) => {
+  const vm = selectVM(template);
+  const YAMLHostname = _.get(vm, 'spec.template.spec') && vm.spec.template.spec.hostname;
+  if (YAMLHostname) {
+    return YAMLHostname;
+  }
+
+  const cloudInitVolume = getCloudInitVolume(vm);
+  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const cloudInitHelper = new CloudInitDataHelper(data);
+  return cloudInitHelper.get(CloudInitDataFormKeys.HOSTNAME);
+};
 
 export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
   const osIds = getTemplatesLabelValues(templates, TEMPLATE_OS_LABEL);

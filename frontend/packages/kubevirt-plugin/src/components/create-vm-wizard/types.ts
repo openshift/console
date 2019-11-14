@@ -38,6 +38,7 @@ export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
 
 export enum VMSettingsField { // TODO refactor to NAME = 'NAME' format for easier debugging once kubevirt-web-ui-components is deprecated
   NAME = 'name',
+  HOSTNAME = 'hostname',
   DESCRIPTION = 'description',
   PROVISION_SOURCE_TYPE = 'provisionSourceType',
   CONTAINER_IMAGE = 'containerImage',

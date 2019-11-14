@@ -17,7 +17,7 @@ import { getDiskBus } from './disk';
 import {
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
-  getVolumeCloudInitUserData,
+  getVolumeCloudInitNoCloud,
 } from './volume';
 import { vCPUCount } from './cpu';
 
@@ -85,7 +85,7 @@ export const getVMStatusConditions = (vm: VMKind) =>
   _.get(vm, 'status.conditions', []) as VMKind['status']['conditions'];
 
 export const getCloudInitVolume = (vm: VMKind) => {
-  const cloudInitVolume = getVolumes(vm).find(getVolumeCloudInitUserData);
+  const cloudInitVolume = getVolumes(vm).find(getVolumeCloudInitNoCloud);
 
   if (cloudInitVolume) {
     // make sure volume is used by disk
@@ -96,9 +96,6 @@ export const getCloudInitVolume = (vm: VMKind) => {
   }
   return null;
 };
-
-export const getCloudInitUserData = (vm: VMKind) =>
-  getVolumeCloudInitUserData(getCloudInitVolume(vm));
 
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);

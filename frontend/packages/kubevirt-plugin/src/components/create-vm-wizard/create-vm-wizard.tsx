@@ -40,6 +40,11 @@ import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-
 import { makeIDReferences } from '../../utils/redux/id-reference';
 import { PersistentVolumeClaimWrapper } from '../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { ProvisionSource } from '../../constants/vm/provision-source';
+import { getVolumeCloudInitNoCloud } from '../../selectors/vm';
+import {
+  CloudInitDataHelper,
+  CloudInitDataFormKeys,
+} from '../../k8s/wrapper/vm/cloud-init-data-helper';
 import {
   ChangedCommonData,
   CommonData,
@@ -88,6 +93,13 @@ const kubevirtInterOP = async ({
   const clonedVMsettings = _.cloneDeep(vmSettings);
   const clonedNetworks = _.cloneDeep(networks);
   const clonedStorages = _.cloneDeep(storages);
+
+  const cloudInitVolume = clonedStorages.map((stor) => stor.volume).find(getVolumeCloudInitNoCloud);
+  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const hostname = new CloudInitDataHelper(data).get(CloudInitDataFormKeys.HOSTNAME);
+  if (hostname) {
+    clonedVMsettings.hostname = { value: hostname };
+  }
 
   clonedVMsettings.namespace = { value: activeNamespace };
   const operatingSystems = getTemplateOperatingSystems(templates);
