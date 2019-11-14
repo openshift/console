@@ -119,7 +119,7 @@ const NodeLink_: React.FC<NodeLinkProps> = (props) => {
   return flags[FLAGS.CAN_LIST_NODE] ? (
     <ResourceLink kind="Node" name={name} title={name} />
   ) : (
-    <>{name}</>
+    <span className="co-break-word">{name}</span>
   );
 };
 
