@@ -11,7 +11,7 @@ const EventItem: React.FC<EventComponentProps> = React.memo(({ event }) => {
     <div className="co-events-card__item">
       <div className="co-recent-item__title">
         <div className="co-recent-item__title-timestamp text-secondary">
-          {twentyFourHourTime(new Date(lastTimestamp))}
+          {lastTimestamp ? twentyFourHourTime(new Date(lastTimestamp)) : '-'}
         </div>
         <div className="co-recent-item__title-message">
           {isError && (

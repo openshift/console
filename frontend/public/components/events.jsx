@@ -84,7 +84,9 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                     name={obj.namespace}
                   />
                 )}
-                <Timestamp className="co-sysevent__timestamp" timestamp={lastTimestamp} />
+                {lastTimestamp && (
+                  <Timestamp className="co-sysevent__timestamp" timestamp={lastTimestamp} />
+                )}
               </div>
               <div className="co-sysevent__details">
                 <small className="co-sysevent__source">
@@ -105,8 +107,14 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                 </small>
                 {count > 1 && (
                   <small className="co-sysevent__count text-secondary">
-                    {count} times in the last{' '}
-                    <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
+                    {count} times
+                    {firstTimestamp && (
+                      <>
+                        {' '}
+                        in the last{' '}
+                        <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
+                      </>
+                    )}
                   </small>
                 )}
               </div>
