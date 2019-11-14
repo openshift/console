@@ -293,7 +293,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
   };
 
   render() {
-    const { options, isDisabled } = this.props;
+    const { options, isDisabled, optionsContainerClassName } = this.props;
 
     return (
       <div
@@ -319,6 +319,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
         </button>
         <Popper
           open={!isDisabled && this.state.active}
+          className={optionsContainerClassName}
           placement="bottom-end"
           closeOnEsc
           closeOnOutsideClick
