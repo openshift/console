@@ -7,6 +7,10 @@ import { PipelineModel } from '../../../models';
 import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
 
+const MISSING_DOCKERFILE_LABEL_TEXT =
+  'The pipeline template for Dockerfiles is not available at this time.';
+const MISSING_RUNTIME_LABEL_TEXT = 'There are no pipeline templates available for this runtime.';
+
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -57,9 +61,7 @@ const PipelineTemplate: React.FC = () => {
       <Alert
         isInline
         variant="info"
-        title={`There are no pipeline templates available for ${
-          isDockerStrategy ? 'dockerfile strategy' : 'this runtime'
-        }.`}
+        title={isDockerStrategy ? MISSING_DOCKERFILE_LABEL_TEXT : MISSING_RUNTIME_LABEL_TEXT}
       />
     );
   }
