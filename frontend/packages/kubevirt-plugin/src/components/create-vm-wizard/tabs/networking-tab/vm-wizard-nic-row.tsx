@@ -71,6 +71,7 @@ export const VMWizardNicRow: React.FC<VMWizardNicRowProps> = ({
           options={getActions(wizardNetworkData, { wizardReduxID, removeNIC, withProgress })}
           isDisabled={isDisabled}
           id={`kebab-for-${name}`}
+          optionsContainerClassName="kubevirt-create-vm-modal__networking-tab-kebab-options"
         />
       }
     />

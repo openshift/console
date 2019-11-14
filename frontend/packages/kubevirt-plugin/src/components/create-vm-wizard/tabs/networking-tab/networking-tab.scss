@@ -12,3 +12,7 @@
   margin-top: 1rem;
   margin-bottom: 3rem;
 }
+
+.kubevirt-create-vm-modal__networking-tab-kebab-options {
+  z-index: calc(var(--pf-global--ZIndex--xs) - 3);
+}

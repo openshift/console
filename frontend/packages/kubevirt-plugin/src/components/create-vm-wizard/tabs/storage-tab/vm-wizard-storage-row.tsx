@@ -86,6 +86,7 @@ export const VmWizardStorageRow: React.FC<VMWizardNicRowProps> = ({
           options={getActions(wizardStorageData, { wizardReduxID, removeStorage, withProgress })}
           isDisabled={isDisabled}
           id={`kebab-for-${name}`}
+          optionsContainerClassName="kubevirt-create-vm-modal__storage-tab-kebab-options"
         />
       }
     />
