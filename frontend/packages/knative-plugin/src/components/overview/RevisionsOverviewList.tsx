@@ -3,7 +3,11 @@ import * as _ from 'lodash';
 import { ListGroup } from 'patternfly-react';
 import { Button } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
+import {
+  ResourceLink,
+  SidebarSectionHeading,
+  useAccessReview,
+} from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
 import { trafficModalLauncher } from '../traffic-splitting/TrafficSplittingController';
 import { ServiceModel } from '../../models';
@@ -45,34 +49,44 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   );
 };
 
-const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => (
-  <>
-    <SidebarSectionHeading text="Revisions" className="revision-overview-list">
-      {/* add extra check, if sidebar is opened for a knative deployment */}
-      {service.kind === ServiceModel.kind && (
-        <Button
-          variant="secondary"
-          onClick={() => trafficModalLauncher({ obj: service })}
-          isDisabled={!(revisions && revisions.length)}
-        >
-          Set Traffic Distribution
-        </Button>
+const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => {
+  const canSetTrafficDistribution = useAccessReview({
+    group: ServiceModel.apiGroup,
+    resource: ServiceModel.plural,
+    namespace: service.metadata.namespace,
+    verb: 'update',
+  });
+
+  return (
+    <>
+      <SidebarSectionHeading text="Revisions" className="revision-overview-list">
+        {/* add extra check, if sidebar is opened for a knative deployment */}
+        {canSetTrafficDistribution &&
+          (service.kind === ServiceModel.kind && (
+            <Button
+              variant="secondary"
+              onClick={() => trafficModalLauncher({ obj: service })}
+              isDisabled={!(revisions && revisions.length)}
+            >
+              Set Traffic Distribution
+            </Button>
+          ))}
+      </SidebarSectionHeading>
+      {_.isEmpty(revisions) ? (
+        <span className="text-muted">No Revisions found for this resource.</span>
+      ) : (
+        <ListGroup componentClass="ul">
+          {_.map(revisions, (revision) => (
+            <RevisionsOverviewListItem
+              key={revision.metadata.uid}
+              revision={revision}
+              service={service}
+            />
+          ))}
+        </ListGroup>
       )}
-    </SidebarSectionHeading>
-    {_.isEmpty(revisions) ? (
-      <span className="text-muted">No Revisions found for this resource.</span>
-    ) : (
-      <ListGroup componentClass="ul">
-        {_.map(revisions, (revision) => (
-          <RevisionsOverviewListItem
-            key={revision.metadata.uid}
-            revision={revision}
-            service={service}
-          />
-        ))}
-      </ListGroup>
-    )}
-  </>
-);
+    </>
+  );
+};
 
 export default RevisionsOverviewList;
