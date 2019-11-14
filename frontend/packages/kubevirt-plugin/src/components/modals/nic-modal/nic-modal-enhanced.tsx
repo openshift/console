@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { Firehose, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { k8sPatch, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
-import { getLoadedData, getResource } from '../../../utils';
+import { getLoadedData } from '../../../utils';
 import { NetworkType } from '../../../constants/vm';
 import { getInterfaces, getUsedNetworks, asVM, getVMLikeModel } from '../../../selectors/vm';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
@@ -88,23 +88,24 @@ const NICModalFirehose: React.FC<NICModalFirehoseProps> = (props) => {
   const namespace = getNamespace(vmLikeEntity);
   const name = getName(vmLikeEntity);
 
-  const resources = [
-    getResource(getVMLikeModel(vmLikeEntity), {
+  const resources: FirehoseResource[] = [
+    {
       name,
       namespace,
-      prop: 'vmLikeEntityLoading',
+      kind: getVMLikeModel(vmLikeEntity).kind,
       isList: false,
-    }),
+      prop: 'vmLikeEntityLoading',
+    },
   ];
 
   if (hasNADs) {
-    resources.push(
-      getResource(NetworkAttachmentDefinitionModel, {
-        namespace,
-        prop: 'nads',
-        optional: true,
-      }),
-    );
+    resources.push({
+      namespace,
+      kind: referenceForModel(NetworkAttachmentDefinitionModel),
+      isList: true,
+      prop: 'nads',
+      optional: true,
+    });
   }
 
   return (
