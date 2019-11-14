@@ -116,7 +116,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
               </Button>
             )}
             {!activeStep.hideCancelButton && (
-              <Button variant={ButtonVariant.link} onClick={onClose}>
+              <Button variant={ButtonVariant.link} onClick={() => onClose()}>
                 Cancel
               </Button>
             )}
