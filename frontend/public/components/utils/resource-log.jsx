@@ -107,22 +107,26 @@ const LogControls = ({
           <DownloadIcon className="co-icon-space-r" />
           Download
         </Button>
-        <span aria-hidden="true" className="co-action-divider hidden-xs">
-          |
-        </span>
-        <Button variant="link" className="pf-m-link--align-right" onClick={toggleFullscreen}>
-          {isFullscreen ? (
-            <>
-              <CompressIcon className="co-icon-space-r" />
-              Collapse
-            </>
-          ) : (
-            <>
-              <ExpandIcon className="co-icon-space-r" />
-              Expand
-            </>
-          )}
-        </Button>
+        {screenfull.enabled && (
+          <>
+            <span aria-hidden="true" className="co-action-divider hidden-xs">
+              |
+            </span>
+            <Button variant="link" className="pf-m-link--align-right" onClick={toggleFullscreen}>
+              {isFullscreen ? (
+                <>
+                  <CompressIcon className="co-icon-space-r" />
+                  Collapse
+                </>
+              ) : (
+                <>
+                  <ExpandIcon className="co-icon-space-r" />
+                  Expand
+                </>
+              )}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -214,8 +218,10 @@ class ResourceLog_ extends React.Component {
 
   componentWillUnmount() {
     this._wsDestroy();
-    screenfull.off('change');
-    screenfull.off('error');
+    if (screenfull.enabled) {
+      screenfull.off('change');
+      screenfull.off('error');
+    }
   }
 
   // Download currently displayed log content
