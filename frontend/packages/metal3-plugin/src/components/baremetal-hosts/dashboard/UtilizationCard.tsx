@@ -50,10 +50,13 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
   const [duration, setDuration] = React.useState(metricDurations[0]);
 
   const { machine } = React.useContext(BareMetalHostDashboardContext);
-  const hostName = getMachineNodeName(machine);
-  const hostIP = getMachineInternalIP(machine);
+  const nodeName = getMachineNodeName(machine);
+  const internalIP = getMachineInternalIP(machine);
 
-  const queries = React.useMemo(() => getUtilizationQueries(hostName, hostIP), [hostName, hostIP]);
+  const queries = React.useMemo(() => getUtilizationQueries(nodeName, internalIP), [
+    nodeName,
+    internalIP,
+  ]);
 
   React.useEffect(() => {
     if (machine) {
@@ -128,7 +131,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   const cpuPopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
       return (
         <ConsumerPopover
           title="CPU"
@@ -149,12 +152,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [hostIP, hostName],
+    [internalIP, nodeName],
   );
 
   const memPopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
       return (
         <ConsumerPopover
           title="Memory"
@@ -175,12 +178,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [hostIP, hostName],
+    [internalIP, nodeName],
   );
 
   const storagePopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(hostName, hostIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
       return (
         <ConsumerPopover
           title="Disk Usage"
@@ -201,7 +204,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [hostIP, hostName],
+    [internalIP, nodeName],
   );
 
   return (
