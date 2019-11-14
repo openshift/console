@@ -11,6 +11,7 @@ import {
 } from '../../constants';
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
+import { flavorSort } from '../../utils/sort';
 
 export const getVMTemplateNamespacedName = (
   vm: VMLikeEntityKind,
@@ -123,5 +124,11 @@ export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
   const templateFlavors = getTemplateFlavors(matchingTemplates);
   templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
 
-  return flavors;
+  // Sort flavors
+  const sortedFlavors = {};
+  flavorSort(Object.keys(flavors)).forEach((k) => {
+    sortedFlavors[k] = flavors[k];
+  });
+
+  return sortedFlavors;
 };
