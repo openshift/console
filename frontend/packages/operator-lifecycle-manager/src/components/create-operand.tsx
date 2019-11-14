@@ -144,7 +144,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
                 validation: null,
                 capabilities: [
                   SpecCapability.fieldGroup.concat(key) as SpecCapability.fieldGroup,
-                  ...capabilitiesFor(nestedVal.type),
+                  ...capabilitiesFor(nestedVal),
                 ],
               }),
             );
@@ -167,7 +167,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
                 validation: null,
                 capabilities: [
                   SpecCapability.arrayFieldGroup.concat(key) as SpecCapability.fieldGroup,
-                  ...capabilitiesFor(itemVal.type),
+                  ...capabilitiesFor(itemVal),
                 ],
               }),
             );
