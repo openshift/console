@@ -18,8 +18,6 @@ import {
   LayoutFactory,
   Layout,
   isGraph,
-  ADD_ELEMENT_EVENT,
-  REMOVE_ELEMENT_EVENT,
 } from './types';
 import defaultElementFactory from './elements/defaultElementFactory';
 import Stateful from './utils/Stateful';
@@ -42,19 +40,12 @@ export default class Visualization extends Stateful implements Controller {
   @observable.shallow
   private readonly store = {};
 
-  private batching = false;
-
-  private addedElements: GraphElement[] = [];
-
-  private removedElements: GraphElement[] = [];
-
   getStore<S = {}>(): S {
     return this.store as S;
   }
 
   @action
   fromModel(model: Model): void {
-    this.batching = true;
     // create elements
     if (model.graph) {
       this.graph = this.createElement<Graph>(ModelKind.graph, model.graph);
@@ -108,25 +99,6 @@ export default class Visualization extends Stateful implements Controller {
     if (this.graph) {
       this.parentOrphansToGraph(this.graph);
     }
-
-    this.batching = false;
-
-    // notify additions and removals
-    // capture batching data locally just incase we re-enter here
-    let removed: GraphElement[] | undefined;
-    let added: GraphElement[] | undefined;
-
-    if (this.removedElements.length) {
-      removed = this.removedElements;
-      this.removedElements = [];
-    }
-    if (this.addedElements.length) {
-      added = this.addedElements;
-      this.addedElements = [];
-    }
-
-    removed && this.fireEvent(REMOVE_ELEMENT_EVENT, removed);
-    added && this.fireEvent(ADD_ELEMENT_EVENT, added);
   }
 
   getGraph(): Graph {
@@ -158,12 +130,6 @@ export default class Visualization extends Stateful implements Controller {
     }
     element.setController(this);
     this.elements[element.getId()] = element;
-
-    if (this.batching) {
-      this.addedElements.push(element);
-    } else {
-      this.fireEvent(ADD_ELEMENT_EVENT, [element]);
-    }
   }
 
   removeElement(element: GraphElement): void {
@@ -176,12 +142,6 @@ export default class Visualization extends Stateful implements Controller {
         .forEach((child) => child.remove());
       element.setController(undefined);
       delete this.elements[element.getId()];
-
-      if (this.batching) {
-        this.removedElements.push(element);
-      } else {
-        this.fireEvent(REMOVE_ELEMENT_EVENT, [element]);
-      }
     }
   }
 

@@ -205,8 +205,8 @@ export interface Controller extends WithState {
   getElements(): GraphElement[];
 }
 
-export type AddElementEventListener = EventListener<[GraphElement[]]>;
-export type RemoveElementEventListener = EventListener<[GraphElement[]]>;
+type ElementEvent = { target: GraphElement };
+export type ElementChildEventListener = EventListener<[ElementEvent & { child: GraphElement }]>;
 
-export const ADD_ELEMENT_EVENT = 'add-element';
-export const REMOVE_ELEMENT_EVENT = 'remove-element';
+export const ADD_CHILD_EVENT = 'element-add-child';
+export const REMOVE_CHILD_EVENT = 'element-remove-child';
