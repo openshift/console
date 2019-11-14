@@ -13,6 +13,7 @@ import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { getDataVolumeStorageSize, getDataVolumeStorageClassName } from '../dv/selectors';
+import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { getDiskBus } from './disk';
 import {
   getVolumeContainerImage,
@@ -24,7 +25,7 @@ import { vCPUCount } from './cpu';
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
 export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
-export const getDisks = (vm: VMKind, defaultValue = []) =>
+export const getDisks = (vm: VMKind, defaultValue = []): V1Disk[] =>
   _.get(vm, 'spec.template.spec.domain.devices.disks') == null
     ? defaultValue
     : vm.spec.template.spec.domain.devices.disks;

@@ -1,9 +1,4 @@
 import { last, includes } from 'lodash';
-import {
-  BOOT_ORDER_SECOND,
-  BOOT_ORDER_FIRST,
-  getBootableDevicesInOrder,
-} from 'kubevirt-web-ui-components';
 import { getName } from '@console/shared';
 import { Volume, k8sGet } from '@console/internal/module/k8s';
 import { CD, StorageType } from '../../../components/modals/cdrom-vm-modal/constants';
@@ -21,8 +16,10 @@ import {
   getDisks,
   getVolumeDataVolumeName,
   asVM,
+  getBootableDevicesInOrder,
 } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
+import { BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../../../constants';
 
 const getNextAvailableBootOrderIndex = (vm: VMLikeEntityKind) => {
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
