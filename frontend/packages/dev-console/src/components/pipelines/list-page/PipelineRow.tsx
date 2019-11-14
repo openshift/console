@@ -43,6 +43,9 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
         {obj.latestRun && obj.latestRun.metadata && obj.latestRun.metadata.name ? (
           <ResourceLink
             kind={pipelinerunReference}
@@ -53,9 +56,6 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
           '-'
         )}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Status status={pipelineFilterReducer(obj)} />
-      </TableData>
       <TableData className={tableColumnClasses[3]}>
         {obj.latestRun ? (
           <LinkedPipelineRunTaskStatus pipeline={obj} pipelineRun={obj.latestRun} />
@@ -64,12 +64,15 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
+        <Status status={pipelineFilterReducer(obj)} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
         {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (
           <Timestamp timestamp={obj.latestRun.status.completionTime} />
         )) ||
           '-'}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={pipelineReference} resource={obj} />
       </TableData>
     </TableRow>

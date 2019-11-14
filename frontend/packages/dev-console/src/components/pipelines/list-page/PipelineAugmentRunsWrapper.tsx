@@ -12,7 +12,7 @@ interface PipelineAugmentRunsWrapperProps {
   reduxIDs?: string[];
 }
 
-const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = ({ ...props }) => {
+const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (props) => {
   const pipelineData = _.get(props.pipeline, 'data', []);
   if (pipelineData.length < 1) {
     return (

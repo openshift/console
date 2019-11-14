@@ -40,16 +40,19 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <Timestamp timestamp={obj.status && obj.status.startTime} />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Status status={pipelineRunFilterReducer(obj)} />
+        <LinkedPipelineRunTaskStatus pipelineRun={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <LinkedPipelineRunTaskStatus pipelineRun={obj} />
+        <Timestamp timestamp={obj.status && obj.status.startTime} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[5]}>
+        <Status status={pipelineRunFilterReducer(obj)} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={pipelinerunReference} resource={obj} />
       </TableData>
     </TableRow>

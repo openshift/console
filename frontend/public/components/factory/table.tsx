@@ -121,6 +121,7 @@ const stateToProps = (
     data = [],
     defaultSortField = 'metadata.name',
     defaultSortFunc = undefined,
+    defaultSortOrder = SortByDirection.asc,
     defaultSortAsNumber = false,
     filters = {},
     loaded = false,
@@ -141,7 +142,7 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortAsNumber = UI.getIn(['listSorts', listId, 'sortAsNumber'], defaultSortAsNumber);
-  const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], SortByDirection.asc);
+  const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
 
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
@@ -329,6 +330,7 @@ export type TableProps = {
   data?: any[];
   defaultSortFunc?: string;
   defaultSortField?: string;
+  defaultSortOrder?: SortByDirection;
   filters?: { [key: string]: any };
   Header: (...args) => any[];
   loadError?: string | Object;

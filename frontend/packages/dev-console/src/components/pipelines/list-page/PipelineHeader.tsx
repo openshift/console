@@ -10,14 +10,14 @@ const PipelineHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Last Run',
-      sortField: 'latestRun.metadata.name',
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Last Run Status',
-      sortField: 'latestRun.status.succeededCondition',
+      title: 'Last Run',
+      sortField: 'latestRun.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -28,14 +28,20 @@ const PipelineHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Last Run Time',
-      sortField: 'latestRun.status.completionTime',
+      title: 'Last Run Status',
+      sortField: 'latestRun.status.succeededCondition',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Last Run Time',
+      sortField: 'latestRun.status.completionTime',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };

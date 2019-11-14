@@ -10,20 +10,20 @@ const PipelineRunHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Started',
-      sortField: 'status.startTime',
+      title: 'Namespace',
+      sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: 'Task Status',
       sortField: 'status.completionTime',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Task Status',
-      sortField: 'status.completionTime',
+      title: 'Started',
+      sortField: 'status.startTime',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
@@ -34,8 +34,14 @@ const PipelineRunHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Status',
+      sortField: 'status.completionTime',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
