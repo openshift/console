@@ -19,7 +19,7 @@ const NODE_ENV = process.env.NODE_ENV;
 const HOT_RELOAD = process.env.HOT_RELOAD;
 
 /* Helpers */
-const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.css' });
+const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 
 const config: Configuration = {
