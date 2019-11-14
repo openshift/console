@@ -1,24 +1,27 @@
+import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { dashboardIsLoaded } from '../../../console-shared/src/test-views/dashboard-shared.view';
 import { serviceName, clusterHealth, clusterName, allNodes } from '../views/storage-dashboard.view';
-import { execSync } from 'child_process';
 
-describe('Check data on Storage Dashboard.', () => {
+const OCS_SERVICE_NAME = 'OpenShift Container Storage';
+const STATUS_HEALTHY = 'healthy';
+
+describe('Check data on Persistent Storage Dashboard.', () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/dashboards/persistent-storage`);
     await dashboardIsLoaded();
   });
 
-  it('Check cluster health is OK', async () => {
-    expect(clusterHealth.getText()).toContain('is healthy');
+  it('Check cluster is healthy', () => {
+    expect(clusterHealth.getText()).toContain(STATUS_HEALTHY);
   });
 
-  it('Check service name is OCS', async () => {
-    expect(serviceName.getText()).toEqual('OpenShift Container Storage');
+  it('Check service name is OCS', () => {
+    expect(serviceName.getText()).toEqual(OCS_SERVICE_NAME);
   });
 
-  it('Check that cluster name is correct', async () => {
+  it('Check if cluster name is correct', async () => {
     const cephClusterName = execSync(
       "kubectl get cephcluster -n openshift-storage -o jsonpath='{.items..metadata.name}'",
     );
