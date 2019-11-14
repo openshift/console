@@ -10,7 +10,11 @@ import {
 } from '@console/internal/components/factory';
 import { getName } from '@console/shared';
 import { powerOffHost } from '../../k8s/requests/bare-metal-host';
-import { NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY } from '../../constants';
+import {
+  NODE_STATUS_UNDER_MAINTENANCE,
+  HOST_STATUS_READY,
+  HOST_STATUS_AVAILABLE,
+} from '../../constants';
 import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 
@@ -73,7 +77,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
 };
 
 const isPowerOffSafe = (status: string) => {
-  const safeStates = [NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY];
+  const safeStates = [NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY, HOST_STATUS_AVAILABLE];
   return safeStates.includes(status);
 };
 
