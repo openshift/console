@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { inject } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { augmentRunsToData, PropPipelineData, KeyedRuns } from '../../utils/pipeline-augment';
@@ -7,7 +8,6 @@ import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipelin
 
 interface ListPipelineData extends K8sKind {
   data: PropPipelineData[];
-  filters: {};
 }
 export const filters = [
   {
@@ -36,6 +36,10 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
   propsReferenceForRuns,
   ...props
 }) => {
+  const allFilters = {
+    ...props.filters,
+    ...(_.get(props.pipeline, 'filters.name') && { name: _.get(props.pipeline, 'filters.name') }),
+  };
   const resourceData =
     props.pipeline && props.pipeline.data && propsReferenceForRuns
       ? augmentRunsToData(props.pipeline.data, propsReferenceForRuns, props as KeyedRuns)
@@ -43,7 +47,7 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
 
   const children = inject(props.children, {
     ...props,
-    filters: props.pipeline.filters,
+    filters: allFilters,
     resources: { pipeline: { data: resourceData } },
   });
   return <>{children}</>;
