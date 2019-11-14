@@ -10,6 +10,7 @@ import * as angularjsImg from '../../imgs/logos/angularjs.svg';
 import * as ansibleImg from '../../imgs/logos/ansible.svg';
 import * as apacheImg from '../../imgs/logos/apache.svg';
 import * as beakerImg from '../../imgs/logos/beaker.svg';
+import * as camelImg from '../../imgs/logos/camel.svg';
 import * as capedwarfImg from '../../imgs/logos/capedwarf.svg';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import * as cassandraImg from '../../imgs/logos/cassandra.svg';
@@ -97,6 +98,7 @@ const logos = new Map()
   .set('icon-ansible', ansibleImg)
   .set('icon-apache', apacheImg)
   .set('icon-beaker', beakerImg)
+  .set('icon-camel', camelImg)
   .set('icon-capedwarf', capedwarfImg)
   .set('icon-catalog', catalogImg)
   .set('icon-cassandra', cassandraImg)
