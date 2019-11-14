@@ -14,6 +14,7 @@ import {
   DropTargetMonitor,
   Identifier,
   DragEvent,
+  DropTarget,
 } from './dnd-types';
 import { useDndManager } from './useDndManager';
 
@@ -86,9 +87,9 @@ export const useDndDrop = <
   elementRef.current = element;
 
   React.useEffect(() => {
-    const [targetId, unregister] = dndManager.registerTarget({
+    const dropTarget: DropTarget = {
       type: spec.accept,
-      hitTest: (x: number, y: number): boolean => {
+      hitTest: (x: number, y: number) => {
         if (specRef.current.hitTest) {
           return specRef.current.hitTest(x, y, propsRef.current);
         }
@@ -146,10 +147,11 @@ export const useDndDrop = <
         }
         return false;
       },
-      hover: (): void =>
+      hover: () => {
         specRef.current.hover &&
-        specRef.current.hover(monitor.getItem(), monitor, propsRef.current),
-      canDrop: (): boolean =>
+          specRef.current.hover(monitor.getItem(), monitor, propsRef.current);
+      },
+      canDrop: () =>
         typeof specRef.current.canDrop === 'boolean'
           ? specRef.current.canDrop
           : typeof specRef.current.canDrop === 'function'
@@ -161,7 +163,8 @@ export const useDndDrop = <
           : !monitor.didDrop()
           ? elementRef.current
           : undefined,
-    });
+    };
+    const [targetId, unregister] = dndManager.registerTarget(dropTarget);
     monitor.receiveHandlerId(targetId);
     return unregister;
   }, [spec.accept, dndManager, monitor]);

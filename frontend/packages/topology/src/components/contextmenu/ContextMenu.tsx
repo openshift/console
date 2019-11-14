@@ -6,7 +6,8 @@ import {
   DropdownSeparator,
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Dropdown/dropdown';
-import { Popper } from '@console/shared';
+// FIXME fully qualified due to the effect of long build times on storybook
+import Popper from '@console/shared/src/components/popper/Popper';
 
 import './ContextMenu.scss';
 

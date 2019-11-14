@@ -18,7 +18,7 @@ export type DragSource = {
   canDrag(dndManager: DndManager): boolean;
   beginDrag(dndManager: DndManager): any;
   drag(dndManager: DndManager): void;
-  endDrag(dndManager: DndManager): void;
+  endDrag(dndManager: DndManager): void | Promise<void>;
   canCancel(dndManager: DndManager): boolean;
 };
 
@@ -120,7 +120,11 @@ export interface DragSourceSpec<
   operation?: DragSpecOperation;
   begin?: (monitor: DragSourceMonitor, props: Props) => any;
   drag?: (event: DragEvent, monitor: DragSourceMonitor, props: Props) => void;
-  end?: (dropResult: DropResult | undefined, monitor: DragSourceMonitor, props: Props) => void;
+  end?: (
+    dropResult: DropResult | undefined,
+    monitor: DragSourceMonitor,
+    props: Props,
+  ) => void | Promise<void>;
   canDrag?: boolean | ((monitor: DragSourceMonitor, props: Props) => boolean);
   collect?: (monitor: DragSourceMonitor, props: Props) => CollectedProps;
   canCancel?: boolean | ((monitor: DragSourceMonitor, props: Props) => boolean);

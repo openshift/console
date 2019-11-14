@@ -71,10 +71,10 @@ const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
   return model;
 };
 
-const moveNodeToGroup = (node: Node, targetGroup: Node) => {
+const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> => {
   const sourceGroup = node.getParent() !== node.getGraph() ? (node.getParent() as Node) : undefined;
   if (sourceGroup === targetGroup) {
-    return;
+    return Promise.reject();
   }
 
   if (sourceGroup) {
@@ -88,24 +88,31 @@ const moveNodeToGroup = (node: Node, targetGroup: Node) => {
     );
     const btnText = targetGroup ? 'Move' : 'Remove';
 
-    confirmModal({
-      title,
-      message,
-      btnText,
-      executeFn: () => {
-        return updateTopologyResourceApplication(
-          node.getData(),
-          targetGroup ? targetGroup.getLabel() : null,
-        ).catch((err) => {
-          const error = err.message;
-          errorModal({ error });
-        });
-      },
+    return new Promise((resolve, reject) => {
+      confirmModal({
+        title,
+        message,
+        btnText,
+        cancel: () => {
+          reject();
+        },
+        executeFn: () => {
+          return updateTopologyResourceApplication(
+            node.getData(),
+            targetGroup ? targetGroup.getLabel() : null,
+          )
+            .then(resolve)
+            .catch((err) => {
+              const error = err.message;
+              errorModal({ error });
+              reject(err);
+            });
+        },
+      });
     });
-    return;
   }
 
-  updateTopologyResourceApplication(node.getData(), targetGroup.getLabel()).catch((err) => {
+  return updateTopologyResourceApplication(node.getData(), targetGroup.getLabel()).catch((err) => {
     const error = err.message;
     errorModal({ error });
   });

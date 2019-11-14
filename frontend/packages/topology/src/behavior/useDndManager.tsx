@@ -212,20 +212,27 @@ export class DndManagerImpl implements DndManager {
   }
 
   endDrag(): void {
+    this.doEndDrag();
+  }
+
+  private async doEndDrag(): Promise<void> {
     const source = this.getSource(this.getSourceId());
-    if (source) {
-      source.endDrag(this);
+    try {
+      if (source) {
+        await source.endDrag(this);
+      }
+    } finally {
+      // clear state
+      delete this.state.didDrop;
+      delete this.state.dropResult;
+      delete this.state.event;
+      delete this.state.isDragging;
+      delete this.state.item;
+      delete this.state.sourceId;
+      delete this.state.targetIds;
+      delete this.state.operation;
+      delete this.state.cancelled;
     }
-    // clear state
-    delete this.state.didDrop;
-    delete this.state.dropResult;
-    delete this.state.event;
-    delete this.state.isDragging;
-    delete this.state.item;
-    delete this.state.sourceId;
-    delete this.state.targetIds;
-    delete this.state.operation;
-    delete this.state.cancelled;
   }
 
   drop(): void {
