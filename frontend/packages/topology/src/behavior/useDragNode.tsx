@@ -4,6 +4,7 @@ import ElementContext from '../utils/ElementContext';
 import { EventListener, isNode, Node } from '../types';
 import { useDndDrag, WithDndDragProps, Modifiers } from './useDndDrag';
 import { DragSourceSpec, DragEvent, ConnectDragSource, DragObjectWithType } from './dnd-types';
+import { useDndManager } from './useDndManager';
 
 export const DRAG_NODE_EVENT = 'drag_node';
 export const DRAG_NODE_START_EVENT = `${DRAG_NODE_EVENT}_start`;
@@ -34,6 +35,8 @@ export const useDragNode = <
   }
   const elementRef = React.useRef(element);
   elementRef.current = element;
+
+  const dndManager = useDndManager();
 
   return useDndDrag(
     React.useMemo(() => {
@@ -104,7 +107,15 @@ export const useDragNode = <
             .fireEvent(DRAG_NODE_EVENT, elementRef.current, event, monitor.getOperation());
         },
         canDrag: spec ? spec.canDrag : undefined,
-        end: (dropResult, monitor, p) => {
+        end: async (dropResult, monitor, p) => {
+          if (spec && spec.end) {
+            try {
+              await spec.end(dropResult, monitor, p);
+            } catch {
+              dndManager.cancel();
+            }
+          }
+
           elementRef.current
             .getController()
             .fireEvent(
@@ -113,13 +124,12 @@ export const useDragNode = <
               monitor.getDragEvent(),
               monitor.getOperation(),
             );
-          spec && spec.end && spec.end(dropResult, monitor, p);
         },
         collect: spec ? spec.collect : undefined,
-        canCancel: spec ? spec.canCancel : undefined,
+        canCancel: spec ? spec.canCancel : true,
       };
       return sourceSpec;
-    }, [spec]),
+    }, [spec, dndManager]),
     props,
   );
 };

@@ -12,6 +12,7 @@ import {
   Identifier,
   DragEvent,
   DragSpecOperation,
+  DragSource,
 } from './dnd-types';
 import { useDndManager } from './useDndManager';
 
@@ -240,24 +241,23 @@ export const useDndDrag = <
   );
 
   React.useEffect(() => {
-    const [sourceId, unregister] = dndManager.registerSource({
+    const dragSource: DragSource = {
       type: spec.item.type,
-      canCancel: (): boolean =>
+      canCancel: () =>
         typeof specRef.current.canCancel === 'boolean'
           ? specRef.current.canCancel
           : typeof specRef.current.canCancel === 'function'
           ? specRef.current.canCancel(monitor, propsRef.current)
           : true,
-      canDrag: (): boolean =>
+      canDrag: () =>
         typeof specRef.current.canDrag === 'boolean'
           ? specRef.current.canDrag
           : typeof specRef.current.canDrag === 'function'
           ? specRef.current.canDrag(monitor, propsRef.current)
           : true,
-      beginDrag: (): any =>
-        specRef.current.begin && specRef.current.begin(monitor, propsRef.current),
-
-      drag: (): void => {
+      beginDrag: () =>
+        specRef.current.begin ? specRef.current.begin(monitor, propsRef.current) : undefined,
+      drag: () => {
         if (specRef.current.drag) {
           const event = monitor.getDragEvent();
           if (event) {
@@ -265,10 +265,12 @@ export const useDndDrag = <
           }
         }
       },
-      endDrag: (): void =>
-        specRef.current.end &&
-        specRef.current.end(monitor.getDropResult(), monitor, propsRef.current),
-    });
+      endDrag: () =>
+        specRef.current.end
+          ? specRef.current.end(monitor.getDropResult(), monitor, propsRef.current)
+          : undefined,
+    };
+    const [sourceId, unregister] = dndManager.registerSource(dragSource);
     monitor.receiveHandlerId(sourceId);
     return unregister;
   }, [spec.item.type, dndManager, monitor]);
