@@ -1,13 +1,7 @@
-import { VMKind, V1NetworkInterface, VMLikeEntityKind } from '../../types';
+import { VMKind, VMLikeEntityKind, BootableDeviceType } from '../../types';
 import { DEVICE_TYPE_DISK, DEVICE_TYPE_INTERFACE } from '../../constants';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { getDisks, getInterfaces } from './selectors';
 import { asVM } from './vmlike';
-
-type BootableDeviceType = {
-  type: string;
-  value: V1Disk | V1NetworkInterface;
-};
 
 export const getBootDeviceIndex = (devices, bootOrder) =>
   devices.findIndex((device) => device.bootOrder === bootOrder);

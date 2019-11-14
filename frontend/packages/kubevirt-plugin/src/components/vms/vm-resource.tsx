@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { BootOrder } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
@@ -18,6 +17,7 @@ import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
+import { BootOrder } from '../boot-order';
 import {
   getOperatingSystemName,
   getOperatingSystem,
