@@ -31,7 +31,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
         >
           <div className="co-recent-item__title">
             <div className="co-recent-item__title-timestamp text-secondary">
-              {twentyFourHourTime(new Date(lastTimestamp))}
+              {lastTimestamp ? twentyFourHourTime(new Date(lastTimestamp)) : '-'}
             </div>
             <div className="co-recent-item__title-message">
               {isError && (
