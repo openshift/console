@@ -1,0 +1,42 @@
+.odc-pod-ring-set {
+  &__donut {
+    &-enter, &-appear {
+      opacity: 0;
+      transform: translateX(-50%);
+    }
+    &-enter-active, &-appear-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 250ms ease-in 300ms, transform 500ms ease-in;
+      will-change: transform;
+    }
+    &-exit {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    &-exit-active {
+      opacity: 0;
+      transform: translateX(-50%);
+      transition: all 500ms ease-out 400ms;
+    }
+  }
+  &__arrow {
+    &-enter {
+      opacity: 0;
+    }
+    &-enter-active {
+      opacity: 1;
+      transition: opacity 300ms ease-in 700ms;
+      will-change: opacity;
+    }
+
+    &-exit {
+      opacity: 1;
+    }
+
+    &-exit-active {
+      opacity: 0;
+      transition: opacity 300ms ease-out;
+    }
+  }
+}
