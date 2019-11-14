@@ -80,6 +80,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Installed Operators',
         resource: referenceForModel(models.ClusterServiceVersionModel),
+        startsWith: [
+          models.ClusterServiceVersionModel.apiGroup,
+          models.ClusterServiceVersionModel.plural,
+        ],
       },
     },
   },
