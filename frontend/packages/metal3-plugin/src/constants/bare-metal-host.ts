@@ -1,4 +1,7 @@
+// TODO(jtomasek): HOST_STATUS_READY is deprecated, remove its occurrences
+// once 'ready' status is replaced with 'available' in BMO
 export const HOST_STATUS_READY = 'ready';
+export const HOST_STATUS_AVAILABLE = 'available';
 export const HOST_STATUS_DISCOVERED = 'discovered';
 export const HOST_STATUS_OK = 'OK';
 export const HOST_STATUS_ERROR = 'error';
@@ -23,7 +26,8 @@ export const HOST_POWER_STATUS_POWERING_OFF = 'Shutting down';
 export const HOST_POWER_STATUS_POWERING_ON = 'Powering on';
 
 export const HOST_STATUS_TITLES = {
-  [HOST_STATUS_READY]: 'Ready',
+  [HOST_STATUS_READY]: 'Available',
+  [HOST_STATUS_AVAILABLE]: 'Available',
   [HOST_STATUS_DISCOVERED]: 'Discovered',
   [HOST_STATUS_OK]: 'OK',
   [HOST_STATUS_ERROR]: 'Error',
@@ -77,6 +81,7 @@ export const HOST_PROGRESS_STATES = [
 
 export const HOST_SUCCESS_STATES = [
   HOST_STATUS_READY,
+  HOST_STATUS_AVAILABLE,
   HOST_STATUS_DISCOVERED,
   HOST_STATUS_OK,
   HOST_STATUS_PROVISIONED,
