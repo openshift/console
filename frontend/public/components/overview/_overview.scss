@@ -60,7 +60,8 @@ $overview-sidebar-width: 550px;
   padding-top: 5px;
 
   .co-m-pane__heading {
-    margin: 0 20px 25px;
+    font-size: var(--pf-global--FontSize--xl);
+    margin: 0 20px var(--pf-global--spacer--md);
   }
 
   .co-actions-menu {
