@@ -8,8 +8,8 @@ import { getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { PipelineModel } from '../../models';
 import ProjectListPage from '../projects/ProjectListPage';
-import { filters } from './PipelineAugmentRuns';
-import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
+import { filters } from './list-page/PipelineAugmentRuns';
+import PipelineAugmentRunsWrapper from './list-page/PipelineAugmentRunsWrapper';
 
 interface PipelinesPageProps {
   namespace: string;

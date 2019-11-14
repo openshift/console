@@ -5,7 +5,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { Alert, Expandable } from '@patternfly/react-core';
 import { PipelineModel } from '../../../models';
 import { CheckboxField } from '../../formik-fields';
-import { PipelineVisualization } from '../../pipelines/PipelineVisualization';
+import { PipelineVisualization } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 
 const MISSING_DOCKERFILE_LABEL_TEXT =
   'The pipeline template for Dockerfiles is not available at this time.';

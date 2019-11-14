@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { runFilters } from '../pipelines/PipelineRuns';
+import { runFilters } from '../pipelines/detail-page-tabs/PipelineRuns';
 import { PipelineRunModel } from '../../models';
-import PipelineRunsList from './PipelineRunList';
+import PipelineRunsList from './list-page/PipelineRunList';
 
 interface PipelineRunResourceListProps {
   namespace: string;
