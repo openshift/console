@@ -18,6 +18,7 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
+      className="odc-radio-button"
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}

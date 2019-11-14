@@ -1,9 +1,16 @@
 .odc-radio-button {
+  padding-left: var(--pf-global--spacer--sm);
+
+  & input[type='radio'] {
+    margin-top: 0;
+  }
+
   &__helper-text {
     padding: var(--pf-global--spacer--md) 0;
     line-height: 1em;
   }
+
   &__displayed-field {
-    padding: var(--pf-global--spacer--sm) 0 var(--pf-global--spacer--sm) 0;
+    padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 1.8rem;
   }
 }

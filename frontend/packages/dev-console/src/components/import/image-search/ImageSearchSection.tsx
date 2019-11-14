@@ -40,7 +40,6 @@ const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ projects, image
     >
       <RadioButtonField
         name="registry"
-        label="Image Section"
         options={[
           {
             label: imageRegistryType.External.label,

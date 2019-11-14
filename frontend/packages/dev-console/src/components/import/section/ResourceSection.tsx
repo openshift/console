@@ -64,8 +64,10 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       label: (
         <div>
           Knative Service
-          <span className="odc-resource-section__badge">
-            {getBadgeFromType(KnativeServingModel.badge)}
+          <span className="odc-resource-section__badge-wrapper">
+            <span className="odc-resource-section__inline-badge">
+              {getBadgeFromType(KnativeServingModel.badge)}
+            </span>
           </span>
         </div>
       ),
