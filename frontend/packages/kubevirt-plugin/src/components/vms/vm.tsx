@@ -158,7 +158,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 };
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
-  const { namespace } = props;
+  const { namespace, skipAccessReview } = props;
 
   const resources = [
     getResource(VirtualMachineModel, { namespace, prop: 'vms' }),
@@ -172,10 +172,12 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   ];
 
   const flatten = ({ vms }) => getLoadedData(vms, []);
+  const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
 
   return (
     <MultiListPage
       {...props}
+      createAccessReview={createAccessReview}
       createButtonText="Create Virtual Machine"
       canCreate
       title={VirtualMachineModel.labelPlural}
@@ -215,4 +217,5 @@ type VirtualMachinesPageProps = {
   namespace: string;
   obj: VMKind;
   hasCreateVMWizardsSupport: boolean;
+  skipAccessReview?: boolean;
 };
