@@ -10,6 +10,7 @@ import {
   RoutePage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { FLAG_KUBEVIRT } from '@console/kubevirt-plugin/src/plugin';
 import * as models from './models';
 import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
@@ -45,7 +46,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Network Attachment Definitions',
         resource: referenceForModel(models.NetworkAttachmentDefinitionModel),
-        required: FLAG_NET_ATTACH_DEF,
+        required: [FLAG_NET_ATTACH_DEF, FLAG_KUBEVIRT],
       },
       mergeAfter: 'Network Policies',
     },

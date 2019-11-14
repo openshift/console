@@ -307,8 +307,10 @@ const mapStateToProps = ({ k8s }) => {
 
   return {
     // FIXME: These should be feature flags.
-    hasSriovNetNodePolicyCRD:
-      !kindsInFlight && !!k8sModels.get(referenceForModel(SriovNetworkNodePolicyModel)),
+    // TODO: Change back when ready to add back SR-IOV support
+    // hasSriovNetNodePolicyCRD:
+    //   !kindsInFlight && !!k8sModels.get(referenceForModel(SriovNetworkNodePolicyModel)),
+    hasSriovNetNodePolicyCRD: false,
     hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(referenceForModel(HyperConvergedModel)),
   };
 };
