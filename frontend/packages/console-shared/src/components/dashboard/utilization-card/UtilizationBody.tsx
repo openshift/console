@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChartAxis } from '@patternfly/react-charts';
-import { Grid, Level } from '@patternfly/react-core';
+import { Grid } from '@patternfly/react-core';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 
 import './utilization-card.scss';
@@ -36,11 +36,11 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) =>
 export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
   const axis = (
     <div className="co-utilization-card__item">
-      <Level className="co-u-hidden co-u-visible-on-xl">
-        <span className="co-utilization-card__item__text">Resource</span>
-        <span className="co-utilization-card__item__text">Usage</span>
-      </Level>
-      <div className="co-utilization-card__item__chart co-utilization-card__item__chart--times">
+      <div className="co-utilization-card__item-section co-u-hidden co-u-visible-on-xl">
+        <span className="co-utilization-card__item-text">Resource</span>
+        <span className="co-utilization-card__item-text">Usage</span>
+      </div>
+      <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">
         <UtilizationAxis timestamps={timestamps} />
       </div>
     </div>

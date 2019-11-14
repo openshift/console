@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Level } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils/types';
 import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
@@ -48,7 +47,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         xAxis={false}
         humanize={humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
-        height={80}
+        height={70}
         chartStatus={chartStatus}
         byteDataType={byteDataType}
       />
@@ -56,8 +55,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     return (
       <div className="co-utilization-card__item">
-        <div className="co-utilization-card__item__section">
-          <Level>
+        <div className="co-utilization-card__item-description">
+          <div className="co-utilization-card__item-section">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {error || (!isLoading && !data.length) ? (
               <div className="text-secondary">Not available</div>
@@ -66,17 +65,19 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             ) : (
               current
             )}
-          </Level>
-          <Level>
-            <span className="co-utilization-card__item__text">
-              {humanAvailable && <span>{humanAvailable} available</span>}
-            </span>
-            <span className="co-utilization-card__item__text">
-              {humanMax && <span>of {humanMax}</span>}
-            </span>
-          </Level>
+          </div>
+          {!error && (humanAvailable || humanMax) && (
+            <div className="co-utilization-card__item-section">
+              <span className="co-utilization-card__item-text">
+                {humanAvailable && <span>{humanAvailable} available</span>}
+              </span>
+              <span className="co-utilization-card__item-text">
+                {humanMax && <span>of {humanMax}</span>}
+              </span>
+            </div>
+          )}
         </div>
-        <div className="co-utilization-card__item__chart">{chart}</div>
+        <div className="co-utilization-card__item-chart">{chart}</div>
       </div>
     );
   },
