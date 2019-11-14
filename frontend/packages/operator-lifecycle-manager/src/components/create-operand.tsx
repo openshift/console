@@ -265,10 +265,10 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       return null;
     }
     if (field.capabilities.includes(SpecCapability.checkbox)) {
-      return false;
+      return null;
     }
     if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
-      return false;
+      return null;
     }
     if (field.capabilities.includes(SpecCapability.updateStrategy)) {
       return null;
@@ -498,7 +498,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <Checkbox
           id={field.path}
           style={{ marginLeft: '10px' }}
-          isChecked={formValues[field.path] as boolean}
+          isChecked={!_.isNil(formValues[field.path]) ? (formValues[field.path] as boolean) : false}
           label={field.displayName}
           required={field.required}
           onChange={(val) => setFormValues((values) => ({ ...values, [field.path]: val }))}
@@ -712,10 +712,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               return (
                 <div id={group} key={group}>
                   <FieldGroup
-                    defaultExpand={_.some(
-                      fieldList,
-                      (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
-                    )}
+                    defaultExpand={
+                      !_.some(
+                        fieldList,
+                        (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
+                      )
+                    }
                     groupName={groupName}
                   >
                     {fieldList.map((field) => (
@@ -754,10 +756,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               return (
                 <div id={group} key={group}>
                   <FieldGroup
-                    defaultExpand={_.some(
-                      fieldList,
-                      (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
-                    )}
+                    defaultExpand={
+                      !_.some(
+                        fieldList,
+                        (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
+                      )
+                    }
                     groupName={groupName}
                   >
                     {fieldList.map((field) => (
