@@ -66,6 +66,7 @@ const getStoragesData = (
       wizardStorageData,
       // for sorting
       name: combinedDisk.getName(),
+      type: combinedDisk.getTypeValue(),
       diskInterface: combinedDisk.getDiskInterface(),
       size: combinedDisk.getReadableSize(),
       storageClass: combinedDisk.getStorageClassName(),
