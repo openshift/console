@@ -85,6 +85,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
     await operatorHubView.ownNamespaceInstallMode.click();
     await browser.wait(until.visibilityOf(operatorHubView.installNamespaceDropdownBtn));
+    await browser.wait(crudView.untilNoLoadersPresent);
     await operatorHubView.installNamespaceDropdownBtn.click();
     await operatorHubView.installNamespaceDropdownFilter(testName);
     await operatorHubView.installNamespaceDropdownSelect(testName).click();
