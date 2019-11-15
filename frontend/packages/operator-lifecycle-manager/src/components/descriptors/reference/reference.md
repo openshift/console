@@ -34,7 +34,7 @@ This descriptor allows you to specify the number of pods for your instance. See 
   description: The desired number of member Pods for the etcd cluster.
   path: size
   x-descriptors:
-  - urn:alm:descriptor:com.tectonic.ui:podCount
+  - 'urn:alm:descriptor:com.tectonic.ui:podCount'
 …
 ```
 
@@ -65,7 +65,7 @@ This descriptor allows you to specify the mini/max amount of compute resources r
   description: Limits describes the minimum/maximum amount of compute resources required/allowed
   path: pod.resources
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
+    - 'urn:alm:descriptor:com.tectonic.ui:resourceRequirements'
 …
 ```
 
@@ -98,7 +98,7 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
   description: The name of the secret object that stores the server's TLS certificate.
   path: tls.static.member.serverSecret
   x-descriptors:
-    - urn:alm:descriptor:io.kubernetes:Secret
+    - 'urn:alm:descriptor:io.kubernetes:Secret'
 …
 ```
 
@@ -129,9 +129,8 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 - displayName: Paused
   description: Specifies if the Operator will manage this cluster.
   path: paused
-  value: false
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
 …
 ```
 
@@ -154,16 +153,15 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 
 **x-descriptors**
 
-This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example:
+This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example for Business Automation Operator:
 
 ```yaml
 …
-- displayName: Optional Item
-  description: Specifies if the optional item will be selected or not.
-  path: examplePath
-  value: false
+- displayName: ImageRegistry Insecure
+  description: A flag used to indicate the specified registry is insecure.
+  path: imageRegistry.insecure
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:checkbox
+    - 'urn:alm:descriptor:com.tectonic.ui:checkbox'
 …
 ```
 
@@ -173,13 +171,11 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
     <td width="50%">CREATION VIEW
       <img src="img/5-1_checkbox-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/5-2_checkbox-dis.png" />
-      <p><small><b>[TODO]</b><i> Display View should show checkbox, similar to booleanSwitch.</small></i></p></td>
-
+      <img src="img/5-2_checkbox-dis.png" /></td>
   </tr>
   <tr style="vertical-align:top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing.</i></small></p>
+      <p><small><i> * Display View also serves as the Modify view.</i></small></p>
       </td>
   </tr>
 </table>
@@ -197,7 +193,7 @@ This descriptor allows you to specify a text input for a _string_ data type. See
   description: The docker image name and version of Portworx Enterprise.
   path: image
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:text
+    - 'urn:alm:descriptor:com.tectonic.ui:text'
 …
 ```
 
@@ -229,7 +225,7 @@ This descriptor allows you to specify a number input for a _number_ data type. S
   description: The Start Port of Portworx
   path: startPort
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:number
+    - 'urn:alm:descriptor:com.tectonic.ui:number'
 …
 ```
 
@@ -261,7 +257,7 @@ This descriptor allows you to specify a number input for a _password_ data type.
   description: The Admin Password of Grafana.
   path: adminPassword
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:password
+    - 'urn:alm:descriptor:com.tectonic.ui:password'
 …
 ```
 
@@ -294,7 +290,7 @@ This descriptor allows you to specify the strategy of your pods being replaced w
   description: The update strategy of the deployment
   path: updateStrategy
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:updateStrategy
+    - 'urn:alm:descriptor:com.tectonic.ui:updateStrategy'
 …
 ```
 
@@ -308,10 +304,8 @@ This descriptor allows you to specify the strategy of your pods being replaced w
       <p><small><b>[TODO]</b><i> Missing the display of "Max Unavailable" and "Max Surge"</small></i></p>
   </tr>
   <tr style="vertical-align:top">
-    <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
-</i></small></p>
-      </td>
+    <td width="50%">MODIFY VIEW
+      <img src="img/9-3_updatestrategy-mod.png" /></td>
   </tr>
 </table>
 
@@ -328,7 +322,7 @@ This descriptor allows you to specify the policy for pulling your container imag
   description: image pull policy for container image
   path: pullPolicy
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:imagePullPolicy
+    - 'urn:alm:descriptor:com.tectonic.ui:imagePullPolicy'
 …
 ```
 
@@ -361,7 +355,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   description: Node affinity is a group of node affinity scheduling
   path: affinity.nodeAffinity
   x-descriptors:    
-    - urn:alm:descriptor:com.tectonic.ui:nodeAffinity
+    - 'urn:alm:descriptor:com.tectonic.ui:nodeAffinity'
 …
 ```
 
@@ -396,7 +390,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   description: Pod affinity is a group of inter pod affinity scheduling rules.
   path: affinity.podAntiAffinity
   x-descriptors:     
-    - urn:alm:descriptor:com.tectonic.ui:podAffinity
+    - 'urn:alm:descriptor:com.tectonic.ui:podAffinity'
 …
 ```
 
@@ -431,7 +425,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   description: Pod anti affinity is a group of inter pod anti affinity scheduling rules.
   path: affinity.podAntiAffinity
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:podAntiAffinity
+    - 'urn:alm:descriptor:com.tectonic.ui:podAntiAffinity'
 …
 ```
 
@@ -466,7 +460,7 @@ This descriptor allows you to specify labels for identifying a set of objects vi
   description: A selector for the ConfigMaps from which to load rule files
   path: ruleSelector
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:selector:core:v1:ConfigMap
+    - 'urn:alm:descriptor:com.tectonic.ui:selector:core:v1:ConfigMap'
 …
 ```
 
@@ -502,14 +496,14 @@ This descriptor allows you to specify a set of fields together as a _group_. Nes
   description: Specifies if Stork is enabled.
   path: stork.enabled
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Stork
-    - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Stork'
+    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
 - displayName: Image
   description: The docker image name and version of Stork.
   path: stork.image
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stork
-    - urn:alm:descriptor:com.tectonic.ui:text
+    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:stork'
+    - 'urn:alm:descriptor:com.tectonic.ui:text'
 …
 ```
 
@@ -657,7 +651,7 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
   description: A list of endpoints allowed as part of this ServiceMonitor
   path: endpoints
   x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:endpointList
+    - 'urn:alm:descriptor:com.tectonic.ui:endpointList'
 …
 ```
 
@@ -685,7 +679,7 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
 ```yaml
 …
 x-descriptors:
-    - urn:alm:descriptor:com.tectonic.ui:label
+    - 'urn:alm:descriptor:com.tectonic.ui:label'
 …
 ```
 * Use [Text Input](#text-input) instead for `string` data type input/output.
@@ -697,7 +691,7 @@ x-descriptors:
 ```yaml
 …
 x-descriptors:
-    urn:alm:descriptor:com.tectonic.ui:namespaceSelector
+    'urn:alm:descriptor:com.tectonic.ui:namespaceSelector'
 …
 ```
 * Use [Kubernetes Object](#kubernetes-object) instead.
