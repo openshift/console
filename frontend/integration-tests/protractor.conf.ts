@@ -1,4 +1,4 @@
-import { browser, $ } from 'protractor';
+import { browser, element, by } from 'protractor';
 import { execSync } from 'child_process';
 import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
@@ -228,7 +228,8 @@ export const checkErrors = async () =>
     }
   });
 
-export const firstElementByTestID = (id: string) => $(`[data-test-id=${id}]`);
+export const firstElementByTestID = (id: string) =>
+  element.all(by.css(`[data-test-id=${id}]`)).first();
 
 export const waitForCount = (elementArrayFinder, expectedCount) => {
   return async () => {
