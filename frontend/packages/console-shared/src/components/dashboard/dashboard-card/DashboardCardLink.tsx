@@ -25,19 +25,28 @@ const DashboardCardLink: React.FC<DashboardCardLinkProps> = React.memo(
 );
 
 export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = React.memo(
-  ({ linkTitle, popupTitle, children, className, onShow, onHide }) => {
+  ({
+    linkTitle,
+    popupTitle,
+    children,
+    className,
+    onShow,
+    onHide,
+    position = PopoverPosition.right,
+  }) => {
     if (React.Children.count(children) === 0) {
       return null;
     }
 
     return (
       <Popover
-        position={PopoverPosition.right}
+        position={position}
         headerContent={popupTitle}
         bodyContent={children}
         enableFlip
         onShow={onShow}
         onHide={onHide}
+        maxWidth="21rem"
       >
         <DashboardCardButtonLink className={className}>{linkTitle}</DashboardCardButtonLink>
       </Popover>
@@ -59,6 +68,7 @@ type DashboardCardPopupLinkProps = {
   className?: string;
   onShow?: () => void;
   onHide?: () => void;
+  position?: PopoverPosition;
 };
 
 type DashboardCardLinkProps = DashboardCardButtonLinkProps & {
