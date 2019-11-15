@@ -9,7 +9,7 @@
     position: absolute;
   }
 
-  &__radio {
-    align-items: flex-start;
+  &__help-text {
+    padding-bottom: var(--pf-global--spacer--xs);
   }
 }

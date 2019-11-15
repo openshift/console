@@ -44,12 +44,12 @@ const ImageSearchSection: React.FC<ImageSearchSectionProps> = ({ projects, image
           {
             label: imageRegistryType.External.label,
             value: imageRegistryType.External.value,
-            displayField: <ImageSearch />,
+            activeChildren: <ImageSearch />,
           },
           {
             label: imageRegistryType.Internal.label,
             value: imageRegistryType.Internal.value,
-            displayField: <ImageStream projects={projects} imageStreams={imageStreams} />,
+            activeChildren: <ImageStream projects={projects} imageStreams={imageStreams} />,
           },
         ]}
       />
