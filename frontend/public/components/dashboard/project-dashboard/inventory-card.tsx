@@ -23,12 +23,15 @@ import {
   getPVCStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
-import { K8sKind } from '../../../module/k8s';
+import { K8sKind, referenceForModel } from '../../../module/k8s';
 import { getName } from '@console/shared';
 import { ProjectDashboardContext } from './project-dashboard-context';
+import { connectToFlags, FlagsObject } from '../../../reducers/features';
+import * as plugins from '../../../plugins';
+import { isProjectDashboardInventoryItem } from '@console/plugin-sdk';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
-  kind: model.kind,
+  kind: model.crd ? referenceForModel(model) : model.kind,
   isList: true,
   prop: 'resource',
   namespace: projectName,
@@ -43,25 +46,43 @@ const ProjectInventoryItem = withDashboardResources(
     model,
     mapper,
     useAbbr,
+    additionalResources = [],
   }: ProjectInventoryItemProps) => {
     React.useEffect(() => {
       if (projectName) {
         const resource = createFirehoseResource(model, projectName);
         watchK8sResource(resource);
-        return () => stopWatchK8sResource(resource);
+        additionalResources.forEach((r) => watchK8sResource({ ...r, namespace: projectName }));
+        return () => {
+          stopWatchK8sResource(resource);
+          additionalResources.forEach(stopWatchK8sResource);
+        };
       }
-    }, [watchK8sResource, stopWatchK8sResource, projectName, model]);
+    }, [watchK8sResource, stopWatchK8sResource, projectName, model, additionalResources]);
 
     const resourceData = _.get(resources.resource, 'data', []) as FirehoseResult['data'];
     const resourceLoaded = _.get(resources.resource, 'loaded');
     const resourceLoadError = _.get(resources.resource, 'loadError');
+
+    const additionalResourcesData = additionalResources.reduce((acc, r) => {
+      acc[r.prop] = _.get(resources[r.prop], 'data');
+      return acc;
+    }, {});
+    const additionalResourcesLoaded = additionalResources
+      .filter((r) => !r.optional)
+      .every((r) => _.get(resources[r.prop], 'loaded'));
+    const additionalResourcesLoadError = additionalResources
+      .filter((r) => !r.optional)
+      .some((r) => !!_.get(resources[r.prop], 'loadError'));
+
     return (
       <ResourceInventoryItem
         kind={model}
-        isLoading={!projectName || !resourceLoaded}
+        isLoading={!projectName || !resourceLoaded || !additionalResourcesLoaded}
         namespace={projectName}
-        error={!!resourceLoadError}
+        error={!!resourceLoadError || additionalResourcesLoadError}
         resources={resourceData}
+        additionalResources={additionalResourcesData}
         mapper={mapper}
         useAbbr={useAbbr}
       />
@@ -69,7 +90,15 @@ const ProjectInventoryItem = withDashboardResources(
   },
 );
 
-export const InventoryCard: React.FC = () => {
+const getPluginItems = (flags: FlagsObject) =>
+  plugins.registry
+    .getProjectDashboardInventoryItems()
+    .filter((e) => plugins.registry.isExtensionInUse(e, flags));
+
+export const InventoryCard = connectToFlags(
+  ...plugins.registry.getRequiredFlags([isProjectDashboardInventoryItem]),
+)(({ flags }) => {
+  const pluginItems = getPluginItems(flags);
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const canListSecrets = useAccessReview({
@@ -100,14 +129,25 @@ export const InventoryCard: React.FC = () => {
         <ProjectInventoryItem projectName={projectName} model={RouteModel} />
         <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
         {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
+        {pluginItems.map((item) => (
+          <ProjectInventoryItem
+            key={item.properties.model.kind}
+            projectName={projectName}
+            model={item.properties.model}
+            mapper={item.properties.mapper}
+            additionalResources={item.properties.additionalResources}
+            useAbbr={item.properties.useAbbr}
+          />
+        ))}
       </DashboardCardBody>
     </DashboardCard>
   );
-};
+});
 
 type ProjectInventoryItemProps = DashboardItemProps & {
   projectName: string;
   model: K8sKind;
   mapper?: StatusGroupMapper;
   useAbbr?: boolean;
+  additionalResources?: FirehoseResource[];
 };
