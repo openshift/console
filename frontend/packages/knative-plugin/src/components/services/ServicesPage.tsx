@@ -9,9 +9,9 @@ export interface ServicesPageProps {
   namespace: string;
 }
 
-const ServicesPage: React.FC<ServicesPageProps> = ({ namespace }) => (
+const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
-    namespace={namespace}
+    {...props}
     canCreate
     kind={referenceForModel(ServiceModel)}
     ListComponent={ServiceList}
