@@ -7,7 +7,7 @@ import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import { menuActions } from './menu-actions';
-import { VMTemplateDetailsConnected } from './vm-template-details';
+import { VMTemplateDetails } from './vm-template-details';
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   const nicsPage = {
@@ -22,12 +22,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     component: VMDisksFirehose,
   };
 
-  const pages = [
-    navFactory.details(VMTemplateDetailsConnected),
-    navFactory.editYaml(),
-    nicsPage,
-    disksPage,
-  ];
+  const pages = [navFactory.details(VMTemplateDetails), navFactory.editYaml(), nicsPage, disksPage];
 
   const breadcrumbsForVMTemplatePage = (match: any) => () => [
     { name: VM_TEMPLATE_LABEL_PLURAL, path: `/k8s/ns/${match.params.ns || 'default'}/vmtemplates` },
