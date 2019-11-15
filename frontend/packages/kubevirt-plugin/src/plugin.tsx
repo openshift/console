@@ -13,6 +13,7 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   ReduxReducer,
+  ProjectDashboardInventoryItem,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
@@ -39,7 +40,8 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsStorageCapacityDropdownItem
-  | ReduxReducer;
+  | ReduxReducer
+  | ProjectDashboardInventoryItem;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -244,6 +246,32 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       namespace: 'kubevirt',
       reducer: kubevirtReducer,
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Project/Dashboard/Inventory/Item',
+    properties: {
+      additionalResources: [
+        {
+          isList: true,
+          kind: models.VirtualMachineInstanceModel.kind,
+          prop: 'vmis',
+        },
+        {
+          isList: true,
+          kind: PodModel.kind,
+          prop: 'pods',
+        },
+        {
+          isList: true,
+          kind: models.VirtualMachineInstanceMigrationModel.kind,
+          prop: 'migrations',
+        },
+      ],
+      model: models.VirtualMachineModel,
+      mapper: getVMStatusGroups,
+      useAbbr: true,
       required: FLAG_KUBEVIRT,
     },
   },
