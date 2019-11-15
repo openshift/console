@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { ErrorLoadingEvents } from '@console/internal/components/events';
+import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { FirehoseResult } from '@console/internal/components/utils/types';
 import { EventStreamList } from '@console/internal/components/utils/event-stream';
 import { EventKind } from '@console/internal/module/k8s';
@@ -15,7 +14,7 @@ const EventsBody: React.FC<EventsBodyProps> = ({ events, filter }) => {
     eventsBody = <div className="skeleton-activity" />;
   } else {
     const filteredEvents = filter ? events.data.filter(filter) : events.data;
-    const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);
+    const sortedEvents = sortEvents(filteredEvents);
     eventsBody =
       filteredEvents.length === 0 ? (
         <div className="co-events-card__body-empty text-secondary">There are no recent events.</div>

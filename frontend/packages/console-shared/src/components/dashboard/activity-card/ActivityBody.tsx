@@ -1,12 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import classNames from 'classnames';
 import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
 import { Accordion } from '@patternfly/react-core';
+import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { FirehoseResult } from '@console/internal/components/utils/types';
-import { ErrorLoadingEvents } from '@console/internal/components/events';
 import { EventStreamList } from '@console/internal/components/utils/event-stream';
 import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
@@ -53,7 +52,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ event
   }
 
   const filteredEvents = filter ? events.data.filter(filter) : events.data;
-  const sortedEvents = _.orderBy(filteredEvents, ['lastTimestamp', 'name'], ['desc', 'asc']);
+  const sortedEvents = sortEvents(filteredEvents);
   if (filteredEvents.length === 0) {
     return (
       <Activity>

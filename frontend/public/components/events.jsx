@@ -30,11 +30,23 @@ import { EventStreamList } from './utils/event-stream';
 const maxMessages = 500;
 const flushInterval = 500;
 
+// We have to check different properties depending on whether events were
+// created with the core/v1 events API or the new events.k8s.io API.
+const getFirstTime = (event) => event.firstTimestamp || event.eventTime;
+export const getLastTime = (event) => {
+  const lastObservedTime = event.series ? event.series.lastObservedTime : null;
+  return event.lastTimestamp || lastObservedTime || event.eventTime;
+};
+export const sortEvents = (events) => {
+  return _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']);
+};
+
 // Predicate function to filter by event "category" (info, error, or all)
-export const categoryFilter = (category, { reason }) => {
+export const categoryFilter = (category, event) => {
   if (category === 'all') {
     return true;
   }
+  const { reason = '' } = event;
   const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
   const isError =
     reason && errorSubstrings.find((substring) => reason.toLowerCase().includes(substring));
@@ -49,17 +61,12 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
   class Inner extends React.PureComponent {
     render() {
       const { event, flags } = this.props;
-      const {
-        count,
-        firstTimestamp,
-        lastTimestamp,
-        involvedObject: obj,
-        source,
-        message,
-        reason,
-      } = event;
+      const { involvedObject: obj, source, message, reason, series } = event;
       const tooltipMsg = `${reason} (${obj.kind})`;
       const isError = categoryFilter('error', event);
+      const firstTime = getFirstTime(event);
+      const lastTime = getLastTime(event);
+      const count = series ? series.count : event.count;
 
       return (
         <div className={classNames('co-sysevent', { 'co-sysevent--error': isError })}>
@@ -75,7 +82,6 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                   kind={referenceFor(obj)}
                   namespace={obj.namespace}
                   name={obj.name}
-                  title={obj.uid}
                 />
                 {obj.namespace && (
                   <ResourceLink
@@ -84,9 +90,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                     name={obj.namespace}
                   />
                 )}
-                {lastTimestamp && (
-                  <Timestamp className="co-sysevent__timestamp" timestamp={lastTimestamp} />
-                )}
+                {lastTime && <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />}
               </div>
               <div className="co-sysevent__details">
                 <small className="co-sysevent__source">
@@ -108,11 +112,11 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
                 {count > 1 && (
                   <small className="co-sysevent__count text-secondary">
                     {count} times
-                    {firstTimestamp && (
+                    {firstTime && (
                       <>
                         {' '}
                         in the last{' '}
-                        <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
+                        <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
                       </>
                     )}
                   </small>
@@ -372,12 +376,10 @@ class EventStream extends React.Component {
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
   flushMessages() {
-    // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
-    // the same timestamp
-    const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
+    const sorted = sortEvents(this.messages);
     const oldestTimestamp = _.min([
       this.state.oldestTimestamp,
-      new Date(_.last(sorted).lastTimestamp),
+      getLastTime(new Date(_.last(sorted))),
     ]);
     sorted.splice(maxMessages);
     this.setState({
