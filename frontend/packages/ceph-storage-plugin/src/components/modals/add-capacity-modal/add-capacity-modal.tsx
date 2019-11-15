@@ -12,10 +12,12 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '@console/internal/components/factory';
+import { cephStorageProvisioners } from '@console/shared';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { OCSServiceModel } from '../../../models';
+
 import './_add-capacity-modal.scss';
-import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 
 export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
@@ -60,6 +62,12 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
       });
   };
 
+  const scFilter = (obj: any) => {
+    return cephStorageProvisioners.every(
+      (provisioner: string) => !_.endsWith(_.get(obj, 'provisioner'), provisioner),
+    );
+  };
+
   const handleRequestSizeInputChange = (capacityObj: any) => {
     setRequestSizeValue(capacityObj.value);
     setButton(capacityObj.value % 2 !== 0);
@@ -74,8 +82,8 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
       <ModalTitle>Add Capacity</ModalTitle>
       <ModalBody>
         Increase the capacity of <strong>{ocsConfig.metadata.name}</strong>.
-        <div className="add-capacity-modal--padding">
-          <div className="add-capacity-modal__input form-group">
+        <div className="add-capacity-modal__body">
+          <div className="form-group add-capacity-modal__input">
             <label className="control-label" htmlFor="request-size-input">
               Capacity
               <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
@@ -106,17 +114,20 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
               Please enter an even number
             </p>
           </div>
-          <label className="control-label">
-            Storage Class
-            <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
-          </label>
-          <OCSStorageClassDropdown
-            onChange={handleStorageClass}
-            name="storageClass"
-            defaultClass={storageClass}
-            hideClassName="add-capacity-modal__hide"
-            required
-          />
+          <div className="form-group add-capacity-modal__dropdown">
+            <label className="control-label" htmlFor="storage-dropdown">
+              Storage Class
+              <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
+            </label>
+            <StorageClassDropdown
+              id="storage-dropdown"
+              onChange={handleStorageClass}
+              name="storageClass"
+              defaultClass={storageClass}
+              filter={scFilter}
+              hideClassName="add-capacity-modal__hide"
+            />
+          </div>
         </div>
       </ModalBody>
       <ModalSubmitFooter

@@ -20,16 +20,17 @@
   margin-top: -15px;
 }
 
-.add-capacity-modal--padding {
-  .co-storage-class-dropdown {
-    .dropdown {
-      width: 340px;
-        button {
-          width: 100%;
-        }
-    }
-  }
+.add-capacity-modal__body {
   padding-top: 2em;
+}
+
+.add-capacity-modal__dropdown .dropdown {
+  max-width: 21.5rem;
+}
+
+.add-capacity-modal__input input {
+  max-width: 17rem;
+  margin-right: 5px;
 }
 
 .add-capacity-modal__span {
