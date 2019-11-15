@@ -117,7 +117,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
     // CR data
     const { data: backingStoreData } = backingStores;
     // CR data clones to maintain order and selection state for table rows
-    const { backingStores: storeMain } = state;
+    const { backingStores: storeMain, namespace } = state;
     const { tier2Policy } = state;
     const showTier2Table = !!tier2Policy;
     const [searchInput, setSearchInput] = React.useState('');
@@ -125,7 +125,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
     const [showHelp, setShowHelp] = React.useState(true);
 
     const openModal = () => {
-      CreateBackingStoreFormModal({});
+      CreateBackingStoreFormModal({ namespace });
     };
 
     const filterSearch = (search: string, list: BackingStoreStateType[]) => {

@@ -19,7 +19,7 @@
 
 .nb-bs-page {
     margin-left: var(--pf-global--spacer--lg);
-    width:80%;
+    margin-right: var(--pf-global--spacer--lg);
 }
 
 .nb-bs-page__breadcrumbs {
@@ -69,4 +69,8 @@
 
 .nb-create-bs__modal {
     background-color: var(--pf-global--BackgroundColor--100);
+}
+
+.nb-bs-page-form__short {
+    width: 80%;
 }
