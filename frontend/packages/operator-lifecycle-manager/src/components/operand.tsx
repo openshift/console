@@ -73,6 +73,11 @@ const getActions = (selectedObj: any) => {
   const pluginActions = actions.map((action) => (kind, ocsObj) => ({
     label: action.properties.label,
     callback: action.properties.callback(kind, ocsObj),
+    accessReview: {
+      ...action.properties.accessReview,
+      name: ocsObj.metadata.name,
+      namespace: ocsObj.metadata.namespace,
+    },
   }));
   return [
     ...pluginActions,

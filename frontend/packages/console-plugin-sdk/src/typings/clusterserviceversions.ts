@@ -1,4 +1,7 @@
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import {
+  K8sResourceKindReference,
+  AccessReviewResourceAttributes,
+} from '@console/internal/module/k8s';
 import { Extension } from './extension';
 
 namespace ExtensionProperties {
@@ -11,6 +14,7 @@ namespace ExtensionProperties {
     apiGroup: string;
     /** action callback */
     callback: (kind: K8sResourceKindReference, obj: any) => () => any;
+    accessReview: AccessReviewResourceAttributes;
   }
 }
 

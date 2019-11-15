@@ -178,6 +178,11 @@ const plugin: Plugin<ConsumedExtensions> = [
             throw e;
           });
       },
+      accessReview: {
+        group: models.OCSServiceModel.apiGroup,
+        resource: models.OCSServiceModel.plural,
+        verb: 'patch',
+      },
     },
   },
 ];
