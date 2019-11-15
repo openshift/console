@@ -28,6 +28,8 @@ export const VM_DETAIL_CONSOLES_HREF = 'consoles';
 
 export const CLOUDINIT_DISK = 'cloudinitdisk';
 
+export const OS_WINDOWS_PREFIX = 'win';
+
 export enum DeviceType {
   NIC = 'NIC',
   DISK = 'DISK',
