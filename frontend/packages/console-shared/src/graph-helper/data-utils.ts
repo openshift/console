@@ -6,26 +6,14 @@ const log = (x: number, y: number) => {
   return Math.log(y) / Math.log(x);
 };
 
-const frequentUnit = (dataPoints: DataPoint[], type) => {
-  // Reduces the dataset to the most frequently used unit
-  const [bestLevel] = dataPoints.reduce(
-    (acc, point) => {
-      const [maxUnit, maxCount, counts] = acc;
-      // Appropriate power level for the datapoint
-      const index = Math.floor(log(_.get(type, 'divisor', 1024), point.y));
-      const unit = _.get(type, ['units', index], '');
-      const unitCount = _.get(counts, unit, 0) + 1;
-      return [
-        ...(unitCount > maxCount ? [unit, unitCount] : [maxUnit, maxCount]),
-        {
-          ...counts,
-          [unit]: unitCount,
-        },
-      ];
-    },
-    ['', 0, {}],
-  );
-  return bestLevel;
+// Get the larget unit seen in the dataframe within the supported range
+const bestUnit = (dataPoints: DataPoint[], type) => {
+  const bestLevel = dataPoints.reduce((maxUnit, point) => {
+    const index = Math.floor(log(_.get(type, 'divisor', 1024), point.y));
+    const unitIndex = index >= type.units.length ? type.units.length - 1 : index;
+    return maxUnit < unitIndex ? unitIndex : maxUnit;
+  }, -1);
+  return _.get(type, ['units', bestLevel]);
 };
 
 // Array based procssor
@@ -34,7 +22,7 @@ export const processFrame = (dataPoints: DataPoint[], typeName: string): Process
   let unit = null;
   if (dataPoints) {
     // Get the appropriate unit and convert the dataset to that level
-    unit = frequentUnit(dataPoints, type);
+    unit = bestUnit(dataPoints, type);
     const frameLevel = type.units.indexOf(unit);
     dataPoints.forEach((point) => {
       point.y /= type.divisor ** frameLevel;
