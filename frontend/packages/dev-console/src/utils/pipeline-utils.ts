@@ -15,7 +15,7 @@ import {
   PipelineParam,
   PipelineRunParam,
 } from './pipeline-augment';
-import { pipelineFilterReducer } from './pipeline-filter-reducer';
+import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 
 interface Resources {
   inputs?: Resource[];
@@ -306,4 +306,21 @@ export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineR
       value: param.default,
     }))
   );
+};
+
+export const pipelineRunDuration = (run: PipelineRun): string => {
+  const startTime = _.get(run, ['status', 'startTime'], null);
+  const completionTime = _.get(run, ['status', 'completionTime'], null);
+
+  // Duration cannot be computed if start time is missing or a completed/failed pipeline has no end time
+  if (!startTime || (!completionTime && pipelineRunStatus(run) !== 'Running')) {
+    return '-';
+  }
+  const start = new Date(startTime).getTime();
+
+  // For running pipelines duration must be current time - starttime.
+  const duration = completionTime
+    ? new Date(completionTime).getTime() - start
+    : new Date().getTime() - start;
+  return formatDuration(duration);
 };

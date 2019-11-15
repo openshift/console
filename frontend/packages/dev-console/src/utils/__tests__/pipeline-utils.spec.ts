@@ -10,8 +10,13 @@ import {
   containerToLogSourceStatus,
   constructCurrentPipeline,
   getPipelineRunParams,
+  pipelineRunDuration,
 } from '../pipeline-utils';
-import { constructPipelineData, mockPipelinesJSON } from './pipeline-test-data';
+import {
+  constructPipelineData,
+  mockPipelinesJSON,
+  mockRunDurationTest,
+} from './pipeline-test-data';
 
 describe('pipeline-utils ', () => {
   it('For first pipeline there should be 1 stages of length 2', () => {
@@ -65,5 +70,23 @@ describe('pipeline-utils ', () => {
     const params = getPipelineRunParams(pipelineParams);
     expect(params[0].name).toBe('APP_NAME');
     expect(params[0].value).toBe('default-app-name');
+  });
+
+  it('expect duration to be "-" for PipelineRun without start Time', () => {
+    const duration = pipelineRunDuration(mockRunDurationTest[0]);
+    expect(duration).not.toBeNull();
+    expect(duration).toBe('-');
+  });
+
+  it('expect duration to be "-" for non running PipelineRun without end Time', () => {
+    const duration = pipelineRunDuration(mockRunDurationTest[1]);
+    expect(duration).not.toBeNull();
+    expect(duration).toBe('-');
+  });
+
+  it('expect duration to be a time formatted string for PipelineRun with start and end Time', () => {
+    const duration = pipelineRunDuration(mockRunDurationTest[2]);
+    expect(duration).not.toBeNull();
+    expect(duration).toBe('1m 13s');
   });
 });
