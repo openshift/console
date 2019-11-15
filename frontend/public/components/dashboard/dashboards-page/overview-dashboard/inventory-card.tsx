@@ -72,15 +72,15 @@ const ClusterInventoryItem = withDashboardResources(
       let additionalResourcesLoaded = true;
       let additionalResourcesLoadError = false;
       if (additionalResources) {
-        additionalResourcesLoaded = additionalResources.every((r) =>
-          _.get(resources[r.prop], 'loaded'),
-        );
+        additionalResourcesLoaded = additionalResources
+          .filter((r) => !r.optional)
+          .every((r) => _.get(resources[r.prop], 'loaded'));
         additionalResources.forEach((r) => {
           additionalResourcesData[r.prop] = _.get(resources[r.prop], 'data');
         });
-        additionalResourcesLoadError = additionalResources.some(
-          (r) => !!_.get(resources[r.prop], 'loadError'),
-        );
+        additionalResourcesLoadError = additionalResources
+          .filter((r) => !r.optional)
+          .some((r) => !!_.get(resources[r.prop], 'loadError'));
       }
 
       const ExpandedComponent = React.useCallback(
