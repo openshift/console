@@ -124,7 +124,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
             byteDataType={ByteDataTypes.BinaryBytes}
             query={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
             error={capacityUtilizationError || totalCapacityError}
-            isLoading={!capacityUtilization || !totalCapacity}
+            isLoading={!capacityUtilization && !totalCapacity}
             max={maxCapacityStats}
             TopConsumerPopover={storagePopover}
           />
