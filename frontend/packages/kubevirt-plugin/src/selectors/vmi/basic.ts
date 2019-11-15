@@ -15,3 +15,11 @@ export const getVMIConditionsByType = (
   const conditions = vmi && vmi.status && vmi.status.conditions;
   return (conditions || []).filter((cond) => cond.type === condType);
 };
+
+export const getVmiTemplateLabels = (vmi: VMIKind): { [key: string]: string } =>
+  (vmi &&
+    vmi.spec &&
+    vmi.spec.template &&
+    vmi.spec.template.metadata &&
+    vmi.spec.template.metadata.labels) ||
+  {};

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { getServicesForVm } from 'kubevirt-web-ui-components';
 import {
   Firehose,
   StatusBox,
@@ -16,6 +15,7 @@ import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
 import { getLoadedData, getResource } from '../../utils';
 import { VirtualMachineInstanceModel } from '../../models';
+import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';
 
@@ -47,7 +47,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
     templates,
   };
 
-  const vmServicesData = getServicesForVm(getLoadedData(props.services, []), vm);
+  const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
 
   const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vm, 'patch'));
 
