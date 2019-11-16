@@ -90,6 +90,6 @@ export interface RadioButtonProps extends FieldProps {
 export interface RadioOption {
   value: string;
   label: React.ReactNode;
-  helperText?: React.ReactNode;
-  displayField?: React.ReactElement;
+  children?: React.ReactNode;
+  activeChildren?: React.ReactElement;
 }

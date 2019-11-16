@@ -1,5 +1,11 @@
 .odc-radio-button {
-  &__helper-text {
-    padding: var(--pf-global--spacer--md) 0;
+  padding-left: var(--pf-global--spacer--sm);
+
+  input[type='radio'] {
+    margin-top: 0;
+  }
+
+  &__children {
+    padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 1.8rem;
   }
 }

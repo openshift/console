@@ -18,6 +18,7 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
+      className="odc-radio-button"
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}
@@ -25,40 +26,34 @@ const RadioButtonField: React.FC<RadioButtonProps> = ({
       isRequired={required}
       label={label}
     >
-      {options.map((option) => (
-        <>
-          <Radio
-            {...field}
-            {...props}
-            key={option.value}
-            id={getFieldId(option.value, 'radiobutton')}
-            value={option.value}
-            label={
-              option.helperText ? (
-                <>
-                  {option.label}
-                  <div className="odc-radio-button__helper-text">{option.helperText}</div>
-                </>
-              ) : (
-                option.label
-              )
-            }
-            isChecked={field.value === option.value}
-            isValid={isValid}
-            aria-describedby={`${fieldId}-helper`}
-            onChange={(val, event) => {
-              field.onChange(event);
-            }}
-          />
-          <br />
-          {option.displayField && field.value === option.value ? (
-            <>
-              {option.displayField}
-              <br />
-            </>
-          ) : null}
-        </>
-      ))}
+      {options.map((option) => {
+        const activeChild = field.value === option.value && option.activeChildren;
+        const staticChild = option.children;
+
+        return (
+          <React.Fragment key={option.value}>
+            <Radio
+              {...field}
+              {...props}
+              id={getFieldId(option.value, 'radiobutton')}
+              value={option.value}
+              label={option.label}
+              isChecked={field.value === option.value}
+              isValid={isValid}
+              aria-describedby={`${fieldId}-helper`}
+              onChange={(val, event) => {
+                field.onChange(event);
+              }}
+            />
+            {(activeChild || staticChild) && (
+              <div className="odc-radio-button__children">
+                {staticChild}
+                {activeChild}
+              </div>
+            )}
+          </React.Fragment>
+        );
+      })}
     </FormGroup>
   );
 };

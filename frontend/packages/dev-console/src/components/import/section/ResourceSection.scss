@@ -1,7 +1,15 @@
-.odc-resource-section__badge {
-  margin-left: var(--pf-global--spacer--md);
-}
+.odc-resource-section {
+  &__badge-wrapper {
+    margin-left: var(--pf-global--spacer--md);
+    position: relative;
+  }
 
-.odc-resource-section__radio {
-  align-items: flex-start;
+  &__inline-badge {
+    bottom: -25%;
+    position: absolute;
+  }
+
+  &__help-text {
+    padding-bottom: var(--pf-global--spacer--xs);
+  }
 }
