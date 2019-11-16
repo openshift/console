@@ -24,6 +24,7 @@ export const isLoaded = () =>
     .then(() => browser.sleep(1000));
 export const resourceRowsPresent = () =>
   browser.wait(until.presenceOf($('.co-m-resource-icon + a')), 10000);
+export const errorPage = $('[data-test-id="error-page"]');
 
 export const resourceRows = $$('[data-test-rows="resource-row"]');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');

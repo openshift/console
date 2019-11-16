@@ -58,6 +58,7 @@ const testSuites = {
     'tests/modal-annotations.scenario.ts',
     'tests/environment.scenario.ts',
   ]),
+  crudBasic: suite(['tests/crud.scenario.ts']),
   monitoring: suite(['tests/monitoring.scenario.ts']),
   newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
   olmFull: suite([
