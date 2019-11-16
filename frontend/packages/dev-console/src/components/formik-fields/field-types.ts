@@ -33,11 +33,13 @@ export interface SearchInputFieldProps extends InputFieldProps {
 
 export interface DropdownFieldProps extends FieldProps {
   items?: object;
+  consumedItems?: string[];
   selectedKey?: string;
   title?: React.ReactNode;
   fullWidth?: boolean;
   disabled?: boolean;
   onChange?: (value: string) => void;
+  handleDuplicateEntry?: any;
 }
 
 export interface EnvironmentFieldProps extends FieldProps {
@@ -58,6 +60,7 @@ export interface MultiColumnFieldProps extends FieldProps {
   emptyValues: { [name: string]: string };
   headers: string[];
   children: React.ReactNode;
+  disableAddValues?: boolean;
 }
 
 export interface NameValuePair {

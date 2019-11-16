@@ -417,12 +417,14 @@ export class Dropdown extends DropdownMixin {
       titlePrefix,
       describedBy,
       disabled,
+      isValid,
     } = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
     const rows = [];
     const bookMarkRows = [];
+    const inlineErrorClass = isValid ? '' : 'dropdown__inline-error';
 
     const addItem = (key, content) => {
       const selected = key === selectedKey && !this.props.noSelection;
@@ -561,7 +563,7 @@ export class Dropdown extends DropdownMixin {
           <button
             aria-haspopup="true"
             aria-expanded={this.state.active}
-            className={classNames('pf-c-dropdown__toggle', buttonClassName)}
+            className={classNames('pf-c-dropdown__toggle', buttonClassName, inlineErrorClass)}
             data-test-id="dropdown-button"
             onClick={this.toggle}
             onKeyDown={this.onKeyDown}

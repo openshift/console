@@ -5,13 +5,38 @@ import { Dropdown } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
+import './_dropdown-field.scss';
 
-const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
+const DropdownField: React.FC<DropdownFieldProps> = ({
+  label,
+  helpText,
+  required,
+  consumedItems,
+  handleDuplicateEntry,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  const checkDuplicateItemEntry = (items, fieldReference): boolean => {
+    let occurence = 0;
+    if (items && items.length > 0) {
+      items.forEach((element) => {
+        if (element === fieldReference.value) {
+          occurence++;
+        }
+      });
+    }
+    return occurence > 1;
+  };
+  const isDuplicateEntry = checkDuplicateItemEntry(consumedItems, field);
+  if (handleDuplicateEntry) {
+    handleDuplicateEntry(isDuplicateEntry);
+  }
+
   return (
     <FormGroup
       fieldId={fieldId}
@@ -32,7 +57,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
           setFieldValue(props.name, value);
           setFieldTouched(props.name, true);
         }}
+        isValid={!isDuplicateEntry}
       />
+      {isDuplicateEntry && <p className="odc-dropdown-field__inline-error">Duplicate detected.</p>}
     </FormGroup>
   );
 };

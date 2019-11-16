@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import { FormikProps, FormikValues, useField } from 'formik';
 import {
   ModalTitle,
   ModalBody,
@@ -11,6 +11,7 @@ import {
   InputField,
   DropdownField,
 } from '@console/dev-console/src/components/formik-fields';
+import * as _ from 'lodash';
 
 export interface TrafficSplittingModalProps {
   revisionItems: any;
@@ -25,6 +26,21 @@ const TrafficSplittingModal: React.FC<Props> = ({
   isSubmitting,
   status,
 }) => {
+  const getConsumedRevisions = (fieldValue): any[] => {
+    return fieldValue.length
+      ? fieldValue.reduce((accumulator, currentValue) => {
+          accumulator.push(currentValue.revisionName);
+          return accumulator;
+        }, [])
+      : [];
+  };
+  const [disableSaveButton, toggleSaveButtonState] = React.useState(false);
+  const toggleSave = (toggle: boolean) => {
+    toggleSaveButtonState(toggle);
+  };
+  const [field] = useField('trafficSplitting');
+  const consumedRevisions = getConsumedRevisions(field.value);
+  const disableAddRevision = _.size(field.value) >= _.size(revisionItems);
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
       <ModalTitle>Set Traffic Distribution</ModalTitle>
@@ -35,6 +51,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
           addLabel="Add Revision"
           headers={['Split', 'Tag', 'Revision']}
           emptyValues={{ percent: '', tag: '', revisionName: '' }}
+          disableAddValues={disableAddRevision}
         >
           <InputField
             name="percent"
@@ -47,7 +64,9 @@ const TrafficSplittingModal: React.FC<Props> = ({
           <DropdownField
             name="revisionName"
             items={revisionItems}
+            consumedItems={consumedRevisions}
             title="Select a revision"
+            handleDuplicateEntry={toggleSave}
             fullWidth
             required
           />
@@ -58,6 +77,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
         submitText="Save"
         cancel={handleReset}
         errorMessage={status.error}
+        submitDisabled={disableSaveButton}
       />
     </form>
   );
