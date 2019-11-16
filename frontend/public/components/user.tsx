@@ -178,18 +178,32 @@ type UserTableRowProps = {
   style: any;
 };
 
-export const UserDetailsPage: React.FC<UserDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={referenceForModel(UserModel)}
-    menuActions={Kebab.factory.common}
-    pages={[
-      navFactory.details(UserDetails),
-      navFactory.editYaml(),
-      navFactory.roles(RoleBindingsTab),
-    ]}
-  />
-);
+const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> = ({
+  startImpersonate,
+  ...props
+}) => {
+  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
+    label: `Impersonate User "${obj.metadata.name}"`,
+    callback: () => startImpersonate('User', obj.metadata.name),
+  });
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(UserModel)}
+      menuActions={[impersonateAction, ...Kebab.factory.common]}
+      pages={[
+        navFactory.details(UserDetails),
+        navFactory.editYaml(),
+        navFactory.roles(RoleBindingsTab),
+      ]}
+    />
+  );
+};
+
+export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(
+  null,
+  { startImpersonate: UIActions.startImpersonate },
+)(UserDetailsPage_);
 
 type UserPageProps = {
   autoFocus?: boolean;
