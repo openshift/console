@@ -162,7 +162,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
 
   it('displays YAML editor for creating a new `Jaeger` instance', async () => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create Jaeger'))));
-    await element(by.buttonText('Create Jaeger')).click();
+    await retry(() => element(by.buttonText('Create Jaeger')).click());
     await yamlView.isLoaded();
 
     expect($('.co-create-operand__header').getText()).toContain('Create Jaeger');
