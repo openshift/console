@@ -69,6 +69,7 @@ type PopperProps = {
   popperOptions?: PopperOptions;
   popperRef?: React.Ref<PopperJS>;
   reference: Reference | (() => Reference);
+  zIndex?: number;
 };
 
 const DEFAULT_POPPER_OPTIONS: PopperOptions = {};
@@ -85,6 +86,7 @@ const Popper: React.FC<PopperProps> = ({
   closeOnOutsideClick,
   onRequestClose,
   popperRef: popperRefIn,
+  zIndex = 9999,
 }) => {
   const controlled = typeof open === 'boolean';
   const openProp = controlled ? open : true;
@@ -194,7 +196,7 @@ const Popper: React.FC<PopperProps> = ({
 
   return isOpen ? (
     <Portal container={container}>
-      <div ref={nodeRefCallback} className={className}>
+      <div ref={nodeRefCallback} className={className} style={{ zIndex }}>
         {children}
       </div>
     </Portal>
