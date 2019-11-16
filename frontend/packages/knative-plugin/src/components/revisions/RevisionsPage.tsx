@@ -4,13 +4,9 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../models';
 import RevisionList from './RevisionList';
 
-export interface RevisionsPageProps {
-  namespace: string;
-}
-
-const RevisionsPage: React.FC<RevisionsPageProps> = ({ namespace }) => (
+const RevisionsPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
-    namespace={namespace}
+    {...props}
     canCreate={false}
     kind={referenceForModel(RevisionModel)}
     ListComponent={RevisionList}

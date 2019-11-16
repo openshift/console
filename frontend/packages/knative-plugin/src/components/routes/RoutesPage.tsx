@@ -5,13 +5,9 @@ import { getBadgeFromType } from '@console/shared';
 import { RouteModel } from '../../models';
 import RouteList from './RouteList';
 
-export interface RoutesPageProps {
-  namespace: string;
-}
-
-const RoutesPage: React.FC<RoutesPageProps> = ({ namespace }) => (
+const RoutesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
-    namespace={namespace}
+    {...props}
     canCreate={false}
     kind={referenceForModel(RouteModel)}
     ListComponent={RouteList}
