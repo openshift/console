@@ -79,11 +79,11 @@ const nodeDragSourceSpec = (
       }
     : undefined,
   canCancel: (monitor) => monitor.getOperation() === REGROUP_OPERATION,
-  end: (dropResult, monitor, props) => {
+  end: async (dropResult, monitor, props) => {
     if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
-      return moveNodeToGroup(props.element, isNode(dropResult) ? dropResult : null);
+      await moveNodeToGroup(props.element, isNode(dropResult) ? dropResult : null);
+      dropResult.appendChild(props.element);
     }
-    return undefined;
   },
   collect: (monitor) => ({
     dragging: monitor.isDragging(),
