@@ -13,7 +13,7 @@ import {
   gitValidationSchema,
   dockerValidationSchema,
   buildValidationSchema,
-  urlRegex,
+  gitUrlRegex,
   resourcesValidationSchema,
 } from './validation-schema';
 
@@ -33,7 +33,7 @@ export const validationSchema = yup.object().shape({
 });
 
 export const detectGitType = (url: string): string => {
-  if (!urlRegex.test(url)) {
+  if (!gitUrlRegex.test(url)) {
     // Not a URL
     return GitTypes.invalid;
   }
@@ -51,7 +51,7 @@ export const detectGitType = (url: string): string => {
 };
 
 export const detectGitRepoName = (url: string): string | undefined => {
-  if (!urlRegex.test(url)) {
+  if (!gitUrlRegex.test(url)) {
     return undefined;
   }
 

@@ -10,7 +10,7 @@ const pathRegex = /^\/.*$/;
 const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
-export const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
+export const gitUrlRegex = /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;
 
 export const nameValidationSchema = yup
   .string()
@@ -228,7 +228,7 @@ export const gitValidationSchema = yup.object().shape({
   url: yup
     .string()
     .max(2000, 'Please enter a URL that is less then 2000 characters.')
-    .matches(urlRegex, 'Invalid Git URL.')
+    .matches(gitUrlRegex, 'Invalid Git URL.')
     .required('Required'),
   type: yup.string().when('showGitType', {
     is: true,
