@@ -10,7 +10,6 @@ export enum HostQuery {
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
   NUMBER_OF_PODS = 'NUMBER_OF_PODS',
-  NUMBER_OF_PODS_SIMPLE = 'NUMBER_OF_PODS_SIMPLE',
   NUMBER_OF_FANS = 'NUMBER_OF_FANS',
   NUMBER_OF_PSUS = 'NUMBER_OF_PSUS',
 
@@ -42,12 +41,7 @@ const hostQueriesByHostName = {
 };
 
 const hostQueriesByIP = {
-  [HostQuery.NUMBER_OF_PODS]: _.template(
-    `kubelet_running_pod_count{instance=~'<%= host %>:.*'}[60m:5m]`,
-  ),
-  [HostQuery.NUMBER_OF_PODS_SIMPLE]: _.template(
-    `kubelet_running_pod_count{instance=~'<%= host %>:.*'}`,
-  ),
+  [HostQuery.NUMBER_OF_PODS]: _.template(`kubelet_running_pod_count{instance=~'<%= host %>:.*'}`),
   [HostQuery.PODS_BY_CPU]: _.template(
     `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{instance=~"<%= host %>:.*",container_name="",pod!=""}[5m])) BY (pod, namespace)))`,
   ),
@@ -98,7 +92,7 @@ export const getUtilizationQueries = (
 });
 
 export const getInventoryQueries = (hostIP: string): HostQueryType => ({
-  [HostQuery.NUMBER_OF_PODS]: getQuery(hostIP, hostQueriesByIP[HostQuery.NUMBER_OF_PODS_SIMPLE]),
+  [HostQuery.NUMBER_OF_PODS]: getQuery(hostIP, hostQueriesByIP[HostQuery.NUMBER_OF_PODS]),
 });
 
 type HostQueryType = {
