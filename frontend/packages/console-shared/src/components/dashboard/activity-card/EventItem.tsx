@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { RedExclamationCircleIcon } from '@console/shared';
-import { categoryFilter } from '@console/internal/components/events';
+import { categoryFilter, getLastTime } from '@console/internal/components/events';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
@@ -10,12 +10,13 @@ import { EventKind, referenceFor } from '@console/internal/module/k8s';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&
-  prevProps.event.lastTimestamp === nextProps.event.lastTimestamp &&
+  getLastTime(prevProps.event) === getLastTime(nextProps.event) &&
   prevProps.isExpanded === nextProps.isExpanded &&
   prevProps.onToggle === nextProps.onToggle;
 
 const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onToggle }) => {
-  const { lastTimestamp, involvedObject, message, reason, metadata } = event;
+  const { involvedObject, message, reason, metadata } = event;
+  const lastTime = getLastTime(event);
   const isError = categoryFilter('error', { reason });
   const expanded = isExpanded(metadata.uid);
   return (
@@ -31,7 +32,11 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
         >
           <div className="co-recent-item__title">
             <div className="co-recent-item__title-timestamp text-secondary">
-              {lastTimestamp ? twentyFourHourTime(new Date(lastTimestamp)) : '-'}
+              {lastTime ? (
+                <span title={lastTime}>{twentyFourHourTime(new Date(lastTime))}</span>
+              ) : (
+                '-'
+              )}
             </div>
             <div className="co-recent-item__title-message">
               {isError && (

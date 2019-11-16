@@ -893,15 +893,22 @@ export type GroupVersionKind = string;
 export type K8sResourceKindReference = GroupVersionKind | string;
 
 export type EventKind = {
-  count: number;
-  type: string;
+  action?: string;
+  count?: number;
+  type?: string;
   involvedObject: EventInvolvedObject;
-  message: string;
-  lastTimestamp: string;
-  firstTimestamp: string;
-  reason: string;
+  message?: string;
+  eventTime?: string;
+  lastTimestamp?: string;
+  firstTimestamp?: string;
+  reason?: string;
   source: {
     component: string;
     host?: string;
+  };
+  series?: {
+    count?: number;
+    lastObservedTime?: string;
+    state?: string;
   };
 } & K8sResourceCommon;
