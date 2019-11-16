@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup, Button } from 'patternfly-react';
+import { ListGroup } from 'patternfly-react';
+import { Button } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
@@ -50,9 +51,9 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
       {/* add extra check, if sidebar is opened for a knative deployment */}
       {service.kind === ServiceModel.kind && (
         <Button
-          variant="secondry"
+          variant="secondary"
           onClick={() => trafficModalLauncher({ obj: service })}
-          disabled={!(revisions && revisions.length)}
+          isDisabled={!(revisions && revisions.length)}
         >
           Set Traffic Distribution
         </Button>
