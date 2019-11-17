@@ -39,6 +39,7 @@ import {
 import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-class';
 import { makeIDReferences } from '../../utils/redux/id-reference';
 import { PersistentVolumeClaimWrapper } from '../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { ProvisionSource } from '../../constants/vm/provision-source';
 import {
   ChangedCommonData,
   CommonData,
@@ -93,6 +94,12 @@ const kubevirtInterOP = async ({
   const osField = clonedVMsettings[VMSettingsField.OPERATING_SYSTEM];
   const osID = osField.value;
   osField.value = operatingSystems.find(({ id }) => id === osID);
+
+  const provisionSourceTypeField = clonedVMsettings[VMSettingsField.PROVISION_SOURCE_TYPE];
+  // createVMTemplate (source URL) creates unwanted dataVolume and removes already prepared dataVolumeTemplate
+  if (provisionSourceTypeField.value === ProvisionSource.URL.getValue()) {
+    provisionSourceTypeField.value = undefined;
+  }
 
   const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
     const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
