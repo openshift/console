@@ -58,13 +58,13 @@ describe('Performance test', () => {
       const chunkName = arguments[0];
       return performance
         .getEntriesByType('resource')
-        .find(({ name }) => name.endsWith('.js') && name.indexOf(`/${chunkName}`) > -1);
+        .find(({ name }) => name.endsWith('.js') && name.indexOf(`/${chunkName}-chunk`) > -1);
     };
 
     it(`downloads new bundle for ${routeName}`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/projects`);
+      await browser.get(`${appHost}/k8s/cluster/namespaces`);
+      await crudView.isLoaded();
       await browser.executeScript(() => performance.setResourceTimingBufferSize(1000));
-      await browser.wait(until.presenceOf(crudView.resourceTitle));
       // Avoid problems where the Operators nav section appears where Workloads was at the moment the tests try to click.
       await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
       await sidenavView.clickNavLink([route.section, route.name]);
@@ -76,7 +76,7 @@ describe('Performance test', () => {
       // FIXME: Really need to address this chunk size
       // TODO(jtomasek): extract common node components to @console/shared to reduce node chunk size
       if (['catalog', 'operator-hub', 'node'].includes(routeName)) {
-        expect((routeChunk as any).decodedBodySize).toBeLessThan(100000);
+        expect((routeChunk as any).decodedBodySize).toBeLessThan(120000);
       } else {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
       }
