@@ -47,6 +47,12 @@ import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
 
+// Prometheus internal labels start with "__"
+const isInternalLabel = (key: string): boolean => _.startsWith(key, '__');
+
+// External labels added by Prometheus (included in Thanos Querier responses)
+const isExternalLabel = (key: string): boolean => key === 'prometheus';
+
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
 const chartTheme = getCustomTheme(
@@ -461,9 +467,11 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               const newGraphData = _.map(newResults, (result) => {
                 return _.map(result, ({ metric, values }) => {
                   // If filterLabels is specified, ignore all series that don't match
-                  // Ignore internal labels (start with "__")
                   return filterLabels &&
-                    _.some(metric, (v, k) => filterLabels[k] !== v && !_.startsWith(k, '__'))
+                    _.some(
+                      metric,
+                      (v, k) => filterLabels[k] !== v && !isInternalLabel(k) && !isExternalLabel(k),
+                    )
                     ? []
                     : [metric, formatSeriesValues(values, samples, span)];
                 });
