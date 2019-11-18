@@ -3,17 +3,18 @@ module github.com/openshift/console
 go 1.12
 
 require (
+	cloud.google.com/go v0.38.0 // indirect
 	github.com/coreos/dex v2.3.0+incompatible
-	github.com/coreos/go-oidc v0.0.0-20180117170138-065b426bd416
-	github.com/coreos/pkg v0.0.0-20150728231633-7373797ee9cd
-	github.com/gorilla/websocket v0.0.0-20180201015256-4ac909741dfa
-	github.com/pquerna/cachecontrol v0.0.0-20160421231612-c97913dcbd76 // indirect
-	github.com/stretchr/testify v1.3.0 // indirect
-	golang.org/x/net v0.0.0-20190311183353-d8887717615a // indirect
-	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2 // indirect
+	github.com/coreos/go-oidc v2.1.0+incompatible
+	github.com/coreos/pkg v0.0.0-20180108230652-97fdf19511ea
+	github.com/gorilla/websocket v1.4.0
+	github.com/openshift/library-go v0.0.0-20191118102510-4e2c7112d252
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
+	google.golang.org/appengine v1.5.0 // indirect
 	google.golang.org/genproto v0.0.0-20190508193815-b515fa19cec8 // indirect
-	google.golang.org/grpc v1.19.0
-	gopkg.in/square/go-jose.v2 v2.0.1 // indirect
-	gopkg.in/yaml.v2 v2.2.1
+	google.golang.org/grpc v1.23.1
+	gopkg.in/yaml.v2 v2.2.4
+	k8s.io/apiserver v0.0.0-20191117060219-524f257d2214 // indirect
+	k8s.io/client-go v11.0.0+incompatible // indirect
 )
