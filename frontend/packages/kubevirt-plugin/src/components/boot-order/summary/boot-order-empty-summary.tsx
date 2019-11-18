@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { Expandable, Text, TextVariants } from '@patternfly/react-core';
-import { BootableDeviceType } from '../../types';
-import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from './constants';
+import { BootableDeviceType } from '../../../types';
+import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from '../constants';
 
-import './boot-order-summary.scss';
-
-export const BootOrderSummaryEmptyState: React.FC<BootOrderSummaryEmptyStateProps> = ({
-  devices,
-}) => {
+export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ devices }) => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-
   const options = devices.filter((device) => !device.value.bootOrder);
-
   const onToggle = React.useCallback(() => setIsExpanded(!isExpanded), [isExpanded]);
 
   // Note(Yaacov):
@@ -43,6 +37,6 @@ export const BootOrderSummaryEmptyState: React.FC<BootOrderSummaryEmptyStateProp
   );
 };
 
-export type BootOrderSummaryEmptyStateProps = {
+export type BootOrderEmptySummaryProps = {
   devices: BootableDeviceType[];
 };
