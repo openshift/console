@@ -6,4 +6,9 @@
   right: 0;
   top: 0;
   bottom: 0;
+
+  // WORKAROUND: see https://github.com/patternfly/patternfly-react/issues/3312
+  .pf-topology-container__with-sidebar {
+    flex: 1;
+  }
 }
