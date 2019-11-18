@@ -343,27 +343,29 @@ export class InstallPlanPreview extends React.Component<
                 requirements for the components specified in the plan. Click the resource name to
                 view the resource in detail.
               </p>
-              <div className="pf-c-form pf-c-form__actions">
-                <Button
-                  variant="primary"
-                  isDisabled={!this.state.needsApproval}
-                  onClick={() => approve()}
-                >
-                  {this.state.needsApproval ? 'Approve' : 'Approved'}
-                </Button>
-                <Button
-                  variant="secondary"
-                  isDisabled={false}
-                  onClick={() =>
-                    history.push(
-                      `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${
-                        subscription.name
-                      }?showDelete=true`,
-                    )
-                  }
-                >
-                  Deny
-                </Button>
+              <div className="pf-c-form">
+                <div className="pf-c-form__actions">
+                  <Button
+                    variant="primary"
+                    isDisabled={!this.state.needsApproval}
+                    onClick={() => approve()}
+                  >
+                    {this.state.needsApproval ? 'Approve' : 'Approved'}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    isDisabled={false}
+                    onClick={() =>
+                      history.push(
+                        `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                          SubscriptionModel,
+                        )}/${subscription.name}?showDelete=true`,
+                      )
+                    }
+                  >
+                    Deny
+                  </Button>
+                </div>
               </div>
             </HintBlock>
           </div>
