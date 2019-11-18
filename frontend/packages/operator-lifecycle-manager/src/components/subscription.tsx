@@ -104,7 +104,7 @@ export const installPlanForSubscription = (
 ): InstallPlanKind =>
   _.find(installPlans, {
     metadata: {
-      name: _.get(subscription, 'status.installPlan.name'),
+      name: _.get(subscription, 'status.installplan.name'),
     },
   });
 
