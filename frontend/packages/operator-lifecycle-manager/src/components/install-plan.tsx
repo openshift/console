@@ -383,7 +383,7 @@ export class InstallPlanPreview extends React.Component<
                 </thead>
                 <tbody>
                   {steps.map((step) => (
-                    <tr key={referenceForStepResource(step.resource)}>
+                    <tr key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}>
                       <td>
                         {['Present', 'Created'].includes(step.status) ? (
                           <ResourceLink
