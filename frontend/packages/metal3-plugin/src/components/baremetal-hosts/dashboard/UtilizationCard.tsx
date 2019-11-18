@@ -26,12 +26,9 @@ import {
   humanizeBinaryBytesWithoutB,
   humanizeBinaryBytes,
   humanizeCpuCores,
-  humanizeSeconds,
-  secondsToNanoSeconds,
-  Humanize,
 } from '@console/internal/components/utils';
 import { MachineKind } from '@console/internal/module/k8s';
-import { getMachineNodeName, getMachineInternalIP } from '@console/shared';
+import { getMachineNodeName } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { BareMetalHostKind } from '../../../types';
@@ -40,7 +37,6 @@ import { getUtilizationQueries, HostQuery, getTopConsumerQueries } from './queri
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
-const humanizeFromSeconds: Humanize = (value) => humanizeSeconds(secondsToNanoSeconds(value));
 
 const UtilizationCard: React.FC<UtilizationCardProps> = ({
   watchPrometheus,
@@ -51,12 +47,8 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   const { machine } = React.useContext(BareMetalHostDashboardContext);
   const nodeName = getMachineNodeName(machine);
-  const internalIP = getMachineInternalIP(machine);
 
-  const queries = React.useMemo(() => getUtilizationQueries(nodeName, internalIP), [
-    nodeName,
-    internalIP,
-  ]);
+  const queries = React.useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
 
   React.useEffect(() => {
     if (machine) {
@@ -131,12 +123,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
 
   const cpuPopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
           title="CPU"
           current={current}
-          humanize={humanizeFromSeconds}
+          humanize={humanizeCpuCores}
           consumers={[
             {
               query: topConsumerQueries[HostQuery.PODS_BY_CPU],
@@ -152,12 +144,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [internalIP, nodeName],
+    [nodeName],
   );
 
   const memPopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
           title="Memory"
@@ -178,12 +170,12 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [internalIP, nodeName],
+    [nodeName],
   );
 
   const storagePopover = React.useCallback(
     ({ current }) => {
-      const topConsumerQueries = getTopConsumerQueries(nodeName, internalIP);
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
           title="Disk Usage"
@@ -204,7 +196,7 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
         />
       );
     },
-    [internalIP, nodeName],
+    [nodeName],
   );
 
   return (
