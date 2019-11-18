@@ -1,5 +1,6 @@
 import { DeploymentKind, K8sResourceKind, PodKind, PodPhase } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { AllPodStatus } from '../constants';
 
 export interface PodDataResources {
   replicationControllers: FirehoseResult;
@@ -35,13 +36,14 @@ export interface PodRingData {
 }
 
 export type ExtPodPhase =
-  | 'Empty'
-  | 'Warning'
-  | 'Idle'
-  | 'Not Ready'
-  | 'Scaled to 0'
-  | 'Autoscaled to 0'
-  | 'Terminating';
+  | AllPodStatus.Empty
+  | AllPodStatus.Warning
+  | AllPodStatus.Idle
+  | AllPodStatus.NotReady
+  | AllPodStatus.ScaledTo0
+  | AllPodStatus.AutoScaledTo0
+  | AllPodStatus.Terminating
+  | AllPodStatus.ScalingUp;
 
 export type ExtPodStatus = {
   phase: ExtPodPhase | PodPhase;

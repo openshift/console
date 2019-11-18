@@ -51,6 +51,7 @@ describe('Pod Utils:', () => {
       alerts: {},
       revision: 0,
       obj: {},
+      phase: 'Complete',
     };
     const previous: PodControllerOverviewItem = { pods: allpods, alerts: {}, revision: 0, obj: {} };
     expect(getPodData(deploymentConfig, allpods, current, previous, false)).toEqual({

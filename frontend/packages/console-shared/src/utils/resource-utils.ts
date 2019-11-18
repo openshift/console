@@ -35,6 +35,7 @@ import {
   CONTAINER_WAITING_STATE_ERROR_REASONS,
   DEPLOYMENT_STRATEGY,
   DEPLOYMENT_PHASE,
+  AllPodStatus,
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
@@ -351,7 +352,7 @@ const getAutoscaledPods = (rc: K8sResourceKind): ExtPodKind[] => {
   return [
     {
       ..._.pick(rc, 'metadata', 'status', 'spec'),
-      status: { phase: 'Autoscaled to 0' },
+      status: { phase: AllPodStatus.AutoScaledTo0 },
     },
   ];
 };
@@ -368,12 +369,21 @@ const getIdledStatus = (
       pods: [
         {
           ..._.pick(rc.obj, 'metadata', 'status', 'spec'),
-          status: { phase: 'Idle' },
+          status: { phase: AllPodStatus.Idle },
         },
       ],
     };
   }
   return rc;
+};
+
+const getScalingUp = (dc: K8sResourceKind): ExtPodKind => {
+  return {
+    ..._.pick(dc, 'metadata'),
+    status: {
+      phase: AllPodStatus.ScalingUp,
+    },
+  };
 };
 
 const getRolloutStatus = (
@@ -591,7 +601,10 @@ export class TransformResourceData {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
       };
-
+      const pods = [];
+      if (!current && !previous) {
+        pods.push(getScalingUp(obj));
+      }
       const status = resourceStatus(obj, current, isRollingOut);
       const overviewItems = {
         alerts,
@@ -600,7 +613,7 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods: [...pods, ..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
@@ -634,6 +647,10 @@ export class TransformResourceData {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
       };
+      const pods = [];
+      if (!current && !previous) {
+        pods.push(getScalingUp(obj));
+      }
       const status = resourceStatus(obj, current, isRollingOut);
       const overviewItems = {
         alerts,
@@ -642,7 +659,7 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods: [...pods, ..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,

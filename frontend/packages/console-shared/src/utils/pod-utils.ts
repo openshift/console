@@ -176,5 +176,5 @@ export const getPodData = (
       completedDeploymentData: previousPods,
     };
   }
-  return { inProgressDeploymentData: null, completedDeploymentData: currentPods };
+  return { inProgressDeploymentData: null, completedDeploymentData: pods };
 };
