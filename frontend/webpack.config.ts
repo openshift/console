@@ -39,6 +39,8 @@ const config: Configuration = {
     progress: true,
     hot: HOT_RELOAD !== 'false',
     inline: HOT_RELOAD !== 'false',
+    host: '0.0.0.0',
+    disableHostCheck: true,
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
