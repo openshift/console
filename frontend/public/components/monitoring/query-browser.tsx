@@ -56,6 +56,12 @@ const isInternalLabel = (key: string): boolean => _.startsWith(key, '__');
 // External labels added by Prometheus (included in Thanos Querier responses)
 const isExternalLabel = (key: string): boolean => key === 'prometheus';
 
+// Prometheus internal labels start with "__"
+const isInternalLabel = (key: string): boolean => _.startsWith(key, '__');
+
+// External labels added by Prometheus (included in Thanos Querier responses)
+const isExternalLabel = (key: string): boolean => key === 'prometheus';
+
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
 const chartTheme = getCustomTheme(
