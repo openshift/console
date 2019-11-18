@@ -10,8 +10,9 @@ import {
   GroupStyle,
   isGraph,
   isNode,
-  ADD_ELEMENT_EVENT,
-  REMOVE_ELEMENT_EVENT,
+  ADD_CHILD_EVENT,
+  REMOVE_CHILD_EVENT,
+  ElementChildEventListener,
 } from '../types';
 import { groupNodeElements, leafNodeElements } from '../utils/element-utils';
 import BaseEdge from '../elements/BaseEdge';
@@ -179,6 +180,8 @@ export default class ForceLayout implements Layout {
 
   private scheduleRestart = false;
 
+  private nodesMap: { [id: string]: D3Node } = {};
+
   constructor(graph: Graph, options?: Partial<ForceLayoutOptions>) {
     this.graph = graph;
     this.options = {
@@ -321,29 +324,21 @@ export default class ForceLayout implements Layout {
   };
 
   private startListening(): void {
-    this.graph.getController().addEventListener(ADD_ELEMENT_EVENT, this.handleAddedElements);
-    this.graph.getController().addEventListener(REMOVE_ELEMENT_EVENT, this.scheduleLayout);
+    this.graph.getController().addEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+    this.graph.getController().addEventListener(REMOVE_CHILD_EVENT, this.scheduleLayout);
   }
 
   private stopListening(): void {
     clearTimeout(this.scheduleHandle);
-    this.graph.getController().removeEventListener(ADD_ELEMENT_EVENT, this.handleAddedElements);
-    this.graph.getController().removeEventListener(REMOVE_ELEMENT_EVENT, this.scheduleLayout);
+    this.graph.getController().removeEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+    this.graph.getController().removeEventListener(REMOVE_CHILD_EVENT, this.scheduleLayout);
   }
 
-  private handleAddedElements = (elements: GraphElement[]): void => {
-    const cx = this.graph.getBounds().width / 2;
-    const cy = this.graph.getBounds().height / 2;
-    elements.filter(isNode).forEach((node) =>
-      node.setBounds(
-        node
-          .getBounds()
-          .clone()
-          .setCenter(cx, cy),
-      ),
-    );
-    this.scheduleRestart = true;
-    this.scheduleLayout();
+  private handleChildAdded: ElementChildEventListener = ({ child }): void => {
+    if (!this.nodesMap[child.getId()]) {
+      this.scheduleRestart = true;
+      this.scheduleLayout();
+    }
   };
 
   private scheduleLayout = (): void => {
@@ -394,18 +389,33 @@ export default class ForceLayout implements Layout {
     });
 
     if (initialRun) {
-      // force center
+      // initialize all node positions
       const cx = this.graph.getBounds().width / 2;
       const cy = this.graph.getBounds().height / 2;
-
-      _.forEach(nodes, (node: D3Node) => {
+      nodes.forEach((node) => {
         node.setPosition(cx, cy);
       });
+
+      // force center
       this.simulation.force('center', d3.forceCenter(cx, cy));
       this.simulation.alpha(1);
-    } else if (restart && this.simulation.alpha() < 0.2) {
-      this.simulation.alpha(0.2);
+    } else if (restart) {
+      // initialize new node positions
+      const cx = this.graph.getBounds().width / 2;
+      const cy = this.graph.getBounds().height / 2;
+      nodes.forEach((node) => {
+        if (!this.nodesMap[node.element.getId()]) {
+          node.setPosition(cx, cy);
+        }
+      });
+
+      if (this.simulation.alpha() < 0.2) {
+        this.simulation.alpha(0.2);
+      }
     }
+
+    // re-create the nodes map
+    this.nodesMap = nodes.reduce((acc, n) => (acc[n.element.getId()] = n && acc), {});
 
     // first remove the links so that the layout doesn't error
     this.forceLink.links([]);

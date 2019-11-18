@@ -1,6 +1,15 @@
 import { observable, computed } from 'mobx';
 import * as _ from 'lodash';
-import { ElementModel, Graph, GraphElement, isGraph, Controller, ModelKind } from '../types';
+import {
+  ElementModel,
+  Graph,
+  GraphElement,
+  isGraph,
+  Controller,
+  ModelKind,
+  ADD_CHILD_EVENT,
+  REMOVE_CHILD_EVENT,
+} from '../types';
 import Stateful from '../utils/Stateful';
 import { Translatable } from '../geom/types';
 
@@ -146,13 +155,14 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
       const idx = this.children.indexOf(child);
       if (idx !== -1) {
         this.children.splice(idx, 1);
+        this.children.splice(index, 0, child);
       } else {
         // remove from old parent
         child.remove();
         child.setParent(this);
-        child.setController(this.controller);
+        this.children.splice(index, 0, child);
+        this.getController().fireEvent(ADD_CHILD_EVENT, { target: this, child });
       }
-      this.children.splice(index, 0, child);
     }
   }
 
@@ -161,13 +171,14 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
       const idx = this.children.indexOf(child);
       if (idx !== -1) {
         this.children.splice(idx, 1);
+        this.children.push(child);
       } else {
         // remove from old parent
         child.remove();
         child.setParent(this);
-        child.setController(this.controller);
+        this.children.push(child);
+        this.getController().fireEvent(ADD_CHILD_EVENT, { target: this, child });
       }
-      this.children.push(child);
     }
   }
 
@@ -177,6 +188,7 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
       if (idx !== -1) {
         this.children.splice(idx, 1);
         child.setParent(undefined);
+        this.getController().fireEvent(REMOVE_CHILD_EVENT, { target: this, child });
       }
     }
   }
