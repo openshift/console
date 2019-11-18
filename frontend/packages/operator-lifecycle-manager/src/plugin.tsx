@@ -245,6 +245,24 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () => (await import('./components/create-catalog-source')).CreateCatalogSource,
     },
   },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.InstallPlanModel,
+      loader: async () =>
+        (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
+          .InstallPlanDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.InstallPlanModel,
+      loader: async () =>
+        (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
+          .InstallPlansPage,
+    },
+  },
 ];
 
 export default plugin;

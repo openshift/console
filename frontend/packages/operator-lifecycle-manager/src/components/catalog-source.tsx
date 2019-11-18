@@ -55,8 +55,8 @@ import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
 import { OperatorHubKind } from './operator-hub';
 
-const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
+const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
 const deleteModal = (kind: K8sKind, catalogSource: CatalogSourceKind): KebabOption => ({
   ...Kebab.factory.Delete(kind, catalogSource),
