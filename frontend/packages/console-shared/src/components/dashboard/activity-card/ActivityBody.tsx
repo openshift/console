@@ -9,6 +9,7 @@ import { FirehoseResult } from '@console/internal/components/utils/types';
 import { EventStreamList } from '@console/internal/components/utils/event-stream';
 import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 import './activity-card.scss';
 
@@ -23,15 +24,32 @@ export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
   </div>
 );
 
-export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ events, filter }) => {
+export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = ({
+  events,
+  filter,
+  paused,
+  setPaused,
+}) => {
+  const ref = React.useRef([]);
+  React.useEffect(() => {
+    if (paused && events) {
+      ref.current = events.data;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paused]);
+  if (!paused && events) {
+    ref.current = events.data;
+  }
+  const eventsData = ref.current;
   const [expanded, setExpanded] = React.useState([]);
   const onToggle = React.useCallback(
     (uid: string) => {
-      expanded.includes(uid)
-        ? setExpanded(expanded.filter((e) => e !== uid))
-        : setExpanded([...expanded, uid]);
+      const isExpanded = expanded.includes(uid);
+      const newExpanded = isExpanded ? expanded.filter((e) => e !== uid) : [...expanded, uid];
+      setPaused(isExpanded ? !!newExpanded.length : !isExpanded);
+      setExpanded(newExpanded);
     },
-    [expanded],
+    [expanded, setPaused],
   );
   const isExpanded = React.useCallback(
     (uid: string) => {
@@ -51,7 +69,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ event
     return <div className="skeleton-activity" />;
   }
 
-  const filteredEvents = filter ? events.data.filter(filter) : events.data;
+  const filteredEvents = filter ? eventsData.filter(filter) : eventsData;
   const sortedEvents = sortEvents(filteredEvents);
   if (filteredEvents.length === 0) {
     return (
@@ -76,12 +94,21 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyProps> = ({ event
   );
 };
 
-export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => (
-  <>
-    <div className="co-activity-card__recent-title">Recent Events</div>
-    <RecentEventsBodyContent {...props} />
-  </>
-);
+export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => {
+  const [paused, setPaused] = React.useState(false);
+  const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
+  return (
+    <>
+      <div className="co-activity-card__recent-title">
+        Recent Events
+        <DashboardCardButtonLink onClick={togglePause}>
+          {paused ? 'Unpause' : 'Pause'}
+        </DashboardCardButtonLink>
+      </div>
+      <RecentEventsBodyContent {...props} paused={paused} setPaused={setPaused} />
+    </>
+  );
+};
 
 export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
   loaded,
@@ -157,6 +184,11 @@ type OngoingActivityBodyProps = {
 type RecentEventsBodyProps = {
   events: FirehoseResult<EventKind[]>;
   filter?: (event: EventKind) => boolean;
+};
+
+type RecentEventsBodyContentProps = RecentEventsBodyProps & {
+  paused?: boolean;
+  setPaused?: (paused: boolean) => void;
 };
 
 type ActivityProps = {

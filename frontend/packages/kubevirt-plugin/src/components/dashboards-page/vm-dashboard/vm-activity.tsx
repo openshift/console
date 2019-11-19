@@ -2,7 +2,9 @@ import * as React from 'react';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardLink, {
+  DashboardCardButtonLink,
+} from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
   RecentEventsBodyContent,
@@ -30,8 +32,8 @@ const getEventsResource = (namespace: string): FirehoseResource => ({
   namespace,
 });
 
-const RecentEvent = withDashboardResources(
-  ({ watchK8sResource, stopWatchK8sResource, resources, vm }: RecentEventProps) => {
+const RecentEvent = withDashboardResources<RecentEventProps>(
+  ({ watchK8sResource, stopWatchK8sResource, resources, vm, paused, setPaused }) => {
     React.useEffect(() => {
       if (vm) {
         const eventsResource = getEventsResource(getNamespace(vm));
@@ -46,6 +48,8 @@ const RecentEvent = withDashboardResources(
       <RecentEventsBodyContent
         events={resources.events as FirehoseResult<EventKind[]>}
         filter={combinedVmFilter(vm)}
+        paused={paused}
+        setPaused={setPaused}
       />
     );
   },
@@ -53,6 +57,9 @@ const RecentEvent = withDashboardResources(
 
 export const VMActivityCard: React.FC = () => {
   const { vm } = React.useContext(VMDashboardContext);
+
+  const [paused, setPaused] = React.useState(false);
+  const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
 
   const name = getName(vm);
   const namespace = getNamespace(vm);
@@ -63,10 +70,13 @@ export const VMActivityCard: React.FC = () => {
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
         <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
+        <DashboardCardButtonLink onClick={togglePause}>
+          {paused ? 'Unpause' : 'Pause'}
+        </DashboardCardButtonLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
-          <RecentEvent vm={vm} />
+          <RecentEvent vm={vm} paused={paused} setPaused={setPaused} />
         </ActivityBody>
       </DashboardCardBody>
     </DashboardCard>
@@ -77,4 +87,6 @@ type EventFilterFuncion = (event: EventKind) => boolean;
 
 type RecentEventProps = DashboardItemProps & {
   vm: VMKind;
+  paused: boolean;
+  setPaused: (paused: boolean) => void;
 };

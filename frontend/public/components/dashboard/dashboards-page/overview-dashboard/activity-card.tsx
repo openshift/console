@@ -26,7 +26,7 @@ import { connectToFlags, WithFlagsProps, FlagsObject } from '../../../../reducer
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
 const RecentEvent = withDashboardResources(
-  ({ watchK8sResource, stopWatchK8sResource, resources }: DashboardItemProps) => {
+  ({ watchK8sResource, stopWatchK8sResource, resources }) => {
     React.useEffect(() => {
       watchK8sResource(eventsResource);
       return () => {
