@@ -195,6 +195,7 @@ export const UtilizationCard = withDashboardResources(
             isLoading={!projectName || !filesystemUtilization}
             humanizeValue={humanizeBinaryBytes}
             query={queries[ProjectQueries.FILESYSTEM_USAGE]}
+            byteDataType={ByteDataTypes.BinaryBytes}
             error={filesystemError}
             TopConsumerPopover={filesystemPopover}
           />
