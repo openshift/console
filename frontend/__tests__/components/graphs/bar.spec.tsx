@@ -4,7 +4,7 @@ import { ChartBar } from '@patternfly/react-charts';
 
 import { BarChart } from '@console/internal/components/graphs/bar';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { LoadingBox } from '@console/internal/components/utils';
+
 import {
   PrometheusGraph,
   PrometheusGraphLink,
@@ -28,8 +28,8 @@ describe('<BarChart />', () => {
     expect(wrapper.find(GraphEmpty).exists()).toBe(true);
   });
 
-  it('should show a loading state', () => {
+  it('should show a skeleton loading state', () => {
     const wrapper = mount(<BarChart data={[]} loading={true} />); // Use full mount function so that we can check for a LoadingBox child
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+    expect(wrapper.find('.skeleton-chart').exists()).toBe(true);
   });
 });

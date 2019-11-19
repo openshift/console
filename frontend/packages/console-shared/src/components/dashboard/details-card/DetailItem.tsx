@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 
 export const DetailItem: React.FC<DetailItemProps> = React.memo(
   ({ title, isLoading = false, children, error = false, valueClassName }) => {
@@ -8,7 +7,7 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(
     if (error) {
       status = <span className="text-secondary">Not available</span>;
     } else if (isLoading) {
-      status = <LoadingInline />;
+      status = <div className="skeleton-text" />;
     } else {
       status = children;
     }
