@@ -62,6 +62,8 @@ export class CombinedDisk {
 
   getSource = () => this.source;
 
+  getSourceValue = () => this.source && this.source.getValue();
+
   isEditingSupported = () => !!this.source && this.source.isEditingSupported();
 
   getName = () => this.diskWrapper.getName();
