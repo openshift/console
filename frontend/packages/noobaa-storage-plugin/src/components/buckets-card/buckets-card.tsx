@@ -4,11 +4,13 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { getName } from '@console/shared';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { StorageClassModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getMetric, getGaugeValue } from '../../utils';
@@ -33,6 +35,23 @@ const objectBucketClaimsResource: FirehoseResource = {
   prop: 'obc',
 };
 
+const storageClassResource: FirehoseResource = {
+  kind: StorageClassModel.kind,
+  isList: true,
+  prop: 'storageclass',
+};
+
+const getNoobaaStorageClasses = (storageClassesList) =>
+  storageClassesList.filter((sc) => _.endsWith(_.get(sc, 'provisioner'), 'noobaa.io/obc'));
+
+const getNoobaaObcCount = (obcList, noobaaStorageClasses) => {
+  const result = obcList.filter((o) => {
+    const storageClassName = _.get(o, 'spec.storageClassName');
+    return noobaaStorageClasses.some((sc) => getName(sc) === storageClassName);
+  });
+  return result.length;
+};
+
 const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
   watchPrometheus,
@@ -43,12 +62,14 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
 }) => {
   React.useEffect(() => {
     watchK8sResource(objectBucketClaimsResource);
+    watchK8sResource(storageClassResource);
     Object.keys(BucketsCardQueries).forEach((key) => watchPrometheus(BucketsCardQueries[key]));
     return () => {
       Object.keys(BucketsCardQueries).forEach((key) =>
         stopWatchPrometheusQuery(BucketsCardQueries[key]),
       );
       stopWatchK8sResource(objectBucketClaimsResource);
+      stopWatchK8sResource(storageClassResource);
     };
   }, [watchK8sResource, watchPrometheus, stopWatchK8sResource, stopWatchPrometheusQuery]);
 
@@ -105,15 +126,22 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     'data',
   ]) as PrometheusResponse;
 
-  const obcData = _.get(resources.obc, 'data', null) as K8sResourceKind[];
+  const obcData = _.get(resources.obc, 'data', []) as K8sResourceKind[];
+  const storageClassesData = _.get(resources.storageclass, 'data', []) as K8sResourceKind[];
   const noobaaBucketsLink = getMetric(bucketsLinksResponse, 'buckets');
-  const obcCount = getGaugeValue(obcCountResponse);
+
+  const noobaaStorageClasses = getNoobaaStorageClasses(storageClassesData);
+  const k8sObc = getNoobaaObcCount(obcData, noobaaStorageClasses);
+  const prometheusObc = getGaugeValue(obcCountResponse);
   const unhealthyObcCount = getGaugeValue(unhealthyObcCountResponse);
 
-  let resultantUnhealthyObcCount: number = null;
-
-  if (obcCount && obcData && unhealthyObcCount)
-    resultantUnhealthyObcCount = obcData.length - Number(obcCount) + Number(unhealthyObcCount);
+  /* Controls the inconsistency due to the latency in prometheus and K8s endpoint data */
+  const getUnhealthyCount = () => {
+    if (prometheusObc && k8sObc && unhealthyObcCount)
+      return k8sObc - Number(prometheusObc) + Number(unhealthyObcCount);
+    return 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
 
   const bucketProps: BucketsType = {
     bucketsCount: getGaugeValue(obCountResponse),
@@ -123,9 +151,9 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     error: obCountResponseError || obObjectsCountResponseError || unhealthyObResponseError,
   };
   const bucketClaimProps: BucketsType = {
-    bucketsCount: obcCount,
+    bucketsCount: String(k8sObc),
     objectsCount: getGaugeValue(obcObjectsCountsResponse),
-    unhealthyCount: resultantUnhealthyObcCount,
+    unhealthyCount: React.useCallback(getUnhealthyCount, [unhealthyObcCount])(),
     isLoading: !(obcCountResponse && obcObjectsCountsResponse && unhealthyObcCountResponse),
     error: obcCountResponseError || obcObjectsCountsResponseError || unhealthyObcCountResponseError,
   };
