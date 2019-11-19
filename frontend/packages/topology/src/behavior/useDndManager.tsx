@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observable } from 'mobx';
+import { actionAsync } from 'mobx-utils';
 import ControllerContext from '../utils/ControllerContext';
 import {
   DndManager,
@@ -215,6 +216,7 @@ export class DndManagerImpl implements DndManager {
     this.doEndDrag();
   }
 
+  @actionAsync
   private async doEndDrag(): Promise<void> {
     const source = this.getSource(this.getSourceId());
     try {
