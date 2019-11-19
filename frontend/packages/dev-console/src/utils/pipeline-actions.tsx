@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { history, resourcePathFromModel, KebabAction } from '@console/internal/components/utils';
-import { k8sCreate, K8sKind, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sCreate, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
@@ -175,10 +175,19 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   return {
     label: 'Stop',
     callback: () => {
-      k8sUpdate(PipelineRunModel, {
-        ...pipelineRun,
-        spec: { ...pipelineRun.spec, status: 'PipelineRunCancelled' },
-      });
+      k8sPatch(
+        PipelineRunModel,
+        {
+          metadata: { name: pipelineRun.metadata.name, namespace: pipelineRun.metadata.namespace },
+        },
+        [
+          {
+            op: 'replace',
+            path: `/spec/status`,
+            value: 'PipelineRunCancelled',
+          },
+        ],
+      );
     },
     hidden: !(pipelineRun && pipelineRunFilterReducer(pipelineRun) === 'Running'),
     accessReview: {
