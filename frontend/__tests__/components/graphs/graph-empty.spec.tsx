@@ -3,12 +3,11 @@ import { shallow } from 'enzyme';
 import { EmptyState, Title } from '@patternfly/react-core';
 
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { LoadingBox } from '@console/internal/components/utils';
 
 describe('<GraphEmpty />', () => {
   it('should render a loading state', () => {
     const wrapper = shallow(<GraphEmpty loading />);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+    expect(wrapper.find('.skeleton-chart').exists()).toBe(true);
   });
 
   it('should render an empty state', () => {

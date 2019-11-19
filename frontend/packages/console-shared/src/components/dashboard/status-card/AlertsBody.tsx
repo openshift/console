@@ -23,8 +23,11 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({
     );
   } else if (isLoading) {
     body = (
-      <div className="co-status-card__alerts-body--loading">
-        <div className="skeleton-alerts" />
+      <div className="co-status-card__alerts-body">
+        <div className="co-status-card__alert-item co-status-card__alert-item--loading">
+          <div className="skeleton-status-alerts" />
+          <div className="skeleton-status-alerts" />
+        </div>
       </div>
     );
   } else if (!children) {
