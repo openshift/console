@@ -12,6 +12,7 @@ export type StorageSimpleData = {
 
 export type StorageSimpleDataValidation = {
   name?: ValidationObject;
+  type?: ValidationObject;
   diskInterface?: ValidationObject;
   size?: ValidationObject;
   storageClass?: ValidationObject;

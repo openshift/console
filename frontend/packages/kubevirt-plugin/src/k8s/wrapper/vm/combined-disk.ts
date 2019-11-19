@@ -11,6 +11,7 @@ import { VMLikeEntityKind } from '../../../types';
 import { asVM, getDataVolumeTemplates, getDisks, getVolumes } from '../../../selectors/vm';
 import { getLoadedData, isLoaded } from '../../../utils';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
+import { DYNAMIC } from '../../../utils/strings';
 import { DiskWrapper } from './disk-wrapper';
 import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
@@ -71,11 +72,18 @@ export class CombinedDisk {
 
   getDiskInterface = () => this.diskWrapper.getReadableDiskBus();
 
-  getReadableSize = (): string =>
-    this.volumeTypeOperation(
+  getReadableSize = (): string => {
+    let result = this.volumeTypeOperation(
       (persistentVolumeClaimWrapper) => persistentVolumeClaimWrapper.getReadabableSize(),
       (dataVolumeWrapper) => dataVolumeWrapper.getReadabableSize(),
     );
+
+    if (result === null && this.source && this.source.hasDynamicSize()) {
+      result = DYNAMIC;
+    }
+
+    return result;
+  };
 
   getSize = (): { value: number; unit: string } =>
     this.volumeTypeOperation(

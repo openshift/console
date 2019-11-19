@@ -26,10 +26,15 @@ const menuActionEdit = (
 });
 
 const menuActionRemove = (
-  { id }: VMWizardStorageWithWrappers,
+  { id, type }: VMWizardStorageWithWrappers,
   { withProgress, removeStorage }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
+  isDisabled: [
+    VMWizardStorageType.PROVISION_SOURCE_DISK,
+    VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
+    VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
+  ].includes(type),
   callback: () =>
     withProgress(
       new Promise((resolve) => {
@@ -42,20 +47,7 @@ const menuActionRemove = (
 const getActions = (
   wizardNetworkData: VMWizardStorageWithWrappers,
   opts: VMWizardStorageRowActionOpts,
-) => {
-  const actions = [menuActionEdit];
-
-  if (
-    ![
-      VMWizardStorageType.PROVISION_SOURCE_DISK,
-      VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-      VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
-    ].includes(wizardNetworkData.type)
-  ) {
-    actions.push(menuActionRemove);
-  }
-  return actions.map((a) => a(wizardNetworkData, opts));
-};
+) => [menuActionEdit, menuActionRemove].map((a) => a(wizardNetworkData, opts));
 
 export type VMWizardNicRowProps = {
   obj: VMWizardStorageBundle;

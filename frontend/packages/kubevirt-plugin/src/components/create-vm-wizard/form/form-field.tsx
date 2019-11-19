@@ -29,7 +29,7 @@ const hasIsDisabled = new Set([
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
-const hasIsRequired = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA]);
+const hasIsRequired = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA, FormFieldType.SELECT]);
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
 
 const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldType>, value) =>

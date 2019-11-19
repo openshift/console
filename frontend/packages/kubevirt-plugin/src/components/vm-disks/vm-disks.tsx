@@ -34,15 +34,17 @@ const getStoragesData = ({
     pvcs,
   );
 
-  return combinedDiskFactory.getCombinedDisks().map((disk) => ({
-    disk,
-    // for sorting
-    name: disk.getName(),
-    type: disk.getTypeValue(),
-    diskInterface: disk.getDiskInterface(),
-    size: disk.getReadableSize(),
-    storageClass: disk.getStorageClassName(),
-  }));
+  return combinedDiskFactory.getCombinedDisks().map((disk) => {
+    return {
+      disk,
+      // for sorting
+      name: disk.getName(),
+      type: disk.getTypeValue(),
+      diskInterface: disk.getDiskInterface(),
+      size: disk.getReadableSize(),
+      storageClass: disk.getStorageClassName(),
+    };
+  });
 };
 
 export type VMDisksTableProps = {

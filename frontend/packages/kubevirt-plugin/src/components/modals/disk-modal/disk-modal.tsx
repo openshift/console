@@ -27,7 +27,7 @@ import {
   asFormSelectValue,
   FormSelectPlaceholderOption,
 } from '../../form/form-select-placeholder-option';
-import { getDialogUIError, getSequenceName } from '../../../utils/strings';
+import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -341,6 +341,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onSizeChanged={source.isSizeEditingSupported() ? setSize : undefined}
               onUnitChanged={source.isSizeEditingSupported() ? setUnit : undefined}
             />
+          )}
+          {!source.requiresSize() && source.hasDynamicSize() && (
+            <FormRow title="Size" fieldId={asId('dynamic-size-row')}>
+              <TextInput
+                key="dynamic-size-row"
+                isDisabled
+                id={asId('dynamic-size-row')}
+                value={DYNAMIC}
+              />
+            </FormRow>
           )}
           <FormRow title="Interface" fieldId={asId('interface')} isRequired>
             <FormSelect
