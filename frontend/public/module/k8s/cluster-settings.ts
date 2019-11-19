@@ -154,7 +154,10 @@ export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href:
 
   // Show a Bugzilla link for prerelease versions and a support case link for supported versions.
   const { major, minor, patch, prerelease } = parsed;
-  const environment = encodeURIComponent(`Version: ${version}\nCluster ID: ${cv.spec.clusterID}`);
+  const environment = encodeURIComponent(`Version: ${version}
+Cluster ID: ${cv.spec.clusterID}
+Browser: ${window.navigator.userAgent}
+`);
   return _.isEmpty(prerelease)
     ? {
         label: 'Open Support Case',
