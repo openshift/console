@@ -161,7 +161,11 @@ export const watchK8sList = (
 
     const response = await k8sList(
       k8skind,
-      { ...query, limit: paginationLimit, ...(continueToken ? { continue: continueToken } : {}) },
+      {
+        limit: paginationLimit,
+        ...query,
+        ...(continueToken ? { continue: continueToken } : {}),
+      },
       true,
     );
 
