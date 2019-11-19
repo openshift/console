@@ -19,24 +19,50 @@ const SvgDropShadowFilter: React.FC<SvgDropShadowFilterProps> = ({
   stdDeviation = 2,
   floodColor = '#030303',
   floodOpacity = 0.2,
-}) => (
-  <SVGDefs id={id}>
-    <filter
-      id={id}
-      x={`-${stdDeviation * 12.5}%`}
-      y={`-${stdDeviation * 12.5}%`}
-      width={`${100 + stdDeviation * 25}%`}
-      height={`${100 + stdDeviation * 25}%`}
-    >
-      <feDropShadow
-        dx={dx}
-        dy={dy}
-        stdDeviation={stdDeviation}
-        floodColor={floodColor}
-        floodOpacity={floodOpacity}
-      />
-    </filter>
-  </SVGDefs>
-);
+}) => {
+  if (window.navigator.userAgent.includes('Edge')) {
+    // feDropShadow is not supported by Edge
+    return (
+      <SVGDefs id={id}>
+        <filter
+          id={id}
+          x={`-${stdDeviation * 12.5}%`}
+          y={`-${stdDeviation * 12.5}%`}
+          width={`${100 + stdDeviation * 25}%`}
+          height={`${100 + stdDeviation * 25}%`}
+        >
+          <feGaussianBlur in="SourceAlpha" stdDeviation={stdDeviation} />
+          <feOffset dx={dx} dy={dy} result="offsetblur" />
+          <feFlood floodColor={floodColor} floodOpacity={floodOpacity} />
+          <feComposite in2="offsetblur" operator="in" />
+          <feMerge>
+            <feMergeNode />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </SVGDefs>
+    );
+  }
+
+  return (
+    <SVGDefs id={id}>
+      <filter
+        id={id}
+        x={`-${stdDeviation * 12.5}%`}
+        y={`-${stdDeviation * 12.5}%`}
+        width={`${100 + stdDeviation * 25}%`}
+        height={`${100 + stdDeviation * 25}%`}
+      >
+        <feDropShadow
+          dx={dx}
+          dy={dy}
+          stdDeviation={stdDeviation}
+          floodColor={floodColor}
+          floodOpacity={floodOpacity}
+        />
+      </filter>
+    </SVGDefs>
+  );
+};
 
 export default SvgDropShadowFilter;
