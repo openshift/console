@@ -8,7 +8,7 @@ import { FLAGS } from '../const';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { coFetchJSON } from '../co-fetch';
-import { ChargebackReportModel } from '../models';
+import { ChargebackReportModel, ReportQueryModel } from '../models';
 import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
 import { GroupVersionKind, K8sResourceKind, modelFor, referenceForModel } from '../module/k8s';
 import {
@@ -27,8 +27,7 @@ import {
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
 export const ScheduledReportReference: GroupVersionKind = 'metering.openshift.io~ScheduledReport';
-export const ReportGenerationQueryReference: GroupVersionKind =
-  'metering.openshift.io~v1alpha1~ReportQuery';
+export const ReportGenerationQueryReference: GroupVersionKind = referenceForModel(ReportQueryModel);
 
 const reportPages = [
   { name: 'All Reports', href: ReportReference },
