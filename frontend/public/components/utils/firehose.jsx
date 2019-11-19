@@ -205,6 +205,7 @@ export const Firehose = connect(
               resource.selector,
               resource.fieldSelector,
               resource.name,
+              resource.limit,
             );
             const k8sKind = k8sModels.get(resource.kind);
             const id = makeReduxID(k8sKind, query);
@@ -267,6 +268,7 @@ Firehose.propTypes = {
       fieldSelector: PropTypes.string,
       isList: PropTypes.bool,
       optional: PropTypes.bool, // do not block children-rendering while resource is still being loaded; do not fail if resource is missing (404)
+      limit: PropTypes.number,
     }),
   ).isRequired,
 };
