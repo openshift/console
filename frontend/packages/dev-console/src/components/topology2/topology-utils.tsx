@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { EdgeModel, Edge, Model, NodeModel, Node, NodeShape } from '@console/topology';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { TopologyDataModel } from '../topology/topology-types';
 import {
   createTopologyResourceConnection,
@@ -134,17 +135,27 @@ const createConnection = (
 
 const removeConnection = (edge: Edge): Promise<any> => {
   const message = (
-    <>
-      Are you sure you want to remove the connection from{' '}
-      <strong>{edge.getSource().getLabel()}</strong> to{' '}
-      <strong>{edge.getTarget().getLabel()}</strong>?
-    </>
+    <div className="co-delete-modal">
+      <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
+      {edge.getType() === 'service-binding' ? (
+        <p>
+          Deleting the binding connector deletes the config details of the source and removes the
+          binding resources. Are you sure you want to delete the binding connector?
+        </p>
+      ) : (
+        <p>
+          Deleting the visual connector removes the `connect-to` annotation from the resources. Are
+          you sure you want to delete the visual connector?
+        </p>
+      )}
+    </div>
   );
 
   return confirmModal({
-    title: 'Delete Connection',
+    title: 'Delete Connector',
     message,
-    btnText: 'Remove',
+    btnText: 'Delete',
+    submitDanger: true,
     executeFn: () => {
       return removeTopologyResourceConnection(
         edge.getSource().getData(),
