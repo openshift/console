@@ -15,6 +15,7 @@ import {
   ConfigMapModel,
   ContainerModel,
   CronJobModel,
+  ClusterResourceQuotaModel,
   CustomResourceDefinitionModel,
   DaemonSetModel,
   DeploymentConfigModel,
@@ -248,6 +249,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(ResourceQuotaModel), () =>
+    import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(
+      (m) => m.ResourceQuotasDetailsPage,
+    ),
+  )
+  .set(referenceForModel(ClusterResourceQuotaModel), () =>
     import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(
       (m) => m.ResourceQuotasDetailsPage,
     ),

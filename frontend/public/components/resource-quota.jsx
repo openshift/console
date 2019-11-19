@@ -39,10 +39,12 @@ const clusterResourceQuotaMenuActions = [
   ...common,
 ];
 
+const isClusterQuota = (quota) => !quota.metadata.namespace;
+
 const quotaKind = (quota) =>
-  quota.metadata.namespace
-    ? referenceForModel(ResourceQuotaModel)
-    : referenceForModel(ClusterResourceQuotaModel);
+  isClusterQuota(quota)
+    ? referenceForModel(ClusterResourceQuotaModel)
+    : referenceForModel(ResourceQuotaModel);
 const quotaActions = (quota) =>
   quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions;
 const gaugeChartThresholds = [{ value: 90 }, { value: 101 }];
@@ -71,14 +73,20 @@ const quotaScopes = Object.freeze({
 });
 
 export const getQuotaResourceTypes = (quota) => {
-  const specHard = _.get(quota, 'spec.hard');
+  const specHard = isClusterQuota(quota)
+    ? _.get(quota, 'spec.quota.hard')
+    : _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
 };
 
 const getResourceUsage = (quota, resourceType) => {
+  const isCluster = isClusterQuota(quota);
+  const statusPath = isCluster ? ['status', 'total', 'hard'] : ['status', 'hard'];
+  const specPath = isCluster ? ['spec', 'quota', 'hard'] : ['spec', 'hard'];
+  const usedPath = isCluster ? ['status', 'total', 'used'] : ['status', 'used'];
   const max =
-    _.get(quota, ['status', 'hard', resourceType]) || _.get(quota, ['spec', 'hard', resourceType]);
-  const used = _.get(quota, ['status', 'used', resourceType]);
+    _.get(quota, [...statusPath, resourceType]) || _.get(quota, [...specPath, resourceType]);
+  const used = _.get(quota, [...usedPath, resourceType]);
   const percent = !max || !used ? 0 : (convertToBaseValue(used) / convertToBaseValue(max)) * 100;
   return {
     used,
@@ -300,10 +308,11 @@ const Details = ({ obj: rq }) => {
   const resourceTypes = getQuotaResourceTypes(rq);
   const showChartRow = hasComputeResources(resourceTypes);
   const scopes = _.get(rq, ['spec', 'scopes']);
+  const label = isClusterQuota(rq) ? ClusterResourceQuotaModel.label : ResourceQuotaModel.label;
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Resource Quota Overview" />
+        <SectionHeading text={`${label} Overview`} />
         {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
         <div className="row">
           <div className="col-sm-6">
@@ -321,7 +330,7 @@ const Details = ({ obj: rq }) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading
-          text="Resource Quota Details"
+          text={`${label} Details`}
           style={{ display: 'block', marginBottom: '20px' }}
         >
           <FieldLevelHelp>
