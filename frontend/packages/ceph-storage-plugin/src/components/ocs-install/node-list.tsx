@@ -343,12 +343,16 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
       .then((storageClasses: StorageClassResourceKind[]) => {
         // find all storageclass with the given provisioner
         const scList = _.filter(storageClasses, (sc) => sc.provisioner === provisioner);
-        // take the default storageclass
+        // take the provisioner based storageclass
         _.forEach(scList, (sc) => {
           if (isDefaultClass(sc)) {
             storageClass = sc.metadata.name;
           }
         });
+        // take the first storageclass if default not set
+        if (!storageClass && storageClass.length > 0) {
+          storageClass = getName(_.get(scList, '0'));
+        }
         makeOCSRequest();
       })
       .catch((err) => {
