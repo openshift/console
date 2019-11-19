@@ -113,16 +113,26 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       ...extensionItems,
       ...projectTemplateItems,
     ];
-
-    //blacklisting all CRDs with annotation 'operators.operatorframework.io/internal-object' set to true
-    const filteredItems = _.reject(items, [
-      'obj',
-      'metadata',
-      'annotations',
-      'operators.operatorframework.io/internal-object',
-    ]);
-
+    const internalCRDs = this.getInternalCRDList();
+    //blacklisting all CRDs present in the blacklisted annotation of the CSV array
+    const filteredItems = _.reject(
+      items,
+      (item) => _.find(internalCRDs, (crd) => _.get(item, ['metadata', 'name']) === crd) || false,
+    );
+    console.log('filtereditems', filteredItems);
     return _.sortBy(filteredItems, 'tileName');
+  }
+
+  getInternalCRDList() {
+    const blackListedAnnot = 'apps.operatorframework.io/internal-objects';
+    let crdList = [];
+    let csvProp = _.get(this.props, ['csvProps'], []);
+    csvProp.map((prop) => {
+      const listFromCSV = _.get(this.props, [prop, 'metadata', 'annotations', blackListedAnnot]);
+      crdList.push(...listFromCSV);
+    });
+    console.log('crdList', crdList);
+    return crdList;
   }
 
   normalizeClusterServiceClasses(serviceClasses) {
@@ -346,12 +356,20 @@ export const Catalog = connectToFlags<CatalogProps>(
       })),
   ];
 
+  let csvProp = [];
+  plugins.registry
+    .getDevCatalogModels()
+    .filter(({ properties }) => !properties.flag || flags[properties.flag])
+    .map(({ properties }) => csvProp.push(referenceForModel(properties.model)));
+  console.log('csv', csvProp);
+
   return (
     <Firehose resources={mock ? [] : resources}>
       <CatalogListPage
         namespace={namespace}
         templateMetadata={templateMetadata}
         projectTemplateMetadata={projectTemplateMetadata}
+        csvProp={csvProp}
         {...props as any}
       />
     </Firehose>
@@ -385,6 +403,7 @@ export type CatalogListPageProps = {
   loaded: boolean;
   loadError?: string;
   namespace?: string;
+  csvProp: string[];
 };
 
 export type CatalogListPageState = {
