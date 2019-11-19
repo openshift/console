@@ -22,6 +22,7 @@ import {
   getTopologyNodeItem,
 } from '@console/dev-console/src/components/topology/topology-utils';
 import { DeploymentModel } from '@console/internal/models';
+import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from './get-knative-resources';
 
 export enum NodeType {
@@ -160,9 +161,9 @@ export const getEventTopologyEdgeItems = (
   application?: string,
 ): Edge[] => {
   const uid = _.get(resource, ['metadata', 'uid']);
-  const sinkSvc = _.get(resource, ['spec', 'sink'], {});
+  const sinkSvc = _.get(resource, 'spec.sink.ref', null) || _.get(resource, 'spec.sink', null);
   const edges = [];
-  if (sinkSvc.kind === 'Service') {
+  if (sinkSvc && sinkSvc.kind === knServiceModel.kind) {
     _.forEach(data, (res) => {
       const PART_OF = 'app.kubernetes.io/part-of';
       const resname = _.get(res, ['metadata', 'name']);
