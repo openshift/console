@@ -3,8 +3,8 @@ import { DetailsPage, DetailsPageProps } from '@console/internal/components/fact
 import { Kebab, navFactory, viewYamlComponent } from '@console/internal/components/utils';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { rerunPipelineAndRedirect, stopPipelineRun } from '../../utils/pipeline-actions';
-import { PipelineRunDetails } from './PipelineRunDetails';
-import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
+import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
+import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => (
   <DetailsPage

@@ -280,32 +280,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/List',
-    properties: {
-      model: PipelineModel,
-      loader: async () =>
-        (await import(
-          './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-list" */
-        )).default,
-    },
-  },
-  {
     type: 'Page/Resource/Details',
     properties: {
       model: PipelineModel,
       loader: async () =>
         (await import(
           './components/pipelines/PipelineDetailsPage' /* webpackChunkName: "pipeline-details" */
-        )).default,
-    },
-  },
-  {
-    type: 'Page/Resource/List',
-    properties: {
-      model: PipelineRunModel,
-      loader: async () =>
-        (await import(
-          './components/pipelineruns/PipelineRunResourceList' /* webpackChunkName: "pipelinerun-list" */
         )).default,
     },
   },
@@ -326,6 +306,26 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: PipelineModel,
+      loader: async () =>
+        (await import(
+          './components/pipelines/PipelinesResourceList' /* webpackChunkName: "pipeline-resource-list" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: PipelineRunModel,
+      loader: async () =>
+        (await import(
+          './components/pipelineruns/PipelineRunsResourceList' /* webpackChunkName: "pipelinerun-resource-list" */
         )).default,
     },
   },
@@ -428,6 +428,36 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
+      path: [
+        `/k8s/all-namespaces/${referenceForModel(PipelineModel)}`,
+        `/k8s/ns/:ns/${referenceForModel(PipelineModel)}`,
+      ],
+      loader: async () =>
+        (await import(
+          './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
+        )).PipelinesPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
+      path: [
+        `/k8s/all-namespaces/${referenceForModel(PipelineRunModel)}`,
+        `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}`,
+      ],
+      loader: async () =>
+        (await import(
+          './components/pipelineruns/PipelineRunsPage' /* webpackChunkName: "pipelinerun-page" */
         )).default,
     },
   },
