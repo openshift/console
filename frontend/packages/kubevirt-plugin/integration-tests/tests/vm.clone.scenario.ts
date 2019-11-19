@@ -40,6 +40,7 @@ import {
   getVMManifest,
   cloudInitCustomScriptConfig,
   rootDisk,
+  datavolumeClonerClusterRole,
 } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import { CloneDialog } from './models/cloneDialog';
@@ -137,8 +138,29 @@ describe('Test clone VM.', () => {
       namespace: vm.namespace,
     });
 
+    const allowCloneRoleBinding = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: {
+        name: 'allow-clone-to-user',
+        namespace: `${testName}`,
+      },
+      subjects: [
+        {
+          kind: 'ServiceAccount',
+          name: 'default',
+          namespace: `${testCloningNamespace}`,
+        },
+      ],
+      roleRef: {
+        kind: 'ClusterRole',
+        name: 'datavolume-cloner',
+        apiGroup: 'rbac.authorization.k8s.io',
+      },
+    };
+
     beforeAll(async () => {
-      createResources([multusNAD, testVM]);
+      createResources([multusNAD, testVM, datavolumeClonerClusterRole, allowCloneRoleBinding]);
       await vm.navigateToTab(TABS.OVERVIEW);
       await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
       await vm.addNIC(networkInterface);
@@ -146,7 +168,13 @@ describe('Test clone VM.', () => {
     }, VM_IMPORT_TIMEOUT_SECS + VM_BOOTUP_TIMEOUT_SECS);
 
     afterAll(() => {
-      deleteResources([multusNAD, testVM, clonedVM.asResource()]);
+      deleteResources([
+        multusNAD,
+        testVM,
+        clonedVM.asResource(),
+        datavolumeClonerClusterRole,
+        allowCloneRoleBinding,
+      ]);
       removeLeakableResource(leakedResources, clonedVM.asResource());
       removeLeakedResources(leakedResources);
     });

@@ -256,3 +256,18 @@ export function getVMManifest(
   };
   return vmResource;
 }
+
+export const datavolumeClonerClusterRole = {
+  apiVersion: 'rbac.authorization.k8s.io/v1',
+  kind: 'ClusterRole',
+  metadata: {
+    name: 'datavolume-cloner',
+  },
+  rules: [
+    {
+      apiGroups: ['cdi.kubevirt.io'],
+      resources: ['datavolumes/source'],
+      verbs: ['*'],
+    },
+  ],
+};
