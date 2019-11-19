@@ -5,10 +5,12 @@ reviewers:
   - vojtechszocs
   - pcbailey
   - jelkosz
+  - rhrazdil
 approvers:
   - mareklibra
   - rawagner
   - suomiy
   - jelkosz
+  - rhrazdil
 labels:
   - component/kubevirt
