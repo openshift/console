@@ -23,7 +23,7 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeNumber,
   humanizeCpuCoresLong,
-  humanizeCpuCoresCompact,
+  humanizeCpuCores,
 } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -181,7 +181,7 @@ export const UtilizationCard = withDashboardResources(
             data={cpuStats}
             isLoading={!projectName || !cpuUtilization}
             humanizeValue={humanizeCpuCoresLong}
-            humanizeValueCompact={humanizeCpuCoresCompact}
+            humanizeValueCompact={humanizeCpuCores}
             query={queries[ProjectQueries.CPU_USAGE]}
             error={cpuError}
             TopConsumerPopover={cpuPopover}

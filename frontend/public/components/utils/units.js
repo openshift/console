@@ -215,30 +215,21 @@ export const humanizeSeconds = (v, initialUnit, preferredUnit) =>
   humanize(v, 'seconds', true, initialUnit, preferredUnit);
 
 export const humanizeCpuCores = (v) => {
-  // conforms k8s format
   const value = v < 1 ? round(v * 1000) : v;
-  const unit = v < 1 ? 'm' : '';
+  const unit = v < 1 ? ' m' : '';
   return {
     string: `${formatValue(value)}${unit}`,
     unit,
     value,
   };
 };
+
 export const humanizeCpuCoresLong = (v) => {
   const humanized = humanizeCpuCores(v);
   const transformedUnit = humanized.unit === 'm' ? ' millicores' : ' cores';
   return {
     ...humanized,
     string: `${formatValue(humanized.value)}${transformedUnit}`,
-  };
-};
-export const humanizeCpuCoresCompact = (v) => {
-  // keep k8s values but round to 3 decimal digits
-  const value = Math.round(v * 1000) / 1000;
-  return {
-    string: `${value}`,
-    unit: '',
-    value,
   };
 };
 

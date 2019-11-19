@@ -8,7 +8,7 @@ import {
   Dropdown,
   humanizeDecimalBytes,
   humanizeCpuCoresLong,
-  humanizeCpuCoresCompact,
+  humanizeCpuCores,
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -109,7 +109,7 @@ export const VMUtilizationCard = withDashboardResources(
             data={cpuStats}
             isLoading={!namespace || !cpuUtilization}
             humanizeValue={humanizeCpuCoresLong}
-            humanizeValueCompact={humanizeCpuCoresCompact}
+            humanizeValueCompact={humanizeCpuCores}
             query={queries[VMQueries.CPU_USAGE]}
             error={cpuError}
           />
