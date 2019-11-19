@@ -568,6 +568,7 @@ export class Dropdown extends DropdownMixin {
             type="button"
             id={this.props.id}
             aria-describedby={describedBy}
+            disabled={disabled}
           >
             <span className="pf-c-dropdown__toggle-text">
               {titlePrefix && `${titlePrefix}: `}
