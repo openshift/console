@@ -188,7 +188,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const storagePopover = React.useCallback(
     ({ current }) => (
       <ConsumerPopover
-        title="Disk Usage"
+        title="Filesystem"
         current={current}
         consumers={storageQueriesPopup}
         humanize={humanizeBinaryBytes}
@@ -231,7 +231,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           max={memoryMax.length ? memoryMax[0].y : null}
         />
         <UtilizationItem
-          title="Disk Usage"
+          title="Filesystem"
           data={storageStats}
           error={storageUtilizationError || storageTotalError}
           isLoading={!storageUtilization || !storageTotal}
