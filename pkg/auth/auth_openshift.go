@@ -177,7 +177,7 @@ func getOpenShiftUser(r *http.Request) (*User, error) {
 		return nil, err
 	}
 	if cookie.Value == "" {
-		return nil, fmt.Errorf("unauthenticated")
+		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", openshiftSessionCookieName)
 	}
 
 	return &User{
