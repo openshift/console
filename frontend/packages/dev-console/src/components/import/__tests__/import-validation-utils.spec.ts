@@ -14,10 +14,25 @@ describe('ValidationUtils', () => {
     it('should return the unsure enum key for valid but unknown git url ', () => {
       const gitType = detectGitType('https://svnsource.test.com');
       expect(gitType).toEqual(GitTypes.unsure);
+
+      const gitType1 = detectGitType('https://github.comWRONG/test/repo');
+      expect(gitType1).toEqual(GitTypes.unsure);
+
+      const gitType2 = detectGitType('git@bitbucket.orgs:atlassian_tutorial/helloworld.git');
+      expect(gitType2).toEqual(GitTypes.unsure);
     });
     it('should return proper git type for valid known git url', () => {
       const gitType = detectGitType('https://github.com/test/repo');
       expect(gitType).toEqual(GitTypes.github);
+
+      const gitType1 = detectGitType('git@bitbucket.org:atlassian_tutorial/helloworld.git');
+      expect(gitType1).toEqual(GitTypes.bitbucket);
+
+      const gitType2 = detectGitType('git@github.com:openshift/console.git');
+      expect(gitType2).toEqual(GitTypes.github);
+
+      const gitType3 = detectGitType('git@bitbucket.org:atlassian_tutorial/helloworld.git');
+      expect(gitType3).toEqual(GitTypes.bitbucket);
     });
   });
 
