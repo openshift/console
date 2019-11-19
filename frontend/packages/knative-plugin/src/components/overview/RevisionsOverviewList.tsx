@@ -9,7 +9,7 @@ import {
   useAccessReview,
 } from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
-import { trafficModalLauncher } from '../traffic-splitting/TrafficSplittingController';
+import { setTrafficDistributionModal } from '../modals';
 import { ServiceModel } from '../../models';
 import './RevisionsOverviewList.scss';
 
@@ -65,7 +65,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
           (service.kind === ServiceModel.kind && (
             <Button
               variant="secondary"
-              onClick={() => trafficModalLauncher({ obj: service })}
+              onClick={() => setTrafficDistributionModal({ obj: service })}
               isDisabled={!(revisions && revisions.length)}
             >
               Set Traffic Distribution

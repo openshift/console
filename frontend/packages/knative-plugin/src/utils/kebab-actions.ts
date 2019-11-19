@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { K8sKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
+import { setTrafficDistribution } from '../actions/traffic-splitting';
 import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
@@ -21,10 +22,14 @@ const modifyApplicationRefs = [
 ];
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
-  if (!resourceKind) {
-    // no common actions
-    return [];
+  const menuActions: KebabAction[] = [];
+  if (resourceKind) {
+    if (_.includes(modifyApplicationRefs, referenceFor(resourceKind))) {
+      menuActions.push(ModifyApplication);
+    }
+    if (resourceKind.kind === ServiceModel.kind) {
+      menuActions.push(setTrafficDistribution);
+    }
   }
-
-  return _.includes(modifyApplicationRefs, referenceFor(resourceKind)) ? [ModifyApplication] : [];
+  return menuActions;
 };
