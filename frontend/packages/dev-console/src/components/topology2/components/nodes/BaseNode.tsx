@@ -14,6 +14,8 @@ import {
   observer,
   createSvgIdUrl,
 } from '@console/topology';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
@@ -63,6 +65,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   useAnchor(EllipseAnchor);
   const cx = element.getBounds().width / 2;
   const cy = element.getBounds().height / 2;
+  const resourceModel = modelFor(referenceFor(element.getData().data.donutStatus.dc));
+  const editAccess = useAccessReview({
+    group: resourceModel.apiGroup,
+    verb: 'patch',
+    resource: resourceModel.plural,
+    name: element.getData().data.donutStatus.dc.metadata.name,
+    namespace: element.getData().data.donutStatus.dc.metadata.namespace,
+  });
 
   const contentsClasses = classNames('odc2-base-node__contents', {
     'is-hover': hover || contextMenuOpen,
@@ -73,12 +83,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
   React.useLayoutEffect(() => {
-    if (hover) {
-      onShowCreateConnector && onShowCreateConnector();
-    } else {
-      onHideCreateConnector && onHideCreateConnector();
+    if (editAccess) {
+      if (hover) {
+        onShowCreateConnector && onShowCreateConnector();
+      } else {
+        onHideCreateConnector && onHideCreateConnector();
+      }
     }
-  }, [hover, onShowCreateConnector, onHideCreateConnector]);
+  }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
 
   return (
     <g className="odc2-base-node">
@@ -86,7 +98,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
       <g
         data-test-id="base-node-handler"
         onClick={onSelect}
-        onContextMenu={onContextMenu}
+        {...(editAccess ? { onContextMenu } : {})}
         ref={refs}
       >
         <circle
