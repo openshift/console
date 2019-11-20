@@ -7,8 +7,9 @@ import {
   K8sKind,
   SelfSubjectAccessReviewKind,
 } from '@console/internal/module/k8s';
+import { ChartLabel } from '@patternfly/react-charts';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
-import { checkPodEditAccess } from '../../utils';
+import { checkPodEditAccess, podRingLabel } from '../../utils';
 import { ExtPodKind } from '../../types';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
@@ -65,6 +66,7 @@ const PodRing: React.FC<PodRingProps> = ({
   const isKnativeRevision = obj.kind === 'Revision';
   const isScalingAllowed = !isKnativeRevision && editable && enableScaling;
   const resourceObj = rc || obj;
+  const { title, subTitle } = podRingLabel(resourceObj, isScalingAllowed);
 
   return (
     <Split>
@@ -73,16 +75,14 @@ const PodRing: React.FC<PodRingProps> = ({
           <PodStatus
             standalone
             data={pods}
-            subTitle={
-              resourceObj.spec.replicas !== resourceObj.status.availableReplicas
-                ? !resourceObj.spec.replicas
-                  ? `pods`
-                  : `scaling to ${resourceObj.spec.replicas}`
-                : resourceObj.spec.replicas > 1 || resourceObj.spec.replicas === 0
-                ? 'pods'
-                : 'pod'
-            }
-            title={resourceObj.status.availableReplicas || '0'}
+            subTitle={subTitle}
+            {...!isScalingAllowed && {
+              subTitleComponent: <ChartLabel style={{ fontSize: '14px' }} />,
+            }}
+            title={title}
+            {...!resourceObj.status.availableReplicas && {
+              titleComponent: <ChartLabel style={{ fontSize: '14px' }} />,
+            }}
           />
         </div>
       </SplitItem>
