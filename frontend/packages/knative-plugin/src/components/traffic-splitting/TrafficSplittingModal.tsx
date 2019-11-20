@@ -24,6 +24,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
   handleReset,
   isSubmitting,
   status,
+  values,
 }) => {
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
@@ -35,6 +36,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
           addLabel="Add Revision"
           headers={['Split', 'Tag', 'Revision']}
           emptyValues={{ percent: '', tag: '', revisionName: '' }}
+          disableDeleteRow={values.trafficSplitting.length === 1}
         >
           <InputField
             name="percent"

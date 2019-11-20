@@ -7,6 +7,8 @@ export interface FieldProps {
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
+  disableDeleteRow?: boolean;
+  disableAddRow?: boolean;
   className?: string;
 }
 
