@@ -362,7 +362,7 @@ export const cleanUpWorkload = (
   const reqs = [];
   const webhooks = [];
   let webhooksAvailable = false;
-  const deleteModels = [BuildConfigModel, DeploymentConfigModel, ServiceModel, RouteModel];
+  const deleteModels = [BuildConfigModel, ServiceModel, RouteModel];
   const knativeDeleteModels = [
     KnativeServiceModel,
     KnativeRouteModel,
@@ -394,12 +394,13 @@ export const cleanUpWorkload = (
     models.forEach((model) => deleteRequest(model, resourceObj));
   };
   switch (resource.kind) {
-    case DeploymentModel.kind:
     case DaemonSetModel.kind:
     case StatefulSetModel.kind:
       deleteRequest(modelFor(resource.kind), resource);
       break;
+    case DeploymentModel.kind:
     case DeploymentConfigModel.kind:
+      deleteRequest(modelFor(resource.kind), resource);
       batchDeleteRequests(deleteModels, resource);
       deleteRequest(ImageStreamModel, resource); // delete imageStream
       webhooksAvailable = true;
