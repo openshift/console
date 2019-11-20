@@ -14,3 +14,15 @@
 .kubevirt-create-vm-modal__cloud-init-ssh-keys-row {
   padding-bottom: 1rem;
 }
+
+.kubevirt-create-vm-modal__cloud-init-remove-button {
+  color: var( --pf-global--Color--200) !important;
+  &:active,
+  &:focus,
+  &:hover {
+    color: var(--pf-global--Color--100) !important;
+  }
+  &:disabled {
+    color: var(--pf-global--disabled-color--200) !important;
+  }
+}

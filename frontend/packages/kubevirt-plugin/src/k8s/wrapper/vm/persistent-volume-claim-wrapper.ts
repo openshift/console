@@ -9,6 +9,7 @@ import {
   getPvcStorageSize,
   getPvcVolumeMode,
 } from '../../../selectors/pvc/selectors';
+import { toIECUnit } from '../../../components/form/size-unit-utils';
 
 export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClaim> {
   static readonly EMPTY = new PersistentVolumeClaimWrapper();
@@ -78,7 +79,7 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
 
   getReadabableSize = () => {
     const { value, unit } = this.getSize();
-    return `${value} ${unit}`;
+    return `${value} ${toIECUnit(unit)}`;
   };
 
   hasSize = () => this.getSize().value > 0;

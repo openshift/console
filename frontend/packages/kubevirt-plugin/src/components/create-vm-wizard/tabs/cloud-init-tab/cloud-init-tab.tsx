@@ -69,10 +69,11 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   const asId = prefixedID.bind(null, id);
   const data = new CloudInitDataHelper({ userData: value });
   const authKeys = data.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [];
+  const areAuthKeysOriginallyEmpty = authKeys.length === 0;
 
   const areAuthKeysEmpty = (keys) => keys.length === 0 || (keys.length === 1 && !keys[0]);
 
-  if (authKeys.length === 0) {
+  if (areAuthKeysOriginallyEmpty) {
     authKeys.push('');
   }
   return (
@@ -89,47 +90,57 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
         title="Authenticated SSH Keys"
         fieldId={asId(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
       >
-        {authKeys.map((authKey, idx) => (
-          /* eslint-disable-next-line react/no-array-index-key */ <Split
-            key={idx}
-            className="kubevirt-create-vm-modal__cloud-init-ssh-keys-row"
-          >
-            <SplitItem isFilled>
-              <TextInput
-                isDisabled={isDisabled}
-                value={authKey || ''}
-                onChange={(val) => {
-                  const result = [...authKeys];
-                  result[idx] = val;
-                  onEntryChange(
-                    CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
-                    areAuthKeysEmpty(result) ? undefined : result,
-                  );
-                }}
-              />
-            </SplitItem>
-            <SplitItem>
-              <Button
-                id={asId(joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'delete', idx))}
-                icon={<MinusCircleIcon />}
-                variant={ButtonVariant.link}
-                isDisabled={isDisabled}
-                onClick={() => {
-                  const result = authKeys.filter((val, i) => i !== idx);
-                  onEntryChange(
-                    CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
-                    areAuthKeysEmpty(result) ? undefined : result,
-                  );
-                }}
-              />
-            </SplitItem>
-          </Split>
-        ))}
+        {authKeys.map((authKey, idx) => {
+          const uiIDX = idx + 1;
+          const inputID = asId(joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'key', uiIDX));
+          return (
+            /* eslint-disable-next-line react/no-array-index-key */ <Split
+              key={uiIDX}
+              className="kubevirt-create-vm-modal__cloud-init-ssh-keys-row"
+            >
+              <SplitItem isFilled>
+                <label hidden htmlFor={inputID}>
+                  {`SSH Key ${uiIDX}`}
+                </label>
+                <TextInput
+                  isDisabled={isDisabled}
+                  value={authKey || ''}
+                  id={inputID}
+                  onChange={(val) => {
+                    const result = [...authKeys];
+                    result[idx] = val;
+                    onEntryChange(
+                      CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
+                      areAuthKeysEmpty(result) ? undefined : result,
+                    );
+                  }}
+                />
+              </SplitItem>
+              <SplitItem>
+                <Button
+                  className="kubevirt-create-vm-modal__cloud-init-remove-button"
+                  id={asId(joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'delete', uiIDX))}
+                  icon={<MinusCircleIcon />}
+                  variant={ButtonVariant.link}
+                  isDisabled={isDisabled || areAuthKeysOriginallyEmpty}
+                  onClick={() => {
+                    const result = authKeys.filter((val, i) => i !== idx);
+                    onEntryChange(
+                      CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
+                      areAuthKeysEmpty(result) ? undefined : result,
+                    );
+                  }}
+                />
+              </SplitItem>
+            </Split>
+          );
+        })}
         <Button
           id={asId(joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'add'))}
           icon={<PlusCircleIcon />}
           variant={ButtonVariant.link}
           isDisabled={isDisabled}
+          isInline
           onClick={() => {
             onEntryChange(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, [...authKeys, '']);
           }}
@@ -283,7 +294,6 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
             }
           />
         )}
-        <FormRow fieldId={asId('base64')} />
         <FormRow fieldId={asId('base64')}>
           <Checkbox
             className="kubevirt-create-vm-modal__cloud-init-base64"

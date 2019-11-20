@@ -10,6 +10,7 @@ import {
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
+import { toIECUnit } from '../../../components/form/size-unit-utils';
 
 type CombinedTypeData = {
   name?: string;
@@ -131,7 +132,7 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 
   getReadabableSize = () => {
     const { value, unit } = this.getSize();
-    return `${value} ${unit}`;
+    return `${value} ${toIECUnit(unit)}`;
   };
 
   hasSize = () => this.getSize().value > 0;

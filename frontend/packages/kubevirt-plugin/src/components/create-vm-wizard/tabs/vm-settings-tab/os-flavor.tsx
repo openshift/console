@@ -89,7 +89,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
                 isDisabled={!!os}
               />
               {operatingSystems.map(({ id, name }) => {
-                return <FormSelectOption key={id} value={id} label={name} />;
+                return <FormSelectOption key={id} value={id} label={name || id} />;
               })}
             </FormSelect>
           </FormField>

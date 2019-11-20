@@ -9,9 +9,9 @@ import {
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { prefixedID } from '../../../../utils';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { BinaryUnit } from '../../../form/size-unit-form-row';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
+import { BinaryUnit } from '../../../form/size-unit-utils';
 
 const ROOT_DISK_NAME = 'rootdisk';
 
