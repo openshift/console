@@ -7,11 +7,16 @@
   top: 0;
   bottom: 0;
 
-  &__layout-icon {
-    &.m-active {
+  &__layout-button {
+    &.pf-m-active, &:hover {
       color: var(--pf-global--active-color--400);
     }
-    > svg {
+
+    &:first-of-type {
+      margin-left: var(--pf-global--spacer--sm);
+    }
+
+    &__icon {
       margin-right: var(--pf-global--spacer--xs);
     }
   }

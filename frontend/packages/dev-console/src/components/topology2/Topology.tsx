@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { action } from 'mobx';
+import { Button, Tooltip } from '@patternfly/react-core';
 import {
   TopologyView,
   TopologyControlBar,
@@ -114,6 +115,8 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   };
 
   const renderControlBar = () => {
+    const layoutControlButtonClasses =
+      'pf-topology-control-bar__button odc-topology__layout-button';
     return (
       <TopologyControlBar
         controlButtons={[
@@ -134,38 +137,33 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
             }),
             legend: false,
           }),
-          {
-            id: 'colaLayout',
-            icon: (
-              <span
-                className={classNames('odc-topology__layout-icon', {
-                  'm-active': layout === COLA_LAYOUT,
-                })}
-              >
-                <TopologyIcon />1
-              </span>
-            ),
-            tooltip: 'Layout 1',
-            ariaLabel: 'Layout 1',
-            callback: () => setLayout(COLA_LAYOUT),
-          },
-          {
-            id: 'colaForceLayout',
-            icon: (
-              <span
-                className={classNames('odc-topology__layout-icon', {
-                  'm-active': layout === COLA_FORCE_LAYOUT,
-                })}
-              >
-                <TopologyIcon />2
-              </span>
-            ),
-            tooltip: 'Layout 2',
-            ariaLabel: 'Layout 2',
-            callback: () => setLayout(COLA_FORCE_LAYOUT),
-          },
         ]}
-      />
+      >
+        <Tooltip content="Layout 1">
+          <Button
+            className={classNames(layoutControlButtonClasses, {
+              'pf-m-active': layout === COLA_LAYOUT,
+            })}
+            variant="tertiary"
+            onClick={() => setLayout(COLA_LAYOUT)}
+          >
+            <TopologyIcon className="odc-topology__layout-button__icon" />1
+            <span className="sr-only">Layout 1</span>
+          </Button>
+        </Tooltip>
+        <Tooltip content="Layout 2">
+          <Button
+            className={classNames(layoutControlButtonClasses, {
+              'pf-m-active': layout === COLA_FORCE_LAYOUT,
+            })}
+            variant="tertiary"
+            onClick={() => setLayout(COLA_FORCE_LAYOUT)}
+          >
+            <TopologyIcon className="odc-topology__layout-button__icon" />2
+            <span className="sr-only">Layout 2</span>
+          </Button>
+        </Tooltip>
+      </TopologyControlBar>
     );
   };
 
