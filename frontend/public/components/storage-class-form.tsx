@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
-import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName } from '@console/shared';
 import {
@@ -834,6 +833,7 @@ export class StorageClassForm_ extends React.Component<
     }
 
     const dynamicContent = _.map(parameters, (parameter, key) => {
+      const paramId = `storage-class-provisioner-${_.kebabCase(_.get(parameter, 'name', key))}`;
       const validationMsg = _.get(parameter, 'validationMsg', null);
       const isCheckbox = parameter.type === 'checkbox';
       const selectedKey = ['newStorageClass', 'parameters', key, 'value'];
@@ -846,6 +846,7 @@ export class StorageClassForm_ extends React.Component<
         <>
           <label
             className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}
+            htmlFor={paramId}
           >
             {_.get(parameter, 'name', key)}
           </label>
@@ -855,8 +856,9 @@ export class StorageClassForm_ extends React.Component<
             dropDownClassName="dropdown--full-width"
             selectedKey={_.get(this.state, selectedKey)}
             onChange={(event) => this.setParameterHandler(key, event, false)}
+            id={paramId}
           />
-          <HelpBlock>{validationMsg ? validationMsg : null}</HelpBlock>
+          <span className="help-block">{validationMsg ? validationMsg : null}</span>
         </>
       ) : (
         <>
@@ -881,33 +883,32 @@ export class StorageClassForm_ extends React.Component<
                 className={classNames('control-label', {
                   'co-required': this.paramIsRequired(key),
                 })}
+                htmlFor={paramId}
               >
                 {_.get(parameter, 'name', key)}
               </label>
-              <FormControl
+              <input
                 type="text"
-                bsClass="pf-c-form-control"
+                className="pf-c-form-control"
                 value={_.get(this.state, selectedKey, '')}
                 onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
+                id={paramId}
               />
             </>
           )}
-          <HelpBlock>{validationMsg ? validationMsg : parameter.hintText}</HelpBlock>
+          <span className="help-block">{validationMsg ? validationMsg : parameter.hintText}</span>
         </>
       );
 
       return (
-        <FormGroup
+        <div
           key={key}
-          controlId={`provisioner-settings-${key}`}
-          validationState={
-            _.get(this.state.newStorageClass.parameters, `${key}.validationMsg`, null)
-              ? 'error'
-              : null
-          }
+          className={classNames('form-group', {
+            'has-error': _.get(this.state.newStorageClass.parameters, `${key}.validationMsg`, null),
+          })}
         >
           {children}
-        </FormGroup>
+        </div>
       );
     });
 
@@ -915,8 +916,8 @@ export class StorageClassForm_ extends React.Component<
       <>
         {dynamicContent}
 
-        <FormGroup controlId={'provisioner-parameters-custom'}>
-          <label className="control-label">Additional Parameters</label>
+        <div className="form-group">
+          <label>Additional Parameters</label>
           <p>
             Specific fields for the selected provisioner. &nbsp;
             <ExternalLink
@@ -931,7 +932,7 @@ export class StorageClassForm_ extends React.Component<
             addString="Add Parameter"
             updateParentData={this.updateCustomParams}
           />
-        </FormGroup>
+        </div>
       </>
     );
   };
@@ -953,55 +954,57 @@ export class StorageClassForm_ extends React.Component<
             </Link>
           </div>
         </h1>
-        <Form>
-          <FormGroup
-            controlId={'basic-settings-name'}
-            validationState={fieldErrors.nameValidationMsg ? 'error' : null}
-          >
+        <form data-test-id="storage-class-form">
+          <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
             <label className="control-label co-required" htmlFor="storage-class-name">
               Name
             </label>
-            <FormControl
+            <input
               type="text"
-              bsClass="pf-c-form-control"
+              className="pf-c-form-control"
               placeholder={newStorageClass.name}
               id="storage-class-name"
               onChange={(event) => this.setStorageHandler('name', event.target.value)}
               value={_.get(newStorageClass, 'name', '')}
             />
-            <HelpBlock>
+            <span className="help-block">
               {fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}
-            </HelpBlock>
-          </FormGroup>
+            </span>
+          </div>
 
-          <FormGroup controlId={'basic-settings-description'}>
+          <div className="form-group">
             <label htmlFor="storage-class-description">Description</label>
-            <FormControl
+            <input
               type="text"
-              bsClass="pf-c-form-control"
+              className="pf-c-form-control"
               id="storage-class-description"
               onChange={(event) => this.setStorageHandler('description', event.target.value)}
               value={_.get(newStorageClass, 'description', '')}
             />
-          </FormGroup>
+          </div>
 
-          <FormGroup controlId={'basic-settings-reclaim-policy'}>
-            <label className="control-label co-required">Reclaim Policy</label>
+          <div className="form-group">
+            <label className="co-required" htmlFor="storage-class-reclaim-policy">
+              Reclaim Policy
+            </label>
             <Dropdown
               title="Select Reclaim Policy"
               items={this.reclaimPolicies}
               dropDownClassName="dropdown--full-width"
               selectedKey={reclaimPolicyKey}
               onChange={(event) => this.setStorageHandler('reclaim', event)}
+              id="storage-class-reclaim-policy"
             />
-            <HelpBlock>
+            <span className="help-block">
               Determines what happens to persistent volumes when the associated persistent volume
               claim is deleted. Defaults to &lsquo;Delete&rsquo;
-            </HelpBlock>
-          </FormGroup>
+            </span>
+          </div>
 
-          <FormGroup controlId={'basic-settings-storage'}>
-            <label className="control-label co-required">Provisioner</label>
+          <div className="form-group">
+            <label className="co-required" htmlFor="storage-class-provisioner">
+              Provisioner
+            </label>
             <Dropdown
               title="Select Provisioner"
               autocompleteFilter={this.autocompleteFilter}
@@ -1011,11 +1014,12 @@ export class StorageClassForm_ extends React.Component<
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={_.get(this.state, 'newStorageClass.type')}
               onChange={(event) => this.setStorageHandler('type', event)}
+              id="storage-class-provisioner"
             />
-            <HelpBlock>
+            <span className="help-block">
               Determines what volume plugin is used for provisioning persistent volumes.
-            </HelpBlock>
-          </FormGroup>
+            </span>
+          </div>
 
           <div className="co-form-subsection">
             {newStorageClass.type !== null ? this.getProvisionerElements() : null}
@@ -1045,7 +1049,7 @@ export class StorageClassForm_ extends React.Component<
               </Button>
             </ActionGroup>
           </ButtonBar>
-        </Form>
+        </form>
       </div>
     );
   }
