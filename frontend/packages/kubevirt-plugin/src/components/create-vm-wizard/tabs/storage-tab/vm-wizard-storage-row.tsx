@@ -13,17 +13,23 @@ import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced
 const menuActionEdit = (
   storageWithWrappers: VMWizardStorageWithWrappers,
   { wizardReduxID, withProgress }: VMWizardStorageRowActionOpts,
-): KebabOption => ({
-  label: 'Edit',
-  callback: () =>
-    withProgress(
-      vmWizardStorageModalEnhanced({
-        blocking: true,
-        wizardReduxID,
-        storage: storageWithWrappers,
-      }).result,
-    ),
-});
+): KebabOption => {
+  return {
+    label: 'Edit',
+    isDisabled: [
+      VMWizardStorageType.WINDOWS_GUEST_TOOLS,
+      VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE,
+    ].includes(storageWithWrappers.type),
+    callback: () =>
+      withProgress(
+        vmWizardStorageModalEnhanced({
+          blocking: true,
+          wizardReduxID,
+          storage: storageWithWrappers,
+        }).result,
+      ),
+  };
+};
 
 const menuActionRemove = (
   { id, type }: VMWizardStorageWithWrappers,

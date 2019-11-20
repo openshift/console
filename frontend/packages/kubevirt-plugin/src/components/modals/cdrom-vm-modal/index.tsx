@@ -19,7 +19,7 @@ const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
     {
       kind: StorageClassModel.kind,
       isList: true,
-      prop: 'storageClassess',
+      prop: 'storageClasses',
     },
     {
       kind: PersistentVolumeClaimModel.kind,
