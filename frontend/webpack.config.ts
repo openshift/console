@@ -10,7 +10,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
-const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
+const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 
 const config: webpack.Configuration = {
   entry: [
