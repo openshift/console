@@ -14,6 +14,7 @@ import {
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
+import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { humanizeBinaryBytes, humanizeCpuCores } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
@@ -180,6 +181,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         current={current}
         consumers={memQueriesPopup}
         humanize={humanizeBinaryBytes}
+        position={PopoverPosition.top}
       />
     ),
     [],
@@ -192,6 +194,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         current={current}
         consumers={storageQueriesPopup}
         humanize={humanizeBinaryBytes}
+        position={PopoverPosition.top}
       />
     ),
     [],

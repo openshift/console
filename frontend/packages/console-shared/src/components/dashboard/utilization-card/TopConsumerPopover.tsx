@@ -16,13 +16,14 @@ import { FLAGS } from '@console/internal/const';
 import { RootState } from '@console/internal/redux';
 import * as UIActions from '@console/internal/actions/ui';
 import { getActivePerspective } from '@console/internal/reducers/ui';
+import { PopoverPosition } from '@patternfly/react-core';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 
 import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
-  ({ current, title, humanize, consumers, namespace }) => {
+  ({ current, title, humanize, consumers, namespace, position }) => {
     const [isOpen, setOpen] = React.useState(false);
     return (
       <DashboardCardPopupLink
@@ -30,6 +31,7 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
         linkTitle={current}
         onHide={React.useCallback(() => setOpen(false), [])}
         onShow={React.useCallback(() => setOpen(true), [])}
+        position={position}
       >
         <PopoverBody
           humanize={humanize}
@@ -258,4 +260,5 @@ export type ConsumerPopoverProps = {
   humanize: Humanize;
   consumers: { model: K8sKind; query: string; metric: string }[];
   namespace?: string;
+  position?: PopoverPosition;
 };
