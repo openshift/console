@@ -26,6 +26,7 @@ type PodStatusProps = {
   title?: string;
   titleComponent?: React.ReactElement;
   subTitle?: string;
+  subTitleComponent?: React.ReactElement;
 };
 
 type PodStatusState = {
@@ -100,6 +101,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       title = '',
       subTitle = '',
       titleComponent,
+      subTitleComponent,
     } = this.props;
     const { vData, updateOnEnd, tipIndex } = this.state;
 
@@ -131,6 +133,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
         width={size}
         title={title}
         titleComponent={titleComponent}
+        subTitleComponent={subTitleComponent}
         subTitle={subTitle}
         allowTooltip={false}
         labels={() => null}
