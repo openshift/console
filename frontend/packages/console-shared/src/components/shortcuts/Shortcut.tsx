@@ -10,6 +10,7 @@ interface ShortcutProps {
   drag?: boolean;
   hover?: boolean;
   keyName?: string;
+  macCtrl?: boolean;
   rightClick?: boolean;
   shift?: boolean;
 }
@@ -30,12 +31,13 @@ const Shortcut: React.FC<ShortcutProps> = ({
   click,
   rightClick,
   hover,
+  macCtrl,
 }) => {
   const isMac = window.navigator.platform.includes('Mac');
   return (
     <tr>
       <td className="ocs-shortcut__cell">
-        {!isMac && ctrl && <Command>Ctrl</Command>}
+        {((!isMac && ctrl) || macCtrl) && <Command>Ctrl</Command>}
         {alt && <Command>{isMac ? '⌥ Opt' : 'Alt'}</Command>}
         {shift && <Command>Shift</Command>}
         {isMac && ctrl && <Command>⌘ Cmd</Command>}

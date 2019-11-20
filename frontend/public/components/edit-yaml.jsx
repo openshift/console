@@ -12,7 +12,7 @@ import {
   global_BackgroundColor_300 as lineNumberForeground,
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, Shortcut, ShortcutTable } from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
@@ -709,13 +709,20 @@ const EditYAML_ = connect(stateToProps)(
                         <Popover
                           aria-label="Shortcuts"
                           bodyContent={
-                            <ul>
-                              <li>Use Ctrl + Space to activate auto complete.</li>
-                              <li>
-                                Use {isMac ? 'Command' : 'Ctrl'} + Shift + O for document outlining.
-                              </li>
-                              <li>Hover over a property to view a description.</li>
-                            </ul>
+                            <ShortcutTable>
+                              <Shortcut macCtrl keyName="space">
+                                Use Ctrl + Space to activate auto complete.
+                              </Shortcut>
+                              <Shortcut ctrl shift keyName="o">
+                                Use Shift + {isMac ? 'Command' : 'Ctrl'} + O for document outlining.
+                              </Shortcut>
+                              <Shortcut hover>
+                                Hover over a property to view a description.
+                              </Shortcut>
+                              <Shortcut ctrl keyName="s">
+                                Use {isMac ? 'Command' : 'Ctrl'} + S to save.
+                              </Shortcut>
+                            </ShortcutTable>
                           }
                           maxWidth="25rem"
                           distance={18}
