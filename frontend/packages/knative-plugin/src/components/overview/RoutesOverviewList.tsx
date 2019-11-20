@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   ResourceLink,
@@ -43,11 +42,11 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
     {_.isEmpty(ksroutes) ? (
       <span className="text-muted">No Routes found for this resource.</span>
     ) : (
-      <ListGroup componentClass="ul">
+      <ul className="list-group">
         {_.map(ksroutes, (route) => (
           <RoutesOverviewListItem key={route.metadata.uid} route={route} resource={resource} />
         ))}
-      </ListGroup>
+      </ul>
     )}
   </>
 );

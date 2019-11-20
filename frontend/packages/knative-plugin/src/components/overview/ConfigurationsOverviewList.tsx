@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { ConfigurationModel } from '@console/knative-plugin';
@@ -43,14 +42,14 @@ const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
     {_.isEmpty(configurations) ? (
       <span className="text-muted">No Configurations found for this resource.</span>
     ) : (
-      <ListGroup componentClass="ul">
+      <ul className="list-group">
         {_.map(configurations, (configuration) => (
           <ConfigurationsOverviewListItem
             key={configuration.metadata.uid}
             configuration={configuration}
           />
         ))}
-      </ListGroup>
+      </ul>
     )}
   </>
 );

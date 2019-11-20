@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup } from 'patternfly-react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   ResourceLink,
@@ -21,7 +20,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
     <>
       <SidebarSectionHeading text="Knative Services" />
       {sink && sink.kind === ServiceModel.kind ? (
-        <ListGroup componentClass="ul">
+        <ul className="list-group">
           <li className="list-group-item">
             <ResourceLink
               kind={referenceForModel(ServiceModel)}
@@ -39,7 +38,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
               </>
             )}
           </li>
-        </ListGroup>
+        </ul>
       ) : (
         <span className="text-muted">No services found for this resource.</span>
       )}

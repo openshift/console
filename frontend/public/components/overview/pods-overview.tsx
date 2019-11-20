@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup } from 'patternfly-react';
 
 import { Status } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
@@ -105,11 +104,11 @@ type PodOverviewItemProps = {
 };
 
 const PodsOverviewList: React.SFC<PodOverviewListProps> = ({ pods }) => (
-  <ListGroup componentClass="ul">
+  <ul className="list-group">
     {_.map(pods, (pod) => (
       <PodOverviewItem key={pod.metadata.uid} pod={pod} />
     ))}
-  </ListGroup>
+  </ul>
 );
 
 PodsOverviewList.displayName = 'PodsOverviewList';

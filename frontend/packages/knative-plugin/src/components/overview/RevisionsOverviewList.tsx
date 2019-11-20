@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListGroup } from 'patternfly-react';
 import { Button } from '@patternfly/react-core';
 import { PodStatus } from '@console/shared';
 import { ChartLabel } from '@patternfly/react-charts';
@@ -110,7 +109,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
       {_.isEmpty(revisions) ? (
         <span className="text-muted">No Revisions found for this resource.</span>
       ) : (
-        <ListGroup componentClass="ul">
+        <ul className="list-group">
           {_.map(revisions, (revision) => (
             <RevisionsOverviewListItem
               key={revision.metadata.uid}
@@ -118,7 +117,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
               service={service}
             />
           ))}
-        </ListGroup>
+        </ul>
       )}
     </>
   );

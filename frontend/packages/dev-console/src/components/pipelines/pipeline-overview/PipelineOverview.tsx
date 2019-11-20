@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { ListGroup } from 'patternfly-react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import {
   SidebarSectionHeading,
@@ -41,7 +40,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
           </Link>
         )}
       </SidebarSectionHeading>
-      <ListGroup componentClass="ul">
+      <ul className="list-group">
         <li className="list-group-item pipeline-overview">
           <Flex breakpointMods={[{ modifier: 'justify-content-space-between' }] as any}>
             <FlexItem>
@@ -60,7 +59,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
         {_.take(pipelineRuns, MAX_VISIBLE).map((pr) => (
           <PipelineRunItem key={pr.metadata.uid} pipelineRun={pr} />
         ))}
-      </ListGroup>
+      </ul>
     </>
   );
 };
