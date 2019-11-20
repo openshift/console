@@ -52,11 +52,4 @@ body,
     margin-bottom: 20px;
     margin-top: 0;
   }
-
-  &__sidebar--hidden {
-    position: absolute;
-    right: $grid-gutter-width;
-    top: 5px;
-    z-index: 1;
-  }
 }

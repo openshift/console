@@ -229,6 +229,11 @@ $co-external-link-padding-right: 15px;
 
 .co-action-divider {
   color: $color-pf-black-600;
+
+  &--spaced {
+    display: inline-block;
+    margin: 0 10px 0 10px;
+  }
 }
 
 .co-break-word {
