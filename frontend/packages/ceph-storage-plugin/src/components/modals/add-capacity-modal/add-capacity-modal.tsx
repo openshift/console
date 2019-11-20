@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 import {
   FieldLevelHelp,
   RequestSizeInput,
@@ -19,11 +20,11 @@ import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
   const dropdownUnits = {
-    Ti: 'Ti',
+    TiB: 'TiB',
   };
-  const requestSizeUnit = dropdownUnits.Ti;
+  const requestSizeUnit = dropdownUnits.TiB;
   const [buttonDisabled, setButton] = React.useState(false);
-  const [requestSizeValue, setRequestSizeValue] = React.useState('1');
+  const [requestSizeValue, setRequestSizeValue] = React.useState('2');
   const [storageClass, setStorageClass] = React.useState('');
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -39,7 +40,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
     setProgress(true);
     const negativeValue = Number(requestSizeValue) < 0 ? -1 : 1;
     const newValue =
-      (Number(presentCount) + Math.abs(Number(requestSizeValue)) * 3) * negativeValue;
+      (Number(presentCount) + Math.abs(Number(requestSizeValue)) / 2) * negativeValue;
     const patch = {
       op: 'replace',
       path: `/spec/storageDeviceSets/0/count`,
@@ -61,6 +62,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
 
   const handleRequestSizeInputChange = (capacityObj: any) => {
     setRequestSizeValue(capacityObj.value);
+    setButton(capacityObj.value % 2 !== 0);
   };
 
   const handleStorageClass = (sc: K8sResourceKind) => {
@@ -73,14 +75,14 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
       <ModalBody>
         Increase the capacity of <strong>{ocsConfig.metadata.name}</strong>.
         <div className="add-capacity-modal--padding">
-          <div className="form-group">
+          <div className="add-capacity-modal__input form-group">
             <label className="control-label" htmlFor="request-size-input">
-              Requested Capacity
+              Capacity
               <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-              <span className="add-capacity-modal__span">
+              <span className="text-secondary add-capacity-modal__span">
                 <span>
-                  Provisioned Capacity:
-                  {presentCount ? ` ${presentCount / 3}Ti` : ' Unavailable'}
+                  Provisioned:
+                  {presentCount ? ` ${presentCount * 2}TiB` : ' Unavailable'}
                 </span>
               </span>
             </label>
@@ -91,8 +93,18 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
               defaultRequestSizeUnit={requestSizeUnit}
               defaultRequestSizeValue={requestSizeValue}
               dropdownUnits={dropdownUnits}
+              step={2}
+              minValue={2}
+              inputClassName="add-capacity-modal__input--width"
               required
             />
+            <p
+              className={classNames('text-secondary add-capacity-modal__help-text', {
+                'add-capacity-modal__help-text-error': buttonDisabled,
+              })}
+            >
+              Please enter an even number
+            </p>
           </div>
           <label className="control-label">
             Storage Class

@@ -16,11 +16,12 @@ export const ocsRequestData: K8sResourceKind = {
     namespace: 'openshift-storage',
   },
   spec: {
-    managedNodes: false,
+    manageNodes: false,
     storageDeviceSets: [
       {
         name: 'ocs-deviceset',
-        count: 3,
+        count: 1,
+        replica: 3,
         resources: {},
         placement: {},
         portable: true,
@@ -31,7 +32,7 @@ export const ocsRequestData: K8sResourceKind = {
             volumeMode: 'Block',
             resources: {
               requests: {
-                storage: '1Ti',
+                storage: '2Ti',
               },
             },
           },
