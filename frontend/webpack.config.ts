@@ -19,7 +19,7 @@ const NODE_ENV = process.env.NODE_ENV;
 const HOT_RELOAD = process.env.HOT_RELOAD;
 
 /* Helpers */
-const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
+const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 
 const config: Configuration = {
   entry: ['./polyfills.js', '@console/app', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
