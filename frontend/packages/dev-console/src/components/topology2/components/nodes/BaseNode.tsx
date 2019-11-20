@@ -99,7 +99,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         data-test-id="base-node-handler"
         onClick={onSelect}
         {...(editAccess ? { onContextMenu } : {})}
-        ref={refs}
+        {...(editAccess ? { ref: refs } : {})}
       >
         <circle
           className={classNames('odc2-base-node__bg', { 'is-highlight': canDrop })}
