@@ -144,7 +144,7 @@ const removeConnection = (edge: Edge): Promise<any> => {
         </p>
       ) : (
         <p>
-          Deleting the visual connector removes the `connect-to` annotation from the resources. Are
+          Deleting the visual connector removes the `connects-to` annotation from the resources. Are
           you sure you want to delete the visual connector?
         </p>
       )}

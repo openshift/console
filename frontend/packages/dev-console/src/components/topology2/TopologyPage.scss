@@ -21,6 +21,10 @@
     }
   }
 
+  &__shortcuts-button {
+    margin-right: var(--pf-global--spacer--2xl);
+  }
+
   // WORKAROUND: see https://github.com/patternfly/patternfly-react/issues/3312
   .pf-topology-container__with-sidebar {
     flex: 1;
