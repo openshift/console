@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
+import { Link } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 import {
   PrometheusGraph,
   PrometheusGraphLink,
   getPrometheusExpressionBrowserURL,
 } from '@console/internal/components/graphs/prometheus-graph';
-import store from '@console/internal/redux';
-import { Provider } from 'react-redux';
 
 describe('<PrometheusGraph />', () => {
   it('should render a title', () => {
@@ -30,29 +29,23 @@ describe('<PrometheusGraph />', () => {
 });
 
 describe('<PrometheusGraphLink />', () => {
-  it('should render an anchor element', () => {
-    // Need full mount with redux store since this is a redux-connected compoenent
-    const wrapper = mount(
-      <Provider store={store}>
-        <PrometheusGraphLink query="test">
-          <p className="test-class" />
-        </PrometheusGraphLink>
-      </Provider>,
+  it('should render with a link', () => {
+    const wrapper = shallow(
+      <PrometheusGraphLink query="test">
+        <p className="test-class" />
+      </PrometheusGraphLink>,
     );
-    expect(wrapper.find('a').exists()).toBe(true);
+    expect(wrapper.find(Link).exists()).toBe(true);
     expect(wrapper.find('p.test-class').exists()).toBe(true);
   });
 
-  it('should not render an anchor element', () => {
-    // Need full mount with redux store since this is a redux-connected compoenent
-    const wrapper = mount(
-      <Provider store={store}>
-        <PrometheusGraphLink query="">
-          <p className="test-class" />
-        </PrometheusGraphLink>
-      </Provider>,
+  it('should not render with a link', () => {
+    const wrapper = shallow(
+      <PrometheusGraphLink query="">
+        <p className="test-class" />
+      </PrometheusGraphLink>,
     );
-    expect(wrapper.find('a').exists()).toBe(false);
+    expect(wrapper.find(Link).exists()).toBe(false);
     expect(wrapper.find('p.test-class').exists()).toBe(true);
   });
 });
