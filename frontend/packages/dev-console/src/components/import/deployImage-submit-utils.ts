@@ -5,6 +5,7 @@ import {
   ImageStreamModel,
   ServiceModel,
   RouteModel,
+  RoleBindingModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -18,8 +19,36 @@ import {
   annotations,
   dryRunOpt,
 } from '../../utils/shared-submit-utils';
-import { registryType } from '../../utils/imagestream-utils';
+import { RegistryType } from '../../utils/imagestream-utils';
 import { DeployImageFormData, Resources } from './import-types';
+
+export const createSystemImagePullerRoleBinding = (
+  formData: DeployImageFormData,
+  dryRun: boolean,
+): Promise<K8sResourceKind> => {
+  const { imageStream } = formData;
+  const roleBinding = {
+    kind: RoleBindingModel.kind,
+    apiVersion: `${RoleBindingModel.apiGroup}/${RoleBindingModel.apiVersion}`,
+    metadata: {
+      name: 'system:image-puller',
+      namespace: imageStream.namespace,
+    },
+    subjects: [
+      {
+        kind: 'ServiceAccount',
+        name: 'default',
+        namespace: formData.project.name,
+      },
+    ],
+    roleRef: {
+      apiGroup: RoleBindingModel.apiGroup,
+      kind: 'ClusterRole',
+      name: 'system:image-puller',
+    },
+  };
+  return k8sCreate(RoleBindingModel, roleBinding, dryRun ? dryRunOpt : {});
+};
 
 export const createImageStream = (
   formData: DeployImageFormData,
@@ -126,7 +155,7 @@ export const createDeployment = (
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
 
   const imageRef =
-    registry === registryType.External
+    registry === RegistryType.External
       ? `${imgName || name}:${tag}`
       : _.get(image, 'dockerImageReference');
 
@@ -300,8 +329,12 @@ export const createResources = async (
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
+  if (registry === RegistryType.Internal) {
+    formData.imageStream.grantAccess &&
+      requests.push(createSystemImagePullerRoleBinding(formData, dryRun));
+  }
   if (formData.resources !== Resources.KnativeService) {
-    registry === registryType.External && requests.push(createImageStream(formData, dryRun));
+    registry === RegistryType.External && requests.push(createImageStream(formData, dryRun));
     if (formData.resources === Resources.Kubernetes) {
       requests.push(createDeployment(formData, dryRun));
     } else {

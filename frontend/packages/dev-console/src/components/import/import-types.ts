@@ -10,7 +10,6 @@ export interface DeployImageFormProps {
 }
 
 export interface ImageStreamProps {
-  projects?: K8sResourceKind[];
   imageStreams: K8sResourceKind[];
 }
 
@@ -45,6 +44,7 @@ export interface DeployImageFormData {
     image: string;
     tag: string;
     namespace: string;
+    grantAccess?: boolean;
   };
   isi: ImageStreamImageData;
   image: ImageStreamImageData;

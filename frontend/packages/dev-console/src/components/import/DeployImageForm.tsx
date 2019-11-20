@@ -21,10 +21,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   imageStreams,
 }) => (
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
-    <ImageSearchSection
-      projects={projects.loaded ? projects.data : []}
-      imageStreams={imageStreams.loaded ? imageStreams.data : []}
-    />
+    <ImageSearchSection imageStreams={imageStreams.loaded ? imageStreams.data : []} />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
