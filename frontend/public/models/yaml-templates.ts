@@ -152,7 +152,7 @@ spec:
     imageChange: {}
   - type: ConfigChange
 `).setIn([referenceForModel(k8sModels.ChargebackReportModel), 'default'], `
-apiVersion: metering.openshift.io/v1alpha1
+apiVersion: metering.openshift.io/v1
 kind: Report
 metadata:
   name: namespace-memory-request

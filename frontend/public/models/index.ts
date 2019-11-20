@@ -141,7 +141,7 @@ export const ChargebackReportModel: K8sKind = {
   label: 'Report',
   labelPlural: 'Reports',
   apiGroup: 'metering.openshift.io',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1',
   crd: true,
   plural: 'reports',
   abbr: 'R',
