@@ -1,6 +1,10 @@
 .odc2-base-node {
   cursor: pointer;
 
+  &:focus {
+    outline: none;
+  }
+
   .odc2-m-drag-active & {
     cursor: grab;
   }

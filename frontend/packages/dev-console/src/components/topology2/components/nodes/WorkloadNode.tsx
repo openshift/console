@@ -25,6 +25,7 @@ export type WorkloadNodeProps = {
   dragging?: boolean;
   highlight?: boolean;
   canDrop?: boolean;
+  dropTarget?: boolean;
   urlAnchorRef?: React.Ref<SVGCircleElement>;
 } & WithSelectionProps &
   WithDragNodeProps &
@@ -32,7 +33,13 @@ export type WorkloadNodeProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const WorkloadNode: React.FC<WorkloadNodeProps> = ({ element, urlAnchorRef, ...rest }) => {
+const WorkloadNode: React.FC<WorkloadNodeProps> = ({
+  element,
+  urlAnchorRef,
+  canDrop,
+  dropTarget,
+  ...rest
+}) => {
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
   const size = Math.min(width, height);
@@ -42,66 +49,74 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({ element, urlAnchorRef, ...r
   const cx = width / 2;
   const cy = height / 2;
 
+  const tipContent = `Create a ${
+    element.getData().operatorBackedService ? 'binding' : 'visual'
+  } connector`;
+
   return (
     <g>
-      <BaseNode
-        outerRadius={radius}
-        innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}
-        icon={workloadData.builderImage}
-        kind={workloadData.kind}
-        element={element}
-        {...rest}
-        attachments={[
-          repoIcon && (
-            <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
-              <Decorator
-                x={cx + radius - decoratorRadius * 0.7}
-                y={cy + radius - decoratorRadius * 0.7}
-                radius={decoratorRadius}
-                href={workloadData.editUrl}
-                external
-              >
-                <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                  {repoIcon}
-                </g>
-              </Decorator>
-            </Tooltip>
-          ),
-          workloadData.url && (
-            <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
-              <Decorator
-                x={cx + radius - decoratorRadius * 0.7}
-                y={cy + -radius + decoratorRadius * 0.7}
-                radius={decoratorRadius}
-                href={workloadData.url}
-                external
-                circleRef={urlAnchorRef}
-              >
-                <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                  <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
-                </g>
-              </Decorator>
-            </Tooltip>
-          ),
-          <BuildDecorator
-            key="build"
-            workloadData={workloadData}
-            x={cx - radius + decoratorRadius * 0.7}
-            y={cy + radius - decoratorRadius * 0.7}
-            radius={decoratorRadius}
-          />,
-        ]}
-      >
-        <PodSet size={size} x={cx} y={cy} data={workloadData.donutStatus} />
-        {workloadData.isKnativeResource && (
-          <KnativeIcon
-            x={cx - radius * 0.15}
-            y={cy - radius * 0.65}
-            width={radius * 0.39}
-            height={radius * 0.31}
-          />
-        )}
-      </BaseNode>
+      <Tooltip content={tipContent} trigger="manual" isVisible={dropTarget && canDrop}>
+        <BaseNode
+          outerRadius={radius}
+          innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}
+          icon={workloadData.builderImage}
+          kind={workloadData.kind}
+          element={element}
+          dropTarget={dropTarget}
+          canDrop={canDrop}
+          {...rest}
+          attachments={[
+            repoIcon && (
+              <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+                <Decorator
+                  x={cx + radius - decoratorRadius * 0.7}
+                  y={cy + radius - decoratorRadius * 0.7}
+                  radius={decoratorRadius}
+                  href={workloadData.editUrl}
+                  external
+                >
+                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                    {repoIcon}
+                  </g>
+                </Decorator>
+              </Tooltip>
+            ),
+            workloadData.url && (
+              <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+                <Decorator
+                  x={cx + radius - decoratorRadius * 0.7}
+                  y={cy + -radius + decoratorRadius * 0.7}
+                  radius={decoratorRadius}
+                  href={workloadData.url}
+                  external
+                  circleRef={urlAnchorRef}
+                >
+                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
+                  </g>
+                </Decorator>
+              </Tooltip>
+            ),
+            <BuildDecorator
+              key="build"
+              workloadData={workloadData}
+              x={cx - radius + decoratorRadius * 0.7}
+              y={cy + radius - decoratorRadius * 0.7}
+              radius={decoratorRadius}
+            />,
+          ]}
+        >
+          <PodSet size={size} x={cx} y={cy} data={workloadData.donutStatus} />
+          {workloadData.isKnativeResource && (
+            <KnativeIcon
+              x={cx - radius * 0.15}
+              y={cy - radius * 0.65}
+              width={radius * 0.39}
+              height={radius * 0.31}
+            />
+          )}
+        </BaseNode>
+      </Tooltip>
     </g>
   );
 };
