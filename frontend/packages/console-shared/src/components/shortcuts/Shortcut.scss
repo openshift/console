@@ -1,0 +1,16 @@
+.ocs-shortcut {
+  &__cell {
+    padding-bottom: var(--pf-global--spacer--sm);
+
+    &:first-child {
+      padding-right: var(--pf-global--spacer--md);
+      text-align: right;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+  }
+
+  &__command:not(:last-child):after {
+    content: ' + ';
+  }
+}
