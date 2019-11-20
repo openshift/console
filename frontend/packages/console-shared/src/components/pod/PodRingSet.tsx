@@ -31,17 +31,26 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
   const completedRC = !!inProgressDeploymentData && completedDeploymentData ? previous : current;
   return (
     <Split gutter="lg">
-      <SplitItem>
-        <PodRing
-          key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
-          pods={completedDeploymentData}
-          rc={completedRC}
-          resourceKind={resourceKind}
-          obj={obj}
-          path={path}
-          enableScaling={!podData.isRollingOut}
-        />
-      </SplitItem>
+      <CSSTransition
+        key={inProgressDeploymentData ? 'deploy-donut' : 'notDeploy-donut'}
+        timeout={500}
+        in={false}
+        enter={false}
+        exit
+        classNames="odc-pod-ring-set__donut-completed"
+      >
+        <SplitItem>
+          <PodRing
+            key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
+            pods={completedDeploymentData}
+            rc={completedRC}
+            resourceKind={resourceKind}
+            obj={obj}
+            path={path}
+            enableScaling={!podData.isRollingOut}
+          />
+        </SplitItem>
+      </CSSTransition>
       <TransitionGroup component={null}>
         {inProgressDeploymentData && (
           <CSSTransition key="arrow-animation" timeout={1000} classNames="odc-pod-ring-set__arrow">
@@ -58,7 +67,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
           <CSSTransition
             key="donut-animation"
             appear
-            timeout={1000}
+            timeout={5000}
             classNames="odc-pod-ring-set__donut"
           >
             <SplitItem>

@@ -1,10 +1,24 @@
 .odc-pod-ring-set {
   &__donut {
-    &-enter, &-appear {
+    &-completed {
+      &-exit {
+        opacity: 1;
+      }
+      &-exit-active {
+        opacity: 0;
+        transition: opacity 500ms ease-out;
+      }
+      &-exit-active-done {
+        opacity: 1;
+      }
+    }
+    &-enter,
+    &-appear {
       opacity: 0;
       transform: translateX(-50%);
     }
-    &-enter-active, &-appear-active {
+    &-enter-active,
+    &-appear-active {
       opacity: 1;
       transform: translateX(0);
       transition: opacity 250ms ease-in 300ms, transform 500ms ease-in;
@@ -16,8 +30,8 @@
     }
     &-exit-active {
       opacity: 0;
-      transform: translateX(-50%);
-      transition: all 500ms ease-out 400ms;
+      transform: translateX(-170%);
+      transition: transform 500ms ease-out 400ms, opacity 0ms linear 900ms;
     }
   }
   &__arrow {
