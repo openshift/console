@@ -16,29 +16,31 @@ import {
   TableData,
 } from '@console/internal/components/factory';
 import {
-  ResourceSummary,
-  StatusBox,
-  navFactory,
-  Timestamp,
-  LabelList,
-  MsgBox,
-  ResourceKebab,
   Kebab,
   KebabAction,
+  LabelList,
   LoadingBox,
+  MsgBox,
+  ResourceKebab,
+  ResourceSummary,
   SectionHeading,
+  StatusBox,
+  Timestamp,
+  navFactory,
+  resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { connectToModel, connectToPlural } from '@console/internal/kinds';
 import {
-  apiVersionForReference,
-  kindForReference,
+  GroupVersionKind,
+  K8sKind,
   K8sResourceKind,
   OwnerReference,
-  K8sKind,
-  referenceFor,
-  GroupVersionKind,
-  referenceForModel,
+  apiVersionForReference,
   groupVersionFor,
+  kindForReference,
+  modelFor,
+  referenceFor,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
@@ -243,11 +245,20 @@ const inFlightStateToProps = ({ k8s }: RootState) => ({
 export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAPIsPageProps) => {
   const { obj } = props;
   const { owned = [] } = obj.spec.customresourcedefinitions;
-  const firehoseResources = owned.map((desc) => ({
-    kind: referenceForProvidedAPI(desc),
-    namespaced: true,
-    prop: desc.kind,
-  }));
+  const firehoseResources = owned.reduce((resources, desc) => {
+    const reference = referenceForProvidedAPI(desc);
+    const model = modelFor(reference);
+    return model
+      ? [
+          ...resources,
+          {
+            kind: referenceForProvidedAPI(desc),
+            namespaced: model.namespaced,
+            prop: desc.kind,
+          },
+        ]
+      : resources;
+  }, []);
 
   const EmptyMsg = () => (
     <MsgBox
@@ -325,17 +336,18 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
     );
   }
 
+  const to = kindObj.namespaced
+    ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
+        csv.metadata.name
+      }/${kind}/~new`
+    : `${resourcePathFromModel(kindObj)}/~new`;
   return (
     <ListPage
       kind={kind}
       ListComponent={OperandList}
       canCreate={_.get(kindObj, 'verbs', [] as string[]).some((v) => v === 'create')}
-      createProps={{
-        to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
-          csv.metadata.name
-        }/${kind}/~new`,
-      }}
-      namespace={_.get(kindObj, 'namespaced') ? namespace : null}
+      createProps={{ to }}
+      namespace={kindObj.namespaced ? namespace : null}
     />
   );
 });
