@@ -15,6 +15,7 @@ export const titleResolver: VMSettingsRenderableFieldResolver = {
   [VMWareProviderField.STATUS]: '',
   [VMWareProviderField.VM]: 'VM or Template to Import',
   [VMSettingsField.NAME]: 'Name',
+  [VMSettingsField.HOSTNAME]: 'Hostname',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',

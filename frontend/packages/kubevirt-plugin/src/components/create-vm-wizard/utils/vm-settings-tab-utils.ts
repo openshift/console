@@ -15,6 +15,7 @@ const idResolver: VMSettingsRenderableFieldResolver = {
   [VMWareProviderField.STATUS]: 'vcenter-status',
   [VMWareProviderField.VM]: 'vcenter-vm-dropdown',
   [VMSettingsField.NAME]: 'vm-name',
+  [VMSettingsField.HOSTNAME]: 'vm-hostname',
   [VMSettingsField.DESCRIPTION]: 'vm-description',
   [VMSettingsField.USER_TEMPLATE]: 'template-dropdown',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'image-source-type-dropdown',

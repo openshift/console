@@ -39,6 +39,7 @@ import {
   getTemplateFlavors,
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
+  getTemplateHostname,
 } from '../../../../../selectors/vm-template/advanced';
 import { V1Network } from '../../../../../types/vm';
 import { getFlavors } from '../../../../../selectors/vm-template/combined-dependent';
@@ -121,6 +122,10 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
       value: provisionSourceDetails.type ? provisionSourceDetails.type.getValue() : null,
     };
+
+    // update hostname
+    const hostname = getTemplateHostname(userTemplate);
+    vmSettingsUpdate[VMSettingsField.HOSTNAME] = { value: hostname };
 
     const networkLookup = createBasicLookup<V1Network>(getNetworks(vm), getSimpleName);
     // prefill networks
