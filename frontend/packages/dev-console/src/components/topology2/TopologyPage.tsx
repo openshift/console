@@ -78,6 +78,7 @@ const TopologyPage: React.FC<Props> = ({
     path: '*/list',
     exact: true,
   });
+
   return (
     <>
       <Helmet>
@@ -87,17 +88,21 @@ const TopologyPage: React.FC<Props> = ({
         variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
         hideApplications={showListView}
         toolbar={
-          <div style={{ display: 'flex' }}>
-            {!showListView && (
+          <>
+            {!showListView && namespace && (
               <Popover
                 aria-label="Shortcuts"
                 bodyContent={TopologyShortcuts}
                 position="left"
-                maxWidth="50rem"
+                maxWidth="100vw"
               >
-                <Button type="button" variant="link" className="odc-topology__shortcuts-button">
-                  <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                  View Shortcuts
+                <Button
+                  type="button"
+                  variant="link"
+                  className="odc-topology__shortcuts-button"
+                  icon={<QuestionCircleIcon />}
+                >
+                  Shortcuts
                 </Button>
               </Popover>
             )}
@@ -111,7 +116,7 @@ const TopologyPage: React.FC<Props> = ({
                 {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
               </Link>
             </Tooltip>
-          </div>
+          </>
         }
       >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>

@@ -15,6 +15,12 @@
     }
   }
 
+  &__toolbar {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
   // Override styles of namespace bar to support the addition of the application selector on mobile
   & .co-namespace {
     &-selector {

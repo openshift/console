@@ -1,13 +1,16 @@
 import * as React from 'react';
+import { Shortcut, ShortcutTable } from '@console/shared';
 
 const TopologyShortcuts: React.ReactElement = (
-  <ul>
-    <li>Drag to move a node or an application.</li>
-    <li>Use Shift + Drag to move the a node in/out of an application group.</li>
-    <li>Right click on node/application group to access respective context menus.</li>
-    <li>Click on node/application to open the respective side panels.</li>
-    <li>Hover over the node to use the drag and drop connector.</li>
-  </ul>
+  <ShortcutTable>
+    <Shortcut drag>Move</Shortcut>
+    <Shortcut shift drag>
+      Edit application grouping
+    </Shortcut>
+    <Shortcut rightClick>Access context menu</Shortcut>
+    <Shortcut click>View details in side panel</Shortcut>
+    <Shortcut hover>Access create connector handle</Shortcut>
+  </ShortcutTable>
 );
 
 export default TopologyShortcuts;
