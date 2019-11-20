@@ -2,12 +2,11 @@ import * as _ from 'lodash';
 import {
   K8sResourceKind,
   modelFor,
-  RouteKind,
   DeploymentKind,
   referenceFor,
 } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { TransformResourceData, isKnativeServing } from '@console/shared';
+import { TransformResourceData, isKnativeServing, OverviewItem } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   tranformKnNodeData,
@@ -60,20 +59,25 @@ export const filterBasedOnActiveApplication = (
 /**
  * get the route data
  */
-const getRouteData = (ksroute: K8sResourceKind[]): string => {
-  return ksroute && ksroute.length > 0 && !_.isEmpty(ksroute[0].status)
-    ? ksroute[0].status.url
-    : null;
+const getRouteData = (ksroutes: K8sResourceKind[], resource: OverviewItem): string => {
+  if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
+    const trafficData = _.find(ksroutes[0].status.traffic, {
+      revisionName: resource.obj.metadata.name,
+    });
+    return _.get(trafficData, 'url', ksroutes[0].status.url);
+  }
+  return null;
 };
 
 /**
  * get routes url
  */
-export const getRoutesUrl = (routes: RouteKind[], ksroute?: K8sResourceKind[]): string => {
+export const getRoutesUrl = (resource: OverviewItem): string => {
+  const { routes, ksroutes } = resource;
   if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
     return getRouteWebURL(routes[0]);
   }
-  return getRouteData(ksroute);
+  return getRouteData(ksroutes, resource);
 };
 
 /**
@@ -125,7 +129,7 @@ export const createTopologyNodeData = (
     pods: dc.pods,
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
-      url: getRoutesUrl(dc.routes, _.get(dc, ['ksroutes'])),
+      url: getRoutesUrl(dc),
       kind: deploymentConfig.kind,
       editUrl:
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
