@@ -174,6 +174,7 @@ const EditYAML_ = connect(stateToProps)(
       editor.focus();
       this.registerYAMLinMonaco(monaco);
       monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => this.save());
     }
 
     get editorHeight() {
