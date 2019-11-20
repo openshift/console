@@ -247,7 +247,9 @@ const Graph: React.FC<GraphProps> = React.memo(({ allSeries, disabledSeries, spa
     maxY = 0;
   }
 
-  const tickFormat =
+  const xTickFormat = span < 5 * 60 * 1000 ? twentyFourHourTimeWithSeconds : twentyFourHourTime;
+
+  const yTickFormat =
     Math.abs(maxY - minY) < 0.005 ? (v) => (v === 0 ? '0' : v.toExponential(1)) : formatValue;
 
   return (
@@ -262,8 +264,8 @@ const Graph: React.FC<GraphProps> = React.memo(({ allSeries, disabledSeries, spa
           theme={chartTheme}
           width={width}
         >
-          <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-          <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={tickFormat} />
+          <ChartAxis tickCount={5} tickFormat={xTickFormat} />
+          <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
           <ChartGroup>
             {_.map(data, (values, i) => (
               <ChartLine key={i} data={values} />
