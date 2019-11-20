@@ -73,8 +73,9 @@ export const findVMPod = (
     );
   });
 
+  // Return the newet Pod created
   return prefixedPods.sort((a: PodKind, b: PodKind) =>
-    a.metadata.creationTimestamp < b.metadata.creationTimestamp ? -1 : 1,
+    a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
   )[0];
 };
 
