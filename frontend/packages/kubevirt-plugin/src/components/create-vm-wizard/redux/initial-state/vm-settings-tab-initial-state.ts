@@ -26,7 +26,6 @@ export const getInitialVmSettings = (common: CommonData) => {
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
-      initialized: isProviderImport,
     },
     [VMSettingsField.PROVIDER]: {
       isRequired: asRequired(isProviderImport),

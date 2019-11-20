@@ -65,7 +65,13 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       : null;
 
   let isCloudInitForm = null;
-  const vmSettingsUpdate = {};
+  const vmSettingsUpdate = {
+    // ensure the the form is reset when "None" template is selected
+    [VMSettingsField.FLAVOR]: { value: '' },
+    [VMSettingsField.OPERATING_SYSTEM]: { value: '' },
+    [VMSettingsField.WORKLOAD_PROFILE]: { value: '' },
+    [VMSettingsField.PROVISION_SOURCE_TYPE]: { value: '' },
+  };
 
   // filter out oldTemplates
   let networksUpdate = immutableListToShallowJS<VMWizardNetwork>(iGetNetworks(state, id)).filter(

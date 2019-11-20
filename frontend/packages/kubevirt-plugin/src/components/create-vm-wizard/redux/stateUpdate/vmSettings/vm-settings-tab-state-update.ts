@@ -1,7 +1,6 @@
 import {
   hasVmSettingsChanged,
   iGetProvisionSource,
-  iGetVmSettingAttribute,
   iGetVmSettingValue,
 } from '../../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../../types';
@@ -13,56 +12,10 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../../selectors/immutable/selectors';
-import { iGetIsLoaded, iGetLoadedData } from '../../../../../utils/immutable';
-import { ignoreCaseSort } from '../../../../../utils/sort';
 import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
 import { getProviders } from '../../../provider-definitions';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-
-export const selectUserTemplateOnLoadedUpdater = ({
-  id,
-  dispatch,
-  getState,
-  changedCommonData,
-}: UpdateOptions) => {
-  const state = getState();
-  if (
-    iGetCommonData(state, id, VMWizardProps.isCreateTemplate) ||
-    iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized') ||
-    !(
-      changedCommonData.has(VMWizardProps.userTemplates) ||
-      changedCommonData.has(VMWizardProps.commonTemplates)
-    )
-  ) {
-    return;
-  }
-
-  const iUserTemplatesWrapper = iGetCommonData(state, id, VMWizardProps.userTemplates);
-  const iCommonTemplatesWrapper = iGetCommonData(state, id, VMWizardProps.commonTemplates); // flavor prefill
-
-  if (!iGetIsLoaded(iUserTemplatesWrapper) || !iGetIsLoaded(iCommonTemplatesWrapper)) {
-    return;
-  }
-
-  const iUserTemplates = iGetLoadedData(iUserTemplatesWrapper);
-
-  const firstUserTemplateName = ignoreCaseSort(
-    iUserTemplates
-      .toIndexedSeq()
-      .toArray()
-      .map(iGetName),
-  )[0];
-
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.USER_TEMPLATE]: {
-        initialized: true,
-        value: firstUserTemplateName,
-      },
-    }),
-  );
-};
 
 export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -92,9 +45,7 @@ export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
     }),
   );
 
-  if (iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')) {
-    prefillVmTemplateUpdater(options);
-  }
+  prefillVmTemplateUpdater(options);
 };
 
 export const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -157,7 +108,6 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
       ? getProviders().map((provider) => provider.getStateUpdater)
       : []),
-    selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,
     flavorUpdater,
