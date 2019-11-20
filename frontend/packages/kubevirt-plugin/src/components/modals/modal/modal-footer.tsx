@@ -63,7 +63,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       {submitButtonText}
     </Button>
     <Button
-      variant={ButtonVariant.plain}
+      variant={ButtonVariant.link}
       onClick={onCancel}
       id={prefixedID(id, 'cancel')}
       isDisabled={isDisabled}

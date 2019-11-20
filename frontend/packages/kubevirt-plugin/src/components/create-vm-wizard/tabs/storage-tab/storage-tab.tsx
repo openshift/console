@@ -67,6 +67,7 @@ const getStoragesData = (
       // for sorting
       name: combinedDisk.getName(),
       diskInterface: combinedDisk.getDiskInterface(),
+      type: combinedDisk.getTypeValue(),
       size: combinedDisk.getReadableSize(),
       storageClass: combinedDisk.getStorageClassName(),
     };
