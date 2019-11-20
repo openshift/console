@@ -1,6 +1,6 @@
-import { ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 
-import { checkLogs, checkErrors } from '../protractor.conf';
+import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as monitoringView from '../views/monitoring.view';
 import * as namespaceView from '../views/namespace.view';
@@ -36,19 +36,15 @@ describe('Monitoring: Alerts', () => {
   it('filters Alerts by name', async () => {
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(
-      testAlertName,
-    );
+    expect(firstElementByTestID('alert-resource-link').getText()).toContain(testAlertName);
   });
 
   it('displays Alert details page', async () => {
     await monitoringView.wait(
-      until.elementToBeClickable(monitoringView.firstListLinkById('alert-resource-link')),
+      until.elementToBeClickable(firstElementByTestID('alert-resource-link')),
     );
-    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(
-      testAlertName,
-    );
-    await monitoringView.firstListLinkById('alert-resource-link').click();
+    expect(firstElementByTestID('alert-resource-link').getText()).toContain(testAlertName);
+    await firstElementByTestID('alert-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
@@ -89,14 +85,12 @@ describe('Monitoring: Alerts', () => {
 
   it('shows the newly created Silence in the Silenced By list', async () => {
     await monitoringView.wait(
-      until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')),
+      until.elementToBeClickable(firstElementByTestID('silence-resource-link')),
     );
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
-      testAlertName,
-    );
+    expect(firstElementByTestID('silence-resource-link').getText()).toContain(testAlertName);
 
     // Click the link to navigate back to the Silence details page
-    await monitoringView.firstListLinkById('silence-resource-link').click();
+    await firstElementByTestID('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
@@ -149,19 +143,15 @@ describe('Monitoring: Silences', () => {
     await horizontalnavView.clickHorizontalTab('Silences');
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
-      testAlertName,
-    );
+    expect(firstElementByTestID('silence-resource-link').getText()).toContain(testAlertName);
   });
 
   it('displays Silence details page', async () => {
     await monitoringView.wait(
-      until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')),
+      until.elementToBeClickable(firstElementByTestID('silence-resource-link')),
     );
-    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(
-      testAlertName,
-    );
-    await monitoringView.firstListLinkById('silence-resource-link').click();
+    expect(firstElementByTestID('silence-resource-link').getText()).toContain(testAlertName);
+    await firstElementByTestID('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
@@ -193,32 +183,195 @@ describe('Monitoring: Silences', () => {
   });
 });
 
-describe('Monitoring: YAML', () => {
+describe('Alertmanager: YAML', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
   });
 
-  it('displays the YAML page', async () => {
+  it('displays the Alermanager YAML page', async () => {
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Global Configuration');
     await crudView.isLoaded();
-    await monitoringView.wait(
-      until.elementToBeClickable(monitoringView.firstListLinkById('alertmanager')),
-    );
-    expect(monitoringView.firstListLinkById('alertmanager').getText()).toContain('Alertmanager');
-    await monitoringView.firstListLinkById('alertmanager').click();
+    await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('alertmanager')));
+    expect(firstElementByTestID('alertmanager').getText()).toContain('Alertmanager');
+    await firstElementByTestID('alertmanager').click();
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
     await crudView.isLoaded();
     expect(monitoringView.alertManagerYamlForm.isPresent()).toBe(true);
   });
 
-  it('saves alert-manager.yaml', async () => {
+  it('saves Alertmanager YAML', async () => {
     expect(monitoringView.successAlert.isPresent()).toBe(false);
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
     expect(monitoringView.successAlert.isPresent()).toBe(true);
+  });
+});
+
+describe('Alertmanager: Configuration', () => {
+  afterEach(() => {
+    checkLogs();
+    checkErrors();
+  });
+
+  it('displays the Alermanager Configuration Overview page', async () => {
+    await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
+    await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Global Configuration');
+    await crudView.isLoaded();
+    await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('alertmanager')));
+    expect(firstElementByTestID('alertmanager').getText()).toContain('Alertmanager');
+    await firstElementByTestID('alertmanager').click();
+    await crudView.isLoaded();
+    expect(monitoringView.alertRoutingHeader.getText()).toContain('Alert Routing');
+  });
+
+  it('launches Alert Routing modal, edits and saves correctly', async () => {
+    await crudView.isLoaded();
+    expect(monitoringView.alertRoutingEditButton.isPresent()).toBe(true);
+    await monitoringView.alertRoutingEditButton.click();
+    await crudView.isLoaded();
+
+    await firstElementByTestID('input-group-by').sendKeys(', cluster');
+    await firstElementByTestID('input-group-wait').clear();
+    await firstElementByTestID('input-group-wait').sendKeys('60s');
+    await firstElementByTestID('input-group-interval').clear();
+    await firstElementByTestID('input-group-interval').sendKeys('10m');
+    await firstElementByTestID('input-repeat-interval').clear();
+    await firstElementByTestID('input-repeat-interval').sendKeys('24h');
+
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+    expect(firstElementByTestID('group_by_value').getText()).toEqual('job, cluster');
+    expect(firstElementByTestID('group_wait_value').getText()).toEqual('60s');
+    expect(firstElementByTestID('group_interval_value').getText()).toEqual('10m');
+    expect(firstElementByTestID('repeat_interval_value').getText()).toEqual('24h');
+  });
+
+  it('creates PagerDuty Receiver correctly', async () => {
+    await crudView.isLoaded();
+    expect(firstElementByTestID('create-receiver').isPresent()).toBe(true);
+    await firstElementByTestID('create-receiver').click();
+    await crudView.isLoaded();
+
+    // these are hidden and disabled until receiverType selected
+    expect(firstElementByTestID('pagerduty-receiver-form').isPresent()).toBe(false);
+    expect(firstElementByTestID('receiver-routing-labels-editor').isPresent()).toBe(false);
+    expect(monitoringView.saveButton.isEnabled()).toBe(false);
+
+    expect(firstElementByTestID('receiver-name').isPresent()).toBe(true);
+    await firstElementByTestID('receiver-name').sendKeys('MyReceiver');
+
+    expect(firstElementByTestID('dropdown-button').isDisplayed()).toBe(true);
+    await firstElementByTestID('dropdown-button').click();
+    await crudView.isLoaded();
+
+    expect(firstElementByTestID('dropdown-menu').isDisplayed()).toBe(true);
+    await firstElementByTestID('dropdown-menu').click();
+    await crudView.isLoaded();
+
+    // these should be shown after receiverType selected
+    expect(firstElementByTestID('pagerduty-receiver-form').isPresent()).toBe(true);
+    expect(firstElementByTestID('receiver-routing-labels-editor').isPresent()).toBe(true);
+
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Routing Key');
+    await firstElementByTestID('integration-type-prometheus').click();
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
+    await firstElementByTestID('integration-key').sendKeys('<integration_key>');
+
+    expect(monitoringView.saveButton.isEnabled()).toBe(true); // should be enabled at this point
+
+    await firstElementByTestID('label-name-0').sendKeys('severity');
+    await firstElementByTestID('label-value-0').sendKeys('warning');
+
+    await monitoringView.saveButton.click();
+
+    await crudView.isLoaded();
+
+    monitoringView.getFirstRowAsText().then((text) => {
+      expect(text).toEqual('MyReceiver pagerduty severity = warning');
+    });
+  });
+
+  it('edits PagerDuty Receiver correctly', async () => {
+    await crudView.isLoaded();
+    expect(crudView.resourceRows.count()).toBe(2);
+    await monitoringView.clickFirstRowKebabAction('Edit Receiver');
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+    expect(firstElementByTestID('receiver-name').getAttribute('value')).toEqual('MyReceiver');
+    expect(firstElementByTestID('dropdown-button').getText()).toEqual('PagerDuty');
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
+    expect(firstElementByTestID('integration-key').getAttribute('value')).toEqual(
+      '<integration_key>',
+    );
+    expect(firstElementByTestID('label-name-0').getAttribute('value')).toEqual('severity');
+    expect(firstElementByTestID('label-value-0').getAttribute('value')).toEqual('warning');
+
+    // Edit Values
+
+    await firstElementByTestID('receiver-name').clear();
+    await firstElementByTestID('receiver-name').sendKeys('MyEditedReceiver');
+    await firstElementByTestID('label-name-0').clear();
+    await firstElementByTestID('label-name-0').sendKeys('cluster');
+    await firstElementByTestID('label-value-0').clear();
+    await firstElementByTestID('label-value-0').sendKeys('MyCluster');
+
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    monitoringView.getFirstRowAsText().then((text) => {
+      expect(text).toEqual('MyEditedReceiver pagerduty cluster = MyCluster');
+    });
+  });
+
+  it('deletes PagerDuty Receiver correctly', async () => {
+    await crudView.isLoaded();
+    expect(crudView.resourceRows.count()).toBe(2);
+
+    await monitoringView.clickFirstRowKebabAction('Delete Receiver');
+    await browser.wait(until.presenceOf(monitoringView.saveButton));
+    await monitoringView.saveButton.click();
+
+    await crudView.isLoaded();
+    expect(crudView.resourceRows.count()).toBe(1);
+  });
+
+  it('prevents deletion of default receiver', async () => {
+    await crudView.isLoaded();
+    await monitoringView.openFirstRowKebabMenu();
+    expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
+  });
+
+  it('prevents deletion and form edit of a receiver with sub-route', async () => {
+    // add receiver with sub-route
+    const yaml = `route:
+  routes:
+    - match:
+      service: database
+      receiver: team-DB-pager
+      routes:
+        - match:
+          owner: team-X
+          receiver: team-X-pager
+receivers:
+- name: 'team-X-pager'
+- name: 'team-DB-pager'`;
+
+    await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await crudView.isLoaded();
+    await firstElementByTestID('alert-manager-yaml-textarea').clear();
+    await firstElementByTestID('alert-manager-yaml-textarea').sendKeys(yaml);
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+    expect(monitoringView.successAlert.isPresent()).toBe(true);
+
+    await horizontalnavView.clickHorizontalTab('Overview');
+    await monitoringView.openFirstRowKebabMenu();
+    expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
+    expect(crudView.actionForLabel('Edit YAML').isPresent()).toBe(true); // should be 'Edit YAML' not 'Edit Receiver'
   });
 });

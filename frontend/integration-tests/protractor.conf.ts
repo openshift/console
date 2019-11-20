@@ -1,4 +1,4 @@
-import { Config, browser, logging } from 'protractor';
+import { Config, browser, logging, $ } from 'protractor';
 import { execSync } from 'child_process';
 import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
@@ -227,6 +227,8 @@ export const checkErrors = async () =>
       fail(`omg js error: ${err}`);
     }
   });
+
+export const firstElementByTestID = (id: string) => $(`[data-test-id=${id}]`);
 
 export const waitForCount = (elementArrayFinder, expectedCount) => {
   return async () => {

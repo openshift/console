@@ -35,7 +35,7 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
   };
 
   return (
-    <div className="co-m-pane__body--section-heading">
+    <div data-test-id="pagerduty-receiver-form" className="co-m-pane__body--section-heading">
       <SectionHeading text="PagerDuty Configuration" />
       <div className="form-group">
         <label className="control-label">Integration Type</label>
@@ -52,7 +52,7 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
           <RadioInput
             title="Prometheus"
             name="integrationType_Prometheus"
-            id="integration-type-prometheus"
+            data-test-id="integration-type-prometheus"
             value="prometheus"
             onChange={(e) => updatePagerDutyValues('integrationType', e.target.value)}
             checked={pagerDutyValues.integrationType === 'prometheus'}
@@ -61,7 +61,7 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required">
+        <label data-test-id="pagerduty-key-label" className="control-label co-required">
           {pagerDutyValues.integrationType === 'events' ? 'Routing' : 'Service'} Key
         </label>
         <input
@@ -69,11 +69,11 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
           type="text"
           aria-describedby="integration-key-help"
           name="integrationKey"
-          id="integration-key"
+          data-test-id="integration-key"
           value={pagerDutyValues.integrationKey}
           onChange={(e) => updatePagerDutyValues('integrationKey', e.target.value)}
         />
-        <div className="help-block" id="integration-key-help">
+        <div className="help-block" data-test-id="integration-key-help">
           PagerDuty integration key
         </div>
       </div>
@@ -82,18 +82,18 @@ const PagerDutySubForm = ({ pagerDutyValues, setPagerDutyValues }) => {
 };
 
 const WebhookSubForm = ({ webhookUrl, setWebhookUrl }) => (
-  <div className="form-group">
+  <div data-test-id="webhook-receiver-form" className="form-group">
     <label className="control-label co-required">URL</label>
     <input
       className="pf-c-form-control"
       type="text"
       aria-describedby="webhook-url-help"
       name="webhookUrl"
-      id="webhook-url"
+      data-test-id="webhook-url"
       value={webhookUrl}
       onChange={(e) => setWebhookUrl(e.target.value)}
     />
-    <div className="help-block" id="webhook-url-help">
+    <div className="help-block" data-test-id="webhook-url-help">
       The endpoint to send HTTP POST requests to
     </div>
   </div>
@@ -130,7 +130,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
   };
 
   return (
-    <div className="form-group">
+    <div data-test-id="receiver-routing-labels-editor" className="form-group">
       <label>Routing Labels</label>
       <p className="co-help-text">
         Firing alerts with labels that match all of these selectors will be sent to this receiver.
@@ -152,6 +152,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
                     <input
                       type="text"
                       className="pf-c-form-control"
+                      data-test-id={`label-name-${i}`}
                       onChange={onRoutingLabelChange(`${i}, name`)}
                       placeholder="Name"
                       value={routeLabel.name}
@@ -165,6 +166,7 @@ const RoutingLabels = ({ routeLabels, setRouteLabels, showAddLabel }) => {
                     <input
                       type="text"
                       className="pf-c-form-control"
+                      data-test-id={`label-value-${i}`}
                       onChange={onRoutingLabelChange(`${i}, value`)}
                       placeholder="Value"
                       value={routeLabel.value}
@@ -388,7 +390,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             onChange={(e) => setReceiverName(e.target.value)}
             aria-describedby="receiver-name-help"
             name="receiverName"
-            id="receiver-name"
+            data-test-id="receiver-name"
             required
           />
         </div>
@@ -398,7 +400,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             title={'Select Receiver Type...'}
             items={receiverTypes}
             dropDownClassName="dropdown--full-width"
-            id="receiver-type"
+            data-test-id="receiver-type"
             selectedKey={receiverType}
             onChange={setReceiverType}
           />
@@ -424,10 +426,20 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
         <ButtonBar errorMessage={errorMsg} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
-            <Button type="submit" variant="primary" id="save-changes" isDisabled={isFormInvalid}>
+            <Button
+              type="submit"
+              variant="primary"
+              data-test-id="save-changes"
+              isDisabled={isFormInvalid}
+            >
               {saveButtonText}
             </Button>
-            <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
+            <Button
+              type="button"
+              variant="secondary"
+              data-test-id="cancel"
+              onClick={history.goBack}
+            >
               Cancel
             </Button>
           </ActionGroup>

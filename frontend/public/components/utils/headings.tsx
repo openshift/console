@@ -161,7 +161,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
 });
 
 export const SectionHeading: React.SFC<SectionHeadingProps> = ({ text, children, style }) => (
-  <h2 className="co-section-heading" style={style}>
+  <h2 className="co-section-heading" style={style} data-test-section-heading={text}>
     {text}
     {children}
   </h2>

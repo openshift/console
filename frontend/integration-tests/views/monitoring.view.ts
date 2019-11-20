@@ -1,10 +1,10 @@
-import { $, $$, browser } from 'protractor';
+import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
+import * as crudView from '../views/crud.view';
 
 export const wait = async (condition) => await browser.wait(condition, 15000);
 
 // List pages
 export const listPageHeading = $('.co-m-pane__heading');
-export const firstListLinkById = (id: string) => $(`[data-test-id=${id}]`);
 export const createButton = $('.co-m-pane__filter-bar-group button');
 
 // Details pages
@@ -32,3 +32,34 @@ export const modalConfirmButton = $('#confirm-action');
 export const alertManagerYamlForm = $('.co-alert-manager-yaml__form');
 export const successAlert = $('.pf-m-success');
 export const helpText = $('.co-help-text');
+
+// Configuration Overview
+export const alertRoutingHeader = $('[data-test-section-heading="Alert Routing"]');
+export const alertRoutingEditButton = $('.co-alert-manager-config__edit-alert-routing-btn');
+export const disabledDeleteReceiverMenuItem = $(
+  '.pf-c-dropdown__menu-item.pf-m-disabled[data-test-action="Delete Receiver"]',
+);
+const firstRow = element.all(by.css(`[data-test-rows="resource-row"]`)).first();
+
+export const openFirstRowKebabMenu = () => {
+  return firstRow
+    .$('[data-test-id="kebab-button"]')
+    .click()
+    .then(() =>
+      browser.wait(until.elementToBeClickable(crudView.actionForLabel('Delete Receiver'))),
+    );
+};
+
+export const clickFirstRowKebabAction = (actionLabel: string) => {
+  return firstRow
+    .$('[data-test-id="kebab-button"]')
+    .click()
+    .then(() => browser.wait(until.elementToBeClickable(crudView.actionForLabel(actionLabel))))
+    .then(() => crudView.actionForLabel(actionLabel).click());
+};
+
+export const getFirstRowAsText = () => {
+  return firstRow.getText().then((text) => {
+    return text.replace(/[\n\r]/g, ' ');
+  });
+};

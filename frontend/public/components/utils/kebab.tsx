@@ -49,7 +49,11 @@ const KebabItemEnabled: React.FC<KebabItemProps> = ({ option, onClick, onEscape,
 };
 
 const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({ option }) => {
-  return <button className="pf-c-dropdown__menu-item pf-m-disabled">{option.label}</button>;
+  return (
+    <button className="pf-c-dropdown__menu-item pf-m-disabled" data-test-action={option.label}>
+      {option.label}
+    </button>
+  );
 };
 
 const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
