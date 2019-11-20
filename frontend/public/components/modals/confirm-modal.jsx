@@ -32,6 +32,7 @@ class ConfirmModal extends PromiseComponent {
           submitText={this.props.btnText || 'Confirm'}
           cancel={this._cancel}
           cancelText={this.props.cancelText || 'Cancel'}
+          submitDanger={this.props.submitDanger}
         />
       </form>
     );
@@ -45,6 +46,7 @@ ConfirmModal.propTypes = {
   executeFn: PropTypes.func.isRequired,
   message: PropTypes.node,
   title: PropTypes.node.isRequired,
+  submitDanger: PropTypes.bool,
 };
 
 export const confirmModal = createModalLauncher(ConfirmModal);
