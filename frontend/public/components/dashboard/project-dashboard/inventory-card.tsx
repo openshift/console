@@ -46,16 +46,20 @@ const ProjectInventoryItem = withDashboardResources(
     model,
     mapper,
     useAbbr,
-    additionalResources = [],
+    additionalResources,
   }: ProjectInventoryItemProps) => {
     React.useEffect(() => {
       if (projectName) {
         const resource = createFirehoseResource(model, projectName);
         watchK8sResource(resource);
-        additionalResources.forEach((r) => watchK8sResource({ ...r, namespace: projectName }));
+        if (additionalResources) {
+          additionalResources.forEach((r) => watchK8sResource({ ...r, namespace: projectName }));
+        }
         return () => {
           stopWatchK8sResource(resource);
-          additionalResources.forEach(stopWatchK8sResource);
+          if (additionalResources) {
+            additionalResources.forEach(stopWatchK8sResource);
+          }
         };
       }
     }, [watchK8sResource, stopWatchK8sResource, projectName, model, additionalResources]);
@@ -64,16 +68,22 @@ const ProjectInventoryItem = withDashboardResources(
     const resourceLoaded = _.get(resources.resource, 'loaded');
     const resourceLoadError = _.get(resources.resource, 'loadError');
 
-    const additionalResourcesData = additionalResources.reduce((acc, r) => {
-      acc[r.prop] = _.get(resources[r.prop], 'data');
-      return acc;
-    }, {});
+    const additionalResourcesData = additionalResources
+      ? additionalResources.reduce((acc, r) => {
+          acc[r.prop] = _.get(resources[r.prop], 'data');
+          return acc;
+        }, {})
+      : {};
     const additionalResourcesLoaded = additionalResources
-      .filter((r) => !r.optional)
-      .every((r) => _.get(resources[r.prop], 'loaded'));
+      ? additionalResources
+          .filter((r) => !r.optional)
+          .every((r) => _.get(resources[r.prop], 'loaded'))
+      : true;
     const additionalResourcesLoadError = additionalResources
-      .filter((r) => !r.optional)
-      .some((r) => !!_.get(resources[r.prop], 'loadError'));
+      ? additionalResources
+          .filter((r) => !r.optional)
+          .some((r) => !!_.get(resources[r.prop], 'loadError'))
+      : false;
 
     return (
       <ResourceInventoryItem
