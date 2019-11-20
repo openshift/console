@@ -189,7 +189,10 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
     <div className="overview__sidebar-pane-head resource-overview__heading">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name co-resource-item">
-          <ResourceIcon className="co-m-resource-icon--lg" kind={kindObj.kind} />
+          <ResourceIcon
+            className="co-m-resource-icon--lg"
+            kind={kindObj.crd ? referenceForModel(kindObj) : resource.kind}
+          />
           <Link
             to={resourcePath(
               kindObj.crd ? referenceForModel(kindObj) : resource.kind,

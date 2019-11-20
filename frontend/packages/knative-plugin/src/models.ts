@@ -1,3 +1,7 @@
+import {
+  chart_color_gold_500 as knativeServingColor,
+  chart_color_red_300 as knativeEventingColor,
+} from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 
@@ -15,6 +19,7 @@ export const ConfigurationModel: K8sKind = {
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
+  color: knativeServingColor.value,
 };
 
 export const KnativeServingModel: K8sKind = {
@@ -29,6 +34,7 @@ export const KnativeServingModel: K8sKind = {
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
+  color: knativeServingColor.value,
 };
 
 export const RevisionModel: K8sKind = {
@@ -43,6 +49,7 @@ export const RevisionModel: K8sKind = {
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
+  color: knativeServingColor.value,
 };
 
 export const RouteModel: K8sKind = {
@@ -57,6 +64,7 @@ export const RouteModel: K8sKind = {
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
+  color: knativeServingColor.value,
 };
 
 export const ServiceModel: K8sKind = {
@@ -71,6 +79,7 @@ export const ServiceModel: K8sKind = {
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
+  color: knativeServingColor.value,
 };
 
 export const EventSourceCronJobModel: K8sKind = {
@@ -84,6 +93,7 @@ export const EventSourceCronJobModel: K8sKind = {
   abbr: 'CJS',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
 
 export const EventSourceContainerModel: K8sKind = {
@@ -97,6 +107,7 @@ export const EventSourceContainerModel: K8sKind = {
   abbr: 'CS',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
 
 export const EventSourceApiServerModel: K8sKind = {
@@ -110,6 +121,7 @@ export const EventSourceApiServerModel: K8sKind = {
   abbr: 'AS',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
 
 export const EventSourceCamelModel: K8sKind = {
@@ -123,6 +135,7 @@ export const EventSourceCamelModel: K8sKind = {
   abbr: 'CS',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
 
 export const EventSourceKafkaModel: K8sKind = {
@@ -136,4 +149,5 @@ export const EventSourceKafkaModel: K8sKind = {
   abbr: 'KS',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };

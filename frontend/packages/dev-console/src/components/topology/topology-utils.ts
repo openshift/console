@@ -130,7 +130,7 @@ export const createTopologyNodeData = (
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
       url: getRoutesUrl(dc),
-      kind: deploymentConfig.kind,
+      kind: referenceFor(deploymentConfig),
       editUrl:
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
         getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),

@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, apiVersionForModel, DeploymentKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  apiVersionForModel,
+  DeploymentKind,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import {
   TransformResourceData,
   getResourcePausedAlert,
@@ -252,7 +257,7 @@ export const createTopologyServiceNodeData = (
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
       url: getRoutesUrl(svcRes),
-      kind: knativeSvc.kind,
+      kind: referenceFor(knativeSvc),
       editUrl:
         annotations['app.openshift.io/edit-url'] ||
         getEditURL(annotations['app.openshift.io/vcs-uri'], cheURL),
