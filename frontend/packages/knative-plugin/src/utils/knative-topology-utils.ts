@@ -251,7 +251,7 @@ export const createTopologyServiceNodeData = (
     resources: { ...svcRes },
     operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
     data: {
-      url: getRoutesUrl(svcRes.routes, _.get(svcRes, ['ksroutes'])),
+      url: getRoutesUrl(svcRes),
       kind: knativeSvc.kind,
       editUrl:
         annotations['app.openshift.io/edit-url'] ||

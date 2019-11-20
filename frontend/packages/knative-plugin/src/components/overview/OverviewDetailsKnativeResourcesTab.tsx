@@ -24,6 +24,7 @@ export type KnativeOverviewProps = {
 export type KnativeRevisionResourceProps = {
   ksroutes: K8sResourceKind[];
   configurations: K8sResourceKind[];
+  obj: K8sResourceKind;
 };
 export type KnativeServiceResourceProps = {
   obj: K8sResourceKind;
@@ -37,7 +38,9 @@ export type OverviewDetailsResourcesTabProps = {
 const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: OverviewItem) => {
   switch (obj.kind) {
     case RevisionModel.kind:
-      return <KnativeRevisionResources ksroutes={ksroutes} configurations={configurations} />;
+      return (
+        <KnativeRevisionResources ksroutes={ksroutes} obj={obj} configurations={configurations} />
+      );
     case ServiceModel.kind:
       return <KnativeServicesResources ksroutes={ksroutes} obj={obj} revisions={revisions} />;
     case EventSourceCronJobModel.kind:
@@ -64,10 +67,11 @@ const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabPr
 const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   ksroutes,
   configurations,
+  obj,
 }) => {
   return (
     <>
-      <KSRoutesOverviewList ksroutes={ksroutes} />
+      <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       <ConfigurationsOverviewList configurations={configurations} />
     </>
   );
@@ -81,7 +85,7 @@ const KnativeServicesResources: React.FC<KnativeServiceResourceProps> = ({
   return (
     <>
       <RevisionsOverviewList revisions={revisions} service={obj} />
-      <KSRoutesOverviewList ksroutes={ksroutes} />
+      <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
     </>
   );
 };
@@ -95,7 +99,7 @@ const KnativeOverview: React.FC<KnativeOverviewProps> = ({
   return (
     <>
       <RevisionsOverviewList revisions={revisions} service={obj} />
-      <KSRoutesOverviewList ksroutes={ksroutes} />
+      <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       <ConfigurationsOverviewList configurations={configurations} />
     </>
   );
