@@ -7,11 +7,11 @@ import {
   removeTopologyResourceConnection,
   updateTopologyResourceApplication,
 } from '../topology/topology-utils';
-import { TYPE_APPLICATION_GROUP } from './const';
+import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 
 const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
-    if (d.type === 'knative-service') {
+    if (d.type === TYPE_KNATIVE_SERVICE) {
       return {
         width: 104,
         height: 104,

@@ -7,6 +7,15 @@
   top: 0;
   bottom: 0;
 
+  &__layout-icon {
+    &.m-active {
+      color: var(--pf-global--active-color--400);
+    }
+    > svg {
+      margin-right: var(--pf-global--spacer--xs);
+    }
+  }
+
   // WORKAROUND: see https://github.com/patternfly/patternfly-react/issues/3312
   .pf-topology-container__with-sidebar {
     flex: 1;
