@@ -29,7 +29,7 @@ const NamespacedPage: React.FC<NamespacedPageProps> = ({
   <div className="odc-namespaced-page">
     <NamespaceBar disabled={disabled} onNamespaceChange={onNamespaceChange}>
       {!hideApplications && <ApplicationSelector disabled={disabled} />}
-      {toolbar && <div style={{ marginLeft: 'auto' }}>{toolbar}</div>}
+      {toolbar && <div className="odc-namespaced-page__toolbar">{toolbar}</div>}
     </NamespaceBar>
     <div
       className={cx('odc-namespaced-page__content', {

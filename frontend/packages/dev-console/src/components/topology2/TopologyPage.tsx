@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { matchPath, match as RMatch, Link } from 'react-router-dom';
-import { Tooltip } from '@patternfly/react-core';
-import { ListIcon, TopologyIcon } from '@patternfly/react-icons';
+import { Tooltip, Popover, Button } from '@patternfly/react-core';
+import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { StatusBox, Firehose, HintBlock, AsyncComponent } from '@console/internal/components/utils';
@@ -17,6 +17,7 @@ import { getCheURL } from '../topology/topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from '../topology/TopologyDataController';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import Topology from './Topology';
+import TopologyShortcuts from './TopologyShortcuts';
 import './TopologyPage.scss';
 
 interface StateProps {
@@ -77,6 +78,7 @@ const TopologyPage: React.FC<Props> = ({
     path: '*/list',
     exact: true,
   });
+
   return (
     <>
       <Helmet>
@@ -86,16 +88,35 @@ const TopologyPage: React.FC<Props> = ({
         variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
         hideApplications={showListView}
         toolbar={
-          <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
-            <Link
-              className="pf-c-button pf-m-plain"
-              to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                showListView ? '' : '/list'
-              }`}
-            >
-              {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-            </Link>
-          </Tooltip>
+          <>
+            {!showListView && namespace && (
+              <Popover
+                aria-label="Shortcuts"
+                bodyContent={TopologyShortcuts}
+                position="left"
+                maxWidth="100vw"
+              >
+                <Button
+                  type="button"
+                  variant="link"
+                  className="odc-topology__shortcuts-button"
+                  icon={<QuestionCircleIcon />}
+                >
+                  Shortcuts
+                </Button>
+              </Popover>
+            )}
+            <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
+              <Link
+                className="pf-c-button pf-m-plain"
+                to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
+                  showListView ? '' : '/list'
+                }`}
+              >
+                {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
+              </Link>
+            </Tooltip>
+          </>
         }
       >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
