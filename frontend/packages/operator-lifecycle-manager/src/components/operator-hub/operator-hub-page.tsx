@@ -29,10 +29,11 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     'data',
     [] as PackageManifestKind[],
   );
-  const localItems = _.get(props.packageManifest, 'data', [] as PackageManifestKind[]);
+  const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]);
   const items: OperatorHubItem[] = marketplaceItems.concat(localItems).map(
     (pkg): OperatorHubItem => {
-      const { currentCSVDesc } = _.get(pkg, 'status.channels[0]', {});
+      const { channels, defaultChannel } = _.get(pkg, 'status');
+      const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
       const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
         currentCSVDesc,
         'annotations',
