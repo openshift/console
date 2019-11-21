@@ -137,7 +137,7 @@ export const filterRevisionsBaseOnTrafficStatus = (
   resource: K8sResourceKind,
   revisions: K8sResourceKind[],
 ): K8sResourceKind[] => {
-  if (!revisions || !resource.status.traffic) return undefined;
+  if (!_.get(resource, 'status.traffic', null)) return undefined;
   return resource.status.traffic.reduce((acc, curr) => {
     const el = revisions.find((rev) => curr.revisionName === rev.metadata.name);
     return el ? [...acc, el] : acc;
