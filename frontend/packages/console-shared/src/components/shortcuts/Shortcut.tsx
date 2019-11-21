@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { MouseIcon } from '@patternfly/react-icons';
 import './Shortcut.scss';
 
@@ -7,10 +8,10 @@ interface ShortcutProps {
   alt?: boolean;
   click?: boolean;
   ctrl?: boolean;
+  ctrlCmd?: boolean;
   drag?: boolean;
   hover?: boolean;
   keyName?: string;
-  macCtrl?: boolean;
   rightClick?: boolean;
   shift?: boolean;
 }
@@ -23,30 +24,34 @@ const Command: React.FC = ({ children }) => (
 
 const Shortcut: React.FC<ShortcutProps> = ({
   children,
-  ctrl,
-  shift,
   alt,
-  keyName,
-  drag,
   click,
-  rightClick,
+  ctrl,
+  ctrlCmd,
+  drag,
   hover,
-  macCtrl,
+  keyName,
+  rightClick,
+  shift,
 }) => {
   const isMac = window.navigator.platform.includes('Mac');
   return (
     <tr>
       <td className="ocs-shortcut__cell">
-        {((!isMac && ctrl) || macCtrl) && <Command>Ctrl</Command>}
+        {(ctrl || (!isMac && ctrlCmd)) && <Command>Ctrl</Command>}
         {alt && <Command>{isMac ? '⌥ Opt' : 'Alt'}</Command>}
         {shift && <Command>Shift</Command>}
-        {isMac && ctrl && <Command>⌘ Cmd</Command>}
+        {isMac && ctrlCmd && <Command>⌘ Cmd</Command>}
         {hover && (
           <Command>
             <MouseIcon /> Hover
           </Command>
         )}
-        {keyName && <Command>{keyName.toUpperCase()}</Command>}
+        {keyName && (
+          <Command>
+            {keyName.length === 1 ? keyName.toUpperCase() : _.startCase(keyName.toLowerCase())}
+          </Command>
+        )}
         {drag && (
           <Command>
             <MouseIcon /> Drag
