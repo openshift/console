@@ -113,7 +113,7 @@ export const BuildLogLink = ({ build }) => {
   return isPipeline ? (
     <BuildPipelineLogLink obj={build} />
   ) : (
-    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>View Logs</Link>
+    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>View logs</Link>
   );
 };
 

@@ -31,7 +31,7 @@ const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
                   resourcesData[0],
                 )}&q=${encodeURIComponent(`app.kubernetes.io/part-of=${group}`)}`}
               >
-                {`View All (${_.size(resourcesData)})`}
+                {`View all (${_.size(resourcesData)})`}
               </Link>
             )}
           </SidebarSectionHeading>

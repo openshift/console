@@ -37,7 +37,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
             className="sidebar__section-view-all"
             to={`${resourcePath(referenceForModel(PipelineModel), name, namespace)}/Runs`}
           >
-            {`View All (${pipelineRuns.length})`}
+            {`View all (${pipelineRuns.length})`}
           </Link>
         )}
       </SidebarSectionHeading>

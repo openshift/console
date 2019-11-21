@@ -47,7 +47,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
             <>
               Update available.{' '}
               <Link to="/settings/cluster" onClick={closeAboutModal}>
-                View Cluster Settings
+                View cluster settings
               </Link>
             </>
           }
@@ -62,7 +62,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
                 <div className="co-select-to-copy">{openshiftVersion}</div>
                 {errataLink && (
                   <div>
-                    <ExternalLink text="View Errata" href={errataLink} />
+                    <ExternalLink text="View errata" href={errataLink} />
                   </div>
                 )}
               </TextListItem>
