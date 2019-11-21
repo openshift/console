@@ -71,13 +71,28 @@ const filterSelected = (list: BackingStoreStateType[], tableId: number) => {
   return list.filter((e) => e.selectedBy === tableId || e.selectedBy === '').sort(sort);
 };
 
-const getTableRows = (list: K8sResourceKind[]) => {
+const findInTier = (tier: string[], name: string) => tier.find((elem) => elem === name);
+
+const isSelectedBy = (bs: K8sResourceKind, tier1: string[], tier2: string[]): number => {
+  if (tier1.length) {
+    const searchTier1 = findInTier(tier1, bs?.metadata?.name);
+    if (searchTier1) return 0;
+  } else if (tier2.length) {
+    const searchTier2 = findInTier(tier2, bs?.metadata?.name);
+    if (searchTier2) return 1;
+  }
+  return -1;
+};
+
+const getTableRows = (list: K8sResourceKind[], state: State) => {
+  const { tier1BackingStore, tier2BackingStore } = state;
   return list.reduce((acc, bs) => {
     const type: string = nameMap[_.get(bs, 'spec.type')];
+    const selectedBy: number = isSelectedBy(bs, tier1BackingStore, tier2BackingStore);
     const obj = {
-      selected: false,
+      selected: selectedBy > -1,
       id: bs.metadata.name,
-      selectedBy: '',
+      selectedBy: selectedBy > -1 ? selectedBy : '',
       cells: [
         {
           title: (
@@ -134,7 +149,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
     };
 
     React.useEffect(() => {
-      const stores = getTableRows(backingStoreData);
+      const stores = getTableRows(backingStoreData, state);
       dispatcher({ type: 'setBackingStores', value: stores });
       // eslint-disable-next-line
     }, [JSON.stringify(backingStoreData), dispatcher]);
