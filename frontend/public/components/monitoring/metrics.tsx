@@ -180,11 +180,13 @@ const headerPrometheusLinkStateToProps = ({ UI }: RootState, { urls }) => {
   };
 };
 
-const HeaderPrometheusLink_ = ({ url }) => (
-  <span className="monitoring-header-link">
-    <ExternalLink href={url} text="Prometheus UI" />
-  </span>
-);
+const HeaderPrometheusLink_ = ({ url }) => {
+  return url ? (
+    <span className="monitoring-header-link">
+      <ExternalLink href={url} text="Prometheus UI" />
+    </span>
+  ) : null;
+};
 const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(
   connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_),
 );
