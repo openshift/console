@@ -188,7 +188,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
                 <DetailItem
                   title="Update channel"
                   isLoading={!clusterVersionLoaded && !clusterVersionError}
-                  error={!!clusterVersionError || (clusterVersionData && !cvChannel)}
+                  error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
                   valueClassName="co-select-to-copy"
                 >
                   {cvChannel}
