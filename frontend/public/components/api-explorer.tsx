@@ -601,7 +601,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           The following subjects can {verb} {plural}
           {namespaced && namespace && <> in namespace {namespace}</>}
           {namespaced && !namespace && <> in all namespaces</>}
-          {namespaced && <> at the cluster scope</>}.
+          {!namespaced && <> at the cluster scope</>}.
         </p>
         <Table
           EmptyMsg={EmptyAccessReviewMsg}
