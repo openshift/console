@@ -7,7 +7,7 @@ import {
   InputField,
   DropdownField,
 } from '@console/shared/src/components/formik-fields';
-import { FormFooter } from '../form-utils';
+import { FormFooter } from '@console/shared/src/components/form-utils';
 
 enum accessRoles {
   '' = 'Select a role',

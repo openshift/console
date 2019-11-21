@@ -7,7 +7,7 @@ import {
   TextAreaField,
   SwitchField,
 } from '@console/shared/src/components/formik-fields';
-import { FormFooter } from '@console/dev-console/src/components/form-utils';
+import { FormFooter } from '@console/shared/src/components/form-utils';
 import { AddBareMetalHostFormValues } from './types';
 
 type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues>;
