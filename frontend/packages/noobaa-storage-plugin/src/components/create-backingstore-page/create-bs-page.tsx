@@ -28,52 +28,55 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
   }, [appName, ns]);
 
   return (
-    <div className="nb-bs-page">
-      <div className="nb-bs-page__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: _.get(
-                clusterServiceVersion,
-                'spec.displayName',
-                'Openshift Container Storage Operator',
-              ),
-              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-            },
-            { name: `Create ${NooBaaBackingStoreModel.label}`, path: match.url },
-          ]}
+    <>
+      <div className="co-create-operand__header">
+        <div className="co-create-operand__header-buttons">
+          <BreadCrumbs
+            breadcrumbs={[
+              {
+                name: _.get(
+                  clusterServiceVersion,
+                  'spec.displayName',
+                  'Openshift Container Storage Operator',
+                ),
+                path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              },
+              { name: `Create ${NooBaaBackingStoreModel.label}`, path: match.url },
+            ]}
+          />
+        </div>
+        <div className="nb-bs-page-title">
+          <Title size="2xl" headingLevel="h1" className="nb-bs-page-title__main">
+            Create new BackingStore
+          </Title>
+          <p className="nb-bs-page-title__info">
+            Storage targets that are used to store chunks of data on MCG buckets.
+          </p>
+        </div>
+      </div>
+      <div className="nb-bs-page">
+        {showHelp && (
+          <Alert
+            isInline
+            variant="info"
+            title="What is a BackingStore?"
+            action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+          >
+            BackingStore represent a storage target to be used as the underlying storage for the
+            data in MCG buckets.
+            <br />
+            Multiple types of backing-stores are supported: aws-s3, s3-compataible,
+            google-cloud-storage, azure-blob, obc, PVC.
+          </Alert>
+        )}
+        <CreateBackingStoreForm
+          cancel={onCancel}
+          isPage
+          namespace={ns}
+          className="nb-bs-page-form__short"
         />
       </div>
-      <div className="nb-bs-page-title">
-        <Title size="2xl" headingLevel="h1" className="nb-bs-page-title__main">
-          Create new BackingStore
-        </Title>
-        <p className="nb-bs-page-title__info">
-          Storage targets that are used to store chunks of data on MCG buckets.
-        </p>
-      </div>
-      {showHelp && (
-        <Alert
-          isInline
-          variant="info"
-          title="What is a BackingStore?"
-          action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
-        >
-          BackingStore represent a storage target to be used as the underlying storage for the data
-          in MCG buckets.
-          <br />
-          Multiple types of backing-stores are supported: aws-s3, s3-compataible,
-          google-cloud-storage, azure-blob, obc, PVC.
-        </Alert>
-      )}
-      <CreateBackingStoreForm
-        csv={clusterServiceVersion}
-        cancel={onCancel}
-        isPage
-        namespace={ns}
-        className="nb-bs-page-form__short"
-      />
-    </div>
+    </>
   );
 };
 
