@@ -710,10 +710,10 @@ const EditYAML_ = connect(stateToProps)(
                           aria-label="Shortcuts"
                           bodyContent={
                             <ShortcutTable>
-                              <Shortcut macCtrl keyName="space">
+                              <Shortcut ctrl keyName="space">
                                 Use Ctrl + Space to activate auto complete.
                               </Shortcut>
-                              <Shortcut ctrl shift keyName="o">
+                              <Shortcut ctrlCmd shift keyName="o">
                                 Use Shift + {isMac ? 'Command' : 'Ctrl'} + O for document outlining.
                               </Shortcut>
                               <Shortcut hover>
