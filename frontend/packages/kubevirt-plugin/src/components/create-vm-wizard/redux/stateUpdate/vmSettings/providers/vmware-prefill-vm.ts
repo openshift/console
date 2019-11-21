@@ -34,8 +34,8 @@ import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../constants/v2v';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit } from '../../../../../form/size-unit-form-row';
 import { getStringEnumValues } from '../../../../../../utils/types';
+import { BinaryUnit } from '../../../../../form/size-unit-utils';
 
 const convert = (value: number, unit: BinaryUnit) => {
   const units = getStringEnumValues<BinaryUnit>(BinaryUnit);

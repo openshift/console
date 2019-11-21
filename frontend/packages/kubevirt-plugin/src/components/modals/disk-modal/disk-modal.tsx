@@ -36,9 +36,10 @@ import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DiskBus, DiskType } from '../../../constants/vm/storage';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
-import { SizeUnitFormRow, BinaryUnit } from '../../form/size-unit-form-row';
+import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { BinaryUnit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {

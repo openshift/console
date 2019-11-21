@@ -5,16 +5,9 @@ import { prefixedID } from '../../utils';
 import { getStringEnumValues } from '../../utils/types';
 import { FormRow } from './form-row';
 import { Integer } from './integer/integer';
+import { BinaryUnit, toIECUnit } from './size-unit-utils';
 
 import './size-unit-form-row.scss';
-
-export enum BinaryUnit {
-  B = 'B',
-  Ki = 'Ki',
-  Mi = 'Mi',
-  Gi = 'Gi',
-  Ti = 'Ti',
-}
 
 type SizeUnitFormRowProps = {
   size: string;
@@ -67,7 +60,7 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
           isDisabled={isDisabled}
         >
           {(units || getStringEnumValues<BinaryUnit>(BinaryUnit)).map((u) => (
-            <FormSelectOption key={u} value={u} label={u} />
+            <FormSelectOption key={u} value={u} label={toIECUnit(u)} />
           ))}
         </FormSelect>
       </SplitItem>
