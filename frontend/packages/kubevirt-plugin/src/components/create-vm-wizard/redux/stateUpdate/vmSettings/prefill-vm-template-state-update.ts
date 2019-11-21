@@ -10,7 +10,11 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../types';
-import { iGetLoadedCommonData, iGetName } from '../../../selectors/immutable/selectors';
+import {
+  iGetCommonData,
+  iGetLoadedCommonData,
+  iGetName,
+} from '../../../selectors/immutable/selectors';
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../../utils/immutable';
 import { iGetNetworks } from '../../../selectors/immutable/networks';
 import { podNetwork } from '../../initial-state/networks-tab-initial-state';
@@ -59,6 +63,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
 
   const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const isProviderImport = iGetCommonData(state, id, VMWizardProps.isProviderImport);
 
   const iUserTemplate =
     userTemplateName && iUserTemplates
@@ -68,10 +73,11 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   let isCloudInitForm = null;
   const vmSettingsUpdate = {
     // ensure the the form is reset when "None" template is selected
-    [VMSettingsField.FLAVOR]: { value: '' },
-    [VMSettingsField.OPERATING_SYSTEM]: { value: '' },
-    [VMSettingsField.WORKLOAD_PROFILE]: { value: '' },
-    [VMSettingsField.PROVISION_SOURCE_TYPE]: { value: '' },
+    [VMSettingsField.FLAVOR]: { value: null },
+    [VMSettingsField.OPERATING_SYSTEM]: { value: null },
+    [VMSettingsField.WORKLOAD_PROFILE]: { value: null },
+    [VMSettingsField.PROVISION_SOURCE_TYPE]: { value: isProviderImport ? undefined : null },
+    [VMSettingsField.HOSTNAME]: { value: null },
   };
 
   // filter out oldTemplates

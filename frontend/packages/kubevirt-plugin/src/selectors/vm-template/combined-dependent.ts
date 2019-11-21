@@ -18,7 +18,7 @@ import {
 } from './advanced';
 
 const getLabel = (labelPrefix: string, value: string) => {
-  if (value == null) {
+  if (!value) {
     return undefined;
   }
   return `${labelPrefix}/${_.get(value, 'id') || value}`;
