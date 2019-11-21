@@ -21,7 +21,7 @@ export const MarkAsSchedulable: KebabAction = (
   kind: K8sKind,
   obj: NodeKind,
   resources: {},
-  { nodeMaintenance }, // NOTE: used by node actions in metal3-plugin
+  { nodeMaintenance } = { nodeMaintenance: false }, // NOTE: used by node actions in metal3-plugin
 ) => ({
   label: 'Mark as Schedulable',
   hidden: !isNodeUnschedulable(obj) || nodeMaintenance,
