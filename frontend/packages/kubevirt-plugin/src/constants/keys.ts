@@ -1,5 +1,6 @@
 export const KEY_CODES = {
   BACKSPACE: 8,
+  TAB: 9,
   SHIFT: 16,
   LEFT_KEY: 37,
   RIGHT_KEY: 39,
@@ -19,6 +20,7 @@ export const KEY_CODES = {
 
 export const INPUT_NAVIGATION_KEYS = [
   KEY_CODES.BACKSPACE,
+  KEY_CODES.TAB,
   KEY_CODES.SHIFT,
   KEY_CODES.LEFT_KEY,
   KEY_CODES.RIGHT_KEY,

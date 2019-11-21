@@ -3,7 +3,7 @@
 import { ValueEnum, VolumeType } from '../../../constants';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
-import { BinaryUnit } from '../../form/size-unit-form-row';
+import { BinaryUnit } from '../../form/size-unit-utils';
 
 export class StorageUISource extends ValueEnum<string> {
   static readonly BLANK = new StorageUISource(

@@ -10,6 +10,7 @@ import {
   WizardStep,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
+import { Prompt } from 'react-router';
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
 import { getDialogUIError } from '../../utils/strings';
 import { ALL_VM_WIZARD_TABS, VMWizardProps, VMWizardTab } from './types';
@@ -17,9 +18,14 @@ import {
   hasStepAllRequiredFilled,
   isStepLocked,
   isStepValid,
+  isWizardEmpty,
 } from './selectors/immutable/wizard-selectors';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { getCreateVMLikeEntityLabel, REVIEW_AND_CREATE } from './strings/strings';
+import {
+  getCreateVMLikeEntityLabel,
+  REVIEW_AND_CREATE,
+  WIZARD_CLOSE_PROMPT,
+} from './strings/strings';
 
 import './create-vm-wizard-footer.scss';
 
@@ -33,11 +39,13 @@ type WizardContext = {
 type CreateVMWizardFooterComponentProps = {
   stepData: any;
   isCreateTemplate: boolean;
+  isProviderImport: boolean;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
   stepData,
   isCreateTemplate,
+  isProviderImport,
 }) => {
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
   return (
@@ -58,6 +66,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 
         return (
           <footer className={css(styles.wizardFooter)}>
+            <Prompt
+              message={(location) => {
+                if (location.pathname.endsWith('/~new-wizard')) {
+                  return false; // do not allow routing inside the wizard (used mainly by sorting)
+                }
+                if (isLastStep || isWizardEmpty(stepData, isProviderImport)) {
+                  return true;
+                }
+                return WIZARD_CLOSE_PROMPT;
+              }}
+            />
             {!isValid && showError && (
               <Alert
                 title={getDialogUIError(hasStepAllRequiredFilled(stepData, activeStepID))}
@@ -116,7 +135,18 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
               </Button>
             )}
             {!activeStep.hideCancelButton && (
-              <Button variant={ButtonVariant.link} onClick={() => onClose()}>
+              <Button
+                variant={ButtonVariant.link}
+                onClick={() => {
+                  if (
+                    isLastStep ||
+                    isWizardEmpty(stepData, isProviderImport) ||
+                    window.confirm(WIZARD_CLOSE_PROMPT) // eslint-disable-line no-alert
+                  ) {
+                    onClose();
+                  }
+                }}
+              >
                 Cancel
               </Button>
             )}
@@ -130,6 +160,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 const stateToProps = (state, { wizardReduxID }) => ({
   stepData: iGetCreateVMWizardTabs(state, wizardReduxID),
   isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
+  isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
 });
 
 export const CreateVMWizardFooter = connect(stateToProps)(CreateVMWizardFooterComponent);
