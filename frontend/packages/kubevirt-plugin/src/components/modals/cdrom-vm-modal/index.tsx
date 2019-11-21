@@ -7,9 +7,13 @@ import { VMLikeEntityKind } from '../../../types';
 import { asVM } from '../../../selectors/vm';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { CDRomModal } from './cdrom-modal';
+import { WINTOOLS_CONTAINER_NAMES } from './constants';
 
 const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
   const { vmLikeEntity } = props;
+
+  const winToolsContainer =
+    WINTOOLS_CONTAINER_NAMES[window.SERVER_FLAGS.branding] || WINTOOLS_CONTAINER_NAMES.okd;
 
   const resources = [
     {
@@ -27,7 +31,7 @@ const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
 
   return (
     <Firehose resources={resources}>
-      <CDRomModal {...props} />
+      <CDRomModal winToolsContainer={winToolsContainer} {...props} />
     </Firehose>
   );
 };

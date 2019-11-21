@@ -26,9 +26,14 @@ export type CDMap = {
 
 export const CD_SIZE = 'size';
 export const CD_STORAGE_CLASS = 'storageClass';
+
 export const WINTOOLS_CONTAINER_NAMES = {
-  downstream: 'virtio-win-container',
-  upstream: 'kubevirt/virtio-container-disk',
+  openshift: 'virtio-win-container',
+  ocp: 'virtio-win-container',
+  online: 'virtio-win-container',
+  dedicated: 'virtio-win-container',
+  azure: 'virtio-win-container',
+  okd: 'kubevirt/virtio-container-disk',
 };
 
 export const initialDisk = {
