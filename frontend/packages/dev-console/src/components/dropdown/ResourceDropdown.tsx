@@ -76,7 +76,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
     const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
     this.setState({ items: resourceList });
-    if (nextProps.loaded && !this.props.loaded && onLoad) {
+    if (nextProps.loaded && onLoad) {
       onLoad(resourceList);
     }
   }
