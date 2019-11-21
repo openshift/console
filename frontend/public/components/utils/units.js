@@ -226,7 +226,7 @@ export const humanizeCpuCores = (v) => {
 
 export const humanizeCpuCoresLong = (v) => {
   const humanized = humanizeCpuCores(v);
-  const transformedUnit = humanized.unit === 'm' ? ' millicores' : ' cores';
+  const transformedUnit = humanized.unit === ' m' ? ' millicores' : ' cores';
   return {
     ...humanized,
     string: `${formatValue(humanized.value)}${transformedUnit}`,

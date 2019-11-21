@@ -44,6 +44,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   formatDate = twentyFourHourTime,
   height = DEFAULT_HEIGHT,
   humanize = humanizeNumber,
+  humanizeLong,
   loading = true,
   padding,
   query,
@@ -73,9 +74,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     humanize,
     unit,
   ]);
+  const humanizeLabel = humanizeLong || humanize;
   const getLabel = React.useCallback(
-    ({ datum: { x, y } }) => `${humanize(y, unit, unit).string} at ${formatDate(x)}`,
-    [humanize, unit, formatDate],
+    ({ datum: { x, y } }) => `${humanizeLabel(y, unit, unit).string} at ${formatDate(x)}`,
+    [humanizeLabel, unit, formatDate],
   );
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
@@ -129,6 +131,7 @@ type AreaChartProps = {
   className?: string;
   formatDate?: (date: Date) => string;
   humanize?: Humanize;
+  humanizeLong?: Humanize;
   height?: number;
   loading?: boolean;
   query?: string;

@@ -47,6 +47,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         query={query}
         xAxis={false}
         humanize={humanizeValueCompact || humanizeValue}
+        humanizeLong={humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={70}
         chartStatus={chartStatus}

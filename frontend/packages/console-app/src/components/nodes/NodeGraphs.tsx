@@ -6,6 +6,7 @@ import {
   humanizeBinaryBytes,
   humanizeCpuCoresLong,
   humanizeDecimalBytesPerSec,
+  humanizeCpuCores,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getNodeAddresses } from '@console/shared';
@@ -36,7 +37,8 @@ const NodeGraphs: React.FC<NodeGraphsProps> = ({ node }) => {
         <div className="col-md-12 col-lg-4">
           <Area
             title="CPU Usage"
-            humanize={humanizeCpuCoresLong}
+            humanize={humanizeCpuCores}
+            humanizeLong={humanizeCpuCoresLong}
             query={`instance:node_cpu:rate:sum${instanceQuery}`}
           />
         </div>

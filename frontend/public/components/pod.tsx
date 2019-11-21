@@ -34,6 +34,7 @@ import {
   pluralize,
   units,
   humanizeCpuCoresLong,
+  humanizeCpuCores,
 } from './utils';
 import { PodLogs } from './pod-logs';
 import { requirePrometheus, Area } from './graphs';
@@ -250,7 +251,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
       <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
-          humanize={humanizeCpuCoresLong}
+          humanize={humanizeCpuCores}
+          humanizeLong={humanizeCpuCoresLong}
           namespace={pod.metadata.namespace}
           query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${
             pod.metadata.namespace
