@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -38,6 +38,7 @@ import {
   ClusterServiceVersionModel,
   InstallPlanModel,
   OperatorGroupModel,
+  CatalogSourceModel,
 } from '../models';
 import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { requireOperatorGroup } from './operator-group';
@@ -197,6 +198,16 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
   );
 });
 
+const getCatalogSources = (
+  installPlan: InstallPlanKind,
+): { sourceName: string; sourceNamespace: string }[] =>
+  _.reduce(
+    _.get(installPlan, 'status.plan') || [],
+    (accumulator, { resource: { sourceName, sourceNamespace } }) =>
+      accumulator.add(fromJS({ sourceName, sourceNamespace })),
+    ImmutableSet(),
+  ).toJS();
+
 export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
   const namespace = _.get(props.match, 'params.ns');
   return (
@@ -278,8 +289,15 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
                   </dd>
                 ))}
                 <dt>Catalog Sources</dt>
-                {(_.get(obj, 'status.catalogSources') || []).map((catalogName) => (
-                  <dd key={catalogName}>{catalogName}</dd>
+                {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
+                  <dd key={`${sourceNamespace}-${sourceName}`}>
+                    <ResourceLink
+                      kind={referenceForModel(CatalogSourceModel)}
+                      name={sourceName}
+                      namespace={sourceNamespace}
+                      title={sourceName}
+                    />
+                  </dd>
                 ))}
               </dl>
             </div>
