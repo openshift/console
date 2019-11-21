@@ -4,7 +4,7 @@ import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 import { ExtPodKind } from '../../types';
 import { calculateRadius, podStatus, getPodStatus } from '../../utils';
-import { podColor } from '../../constants';
+import { podColor, AllPodStatus } from '../../constants';
 import './PodStatus.scss';
 
 const ANIMATION_DURATION = 350;
@@ -38,9 +38,10 @@ const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // 
 
 const podStatusIsNumeric = (podStatusValue: string) => {
   return (
-    podStatusValue !== 'Scaled to 0' &&
-    podStatusValue !== 'Autoscaled to 0' &&
-    podStatusValue !== 'Idle'
+    podStatusValue !== AllPodStatus.ScaledTo0 &&
+    podStatusValue !== AllPodStatus.AutoScaledTo0 &&
+    podStatusValue !== AllPodStatus.Idle &&
+    podStatusValue !== AllPodStatus.ScalingUp
   );
 };
 
@@ -73,13 +74,12 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
     }));
 
     if (_.isEmpty(data)) {
-      _.update(vData, `[${_.findKey(vData, { x: 'Scaled to 0' })}]['y']`, () => 1);
+      _.update(vData, `[${_.findKey(vData, { x: AllPodStatus.ScaledTo0 })}]['y']`, () => 1);
     }
 
     // Determine if we have moved to just 1 data point left
     const prevDataPoints = _.size(_.filter(prevState.vData, (nextData) => nextData.y !== 0));
     const dataPoints = _.size(_.filter(vData, (nextData) => nextData.y !== 0));
-
     return { vData, updateOnEnd: dataPoints === 1 && prevDataPoints > 1 };
   }
 
