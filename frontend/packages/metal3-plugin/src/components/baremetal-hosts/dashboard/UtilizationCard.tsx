@@ -131,14 +131,14 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           humanize={humanizeCpuCores}
           consumers={[
             {
-              query: topConsumerQueries[HostQuery.PODS_BY_CPU],
-              model: PodModel,
-              metric: 'pod',
-            },
-            {
               query: topConsumerQueries[HostQuery.PROJECTS_BY_CPU],
               model: ProjectModel,
               metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_CPU],
+              model: PodModel,
+              metric: 'pod',
             },
           ]}
         />
@@ -157,14 +157,14 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           humanize={humanizeBinaryBytes}
           consumers={[
             {
-              query: topConsumerQueries[HostQuery.PODS_BY_MEMORY],
-              model: PodModel,
-              metric: 'pod',
-            },
-            {
               query: topConsumerQueries[HostQuery.PROJECTS_BY_MEMORY],
               model: ProjectModel,
               metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_MEMORY],
+              model: PodModel,
+              metric: 'pod',
             },
           ]}
         />
@@ -183,14 +183,14 @@ const UtilizationCard: React.FC<UtilizationCardProps> = ({
           humanize={humanizeBinaryBytes}
           consumers={[
             {
-              query: topConsumerQueries[HostQuery.PODS_BY_STORAGE],
-              model: PodModel,
-              metric: 'pod',
-            },
-            {
               query: topConsumerQueries[HostQuery.PROJECTS_BY_STORAGE],
               model: ProjectModel,
               metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_STORAGE],
+              model: PodModel,
+              metric: 'pod',
             },
           ]}
         />

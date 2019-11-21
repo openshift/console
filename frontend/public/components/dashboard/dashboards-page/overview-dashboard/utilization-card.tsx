@@ -30,6 +30,11 @@ const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 const cpuQueriesPopup = [
   {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_CPU],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
+  {
     query: top25ConsumerQueries[OverviewQuery.PODS_BY_CPU],
     model: PodModel,
     metric: 'pod',
@@ -39,14 +44,14 @@ const cpuQueriesPopup = [
     model: NodeModel,
     metric: 'instance',
   },
-  {
-    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_CPU],
-    model: ProjectModel,
-    metric: 'namespace',
-  },
 ];
 
 const memQueriesPopup = [
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
   {
     query: top25ConsumerQueries[OverviewQuery.PODS_BY_MEMORY],
     model: PodModel,
@@ -57,14 +62,14 @@ const memQueriesPopup = [
     model: NodeModel,
     metric: 'instance',
   },
-  {
-    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
-    model: ProjectModel,
-    metric: 'namespace',
-  },
 ];
 
 const storageQueriesPopup = [
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
   {
     query: top25ConsumerQueries[OverviewQuery.PODS_BY_STORAGE],
     model: PodModel,
@@ -74,11 +79,6 @@ const storageQueriesPopup = [
     query: top25ConsumerQueries[OverviewQuery.NODES_BY_STORAGE],
     model: NodeModel,
     metric: 'instance',
-  },
-  {
-    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
-    model: ProjectModel,
-    metric: 'namespace',
   },
 ];
 
