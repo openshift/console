@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '../../formik-fields';
+import { InputField } from '@console/shared/src/components/formik-fields';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
-import { getFieldId } from '../../formik-fields/field-utils';
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 export const UNASSIGNED_KEY = '#UNASSIGNED_KEY#';

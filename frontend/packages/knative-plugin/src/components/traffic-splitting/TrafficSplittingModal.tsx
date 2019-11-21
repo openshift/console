@@ -10,7 +10,7 @@ import {
   MultiColumnField,
   InputField,
   DropdownField,
-} from '@console/dev-console/src/components/formik-fields';
+} from '@console/shared/src/components/formik-fields';
 
 export interface TrafficSplittingModalProps {
   revisionItems: any;

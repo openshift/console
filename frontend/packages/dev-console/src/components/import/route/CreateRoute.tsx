@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField, DropdownField } from '../../formik-fields';
+import { InputField, DropdownField } from '@console/shared/src/components/formik-fields';
 import { makePortName } from '../../../utils/imagestream-utils';
 
 const CreateRoute: React.FC = () => {

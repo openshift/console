@@ -10,3 +10,4 @@ export { default as InputSearchField } from './InputSearchField';
 export { default as MultiColumnField } from './multi-column-field/MultiColumnField';
 export { default as ResourceLimitField } from './ResourceLimitField';
 export { default as RadioButtonField } from './RadioButtonField';
+export { default as SwitchField } from './SwitchField';

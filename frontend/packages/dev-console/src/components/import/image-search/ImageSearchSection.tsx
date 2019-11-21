@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { RadioButtonField } from '../../formik-fields';
+import { RadioButtonField } from '@console/shared/src/components/formik-fields';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';

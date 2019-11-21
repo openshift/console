@@ -2,10 +2,10 @@ import * as React from 'react';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { DropdownFieldProps } from '@console/shared/src/components/formik-fields/field-types';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import PipelineResourceDropdown from '../../dropdown/PipelineResourceDropdown';
 import PipelineResourceForm from '../pipeline-resource/PipelineResourceForm';
-import { DropdownFieldProps } from '../../formik-fields/field-types';
-import { getFieldId } from '../../formik-fields/field-utils';
 
 export const CREATE_PIPELINE_RESOURCE = '#CREATE_PIPELINE_RESOURCE#';
 

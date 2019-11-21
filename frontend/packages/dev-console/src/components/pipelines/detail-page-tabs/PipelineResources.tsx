@@ -4,7 +4,11 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { MultiColumnField, InputField, DropdownField } from '../../formik-fields';
+import {
+  MultiColumnField,
+  InputField,
+  DropdownField,
+} from '@console/shared/src/components/formik-fields';
 import { FormFooter } from '../../form-utils';
 
 enum resourceTypes {

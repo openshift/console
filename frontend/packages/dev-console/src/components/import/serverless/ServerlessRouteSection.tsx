@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
+import { InputField } from '@console/shared/src/components/formik-fields';
 import FormSection from '../section/FormSection';
 import { RouteData } from '../import-types';
-import { InputField } from '../../formik-fields';
 
 export interface ServerlessRouteSectionProps {
   route: RouteData;

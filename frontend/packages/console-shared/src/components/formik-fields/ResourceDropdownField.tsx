@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-import ResourceDropdown from '../dropdown/ResourceDropdown';
+import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

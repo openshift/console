@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField, TextAreaField } from '../../formik-fields';
+import { InputField, TextAreaField } from '@console/shared/src/components/formik-fields';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
 import ApplicationSelector from './ApplicationSelector';

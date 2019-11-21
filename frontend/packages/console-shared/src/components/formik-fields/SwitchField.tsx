@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { useField } from 'formik';
 import { FormGroup, Switch } from '@patternfly/react-core';
-import { getFieldId } from '@console/dev-console/src/components/formik-fields/field-utils';
-import { CheckboxFieldProps } from '@console/dev-console/src/components/formik-fields/field-types';
+import { getFieldId } from './field-utils';
+import { CheckboxFieldProps } from './field-types';
 
 const SwitchField: React.FC<CheckboxFieldProps> = ({
   label,

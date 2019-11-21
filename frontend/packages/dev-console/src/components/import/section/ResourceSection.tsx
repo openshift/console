@@ -10,9 +10,9 @@ import {
 import { getBadgeFromType } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
+import { RadioOption } from '@console/shared/src/components/formik-fields/field-types';
+import { RadioButtonField } from '@console/shared/src/components/formik-fields';
 import { Resources } from '../import-types';
-import { RadioOption } from '../../formik-fields/field-types';
-import { RadioButtonField } from '../../formik-fields';
 import FormSection from './FormSection';
 import './ResourceSection.scss';
 

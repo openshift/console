@@ -11,7 +11,7 @@ import {
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { InputField } from '../formik-fields';
+import { InputField } from '@console/shared/src/components/formik-fields';
 
 type DeleteApplicationModalProps = {
   initialApplication: string;
