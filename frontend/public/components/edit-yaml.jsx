@@ -676,7 +676,6 @@ const EditYAML_ = connect(stateToProps)(
       const definition = model ? definitionFor(model) : { properties: [] };
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
-      const isMac = window.navigator.platform.includes('Mac');
       const editYamlComponent = (
         <div className="co-file-dropzone">
           {canDrop && (
@@ -716,9 +715,7 @@ const EditYAML_ = connect(stateToProps)(
                               <Shortcut ctrlCmd shift keyName="o">
                                 View document outline
                               </Shortcut>
-                              <Shortcut hover>
-                                View property descriptions
-                              </Shortcut>
+                              <Shortcut hover>View property descriptions</Shortcut>
                               <Shortcut ctrlCmd keyName="s">
                                 Save
                               </Shortcut>
@@ -729,7 +726,7 @@ const EditYAML_ = connect(stateToProps)(
                         >
                           <Button type="button" variant="link" isInline>
                             <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                            Shortcuts
+                            View shortcuts
                           </Button>
                         </Popover>
                       </div>
