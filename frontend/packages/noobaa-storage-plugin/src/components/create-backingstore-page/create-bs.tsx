@@ -549,7 +549,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     };
     if (provider === 'AWS S3') {
       // eslint-disable-next-line
-      bsPayload.spec['region'] = providerDataState.region;
+      bsPayload.spec['awsS3'] = { ...bsPayload.spec['awsS3'], 'region': providerDataState.region };
     }
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
     return handlePromise(Promise.all(promises)).then((resource) => {
