@@ -6,6 +6,10 @@ import { FormFooterProps } from './form-utils-types';
 const FormFooter: React.FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
+  handleCancel,
+  submitLabel = 'Save',
+  resetLabel = 'Reload',
+  cancelLabel = 'Cancel',
   isSubmitting,
   errorMessage,
   successMessage,
@@ -15,7 +19,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   <ButtonBar inProgress={isSubmitting} errorMessage={errorMessage} successMessage={successMessage}>
     {showAlert && (
       <Alert isInline className="co-alert" variant="info" title="You made changes to this page.">
-        Click Save to save changes or Reload to cancel.
+        {`Click ${submitLabel} to save changes or ${resetLabel} to cancel changes.`}
       </Alert>
     )}
     <ActionGroup className="pf-c-form">
@@ -25,11 +29,18 @@ const FormFooter: React.FC<FormFooterProps> = ({
         variant={ButtonVariant.primary}
         isDisabled={disableSubmit}
       >
-        Save
+        {submitLabel}
       </Button>
-      <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
-        Reload
-      </Button>
+      {handleReset && (
+        <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
+          {resetLabel}
+        </Button>
+      )}
+      {handleCancel && (
+        <Button type="button" variant={ButtonVariant.secondary} onClick={handleCancel}>
+          {cancelLabel}
+        </Button>
+      )}
     </ActionGroup>
   </ButtonBar>
 );
