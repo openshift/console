@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
+import { Status } from '@console/shared';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
@@ -62,7 +63,9 @@ const Details = ({ obj: replicationController }) => {
             {phase && (
               <>
                 <dt>Phase</dt>
-                <dd>{phase}</dd>
+                <dd>
+                  <Status status={phase} />
+                </dd>
               </>
             )}
             <ResourcePodCount resource={replicationController} />
@@ -187,7 +190,9 @@ const ReplicationControllerTableRow = ({ obj, index, key, style }) => {
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
       </TableData>
-      <TableData className={tableColumnClasses[3]}>{phase}</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Status status={phase} />
+      </TableData>
       <TableData className={tableColumnClasses[4]}>
         <OwnerReferences resource={obj} />
       </TableData>
