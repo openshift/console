@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
+import { useAccessReview } from '@console/internal/components/utils';
 import { Layer, Edge, WithRemoveConnectorProps, observer, useHover } from '@console/topology';
 import './BaseEdge.scss';
 
@@ -20,14 +22,29 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   const [hover, hoverRef] = useHover();
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
+  const resourceModel =
+    element.getSource().getData().data.donutStatus &&
+    modelFor(referenceFor(element.getSource().getData().data.donutStatus.dc));
+
+  const editAccess = useAccessReview({
+    group: resourceModel && resourceModel.apiGroup,
+    verb: 'patch',
+    resource: resourceModel && resourceModel.plural,
+    name:
+      element.getSource().getData().data.donutStatus &&
+      element.getSource().getData().data.donutStatus.dc.metadata.name,
+    namespace:
+      element.getSource().getData().data.donutStatus &&
+      element.getSource().getData().data.donutStatus.dc.metadata.namespace,
+  });
 
   React.useLayoutEffect(() => {
     if (hover && !dragging) {
-      onShowRemoveConnector && onShowRemoveConnector();
+      editAccess && onShowRemoveConnector && onShowRemoveConnector();
     } else {
       onHideRemoveConnector && onHideRemoveConnector();
     }
-  }, [hover, dragging, onShowRemoveConnector, onHideRemoveConnector]);
+  }, [hover, dragging, onShowRemoveConnector, onHideRemoveConnector, editAccess]);
 
   return (
     <Layer id={dragging || hover ? 'top' : undefined}>

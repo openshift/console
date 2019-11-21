@@ -98,7 +98,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
       <g
         data-test-id="base-node-handler"
         onClick={onSelect}
-        {...(editAccess ? { onContextMenu } : {})}
+        onContextMenu={(editAccess && onContextMenu) || null}
         {...(editAccess ? { ref: refs } : {})}
       >
         <circle
