@@ -28,17 +28,19 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
         >
           <p>
             Data placement capabilities are built as a multi-layer structure, here are the layers
-            bottom up:
+            bottom-up:
           </p>
           <ul>
             <li>
               Spread Tier - list of backing-stores, aggregates the storage of multiple stores.
             </li>
             <li>
-              Mirroring Tier - list of spread-layers, async-mirroring to all mirrors with locality
-              optimization.
+              Mirroring Tier - list of spread-layers, async-mirroring to all mirrors, with locality
+              optimization (will allocate on the closest region to the source endpoint), mirroring
+              requires at least two backing-stores.
             </li>
           </ul>
+          The number of replicas can be configured via the NooBaa management console.
         </Alert>
       )}
       <Form className="nb-create-bc-step-page-form">
@@ -54,8 +56,8 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           name="placement-policy-1"
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
-          Spreading the data across the chosen resources does not includes failure tolerance in case
-          of resource failure.
+          Spreading the data across the chosen resources. By default, a replica of one copy is used
+          and does not include failure tolerance in case of resource failure.
         </p>
         <Radio
           value="Mirror"
@@ -67,8 +69,8 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
           {' '}
-          Full duplication of the data in each chosen resource, includes failure tolerance in cause
-          of resource failure.
+          Full duplication of the data in each chosen resource, By default, a replica of one copy
+          per location is used. includes failure tolerance in case of resource failure.
         </p>
       </Form>
       {!showTier2 && (

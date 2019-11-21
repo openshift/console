@@ -31,7 +31,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           className="nb-create-bc-step-page__info"
           action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
-          <p>An MCG Bucket&apos;s data location is determined by a policy called a bucketClass</p>
+          <p>An MCG Bucket&apos;s data location is determined by a policy called a Bucket Class</p>
           <ExternalLink
             href="https://github.com/noobaa/noobaa-operator/blob/master/doc/bucket-class-crd.md"
             text="Learn More"
@@ -51,8 +51,8 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           isRequired
           className="nb-create-bc-step-page-form__element"
           fieldId="bucketclassname-input"
-          label="BucketClass Name"
-          helperText="A unique name for the bucketClass within the project."
+          label="Bucket Class Name"
+          helperText="A unique name for the Bucket Class within the project."
         >
           <TextInput
             placeholder="my-multi-cloud-mirror"
