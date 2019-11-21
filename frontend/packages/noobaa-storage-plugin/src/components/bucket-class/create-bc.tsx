@@ -114,7 +114,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       id: CreateStepsBC.REVIEW,
       name: 'Review',
       component: <ReviewPage state={state} />,
-      nextButtonText: 'Create BucketClass',
+      nextButtonText: 'Create Bucket Class',
       enableNext: creationConditionsSatisfied(),
     },
   ];
@@ -139,10 +139,10 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         </div>
         <div className="nb-create-bc-header-title">
           <Title size="2xl" headingLevel="h1" className="nb-create-bc-header-title__main">
-            Create new BucketClass
+            Create new Bucket Class
           </Title>
           <p className="nb-create-bc-header-title__info">
-            BucketClass is a CRD representing a class for buckets that defines tiering policies and
+            Bucket Class is a CRD representing a class for buckets that defines tiering policies and
             data placements for an OBC.
           </p>
         </div>
@@ -153,7 +153,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           isInPage
           isOpen
           title="Create new Bucket Class"
-          description="NooBaaBucketClass is a CRD representing a class for buckets that defines policies for data placement and more"
+          description="NooBaa Bucket Class is a CRD representing a class for buckets that defines policies for data placement and more"
           steps={steps}
           onSave={finalStep}
           onClose={() => history.goBack()}
