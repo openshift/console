@@ -124,6 +124,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
         <FormGroup label="Region" fieldId="region" className="nb-bs-form-entry" isRequired>
           <Dropdown
             className="nb-bs-form-entry__dropdown"
+            menuClassName="nb-bs-form-entry__dropdown--short"
             buttonClassName="nb-bs-form-entry__dropdown"
             onChange={(e) => {
               dispatch({ type: 'setRegion', value: e });
@@ -149,6 +150,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           label="Secret"
           fieldId="secret-dropdown"
           className="nb-bs-form-entry nb-bs-form-entry--full-width"
+          isRequired
         >
           <InputGroup>
             <Firehose resources={resources}>
@@ -168,7 +170,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
         </FormGroup>
       ) : (
         <>
-          <FormGroup label={credentialField1Label} fieldId="acess-key">
+          <FormGroup label={credentialField1Label} fieldId="acess-key" isRequired>
             <InputGroup>
               <TextInput
                 value={state.accessKey}
@@ -186,6 +188,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
             className="nb-bs-form-entry"
             label={credentialField2Label}
             fieldId="secret-key"
+            isRequired
           >
             <TextInput
               value={state.secretKey}
@@ -333,6 +336,7 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
         helperText="Upload a .json file with the service account keys provided by google cloud storage."
         label="Secret Key"
         fieldId="secret-key"
+        isRequired
       >
         <InputGroup>
           <TextInput
@@ -575,6 +579,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
         helperText="If not provided, a generic name will be generated."
+        isRequired
       >
         <TextInput
           onChange={setBsName}

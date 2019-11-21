@@ -74,3 +74,8 @@
 .nb-bs-page-form__short {
     width: 80%;
 }
+
+.nb-bs-form-entry__dropdown--short {
+    overflow-y: auto;
+    max-height: 30vh;
+}
