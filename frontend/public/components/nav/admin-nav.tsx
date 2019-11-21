@@ -74,7 +74,13 @@ const MonitoringNavSection_ = ({ grafanaURL, canAccess, kibanaURL }) => {
           startsWith={monitoringAlertsStartsWith}
         />
       )}
-      {showAlerts && <HrefLink href="/monitoring/query-browser?query0=" name="Metrics" />}
+      {showAlerts && (
+        <HrefLink
+          href="/monitoring/query-browser?query0="
+          name="Metrics"
+          startsWith={['monitoring/query-browser']}
+        />
+      )}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
