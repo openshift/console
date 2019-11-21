@@ -27,7 +27,13 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   circleRef,
 }) => {
   const decorator = (
-    <g className="odc-decorator" onClick={onClick}>
+    <g
+      className="odc-decorator"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick && onClick(e);
+      }}
+    >
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
       <circle
         ref={circleRef}
