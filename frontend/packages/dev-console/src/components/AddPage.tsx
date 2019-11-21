@@ -21,7 +21,7 @@ interface ResourcesType {
   deployments: K8sResourceKind;
   daemonSets: K8sResourceKind;
   statefulSets: K8sResourceKind;
-  knativeService: K8sResourceKind;
+  knativeService?: K8sResourceKind;
 }
 interface EmptyStateLoaderProps {
   resources?: ResourcesType;
@@ -34,6 +34,7 @@ const handleProjectCreate = (project: K8sResourceKind) =>
 
 const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
   const [noWorkloads, setNoWorkloads] = React.useState(false);
+  const knativeData = _.get(resources, ['knativeService', 'data'], null);
 
   React.useEffect(() => {
     if (loaded) {
@@ -42,7 +43,7 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
           _.isEmpty(resources.deployments.data) &&
           _.isEmpty(resources.daemonSets.data) &&
           _.isEmpty(resources.statefulSets.data) &&
-          _.isEmpty(resources.knativeService.data),
+          _.isEmpty(knativeData),
       );
     } else if (loadError) {
       setNoWorkloads(false);
@@ -54,7 +55,7 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
     resources.deploymentConfigs.data,
     resources.deployments.data,
     resources.statefulSets.data,
-    resources.knativeService.data,
+    knativeData,
   ]);
   return noWorkloads ? (
     <ODCEmptyState
