@@ -7,7 +7,8 @@ import { StorageResource, NetworkResource } from '../utils/types';
 import { fillInput } from '../utils/utils';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
 import { confirmAction } from '../../views/vm.actions.view';
-import { vmDetailFlavorEditButton } from '../../views/virtualMachine.view';
+import { vmDetailFlavorEditButton, vmDetailCdEditButton } from '../../views/virtualMachine.view';
+import * as editCD from '../../views/editCDView';
 import { DetailView } from './detailView';
 import * as editFlavor from './editFlavorView';
 
@@ -80,5 +81,10 @@ export class KubevirtDetailView extends DetailView {
   async modalEditFlavor() {
     await click(vmDetailFlavorEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editFlavor.modalTitle()));
+  }
+
+  async modalEditCDRoms() {
+    await click(vmDetailCdEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editCD.modalTitle));
   }
 }
