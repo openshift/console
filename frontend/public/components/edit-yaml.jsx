@@ -711,16 +711,16 @@ const EditYAML_ = connect(stateToProps)(
                           bodyContent={
                             <ShortcutTable>
                               <Shortcut macCtrl keyName="space">
-                                Use Ctrl + Space to activate auto complete.
+                                Activate auto complete
                               </Shortcut>
                               <Shortcut ctrl shift keyName="o">
-                                Use Shift + {isMac ? 'Command' : 'Ctrl'} + O for document outlining.
+                                View document outline
                               </Shortcut>
                               <Shortcut hover>
-                                Hover over a property to view a description.
+                                View property descriptions
                               </Shortcut>
                               <Shortcut ctrl keyName="s">
-                                Use {isMac ? 'Command' : 'Ctrl'} + S to save.
+                                Save
                               </Shortcut>
                             </ShortcutTable>
                           }
