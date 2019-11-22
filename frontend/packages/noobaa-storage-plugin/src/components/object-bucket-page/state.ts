@@ -8,6 +8,7 @@ type State = {
   progress: boolean;
   error: string;
   payload: K8sResourceKind;
+  bucketClass: string;
 };
 
 export const defaultState = {
@@ -18,6 +19,7 @@ export const defaultState = {
   payload: {},
   sizeUnit: 'GiB',
   sizeValue: '',
+  bucketClass: '',
 };
 
 type Action =
@@ -27,7 +29,8 @@ type Action =
   | { type: 'unsetProgress' }
   | { type: 'setError'; message: string }
   | { type: 'setPayload'; payload: {} }
-  | { type: 'setSize'; unit: string; value: string };
+  | { type: 'setSize'; unit: string; value: string }
+  | { type: 'setBucketClass'; name: string };
 
 export const commonReducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -45,6 +48,8 @@ export const commonReducer = (state: State, action: Action) => {
       return Object.assign({}, state, { sizeUnit: action.unit, sizeValue: action.value });
     case 'setPayload':
       return Object.assign({}, state, { payload: action.payload });
+    case 'setBucketClass':
+      return Object.assign({}, state, { bucketClass: action.name });
     default:
       return defaultState;
   }
