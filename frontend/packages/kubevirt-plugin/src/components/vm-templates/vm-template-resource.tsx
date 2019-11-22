@@ -1,16 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   getOperatingSystemName,
   getOperatingSystem,
   getWorkloadProfile,
   BootOrder,
   getBootableDevicesInOrder,
-  TemplateSource,
-  getTemplateProvisionSource,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
@@ -24,6 +21,7 @@ import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { asVM } from '../../selectors/vm';
 import { VMTemplateLink } from './vm-template-link';
+import { TemplateSource } from './vm-template-source';
 
 import './_vm-template-resource.scss';
 
@@ -79,15 +77,12 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
-  dataVolumes,
   canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
   const sortedBootableDevices = getBootableDevicesInOrder(template);
   const cds = getCDRoms(asVM(template));
   const flavorText = getFlavorText(template);
-  const isProvisionSource =
-    dataVolumes && !!_.get(getTemplateProvisionSource(template, dataVolumes), 'type');
 
   return (
     <dl className="co-m-pane__details">
@@ -120,12 +115,8 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         </EditButton>
       </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Provision Source"
-        idValue={prefixedID(id, 'provisioning-source')}
-        isNotAvail={!isProvisionSource}
-      >
-        {dataVolumes && <TemplateSource template={template} dataVolumes={dataVolumes} detailed />}
+      <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
+        <TemplateSource template={template} detailed />
       </VMDetailsItem>
     </dl>
   );
@@ -133,7 +124,6 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 
 type VMTemplateResourceListProps = {
   template: TemplateKind;
-  dataVolumes: K8sResourceKind[];
   canUpdateTemplate: boolean;
 };
 

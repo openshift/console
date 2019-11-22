@@ -58,6 +58,11 @@ export class ProvisionSource extends ValueEnum<string> {
     const bootDisk = getDisks(vm).find((disk) => disk.bootOrder === 1);
     if (bootDisk) {
       const volume = getVolumes(vm).find((vol) => vol.name === bootDisk.name);
+      if (!volume) {
+        return {
+          error: 'No Volume has been found.',
+        };
+      }
       const volumeWrapper = VolumeWrapper.initialize(volume);
       let dataVolumeWrapper;
 
@@ -105,7 +110,7 @@ export class ProvisionSource extends ValueEnum<string> {
           };
         default:
           return {
-            error: `Datavolume ${volumeWrapper.getDataVolumeName()} does not have a supported source.`,
+            error: `Volume ${volumeWrapper.getName()} does not have a supported source.`,
           };
       }
     }
