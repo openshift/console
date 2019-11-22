@@ -23,7 +23,7 @@ export default [
   {
     type: 'Dashboards/Overview/Health/URL',
     properties: {
-      title: 'Image Security',
+      title: 'Quay Image Security',
       url: '',
       fetch: () => null,
       healthHandler: securityHealthHandler,
@@ -37,7 +37,7 @@ export default [
         import('./components/summary' /* webpackChunkName: "container-security" */).then(
           (m) => m.SecurityBreakdownPopup,
         ),
-      popupTitle: 'Security breakdown',
+      popupTitle: 'Quay Image Security breakdown',
       required: SecurityLabellerFlag,
     },
   },

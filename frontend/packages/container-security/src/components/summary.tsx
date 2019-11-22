@@ -46,7 +46,8 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
   return (
     <>
       <div className="co-overview-status__control-plane-description">
-        Quay analyzes container images to identify vulnerabilities.
+        Container images from Quay are analyzed to identify vulnerabilities. Images from other
+        registries are not scanned.
       </div>
       {!_.isEmpty(props.k8sResult.data) ? (
         <div>
