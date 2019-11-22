@@ -81,9 +81,8 @@ describe('knative topology utils', () => {
     expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, mockRevisions)).toHaveLength(2);
   });
 
-  it('should return undefined if revisions or traffic status is not defined', () => {
+  it('should return undefined if traffic status is not defined', () => {
     const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
     expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
-    expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, undefined)).toBeUndefined();
   });
 });
