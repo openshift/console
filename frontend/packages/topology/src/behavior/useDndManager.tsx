@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observable } from 'mobx';
-import { actionAsync } from 'mobx-utils';
 import ControllerContext from '../utils/ControllerContext';
 import {
   DndManager,
@@ -212,12 +211,7 @@ export class DndManagerImpl implements DndManager {
     });
   }
 
-  endDrag(): void {
-    this.doEndDrag();
-  }
-
-  @actionAsync
-  private async doEndDrag(): Promise<void> {
+  async endDrag(): Promise<void> {
     const source = this.getSource(this.getSourceId());
     try {
       if (source) {
@@ -275,6 +269,9 @@ export class DndManagerImpl implements DndManager {
   cancel(): boolean {
     if (!this.state.event) {
       throw new Error('Drag event not initialized');
+    }
+    if (this.state.cancelled) {
+      return true;
     }
     const source = this.getSource(this.getSourceId());
     if (source && source.canCancel(this)) {

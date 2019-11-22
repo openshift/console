@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import { action, computed, comparer } from 'mobx';
 import { observer } from 'mobx-react';
+import { actionAsync } from 'mobx-utils';
 import ElementContext from '../utils/ElementContext';
 import useCallbackRef from '../utils/useCallbackRef';
 import {
@@ -146,7 +147,7 @@ export const useDndDrag = <
                     .node() as any,
               )
               .on('start', function() {
-                const updateOperation = () => {
+                const updateOperation = actionAsync(async () => {
                   const { operation } = specRef.current;
                   if (operation && idRef.current) {
                     const op = getOperation(operation);
@@ -165,7 +166,7 @@ export const useDndDrag = <
                           ],
                           drag: [event.x, event.y, event.pageX, event.pageY],
                         };
-                        dndManager.endDrag();
+                        await dndManager.endDrag();
                       }
                       if (op && operationChangeEvents) {
                         dndManager.beginDrag(idRef.current, op, ...operationChangeEvents.begin);
@@ -174,25 +175,25 @@ export const useDndDrag = <
                       }
                     }
                   }
-                };
+                });
                 d3.select(node.ownerDocument)
                   .on(
                     'keydown.useDndDrag',
-                    action(() => {
+                    actionAsync(async () => {
                       const e = d3.event as KeyboardEvent;
                       if (e.key === 'Escape') {
                         if (dndManager.isDragging() && dndManager.cancel()) {
                           operationChangeEvents = null;
                           d3.select(d3.event.view).on('.drag', null);
                           d3.select(node.ownerDocument).on('.useDndDrag', null);
-                          dndManager.endDrag();
+                          await dndManager.endDrag();
                         }
                       } else {
-                        updateOperation();
+                        await updateOperation();
                       }
                     }),
                   )
-                  .on('keyup.useDndDrag', action(updateOperation));
+                  .on('keyup.useDndDrag', updateOperation);
               })
               .on(
                 'drag',
@@ -220,12 +221,12 @@ export const useDndDrag = <
               )
               .on(
                 'end',
-                action(() => {
+                actionAsync(async () => {
                   operationChangeEvents = null;
                   d3.select(node.ownerDocument).on('.useDndDrag', null);
                   if (dndManager.isDragging()) {
                     dndManager.drop();
-                    dndManager.endDrag();
+                    await dndManager.endDrag();
                   }
                 }),
               )
