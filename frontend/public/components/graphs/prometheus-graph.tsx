@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
-import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
+import { MonitoringRoutes } from '../../reducers/monitoring';
 
 export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   const base = urls && urls[MonitoringRoutes.Prometheus];
@@ -18,23 +19,23 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   return `${base}/graph?${params.toString()}`;
 };
 
-export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
-  ({ children, query, urls }: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
-    const url = getPrometheusExpressionBrowserURL(urls, [query]);
-    return query ? (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ color: 'inherit', textDecoration: 'none' }}
-      >
-        {children}
-      </a>
-    ) : (
-      <>{children}</>
-    );
-  },
-);
+const getQueryBrowserURL = (query: string): string => {
+  const params = new URLSearchParams();
+  params.set('query0', query);
+  return `/monitoring/query-browser?${params.toString()}`;
+};
+
+export const PrometheusGraphLink = ({
+  children,
+  query,
+}: React.PropsWithChildren<PrometheusGraphLinkProps>) =>
+  query ? (
+    <Link to={getQueryBrowserURL(query)} style={{ color: 'inherit', textDecoration: 'none' }}>
+      {children}
+    </Link>
+  ) : (
+    <>{children}</>
+  );
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
@@ -47,7 +48,6 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 
 type PrometheusGraphLinkProps = {
   query: string;
-  urls?: string[];
 };
 
 type PrometheusGraphProps = {
