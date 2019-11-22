@@ -7,7 +7,9 @@ import {
   Pipeline,
   getRunStatusColor,
   runStatus,
+  getResourceModelFromTask,
 } from '../pipeline-augment';
+import { ClusterTaskModel, TaskModel } from '../../models';
 import { testData } from './pipeline-augment-test-data';
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {
@@ -211,5 +213,26 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       expect(sumFailedTaskStatus(taskStatus)).toEqual(taskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(taskCount);
     });
+  });
+});
+
+describe('PipelineAugment test successfully determine Task type', () => {
+  it('expect to always get back a model', () => {
+    const model = getResourceModelFromTask({ name: null, taskRef: { name: null } });
+    expect(model).toBe(TaskModel);
+  });
+
+  it('expect to get a TaskModel for normal tasks', () => {
+    const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
+
+    const model = getResourceModelFromTask(complexTestData.pipeline.spec.tasks[0]);
+    expect(model).toBe(TaskModel);
+  });
+
+  it('expect to get a ClusterTaskModel for tasks of a ClusterTask kind', () => {
+    const complexTestData = pipelineTestData[PipelineExampleNames.CLUSTER_PIPELINE];
+
+    const model = getResourceModelFromTask(complexTestData.pipeline.spec.tasks[0]);
+    expect(model).toBe(ClusterTaskModel);
   });
 });

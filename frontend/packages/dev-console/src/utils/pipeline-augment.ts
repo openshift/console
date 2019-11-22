@@ -6,8 +6,8 @@ import {
   chart_color_black_400 as skippedColor,
   chart_color_black_500 as cancelledColor,
 } from '@patternfly/react-tokens';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { PipelineRunModel } from '../models';
+import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../models';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
 interface Metadata {
@@ -38,6 +38,7 @@ export interface PipelineTask {
   name: string;
   runAfter?: string[];
   taskRef: {
+    kind?: string;
     name: string;
   };
 }
@@ -74,12 +75,14 @@ export interface Pipeline extends K8sResourceKind {
 
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
-    pipelineRef?: { name: string };
+    pipelineRef: { name: string };
     params?: PipelineRunParam[];
     resources?: PipelineResource[];
     serviceAccount?: string;
+    serviceAccountName?: string;
     // Odd status value that only appears in a single case - cancelling a pipeline
     status?: 'PipelineRunCancelled';
+    timeout?: string;
   };
   status?: {
     succeededCondition?: string;
@@ -295,4 +298,12 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
     taskStatus[runStatus.PipelineNotStarted]++;
   }
   return taskStatus;
+};
+
+export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
+  const {
+    taskRef: { kind },
+  } = task;
+
+  return kind === ClusterTaskModel.kind ? ClusterTaskModel : TaskModel;
 };
