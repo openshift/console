@@ -857,6 +857,7 @@ export type K8sKind = {
   verbs?: K8sVerb[];
   shortNames?: string[];
   badge?: BadgeType;
+  color?: string;
 };
 
 export type Cause = {

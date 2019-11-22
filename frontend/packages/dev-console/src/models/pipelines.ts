@@ -1,5 +1,8 @@
+import { chart_color_orange_200 as tektonGroupColor } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
+
+const color = tektonGroupColor.value;
 
 export const PipelineModel: K8sKind = {
   apiGroup: 'tekton.dev',
@@ -13,6 +16,7 @@ export const PipelineModel: K8sKind = {
   labelPlural: 'Pipelines',
   crd: true,
   badge: BadgeType.DEV,
+  color,
 };
 
 export const PipelineRunModel: K8sKind = {
@@ -27,6 +31,7 @@ export const PipelineRunModel: K8sKind = {
   labelPlural: 'Pipeline Runs',
   crd: true,
   badge: BadgeType.DEV,
+  color,
 };
 
 export const TaskModel: K8sKind = {
@@ -41,6 +46,7 @@ export const TaskModel: K8sKind = {
   labelPlural: 'Tasks',
   crd: true,
   badge: BadgeType.DEV,
+  color,
 };
 
 export const TaskRunModel: K8sKind = {
@@ -55,6 +61,7 @@ export const TaskRunModel: K8sKind = {
   labelPlural: 'Task Runs',
   crd: true,
   badge: BadgeType.DEV,
+  color,
 };
 
 export const PipelineResourceModel: K8sKind = {
@@ -69,6 +76,7 @@ export const PipelineResourceModel: K8sKind = {
   labelPlural: 'Pipeline Resources',
   crd: true,
   badge: BadgeType.DEV,
+  color,
 };
 
 export const ClusterTaskModel: K8sKind = {
@@ -83,4 +91,20 @@ export const ClusterTaskModel: K8sKind = {
   labelPlural: 'Cluster Tasks',
   crd: true,
   badge: BadgeType.DEV,
+  color,
+};
+
+export const ConditionModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Condition',
+  plural: 'conditions',
+  abbr: 'C',
+  namespaced: true,
+  kind: 'Condition',
+  id: 'condition',
+  labelPlural: 'Conditions',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
 };

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import { get } from 'lodash';
 import { useSize } from '@console/topology';
 import { modelFor, kindToAbbr } from '@console/internal/module/k8s';
@@ -13,12 +14,13 @@ export interface ResourceIconProps {
 export function getKindStringAndAbbrivation(kind: string) {
   const kindObj = modelFor(kind);
   const kindStr = get(kindObj, 'kind', kind);
+  const kindColor = get(kindObj, 'color', undefined);
   const kindAbbr = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
-  return { kindStr, kindAbbr };
+  return { kindStr, kindAbbr, kindColor };
 }
 
 export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRef) => {
-  const { kindAbbr, kindStr } = getKindStringAndAbbrivation(kind);
+  const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbrivation(kind);
   const [textSize, textRef] = useSize([]);
 
   let rect = null;
@@ -30,6 +32,7 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
 
     rect = (
       <rect
+        fill={kindColor}
         ref={iconRef}
         x={x - paddingX - textSize.width / 2}
         width={textSize.width + paddingX * 2}
@@ -41,7 +44,11 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
     );
   }
   return (
-    <g className={`odc-resource-icon odc-resource-icon-${kindStr.toLowerCase()}`}>
+    <g
+      className={cx('odc-resource-icon', {
+        [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
+      })}
+    >
       {rect}
       <title>{kindStr}</title>
       <text ref={textRef} x={x} y={y} textAnchor="middle" dy="0.35em">

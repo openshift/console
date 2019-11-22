@@ -1,13 +1,17 @@
+@import '../../../../../../public/style/_vars.scss';
+
 .odc-resource-icon {
   font-size: 80%;
-  fill: #00b9e4;
+  fill: $color-container-dark;
   text {
     fill: #fff !important;
   }
 }
-
+.odc-resource-icon-service {
+  fill: $color-service-dark;
+}
 .odc-resource-icon-deployment,
 .odc-resource-icon-daemonset,
 .odc-resource-icon-deploymentconfig {
-  fill: var(--pf-global--info-color--200);
+  fill: $color-pod-overlord;
 }
