@@ -301,12 +301,31 @@ h6 {
 
     .pf-c-nav__simple-list .pf-c-nav__link {
       font-size: $font-size-base;
+      // fix bug where nav items retain focus after navigation
+      // see https://github.com/patternfly/patternfly-next/issues/2463
+      &:focus {
+        background-color: transparent;
+        color: var(--pf-global--Color--light-300); // escape PF var chaos
+        font-weight: var(--pf-c-nav__list-link--FontWeight);
+      }
+      &:focus:hover,
+      &.pf-m-current:focus {
+        background-color: var(--pf-c-nav__simple-list-link--focus--BackgroundColor);
+        color: var(--pf-c-nav__simple-list-link--focus--Color);
+        font-weight: var(--pf-c-nav__simple-list-link--m-current--FontWeight);
+      }
     }
 
     // override list styles, necessary due to setting $pf-global--enable-reset to false
     ul {
       list-style: none;
     }
+  }
+
+  // fix bug where nav items retain focus after navigation
+  // see https://github.com/patternfly/patternfly-next/issues/2463
+  .pf-c-nav__item.pf-m-current .pf-c-nav__simple-list .pf-c-nav__link:focus {
+    color: var(--pf-global--Color--light-100); // escape PF var chaos
   }
 }
 
