@@ -12,7 +12,7 @@ import {
   global_BackgroundColor_300 as lineNumberForeground,
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, Shortcut, ShortcutTable } from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
@@ -676,7 +676,6 @@ const EditYAML_ = connect(stateToProps)(
       const definition = model ? definitionFor(model) : { properties: [] };
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
-      const isMac = window.navigator.platform.includes('Mac');
       const editYamlComponent = (
         <div className="co-file-dropzone">
           {canDrop && (
@@ -709,20 +708,25 @@ const EditYAML_ = connect(stateToProps)(
                         <Popover
                           aria-label="Shortcuts"
                           bodyContent={
-                            <ul>
-                              <li>Use Ctrl + Space to activate auto complete.</li>
-                              <li>
-                                Use {isMac ? 'Command' : 'Ctrl'} + Shift + O for document outlining.
-                              </li>
-                              <li>Hover over a property to view a description.</li>
-                            </ul>
+                            <ShortcutTable>
+                              <Shortcut ctrl keyName="space">
+                                Activate auto complete
+                              </Shortcut>
+                              <Shortcut ctrlCmd shift keyName="o">
+                                View document outline
+                              </Shortcut>
+                              <Shortcut hover>View property descriptions</Shortcut>
+                              <Shortcut ctrlCmd keyName="s">
+                                Save
+                              </Shortcut>
+                            </ShortcutTable>
                           }
                           maxWidth="25rem"
                           distance={18}
                         >
                           <Button type="button" variant="link" isInline>
                             <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                            Shortcuts
+                            View shortcuts
                           </Button>
                         </Popover>
                       </div>
