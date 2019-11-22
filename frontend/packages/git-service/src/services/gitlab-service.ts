@@ -10,10 +10,17 @@ import {
 } from '../types';
 import { BaseService } from './base-service';
 
+type GitlabRepo = {
+  id: number;
+  path_with_namespace: string;
+};
+
 export class GitlabService extends BaseService {
   private readonly client: any;
 
   private readonly metadata: RepoMetadata;
+
+  private repo: GitlabRepo;
 
   constructor(gitsource: GitSource) {
     super(gitsource);
@@ -23,7 +30,21 @@ export class GitlabService extends BaseService {
       host: this.metadata.host,
       token,
     });
+    this.repo = null;
   }
+
+  private getRepo = async (): Promise<GitlabRepo> => {
+    if (this.repo) {
+      return Promise.resolve(this.repo);
+    }
+    const repo: GitlabRepo = await this.client.Projects.show(this.metadata.fullName);
+    if (!repo || repo.path_with_namespace !== this.metadata.fullName) {
+      throw new Error('Unable to find repo');
+    }
+
+    this.repo = repo;
+    return Promise.resolve(this.repo);
+  };
 
   getRepoMetadata(): RepoMetadata {
     const { name, owner, protocol, source, full_name: fullName } = GitUrlParse(this.gitsource.url);
@@ -48,13 +69,8 @@ export class GitlabService extends BaseService {
 
   getProjectId = async (): Promise<any> => {
     try {
-      const resp = await this.client.Projects.search(this.metadata.repoName);
-      for (const re of resp) {
-        if (re.path_with_namespace === this.metadata.fullName) {
-          return re.id;
-        }
-      }
-      throw new Error('Unable to find gitlab project id, check project details!');
+      const repo = await this.getRepo();
+      return repo.id;
     } catch (e) {
       throw e;
     }
@@ -62,19 +78,10 @@ export class GitlabService extends BaseService {
 
   isRepoReachable = async (): Promise<boolean> => {
     try {
-      const resp = await this.client.Projects.search(this.metadata.repoName);
-      if (resp.length < 1) {
-        return false;
-      }
-      for (const re of resp) {
-        if (re.path_with_namespace === this.metadata.fullName) {
-          return true;
-        }
-      }
-
-      return false;
+      await this.getRepo();
+      return true;
     } catch (e) {
-      throw e;
+      return false;
     }
   };
 
