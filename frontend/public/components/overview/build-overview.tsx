@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { ListGroup } from 'patternfly-react';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
@@ -100,7 +99,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
   };
 
   return (
-    <ListGroup className="build-overview__list" componentClass="ul">
+    <ul className="list-group">
       <li className="list-group-item build-overview__item">
         <div className="build-overview__item-title">
           <div>
@@ -122,7 +121,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
       ) : (
         _.map(builds, (build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
       )}
-    </ListGroup>
+    </ul>
   );
 };
 
