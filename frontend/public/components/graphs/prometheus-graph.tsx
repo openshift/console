@@ -1,9 +1,15 @@
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 
+import * as UIActions from '../../actions/ui';
+import { FLAGS } from '../../const';
+import { featureReducerName } from '../../reducers/features';
 import { MonitoringRoutes } from '../../reducers/monitoring';
+import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
+import { RootState } from '../../redux';
 
 export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   const base = urls && urls[MonitoringRoutes.Prometheus];
@@ -19,23 +25,53 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   return `${base}/graph?${params.toString()}`;
 };
 
-const getQueryBrowserURL = (query: string): string => {
+const mapStateToProps = (state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+  canAccessMonitoring:
+    !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
+  namespace: getActiveNamespace(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  setActivePerspective: (id: string) => dispatch(UIActions.setActivePerspective(id)),
+});
+
+export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
+  activePerspective,
+  canAccessMonitoring,
+  children,
+  namespace,
+  query,
+  setActivePerspective,
+}) => {
+  const onClick = React.useCallback(() => {
+    if (!canAccessMonitoring && activePerspective !== 'dev') {
+      setActivePerspective('dev');
+    }
+  }, [canAccessMonitoring, setActivePerspective, activePerspective]);
+
+  if (!query) {
+    return <>{children}</>;
+  }
+
   const params = new URLSearchParams();
   params.set('query0', query);
-  return `/monitoring/query-browser?${params.toString()}`;
-};
 
-export const PrometheusGraphLink = ({
-  children,
-  query,
-}: React.PropsWithChildren<PrometheusGraphLinkProps>) =>
-  query ? (
-    <Link to={getQueryBrowserURL(query)} style={{ color: 'inherit', textDecoration: 'none' }}>
+  const url =
+    canAccessMonitoring && activePerspective === 'admin'
+      ? `/monitoring/query-browser?${params.toString()}`
+      : `/metrics/ns/${namespace}?${params.toString()}`;
+
+  return (
+    <Link to={url} onClick={onClick} style={{ color: 'inherit', textDecoration: 'none' }}>
       {children}
     </Link>
-  ) : (
-    <>{children}</>
   );
+};
+export const PrometheusGraphLink = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PrometheusGraphLink_);
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
@@ -47,7 +83,11 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 );
 
 type PrometheusGraphLinkProps = {
+  activePerspective: string;
+  canAccessMonitoring: boolean;
+  namespace?: string;
   query: string;
+  setActivePerspective: (id: string) => undefined;
 };
 
 type PrometheusGraphProps = {
