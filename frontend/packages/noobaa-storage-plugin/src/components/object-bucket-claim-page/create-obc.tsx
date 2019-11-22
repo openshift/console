@@ -8,6 +8,7 @@ import {
   history,
   resourceObjPath,
   resourcePathFromModel,
+  Firehose,
 } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
@@ -15,12 +16,18 @@ import {
   k8sCreate,
   K8sResourceKind,
   referenceFor,
+  referenceForModel,
 } from '@console/internal/module/k8s';
-import { NooBaaObjectBucketClaimModel } from '@console/noobaa-storage-plugin/src/models';
+import {
+  NooBaaObjectBucketClaimModel,
+  NooBaaBucketClassModel,
+} from '@console/noobaa-storage-plugin/src/models';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { filterScOnProvisioner, getName } from '@console/shared';
+import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
+import './create-obc.scss';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
   const [state, dispatch] = React.useReducer(commonReducer, defaultState);
@@ -48,8 +55,11 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       obj.metadata.generateName = 'bucketclaim-';
       obj.spec.generateBucketName = 'bucket-';
     }
+    if (state.bucketClass) {
+      obj.spec.additionalConfig = { bucketclass: state.bucketClass };
+    }
     dispatch({ type: 'setPayload', payload: obj });
-  }, [namespace, state.name, state.scName]);
+  }, [namespace, state.name, state.scName, state.bucketClass]);
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -112,12 +122,36 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 onChange={(sc) => dispatch({ type: 'setStorage', name: getName(sc) })}
                 required
                 name="storageClass"
-                className="co-required"
+                hideClassName="co-required"
                 filter={showOnlyObcScs}
               />
               <p className="help-block">
                 Defines the object-store service and the bucket provisioner.
               </p>
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="obc-name">
+                Bucket Class
+              </label>
+              <Firehose
+                resources={[
+                  {
+                    isList: true,
+                    namespace,
+                    kind: referenceForModel(NooBaaBucketClassModel),
+                    prop: 'bucketClass',
+                  },
+                ]}
+              >
+                <ResourceDropdown
+                  onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
+                  dataSelector={['metadata', 'name']}
+                  selectedKey={state.bucketClass}
+                  placeholder="Select Bucket Class"
+                  dropDownClassName="dropdown--full-width"
+                  className="nb-create-obc__bc-dropdown"
+                />
+              </Firehose>
             </div>
           </div>
         </div>
