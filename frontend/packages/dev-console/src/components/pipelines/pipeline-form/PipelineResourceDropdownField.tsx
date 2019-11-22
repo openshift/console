@@ -81,6 +81,7 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
       {createMode && (
         <div style={{ marginTop: 'var(--pf-global--spacer--sm)' }}>
           <PipelineResourceForm
+            namespace={values.namespace}
             type={props.filterType}
             closeDisabled={isListEmpty}
             onClose={() => {
