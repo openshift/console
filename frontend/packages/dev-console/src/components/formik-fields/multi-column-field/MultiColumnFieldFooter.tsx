@@ -1,15 +1,25 @@
 import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Button } from 'patternfly-react';
+import { Button } from '@patternfly/react-core';
 
 export interface MultiColumnFieldHeader {
   addLabel: string;
   onAdd: () => void;
+  disableAddRow?: boolean;
 }
 
-const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({ addLabel, onAdd }) => (
-  <Button type="button" bsStyle="link" className="btn-link--no-btn-default-values" onClick={onAdd}>
-    <PlusCircleIcon style={{ marginRight: 'var(--pf-global--spacer--xs)' }} />
+const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
+  addLabel,
+  onAdd,
+  disableAddRow = false,
+}) => (
+  <Button
+    variant="link"
+    isDisabled={disableAddRow}
+    onClick={onAdd}
+    icon={<PlusCircleIcon />}
+    isInline
+  >
     {addLabel || 'Add values'}
   </Button>
 );

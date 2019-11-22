@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
 import './MultiColumnField.scss';
@@ -10,22 +11,27 @@ export interface MultiColumnFieldRowProps {
   children: React.ReactNode;
   onDelete: () => void;
   isReadOnly?: boolean;
+  disableDeleteRow?: boolean;
 }
 
-const minusCircleIcon = (onDelete: () => void, toolTip?: string) => {
+const minusCircleIcon = (onDelete: () => void, disableDeleteRow?: boolean, toolTip?: string) => {
   return (
-    <div className="odc-multi-column-field__col--button">
+    <div className={cx('odc-multi-column-field__col--button', { 'is-disabled': disableDeleteRow })}>
       <MinusCircleIcon aria-hidden="true" onClick={onDelete} />
       <span className="sr-only">{toolTip || 'Delete'}</span>
     </div>
   );
 };
 
-const renderMinusCircleIcon = (onDelete: () => void, toolTip?: string) => {
+const renderMinusCircleIcon = (
+  onDelete: () => void,
+  toolTip?: string,
+  disableDeleteRow?: boolean,
+) => {
   return toolTip ? (
-    <Tooltip content={toolTip}>{minusCircleIcon(onDelete, toolTip)}</Tooltip>
+    <Tooltip content={toolTip}>{minusCircleIcon(onDelete, disableDeleteRow, toolTip)}</Tooltip>
   ) : (
-    minusCircleIcon(onDelete)
+    minusCircleIcon(onDelete, disableDeleteRow)
   );
 };
 
@@ -36,6 +42,7 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   onDelete,
   children,
   isReadOnly,
+  disableDeleteRow,
 }) => (
   <div className="odc-multi-column-field__row">
     {React.Children.map(children, (child: React.ReactElement) => {
@@ -47,7 +54,7 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
         </div>
       );
     })}
-    {!isReadOnly && renderMinusCircleIcon(onDelete, toolTip)}
+    {!isReadOnly && renderMinusCircleIcon(onDelete, toolTip, disableDeleteRow)}
   </div>
 );
 
