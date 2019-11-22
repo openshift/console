@@ -102,7 +102,7 @@ const Popper: React.FC<PopperProps> = ({
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
       if (e.keyCode === 27) {
-        onRequestClose ? controlled && onRequestClose() : setOpen(false);
+        controlled ? onRequestClose && onRequestClose() : setOpen(false);
       }
     },
     [onRequestClose, controlled],
@@ -110,8 +110,8 @@ const Popper: React.FC<PopperProps> = ({
 
   const onClickOutside = React.useCallback(
     (e: MouseEvent) => {
-      if (nodeRef.current && e.target instanceof Node && !nodeRef.current.contains(e.target)) {
-        onRequestClose ? controlled && onRequestClose(e) : setOpen(false);
+      if (!nodeRef.current || (e.target instanceof Node && !nodeRef.current.contains(e.target))) {
+        controlled ? onRequestClose && onRequestClose(e) : setOpen(false);
       }
     },
     [onRequestClose, controlled],
@@ -122,7 +122,8 @@ const Popper: React.FC<PopperProps> = ({
       popperRef.current.destroy();
       popperRefs(null);
       document.removeEventListener('keydown', onKeyDown, true);
-      document.removeEventListener('click', onClickOutside, true);
+      document.removeEventListener('mousedown', onClickOutside, true);
+      document.removeEventListener('touchstart', onClickOutside, true);
     }
   }, [onClickOutside, onKeyDown, popperRefs]);
 
@@ -155,7 +156,8 @@ const Popper: React.FC<PopperProps> = ({
       document.addEventListener('keydown', onKeyDown, true);
     }
     if (closeOnOutsideClick) {
-      document.addEventListener('click', onClickOutside, true);
+      document.addEventListener('mousedown', onClickOutside, true);
+      document.addEventListener('touchstart', onClickOutside, true);
     }
   }, [
     popperRefs,
