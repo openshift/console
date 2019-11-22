@@ -12,19 +12,8 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": [
-      "jest"
-    ]
+    "types": ["jest"]
   },
-  "exclude": [
-    ".yarn",
-    "**/node_modules",
-    "public/dist"
-  ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": [".yarn", "**/node_modules", "public/dist"],
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

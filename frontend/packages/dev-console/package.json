@@ -15,7 +15,9 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
-      "devconsole": ["integration-tests/**/*.scenario.ts"]
+      "devconsole": [
+        "integration-tests/**/*.scenario.ts"
+      ]
     }
   }
 }
