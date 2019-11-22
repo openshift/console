@@ -52,6 +52,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const [updateChannel, setUpdateChannel] = React.useState(null);
   const [approval, setApproval] = React.useState(InstallPlanApproval.Automatic);
   const [cannotResolve, setCannotResolve] = React.useState(false);
+  const [error, setError] = React.useState('');
 
   const { name: pkgName } = props.packageManifest.data[0].metadata;
   const {
@@ -156,6 +157,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   };
 
   const submit = () => {
+    // Clear any previous errors.
+    setError('');
     const operatorGroup: OperatorGroupKind = {
       apiVersion: apiVersionForModel(OperatorGroupModel) as OperatorGroupKind['apiVersion'],
       kind: 'OperatorGroup',
@@ -199,7 +202,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             targetNamespace || props.targetNamespace || selectedTargetNamespace,
           ),
         ),
-      );
+      )
+      .catch(({ message = 'Could not create operator subscription.' }) => setError(message));
   };
 
   const formValid = () =>
@@ -213,6 +217,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const formError = () => {
     return (
+      (error && (
+        <Alert
+          isInline
+          className="co-alert co-alert--scrollable"
+          variant="danger"
+          title="An error occurred"
+        >
+          <div className="co-pre-line">{error}</div>
+        </Alert>
+      )) ||
       (!namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && (
         <Alert
           isInline
