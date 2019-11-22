@@ -34,13 +34,17 @@ describe('pipeline-utils ', () => {
   });
 
   it('should return correct Container Status', () => {
-    let status = containerToLogSourceStatus({ state: { waiting: {} } });
+    let status = containerToLogSourceStatus({ name: 'test', state: { waiting: {} } });
     expect(status).toBe(LOG_SOURCE_WAITING);
-    status = containerToLogSourceStatus({ state: { waiting: {} }, lastState: LOG_SOURCE_WAITING });
+    status = containerToLogSourceStatus({
+      name: 'test',
+      state: { waiting: {} },
+      lastState: LOG_SOURCE_WAITING,
+    });
     expect(status).toBe(LOG_SOURCE_RESTARTING);
-    status = containerToLogSourceStatus({ state: { running: {} } });
+    status = containerToLogSourceStatus({ name: 'test', state: { running: {} } });
     expect(status).toBe(LOG_SOURCE_RUNNING);
-    status = containerToLogSourceStatus({ state: { terminated: {} } });
+    status = containerToLogSourceStatus({ name: 'test', state: { terminated: {} } });
     expect(status).toBe(LOG_SOURCE_TERMINATED);
   });
 

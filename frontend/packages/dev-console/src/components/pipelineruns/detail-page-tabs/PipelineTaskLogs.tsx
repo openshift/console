@@ -31,6 +31,29 @@ interface PipelineTaskLogsState {
   targetHeight: number;
 }
 
+const getRenderContainers = (pod: Pod): { containers: Container[]; stillFetching: boolean } => {
+  const containers: Container[] = _.get(pod, ['spec', 'containers'], []);
+  const containerStatus: ContainerStatus[] = _.get(pod, ['status', 'containerStatuses'], []);
+
+  const containerNames = containers.map((c) => c.name);
+  const sortedContainerStatus = [];
+  containerStatus.forEach((cs) => {
+    const containerIndex = containerNames.indexOf(cs.name);
+    sortedContainerStatus[containerIndex] = cs;
+  });
+
+  const firstrunningCont = sortedContainerStatus.findIndex(
+    (container) => containerToLogSourceStatus(container) !== LOG_SOURCE_TERMINATED,
+  );
+  return {
+    containers: containers.slice(
+      0,
+      firstrunningCont === -1 ? containers.length : firstrunningCont + 1,
+    ),
+    stillFetching: firstrunningCont !== -1,
+  };
+};
+
 class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTaskLogsState> {
   scrollPane: React.RefObject<HTMLDivElement> = React.createRef();
 
@@ -48,48 +71,26 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
   }
 
   componentDidMount() {
-    const containers: Container[] = _.get(this.props, ['obj', 'data', 'spec', 'containers'], []);
-    const containerStatus: ContainerStatus[] = _.get(
-      this.props,
-      ['obj', 'data', 'status', 'containerStatuses'],
-      [],
-    );
-    const firstrunningCont = containerStatus.findIndex(
-      (container) => containerToLogSourceStatus(container) !== LOG_SOURCE_TERMINATED,
-    );
-    const renderContainers = containers.slice(
-      0,
-      firstrunningCont === -1 ? containers.length : firstrunningCont + 1,
-    );
+    const pod: Pod = _.get(this.props, ['obj', 'data'], {});
+    const { containers, stillFetching } = getRenderContainers(pod);
+    this.setState({
+      renderContainers: containers,
+      fetching: stillFetching,
+    });
 
-    this.setState({ renderContainers });
-    firstrunningCont === -1
-      ? this.setState({ fetching: false })
-      : this.setState({ fetching: true });
     this.scrollToBottom();
     window.addEventListener('resize', this.sizeContainer, { passive: true });
     this.sizeContainer();
   }
 
   componentWillReceiveProps(nextProps) {
-    const containers: Container[] = _.get(nextProps, ['obj', 'data', 'spec', 'containers'], []);
-    const containerStatus: ContainerStatus[] = _.get(
-      nextProps,
-      ['obj', 'data', 'status', 'containerStatuses'],
-      [],
-    );
     if (!_.isEqual(this.props, nextProps)) {
-      const firstrunningCont = containerStatus.findIndex(
-        (container) => containerToLogSourceStatus(container) !== LOG_SOURCE_TERMINATED,
-      );
-      const renderContainers = containers.slice(
-        0,
-        firstrunningCont === -1 ? containers.length : firstrunningCont + 1,
-      );
-      this.setState({ renderContainers });
-      firstrunningCont === -1
-        ? this.setState({ fetching: false })
-        : this.setState({ fetching: true });
+      const pod: Pod = _.get(nextProps, ['obj', 'data'], {});
+      const { containers, stillFetching } = getRenderContainers(pod);
+      this.setState({
+        renderContainers: containers,
+        fetching: stillFetching,
+      });
     }
     if (
       _.get(this.props, ['obj', 'data', 'metadata', 'name'], false) !==

@@ -29,6 +29,7 @@ interface Resource {
 }
 
 export interface ContainerStatus {
+  name: string;
   lastState?: string;
   state?: {
     waiting?: Record<string, any>;
