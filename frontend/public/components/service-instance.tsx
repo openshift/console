@@ -127,7 +127,7 @@ class ServiceInstanceMessage_ extends React.Component<
         >
           This service instance is marked for deletion, but still has bindings. You must delete the
           bindings before the instance will be deleted.{' '}
-          <Link to={`${basePath}/servicebindings`}>View Service Bindings</Link>
+          <Link to={`${basePath}/servicebindings`}>View service bindings</Link>
         </Alert>
       );
     }
@@ -194,7 +194,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({ obj: s
                 <>
                   <dt>Dashboard</dt>
                   <dd>
-                    <ExternalLink href={dashboardURL} text="View Dashboard" />
+                    <ExternalLink href={dashboardURL} text="View dashboard" />
                   </dd>
                 </>
               )}

@@ -46,7 +46,7 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
 export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj }) => {
   const link = getJenkinsLogURL(obj);
   return link ? (
-    <ExternalLink href={link} text="View Logs" additionalClassName="build-pipeline__log-link" />
+    <ExternalLink href={link} text="View logs" additionalClassName="build-pipeline__log-link" />
   ) : null;
 };
 

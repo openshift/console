@@ -91,7 +91,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
           <Status status={phase} />
         </span>
         <span className="col-xs-3 text-right">
-          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>View Logs</Link>
+          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>View logs</Link>
         </span>
       </div>
     </li>
@@ -132,7 +132,7 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({ pods, obj }) => {
             className="sidebar__section-view-all"
             to={`${resourcePath(obj.kind, name, namespace)}/pods`}
           >
-            {`View All (${_.size(pods)})`}
+            {`View all (${_.size(pods)})`}
           </Link>
         )}
       </SidebarSectionHeading>

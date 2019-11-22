@@ -325,7 +325,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
         <SectionHeading text="Update History">
           {errataLink && (
             <small>
-              <ExternalLink text="View Errata" href={errataLink} />
+              <ExternalLink text="View errata" href={errataLink} />
             </small>
           )}
         </SectionHeading>

@@ -36,12 +36,12 @@ export const ClusterServiceClassInfo: React.FC<ClusterServiceClassInfoProps> = (
             <ul className="list-inline">
               {documentationURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={documentationURL} text="View Documentation" />
+                  <ExternalLink href={documentationURL} text="View documentation" />
                 </li>
               )}
               {supportURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={supportURL} text="Get Support" />
+                  <ExternalLink href={supportURL} text="Get support" />
                 </li>
               )}
             </ul>

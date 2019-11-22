@@ -33,7 +33,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
           <Status status={pipelineRunStatus(pipelineRun) || 'Pending'} />
         </GridItem>
         <GridItem span={3} className="text-right">
-          <Link to={`${path}/logs`}>View Logs</Link>
+          <Link to={`${path}/logs`}>View logs</Link>
         </GridItem>
       </Grid>
     </li>

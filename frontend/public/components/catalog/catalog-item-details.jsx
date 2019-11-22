@@ -54,7 +54,7 @@ export class CatalogTileDetails extends React.Component {
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
-    const supportUrlLink = <ExternalLink href={supportUrl} text="Get Support" />;
+    const supportUrlLink = <ExternalLink href={supportUrl} text="Get support" />;
     const documentationUrlLink = (
       <ExternalLink
         href={documentationUrl}
