@@ -140,7 +140,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
 
       watchK8sResource: WatchK8sResource = (resource) => {
         this.setState((state: WithDashboardResourcesState) => ({
-          k8sResources: [...state.k8sResources, resource],
+          k8sResources: [...state.k8sResources, { ...resource, optional: true }],
         }));
       };
 
