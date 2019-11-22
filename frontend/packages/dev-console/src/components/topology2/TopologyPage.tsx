@@ -102,7 +102,7 @@ const TopologyPage: React.FC<Props> = ({
                   className="odc-topology__shortcuts-button"
                   icon={<QuestionCircleIcon />}
                 >
-                  Shortcuts
+                  View shortcuts
                 </Button>
               </Popover>
             )}
