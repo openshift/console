@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
-import { Form } from 'patternfly-react';
 
 import {
   ConnectedStorageClassForm,
@@ -40,7 +39,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders a form', () => {
-    expect(wrapper.find(Form).exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="storage-class-form"]').exists()).toBe(true);
   });
 
   it('renders a dropdown for selecting the reclaim policy', () => {
