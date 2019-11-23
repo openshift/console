@@ -1,7 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 
 import * as plugins from '../../../../plugins';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -26,23 +24,13 @@ import {
   getPVCStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
-import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
+import { connectToFlags, FlagsObject } from '../../../../reducers/features';
 import { LazyLoader, isDashboardsOverviewInventoryItem } from '@console/plugin-sdk';
 
-const getItems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
-  plugins.registry.getDashboardsOverviewInventoryItems().filter((e) => {
-    if (!plugins.registry.isExtensionInUse(e, flags)) {
-      return false;
-    }
-    const { model, additionalResources } = e.properties;
-    if (!k8sModels.get(model.crd ? referenceForModel(model) : model.kind)) {
-      return false;
-    }
-    if (additionalResources) {
-      return additionalResources.filter((r) => !r.optional).every((r) => !!k8sModels.get(r.kind));
-    }
-    return true;
-  });
+const getItems = (flags: FlagsObject) =>
+  plugins.registry
+    .getDashboardsOverviewInventoryItems()
+    .filter((e) => plugins.registry.isExtensionInUse(e, flags));
 
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
@@ -122,48 +110,38 @@ const ClusterInventoryItem = withDashboardResources(
   ),
 );
 
-const mapStateToProps = ({ k8s }) => ({
-  k8sModels: k8s.getIn(['RESOURCES', 'models']),
-});
-
-export const InventoryCard = connect(mapStateToProps)(
-  connectToFlags<InventoryCardProps>(
-    ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItem]),
-  )(({ flags, k8sModels }) => {
-    const items = getItems(flags, k8sModels);
-    return (
-      <DashboardCard>
-        <DashboardCardHeader>
-          <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
-        </DashboardCardHeader>
-        <DashboardCardBody>
-          <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
-          <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
-          <ClusterInventoryItem model={StorageClassModel} />
+export const InventoryCard = connectToFlags(
+  ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItem]),
+)(({ flags }) => {
+  const items = getItems(flags);
+  return (
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
+        <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
+        <ClusterInventoryItem model={StorageClassModel} />
+        <ClusterInventoryItem
+          model={PersistentVolumeClaimModel}
+          mapper={getPVCStatusGroups}
+          useAbbr
+        />
+        {items.map((item) => (
           <ClusterInventoryItem
-            model={PersistentVolumeClaimModel}
-            mapper={getPVCStatusGroups}
-            useAbbr
+            key={item.properties.model.kind}
+            model={item.properties.model}
+            mapper={item.properties.mapper}
+            additionalResources={item.properties.additionalResources}
+            useAbbr={item.properties.useAbbr}
+            expandedComponent={item.properties.expandedComponent}
           />
-          {items.map((item) => (
-            <ClusterInventoryItem
-              key={item.properties.model.kind}
-              model={item.properties.model}
-              mapper={item.properties.mapper}
-              additionalResources={item.properties.additionalResources}
-              useAbbr={item.properties.useAbbr}
-              expandedComponent={item.properties.expandedComponent}
-            />
-          ))}
-        </DashboardCardBody>
-      </DashboardCard>
-    );
-  }),
-);
-
-type InventoryCardProps = WithFlagsProps & {
-  k8sModels: ImmutableMap<string, K8sKind>;
-};
+        ))}
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});
 
 type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;

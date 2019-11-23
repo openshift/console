@@ -61,7 +61,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/ClusterUpdateActivity' /* webpackChunkName: "console-app" */
         ).then((m) => m.default),
-      required: FLAGS.CLUSTER_VERSION,
+      required: FLAGS.OPENSHIFT,
     },
   },
   {
@@ -77,7 +77,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'version',
         isList: false,
         prop: 'cv',
-        optional: true,
       },
     },
   },
