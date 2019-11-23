@@ -49,16 +49,6 @@
 
   .project-overview__item {
     min-height: 71px;
-
-    &.list-group-item {
-      background-clip: initial;
-      border-bottom: 1px solid $color-pf-black-200;
-      border-left: 0;
-      border-right: 0;
-      border-top: 1px solid $color-pf-black-200;
-      cursor: pointer;
-      position: relative;
-    }
   }
 
   .project-overview__item--selected {
@@ -128,17 +118,6 @@
   }
 
   @media (min-width: $screen-md-min) {
-    // Override Patternfly list view styles so that the additional info has a
-    // little more space for alerts, metrics, and pod status.
-    .list-view-pf-additional-info {
-      width: 62%;
-    }
-
-    .list-view-pf-description {
-      flex-basis: 38%;
-      width: 38%;
-    }
-
     .project-overview__detail--cpu,
     .project-overview__detail--memory {
       text-align: right;

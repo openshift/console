@@ -3,9 +3,9 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { ListView } from 'patternfly-react';
 import { Button, Tooltip } from '@patternfly/react-core';
 
+import { ListView, ListViewItem } from './list-view';
 import {
   Status as TooltipStatus,
   YellowExclamationTriangleIcon,
@@ -324,7 +324,7 @@ const ProjectOverviewListItem = connect<
   );
 
   return (
-    <ListView.Item
+    <ListViewItem
       onClick={onClick}
       className={className}
       heading={heading}
