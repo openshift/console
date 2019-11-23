@@ -45,7 +45,8 @@ export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomR
                 );
                 elementRef.current.setScale(d3.event.transform.k);
               }),
-            );
+            )
+            .filter(() => !d3.event.ctrlKey && !d3.event.button);
           zoom($svg);
 
           // Update the d3 transform whenever the scale or bounds change.

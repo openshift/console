@@ -229,7 +229,10 @@ export const useDndDrag = <
                   }
                 }),
               )
-              .filter(() => dndManager.canDragSource(idRef.current)),
+              .filter(
+                () =>
+                  !d3.event.ctrlKey && !d3.event.button && dndManager.canDragSource(idRef.current),
+              ),
           );
         }
         return () => {
