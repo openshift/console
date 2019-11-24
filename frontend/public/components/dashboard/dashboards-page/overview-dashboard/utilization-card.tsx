@@ -169,6 +169,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         current={current}
         consumers={cpuQueriesPopup}
         humanize={humanizeCpuCores}
+        position={PopoverPosition.top}
       />
     ),
     [],
