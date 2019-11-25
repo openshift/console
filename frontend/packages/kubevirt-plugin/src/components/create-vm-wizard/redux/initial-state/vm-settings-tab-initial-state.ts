@@ -4,6 +4,22 @@ import { asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getProviders } from '../../provider-definitions';
 
+export const vmSettingsOrder = {
+  [VMSettingsField.PROVIDER]: 0,
+  [VMSettingsField.USER_TEMPLATE]: 1,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 2,
+  [VMSettingsField.CONTAINER_IMAGE]: 3,
+  [VMSettingsField.IMAGE_URL]: 4,
+  [VMSettingsField.OPERATING_SYSTEM]: 5,
+  [VMSettingsField.FLAVOR]: 6,
+  [VMSettingsField.MEMORY]: 7,
+  [VMSettingsField.CPU]: 8,
+  [VMSettingsField.WORKLOAD_PROFILE]: 9,
+  [VMSettingsField.NAME]: 10,
+  [VMSettingsField.DESCRIPTION]: 11,
+  [VMSettingsField.START_VM]: 12,
+};
+
 export const getInitialVmSettings = (common: CommonData) => {
   const {
     data: { isCreateTemplate, isProviderImport },
@@ -77,5 +93,6 @@ export const getInitialVmSettings = (common: CommonData) => {
 
 export const getVmSettingsInitialState = (props) => ({
   value: getInitialVmSettings(props),
+  error: null,
   isValid: false,
 });

@@ -58,17 +58,22 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const iNetworks = iGetNetworks(state, id);
+  let error = null;
 
   let hasAllRequiredFilled = iNetworks.every((iNetwork) =>
     iGetIn(iNetwork, ['validation', 'hasAllRequiredFilled']),
   );
 
-  if (hasAllRequiredFilled && iGetProvisionSource(state, id) === ProvisionSource.PXE) {
-    hasAllRequiredFilled = !!iNetworks.find(
+  if (iGetProvisionSource(state, id) === ProvisionSource.PXE) {
+    const hasBootSource = !!iNetworks.find(
       (networkBundle) =>
         !iGetIn(networkBundle, ['network', 'pod']) &&
         iGetIn(networkBundle, ['networkInterface', 'bootOrder']) === 1,
     );
+    if (!hasBootSource) {
+      error = 'Please select the boot source.';
+      hasAllRequiredFilled = false;
+    }
   }
 
   let isValid = hasAllRequiredFilled;
@@ -77,13 +82,16 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
     isValid = iNetworks.every((iNetwork) => iGetIn(iNetwork, ['validation', 'isValid']));
   }
 
-  if (checkTabValidityChanged(state, id, VMWizardTab.NETWORKING, isValid, hasAllRequiredFilled)) {
+  if (
+    checkTabValidityChanged(state, id, VMWizardTab.NETWORKING, isValid, hasAllRequiredFilled, error)
+  ) {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
         id,
         VMWizardTab.NETWORKING,
         isValid,
         hasAllRequiredFilled,
+        error,
       ),
     );
   }

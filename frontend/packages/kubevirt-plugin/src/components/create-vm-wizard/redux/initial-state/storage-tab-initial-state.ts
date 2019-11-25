@@ -82,6 +82,7 @@ export const getProvisionSourceStorage = (provisionSource: ProvisionSource): VMW
 
 export const getStorageInitialState = () => ({
   value: [],
+  error: null,
   isValid: true, // empty Storages are valid
   hasAllRequiredFilled: true,
 });

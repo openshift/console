@@ -69,19 +69,24 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const iStorages = iGetStorages(state, id);
+  let error = null;
 
   let hasAllRequiredFilled = iStorages.every((iStorage) =>
     iGetIn(iStorage, ['validation', 'hasAllRequiredFilled']),
   );
 
-  if (hasAllRequiredFilled && iGetProvisionSource(state, id) === ProvisionSource.DISK) {
-    hasAllRequiredFilled = !!iStorages.find(
+  if (iGetProvisionSource(state, id) === ProvisionSource.DISK) {
+    const hasBootSource = !!iStorages.find(
       (storageBundle) =>
         iGetIn(storageBundle, ['disk', 'bootOrder']) === 1 &&
         iGetIn(storageBundle, ['disk', 'disk']) &&
         (iGetIn(storageBundle, ['volume', 'dataVolume']) ||
           iGetIn(storageBundle, ['volume', 'persistentVolumeClaim'])),
     );
+    if (!hasBootSource) {
+      error = 'Please select the boot source.';
+      hasAllRequiredFilled = false;
+    }
   }
 
   let isValid = hasAllRequiredFilled;
@@ -90,13 +95,16 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
     isValid = iStorages.every((iStorage) => iGetIn(iStorage, ['validation', 'isValid']));
   }
 
-  if (checkTabValidityChanged(state, id, VMWizardTab.STORAGE, isValid, hasAllRequiredFilled)) {
+  if (
+    checkTabValidityChanged(state, id, VMWizardTab.STORAGE, isValid, hasAllRequiredFilled, error)
+  ) {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
         id,
         VMWizardTab.STORAGE,
         isValid,
         hasAllRequiredFilled,
+        error,
       ),
     );
   }

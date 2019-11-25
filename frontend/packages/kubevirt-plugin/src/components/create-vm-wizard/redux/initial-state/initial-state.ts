@@ -23,5 +23,13 @@ export const getTabInitialState = (tabKey: VMWizardTab, props: CommonData) => {
     result = getter(props);
   }
 
-  return result || { value: {}, isValid: false, isLocked: false, hasAllRequiredFilled: false };
+  return (
+    result || {
+      value: {},
+      error: null,
+      isValid: false,
+      isLocked: false,
+      hasAllRequiredFilled: false,
+    }
+  );
 };

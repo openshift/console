@@ -8,4 +8,5 @@ export const getCloudInitInitialState = () => ({
   },
   isValid: true,
   hasAllRequiredFilled: true,
+  error: null,
 });

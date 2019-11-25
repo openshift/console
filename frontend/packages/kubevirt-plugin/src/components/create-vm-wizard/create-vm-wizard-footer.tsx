@@ -12,9 +12,10 @@ import {
 import * as _ from 'lodash';
 import { Prompt } from 'react-router';
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
-import { getDialogUIError } from '../../utils/strings';
+import { getDialogUIError, getSimpleDialogUIError } from '../../utils/strings';
 import { ALL_VM_WIZARD_TABS, VMWizardProps, VMWizardTab } from './types';
 import {
+  getStepError,
   hasStepAllRequiredFilled,
   isStepLocked,
   isStepValid,
@@ -54,6 +55,8 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const activeStepID = activeStep.id as VMWizardTab;
         const isLocked = _.some(ALL_VM_WIZARD_TABS, (id) => isStepLocked(stepData, id));
         const isValid = isStepValid(stepData, activeStepID);
+        const hasStepAllRequired = hasStepAllRequiredFilled(stepData, activeStepID);
+        const stepError = getStepError(stepData, activeStepID);
         checkValidity(isValid);
 
         const isFirstStep = activeStepID === VMWizardTab.VM_SETTINGS;
@@ -79,11 +82,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             />
             {!isValid && showError && (
               <Alert
-                title={getDialogUIError(hasStepAllRequiredFilled(stepData, activeStepID))}
+                title={
+                  stepError
+                    ? getSimpleDialogUIError(hasStepAllRequired)
+                    : getDialogUIError(hasStepAllRequired)
+                }
                 isInline
                 variant="danger"
                 className="kubevirt-create-vm-modal__footer-error"
-              />
+              >
+                {stepError}
+              </Alert>
             )}
             {!isLastStep && (
               <Button

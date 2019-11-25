@@ -13,12 +13,14 @@ type NetworkBootSourceProps = {
   isDisabled: boolean;
   networks: VMWizardNetworkWithWrappers[];
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
+  className?: string;
 };
 
 export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
   isDisabled,
   onBootOrderChanged,
   networks,
+  className,
 }) => {
   const pxeNetworks = networks.filter((n) => !n.networkWrapper.isPodNetwork());
   const hasPXENetworks = pxeNetworks.length > 0;
@@ -28,7 +30,7 @@ export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
   );
 
   return (
-    <Form>
+    <Form className={className}>
       <FormRow
         title="Boot Source"
         fieldId={PXE_BOOTSOURCE_ID}

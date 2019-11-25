@@ -6,4 +6,5 @@ export const getResultInitialState = () => ({
   },
   isValid: null,
   isPending: false,
+  error: null,
 });
