@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/auth"
+
+	"k8s.io/klog"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.
@@ -23,7 +25,7 @@ func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.U
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, err := a.Authenticate(r)
 		if err != nil {
-			plog.Infof("authentication failed: %v", err)
+			klog.Infof("authentication failed: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -39,16 +41,15 @@ func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.U
 			"TRACE":
 			safe = true
 		}
-
 		if !safe {
 			if err := a.VerifySourceOrigin(r); err != nil {
-				plog.Infof("invalid source origin: %v", err)
+				klog.Infof("invalid source origin: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 
 			if err := a.VerifyCSRFToken(r); err != nil {
-				plog.Infof("invalid CSRFToken: %v", err)
+				klog.Infof("invalid CSRFToken: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}

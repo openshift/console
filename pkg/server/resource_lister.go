@@ -7,6 +7,8 @@ import (
 	"net/url"
 
 	"github.com/openshift/console/pkg/serverutils"
+
+	"k8s.io/klog"
 )
 
 // ResourceLister handles resource requests
@@ -67,7 +69,7 @@ func NewResourceLister(bearerToken string, requestURL *url.URL, client *http.Cli
 	if r.responseFilter == nil {
 		r.responseFilter = func(w http.ResponseWriter, r *http.Response) {
 			if _, err := io.Copy(w, r.Body); err != nil {
-				plog.Errorf("console service account cannot list resource: %s", err)
+				klog.Errorf("console service account cannot list resource: %s", err)
 				serverutils.SendResponse(w.(http.ResponseWriter), http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 			}
 		}

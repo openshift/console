@@ -2,12 +2,9 @@ package bridge
 
 import (
 	"fmt"
-	"github.com/coreos/pkg/capnslog"
 	"net/url"
-)
 
-var (
-	plog = capnslog.NewPackageLogger("github.com/openshift/console", "bridge")
+	"k8s.io/klog"
 )
 
 func ValidateFlagNotEmpty(name string, value string) string {
@@ -50,5 +47,5 @@ func ValidateFlagIs(name string, value string, expectedValues ...string) string 
 }
 
 func FlagFatalf(name string, format string, a ...interface{}) {
-	plog.Fatalf("Invalid flag: %s, error: %s", name, fmt.Sprintf(format, a...))
+	klog.Fatalf("Invalid flag: %s, error: %s", name, fmt.Sprintf(format, a...))
 }

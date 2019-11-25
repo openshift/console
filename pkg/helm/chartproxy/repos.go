@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/coreos/pkg/capnslog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -19,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog"
 
 	"github.com/openshift/library-go/pkg/crypto"
 )
@@ -29,7 +29,6 @@ var (
 		Version:  "v1beta1",
 		Resource: "helmchartrepositories",
 	}
-	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/chartproxy")
 )
 
 const (
@@ -184,13 +183,13 @@ func (b *helmRepoGetter) List() ([]*helmRepo, error) {
 	var helmRepos []*helmRepo
 	repos, err := b.Client.Resource(helmChartRepositoryGVK).List(context.TODO(), v1.ListOptions{})
 	if err != nil {
-		plog.Errorf("Error listing helm chart repositories: %v \nempty repository list will be used", err)
+		klog.Errorf("Error listing helm chart repositories: %v \nempty repository list will be used", err)
 		return helmRepos, nil
 	}
 	for _, item := range repos.Items {
 		helmConfig, err := b.unmarshallConfig(item)
 		if err != nil {
-			plog.Errorf("Error unmarshalling repo %v: %v", item, err)
+			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
 			continue
 		}
 		helmRepos = append(helmRepos, helmConfig)
