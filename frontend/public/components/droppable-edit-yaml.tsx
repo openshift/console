@@ -4,6 +4,7 @@ import * as React from 'react';
 import { EditYAML } from './edit-yaml';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
+import { DropTargetMonitor } from 'react-dnd/lib/interfaces';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
@@ -22,9 +23,9 @@ const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, m
   connectDropTarget: connectObj.dropTarget(),
   isOver: monitor.isOver(),
   canDrop: monitor.canDrop(),
-}))(EditYAML);
+}))(EditYAML as React.FC<EditYAMLProps>);
 
-export const DroppableEditYAML = withDragDropContext(
+export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
   class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
     constructor(props) {
       super(props);
@@ -94,11 +95,18 @@ export const DroppableEditYAML = withDragDropContext(
   },
 );
 
+type EditYAMLProps = {
+  obj: string;
+  fileUpload: string;
+  error: string;
+  onDrop: (item: any, monitor: DropTargetMonitor) => void;
+};
+
 export type DroppableEditYAMLProps = {
   obj: string;
 };
 
 export type DroppableEditYAMLState = {
-  fileUpload: string | ArrayBuffer;
+  fileUpload: string;
   error: string;
 };
