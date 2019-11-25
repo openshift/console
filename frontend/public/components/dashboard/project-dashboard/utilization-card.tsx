@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -12,6 +11,12 @@ import {
   TWENTY_FOUR_HR,
   UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
+import { getName } from '@console/shared';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import { PopoverPosition } from '@patternfly/react-core';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getPrometheusQueryResponse } from '../../../actions/dashboards';
+import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import { Dropdown } from '../../utils/dropdown';
 import {
   humanizeBinaryBytes,
@@ -21,12 +26,8 @@ import {
 } from '../../utils';
 import { getRangeVectorStats } from '../../graphs/utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { getName } from '@console/shared';
-import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PodModel } from '../../../models';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getPrometheusQueryResponse } from '../../../actions/dashboards';
+import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
@@ -96,6 +97,7 @@ export const UtilizationCard = withDashboardResources(
           ]}
           humanize={humanizeCpuCores}
           namespace={projectName}
+          position={PopoverPosition.top}
         />
       ),
       [projectName],
@@ -115,6 +117,7 @@ export const UtilizationCard = withDashboardResources(
           ]}
           humanize={humanizeBinaryBytes}
           namespace={projectName}
+          position={PopoverPosition.top}
         />
       ),
       [projectName],
@@ -134,6 +137,7 @@ export const UtilizationCard = withDashboardResources(
           ]}
           humanize={humanizeBinaryBytes}
           namespace={projectName}
+          position={PopoverPosition.top}
         />
       ),
       [projectName],
@@ -153,6 +157,7 @@ export const UtilizationCard = withDashboardResources(
           ]}
           humanize={humanizeDecimalBytesPerSec}
           namespace={projectName}
+          position={PopoverPosition.top}
         />
       ),
       [projectName],
