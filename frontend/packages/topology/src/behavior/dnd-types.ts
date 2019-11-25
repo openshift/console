@@ -80,7 +80,7 @@ export interface DndManager {
     pageY: number,
   ): void;
   hover(targetIds: string[]): void;
-  endDrag(): void;
+  endDrag(): Promise<void>;
   drag(x: number, y: number, pageX: number, pageY: number): void;
   drop(): void;
   cancel(): boolean;
