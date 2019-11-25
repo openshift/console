@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
-import { Colors } from './bar-colors';
+import { Colors, OTHER_TOOLTIP } from './consts';
 
 const getTotal = (stats: StackDataPoint[]) =>
   stats.reduce((total, dataPoint) => total + dataPoint.y, 0);
@@ -16,10 +16,10 @@ const addOthers = (
   const othersData = {
     x: '0',
     y: others,
-    name: 'Others',
+    name: 'Other',
     color: Colors.OTHER,
     label: humanize(others).string,
-    link: '',
+    link: OTHER_TOOLTIP,
     id: 6,
   };
   return othersData;
