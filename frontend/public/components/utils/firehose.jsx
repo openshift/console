@@ -150,7 +150,7 @@ export const Firehose = connect(
       shallowMapEquals(next.k8sModels, prev.k8sModels),
   },
 )(
-  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>}>} */
+  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, doNotConnectToState?: boolean}>} */
   class Firehose extends React.Component {
     state = {
       firehoses: [],
@@ -233,18 +233,23 @@ export const Firehose = connect(
     }
 
     render() {
-      const reduxes = this.state.firehoses.map(({ id, prop, isList, filters, optional }) => ({
-        reduxID: id,
-        prop,
-        isList,
-        filters,
-        optional,
-      }));
-      const children = inject(this.props.children, _.omit(this.props, ['children', 'resources']));
+      if (this.props.loaded || this.state.firehoses.length > 0) {
+        const children = inject(this.props.children, _.omit(this.props, ['children', 'resources']));
 
-      return this.props.loaded || this.state.firehoses.length > 0 ? (
-        <ConnectToState reduxes={reduxes}>{children}</ConnectToState>
-      ) : null;
+        if (this.props.doNotConnectToState) {
+          return children;
+        }
+
+        const reduxes = this.state.firehoses.map(({ id, prop, isList, filters, optional }) => ({
+          reduxID: id,
+          prop,
+          isList,
+          filters,
+          optional,
+        }));
+        return <ConnectToState reduxes={reduxes}>{children}</ConnectToState>;
+      }
+      return null;
     }
   },
 );
@@ -259,6 +264,7 @@ Firehose.contextTypes = {
 Firehose.propTypes = {
   children: PropTypes.node,
   expand: PropTypes.bool,
+  doNotConnectToState: PropTypes.bool,
   resources: PropTypes.arrayOf(
     PropTypes.shape({
       kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,

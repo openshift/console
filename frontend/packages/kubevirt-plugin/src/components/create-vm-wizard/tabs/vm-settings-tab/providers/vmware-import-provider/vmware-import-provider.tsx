@@ -207,7 +207,7 @@ const VMWareImportProviderConnected: React.FC<VMWareImportProviderConnectedProps
   }
 
   return (
-    <Firehose resources={resources}>
+    <Firehose resources={resources} doNotConnectToState>
       <VMWareImportProviderFirehose {...rest} dataIDReferences={makeIDReferences(resources)} />
     </Firehose>
   );
