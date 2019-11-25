@@ -11,6 +11,9 @@
     "@console/operator-lifecycle-manager": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.ts",
+    "integrationTestSuites": {
+      "ceph-storage": ["integration-tests/**/*.scenario.ts"]
+    }
   }
 }
