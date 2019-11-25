@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as d3 from 'd3';
-import { action, computed, comparer } from 'mobx';
+import { action, computed, comparer, flow } from 'mobx';
 import { observer } from 'mobx-react';
-import { actionAsync } from 'mobx-utils';
 import ElementContext from '../utils/ElementContext';
 import useCallbackRef from '../utils/useCallbackRef';
 import {
@@ -131,10 +130,13 @@ export const useDndDrag = <
     React.useCallback(
       (node: SVGElement | null) => {
         if (node) {
-          let operationChangeEvents: {
-            begin: [number, number, number, number];
-            drag: [number, number, number, number];
-          } | null = null;
+          let operationChangeEvents:
+            | {
+                begin: [number, number, number, number];
+                drag: [number, number, number, number];
+              }
+            | undefined;
+          let operation: DragSpecOperation | undefined;
           d3.select(node).call(
             d3
               .drag()
@@ -147,8 +149,11 @@ export const useDndDrag = <
                     .node() as any,
               )
               .on('start', function() {
-                const updateOperation = actionAsync(async () => {
-                  const { operation } = specRef.current;
+                operation =
+                  typeof specRef.current.operation === 'function'
+                    ? specRef.current.operation(monitor, propsRef.current)
+                    : specRef.current.operation;
+                const updateOperation = async () => {
                   if (operation && idRef.current) {
                     const op = getOperation(operation);
                     if (dndManager.getOperation() !== op) {
@@ -171,29 +176,34 @@ export const useDndDrag = <
                       if (op && operationChangeEvents) {
                         dndManager.beginDrag(idRef.current, op, ...operationChangeEvents.begin);
                         dndManager.drag(...operationChangeEvents.drag);
-                        operationChangeEvents = null;
+                        operationChangeEvents = undefined;
                       }
                     }
                   }
-                });
+                };
                 d3.select(node.ownerDocument)
                   .on(
                     'keydown.useDndDrag',
-                    actionAsync(async () => {
+                    flow(function*() {
                       const e = d3.event as KeyboardEvent;
                       if (e.key === 'Escape') {
                         if (dndManager.isDragging() && dndManager.cancel()) {
-                          operationChangeEvents = null;
+                          operationChangeEvents = undefined;
                           d3.select(d3.event.view).on('.drag', null);
                           d3.select(node.ownerDocument).on('.useDndDrag', null);
-                          await dndManager.endDrag();
+                          yield dndManager.endDrag();
                         }
                       } else {
-                        await updateOperation();
+                        yield updateOperation();
                       }
                     }),
                   )
-                  .on('keyup.useDndDrag', updateOperation);
+                  .on(
+                    'keyup.useDndDrag',
+                    flow(function*() {
+                      yield updateOperation();
+                    }),
+                  );
               })
               .on(
                 'drag',
@@ -205,8 +215,8 @@ export const useDndDrag = <
                   } else if (operationChangeEvents) {
                     operationChangeEvents.drag = [x, y, pageX, pageY];
                   } else {
-                    const op = getOperation(specRef.current.operation);
-                    if (op || !hasOperation(specRef.current.operation)) {
+                    const op = getOperation(operation);
+                    if (op || !hasOperation(operation)) {
                       if (idRef.current) {
                         dndManager.beginDrag(idRef.current, op, x, y, pageX, pageY);
                       }
@@ -221,12 +231,13 @@ export const useDndDrag = <
               )
               .on(
                 'end',
-                actionAsync(async () => {
-                  operationChangeEvents = null;
+                flow(function*() {
+                  operationChangeEvents = undefined;
+                  operation = undefined;
                   d3.select(node.ownerDocument).on('.useDndDrag', null);
                   if (dndManager.isDragging()) {
                     dndManager.drop();
-                    await dndManager.endDrag();
+                    yield dndManager.endDrag();
                   }
                 }),
               )
@@ -240,7 +251,7 @@ export const useDndDrag = <
           node && d3.select(node).on('mousedown.drag', null);
         };
       },
-      [dndManager],
+      [dndManager, monitor],
     ),
   );
 
