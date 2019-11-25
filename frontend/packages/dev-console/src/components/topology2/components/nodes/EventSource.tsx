@@ -28,6 +28,7 @@ const EventSource: React.FC<EventSourceProps> = ({
   selected,
   onSelect,
   onContextMenu,
+  contextMenuOpen,
   dragNodeRef,
   dragging,
 }) => {
@@ -50,7 +51,9 @@ const EventSource: React.FC<EventSourceProps> = ({
         className="odc-event-source__bg"
         ref={svgAnchorRef}
         filter={createSvgIdUrl(
-          hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+          hover || dragging || contextMenuOpen
+            ? NODE_SHADOW_FILTER_ID_HOVER
+            : NODE_SHADOW_FILTER_ID,
         )}
         points={`${width / 2}, ${(height - size) / 2} ${width - (width - size) / 2},${height /
           2} ${width / 2},${height - (height - size) / 2} ${(width - size) / 2},${height / 2}`}
