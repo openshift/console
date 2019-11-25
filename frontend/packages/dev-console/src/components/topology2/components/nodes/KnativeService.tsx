@@ -11,7 +11,6 @@ import {
   RectAnchor,
   useAnchor,
   WithDragNodeProps,
-  Layer,
   useHover,
   createSvgIdUrl,
   useCombineRefs,
@@ -39,7 +38,6 @@ const KnativeService: React.FC<EventSourceProps> = ({
   onContextMenu,
   dragNodeRef,
   dragging,
-  regrouping,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -60,24 +58,22 @@ const KnativeService: React.FC<EventSourceProps> = ({
   return (
     <g ref={hoverRef} onClick={onSelect} onContextMenu={onContextMenu}>
       <NodeShadows />
-      <Layer id={dragging && regrouping ? undefined : 'groups2'}>
-        <rect
-          ref={nodeRefs}
-          className={cx('odc-knative-service', {
-            'is-selected': selected,
-            'is-dragging': dragging,
-          })}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          rx="5"
-          ry="5"
-          filter={createSvgIdUrl(
-            hover || innerHover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
-          )}
-        />
-      </Layer>
+      <rect
+        ref={nodeRefs}
+        className={cx('odc-knative-service', {
+          'is-selected': selected,
+          'is-dragging': dragging,
+        })}
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        rx="5"
+        ry="5"
+        filter={createSvgIdUrl(
+          hover || innerHover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+        )}
+      />
       {hasDataUrl && (
         <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
           <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
