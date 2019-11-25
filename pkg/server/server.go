@@ -16,7 +16,6 @@ import (
 	"strings"
 
 	"github.com/coreos/dex/api"
-	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
@@ -54,10 +53,6 @@ const (
 	gitopsEndpoint                   = "/api/gitops/"
 
 	sha256Prefix = "sha256~"
-)
-
-var (
-	plog = capnslog.NewPackageLogger("github.com/openshift/console", "server")
 )
 
 type jsGlobals struct {

@@ -12,11 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coreos/pkg/capnslog"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
 )
@@ -37,8 +36,6 @@ const (
 	// startup is blocked.
 	WorkspaceRestrictedAcccessAnnotation = "controller.devfile.io/restricted-access"
 )
-
-var log = capnslog.NewPackageLogger("github.com/openshift/console", "terminal")
 
 // Proxy provides handlers to handle terminal related requests
 type Proxy struct {
@@ -185,7 +182,7 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 
 	enabled, err := workspaceOperatorIsRunning()
 	if err != nil {
-		log.Errorf("Failed to check if workspace operator is running: %s", err)
+		klog.Errorf("Failed to check if workspace operator is running: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

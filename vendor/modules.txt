@@ -67,10 +67,7 @@ github.com/containerd/continuity/pathdriver
 github.com/coreos/dex/api
 # github.com/coreos/go-oidc v2.1.0+incompatible
 github.com/coreos/go-oidc
-# github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
-github.com/coreos/go-systemd/journal
 # github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-github.com/coreos/pkg/capnslog
 github.com/coreos/pkg/flagutil
 github.com/coreos/pkg/health
 github.com/coreos/pkg/httputil

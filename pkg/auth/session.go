@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"k8s.io/klog"
 )
 
 const openshiftSessionCookieName = "openshift-session-token"
@@ -62,7 +64,7 @@ func (ss *SessionStore) deleteSession(token string) error {
 			return nil
 		}
 	}
-	log.Errorf("ss.byAge did not contain session %v", token)
+	klog.Errorf("ss.byAge did not contain session %v", token)
 	return fmt.Errorf("ss.byAge did not contain session %v", token)
 }
 
@@ -78,10 +80,10 @@ func (ss *SessionStore) pruneSessions() {
 			expired++
 		}
 	}
-	log.Debugf("Pruned %v expired sessions.", expired)
+	klog.V(4).Infof("Pruned %v expired sessions.", expired)
 	toRemove := len(ss.byAge) - ss.maxSessions
 	if toRemove > 0 {
-		log.Debugf("Still too many sessions. Pruning oldest %v sessions...", toRemove)
+		klog.V(4).Infof("Still too many sessions. Pruning oldest %v sessions...", toRemove)
 		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
 		for _, s := range ss.byAge[:toRemove] {
 			delete(ss.byToken, s.token)
@@ -89,6 +91,6 @@ func (ss *SessionStore) pruneSessions() {
 		ss.byAge = ss.byAge[toRemove:]
 	}
 	if expired+toRemove > 0 {
-		log.Debugf("Pruned %v old sessions.", expired+toRemove)
+		klog.V(4).Infof("Pruned %v old sessions.", expired+toRemove)
 	}
 }
