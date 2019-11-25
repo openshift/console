@@ -17,8 +17,8 @@ import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
-import { asVM, getBootableDevicesInOrder } from '../../selectors/vm';
-import { BootOrder } from '../boot-order';
+import { asVM, getDevices } from '../../selectors/vm';
+import { BootOrderSummary } from '../boot-order';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 
@@ -79,18 +79,14 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
-  const sortedBootableDevices = getBootableDevicesInOrder(template);
+  const devices = getDevices(asVM(template));
   const cds = getCDRoms(asVM(template));
   const flavorText = getFlavorText(template);
 
   return (
     <dl className="co-m-pane__details">
-      <VMDetailsItem
-        title="Boot Order"
-        idValue={prefixedID(id, 'boot-order')}
-        isNotAvail={sortedBootableDevices.length === 0}
-      >
-        <BootOrder bootableDevices={sortedBootableDevices} />
+      <VMDetailsItem title="Boot Order" idValue={prefixedID(id, 'boot-order')}>
+        <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 
       <VMDetailsItem

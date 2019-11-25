@@ -15,5 +15,6 @@ export type VMMultiStatus = {
 
 export type BootableDeviceType = {
   type: string;
+  typeLabel: string;
   value: V1Disk | V1NetworkInterface;
 };
