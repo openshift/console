@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as _ from 'lodash';
-import { SECOND } from './consts';
+import { POD_NAME_PATTERNS, SECOND } from './consts';
 
 export const checkIfClusterIsReady = async () => {
   let stillLoading = true;
@@ -44,11 +44,16 @@ export const getPodPhase = (pod) => {
   return pod.status.phase;
 };
 
+export const getPodRestartCount = (pod) => {
+  return pod.status.containerStatuses[0].restartCount;
+};
+
 export const getPodName = (pod) => {
   return pod.metadata.name;
 };
 
 export const testPodIsRunning = (podPhase: string) => expect(podPhase).toBe('Running');
+export const testPodIsSucceeded = (podPhase: string) => expect(podPhase).toBe('Succeeded');
 
 export const getDataFromRowAndCol = async (
   row: number,
@@ -84,3 +89,12 @@ export const verifyNodeLabels = (nodeName: string, label: string): boolean => {
   if (labels.includes(label)) return true;
   return false;
 };
+
+export const isPodPresent = (pods, podName) => {
+  const podObj = pods.items.find((pod) => getPodName(pod) === podName);
+  return podObj || '';
+};
+
+export const getOSDPreparePodsCnt = (pods) =>
+  pods.items.filter((pod) => getPodName(pod).includes(POD_NAME_PATTERNS.ROOK_CEPH_OSD_PREPARE))
+    .length;
