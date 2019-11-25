@@ -7,13 +7,47 @@
   top: 0;
   bottom: 0;
 
+  &__layout-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 var(--pf-global--spacer--sm);
+  }
+
   &__layout-button {
-    &.pf-m-active, &:hover {
-      color: var(--pf-global--active-color--400);
+    .pf-topology-control-bar__button.pf-c-button {
+      border-radius: 0;
+      margin-right: 0;
+
+      &:focus {
+        z-index: 10;
+        color: var(--pf-global--active-color--400);
+      }
+
+      &.pf-m-active {
+        background-color: var(--pf-global--Color--light-300);
+        color: var(--pf-global--icon--Color--dark	);
+      }
+
+      &:hover {
+        z-index: 20;
+        color: var(--pf-global--active-color--400);
+        &.pf-m-active {
+          color: var(--pf-global--icon--Color--dark	);
+        }
+      }
     }
 
     &:first-of-type {
-      margin-left: var(--pf-global--spacer--sm);
+      .pf-topology-control-bar__button.pf-c-button {
+        border-radius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
+      }
+    }
+
+    &:last-of-type {
+      .pf-topology-control-bar__button.pf-c-button {
+        border-radius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
+      }
     }
 
     &__icon {
