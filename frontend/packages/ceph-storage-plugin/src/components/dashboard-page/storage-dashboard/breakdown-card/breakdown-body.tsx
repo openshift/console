@@ -16,6 +16,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   humanize,
   isLoading,
   hasLoadError,
+  ocsVersion = '',
 }) => {
   if (isLoading && !hasLoadError) {
     return <BreakdownChartLoading />;
@@ -79,7 +80,12 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
         )}
       </GridItem>
       <GridItem span={12}>
-        <BreakdownChart data={chartData} legends={legends} metricModel={metricModel} />
+        <BreakdownChart
+          data={chartData}
+          legends={legends}
+          metricModel={metricModel}
+          ocsVersion={ocsVersion}
+        />
       </GridItem>
     </Grid>
   );
@@ -94,4 +100,5 @@ type BreakdownBodyProps = {
   capacityTotal?: string;
   metricModel: K8sKind;
   humanize: Humanize;
+  ocsVersion?: string;
 };
