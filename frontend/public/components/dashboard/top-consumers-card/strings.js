@@ -1,6 +1,6 @@
-export const CPU_DESC = 'CPU time';
+export const CPU_DESC = 'CPU consumption';
 export const MEMORY_DESC = 'Memory consumption';
-export const STORAGE_DESC = 'Average I/O time';
+export const STORAGE_DESC = 'Storage consumption';
 export const NETWORK_DESC = 'Network consumption';
 
 export const PODS = 'Pods';

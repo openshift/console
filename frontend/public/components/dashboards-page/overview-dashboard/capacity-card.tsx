@@ -11,7 +11,7 @@ import {
 } from '../../dashboard/dashboard-card';
 import { CapacityBody, CapacityItem } from '../../dashboard/capacity-card';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
-import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB, useRefWidth } from '../../utils';
+import { humanizeBinaryBytesWithoutB, humanizeCpuCores, humanizeDecimalBytesPerSec, useRefWidth } from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
 import { OverviewQuery, capacityQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
@@ -50,6 +50,7 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
 
   const queries = getQueries(flags);
   const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
+  const cpuTotal = prometheusResults.getIn([queries[OverviewQuery.CPU_TOTAL], 'result']);
   const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
   const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'result']);
   const storageUsed = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'result']);
@@ -61,8 +62,8 @@ export const CapacityCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
     <CapacityItem
       title="CPU"
       used={getLastStats(cpuUtilization, getRangeVectorStats)}
-      total={100}
-      formatValue={humanizePercentage}
+      total={getLastStats(cpuTotal, getInstantVectorStats)}
+      formatValue={humanizeCpuCores}
       isLoading={!cpuUtilization}
     />
   );

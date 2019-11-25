@@ -1,18 +1,13 @@
 import * as React from 'react';
 
 import { CPU_DESC, MEMORY_DESC, STORAGE_DESC, NETWORK_DESC } from './strings';
-import { Humanize, humanizeBinaryBytesWithoutB, humanizeDecimalBytesPerSec, humanizeSeconds } from '../../utils';
+import { Humanize, humanizeBinaryBytesWithoutB, humanizeCpuCores, humanizeDecimalBytesPerSec } from '../../utils';
 import { MetricType } from './metric-type';
-
-const toNanoSeconds = (value: React.ReactText) => {
-  const val = Number(value);
-  return isFinite(val) ? val * 1000 ** 3 : 0;
-};
 
 export const metricTypeMap: MetricTypeMap = {
   [MetricType.CPU]: {
     description: CPU_DESC,
-    humanize: value => humanizeSeconds(toNanoSeconds(value)),
+    humanize: humanizeCpuCores,
   },
   [MetricType.MEMORY]: {
     description: MEMORY_DESC,
@@ -20,7 +15,7 @@ export const metricTypeMap: MetricTypeMap = {
   },
   [MetricType.STORAGE]: {
     description: STORAGE_DESC,
-    humanize: value => humanizeSeconds(toNanoSeconds(value)),
+    humanize: humanizeBinaryBytesWithoutB,
   },
   [MetricType.NETWORK]: {
     description: NETWORK_DESC,
