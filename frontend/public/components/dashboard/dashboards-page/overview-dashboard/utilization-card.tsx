@@ -16,7 +16,12 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import { humanizeBinaryBytes, humanizeCpuCores } from '../../../utils/units';
+import {
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeNumber,
+  humanizeDecimalBytesPerSec,
+} from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import { Dropdown } from '../../../utils/dropdown';
 import { OverviewQuery, utilizationQueries, top25ConsumerQueries } from './queries';
@@ -79,6 +84,19 @@ const storageQueriesPopup = [
     query: top25ConsumerQueries[OverviewQuery.NODES_BY_STORAGE],
     model: NodeModel,
     metric: 'instance',
+  },
+];
+
+const podQueriesPopup = [
+  {
+    query: top25ConsumerQueries[OverviewQuery.PROJECTS_BY_PODS],
+    model: ProjectModel,
+    metric: 'namespace',
+  },
+  {
+    query: top25ConsumerQueries[OverviewQuery.NODES_BY_PODS],
+    model: NodeModel,
+    metric: 'node',
   },
 ];
 
@@ -154,6 +172,20 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
     prometheusResults,
     queries[OverviewQuery.STORAGE_UTILIZATION].total,
   );
+  const [podUtilization, podUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.POD_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [networkUtilization, networkUtilizationError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.NETWORK_UTILIZATION].utilization,
+    UTILIZATION_QUERY_HOUR_MAP[duration],
+  );
+  const [networkTotal, networkTotalError] = getPrometheusQueryResponse(
+    prometheusResults,
+    queries[OverviewQuery.NETWORK_UTILIZATION].total,
+  );
 
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const cpuMax = getInstantVectorStats(cpuTotal);
@@ -161,6 +193,9 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
   const memoryMax = getInstantVectorStats(memoryTotal);
   const storageStats = getRangeVectorStats(storageUtilization);
   const storageMax = getInstantVectorStats(storageTotal);
+  const networkStats = getRangeVectorStats(networkUtilization);
+  const networkMax = getInstantVectorStats(networkTotal);
+  const podStats = getRangeVectorStats(podUtilization);
 
   const cpuPopover = React.useCallback(
     ({ current }) => (
@@ -195,6 +230,19 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
         current={current}
         consumers={storageQueriesPopup}
         humanize={humanizeBinaryBytes}
+        position={PopoverPosition.top}
+      />
+    ),
+    [],
+  );
+
+  const podPopover = React.useCallback(
+    ({ current }) => (
+      <ConsumerPopover
+        title="Pod count"
+        current={current}
+        consumers={podQueriesPopup}
+        humanize={humanizeNumber}
         position={PopoverPosition.top}
       />
     ),
@@ -244,6 +292,24 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
           max={storageMax.length ? storageMax[0].y : null}
+        />
+        <UtilizationItem
+          title="Network"
+          data={networkStats}
+          error={networkUtilizationError || networkTotalError}
+          isLoading={!networkUtilization || !networkTotal}
+          query={utilizationQueries[OverviewQuery.NETWORK_UTILIZATION].utilization}
+          humanizeValue={humanizeDecimalBytesPerSec}
+          max={networkMax.length ? networkMax[0].y : null}
+        />
+        <UtilizationItem
+          title="Pod count"
+          data={podStats}
+          error={podUtilizationError}
+          isLoading={!podUtilization}
+          query={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
+          humanizeValue={humanizeNumber}
+          TopConsumerPopover={podPopover}
         />
       </UtilizationBody>
     </DashboardCard>
