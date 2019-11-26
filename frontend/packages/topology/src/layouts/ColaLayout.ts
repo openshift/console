@@ -498,6 +498,7 @@ class ColaLayout implements Layout {
     });
 
     // Create groups only for those with children
+    const prevGroups = this.groups;
     this.groups = groups
       .filter((g) => g.getChildren().length > 0)
       .map((group: Node) => new ColaGroup(group, nodeIndex++, this.options.groupDistance));
@@ -532,7 +533,24 @@ class ColaLayout implements Layout {
     const newNodes: ColaNode[] = initialRun
       ? this.nodes
       : this.nodes.filter((node) => !this.nodesMap[node.element.getId()]);
-    const addingNodes = restart && newNodes.length > 0;
+    let addingNodes = restart && newNodes.length > 0;
+
+    if (!initialRun && restart && !addingNodes) {
+      this.groups.forEach((group) => {
+        const prevGroup = prevGroups.find((g) => g.element.getId() === group.element.getId());
+        if (!prevGroup) {
+          addingNodes = true;
+          newNodes.push(...group.leaves);
+        } else {
+          group.leaves.forEach((node) => {
+            if (!prevGroup.leaves.find((l) => l.element.getId() === node.element.getId())) {
+              newNodes.push(node);
+            }
+          });
+        }
+      });
+      addingNodes = newNodes.length > 0;
+    }
 
     // initialize new node positions
     const cx = this.graph.getBounds().width / 2;
