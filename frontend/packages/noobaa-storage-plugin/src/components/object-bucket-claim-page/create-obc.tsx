@@ -123,6 +123,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 name="storageClass"
                 hideClassName="co-required"
                 filter={showOnlyObcScs}
+                id="sc-dropdown"
               />
               <p className="help-block">
                 Defines the object-store service and the bucket provisioner.
@@ -136,7 +137,6 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 resources={[
                   {
                     isList: true,
-                    namespace,
                     kind: referenceForModel(NooBaaBucketClassModel),
                     prop: 'bucketClass',
                   },
@@ -149,6 +149,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                   placeholder="Select Bucket Class"
                   dropDownClassName="dropdown--full-width"
                   className="nb-create-obc__bc-dropdown"
+                  id="bc-dropdown"
                 />
               </Firehose>
             </div>
