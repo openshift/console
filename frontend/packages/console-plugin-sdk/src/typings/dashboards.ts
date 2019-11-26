@@ -137,7 +137,7 @@ namespace ExtensionProperties {
 
   export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
     /** Resource to watch */
-    k8sResource: FirehoseResource;
+    k8sResource: FirehoseResource & { isList: true };
 
     /**
      * Function which will determine if given resource represents the action.
@@ -146,7 +146,7 @@ namespace ExtensionProperties {
     isActivity?: (resource: K8sResourceKind) => boolean;
 
     /** Timestamp for given action, which will be used for ordering */
-    getTimestamp: (resource: K8sResourceKind) => Date;
+    getTimestamp?: (resource: K8sResourceKind) => Date;
 
     /** Loader for corresponding action component */
     loader: LazyLoader<K8sActivityProps>;
