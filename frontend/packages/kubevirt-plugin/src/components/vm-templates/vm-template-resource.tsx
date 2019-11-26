@@ -3,8 +3,6 @@ import {
   getOperatingSystemName,
   getOperatingSystem,
   getWorkloadProfile,
-  BootOrder,
-  getBootableDevicesInOrder,
 } from 'kubevirt-web-ui-components';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
@@ -19,7 +17,8 @@ import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
-import { asVM } from '../../selectors/vm';
+import { asVM, getBootableDevicesInOrder } from '../../selectors/vm';
+import { BootOrder } from '../boot-order';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 
