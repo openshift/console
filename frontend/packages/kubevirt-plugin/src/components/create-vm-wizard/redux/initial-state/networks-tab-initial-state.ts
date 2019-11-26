@@ -3,6 +3,7 @@ import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-inte
 import { NetworkInterfaceModel, NetworkType } from '../../../../constants/vm/network';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { getSequenceName } from '../../../../utils/strings';
+import { InitialStepStateGetter } from './types';
 
 export const podNetwork: VMWizardNetwork = {
   id: '0',
@@ -18,9 +19,10 @@ export const podNetwork: VMWizardNetwork = {
   }).asResource(),
 };
 
-export const getNetworksInitialState = () => ({
+export const getNetworksInitialState: InitialStepStateGetter = () => ({
   value: [podNetwork],
-  isValid: true,
-  hasAllRequiredFilled: true,
   error: null,
+  hasAllRequiredFilled: true,
+  isValid: true,
+  isLocked: false,
 });

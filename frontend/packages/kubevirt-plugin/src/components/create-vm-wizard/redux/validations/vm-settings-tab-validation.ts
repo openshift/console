@@ -153,10 +153,25 @@ export const validateVmSettings = (options: UpdateOptions) => {
 };
 
 const describeFields = (describe: string, fields: string[]) => {
-  if (fields.length > 0) {
-    const describedFields = fields
-      .sort((a, b) => vmSettingsOrder[iGetFieldKey(a)] - vmSettingsOrder[iGetFieldKey(b)])
-      .map((field) => getFieldReadableTitle(iGetFieldKey(field)));
+  if (fields && fields.length > 0) {
+    const describedFields = _.compact(
+      fields
+        .sort((a, b) => {
+          const aValue = vmSettingsOrder[iGetFieldKey(a)];
+          const bValue = vmSettingsOrder[iGetFieldKey(b)];
+
+          if (bValue == null) {
+            return -1;
+          }
+
+          if (aValue == null) {
+            return 1;
+          }
+
+          return aValue - bValue;
+        })
+        .map((field) => getFieldReadableTitle(iGetFieldKey(field))),
+    );
     return makeSentence(
       `${assureEndsWith(describe, ' ')}the following ${pluralize(
         fields.length,

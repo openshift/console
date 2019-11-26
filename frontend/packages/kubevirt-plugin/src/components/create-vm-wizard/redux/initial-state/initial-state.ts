@@ -5,8 +5,9 @@ import { getStorageInitialState } from './storage-tab-initial-state';
 import { getResultInitialState } from './result-tab-initial-state';
 import { getReviewInitialState } from './review-tab-initial-state';
 import { getCloudInitInitialState } from './cloud-init-tab-initial-state';
+import { InitialStepStateGetter, StepState } from './types';
 
-const initialStateGetterResolver = {
+const initialStateGetterResolver: { [key in VMWizardTab]: InitialStepStateGetter } = {
   [VMWizardTab.VM_SETTINGS]: getVmSettingsInitialState,
   [VMWizardTab.NETWORKING]: getNetworksInitialState,
   [VMWizardTab.STORAGE]: getStorageInitialState,
@@ -15,12 +16,12 @@ const initialStateGetterResolver = {
   [VMWizardTab.RESULT]: getResultInitialState,
 };
 
-export const getTabInitialState = (tabKey: VMWizardTab, props: CommonData) => {
+export const getTabInitialState = (tabKey: VMWizardTab, data: CommonData): StepState => {
   const getter = initialStateGetterResolver[tabKey];
 
-  let result;
+  let result: StepState;
   if (getter) {
-    result = getter(props);
+    result = getter(data);
   }
 
   return (

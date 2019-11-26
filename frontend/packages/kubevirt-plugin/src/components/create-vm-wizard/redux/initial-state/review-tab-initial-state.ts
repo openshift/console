@@ -1,6 +1,9 @@
-export const getReviewInitialState = () => ({
+import { InitialStepStateGetter } from './types';
+
+export const getReviewInitialState: InitialStepStateGetter = () => ({
   value: {},
+  error: null,
   isValid: true,
   hasAllRequiredFilled: true,
-  error: null,
+  isLocked: false,
 });

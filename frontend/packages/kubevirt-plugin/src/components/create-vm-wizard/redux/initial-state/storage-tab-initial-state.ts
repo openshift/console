@@ -13,6 +13,7 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
+import { InitialStepStateGetter } from './types';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -80,9 +81,10 @@ export const getProvisionSourceStorage = (provisionSource: ProvisionSource): VMW
   return null;
 };
 
-export const getStorageInitialState = () => ({
+export const getStorageInitialState: InitialStepStateGetter = () => ({
   value: [],
   error: null,
-  isValid: true, // empty Storages are valid
   hasAllRequiredFilled: true,
+  isValid: true, // empty Storages are valid
+  isLocked: false,
 });

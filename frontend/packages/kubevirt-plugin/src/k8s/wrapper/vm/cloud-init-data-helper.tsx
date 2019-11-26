@@ -17,7 +17,7 @@ export enum CloudInitDataFormKeys {
 }
 export const CLOUD_CONFIG_HEADER = '#cloud-config';
 
-const formAllowedKeys = new Set([
+export const formAllowedKeys = new Set([
   CloudInitDataFormKeys.NAME,
   CloudInitDataFormKeys.HOSTNAME,
   CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,

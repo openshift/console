@@ -4,7 +4,7 @@ import {
   VMSettingsRenderableFieldResolver,
   VMWareProviderField,
 } from '../types';
-import { titleResolver, placeholderResolver, helpResolver } from '../strings/vm-settings';
+import { helpResolver, placeholderResolver, titleResolver } from '../strings/vm-settings';
 
 const idResolver: VMSettingsRenderableFieldResolver = {
   [VMWareProviderField.VCENTER]: 'vcenter-instance-dropdown',

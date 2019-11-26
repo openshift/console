@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
+import { joinGrammaticallyListOfItems } from '@console/shared/src';
 import { CloudInitField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
@@ -30,6 +31,7 @@ import { iGetCloudInitValue } from '../../selectors/immutable/cloud-init';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
+  formAllowedKeys,
 } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 
 import './cloud-init-tab.scss';
@@ -240,10 +242,23 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       if (cloudInitData.includesOnlyFormValues()) {
         executeFn();
       } else {
+        const persistedKeys = [...formAllowedKeys].filter((key) => cloudInitData.has(key));
         confirmModal({
-          title: 'Irreversible operation',
-          message: 'Are you sure you want to discard some of the cloudInit options?',
-          btnText: 'Yes',
+          title: 'Data loss confirmation',
+          message: (
+            <>
+              When using the Cloud-init form, custom values can not be applied and will be
+              discarded.
+              {persistedKeys.length === 0
+                ? ''
+                : ` The following fields will be kept: ${joinGrammaticallyListOfItems(
+                    persistedKeys,
+                  )}.`}{' '}
+              <br />
+              Are you sure you want to want to take this action?{' '}
+            </>
+          ),
+          btnText: 'Confirm',
           executeFn,
         });
       }
