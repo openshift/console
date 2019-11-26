@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   K8sResourceKind,
   GroupVersionKind,
@@ -18,6 +19,7 @@ import {
   PackageManifestKind,
   StepResource,
   ClusterServiceVersionIcon,
+  SubscriptionKind,
 } from '../types';
 import * as operatorLogo from '../operator.svg';
 
@@ -126,6 +128,19 @@ export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
     </span>
   );
 };
+
+export const subscriptionForCSV = (
+  subscriptions: SubscriptionKind[],
+  csv: ClusterServiceVersionKind,
+): SubscriptionKind =>
+  _.find(subscriptions, {
+    metadata: {
+      namespace: _.get(csv, ['metadata', 'annotations', 'olm.operatorNamespace']),
+    },
+    status: {
+      installedCSV: getName(csv),
+    },
+  } as any); // 'as any' to supress typescript error caused by lodash
 
 export type ClusterServiceVersionLogoProps = {
   displayName: string;

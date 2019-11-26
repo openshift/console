@@ -11,7 +11,6 @@ import * as UIActions from '@console/internal/actions/ui';
 import {
   ALL_NAMESPACES_KEY,
   ErrorStatus,
-  getName,
   ProgressStatus,
   Status,
   SuccessStatus,
@@ -85,22 +84,14 @@ import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails, catalogSourceForSubscription } from './subscription';
-import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
+import {
+  ClusterServiceVersionLogo,
+  referenceForProvidedAPI,
+  providedAPIsFor,
+  subscriptionForCSV,
+} from './index';
 
 const FAILED_SUBSCRIPTION_STATES = ['Unknown', SubscriptionState.SubscriptionStateFailed];
-
-const subscriptionForCSV = (
-  subscriptions: SubscriptionKind[],
-  csv: ClusterServiceVersionKind,
-): SubscriptionKind =>
-  _.find(subscriptions, {
-    metadata: {
-      namespace: _.get(csv, ['metadata', 'annotations', 'olm.operatorNamespace']),
-    },
-    status: {
-      installedCSV: getName(csv),
-    },
-  } as any); // 'as any' to supress typescript error caused by lodash
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);

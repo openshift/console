@@ -139,11 +139,17 @@ namespace ExtensionProperties {
     /** Resource to watch */
     k8sResource: FirehoseResource & { isList: true };
 
+    /** Additional resources which will be fetched and passed to `isActivity` function. */
+    additionalResources?: FirehoseResource[];
+
     /**
      * Function which will determine if given resource represents the action.
      * If the function is not defined, every resource represents activity.
      */
-    isActivity?: (resource: K8sResourceKind) => boolean;
+    isActivity?: (
+      resource: K8sResourceKind,
+      additionalResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
+    ) => boolean;
 
     /** Timestamp for given action, which will be used for ordering */
     getTimestamp?: (resource: K8sResourceKind) => Date;

@@ -9,12 +9,14 @@ import {
   ResourceDetailsPage,
   RoutePage,
   DevCatalogModel,
+  DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
 import { Flags } from './const';
 import './style.scss';
+import { isClusterServiceVersionUpgradeActivity } from './components/dashboard/utils';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -24,7 +26,8 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | DevCatalogModel;
+  | DevCatalogModel
+  | DashboardsOverviewResourceActivity;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -247,6 +250,28 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
           .InstallPlansPage,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        kind: referenceForModel(models.ClusterServiceVersionModel),
+        prop: 'csvs',
+        isList: true,
+      },
+      additionalResources: [
+        {
+          kind: referenceForModel(models.SubscriptionModel),
+          prop: 'subscriptions',
+          isList: true,
+        },
+      ],
+      isActivity: isClusterServiceVersionUpgradeActivity,
+      loader: () =>
+        import('./components/dashboard/csv-activity' /* webpackChunkName: "csv-activity" */).then(
+          (m) => m.default,
+        ),
     },
   },
 ];

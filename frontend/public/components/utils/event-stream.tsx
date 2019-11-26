@@ -115,7 +115,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
         {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
           <AutoSizer disableHeight onResize={onResize}>
             {({ width }) => (
-              <div ref={registerChild}>
+              <div ref={(el) => registerChild(el)}>
                 <VirtualList
                   autoHeight
                   data={events}

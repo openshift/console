@@ -48,7 +48,15 @@ const RecentEvent = withDashboardResources(
 const getResourceActivities = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
   plugins.registry.getDashboardsOverviewResourceActivities().filter((e) => {
     const model = k8sModels.get(e.properties.k8sResource.kind);
-    return plugins.registry.isExtensionInUse(e, flags) && model && model.namespaced;
+    const additionalModels = (e.properties.additionalResources || []).map((r) =>
+      k8sModels.get(r.kind),
+    );
+    return (
+      plugins.registry.isExtensionInUse(e, flags) &&
+      model &&
+      model.namespaced &&
+      additionalModels.every((m) => m && m.namespaced)
+    );
   });
 
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
@@ -75,10 +83,20 @@ const OngoingActivity = connect(mapStateToProps)(
             watchK8sResource(
               uniqueResource({ ...a.properties.k8sResource, namespace: projectName }, index),
             );
+            if (a.properties.additionalResources) {
+              a.properties.additionalResources.forEach((r) =>
+                watchK8sResource(uniqueResource(r, index)),
+              );
+            }
           });
           return () => {
             resourceActivities.forEach((a, index) => {
               stopWatchK8sResource(uniqueResource(a.properties.k8sResource, index));
+              if (a.properties.additionalResources) {
+                a.properties.additionalResources.forEach((r) =>
+                  stopWatchK8sResource(uniqueResource(r, index)),
+                );
+              }
             });
           };
         }
@@ -94,8 +112,24 @@ const OngoingActivity = connect(mapStateToProps)(
             [uniqueResource(a.properties.k8sResource, index).prop, 'data'],
             [],
           ) as FirehoseResult['data'];
+          const additionalResourcesData = {};
+          let additionalResourcesLoaded = true;
+          if (a.properties.additionalResources) {
+            a.properties.additionalResources.forEach((r) => {
+              const result = _.get(resources, uniqueResource(r, index).prop, {} as FirehoseResult);
+              additionalResourcesData[r.prop] = result.data;
+              additionalResourcesLoaded =
+                additionalResourcesLoaded && r.optional ? true : result.loaded;
+            });
+          }
           return k8sResources
-            .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
+            .filter(
+              (r) =>
+                additionalResourcesLoaded &&
+                (a.properties.isActivity
+                  ? a.properties.isActivity(r, additionalResourcesData)
+                  : true),
+            )
             .map((r) => ({
               resource: r,
               timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
