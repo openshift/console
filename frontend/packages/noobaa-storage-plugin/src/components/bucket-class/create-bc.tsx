@@ -2,14 +2,16 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Title, Wizard } from '@patternfly/react-core';
-import { apiVersionForModel, k8sCreate, k8sGet, referenceFor } from '@console/internal/module/k8s';
-import { history } from '@console/internal/components/utils/router';
 import {
-  BreadCrumbs,
-  resourceObjPath,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
+  apiVersionForModel,
+  k8sCreate,
+  k8sGet,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { history } from '@console/internal/components/utils/router';
+import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { getName } from '@console/shared';
 import { NooBaaBucketClassModel } from '../../models';
 import GeneralPage from './wizard-pages/general-page';
 import PlacementPolicyPage from './wizard-pages/placement-policy-page';
@@ -68,7 +70,11 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     promiseObj
       .then((obj) => {
         dispatch({ type: 'setIsLoading', value: false });
-        history.push(resourceObjPath(obj, referenceFor(obj)));
+        history.push(
+          `/k8s/ns/${ns}/clusterserviceversions/${getName(
+            clusterServiceVersion,
+          )}/${referenceForModel(NooBaaBucketClassModel)}/${getName(obj)}`,
+        );
       })
       .catch((err) => {
         dispatch({ type: 'setIsLoading', value: false });
