@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
@@ -7,6 +8,7 @@ import {
   RoutePage,
   ModelFeatureFlag,
   ModelDefinition,
+  DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
@@ -21,7 +23,8 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | RoutePage
   | ModelFeatureFlag
-  | ModelDefinition;
+  | ModelDefinition
+  | DashboardsOverviewResourceActivity;
 
 const METAL3_FLAG = 'METAL3';
 
@@ -134,6 +137,23 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/baremetal-nodes/BareMetalNodeDetailsPage' /* webpackChunkName: "node" */
+        ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(NodeMaintenanceModel),
+        prop: 'maintenances',
+      },
+      isActivity: (resource) => _.get(resource.status, 'phase') === 'Running',
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import(
+          './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
         ).then((m) => m.default),
       required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
