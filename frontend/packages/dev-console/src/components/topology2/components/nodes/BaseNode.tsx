@@ -17,6 +17,7 @@ import {
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
+import { getTopologyResourceObject } from '../../../topology/topology-utils';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';
@@ -65,13 +66,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   useAnchor(EllipseAnchor);
   const cx = element.getBounds().width / 2;
   const cy = element.getBounds().height / 2;
-  const resourceModel = modelFor(referenceFor(element.getData().data.donutStatus.dc));
+  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,
-    name: element.getData().data.donutStatus.dc.metadata.name,
-    namespace: element.getData().data.donutStatus.dc.metadata.namespace,
+    name: resourceObj.metadata.name,
+    namespace: resourceObj.metadata.namespace,
   });
 
   const contentsClasses = classNames('odc2-base-node__contents', {
@@ -98,8 +100,8 @@ const BaseNode: React.FC<BaseNodeProps> = ({
       <g
         data-test-id="base-node-handler"
         onClick={onSelect}
-        onContextMenu={(editAccess && onContextMenu) || null}
-        {...(editAccess ? { ref: refs } : {})}
+        onContextMenu={editAccess ? onContextMenu : null}
+        ref={refs}
       >
         <circle
           className={classNames('odc2-base-node__bg', { 'is-highlight': canDrop })}
