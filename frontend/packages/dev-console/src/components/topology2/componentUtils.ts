@@ -23,6 +23,7 @@ type GraphProps = {
 
 type NodeProps = {
   element: Node;
+  canEdit?: boolean;
 };
 
 type EdgeProps = {
@@ -73,11 +74,13 @@ const nodeDragSourceSpec = (
   allowRegroup: boolean = true,
 ): DragSourceSpec<DragObjectWithType, Node, {}, NodeProps> => ({
   item: { type },
-  operation: allowRegroup
-    ? {
-        [Modifiers.SHIFT]: REGROUP_OPERATION,
-      }
-    : undefined,
+  operation: (monitor, props) => {
+    return props.canEdit && allowRegroup
+      ? {
+          [Modifiers.SHIFT]: REGROUP_OPERATION,
+        }
+      : undefined;
+  },
   canCancel: (monitor) => monitor.getOperation() === REGROUP_OPERATION,
   end: async (dropResult, monitor, props) => {
     if (!monitor.isCancelled() && monitor.getOperation() === REGROUP_OPERATION) {

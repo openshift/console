@@ -45,6 +45,7 @@ import KnativeService from './components/nodes/KnativeService';
 import TrafficLink from './components/edges/TrafficLink';
 import ServiceBinding from './components/edges/ServiceBinding';
 import RevisionNode from './components/nodes/RevisionNode';
+import { withEditReviewAccess } from './withEditReviewAccess';
 
 type NodeProps = {
   element: Node;
@@ -116,13 +117,15 @@ class ComponentFactory {
               { droppable?: boolean; hover?: boolean; canDrop?: boolean },
               NodeProps
             >(nodeDropTargetSpec)(
-              withDragNode(nodeDragSourceSpec(type))(
-                withSelection(false, true)(
-                  withContextMenu(
-                    workloadContextMenu,
-                    document.getElementById('modal-container'),
-                    'odc2-topology-context-menu',
-                  )(WorkloadNode),
+              withEditReviewAccess()(
+                withDragNode(nodeDragSourceSpec(type))(
+                  withSelection(false, true)(
+                    withContextMenu(
+                      workloadContextMenu,
+                      document.getElementById('modal-container'),
+                      'odc2-topology-context-menu',
+                    )(WorkloadNode),
+                  ),
                 ),
               ),
             ),
