@@ -34,17 +34,15 @@ const getStoragesData = ({
     pvcs,
   );
 
-  return combinedDiskFactory.getCombinedDisks().map((disk) => {
-    return {
-      disk,
-      // for sorting
-      name: disk.getName(),
-      type: disk.getTypeValue(),
-      diskInterface: disk.getDiskInterface(),
-      size: disk.getReadableSize(),
-      storageClass: disk.getStorageClassName(),
-    };
-  });
+  return combinedDiskFactory.getCombinedDisks().map((disk) => ({
+    disk,
+    // for sorting
+    name: disk.getName(),
+    source: disk.getSourceValue(),
+    diskInterface: disk.getDiskInterface(),
+    size: disk.getReadableSize(),
+    storageClass: disk.getStorageClassName(),
+  }));
 };
 
 export type VMDisksTableProps = {
@@ -73,6 +71,11 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
               transforms: [sortable],
             },
             {
+              title: 'Source',
+              sortField: 'source',
+              transforms: [sortable],
+            },
+            {
               title: 'Size',
               sortField: 'size',
               transforms: [sortable],
@@ -80,11 +83,6 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
             {
               title: 'Interface',
               sortField: 'diskInterface',
-              transforms: [sortable],
-            },
-            {
-              title: 'Type',
-              sortField: 'type',
               transforms: [sortable],
             },
             {

@@ -4,7 +4,7 @@ import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 
 export type StorageSimpleData = {
   name?: string;
-  type?: string;
+  source?: string;
   diskInterface?: string;
   size?: string;
   storageClass?: string;
@@ -12,7 +12,7 @@ export type StorageSimpleData = {
 
 export type StorageSimpleDataValidation = {
   name?: ValidationObject;
-  type?: ValidationObject;
+  source?: ValidationObject;
   diskInterface?: ValidationObject;
   size?: ValidationObject;
   storageClass?: ValidationObject;
