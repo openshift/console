@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
+import { Link, Router } from 'react-router-dom';
+import { mount, shallow } from 'enzyme';
 
+import { setFlag } from '@console/internal/actions/features';
+import * as UIActions from '@console/internal/actions/ui';
+import { history } from '@console/internal/components/utils/router';
+import { FLAGS } from '@console/internal/const';
 import {
   PrometheusGraph,
   PrometheusGraphLink,
   getPrometheusExpressionBrowserURL,
 } from '@console/internal/components/graphs/prometheus-graph';
+import store from '@console/internal/redux';
 
 describe('<PrometheusGraph />', () => {
   it('should render a title', () => {
@@ -29,24 +35,40 @@ describe('<PrometheusGraph />', () => {
 });
 
 describe('<PrometheusGraphLink />', () => {
-  it('should render with a link', () => {
-    const wrapper = shallow(
-      <PrometheusGraphLink query="test">
-        <p className="test-class" />
-      </PrometheusGraphLink>,
-    );
-    expect(wrapper.find(Link).exists()).toBe(true);
-    expect(wrapper.find('p.test-class').exists()).toBe(true);
-  });
+  it('should only render with a link if query is set', () => {
+    window.SERVER_FLAGS.prometheusBaseURL = 'prometheusBaseURL';
+    store.dispatch(UIActions.setActivePerspective('admin'));
 
-  it('should not render with a link', () => {
-    const wrapper = shallow(
-      <PrometheusGraphLink query="">
-        <p className="test-class" />
-      </PrometheusGraphLink>,
-    );
+    // Need full mount with redux store since this is a redux-connected component
+    const getWrapper = (query: string) => {
+      const wrapper = mount(
+        <Router history={history}>
+          <Provider store={store}>
+            <PrometheusGraphLink query={query}>
+              <p className="test-class" />
+            </PrometheusGraphLink>
+          </Provider>
+        </Router>,
+      );
+      expect(wrapper.find('p.test-class').exists()).toBe(true);
+      return wrapper;
+    };
+
+    let wrapper;
+
+    store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
+    wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
-    expect(wrapper.find('p.test-class').exists()).toBe(true);
+    wrapper = getWrapper('test');
+    expect(wrapper.find(Link).exists()).toBe(true);
+    expect(wrapper.find(Link).props().to).toEqual('/metrics/ns/default?query0=test');
+
+    store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
+    wrapper = getWrapper('');
+    expect(wrapper.find(Link).exists()).toBe(false);
+    wrapper = getWrapper('test');
+    expect(wrapper.find(Link).exists()).toBe(true);
+    expect(wrapper.find(Link).props().to).toEqual('/monitoring/query-browser?query0=test');
   });
 });
 
