@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { ActionGroup, Button } from '@patternfly/react-core';
-
+import { isCephProvisioner } from '@console/shared/src/utils';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
   AsyncComponent,
@@ -22,18 +22,18 @@ const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import
 //See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
 const provisionerAccessModeMapping = {
   'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
-  'kubernetes.io/aws-ebs' : ['ReadWriteOnce'],
-  'kubernetes.io/gce-pd' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/glusterfs' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/cinder' : ['ReadWriteOnce'],
-  'kubernetes.io/azure-file' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/azure-disk' : ['ReadWriteOnce'],
-  'kubernetes.io/quobyte' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/rbd' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/vsphere-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/portworx-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/scaleio' : ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/storageos' : ['ReadWriteOnce'],
+  'kubernetes.io/aws-ebs': ['ReadWriteOnce'],
+  'kubernetes.io/gce-pd': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/glusterfs': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/cinder': ['ReadWriteOnce'],
+  'kubernetes.io/azure-file': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/azure-disk': ['ReadWriteOnce'],
+  'kubernetes.io/quobyte': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/rbd': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/vsphere-volume': ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/portworx-volume': ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/scaleio': ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/storageos': ['ReadWriteOnce'],
 };
 
 // This form is done a little odd since it is used in both its own page and as
@@ -81,15 +81,22 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ nameValuePairs }, this.onChange);
   };
 
+  getAccessModeForProvisioner = (provisioner: string) => {
+    return provisioner && isCephProvisioner(provisioner)
+      ? ['ReadWriteOnce', 'ReadWriteMany']
+      : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+  };
+
   handleStorageClass = storageClass => {
     //if the provisioner is unknown or no storage class selected, user should be able to set any access mode
-    const modes = storageClass && storageClass.provisioner && provisionerAccessModeMapping[storageClass.provisioner] ? provisionerAccessModeMapping[storageClass.provisioner] : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+    const modes = storageClass && storageClass.provisioner && provisionerAccessModeMapping[storageClass.provisioner] ? provisionerAccessModeMapping[storageClass.provisioner] : this.getAccessModeForProvisioner(storageClass.provisioner);
     //setting message to display for various modes when a storage class of a know provisioner is selected
-    const displayMessage = storageClass && provisionerAccessModeMapping[storageClass.provisioner] ? 'Access mode is set by storage class and cannot be changed.': 'Permissions to the mounted drive.';
+    const displayMessage = (provisionerAccessModeMapping[storageClass.provisioner] ||
+      isCephProvisioner(storageClass.provisioner)) ? 'Access mode is set by storage class and cannot be changed.' : 'Permissions to the mounted drive.';
     this.setState({ accessModeHelp: displayMessage }, this.onChange);
 
     //setting accessMode to default with the change to Storage Class selection
-    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce'}, this.onChange);
+    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce' }, this.onChange);
   };
 
   handleRequestSizeInputChange = obj => {
@@ -210,7 +217,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
             return radioObj;
           })}
           <p className="help-block" id="access-mode-help">
-            {this.state.accessModeHelp }
+            {this.state.accessModeHelp}
           </p>
         </div>
         <label className="control-label co-required" htmlFor="request-size-input">
