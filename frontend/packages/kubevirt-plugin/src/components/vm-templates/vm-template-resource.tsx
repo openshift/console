@@ -79,7 +79,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
-  const devices = getDevices(asVM(template));
+  const devices = getDevices(template);
   const cds = getCDRoms(asVM(template));
   const flavorText = getFlavorText(template);
 

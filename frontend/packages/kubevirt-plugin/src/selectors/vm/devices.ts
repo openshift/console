@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { VMLikeEntityKind, BootableDeviceType } from '../../types';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { DEVICE_TYPE_DISK, DEVICE_TYPE_INTERFACE } from '../../constants';
+import { DeviceType } from '../../constants';
 import { getDisks, getInterfaces } from './selectors';
 import { asVM } from './vmlike';
 
@@ -11,16 +11,18 @@ export const getBootDeviceIndex = (devices, bootOrder) =>
 export const getDeviceBootOrder = (device, defaultValue?): number =>
   device && device.bootOrder === undefined ? defaultValue : device.bootOrder;
 
-export const getDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
-  const disks = getDisks(asVM(vm)).map((disk) => ({
-    type: DEVICE_TYPE_DISK,
+export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
+  const vm = asVM(vmLikeEntity);
+
+  const disks = getDisks(vm).map((disk) => ({
+    type: DeviceType.DISK,
     typeLabel: DiskWrapper.initialize(disk)
       .getType()
       .toString(),
     value: disk,
   }));
-  const nics = getInterfaces(asVM(vm)).map((nic) => ({
-    type: DEVICE_TYPE_INTERFACE,
+  const nics = getInterfaces(vm).map((nic) => ({
+    type: DeviceType.NIC,
     typeLabel: 'NIC',
     value: nic,
   }));
