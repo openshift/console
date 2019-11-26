@@ -386,7 +386,10 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     ownedDefinitions.concat(reqDefinitions),
     (def) => def.name.split('.')[0] === props.kindObj.plural,
   );
-  const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
+  const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []).filter(
+    // exclude Conditions since they are included in their own section
+    (descriptor) => descriptor.path !== 'conditions',
+  );
   const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
   const currentStatus = _.find(statusDescriptors, { displayName: 'Status' });
   const primaryDescriptors = statusDescriptors.filter((descriptor) => isMainDescriptor(descriptor));
