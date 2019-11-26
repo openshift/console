@@ -5,68 +5,88 @@ import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
 import { createProjectMessageStateToProps } from '../reducers/ui';
-import { Disabled, HintBlock } from './utils';
+import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
 import { ProjectModel, RoleModel, StorageClassModel } from '../models';
+import { createProjectModal } from './modals/create-namespace-modal';
 
 const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
 
-export const StartGuide: React.FC<StartGuideProps> = ({ startGuide }) => {
-  return <div className="co-m-pane__body">{startGuide}</div>;
-};
-
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
-  ({ createProjectMessage }) => (
-    <HintBlock title="Getting Started">
-      {createProjectMessage ? (
-        <p className="co-pre-line">{createProjectMessage}</p>
-      ) : (
+  ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => (
+    <>
+      {canCreateProject ? (
         <p>
           OpenShift helps you quickly develop, host, and scale applications. To get started, create
           a project for your application.
         </p>
+      ) : (
+        <p>
+          OpenShift helps you quickly develop, host, and scale applications. To get started, you'll
+          need a project. Currently, you can't create or access any projects.
+          {!createProjectMessage && " You'll need to contact a cluster administrator for help."}
+        </p>
+      )}
+      {createProjectMessage && (
+        <p className="co-pre-line">
+          <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
+        </p>
       )}
       <p>
-        <Link to="/k8s/cluster/projects">
-          <Button variant="primary">View My Projects</Button>
-        </Link>
+        To learn more, visit the OpenShift{' '}
+        <ExternalLink href={openshiftHelpBase} text="documentation" />.
       </p>
-    </HintBlock>
+      <p>
+        Download the <Link to="/command-line-tools">command-line tools</Link>
+      </p>
+      {canCreateProject && (
+        <Button variant="primary" onClick={() => createProjectModal({ blocking: true })}>
+          Create Project
+        </Button>
+      )}
+    </>
   ),
 );
 
-export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) =>
-  connectToFlags(FLAGS.SHOW_OPENSHIFT_START_GUIDE)(({ flags, ...rest }: any) => {
-    const { kindObj } = rest;
-    const kind = _.get(kindObj, 'kind', rest.kind);
+export const withStartGuide = (WrappedComponent, disable: boolean = true) =>
+  connectToFlags(FLAGS.SHOW_OPENSHIFT_START_GUIDE, FLAGS.CAN_CREATE_PROJECT)(
+    ({ flags, ...rest }: any) => {
+      const { kindObj } = rest;
+      const kind = _.get(kindObj, 'kind', rest.kind);
 
-    // The start guide does not need to be shown on the Projects list page.
-    if (kind === ProjectModel.kind) {
-      return <WrappedComponent {...rest} />;
-    }
+      // The start guide does not need to be shown on the Projects list page.
+      if (kind === ProjectModel.kind) {
+        return <WrappedComponent {...rest} />;
+      }
 
-    if (flags.SHOW_OPENSHIFT_START_GUIDE) {
-      return (
-        <>
-          <StartGuide startGuide={<OpenShiftGettingStarted />} />
-          {// Whitelist certain resource kinds that should not be disabled when no projects are available.
-          // Disabling should also be optional
-          doNotDisable || WHITELIST.includes(kind) ? (
-            <WrappedComponent {...rest} noProjectsAvailable />
-          ) : (
-            <Disabled>
+      if (flags[FLAGS.SHOW_OPENSHIFT_START_GUIDE]) {
+        return (
+          <>
+            <div className="co-m-pane__body">
+              <HintBlock title="Getting Started">
+                <OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />
+              </HintBlock>
+            </div>
+            {// Whitelist certain resource kinds that should not be disabled when no projects are
+            // available. Disabling should also be optional
+            !disable || WHITELIST.includes(kind) ? (
               <WrappedComponent {...rest} noProjectsAvailable />
-            </Disabled>
-          )}
-        </>
-      );
-    }
-    return <WrappedComponent {...rest} />;
-  });
+            ) : (
+              <Disabled>
+                <WrappedComponent {...rest} noProjectsAvailable />
+              </Disabled>
+            )}
+          </>
+        );
+      }
+      return <WrappedComponent {...rest} />;
+    },
+  );
 
-type StartGuideProps = {
-  startGuide: React.ReactNode;
+type OpenShiftGettingStartedProps = {
+  canCreateProject: boolean;
+  createProjectMessage: string;
 };
 
 export type WithStartGuideProps = {

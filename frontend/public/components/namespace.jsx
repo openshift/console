@@ -50,8 +50,7 @@ import {
 } from '../const';
 import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
 import { setFlag } from '../actions/features';
-import { openshiftHelpBase } from './utils/documentation';
-import { createProjectMessageStateToProps } from '../reducers/ui';
+import { OpenShiftGettingStarted } from './start-guide';
 import { Overview } from './overview';
 import {
   getNamespaceDashboardConsoleLinks,
@@ -274,53 +273,38 @@ export const ProjectsTable = (props) => (
   />
 );
 
-const ProjectList_ = (props) => {
-  const ProjectEmptyMessageDetail = (
-    <>
-      <p className="co-pre-line">
-        {props.createProjectMessage || 'Create a project for your application.'}
-      </p>
-      <p>
-        To learn more, visit the OpenShift{' '}
-        <ExternalLink href={openshiftHelpBase} text="documentation" />.
-      </p>
-      <p>
-        Download the <Link to="/command-line-tools">command-line tools</Link>
-      </p>
-    </>
-  );
+export const ProjectList = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ data, flags, ...rest }) => {
   const ProjectEmptyMessage = () => (
-    <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />
+    <MsgBox
+      title="Welcome to OpenShift"
+      detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
+    />
   );
   const ProjectNotFoundMessage = () => <MsgBox title="No Projects Found" />;
   return (
     <Table
-      {...props}
+      {...rest}
       aria-label="Projects"
+      data={data}
       Header={ProjectTableHeader}
       Row={ProjectTableRow}
-      EmptyMsg={props.data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
+      EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
       virtualize
     />
   );
-};
-export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList_);
+});
 
-const ProjectsPage_ = (props) => {
-  const canCreate = props.flags[FLAGS.CAN_CREATE_PROJECT];
+export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ flags, ...rest }) => (
   // Skip self-subject access review for projects since they use a special project request API.
   // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
-  return (
-    <ListPage
-      {...props}
-      ListComponent={ProjectList}
-      canCreate={canCreate}
-      skipAccessReview
-      createHandler={() => createProjectModal({ blocking: true })}
-    />
-  );
-};
-export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
+  <ListPage
+    {...rest}
+    ListComponent={ProjectList}
+    canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
+    skipAccessReview
+    createHandler={() => createProjectModal({ blocking: true })}
+  />
+));
 
 /** @type {React.SFC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
