@@ -74,7 +74,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
   return osIds.map((osId) => {
     const nameAnnotation = `${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`;
     const template = templates.find(
-      (t) => !!Object.keys(getAnnotations(t)).find((annotation) => annotation === nameAnnotation),
+      (t) =>
+        !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
     );
     return {
       id: osId,
