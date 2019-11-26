@@ -96,7 +96,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       id: CreateStepsBC.GENERAL,
       name: 'General',
       component: <GeneralPage dispatch={dispatch} state={state} />,
-      enableNext: !!state.bucketClassName,
+      enableNext: !!state.bucketClassName.trim().length,
     },
     {
       id: CreateStepsBC.PLACEMENT,

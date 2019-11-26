@@ -130,7 +130,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
               dispatch({ type: 'setRegion', value: e });
             }}
             items={awsRegionItems}
-            selectedKey={provider}
+            selectedKey={awsRegions[0]}
           />
         </FormGroup>
       )}
