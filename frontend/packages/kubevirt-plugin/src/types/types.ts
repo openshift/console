@@ -1,4 +1,5 @@
 import { PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { DeviceType } from '../constants';
 import { VMKind, V1NetworkInterface } from './vm';
 import { V1Disk } from './vm/disk/V1Disk';
 
@@ -14,7 +15,7 @@ export type VMMultiStatus = {
 };
 
 export type BootableDeviceType = {
-  type: string;
+  type: DeviceType;
   typeLabel: string;
   value: V1Disk | V1NetworkInterface;
 };
