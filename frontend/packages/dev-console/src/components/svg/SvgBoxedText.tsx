@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { useSize, useHover, createSvgIdUrl } from '@console/topology';
+import {
+  useSize,
+  useHover,
+  WithDndDragProps,
+  useCombineRefs,
+  createSvgIdUrl,
+} from '@console/topology';
 import SvgResourceIcon from '../topology/shapes/ResourceIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 
@@ -13,6 +19,7 @@ export interface SvgBoxedTextProps {
   cornerRadius?: number;
   kind?: string;
   truncate?: number;
+  dragRef?: WithDndDragProps['dndDragRef'];
   // TODO remove with 2.0
   onMouseEnter?: React.MouseEventHandler<SVGGElement>;
   onMouseLeave?: React.MouseEventHandler<SVGGElement>;
@@ -42,15 +49,16 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   onMouseEnter,
   onMouseLeave,
   truncate,
+  dragRef,
   ...other
 }) => {
   const [labelHover, labelHoverRef] = useHover(200);
   const [textSize, textRef] = useSize([children, className, labelHover]);
   const [iconSize, iconRef] = useSize([kind]);
   const iconSpace = kind && iconSize ? iconSize.width + paddingX : 0;
-
+  const refs = useCombineRefs(dragRef, typeof truncate === 'number' ? labelHoverRef : undefined);
   return (
-    <g className={className} ref={typeof truncate === 'number' ? labelHoverRef : undefined}>
+    <g className={className} ref={refs}>
       <SvgDropShadowFilter id={FILTER_ID} />
       {textSize && (
         <rect

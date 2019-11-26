@@ -66,25 +66,21 @@ class ComponentFactory {
       switch (type) {
         case TYPE_APPLICATION_GROUP:
           return withDndDrop(groupWorkoadDropTargetSpec)(
-            withDragNode()(
-              withSelection(false, true)(
-                withContextMenu(
-                  groupContextMenu,
-                  document.getElementById('modal-container'),
-                  'odc2-topology-context-menu',
-                )(ApplicationGroup),
-              ),
+            withSelection(false, true)(
+              withContextMenu(
+                groupContextMenu,
+                document.getElementById('modal-container'),
+                'odc2-topology-context-menu',
+              )(ApplicationGroup),
             ),
           );
         case TYPE_KNATIVE_SERVICE:
-          return withDragNode(nodeDragSourceSpec(type))(
-            withSelection(false, true)(
-              withContextMenu(
-                nodeContextMenu,
-                document.getElementById('modal-container'),
-                'odc2-topology-context-menu',
-              )(KnativeService),
-            ),
+          return withSelection(false, true)(
+            withContextMenu(
+              nodeContextMenu,
+              document.getElementById('modal-container'),
+              'odc2-topology-context-menu',
+            )(KnativeService),
           );
         case TYPE_EVENT_SOURCE:
           return withDragNode(nodeDragSourceSpec(type))(

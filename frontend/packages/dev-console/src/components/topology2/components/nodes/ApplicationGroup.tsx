@@ -11,8 +11,8 @@ import {
   observer,
   useCombineRefs,
   useHover,
+  useDragNode,
   WithDndDropProps,
-  WithDragNodeProps,
   WithSelectionProps,
   WithContextMenuProps,
   createSvgIdUrl,
@@ -31,7 +31,6 @@ type ApplicationGroupProps = {
   dropTarget?: boolean;
   dragging?: boolean;
 } & WithSelectionProps &
-  WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps;
 
@@ -63,7 +62,6 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   element,
   selected,
   onSelect,
-  dragNodeRef,
   dndDropRef,
   droppable,
   canDrop,
@@ -76,6 +74,8 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const [groupLabelHover, groupLabelHoverRef] = useHover();
   const labelLocation = React.useRef<PointWithSize>();
   const pathRef = React.useRef<string>();
+  const dragNodeRef = useDragNode()[1];
+  const dragLabelRef = useDragNode()[1];
   const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
 
   const hover = groupHover || groupLabelHover;
@@ -149,6 +149,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           paddingX={20}
           paddingY={5}
           truncate={16}
+          dragRef={dragLabelRef}
         >
           {element.getLabel()}
         </SvgBoxedText>
