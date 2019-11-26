@@ -69,6 +69,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   canDrop,
   dropTarget,
   onContextMenu,
+  contextMenuOpen,
   dragging,
 }) => {
   const [groupHover, groupHoverRef] = useHover();
@@ -120,7 +121,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const pathClasses = classNames('odc2-application-group', {
     'is-highlight': canDrop,
     'is-selected': selected,
-    'is-hover': hover || (canDrop && dropTarget),
+    'is-hover': hover || (canDrop && dropTarget) || contextMenuOpen,
   });
 
   return (
@@ -131,7 +132,9 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           <path
             ref={refs}
             filter={createSvgIdUrl(
-              hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+              hover || dragging || contextMenuOpen
+                ? NODE_SHADOW_FILTER_ID_HOVER
+                : NODE_SHADOW_FILTER_ID,
             )}
             className={pathClasses}
             d={pathRef.current}

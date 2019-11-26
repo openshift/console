@@ -57,6 +57,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   onHideCreateConnector,
   onShowCreateConnector,
   onContextMenu,
+  contextMenuOpen,
 }) => {
   const [hover, hoverRef] = useHover();
   useAnchor(EllipseAnchor);
@@ -64,7 +65,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const cy = element.getBounds().height / 2;
 
   const contentsClasses = classNames('odc2-base-node__contents', {
-    'is-hover': hover,
+    'is-hover': hover || contextMenuOpen,
     'is-highlight': canDrop,
     'is-dragging': dragging || edgeDragging,
     'is-droppable': dropTarget && canDrop,
@@ -95,7 +96,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           cy={cy}
           r={outerRadius}
           filter={createSvgIdUrl(
-            hover || dragging || edgeDragging || dropTarget
+            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
               ? NODE_SHADOW_FILTER_ID_HOVER
               : NODE_SHADOW_FILTER_ID,
           )}

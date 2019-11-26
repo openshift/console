@@ -37,6 +37,7 @@ const KnativeService: React.FC<EventSourceProps> = ({
   selected,
   onSelect,
   onContextMenu,
+  contextMenuOpen,
   dragNodeRef,
   dragging,
   regrouping,
@@ -74,7 +75,9 @@ const KnativeService: React.FC<EventSourceProps> = ({
           rx="5"
           ry="5"
           filter={createSvgIdUrl(
-            hover || innerHover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+            hover || innerHover || dragging || contextMenuOpen
+              ? NODE_SHADOW_FILTER_ID_HOVER
+              : NODE_SHADOW_FILTER_ID,
           )}
         />
       </Layer>
