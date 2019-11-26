@@ -44,7 +44,7 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   truncate,
   ...other
 }) => {
-  const [labelHover, labelHoverRef] = useHover(200);
+  const [labelHover, labelHoverRef] = useHover();
   const [textSize, textRef] = useSize([children, className, labelHover]);
   const [iconSize, iconRef] = useSize([kind]);
   const iconSpace = kind && iconSize ? iconSize.width + paddingX : 0;

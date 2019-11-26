@@ -2,7 +2,8 @@ import * as React from 'react';
 import useCallbackRef from './useCallbackRef';
 
 const useHover = <T extends Element>(
-  delay?: number,
+  delayIn: number = 200,
+  delayOut: number = 200,
 ): [boolean, (node: T) => (() => void) | undefined] => {
   const [hover, setHover] = React.useState<boolean>(false);
   const unmountRef = React.useRef(false);
@@ -25,21 +26,26 @@ const useHover = <T extends Element>(
           // store locally instead of a ref because it only needs to be referred by inner closures
           let delayHandle: any;
 
-          const onMouseEnter = () => {
+          const delayedStateChange = (newState: boolean, delay: number) => {
+            clearTimeout(unsetHandle.current);
+            clearTimeout(delayHandle);
+
             if (delay != null) {
               delayHandle = window.setTimeout(() => {
-                delayHandle = clearTimeout(unsetHandle.current);
-                setHover(true);
+                clearTimeout(unsetHandle.current);
+                setHover(newState);
               }, delay);
             } else {
-              clearTimeout(unsetHandle.current);
-              setHover(true);
+              setHover(newState);
             }
           };
 
+          const onMouseEnter = () => {
+            delayedStateChange(true, delayIn);
+          };
+
           const onMouseLeave = () => {
-            clearTimeout(delayHandle);
-            setHover(false);
+            delayedStateChange(false, delayOut);
           };
 
           node.addEventListener('mouseenter', onMouseEnter);
@@ -54,13 +60,16 @@ const useHover = <T extends Element>(
               // This can happen with layers. Rendering a node to a new layer will unmount the old node
               // and remount a new node at the same location. This will prevent flickering and getting
               // stuck in a hover state.
-              unsetHandle.current = window.setTimeout(() => setHover(false), 0);
+              unsetHandle.current = window.setTimeout(
+                () => setHover(false),
+                Math.max(delayIn, delayOut),
+              );
             }
           };
         }
         return undefined;
       },
-      [delay],
+      [delayIn, delayOut],
     ),
   );
 
