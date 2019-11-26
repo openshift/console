@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List, ListItem, Expandable, Text, TextVariants } from '@patternfly/react-core';
+import { ListItem, Expandable, Text, TextVariants } from '@patternfly/react-core';
 import { BootableDeviceType } from '../../types';
 import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from './constants';
 
@@ -14,7 +14,9 @@ export const BootOrderSummaryEmptyState = ({ devices }: BootOrderSummaryEmptySta
     setIsExpanded(!isExpanded);
   };
 
-  // Note(Yaacov): className='text-secondary' is a hack to fix TextVariants being overriden.
+  // Note(Yaacov):
+  // className='text-secondary' is a hack to fix TextVariants being overriden.
+  // Using <ol> because '@patternfly/react-core' <List> currently miss isOrder parameter.
   return (
     <>
       <Text component={TextVariants.p} className="kubevirt-boot-order-summary__empty-text">
@@ -30,11 +32,11 @@ export const BootOrderSummaryEmptyState = ({ devices }: BootOrderSummaryEmptySta
           isExpanded={isExpanded}
           className="kubevirt-boot-order-summary__expandable"
         >
-          <List>
+          <ol>
             {options.map((option) => (
               <ListItem key={deviceKey(option)}>{deviceLabel(option)}</ListItem>
             ))}
-          </List>
+          </ol>
         </Expandable>
       )}
     </>
