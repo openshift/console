@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
+export const hasLabel = (obj: K8sResourceKind, label: string): boolean =>
+  _.has(obj, ['metadata', 'labels', label]);
 export const getName = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
   _.get(value, 'metadata.name') as K8sResourceKind['metadata']['name'];
 export const getNamespace = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
