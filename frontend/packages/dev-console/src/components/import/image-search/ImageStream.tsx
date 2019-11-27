@@ -141,7 +141,7 @@ const ImageStream: React.FC<ImageStreamProps> = ({ imageStreams }) => {
                 ? 'No Tag'
                 : 'Select Tag'
             }
-            disabled={!isImageStreamSelected}
+            disabled={!isImageStreamSelected || !isTagsAvailable}
             fullWidth
             required
             onChange={(tag) => {
