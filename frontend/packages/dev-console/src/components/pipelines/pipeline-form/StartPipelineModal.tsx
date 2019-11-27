@@ -6,6 +6,7 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { errorModal } from '@console/internal/components/modals';
 import { PipelineRunModel } from '../../../models';
 import {
   Pipeline,
@@ -66,6 +67,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       .catch((err) => {
         actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
+        errorModal({ error: err.message });
         close();
       });
   };
