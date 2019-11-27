@@ -5,7 +5,9 @@ import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } fr
 
 import './boot-order-summary.scss';
 
-export const BootOrderSummaryEmptyState: React.FC<BootOrderSummaryEmptyStateProps> = ({ devices }) => {
+export const BootOrderSummaryEmptyState: React.FC<BootOrderSummaryEmptyStateProps> = ({
+  devices,
+}) => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
   const options = devices.filter((device) => !device.value.bootOrder);
