@@ -3,11 +3,13 @@ import { getNamespace, getName } from '@console/shared/src/selectors';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../models';
 import { VMKind, VMLikeEntityKind } from '../../types';
+import { iGetIn } from '../../utils/immutable';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
   CUSTOM_FLAVOR,
+  TEMPLATE_TYPE_LABEL,
 } from '../../constants';
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
@@ -131,4 +133,28 @@ export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
   });
 
   return sortedFlavors;
+};
+
+export const getRelevantTemplates = (
+  commonTemplates: TemplateKind[],
+  os: string,
+  workloadProfile: string,
+  flavor: string,
+) => {
+  if (!commonTemplates || commonTemplates.length === 0 || !os || !workloadProfile) {
+    return [];
+  }
+  return (commonTemplates || []).filter(
+    (template) =>
+      iGetIn(template, ['metadata', 'labels', TEMPLATE_TYPE_LABEL]) === 'base' &&
+      (!os || iGetIn(template, ['metadata', 'labels', `${TEMPLATE_OS_LABEL}/${os}`])) &&
+      (!workloadProfile ||
+        iGetIn(template, [
+          'metadata',
+          'labels',
+          `${TEMPLATE_WORKLOAD_LABEL}/${workloadProfile}`,
+        ])) &&
+      (flavor === 'Custom' ||
+        iGetIn(template, ['metadata', 'labels', `${TEMPLATE_FLAVOR_LABEL}/${flavor}`])),
+  );
 };

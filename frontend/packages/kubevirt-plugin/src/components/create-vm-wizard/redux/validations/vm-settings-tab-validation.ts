@@ -29,8 +29,12 @@ import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
+import {
+  getFieldReadableTitle,
+  getFieldTitle,
+  getFieldId,
+} from '../../utils/vm-settings-tab-utils';
 import { concatImmutableLists, iGet } from '../../../../utils/immutable';
-import { getFieldReadableTitle, getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import {
   checkTabValidityChanged,
   iGetCommonData,
@@ -42,6 +46,10 @@ import { validatePositiveInteger } from '../../../../utils/validations/common';
 import { pluralize } from '../../../../utils/strings';
 import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state';
 import { getValidationUpdate } from './utils';
+import {
+  getTemplateValidations,
+  runValidation,
+} from './common-template-validations/common-templates-validations';
 
 const validateVm: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
@@ -95,6 +103,26 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
   return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
 };
 
+const memoryValidation: VmSettingsValidator = (field, options): ValidationObject => {
+  const memValueGB = iGetFieldValue(field);
+  if (!memValueGB) {
+    return null;
+  }
+  const memValueBytes = memValueGB * 1024 ** 3;
+  const validations = getTemplateValidations(options, getFieldId(VMSettingsField.MEMORY));
+  if (validations.length === 0) {
+    return null;
+  }
+
+  const validationResult = runValidation(validations, memValueBytes);
+
+  if (!validationResult.isValid) {
+    return asValidationObject(validationResult.errorMsg, ValidationErrorType.Error);
+  }
+
+  return null;
+};
+
 const asVMSettingsFieldValidator = (
   validator: (value: string, opts: { subject: string }) => ValidationObject,
 ) => (field) =>
@@ -135,8 +163,12 @@ const validationConfig: VMSettingsValidationConfig = {
     validator: asVMSettingsFieldValidator(validatePositiveInteger),
   },
   [VMSettingsField.MEMORY]: {
-    detectValueChanges: [VMSettingsField.MEMORY],
-    validator: asVMSettingsFieldValidator(validatePositiveInteger),
+    detectValueChanges: [
+      VMSettingsField.MEMORY,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.WORKLOAD_PROFILE,
+    ],
+    validator: memoryValidation,
   },
 };
 
