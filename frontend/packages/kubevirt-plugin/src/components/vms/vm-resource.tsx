@@ -17,12 +17,12 @@ import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
-import { BootOrder } from '../boot-order';
+import { BootOrderSummary } from '../boot-order';
 import {
   getOperatingSystemName,
   getOperatingSystem,
   getWorkloadProfile,
-  getBootableDevicesInOrder,
+  getDevices,
 } from '../../selectors/vm';
 
 import './vm-resource.scss';
@@ -95,7 +95,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const { launcherPod } = vmStatus;
   const cds = getCDRoms(vm);
-  const sortedBootableDevices = getBootableDevicesInOrder(vm);
+  const devices = getDevices(vm);
   const nodeName = getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
   const workloadProfile = getWorkloadProfile(vm);
@@ -117,12 +117,8 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         )}
       </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Boot Order"
-        idValue={prefixedID(id, 'boot-order')}
-        isNotAvail={sortedBootableDevices.length === 0}
-      >
-        <BootOrder bootableDevices={sortedBootableDevices} />
+      <VMDetailsItem title="Boot Order" idValue={prefixedID(id, 'boot-order')}>
+        <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 
       <VMDetailsItem
