@@ -109,8 +109,8 @@ const filterSelectedItems = (items: BackingStoreStateType[], tableId: number): s
 
 const getBsLabel = (policy: string) =>
   policy === 'Mirror'
-    ? 'Select at least 2 Backingstore resources'
-    : 'Select at least 1 Backingstore resource';
+    ? 'Select at least 2 Backing Store resources'
+    : 'Select at least 1 Backing Store resource';
 
 const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
   ({ backingStores, dispatcher, state }) => {
@@ -161,11 +161,11 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             className="nb-create-bc-step-page__info"
             isInline
             variant="info"
-            title="What is a BackingStore?"
+            title="What is a Backing Store?"
             action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>
-              BackingStore represents a storage target to be used as the underlying storage for the
+              Backing Store represents a storage target to be used as the underlying storage for the
               data in MCG buckets.
             </p>
             <p>
@@ -181,14 +181,14 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
         <Form className="nb-bc-step-page-form">
           <Title headingLevel="h3" size="xl" className="nb-bc-step-page-form__title">
             <Flex breakpointMods={[{ modifier: 'justify-content-space-between' }] as any}>
-              <FlexItem>Tier 1 - backingStore ({state.tier1Policy})</FlexItem>
+              <FlexItem>Tier 1 - Backing Store ({state.tier1Policy})</FlexItem>
               <FlexItem>
                 <Button
                   variant="link"
                   onClick={openModal}
                   className="nb-bc-step-page-form__modal-launcher"
                 >
-                  <PlusCircleIcon /> Create BackingStore
+                  <PlusCircleIcon /> Create Backing Store
                 </Button>
               </FlexItem>
             </Flex>
@@ -202,7 +202,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
           >
             <TextInput
               className="nb-bc-step-page-form__element--short"
-              placeholder="Search BackingStore"
+              placeholder="Search Backing Store"
               onChange={setSearchInput}
               value={searchInput}
               type="text"
@@ -229,7 +229,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
         {showTier2Table && (
           <Form className="nb-bc-step-page-form">
             <Title headingLevel="h3" size="xl">
-              Tier 2 - backingStore ({state.tier2Policy}){' '}
+              Tier 2 - Backing Store ({state.tier2Policy}){' '}
             </Title>
             <FormGroup
               className="nb-bc-step-page-form__element"
@@ -239,7 +239,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             >
               <TextInput
                 className="nb-bc-step-page-form__element--short"
-                placeholder="Search BackingStore"
+                placeholder="Search Backing Store"
                 onChange={(v) => setSearchInput2(v)}
                 value={searchInput2}
                 type="text"

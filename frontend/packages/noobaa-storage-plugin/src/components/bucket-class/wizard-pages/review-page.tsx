@@ -48,14 +48,14 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
           <Title size="md" headingLevel="h5">
             Tier 1: {tier1Policy}
           </Title>
-          <p>Selected BackingStore: {tier1BackingStore.join(', ')}</p>
+          <p>Selected Backing Store: {tier1BackingStore.join(', ')}</p>
         </div>
         {tier2Policy && (
           <>
             <Title size="md" headingLevel="h5">
               Tier 2: {tier2Policy}
             </Title>
-            <p>Selected BackingStore: {tier2BackingStore.join(', ')}</p>
+            <p>Selected Backing Store: {tier2BackingStore.join(', ')}</p>
           </>
         )}
       </div>

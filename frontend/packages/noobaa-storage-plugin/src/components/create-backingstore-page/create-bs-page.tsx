@@ -47,7 +47,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
         </div>
         <div className="nb-bs-page-title">
           <Title size="2xl" headingLevel="h1" className="nb-bs-page-title__main">
-            Create new BackingStore
+            Create new Backing Store
           </Title>
           <p className="nb-bs-page-title__info">
             Storage targets that are used to store chunks of data on MCG buckets.
@@ -59,14 +59,14 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           <Alert
             isInline
             variant="info"
-            title="What is a BackingStore?"
+            title="What is a Backing Store?"
             action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
-            BackingStore represent a storage target to be used as the underlying storage for the
-            data in MCG buckets.
+            A backing store represents a storage target to be used as the underlying storage layer
+            in MCG buckets.
             <br />
-            Multiple types of backing-stores are supported: aws-s3, s3-compataible,
-            google-cloud-storage, azure-blob, obc, PVC.
+            Multiple types of backing stores are supported: AWS S3, S3 Compatible, Google Cloud
+            Storage, Azure Blob, PVC.
           </Alert>
         )}
         <CreateBackingStoreForm
