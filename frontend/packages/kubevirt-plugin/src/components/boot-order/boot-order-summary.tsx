@@ -6,7 +6,7 @@ import { deviceLabel, deviceKey } from './constants';
 import { BootOrderSummaryEmptyState } from './boot-order-summary-empty-state';
 
 // NOTE(yaacov): using <ol> because '@patternfly/react-core' <List> currently miss isOrder parameter.
-export const BootOrderSummary = ({ devices }: BootOrderSummaryProps) => {
+export const BootOrderSummary = ({ devices }) => {
   const sources = _.sortBy(devices.filter((device) => device.value.bootOrder), 'value.bootOrder');
 
   return (

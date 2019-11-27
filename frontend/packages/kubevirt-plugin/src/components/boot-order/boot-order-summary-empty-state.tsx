@@ -5,14 +5,12 @@ import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } fr
 
 import './boot-order-summary.scss';
 
-export const BootOrderSummaryEmptyState = ({ devices }: BootOrderSummaryEmptyStateProps) => {
+export const BootOrderSummaryEmptyState = ({ devices }) => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
   const options = devices.filter((device) => !device.value.bootOrder);
 
-  const onToggle = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const onToggle = React.useCallback(() => setIsExpanded(!isExpanded), [isExpanded]);
 
   // Note(Yaacov):
   // className='text-secondary' is a hack to fix TextVariants being overriden.
