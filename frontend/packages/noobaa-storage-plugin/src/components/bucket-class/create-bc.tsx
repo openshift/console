@@ -127,8 +127,8 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
 
   return (
     <>
-      <div className="nb-create-bc-header">
-        <div className="nb-create-bc-header__breadcrumbs">
+      <div className="co-create-operand__header">
+        <div className="co-create-operand__header-buttons">
           <BreadCrumbs
             breadcrumbs={[
               {
