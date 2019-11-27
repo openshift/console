@@ -20,7 +20,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { BY_IOPS, CHART_LABELS, PROVIDERS } from '../../constants';
+import { BY_IOPS, CHART_LABELS, PROVIDERS, BY_EGRESS } from '../../constants';
 import {
   DataConsumersValue,
   DataConsumersSortByValue,
@@ -67,9 +67,10 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
     curentDropdown,
   );
 
-  // chartData = [[]] or [[],[]]
+  // chartData = [[],[],[],[],[],[]] or []
   if (!chartData.some(_.isEmpty)) {
-    padding = chartData[0].length === 2 ? 125 : 30; // FIX: for making the bars closeby in case of two datapoints, should be removed once victory charts support this adjustment
+    padding =
+      chartData[0].length === 2 || (sortByKpi === BY_EGRESS && chartData.length === 2) ? 125 : 25; // Adjusts spacing between each BarGroup
     maxVal = max.value;
     maxUnit = max.unit;
     suffixLabel = maxUnit;
@@ -113,9 +114,9 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
                   themeColor={ChartThemeColor.purple}
                   data={legendData}
                   orientation="horizontal"
-                  symbolSpacer={7}
+                  symbolSpacer={5}
+                  gutter={2}
                   height={30}
-                  gutter={10}
                   padding={{ top: 50, bottom: 0 }}
                   style={{ labels: { fontSize: 8 } }}
                 />
@@ -124,7 +125,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
               padding={{
                 bottom: 50,
                 left: 30,
-                right: 30,
+                right: 20,
                 top: 30,
               }}
               themeColor={ChartThemeColor.purple}
@@ -138,7 +139,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
                   tickLabels: { fontSize: 8, padding: 0 },
                 }}
               />
-              <ChartGroup offset={11}>
+              <ChartGroup offset={sortByKpi === BY_EGRESS ? 0 : 11}>
                 {chartData.map((data, i) => (
                   <ChartBar key={i} data={data} /> // eslint-disable-line react/no-array-index-key
                 ))}
