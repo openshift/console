@@ -67,6 +67,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
         </Alert>
       )}
       <CreateBackingStoreForm
+        csv={clusterServiceVersion}
         cancel={onCancel}
         isPage
         namespace={ns}

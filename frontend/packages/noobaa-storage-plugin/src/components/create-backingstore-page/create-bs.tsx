@@ -20,10 +20,14 @@ import {
   HandlePromiseProps,
   NsDropdown,
   RequestSizeInput,
-  resourceObjPath,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import { apiVersionForModel, k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import {
+  apiVersionForModel,
+  k8sCreate,
+  referenceForModel,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
 import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
 import { SecretModel } from '@console/internal/models';
@@ -512,7 +516,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     }
   }, [bsName, namespace.length, provider, providerDataState]);
 
-  const { cancel, className, close, inProgress, errorMessage, handlePromise, isPage } = props;
+  const { cancel, className, close, inProgress, errorMessage, handlePromise, isPage, csv } = props;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -559,7 +563,11 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     return handlePromise(Promise.all(promises)).then((resource) => {
       const lastIndex = resource.length - 1;
       if (isPage)
-        history.push(resourceObjPath(resource[lastIndex], referenceFor(resource[lastIndex])));
+        history.push(
+          `/k8s/ns/${namespace}/clusterserviceversions/${getName(csv)}/${referenceForModel(
+            NooBaaBackingStoreModel,
+          )}/${getName(resource[lastIndex])}`,
+        );
       else close();
     });
   };
@@ -628,6 +636,7 @@ type CreateBackingStoreFormProps = ModalComponentProps & {
   isPage?: boolean;
   namespace?: string;
   className?: string;
+  csv?: K8sResourceKind;
 };
 
 type S3EndpointTypeProps = {
