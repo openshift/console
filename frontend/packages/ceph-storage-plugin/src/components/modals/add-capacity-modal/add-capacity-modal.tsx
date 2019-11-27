@@ -1,11 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import {
-  FieldLevelHelp,
-  RequestSizeInput,
-  withHandlePromise,
-} from '@console/internal/components/utils/index';
+import { DashboardCardHelp } from '@console/internal/components/dashboard/dashboard-card';
+import { RequestSizeInput, withHandlePromise } from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
   ModalBody,
@@ -20,9 +17,9 @@ import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
   const dropdownUnits = {
-    TiB: 'TiB',
+    Ti: 'Ti',
   };
-  const requestSizeUnit = dropdownUnits.TiB;
+  const requestSizeUnit = dropdownUnits.Ti;
   const [buttonDisabled, setButton] = React.useState(false);
   const [requestSizeValue, setRequestSizeValue] = React.useState('2');
   const [storageClass, setStorageClass] = React.useState('');
@@ -78,7 +75,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
           <div className="add-capacity-modal__input form-group">
             <label className="control-label" htmlFor="request-size-input">
               Capacity
-              <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+              <DashboardCardHelp>{labelTooltip}</DashboardCardHelp>
               <span className="text-secondary add-capacity-modal__span">
                 <span>
                   Provisioned:
