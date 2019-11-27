@@ -813,6 +813,7 @@ const Query_: React.FC<QueryProps> = ({
   patchQuery,
   toggleIsEnabled,
 }) => {
+  const switchKey = `${id}-${isEnabled}`;
   const switchLabel = `${isEnabled ? 'Disable' : 'Enable'} query`;
 
   const toggleIsExpanded = () => patchQuery({ isExpanded: !isExpanded });
@@ -829,9 +830,9 @@ const Query_: React.FC<QueryProps> = ({
         <div title={switchLabel}>
           <Switch
             aria-label={switchLabel}
-            id={id}
+            id={switchKey}
             isChecked={isEnabled}
-            key={id}
+            key={switchKey}
             onChange={toggleIsEnabled}
           />
         </div>
