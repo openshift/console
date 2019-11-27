@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListItem, Expandable, Text, TextVariants } from '@patternfly/react-core';
+import { Expandable, Text, TextVariants } from '@patternfly/react-core';
 import { BootableDeviceType } from '../../types';
 import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from './constants';
 
@@ -32,7 +32,7 @@ export const BootOrderSummaryEmptyState = ({ devices }) => {
         >
           <ol>
             {options.map((option) => (
-              <ListItem key={deviceKey(option)}>{deviceLabel(option)}</ListItem>
+              <li key={deviceKey(option)}>{deviceLabel(option)}</li>
             ))}
           </ol>
         </Expandable>

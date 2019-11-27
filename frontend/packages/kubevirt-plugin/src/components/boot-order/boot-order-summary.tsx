@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ListItem } from '@patternfly/react-core';
 import { BootableDeviceType } from '../../types';
 import { deviceLabel, deviceKey } from './constants';
 import { BootOrderSummaryEmptyState } from './boot-order-summary-empty-state';
@@ -16,7 +15,7 @@ export const BootOrderSummary = ({ devices }) => {
       ) : (
         <ol>
           {sources.map((source) => (
-            <ListItem key={deviceKey(source)}>{deviceLabel(source)}</ListItem>
+            <li key={deviceKey(source)}>{deviceLabel(source)}</li>
           ))}
         </ol>
       )}
