@@ -6,18 +6,20 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 import { ActionGroup, Button } from '@patternfly/react-core';
+import { getName } from '@console/shared';
 import {
   AsyncComponent,
   ButtonBar,
   Dropdown,
+  ExternalLink,
+  Firehose,
+  FirehoseResult,
   NameValueEditorPair,
   history,
-  ExternalLink,
 } from './utils';
-import { Firehose } from './utils/firehose';
-import { k8sCreate } from './../module/k8s';
+import { k8sCreate, K8sResourceKind, referenceForModel } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
-import { StorageClassModel } from './../models';
+import { CSIDriverModel, StorageClassModel } from './../models';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
@@ -33,7 +35,7 @@ const defaultState = {
   validationSuccessful: false,
   loading: false,
   error: null,
-  fieldErrors: {parameters: {}},
+  fieldErrors: { parameters: {} },
 };
 
 export class StorageClassForm_ extends React.Component<StorageClassFormProps, StorageClassFormState> {
@@ -48,7 +50,113 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     this.previousName = '';
   }
 
-  storageTypes = Object.freeze({
+  defaultProvisionerObj = {
+    title: '',
+    provisioner: '',
+    parameters: {},
+  };
+
+  storageTypes = {};
+
+  CSIStorageTypes = Object.freeze({
+    'rbd.csi.ceph.com': {
+      title: 'Ceph RBD',
+      provisioner: 'rbd.csi.ceph.com',
+      documentationLink: 'https://rook.io/docs/rook/v1.1/',
+      parameters: {
+        clusterID: {
+          name: 'Cluster ID',
+          hintText: 'The namespace where Ceph is deployed',
+          required: true,
+        },
+        pool: {
+          name: 'Pool',
+          hintText: 'Ceph pool into which volume data shall be stored',
+          required: true,
+        },
+        imageFormat: {
+          name: 'Image Format',
+          hintText: 'RBD image format. Defaults to "2"',
+          values: { '2': '2' },
+          required: true,
+        },
+        imageFeatures: {
+          name: 'Image Features',
+          hintText: 'Ceph RBD image features',
+          values: { layering: 'layering' },
+          required: true,
+        },
+        'csi.storage.k8s.io/provisioner-secret-name': {
+          name: 'Provisioner Secret Name',
+          hintText: 'The name of provisioner secret',
+          required: true,
+        },
+        'csi.storage.k8s.io/provisioner-secret-namespace': {
+          name: 'Provisioner Secret Namespace',
+          hintText: 'The namespace where provisioner secret is created',
+          required: true,
+        },
+        'csi.storage.k8s.io/node-stage-secret-name': {
+          name: 'Node Stage Secret Name',
+          hintText: 'The name of Node Stage secret',
+          required: true,
+        },
+        'csi.storage.k8s.io/node-stage-secret-namespace': {
+          name: 'Node Stage Secret Namespace',
+          hintText: 'The namespace where provisioner secret is created',
+          required: true,
+        },
+        'csi.storage.k8s.io/fstype': {
+          name: 'Filesystem Type',
+          hintText: 'Ceph RBD filesystem type. Default set to ext4',
+          required: true,
+        },
+      },
+    },
+    'cephfs.csi.ceph.com': {
+      title: 'Ceph FS',
+      provisioner: 'cephfs.csi.ceph.com',
+      documentationLink: 'https://rook.io/docs/rook/v1.1/',
+      parameters: {
+        clusterID: {
+          name: 'Cluster ID',
+          hintText: 'The namespace where Ceph is deployed',
+          required: true,
+        },
+        pool: {
+          name: 'Pool',
+          hintText: 'Ceph pool into which volume data shall be stored',
+        },
+        fsName: {
+          name: 'Filesystem Name',
+          hintText: 'CephFS filesystem name into which the volume shall be created',
+          required: true,
+        },
+        'csi.storage.k8s.io/provisioner-secret-name': {
+          name: 'Provisioner Secret Name',
+          hintText: 'The name of provisioner secret',
+          required: true,
+        },
+        'csi.storage.k8s.io/provisioner-secret-namespace': {
+          name: 'Provisioner Secret Namespace',
+          hintText: 'The namespace where provisioner secret is created',
+          required: true,
+        },
+        'csi.storage.k8s.io/node-stage-secret-name': {
+          name: 'Node Stage Secret Name',
+          hintText: 'The name of Node Stage secret',
+          required: true,
+        },
+        'csi.storage.k8s.io/node-stage-secret-namespace': {
+          name: 'Node Stage Secret Namespace',
+          hintText: 'The namespace where provisioner secret is created',
+          required: true,
+        },
+      },
+    },
+  });
+
+  defaultStorageTypes = Object.freeze({
     local: {
       title: 'Local',
       provisioner: 'kubernetes.io/no-provisioner',
@@ -265,62 +373,6 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         },
       },
     },
-    cephRbd: {
-      title: 'Ceph RBD',
-      provisioner: 'kubernetes.io/rbd',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#ceph-rbd',
-      parameters: {
-        monitors: {
-          name: 'Monitors',
-          required: true,
-          hintText: 'Monitors',
-        },
-        adminId: {
-          name: 'Admin Client ID',
-          hintText: 'Admin Client ID',
-        },
-        adminSecretName: {
-          name: 'Admin Secret Name',
-          required: true,
-          hintText: 'Admin Secret Name',
-        },
-        adminSecretNamespace: {
-          name: 'Admin Secret Namespace',
-          hintText: 'Admin Secret Namespace',
-        },
-        pool: {
-          name: 'Pool',
-          hintText: 'Pool',
-        },
-        userId: {
-          name: 'User Client ID',
-          hintText: 'Ceph client ID used to map the RBD image',
-        },
-        userSecretName: {
-          name: 'User Secret Name',
-          required: true,
-          hintText: 'User Secret Name',
-        },
-        userSecretNamespace: {
-          name: 'User Secret Namespace',
-          hintText: 'User Secret Namespace',
-        },
-        fsType: {
-          name: 'Filesystem Type',
-          hintText: 'Filesystem Type',
-        },
-        imageFormat: {
-          name: 'Image Format',
-          values: {1: '1', 2: '2'},
-          hintText: 'Select Image Format',
-        },
-        imageFeatures: {
-          name: 'Image Features',
-          hintText: 'Image Features',
-          visible: (params) => _.get(params, 'imageFormat.value') === '2',
-        },
-      },
-    },
     vSphereVolume: {
       title: 'vSphere Volume',
       provisioner: 'kubernetes.io/vsphere-volume',
@@ -484,21 +536,52 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     Delete: 'Delete',
   };
 
+  // Accepts a list of CSI provisioners and it checks if the
+  // provisioner is listed in CSIStorageTypes object
+  // if yes then return the provisioner with parameters that
+  // needs to be filled by user.
+  csiProvisionerMap = (csiData) => {
+    const csiListedProvisioner: string[] = _.keys(this.CSIStorageTypes);
+    csiData.map((csi) => {
+      _.each(csiListedProvisioner, (provisioner) => {
+        const hasProvisioner = getName(csi).includes(provisioner);
+        if (hasProvisioner) {
+          const provisionerData = _.cloneDeep(this.CSIStorageTypes[provisioner]);
+          provisionerData.provisioner = getName(csi);
+          this.storageTypes[getName(csi)] = provisionerData;
+          return false;
+        }
+        const provisionerData = _.cloneDeep(this.defaultProvisionerObj);
+        provisionerData.title = getName(csi);
+        provisionerData.provisioner = getName(csi);
+        this.storageTypes[getName(csi)] = provisionerData;
+      });
+    });
+  };
+
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
-      this.props.watchK8sList(this.reduxId, {}, StorageClassModel);
-      const loaded = this.props.k8s.getIn([StorageClassModel.plural, 'loaded']);
+      const { resources } = this.props;
+      const loaded = _.get(resources.sc, 'loaded');
+      const csiLoaded = _.get(resources.csi, 'loaded');
+      const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
+      const csiData = _.get(resources.csi, 'data', []) as K8sResourceKind[];
       if (loaded) {
-        const data = this.props.k8s.getIn([StorageClassModel.plural, 'data']);
         this.resources = {
-          data: data && data.toArray().map(p => p.toJSON()),
-          loadError: this.props.k8s.getIn([StorageClassModel.plural, 'loadError']),
+          data: scData,
+          loadError: _.get(resources.sc, 'loadError'),
           loaded,
         };
-
         this.validateForm();
       }
+      if (csiLoaded) {
+        this.csiProvisionerMap(csiData);
+      }
     }
+  }
+
+  componentDidMount() {
+    this.storageTypes = _.cloneDeep(this.defaultStorageTypes);
   }
 
   setParameterHandler = (param, event, checkbox) => {
@@ -712,6 +795,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const dynamicContent = _.map(parameters, (parameter, key) => {
       const validationMsg = _.get(parameter, 'validationMsg', null);
       const isCheckbox = parameter.type === 'checkbox';
+      const selectedKey = ['newStorageClass', 'parameters', key, 'value'];
 
       if (parameter.visible && !parameter.visible(this.state.newStorageClass.parameters)) {
         return null;
@@ -726,8 +810,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             title={parameter.hintText}
             items={parameter.values}
             dropDownClassName="dropdown--full-width"
-            selectedKey={_.get(this.state, `newStorageClass.parameters.${key}.value`)}
-            onChange={(event) => this.setParameterHandler(key, event, false)} />
+            selectedKey={_.get(this.state, selectedKey)}
+            onChange={(event) => this.setParameterHandler(key, event, false)}
+          />
           <HelpBlock>{validationMsg ? validationMsg : null}</HelpBlock>
         </React.Fragment>
         : <React.Fragment>
@@ -738,8 +823,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
                   <input type="checkbox"
                     className="create-storage-class-form__checkbox"
                     onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
-                    checked={_.get(this.state, `newStorageClass.parameters.${key}.value`, false)}
-                    id={`provisioner-settings-${key}-checkbox`} />
+                    checked={_.get(this.state, selectedKey, false)}
+                    id={`provisioner-settings-${key}-checkbox`}
+                  />
                   {_.get(parameter, 'name', key)}
                 </label>
               </div>
@@ -751,8 +837,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               <FormControl
                 type="text"
                 bsClass="pf-c-form-control"
-                value={_.get(this.state, `newStorageClass.parameters.${key}.value`, '')}
-                onChange={(event) => this.setParameterHandler(key, event, isCheckbox)} />
+                value={_.get(this.state, selectedKey, '')}
+                onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
+              />
             </React.Fragment>
           }
           <HelpBlock>{validationMsg ? validationMsg : parameter.hintText}</HelpBlock>
@@ -899,6 +986,9 @@ export type StorageClassFormProps = {
   watchK8sList: (id: string, query: object, kind: object) => void;
   stopK8sWatch: (id: string) => void;
   k8s: any;
+  resources?: {
+    [key: string]: FirehoseResult;
+  };
 };
 
 export type StorageClassData = {
@@ -934,8 +1024,11 @@ export type Resources = {
 
 export const ConnectedStorageClassForm = connect(mapStateToProps, mapDispatchToProps)(StorageClassForm_);
 
-export const StorageClassForm = props => {
-  const resources = [{kind: 'StorageClass', isList: true}];
+export const StorageClassForm = (props) => {
+  const resources = [
+    { kind: StorageClassModel.kind, isList: true, prop: 'sc' },
+    { kind: referenceForModel(CSIDriverModel), isList: true, prop: 'csi' },
+  ];
   return (
     <Firehose resources={resources}>
       <ConnectedStorageClassForm {...props} />
