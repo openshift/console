@@ -1,11 +1,11 @@
 reviewers:
+  - abhi-kn
   - andrewballantyne
   - abhinandan13jan
   - debsmita1
   - divyanshiGupta
   - christianvogt
   - gijohn
-  - joshuawilson
   - invincibleJai
   - karthikjeeyar
   - nemesis09
@@ -13,8 +13,8 @@ reviewers:
   - sahil143
   - vikram-raj
 approvers:
+  - andrewballantyne
   - christianvogt
-  - joshuawilson
   - rohitkrai03
 labels:
   - component/dev-console
