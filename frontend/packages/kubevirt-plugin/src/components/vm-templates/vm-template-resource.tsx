@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {
-  getOperatingSystemName,
-  getOperatingSystem,
-  getWorkloadProfile,
-} from 'kubevirt-web-ui-components';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getCDRoms } from '../../selectors/vm/selectors';
+import {
+  getCDRoms,
+  getOperatingSystemName,
+  getOperatingSystem,
+  getWorkloadProfile,
+} from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
