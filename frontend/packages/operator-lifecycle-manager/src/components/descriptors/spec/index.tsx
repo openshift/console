@@ -242,7 +242,8 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
     (c) =>
       !c.startsWith(SpecCapability.fieldGroup) &&
       !c.startsWith(SpecCapability.arrayFieldGroup) &&
-      !c.startsWith(SpecCapability.advanced),
+      !c.startsWith(SpecCapability.advanced) &&
+      !c.startsWith(SpecCapability.fieldDependency),
   ) as SpecCapability;
   const Capability = capabilityFor(capability);
 
