@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Dropdown } from '.';
+import * as classNames from 'classnames';
 
 export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
   state = {
@@ -25,15 +26,16 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
       <div className="form-group">
         <div className="pf-c-input-group">
           <input
-            className="pf-c-form-control"
+            className={classNames('pf-c-form-control', this.props.inputClassName)}
             type="number"
-            step="any"
+            step={this.props.step || 'any'}
             onChange={this.onValueChange}
             placeholder={this.props.placeholder}
             aria-describedby={describedBy}
             name={inputName}
             required={this.props.required}
             value={this.props.defaultRequestSizeValue}
+            min={this.props.minValue}
           />
           <Dropdown
             title={this.props.defaultRequestSizeUnit}
@@ -59,4 +61,7 @@ export type RequestSizeInputProps = {
   defaultRequestSizeUnit: string;
   defaultRequestSizeValue: string;
   describedBy?: string;
+  step?: number;
+  minValue?: number;
+  inputClassName?: string;
 };
