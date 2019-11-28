@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { saveAs } from 'file-saver';
 import { DownloadIcon } from '@patternfly/react-icons';
@@ -121,11 +122,13 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
   scrollToBottom = (): void => {
     if (this.scrollUntouched && this.scrollPane.current) {
       this.isAutoScrolling = true;
-      this.scrollPane.current.scroll({
-        top: _.get(this.scrollPane, ['current', 'scrollHeight'], false),
-        behavior: 'smooth',
-      });
-      setTimeout(() => (this.isAutoScrolling = false), 200); // buffer time for scroll to complete
+      if (typeof this.scrollPane.current.scroll === 'function') {
+        this.scrollPane.current.scroll({
+          top: _.get(this.scrollPane, ['current', 'scrollHeight'], false),
+          behavior: 'smooth',
+        });
+        setTimeout(() => (this.isAutoScrolling = false), 200); // buffer time for scroll to complete
+      }
     }
   };
 
@@ -155,7 +158,9 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
           </div>
         </div>
         <div
-          className="odc-pipeline-task-logs__container"
+          className={classNames('odc-pipeline-task-logs__container', {
+            'is-edge': window.navigator.userAgent.includes('Edge'),
+          })}
           onScroll={() =>
             this.scrollUntouched && !this.isAutoScrolling && (this.scrollUntouched = false)
           }

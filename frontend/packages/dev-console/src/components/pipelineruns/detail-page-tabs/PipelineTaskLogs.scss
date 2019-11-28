@@ -3,6 +3,12 @@
     margin-top: var(--pf-global--spacer--lg);
   }
   &__container {
+    &.is-edge {
+      .pf-c-alert {
+        display: none;
+      }
+    }
+
     background-color: #030303;
     overflow-y: scroll;
   }
@@ -26,14 +32,13 @@
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--sm)
       var(--pf-global--spacer--md);
   }
-  &__step .log-window__contents {
-    height: auto !important;
-  }
-  &__step .log-window__header {
-    display: none;
-  }
-  &__step .co-toolbar {
-    display: none;
+  &__step {
+    .log-window__contents {
+      height: auto !important;
+    }
+    .log-window__header, .co-toolbar {
+      display: none;
+    }
   }
   &__step .log-window__body {
     padding: 0px var(--pf-global--spacer--lg) 0px var(--pf-global--spacer--lg);
