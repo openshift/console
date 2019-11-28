@@ -2,11 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  getTemplateOperatingSystems,
-  getTemplateFlavors,
-  TEMPLATE_TYPE_LABEL,
-} from 'kubevirt-web-ui-components';
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
@@ -21,10 +16,14 @@ import {
 } from '@console/shared';
 import { match } from 'react-router';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import {
+  getTemplateOperatingSystems,
+  getTemplateFlavors,
+} from '../../selectors/vm-template/advanced';
+import { TEMPLATE_TYPE_LABEL } from '../../constants';
 import { TemplateSource } from './vm-template-source';
 import { menuActions } from './menu-actions';
 import { VMTemplateLink } from './vm-template-link';
-
 import './vm-template.scss';
 
 const { kind } = TemplateModel;
@@ -112,7 +111,7 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
       <TableData className={dimensify()}>
         <TemplateSource template={template} />
       </TableData>
-      <TableData className={dimensify()}>{os ? os.name || os.fieldId : DASH}</TableData>
+      <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
       <TableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={kind} resource={template} />

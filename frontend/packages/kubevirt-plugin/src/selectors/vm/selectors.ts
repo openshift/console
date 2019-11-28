@@ -41,10 +41,14 @@ export const getVolumes = (vm: VMKind, defaultValue = []) =>
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
 
-export const getOperatingSystem = (vm: VMLikeEntityKind): string =>
-  findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
-export const getOperatingSystemName = (vm: VMKind): string =>
-  getValueByPrefix(getAnnotations(vm), `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vm)}`);
+export const getOperatingSystem = (vmLike: VMLikeEntityKind): string =>
+  findKeySuffixValue(getLabels(vmLike), TEMPLATE_OS_LABEL);
+export const getOperatingSystemName = (vmLike: VMLikeEntityKind) =>
+  getValueByPrefix(
+    getAnnotations(vmLike),
+    `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vmLike)}`,
+  );
+
 export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
 export const getFlavor = (vmLike: VMLikeEntityKind) =>
