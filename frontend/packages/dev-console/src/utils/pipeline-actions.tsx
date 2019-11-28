@@ -79,10 +79,12 @@ export const triggerPipeline = (
 export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => ({
   label: 'Rerun',
   callback: () => {
-    const namespace = _.get(pipelineRun, 'spec.metadata.namespace');
-    const pipelineRef = _.get(pipelineRun, 'spec.spec.pipelineRef.name');
+    const namespace = _.get(pipelineRun, 'metadata.namespace');
+    const pipelineRef = _.get(pipelineRun, 'spec.pipelineRef.name');
     if (namespace && pipelineRef) {
       k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun));
+    } else {
+      errorModal({ error: 'Invalid Pipeline Run configuration, unable to start Pipeline.' });
     }
   },
   accessReview: {
@@ -126,16 +128,17 @@ export const startPipeline: KebabAction = (
 
 type RerunPipelineData = {
   onComplete?: (pipelineRun: PipelineRun) => void;
+  label?: string;
 };
 const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRun,
   resources: any,
-  customData: RerunPipelineData = {},
+  customData: RerunPipelineData = { label: 'Start Last Run' },
 ) => {
   const { onComplete } = customData;
 
-  const sharedProps = { label: 'Start Last Run', accessReview: {} };
+  const sharedProps = { label: customData.label, accessReview: {} };
 
   if (
     !pipelineRun ||
@@ -167,7 +170,20 @@ export const rerunPipelineAndStay: KebabAction = (kind: K8sKind, pipelineRun: Pi
 };
 
 export const rerunPipelineAndRedirect: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
-  return rerunPipeline(kind, pipelineRun, null, { onComplete: handlePipelineRunSubmit });
+  return rerunPipeline(kind, pipelineRun, null, {
+    onComplete: handlePipelineRunSubmit,
+    label: 'Start Last Run',
+  });
+};
+
+export const rerunPipelineRunAndRedirect: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRun,
+) => {
+  return rerunPipeline(kind, pipelineRun, null, {
+    onComplete: handlePipelineRunSubmit,
+    label: 'Rerun',
+  });
 };
 
 export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
