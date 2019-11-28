@@ -10,7 +10,7 @@ export const TEMPLATE_ACTIONS_TIMEOUT_SECS = 90 * SEC;
 export const VM_ACTIONS_TIMEOUT_SECS = 250 * SEC;
 export const VM_BOOTUP_TIMEOUT_SECS = 230 * SEC;
 export const VM_MIGRATION_TIMEOUT_SECS = 260 * SEC;
-export const VM_STOP_TIMEOUT_SECS = 10 * SEC;
+export const VM_STOP_TIMEOUT_SECS = 20 * SEC;
 export const VM_IP_ASSIGNMENT_TIMEOUT_SECS = 180 * SEC;
 export const VM_IMPORT_TIMEOUT_SECS = 160 * SEC;
 export const WINDOWS_IMPORT_TIMEOUT_SECS = 150 * SEC;
@@ -25,6 +25,7 @@ export const NODE_STOP_MAINTENANCE_TIMEOUT = 40 * SEC;
 
 // Web-UI Exceptions
 export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
+export const WIZARD_CREATE_VM_SUCCESS = 'Successfully created virtual machine';
 export const WIZARD_CREATE_VM_ERROR = 'Creating VM failed';
 export const WIZARD_CREATE_TEMPLATE_ERROR = 'Creating Template failed';
 
@@ -36,71 +37,86 @@ export const NODE_MAINTENANCE_STATUS = 'Under maintenance';
 export const NODE_STOPPING_MAINTENANCE_STATUS = 'Stopping maintenance';
 export const NODE_READY_STATUS = 'Ready';
 
-// Wizard dialog
-export const WIZARD_TABLE_FIRST_ROW = 1;
+// Wizard
+export const CONFIG_NAME_URL = 'URL';
+export const CONFIG_NAME_CONTAINER = 'Container';
+export const CONFIG_NAME_PXE = 'PXE';
+export const CONFIG_NAME_DISK = 'Disk';
+export const CONFIG_NAME_CLONED_DISK = 'ClonedDisk';
 
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 export const COMMON_TEMPLATES_VERSION = 'v0.6.2';
 
-// Tab names
-export const TABS = {
-  OVERVIEW: 'Overview',
-  YAML: 'YAML',
-  CONSOLES: 'Consoles',
-  EVENTS: 'Events',
-  DISKS: 'Disks',
-  NICS: 'Network Interfaces',
-};
-Object.freeze(TABS);
+export enum TAB {
+  Consoles = 'Consoles',
+  Disks = 'Disks',
+  Events = 'Events',
+  NetworkInterfaces = 'Network Interfaces',
+  Overview = 'Overview',
+  Yaml = 'YAML',
+}
 
-// Tab names
-export const VM_ACTIONS = {
-  START: 'Start Virtual Machine',
-  STOP: 'Stop Virtual Machine',
-  CLONE: 'Clone Virtual Machine',
-  RESTART: 'Restart Virtual Machine',
-  MIGRATE: 'Migrate Virtual Machine',
-  CANCEL: 'Cancel Virtual Machine Migration',
-  EDIT_LABELS: 'Edit Labels',
-  EDIT_ANNOTATIONS: 'Edit Annotations',
-  DELETE: 'Delete Virtual Machine',
-};
-Object.freeze(VM_ACTIONS);
+export enum VM_ACTION {
+  Cancel = 'Cancel Virtual Machine Migration',
+  Clone = 'Clone Virtual Machine',
+  Delete = 'Delete Virtual Machine',
+  EditAnnotations = 'Edit Annotations',
+  EditLabels = 'Edit Labels',
+  Migrate = 'Migrate Virtual Machine',
+  Restart = 'Restart Virtual Machine',
+  Start = 'Start Virtual Machine',
+  Stop = 'Stop Virtual Machine',
+}
 
-// Network tab columns in VM Wizard
-export const networkWizardTabCol = {
-  name: 0,
-  mac: 1,
-  networkDefinition: 2,
-  binding: 3,
-};
-Object.freeze(networkWizardTabCol);
+export enum VM_STATUS {
+  Error = 'Error',
+  Starting = 'Starting',
+  Running = 'Running',
+  Off = 'Off',
+  Pending = 'Pending',
+  Importing = 'Importing',
+  Migrating = 'Migrating',
+}
 
-// Network tab columns in detail view
+export enum DISK_SOURCE {
+  AttachDisk = 'Attach Disk',
+  AttachClonedDisk = 'Attach Cloned Disk',
+  Blank = 'Blank',
+  Container = 'Container',
+  Url = 'URL',
+}
+
+export enum NIC_MODEL {
+  VirtIO = 'VirtIO',
+  e1000 = 'e1000',
+  e1000e = 'e1000e',
+  net2kPCI = 'net2kPCI',
+  pcnet = 'pcnet',
+  rtl8139 = 'rtl8139',
+}
+
+export enum DISK_INTERFACE {
+  VirtIO = 'VirtIO',
+  sata = 'sata',
+  scsi = 'scsi',
+}
+
 export const networkTabCol = {
   name: 0,
   model: 1,
-  networkDefinition: 2,
-  binding: 3,
+  network: 2,
+  type: 3,
   mac: 4,
 };
 Object.freeze(networkTabCol);
 
-// Storage tab columns in VM Wizard
-export const diskWizardTabCol = {
-  name: 0,
-  size: 1,
-  storageClass: 2,
-};
-Object.freeze(diskWizardTabCol);
-
-// Network tab columns in detail view
 export const diskTabCol = {
   name: 0,
   size: 1,
   interface: 2,
-  storageClass: 3,
+  type: 3,
+  storageClass: 4,
 };
 Object.freeze(diskTabCol);

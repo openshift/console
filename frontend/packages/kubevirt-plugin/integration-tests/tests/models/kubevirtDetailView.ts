@@ -1,57 +1,59 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { isLoaded, resourceRows } from '@console/internal-integration-tests/views/crud.view';
-import { selectDropdownOption, click, waitForCount } from '@console/shared/src/test-utils/utils';
-import { TABS, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
+import { click, waitForCount } from '@console/shared/src/test-utils/utils';
+import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
+import { TAB, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import { StorageResource, NetworkResource } from '../utils/types';
-import { fillInput } from '../utils/utils';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
 import { confirmAction } from '../../views/vm.actions.view';
 import { vmDetailFlavorEditButton, vmDetailCdEditButton } from '../../views/virtualMachine.view';
 import * as editCD from '../../views/editCDView';
+import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
+import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
 import * as editFlavor from './editFlavorView';
 
 export class KubevirtDetailView extends DetailView {
   async getAttachedDisks(): Promise<StorageResource[]> {
-    await this.navigateToTab(TABS.DISKS);
+    await this.navigateToTab(TAB.Disks);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
-      const cols = line.split(/\s+/);
+      const cols = line.split(/\t/);
       return {
         name: cols[diskTabCol.name],
-        size: cols[diskTabCol.size].slice(0, -2),
+        size: cols[diskTabCol.size].slice(0, -4),
+        interface: cols[diskTabCol.interface],
         storageClass: cols[diskTabCol.storageClass],
       };
     });
   }
 
   async getAttachedNICs(): Promise<NetworkResource[]> {
-    await this.navigateToTab(TABS.NICS);
+    await this.navigateToTab(TAB.NetworkInterfaces);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
-      const cols = line.split(/\s+/);
+      const cols = line.split(/\t/);
       return {
         name: cols[networkTabCol.name],
+        model: cols[networkTabCol.model],
         mac: cols[networkTabCol.mac],
-        networkDefinition: cols[networkTabCol.networkDefinition],
-        binding: cols[networkTabCol.binding],
+        network: cols[networkTabCol.network],
+        type: cols[networkTabCol.type],
       };
     });
   }
 
   async addDisk(disk: StorageResource) {
-    await this.navigateToTab(TABS.DISKS);
-    await click(kubevirtDetailView.createDisk, 1000);
-    await fillInput(kubevirtDetailView.diskName, disk.name);
-    await fillInput(kubevirtDetailView.diskSize, disk.size);
-    await selectDropdownOption(kubevirtDetailView.diskStorageClassDropdownId, disk.storageClass);
-    await click(kubevirtDetailView.applyBtn);
-    await isLoaded();
+    await this.navigateToTab(TAB.Disks);
+    const count = await resourceRows.count();
+    await click(kubevirtDetailView.createDiskButton);
+    const dialog = new DiskDialog();
+    await dialog.create(disk);
+    await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async removeDisk(name: string) {
-    await this.navigateToTab(TABS.DISKS);
+    await this.navigateToTab(TAB.Disks);
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
@@ -59,18 +61,16 @@ export class KubevirtDetailView extends DetailView {
   }
 
   async addNIC(nic: NetworkResource) {
-    await this.navigateToTab(TABS.NICS);
-    await click(kubevirtDetailView.createNic, 1000);
-    await fillInput(kubevirtDetailView.nicName, nic.name);
-    await selectDropdownOption(kubevirtDetailView.networkTypeDropdownId, nic.networkDefinition);
-    await selectDropdownOption(kubevirtDetailView.networkBindingId, nic.binding);
-    await fillInput(kubevirtDetailView.macAddress, nic.mac);
-    await click(kubevirtDetailView.applyBtn);
-    await isLoaded();
+    await this.navigateToTab(TAB.NetworkInterfaces);
+    const count = await resourceRows.count();
+    await click(kubevirtDetailView.createNICButton);
+    const dialog = new NetworkInterfaceDialog();
+    await dialog.create(nic);
+    await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async removeNIC(name: string) {
-    await this.navigateToTab(TABS.NICS);
+    await this.navigateToTab(TAB.NetworkInterfaces);
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();

@@ -7,10 +7,11 @@ import { getVMManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import {
-  TABS,
+  TAB,
   DASH,
   VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTIONS,
+  VM_ACTION,
+  VM_STATUS,
   COMMON_TEMPLATES_VERSION,
 } from './utils/consts';
 import { NodePortService } from './utils/types';
@@ -51,13 +52,14 @@ describe('Test VM overview', () => {
   });
 
   beforeEach(async () => {
-    await vm.navigateToTab(TABS.OVERVIEW);
+    await vm.navigateToTab(TAB.Overview);
     await isLoaded();
   });
 
   it('Check VM details in overview when VM is off', async () => {
     const expectation = {
       name: vmName,
+      status: VM_STATUS.Off,
       description: testName,
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
@@ -67,11 +69,11 @@ describe('Test VM overview', () => {
       ip: DASH,
       pod: DASH,
       node: DASH,
-      offIconPresent: true,
     };
 
     const found = {
       name: await resourceTitle.getText(),
+      status: await vm.getStatus(),
       description: await vmView.vmDetailDesc(testName, vmName).getText(),
       os: await vmView.vmDetailOS(testName, vmName).getText(),
       profile: await vmView.vmDetailWorkloadProfile(testName, vmName).getText(),
@@ -81,7 +83,6 @@ describe('Test VM overview', () => {
       ip: await vmView.vmDetailIP(testName, vmName).getText(),
       pod: await vmView.vmDetailPod(testName, vmName).getText(),
       node: await vmView.vmDetailNode(testName, vmName).getText(),
-      offIconPresent: await vmView.statusIcon(vmView.statusIcons.off).isPresent(),
     };
 
     const equal = _.isEqual(found, expectation);
@@ -95,7 +96,7 @@ describe('Test VM overview', () => {
   it(
     'Check VM details in overview when VM is running',
     async () => {
-      await vm.action(VM_ACTIONS.START);
+      await vm.action(VM_ACTION.Start);
       // Empty fields turn into non-empty
       expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(DASH);
       expect(
@@ -115,7 +116,7 @@ describe('Test VM overview', () => {
   );
 
   it('Check vm services', async () => {
-    await vm.navigateToTab(TABS.OVERVIEW);
+    await vm.navigateToTab(TAB.Overview);
     await asyncForEach(nodePortServices, async (srv) => {
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(

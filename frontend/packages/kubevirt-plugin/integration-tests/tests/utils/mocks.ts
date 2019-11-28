@@ -1,7 +1,14 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { CloudInitConfig } from './types';
-import { STORAGE_CLASS, COMMON_TEMPLATES_VERSION } from './consts';
-import { getRandomMacAddress } from './utils';
+import {
+  STORAGE_CLASS,
+  COMMON_TEMPLATES_VERSION,
+  NIC_MODEL,
+  DISK_INTERFACE,
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+  KUBEVIRT_PROJECT_NAME,
+} from './consts';
+import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
 
 export const multusNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
@@ -51,14 +58,7 @@ export const basicVMConfig = {
   workloadProfile: 'desktop',
   sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
-  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}.example.com`,
-};
-
-export const networkInterface = {
-  name: `nic1-${testName.slice(-5)}`,
-  mac: getRandomMacAddress(),
-  binding: 'bridge',
-  networkDefinition: multusNAD.metadata.name,
+  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
 
 export const networkBindingMethods = {
@@ -67,15 +67,25 @@ export const networkBindingMethods = {
   sriov: 'sriov',
 };
 
+export const networkInterface = {
+  name: `nic1-${testName.slice(-5)}`,
+  model: NIC_MODEL.VirtIO,
+  mac: getRandomMacAddress(),
+  network: multusNAD.metadata.name,
+  type: networkBindingMethods.bridge,
+};
+
 export const rootDisk = {
   name: 'rootdisk',
   size: '1',
+  interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
 };
 
 export const hddDisk = {
   name: `disk-${testName.slice(-5)}`,
-  size: '2',
+  size: '1',
+  interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
 };
 
@@ -98,6 +108,7 @@ export function getVMManifest(
       'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
+    finalizers: ['k8s.v1.cni.cncf.io/kubeMacPool'],
     namespace,
     labels: {
       app: vmName,
@@ -115,14 +126,20 @@ export function getVMManifest(
       url: basicVMConfig.sourceURL,
     },
   };
+  const kubevirtStorage = getResourceObject(
+    KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+    KUBEVIRT_PROJECT_NAME,
+    'configMap',
+  );
   const dataVolumeTemplate = {
     metadata: {
       name: `${metadata.name}-rootdisk`,
     },
     spec: {
       pvc: {
-        accessModes: ['ReadWriteMany'],
-        volumeMode: 'Block',
+        accessModes: [resolveStorageDataAttribute(kubevirtStorage, 'accessMode')],
+        volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
+        dataSource: null,
         resources: {
           requests: {
             storage: '1Gi',
@@ -231,6 +248,7 @@ export function getVMManifest(
                   bootOrder: 2,
                   masquerade: {},
                   name: 'nic0',
+                  model: 'virtio',
                 },
               ],
               rng: {},
@@ -256,3 +274,18 @@ export function getVMManifest(
   };
   return vmResource;
 }
+
+export const datavolumeClonerClusterRole = {
+  apiVersion: 'rbac.authorization.k8s.io/v1',
+  kind: 'ClusterRole',
+  metadata: {
+    name: 'datavolume-cloner',
+  },
+  rules: [
+    {
+      apiGroups: ['cdi.kubevirt.io'],
+      resources: ['datavolumes/source'],
+      verbs: ['*'],
+    },
+  ],
+};

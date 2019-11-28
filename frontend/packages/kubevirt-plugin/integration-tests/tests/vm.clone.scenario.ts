@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { execSync } from 'child_process';
-import { $, browser, ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
@@ -20,8 +20,7 @@ import {
   addLeakableResource,
   removeLeakableResource,
 } from '@console/shared/src/test-utils/utils';
-import * as cloneDialogView from '../views/cloneDialog.view';
-import { statusIcons, waitForStatusIcon } from '../views/virtualMachine.view';
+import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
 import { getResourceObject, getRandStr, createProject } from './utils/utils';
 import {
@@ -30,8 +29,9 @@ import {
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
-  TABS,
-  VM_ACTIONS,
+  TAB,
+  VM_ACTION,
+  VM_STATUS,
 } from './utils/consts';
 import {
   basicVMConfig,
@@ -40,13 +40,14 @@ import {
   getVMManifest,
   cloudInitCustomScriptConfig,
   rootDisk,
+  datavolumeClonerClusterRole,
 } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
-import { CloneDialog } from './models/cloneDialog';
+import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
 
 describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();
-  const cloneDialog = new CloneDialog();
+  const cloneDialog = new CloneVirtualMachineDialog();
   const testCloningNamespace = `${testName}-cloning`;
 
   beforeAll(async () => {
@@ -77,9 +78,9 @@ describe('Test clone VM.', () => {
     it(
       'Displays warning in clone wizard when cloned vm is running.',
       async () => {
-        await vm.action(VM_ACTIONS.START, false);
-        await waitForStatusIcon(statusIcons.starting, PAGE_LOAD_TIMEOUT_SECS);
-        await vm.action(VM_ACTIONS.CLONE);
+        await vm.action(VM_ACTION.Start, false);
+        await vm.waitForStatus(VM_STATUS.Starting, PAGE_LOAD_TIMEOUT_SECS);
+        await vm.action(VM_ACTION.Clone);
         await browser.wait(
           until.and(
             until.presenceOf(cloneDialogView.warningMessage),
@@ -92,25 +93,25 @@ describe('Test clone VM.', () => {
         );
         expect(cloneDialogView.confirmButton.isEnabled()).toBeTruthy();
         await cloneDialog.close();
-        await waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT_SECS);
-        await vm.action(VM_ACTIONS.STOP);
+        await vm.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
+        await vm.action(VM_ACTION.Stop);
       },
       VM_BOOTUP_TIMEOUT_SECS,
     );
 
     it('Prefills correct data in the clone VM dialog.', async () => {
-      await vm.action(VM_ACTIONS.CLONE);
+      await vm.action(VM_ACTION.Clone);
       expect(cloneDialogView.nameInput.getAttribute('value')).toEqual(`${vm.name}-clone`);
       expect(cloneDialogView.descriptionInput.getText()).toEqual(
         testContainerVM.metadata.annotations.description,
       );
       // Check preselected value of NS dropdown
-      expect($(cloneDialogView.namespaceSelectorId).getAttribute('value')).toEqual(vm.namespace);
+      expect(cloneDialogView.namespaceSelector.getAttribute('value')).toEqual(vm.namespace);
       await cloneDialog.close();
     });
 
     it('Validates VM name.', async () => {
-      await vm.action(VM_ACTIONS.CLONE);
+      await vm.action(VM_ACTION.Clone);
 
       expect(cloneDialogView.warningMessage.isPresent()).toBe(false);
 
@@ -137,16 +138,42 @@ describe('Test clone VM.', () => {
       namespace: vm.namespace,
     });
 
+    const allowCloneRoleBinding = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: {
+        name: 'allow-clone-to-user',
+        namespace: `${testName}`,
+      },
+      subjects: [
+        {
+          kind: 'ServiceAccount',
+          name: 'default',
+          namespace: `${testCloningNamespace}`,
+        },
+      ],
+      roleRef: {
+        kind: 'ClusterRole',
+        name: 'datavolume-cloner',
+        apiGroup: 'rbac.authorization.k8s.io',
+      },
+    };
+
     beforeAll(async () => {
-      createResources([multusNAD, testVM]);
-      await vm.navigateToTab(TABS.OVERVIEW);
-      await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+      createResources([multusNAD, testVM, datavolumeClonerClusterRole, allowCloneRoleBinding]);
+      await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.addNIC(networkInterface);
-      await vm.action(VM_ACTIONS.START);
+      await vm.action(VM_ACTION.Start);
     }, VM_IMPORT_TIMEOUT_SECS + VM_BOOTUP_TIMEOUT_SECS);
 
     afterAll(() => {
-      deleteResources([multusNAD, testVM, clonedVM.asResource()]);
+      deleteResources([
+        multusNAD,
+        testVM,
+        clonedVM.asResource(),
+        datavolumeClonerClusterRole,
+        allowCloneRoleBinding,
+      ]);
       removeLeakableResource(leakedResources, clonedVM.asResource());
       removeLeakedResources(leakedResources);
     });
@@ -158,13 +185,12 @@ describe('Test clone VM.', () => {
           name: `${vm.name}-${getRandStr(4)}`,
           namespace: testCloningNamespace,
         });
-        await vm.action(VM_ACTIONS.CLONE);
+        await vm.action(VM_ACTION.Clone);
         await cloneDialog.fillName(vmClonedToOtherNS.name);
         await cloneDialog.selectNamespace(vmClonedToOtherNS.namespace);
         await cloneDialog.clone();
         await withResource(leakedResources, vmClonedToOtherNS.asResource(), async () => {
-          await vmClonedToOtherNS.navigateToTab(TABS.OVERVIEW);
-          await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+          await vmClonedToOtherNS.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
         });
       },
       VM_IMPORT_TIMEOUT_SECS,
@@ -173,24 +199,23 @@ describe('Test clone VM.', () => {
     it(
       'Start cloned VM on creation',
       async () => {
-        await vm.action(VM_ACTIONS.CLONE);
+        await vm.action(VM_ACTION.Clone);
         await cloneDialog.startOnCreation();
         await cloneDialog.clone();
         addLeakableResource(leakedResources, clonedVM.asResource());
 
-        await clonedVM.navigateToTab(TABS.OVERVIEW);
-        await waitForStatusIcon(statusIcons.running, CLONE_VM_TIMEOUT_SECS);
+        await clonedVM.navigateToTab(TAB.Overview);
+        await clonedVM.waitForStatus(VM_STATUS.Running, CLONE_VM_TIMEOUT_SECS);
       },
       VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
     );
 
     it('Running VM is stopped when cloned', async () => {
-      await vm.navigateToTab(TABS.OVERVIEW);
-      await waitForStatusIcon(statusIcons.off, PAGE_LOAD_TIMEOUT_SECS);
+      await vm.waitForStatus(VM_STATUS.Off, PAGE_LOAD_TIMEOUT_SECS);
     });
 
-    it('Cloned VM has cleared MAC addresses.', async () => {
-      await clonedVM.navigateToTab(TABS.NICS);
+    it('Cloned VM has changed MAC address.', async () => {
+      await clonedVM.navigateToTab(TAB.NetworkInterfaces);
       await browser.wait(until.and(waitForCount(resourceRows, 2)), PAGE_LOAD_TIMEOUT_SECS);
       const addedNIC = (await clonedVM.getAttachedNICs()).find(
         (nic) => nic.name === networkInterface.name,
@@ -198,7 +223,7 @@ describe('Test clone VM.', () => {
       expect(addedNIC.mac === networkInterface.mac).toBe(false);
     });
 
-    it('Cloned VM has vm.kubevirt.io/name label.', async () => {
+    it('Cloned VM has vm.kubevirt.io/name label.', () => {
       expect(
         searchYAML(`vm.kubevirt.io/name: ${vm.name}`, clonedVM.name, clonedVM.namespace, 'vm'),
       ).toBeTruthy();
@@ -218,10 +243,9 @@ describe('Test clone VM.', () => {
       async () => {
         createResource(urlVMManifest);
         await withResource(leakedResources, urlVM.asResource(), async () => {
-          await urlVM.navigateToTab(TABS.OVERVIEW);
-          await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
-          await urlVM.action(VM_ACTIONS.START);
-          await urlVM.action(VM_ACTIONS.CLONE);
+          await urlVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await urlVM.action(VM_ACTION.Start);
+          await urlVM.action(VM_ACTION.Clone);
           await cloneDialog.clone();
 
           const clonedVM = new VirtualMachine({
@@ -229,7 +253,7 @@ describe('Test clone VM.', () => {
             namespace: urlVM.namespace,
           });
           await withResource(leakedResources, clonedVM.asResource(), async () => {
-            await clonedVM.action(VM_ACTIONS.START, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
+            await clonedVM.action(VM_ACTION.Start, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
 
             // Check cloned PVC exists
             const clonedVMDiskName = `${clonedVM.name}-${urlVM.name}-rootdisk-clone`;
@@ -245,9 +269,10 @@ describe('Test clone VM.', () => {
               clonedVM.kind,
             );
             const clonedDataVolumeTemplate = getDataVolumeTemplates(clonedVMJSON);
-            const result = _.find(clonedDataVolumeTemplate, function(o) {
-              return o.metadata.name === clonedVMDiskName;
-            });
+            const result = _.find(
+              clonedDataVolumeTemplate,
+              (o) => o.metadata.name === clonedVMDiskName,
+            );
             expect(_.get(result, 'spec.source.pvc.name')).toEqual(`${urlVM.name}-rootdisk`);
           });
         });
@@ -271,11 +296,14 @@ describe('Test clone VM.', () => {
           startOnCreation: false,
           cloudInit: cloudInitCustomScriptConfig,
         };
-        const expectedDisks = [rootDisk, { name: 'cloudinitdisk', size: '', storageClass: '-' }];
+        const expectedDisks = [
+          rootDisk,
+          { name: 'cloudinitdisk', size: '', interface: 'VirtIO', storageClass: '-' },
+        ];
         const ciVM = new VirtualMachine(ciVMConfig);
         await ciVM.create(ciVMConfig);
         await withResource(leakedResources, ciVM.asResource(), async () => {
-          await ciVM.action(VM_ACTIONS.CLONE);
+          await ciVM.action(VM_ACTION.Clone);
           await cloneDialog.clone();
           const clonedVM = new VirtualMachine({
             name: `${ciVMConfig.name}-clone`,
@@ -295,16 +323,14 @@ describe('Test clone VM.', () => {
               clonedVM.kind,
             );
             const clonedVMVolumes = getVolumes(clonedVMJSON);
-            const result = _.find(clonedVMVolumes, function(o) {
-              return o.name === 'cloudinitdisk';
-            });
+            const result = _.find(clonedVMVolumes, (o) => o.name === 'cloudinitdisk');
             expect(result).toBeDefined();
             expect(_.get(result, 'cloudInitNoCloud.userData', '')).toEqual(
               cloudInitCustomScriptConfig.customScript,
             );
 
             // Verify the cloned VM can boot
-            await clonedVM.action(VM_ACTIONS.START, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
+            await clonedVM.action(VM_ACTION.Start, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
           });
         });
       },

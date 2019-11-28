@@ -13,20 +13,16 @@ import {
   removeLeakableResource,
   waitForCount,
 } from '@console/shared/src/test-utils/utils';
-import {
-  waitForActionFinished,
-  waitForStatusIcon,
-  statusIcons,
-} from '../views/virtualMachine.view';
 import { getVMManifest } from './utils/mocks';
 import { fillInput } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
-  VM_ACTIONS,
-  TABS,
+  VM_ACTION,
+  TAB,
   VM_IMPORT_TIMEOUT_SECS,
+  VM_STATUS,
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 
@@ -53,15 +49,16 @@ describe('Test VM actions', () => {
       await isLoaded();
       await fillInput(textFilter, vmName);
       await resourceRowsPresent();
-      await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+      await browser.wait(
+        until.textToBePresentInElement(resourceRows.first(), VM_STATUS.Off),
+        VM_IMPORT_TIMEOUT_SECS,
+      );
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
       'Starts VM',
       async () => {
-        await vm.listViewAction(VM_ACTIONS.START);
-        await fillInput(textFilter, vmName);
-        await waitForActionFinished(VM_ACTIONS.START);
+        await vm.listViewAction(VM_ACTION.Start);
       },
       VM_BOOTUP_TIMEOUT_SECS,
     );
@@ -69,21 +66,17 @@ describe('Test VM actions', () => {
     it(
       'Restarts VM',
       async () => {
-        await vm.listViewAction(VM_ACTIONS.RESTART);
-        await fillInput(textFilter, vmName);
-        await waitForActionFinished(VM_ACTIONS.RESTART);
+        await vm.listViewAction(VM_ACTION.Restart);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
     it('Stops VM', async () => {
-      await vm.listViewAction(VM_ACTIONS.STOP);
-      await fillInput(textFilter, vmName);
-      await waitForActionFinished(VM_ACTIONS.STOP);
+      await vm.listViewAction(VM_ACTION.Stop);
     });
 
     it('Deletes VM', async () => {
-      await vm.listViewAction(VM_ACTIONS.DELETE);
+      await vm.listViewAction(VM_ACTION.Delete, false);
       await isLoaded();
       await fillInput(textFilter, vmName);
       await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
@@ -99,14 +92,14 @@ describe('Test VM actions', () => {
       testVM.metadata.name = vmName;
       createResource(testVM);
       addLeakableResource(leakedResources, testVM);
-      await vm.navigateToTab(TABS.OVERVIEW);
-      await waitForStatusIcon(statusIcons.off, VM_IMPORT_TIMEOUT_SECS);
+      await vm.navigateToTab(TAB.Overview);
+      await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
       'Starts VM',
       async () => {
-        await vm.action(VM_ACTIONS.START);
+        await vm.action(VM_ACTION.Start);
       },
       VM_BOOTUP_TIMEOUT_SECS,
     );
@@ -114,19 +107,20 @@ describe('Test VM actions', () => {
     it(
       'Restarts VM',
       async () => {
-        await vm.action(VM_ACTIONS.RESTART);
+        await vm.action(VM_ACTION.Restart);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
     it('Stops VM', async () => {
-      await vm.action(VM_ACTIONS.STOP);
+      await vm.action(VM_ACTION.Stop);
     });
 
     it('Deletes VM', async () => {
-      await vm.action(VM_ACTIONS.DELETE);
-      await isLoaded();
+      await vm.action(VM_ACTION.Delete, false);
+      await vm.navigateToListView();
       await fillInput(textFilter, vmName);
+      await isLoaded();
       await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
       removeLeakableResource(leakedResources, testVM);
     });

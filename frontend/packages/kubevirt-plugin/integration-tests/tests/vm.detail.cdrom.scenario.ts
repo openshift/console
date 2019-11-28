@@ -8,15 +8,14 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
-import { selectSelectorOption } from './utils/utils';
-import { VirtualMachine } from './models/virtualMachine';
 import {
-  vmConfig,
-  getProvisionConfigs,
-  getTestDataVolume,
+  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   CONFIG_NAME_CONTAINER,
-} from './vm.wizard.configs';
+  STORAGE_CLASS,
+} from './utils/consts';
+import { selectOptionByOptionValue } from './utils/utils';
+import { VirtualMachine } from './models/virtualMachine';
+import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
   const testDataVolume = getTestDataVolume(testName);
@@ -88,10 +87,10 @@ describe('KubeVirt VM detail - edit cdroms', () => {
         await element
           .all(by.css(editCdView.cdEjectBtn))
           .then((ejects) => ejects.forEach((eject) => click(eject)));
-        await selectSelectorOption(editCdView.cdTypeSelect(1), 'url');
-        await selectSelectorOption(editCdView.cdStorageClassSelect(1), 'local-sc');
-        await selectSelectorOption(editCdView.cdTypeSelect(2), 'pvc');
-        await selectSelectorOption(editCdView.cdPVCSelect(2), testDataVolume.metadata.name);
+        await selectOptionByOptionValue(editCdView.cdTypeSelect(1), 'url');
+        await selectOptionByOptionValue(editCdView.cdStorageClassSelect(1), STORAGE_CLASS);
+        await selectOptionByOptionValue(editCdView.cdTypeSelect(2), 'pvc');
+        await selectOptionByOptionValue(editCdView.cdPVCSelect(2), testDataVolume.metadata.name);
         await click(editCdView.saveButton);
 
         await browser.wait(

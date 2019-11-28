@@ -42,6 +42,7 @@ describe('Kubevirt create VM Template using wizard', () => {
       startOnCreation: true,
       name: `${name}-${testName}`,
       template: templateConfig.name,
+      provisionSource: templateConfig.provisionSource,
       storageResources: [],
       networkResources: [],
     };
@@ -95,15 +96,15 @@ describe('Kubevirt create VM Template using wizard', () => {
     it(
       `Create VM Template using ${configName}.`,
       async () => {
-        const vmTemplate = new VirtualMachineTemplate(
-          vmTemplateConfig(configName.toLowerCase(), provisionConfig),
-        );
-        const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), vmTemplate));
+        const templateCfg = vmTemplateConfig(configName.toLowerCase(), provisionConfig);
+        const vmTemplate = new VirtualMachineTemplate(templateCfg);
+        const vmCfg = vmConfig(configName.toLowerCase(), templateCfg);
+        const vm = new VirtualMachine(vmCfg);
 
         await withResource(leakedResources, vmTemplate.asResource(), async () => {
-          await vmTemplate.create(vmTemplateConfig(configName.toLowerCase(), provisionConfig));
+          await vmTemplate.create(templateCfg);
           await withResource(leakedResources, vm.asResource(), async () => {
-            await vm.create(vmConfig(configName.toLowerCase(), vmTemplate));
+            await vm.create(vmCfg);
           });
         });
       },

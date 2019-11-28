@@ -20,7 +20,7 @@ import {
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { VM_BOOTUP_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, VM_ACTIONS } from './utils/consts';
+import { VM_BOOTUP_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, VM_ACTION } from './utils/consts';
 import { getVMManifest, multusNAD } from './utils/mocks';
 
 describe('Test VM creation from YAML', () => {
@@ -50,7 +50,7 @@ describe('Test VM creation from YAML', () => {
         await click(saveButton);
         await isLoaded();
         expect(resourceTitle.getText()).toEqual(vm.name);
-        await vm.action(VM_ACTIONS.START);
+        await vm.action(VM_ACTION.Start);
       });
     },
     VM_BOOTUP_TIMEOUT_SECS,

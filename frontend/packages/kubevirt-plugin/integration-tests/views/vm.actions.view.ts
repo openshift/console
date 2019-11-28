@@ -28,6 +28,7 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser
     .wait(until.elementToBeClickable(getActionsDropdown()))
     .then(() => getActionsDropdown().click());
+  await browser.wait(until.presenceOf($('[data-test-id="action-items"]')));
   await browser.wait(waitForCount(disabledDropdownButtons, 0));
   await click($(`[data-test-action="${action}"]`));
 };
