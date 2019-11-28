@@ -6,17 +6,18 @@ import {
   click,
 } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, CONFIG_NAME_CONTAINER } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import * as editFlavorView from './models/editFlavorView';
 import { fillInput } from './utils/utils';
+import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
   const provisionConfigs = getProvisionConfigs(testName);
 
-  const configName = CONFIG_NAME_CONTAINER;
+  const configName = ProvisionConfigName.CONTAINER;
   const provisionConfig = provisionConfigs.get(configName);
 
   // not needed for testing flavor

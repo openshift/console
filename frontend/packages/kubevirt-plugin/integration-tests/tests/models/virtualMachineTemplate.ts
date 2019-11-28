@@ -4,7 +4,7 @@ import {
   resourceRowsPresent,
 } from '@console/internal-integration-tests/views/crud.view';
 import { VMTemplateConfig } from '../utils/types';
-import { CONFIG_NAME_PXE, CONFIG_NAME_URL } from '../utils/consts';
+import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
 import { KubevirtDetailView } from './kubevirtDetailView';
 
@@ -43,7 +43,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     for (const resource of networkResources) {
       await wizard.addNIC(resource);
     }
-    if (provisionSource.method === CONFIG_NAME_PXE) {
+    if (provisionSource.method === ProvisionConfigName.PXE) {
       // Select the last NIC as the source for booting
       await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
     }
@@ -51,7 +51,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
     // Storage
     for (const resource of storageResources) {
-      if (resource.name === 'rootdisk' && provisionSource.method === CONFIG_NAME_URL) {
+      if (resource.name === 'rootdisk' && provisionSource.method === ProvisionConfigName.URL) {
         await wizard.editDisk(resource.name, resource);
       } else {
         await wizard.addDisk(resource);

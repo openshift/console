@@ -8,14 +8,11 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import {
-  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
-  CONFIG_NAME_CONTAINER,
-  STORAGE_CLASS,
-} from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS } from './utils/consts';
 import { selectOptionByOptionValue } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
+import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
   const testDataVolume = getTestDataVolume(testName);
@@ -30,7 +27,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   const leakedResources = new Set<string>();
   const provisionConfigs = getProvisionConfigs(testName);
 
-  const configName = CONFIG_NAME_CONTAINER;
+  const configName = ProvisionConfigName.CONTAINER;
   const provisionConfig = provisionConfigs.get(configName);
 
   provisionConfig.networkResources = [];
