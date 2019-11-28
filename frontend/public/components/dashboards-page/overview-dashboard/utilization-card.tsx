@@ -11,7 +11,7 @@ import {
 import { UtilizationItem, UtilizationBody } from '../../dashboard/utilization-card';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { getRangeVectorStats } from '../../graphs/utils';
-import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../utils';
+import { humanizeCpuCores, humanizeBinaryBytesWithoutB } from '../../utils';
 import { OverviewQuery, utilizationQueries } from './queries';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../reducers/features';
 import { getFlagsForExtensions, isDashboardExtensionInUse } from '../utils';
@@ -73,7 +73,7 @@ const UtilizationCard_: React.FC<DashboardItemProps & WithFlagsProps> = ({
             title="CPU"
             data={cpuStats}
             isLoading={!cpuUtilization}
-            humanizeValue={humanizePercentage}
+            humanizeValue={humanizeCpuCores}
             query={queries[OverviewQuery.CPU_UTILIZATION]}
           />
           <UtilizationItem
