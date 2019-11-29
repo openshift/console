@@ -18,7 +18,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
   return (
     <div className="nb-create-bc-step-page">
       <Title size="xl" headingLevel="h2">
-        Review and confirm BucketClass settings
+        Review and confirm Bucket Class settings
       </Title>
       <div className="nb-create-bc-step-page-review__item">
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
@@ -28,7 +28,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
       </div>
       <div className="nb-create-bc-step-page-review__item">
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
-          BucketClass name
+          Bucket Class name
         </Title>
         <p>{bucketClassName}</p>
       </div>
