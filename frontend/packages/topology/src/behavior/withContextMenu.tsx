@@ -8,6 +8,7 @@ type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
 
 export type WithContextMenuProps = {
   onContextMenu: (e: React.MouseEvent) => void;
+  contextMenuOpen: boolean;
 };
 
 export const withContextMenu = <E extends TopologyElement>(
@@ -34,7 +35,11 @@ export const withContextMenu = <E extends TopologyElement>(
 
     return (
       <>
-        <WrappedComponent {...props as any} onContextMenu={onContextMenu} />
+        <WrappedComponent
+          {...props as any}
+          onContextMenu={onContextMenu}
+          contextMenuOpen={!!reference}
+        />
         {reference ? (
           <ContextMenu
             reference={reference}
