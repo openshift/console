@@ -1,5 +1,7 @@
+import { isWinToolsImage, getVolumeContainerImage } from '../../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
+  hasVMSettingsValueChanged,
   iGetProvisionSource,
   iGetVmSettingValue,
 } from '../../../selectors/immutable/vm-settings';
@@ -15,6 +17,8 @@ import {
 import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
 import { getProviders } from '../../../provider-definitions';
+import { windowsToolsStorage } from '../../initial-state/storage-tab-initial-state';
+import { getStorages } from '../../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
@@ -103,6 +107,25 @@ export const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptio
   );
 };
 
+export const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+    return;
+  }
+  const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
+  const isWindows = os && os.startsWith('win');
+  const windowsTools = getStorages(state, id).find(
+    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
+  );
+
+  if (isWindows && !windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+  }
+  if (!isWindows && windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
+  }
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
@@ -111,6 +134,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,
     flavorUpdater,
+    osUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

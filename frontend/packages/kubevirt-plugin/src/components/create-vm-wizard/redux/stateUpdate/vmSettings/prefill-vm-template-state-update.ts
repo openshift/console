@@ -37,6 +37,7 @@ import {
   getVolumes,
   hasAutoAttachPodInterface,
   parseCPU,
+  isWinToolsImage,
 } from '../../../../../selectors/vm';
 import { selectVM } from '../../../../../selectors/vm-template/selectors';
 import {
@@ -92,6 +93,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         VMWizardStorageType.PROVISION_SOURCE_DISK,
         VMWizardStorageType.TEMPLATE,
         VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
+        VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE,
       ].includes(storage.type) &&
       VolumeWrapper.initialize(storage.volume).getType() !== VolumeType.CLOUD_INIT_NO_CLOUD,
   );
@@ -177,18 +179,28 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         }
       }
 
+      // TODO: can't be guest tools and provision source at the same time, refactor to flags?
+      let type = diskWrapper.isFirstBootableDevice()
+        ? VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK
+        : VMWizardStorageType.TEMPLATE;
+
+      if (isWinToolsImage(volumeWrapper.getContainerImage())) {
+        type = VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE;
+      }
+
       return {
         id: getNextStorageID(),
-        type: diskWrapper.isFirstBootableDevice()
-          ? VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK
-          : VMWizardStorageType.TEMPLATE,
+        type,
         volume,
         dataVolume: datavolumeTemplatesLookup[volumeWrapper.getDataVolumeName()],
         disk:
           diskWrapper.getType() === DiskType.DISK && !diskWrapper.getDiskBus()
             ? DiskWrapper.mergeWrappers(
                 diskWrapper,
-                DiskWrapper.initializeFromSimpleData({ type: DiskType.DISK, bus: DiskBus.VIRTIO }),
+                DiskWrapper.initializeFromSimpleData({
+                  type: DiskType.DISK,
+                  bus: DiskBus.VIRTIO,
+                }),
               ).asResource()
             : disk,
       };
