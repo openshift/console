@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { connect } from 'react-redux';
 import { validationSchema } from './pipelineResource-validation-utils';
 import PipelineResourceParam from './PipelineResourceParam';
 import { createPipelineResource, createSecretResource } from './pipelineResource-utils';
@@ -106,8 +103,4 @@ const PipelineResourceForm: React.FC<PipelineResourceFormProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  namespace: getActiveNamespace(state),
-});
-
-export default connect(mapStateToProps)(PipelineResourceForm);
+export default PipelineResourceForm;
