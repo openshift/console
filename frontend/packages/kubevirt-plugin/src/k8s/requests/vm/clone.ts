@@ -1,7 +1,7 @@
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { VMKind } from '../../../types/vm';
 import { VirtualMachineModel } from '../../../models';
-import { CloneTo, VMClone } from '../../objects/vm/vm/vm-clone';
+import { CloneTo, VMClone } from '../../helpers/vm-clone';
 import { isVMRunning } from '../../../selectors/vm';
 import { stopVM } from './actions';
 
