@@ -7,8 +7,11 @@ import {
   DISK_INTERFACE,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
+  COMMON_TEMPLATES_NAMESPACE,
+  COMMON_TEMPLATES_REVISION,
 } from './consts';
 import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
+import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
 
 export const multusNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
@@ -53,9 +56,9 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
 };
 
 export const basicVMConfig = {
-  operatingSystem: 'Red Hat Enterprise Linux 7.6',
-  flavor: 'tiny',
-  workloadProfile: 'desktop',
+  operatingSystem: OperatingSystem.RHEL7_6,
+  flavor: Flavor.TINY,
+  workloadProfile: WorkloadProfile.DESKTOP,
   sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
@@ -115,8 +118,8 @@ export function getVMManifest(
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
       'vm.kubevirt.io/template': `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
-      'vm.kubevirt.io/template-namespace': 'openshift',
-      'vm.kubevirt.io/template.revision': '1',
+      'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
+      'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
       'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
       'workload.template.kubevirt.io/desktop': 'true',
     },

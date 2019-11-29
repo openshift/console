@@ -11,13 +11,10 @@ import {
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
   DISK_INTERFACE,
-  CONFIG_NAME_URL,
-  CONFIG_NAME_PXE,
-  CONFIG_NAME_CONTAINER,
-  CONFIG_NAME_DISK,
   DISK_SOURCE,
 } from './utils/consts';
 import { resolveStorageDataAttribute, getResourceObject } from './utils/utils';
+import { ProvisionConfigName } from './utils/constants/wizard';
 
 export const vmConfig = (name: string, provisionConfig, testName: string) => {
   const commonSettings = {
@@ -72,33 +69,33 @@ const getDiskToCloneFrom = (testName: string): StorageResource => {
 };
 
 export const getProvisionConfigs = (testName: string) =>
-  OrderedMap<string, ProvisionConfig>()
-    .set(CONFIG_NAME_URL, {
+  OrderedMap<ProvisionConfigName, ProvisionConfig>()
+    .set(ProvisionConfigName.URL, {
       provision: {
-        method: CONFIG_NAME_URL,
+        method: ProvisionConfigName.URL,
         source: basicVMConfig.sourceURL,
       },
       networkResources: [networkInterface],
       storageResources: [rootDisk],
     })
-    .set(CONFIG_NAME_CONTAINER, {
+    .set(ProvisionConfigName.CONTAINER, {
       provision: {
-        method: CONFIG_NAME_CONTAINER,
+        method: ProvisionConfigName.CONTAINER,
         source: basicVMConfig.sourceContainer,
       },
       networkResources: [networkInterface],
       storageResources: [hddDisk],
     })
-    .set(CONFIG_NAME_PXE, {
+    .set(ProvisionConfigName.PXE, {
       provision: {
-        method: CONFIG_NAME_PXE,
+        method: ProvisionConfigName.PXE,
       },
       networkResources: [networkInterface],
       storageResources: [rootDisk],
     })
-    .set(CONFIG_NAME_DISK, {
+    .set(ProvisionConfigName.DISK, {
       provision: {
-        method: CONFIG_NAME_DISK,
+        method: ProvisionConfigName.DISK,
       },
       networkResources: [networkInterface],
       storageResources: [getDiskToCloneFrom(testName)],

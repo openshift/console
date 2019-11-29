@@ -6,6 +6,7 @@ import {
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
+import { getAnnotations, getLabels } from '../../src/selectors/selectors';
 import { VirtualMachine } from './models/virtualMachine';
 import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
 import {
@@ -14,8 +15,9 @@ import {
   VM_ACTION,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
   VM_STATUS,
-  CONFIG_NAME_DISK,
-  CONFIG_NAME_URL,
+  COMMON_TEMPLATES_VERSION,
+  COMMON_TEMPLATES_NAMESPACE,
+  COMMON_TEMPLATES_REVISION,
 } from './utils/consts';
 import { multusNAD } from './utils/mocks';
 import {
@@ -24,6 +26,13 @@ import {
   getTestDataVolume,
   kubevirtStorage,
 } from './vm.wizard.configs';
+import {
+  Flavor,
+  OperatingSystem,
+  OSIDLookup,
+  ProvisionConfigName,
+  WorkloadProfile,
+} from './utils/constants/wizard';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
@@ -44,7 +53,7 @@ describe('Kubevirt create VM using wizard', () => {
 
   provisionConfigs.forEach((provisionConfig, configName) => {
     const specTimeout =
-      configName === CONFIG_NAME_DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
+      configName === ProvisionConfigName.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
       `Create VM using ${configName}.`,
       async () => {
@@ -60,9 +69,62 @@ describe('Kubevirt create VM using wizard', () => {
   });
 
   it(
+    'Creates windows 10 VM with correct metadata',
+    async () => {
+      const testVMConfig = vmConfig(
+        'windows10',
+        provisionConfigs.get(ProvisionConfigName.CONTAINER),
+        testName,
+      );
+      testVMConfig.networkResources = [];
+      testVMConfig.operatingSystem = OperatingSystem.WINDOWS_10;
+      testVMConfig.flavor = Flavor.MEDIUM;
+      testVMConfig.workloadProfile = WorkloadProfile.SERVER;
+      testVMConfig.startOnCreation = false; // do not check as there is only medium/large profile present and we would get insufficient memory.
+      const osID = OSIDLookup[testVMConfig.operatingSystem];
+
+      const vm = new VirtualMachine(testVMConfig);
+
+      await withResource(leakedResources, vm.asResource(), async () => {
+        await vm.create(testVMConfig);
+        const vmResult = getResourceObject(vm.name, vm.namespace, vm.kind);
+        const annotations = getAnnotations(vmResult);
+        const labels = getLabels(vmResult);
+
+        expect(annotations).toBeDefined();
+        expect(labels).toBeDefined();
+
+        const requiredAnnotations = {
+          [`name.os.template.kubevirt.io/${osID}`]: OperatingSystem.WINDOWS_10,
+        };
+
+        const requiredLabels = {
+          [`workload.template.kubevirt.io/${testVMConfig.workloadProfile}`]: 'true',
+          [`flavor.template.kubevirt.io/${testVMConfig.flavor}`]: 'true',
+          [`os.template.kubevirt.io/${osID}`]: 'true',
+          'vm.kubevirt.io/template': `win2k12r2-${testVMConfig.workloadProfile}-${
+            testVMConfig.flavor
+          }-${COMMON_TEMPLATES_VERSION}`,
+          'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
+          'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
+          'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
+        };
+
+        expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
+        expect(_.pick(labels, Object.keys(requiredLabels))).toEqual(requiredLabels);
+      });
+    },
+    VM_BOOTUP_TIMEOUT_SECS,
+  );
+
+  it(
     'Creates DV with correct accessMode/volumeMode',
     async () => {
-      const testVMConfig = vmConfig('test-dv', provisionConfigs.get(CONFIG_NAME_URL), testName);
+      const testVMConfig = vmConfig(
+        'test-dv',
+        provisionConfigs.get(ProvisionConfigName.URL),
+        testName,
+      );
       testVMConfig.networkResources = [];
       const vm = new VirtualMachine(testVMConfig);
 
@@ -84,7 +146,7 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
-      const clonedDiskProvisionConfig = provisionConfigs.get(CONFIG_NAME_DISK);
+      const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
       const vm1Config = vmConfig('vm1', clonedDiskProvisionConfig, testName);
       const vm2Config = vmConfig('vm2', clonedDiskProvisionConfig, testName);
       vm1Config.startOnCreation = false;

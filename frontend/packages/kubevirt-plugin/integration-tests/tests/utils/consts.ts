@@ -37,17 +37,12 @@ export const NODE_MAINTENANCE_STATUS = 'Under maintenance';
 export const NODE_STOPPING_MAINTENANCE_STATUS = 'Stopping maintenance';
 export const NODE_READY_STATUS = 'Ready';
 
-// Wizard
-export const CONFIG_NAME_URL = 'URL';
-export const CONFIG_NAME_CONTAINER = 'Container';
-export const CONFIG_NAME_PXE = 'PXE';
-export const CONFIG_NAME_DISK = 'Disk';
-export const CONFIG_NAME_CLONED_DISK = 'ClonedDisk';
-
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 export const COMMON_TEMPLATES_VERSION = 'v0.6.2';
+export const COMMON_TEMPLATES_NAMESPACE = 'openshift';
+export const COMMON_TEMPLATES_REVISION = '1';
 
 export enum TAB {
   Consoles = 'Consoles',
