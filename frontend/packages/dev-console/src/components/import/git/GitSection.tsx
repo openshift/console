@@ -62,7 +62,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
       setFieldValue('image.recommended', '');
       setFieldValue('image.couldNotRecommend', false);
       setFieldValue('git.isUrlValidated', false);
-      setFieldError('git.url', 'Git respository is not reachable.');
+      setFieldError('git.url', 'Git repository is not reachable.');
     }
 
     validateForm();
