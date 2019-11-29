@@ -80,7 +80,7 @@ const nodeDragSourceSpec = (
     : undefined,
   canCancel: (monitor) => monitor.getOperation() === REGROUP_OPERATION,
   end: async (dropResult, monitor, props) => {
-    if (monitor.getOperation() === REGROUP_OPERATION) {
+    if (!monitor.isCancelled() && monitor.getOperation() === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
         await moveNodeToGroup(props.element, isNode(dropResult) ? dropResult : null);
         dropResult.appendChild(props.element);
