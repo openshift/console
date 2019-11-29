@@ -404,6 +404,20 @@ type Action =
   | { type: 'setVolumeSize'; value: string }
   | { type: 'setStorageClass'; value: string };
 
+type BSPayload = {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    namespace: string;
+    name: string;
+  };
+  spec: {
+    type: string;
+    ssl: boolean;
+    [key: string]: any;
+  };
+};
+
 const initialState: ProviderDataState = {
   secretName: '',
   secretKey: '',
@@ -536,7 +550,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       promises.push(k8sCreate(SecretModel, secretPayload));
     }
     /** Payload for bs */
-    const bsPayload = {
+    const bsPayload: BSPayload = {
       apiVersion: apiVersionForModel(NooBaaBackingStoreModel),
       kind: NooBaaBackingStoreModel.kind,
       metadata: {
@@ -555,9 +569,9 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         ssl: false,
       },
     };
+
     if (provider === 'AWS S3') {
-      // eslint-disable-next-line
-      bsPayload.spec['awsS3'] = { ...bsPayload.spec['awsS3'], 'region': providerDataState.region };
+      bsPayload.spec.awsS3 = { ...bsPayload.spec.awsS3, region: providerDataState.region };
     }
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
     return handlePromise(Promise.all(promises)).then((resource) => {
