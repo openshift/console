@@ -262,6 +262,8 @@ export const getSimpleVMStatus = (
     : VM_SIMPLE_STATUS_OTHER;
 };
 
+export const isVmOff = (vmStatus: VMStatus) => vmStatus.status === VM_STATUS_OFF;
+
 export type VMStatus = Status & {
   pod?: PodKind;
   launcherPod?: PodKind;

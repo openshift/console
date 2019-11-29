@@ -6,7 +6,6 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import { isWindows } from 'kubevirt-web-ui-components';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { PlusCircleIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { k8sPatch } from '@console/internal/module/k8s';
@@ -22,6 +21,7 @@ import {
   getStorageSizeByDisk,
   getStorageClassNameByDisk,
   isVMRunning,
+  isWindows,
 } from '../../../selectors/vm/selectors';
 import { isValidationError, validateURL } from '../../../utils/validations/common';
 import { VMKind, VMLikeEntityKind } from '../../../types';

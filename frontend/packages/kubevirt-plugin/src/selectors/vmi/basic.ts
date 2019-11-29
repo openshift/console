@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { VMIKind } from '../../types';
 
 export const getVMIDisks = (vmi: VMIKind): VMIKind['spec']['domain']['devices']['disks'] =>
@@ -15,3 +16,6 @@ export const getVMIConditionsByType = (
   const conditions = vmi && vmi.status && vmi.status.conditions;
   return (conditions || []).filter((cond) => cond.type === condType);
 };
+
+export const getVmiTemplateLabels = (vmi: VMIKind): { [key: string]: string } =>
+  (_.get(vmi, 'vmi.spec.template.metadata') && vmi.spec.template.metadata.labels) || {};
