@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { createItemButton } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { fillInput, selectOptionByText } from '../utils/utils';
 import { CloudInitConfig, StorageResource, NetworkResource } from '../utils/types';
 import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
@@ -63,8 +63,11 @@ export class Wizard {
       await click(wizardView.cloudInitCustomScriptCheckbox);
       await fillInput(wizardView.customCloudInitScriptTextArea, cloudInitOptions.customScript);
     } else {
-      await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname);
-      await fillInput(wizardView.cloudInitSSHKey, cloudInitOptions.sshKey);
+      await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname || '');
+      await asyncForEach(cloudInitOptions.sshKeys, async (sshKey: string, index: number) => {
+        await fillInput(wizardView.cloudInitSSHKey(index + 1), sshKey);
+        await click(wizardView.cloudInitAddKeyButton);
+      });
     }
   }
 

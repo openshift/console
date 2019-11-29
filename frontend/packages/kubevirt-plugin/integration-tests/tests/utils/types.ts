@@ -34,7 +34,7 @@ export type CloudInitConfig = {
   useCustomScript?: boolean;
   customScript?: string;
   hostname?: string;
-  sshKey?: string;
+  sshKeys?: string[];
 };
 
 export type NodePortService = {
