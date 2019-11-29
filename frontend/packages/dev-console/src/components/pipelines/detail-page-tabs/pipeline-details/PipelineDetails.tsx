@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { TaskModel } from '../../../../models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { Pipeline, getResourceModelFromTask } from '../../../../utils/pipeline-augment';
 import { PipelineVisualization } from './PipelineVisualization';
 
 interface PipelineDetailsProps {
-  obj: K8sResourceKind;
+  obj: Pipeline;
 }
 
 const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
@@ -22,13 +22,14 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
             <SectionHeading text="Tasks" />
             <dl>
               {pipeline.spec.tasks.map((task) => {
+                const resourceModel = getResourceModelFromTask(task);
                 return (
                   <React.Fragment key={task.name}>
                     <dt>Name: {task.name}</dt>
                     <dd>
                       Ref:{' '}
                       <ResourceLink
-                        kind={referenceForModel(TaskModel)}
+                        kind={referenceForModel(resourceModel)}
                         name={task.taskRef.name}
                         namespace={pipeline.metadata.namespace}
                         title={task.taskRef.name}
