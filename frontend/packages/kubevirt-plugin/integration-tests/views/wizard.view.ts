@@ -43,9 +43,8 @@ export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
 export const cloudInitCustomScriptCheckbox = $('#cloud-init-edit-mode-second-option');
 export const customCloudInitScriptTextArea = $('#cloudinit-custom-custom-script');
 export const cloudInitAddKeyButton = $('#cloudinit-ssh-authorized-keys-add');
-export const cloudInitHostname = $('#cloud-init-hostname');
-export const cloudInitSSH = $('#cloud-init-ssh');
-export const cloudInitSSHKey = $$('.pf-c-form-control').get(1);
+export const cloudInitHostname = $('#cloudinit-hostname');
+export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh-authorized-keys-key-${rowNumber}`);
 
 // Result tab
 export const creationStatus = $('h5.pf-c-title');
