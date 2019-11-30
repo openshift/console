@@ -30,11 +30,15 @@ class ColaNode implements webcola.Node {
 
   public readonly distance: number;
 
+  // isFixed is used locally for Force simulation during drag events
   public isFixed: boolean = false;
 
   public index: number;
 
   public parent: ColaGroup;
+
+  // fixed is used by Cola during node additions: 1 for fixed
+  public fixed: number = 0;
 
   constructor(node: Node, index: number, distance: number) {
     this.node = node;
@@ -272,12 +276,15 @@ class ColaLayout implements Layout {
         action(() => this.nodes.forEach((d) => d.update()))();
       }
       if (this.options.maxTicks >= 0 && this.tickCount > this.options.maxTicks) {
-        this.d3Cola.alpha(0);
+        this.d3Cola.stop();
       }
     });
     this.d3Cola.on('end', () => {
       action(() => {
-        this.nodes.forEach((d) => d.update());
+        this.nodes.forEach((d) => {
+          d.update();
+          d.fixed = 0;
+        });
         if (this.options.layoutOnDrag) {
           this.useForceSimulation();
         }
@@ -456,46 +463,6 @@ class ColaLayout implements Layout {
     this.forceLink.links([...this.edges]);
   }
 
-  private forceSimulateAdditions = (newNodes: ColaNode[]) => {
-    if (!newNodes || !newNodes.length) {
-      return;
-    }
-
-    // Fix the position of existing nodes
-    this.nodes
-      .filter((n) => !newNodes.includes(n))
-      .forEach((n) => {
-        n.isFixed = true;
-      });
-
-    // Set distance on new nodes based on any edges
-    this.forceLink.distance((e) => {
-      if (newNodes.includes(e.source) || newNodes.includes(e.target)) {
-        return this.getLinkDistance(e);
-      }
-      return this.getNodeDistance(e);
-    });
-
-    this.simulation.on(
-      'end',
-      action(() => {
-        this.nodes.forEach((n) => {
-          n.isFixed = false;
-        });
-        if (this.options.layoutOnDrag) {
-          this.useForceSimulation();
-        } else {
-          this.haltForceSimulation();
-        }
-        this.simulation.on('end');
-      }),
-    );
-
-    this.simulation.nodes([...this.nodes]);
-    this.forceLink.links([...this.edges]);
-    this.simulation.alpha(0.2).restart();
-  };
-
   private haltForceSimulation(): void {
     this.simulation.alpha(0);
     this.simulation.nodes([]);
@@ -531,6 +498,7 @@ class ColaLayout implements Layout {
     });
 
     // Create groups only for those with children
+    const prevGroups = this.groups;
     this.groups = groups
       .filter((g) => g.getChildren().length > 0)
       .map((group: Node) => new ColaGroup(group, nodeIndex++, this.options.groupDistance));
@@ -562,27 +530,34 @@ class ColaLayout implements Layout {
 
     this.d3Cola.size([this.graph.getBounds().width, this.graph.getBounds().height]);
 
-    const newNodes: ColaNode[] = [];
+    const newNodes: ColaNode[] = initialRun
+      ? this.nodes
+      : this.nodes.filter((node) => !this.nodesMap[node.element.getId()]);
+    let addingNodes = restart && newNodes.length > 0;
 
-    if (initialRun) {
-      // initialize all node positions
-      const cx = this.graph.getBounds().width / 2;
-      const cy = this.graph.getBounds().height / 2;
-      this.nodes.forEach((node: ColaNode) => {
-        node.setPosition(cx, cy);
-      });
-      this.d3Cola.alpha(0.2);
-    } else {
-      // initialize new node positions
-      const cx = this.graph.getBounds().width / 2;
-      const cy = this.graph.getBounds().height / 2;
-      this.nodes.forEach((node) => {
-        if (!this.nodesMap[node.element.getId()]) {
-          node.setPosition(cx, cy);
-          newNodes.push(node);
+    if (!initialRun && restart && !addingNodes) {
+      this.groups.forEach((group) => {
+        const prevGroup = prevGroups.find((g) => g.element.getId() === group.element.getId());
+        if (!prevGroup) {
+          addingNodes = true;
+          newNodes.push(...group.leaves);
+        } else {
+          group.leaves.forEach((node) => {
+            if (!prevGroup.leaves.find((l) => l.element.getId() === node.element.getId())) {
+              newNodes.push(node);
+            }
+          });
         }
       });
+      addingNodes = newNodes.length > 0;
     }
+
+    // initialize new node positions
+    const cx = this.graph.getBounds().width / 2;
+    const cy = this.graph.getBounds().height / 2;
+    newNodes.forEach((node: ColaNode) => {
+      node.setPosition(cx, cy);
+    });
 
     // re-create the nodes map
     this.nodesMap = this.nodes.reduce((acc, n) => (acc[n.element.getId()] = n && acc), {});
@@ -597,21 +572,28 @@ class ColaLayout implements Layout {
     this.d3Cola.links(this.edges);
     this.d3Cola.groups(this.groups);
 
-    if (restart && newNodes.length > 0) {
-      this.forceSimulateAdditions(newNodes);
-      return;
+    if (addingNodes) {
+      // Set existing nodes to be fixed
+      this.nodes
+        .filter((n) => !newNodes.includes(n))
+        .forEach((n) => {
+          n.fixed = 1;
+        });
     }
 
-    if (initialRun) {
+    if (initialRun || addingNodes) {
       // Reset the force simulation
       this.haltForceSimulation();
 
-      // start
+      // start the layout
+      this.d3Cola.alpha(0.2);
       this.d3Cola.start(
-        this.options.initialUnconstrainedIterations,
-        this.options.initialUserConstraintIterations,
-        this.options.initialAllConstraintsIterations,
-        this.options.gridSnapIterations,
+        addingNodes ? 0 : this.options.initialUnconstrainedIterations,
+        addingNodes ? 0 : this.options.initialUserConstraintIterations,
+        addingNodes ? 0 : this.options.initialAllConstraintsIterations,
+        addingNodes ? 0 : this.options.gridSnapIterations,
+        true,
+        !addingNodes,
       );
     } else if (restart && this.options.layoutOnDrag) {
       this.useForceSimulation();
