@@ -74,7 +74,7 @@ describe("OCS install scenario", () => {
         await browser.sleep(1000);
         click(element(by.cssContainingText('a','Storage Cluster')));
         click(element(by.cssContainingText('button','Create OCS Cluster Service')));
-        await browser.sleep(10000);
+        // await browser.sleep(10000);
         // const table = $('.pf-c-table.pf-m-compact tbody');
         // const rows = table.$$('tr');
         // const workerNodes = rows.filter((row) => row.$('[data-label="Role"]').getText().then((text) => text === 'worker')    );
@@ -130,9 +130,7 @@ describe("OCS install scenario", () => {
                 table.$$('input').get(index).click();
             }
             browser.sleep(20000);
-    
-    
-            
+           
     
         });
     
