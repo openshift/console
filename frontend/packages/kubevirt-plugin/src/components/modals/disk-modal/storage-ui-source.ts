@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 
 import { ValueEnum, VolumeType } from '../../../constants';
-import { DataVolumeSourceType } from '../../../constants/vm/storage';
+import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';
 
@@ -114,6 +114,8 @@ export class StorageUISource extends ValueEnum<string> {
 
   isEditingSupported = () => !this.dataVolumeSourceType; // vm disks - do not support because pvc was already created from DV
 
+  isNameEditingSupported = (diskType: DiskType) => diskType !== DiskType.CDROM;
+
   isSizeEditingSupported = () => this !== StorageUISource.IMPORT_DISK;
 
   isPlainDataVolume = (isCreateTemplate: boolean) =>
@@ -121,6 +123,14 @@ export class StorageUISource extends ValueEnum<string> {
 
   hasDynamicSize = () => this === StorageUISource.CONTAINER;
 
-  canBeChangedToThisSource = () =>
-    this !== StorageUISource.IMPORT_DISK && this !== StorageUISource.OTHER;
+  canBeChangedToThisSource = (diskType: DiskType) => {
+    if (diskType === DiskType.CDROM) {
+      return (
+        this === StorageUISource.ATTACH_DISK ||
+        this === StorageUISource.URL ||
+        this === StorageUISource.CONTAINER
+      );
+    }
+    return this !== StorageUISource.IMPORT_DISK && this !== StorageUISource.OTHER;
+  };
 }

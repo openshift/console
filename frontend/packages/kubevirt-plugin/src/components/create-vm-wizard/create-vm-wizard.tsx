@@ -76,6 +76,7 @@ import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
 import { StorageTab } from './tabs/storage-tab/storage-tab';
 import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
+import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
 
 import './create-vm-wizard.scss';
 
@@ -433,6 +434,15 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
               <>
                 <ResourceLoadErrors wizardReduxID={reduxID} />
                 <CloudInitTab wizardReduxID={reduxID} />
+              </>
+            ),
+          },
+          {
+            id: VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+            component: (
+              <>
+                <ResourceLoadErrors wizardReduxID={reduxID} />
+                <VirtualHardwareTab wizardReduxID={reduxID} />
               </>
             ),
           },

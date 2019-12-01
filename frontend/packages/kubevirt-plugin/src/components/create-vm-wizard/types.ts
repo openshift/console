@@ -19,6 +19,7 @@ export enum VMWizardTab { // order important
   VM_SETTINGS = 'VM_SETTINGS',
   NETWORKING = 'NETWORKING',
   ADVANCED_CLOUD_INIT = 'ADVANCED_CLOUD_INIT',
+  ADVANCED_VIRTUAL_HARDWARE = 'ADVANCED_VIRTUAL_HARDWARE',
   STORAGE = 'STORAGE',
   REVIEW = 'REVIEW',
   RESULT = 'RESULT',
@@ -204,8 +205,8 @@ export enum VMWizardStorageType {
 export type VMWizardStorage = {
   id?: string;
   type: VMWizardStorageType;
-  disk: V1Disk;
-  volume: V1Volume;
+  disk?: V1Disk;
+  volume?: V1Volume;
   dataVolume?: V1alpha1DataVolume;
   validation?: UIDiskValidation;
   persistentVolumeClaim?: V1PersistentVolumeClaim;
@@ -216,8 +217,8 @@ export type VMWizardStorage = {
 };
 
 export type VMWizardStorageWithWrappers = VMWizardStorage & {
-  diskWrapper: DiskWrapper;
-  volumeWrapper: VolumeWrapper;
+  diskWrapper?: DiskWrapper;
+  volumeWrapper?: VolumeWrapper;
   dataVolumeWrapper?: DataVolumeWrapper;
   persistentVolumeClaimWrapper?: PersistentVolumeClaimWrapper;
 };

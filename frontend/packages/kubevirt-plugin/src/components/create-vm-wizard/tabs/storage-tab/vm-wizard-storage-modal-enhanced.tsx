@@ -29,6 +29,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
     storage,
     isCreateTemplate,
+    isEditing,
     namespace: vmNamespace,
     useProjects,
     addUpdateStorage,
@@ -98,6 +99,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
         ].includes(type)}
         isCreateTemplate={isCreateTemplate}
+        isEditing={isEditing}
         onSubmit={(
           resultDiskWrapper,
           resultVolumeWrapper,
@@ -130,6 +132,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
 };
 
 type VMWizardStorageModalProps = ModalComponentProps & {
+  isEditing?: boolean;
   storage?: VMWizardStorageWithWrappers;
   namespace: string;
   useProjects?: boolean;

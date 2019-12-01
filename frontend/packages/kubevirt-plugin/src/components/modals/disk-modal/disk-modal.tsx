@@ -64,6 +64,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     isCreateTemplate,
     onSubmit,
     inProgress,
+    isEditing,
     errorMessage,
     handlePromise,
     close,
@@ -73,7 +74,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const disk = props.disk || DiskWrapper.EMPTY;
   const volume = props.volume || VolumeWrapper.EMPTY;
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
-  const isEditing = disk !== DiskWrapper.EMPTY;
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -84,8 +84,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   });
   const combinedDiskSize = combinedDisk.getSize();
 
+  const type = disk.getType() || DiskType.DISK;
+
   const [source, setSource] = React.useState<StorageUISource>(
-    isEditing ? combinedDisk.getSource() || StorageUISource.OTHER : StorageUISource.BLANK,
+    combinedDisk.getInitialSource(isEditing),
   );
 
   const [url, setURL] = React.useState<string>(dataVolume.getURL);
@@ -116,7 +118,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
     bus,
-    type: disk.getType() || DiskType.DISK,
+    type,
   });
 
   const resultDataVolumeName = prefixedID(vmName, name);
@@ -230,25 +232,29 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{isEditing ? 'Edit' : 'Add'} Disk</ModalTitle>
+      <ModalTitle>
+        {isEditing ? 'Edit' : 'Add'} {type.toString()}
+      </ModalTitle>
       <ModalBody>
         <Form>
           <FormRow title="Source" fieldId={asId('source')} isRequired>
             <FormSelect
               onChange={
-                disableSourceChange || !source.canBeChangedToThisSource()
+                disableSourceChange || !source.canBeChangedToThisSource(type)
                   ? undefined
                   : onSourceChanged
               }
               value={asFormSelectValue(source)}
               id={asId('source')}
-              isDisabled={inProgress || disableSourceChange || !source.canBeChangedToThisSource()}
+              isDisabled={
+                inProgress || disableSourceChange || !source.canBeChangedToThisSource(type)
+              }
             >
               {StorageUISource.getAll()
                 .filter(
                   (storageUISource) =>
-                    storageUISource.canBeChangedToThisSource() ||
-                    !source.canBeChangedToThisSource(),
+                    storageUISource.canBeChangedToThisSource(type) ||
+                    !source.canBeChangedToThisSource(type),
                 )
                 .map((uiType) => {
                   return (
@@ -332,13 +338,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           >
             <TextInput
               isValid={!isValidationError(nameValidation)}
-              isDisabled={!usedDiskNames || inProgress}
+              isDisabled={!usedDiskNames || inProgress || !source.isNameEditingSupported(type)}
               isRequired
               id={asId('name')}
               value={name}
               onChange={onNameChanged}
             />
           </FormRow>
+
           {source.requiresSize() && (
             <SizeUnitFormRow
               key="size-row"
@@ -420,6 +427,7 @@ export type DiskModalProps = {
   disk?: DiskWrapper;
   disableSourceChange?: boolean;
   isCreateTemplate?: boolean;
+  isEditing?: boolean;
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;
   persistentVolumeClaim?: PersistentVolumeClaimWrapper;

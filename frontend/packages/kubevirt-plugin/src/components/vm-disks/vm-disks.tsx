@@ -15,6 +15,7 @@ import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { VHW_TYPES } from '../create-vm-wizard/tabs/virtual-hardware-tab/types';
 import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
@@ -34,15 +35,18 @@ const getStoragesData = ({
     pvcs,
   );
 
-  return combinedDiskFactory.getCombinedDisks().map((disk) => ({
-    disk,
-    // for sorting
-    name: disk.getName(),
-    source: disk.getSourceValue(),
-    diskInterface: disk.getDiskInterface(),
-    size: disk.getReadableSize(),
-    storageClass: disk.getStorageClassName(),
-  }));
+  return combinedDiskFactory
+    .getCombinedDisks()
+    .filter((storage) => !VHW_TYPES.has(storage.diskWrapper.getType()))
+    .map((disk) => ({
+      disk,
+      // for sorting
+      name: disk.getName(),
+      source: disk.getSourceValue(),
+      diskInterface: disk.getDiskInterface(),
+      size: disk.getReadableSize(),
+      storageClass: disk.getStorageClassName(),
+    }));
 };
 
 export type VMDisksTableProps = {

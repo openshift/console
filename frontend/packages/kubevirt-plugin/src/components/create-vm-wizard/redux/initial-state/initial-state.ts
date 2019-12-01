@@ -6,12 +6,14 @@ import { getResultInitialState } from './result-tab-initial-state';
 import { getReviewInitialState } from './review-tab-initial-state';
 import { getCloudInitInitialState } from './cloud-init-tab-initial-state';
 import { InitialStepStateGetter, StepState } from './types';
+import { getVirtualHardwareInitialState } from './virtual-hardware-tab-initial-state';
 
 const initialStateGetterResolver: { [key in VMWizardTab]: InitialStepStateGetter } = {
   [VMWizardTab.VM_SETTINGS]: getVmSettingsInitialState,
   [VMWizardTab.NETWORKING]: getNetworksInitialState,
   [VMWizardTab.STORAGE]: getStorageInitialState,
   [VMWizardTab.ADVANCED_CLOUD_INIT]: getCloudInitInitialState,
+  [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: getVirtualHardwareInitialState,
   [VMWizardTab.REVIEW]: getReviewInitialState,
   [VMWizardTab.RESULT]: getResultInitialState,
 };
