@@ -1,10 +1,10 @@
 import { $, browser, ExpectedConditions as until, element , by} from 'protractor';
-import {appHost} from '../../protractor.conf';
-import {isLoaded, rowForName} from '../../views/crud.view';
-import {click} from '../../../packages/console-shared/src/test-utils/utils';
-import * as sidenavView from '../../views/sidenav.view'
-import * as crudView from '../../views/crud.view';
-import {operatorModalInstallBtn} from '../../views/operator-hub.view'
+import {appHost} from '@console/internal-integration-tests/protractor.conf';
+import {isLoaded} from '../../../../integration-tests/views/crud.view';
+import {click} from '../../../console-shared/src/test-utils/utils';
+import * as sidenavView from '../../../../integration-tests/views/sidenav.view'
+import * as crudView from '../../../../integration-tests/views/crud.view';
+import {operatorModalInstallBtn} from '../../../operator-lifecycle-manager/integration-tests/views/operator-hub.view'
 // import {isLoaded as yamlIsLoaded} from '../../views/yaml.view'
 
 describe("OCS install scenario", () => {
