@@ -5,6 +5,7 @@ import {click} from '../../../console-shared/src/test-utils/utils';
 import * as sidenavView from '../../../../integration-tests/views/sidenav.view'
 import * as crudView from '../../../../integration-tests/views/crud.view';
 import {operatorModalInstallBtn} from '../../../operator-lifecycle-manager/integration-tests/views/operator-hub.view'
+import * as ocsInstall from '../views/ocs-install.view'
 // import {isLoaded as yamlIsLoaded} from '../../views/yaml.view'
 
 describe("OCS install scenario", () => {
@@ -26,14 +27,17 @@ describe("OCS install scenario", () => {
         
         
         
-        click(element(by.css('.pf-c-dropdown__toggle.pf-m-plain')));
+        // click(element(by.css('.pf-c-dropdown__toggle.pf-m-plain')));
+        click(ocsInstall.projectPicker);
         console.log("after clicking namespaces");
         
-        click(element(by.css('#openshift-storage-link')));
+        // click(element(by.css('#openshift-storage-link')));
+        click(ocsInstall.openshiftStorageProj);
         console.log("after clicking openshift-storage namespace")
         
         
-        click(element(by.cssContainingText('.vertical-tabs-pf-tab a','Storage')));
+        // click(element(by.cssContainingText('.vertical-tabs-pf-tab a','Storage')));
+        click(ocsInstall.operatorHubStorageSec);
         console.log("after clicking storage");
         
     
