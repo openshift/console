@@ -5,7 +5,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ImageStreamTagModel, RoleBindingModel } from '@console/internal/models';
 import { useAccessReview } from '@console/internal/components/utils';
-import { DropdownField, CheckboxField } from '@console/shared/src/components/formik-fields';
+import { DropdownField, ResourceDropdownField, CheckboxField } from '@console/shared';
 import { ImageStreamProps } from '../import-types';
 import {
   getSuggestedName,
@@ -18,7 +18,6 @@ import {
   getImageStreamTags,
 } from '../../../utils/imagestream-utils';
 import './ImageStream.scss';
-import ResourceDropdownField from '../../../../../console-shared/src/components/formik-fields/ResourceDropdownField';
 
 const ImageStream: React.FC<ImageStreamProps> = ({ imageStreams }) => {
   const resources = getProjectResource();

@@ -4,7 +4,7 @@ import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { getGitService, GitProvider } from '@console/git-service';
 import { LoadingInline } from '@console/internal/components/utils';
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { InputField, DropdownField } from '@console/shared/src/components/formik-fields';
+import { InputField, DropdownField } from '@console/shared';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';

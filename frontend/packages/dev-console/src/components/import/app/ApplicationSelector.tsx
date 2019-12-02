@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared/src/components/formik-fields';
-import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField, getFieldId } from '@console/shared';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';

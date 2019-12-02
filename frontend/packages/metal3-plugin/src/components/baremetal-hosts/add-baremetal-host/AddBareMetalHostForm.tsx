@@ -2,12 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps } from 'formik';
 import { Form, TextInputTypes } from '@patternfly/react-core';
-import {
-  InputField,
-  TextAreaField,
-  SwitchField,
-} from '@console/shared/src/components/formik-fields';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { InputField, TextAreaField, SwitchField, FormFooter } from '@console/shared';
 import { AddBareMetalHostFormValues } from './types';
 
 type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues>;

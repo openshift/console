@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
-import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { secretModalLauncher } from '../CreateSecretModal';
 

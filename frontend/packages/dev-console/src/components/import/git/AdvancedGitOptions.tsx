@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared/src/components/formik-fields';
+import { InputField } from '@console/shared';
 import FormSection from '../section/FormSection';
 import SourceSecretSelector from './SourceSecretSelector';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField, DroppableFileInputField } from '@console/shared/src/components/formik-fields';
+import { InputField, DroppableFileInputField } from '@console/shared';
 
 const PipelineClusterOptions: React.FC = () => (
   <>

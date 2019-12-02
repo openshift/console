@@ -1,9 +1,6 @@
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { LazyLoader } from '@console/plugin-sdk';
-import {
-  NameValuePair,
-  NameValueFromPair,
-} from '@console/shared/src/components/formik-fields/field-types';
+import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 
 export interface DeployImageFormProps {

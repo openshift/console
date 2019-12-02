@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CheckboxField, EnvironmentField } from '@console/shared/src/components/formik-fields';
+import { CheckboxField, EnvironmentField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
 export interface BuildConfigSectionProps {
