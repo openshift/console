@@ -1,6 +1,6 @@
 import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '@console/app/src/status/node';
-import { isNodeUnschedulable } from '@console/shared';
+import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
 import { isHostPoweredOn } from '../selectors';

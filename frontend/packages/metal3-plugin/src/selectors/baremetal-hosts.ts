@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src/selectors';
+import { getName } from '@console/shared/src/selectors/common';
 import { MachineKind } from '@console/internal/module/k8s';
 import {
   BareMetalHostDisk,

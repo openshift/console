@@ -34,9 +34,13 @@ const hostStatesToFilterMap = Object.freeze({
     title: 'Error',
     states: HOST_ERROR_STATES,
   },
+  maintenance: {
+    title: 'Maintenance',
+    states: Object.keys(NODE_STATUS_TITLES),
+  },
   other: {
     title: 'Other',
-    states: [...Object.keys(HOST_STATUS_TITLES), ...Object.keys(NODE_STATUS_TITLES)],
+    states: Object.keys(HOST_STATUS_TITLES),
   },
 });
 

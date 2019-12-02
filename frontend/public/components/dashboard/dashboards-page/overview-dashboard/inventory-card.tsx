@@ -13,24 +13,23 @@ import {
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import {
-  PodModel,
-  NodeModel,
-  PersistentVolumeClaimModel,
-  StorageClassModel,
-} from '../../../../models';
 import { K8sResourceKind, K8sKind, referenceForModel } from '../../../../module/k8s';
-import {
-  getPodStatusGroups,
-  getNodeStatusGroups,
-  getPVCStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
-import { LazyLoader, isDashboardsOverviewInventoryItem } from '@console/plugin-sdk';
+import {
+  LazyLoader,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement,
+  DashboardsOverviewInventoryItem,
+  DashboardsOverviewInventoryItemReplacement,
+} from '@console/plugin-sdk';
 
-const getItems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
-  plugins.registry.getDashboardsOverviewInventoryItems().filter((e) => {
+const filterExtension = (
+  extensions: Array<DashboardsOverviewInventoryItem | DashboardsOverviewInventoryItemReplacement>,
+  k8sModels: ImmutableMap<string, K8sKind>,
+  flags: FlagsObject,
+) =>
+  extensions.filter((e) => {
     if (!plugins.registry.isExtensionInUse(e, flags)) {
       return false;
     }
@@ -44,13 +43,29 @@ const getItems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) 
     return true;
   });
 
+const getItems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) => {
+  const items = filterExtension(
+    plugins.registry.getDashboardsOverviewInventoryItems(),
+    k8sModels,
+    flags,
+  );
+  const replacements = filterExtension(
+    plugins.registry.getDashboardsOverviewInventoryItemReplacements(),
+    k8sModels,
+    flags,
+  );
+  return items.map(
+    (item) => replacements.find((r) => r.properties.model === item.properties.model) || item,
+  );
+};
+
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
   prop: 'resource',
 });
 
-const ClusterInventoryItem = withDashboardResources(
+const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
   React.memo(
     ({
       watchK8sResource,
@@ -61,7 +76,7 @@ const ClusterInventoryItem = withDashboardResources(
       useAbbr,
       additionalResources,
       expandedComponent,
-    }: ClusterInventoryItemProps) => {
+    }) => {
       React.useEffect(() => {
         const resource = getFirehoseResource(model);
         watchK8sResource(resource);
@@ -129,6 +144,7 @@ const mapStateToProps = ({ k8s }) => ({
 export const InventoryCard = connect(mapStateToProps)(
   connectToFlags<InventoryCardProps>(
     ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItem]),
+    ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItemReplacement]),
   )(({ flags, k8sModels }) => {
     const items = getItems(flags, k8sModels);
     return (
@@ -137,14 +153,6 @@ export const InventoryCard = connect(mapStateToProps)(
           <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody>
-          <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
-          <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
-          <ClusterInventoryItem model={StorageClassModel} />
-          <ClusterInventoryItem
-            model={PersistentVolumeClaimModel}
-            mapper={getPVCStatusGroups}
-            useAbbr
-          />
           {items.map((item) => (
             <ClusterInventoryItem
               key={item.properties.model.kind}

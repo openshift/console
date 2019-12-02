@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import * as React from 'react';
+import { MaintenanceIcon } from '@patternfly/react-icons';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
@@ -9,15 +11,20 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
   DashboardsOverviewResourceActivity,
+  DashboardsOverviewInventoryItemReplacement,
+  DashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
+import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
+  | DashboardsOverviewInventoryItemReplacement
+  | DashboardsInventoryItemGroup
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
@@ -87,13 +94,24 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Dashboards/Overview/Inventory/Item/Replacement',
+    properties: {
+      model: NodeModel,
+      additionalResources: [
+        {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceModel),
+          prop: 'maintenaces',
+          optional: true,
+        },
+      ],
+      mapper: getBMNStatusGroups,
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+    },
+  },
+  {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      resource: {
-        isList: true,
-        kind: referenceForModel(BareMetalHostModel),
-        prop: 'hosts',
-      },
       additionalResources: [
         {
           isList: true,
@@ -108,7 +126,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
-          prop: 'maintenaces',
+          prop: 'maintenances',
           optional: true,
         },
       ],
@@ -155,6 +173,14 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
         ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Inventory/Item/Group',
+    properties: {
+      id: 'node-maintenance',
+      icon: <MaintenanceIcon />,
       required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },

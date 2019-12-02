@@ -215,11 +215,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      resource: {
-        isList: true,
-        kind: RouteModel.kind,
-        prop: 'routes',
-      },
       model: RouteModel,
       mapper: getRouteStatusGroups,
       expandedComponent: () =>

@@ -197,11 +197,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      resource: {
-        isList: true,
-        kind: models.VirtualMachineModel.kind,
-        prop: 'vms',
-      },
       additionalResources: [
         {
           isList: true,
