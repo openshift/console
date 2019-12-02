@@ -261,6 +261,7 @@ export const createTopologyServiceNodeData = (
       editUrl:
         annotations['app.openshift.io/edit-url'] ||
         getEditURL(annotations['app.openshift.io/vcs-uri'], cheURL),
+      cheEnabled: !!cheURL,
       isKnativeResource: true,
     },
   };
