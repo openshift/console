@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { getNamespace } from '@console/shared';
 import {
@@ -49,10 +48,6 @@ export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetail
 
 const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   const { template, ...restProps } = props;
-  const flatResources = {
-    template,
-    dataVolumes: _.get(props, 'datavolumes.data'),
-  };
   const loaded = props.loaded || !props.hasDataVolumes;
 
   const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
@@ -64,10 +59,10 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
         <SectionHeading text="VM Template Overview" />
         <div className="row">
           <div className="col-sm-6">
-            <VMTemplateResourceSummary {...flatResources} canUpdateTemplate={canUpdate} />
+            <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
           </div>
           <div className="col-sm-6">
-            <VMTemplateDetailsList {...flatResources} canUpdateTemplate={canUpdate} />
+            <VMTemplateDetailsList template={template} canUpdateTemplate={canUpdate} />
           </div>
         </div>
       </div>

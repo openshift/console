@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
-  TemplateSource,
   getTemplateOperatingSystems,
   getTemplateFlavors,
   TEMPLATE_TYPE_LABEL,
@@ -22,6 +21,7 @@ import {
 } from '@console/shared';
 import { match } from 'react-router';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { TemplateSource } from './vm-template-source';
 import { menuActions } from './menu-actions';
 import { VMTemplateLink } from './vm-template-link';
 
