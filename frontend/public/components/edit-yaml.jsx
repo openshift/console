@@ -15,6 +15,7 @@ import {
 import { getBadgeFromType, Shortcut, ShortcutTable } from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
+import { errorModal } from './modals';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
 import { FLAGS, ALL_NAMESPACES_KEY } from '../const';
 import {
@@ -442,9 +443,16 @@ const EditYAML_ = connect(stateToProps)(
     }
 
     getYamlContent_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
-      const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
-      this.setState({ sampleObj });
-      return sampleObj;
+      try {
+        const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
+        this.setState({ sampleObj });
+        return sampleObj;
+      } catch ({ message, name }) {
+        errorModal({
+          title: 'Failed to Parse YAML Sample',
+          error: <div className="co-pre-line">{message || name || 'An error occurred.'}</div>,
+        });
+      }
     }
 
     insertYamlContent_ = (id, yaml, kind) => {
@@ -458,9 +466,13 @@ const EditYAML_ = connect(stateToProps)(
     };
 
     downloadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
-      const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
-      const data = safeDump(sampleObj);
-      this.download(data);
+      try {
+        const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
+        const data = safeDump(sampleObj);
+        this.download(data);
+      } catch (e) {
+        this.download(yaml);
+      }
     }
 
     registerYAMLinMonaco(monaco) {
