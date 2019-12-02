@@ -134,6 +134,7 @@ export const createTopologyNodeData = (
       editUrl:
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
         getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),
+      cheEnabled: !!cheURL,
       builderImage:
         getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
         getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||

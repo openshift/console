@@ -44,6 +44,7 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "cheEnabled": false,
         "connectedPipeline": Object {
           "pipeline": undefined,
           "pipelineRuns": Array [],
@@ -559,6 +560,7 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "cheEnabled": false,
         "connectedPipeline": Object {
           "pipeline": undefined,
           "pipelineRuns": Array [],
@@ -1532,6 +1534,7 @@ Object {
       "data": Object {
         "build": undefined,
         "builderImage": "test-file-stub",
+        "cheEnabled": false,
         "connectedPipeline": Object {
           "pipeline": undefined,
           "pipelineRuns": Array [],
