@@ -1,17 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-
 import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
 
-describe(NameValueEditor.displayName, () => {
-  const Editor = DragDropContext(HTML5Backend)(NameValueEditor);
-
+describe('Name Value Editor', () => {
   describe('When supplied with attributes nameString and valueString', () => {
     it('renders header correctly', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           nameString={'foo'}
@@ -27,7 +22,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When supplied with nameValuePairs', () => {
     it('renders PairElement correctly', () => {
       const wrapper = shallow(
-        <Editor nameValuePairs={[['name', 'value', 0]]} updateParentData={() => {}} />,
+        <NameValueEditor nameValuePairs={[['name', 'value', 0]]} updateParentData={() => {}} />,
       );
 
       expect(wrapper.html()).toContain('value="name"');
@@ -38,7 +33,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When readOnly attribute is "true"', () => {
     it('does not render add button', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={true}
@@ -50,7 +45,7 @@ describe(NameValueEditor.displayName, () => {
 
     it('does not render PairElement buttons', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={true}
@@ -64,7 +59,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When readOnly attribute is "false"', () => {
     it('renders add button', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={false}
@@ -79,7 +74,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When readOnly attribute is "false" and allowSorting is "true"', () => {
     it('renders PairElement buttons correctly', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={false}
@@ -95,7 +90,7 @@ describe(NameValueEditor.displayName, () => {
   describe('When allowSorting attribute is "false"', () => {
     it('renders PairElement buttons correctly', () => {
       const wrapper = shallow(
-        <Editor
+        <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           allowSorting={false}

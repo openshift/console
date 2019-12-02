@@ -36,7 +36,10 @@
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
+      "^dnd-core$": "dnd-core/dist/cjs",
+      "^react-dnd$": "react-dnd/dist/cjs",
+      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
     },
     "transform": {
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
@@ -102,8 +105,8 @@
     "prop-types": "15.7.x",
     "react": "^16.9.0",
     "react-copy-to-clipboard": "5.x",
-    "react-dnd": "^2.6.0",
-    "react-dnd-html5-backend": "^2.6.0",
+    "react-dnd": "^9.4.0",
+    "react-dnd-html5-backend": "^9.4.0",
     "react-dom": "^16.9.0",
     "react-helmet": "^5.2.1",
     "react-jsonschema-form": "^1.0.4",
