@@ -2,8 +2,17 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { ActionGroup, Button } from '@patternfly/react-core';
+import { safeLoad } from 'js-yaml';
 
-import { ButtonBar, Dropdown, Firehose, history, StatusBox } from '../../utils';
+import {
+  ButtonBar,
+  Dropdown,
+  Firehose,
+  history,
+  LoadError,
+  LoadingBox,
+  StatusBox,
+} from '../../utils';
 import {
   getAlertManagerConfig,
   patchAlertManagerConfig,
@@ -18,6 +27,7 @@ import {
 import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
+import { coFetchJSON } from '../../../co-fetch';
 
 /**
  * Converts routes of a specific Receiver:
@@ -152,6 +162,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   titleVerb,
   saveButtonText,
   editReceiverNamed,
+  alertManagerGlobals,
 }) => {
   const secret: K8sResourceKind = obj; // Secret "alertmanager-main" which contains alertmanager.yaml config
   const [errorMsg, setErrorMsg] = React.useState('');
@@ -159,6 +170,9 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   let config: AlertManagerConfig;
   if (!errorMsg) {
     config = getAlertManagerConfig(secret, setErrorMsg);
+  }
+  if (!alertManagerGlobals || _.isEmpty(alertManagerGlobals)) {
+    setErrorMsg('Could not find Alertmanager global parameters.');
   }
 
   const INITIAL_STATE = {
@@ -335,9 +349,53 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 };
 
 const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
-  return (
+  const { alertManagerBaseURL } = window.SERVER_FLAGS;
+  const [alertManagerGlobals, setAlertManagerGlobals] = React.useState();
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState('');
+
+  if (_.isEmpty(errorMsg)) {
+    if (!alertManagerBaseURL) {
+      setErrorMsg(`Error alertManagerBaseURL not set`);
+      return;
+    }
+    if (!inProgress && _.isEmpty(alertManagerGlobals)) {
+      setInProgress(true);
+      coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`).then((data) => {
+        const origAlertMngrConfigStr = _.get(data, 'config.original', {});
+        if (_.isEmpty(origAlertMngrConfigStr)) {
+          setErrorMsg('alertmanager.v2.status.config.original not found.');
+          setInProgress(false);
+          return;
+        }
+        let origAlertMngrConfig;
+        try {
+          origAlertMngrConfig = safeLoad(origAlertMngrConfigStr);
+        } catch (e) {
+          setErrorMsg(`could not convert alertmanager config.original yaml: ${e}`);
+          setInProgress(false);
+          return;
+        }
+        setAlertManagerGlobals(origAlertMngrConfig.global);
+        setErrorMsg('');
+        setInProgress(false);
+      });
+      return;
+    }
+  }
+
+  return inProgress ? (
+    <LoadingBox className="loading-box loading-box__loading" />
+  ) : !_.isEmpty(errorMsg) ? (
+    <LoadError
+      message={errorMsg}
+      label="Alertmanager Globals"
+      className="loading-box loading-box__errored"
+      canRetry={false}
+    />
+  ) : (
     <StatusBox {...obj}>
-      <ReceiverBaseForm {...props} obj={obj.data} />
+      <ReceiverBaseForm {...props} obj={obj.data} alertManagerGlobals={alertManagerGlobals} />
     </StatusBox>
   );
 });
@@ -379,4 +437,5 @@ type ReceiverBaseFormProps = {
   titleVerb: string;
   saveButtonText: string;
   editReceiverNamed?: string;
+  alertManagerGlobals?: object;
 };
