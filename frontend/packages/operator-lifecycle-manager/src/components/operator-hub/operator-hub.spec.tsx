@@ -7,7 +7,7 @@ import {
   VerticalTabsTab,
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
-import { Modal } from 'patternfly-react';
+import { Modal } from '@patternfly/react-core';
 import { MarkdownView } from '../clusterserviceversion';
 import {
   operatorHubListPageProps,
@@ -116,7 +116,7 @@ describe('OperatorHubList', () => {
       ),
     ).toBe(true);
 
-    const closeButton = details.find(Modal.CloseButton);
+    const closeButton = details.find(Modal).find('button');
     closeButton.simulate('click');
     const noShowDetails = wrapper.find(OperatorHubItemDetails);
 

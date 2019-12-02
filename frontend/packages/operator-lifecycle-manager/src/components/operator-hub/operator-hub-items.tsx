@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import LazyLoad from 'react-lazyload';
-import { Modal } from 'patternfly-react';
-import { CatalogTile } from '@patternfly/react-catalog-view-extension';
+import { Button, Modal } from '@patternfly/react-core';
+import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY,
   GreenCheckCircleIcon,
@@ -10,6 +11,7 @@ import {
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
+import { SubscriptionModel } from '../../models';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
@@ -318,6 +320,13 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     );
   };
 
+  const createLink =
+    detailsItem &&
+    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}`;
+  const uninstallLink = () =>
+    detailsItem &&
+    `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+
   return (
     <>
       <TileViewPage
@@ -331,20 +340,45 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         renderTile={renderTile}
         emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
       />
-      <Modal
-        show={!!detailsItem && showDetails}
-        onHide={closeOverlay}
-        bsSize="lg"
-        className="co-catalog-page__overlay right-side-modal-pf"
-      >
-        {detailsItem && (
-          <OperatorHubItemDetails
-            namespace={props.namespace}
-            item={detailsItem}
-            closeOverlay={closeOverlay}
-          />
-        )}
-      </Modal>
+      {detailsItem && (
+        <Modal
+          className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          header={
+            <>
+              <CatalogItemHeader
+                iconClass={detailsItem.iconClass}
+                iconImg={detailsItem.imgUrl}
+                title={detailsItem.name}
+                vendor={`${detailsItem.version} provided by ${detailsItem.provider}`}
+              />
+              <div className="co-catalog-page__button">
+                {!detailsItem.installed ? (
+                  <Link
+                    className="pf-c-button pf-m-primary co-catalog-page__overlay-create"
+                    to={createLink}
+                  >
+                    Install
+                  </Link>
+                ) : (
+                  <Button
+                    className="co-catalog-page__overlay-create"
+                    isDisabled={!detailsItem.installed}
+                    onClick={() => history.push(uninstallLink())}
+                    variant="secondary"
+                  >
+                    Uninstall
+                  </Button>
+                )}
+              </div>
+            </>
+          }
+          isOpen={!!detailsItem && showDetails}
+          onClose={closeOverlay}
+          title={detailsItem.name}
+        >
+          <OperatorHubItemDetails namespace={props.namespace} item={detailsItem} />
+        </Modal>
+      )}
     </>
   );
 };

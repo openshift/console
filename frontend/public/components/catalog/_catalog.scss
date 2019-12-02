@@ -6,7 +6,7 @@ $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
-.catalog-tile-pf-title, .properties-side-panel-pf-property-value {
+.catalog-tile-pf-title {
   @include co-break-word;
 }
 
@@ -104,6 +104,10 @@ $co-modal-ignore-warning-icon-width: 30px;
     margin: 0 ($grid-gutter-width / 2) 0 $grid-gutter-width;
   }
 
+  &__button {
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+  }
+
   &__content {
     flex: 1 1 auto;
   }
@@ -140,6 +144,10 @@ $co-modal-ignore-warning-icon-width: 30px;
     margin: 0 0 20px 30px;
   }
 
+  &__hint {
+    margin: 0 0 var(--pf-global--spacer--md) 0;
+  }
+
   &__input {
     margin: 0 10px 20px 30px;
     width: auto !important;
@@ -165,8 +173,10 @@ $co-modal-ignore-warning-icon-width: 30px;
 
   // Enable scrolling on the modal
   &__overlay {
+    border: 0 !important; // Collapse default PF4 modal border-width
+
     .modal-body .co-hint-block {
-        margin-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     .properties-side-panel-pf {
@@ -174,18 +184,52 @@ $co-modal-ignore-warning-icon-width: 30px;
     }
   }
 
+  &__overlay--right {
+    position: fixed !important;
+    bottom: 0;
+    padding: 0 !important;
+    right: 0;
+    top: 4.75rem; // --pf-c-page__header--MinHeight
+
+    .catalog-item-header-pf {
+      padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+    }
+
+    .pf-c-modal-box__body {
+      // Required to position scroll shadows correctly on Chrome
+      display: flex;
+      flex-direction: column;
+      margin: 0 !important;
+    }
+
+    .pf-c-title {
+      margin-right: 0 !important;
+    }
+
+    .modal-body-inner-shadow-covers {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    h1 {
+      white-space: normal;
+    }
+  }
+
   &__overlay-body {
-    margin: 15px 0 0;
+    margin: 0;
+    padding-left: var(--pf-global--spacer--lg);
+    padding-right: var(--pf-global--spacer--lg);
+    padding-top: var(--pf-global--spacer--md);
     @media(min-width: $screen-sm-min) {
       display: flex;
     }
   }
 
   &__overlay-create {
-    margin-bottom: 20px;
+    display: inline-flex !important;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    width: 100%;
   }
 
   &__overlay-description {
@@ -205,6 +249,18 @@ $co-modal-ignore-warning-icon-width: 30px;
   &__tabs {
     flex: 0 0 220px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
+  }
+}
+
+@media screen and (min-width: $screen-sm) {
+  .pf-c-modal-box.co-catalog-page__overlay {
+    width: 600px;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .pf-c-modal-box.co-catalog-page__overlay {
+    width: 900px;
   }
 }
 
