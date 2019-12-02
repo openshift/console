@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { ResourceDropdown } from '@console/shared';
 import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineResourceModel } from '../../models';
-import ResourceDropdown from './ResourceDropdown';
 
 export interface PipelineResourceDropdownProps {
   dropDownClassName?: string;

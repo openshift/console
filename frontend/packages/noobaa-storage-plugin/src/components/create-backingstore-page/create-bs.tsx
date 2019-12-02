@@ -29,11 +29,10 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
-import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
+import { ResourceDropdown, getAPIVersion, getName } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { getAPIVersion, getName } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { NooBaaBackingStoreModel } from '../../models';

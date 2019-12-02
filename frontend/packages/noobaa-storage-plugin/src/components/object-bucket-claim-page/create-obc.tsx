@@ -24,8 +24,8 @@ import {
 } from '@console/noobaa-storage-plugin/src/models';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { StorageClass } from '@console/internal/components/storage-class-form';
-import { filterScOnProvisioner, getName } from '@console/shared';
-import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
+import { filterScOnProvisioner, getName , ResourceDropdown } from '@console/shared';
+
 import { commonReducer, defaultState } from '../object-bucket-page/state';
 import './create-obc.scss';
 
