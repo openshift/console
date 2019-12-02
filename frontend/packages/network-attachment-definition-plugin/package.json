@@ -4,12 +4,18 @@
   "description": "Network attachment definition add-on",
   "private": true,
   "main": "src/index.ts",
+  "scripts": {
+    "lint": "yarn --cwd ../.. eslint packages/network-attachment-definition-plugin"
+  },
   "dependencies": {
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
     "@console/internal": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.ts",
+    "integrationTestSuites": {
+      "network-attachment-definition": ["integration-tests/**/*.scenario.ts"]
+    }
   }
 }
