@@ -14,9 +14,17 @@ import {
   useAccessReview,
 } from './index';
 import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
+import { humanizeNumberSI } from './units';
 
-export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) =>
-  `${i || 0} ${i === 1 ? singular : plural}`;
+export const pluralize = (
+  i: number,
+  singular: string,
+  plural: string = `${singular}s`,
+  humanize?: boolean,
+) => {
+  const count = i || 0;
+  return `${humanize ? humanizeNumberSI(count).string : count} ${i === 1 ? singular : plural}`;
+};
 
 export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
   function DetailsPage(props: T) {

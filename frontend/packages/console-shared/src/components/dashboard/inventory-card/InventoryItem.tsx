@@ -12,7 +12,7 @@ import {
   AccordionContent,
 } from '@patternfly/react-core';
 import * as plugins from '@console/internal/plugins';
-import { pluralize } from '@console/internal/components/utils';
+import { pluralize, humanizeNumberSI } from '@console/internal/components/utils';
 import { isDashboardsInventoryItemGroup } from '@console/plugin-sdk';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
@@ -72,7 +72,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   }) => {
     const [expanded, setExpanded] = React.useState(false);
     const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
-    const titleMessage = isLoading || error ? title : pluralize(count, title, titlePlural);
+    const titleMessage = isLoading || error ? title : pluralize(count, title, titlePlural, true);
     return ExpandedComponent ? (
       <Accordion
         asDefinitionList={false}
@@ -138,7 +138,7 @@ export const Status = connectToFlags<StatusProps>(
   return (
     <div className="co-inventory-card__status">
       <span className="co-dashboard-icon">{groupIcon}</span>
-      <span className="co-inventory-card__status-text">{count}</span>
+      <span className="co-inventory-card__status-text">{humanizeNumberSI(count).string}</span>
     </div>
   );
 });
@@ -160,7 +160,7 @@ const StatusLink = connectToFlags<StatusLinkProps>(
     <div className="co-inventory-card__status">
       <Link to={to} style={{ textDecoration: 'none' }}>
         <span className="co-dashboard-icon">{groupIcon}</span>
-        <span className="co-inventory-card__status-text">{count}</span>
+        <span className="co-inventory-card__status-text">{humanizeNumberSI(count).string}</span>
       </Link>
     </div>
   );
