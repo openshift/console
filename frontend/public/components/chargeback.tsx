@@ -38,7 +38,7 @@ import {
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
 export const ScheduledReportReference: GroupVersionKind = 'metering.openshift.io~ScheduledReport';
-export const ReportGenerationQueryReference: GroupVersionKind = 'metering.openshift.io~v1alpha1~ReportQuery';
+export const ReportGenerationQueryReference: GroupVersionKind = 'metering.openshift.io~v1~ReportQuery';
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},
