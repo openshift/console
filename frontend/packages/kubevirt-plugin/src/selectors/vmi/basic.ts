@@ -19,3 +19,8 @@ export const getVMIConditionsByType = (
 
 export const getVmiTemplateLabels = (vmi: VMIKind): { [key: string]: string } =>
   (_.get(vmi, 'vmi.spec.template.metadata') && vmi.spec.template.metadata.labels) || {};
+
+export const isVMIRunning = (vmi: VMIKind) => vmi && vmi.status && vmi.status.phase === 'Running';
+
+export const getVMIInterfaces = (vmi: VMIKind) =>
+  (vmi && vmi.status && vmi.status.interfaces) || [];
