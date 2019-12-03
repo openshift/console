@@ -3,7 +3,7 @@ import * as Immutable from 'immutable';
 
 import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
-import { FLAGS } from '../../public/const';
+import { FLAGS } from '@console/shared';
 import { featureReducer, defaults, connectToFlags } from '../../public/reducers/features';
 
 describe('featureReducer', () => {

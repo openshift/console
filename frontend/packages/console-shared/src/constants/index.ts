@@ -1,4 +1,4 @@
 export * from './pod';
 export * from './resource';
-
-export const DASH = '-';
+export * from './common';
+export * from './ui';

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { FlagsObject, WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
@@ -14,6 +13,7 @@ import {
 import * as plugins from '@console/internal/plugins';
 import { pluralize } from '@console/internal/components/utils';
 import { isDashboardsInventoryItemGroup } from '@console/plugin-sdk';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
 

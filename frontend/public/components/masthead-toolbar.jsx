@@ -20,9 +20,9 @@ import {
 } from '@patternfly/react-core';
 import classNames from 'classnames';
 
+import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
-import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
 import { getOCMLink } from '../module/k8s';
 import { history, Firehose } from './utils';
@@ -34,7 +34,6 @@ import {
   getReportBugLink,
 } from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (

@@ -10,6 +10,7 @@ import {
   UnknownIcon,
 } from '@patternfly/react-icons';
 
+import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
@@ -22,12 +23,10 @@ import {
   FieldLevelHelp,
 } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
-import { FLAGS } from '../const';
 import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
 const resourceQuotaMenuActions = [

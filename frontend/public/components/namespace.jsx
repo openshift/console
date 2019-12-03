@@ -8,7 +8,14 @@ import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
-import { Status, getRequester } from '@console/shared';
+import {
+  Status,
+  getRequester,
+  ALL_NAMESPACES_KEY,
+  KEYBOARD_SHORTCUTS,
+  NAMESPACE_LOCAL_STORAGE_KEY,
+  FLAGS,
+} from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
@@ -46,12 +53,6 @@ import {
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
-import {
-  ALL_NAMESPACES_KEY,
-  KEYBOARD_SHORTCUTS,
-  NAMESPACE_LOCAL_STORAGE_KEY,
-  FLAGS,
-} from '../const';
 import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';

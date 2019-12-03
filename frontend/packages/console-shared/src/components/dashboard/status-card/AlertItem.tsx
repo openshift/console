@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { alertURL, Alert } from '@console/internal/components/monitoring';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { getAlertSeverity, getAlertMessage, getAlertDescription, getAlertTime } from './utils';
 
 const getSeverityIcon = (severity: string) => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Redirect } from 'react-router';
-import { ALL_NAMESPACES_KEY } from '@console/internal/const';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { AllProjectsDetailList } from '../AllProjectsDetailList';
 
 describe('AllProjectsDetailList', () => {

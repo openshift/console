@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { FLAGS } from '../const';
+import { FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { Firehose, FirehoseResult } from './utils';
 import { referenceForModel } from '../module/k8s';

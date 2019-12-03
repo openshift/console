@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '../const';
+import { FLAGS } from '@console/shared';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { coFetchJSON } from '../co-fetch';

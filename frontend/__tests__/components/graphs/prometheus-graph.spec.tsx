@@ -3,10 +3,10 @@ import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 
+import { FLAGS } from '@console/shared';
 import { setFlag } from '@console/internal/actions/features';
 import * as UIActions from '@console/internal/actions/ui';
 import { history } from '@console/internal/components/utils/router';
-import { FLAGS } from '@console/internal/const';
 import {
   PrometheusGraph,
   PrometheusGraphLink,

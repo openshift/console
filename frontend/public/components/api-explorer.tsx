@@ -9,7 +9,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
-import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {

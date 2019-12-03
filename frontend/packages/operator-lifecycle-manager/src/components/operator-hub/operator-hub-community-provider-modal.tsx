@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/internal/const';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import {
   createModalLauncher,
   ModalTitle,

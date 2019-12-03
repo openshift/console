@@ -19,7 +19,7 @@ import {
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
-import { FLAGS } from '@console/internal/const';
+import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';

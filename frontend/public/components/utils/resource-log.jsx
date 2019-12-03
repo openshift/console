@@ -5,16 +5,15 @@ import { saveAs } from 'file-saver';
 import { Alert, AlertActionLink, Button } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
 import { CompressIcon, ExpandIcon, DownloadIcon } from '@patternfly/react-icons';
-
-import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import * as classNames from 'classnames';
+import { FLAGS } from '@console/shared/src/constants';
+import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { FLAGS } from '../../const';
 import { connectToFlags } from '../../reducers/features';
 
 export const STREAM_EOF = 'eof';

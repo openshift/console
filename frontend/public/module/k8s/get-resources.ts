@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 
 import { coFetchJSON } from '../../co-fetch';
 import { K8sKind, K8sVerb } from '../../module/k8s';
-import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '../../const';
+import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 
 const ADMIN_RESOURCES = new Set([
   'roles',

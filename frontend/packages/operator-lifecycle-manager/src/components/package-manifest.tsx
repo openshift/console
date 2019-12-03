@@ -7,7 +7,7 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { StatusBox, MsgBox } from '@console/internal/components/utils';
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '@console/internal/const';
+import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '@console/shared';
 import {
   PackageManifestModel,
   SubscriptionModel,

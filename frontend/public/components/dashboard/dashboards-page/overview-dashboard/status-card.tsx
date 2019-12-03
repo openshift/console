@@ -10,6 +10,7 @@ import {
 } from '@console/plugin-sdk';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
+import { FLAGS } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -43,7 +44,6 @@ import {
 import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
-import { FLAGS } from '../../../../const';
 
 const getSubsystems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
   plugins.registry

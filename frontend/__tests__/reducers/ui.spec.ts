@@ -1,6 +1,6 @@
 import * as Immutable from 'immutable';
 import uiReducer, { getActivePerspective, getDefaultPerspective } from '../../public/reducers/ui';
-import { LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '../../public/const';
+import { LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '@console/shared';
 import * as UIActions from '../../public/actions/ui';
 import { RootState } from '@console/internal/redux';
 import * as plugins from '../../public/plugins';

@@ -2,6 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { getInfrastructurePlatform } from '@console/shared/src/selectors';
+import { FLAGS } from '@console/shared/src/constants';
 import {
   GroupModel,
   InfrastructureModel,
@@ -14,7 +15,6 @@ import { coFetchJSON } from '../co-fetch';
 import { MonitoringRoutes } from '../reducers/monitoring';
 import { setMonitoringURL } from './monitoring';
 import { setClusterID, setConsoleLinks, setCreateProjectMessage, setUser } from './ui';
-import { FLAGS } from '../const';
 import * as plugins from '../plugins';
 
 export enum ActionType {

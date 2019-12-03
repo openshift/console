@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '../const';
+import { FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace, DASH, SecondaryStatus } from '@console/shared';
+import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';

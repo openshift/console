@@ -4,7 +4,7 @@ import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createResources } from './deployImage-submit-utils';

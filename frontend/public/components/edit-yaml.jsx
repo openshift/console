@@ -12,12 +12,17 @@ import {
   global_BackgroundColor_300 as lineNumberForeground,
   global_BackgroundColor_dark_100 as editorBackground,
 } from '@patternfly/react-tokens';
-import { getBadgeFromType, Shortcut, ShortcutTable } from '@console/shared';
+import {
+  FLAGS,
+  ALL_NAMESPACES_KEY,
+  getBadgeFromType,
+  Shortcut,
+  ShortcutTable,
+} from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
 import { errorModal } from './modals';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
-import { FLAGS, ALL_NAMESPACES_KEY } from '../const';
 import {
   referenceForModel,
   k8sCreate,

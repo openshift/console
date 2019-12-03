@@ -9,6 +9,7 @@ import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Alert, Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core';
 import * as UIActions from '@console/internal/actions/ui';
 import {
+  ALL_NAMESPACES_KEY,
   ErrorStatus,
   getName,
   ProgressStatus,
@@ -25,7 +26,6 @@ import {
   TableData,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { withFallback } from '@console/internal/components/utils/error-boundary';
 import {
   modelFor,

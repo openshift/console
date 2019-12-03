@@ -5,16 +5,16 @@ import * as _ from 'lodash-es';
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
 import { history } from '../components/utils/router';
+import { OverviewItem } from '@console/shared';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
-} from '../const';
+} from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { OverviewItem } from '@console/shared';
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',

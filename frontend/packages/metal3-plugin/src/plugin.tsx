@@ -16,7 +16,7 @@ import {
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
-import { FLAGS } from '@console/internal/const';
+import { FLAGS } from '@console/shared/src/constants';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
 import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';

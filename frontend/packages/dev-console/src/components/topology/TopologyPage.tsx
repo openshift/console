@@ -5,7 +5,7 @@ import { matchPath, match as RMatch, Link } from 'react-router-dom';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { StatusBox, Firehose, HintBlock, AsyncComponent } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';

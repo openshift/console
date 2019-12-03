@@ -8,7 +8,7 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
-} from '../const';
+} from '@console/shared/src/constants';
 import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';

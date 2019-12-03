@@ -6,7 +6,7 @@ import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources } from './import-submit-utils';

@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY, LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '../../public/const';
+import { ALL_NAMESPACES_KEY, LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '@console/shared';
 
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';

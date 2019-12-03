@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import { history } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/internal/const';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { ProjectsDetailsPage } from '@console/internal/components/namespace';
 import { ProjectModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';

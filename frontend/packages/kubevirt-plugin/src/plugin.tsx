@@ -17,7 +17,7 @@ import {
   DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { FLAGS } from '@console/internal/const';
+import { FLAGS } from '@console/shared/src/constants';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import * as models from './models';
