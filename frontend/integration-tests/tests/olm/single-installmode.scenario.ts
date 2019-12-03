@@ -2,7 +2,7 @@ import { browser, $, $$, element, ExpectedConditions as until, by } from 'protra
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
 
-import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors, retry } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
@@ -58,9 +58,10 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it('displays subscription creation form for selected Operator', async() => {
+    await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
-    await catalogPageView.catalogTileFor('Prometheus Operator').click();
+    await retry(() => catalogPageView.catalogTileFor('Prometheus Operator').click());
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
@@ -88,7 +89,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await catalogPageView.clickFilterCheckbox('providerType-custom');
     await catalogPageView.clickFilterCheckbox('installState-installed');
 
-    expect(catalogPageView.catalogTileFor('Prometheus Operator').isDisplayed()).toBe(true);
+    const isDisplayed = retry(() => catalogPageView.catalogTileFor('Prometheus Operator').isDisplayed());
+    expect(isDisplayed).toBe(true);
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async() => {
@@ -122,7 +124,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays metadata about Prometheus Operator in the "Overview" section', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await crudView.rowForOperator('Prometheus Operator').$('.co-clusterserviceversion-logo').click();
+    await retry(() => crudView.rowForOperator('Prometheus Operator').$('.co-clusterserviceversion-logo').click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
@@ -151,11 +153,11 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName('example')));
 
-    expect(crudView.rowForName('example').getText()).toContain('Prometheus');
+    expect(retry(() => crudView.rowForName('example').getText())).toContain('Prometheus');
   });
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async() => {
-    await crudView.rowForName('example').element(by.linkText('example')).click();
+    await retry(() => crudView.rowForName('example').element(by.linkText('example')).click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
@@ -174,6 +176,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 
+    await crudView.rowFiltersPresent();
     prometheusResources.forEach(kind => {
       expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
     });
