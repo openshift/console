@@ -33,13 +33,6 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     cniVersion: '0.3.1',
   };
 
-  let ipam = {};
-  try {
-    ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
-  } catch (e) {
-    console.error(e); // eslint-disable-line no-console
-  }
-
   if (networkType === 'cnv-bridge') {
     const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
     config.plugins = [
@@ -47,11 +40,16 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
         type: 'cnv-bridge',
         bridge: _.get(typeParamsData, 'bridge.value', ''),
         vlan: _.isEmpty(vlan) ? undefined : vlan,
-        ipam,
       },
       { type: 'cnv-tuning' },
     ];
   } else if (networkType === 'sriov') {
+    let ipam = {};
+    try {
+      ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
+    } catch (e) {
+      console.error(e); // eslint-disable-line no-console
+    }
     config.ipam = ipam;
   }
 
