@@ -36,10 +36,6 @@ export const mockPipelineRun = {
         },
       },
     ],
-    serviceAccount: '',
-    trigger: {
-      type: 'manual',
-    },
   },
   status: {
     completionTime: '2019-06-08T18:27:28Z',

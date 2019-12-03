@@ -69,7 +69,7 @@ export interface Pipeline extends K8sResourceKind {
     params?: PipelineParam[];
     resources?: PipelineResource[];
     tasks: PipelineTask[];
-    serviceAccount?: string;
+    serviceAccountName?: string;
   };
 }
 
@@ -78,7 +78,6 @@ export interface PipelineRun extends K8sResourceKind {
     pipelineRef: { name: string };
     params?: PipelineRunParam[];
     resources?: PipelineResource[];
-    serviceAccount?: string;
     serviceAccountName?: string;
     // Odd status value that only appears in a single case - cancelling a pipeline
     status?: 'PipelineRunCancelled';
