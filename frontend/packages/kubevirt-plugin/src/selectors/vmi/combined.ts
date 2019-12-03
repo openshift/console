@@ -37,7 +37,7 @@ export const getRdpConnectionDetails = (
   vmi: VMIKind,
   rdpService: K8sResourceKind,
   launcherPod: PodKind,
-) => {
+): RDPConnectionDetailsType => {
   if (!vmi || !rdpService) {
     return undefined;
   }
@@ -48,7 +48,9 @@ export const getRdpConnectionDetails = (
   };
 };
 
-export const getSerialConsoleConnectionDetails = (vmi: VMIKind) => {
+export const getSerialConsoleConnectionDetails = (
+  vmi: VMIKind,
+): SerialConsoleConnectionDetailsType => {
   if (!vmi) {
     return undefined;
   }
@@ -62,7 +64,7 @@ export const getSerialConsoleConnectionDetails = (vmi: VMIKind) => {
   };
 };
 
-export const getVncConnectionDetails = (vmi: VMIKind) => {
+export const getVncConnectionDetails = (vmi: VMIKind): VNCConnectionDetailsType => {
   if (!vmi) {
     return undefined;
   }
@@ -85,4 +87,37 @@ export const getVncConnectionDetails = (vmi: VMIKind) => {
     },
     */
   };
+};
+
+const getVMIStatusConditions = (vmi: VMIKind) => (vmi && vmi.status && vmi.status.conditions) || [];
+
+export const isGuestAgentConnected = (vmi: VMIKind): boolean =>
+  getVMIStatusConditions(vmi).some(
+    (condition) => condition.type === 'AgentConnected' && condition.status === 'True',
+  );
+
+export type VNCConnectionDetailsType = {
+  encrypt: boolean;
+  host: string;
+  port: string | number;
+  path: string;
+  manual: VNCConnectionDetailsManualType; // so far not used, kept for compatibility and future extension when VNC can be accessed directly without k8s API proxy
+};
+
+export type SerialConsoleConnectionDetailsType = {
+  vmi: VMIKind;
+  host: string;
+  path: string;
+};
+
+export type VNCConnectionDetailsManualType = {};
+
+export type RDPConnectionDetailsManualType = {
+  address: string;
+  port: number | string;
+};
+
+export type RDPConnectionDetailsType = {
+  vmi: VMIKind;
+  manual: RDPConnectionDetailsManualType;
 };
