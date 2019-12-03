@@ -6,6 +6,7 @@ import {
   getTrafficTopologyEdgeItems,
   NodeType,
   filterRevisionsBaseOnTrafficStatus,
+  getParentResource,
 } from '../knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
@@ -22,7 +23,23 @@ describe('knative topology utils', () => {
     expect(knResource.revisions).toBeDefined();
     expect(knResource.revisions).toHaveLength(1);
   });
-
+  it('expect getParentResource to return parent resources', () => {
+    const configuration = getParentResource(
+      MockKnativeResources.revisions.data[0],
+      MockKnativeResources.configurations.data,
+    );
+    const revision = getParentResource(configuration, MockKnativeResources.services.data);
+    expect(configuration).toBeDefined();
+    expect(configuration.metadata.uid).toBe('1317f615-9636-11e9-b134-06a61d886b62');
+    expect(revision).toBeDefined();
+    expect(revision.metadata.uid).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
+  });
+  it('expect getParentResource to return parent resources', () => {
+    const configuration = getParentResource(undefined, MockKnativeResources.configurations.data);
+    const revision = getParentResource(undefined, MockKnativeResources.services.data);
+    expect(configuration).not.toBeDefined();
+    expect(revision).not.toBeDefined();
+  });
   it('expect getKnativeTopologyNodeItems to return node data for service', () => {
     const knServiceNode = getKnativeTopologyNodeItems(
       MockKnativeResources.ksservices.data[0],

@@ -97,13 +97,17 @@ class ComponentFactory {
             ),
           );
         case TYPE_KNATIVE_REVISION:
-          return withDragNode(nodeDragSourceSpec(type, false))(
-            withSelection(false, true)(
-              withContextMenu(
-                nodeContextMenu,
-                document.getElementById('modal-container'),
-                'odc2-topology-context-menu',
-              )(RevisionNode),
+          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+            withDndDrop<any>(graphWorkloadDropTargetSpec)(
+              withDragNode(nodeDragSourceSpec(type, false))(
+                withSelection(false, true)(
+                  withContextMenu(
+                    nodeContextMenu,
+                    document.getElementById('modal-container'),
+                    'odc2-topology-context-menu',
+                  )(RevisionNode),
+                ),
+              ),
             ),
           );
         case TYPE_REVISION_TRAFFIC:

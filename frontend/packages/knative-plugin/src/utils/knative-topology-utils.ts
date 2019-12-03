@@ -20,11 +20,14 @@ import {
   TopologyDataObject,
 } from '@console/dev-console/src/components/topology/topology-types';
 import {
+  allowedResources,
   getTopologyGroupItems,
   createTopologyNodeData,
   getRoutesUrl,
   getEditURL,
   getTopologyNodeItem,
+  getTopologyEdgeItems,
+  filterBasedOnActiveApplication,
 } from '@console/dev-console/src/components/topology/topology-utils';
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel as knServiceModel } from '../models';
@@ -40,6 +43,48 @@ export enum EdgeType {
   Traffic = 'revision-traffic',
   EventSource = 'event-source-link',
 }
+/**
+ * fetch the parent resource from a resource
+ * @param resource
+ * @param resources
+ */
+export const getParentResource = (
+  resource: K8sResourceKind,
+  resources: K8sResourceKind[],
+): K8sResourceKind => {
+  const parentUids = _.map(
+    _.get(resource, ['metadata', 'ownerReferences'], []),
+    (owner) => owner.uid,
+  );
+  const [resourcesParent] = _.filter(resources, ({ metadata: { uid } }) =>
+    parentUids.includes(uid),
+  );
+  return resourcesParent;
+};
+
+/**
+ * Filters revision based on active application
+ * @param revisions
+ * @param resources
+ * @param application
+ */
+export const filterRevisionsByActiveApplication = (
+  revisions: K8sResourceKind[],
+  resources: TopologyDataResources,
+  application: string,
+) => {
+  const filteredRevisions = [];
+  _.forEach(revisions, (revision) => {
+    const configuration = getParentResource(revision, resources.configurations.data);
+    const service = getParentResource(configuration, resources.ksservices.data);
+    const hasTraffic = _.find(service.status.traffic, { revisionName: revision.metadata.name });
+    const isServicePartofGroup = filterBasedOnActiveApplication([service], application).length > 0;
+    if (hasTraffic && isServicePartofGroup) {
+      filteredRevisions.push(revision);
+    }
+  });
+  return filteredRevisions;
+};
 
 /**
  * Forms data with respective revisions, configurations, routes based on kntaive service
@@ -280,6 +325,14 @@ export const tranformKnNodeData = (
   let edgesData = [];
   let groupsData = [];
   const dataToShowOnNodes = {};
+  const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
+  const allResources = _.flatten(
+    allowedResources.map((resourceKind) => {
+      return resources[resourceKind]
+        ? filterBasedOnActiveApplication(resources[resourceKind].data, application)
+        : [];
+    }),
+  );
   _.forEach(knResourcesData, (res) => {
     const { uid } = res.metadata;
     if (
@@ -310,6 +363,10 @@ export const tranformKnNodeData = (
             cheURL,
             type,
           );
+          edgesData = [
+            ...edgesData,
+            ...getTopologyEdgeItems(res, allResources, serviceBindingRequests, application),
+          ];
           groupsData = [...topologyGraphAndNodeData.graph.groups];
           break;
         }

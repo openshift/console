@@ -7,7 +7,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ServiceBindingRequestModel } from '../../models';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
-import { transformTopologyData } from './topology-utils';
+import { allowedResources, transformTopologyData } from './topology-utils';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -36,8 +36,6 @@ export interface TopologyDataControllerProps {
   serviceBinding: boolean;
   resourceList: plugins.OverviewCRD[];
 }
-
-const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
 const Controller: React.FC<ControllerProps> = React.memo(
   ({ render, application, cheURL, resources, loaded, loadError, utils, serviceBinding }) =>
