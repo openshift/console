@@ -3,30 +3,27 @@
   "env": {
     "browser": true,
     "es6": true,
-    "jasmine": true,
+    "jasmine": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:react/recommended",
-    "plugin:console/prettier",
+    "plugin:console/json",
+    "plugin:console/prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
     "comment": true,
     "ecmaFeatures": {
-      "jsx": true,
+      "jsx": true
     },
     "ecmaVersion": 2017,
-    "sourceType": "module",
+    "sourceType": "module"
   },
-  "plugins": [
-    "react",
-    "react-hooks",
-    "@typescript-eslint",
-  ],
+  "plugins": ["react", "react-hooks", "@typescript-eslint"],
   "rules": {
     "camelcase": 2,
     "consistent-return": 0,
@@ -34,7 +31,7 @@
     "curly": [2, "all"],
     "default-case": [2],
     "dot-notation": [2],
-    "no-multiple-empty-lines": [2, {"max": 2, "maxEOF": 0}],
+    "no-multiple-empty-lines": [2, { "max": 2, "maxEOF": 0 }],
     "eqeqeq": [2, "allow-null"],
     "guard-for-in": 2,
     "import/no-unresolved": ["error"],
@@ -50,11 +47,14 @@
     "no-irregular-whitespace": ["error"],
     "no-shadow": ["error"],
     "no-underscore-dangle": 0,
-    "@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "React", "args": "after-used"}],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "varsIgnorePattern": "React", "args": "after-used" }
+    ],
     "@typescript-eslint/no-use-before-define": 2,
     "no-var": 2,
     "object-shorthand": ["error", "properties"],
-    "prefer-const": ["error", {"destructuring": "all"}],
+    "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-template": 2,
     "radix": 2,
     "react/jsx-fragments": "error",
@@ -64,17 +64,17 @@
     "react/no-string-refs": 1,
     "react/no-unknown-property": "error",
     "react/prop-types": 0,
-    "react/self-closing-comp": ["error", {"component": true, "html": false}],
+    "react/self-closing-comp": ["error", { "component": true, "html": false }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/display-name": 0,
-    "react/no-unescaped-entities": 0,
+    "react/no-unescaped-entities": 0
   },
   "settings": {
     "import/extensions": [".js", ".jsx"],
-    "import/resolver": {"node": {"extensions": [".js", ".jsx", ".ts", ".tsx"]}},
+    "import/resolver": { "node": { "extensions": [".js", ".jsx", ".ts", ".tsx"] } },
     "react": {
-      "version": "detect",
-    },
+      "version": "detect"
+    }
   }
 }

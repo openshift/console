@@ -15,6 +15,9 @@ module.exports = {
     jest: require('./lib/config/jest'),
     node: require('./lib/config/node'),
 
+    // Add JSON linting (optional)
+    json: require('./lib/config/json'),
+
     // Prettier must go last (optional)
     prettier: require('./lib/config/prettier'),
 
@@ -27,6 +30,7 @@ module.exports = {
         'plugin:console/typescript',
         // TODO enable when we stop using jest with jasmine types
         // 'plugin:console/jest',
+        'plugin:console/json',
         'plugin:console/prettier',
       ],
       rules: {
@@ -43,6 +47,7 @@ module.exports = {
         'plugin:console/node',
         // TODO enable when we stop using jest with jasmine types
         // 'plugin:console/jest',
+        'plugin:console/json',
         'plugin:console/prettier',
       ],
       rules: {
