@@ -47,7 +47,7 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    subresource: 'instantiate',
+    subresource: 'clone',
     name: build.metadata.name,
     namespace: build.metadata.namespace,
     verb: 'create',
