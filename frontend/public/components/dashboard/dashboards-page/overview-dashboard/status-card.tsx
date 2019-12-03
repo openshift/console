@@ -13,6 +13,7 @@ import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
@@ -292,6 +293,7 @@ export const StatusCard = connect(mapStateToProps)(
       <DashboardCard>
         <DashboardCardHeader>
           <DashboardCardTitle>Status</DashboardCardTitle>
+          <DashboardCardLink to="monitoring/alerts">View alerts</DashboardCardLink>
         </DashboardCardHeader>
         <DashboardCardBody>
           <HealthBody>
