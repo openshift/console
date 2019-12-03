@@ -244,7 +244,9 @@ export const constructPipelineData = {
   pipelineRuns: [
     specificPipelineData.pipelineRuns[DataState.SUCCESS],
     specificPipelineData.pipelineRuns[DataState.IN_PROGRESS],
-    specificPipelineData.pipelineRuns[DataState.CANCELLED],
+    specificPipelineData.pipelineRuns[DataState.CANCELLED1],
+    specificPipelineData.pipelineRuns[DataState.CANCELLED2],
+    specificPipelineData.pipelineRuns[DataState.CANCELLED3],
   ],
 };
 

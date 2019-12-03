@@ -19,6 +19,7 @@ interface StatusIconProps {
 export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
   switch (status) {
     case runStatus['In Progress']:
+    case runStatus.Running:
       return <SyncAltIcon {...props} className="fa-spin" />;
 
     case runStatus.Succeeded:
