@@ -84,6 +84,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
   let max: HumanizeResult;
   let firstBarMax: HumanizeResult;
   let secondBarMax: HumanizeResult;
+  let nonFormattedData: ChartDataPoint[];
   switch (dropdownValue) {
     case 'PROVIDERS_BY_IOPS':
     case 'ACCOUNTS_BY_IOPS':
@@ -156,9 +157,13 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       break;
     case 'PROVIDERS_BY_EGRESS':
       max = getMaxVal(result.egress, humanizeBinaryBytes);
-      chartData = [getChartData(result.egress, metric, humanizeBinaryBytes, max.unit)];
-      legendData = chartData[0].map((dataPoint) => ({
-        name: `${dataPoint.x} ${dataPoint.y} ${max.unit}`,
+      nonFormattedData = getChartData(result.egress, metric, humanizeBinaryBytes, max.unit);
+      chartData = nonFormattedData.length ? nonFormattedData.map((dataPoint) => [dataPoint]) : [[]];
+      legendData = nonFormattedData.map((dataPoint) => ({
+        name: `${dataPoint.x.replace(
+          /(^[A-Z]|_[A-Z])([A-Z]+)/g,
+          (_g, g1, g2) => g1 + g2.toLowerCase(),
+        )} ${dataPoint.y} ${max.unit}`,
       }));
       break;
     default:
@@ -174,7 +179,7 @@ export type ChartDataPoint = {
   name: string;
 };
 
-type ChartData = [ChartDataPoint[]] | [ChartDataPoint[], ChartDataPoint[]];
+type ChartData = ChartDataPoint[][];
 
 type LegendData = { name: string }[];
 
