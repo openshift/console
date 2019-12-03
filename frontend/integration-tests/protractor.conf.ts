@@ -1,4 +1,4 @@
-import { Config, browser, logging, $ } from 'protractor';
+import { browser, $ } from 'protractor';
 import { execSync } from 'child_process';
 import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
@@ -36,7 +36,7 @@ const junitReporter = new JUnitXmlReporter({
   savePath: `./${screenshotsDir}`,
   consolidateAll: true,
 });
-const browserLogs: logging.Entry[] = [];
+const browserLogs = [];
 
 const suite = (tests: string[]): string[] =>
   (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
@@ -121,7 +121,7 @@ const testSuites = {
   login: ['tests/login.scenario.ts'],
 };
 
-export const config: Config = {
+export const config = {
   framework: 'jasmine',
   directConnect: true,
   skipSourceMapSupport: true,

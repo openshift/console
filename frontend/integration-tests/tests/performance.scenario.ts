@@ -37,14 +37,14 @@ describe('Performance test', () => {
     await browser.get(`${appHost}/k8s/ns/openshift-console/configmaps`);
     await crudView.isLoaded();
 
-    const initialChunks = await browser.executeScript<{ name: string; size: number }[]>(() =>
+    const initialChunks = await browser.executeScript(() =>
       performance.getEntriesByType('resource').filter(({ name }) => name.endsWith('.js')),
     );
 
     await crudView.clickKebabAction('console-config', 'Edit Config Map');
     await yamlView.isLoaded();
 
-    const postChunks = await browser.executeScript<{ name: string; size: number }[]>(() =>
+    const postChunks = await browser.executeScript(() =>
       performance.getEntriesByType('resource').filter(({ name }) => name.endsWith('.js')),
     );
 
@@ -70,7 +70,7 @@ describe('Performance test', () => {
       await sidenavView.clickNavLink([route.section, route.name]);
       await browser.wait(crudView.untilNoLoadersPresent);
 
-      const routeChunk = await browser.executeScript<PerformanceEntry>(routeChunkFor, routeName);
+      const routeChunk = await browser.executeScript(routeChunkFor, routeName);
 
       expect(routeChunk).not.toBeNull();
       // FIXME: Really need to address this chunk size

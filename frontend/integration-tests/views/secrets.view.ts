@@ -1,12 +1,4 @@
-import {
-  $,
-  $$,
-  browser,
-  by,
-  ExpectedConditions as until,
-  element,
-  ElementFinder,
-} from 'protractor';
+import { $, $$, browser, by, ExpectedConditions as until, element } from 'protractor';
 import { Base64 } from 'js-base64';
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
@@ -73,7 +65,7 @@ export const clickRevealValues = async () => {
 export const encode = (username, password) => Base64.encode(`${username}:${password}`);
 
 export const createSecret = async (
-  linkElement: ElementFinder,
+  linkElement: any,
   ns: string,
   name: string,
   updateForm: Function,
