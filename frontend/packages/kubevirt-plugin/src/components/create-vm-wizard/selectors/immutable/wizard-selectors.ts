@@ -11,6 +11,7 @@ export const isStepPending = (stepData, stepId: VMWizardTab) =>
   !!iGetIn(stepData, [stepId, 'isPending']);
 export const hasStepAllRequiredFilled = (stepData, stepId: VMWizardTab) =>
   !!iGetIn(stepData, [stepId, 'hasAllRequiredFilled']);
+export const getStepError = (stepData, stepId: VMWizardTab) => iGetIn(stepData, [stepId, 'error']);
 
 export const isWizardEmpty = (stepData, isProviderImport) => {
   const networks = iGetIn(stepData, [VMWizardTab.NETWORKING, 'value']);

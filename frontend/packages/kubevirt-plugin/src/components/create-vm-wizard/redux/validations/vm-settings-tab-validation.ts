@@ -1,10 +1,11 @@
-import { isEmpty } from 'lodash';
+import * as _ from 'lodash';
 import { List } from 'immutable';
 import {
   asValidationObject,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared/src/utils/validation';
+import { assureEndsWith, joinGrammaticallyListOfItems, makeSentence } from '@console/shared/src';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import {
   hasVmSettingsChanged,
@@ -29,7 +30,7 @@ import {
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
 import { concatImmutableLists, iGet } from '../../../../utils/immutable';
-import { getFieldTitle } from '../../utils/vm-settings-tab-utils';
+import { getFieldReadableTitle, getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import {
   checkTabValidityChanged,
   iGetCommonData,
@@ -38,6 +39,8 @@ import {
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
 import { validatePositiveInteger } from '../../../../utils/validations/common';
+import { pluralize } from '../../../../utils/strings';
+import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state';
 import { getValidationUpdate } from './utils';
 
 const validateVm: VmSettingsValidator = (field, options) => {
@@ -144,9 +147,40 @@ export const validateVmSettings = (options: UpdateOptions) => {
 
   const update = getValidationUpdate(validationConfig, options, vmSettings, hasVmSettingsChanged);
 
-  if (!isEmpty(update)) {
+  if (!_.isEmpty(update)) {
     dispatch(vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, update));
   }
+};
+
+const describeFields = (describe: string, fields: string[]) => {
+  if (fields && fields.length > 0) {
+    const describedFields = _.compact(
+      fields
+        .sort((a, b) => {
+          const aValue = vmSettingsOrder[iGetFieldKey(a)];
+          const bValue = vmSettingsOrder[iGetFieldKey(b)];
+
+          if (bValue == null) {
+            return -1;
+          }
+
+          if (aValue == null) {
+            return 1;
+          }
+
+          return aValue - bValue;
+        })
+        .map((field) => getFieldReadableTitle(iGetFieldKey(field))),
+    );
+    return makeSentence(
+      `${assureEndsWith(describe, ' ')}the following ${pluralize(
+        fields.length,
+        'field',
+      )}: ${joinGrammaticallyListOfItems(describedFields)}.`,
+      false,
+    );
+  }
+  return null;
 };
 
 export const setVmSettingsTabValidity = (options: UpdateOptions) => {
@@ -155,25 +189,40 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
   const vmSettings = iGetVmSettings(state, id);
 
   // check if all required fields are defined
-  const hasAllRequiredFilled = vmSettings
-    .filter((field) => isFieldRequired(field) && !field.get('skipValidation'))
-    .every((field) => field.get('value'));
-  let isValid = hasAllRequiredFilled;
+  const emptyRequiredFields = vmSettings
+    .filter(
+      (field) => isFieldRequired(field) && !field.get('skipValidation') && !field.get('value'),
+    )
+    .toArray();
+  let error = describeFields('Please fill in', emptyRequiredFields);
+  const hasAllRequiredFilled = emptyRequiredFields.length === 0;
 
-  if (isValid) {
-    // check if all fields are valid
-    isValid = vmSettings.every(
-      (field) => field.getIn(['validation', 'type']) !== ValidationErrorType.Error,
-    );
+  // check if fields are valid
+  const invalidFields = vmSettings
+    .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
+    .toArray();
+  if (invalidFields.length > 0) {
+    error = describeFields('Please correct', invalidFields);
   }
+  const isValid = hasAllRequiredFilled && invalidFields.length === 0;
 
-  if (checkTabValidityChanged(state, id, VMWizardTab.VM_SETTINGS, isValid, hasAllRequiredFilled)) {
+  if (
+    checkTabValidityChanged(
+      state,
+      id,
+      VMWizardTab.VM_SETTINGS,
+      isValid,
+      hasAllRequiredFilled,
+      error,
+    )
+  ) {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
         id,
         VMWizardTab.VM_SETTINGS,
         isValid,
         hasAllRequiredFilled,
+        error,
       ),
     );
   }

@@ -3,11 +3,28 @@ import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
 import { asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getProviders } from '../../provider-definitions';
+import { InitialStepStateGetter, VMSettings } from './types';
 
-export const getInitialVmSettings = (common: CommonData) => {
+export const vmSettingsOrder = {
+  [VMSettingsField.PROVIDER]: 0,
+  [VMSettingsField.USER_TEMPLATE]: 1,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 2,
+  [VMSettingsField.CONTAINER_IMAGE]: 3,
+  [VMSettingsField.IMAGE_URL]: 4,
+  [VMSettingsField.OPERATING_SYSTEM]: 5,
+  [VMSettingsField.FLAVOR]: 6,
+  [VMSettingsField.MEMORY]: 7,
+  [VMSettingsField.CPU]: 8,
+  [VMSettingsField.WORKLOAD_PROFILE]: 9,
+  [VMSettingsField.NAME]: 10,
+  [VMSettingsField.DESCRIPTION]: 11,
+  [VMSettingsField.START_VM]: 12,
+};
+
+export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
     data: { isCreateTemplate, isProviderImport },
-  } = common;
+  } = data;
 
   const hiddenByProvider = asHidden(isProviderImport, VMWizardProps.isProviderImport);
   const hiddenByProviderOrTemplate = isProviderImport
@@ -23,6 +40,7 @@ export const getInitialVmSettings = (common: CommonData) => {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
     },
+    [VMSettingsField.HOSTNAME]: {},
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
@@ -75,7 +93,10 @@ export const getInitialVmSettings = (common: CommonData) => {
   return fields;
 };
 
-export const getVmSettingsInitialState = (props) => ({
-  value: getInitialVmSettings(props),
+export const getVmSettingsInitialState: InitialStepStateGetter = (data) => ({
+  value: getInitialVmSettings(data),
+  error: null,
+  hasAllRequiredFilled: false,
   isValid: false,
+  isLocked: false,
 });

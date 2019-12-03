@@ -14,12 +14,14 @@ type StorageBootOrderProps = {
   isDisabled: boolean;
   storages: VMWizardStorageWithWrappers[];
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
+  className: string;
 };
 
 export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   isDisabled,
   onBootOrderChanged,
   storages,
+  className,
 }) => {
   const filteredStorages = storages.filter(({ volumeWrapper, dataVolumeWrapper }) =>
     [StorageUISource.ATTACH_DISK, StorageUISource.ATTACH_CLONED_DISK].includes(
@@ -36,7 +38,7 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   );
 
   return (
-    <Form>
+    <Form className={className}>
       <FormRow
         title="Boot Source"
         fieldId={STORAGE_BOOT_SOURCE}

@@ -1,8 +1,9 @@
 import { VMImportProvider, VMWareProviderField } from '../../../types';
 import { asDisabled, asHidden } from '../../../utils/utils';
 import { V2VVMwareStatus } from '../../../../../statuses/v2vvmware';
+import { VMwareSettings } from '../types';
 
-export const getVmWareInitialState = () => {
+export const getVmWareInitialState = (): VMwareSettings => {
   const hiddenByVCenter = asHidden(true, VMWareProviderField.VCENTER);
   const fields = {
     [VMWareProviderField.VCENTER]: {},

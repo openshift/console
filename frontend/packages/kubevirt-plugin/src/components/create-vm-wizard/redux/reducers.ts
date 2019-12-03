@@ -184,7 +184,8 @@ export default (state, action: WizardInternalAction) => {
         .setIn(
           [dialogID, 'tabs', payload.tab, 'hasAllRequiredFilled'],
           payload.hasAllRequiredFilled,
-        );
+        )
+        .setIn([dialogID, 'tabs', payload.tab, 'error'], payload.error);
     case InternalActionType.SetTabLocked:
       return state.setIn([dialogID, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
     case InternalActionType.SetVmSettingsFieldValue:

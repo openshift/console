@@ -12,6 +12,9 @@ export const getDialogUIError = (hasAllRequiredFilled) =>
     ? 'Please correct the invalid fields.'
     : 'Please fill in all required fields.';
 
+export const getSimpleDialogUIError = (hasAllRequiredFilled) =>
+  hasAllRequiredFilled ? 'Some fields are not correct' : 'Required fields not completed';
+
 export const getCheckboxReadableValue = (value: boolean) => (value ? 'yes' : 'no');
 
 export const getSequenceName = (name: string, usedSequenceNames?: Set<string>) => {
@@ -27,3 +30,6 @@ export const getSequenceName = (name: string, usedSequenceNames?: Set<string>) =
   }
   return null;
 };
+
+export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) =>
+  i === 1 ? singular : plural;

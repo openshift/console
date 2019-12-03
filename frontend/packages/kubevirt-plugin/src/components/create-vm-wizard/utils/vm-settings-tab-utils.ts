@@ -4,7 +4,7 @@ import {
   VMSettingsRenderableFieldResolver,
   VMWareProviderField,
 } from '../types';
-import { titleResolver, placeholderResolver, helpResolver } from '../strings/vm-settings';
+import { helpResolver, placeholderResolver, titleResolver } from '../strings/vm-settings';
 
 const idResolver: VMSettingsRenderableFieldResolver = {
   [VMWareProviderField.VCENTER]: 'vcenter-instance-dropdown',
@@ -33,6 +33,12 @@ const idResolver: VMSettingsRenderableFieldResolver = {
 export const getFieldId = (key: VMSettingsRenderableField | VMWareProviderField) => idResolver[key];
 export const getFieldTitle = (key: VMSettingsRenderableField | VMWareProviderField) =>
   titleResolver[key];
+export const getFieldReadableTitle = (key: VMSettingsRenderableField | VMWareProviderField) => {
+  if (key === VMSettingsField.MEMORY) {
+    return 'Memory';
+  }
+  return titleResolver[key];
+};
 export const getPlaceholder = (key: VMSettingsRenderableField | VMWareProviderField) =>
   placeholderResolver[key];
 export const getFieldHelp = (

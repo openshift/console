@@ -2,7 +2,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { iGet, iGetIn, iGetLoadedData } from '../../../../utils/immutable';
 import { getCreateVMWizards } from '../selectors';
 import { CommonDataProp, VMWizardTab } from '../../types';
-import { hasStepAllRequiredFilled, isStepValid } from './wizard-selectors';
+import { getStepError, hasStepAllRequiredFilled, isStepValid } from './wizard-selectors';
 
 export const iGetCreateVMWizard = (state, reduxID: string) =>
   iGet(getCreateVMWizards(state), reduxID);
@@ -13,13 +13,15 @@ export const checkTabValidityChanged = (
   state,
   reduxID: string,
   tab: VMWizardTab,
-  nextIsValid,
-  nextHasAllRequiredFilled,
+  nextIsValid: boolean,
+  nextHasAllRequiredFilled: boolean,
+  nextError,
 ) => {
   const tabs = iGetCreateVMWizardTabs(state, reduxID);
   return (
     isStepValid(tabs, tab) !== nextIsValid ||
-    hasStepAllRequiredFilled(tabs, tab) !== nextHasAllRequiredFilled
+    hasStepAllRequiredFilled(tabs, tab) !== nextHasAllRequiredFilled ||
+    getStepError(tabs, tab) !== nextError
   );
 };
 

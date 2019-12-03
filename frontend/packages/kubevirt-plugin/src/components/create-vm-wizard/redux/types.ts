@@ -76,6 +76,7 @@ export type WizardInternalAction = {
     deviceID?: string;
     deviceType?: DeviceType;
     bootOrder?: number;
+    error?: string;
   };
 };
 

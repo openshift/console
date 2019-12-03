@@ -118,22 +118,19 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
       </Split>
       {showStorages && (
         <>
-          <div className="kubevirt-create-vm-modal__storage-tab-main">
-            <VMDisksTable
-              columnClasses={diskTableColumnClasses}
-              data={getStoragesData(storages, persistentVolumeClaims)}
-              customData={{ isDisabled: isLocked, withProgress, removeStorage, wizardReduxID }}
-              row={VmWizardStorageRow}
-            />
-          </div>
+          <VMDisksTable
+            columnClasses={diskTableColumnClasses}
+            data={getStoragesData(storages, persistentVolumeClaims)}
+            customData={{ isDisabled: isLocked, withProgress, removeStorage, wizardReduxID }}
+            row={VmWizardStorageRow}
+          />
           {isBootDiskRequired && (
-            <footer className="kubevirt-create-vm-modal__storage-tab-boot-select">
-              <StorageBootSource
-                isDisabled={isLocked}
-                storages={storages}
-                onBootOrderChanged={onBootOrderChanged}
-              />
-            </footer>
+            <StorageBootSource
+              className="kubevirt-create-vm-modal__storage-tab-boot-select"
+              isDisabled={isLocked}
+              storages={storages}
+              onBootOrderChanged={onBootOrderChanged}
+            />
           )}
         </>
       )}
