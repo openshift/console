@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import classNames from 'classnames';
-import { RedExclamationCircleIcon } from '@console/shared';
-import { categoryFilter, getLastTime } from '@console/internal/components/events';
+import { typeFilter, getLastTime } from '@console/internal/components/events';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { EventKind, referenceFor } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '../../status';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&
@@ -15,9 +15,9 @@ const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.onToggle === nextProps.onToggle;
 
 const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onToggle }) => {
-  const { involvedObject, message, reason, metadata } = event;
+  const { involvedObject, message, metadata } = event;
   const lastTime = getLastTime(event);
-  const isError = categoryFilter('error', { reason });
+  const isWarning = typeFilter('warning', event);
   const expanded = isExpanded(metadata.uid);
   return (
     <div className="co-recent-item__body">
@@ -27,7 +27,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
           isExpanded={expanded}
           id={metadata.uid}
           className={classNames('co-recent-item__toggle', {
-            'co-recent-item--error': isError && expanded,
+            'co-recent-item--warning': isWarning && expanded,
           })}
         >
           <div className="co-recent-item__title">
@@ -39,8 +39,8 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
               )}
             </div>
             <div className="co-recent-item__title-message">
-              {isError && (
-                <RedExclamationCircleIcon className="co-dashboard-icon co-recent-item__icon--error" />
+              {isWarning && (
+                <YellowExclamationTriangleIcon className="co-dashboard-icon co-recent-item__icon--warning" />
               )}
               {!expanded && (
                 <>
@@ -53,7 +53,9 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
         </AccordionToggle>
         <AccordionContent
           isHidden={!expanded}
-          className={classNames('co-recent-item__content', { 'co-recent-item--error': isError })}
+          className={classNames('co-recent-item__content', {
+            'co-recent-item--warning': isWarning,
+          })}
         >
           <div>
             <div className="co-recent-item__content-header">

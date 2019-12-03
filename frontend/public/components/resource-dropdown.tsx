@@ -113,7 +113,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               <span className="co-resource-icon--fixed-width">
                 <ResourceIcon kind="All" />
               </span>
-              <span className="co-resource-item__resource-name">All Types</span>
+              <span className="co-resource-item__resource-name">All Resources</span>
             </span>
             {/* <ResourceIcon kind="All" /> */}
           </>

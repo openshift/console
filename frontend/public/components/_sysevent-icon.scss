@@ -10,14 +10,12 @@
 }
 
 
-.co-sysevent--error {
-  $failure-red: #d64456;
-
+.co-sysevent--warning {
   .co-sysevent-icon,
   .co-sysevent__box {
-    border-color: $failure-red;
+    border-color: var(--pf-global--warning-color--100);
   }
   .co-sysevent__icon-line {
-    background-color: $failure-red;
+    background-color: var(--pf-global--warning-color--100);
   }
 }

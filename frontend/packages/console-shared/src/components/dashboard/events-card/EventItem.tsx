@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { RedExclamationCircleIcon } from '@console/shared';
-import { categoryFilter, getLastTime } from '@console/internal/components/events';
+import { typeFilter, getLastTime } from '@console/internal/components/events';
 import { EventComponentProps } from '@console/internal/components/utils/event-stream';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 
 const EventItem: React.FC<EventComponentProps> = React.memo(({ event }) => {
   const { message } = event;
   const lastTime = getLastTime(event);
-  const isError = categoryFilter('error', event);
+  const isError = typeFilter('warning', event);
   return (
     <div className="co-events-card__item">
       <div className="co-recent-item__title">
