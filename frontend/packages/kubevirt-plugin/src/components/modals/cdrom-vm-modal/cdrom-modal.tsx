@@ -12,7 +12,7 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooter } from '../modal/modal-footer';
 import { getCDsPatch } from '../../../k8s/patches/vm/vm-cdrom-patches';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
-import { getVMLikeModel, asVM } from '../../../selectors/vm';
+import { getVMLikeModel, asVM, isWindows } from '../../../selectors/vm';
 import {
   getCDRoms,
   getContainerImageByDisk,
@@ -21,7 +21,6 @@ import {
   getStorageSizeByDisk,
   getStorageClassNameByDisk,
   isVMRunning,
-  isWindows,
 } from '../../../selectors/vm/selectors';
 import { isValidationError, validateURL } from '../../../utils/validations/common';
 import { VMKind, VMLikeEntityKind } from '../../../types';

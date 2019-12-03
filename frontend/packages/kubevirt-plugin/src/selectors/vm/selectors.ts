@@ -7,7 +7,6 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
-  OS_WINDOWS_PREFIX,
 } from '../../constants/vm';
 import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
@@ -44,7 +43,7 @@ export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
 
 export const getOperatingSystem = (vm: VMLikeEntityKind): string =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_OS_LABEL);
-export const getOperatingSystemName = (vm: VMKind) =>
+export const getOperatingSystemName = (vm: VMKind): string =>
   getValueByPrefix(getAnnotations(vm), `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vm)}`);
 export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
@@ -130,6 +129,3 @@ export const getStorageClassNameByDisk = (vm: VMKind, diskName: string) =>
   getDataVolumeStorageClassName(
     getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(diskName)),
   );
-
-export const isWindows = (vm: VMKind) =>
-  (getOperatingSystem(vm) || '').startsWith(OS_WINDOWS_PREFIX);
