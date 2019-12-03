@@ -403,12 +403,15 @@ describe('Using OLM descriptor components', () => {
     });
   });
 
-  testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors.forEach((descriptor) => {
-    it(`displays status descriptor for ${descriptor.displayName}`, async () => {
-      const label = operatorView.descriptorLabel(descriptor);
-      expect(label.isDisplayed()).toBe(true);
+  testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors
+    // exclude Conditions since they are included in their own section
+    .filter((descriptor) => descriptor.path !== 'conditions')
+    .forEach((descriptor) => {
+      it(`displays status descriptor for ${descriptor.displayName}`, async () => {
+        const label = operatorView.descriptorLabel(descriptor);
+        expect(label.isDisplayed()).toBe(true);
+      });
     });
-  });
 
   it('displays form for creating operand', async () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
