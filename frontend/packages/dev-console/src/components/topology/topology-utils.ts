@@ -11,6 +11,7 @@ import { getImageForIconClass } from '@console/internal/components/catalog/catal
 import {
   tranformKnNodeData,
   filterNonKnativeDeployments,
+  filterRevisionsByActiveApplication,
   NodeType,
 } from '@console/knative-plugin/src/utils/knative-topology-utils';
 import {
@@ -31,6 +32,8 @@ import {
   Group,
   TopologyOverviewItem,
 } from './topology-types';
+
+export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
@@ -183,7 +186,7 @@ export const getTopologyNodeItem = (
  * @param dc
  * @param resources
  */
-const getTopologyEdgeItems = (
+export const getTopologyEdgeItems = (
   dc: K8sResourceKind,
   resources: K8sResourceKind[],
   sbrs: K8sResourceKind[],
@@ -228,7 +231,12 @@ const getTopologyEdgeItems = (
             sbr.spec.backingServiceSelector.resourceRef &&
           _.get(deployment, 'metadata.ownerReferences[0].kind') ===
             sbr.spec.backingServiceSelector.kind;
-        return targetFound;
+        const appGroup = _.get(
+          deployment,
+          ['metadata', 'labels', 'app.kubernetes.io/part-of'],
+          null,
+        );
+        return targetFound && (!application || application === appGroup);
       }),
       ['metadata', 'uid'],
     );
@@ -316,7 +324,7 @@ export const transformTopologyData = (
     const activeAppKnResource =
       type !== NodeType.Revision
         ? filterBasedOnActiveApplication(knativeResources, application)
-        : knativeResources;
+        : filterRevisionsByActiveApplication(knativeResources, resources, application);
     if (activeAppKnResource && activeAppKnResource.length) {
       const knativeResourceData = tranformKnNodeData(
         activeAppKnResource,
@@ -365,13 +373,12 @@ export const transformTopologyData = (
   // END: kn call to form topology data
 
   const transformResourceData = createInstanceForResource(resources, utils);
-  const allResources = _.cloneDeep(
-    _.concat(
-      resources.deploymentConfigs && resources.deploymentConfigs.data,
-      resources.deployments && resources.deployments.data,
-      resources.statefulSets && resources.statefulSets.data,
-      resources.daemonSets && resources.daemonSets.data,
-    ),
+  const allResources = _.flatten(
+    allowedResources.map((resourceKind) => {
+      return resources[resourceKind]
+        ? filterBasedOnActiveApplication(resources[resourceKind].data, application)
+        : [];
+    }),
   );
 
   _.forEach(transformBy, (key) => {
