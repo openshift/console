@@ -52,7 +52,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
         )}
         <div>
           <span className="co-dashboard-text--small co-status-card__health-item-text">
-            {PopupComponent ? (
+            {PopupComponent && state !== HealthState.LOADING ? (
               <DashboardCardPopupLink
                 linkTitle={title}
                 popupTitle={popupTitle}
