@@ -209,6 +209,10 @@ const EditYAML_ = connect(stateToProps)(
         : hasSidebarBodyWidth;
     }
 
+    // Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
+    // popover. We need to find the actual DOM element.
+    focusEditor = () => setTimeout(() => document.querySelector('.monaco-editor textarea').focus());
+
     reload() {
       this.loadYaml(true);
       this.setState({
@@ -723,6 +727,7 @@ const EditYAML_ = connect(stateToProps)(
                           }
                           maxWidth="25rem"
                           distance={18}
+                          onHide={this.focusEditor}
                         >
                           <Button type="button" variant="link" isInline>
                             <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
