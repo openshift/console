@@ -5,7 +5,7 @@ import Portal from './Portal';
 
 // alignment with PopperJS reference API
 type PopperJSReference = {
-  getBoundingClientRect: Element['getBoundingClientRect'];
+  getBoundingClientRect: PopperJS['reference']['getBoundingClientRect'];
   clientWidth: number;
   clientHeight: number;
 };
@@ -17,16 +17,14 @@ type Reference = Element | PopperJSReference | ClientRectProp;
 class VirtualReference implements PopperJSReference {
   private rect: ClientRect;
 
-  constructor(rect: ClientRectProp) {
-    const width = rect.width || 0;
-    const height = rect.height || 0;
+  constructor({ height = 0, width = 0, x, y }: ClientRectProp) {
     this.rect = {
-      left: rect.x,
-      top: rect.y,
-      right: rect.x + width,
-      bottom: rect.y + height,
-      width,
+      bottom: y + height,
       height,
+      left: x,
+      right: x + width,
+      top: y,
+      width,
     };
   }
 
