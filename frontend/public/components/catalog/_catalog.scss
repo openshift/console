@@ -88,7 +88,7 @@ $co-modal-ignore-warning-icon-width: 30px;
   box-shadow: 0 0.0625rem 0.125rem 0 rgba(3,3,3,.2);
   display: flex;
   flex:1;
-  margin: 0 ($grid-gutter-width / 2);
+  margin: 0 ($grid-gutter-width / 2) 0 $grid-gutter-width;
   padding: ($grid-gutter-width / 2) 0 0;
 
   &__content {
