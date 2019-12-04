@@ -207,8 +207,8 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       }
       const schemaPath = field.path.split('.').join('.properties.');
       const required = (_.get(
-        props.openAPI.properties,
-        _.dropRight(['spec', ...field.path.split('.')])
+        props.openAPI,
+        _.dropRight(['properties.spec', ...field.path.split('.')])
           .join('.properties.')
           .concat('.required'),
         [],
