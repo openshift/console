@@ -1186,6 +1186,22 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.33.5.tgz#e8abad22510d32de4933a42d7f567b152ccc0e6d"
   integrity sha512-/4S19Ln2BY62nUP/Ow+j4gzCKm4e3HYehW92R+iaREaBgatfq55G50QdPsXDvTvLeTp9lS6YfXJlLz7OTIHnhw==
 
+"@patternfly/patternfly@2.43.2":
+  version "2.43.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.43.2.tgz#43274081ea62827383cf86601e33b890ffd5734f"
+  integrity sha512-DGTUMIk8XvnciIo+2wyBdJGkDyIBvx1AqgDU7DLZfm9TOB+w0xdY64sgXIgG+673tgmpzDuA7yuCggpTyIy6/g==
+
+"@patternfly/react-catalog-view-extension@1.1.42":
+  version "1.1.42"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-catalog-view-extension/-/react-catalog-view-extension-1.1.42.tgz#9af4ab9c5ff90f0137e2108723b0cb54fac3c693"
+  integrity sha512-eCal3CYSuX1N9lY0n/wQg9LPMv5ZK7J5M889sw9mjJzMWaXMrM1E4C/YXjBdhe5wixRcd/kbP8lD8NBYQplDyg==
+  dependencies:
+    "@patternfly/patternfly" "2.43.2"
+    "@patternfly/react-core" "^3.125.0"
+    "@patternfly/react-styles" "^3.6.12"
+    classnames "^2.2.5"
+    patternfly "^3.59.4"
+
 "@patternfly/react-charts@5.0.13":
   version "5.0.13"
   resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-5.0.13.tgz#57467fe8e1d4ae0d63c5d2da22f05b96b09f7974"
@@ -1225,6 +1241,26 @@
     focus-trap-react "^4.0.1"
     tippy.js "3.4.1"
 
+"@patternfly/react-core@^3.125.0":
+  version "3.125.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.125.0.tgz#b41e06136a8a33340ef647533ee3c01271a257c2"
+  integrity sha512-WGndDJhBzX99yP52DxpDAB3wcEp8PS7rLy7EblAsAzcwQ2aTv6jKe7Ww8Ofh5t4Syz4P20DYyYzCzs/oa5P/9A==
+  dependencies:
+    "@patternfly/react-icons" "^3.14.24"
+    "@patternfly/react-styles" "^3.6.12"
+    "@patternfly/react-tokens" "^2.7.11"
+    emotion "^9.2.9"
+    exenv "^1.2.2"
+    focus-trap-react "^4.0.1"
+    tippy.js "3.4.1"
+
+"@patternfly/react-icons@^3.14.24":
+  version "3.14.24"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.14.24.tgz#9320e75c627a6159d73cd01ab761e5fe38112b77"
+  integrity sha512-R5vP/jpDScGJqbKYWA7gn0K9V4unhpu+THazxmDJtX55zR/AQgaiaQ70q+/URKtsQhWUFBPKjczuJnzOoo3S3Q==
+  dependencies:
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
+
 "@patternfly/react-icons@^3.14.7":
   version "3.14.7"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.14.7.tgz#62772dd48cce2a80e838fba98ec08db173846c4e"
@@ -1236,6 +1272,25 @@
   version "3.5.27"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.5.27.tgz#a513495932ebe64ecb013d8fb1589d746ac7ea1e"
   integrity sha512-nDhWOR+7W/oQgIw+4nwvGpoS2OgarfxlIEkFQaNdete6QyKwp2erPxDBNnj2gOGaB/+CKDWvTWD6JPhiuU56ew==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
+    camel-case "^3.0.0"
+    css "^2.2.3"
+    cssom "^0.3.4"
+    cssstyle "^0.3.1"
+    emotion "^9.2.9"
+    emotion-server "^9.2.9"
+    fbjs-scripts "^0.8.3"
+    fs-extra "^6.0.1"
+    jsdom "^15.1.0"
+    relative "^3.0.2"
+    resolve-from "^4.0.0"
+    typescript "3.4.5"
+
+"@patternfly/react-styles@^3.6.12":
+  version "3.6.12"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.6.12.tgz#7c02e336e6adf008723abf5ced41ae8d128e1529"
+  integrity sha512-x+BmqcHYzimZ0ValhvD5sh9DpTGqzR5/DWtRPS+8qbtI4qKCWmgcNGa3ZslYMJ0sypJR+gV2qWWD7Y4lacf9OA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0-beta.48"
     camel-case "^3.0.0"
@@ -1269,6 +1324,11 @@
   version "2.6.31"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.31.tgz#3fab62e9ccf4d81f6c10edbcf66836264362b3d3"
   integrity sha512-K9semfLIdf2vECefAbheXPVwZqq8nXY0Hf/VkWh6OBCL6R4FekxajpSBgobeoTQUotmvz5boMngqhkUjE7yChA==
+
+"@patternfly/react-tokens@^2.7.11":
+  version "2.7.11"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.7.11.tgz#adb705d53fc466ca046c8c08ec464ad54ac4d6c7"
+  integrity sha512-WU9DVmAXQOF+ghZ4FX6QK4LN1vQmAz92/fBVEDnbVhWX6QM2O+/JXZ31+d9d0pnFylQTaQ934YllsnS+zhQX9Q==
 
 "@patternfly/react-topology@2.8.63":
   version "2.8.63"
@@ -4689,7 +4749,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@2.x, classnames@^2.2.0, classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6:
+classnames@2.x, classnames@^2.2.0, classnames@^2.2.3, classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -6128,10 +6188,6 @@ detect-port@^1.3.0:
   dependencies:
     address "^1.0.1"
     debug "^2.6.0"
-
-diff@^2.2.2:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/diff/-/diff-2.2.3.tgz#60eafd0d28ee906e4e8ff0a52c1229521033bf99"
 
 diff@^3.1.0, diff@^3.2.0:
   version "3.5.0"
@@ -7957,10 +8013,6 @@ git-url-parse@^11.1.2:
   integrity sha512-gZeLVGY8QVKMIkckncX+iCq2/L8PlwncvDFKiWkBn9EtCfYDbliRTTp6qzyQ1VMdITUfq7293zDzfpjdiGASSQ==
   dependencies:
     git-up "^4.0.0"
-
-gitdiff-parser@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/gitdiff-parser/-/gitdiff-parser-0.1.2.tgz#26a256e05e9c2d5016b512a96c1dacb40862b92a"
 
 gitlab@10.0.1:
   version "10.0.1"
@@ -10396,10 +10448,6 @@ lodash.escaperegexp@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.escaperegexp/-/lodash.escaperegexp-4.1.2.tgz#64762c48618082518ac3df4ccf5d5886dae20347"
 
-lodash.findlastindex@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.findlastindex/-/lodash.findlastindex-4.6.0.tgz#b8375ac0f02e9b926375cdf8dc3ea814abf9c6ac"
-
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
@@ -10441,10 +10489,6 @@ lodash.keys@^3.0.0:
     lodash._getnative "^3.0.0"
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
-
-lodash.mapvalues@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
@@ -12111,23 +12155,6 @@ patternfly-bootstrap-treeview@~2.1.10:
     bootstrap "^3.4.1"
     jquery "^3.4.1"
 
-patternfly-react-extensions@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-3.0.2.tgz#f161a752be75f835a9a2ddfac2249c85d0fd71c3"
-  integrity sha512-MQxCOpFPr8Ruywmhj9pz3AmAwdgO6KtDBxZnt77jzFh1CV1sXV0vFCg2sjC0pZTGfMRHNbY9G9YJ3TLSuX7RVw==
-  dependencies:
-    breakjs "^1.0.0"
-    classnames "^2.2.5"
-    css-element-queries "^1.0.1"
-    patternfly "^3.59.4"
-    patternfly-react "^2.39.6"
-    react-bootstrap "^0.32.1"
-    react-click-outside "^3.0.1"
-    react-diff-view "^1.8.1"
-    react-ellipsis-with-tooltip "^1.0.8"
-    react-virtualized "^9.21.1"
-    unidiff "^1.0.1"
-
 patternfly-react@2.32.3:
   version "2.32.3"
   resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.32.3.tgz#a66d580c6e93cd061ade3e6059cd02af48b79a68"
@@ -12139,34 +12166,6 @@ patternfly-react@2.32.3:
     css-element-queries "^1.0.1"
     lodash "^4.17.11"
     patternfly "^3.58.0"
-    react-bootstrap "^0.32.1"
-    react-bootstrap-switch "^15.5.3"
-    react-bootstrap-typeahead "^3.4.1"
-    react-c3js "^0.1.20"
-    react-click-outside "^3.0.1"
-    react-collapse "^4.0.3"
-    react-debounce-input "^3.2.0"
-    react-ellipsis-with-tooltip "^1.0.8"
-    react-fontawesome "^1.6.1"
-    react-motion "^0.5.2"
-    reactabular-table "^8.14.0"
-    recompose "^0.26.0"
-    uuid "^3.3.2"
-  optionalDependencies:
-    sortabular "^1.5.1"
-    table-resolver "^3.2.0"
-
-patternfly-react@^2.39.6:
-  version "2.39.6"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.39.6.tgz#14f912f734c711e6f5bd4d714e80cdaeafbe6f4c"
-  integrity sha512-HgVrRQWgKyTCCXvQlz5MY5FZ80oBe4i0e47LdBU/s28N6I4xl8rKpekxE0QNx2dtOFev+nS2AwphagwihmkXIQ==
-  dependencies:
-    bootstrap-slider-without-jquery "^10.0.0"
-    breakjs "^1.0.0"
-    classnames "^2.2.5"
-    css-element-queries "^1.0.1"
-    lodash "^4.17.15"
-    patternfly "^3.59.4"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.4.1"
@@ -13280,18 +13279,6 @@ react-dev-utils@^9.0.0:
     sockjs-client "1.4.0"
     strip-ansi "5.2.0"
     text-table "0.2.0"
-
-react-diff-view@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-1.8.1.tgz#0b9b4adcb92de6730d28177d68654dfcc2097f73"
-  dependencies:
-    classnames "^2.2.6"
-    gitdiff-parser "^0.1.2"
-    leven "^2.1.0"
-    lodash.escape "^4.0.1"
-    lodash.findlastindex "^4.6.0"
-    lodash.mapvalues "^4.6.0"
-    warning "^4.0.1"
 
 react-dnd-html5-backend@5.0.x:
   version "5.0.1"
@@ -16085,12 +16072,6 @@ unicode-property-aliases-ecmascript@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-1.0.5.tgz#a9cc6cc7ce63a0a3023fc99e341b94431d405a57"
   integrity sha512-L5RAqCfXqAwR3RriF8pM0lU0w4Ryf/GgzONwi6KnL1taJQa7x1TCxdJnILX59WIGOwR57IVxn7Nej0fz1Ny6fw==
-
-unidiff@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/unidiff/-/unidiff-1.0.1.tgz#2ff8da0710a9abb4e1133e9da4c87747fb5ff508"
-  dependencies:
-    diff "^2.2.2"
 
 union-value@^1.0.0:
   version "1.0.0"

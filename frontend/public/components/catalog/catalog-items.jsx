@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
-import { CatalogTile } from 'patternfly-react-extensions';
+import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { Modal } from 'patternfly-react';
 
 import { history } from '../utils/router';
