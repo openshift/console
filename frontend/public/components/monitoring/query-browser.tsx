@@ -503,7 +503,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const queriesKey = _.reject(queries, _.isEmpty).join();
   usePoll(tick, delay, endTime, filterLabels, namespace, queriesKey, samples, span);
 
-  React.useEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
+  React.useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
   const onSpanChange = React.useCallback((newSpan: number) => {
     setXDomain(undefined);
@@ -565,7 +565,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       {_.isEmpty(graphData) && !updating && <GraphEmpty />}
       {!_.isEmpty(graphData) && (
         <>
-          {samples < maxSamplesForSpan && (
+          {samples < maxSamplesForSpan && !updating && (
             <Alert
               isInline
               className="co-alert"
