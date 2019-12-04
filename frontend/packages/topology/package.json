@@ -32,7 +32,10 @@
     "webcola": "3.4.0"
   },
   "scripts": {
+    "build-storybook": "build-storybook",
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/topology/src/**\",\"!**/__tests__/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/topology",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "test": "yarn --cwd ../.. run test packages/topology"
   }
 }
