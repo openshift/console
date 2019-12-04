@@ -6,7 +6,7 @@ import {
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
-import { podColor } from '../constants/pod';
+import { podColor, AllPodStatus } from '../constants/pod';
 import { ExtPodKind } from '../types/pod';
 import { DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
@@ -147,6 +147,15 @@ export const isIdled = (deploymentConfig: K8sResourceKind): boolean => {
   );
 };
 
+const getScalingUp = (dc: K8sResourceKind): ExtPodKind => {
+  return {
+    ..._.pick(dc, 'metadata'),
+    status: {
+      phase: AllPodStatus.ScalingUp,
+    },
+  };
+};
+
 export const getPodData = (
   dc: K8sResourceKind,
   pods: ExtPodKind[],
@@ -175,6 +184,10 @@ export const getPodData = (
       inProgressDeploymentData: currentPods,
       completedDeploymentData: previousPods,
     };
+  }
+  // if build is not finished show `Scaling Up` on pod phase
+  if (!current && !previous) {
+    return { inProgressDeploymentData: null, completedDeploymentData: [getScalingUp(dc)] };
   }
   return { inProgressDeploymentData: null, completedDeploymentData: pods };
 };
