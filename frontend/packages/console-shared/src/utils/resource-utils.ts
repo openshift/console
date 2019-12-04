@@ -377,15 +377,6 @@ const getIdledStatus = (
   return rc;
 };
 
-const getScalingUp = (dc: K8sResourceKind): ExtPodKind => {
-  return {
-    ..._.pick(dc, 'metadata'),
-    status: {
-      phase: AllPodStatus.ScalingUp,
-    },
-  };
-};
-
 const getRolloutStatus = (
   dc: K8sResourceKind,
   current: PodControllerOverviewItem,
@@ -601,10 +592,6 @@ export class TransformResourceData {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
       };
-      const pods = [];
-      if (!current && !previous) {
-        pods.push(getScalingUp(obj));
-      }
       const status = resourceStatus(obj, current, isRollingOut);
       const overviewItems = {
         alerts,
@@ -613,7 +600,7 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [...pods, ..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
@@ -647,10 +634,6 @@ export class TransformResourceData {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
       };
-      const pods = [];
-      if (!current && !previous) {
-        pods.push(getScalingUp(obj));
-      }
       const status = resourceStatus(obj, current, isRollingOut);
       const overviewItems = {
         alerts,
@@ -659,7 +642,7 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [...pods, ..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
