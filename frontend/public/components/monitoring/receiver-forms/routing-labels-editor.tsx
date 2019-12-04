@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { ExternalLink } from '../../utils';
+import { ExternalLink, SectionHeading } from '../../utils';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
@@ -43,7 +43,7 @@ export const RoutingLabelEditor = ({ formValues, setFormValues, isDefaultReceive
 
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
-      <label>Routing Labels</label>
+      <SectionHeading text="Routing Labels" />
       <p className="co-help-text">
         Firing alerts with labels that match all of these selectors will be sent to this receiver.
         Label values can be matched exactly or with a &nbsp;

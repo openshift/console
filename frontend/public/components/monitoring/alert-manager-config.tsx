@@ -444,6 +444,7 @@ export type AlertManagerReceiver = {
 };
 
 export type AlertManagerConfig = {
+  global: { [key: string]: string };
   route: AlertManagerRoute;
   receivers: AlertManagerReceiver[];
 };

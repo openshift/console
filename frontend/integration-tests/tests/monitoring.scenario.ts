@@ -1,4 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import * as _ from 'lodash';
+import { safeLoad } from 'js-yaml';
 
 import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
@@ -254,7 +256,6 @@ describe('Alertmanager: Configuration', () => {
 
   it('creates PagerDuty Receiver correctly', async () => {
     await crudView.isLoaded();
-    expect(firstElementByTestID('create-receiver').isPresent()).toBe(true);
     await firstElementByTestID('create-receiver').click();
     await crudView.isLoaded();
 
@@ -263,14 +264,9 @@ describe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('receiver-routing-labels-editor').isPresent()).toBe(false);
     expect(monitoringView.saveButton.isEnabled()).toBe(false);
 
-    expect(firstElementByTestID('receiver-name').isPresent()).toBe(true);
     await firstElementByTestID('receiver-name').sendKeys('MyReceiver');
-
-    expect(firstElementByTestID('dropdown-button').isDisplayed()).toBe(true);
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
-
-    expect(firstElementByTestID('dropdown-menu').isDisplayed()).toBe(true);
     await firstElementByTestID('dropdown-menu').click();
     await crudView.isLoaded();
 
@@ -281,9 +277,11 @@ describe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Routing Key');
     await firstElementByTestID('integration-type-prometheus').click();
     expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
-    await firstElementByTestID('integration-key').sendKeys('<integration_key>');
 
-    expect(monitoringView.saveButton.isEnabled()).toBe(true); // should be enabled at this point
+    // pagerduty subform should still be invalid at this point, thus save button should be disabled
+    expect(monitoringView.saveButton.isEnabled()).toBe(false);
+    await firstElementByTestID('integration-key').sendKeys('<integration_key>');
+    expect(monitoringView.saveButton.isEnabled()).toBe(true); // subform valid, save should be enabled at this point
 
     await firstElementByTestID('label-name-0').sendKeys('severity');
     await firstElementByTestID('label-value-0').sendKeys('warning');
@@ -326,7 +324,95 @@ describe('Alertmanager: Configuration', () => {
     });
   });
 
+  const getConfigs = (receiverName, yamlStr) => {
+    const config = safeLoad(yamlStr);
+    const receiverConfig: any = _.find(config.receivers, { name: receiverName });
+    return {
+      config,
+      receiverPagerdutyConfig: receiverConfig.pagerduty_configs[0],
+    };
+  };
+
+  it('saves pagerDutyURL as default/global correctly', async () => {
+    await crudView.isLoaded();
+    expect(crudView.resourceRows.count()).toBe(2);
+    await monitoringView.clickFirstRowKebabAction('Edit Receiver');
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+
+    const pagerDutyURL = firstElementByTestID('pagerduty-url');
+    const saveAsDefault = firstElementByTestID('save-as-default');
+
+    // saveAsDefault checkbox disabled when url equals global url
+    expect(_.isEmpty(pagerDutyURL.getAttribute('value'))).toBeFalsy();
+    expect(saveAsDefault.isEnabled()).toBeFalsy();
+
+    // changing url, enables saveAsDefault, save pagerduty-url with Receiver
+    await pagerDutyURL.clear();
+    await pagerDutyURL.sendKeys('http://pagerduty-url-specific-to-receiver');
+    expect(saveAsDefault.isEnabled()).toBeTruthy();
+    expect(saveAsDefault.getAttribute('checked')).toBeFalsy();
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    //pagerduty_url should be saved with Receiver and not global
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    await yamlView.getEditorContent().then((yamlStr) => {
+      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
+      expect(_.has(config, 'global.pagerduty_url')).toBeFalsy();
+      expect(_.get(receiverPagerdutyConfig, 'pagerduty_url')).toBe(
+        'http://pagerduty-url-specific-to-receiver',
+      );
+    });
+
+    // save pagerduty_url as default/global
+    await horizontalnavView.clickHorizontalTab('Overview');
+    await crudView.isLoaded();
+    await monitoringView.clickFirstRowKebabAction('Edit Receiver');
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+    await pagerDutyURL.clear();
+    await pagerDutyURL.sendKeys('http://global-pagerduty-url');
+    expect(saveAsDefault.isEnabled()).toBeTruthy();
+    saveAsDefault.click();
+    expect(saveAsDefault.getAttribute('checked')).toBeTruthy();
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    // pagerduty_url should be saved as global, not with Receiver
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    await yamlView.getEditorContent().then((yamlStr) => {
+      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
+      expect(_.get(config, 'global.pagerduty_url')).toBe('http://global-pagerduty-url');
+      expect(_.has(receiverPagerdutyConfig, 'pagerduty_url')).toBeFalsy();
+    });
+
+    // save pagerduty url to receiver with an existing global
+    await horizontalnavView.clickHorizontalTab('Overview');
+    await crudView.isLoaded();
+    await monitoringView.clickFirstRowKebabAction('Edit Receiver');
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+    await pagerDutyURL.clear();
+    await pagerDutyURL.sendKeys('http://pagerduty-url-specific-to-receiver');
+    expect(saveAsDefault.isEnabled()).toBeTruthy();
+    expect(saveAsDefault.getAttribute('checked')).toBeFalsy();
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    // pagerduty_url should be saved with Receiver, as well as having a global pagerduty_url prop
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    await yamlView.getEditorContent().then((yamlStr) => {
+      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
+      expect(_.get(config, 'global.pagerduty_url')).toBe('http://global-pagerduty-url');
+      expect(_.get(receiverPagerdutyConfig, 'pagerduty_url')).toBe(
+        'http://pagerduty-url-specific-to-receiver',
+      );
+    });
+  });
+
   it('deletes PagerDuty Receiver correctly', async () => {
+    await horizontalnavView.clickHorizontalTab('Overview');
     await crudView.isLoaded();
     expect(crudView.resourceRows.count()).toBe(2);
 

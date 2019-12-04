@@ -106,8 +106,8 @@ const createRoute = (receiver: AlertManagerReceiver, routeLabels) => {
  *   }
  * }
  */
-const createReceiver = (formValues, createReceiverConfig) => {
-  const receiverConfig = createReceiverConfig(formValues);
+const createReceiver = (globals, formValues, createReceiverConfig) => {
+  const receiverConfig = createReceiverConfig(globals, formValues);
   return {
     name: formValues.receiverName,
     [formValues.receiverType]: [{ ...receiverConfig }],
@@ -174,13 +174,22 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   if (!alertManagerGlobals || _.isEmpty(alertManagerGlobals)) {
     setErrorMsg('Could not find Alertmanager global parameters.');
   }
+  const { route, global } = config || {};
+
+  // alertManagerGlobals contains props not in global from alertmanager yaml config
+  // default allGlobals to global props first, then alertManagerGlobals props
+  const allGlobals = _.defaults({}, global, alertManagerGlobals);
 
   const INITIAL_STATE = {
     receiverName: '',
     receiverType: '',
     routeLabels: [],
   };
-  _.assign(INITIAL_STATE, PagerDutyForm.getInitialValues(null), WebhookForm.getInitialValues(null));
+  _.assign(
+    INITIAL_STATE,
+    PagerDutyForm.getInitialValues(allGlobals, null),
+    WebhookForm.getInitialValues(allGlobals, null),
+  );
 
   let receiverToEdit: AlertManagerReceiver;
   if (editReceiverNamed) {
@@ -193,12 +202,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       const receiverConfig = _.get(receiverToEdit, `${INITIAL_STATE.receiverType}[0]`);
       _.assign(
         INITIAL_STATE,
-        subFormFactory(INITIAL_STATE.receiverType).getInitialValues(receiverConfig),
+        subFormFactory(INITIAL_STATE.receiverType).getInitialValues(allGlobals, receiverConfig),
       );
     }
   }
 
-  const { route } = config || {};
   const { receiver: defaultReceiver } = route || {}; // top level route.receiver is the default receiver for all alarms
   // if no default receiver defined or editing the default receiver
   const isDefaultReceiver = defaultReceiver === undefined || defaultReceiver === editReceiverNamed;
@@ -220,8 +228,10 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const save = (e) => {
     e.preventDefault();
 
+    _.assign(config.global, SubForm.updateGlobals(allGlobals, formValues));
+
     // Update Receivers
-    const newReceiver = createReceiver(formValues, SubForm.createReceiverConfig);
+    const newReceiver = createReceiver(allGlobals, formValues, SubForm.createReceiverConfig);
     _.update(config, 'receivers', (receivers = []) => {
       if (editReceiverNamed) {
         const index = _.findIndex(receivers, { name: editReceiverNamed });
@@ -314,7 +324,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
         {formValues.receiverType && (
           <>
-            <SubForm.Form formValues={formValues} handleChange={handleChange} />
+            <SubForm.Form
+              globals={allGlobals}
+              formValues={formValues}
+              handleChange={handleChange}
+            />
             <RoutingLabelEditor
               formValues={formValues}
               setFormValues={setFormValues}
