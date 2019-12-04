@@ -207,6 +207,7 @@ export class CatalogTileViewPage extends React.Component {
     const iconImgUrl = tileImgUrl || catalogImg;
     return (
       <CatalogTile
+        className="co-catalog-tile"
         key={uid}
         onClick={() => this.openOverlay(item)}
         title={tileName}
@@ -215,6 +216,7 @@ export class CatalogTileViewPage extends React.Component {
         vendor={vendor}
         description={tileDescription}
         data-test={`${kind}-${obj.metadata.name}`}
+        maxDescriptionLength={55}
       />
     );
   }
