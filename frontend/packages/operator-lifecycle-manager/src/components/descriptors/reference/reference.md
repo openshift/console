@@ -1,28 +1,33 @@
 # OLM Descriptor Reference
 
-- [podCount](#podcount)
-- [resourceRequirements](#resourcerequirements)
-- [Kubernetes Object](#kubernetes-object)
-- [booleanSwitch](#booleanswitch)
-- [Checkbox](#checkbox)
-- [Text Input](#text-input)
-- [Number Input](#number-input)
-- [Password Input](#password-input)
-- [Update Strategy](#update-strategy)
-- [Image Pull Policy](#image-pull-policy)
-- [Node Affinity](#node-affinity)
-- [Pod Affinity](#pod-affinity)
-- [Pod Anti-affinity](#pod-anti-affinity)
-- [Selector](#selector)
-- [Field Group](#field-group)
-- [Array Field Group](#array-field-group)
-- [Select](#select)
-- [Advanced](#advanced)
-- [Endpoint List](#endpoint-list)
-- [DEPRECATED Descriptors](#deprecated-descriptors)
+specDescriptors:
+  1. [podCount](#1-podcount)
+  2. [resourceRequirements](#2-resourcerequirements)
+  3. [Kubernetes Object](#3-kubernetes-object)
+  4. [booleanSwitch](#4-booleanswitch)
+  5. [Checkbox](#5-checkbox)
+  6. [Text Input](#6-text-input)
+  7. [Number Input](#7-number-input)
+  8. [Password Input](#8-password-input)
+  9. [Update Strategy](#9-update-strategy)
+  10. [Image Pull Policy](#10-image-pull-policy)
+  11. [Node Affinity](#11-node-affinity)
+  12. [Pod Affinity](#12-pod-affinity)
+  13. [Pod Anti-affinity](#13-pod-anti-affinity)
+  14. [Selector](#14-selector)
+  15. [Field Group](#15-field-group)
+  16. [Array Field Group](#16-array-field-group)
+  17. [Select](#17-select)
+  18. [Advanced](#18-advanced)
+  19. [Endpoint List](#19-endpoint-list)
+  20. [DEPRECATED Descriptors](#20-deprecated-descriptors)
 
+statusDescriptors:
+  - [ToDo]
 
-## podCount
+## specDescriptors
+
+### 1. podCount
 
 **x-descriptors**
 
@@ -53,7 +58,7 @@ This descriptor allows you to specify the number of pods for your instance. See 
 </table>
 
 
-## resourceRequirements
+### 2. resourceRequirements
 
 **x-descriptors**
 
@@ -86,7 +91,7 @@ This descriptor allows you to specify the mini/max amount of compute resources r
 </table>
 
 
-## Kubernetes Object
+### 3. Kubernetes Object
 
 **x-descriptors**
 
@@ -118,7 +123,7 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
 </table>
 
 
-## booleanSwitch
+### 4. booleanSwitch
 
 **x-descriptors**
 
@@ -149,7 +154,7 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 </table>
 
 
-## Checkbox
+### 5. Checkbox
 
 **x-descriptors**
 
@@ -181,7 +186,7 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 </table>
 
 
-## Text Input
+### 6. Text Input
 
 **x-descriptors**
 
@@ -213,7 +218,7 @@ This descriptor allows you to specify a text input for a _string_ data type. See
 </table>
 
 
-## Number Input
+### 7. Number Input
 
 **x-descriptors**
 
@@ -245,7 +250,7 @@ This descriptor allows you to specify a number input for a _number_ data type. S
 </table>
 
 
-## Password Input
+### 8. Password Input
 
 **x-descriptors**
 
@@ -278,7 +283,7 @@ This descriptor allows you to specify a number input for a _password_ data type.
 </table>
 
 
-## Update Strategy
+### 9. Update Strategy
 
 **x-descriptors**
 
@@ -310,7 +315,7 @@ This descriptor allows you to specify the strategy of your pods being replaced w
 </table>
 
 
-## Image Pull Policy
+### 10. Image Pull Policy
 
 **x-descriptors**
 
@@ -343,7 +348,7 @@ This descriptor allows you to specify the policy for pulling your container imag
 </table>
 
 
-## Node Affinity
+### 11. Node Affinity
 
 **x-descriptors**
 
@@ -378,7 +383,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-## Pod Affinity
+### 12. Pod Affinity
 
 **x-descriptors**
 
@@ -413,7 +418,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-## Pod Anti-affinity
+### 13. Pod Anti-affinity
 
 **x-descriptors**
 
@@ -448,7 +453,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-## Selector
+### 14. Selector
 
 **x-descriptors**
 
@@ -484,7 +489,7 @@ See Kubernetes doc for details in
 [resources-that-support-set-based-requirement](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements).
 
 
-## Field Group
+### 15. Field Group
 
 **x-descriptors**
 
@@ -524,7 +529,7 @@ This descriptor allows you to specify a set of fields together as a _group_. Nes
 </table>
 
 
-## Array Field Group
+### 16. Array Field Group
 
 **x-descriptors**
 
@@ -565,7 +570,7 @@ This descriptor allows you to specify a set of fields together as an _array item
 </table>
 
 
-## Select
+### 17. Select
 
 **x-descriptors**
 
@@ -599,7 +604,7 @@ This descriptor allows you to specify a set of predefined options (e.g. `enum:` 
 </table>
 
 
-## Advanced
+### 18. Advanced
 
 **x-descriptors**
 
@@ -639,7 +644,7 @@ This descriptor allows you to specify fields as &quot;Advanced&quot; options and
 </table>
 
 
-## Endpoint List
+### 19. Endpoint List
 
 **x-descriptors**
 
@@ -671,9 +676,9 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
 </table>
 
 
-## DEPRECATED Descriptors
+### 20. DEPRECATED Descriptors
 
-### Label **[DEPRECATED]**
+#### Label **[DEPRECATED]**
 
 **x-descriptors**
 ```yaml
@@ -685,7 +690,7 @@ x-descriptors:
 * Use [Text Input](#text-input) instead for `string` data type input/output.
 
 
-### namespaceSelector **[DEPRECATED]**
+#### namespaceSelector **[DEPRECATED]**
 
 **x-descriptors**
 ```yaml
