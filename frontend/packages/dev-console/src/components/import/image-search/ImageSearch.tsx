@@ -5,8 +5,8 @@ import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes, Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { InputSearchField } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
-import { InputSearchField } from '../../formik-fields';
 import { secretModalLauncher } from '../CreateSecretModal';
 
 const ImageSearch: React.FC = () => {

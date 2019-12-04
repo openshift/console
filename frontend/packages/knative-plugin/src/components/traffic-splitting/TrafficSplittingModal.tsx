@@ -6,11 +6,7 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { TextInputTypes } from '@patternfly/react-core';
-import {
-  MultiColumnField,
-  InputField,
-  DropdownField,
-} from '@console/dev-console/src/components/formik-fields';
+import { MultiColumnField, InputField, DropdownField } from '@console/shared';
 
 export interface TrafficSplittingModalProps {
   revisionItems: any;

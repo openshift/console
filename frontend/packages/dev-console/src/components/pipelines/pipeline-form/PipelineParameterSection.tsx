@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FieldArray } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
+import { InputField } from '@console/shared';
 import FormSection from '../../import/section/FormSection';
-import { InputField } from '../../formik-fields';
 
 export interface ParamertersSectionProps {
   parameters: {

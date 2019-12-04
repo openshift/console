@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { ResourceLimitField } from '@console/shared';
 import FormSection from '../section/FormSection';
-import { ResourceLimitField } from '../../formik-fields';
 import { MemoryUnits, CPUUnits } from '../import-types';
 
 const ResourceLimitSection: React.FC = () => {

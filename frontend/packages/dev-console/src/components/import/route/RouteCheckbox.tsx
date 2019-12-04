@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CheckboxField } from '../../formik-fields';
+import { CheckboxField } from '@console/shared';
 
 const RouteCheckbox: React.FC = () => {
   return (

@@ -4,8 +4,8 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
+import { getFieldId } from '@console/shared';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
-import { getFieldId } from '../../formik-fields/field-utils';
 import BuilderImageCard from './BuilderImageCard';
 import './BuilderImageSelector.scss';
 

@@ -3,8 +3,8 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
 import { Alert, Expandable } from '@patternfly/react-core';
+import { CheckboxField } from '@console/shared';
 import { PipelineModel } from '../../../models';
-import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 
 const MISSING_DOCKERFILE_LABEL_TEXT =
