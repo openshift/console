@@ -4,6 +4,7 @@ import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
 import { Alert, Expandable } from '@patternfly/react-core';
 import { CheckboxField } from '@console/shared';
+import { CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
 import { PipelineVisualization } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 
@@ -32,7 +33,7 @@ const PipelineTemplate: React.FC = () => {
 
     const fetchPipelineTemplate = async () => {
       const templates = await k8sList(PipelineModel, {
-        ns: 'openshift',
+        ns: CLUSTER_PIPELINE_NS,
         labelSelector,
       });
       const pipelineTemplate = templates && templates[0];
