@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
@@ -19,6 +20,7 @@ import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { asVM, getDevices } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 
@@ -76,6 +78,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
+  dataVolumeLookup,
   canUpdateTemplate,
 }) => {
   const id = getBasicID(template);
@@ -111,7 +114,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
-        <TemplateSource template={template} detailed />
+        <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
       </VMDetailsItem>
     </dl>
   );
@@ -119,6 +122,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 
 type VMTemplateResourceListProps = {
   template: TemplateKind;
+  dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
   canUpdateTemplate: boolean;
 };
 

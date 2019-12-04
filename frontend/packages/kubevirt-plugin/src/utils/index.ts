@@ -15,6 +15,7 @@ import {
   getUID,
 } from '@console/shared/src/selectors';
 import { CPU } from '../types';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../constants/vm-templates';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;
@@ -55,6 +56,13 @@ export const getLoadError = (
   }
 
   return null;
+};
+
+export const insertName = (value: string, name) => {
+  if (value.indexOf(VM_TEMPLATE_NAME_PARAMETER) > -1) {
+    return value.replace(VM_TEMPLATE_NAME_PARAMETER, name);
+  }
+  return joinIDs(name, value);
 };
 
 export const parseNumber = (value, defaultValue = null) =>

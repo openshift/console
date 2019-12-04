@@ -32,6 +32,7 @@ export enum VMWizardProps {
   virtualMachines = 'virtualMachines',
   userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
+  dataVolumes = 'dataVolumes',
 }
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
@@ -115,6 +116,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.virtualMachines
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
+  | VMWizardProps.dataVolumes
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
   | VMWareProviderProps.v2vvmware
@@ -134,6 +136,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.virtualMachines,
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
+  VMWizardProps.dataVolumes,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,
   VMWareProviderProps.v2vvmware,

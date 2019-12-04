@@ -28,6 +28,7 @@ import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persist
 const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
     storage,
+    isCreateTemplate,
     namespace: vmNamespace,
     useProjects,
     addUpdateStorage,
@@ -96,6 +97,7 @@ const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
           VMWizardStorageType.PROVISION_SOURCE_DISK,
           VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
         ].includes(type)}
+        isCreateTemplate={isCreateTemplate}
         onSubmit={(
           resultDiskWrapper,
           resultVolumeWrapper,
@@ -131,6 +133,7 @@ type VMWizardStorageModalProps = ModalComponentProps & {
   storage?: VMWizardStorageWithWrappers;
   namespace: string;
   useProjects?: boolean;
+  isCreateTemplate: boolean;
   storages: VMWizardStorageWithWrappers[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
 };
@@ -140,6 +143,7 @@ const stateToProps = (state, { wizardReduxID }) => {
   return {
     useProjects,
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
+    isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
     storages: getStoragesWithWrappers(state, wizardReduxID),
   };
 };

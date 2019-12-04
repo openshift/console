@@ -42,5 +42,5 @@ export const hasVMSettingsValueChanged = (
 ) =>
   keys.find((key) => iGetVmSettingValue(prevState, id, key) !== iGetVmSettingValue(state, id, key));
 
-export const iGetProvisionSource = (state, id: string) =>
+export const iGetProvisionSource = (state, id: string): ProvisionSource =>
   ProvisionSource.fromString(iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE));
