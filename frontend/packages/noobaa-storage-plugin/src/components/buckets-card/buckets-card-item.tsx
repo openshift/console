@@ -25,7 +25,9 @@ const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, 
 
 const BucketsRow: React.FC<BucketsRowProps> = React.memo(
   ({ bucketsCount, title, objectsCount }) => {
-    const subtitle = _.isNil(objectsCount) ? 'Unavailable' : formatCount(Number(objectsCount));
+    const subtitle: string = _.isNil(objectsCount)
+      ? 'Not available'
+      : formatCount(Number(objectsCount));
     return (
       <div className="nb-buckets-card__row-title">
         <div>{_.isNil(bucketsCount) ? title : pluralize(Number(bucketsCount), title)}</div>

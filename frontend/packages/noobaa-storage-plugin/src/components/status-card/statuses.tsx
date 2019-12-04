@@ -38,8 +38,9 @@ export const getNooBaaState: GetObjectServiceStatus = (
   );
   const noobaaPhase = _.get(k8sResponse, 'data[0].status.phase');
   const unhealthyBucketsRatio = unhealthyBuckets / buckets;
+  const noData = !(buckets && unhealthyBuckets && pools && unhealthyPools && noobaaPhase);
 
-  if (hasLoadError) {
+  if (hasLoadError || noData) {
     return { state: HealthState.UNKNOWN };
   }
   if (isLoading) {
