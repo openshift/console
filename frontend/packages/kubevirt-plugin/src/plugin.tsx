@@ -14,9 +14,11 @@ import {
   DashboardsInventoryItemGroup,
   ReduxReducer,
   ProjectDashboardInventoryItem,
+  DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
+import { getName } from '@console/shared/src/selectors/common';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -41,7 +43,8 @@ type ConsumedExtensions =
   | DashboardsInventoryItemGroup
   | DashboardsStorageCapacityDropdownItem
   | ReduxReducer
-  | ProjectDashboardInventoryItem;
+  | ProjectDashboardInventoryItem
+  | DashboardsOverviewResourceActivity;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -272,6 +275,40 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: models.DataVolumeModel.kind,
+        prop: 'dvs',
+      },
+      isActivity: (resource) => _.get(resource, 'status.phase') === 'ImportInProgress',
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import(
+          './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
+        ).then((m) => m.DiskImportActivity),
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: PodModel.kind,
+        prop: 'pods',
+      },
+      isActivity: (resource) => getName(resource).startsWith('kubevirt-v2v-conversion'),
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import(
+          './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
+        ).then((m) => m.V2VImportActivity),
       required: FLAG_KUBEVIRT,
     },
   },
