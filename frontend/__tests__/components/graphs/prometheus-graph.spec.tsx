@@ -37,7 +37,6 @@ describe('<PrometheusGraph />', () => {
 describe('<PrometheusGraphLink />', () => {
   it('should only render with a link if query is set', () => {
     window.SERVER_FLAGS.prometheusBaseURL = 'prometheusBaseURL';
-    store.dispatch(UIActions.setActivePerspective('admin'));
 
     // Need full mount with redux store since this is a redux-connected component
     const getWrapper = (query: string) => {
@@ -57,13 +56,29 @@ describe('<PrometheusGraphLink />', () => {
     let wrapper;
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
+    store.dispatch(UIActions.setActivePerspective('dev'));
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
-    expect(wrapper.find(Link).props().to).toEqual('/metrics/ns/default?query0=test');
+    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
+
+    store.dispatch(UIActions.setActivePerspective('admin'));
+    wrapper = getWrapper('');
+    expect(wrapper.find(Link).exists()).toBe(false);
+    wrapper = getWrapper('test');
+    expect(wrapper.find(Link).exists()).toBe(true);
+    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
+    store.dispatch(UIActions.setActivePerspective('dev'));
+    wrapper = getWrapper('');
+    expect(wrapper.find(Link).exists()).toBe(false);
+    wrapper = getWrapper('test');
+    expect(wrapper.find(Link).exists()).toBe(true);
+    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
+
+    store.dispatch(UIActions.setActivePerspective('admin'));
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
