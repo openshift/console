@@ -47,6 +47,7 @@ export const ClusterServiceVersionModel: K8sKind = {
   crd: true,
   plural: 'clusterserviceversions',
   propagationPolicy: 'Foreground',
+  legacyPluralURL: true,
 };
 
 export const InstallPlanModel: K8sKind = {
@@ -71,6 +72,7 @@ export const SubscriptionModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'subscriptions',
+  legacyPluralURL: true,
 };
 
 export const OperatorGroupModel: K8sKind = {
