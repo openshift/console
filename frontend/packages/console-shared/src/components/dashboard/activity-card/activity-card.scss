@@ -99,9 +99,12 @@
 .co-recent-item__content-resourcelink {
   display: block;
   flex: 2 0 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+
+  .co-resource-item__resource-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 .co-recent-item__icon--warning {
