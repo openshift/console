@@ -23,6 +23,7 @@ export enum SpecCapability {
   arrayFieldGroup = 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:',
   select = 'urn:alm:descriptor:com.tectonic.ui:select:',
   advanced = 'urn:alm:descriptor:com.tectonic.ui:advanced',
+  fieldDependency = 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:',
 }
 
 export enum StatusCapability {
