@@ -42,6 +42,14 @@ export class DetailView {
     await isLoaded();
   }
 
+  async navigateToConsoles() {
+    await this.navigateToListView();
+    await VmsListView.vmListByName(this.name).click();
+    await isLoaded();
+    await clickHorizontalTab('Consoles');
+    await isLoaded();
+  }
+
   async navigateToListView() {
     const vmsListUrl = (namespace) =>
       `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/${this.kind}`;
