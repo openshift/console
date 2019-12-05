@@ -47,4 +47,8 @@
 @import "~@patternfly/patternfly/components/Form/form";
 @import "~@patternfly/patternfly/components/FormControl/form-control";
 @import "~@patternfly/patternfly/components/InputGroup/input-group";
+@import "~@patternfly/patternfly/utilities/Sizing/sizing";
 @import "~@patternfly/patternfly/patternfly-charts";
+
+// External dependency extensions
+@import "style/patternfly-sizing-extension";

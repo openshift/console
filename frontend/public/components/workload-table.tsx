@@ -16,11 +16,11 @@ import {
 } from './utils';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -50,15 +50,15 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
         />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
         <Link
           to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
           title="pods"
         >
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <LabelList kind={kind} labels={obj.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
@@ -94,14 +94,14 @@ export const WorkloadTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
-      sortField: 'metadata.labels',
+      title: 'Status',
+      sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status',
-      sortFunc: 'numReplicas',
+      title: 'Labels',
+      sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
