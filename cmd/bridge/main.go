@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"flag"
 	"fmt"
+	"github.com/openshift/console/pkg/crypto"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -241,7 +242,10 @@ func main() {
 		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
 			log.Fatalf("No CA found for the API server")
 		}
-		tlsConfig := &tls.Config{RootCAs: rootCAs}
+		tlsConfig := &tls.Config{
+			RootCAs:      rootCAs,
+			CipherSuites: crypto.DefaultCiphers(),
+		}
 
 		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
@@ -266,8 +270,11 @@ func main() {
 			if !prometheusProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
-			prometheusTLSConfig := &tls.Config{RootCAs: prometheusProxyRootCAs}
-			// Only proxy requests to the Prometheus API, not the UI.
+			prometheusTLSConfig := &tls.Config{
+				RootCAs:      prometheusProxyRootCAs,
+				CipherSuites: crypto.DefaultCiphers(),
+			}
+
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: prometheusTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -284,6 +291,7 @@ func main() {
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
+				CipherSuites:       crypto.DefaultCiphers(),
 			},
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
