@@ -630,7 +630,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       return (
         <div style={{}}>
           <Dropdown
-            title=""
+            title={`Select ${field.displayName}`}
             selectedKey={formValues[field.path]}
             items={field.capabilities
               .filter((c) => c.startsWith(SpecCapability.select))
