@@ -281,6 +281,9 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetConsoleLinks:
       return state.set('consoleLinks', action.payload.consoleLinks);
 
+    case ActionType.SetPodMetrics:
+      return state.setIn(['metrics', 'pod'], action.payload.podMetrics);
+
     default:
       break;
   }

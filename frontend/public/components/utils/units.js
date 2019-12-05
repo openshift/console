@@ -387,3 +387,16 @@ export const secondsToNanoSeconds = (value) => {
   const val = Number(value);
   return Number.isFinite(val) ? val * 1000 ** 3 : 0;
 };
+
+const formatToFractionalDigits = (value, digits) =>
+  Intl.NumberFormat(undefined, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+
+export const formatBytesAsMiB = (bytes) => {
+  const mib = bytes / 1024 / 1024;
+  return formatToFractionalDigits(mib, 1);
+};
+
+export const formatCores = (cores) => formatToFractionalDigits(cores, 3);
