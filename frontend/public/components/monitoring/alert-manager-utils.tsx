@@ -13,19 +13,35 @@ import { SecretModel } from '../../models';
 
 export const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
-export const getAlertManagerConfig = (secret: K8sResourceKind, setErrorMsg) => {
+const decodeAlertManagerYaml = (secret: K8sResourceKind, setErrorMsg) => {
   const alertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  let config: AlertManagerConfig;
+  let yaml: string = '';
 
   if (_.isEmpty(alertManagerYaml)) {
     setErrorMsg(
       'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"',
     );
-    return config;
+    return yaml;
   }
 
   try {
-    config = safeLoad(Base64.decode(alertManagerYaml));
+    yaml = Base64.decode(alertManagerYaml);
+  } catch (e) {
+    setErrorMsg(`Error decoding alertmanager.yaml: ${e}`);
+  }
+
+  return yaml;
+};
+
+export const getAlertManagerYAML = (secret: K8sResourceKind, setErrorMsg): string => {
+  return decodeAlertManagerYaml(secret, setErrorMsg);
+};
+
+export const getAlertManagerConfig = (secret: K8sResourceKind, setErrorMsg): AlertManagerConfig => {
+  let config: AlertManagerConfig;
+  const alertManagerYaml: string = decodeAlertManagerYaml(secret, setErrorMsg);
+  try {
+    config = safeLoad(alertManagerYaml);
   } catch (e) {
     setErrorMsg(`Error loading alertmanager.yaml: ${e}`);
   }

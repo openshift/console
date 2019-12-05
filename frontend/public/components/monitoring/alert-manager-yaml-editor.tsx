@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
-import { Base64 } from 'js-base64';
 import { safeLoad } from 'js-yaml';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { StatusBox } from '../utils';
 import { AsyncComponent } from '../utils/async';
-import { patchAlertManagerConfig } from './alert-manager-utils';
-import { Helmet } from 'react-helmet';
+import { patchAlertManagerConfig, getAlertManagerYAML } from './alert-manager-utils';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
@@ -21,15 +20,11 @@ const EditAlertmanagerYAML = (props) => (
 
 const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) => {
   const secret: K8sResourceKind = obj;
-  const encodedAlertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  const initErrorMsg = _.isEmpty(encodedAlertManagerYaml)
-    ? 'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"'
-    : null;
-
-  const [errorMsg, setErrorMsg] = React.useState(initErrorMsg);
-  const [successMsg, setSuccessMsg] = React.useState();
-  const alertManagerYamlStr = !_.isEmpty(encodedAlertManagerYaml)
-    ? Base64.decode(encodedAlertManagerYaml)
+  const [errorMsg, setErrorMsg] = React.useState('');
+  const [loadErrorMsg, setloadErrorMsg] = React.useState('');
+  const [successMsg, setSuccessMsg] = React.useState('');
+  const alertManagerYamlStr = _.isEmpty(loadErrorMsg)
+    ? getAlertManagerYAML(secret, setloadErrorMsg)
     : '';
 
   const save = (yaml: string) => {
@@ -60,6 +55,19 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
       },
     );
   };
+
+  if (loadErrorMsg) {
+    return (
+      <Alert
+        isInline
+        className="co-alert co-alert--scrollable"
+        variant="danger"
+        title="An error occurred"
+      >
+        <div className="co-pre-line">{loadErrorMsg}</div>
+      </Alert>
+    );
+  }
 
   return (
     <>
