@@ -63,7 +63,7 @@ Which yields this UI:
 ![screenshot_20180821_163304](https://user-images.githubusercontent.com/11700385/44427562-eb1fb500-a55f-11e8-83e5-98e7008dabdb.png)
 
 ## OLM Descriptor Reference
-Checkout the [reference](https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md) of different specDescriptors and statusDescriptors available with sample code snippets and screenshots.
+Checkout the [reference](reference/reference.md) of different specDescriptors and statusDescriptors available with sample code snippets and screenshots.
 
 
 ## Create Forms
