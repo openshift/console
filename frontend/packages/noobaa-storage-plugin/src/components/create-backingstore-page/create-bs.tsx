@@ -508,26 +508,6 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     providerDataReducer,
     initialState,
   );
-  const [disabled, setDisabled] = React.useState(true);
-
-  // Basic validation of the form
-  React.useEffect(() => {
-    const secretLogic = !(
-      providerDataState.target.trim().length > 0 &&
-      ((providerDataState.accessKey.trim().length > 0 &&
-        providerDataState.secretKey.trim().length > 0) ||
-        providerDataState.secretName.length > 0)
-    );
-    if (namespace.length === 0 || bsName.trim().length === 0) {
-      setDisabled(true);
-    } else if (provider === 'AWS S3' && providerDataState.region.length === 0) {
-      setDisabled(true);
-    } else if (provider !== 'PVC' && secretLogic) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
-  }, [bsName, namespace.length, provider, providerDataState]);
 
   const { cancel, className, close, inProgress, errorMessage, handlePromise, isPage, csv } = props;
 
@@ -599,7 +579,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         label="Backing Store Name"
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
-        helperText="If not provided, a generic name will be generated."
+        helperText="A unqiue name for the Backing Store within the project"
         isRequired
       >
         <TextInput
@@ -631,7 +611,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       {provider === 'PVC' && <PVCType state={providerDataState} dispatch={providerDataDispatch} />}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
-          <Button type="submit" variant="primary" isDisabled={disabled}>
+          <Button type="submit" variant="primary">
             Create Backing Store
           </Button>
           <Button onClick={cancel} variant="secondary">
