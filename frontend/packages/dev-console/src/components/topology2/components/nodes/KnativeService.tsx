@@ -10,7 +10,7 @@ import {
   WithContextMenuProps,
   RectAnchor,
   useAnchor,
-  WithDragNodeProps,
+  useDragNode,
   Layer,
   useHover,
   createSvgIdUrl,
@@ -22,6 +22,8 @@ import { getTopologyResourceObject } from '../../../topology/topology-utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import Decorator from '../../../topology/shapes/Decorator';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
+import { nodeDragSourceSpec } from '../../componentUtils';
+import { TYPE_KNATIVE_SERVICE } from '../../const';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
 import './KnativeService.scss';
@@ -31,7 +33,6 @@ export type EventSourceProps = {
   dragging: boolean;
   regrouping: boolean;
 } & WithSelectionProps &
-  WithDragNodeProps &
   WithContextMenuProps;
 
 const DECORATOR_RADIUS = 13;
@@ -41,12 +42,14 @@ const KnativeService: React.FC<EventSourceProps> = ({
   onSelect,
   onContextMenu,
   contextMenuOpen,
-  dragNodeRef,
   dragging,
   regrouping,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
+  const dragNodeRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE), { element })[1];
+  const dragLabelRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE), { element })[1];
+
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
@@ -111,6 +114,7 @@ const KnativeService: React.FC<EventSourceProps> = ({
           paddingY={4}
           kind={data.kind}
           truncate={16}
+          dragRef={dragLabelRef}
         >
           {element.getLabel()}
         </SvgBoxedText>
