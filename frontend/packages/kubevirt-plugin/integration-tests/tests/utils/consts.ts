@@ -109,9 +109,9 @@ Object.freeze(networkTabCol);
 
 export const diskTabCol = {
   name: 0,
-  size: 1,
-  interface: 2,
-  type: 3,
+  source: 1,
+  size: 2,
+  interface: 3,
   storageClass: 4,
 };
 Object.freeze(diskTabCol);
