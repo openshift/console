@@ -26,6 +26,12 @@ export enum STORAGE_CLASS_PATTERNS {
   NOOBAA = 'noobaa.io',
 }
 
+export enum CLUSTER_STATUS {
+  READY = 'Ready',
+  PROGRESSING = 'Progressing',
+  HEALTH_ERROR = 'HEALTH_ERR',
+}
+
 export const OCS_NODE_LABEL = 'cluster.ocs.openshift.io/openshift-storage';
 
 export const KIND = 'storagecluster';
