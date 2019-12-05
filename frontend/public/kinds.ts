@@ -65,7 +65,9 @@ export const connectToPlural: ConnectToPlural = connect(
         kindObj = state.k8s.getIn(['RESOURCES', 'models']).get(plural);
       }
     } else {
-      kindObj = allModels().find((model) => model.plural === plural);
+      kindObj = allModels().find(
+        (model) => model.plural === plural && (!model.crd || model.legacyPluralURL),
+      );
     }
 
     const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');

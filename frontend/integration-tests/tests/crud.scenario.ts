@@ -44,7 +44,7 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('buildconfigs', { kind: 'BuildConfig' })
     .set('imagestreams', { kind: 'ImageStream' })
     .set('routes', { kind: 'Route' })
-    .set('groups', { kind: 'user.openshift.io~v1~Group', namespaced: false });
+    .set('user.openshift.io~v1~Group', { kind: 'user.openshift.io~v1~Group', namespaced: false });
   const serviceCatalogObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>().set(
     'clusterservicebrokers',
     { kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false },
@@ -77,7 +77,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
   testObjs.forEach(({ kind, namespaced = true }, resource) => {
     describe(kind, () => {
-      const name = `${testName}-${kind.toLowerCase()}`;
+      const name = `${testName}-${_.kebabCase(kind)}`;
       it('displays a list view for the resource', async () => {
         await browser.get(
           `${appHost}${
