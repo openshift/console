@@ -25,3 +25,5 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 oc apply -f ./frontend/integration-tests/data/htpasswd-idp.yaml
 
 ./test-gui.sh ${1:-e2e}
+
+./test-ciphers.sh
