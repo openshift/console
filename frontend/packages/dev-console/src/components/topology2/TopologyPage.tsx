@@ -13,7 +13,7 @@ import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
-import { getCheURL } from '../topology/topology-utils';
+import { getCheURL } from './topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from '../topology/TopologyDataController';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import Topology from './Topology';

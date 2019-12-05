@@ -6,7 +6,7 @@ import {
   getKnativeServingRoutes,
 } from '@console/knative-plugin/src/utils/get-knative-resources';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
-import { transformTopologyData, getEditURL } from '../topology-utils';
+import { transformTopologyData, getEditURL } from '../../topology2/topology-utils';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 

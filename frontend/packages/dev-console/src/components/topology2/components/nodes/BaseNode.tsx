@@ -17,7 +17,7 @@ import {
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { getTopologyResourceObject } from '../../../topology/topology-utils';
+import { getTopologyResourceObject } from '../../topology-utils';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';

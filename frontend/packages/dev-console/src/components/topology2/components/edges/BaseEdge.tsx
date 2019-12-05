@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { Layer, Edge, WithRemoveConnectorProps, observer, useHover } from '@console/topology';
-import { getTopologyResourceObject } from '../../../topology/topology-utils';
+import { getTopologyResourceObject } from '../../topology-utils';
 import './BaseEdge.scss';
 
 type BaseEdgeProps = {

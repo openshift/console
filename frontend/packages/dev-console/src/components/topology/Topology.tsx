@@ -14,7 +14,7 @@ import {
   createTopologyResourceConnection,
   removeTopologyResourceConnection,
   updateTopologyResourceApplication,
-} from './topology-utils';
+} from '../topology2/topology-utils';
 import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 import { ActionProviders } from './actions-providers';

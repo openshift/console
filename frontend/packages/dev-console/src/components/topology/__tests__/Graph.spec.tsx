@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { transformTopologyData } from '../topology-utils';
+import { transformTopologyData } from '../../topology2/topology-utils';
 import Graph from '../Graph';
 import { nodeProvider, edgeProvider, groupProvider } from '../shape-providers';
 import { ActionProviders } from '../actions-providers';

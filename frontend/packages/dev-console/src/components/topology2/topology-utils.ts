@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { EdgeModel, Model, NodeModel, NodeShape } from '@console/topology';
 import {
   K8sResourceKind,
   modelFor,
@@ -31,7 +32,8 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
-} from './topology-types';
+} from '../topology/topology-types';
+import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
@@ -426,6 +428,68 @@ export const transformTopologyData = (
     }
   });
   return topologyGraphAndNodeData;
+};
+
+export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
+  const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
+    if (d.type === TYPE_KNATIVE_SERVICE) {
+      return {
+        width: 104,
+        height: 104,
+        id: d.id,
+        type: d.type,
+        label: dataModel.topology[d.id].name,
+        data: dataModel.topology[d.id],
+        children: (d as any).children,
+        group: true,
+        shape: NodeShape.rect,
+        style: {
+          padding: [40, 50, 40, 40],
+        },
+      };
+    }
+    return {
+      width: 104,
+      height: 104,
+      id: d.id,
+      type: d.type,
+      label: dataModel.topology[d.id].name,
+      data: dataModel.topology[d.id],
+    };
+  });
+
+  const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    return {
+      id: d.id,
+      group: true,
+      type: TYPE_APPLICATION_GROUP,
+      data: dataModel.topology[d.id],
+      children: d.nodes,
+      label: d.name,
+      style: {
+        padding: 40,
+      },
+    };
+  });
+
+  // create links from data
+  const edges = dataModel.graph.edges.map(
+    (d): EdgeModel => ({
+      data: d,
+      source: d.source,
+      target: d.target,
+      id: `${d.source}_${d.target}`,
+      type: d.type,
+    }),
+  );
+
+  // create topology model
+  const model: Model = {
+    nodes: [...nodes, ...groupNodes],
+    edges,
+  };
+
+  return model;
 };
 
 export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K8sResourceKind => {

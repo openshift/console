@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { SVGDefsProvider } from '@console/topology';
 import { MockResources } from '../../__tests__/topology-test-data';
-import { transformTopologyData } from '../../topology-utils';
+import { transformTopologyData } from '../../../topology2/topology-utils';
 import WorkloadNode from '../WorkloadNode';
 
 jest.mock('@console/internal/components/catalog/catalog-item-icon', () => ({

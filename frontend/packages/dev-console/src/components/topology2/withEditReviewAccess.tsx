@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { Node } from '@console/topology';
-import { getTopologyResourceObject } from '../topology/topology-utils';
+import { getTopologyResourceObject } from './topology-utils';
 
 type ComponentProps = {
   element: Node;

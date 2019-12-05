@@ -28,7 +28,7 @@ import {
   getTopologyNodeItem,
   getTopologyEdgeItems,
   filterBasedOnActiveApplication,
-} from '@console/dev-console/src/components/topology/topology-utils';
+} from '@console/dev-console/src/components/topology2/topology-utils';
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from './get-knative-resources';

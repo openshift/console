@@ -17,7 +17,7 @@ import { TopologyDataResources } from '../../components/topology/topology-types'
 import {
   transformTopologyData,
   getTopologyResourceObject,
-} from '../../components/topology/topology-utils';
+} from '../../components/topology2/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
 import { MockResources } from '../../components/topology/__tests__/topology-test-data';
 import { MockKnativeResources } from '../../components/topology/__tests__/topology-knative-test-data';

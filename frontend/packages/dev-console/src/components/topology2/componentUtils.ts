@@ -13,7 +13,9 @@ import {
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
 } from '@console/topology';
-import { createConnection, removeConnection, moveNodeToGroup } from './topology-utils';
+import { createConnection } from './components/createConnection';
+import { removeConnection } from './components/removeConnection';
+import { moveNodeToGroup } from './components/moveNodeToGroup';
 import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
 import './components/GraphComponent.scss';
 

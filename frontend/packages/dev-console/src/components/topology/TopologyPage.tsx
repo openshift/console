@@ -14,7 +14,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
 import { ALLOW_SERVICE_BINDING } from '../../const';
-import { getCheURL } from './topology-utils';
+import { getCheURL } from '../topology2/topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 
