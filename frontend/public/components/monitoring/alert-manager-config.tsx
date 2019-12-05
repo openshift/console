@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
@@ -18,14 +19,14 @@ import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
 import { confirmModal, createAlertRoutingModal } from '../modals';
 import { Table, TableData, TableRow, TextFilter } from '../factory';
 import {
-  getAlertManagerConfig,
-  patchAlertManagerConfig,
+  getAlertmanagerConfig,
+  patchAlertmanagerConfig,
   receiverTypes,
 } from './alert-manager-utils';
 import { Helmet } from 'react-helmet';
 
 let secret: K8sResourceKind = null; // alertmanager-main Secret which holds alertmanager configuration yaml
-let config: AlertManagerConfig = null; // alertmanager configuration yaml as object
+let config: AlertmanagerConfig = null; // alertmanager configuration yaml as object
 
 const AlertRouting = () => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
@@ -95,7 +96,7 @@ const ReceiverTableHeader = () => {
 };
 ReceiverTableHeader.displayName = 'ReceiverTableHeader';
 
-const getIntegrationTypes = (receiver: AlertManagerReceiver): string[] => {
+const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
   /* Given receiver = {
        "name": "team-X-pager",
        "email_configs": [...],
@@ -144,7 +145,7 @@ const getRoutingLabelsByReceivers = (routes, parentLabels): RoutingLabelsByRecei
  * is receiver not in any route (no routing labels)?
  */
 const hasSimpleRoute = (
-  receiver: AlertManagerReceiver,
+  receiver: AlertmanagerReceiver,
   receiverRoutingLabels: RoutingLabelsByReceivers[],
 ): boolean => {
   const routes = _.get(config, ['route', 'routes']);
@@ -160,7 +161,7 @@ const hasSimpleRoute = (
  * No receiver type specified is valid, as well as a single receiver type with no config
  */
 const hasSimpleReceiver = (
-  receiver: AlertManagerReceiver,
+  receiver: AlertmanagerReceiver,
   receiverIntegrationTypes: string[],
 ): boolean => {
   if (receiverIntegrationTypes.length === 0) {
@@ -201,15 +202,15 @@ const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
 const deleteReceiver = (receiverName: string) => {
   // remove any routes which use receiverToDelete
   _.update(config, 'route.routes', (routes) => {
-    _.remove(routes, (route: AlertManagerRoute) => route.receiver === receiverName);
+    _.remove(routes, (route: AlertmanagerRoute) => route.receiver === receiverName);
     return routes;
   });
   // delete receiver
   _.update(config, 'receivers', (receivers) => {
-    _.remove(receivers, (receiver: AlertManagerReceiver) => receiver.name === receiverName);
+    _.remove(receivers, (receiver: AlertmanagerReceiver) => receiver.name === receiverName);
     return receivers;
   });
-  return patchAlertManagerConfig(secret, config).then(() => {
+  return patchAlertmanagerConfig(secret, config).then(() => {
     history.push('/monitoring/alertmanagerconfig');
   });
 };
@@ -354,11 +355,11 @@ const Receivers = () => {
   );
 };
 
-const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ obj }) => {
+const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj }) => {
   const [errorMsg, setErrorMsg] = React.useState('');
   secret = obj; // alertmanager-main Secret which holds encoded alertmanager configuration yaml
   if (!errorMsg) {
-    config = getAlertManagerConfig(secret, setErrorMsg);
+    config = getAlertmanagerConfig(secret, setErrorMsg);
   }
 
   if (errorMsg) {
@@ -382,7 +383,7 @@ const AlertManagerConfiguration: React.FC<AlertManagerConfigurationProps> = ({ o
   );
 };
 
-export const AlertManagerConfigWrapper: React.FC<AlertManagerConfigWrapperProps> = React.memo(
+export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
     return (
       <>
@@ -390,21 +391,21 @@ export const AlertManagerConfigWrapper: React.FC<AlertManagerConfigWrapperProps>
           <title>Alerting</title>
         </Helmet>
         <StatusBox {...obj}>
-          <AlertManagerConfiguration {...props} obj={obj.data} />
+          <AlertmanagerConfiguration {...props} obj={obj.data} />
         </StatusBox>
       </>
     );
   },
 );
 
-type AlertManagerConfigWrapperProps = {
+type AlertmanagerConfigWrapperProps = {
   obj?: {
     data?: K8sResourceKind;
     [key: string]: any;
   };
 };
 
-type AlertManagerConfigurationProps = {
+type AlertmanagerConfigurationProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
@@ -412,15 +413,15 @@ type labels = {
   [key: string]: string;
 };
 
-export type AlertManagerRoute = {
+export type AlertmanagerRoute = {
   receiver?: string;
   groupBy?: { [key: string]: string };
   groupWait?: string;
   groupInterval?: string;
   repeatInterval?: string;
   match?: labels[];
-  matchRe?: labels[];
-  routes?: AlertManagerRoute[];
+  match_re?: labels[];
+  routes?: AlertmanagerRoute[];
 };
 
 type RoutingLabelsByReceivers = {
@@ -437,24 +438,24 @@ type PagerDutyConfig = {
   serviceKey?: string;
 };
 
-export type AlertManagerReceiver = {
+export type AlertmanagerReceiver = {
   name: string;
   webhookConfigs?: WebhookConfig[];
   pagerdutyConfigs?: PagerDutyConfig[];
 };
 
-export type AlertManagerConfig = {
-  route: AlertManagerRoute;
-  receivers: AlertManagerReceiver[];
+export type AlertmanagerConfig = {
+  route: AlertmanagerRoute;
+  receivers: AlertmanagerReceiver[];
 };
 
 type ReceiverTableProps = {
-  data: AlertManagerReceiver[];
+  data: AlertmanagerReceiver[];
   filterValue?: string;
 };
 
 type ReceiverTableRowProps = {
-  obj: AlertManagerReceiver;
+  obj: AlertmanagerReceiver;
   index: number;
   key?: string;
   style: object;

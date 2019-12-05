@@ -215,7 +215,7 @@ const detectMonitoringURLs = (dispatch) =>
     (res) => {
       const { alertmanagerURL, grafanaURL, prometheusURL } = res.data;
       if (!_.isEmpty(alertmanagerURL)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.AlertManager, alertmanagerURL));
+        dispatch(setMonitoringURL(MonitoringRoutes.Alertmanager, alertmanagerURL));
       }
       if (!_.isEmpty(grafanaURL)) {
         dispatch(setMonitoringURL(MonitoringRoutes.Grafana, grafanaURL));

@@ -465,7 +465,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             exact
             loader={() =>
               import(
-                './monitoring/alert-manager-receiver-forms' /* webpackChunkName: "monitoring" */
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
               ).then((m) => m.CreateReceiver)
             }
           />
@@ -474,7 +474,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             exact
             loader={() =>
               import(
-                './monitoring/alert-manager-receiver-forms' /* webpackChunkName: "monitoring" */
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
               ).then((m) => m.EditReceiver)
             }
           />

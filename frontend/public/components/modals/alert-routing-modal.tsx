@@ -3,8 +3,8 @@ import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { K8sResourceKind } from '../../module/k8s';
-import { AlertManagerConfig } from '../monitoring/alert-manager-config';
-import { patchAlertManagerConfig } from '../monitoring/alert-manager-utils';
+import { AlertmanagerConfig } from '../monitoring/alert-manager-config';
+import { patchAlertmanagerConfig } from '../monitoring/alert-manager-utils';
 
 const updateAlertRoutingProperty = (
   config: any,
@@ -50,7 +50,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
     updateAlertRoutingProperty(config, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
 
     setInProgress(true);
-    patchAlertManagerConfig(secret, config).then(close, (err) => {
+    patchAlertmanagerConfig(secret, config).then(close, (err) => {
       setErrorMessage(err.message);
       setInProgress(false);
     });
@@ -166,6 +166,6 @@ export const createAlertRoutingModal = createModalLauncher<AlertRoutingModalProp
 export type AlertRoutingModalProps = {
   cancel: () => void;
   close: () => void;
-  config: AlertManagerConfig;
+  config: AlertmanagerConfig;
   secret: K8sResourceKind;
 };

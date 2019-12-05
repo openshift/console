@@ -124,6 +124,7 @@ class DropDownRow extends React.PureComponent {
             className="pf-c-dropdown__menu-item"
             id={`${itemKey}-link`}
             data-test-id="dropdown-menu"
+            data-test-dropdown-menu={itemKey}
             onClick={(e) => onclick(itemKey, e)}
           >
             {content}
