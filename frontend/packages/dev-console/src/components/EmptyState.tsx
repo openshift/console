@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
 import { history, PageHeading, useAccessReview } from '@console/internal/components/utils';
@@ -81,59 +82,79 @@ const ODCEmptyState: React.FC<Props> = ({
         )}
       </div>
       <div className="odc-empty-state__content">
-        {allImportResourceAccess && (
-          <CatalogTile
-            onClick={(e: React.SyntheticEvent) => navigateTo(e, '/import?importType=git')}
-            href="/import?importType=git"
-            title="From Git"
-            iconImg={importGitIcon}
-            description="Import code from your git repository to be built and deployed"
-            data-test-id="import-from-git"
-          />
-        )}
-        {allCatalogImageResourceAccess && (
-          <CatalogTile
-            onClick={(e: React.SyntheticEvent) =>
-              navigateTo(e, `/deploy-image?preselected-ns=${activeNamespace}`)
-            }
-            href={`/deploy-image?preselected-ns=${activeNamespace}`}
-            title="Container Image"
-            iconClass="pficon-image"
-            description="Deploy an existing image from an image registry or image stream tag"
-          />
-        )}
-        <CatalogTile
-          onClick={(e: React.SyntheticEvent) => navigateTo(e, '/catalog')}
-          href="/catalog"
-          title="From Catalog"
-          iconClass="pficon-catalog"
-          description="Browse the catalog to discover, deploy and connect to services"
-        />
-        {allImportResourceAccess && (
-          <CatalogTile
-            onClick={(e: React.SyntheticEvent) => navigateTo(e, '/import?importType=docker')}
-            href="/import?importType=docker"
-            title="From Dockerfile"
-            iconImg={dockerfileIcon}
-            description="Import your Dockerfile from your git repo to be built & deployed"
-          />
-        )}
-        <CatalogTile
-          onClick={(e: React.SyntheticEvent) =>
-            navigateTo(e, formatNamespacedRouteForResource('import', activeNamespace))
-          }
-          href={formatNamespacedRouteForResource('import', activeNamespace)}
-          title="YAML"
-          iconImg={yamlIcon}
-          description="Create resources from their YAML or JSON definitions"
-        />
-        <CatalogTile
-          onClick={(e: React.SyntheticEvent) => navigateTo(e, '/catalog?category=databases')}
-          href="/catalog?category=databases"
-          title="Database"
-          iconClass="fas fa-database"
-          description="Browse the catalog to discover database services to add to your application"
-        />
+        <Gallery gutter="sm">
+          {allImportResourceAccess && (
+            <GalleryItem key="gallery-fromgit">
+              <CatalogTile
+                className="odc-empty-state__tile"
+                onClick={(e: React.SyntheticEvent) => navigateTo(e, '/import?importType=git')}
+                href="/import?importType=git"
+                title="From Git"
+                iconImg={importGitIcon}
+                description="Import code from your git repository to be built and deployed"
+                data-test-id="import-from-git"
+              />
+            </GalleryItem>
+          )}
+          {allCatalogImageResourceAccess && (
+            <GalleryItem key="gallery-container">
+              <CatalogTile
+                className="odc-empty-state__tile"
+                onClick={(e: React.SyntheticEvent) =>
+                  navigateTo(e, `/deploy-image?preselected-ns=${activeNamespace}`)
+                }
+                href={`/deploy-image?preselected-ns=${activeNamespace}`}
+                title="Container Image"
+                iconClass="pficon-image"
+                description="Deploy an existing image from an image registry or image stream tag"
+              />
+            </GalleryItem>
+          )}
+          <GalleryItem key="gallery-catalog">
+            <CatalogTile
+              className="odc-empty-state__tile"
+              onClick={(e: React.SyntheticEvent) => navigateTo(e, '/catalog')}
+              href="/catalog"
+              title="From Catalog"
+              iconClass="pficon-catalog"
+              description="Browse the catalog to discover, deploy and connect to services"
+            />
+          </GalleryItem>
+          {allImportResourceAccess && (
+            <GalleryItem key="gallery-dockerfile">
+              <CatalogTile
+                className="odc-empty-state__tile"
+                onClick={(e: React.SyntheticEvent) => navigateTo(e, '/import?importType=docker')}
+                href="/import?importType=docker"
+                title="From Dockerfile"
+                iconImg={dockerfileIcon}
+                description="Import your Dockerfile from your git repo to be built & deployed"
+              />
+            </GalleryItem>
+          )}
+          <GalleryItem key="gallery-yaml">
+            <CatalogTile
+              className="odc-empty-state__tile"
+              onClick={(e: React.SyntheticEvent) =>
+                navigateTo(e, formatNamespacedRouteForResource('import', activeNamespace))
+              }
+              href={formatNamespacedRouteForResource('import', activeNamespace)}
+              title="YAML"
+              iconImg={yamlIcon}
+              description="Create resources from their YAML or JSON definitions"
+            />
+          </GalleryItem>
+          <GalleryItem key="gallery-database">
+            <CatalogTile
+              className="odc-empty-state__tile"
+              onClick={(e: React.SyntheticEvent) => navigateTo(e, '/catalog?category=databases')}
+              href="/catalog?category=databases"
+              title="Database"
+              iconClass="fas fa-database"
+              description="Browse the catalog to discover database services to add to your application"
+            />
+          </GalleryItem>
+        </Gallery>
       </div>
     </>
   );

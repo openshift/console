@@ -12,7 +12,9 @@
 
   &__content {
     padding: var(--pf-global--spacer--lg);
-    display: flex;
-    flex-wrap: wrap;
+  }
+
+  &__tile {
+    height: 230px;
   }
 }
