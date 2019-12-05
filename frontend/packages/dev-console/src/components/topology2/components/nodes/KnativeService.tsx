@@ -16,6 +16,9 @@ import {
   createSvgIdUrl,
   useCombineRefs,
 } from '@console/topology';
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { getTopologyResourceObject } from '../../../topology/topology-utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import Decorator from '../../../topology/shapes/Decorator';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
@@ -47,6 +50,15 @@ const KnativeService: React.FC<EventSourceProps> = ({
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
+  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceModel = modelFor(referenceFor(resourceObj));
+  const editAccess = useAccessReview({
+    group: resourceModel.apiGroup,
+    verb: 'patch',
+    resource: resourceModel.plural,
+    name: resourceObj.metadata.name,
+    namespace: resourceObj.metadata.namespace,
+  });
   useAnchor(
     React.useCallback(
       (node: Node) => new RevisionTrafficSourceAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
@@ -59,7 +71,7 @@ const KnativeService: React.FC<EventSourceProps> = ({
   const { x, y, width, height } = element.getBounds();
 
   return (
-    <g ref={hoverRef} onClick={onSelect} onContextMenu={onContextMenu}>
+    <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>
       <NodeShadows />
       <Layer id={dragging && regrouping ? undefined : 'groups2'}>
         <rect

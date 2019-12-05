@@ -42,19 +42,19 @@ export const useDragNode = <
     React.useMemo(() => {
       const sourceSpec: DragSourceSpec<any, any, any, Props> = {
         item: (spec && spec.item) || { type: '#useDragNode#' },
-        operation: (() => {
-          if (
-            spec &&
-            typeof spec.operation === 'object' &&
-            Object.keys(spec.operation).length > 0
-          ) {
-            return {
-              ...defaultOperation,
-              ...spec.operation,
-            };
+        operation: (monitor, p) => {
+          if (spec) {
+            const operation =
+              typeof spec.operation === 'function' ? spec.operation(monitor, p) : spec.operation;
+            if (typeof operation === 'object' && Object.keys(operation).length > 0) {
+              return {
+                ...defaultOperation,
+                ...operation,
+              };
+            }
           }
           return defaultOperation;
-        })(),
+        },
         begin: (monitor, p) => {
           elementRef.current.raise();
           if (elementRef.current.isGroup()) {
