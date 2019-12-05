@@ -1,6 +1,5 @@
 package serverconfig
 
-
 // This file is a copy of the struct within the console operator:
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
