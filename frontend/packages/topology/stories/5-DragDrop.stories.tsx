@@ -230,7 +230,10 @@ export const dndShiftRegroup = () => {
         accept: 'test',
         canDrop: (item, monitor, props) => {
           return (
-            monitor.getOperation() === 'regroup' && !!props && item.getParent() !== props.element
+            item &&
+            monitor.getOperation() === 'regroup' &&
+            !!props &&
+            item.getParent() !== props.element
           );
         },
         collect: (monitor) => ({
@@ -243,9 +246,9 @@ export const dndShiftRegroup = () => {
     if (type === 'node-drag') {
       return withDragNode<DragObjectWithType, Node, {}, ElementProps>({
         item: { type: 'test' },
-        operation: {
+        operation: () => ({
           [Modifiers.SHIFT]: 'regroup',
-        },
+        }),
         end: (dropResult, monitor, props) => {
           if (monitor.didDrop() && dropResult && props) {
             dropResult.appendChild(props.element);

@@ -117,7 +117,7 @@ export interface DragSourceSpec<
   Props extends {} = {}
 > {
   item: DragObject;
-  operation?: DragSpecOperation;
+  operation?: ((monitor: DragSourceMonitor, props: Props) => DragSpecOperation) | DragSpecOperation;
   begin?: (monitor: DragSourceMonitor, props: Props) => any;
   drag?: (event: DragEvent, monitor: DragSourceMonitor, props: Props) => void;
   end?: (
