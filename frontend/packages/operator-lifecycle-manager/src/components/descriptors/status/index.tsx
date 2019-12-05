@@ -17,7 +17,7 @@ const Invalid: React.SFC<StatusCapabilityProps> = (props) => (
 );
 
 const Default: React.SFC<StatusCapabilityProps> = ({ value }) => {
-  if (_.isEmpty(value) && !_.isNumber(value)) {
+  if (_.isEmpty(value) && !_.isNumber(value) && !_.isBoolean(value)) {
     return <span className="text-muted">None</span>;
   }
   if (_.isObject(value)) {
