@@ -41,16 +41,13 @@ export const sortEvents = (events) => {
   return _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']);
 };
 
-// Predicate function to filter by event "category" (info, error, or all)
-export const categoryFilter = (category, event) => {
-  if (category === 'all') {
+// Predicate function to filter by event "type" (normal, warning, or all)
+export const typeFilter = (eventType, event) => {
+  if (eventType === 'all') {
     return true;
   }
-  const { reason = '' } = event;
-  const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
-  const isError =
-    reason && errorSubstrings.find((substring) => reason.toLowerCase().includes(substring));
-  return category === 'error' ? isError : !isError;
+  const { type = 'normal' } = event;
+  return type.toLowerCase() === eventType;
 };
 
 const kindFilter = (kind, { involvedObject }) => {
@@ -63,13 +60,13 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
       const { event, flags } = this.props;
       const { involvedObject: obj, source, message, reason, series } = event;
       const tooltipMsg = `${reason} (${obj.kind})`;
-      const isError = categoryFilter('error', event);
+      const isWarning = typeFilter('warning', event);
       const firstTime = getFirstTime(event);
       const lastTime = getLastTime(event);
       const count = series ? series.count : event.count;
 
       return (
-        <div className={classNames('co-sysevent', { 'co-sysevent--error': isError })}>
+        <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
           <div className="co-sysevent__icon-box">
             <i className="co-sysevent-icon" title={tooltipMsg} />
             <div className="co-sysevent__icon-line" />
@@ -132,20 +129,20 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
   },
 );
 
-const categories = { all: 'All Categories', info: 'Info', error: 'Error' };
+const eventTypes = { all: 'All Types', normal: 'Normal', warning: 'Warning' };
 
 export class EventsList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      category: 'all',
+      type: 'all',
       kind: 'all',
       textFilter: '',
     };
   }
 
   render() {
-    const { category, kind, textFilter } = this.state;
+    const { type, kind, textFilter } = this.state;
     const { autoFocus = true, mock } = this.props;
 
     return (
@@ -157,14 +154,14 @@ export class EventsList extends React.Component {
               onChange={(v) => this.setState({ kind: v })}
               selected={kind}
               showAll
-              title="All Types"
+              title="All Resources"
             />
             <Dropdown
               className="btn-group"
-              items={categories}
-              onChange={(v) => this.setState({ category: v })}
-              selectedKey={this.state.category}
-              title="All Categories"
+              items={eventTypes}
+              onChange={(v) => this.setState({ type: v })}
+              selectedKey={this.state.type}
+              title="All Types"
             />
           </div>
           <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
@@ -175,13 +172,7 @@ export class EventsList extends React.Component {
             />
           </div>
         </div>
-        <EventStream
-          {...this.props}
-          category={category}
-          kind={kind}
-          mock={mock}
-          textFilter={textFilter}
-        />
+        <EventStream {...this.props} type={type} kind={kind} mock={mock} textFilter={textFilter} />
       </>
     );
   }
@@ -303,7 +294,7 @@ class EventStream extends React.Component {
     this.ws && this.ws.destroy();
   }
 
-  static filterEvents(messages, { kind, category, filter, textFilter }) {
+  static filterEvents(messages, { kind, type, filter, textFilter }) {
     // Don't use `fuzzy` because it results in some surprising matches in long event messages.
     // Instead perform an exact substring match on each word in the text filter.
     const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
@@ -321,7 +312,7 @@ class EventStream extends React.Component {
     };
 
     const f = (obj) => {
-      if (category && !categoryFilter(category, obj)) {
+      if (type && !typeFilter(type, obj)) {
         return false;
       }
       if (kind && !kindFilter(kind, obj)) {
@@ -340,12 +331,12 @@ class EventStream extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { filter, kind, category, textFilter, loading } = prevState;
+    const { filter, kind, type, textFilter, loading } = prevState;
 
     if (
       _.isEqual(filter, nextProps.filter) &&
       kind === nextProps.kind &&
-      category === nextProps.category &&
+      type === nextProps.type &&
       textFilter === nextProps.textFilter
     ) {
       return {};
@@ -359,7 +350,7 @@ class EventStream extends React.Component {
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
       textFilter: nextProps.textFilter,
       kind: nextProps.kind,
-      category: nextProps.category,
+      type: nextProps.type,
       filter: nextProps.filter,
     };
   }
@@ -469,13 +460,13 @@ class EventStream extends React.Component {
 }
 
 EventStream.defaultProps = {
-  category: 'all',
+  type: 'all',
   kind: 'all',
   mock: false,
 };
 
 EventStream.propTypes = {
-  category: PropTypes.string,
+  type: PropTypes.string,
   filter: PropTypes.array,
   kind: PropTypes.string.isRequired,
   mock: PropTypes.bool,

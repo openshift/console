@@ -40,8 +40,8 @@
     padding-right: var(--pf-c-card--child--PaddingRight);
   }
 
-  .co-recent-item--error {
-    border-left-color: var(--pf-global--danger-color--100);
+  .co-recent-item--warning {
+    border-left-color: var(--pf-global--warning-color--100);
   }
 
   .pf-c-accordion__toggle {
@@ -104,7 +104,7 @@
   white-space: nowrap;
 }
 
-.co-recent-item__icon--error {
+.co-recent-item__icon--warning {
   align-items: center;
   display: flex;
   margin-right: 0.3rem;
