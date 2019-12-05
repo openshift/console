@@ -1,6 +1,7 @@
 import { $, $$, by, browser, ExpectedConditions as until } from 'protractor';
 import { waitForNone } from '../protractor.conf';
 
+export const yamlEditor = $('.yaml-editor');
 export const saveButton = $('.yaml-editor__buttons').$('#save-changes');
 export const cancelButton = $('.yaml-editor__buttons').element(by.buttonText('Cancel'));
 export const isLoaded = () =>

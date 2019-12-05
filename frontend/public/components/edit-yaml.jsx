@@ -329,7 +329,14 @@ const EditYAML_ = connect(stateToProps)(
     }
 
     save() {
+      const { onSave } = this.props;
       let obj;
+
+      if (onSave) {
+        onSave(this.getEditor().getValue());
+        return;
+      }
+
       try {
         obj = safeLoad(this.getEditor().getValue());
       } catch (e) {
@@ -682,7 +689,13 @@ const EditYAML_ = connect(stateToProps)(
       });
 
       const { error, success, stale, yaml, height, showSidebar } = this.state;
-      const { obj, download = true, header } = this.props;
+      const {
+        obj,
+        download = true,
+        header,
+        genericYAML = false,
+        children: customAlerts,
+      } = this.props;
       const readOnly = this.props.readOnly || this.state.notAllowed;
       const options = { readOnly, scrollBeyondLastLine: false };
       const model = this.getModel(obj);
@@ -720,33 +733,35 @@ const EditYAML_ = connect(stateToProps)(
                 <div className="co-p-has-sidebar__body">
                   <div className="yaml-editor" ref={(r) => (this.editor = r)}>
                     <div className="yaml-editor__links">
-                      <div className="yaml-editor__link">
-                        <Popover
-                          aria-label="Shortcuts"
-                          bodyContent={
-                            <ShortcutTable>
-                              <Shortcut ctrl keyName="space">
-                                Activate auto complete
-                              </Shortcut>
-                              <Shortcut ctrlCmd shift keyName="o">
-                                View document outline
-                              </Shortcut>
-                              <Shortcut hover>View property descriptions</Shortcut>
-                              <Shortcut ctrlCmd keyName="s">
-                                Save
-                              </Shortcut>
-                            </ShortcutTable>
-                          }
-                          maxWidth="25rem"
-                          distance={18}
-                          onHide={this.focusEditor}
-                        >
-                          <Button type="button" variant="link" isInline>
-                            <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                            View shortcuts
-                          </Button>
-                        </Popover>
-                      </div>
+                      {!genericYAML && (
+                        <div className="yaml-editor__link">
+                          <Popover
+                            aria-label="Shortcuts"
+                            bodyContent={
+                              <ShortcutTable>
+                                <Shortcut ctrl keyName="space">
+                                  Activate auto complete
+                                </Shortcut>
+                                <Shortcut ctrlCmd shift keyName="o">
+                                  View document outline
+                                </Shortcut>
+                                <Shortcut hover>View property descriptions</Shortcut>
+                                <Shortcut ctrlCmd keyName="s">
+                                  Save
+                                </Shortcut>
+                              </ShortcutTable>
+                            }
+                            maxWidth="25rem"
+                            distance={18}
+                            onHide={this.focusEditor}
+                          >
+                            <Button type="button" variant="link" isInline>
+                              <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+                              View shortcuts
+                            </Button>
+                          </Popover>
+                        </div>
+                      )}
                       {!showSidebar && hasSidebarContent && (
                         <>
                           <div className="co-action-divider--spaced">|</div>
@@ -774,6 +789,7 @@ const EditYAML_ = connect(stateToProps)(
                       onChange={(newValue) => this.setState({ yaml: newValue })}
                     />
                     <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
+                      {customAlerts}
                       {error && (
                         <Alert
                           isInline
@@ -818,7 +834,7 @@ const EditYAML_ = connect(stateToProps)(
                             Save
                           </Button>
                         )}
-                        {!create && (
+                        {!create && !genericYAML && (
                           <Button
                             type="submit"
                             variant="secondary"

@@ -1,25 +1,25 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { ActionGroup, Button } from '@patternfly/react-core';
-
+import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
+import { safeLoad } from 'js-yaml';
+
 import { K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, history, StatusBox } from '../utils';
+import { StatusBox } from '../utils';
 import { AsyncComponent } from '../utils/async';
 import { patchAlertManagerConfig } from './alert-manager-utils';
 import { Helmet } from 'react-helmet';
 
-const DroppableFileInput = (props) => (
+const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
-    loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
     {...props}
+    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
+    create={false}
+    genericYAML
   />
 );
 
-const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
-  obj,
-  onCancel = history.goBack,
-}) => {
+const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) => {
   const secret: K8sResourceKind = obj;
   const encodedAlertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
   const initErrorMsg = _.isEmpty(encodedAlertManagerYaml)
@@ -28,20 +28,24 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
 
   const [errorMsg, setErrorMsg] = React.useState(initErrorMsg);
   const [successMsg, setSuccessMsg] = React.useState();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [alertManagerYamlStr, setAlertManagerYamlStr] = React.useState(
-    !_.isEmpty(encodedAlertManagerYaml) ? Base64.decode(encodedAlertManagerYaml) : '',
-  );
+  const alertManagerYamlStr = !_.isEmpty(encodedAlertManagerYaml)
+    ? Base64.decode(encodedAlertManagerYaml)
+    : '';
 
-  const save = (e) => {
-    e.preventDefault();
-    if (_.isEmpty(alertManagerYamlStr)) {
+  const save = (yaml: string) => {
+    if (_.isEmpty(yaml)) {
       setErrorMsg('Alertmanager configuration cannot be empty.');
       setSuccessMsg('');
       return;
     }
-    setInProgress(true);
-    patchAlertManagerConfig(secret, alertManagerYamlStr).then(
+    try {
+      safeLoad(yaml);
+    } catch (e) {
+      setErrorMsg(`Error parsing Alertmanager YAML: ${e}`);
+      setSuccessMsg('');
+      return;
+    }
+    patchAlertManagerConfig(secret, yaml).then(
       (newSecret) => {
         setSuccessMsg(
           `${newSecret.metadata.name} has been updated to version ${
@@ -49,49 +53,36 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({
           }`,
         );
         setErrorMsg('');
-        setInProgress(false);
       },
       (err) => {
         setErrorMsg(err.message);
         setSuccessMsg('');
-        setInProgress(false);
       },
     );
   };
 
   return (
-    <div className="co-m-pane__body">
-      <form
-        className="co-m-pane__body-group co-alert-manager-yaml-form co-m-pane__form"
-        onSubmit={save}
-      >
-        <p className="co-alert-manager-yaml__explanation">
-          Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings
+    <>
+      <div className="co-m-nav-title">
+        <p className="help-block">
+          Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager
+          settings.
         </p>
-        <div className="co-alert-manager-yaml__form-entry-wrapper">
-          <div className="co-alert-manager-yaml__form">
-            <div className="form-group">
-              <DroppableFileInput
-                data-test-id="alert-manager-yaml-textarea"
-                onChange={setAlertManagerYamlStr}
-                inputFileData={alertManagerYamlStr}
-                inputFieldHelpText="Drag and drop file with your value here or browse to upload it."
-              />
-            </div>
-          </div>
-        </div>
-        <ButtonBar errorMessage={errorMsg} successMessage={successMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button type="submit" variant="primary" id="save-changes">
-              Save
-            </Button>
-            <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>
+      </div>
+      <EditAlertmanagerYAML onSave={save} obj={alertManagerYamlStr}>
+        {errorMsg && (
+          <Alert
+            isInline
+            className="co-alert co-alert--scrollable"
+            variant="danger"
+            title="An error occurred"
+          >
+            <div className="co-pre-line">{errorMsg}</div>
+          </Alert>
+        )}
+        {successMsg && <Alert isInline className="co-alert" variant="success" title={successMsg} />}
+      </EditAlertmanagerYAML>
+    </>
   );
 };
 
