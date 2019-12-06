@@ -58,7 +58,7 @@ export const edgesFromServiceBinding = (
   const sourceBindings = [];
   _.forEach(sbrs, (sbr) => {
     let edgeExists = false;
-    if (_.get(sbr, 'spec.applicationSelector.resource') === modelFor(source.kind).plural) {
+    if (_.get(sbr, 'spec.applicationSelector.resource') === modelFor(referenceFor(source)).plural) {
       if (_.get(sbr, 'spec.applicationSelector.resourceRef') === source.metadata.name) {
         edgeExists = true;
       } else {
@@ -184,7 +184,7 @@ const updateItemAppConnectTo = (
   connectValue: string,
   oldValue: string = undefined,
 ) => {
-  const model = modelFor(item.kind);
+  const model = modelFor(referenceFor(item));
 
   if (!model) {
     return Promise.reject();
@@ -246,7 +246,7 @@ export const createServiceBinding = (
   const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
   const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
   const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
-  const sbrName = `${sourceName}-${modelFor(source.kind).abbr}-${targetName}-${
+  const sbrName = `${sourceName}-${modelFor(referenceFor(source)).abbr}-${targetName}-${
     modelFor(target.kind).abbr
   }`;
 
@@ -262,7 +262,7 @@ export const createServiceBinding = (
         resourceRef: sourceName,
         group: sourceGroup[0],
         version: sourceGroup[1],
-        resource: modelFor(source.kind).plural,
+        resource: modelFor(referenceFor(source)).plural,
       },
       backingServiceSelector: {
         group: targetResourceGroup[0],
