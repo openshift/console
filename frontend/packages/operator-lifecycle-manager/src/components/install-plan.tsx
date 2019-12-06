@@ -32,7 +32,7 @@ import {
   k8sUpdate,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, Status } from '@console/shared';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -96,14 +96,7 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
   key,
   style,
 }) => {
-  const phaseFor = (phase: InstallPlanKind['status']['phase']) =>
-    phase === 'RequiresApproval' ? (
-      <>
-        <YellowExclamationTriangleIcon /> {phase}
-      </>
-    ) : (
-      phase
-    );
+  const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -269,7 +262,9 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Status</dt>
-                <dd>{_.get(obj.status, 'phase', 'Unknown')}</dd>
+                <dd>
+                  <Status status={_.get(obj.status, 'phase', 'Unknown')} />
+                </dd>
                 <dt>Components</dt>
                 {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
                   <dd key={csvName}>
