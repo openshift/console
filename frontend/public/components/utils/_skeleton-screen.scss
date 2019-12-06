@@ -1,6 +1,6 @@
 @import '~@console/shared/src/styles/skeleton-screen';
 
-$skeleton-detail-bone-height: 24px;
+$skeleton-detail-bone-height: $skeleton-bone-height-1line;
 $skeleton-detail-bone: linear-gradient(white $skeleton-detail-bone-height, transparent 0);
 
 $skeleton-detail-position: 15px 35px; // declared out of alpha order to be reused

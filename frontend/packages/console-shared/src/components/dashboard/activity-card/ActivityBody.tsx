@@ -66,7 +66,17 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
     return <ErrorLoadingEvents />;
   }
   if (!(events && events.loaded)) {
-    return <div className="skeleton-activity" />;
+    return (
+      <div className="co-status-card__alerts-body">
+        <div className="co-status-card__alert-item co-status-card__alert-item--loading">
+          <div className="skeleton-activity__dashboard" />
+          <div className="skeleton-activity__dashboard" />
+          <div className="skeleton-activity__dashboard" />
+          <div className="skeleton-activity__dashboard" />
+          <div className="skeleton-activity__dashboard" />
+        </div>
+      </div>
+    );
   }
 
   const filteredEvents = filter ? eventsData.filter(filter) : eventsData;
@@ -119,7 +129,11 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
     loaded || resourceActivities.length > 0 || prometheusActivities.length > 0;
   let body: React.ReactNode;
   if (!activitiesLoaded) {
-    body = <div className="skeleton-activity" />;
+    body = (
+      <div className="co-activity-item__ongoing">
+        <div className="skeleton-activity__dashboard" />
+      </div>
+    );
   } else {
     const allActivities = prometheusActivities.map(({ results, loader }, idx) => (
       // eslint-disable-next-line react/no-array-index-key

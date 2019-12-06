@@ -137,17 +137,34 @@
   text-align: left;
 }
 
-.skeleton-activity {
+.skeleton-activity__dashboard {
   animation: $skeleton-animation;
-  background: $skeleton-color;
-  height: 30px;
+  height: $skeleton-bone-height-1line;
+  margin-bottom: 1em;
   opacity: 0;
-  margin: 1rem var(--pf-c-card--child--PaddingRight) 1rem var(--pf-c-card--child--PaddingLeft);
+  width: 100%;
   &::after {
     background-repeat: no-repeat;
-    content: "";
-    display: block;
+    content:"";
+    display:block;
     height: 100%;
     width: 100%;
   }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.skeleton-activity__dashboard::after {
+  background-image:
+    $skeleton-activity-bone,
+    $skeleton-activity-icon;
+
+  background-position:
+    $skeleton-activity-position,
+    $skeleton-activity-icon-position;
+
+  background-size:
+    $skeleton-activity-size,
+    $skeleton-activity-icon-size;
 }
