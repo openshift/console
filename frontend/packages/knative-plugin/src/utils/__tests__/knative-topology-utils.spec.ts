@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology2/__tests__/topology-knative-test-data';
+import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
   getKnativeTopologyNodeItems,

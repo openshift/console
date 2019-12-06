@@ -18,7 +18,7 @@ import {
   TopologyDataResources,
   TopologyDataModel,
   TopologyDataObject,
-} from '@console/dev-console/src/components/topology2/topology-types';
+} from '@console/dev-console/src/components/topology/topology-types';
 import {
   allowedResources,
   getTopologyGroupItems,
@@ -28,7 +28,7 @@ import {
   getTopologyNodeItem,
   getTopologyEdgeItems,
   filterBasedOnActiveApplication,
-} from '@console/dev-console/src/components/topology2/topology-utils';
+} from '@console/dev-console/src/components/topology/topology-utils';
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from './get-knative-resources';

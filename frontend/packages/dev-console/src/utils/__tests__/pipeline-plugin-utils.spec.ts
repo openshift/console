@@ -2,7 +2,7 @@ import {
   sampleDeploymentConfigs,
   MockResources,
   sampleDeployments,
-} from '../../components/topology2/__tests__/topology-test-data';
+} from '../../components/topology/__tests__/topology-test-data';
 import { getPipelinesAndPipelineRunsForResource } from '../pipeline-plugin-utils';
 
 describe('pipeline-plugin-utils', () => {

@@ -20,11 +20,11 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getTopologyResourceObject } from '../../topology-utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import Decorator from './Decorator';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 import { nodeDragSourceSpec } from '../../componentUtils';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
+import Decorator from './Decorator';
 
 import './KnativeService.scss';
 

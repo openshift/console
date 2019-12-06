@@ -13,14 +13,14 @@ import {
   RouteModel as KnativeRouteModel,
 } from '@console/knative-plugin';
 import * as utils from '@console/internal/components/utils';
-import { TopologyDataResources } from '../../components/topology2/topology-types';
+import { TopologyDataResources } from '../../components/topology/topology-types';
 import {
   transformTopologyData,
   getTopologyResourceObject,
-} from '../../components/topology2/topology-utils';
+} from '../../components/topology/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
-import { MockResources } from '../../components/topology2/__tests__/topology-test-data';
-import { MockKnativeResources } from '../../components/topology2/__tests__/topology-knative-test-data';
+import { MockResources } from '../../components/topology/__tests__/topology-test-data';
+import { MockKnativeResources } from '../../components/topology/__tests__/topology-knative-test-data';
 
 import Spy = jasmine.Spy;
 

@@ -31,7 +31,7 @@ import {
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
 import { checkAccess } from '@console/internal/components/utils';
-import { TopologyDataObject } from '../components/topology2/topology-types';
+import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';

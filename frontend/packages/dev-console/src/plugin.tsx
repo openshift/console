@@ -369,7 +369,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       loader: async () =>
         (await import(
-          './components/topology2/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
         )).default,
     },
   },

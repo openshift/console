@@ -11,8 +11,8 @@ import {
 } from '@console/topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import Decorator from './Decorator';
 import { routeDecoratorIcon } from '../../../import/render-utils';
+import Decorator from './Decorator';
 import PodSet from './PodSet';
 import KnativeIcon from './KnativeIcon';
 import BuildDecorator from './build-decorators/BuildDecorator';
