@@ -8,7 +8,7 @@ import {
   ExclamationTriangleIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DASH } from '../../constants';
 import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
@@ -65,14 +65,12 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Bound':
     case 'Complete':
     case 'Completed':
+    case 'Created':
     case 'Enabled':
     case 'Succeeded':
     case 'Ready':
     case 'Up to date':
       return <SuccessStatus {...statusProps} />;
-
-    case 'Created':
-      return <StatusIconAndText {...statusProps} icon={<GreenCheckCircleIcon />} />;
 
     case 'Info':
       return <InfoStatus {...statusProps}>{children}</InfoStatus>;
