@@ -19,6 +19,8 @@ import { PersistentVolumeClaimModel } from '../../models/index';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
+const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
+
 //See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
 const provisionerAccessModeMapping = {
   'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
@@ -69,6 +71,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
       Gi: 'Gi',
       Ti: 'Ti',
     },
+    storageProvisioner: '',
   };
 
   handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
@@ -96,7 +99,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ accessModeHelp: displayMessage }, this.onChange);
 
     //setting accessMode to default with the change to Storage Class selection
-    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce' }, this.onChange);
+    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce', storageProvisioner: storageClass && storageClass.provisioner}, this.onChange);
   };
 
   handleRequestSizeInputChange = obj => {
@@ -126,7 +129,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
 
   updatePVC = () => {
     const { namespace } = this.props;
-    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass } = this.state;
+    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass, storageProvisioner } = this.state;
     const obj: K8sResourceKind = {
       apiVersion: 'v1',
       kind: 'PersistentVolumeClaim',
@@ -152,6 +155,14 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
 
     if (storageClass) {
       obj.spec.storageClassName = storageClass;
+
+      // should set block only for RBD + RWX
+      if (
+        _.endsWith(storageProvisioner, cephRBDProvisionerSuffix) &&
+        accessMode === 'ReadWriteMany'
+      ) {
+        obj.spec.volumeMode = 'Block';
+      }
     }
 
     return obj;
@@ -359,6 +370,7 @@ export type CreatePVCFormState = {
   useSelector: boolean;
   nameValuePairs: string[][];
   accessModeHelp: string;
+  storageProvisioner: string;
 };
 
 export type CreatePVCPageProps = {
