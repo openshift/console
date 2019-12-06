@@ -151,7 +151,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="co-form-section__separator" />
-          <h3>URLs</h3>
+          <h3 className="co-required">URLs</h3>
           <p className="co-m-pane__explanation">At least one URL must be provided.</p>
           <div className="form-group">
             <label className="control-label" htmlFor="challenge-url">
