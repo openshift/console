@@ -12,7 +12,6 @@ const isInternal = (crd: { name: string }): boolean => {
   );
   try {
     const internalOpList = JSON.parse(internalOpListString); // JSON.parse fails if incorrect annotation structure
-    if (!Array.isArray(internalOpList) || internalOpList.length === 0) return false;
     return internalOpList.some((op) => op === crd.name);
   } catch {
     /* eslint-disable-next-line no-console */
