@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { createSvgIdUrl } from '@console/topology';
-import { ViewNode } from '../topology-types';
+import { ViewNode } from '../../topology2/topology-types';
 
 import './BaseEdge.scss';
 

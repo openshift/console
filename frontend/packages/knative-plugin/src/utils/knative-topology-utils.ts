@@ -18,7 +18,7 @@ import {
   TopologyDataResources,
   TopologyDataModel,
   TopologyDataObject,
-} from '@console/dev-console/src/components/topology/topology-types';
+} from '@console/dev-console/src/components/topology2/topology-types';
 import {
   allowedResources,
   getTopologyGroupItems,

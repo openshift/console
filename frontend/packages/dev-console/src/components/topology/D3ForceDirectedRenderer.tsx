@@ -24,7 +24,7 @@ import {
   ViewEdge,
   ViewGroup,
   ViewNode,
-} from './topology-types';
+} from '../topology2/topology-types';
 import { dragConnectorEndPoint, DraggingCreateConnector } from './shapes/DraggingCreateConnector';
 import { DraggingMoveConnector } from './shapes/DraggingMoveConnector';
 

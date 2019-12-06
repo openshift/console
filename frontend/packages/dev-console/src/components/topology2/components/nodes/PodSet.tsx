@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PodStatus, calculateRadius, getPodData } from '@console/shared';
-import { DonutStatusData } from '../topology-types';
+import { DonutStatusData } from '../../topology-types';
 
 interface PodSetProps {
   size: number;

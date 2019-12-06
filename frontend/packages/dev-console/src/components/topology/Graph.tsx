@@ -11,7 +11,7 @@ import {
   ActionProvider,
   ContextMenuProvider,
   GraphElementType,
-} from './topology-types';
+} from '../topology2/topology-types';
 import './Graph.scss';
 import { GraphContextMenu } from './GraphContextMenu';
 

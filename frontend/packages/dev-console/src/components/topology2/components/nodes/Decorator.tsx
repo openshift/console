@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createSvgIdUrl } from '@console/topology';
-import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
+import SvgDropShadowFilter from '../../../svg/SvgDropShadowFilter';
 
 import './Decorator.scss';
 

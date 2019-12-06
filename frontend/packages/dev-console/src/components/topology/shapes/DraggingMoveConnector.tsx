@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createSvgIdUrl } from '@console/topology';
-import { NodeProps } from '../topology-types';
+import { NodeProps } from '../../topology2/topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 
 import './DraggingMoveConnector.scss';

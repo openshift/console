@@ -6,7 +6,7 @@ import { menuActions as deploymentMenuActions } from '@console/internal/componen
 import { menuActions as statefulSetMenuActions } from '@console/internal/components/stateful-set';
 import { menuActions as daemonSetMenuActions } from '@console/internal/components/daemon-set';
 import { TopologyDataObject } from '../topology-types';
-import { getTopologyResourceObject } from '../../topology2/topology-utils';
+import { getTopologyResourceObject } from '../topology-utils';
 
 export const workloadActions = (workload: TopologyDataObject): KebabOption[] => {
   const contextMenuResource = getTopologyResourceObject(workload);

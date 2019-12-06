@@ -6,7 +6,7 @@ import { getResourceList } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ServiceBindingRequestModel } from '../../models';
-import { allowedResources, transformTopologyData } from '../topology2/topology-utils';
+import { allowedResources, transformTopologyData } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
 
 export interface RenderProps {

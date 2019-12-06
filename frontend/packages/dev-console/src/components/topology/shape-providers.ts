@@ -2,7 +2,7 @@ import DefaultEdge from './shapes/DefaultEdge';
 import DefaultNode from './shapes/DefaultNode';
 import DefaultGroup from './shapes/DefaultGroup';
 import WorkloadNode from './shapes/WorkloadNode';
-import { NodeProvider, EdgeProvider, GroupProvider } from './topology-types';
+import { NodeProvider, EdgeProvider, GroupProvider } from '../topology2/topology-types';
 import ConnectsTo from './shapes/ConnectsTo';
 
 export const nodeProvider: NodeProvider = (type) => {

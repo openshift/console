@@ -13,7 +13,7 @@ import {
   RouteModel as KnativeRouteModel,
 } from '@console/knative-plugin';
 import * as utils from '@console/internal/components/utils';
-import { TopologyDataResources } from '../../components/topology/topology-types';
+import { TopologyDataResources } from '../../components/topology2/topology-types';
 import {
   transformTopologyData,
   getTopologyResourceObject,

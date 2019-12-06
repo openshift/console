@@ -1,6 +1,6 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
-import { TopologyDataModel, TopologyDataResources } from '../topology-types';
+import { TopologyDataModel, TopologyDataResources } from '../../topology2/topology-types';
 
 export const resources: TopologyDataResources = {
   replicationControllers: { loaded: true, loadError: '', data: [] },

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ContextMenuItem, GraphElement, Node } from '@console/topology';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
-import { workloadActions } from '../topology/actions/workloadActions';
-import { groupActions } from '../topology/actions/groupActions';
-import { nodeActions } from '../topology/actions/nodeActions';
-import { TopologyApplicationObject } from '../topology/topology-types';
+import { workloadActions } from './actions/workloadActions';
+import { groupActions } from './actions/groupActions';
+import { nodeActions } from './actions/nodeActions';
+import { TopologyApplicationObject } from './topology-types';
 
 const onKebabOptionClick = (option: KebabOption) => {
   if (option.callback) {

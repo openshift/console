@@ -3,7 +3,7 @@ import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { asAccessReview } from '@console/internal/components/utils';
 import { TopologyDataMap, TopologyApplicationObject } from '../topology-types';
-import { getTopologyResourceObject } from '../../topology2/topology-utils';
+import { getTopologyResourceObject } from '../topology-utils';
 import { deleteApplicationModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
 

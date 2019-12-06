@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import * as _ from 'lodash';
 import { pointInSvgPath } from 'point-in-svg-path';
 import { createSvgIdUrl, hullPath, PointTuple } from '@console/topology';
-import { GroupElementInterface, GroupProps, ViewNode } from '../topology-types';
+import { GroupElementInterface, GroupProps, ViewNode } from '../../topology2/topology-types';
 import SvgBoxedText from '../../svg/SvgBoxedText';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 

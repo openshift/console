@@ -3,12 +3,12 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { routeDecoratorIcon } from '../../import/render-utils';
-import { NodeProps, WorkloadData } from '../topology-types';
+import { NodeProps, WorkloadData } from '../../topology2/topology-types';
 import BuildDecorator from '../../topology2/components/nodes/build-decorators/BuildDecorator';
-import Decorator from './Decorator';
+import Decorator from '../../topology2/components/nodes/Decorator';
 import BaseNode from './BaseNode';
-import KnativeIcon from './KnativeIcon';
-import PodSet from './PodSet';
+import KnativeIcon from '../../topology2/components/nodes/KnativeIcon';
+import PodSet from '../../topology2/components/nodes/PodSet';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
   data: workload,

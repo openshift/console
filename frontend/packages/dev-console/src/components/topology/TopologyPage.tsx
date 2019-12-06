@@ -15,7 +15,7 @@ import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { getCheURL } from '../topology2/topology-utils';
-import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
+import ConnectedTopologyDataController, { RenderProps } from '../topology2/TopologyDataController';
 import Topology from './Topology';
 
 interface StateProps {

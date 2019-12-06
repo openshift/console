@@ -32,7 +32,7 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
-} from '../topology/topology-types';
+} from './topology-types';
 import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];

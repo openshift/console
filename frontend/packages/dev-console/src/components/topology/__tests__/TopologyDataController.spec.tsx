@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
+import { TopologyDataControllerProps, TopologyDataController } from '../../topology2/TopologyDataController';
 import { resources } from './topology-test-data';
 
 const TestInner = () => null;

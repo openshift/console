@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { CloseButton } from '@console/internal/components/utils';
-import SideBar, { TopologySideBarProps } from '../TopologySideBar';
+import SideBar, { TopologySideBarProps } from '../../topology2/TopologySideBar';
 
 describe('TopologySideBar:', () => {
   const props: TopologySideBarProps = {

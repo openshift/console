@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EdgeProps } from '../topology-types';
+import { EdgeProps } from '../../topology2/topology-types';
 import BaseEdge from './BaseEdge';
 
 export type DefaultEdgeProps = EdgeProps;

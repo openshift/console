@@ -19,10 +19,10 @@ import {
   SelectionEventListener,
 } from '@console/topology';
 import { TopologyIcon } from '@patternfly/react-icons';
-import TopologySideBar from '../topology/TopologySideBar';
-import { TopologyDataModel, TopologyDataObject } from '../topology/topology-types';
-import TopologyResourcePanel from '../topology/TopologyResourcePanel';
-import TopologyApplicationPanel from '../topology/TopologyApplicationPanel';
+import TopologySideBar from './TopologySideBar';
+import { TopologyDataModel, TopologyDataObject } from './topology-types';
+import TopologyResourcePanel from './TopologyResourcePanel';
+import TopologyApplicationPanel from './TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';

@@ -1,7 +1,7 @@
 import { KebabOption } from '@console/internal/components/utils';
-import { GraphElementType, TopologyDataMap } from './topology-types';
-import { workloadActions } from './actions/workloadActions';
-import { groupActions, getGroupComponents } from './actions/groupActions';
+import { GraphElementType, TopologyDataMap } from '../topology2/topology-types';
+import { workloadActions } from '../topology2/actions/workloadActions';
+import { groupActions, getGroupComponents } from '../topology2/actions/groupActions';
 
 export class ActionProviders {
   private readonly topology: TopologyDataMap;

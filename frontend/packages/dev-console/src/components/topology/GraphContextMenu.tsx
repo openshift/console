@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { PopupKebabMenu } from '@console/shared/src';
 import { KebabOption } from '@console/internal/components/utils';
-import { ActionProvider, ContextMenuProvider, GraphElementType } from './topology-types';
+import { ActionProvider, ContextMenuProvider, GraphElementType } from '../topology2/topology-types';
 
 export interface GraphContextMenuProps {
   actionProvider: ActionProvider;

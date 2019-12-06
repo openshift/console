@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TrashIcon } from '@patternfly/react-icons';
 import { boundingBoxForLine, PointTuple } from '@console/topology';
-import { EdgeProps } from '../topology-types';
+import { EdgeProps } from '../../topology2/topology-types';
 import BaseEdge from './BaseEdge';
 import SvgArrowMarker from './SvgArrowMarker';
 

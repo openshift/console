@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createSvgIdUrl, hullPath, PointTuple } from '@console/topology';
-import { DragConnectionProps } from '../topology-types';
+import { DragConnectionProps } from '../../topology2/topology-types';
 import SvgArrowMarker from './SvgArrowMarker';
 
 import './DraggingCreateConnector.scss';

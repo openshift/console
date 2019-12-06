@@ -9,17 +9,17 @@ import {
   GraphElementType,
   TopologyDataModel,
   TopologyDataObject,
-} from './topology-types';
+} from '../topology2/topology-types';
 import {
   createTopologyResourceConnection,
   removeTopologyResourceConnection,
   updateTopologyResourceApplication,
 } from '../topology2/topology-utils';
 import TopologyControlBar from './TopologyControlBar';
-import TopologySideBar from './TopologySideBar';
+import TopologySideBar from '../topology2/TopologySideBar';
 import { ActionProviders } from './actions-providers';
-import TopologyApplicationPanel from './TopologyApplicationPanel';
-import TopologyResourcePanel from './TopologyResourcePanel';
+import TopologyApplicationPanel from '../topology2/TopologyApplicationPanel';
+import TopologyResourcePanel from '../topology2/TopologyResourcePanel';
 
 type State = {
   selected?: string;

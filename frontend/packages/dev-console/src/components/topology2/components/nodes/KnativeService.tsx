@@ -20,7 +20,7 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getTopologyResourceObject } from '../../topology-utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import Decorator from '../../../topology/shapes/Decorator';
+import Decorator from './Decorator';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 import { nodeDragSourceSpec } from '../../componentUtils';
 import { TYPE_KNATIVE_SERVICE } from '../../const';

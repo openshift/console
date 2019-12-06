@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NodeProps } from '../topology-types';
+import { NodeProps } from '../../topology2/topology-types';
 import BaseNode from './BaseNode';
 
 const DefaultNode: React.FC<NodeProps> = ({ x, y, size, name, ...others }) => (

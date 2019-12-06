@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { modelFor } from '@console/internal/module/k8s';
 import ApplicationGroupResource from './ApplicationGroupResource';
 import { TopologyDataObject } from './topology-types';
-import { getTopologyResourceObject } from '../topology2/topology-utils';
+import { getTopologyResourceObject } from './topology-utils';
 
 import './TopologyApplicationResources.scss';
 

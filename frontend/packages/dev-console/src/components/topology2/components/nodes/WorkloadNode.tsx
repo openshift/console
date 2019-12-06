@@ -11,10 +11,10 @@ import {
 } from '@console/topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import Decorator from '../../../topology/shapes/Decorator';
+import Decorator from './Decorator';
 import { routeDecoratorIcon } from '../../../import/render-utils';
-import PodSet from '../../../topology/shapes/PodSet';
-import KnativeIcon from '../../../topology/shapes/KnativeIcon';
+import PodSet from './PodSet';
+import KnativeIcon from './KnativeIcon';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import BaseNode from './BaseNode';
 

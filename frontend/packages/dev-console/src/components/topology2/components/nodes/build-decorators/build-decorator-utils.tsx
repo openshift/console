@@ -4,7 +4,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
 import { PipelineRunModel } from '../../../../../models';
 import { constructCurrentPipeline } from '../../../../../utils/pipeline-utils';
-import { WorkloadData } from '../../../../topology/topology-types';
+import { WorkloadData } from '../../../topology-types';
 import PipelineBuildDecoratorTooltip from './PipelineBuildDecoratorTooltip';
 
 type BuildDecoratorData = {
