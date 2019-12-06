@@ -113,12 +113,12 @@ const getActions = (selectedObj: any) => {
 };
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
 ];
 
@@ -131,26 +131,26 @@ export const OperandTableHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
       title: 'Kind',
       sortField: 'kind',
       transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
+      props: { className: tableColumnClasses[1] },
     },
     {
       title: 'Status',
       sortField: 'status.phase',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[2] },
     },
     {
       title: 'Version',
       sortField: 'spec.version',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Labels',
+      sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
@@ -174,16 +174,13 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
       <TableData className={tableColumnClasses[0]}>
         <OperandLink obj={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <LabelList kind={obj.kind} labels={obj.metadata.labels} />
-      </TableData>
       <TableData
-        className={classNames(tableColumnClasses[2], 'co-break-word')}
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
         data-test-operand-kind={obj.kind}
       >
         {obj.kind}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses[2]}>
         {_.isEmpty(status) ? (
           <div className="text-muted">Unknown</div>
         ) : (
@@ -192,8 +189,11 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
           </>
         )}
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <LabelList kind={obj.kind} labels={obj.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />

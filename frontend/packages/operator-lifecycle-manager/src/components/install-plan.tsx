@@ -4,7 +4,6 @@ import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import {
   MultiListPage,
@@ -46,12 +45,19 @@ import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { referenceForStepResource } from './index';
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
+];
+
+const componentsTableColumnClasses = [
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
 export const InstallPlanTableHeader = () => {
@@ -69,17 +75,17 @@ export const InstallPlanTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Components',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Subscriptions',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
       title: 'Status',
       sortField: 'status.phase',
       transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Components',
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Subscriptions',
       props: { className: tableColumnClasses[4] },
     },
     {
@@ -116,6 +122,9 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
         />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
+        {phaseFor(_.get(obj.status, 'phase')) || 'Unknown'}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
         <ul className="list-unstyled">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
@@ -136,7 +145,7 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
           ))}
         </ul>
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses[4]}>
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
@@ -151,9 +160,6 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
               </li>
             </ul>
           )) || <span className="text-muted">None</span>}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {phaseFor(_.get(obj.status, 'phase')) || 'Unknown'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
@@ -338,7 +344,7 @@ export class InstallPlanPreview extends React.Component<
     const stepStatus = (status: Step['status']) => (
       <>
         {status === 'Present' && <GreenCheckCircleIcon className="co-icon-space-r" />}
-        {status === 'Created' && <AddCircleOIcon className="co-icon-space-r" />}
+        {status === 'Created' && <GreenCheckCircleIcon className="co-icon-space-r" />}
         {status}
       </>
     );
@@ -387,19 +393,19 @@ export class InstallPlanPreview extends React.Component<
           <div key={steps[0].resolving} className="co-m-pane__body">
             <SectionHeading text={steps[0].resolving} />
             <div className="co-table-container">
-              <table className="table">
+              <table className="pf-c-table pf-m-compact pf-m-border-rows">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Kind</th>
-                    <th>API Version</th>
-                    <th>Status</th>
+                    <th className={componentsTableColumnClasses[0]}>Name</th>
+                    <th className={componentsTableColumnClasses[1]}>Kind</th>
+                    <th className={componentsTableColumnClasses[2]}>Status</th>
+                    <th className={componentsTableColumnClasses[3]}>API Version</th>
                   </tr>
                 </thead>
                 <tbody>
                   {steps.map((step) => (
                     <tr key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}>
-                      <td>
+                      <td className={componentsTableColumnClasses[0]}>
                         {['Present', 'Created'].includes(step.status) ? (
                           <ResourceLink
                             kind={referenceForStepResource(step.resource)}
@@ -422,9 +428,11 @@ export class InstallPlanPreview extends React.Component<
                           </>
                         )}
                       </td>
-                      <td>{step.resource.kind}</td>
-                      <td>{apiVersionForReference(referenceForStepResource(step.resource))}</td>
-                      <td>{stepStatus(step.status)}</td>
+                      <td className={componentsTableColumnClasses[1]}>{step.resource.kind}</td>
+                      <td className={componentsTableColumnClasses[2]}>{stepStatus(step.status)}</td>
+                      <td className={componentsTableColumnClasses[3]}>
+                        {apiVersionForReference(referenceForStepResource(step.resource))}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
