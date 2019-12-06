@@ -1,13 +1,5 @@
 import { execSync } from 'child_process';
-import {
-  browser,
-  element,
-  by,
-  $,
-  $$,
-  ExpectedConditions as until,
-  ElementFinder,
-} from 'protractor';
+import { browser, element, by, $, $$, ExpectedConditions as until } from 'protractor';
 import { safeDump } from 'js-yaml';
 import { startCase, get, find, isUndefined } from 'lodash';
 import {
@@ -83,7 +75,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
   }
 };
 
-const inputValueFor = (capability: SpecCapability) => async (el: ElementFinder) => {
+const inputValueFor = (capability: SpecCapability) => async (el: any) => {
   switch (capability) {
     case SpecCapability.podCount:
       return parseInt(await el.$('input').getAttribute('value'), 10);

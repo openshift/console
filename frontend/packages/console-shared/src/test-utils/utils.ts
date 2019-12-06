@@ -1,14 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console, no-underscore-dangle */
 import { execSync } from 'child_process';
-import {
-  $,
-  by,
-  ElementFinder,
-  browser,
-  ExpectedConditions as until,
-  element,
-  ElementArrayFinder,
-} from 'protractor';
+import { $, by, browser, ExpectedConditions as until, element } from 'protractor';
 import { By } from 'selenium-webdriver';
 import { config } from '@console/internal-integration-tests/protractor.conf';
 
@@ -86,7 +78,7 @@ export async function withResource(
   }
 }
 
-export async function click(elem: ElementFinder, timeout?: number) {
+export async function click(elem: any, timeout?: number) {
   const _timeout = resolveTimeout(timeout, config.jasmineNodeOpts.defaultTimeoutInterval);
   await browser.wait(until.elementToBeClickable(elem), _timeout);
   await elem.click();
@@ -132,21 +124,21 @@ export async function asyncForEach(iterable, callback) {
   }
 }
 
-export const waitForCount = (elementArrayFinder: ElementArrayFinder, targetCount: number) => {
+export const waitForCount = (elementArrayFinder: any, targetCount: number) => {
   return async () => {
     const count = await elementArrayFinder.count();
     return count === targetCount;
   };
 };
 
-export const waitForStringInElement = (elem: ElementFinder, needle: string) => {
+export const waitForStringInElement = (elem: any, needle: string) => {
   return async () => {
     const content = await elem.getText();
     return content.includes(needle);
   };
 };
 
-export const waitForStringNotInElement = (elem: ElementFinder, needle: string) => {
+export const waitForStringNotInElement = (elem: any, needle: string) => {
   return async () => {
     const content = await elem.getText();
     return !content.includes(needle);

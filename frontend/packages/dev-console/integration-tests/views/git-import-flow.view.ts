@@ -1,5 +1,5 @@
 /* eslint-disable no-console, promise/catch-or-return */
-import { ElementFinder, browser, ExpectedConditions as until, by, element, Key } from 'protractor';
+import { browser, ExpectedConditions as until, by, element, Key } from 'protractor';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));
@@ -36,7 +36,7 @@ export const enterGitRepoUrl = async function(gitUrl: string) {
 };
 
 export const safeSendKeys = async function(
-  uiElement: ElementFinder,
+  uiElement: any,
   uiElementName: string,
   newValue: string,
 ) {

@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
-import { $, $$, ElementFinder, browser, by, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
@@ -12,7 +12,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
 import { NodePortService } from './types';
 
-export async function fillInput(elem: ElementFinder, value: string) {
+export async function fillInput(elem: any, value: string) {
   // Sometimes there seems to be an issue with clear() method not clearing the input
   let attempts = 3;
   do {
@@ -52,23 +52,23 @@ export async function createProject(name: string) {
   }
 }
 
-export async function getInputValue(elem: ElementFinder) {
+export async function getInputValue(elem: any) {
   return elem.getAttribute('value');
 }
 
-export async function getSelectedOptionText(selector: ElementFinder) {
+export async function getSelectedOptionText(selector: any) {
   return selector.$('option:checked').getText();
 }
 
-export async function selectOptionByText(selector: ElementFinder, option: string) {
+export async function selectOptionByText(selector: any, option: string) {
   await click(selector.all(by.cssContainingText('option', option)).first());
 }
 
-export async function selectOptionByOptionValue(selector: ElementFinder, option: string) {
+export async function selectOptionByOptionValue(selector: any, option: string) {
   await click(selector.all(by.css(`option[value="${option}"]`)).first());
 }
 
-export async function getSelectOptions(selector: ElementFinder): Promise<string[]> {
+export async function getSelectOptions(selector: any): Promise<string[]> {
   const options = [];
   await selector.$$('option').each((elem) => {
     elem

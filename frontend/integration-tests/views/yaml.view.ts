@@ -10,8 +10,7 @@ export const isLoaded = () =>
     .then(() => browser.sleep(1000));
 
 const getValue = () => (window as any).monaco.editor.getModels()[0].getValue();
-export const getEditorContent = async (): Promise<string> =>
-  await browser.executeScript<string>(getValue);
+export const getEditorContent = async (): Promise<string> => await browser.executeScript(getValue);
 
 const setValue = (text) => (window as any).monaco.editor.getModels()[0].setValue(text);
 export const setEditorContent = async (text: string) => {
