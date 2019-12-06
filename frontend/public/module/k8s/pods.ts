@@ -177,6 +177,35 @@ export const getVolumeMountsByPermissions = (pod: PodKind) => {
   return _.values(m);
 };
 
+const podContainerStatuses = (pod: PodKind): ContainerStatus[] => {
+  if (!pod || !pod.status) {
+    return [];
+  }
+  const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
+  return [...initContainerStatuses, ...containerStatuses];
+};
+
+export const podRestarts = (pod: PodKind): number => {
+  const containerStatuses = podContainerStatuses(pod);
+  return containerStatuses.reduce(
+    (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
+    0,
+  );
+};
+
+export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
+  const containerStatuses = podContainerStatuses(pod);
+  return containerStatuses.reduce(
+    (acc, { ready }: ContainerStatus) => {
+      if (ready) {
+        acc.readyCount = acc.readyCount + 1;
+      }
+      return acc;
+    },
+    { readyCount: 0, totalContainers: containerStatuses.length },
+  );
+};
+
 // This logic is replicated from k8s (at this writing, Kubernetes 1.15)
 // (See https://github.com/kubernetes/kubernetes/blob/release-1.15/pkg/printers/internalversion/printers.go)
 export const podPhase = (pod: PodKind): PodPhase => {
@@ -252,38 +281,4 @@ export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
     return 'CrashLoopBackOff';
   }
   return _.get(pod, 'status.phase', 'Unknown');
-};
-
-export const podReadiness = ({ status }: PodKind): PodReadiness => {
-  if (_.isEmpty(status.conditions)) {
-    return null;
-  }
-
-  let allReady = true;
-  const conditions = _.map(status.conditions, (c: any) => {
-    if (c.status !== 'True') {
-      allReady = false;
-    }
-    return Object.assign({ time: new Date(c.lastTransitionTime) }, c);
-  });
-
-  if (allReady) {
-    return 'Ready';
-  }
-
-  let earliestNotReady = null;
-  _.each(conditions, (c) => {
-    if (c.status === 'True') {
-      return;
-    }
-    if (!earliestNotReady) {
-      earliestNotReady = c;
-      return;
-    }
-    if (c.time < earliestNotReady.time) {
-      earliestNotReady = c;
-    }
-  });
-
-  return earliestNotReady.reason || earliestNotReady.type;
 };
