@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  ClipboardListIcon,
   HourglassStartIcon,
   HourglassHalfIcon,
   SyncAltIcon,
@@ -7,6 +8,7 @@ import {
   ExclamationTriangleIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
+import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { DASH } from '../../constants';
 import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
@@ -21,10 +23,14 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Pending':
       return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
 
+    case 'Planning':
+      return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
+
     case 'ContainerCreating':
       return <ProgressStatus {...statusProps} />;
 
     case 'In Progress':
+    case 'Installing':
     case 'Running':
     case 'Updating':
     case 'Upgrading':
@@ -39,11 +45,16 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Warning':
       return <StatusIconAndText {...statusProps} icon={<ExclamationTriangleIcon />} />;
 
+    case 'RequiresApproval':
+      return <StatusIconAndText {...statusProps} icon={<YellowExclamationTriangleIcon />} />;
+
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
     case 'Critical':
     case 'Error':
+    case 'ErrorImagePull':
     case 'Failed':
+    case 'ImagePullBackOff':
     case 'InstallCheckFailed':
     case 'Lost':
     case 'Rejected':
@@ -59,6 +70,9 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Ready':
     case 'Up to date':
       return <SuccessStatus {...statusProps} />;
+
+    case 'Created':
+      return <StatusIconAndText {...statusProps} icon={<GreenCheckCircleIcon />} />;
 
     case 'Info':
       return <InfoStatus {...statusProps}>{children}</InfoStatus>;
