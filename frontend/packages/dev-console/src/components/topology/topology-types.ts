@@ -100,6 +100,7 @@ export interface ConnectedWorkloadPipeline {
 export interface WorkloadData {
   url?: string;
   editUrl?: string;
+  cheEnabled?: boolean;
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
