@@ -29,8 +29,8 @@ const ocsLink = (elem, catalogSource) =>
   $(`a[data-test="${elem}-${catalogSource}-openshift-marketplace"]`);
 
 // General Items
-const namespaceDropdown = $('.co-namespace-selector button');
-const openshiftStorageItem = $('#openshift-storage-link');
+export const namespaceDropdown = $('.co-namespace-selector button');
+export const openshiftStorageItem = $('#openshift-storage-link');
 
 // Namespace
 const labelValue = 'true';
