@@ -12,6 +12,7 @@ import { Status, getRequester } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
+import { coFetchJSON } from '../co-fetch';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -29,6 +30,8 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  formatBytesAsMiB,
+  formatCores,
   humanizeBinaryBytes,
   humanizeCpuCores,
   navFactory,
@@ -42,7 +45,7 @@ import {
   configureNamespacePullSecretModal,
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
-import { Bar, Area, requirePrometheus } from './graphs';
+import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
 import {
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
@@ -94,11 +97,34 @@ const nsMenuActions = [
   deleteModal,
 ];
 
+const fetchNamespaceMetrics = () => {
+  const metrics = [
+    {
+      key: 'memory',
+      query: 'sum by(namespace) (container_memory_working_set_bytes{container="",pod!=""})',
+    },
+    {
+      key: 'cpu',
+      query: 'namespace:container_cpu_usage:sum',
+    },
+  ];
+  const promises = metrics.map(({ key, query }) => {
+    const url = `${PROMETHEUS_BASE_PATH}/api/v1/query?&query=${query}`;
+    return coFetchJSON(url).then(({ data: { result } }) => {
+      return result.reduce((acc, data) => {
+        const value = Number(data.value[1]);
+        return _.set(acc, [key, data.metric.namespace], value);
+      }, {});
+    });
+  });
+  return Promise.all(promises).then((data) => _.assign({}, ...data));
+};
+
 const namespacesColumnClasses = [
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  '', // name
+  '', // status
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // labels
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg pf-u-w-16-on-lg'), // created
   Kebab.columnClass,
 ];
 
@@ -178,16 +204,17 @@ export const NamespacesPage = (props) => (
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnClasses = [
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  '', // name
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // display name
+  '', // status
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // requester
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // memory
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // cpu
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // created
   Kebab.columnClass,
 ];
 
-const ProjectTableHeader = () => {
+const projectTableHeader = ({ showMetrics, showActions }) => {
   return [
     {
       title: 'Name',
@@ -213,22 +240,31 @@ const ProjectTableHeader = () => {
       transforms: [sortable],
       props: { className: projectColumnClasses[3] },
     },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: projectColumnClasses[4] },
-    },
+    ...(showMetrics
+      ? [
+          {
+            title: 'Memory',
+            sortFunc: 'namespaceMemory',
+            transforms: [sortable],
+            props: { className: projectColumnClasses[4] },
+          },
+          {
+            title: 'CPU',
+            sortFunc: 'namespaceCPU',
+            transforms: [sortable],
+            props: { className: projectColumnClasses[5] },
+          },
+        ]
+      : []),
     {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: projectColumnClasses[5] },
+      props: { className: projectColumnClasses[6] },
     },
-    { title: '', props: { className: projectColumnClasses[6] } },
+    ...(showActions ? [{ title: '', props: { className: projectColumnClasses[7] } }] : []),
   ];
 };
-ProjectTableHeader.displayName = 'ProjectTableHeader';
 
 const ProjectLink = connect(
   null,
@@ -248,84 +284,131 @@ const ProjectLink = connect(
     </Button>
   </span>
 ));
-const projectHeaderWithoutActions = () => _.dropRight(ProjectTableHeader());
+const projectHeaderWithoutActions = () =>
+  projectTableHeader({ showMetrics: false, showActions: false });
 
-const ProjectTableRow = ({ obj: project, index, key, style, customData = {} }) => {
-  const requester = getRequester(project);
-  const { ProjectLinkComponent, actionsEnabled = true } = customData;
-  return (
-    <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={projectColumnClasses[0]}>
-        {customData && ProjectLinkComponent ? (
-          <ProjectLinkComponent project={project} />
-        ) : (
-          <span className="co-resource-item">
-            <ResourceLink
-              kind="Project"
-              name={project.metadata.name}
-              title={project.metadata.uid}
-            />
-          </span>
-        )}
-      </TableData>
-      <TableData className={projectColumnClasses[1]}>
-        <span className="co-break-word">
-          {getDisplayName(project) || <span className="text-muted">No display name</span>}
-        </span>
-      </TableData>
-      <TableData className={projectColumnClasses[2]}>
-        <Status status={project.status.phase} />
-      </TableData>
-      <TableData className={classNames(projectColumnClasses[3], 'co-break-word')}>
-        {requester || <span className="text-muted">No requester</span>}
-      </TableData>
-      <TableData className={projectColumnClasses[4]}>
-        <LabelList kind="Project" labels={project.metadata.labels} />
-      </TableData>
-      <TableData className={projectColumnClasses[5]}>
-        {fromNow(project.metadata.creationTimestamp)}
-      </TableData>
-      {actionsEnabled && (
-        <TableData className={projectColumnClasses[6]}>
-          <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+const projectRowStateToProps = ({ UI }) => ({
+  metrics: UI.getIn(['metrics', 'namespace']),
+});
+
+const ProjectTableRow = connect(projectRowStateToProps)(
+  ({ obj: project, index, key, style, customData = {}, metrics }) => {
+    const requester = getRequester(project);
+    const { ProjectLinkComponent, actionsEnabled = true, showMetrics } = customData;
+    const bytes = _.get(metrics, ['memory', project.metadata.name]);
+    const cores = _.get(metrics, ['cpu', project.metadata.name]);
+    return (
+      <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
+        <TableData className={projectColumnClasses[0]}>
+          {customData && ProjectLinkComponent ? (
+            <ProjectLinkComponent project={project} />
+          ) : (
+            <span className="co-resource-item">
+              <ResourceLink
+                kind="Project"
+                name={project.metadata.name}
+                title={project.metadata.uid}
+              />
+            </span>
+          )}
         </TableData>
-      )}
-    </TableRow>
-  );
-};
+        <TableData className={projectColumnClasses[1]}>
+          <span className="co-break-word co-line-clamp">
+            {getDisplayName(project) || <span className="text-muted">No display name</span>}
+          </span>
+        </TableData>
+        <TableData className={projectColumnClasses[2]}>
+          <Status status={project.status.phase} />
+        </TableData>
+        <TableData className={classNames(projectColumnClasses[3], 'co-break-word')}>
+          {requester || <span className="text-muted">No requester</span>}
+        </TableData>
+        {showMetrics && (
+          <>
+            <TableData className={projectColumnClasses[4]}>
+              {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+            </TableData>
+            <TableData className={projectColumnClasses[5]}>
+              {cores ? `${formatCores(cores)} cores` : '-'}
+            </TableData>
+          </>
+        )}
+        <TableData className={projectColumnClasses[6]}>
+          {fromNow(project.metadata.creationTimestamp)}
+        </TableData>
+        {actionsEnabled && (
+          <TableData className={projectColumnClasses[7]}>
+            <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+          </TableData>
+        )}
+      </TableRow>
+    );
+  },
+);
 ProjectTableRow.displayName = 'ProjectTableRow';
 
+const Row = (rowProps) => <ProjectTableRow {...rowProps} />;
 export const ProjectsTable = (props) => (
   <Table
     {...props}
     aria-label="Projects"
     Header={projectHeaderWithoutActions}
-    Row={ProjectTableRow}
+    Row={Row}
     customData={{ ProjectLinkComponent: ProjectLink, actionsEnabled: false }}
     virtualize
   />
 );
 
-export const ProjectList = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ data, flags, ...rest }) => {
-  const ProjectEmptyMessage = () => (
-    <MsgBox
-      title="Welcome to OpenShift"
-      detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
-    />
-  );
-  const ProjectNotFoundMessage = () => <MsgBox title="No Projects Found" />;
-  return (
-    <Table
-      {...rest}
-      aria-label="Projects"
-      data={data}
-      Header={ProjectTableHeader}
-      Row={ProjectTableRow}
-      EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
-      virtualize
-    />
-  );
-});
+const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
+const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
+const ProjectList_ = connectToFlags(FLAGS.CAN_CREATE_PROJECT, FLAGS.CAN_GET_NS)(
+  ({ data, flags, setNamespaceMetrics, ...tableProps }) => {
+    const canGetNS = flags[FLAGS.CAN_GET_NS];
+    const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
+    /* eslint-disable react-hooks/exhaustive-deps */
+    React.useEffect(() => {
+      if (showMetrics) {
+        const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
+        updateMetrics();
+        const id = setInterval(updateMetrics, 30 * 1000);
+        return () => clearInterval(id);
+      }
+    }, [showMetrics]);
+    /* eslint-enable react-hooks/exhaustive-deps */
+
+    // Don't render the table until we know whether we can get metrics. It's
+    // not possible to change the table headers once the component is mounted.
+    if (flagPending(canGetNS)) {
+      return null;
+    }
+
+    const ProjectEmptyMessage = () => (
+      <MsgBox
+        title="Welcome to OpenShift"
+        detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
+      />
+    );
+    const ProjectNotFoundMessage = () => <MsgBox title="No Projects Found" />;
+    return (
+      <Table
+        {...tableProps}
+        aria-label="Projects"
+        data={data}
+        Header={showMetrics ? headerWithMetrics : headerNoMetrics}
+        Row={Row}
+        EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
+        customData={{ showMetrics }}
+        virtualize
+      />
+    );
+  },
+);
+export const ProjectList = connect(
+  null,
+  (dispatch) => ({
+    setNamespaceMetrics: (metrics) => dispatch(UIActions.setNamespaceMetrics(metrics)),
+  }),
+)(connectToFlags(FLAGS.CAN_CREATE_PROJET, FLAGS.CAN_GET_NS)(ProjectList_));
 
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ flags, ...rest }) => (
   // Skip self-subject access review for projects since they use a special project request API.

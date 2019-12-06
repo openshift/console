@@ -465,10 +465,10 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
 );
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC = (props) => {
-  const Row = (rowProps: PodTableRowProps) => <PodTableRow {...rowProps} />;
-  return <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={Row} virtualize />;
-};
+const Row = (rowProps: PodTableRowProps) => <PodTableRow {...rowProps} />;
+export const PodList: React.FC = (props) => (
+  <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={Row} virtualize />
+);
 PodList.displayName = 'PodList';
 
 const filters = [

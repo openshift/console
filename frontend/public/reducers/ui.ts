@@ -284,6 +284,9 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetPodMetrics:
       return state.setIn(['metrics', 'pod'], action.payload.podMetrics);
 
+    case ActionType.SetNamespaceMetrics:
+      return state.setIn(['metrics', 'namespace'], action.payload.namespaceMetrics);
+
     default:
       break;
   }
