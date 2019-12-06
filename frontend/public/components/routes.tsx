@@ -134,11 +134,11 @@ export const RouteStatus: React.FC<RouteStatusProps> = ({ obj: route }) => {
 RouteStatus.displayName = 'RouteStatus';
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -159,19 +159,19 @@ const RouteTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
+      title: 'Status',
+      props: { className: tableColumnClasses[2] },
+    },
+    {
       title: 'Location',
       sortField: 'spec.host',
       transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
+      props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Service',
       sortField: 'spec.to.name',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Status',
       props: { className: tableColumnClasses[4] },
     },
     {
@@ -200,19 +200,19 @@ const RouteTableRow: React.FC<RouteTableRowProps> = ({ obj: route, index, key, s
           title={route.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={tableColumnClasses[2]}>
+        <RouteStatus obj={route} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <RouteLocation obj={route} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses[4]}>
         <ResourceLink
           kind="Service"
           name={route.spec.to.name}
           namespace={route.metadata.namespace}
           title={route.spec.to.name}
         />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <RouteStatus obj={route} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={route} />
