@@ -10,7 +10,7 @@ import {
   EventSourceCamelModel,
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
-import { TopologyDataResources } from '../../topology2/topology-types';
+import { TopologyDataResources } from '../topology-types';
 
 export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
   loaded: true,

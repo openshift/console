@@ -5,7 +5,7 @@ import {
   sampleDeployments,
   sampleStatefulSets,
   sampleDaemonSets,
-} from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+} from '@console/dev-console/src/components/topology2/__tests__/topology-test-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
@@ -14,7 +14,7 @@ import {
 import {
   sampleKnativeDeployments,
   MockKnativeResources,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+} from '@console/dev-console/src/components/topology2/__tests__/topology-knative-test-data';
 import { TransformResourceData } from '../resource-utils';
 
 declare global {

@@ -6,7 +6,7 @@ import {
   useCombineRefs,
   createSvgIdUrl,
 } from '@console/topology';
-import SvgResourceIcon from '../topology/shapes/ResourceIcon';
+import SvgResourceIcon from '../topology2/components/nodes/ResourceIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 
 export interface SvgBoxedTextProps {

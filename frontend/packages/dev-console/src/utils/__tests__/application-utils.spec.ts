@@ -19,8 +19,8 @@ import {
   getTopologyResourceObject,
 } from '../../components/topology2/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
-import { MockResources } from '../../components/topology/__tests__/topology-test-data';
-import { MockKnativeResources } from '../../components/topology/__tests__/topology-knative-test-data';
+import { MockResources } from '../../components/topology2/__tests__/topology-test-data';
+import { MockKnativeResources } from '../../components/topology2/__tests__/topology-knative-test-data';
 
 import Spy = jasmine.Spy;
 

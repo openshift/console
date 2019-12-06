@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { transformTopologyData } from '../../topology2/topology-utils';
-import Graph from '../Graph';
-import { nodeProvider, edgeProvider, groupProvider } from '../shape-providers';
-import { ActionProviders } from '../actions-providers';
+import { transformTopologyData } from '../topology-utils';
+import Topology from '../Topology';
 import { MockGraphResources } from './graph-test-data';
 
 const mockCheURL = 'https://mock-che.test-cluster.com';
@@ -21,28 +19,7 @@ describe('Graph', () => {
       mockCheURL,
     );
     mockSelectFn = jest.fn();
-    const actionProvider = new ActionProviders(topologyData.topology);
-    graphWrapper = shallow(
-      <Graph
-        graph={topologyData.graph}
-        topology={topologyData.topology}
-        onSelect={mockSelectFn}
-        actionProvider={actionProvider.getActions}
-        nodeProvider={nodeProvider}
-        edgeProvider={edgeProvider}
-        groupProvider={groupProvider}
-        onUpdateNodeGroup={this.onUpdateNodeGroup}
-        onCreateConnection={this.onCreateConnection}
-        onRemoveConnection={this.onRemoveConnection}
-        graphApiRef={this.graphApiRef}
-      />,
-    );
-    graphWrapper.setState({
-      dimensions: {
-        width: 500,
-        height: 300,
-      },
-    });
+    graphWrapper = shallow(<Topology data={topologyData} serviceBinding={false} />);
   });
 
   xit('should display the workload nodes', () => {

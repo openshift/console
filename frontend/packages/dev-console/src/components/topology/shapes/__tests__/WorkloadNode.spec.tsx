@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 import { SVGDefsProvider } from '@console/topology';
-import { MockResources } from '../../__tests__/topology-test-data';
+import { MockResources } from '../../../topology2/__tests__/topology-test-data';
 import { transformTopologyData } from '../../../topology2/topology-utils';
 import WorkloadNode from '../WorkloadNode';
 

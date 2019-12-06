@@ -1,5 +1,5 @@
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
-import { MockResources } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { MockKnativeResources } from '@console/dev-console/src/components/topology2/__tests__/topology-knative-test-data';
+import { MockResources } from '@console/dev-console/src/components/topology2/__tests__/topology-test-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
