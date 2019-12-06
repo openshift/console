@@ -3,7 +3,7 @@ import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { formatNamespacedRouteForResource } from '../../actions/ui';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import * as plugins from '../../plugins';

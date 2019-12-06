@@ -19,9 +19,8 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import classNames from 'classnames';
-
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
-import * as UIActions from '../actions/ui';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink } from '../module/k8s';
@@ -172,10 +171,7 @@ class MastheadToolbarContents_ extends React.Component {
 
   _onImportYAML(e) {
     e.preventDefault();
-    const importYAMLPath = UIActions.formatNamespacedRouteForResource(
-      'import',
-      this.props.activeNamespace,
-    );
+    const importYAMLPath = formatNamespacedRouteForResource('import', this.props.activeNamespace);
     history.push(importYAMLPath);
   }
 
