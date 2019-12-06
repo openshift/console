@@ -12,6 +12,7 @@ import {
   ErrorStatus,
   getName,
   ProgressStatus,
+  Status,
   SuccessStatus,
   WarningStatus,
   getNamespace,
@@ -709,7 +710,9 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             </div>
             <div className="col-sm-6">
               <dt>Status</dt>
-              <dd>{status ? status.phase : 'Unknown'}</dd>
+              <dd>
+                <Status status={status ? status.phase : 'Unknown'} />
+              </dd>
               <dt>Status Reason</dt>
               <dd>{status ? status.message : 'Unknown'}</dd>
               <dt>Operator Deployments</dt>
