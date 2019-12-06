@@ -114,15 +114,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       ...projectTemplateItems,
     ];
 
-    //blacklisting all CRDs with annotation 'operators.operatorframework.io/internal-object' set to true
-    const filteredItems = _.reject(items, [
-      'obj',
-      'metadata',
-      'annotations',
-      'operators.operatorframework.io/internal-object',
-    ]);
-
-    return _.sortBy(filteredItems, 'tileName');
+    return _.sortBy(items, 'tileName');
   }
 
   normalizeClusterServiceClasses(serviceClasses) {
