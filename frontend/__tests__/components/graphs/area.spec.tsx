@@ -4,7 +4,7 @@ import { Chart, ChartArea, ChartAxis } from '@patternfly/react-charts';
 
 import { AreaChart } from '@console/internal/components/graphs/area';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { LoadingBox } from '@console/internal/components/utils';
+
 import {
   PrometheusGraph,
   PrometheusGraphLink,
@@ -37,8 +37,8 @@ describe('<AreaChart />', () => {
     expect(wrapper.find(GraphEmpty).exists()).toBe(true);
   });
 
-  it('should show a loading state', () => {
+  it('should show a loading skeleton state', () => {
     const wrapper = mount(<AreaChart data={[]} loading={true} />); // Use full mount function so that we can check for a LoadingBox child
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+    expect(wrapper.find('.skeleton-chart').exists()).toBe(true);
   });
 });

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
-import { LoadingBox } from '../utils';
 
 export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false }) => (
   <div
     style={{
-      height,
-      width: '100%',
-      display: 'flex',
       alignItems: 'center',
+      display: 'flex',
+      height,
       justifyContent: 'center',
+      padding: '5px',
+      width: '100%',
     }}
   >
     {loading ? (
-      <LoadingBox />
+      <div className="skeleton-chart" />
     ) : (
       <EmptyState variant={EmptyStateVariant.full}>
         <Title className="graph-empty-state__title text-secondary" size="sm">

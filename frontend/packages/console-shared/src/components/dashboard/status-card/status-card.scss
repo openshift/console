@@ -13,11 +13,10 @@
   }
 }
 
-.co-status-card__alerts-body--loading {
-  align-items: center;
+.co-status-card__alert-item--loading {
   display: flex;
+  flex-direction: column;
   height: 100%;
-  justify-content: center;
   width: 100%;
 }
 
@@ -108,13 +107,13 @@
   font-size: 0.7rem;
 }
 
-.skeleton-alerts {
+.skeleton-health {
   animation: $skeleton-animation;
+  border-radius: 50px;
   background: $skeleton-color;
-  height: 40px;
-  width: 400px;
+  height: $skeleton-bone-height-1line;
   opacity: 0;
-  margin-right: 0.5rem;
+  width: $skeleton-bone-height-1line;
   &::after {
     background-repeat: no-repeat;
     content: "";
@@ -124,17 +123,37 @@
   }
 }
 
-.skeleton-health {
+.skeleton-status-alerts {
   animation: $skeleton-animation;
-  background: $skeleton-color;
-  height: 20px;
-  width: 20px;
+  height: 50px;
+  margin-bottom: 1em;
   opacity: 0;
+  width: 100%;
   &::after {
     background-repeat: no-repeat;
-    content: "";
-    display: block;
+    content:"";
+    display:block;
     height: 100%;
     width: 100%;
   }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.skeleton-status-alerts::after {
+  background-image:
+    $skeleton-status-bone,
+    $skeleton-status-bone,
+    $skeleton-status-resource-icon;
+
+  background-position:
+    $skeleton-status-metadata-position,
+    $skeleton-status-resource-position,
+    $skeleton-status-resource-icon-position;
+
+  background-size:
+    $skeleton-status-metadata-size,
+    $skeleton-status-resource-size,
+    $skeleton-status-resource-icon-size;
 }
