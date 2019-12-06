@@ -33,11 +33,11 @@ export const menuActions: KebabAction[] = [
 const kind = 'DaemonSet';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -56,14 +56,14 @@ const DaemonSetTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
-      sortField: 'metadata.labels',
+      title: 'Status',
+      sortFunc: 'daemonsetNumScheduled',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status',
-      sortFunc: 'daemonsetNumScheduled',
+      title: 'Labels',
+      sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
@@ -110,9 +110,6 @@ const DaemonSetTableRow = ({
         />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={daemonset.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
         <Link
           to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
           title="pods"
@@ -120,6 +117,9 @@ const DaemonSetTableRow = ({
           {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled}{' '}
           pods
         </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <LabelList kind={kind} labels={daemonset.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
