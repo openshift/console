@@ -76,7 +76,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
 
-  const contentsClasses = classNames('odc2-base-node__contents', {
+  const contentsClasses = classNames('odc-base-node__contents', {
     'is-hover': hover || contextMenuOpen,
     'is-highlight': canDrop,
     'is-dragging': dragging || edgeDragging,
@@ -95,7 +95,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
 
   return (
-    <g className="odc2-base-node">
+    <g className="odc-base-node">
       <NodeShadows />
       <g
         data-test-id="base-node-handler"
@@ -104,7 +104,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         ref={refs}
       >
         <circle
-          className={classNames('odc2-base-node__bg', { 'is-highlight': canDrop })}
+          className={classNames('odc-base-node__bg', { 'is-highlight': canDrop })}
           ref={dndDropRef}
           cx={cx}
           cy={cy}
@@ -125,7 +125,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           />
           {(kind || element.getLabel()) && (
             <SvgBoxedText
-              className="odc2-base-node__label"
+              className="odc-base-node__label"
               x={cx}
               y={cy + outerRadius + 20}
               paddingX={8}
@@ -137,7 +137,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             </SvgBoxedText>
           )}
           {selected && (
-            <circle className="odc2-base-node__selection" cx={cx} cy={cy} r={outerRadius + 1} />
+            <circle className="odc-base-node__selection" cx={cx} cy={cy} r={outerRadius + 1} />
           )}
           {children}
         </g>

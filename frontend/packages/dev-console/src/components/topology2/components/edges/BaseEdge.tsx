@@ -49,7 +49,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
       <g
         ref={hoverRef}
         data-test-id="edge-handler"
-        className={classNames(className, 'odc2-base-edge', {
+        className={classNames(className, 'odc-base-edge', {
           'is-highlight': dragging,
           'is-hover': hover,
         })}
@@ -63,7 +63,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
           stroke="transparent"
         />
         <line
-          className="odc2-base-edge__link"
+          className="odc-base-edge__link"
           x1={startPoint.x}
           y1={startPoint.y}
           x2={endPoint.x}

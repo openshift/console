@@ -23,7 +23,7 @@ const ServiceBinding: React.FC<ServiceBindingProps> = ({
   children,
   ...others
 }) => (
-  <BaseEdge element={element} {...others} className="odc2-service-binding">
+  <BaseEdge element={element} {...others} className="odc-service-binding">
     <EdgeConnectorArrow dragRef={targetDragRef} edge={element} />
     {children}
   </BaseEdge>

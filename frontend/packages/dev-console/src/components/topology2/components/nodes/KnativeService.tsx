@@ -111,7 +111,7 @@ const KnativeService: React.FC<EventSourceProps> = ({
       )}
       {(data.kind || element.getLabel()) && (
         <SvgBoxedText
-          className="odc-knative-service__label odc2-base-node__label"
+          className="odc-knative-service__label odc-base-node__label"
           x={x + width / 2}
           y={y + height + 20}
           paddingX={8}

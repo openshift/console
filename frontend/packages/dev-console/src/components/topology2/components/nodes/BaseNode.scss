@@ -1,11 +1,11 @@
-.odc2-base-node {
+.odc-base-node {
   cursor: pointer;
 
   &:focus {
     outline: none;
   }
 
-  .odc2-m-drag-active & {
+  .odc-m-drag-active & {
     cursor: grab;
   }
 
@@ -33,8 +33,8 @@
   }
 }
 
-.odc2-m-drag-active {
-  .odc2-base-node__contents {
+.odc-m-drag-active {
+  .odc-base-node__contents {
     opacity: 0.3;
     &.is-dragging, &.is-droppable {
       opacity: 1;

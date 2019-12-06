@@ -10,7 +10,7 @@ import {
 } from '@console/topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyResourceObject } from '../../../topology/topology-utils';
+import { getTopologyResourceObject } from '../../topology-utils';
 import BaseEdge from './BaseEdge';
 import './ConnectsTo.scss';
 
@@ -31,7 +31,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const edgeClasses = classNames('odc2-connects-to', { 'odc2-m-editable': editAccess });
+  const edgeClasses = classNames('odc-connects-to', { 'odc2-m-editable': editAccess });
   return (
     <BaseEdge className={edgeClasses} element={element} {...others}>
       <EdgeConnectorArrow dragRef={editAccess ? targetDragRef : undefined} edge={element} />

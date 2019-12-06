@@ -71,7 +71,7 @@ class ComponentFactory {
               withContextMenu(
                 groupContextMenu,
                 document.getElementById('modal-container'),
-                'odc2-topology-context-menu',
+                'odc-topology-context-menu',
               )(ApplicationGroup),
             ),
           );
@@ -80,7 +80,7 @@ class ComponentFactory {
             withContextMenu(
               nodeContextMenu,
               document.getElementById('modal-container'),
-              'odc2-topology-context-menu',
+              'odc-topology-context-menu',
             )(KnativeService),
           );
         case TYPE_EVENT_SOURCE:
@@ -89,7 +89,7 @@ class ComponentFactory {
               withContextMenu(
                 nodeContextMenu,
                 document.getElementById('modal-container'),
-                'odc2-topology-context-menu',
+                'odc-topology-context-menu',
               )(EventSource),
             ),
           );
@@ -101,7 +101,7 @@ class ComponentFactory {
                   withContextMenu(
                     nodeContextMenu,
                     document.getElementById('modal-container'),
-                    'odc2-topology-context-menu',
+                    'odc-topology-context-menu',
                   )(RevisionNode),
                 ),
               ),
@@ -123,7 +123,7 @@ class ComponentFactory {
                     withContextMenu(
                       workloadContextMenu,
                       document.getElementById('modal-container'),
-                      'odc2-topology-context-menu',
+                      'odc-topology-context-menu',
                     )(WorkloadNode),
                   ),
                 ),

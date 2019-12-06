@@ -5,7 +5,7 @@ type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
   dragEditInProgress?: boolean;
 };
 
-const DRAG_ACTIVE_CLASS = 'odc2-m-drag-active';
+const DRAG_ACTIVE_CLASS = 'odc-m-drag-active';
 
 const GraphComponent: React.FC<GraphComponentProps> = (props) => {
   React.useEffect(() => {

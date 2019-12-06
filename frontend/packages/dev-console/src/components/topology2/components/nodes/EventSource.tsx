@@ -77,7 +77,7 @@ const EventSource: React.FC<EventSourceProps> = ({
       />
       {(data.kind || element.getLabel()) && (
         <SvgBoxedText
-          className="odc2-base-node__label"
+          className="odc-base-node__label"
           x={width / 2}
           y={(height + size) / 2 + 20}
           paddingX={8}

@@ -4,13 +4,13 @@
   stroke-width: 4px;
   cursor: pointer;
 
-  .odc2-m-drag-active & {
+  .odc-m-drag-active & {
     cursor: grab;
   }
 
   &__label {
     cursor: pointer;
-    .odc2-m-drag-active & {
+    .odc-m-drag-active & {
       cursor: grab;
     }
   }
@@ -21,7 +21,7 @@
   }
 }
 
-.odc2-m-drag-active {
+.odc-m-drag-active {
   .odc-knative-service {
     opacity: 0.3;
     &.is-dragging {

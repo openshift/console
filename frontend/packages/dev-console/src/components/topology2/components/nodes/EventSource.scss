@@ -1,7 +1,7 @@
 .odc-event-source {
   cursor: pointer;
 
-  .odc2-m-drag-active & {
+  .odc-m-drag-active & {
     cursor: grab;
   }
 
@@ -16,7 +16,7 @@
   }
 }
 
-.odc2-m-drag-active {
+.odc-m-drag-active {
   .odc-event-source {
     opacity: 0.3;
   }

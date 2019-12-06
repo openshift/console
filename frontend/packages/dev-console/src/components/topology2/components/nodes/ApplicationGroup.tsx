@@ -118,7 +118,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     labelLocation.current = computeLabelLocation(hullPoints as PointWithSize[]);
   }
 
-  const pathClasses = classNames('odc2-application-group', {
+  const pathClasses = classNames('odc-application-group', {
     'is-highlight': canDrop,
     'is-selected': selected,
     'is-hover': hover || (canDrop && dropTarget) || contextMenuOpen,
@@ -143,7 +143,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
       </Layer>
       <g ref={groupLabelHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
         <SvgBoxedText
-          className="odc2-application-group__label"
+          className="odc-application-group__label"
           x={labelLocation.current[0]}
           y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
           paddingX={20}
