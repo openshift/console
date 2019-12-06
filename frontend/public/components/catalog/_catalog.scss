@@ -17,7 +17,6 @@ $co-modal-ignore-warning-icon-width: 30px;
 }
 
 .co-catalog {
-  background: $color-pf-black-150;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -91,6 +90,9 @@ $co-modal-ignore-warning-icon-width: 30px;
   flex:1;
   margin: 0 ($grid-gutter-width / 2);
   padding: ($grid-gutter-width / 2) 0 0;
+  @media (min-width: $screen-sm-min) {
+    margin: 0 ($grid-gutter-width / 2) 0 $grid-gutter-width;
+  }
 
   &__content {
     flex: 1 1 auto;
