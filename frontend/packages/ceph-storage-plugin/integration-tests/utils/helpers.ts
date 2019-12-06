@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as _ from 'lodash';
+import { click } from '@console/shared/src/test-utils/utils';
 import { OSD, POD_NAME_PATTERNS, SECOND } from './consts';
 
 export const checkIfClusterIsReady = async () => {
@@ -159,6 +160,13 @@ export const verifyNodeOSDMapping = (
   return filteredOsds.length === 0;
 };
 
+export const selectItemFromDropdown = async (item, dropdownElement) => {
+  await click(dropdownElement);
+  await click($(`#${item}-link`));
+};
+
+export const namespaceDropdown = $('div[data-test-id="namespace-bar-dropdown"] div div button');
+
 export type NodeType = {
   id: number;
   name: string;
@@ -186,4 +194,11 @@ export type PvcType = {
   sizeUnits: string;
   storageClass: string;
   accessMode: string;
+};
+
+export type ObcType = {
+  name: string;
+  namespace: string;
+  storageClass: string;
+  bucketClass: string;
 };

@@ -1,17 +1,11 @@
-import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import { PVC_STATUS } from '../utils/consts';
-import { PvcType } from '../utils/helpers';
-
-export const selectItemFromDropdown = async (item, dropdownElement) => {
-  await click(dropdownElement);
-  await click($(`#${item}-link`));
-};
+import { CLAIM_STATUS } from '../utils/consts';
+import { namespaceDropdown, PvcType, selectItemFromDropdown } from '../utils/helpers';
 
 // create pvc
-export const namespaceDropdown = $$('[class="pf-c-dropdown__toggle pf-m-plain"]').get(0);
 export const storageclassDropdown = $('#storageclass-dropdown');
 export const inputPVCName = $('#pvc-name');
 export const selectAccessMode = (accessMode) => $(`input[value=${accessMode}]`);
@@ -53,7 +47,7 @@ export const createNewPersistentVolumeClaim = async (pvc: PvcType, waitForBindin
   await selectItemFromDropdown(pvc.sizeUnits, sizeUnitsDropdown);
   await click(crudView.saveChangesBtn);
   if (waitForBinding === true)
-    await browser.wait(until.textToBePresentInElement(pvcStatus, PVC_STATUS.BOUND));
+    await browser.wait(until.textToBePresentInElement(pvcStatus, CLAIM_STATUS.BOUND));
 };
 
 export const deletePersistentVolumeClaim = async (name: string, namespace: string) => {

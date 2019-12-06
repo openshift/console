@@ -9,8 +9,8 @@ import {
   pvcSize,
 } from '../../views/pvc.view';
 import {
+  CLAIM_STATUS,
   NS,
-  PVC_STATUS,
   SIZE_UNITS,
   STORAGE_CLASS_PATTERNS,
   VOLUME_ACCESS_MODES,
@@ -31,10 +31,33 @@ describe('Test PVC creation with options.', () => {
       accessMode: VOLUME_ACCESS_MODES.RWO,
     };
     await createNewPersistentVolumeClaim(testPvc, true);
-    expect(pvcStatus.getText()).toEqual(PVC_STATUS.BOUND);
+    expect(pvcStatus.getText()).toEqual(CLAIM_STATUS.BOUND);
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
-    await deletePersistentVolumeClaim('rbdpvc', NS);
+    await deletePersistentVolumeClaim(testPvc.name, NS);
+  });
+
+  it('Test creating 3 PVCs in a row', async () => {
+    const pvcNames = ['first-pvc', 'second-pvc', 'third-pvc'];
+    for (const pvcName of pvcNames) {
+      const testPvc = {
+        name: pvcName,
+        namespace: NS,
+        size: '5',
+        sizeUnits: SIZE_UNITS.GI,
+        storageClass: STORAGE_CLASS_PATTERNS.RBD,
+        accessMode: VOLUME_ACCESS_MODES.RWO,
+      };
+      // eslint-disable-next-line no-await-in-loop
+      await createNewPersistentVolumeClaim(testPvc, true);
+      expect(pvcStatus.getText()).toEqual(CLAIM_STATUS.BOUND);
+    }
+    await goToPersistentVolumeClaims();
+    await resourceRowsPresent();
+    for (const pvcName of pvcNames) {
+      // eslint-disable-next-line no-await-in-loop
+      await deletePersistentVolumeClaim(pvcName, NS);
+    }
   });
 
   it('Test PVC size is rounded', async () => {
@@ -52,7 +75,7 @@ describe('Test PVC creation with options.', () => {
     expect(pvcSize.getText()).toEqual('2Gi');
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
-    await deletePersistentVolumeClaim('rbdpvc', NS);
+    await deletePersistentVolumeClaim(testPvc.name, NS);
   });
 
   it('Test cephFS PVC is created and gets bound', async () => {
@@ -65,10 +88,10 @@ describe('Test PVC creation with options.', () => {
       accessMode: VOLUME_ACCESS_MODES.RWO,
     };
     await createNewPersistentVolumeClaim(testPvc, true);
-    expect(pvcStatus.getText()).toEqual(PVC_STATUS.BOUND);
+    expect(pvcStatus.getText()).toEqual(CLAIM_STATUS.BOUND);
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
-    await deletePersistentVolumeClaim('cephfspvc', NS);
+    await deletePersistentVolumeClaim(testPvc.name, NS);
   });
 
   it('Test RWX RBD PVC is created and gets bound', async () => {
@@ -81,10 +104,10 @@ describe('Test PVC creation with options.', () => {
       accessMode: VOLUME_ACCESS_MODES.RWX,
     };
     await createNewPersistentVolumeClaim(testPvc, true);
-    expect(pvcStatus.getText()).toEqual(PVC_STATUS.BOUND);
+    expect(pvcStatus.getText()).toEqual(CLAIM_STATUS.BOUND);
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
-    await deletePersistentVolumeClaim('rwxrbdpvc', NS);
+    await deletePersistentVolumeClaim(testPvc.name, NS);
   });
 
   it('Test RWX CephFS PVC is created and gets bound', async () => {
@@ -97,9 +120,9 @@ describe('Test PVC creation with options.', () => {
       accessMode: VOLUME_ACCESS_MODES.RWX,
     };
     await createNewPersistentVolumeClaim(testPvc, true);
-    expect(pvcStatus.getText()).toEqual(PVC_STATUS.BOUND);
+    expect(pvcStatus.getText()).toEqual(CLAIM_STATUS.BOUND);
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
-    await deletePersistentVolumeClaim('rwxcephfspvc', NS);
+    await deletePersistentVolumeClaim(testPvc.name, NS);
   });
 });

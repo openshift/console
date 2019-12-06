@@ -24,6 +24,7 @@ export enum STORAGE_CLASS_PATTERNS {
   RBD = 'ocs-storagecluster-ceph-rbd',
   FS = 'ocs-storagecluster-cephfs',
   NOOBAA = 'noobaa.io',
+  NOOBAA_FULL_NAME = 'openshift-storage\\.noobaa\\.io',
 }
 
 export enum CLUSTER_STATUS {
@@ -56,7 +57,9 @@ export enum SIZE_UNITS {
   TI = 'Ti',
 }
 
-export enum PVC_STATUS {
+export enum CLAIM_STATUS {
   PENDING = 'Pending',
   BOUND = 'Bound',
 }
+
+export const DEFAULT_BUCKET_CLASS = 'noobaa-default-bucket-class';

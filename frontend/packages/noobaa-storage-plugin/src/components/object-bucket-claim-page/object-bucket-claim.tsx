@@ -141,7 +141,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             {isBound(obj) && (
               <>
                 <dt>Secret</dt>
-                <dd>
+                <dd data-test-id="obc-secret">
                   <ResourceLink
                     kind="Secret"
                     name={obj.metadata.name}
@@ -154,7 +154,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           </div>
           <div className="col-sm-6">
             <dt>Status</dt>
-            <dd>
+            <dd data-test-id="obc-status">
               <OBCStatus obc={obj} />
             </dd>
             <dt>Storage Class</dt>
@@ -168,7 +168,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             {isBound(obj) && (
               <>
                 <dt>Object Bucket</dt>
-                <dd>
+                <dd data-test-id="object-bucket">
                   <ResourceLink
                     kind={referenceForModel(NooBaaObjectBucketModel)}
                     name={obj.spec.ObjectBucketName}
