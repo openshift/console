@@ -60,12 +60,12 @@ export const Readiness: React.FC<ReadinessProps> = ({ pod }) => {
 Readiness.displayName = 'Readiness';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -91,16 +91,16 @@ const PodTableRow: React.FC<PodTableRowProps> = ({ obj: pod, index, key, style }
         />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <OwnerReferences resource={pod} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <NodeLink name={pod.spec.nodeName} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
         <Status status={phase} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[3]}>
         <Readiness pod={pod} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <OwnerReferences resource={pod} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <NodeLink name={pod.spec.nodeName} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab
@@ -136,26 +136,26 @@ const PodTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Owner',
-      sortField: 'metadata.ownerReferences[0].name',
+      title: 'Status',
+      sortFunc: 'podPhase',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Node',
-      sortField: 'spec.nodeName',
+      title: 'Readiness',
+      sortFunc: 'podReadiness',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Status',
-      sortFunc: 'podPhase',
+      title: 'Owner',
+      sortField: 'metadata.ownerReferences[0].name',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Readiness',
-      sortFunc: 'podReadiness',
+      title: 'Node',
+      sortField: 'spec.nodeName',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
     },
