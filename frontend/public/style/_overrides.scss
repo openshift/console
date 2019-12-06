@@ -387,16 +387,8 @@ h6 {
 }
 
 .pf-c-table__action {
-  width: 5% !important;
   padding-left: 0px !important;
-
-  @media screen and (max-width: 992px) {
-    width: 10% !important;
-  }
-}
-
-.pf-c-table__action.dropdown-kebab-pf .pf-c-dropdown__menu.pf-m-align-right {
-  right: -16px; // align with table edge, offset pf-c-table--m-compact-cell--first-last-child--PaddingRight
+  width: 60px !important;
 }
 
 // FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.

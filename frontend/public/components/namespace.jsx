@@ -34,6 +34,7 @@ import {
   navFactory,
   useAccessReview,
 } from './utils';
+import { fromNow } from './utils/datetime';
 import {
   createNamespaceModal,
   createProjectModal,
@@ -94,9 +95,10 @@ const nsMenuActions = [
 ];
 
 const namespacesColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -120,7 +122,13 @@ const NamespacesTableHeader = () => {
       transforms: [sortable],
       props: { className: namespacesColumnClasses[2] },
     },
-    { title: '', props: { className: namespacesColumnClasses[3] } },
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: namespacesColumnClasses[3] },
+    },
+    { title: '', props: { className: namespacesColumnClasses[4] } },
   ];
 };
 NamespacesTableHeader.displayName = 'NamespacesTableHeader';
@@ -138,6 +146,9 @@ const NamespacesTableRow = ({ obj: ns, index, key, style }) => {
         <LabelList kind="Namespace" labels={ns.metadata.labels} />
       </TableData>
       <TableData className={namespacesColumnClasses[3]}>
+        {fromNow(ns.metadata.creationTimestamp)}
+      </TableData>
+      <TableData className={namespacesColumnClasses[4]}>
         <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
       </TableData>
     </TableRow>
@@ -167,10 +178,12 @@ export const NamespacesPage = (props) => (
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnClasses = [
-  classNames('col-md-3', 'col-sm-6', 'col-xs-8'),
-  classNames('col-md-3', 'col-sm-3', 'col-xs-4'),
-  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
 ];
 
@@ -183,24 +196,36 @@ const ProjectTableHeader = () => {
       props: { className: projectColumnClasses[0] },
     },
     {
+      title: 'Display Name',
+      sortField: 'metadata.annotations["openshift.io/display-name"]',
+      transforms: [sortable],
+      props: { className: projectColumnClasses[1] },
+    },
+    {
       title: 'Status',
       sortField: 'status.phase',
       transforms: [sortable],
-      props: { className: projectColumnClasses[1] },
+      props: { className: projectColumnClasses[2] },
     },
     {
       title: 'Requester',
       sortField: "metadata.annotations.['openshift.io/requester']",
       transforms: [sortable],
-      props: { className: projectColumnClasses[2] },
+      props: { className: projectColumnClasses[3] },
     },
     {
       title: 'Labels',
       sortField: 'metadata.labels',
       transforms: [sortable],
-      props: { className: projectColumnClasses[3] },
+      props: { className: projectColumnClasses[4] },
     },
-    { title: '', props: { className: projectColumnClasses[4] } },
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: projectColumnClasses[5] },
+    },
+    { title: '', props: { className: projectColumnClasses[6] } },
   ];
 };
 ProjectTableHeader.displayName = 'ProjectTableHeader';
@@ -244,16 +269,24 @@ const ProjectTableRow = ({ obj: project, index, key, style, customData = {} }) =
         )}
       </TableData>
       <TableData className={projectColumnClasses[1]}>
+        <span className="co-break-word">
+          {getDisplayName(project) || <span className="text-muted">No display name</span>}
+        </span>
+      </TableData>
+      <TableData className={projectColumnClasses[2]}>
         <Status status={project.status.phase} />
       </TableData>
-      <TableData className={classNames(projectColumnClasses[2], 'co-break-word')}>
+      <TableData className={classNames(projectColumnClasses[3], 'co-break-word')}>
         {requester || <span className="text-muted">No requester</span>}
       </TableData>
-      <TableData className={projectColumnClasses[3]}>
+      <TableData className={projectColumnClasses[4]}>
         <LabelList kind="Project" labels={project.metadata.labels} />
       </TableData>
+      <TableData className={projectColumnClasses[5]}>
+        {fromNow(project.metadata.creationTimestamp)}
+      </TableData>
       {actionsEnabled && (
-        <TableData className={projectColumnClasses[4]}>
+        <TableData className={projectColumnClasses[6]}>
           <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
         </TableData>
       )}
