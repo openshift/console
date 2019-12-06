@@ -9,7 +9,8 @@ import { SecretModel } from '../../models';
 
 export const receiverTypes = {
   pagerduty_configs: 'PagerDuty',
-  webhook_configs: 'Webhook Receiver',
+  webhook_configs: 'Webhook',
+  email_configs: 'Email',
 };
 
 const decodeAlertManagerYaml = (secret: K8sResourceKind, setErrorMsg) => {

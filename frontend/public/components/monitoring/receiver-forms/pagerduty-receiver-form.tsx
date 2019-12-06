@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { SectionHeading } from '../../utils';
 import { RadioInput } from '../../radio';
 import * as classNames from 'classnames';
 
@@ -13,8 +12,7 @@ export const Form = ({ globals, formValues, handleChange }) => {
   const saveAsDefaultLabelClass = classNames({ 'co-no-bold': disableSaveAsDefault });
 
   return (
-    <div data-test-id="pagerduty-receiver-form" className="co-m-pane__body--section-heading">
-      <SectionHeading text="PagerDuty Configuration" />
+    <div data-test-id="pagerduty-receiver-form">
       <div className="form-group">
         <label className="control-label">Integration Type</label>
         <div>
@@ -106,8 +104,7 @@ export const getInitialValues = (globals, receiverConfig) => {
   initValues.pagerDutyIntegrationKey =
     _.get(receiverConfig, 'service_key') || _.get(receiverConfig, 'routing_key') || '';
   // default to receiverConfig, global, or ''
-  initValues.pagerDutyURL =
-    _.get(receiverConfig, 'pagerduty_url') || _.get(globals, 'pagerduty_url') || '';
+  initValues.pagerDutyURL = _.get(receiverConfig, 'url') || _.get(globals, 'pagerduty_url') || '';
 
   return initValues;
 };

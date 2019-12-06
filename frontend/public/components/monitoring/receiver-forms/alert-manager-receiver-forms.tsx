@@ -27,6 +27,7 @@ import {
 import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
+import * as EmailForm from './email-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
 
 /**
@@ -120,6 +121,8 @@ const subFormFactory = (receiverType) => {
       return PagerDutyForm;
     case 'webhook_configs':
       return WebhookForm;
+    case 'email_configs':
+      return EmailForm;
     default:
       return WebhookForm;
   }
@@ -189,6 +192,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     INITIAL_STATE,
     PagerDutyForm.getInitialValues(allGlobals, null),
     WebhookForm.getInitialValues(allGlobals, null),
+    EmailForm.getInitialValues(allGlobals, null),
   );
 
   let receiverToEdit: AlertManagerReceiver;
@@ -294,7 +298,8 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       </Helmet>
       <form className="co-m-pane__body-group" onSubmit={save}>
         <h1 className="co-m-pane__heading">
-          {titleVerb} {isDefaultReceiver && 'Default'} Receiver
+          {titleVerb} {receiverTypes[`${formValues.receiverType}`]} {isDefaultReceiver && 'Default'}{' '}
+          Receiver
         </h1>
         <div className="form-group">
           <label className="control-label co-required">Receiver Name</label>
