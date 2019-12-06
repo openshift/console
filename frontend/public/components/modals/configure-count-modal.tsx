@@ -40,6 +40,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
           changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
           autoFocus
           required
+          min={0}
         />
       </ModalBody>
       <ModalSubmitFooter

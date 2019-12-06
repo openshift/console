@@ -1,23 +1,41 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { Button } from '@patternfly/react-core';
 import { MinusSquareIcon, PlusSquareIcon } from '@patternfly/react-icons';
 
-export const NumberSpinner: React.FC<NumberSpinnerProps> = (props) => {
-  const inputProps = _.omit(props, ['className', 'changeValueBy']);
-  const className = classNames(props.className, 'co-m-number-spinner__input');
-
+export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
+  className,
+  changeValueBy,
+  min,
+  ...inputProps
+}) => {
   return (
     <div>
-      <MinusSquareIcon
-        className="co-m-number-spinner__down-icon"
-        onClick={() => props.changeValueBy(-1)}
+      <Button
+        onClick={() => changeValueBy(-1)}
+        type="button"
+        variant="plain"
+        isDisabled={!_.isNil(min) && inputProps.value <= min}
+        aria-label="Decrement"
+        className="co-m-number-spinner__button"
+      >
+        <MinusSquareIcon className="co-m-number-spinner__down-icon" />
+      </Button>
+      <input
+        type="number"
+        className={classNames(className, 'co-m-number-spinner__input')}
+        {...inputProps}
       />
-      <input type="number" className={className} {...inputProps} />
-      <PlusSquareIcon
-        className="co-m-number-spinner__up-icon"
-        onClick={() => props.changeValueBy(1)}
-      />
+      <Button
+        onClick={() => changeValueBy(1)}
+        type="button"
+        variant="plain"
+        aria-label="Increment"
+        className="co-m-number-spinner__button"
+      >
+        <PlusSquareIcon className="co-m-number-spinner__up-icon" />
+      </Button>
     </div>
   );
 };
@@ -25,4 +43,5 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = (props) => {
 type NumberSpinnerProps = {
   className?: string;
   changeValueBy: (operation: number) => void;
+  min?: number;
 } & React.HTMLProps<HTMLInputElement>;
