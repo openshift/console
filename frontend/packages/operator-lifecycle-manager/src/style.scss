@@ -1,13 +1,13 @@
 // Bootstrap Core variables and mixins
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
 
 // Patternfly Core variables and mixins
-@import "~patternfly/dist/sass/patternfly/variables";
-@import "~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides";
-@import "~patternfly/dist/sass/patternfly/mixins";
+@import '~patternfly/dist/sass/patternfly/variables';
+@import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
+@import '~patternfly/dist/sass/patternfly/mixins';
 @import '~patternfly/dist/sass/patternfly/icons';
-@import "~patternfly-react/dist/sass/patternfly-react";
+@import '~patternfly-react/dist/sass/patternfly-react';
 
 $co-affinity-row-margin: 15px;
 
@@ -28,14 +28,16 @@ $co-affinity-row-margin: 15px;
 .co-clusterserviceversion-link {
   .co-clusterserviceversion-logo {
     flex-direction: column;
-    @media  (min-width: $screen-xs-min) and (max-width: $screen-xs-max),(min-width: $screen-md-min)  {
+    @media (min-width: $screen-xs-min) and (max-width: $screen-xs-max),
+      (min-width: $screen-md-min) {
       flex-direction: row;
     }
   }
 }
 
 .co-clusterserviceversion-link {
-  &:focus, &:hover {
+  &:focus,
+  &:hover {
     text-decoration: none;
 
     .co-clusterserviceversion-logo__name__clusterserviceversion {
@@ -71,8 +73,7 @@ $co-affinity-row-margin: 15px;
   margin-bottom: 5px;
   margin-top: 0;
 }
-.co-m-pane__heading--logo
-.co-clusterserviceversion-logo__name__provider {
+.co-m-pane__heading--logo .co-clusterserviceversion-logo__name__provider {
   font-size: var(--pf-global--FontSize--sm);
 }
 
@@ -155,7 +156,7 @@ $co-affinity-row-margin: 15px;
   --pf-c-accordion__toggle-text--active--Color: var(--pf-global--Color--100) !important;
   --pf-c-accordion__toggle-text--active--FontWeight: 600 !important;
   --pf-c-accordion__toggle-text--expanded--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--expanded--FontWeight	: 600 !important;
+  --pf-c-accordion__toggle-text--expanded--FontWeight: 600 !important;
   --pf-c-accordion__toggle-text--focus--Color: var(--pf-global--Color--100) !important;
   --pf-c-accordion__toggle-text--focus--FontWeight: 600 !important;
   --pf-c-accordion__toggle-text--hover--Color: var(--pf-global--Color--100) !important;
@@ -181,7 +182,7 @@ $co-affinity-row-margin: 15px;
 .co-create-operand__header {
   border-bottom: 1px solid #ddd;
   padding: 10px 15px;
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     padding: 0 30px 15px;
   }
 }
@@ -215,7 +216,6 @@ $co-affinity-row-margin: 15px;
 .co-affinity-term__weight-input {
   margin-bottom: $co-affinity-row-margin;
 }
-
 
 .co-affinity-term__topology-input {
   display: flex;

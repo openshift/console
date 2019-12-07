@@ -1,6 +1,6 @@
 .co-search {
   padding-bottom: 30px;
-  @media(max-width: $grid-float-breakpoint-max) {
+  @media (max-width: $grid-float-breakpoint-max) {
     .pf-c-input-group {
       display: block;
       .pf-c-dropdown__toggle {
@@ -9,6 +9,22 @@
       }
     }
   }
+}
+
+.co-search-group {
+  display: flex;
+  flex-direction: column;
+  @media (min-width: $screen-xs-min) {
+    flex-direction: row;
+  }
+}
+
+.co-search-group__filter {
+  flex: 1 0 auto;
+}
+
+.co-search-group__resource {
+  margin: 0 15px 15px 0;
 }
 
 .co-search-input.pf-c-form-control {
@@ -23,7 +39,7 @@
   .pf-c-dropdown__toggle .show {
     display: inline !important;
     &::before {
-      content: "- "
+      content: '- ';
     }
   }
   .pf-c-dropdown__menu {
@@ -40,4 +56,8 @@
       }
     }
   }
+}
+
+.span--icon__right-margin {
+  margin-right: 6px;
 }
