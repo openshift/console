@@ -209,6 +209,7 @@ export const FireMan_ = connect(
         filterLabel,
         helpText,
         resources,
+        showTextFilter = true,
         textFilter,
         badge,
         title,
@@ -276,15 +277,17 @@ export const FireMan_ = connect(
               </div>
             )}
             {createLink && <div className="co-m-pane__filter-bar-group">{createLink}</div>}
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter
-                label={filterLabel}
-                onChange={(e) => this.applyFilter(textFilter, e.target.value)}
-                defaultValue={this.defaultValue}
-                tabIndex={1}
-                autoFocus={autoFocus}
-              />
-            </div>
+            {showTextFilter && (
+              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+                <TextFilter
+                  label={filterLabel}
+                  onChange={(e) => this.applyFilter(textFilter, e.target.value)}
+                  defaultValue={this.defaultValue}
+                  tabIndex={1}
+                  autoFocus={autoFocus}
+                />
+              </div>
+            )}
           </div>
           <div className="co-m-pane__body">
             {inject(this.props.children, {
@@ -334,7 +337,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTextFilter?: boolean, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -352,6 +355,7 @@ export const ListPage = withFallback((props) => {
     name,
     namespace,
     selector,
+    showTextFilter = true,
     showTitle = true,
     skipAccessReview,
     textFilter,
@@ -416,6 +420,7 @@ export const ListPage = withFallback((props) => {
       resources={resources}
       rowFilters={rowFilters}
       selectorFilterLabel="Filter by selector (app=nginx) ..."
+      showTextFilter={showTextFilter}
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
@@ -426,7 +431,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, showTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -442,6 +447,7 @@ export const MultiListPage = (props) => {
     mock,
     namespace,
     rowFilters,
+    showTextFilter = true,
     showTitle = true,
     staticFilters,
     textFilter,
@@ -468,6 +474,7 @@ export const MultiListPage = (props) => {
       helpText={helpText}
       resources={mock ? [] : resources}
       selectorFilterLabel="Filter by selector (app=nginx) ..."
+      showTextFilter={showTextFilter}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}

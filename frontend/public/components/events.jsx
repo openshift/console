@@ -136,31 +136,73 @@ export class EventsList extends React.Component {
     super(props);
     this.state = {
       type: 'all',
-      kind: 'all',
       textFilter: '',
+      selected: ['All'],
     };
   }
 
+  updateSelected = (event, selection) => {
+    const { selected } = this.state;
+    const updateItems = selected.includes(selection)
+      ? selected.filter((keepItem) => keepItem !== selection)
+      : [...selected, selection];
+    this.setState({ selected: updateItems });
+  };
+
+  clearSelection = () => {
+    this.setState({ selected: [] });
+  };
+
+  getEvents = () => {
+    const { selected, type, textFilter } = this.state;
+    const events = [];
+    if (selected.includes('All') || selected.length <= 0) {
+      events.push(
+        <EventStream
+          {...this.props}
+          key={'all-resources-event'}
+          type={type}
+          kind={'all'}
+          mock={this.props.mock}
+          textFilter={textFilter}
+        />,
+      );
+    } else {
+      selected.forEach((kind) => {
+        events.push(
+          <EventStream
+            {...this.props}
+            key={kind}
+            type={type}
+            kind={kind}
+            mock={this.props.mock}
+            textFilter={textFilter}
+          />,
+        );
+      });
+    }
+    return events;
+  };
+
   render() {
-    const { type, kind, textFilter } = this.state;
-    const { autoFocus = true, mock } = this.props;
+    const { type, selected } = this.state;
+    const { autoFocus = true } = this.props;
 
     return (
       <>
         <div className="co-m-pane__filter-bar">
           <div className="co-m-pane__filter-bar-group">
             <ResourceListDropdown
-              className="btn-group"
-              onChange={(v) => this.setState({ kind: v })}
-              selected={kind}
-              showAll
-              title="All Resources"
+              onChange={this.updateSelected}
+              selected={selected}
+              showAll={true}
+              clearSelection={this.clearSelection}
             />
             <Dropdown
               className="btn-group"
               items={eventTypes}
               onChange={(v) => this.setState({ type: v })}
-              selectedKey={this.state.type}
+              selectedKey={type}
               title="All Types"
             />
           </div>
@@ -172,7 +214,7 @@ export class EventsList extends React.Component {
             />
           </div>
         </div>
-        <EventStream {...this.props} type={type} kind={kind} mock={mock} textFilter={textFilter} />
+        {this.getEvents()}
       </>
     );
   }

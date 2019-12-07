@@ -1,18 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import * as PropTypes from 'prop-types';
-import { Map as ImmutableMap, OrderedMap, Set as ImmutableSet } from 'immutable';
-import * as classNames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
-
-import { Dropdown, ResourceIcon } from './utils';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { ResourceIcon } from './utils';
 import {
   K8sKind,
   K8sResourceKindReference,
   referenceForModel,
   apiVersionForReference,
-  kindForReference,
 } from '../module/k8s';
 
 // Blacklist known duplicate resources.
@@ -43,29 +39,18 @@ const blacklistResources = ImmutableSet([
   'extensions/v1beta1.ReplicationControllerDummy',
 ]);
 
-const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup }) => (
-  <>
-    <span className="co-resource-item">
-      <span className="co-resource-icon--fixed-width">
-        <ResourceIcon kind={referenceForModel(model)} />
-      </span>
-      <span className="co-resource-item__resource-name">
-        {model.kind}
-        {showGroup && (
-          <>
-            &nbsp;
-            <div className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
-              {model.apiGroup || 'core'}/{model.apiVersion}
-            </div>
-          </>
-        )}
-      </span>
-    </span>
-  </>
-);
-
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, showAll, className, preferredVersions } = props;
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const { clearSelection, selected, onChange, allModels, showAll, preferredVersions } = props;
+
+  const onToggle = (expand: boolean) => {
+    setIsExpanded(expand);
+  };
+
+  const onClearSelection = () => {
+    setIsExpanded(false);
+    clearSelection();
+  };
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -99,50 +84,76 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const kinds = resources.groupBy((m) => m.kind);
   const isDup = (kind) => kinds.get(kind).size > 1;
 
-  // Create dropdown items for each resource.
-  const items = resources.map((model) => (
-    <DropdownItem key={referenceForModel(model)} model={model} showGroup={isDup(model.kind)} />
-  )) as OrderedMap<string, JSX.Element>;
-
-  // Add an "All" item to the top if `showAll`.
-  const allItems = (showAll
-    ? OrderedMap({
-        all: (
-          <>
-            <span className="co-resource-item">
-              <span className="co-resource-icon--fixed-width">
-                <ResourceIcon kind="All" />
-              </span>
-              <span className="co-resource-item__resource-name">All Resources</span>
-            </span>
-            {/* <ResourceIcon kind="All" /> */}
-          </>
-        ),
-      }).concat(items)
-    : items
-  ).toJS() as { [s: string]: JSX.Element };
-
-  const selectedKey = allItems[selected] ? selected : kindForReference(selected);
-  const autocompleteFilter = (text, item) => {
-    const { model } = item.props;
-    if (!model) {
-      return false;
-    }
-
-    return fuzzy(_.toLower(text), _.toLower(model.kind));
+  const selectItem = (model: K8sKind, showGroup: boolean) => {
+    return (
+      <SelectOption
+        key={referenceForModel(model)}
+        isDisabled={false}
+        value={referenceForModel(model)}
+      >
+        <span className={'co-resource-item'}>
+          <span className="co-resource-icon--fixed-width">
+            <ResourceIcon kind={referenceForModel(model)} />
+          </span>
+          <span className="co-resource-item__resource-name">
+            {model.kind}
+            {showGroup && (
+              <>
+                &nbsp;
+                <div className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
+                  {model.apiGroup || 'core'}/{model.apiVersion}
+                </div>
+              </>
+            )}
+          </span>
+        </span>
+      </SelectOption>
+    );
   };
 
+  const getItems = () => {
+    const options = [];
+    if (showAll) {
+      options.push(
+        <SelectOption key={'All'} isDisabled={false} value={'All'}>
+          <span className="co-resource-item">
+            <span className="co-resource-icon--fixed-width">
+              <ResourceIcon kind="All" />
+            </span>
+            <span className="co-resource-item__resource-name">All Resources</span>
+          </span>
+        </SelectOption>,
+      );
+    }
+    resources.map((model) => {
+      options.push(selectItem(model, isDup(model.kind)));
+    });
+    return options;
+  };
+
+  const titleId = 'multi-typeahead-select-id';
   return (
-    <Dropdown
-      menuClassName="dropdown-menu--text-wrap"
-      className={classNames('co-type-selector', className)}
-      items={allItems}
-      title={allItems[selectedKey]}
-      onChange={onChange}
-      autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder="Select Resource"
-      selectedKey={selectedKey}
-    />
+    <div>
+      <span id={titleId} hidden>
+        Select Resource
+      </span>
+      <Select
+        variant={SelectVariant.typeaheadMulti}
+        aria-label="Select Resource"
+        onToggle={onToggle}
+        onSelect={onChange}
+        onClear={onClearSelection}
+        selections={selected}
+        isExpanded={isExpanded}
+        ariaLabelledBy={titleId}
+        placeholderText="Select Resource"
+        isCreatable={false}
+        maxHeight={400}
+      >
+        {getItems()}
+        {/* {allItems} */}
+      </Select>
+    </div>
   );
 };
 
@@ -155,26 +166,12 @@ export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(
   ResourceListDropdown_,
 );
 
-ResourceListDropdown.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  selected: PropTypes.string,
-  showAll: PropTypes.bool,
-  className: PropTypes.string,
-  id: PropTypes.string,
-};
-
 export type ResourceListDropdownProps = {
-  // FIXME: `selected` should be GroupVersionKind
-  selected: K8sResourceKindReference;
-  onChange: Function;
-  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
-  preferredVersions: { groupVersion: string; version: string }[];
-  className?: string;
+  selected: K8sResourceKindReference[];
+  onChange: any;
+  allModels?: ImmutableMap<K8sResourceKindReference, K8sKind>;
+  preferredVersions?: { groupVersion: string; version: string }[];
   id?: string;
   showAll?: boolean;
-};
-
-type DropdownItemProps = {
-  model: K8sKind;
-  showGroup?: boolean;
+  clearSelection: any;
 };
