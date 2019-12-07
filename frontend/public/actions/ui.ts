@@ -58,10 +58,10 @@ allModels().forEach((v, k) => {
   }
   if (v.crd) {
     namespacedResources.add(k);
-    return;
   }
-
-  namespacedResources.add(v.plural);
+  if (!v.crd || v.legacyPluralURL) {
+    namespacedResources.add(v.plural);
+  }
 });
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
