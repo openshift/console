@@ -858,6 +858,11 @@ export type K8sKind = {
   shortNames?: string[];
   badge?: BadgeType;
   color?: string;
+
+  // Legacy option for supporing plural names in URL paths when `crd: true`.
+  // This should not be set for new models, but is needed to avoid breaking
+  // existing links as we transition to using the API group in URL paths.
+  legacyPluralURL?: boolean;
 };
 
 export type Cause = {

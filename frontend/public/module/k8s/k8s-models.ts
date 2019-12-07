@@ -7,16 +7,14 @@ import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';
 import { registry } from '../../plugins';
 
+const modelKey = (model: K8sKind): string => {
+  // TODO: Use `referenceForModel` even for known API objects
+  return model.crd ? referenceForModel(model) : model.kind;
+};
+
 export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
   return ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
-    models.forEach((model) => {
-      if (model.crd) {
-        map.set(referenceForModel(model), model);
-      } else {
-        // TODO: Use `referenceForModel` even for known API objects
-        map.set(model.kind, model);
-      }
-    });
+    models.forEach((model) => map.set(modelKey(model), model));
   });
 };
 
@@ -26,8 +24,7 @@ export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindRefe
  */
 let k8sModels = modelsToMap(_.values(staticModels));
 
-const hasModel = (model: K8sKind) =>
-  k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
+const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
 
 k8sModels = k8sModels.withMutations((map) => {
   const pluginModels = _.flatMap(registry.getModelDefinitions().map((md) => md.properties.models));
