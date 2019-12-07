@@ -105,11 +105,11 @@ const subscriptionForCSV = (
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -126,11 +126,11 @@ export const ClusterServiceVersionTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Deployment',
+      title: 'Status',
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status',
+      title: 'Deployment',
       props: { className: tableColumnClasses[3] },
     },
     {
@@ -272,18 +272,8 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           <ResourceLink kind="Namespace" title={namespace} name={namespace} />
         </TableData>
 
-        {/* Deployment */}
-        <TableData className={tableColumnClasses[2]}>
-          <ResourceLink
-            kind="Deployment"
-            name={deploymentName}
-            namespace={operatorNamespaceFor(obj)}
-            title={deploymentName}
-          />
-        </TableData>
-
         {/* Status */}
-        <TableData className={tableColumnClasses[3]}>
+        <TableData className={tableColumnClasses[2]}>
           <div className="co-clusterserviceversion-row__status">
             <ClusterServiceVersionStatus
               catalogSource={catalogSource}
@@ -291,6 +281,16 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
               subscription={subscription}
             />
           </div>
+        </TableData>
+
+        {/* Deployment */}
+        <TableData className={tableColumnClasses[3]}>
+          <ResourceLink
+            kind="Deployment"
+            name={deploymentName}
+            namespace={operatorNamespaceFor(obj)}
+            title={deploymentName}
+          />
         </TableData>
 
         {/* Provided APIs */}
