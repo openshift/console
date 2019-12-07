@@ -54,7 +54,7 @@ export enum ActionType {
 
 export type PodMetrics = {
   [metricKey: string]: {
-    [namepsace: string]: {
+    [namespace: string]: {
       [name: string]: number;
     };
   };

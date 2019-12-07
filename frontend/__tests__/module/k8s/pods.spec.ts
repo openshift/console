@@ -1,4 +1,4 @@
-import { podReadiness, podPhase } from '../../../public/module/k8s/pods';
+import { podPhase, podReadiness, podRestarts } from '../../../public/module/k8s/pods';
 
 describe('podPhase', () => {
   let pod;
@@ -66,68 +66,104 @@ describe('podReadiness', () => {
     pod = {
       status: {
         phase: 'Running',
-        conditions: [{ type: 'Ready', status: 'True' }],
+        initContainerStatuses: [
+          {
+            ready: true,
+          },
+        ],
+        containerStatuses: [
+          {
+            ready: true,
+          },
+          {
+            ready: true,
+          },
+        ],
       },
     };
   });
 
-  it('returns null if given conditions list is empty', () => {
-    pod.status.conditions = [];
-    const readiness = podReadiness(pod);
+  it('returns 0 if no status stanza', () => {
+    delete pod.status;
+    const { readyCount, totalContainers } = podReadiness(pod);
 
-    expect(readiness).toBe(null);
+    expect(readyCount).toBe(0);
+    expect(totalContainers).toBe(0);
   });
 
-  it('returns "Ready" if all condition status are set to "True"', () => {
-    const readiness = podReadiness(pod);
+  it('returns correct count for containers', () => {
+    pod.status.initContainerStatuses = [];
+    const { readyCount, totalContainers } = podReadiness(pod);
 
-    expect(readiness).toEqual('Ready');
+    expect(readyCount).toEqual(2);
+    expect(totalContainers).toEqual(2);
   });
 
-  it('returns `reason` of the condition with the oldest `lastTransitionTime` if not all ready', () => {
-    pod.status.conditions = pod.status.conditions.concat([
-      {
-        type: 'Initialized',
-        status: 'False',
-        lastTransitionTime: '2017-04-01T12:00:00Z',
-        reason: 'Ready',
-      },
-      {
-        type: 'PodScheduled',
-        status: 'True',
-        lastTransitionTime: '2017-03-01T12:00:00Z',
-        reason: 'Initialized',
-      },
-      {
-        type: 'Unschedulable',
-        status: 'False',
-        lastTransitionTime: '2017-02-01T12:00:00Z',
-        reason: 'Unschedulable',
-      },
-    ]);
-    const expectedReadiness: string = pod.status.conditions
-      .filter((condition) => condition.status !== 'True')
-      .sort((a, b) => (new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1))[0]
-      .reason;
+  it('returns correct count for containers and init containers', () => {
+    const { readyCount, totalContainers } = podReadiness(pod);
 
-    const readiness = podReadiness(pod);
-
-    expect(readiness).toEqual(expectedReadiness);
+    expect(readyCount).toEqual(3);
+    expect(totalContainers).toEqual(3);
   });
 
-  it('returns `type` of the condition with the oldest `lastTransitionTime` if not all ready and `reason` is undefined', () => {
-    pod.status.conditions = pod.status.conditions.concat([
-      { type: 'Initialized', status: 'False', lastTransitionTime: '2017-04-01T12:00:00Z' },
-      { type: 'PodScheduled', status: 'True', lastTransitionTime: '2017-03-01T12:00:00Z' },
-      { type: 'Unschedulable', status: 'False', lastTransitionTime: '2017-02-01T12:00:00Z' },
-    ]);
-    const expectedReadiness: string = pod.status.conditions
-      .filter((condition) => condition.status !== 'True')
-      .sort((a, b) => (new Date(a.lastTransitionTime) < new Date(b.lastTransitionTime) ? -1 : 1))[0]
-      .type;
+  it("returns correct count when init container isn't ready", () => {
+    pod.status.initContainerStatuses[0].ready = false;
+    const { readyCount, totalContainers } = podReadiness(pod);
 
-    const readiness = podReadiness(pod);
+    expect(readyCount).toEqual(2);
+    expect(totalContainers).toEqual(3);
+  });
 
-    expect(readiness).toEqual(expectedReadiness);
+  it("returns correct count when container isn't ready", () => {
+    pod.status.containerStatuses[0].ready = false;
+    const { readyCount, totalContainers } = podReadiness(pod);
+
+    expect(readyCount).toEqual(2);
+    expect(totalContainers).toEqual(3);
+  });
+});
+
+describe('podRestarts', () => {
+  let pod;
+
+  beforeEach(() => {
+    pod = {
+      status: {
+        phase: 'Running',
+        initContainerStatuses: [
+          {
+            restartCount: 1,
+          },
+        ],
+        containerStatuses: [
+          {
+            restartCount: 1,
+          },
+          {
+            restartCount: 2,
+          },
+        ],
+      },
+    };
+  });
+
+  it('returns 0 if no status stanza', () => {
+    delete pod.status;
+    const restartCount = podRestarts(pod);
+
+    expect(restartCount).toBe(0);
+  });
+
+  it('returns correct count for containers', () => {
+    pod.status.initContainerStatuses = [];
+    const restartCount = podRestarts(pod);
+
+    expect(restartCount).toBe(3);
+  });
+
+  it('returns correct count for containers and init containers', () => {
+    const restartCount = podRestarts(pod);
+
+    expect(restartCount).toBe(4);
   });
 });

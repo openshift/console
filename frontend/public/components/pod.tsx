@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Status, ErrorStatus } from '@console/shared';
+import { Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import * as UIActions from '../actions/ui';
@@ -15,6 +15,7 @@ import {
   podPhase,
   podPhaseFilterReducer,
   podReadiness,
+  podRestarts,
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
@@ -48,7 +49,6 @@ import {
   PROMETHEUS_TENANCY_BASE_PATH,
   requirePrometheus,
 } from './graphs';
-import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 
 // Only request metrics if the device's screen width is larger than the
@@ -88,33 +88,17 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
 };
 
 export const menuActions = [...Kebab.factory.common];
-const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
-
-export const Readiness: React.FC<ReadinessProps> = ({ pod }) => {
-  const readiness = podReadiness(pod);
-  if (!readiness) {
-    return null;
-  }
-  if (validReadinessStates.has(readiness)) {
-    return <CamelCaseWrap value={readiness} />;
-  }
-  return (
-    <span className="co-error co-icon-and-text">
-      <ErrorStatus title={readiness} />
-    </span>
-  );
-};
-Readiness.displayName = 'Readiness';
 
 const tableColumnClasses = [
   '',
   '',
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl', 'pf-u-w-8-on-2xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', { 'pf-m-visible-on-xl': showMetrics }),
-  classNames('pf-m-hidden', { 'pf-m-visible-on-xl': showMetrics }),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
+  classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl pf-u-w-10-on-2xl'),
   Kebab.columnClass,
 ];
 
@@ -127,7 +111,9 @@ const podRowStateToProps = ({ UI }) => ({
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
   ({ obj: pod, index, key, style, metrics }: PodTableRowProps & PodTableRowPropsFromState) => {
     const { name, namespace, creationTimestamp } = pod.metadata;
+    const { readyCount, totalContainers } = podReadiness(pod);
     const phase = podPhase(pod);
+    const restarts = podRestarts(pod);
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
     return (
@@ -142,19 +128,20 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
           <Status status={phase} />
         </TableData>
         <TableData className={tableColumnClasses[3]}>
-          <Readiness pod={pod} />
+          {readyCount}/{totalContainers}
         </TableData>
-        <TableData className={tableColumnClasses[4]}>
+        <TableData className={tableColumnClasses[4]}>{restarts}</TableData>
+        <TableData className={tableColumnClasses[5]}>
           <OwnerReferences resource={pod} />
         </TableData>
-        <TableData className={tableColumnClasses[5]}>
+        <TableData className={tableColumnClasses[6]}>
           {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[6]}>
+        <TableData className={tableColumnClasses[7]}>
           {cores ? `${formatCores(cores)} cores` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[7]}>{fromNow(creationTimestamp)}</TableData>
-        <TableData className={tableColumnClasses[8]}>
+        <TableData className={tableColumnClasses[8]}>{fromNow(creationTimestamp)}</TableData>
+        <TableData className={tableColumnClasses[9]}>
           <ResourceKebab
             actions={menuActions}
             kind={kind}
@@ -189,38 +176,44 @@ const PodTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Readiness',
+      title: 'Ready',
       sortFunc: 'podReadiness',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
+      title: 'Restarts',
+      sortFunc: 'podRestarts',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
       title: 'Owner',
       sortField: 'metadata.ownerReferences[0].name',
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[5] },
     },
     {
       title: 'Memory',
       sortFunc: 'podMemory',
       transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[6] },
     },
     {
       title: 'CPU',
       sortFunc: 'podCPU',
       transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[7] },
     },
     {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[7] },
+      props: { className: tableColumnClasses[8] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[8] },
+      props: { className: tableColumnClasses[9] },
     },
   ];
 };
@@ -526,10 +519,6 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
     />
   );
 });
-
-type ReadinessProps = {
-  pod: PodKind;
-};
 
 type ContainerLinkProps = {
   pod: PodKind;

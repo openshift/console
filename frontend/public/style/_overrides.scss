@@ -341,16 +341,10 @@ h6 {
 
 .pf-c-table tr > * {
   --pf-c-table-cell--FontSize: $font-size-base;
-  --pf-c-table-cell--PaddingLeft: 16px;
-  --pf-c-table-cell--PaddingRight: 16px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 16px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 16px;
-}
-
-// react-virtualized disables pointer-events when scrolling, but this prevents
-// users from being able to click actions in the last row of a long list
-.dropdown-kebab-pf.pf-c-table__action .pf-c-dropdown__menu {
-  pointer-events: auto;
+  --pf-c-table-cell--PaddingLeft: 12px;
+  --pf-c-table-cell--PaddingRight: 12px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 12px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 12px;
 }
 
 .pf-c-table.pf-c-virtualized tr {
@@ -371,13 +365,6 @@ h6 {
   }
 }
 
-.pf-c-table.pf-m-compact .pf-c-table__action {
-  --pf-c-table__action--PaddingLeft: 16px;
-  --pf-c-table__action--PaddingRight: 16px;
-  --pf-c-table__action--PaddingTop: 8px;
-  --pf-c-table__action--PaddingBottom: 8px;
-}
-
 .pf-c-table__check {
   width: 8.333% !important;
 
@@ -387,8 +374,8 @@ h6 {
 }
 
 .pf-c-table__action {
-  padding-left: 0px !important;
-  width: 60px !important;
+  padding: 8px 0 !important;
+  width: 44px !important;
 }
 
 // FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.
