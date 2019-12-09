@@ -36,7 +36,17 @@
 .odc-m-drag-active {
   .odc-base-node__contents {
     opacity: 0.3;
-    &.is-dragging, &.is-droppable {
+    &.is-dragging,
+    &.is-droppable {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active {
+  .odc-base-node__contents {
+    opacity: 0.3;
+    &.is-filtered {
       opacity: 1;
     }
   }

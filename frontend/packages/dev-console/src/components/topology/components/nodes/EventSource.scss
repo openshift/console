@@ -21,3 +21,12 @@
     opacity: 0.3;
   }
 }
+
+.odc-m-filter-active {
+  .odc-event-source {
+    opacity: 0.3;
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}
