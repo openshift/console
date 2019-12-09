@@ -29,6 +29,9 @@ export const normalizeClusterServiceVersions = (
         }`
       : operatorLogo;
 
+  const formatTileDescription = (crdDescription: string, csvDescription: string): string =>
+    `${crdDescription}\n## Operator Description\n${csvDescription}`;
+
   const operatorProvidedAPIs: K8sResourceKind[] = _.flatten(
     clusterServiceVersions.map((csv) => providedAPIsFor(csv).map((desc) => ({ ...desc, csv }))),
   )
@@ -54,7 +57,7 @@ export const normalizeClusterServiceVersions = (
       tileName: desc.displayName,
       tileIconClass: null,
       tileImgUrl: imgFor(desc),
-      tileDescription: desc.description,
+      tileDescription: formatTileDescription(desc.description, desc.csv.spec.description),
       tileProvider: desc.csv.spec.provider.name,
       tags: desc.csv.spec.keywords,
       createLabel: 'Create',
