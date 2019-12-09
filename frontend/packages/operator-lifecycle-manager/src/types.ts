@@ -53,6 +53,13 @@ export enum SubscriptionState {
   SubscriptionStateAtLatest = 'AtLatestKnown',
 }
 
+export enum ClusterServiceVersionStatus {
+  Failed = 'Failed',
+  OK = 'OK',
+  Pending = 'Pending',
+  Unknown = 'Unknown',
+}
+
 export type CRDDescription = {
   name: string;
   version: string;

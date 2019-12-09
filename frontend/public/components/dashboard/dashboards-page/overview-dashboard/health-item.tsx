@@ -1,0 +1,246 @@
+import * as React from 'react';
+import { Map as ImmutableMap } from 'immutable';
+import {
+  DashboardsOverviewHealthOperator,
+  DashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewHealthPrometheusSubsystem,
+} from '@console/plugin-sdk';
+import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+import OperatorStatusBody, {
+  OperatorsSection,
+} from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
+import {
+  getOperatorsHealthState,
+  getMostImportantStatuses,
+} from '@console/shared/src/components/dashboard/status-card/state-utils';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
+import { uniqueResource } from './utils';
+import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
+import { PrometheusResponse } from '../../../graphs';
+import { K8sKind } from '../../../../module/k8s';
+
+export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
+  resources,
+  operatorExtensions,
+}) => {
+  const sections = operatorExtensions
+    .map((o, index) => {
+      const operatorResources = o.properties.resources.reduce((acc, r) => {
+        acc[r.prop] = resources[uniqueResource(r, index).prop];
+        return acc;
+      }, {});
+      return (
+        <OperatorsSection
+          key={o.properties.title}
+          resources={operatorResources}
+          getOperatorsWithStatuses={o.properties.getOperatorsWithStatuses}
+          title={o.properties.title}
+          linkTo={o.properties.viewAllLink || resourcePath(o.properties.resources[0].kind)}
+          rowLoader={o.properties.operatorRowLoader}
+        />
+      );
+    })
+    .reverse();
+  return <OperatorStatusBody>{sections}</OperatorStatusBody>;
+};
+
+export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps>(
+  ({ resources, watchK8sResource, stopWatchK8sResource, operatorExtensions }) => {
+    React.useEffect(() => {
+      operatorExtensions.forEach((o, index) =>
+        o.properties.resources.forEach((r) => watchK8sResource(uniqueResource(r, index))),
+      );
+      return () => {
+        operatorExtensions.forEach((o, index) =>
+          o.properties.resources.forEach((r) => stopWatchK8sResource(uniqueResource(r, index))),
+        );
+      };
+    }, [watchK8sResource, stopWatchK8sResource, operatorExtensions]);
+
+    const healthStatuses = operatorExtensions.map((o, index) => {
+      const operatorResources = o.properties.resources.reduce((acc, r) => {
+        acc[r.prop] = resources[uniqueResource(r, index).prop] || {};
+        return acc;
+      }, {});
+      if (
+        Object.keys(operatorResources).some((resource) => operatorResources[resource].loadError)
+      ) {
+        return { health: HealthState.UNKNOWN };
+      }
+      if (Object.keys(operatorResources).some((resource) => !operatorResources[resource].loaded)) {
+        return { health: HealthState.LOADING };
+      }
+      const operatorStatuses = o.properties.getOperatorsWithStatuses(operatorResources);
+      const importantStatuses = getMostImportantStatuses(operatorStatuses);
+      return {
+        health: importantStatuses[0].status.health,
+        count: importantStatuses.length,
+      };
+    });
+
+    const PopupComponentCallback = React.useCallback(
+      () => <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />,
+      [resources, operatorExtensions],
+    );
+
+    const operatorsHealth = getOperatorsHealthState(healthStatuses);
+
+    return (
+      <HealthItem
+        title="Operators"
+        state={operatorsHealth.health}
+        details={operatorsHealth.detailMessage}
+        popupTitle="Operator status"
+        PopupComponent={PopupComponentCallback}
+      />
+    );
+  },
+);
+
+export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
+  ({
+    watchURL,
+    stopWatchURL,
+    urlResults,
+    resources,
+    watchK8sResource,
+    stopWatchK8sResource,
+    subsystem,
+    models,
+  }) => {
+    const modelExists =
+      subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+    React.useEffect(() => {
+      watchURL(subsystem.url, subsystem.fetch);
+      if (modelExists) {
+        watchK8sResource(subsystem.additionalResource);
+      }
+      return () => {
+        stopWatchURL(subsystem.url);
+        if (modelExists) {
+          stopWatchK8sResource(subsystem.additionalResource);
+        }
+      };
+    }, [watchURL, stopWatchURL, watchK8sResource, stopWatchK8sResource, subsystem, modelExists]);
+
+    const healthResult = urlResults.getIn([subsystem.url, 'data']);
+    const healthResultError = urlResults.getIn([subsystem.url, 'loadError']);
+
+    const k8sResult = subsystem.additionalResource
+      ? resources[subsystem.additionalResource.prop]
+      : null;
+    const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
+
+    const PopupComponentCallback = subsystem.popupComponent
+      ? React.useCallback(
+          () => (
+            <AsyncComponent
+              loader={subsystem.popupComponent}
+              healthResult={healthResult}
+              healthResultError={healthResultError}
+              k8sResult={k8sResult}
+            />
+          ),
+          [subsystem, healthResult, healthResultError, k8sResult],
+        )
+      : null;
+
+    return (
+      <HealthItem
+        title={subsystem.title}
+        state={healthState.state}
+        details={healthState.message}
+        popupTitle={subsystem.popupTitle}
+        PopupComponent={PopupComponentCallback}
+      />
+    );
+  },
+);
+
+export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemProps>(
+  ({
+    watchK8sResource,
+    stopWatchK8sResource,
+    resources,
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    prometheusResults,
+    subsystem,
+    models,
+  }) => {
+    const modelExists =
+      subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+    React.useEffect(() => {
+      subsystem.queries.forEach((q) => watchPrometheus(q));
+      if (modelExists) {
+        watchK8sResource(subsystem.additionalResource);
+      }
+      return () => {
+        subsystem.queries.forEach((q) => stopWatchPrometheusQuery(q));
+        if (modelExists) {
+          stopWatchK8sResource(subsystem.additionalResource);
+        }
+      };
+    }, [
+      watchK8sResource,
+      stopWatchK8sResource,
+      watchPrometheus,
+      stopWatchPrometheusQuery,
+      subsystem,
+      modelExists,
+    ]);
+
+    const queryResults = subsystem.queries.map(
+      (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+    );
+    const queryErrors = subsystem.queries.map((q) => prometheusResults.getIn([q, 'loadError']));
+
+    const k8sResult = subsystem.additionalResource
+      ? resources[subsystem.additionalResource.prop]
+      : null;
+    const healthState = subsystem.healthHandler(queryResults, queryErrors, k8sResult);
+
+    const PopupComponentCallback = subsystem.popupComponent
+      ? React.useCallback(
+          () => (
+            <AsyncComponent
+              loader={subsystem.popupComponent}
+              results={queryResults}
+              errors={queryErrors}
+            />
+          ),
+          [queryResults, queryErrors, subsystem],
+        )
+      : null;
+
+    return (
+      <HealthItem
+        title={subsystem.title}
+        state={healthState.state}
+        details={healthState.message}
+        popupTitle={subsystem.popupTitle}
+        PopupComponent={PopupComponentCallback}
+      />
+    );
+  },
+);
+
+type OperatorHealthItemProps = DashboardItemProps & {
+  operatorExtensions: DashboardsOverviewHealthOperator[];
+};
+
+type URLHealthItemProps = DashboardItemProps & {
+  subsystem: DashboardsOverviewHealthURLSubsystem<any>['properties'];
+  models: ImmutableMap<string, K8sKind>;
+};
+
+type PrometheusHealthItemProps = DashboardItemProps & {
+  subsystem: DashboardsOverviewHealthPrometheusSubsystem['properties'];
+  models: ImmutableMap<string, K8sKind>;
+};
+
+type OperatorsPopupProps = {
+  resources: FirehoseResourcesResult;
+  operatorExtensions: DashboardsOverviewHealthOperator[];
+};

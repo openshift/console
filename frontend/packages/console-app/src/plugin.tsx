@@ -8,13 +8,8 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
+  DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  getNodeStatusGroups,
-  getPodStatusGroups,
-  getPVCStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import {
   ClusterVersionModel,
   NodeModel,
@@ -23,10 +18,17 @@ import {
   PersistentVolumeClaimModel,
   ClusterOperatorModel,
 } from '@console/internal/models';
+import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import {
+  getNodeStatusGroups,
+  getPodStatusGroups,
+  getPVCStatusGroups,
+} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import {
   fetchK8sHealth,
   getK8sHealthState,
   getControlPlaneHealth,
+  getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
 import {
   API_SERVERS_UP,
@@ -46,7 +48,8 @@ type ConsumedExtensions =
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewInventoryItem;
+  | DashboardsOverviewInventoryItem
+  | DashboardsOverviewHealthOperator<ClusterOperator>;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -154,6 +157,26 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/dashboards-page/ClusterOperatorUpgradeActivity' /* webpackChunkName: "console-app" */
         ).then((m) => m.default),
       required: FLAGS.CLUSTER_VERSION,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Health/Operator',
+    properties: {
+      title: 'Cluster operators',
+      resources: [
+        {
+          kind: referenceForModel(ClusterOperatorModel),
+          isList: true,
+          namespaced: false,
+          prop: 'clusterOperators',
+        },
+      ],
+      getOperatorsWithStatuses: getClusterOperatorHealthStatus,
+      operatorRowLoader: () =>
+        import(
+          './components/dashboards-page/OperatorStatus' /* webpackChunkName: "console-app" */
+        ).then((c) => c.default),
+      viewAllLink: '/settings/cluster/clusteroperators',
     },
   },
 ];

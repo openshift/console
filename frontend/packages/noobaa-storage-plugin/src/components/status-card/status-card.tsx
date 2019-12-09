@@ -11,7 +11,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
+import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   withDashboardResources,

@@ -1,37 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { InProgressIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '../../status/icons';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
-import { HealthState } from './states';
-
-const healthStateMapping = {
-  [HealthState.OK]: {
-    icon: <GreenCheckCircleIcon />,
-  },
-  [HealthState.ERROR]: {
-    icon: <RedExclamationCircleIcon />,
-  },
-  [HealthState.WARNING]: {
-    icon: <YellowExclamationTriangleIcon />,
-    message: 'Degraded',
-  },
-  [HealthState.UPDATING]: {
-    icon: <SyncAltIcon className="update-pending" />,
-    message: 'Updating',
-  },
-  [HealthState.PROGRESS]: {
-    icon: <InProgressIcon />,
-  },
-  [HealthState.UNKNOWN]: {
-    icon: <UnknownIcon className="text-secondary" />,
-    message: 'Not available',
-  },
-};
+import { HealthState, healthStateMapping } from './states';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
   <div className="co-dashboard-icon">

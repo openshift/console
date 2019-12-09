@@ -1,7 +1,11 @@
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  FirehoseResource,
+  FirehoseResult,
+  FirehoseResourcesResult,
+} from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
@@ -75,6 +79,27 @@ namespace ExtensionProperties {
      * Popup title
      */
     popupTitle?: string;
+  }
+
+  export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon>
+    extends DashboardsOverviewHealthSubsystem {
+    /** Title of operators section in popup */
+    title: string;
+
+    /** Resources which will be fetched and passed to healthHandler */
+    resources: FirehoseResource[];
+
+    /** Resolve status for operators */
+    getOperatorsWithStatuses: GetOperatorsWithStatuses<R>;
+
+    /** Loader for popup row component */
+    operatorRowLoader: LazyLoader<OperatorRowProps<R>>;
+
+    /**
+     * Link to all resources page.
+     * If not provided then a list page of first resource from resources prop is used.
+     */
+    viewAllLink?: string;
   }
 
   export interface DashboardsTab extends DashboardsExtensionProperties {
@@ -197,14 +222,26 @@ export const isDashboardsOverviewHealthPrometheusSubsystem = (
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'Dashboards/Overview/Health/Prometheus';
 
+export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon = K8sResourceCommon>
+  extends Extension<ExtensionProperties.DashboardsOverviewHealthOperator<R>> {
+  type: 'Dashboards/Overview/Health/Operator';
+}
+
+export const isDashboardsOverviewHealthOperator = (
+  e: Extension,
+): e is DashboardsOverviewHealthOperator => e.type === 'Dashboards/Overview/Health/Operator';
+
 export type DashboardsOverviewHealthSubsystem =
   | DashboardsOverviewHealthURLSubsystem
-  | DashboardsOverviewHealthPrometheusSubsystem;
+  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
   e: Extension,
 ): e is DashboardsOverviewHealthSubsystem =>
-  isDashboardsOverviewHealthURLSubsystem(e) || isDashboardsOverviewHealthPrometheusSubsystem(e);
+  isDashboardsOverviewHealthURLSubsystem(e) ||
+  isDashboardsOverviewHealthPrometheusSubsystem(e) ||
+  isDashboardsOverviewHealthOperator(e);
 
 export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsTab> {
   type: 'Dashboards/Tab';
@@ -307,3 +344,34 @@ export type PrometheusHealthHandler = (
   errors: any[],
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
 ) => SubsystemHealth;
+
+export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;
+
+export type OperatorHealth = {
+  health: HealthState;
+  count?: number;
+};
+
+export type GetOperatorsWithStatuses<R extends K8sResourceCommon = K8sResourceCommon> = (
+  resources: FirehoseResourcesResult,
+) => OperatorStatusWithResources<R>[];
+
+export type OperatorStatusWithResources<R extends K8sResourceCommon = K8sResourceCommon> = {
+  operators: R[];
+  status: OperatorStatusPriority;
+};
+
+export type GetOperatorStatusPriority<R extends K8sResourceCommon = K8sResourceCommon> = (
+  operator: R,
+) => OperatorStatusPriority;
+
+export type OperatorStatusPriority = {
+  title: string;
+  priority: number;
+  icon: React.ReactNode;
+  health: HealthState;
+};
+
+export type OperatorRowProps<R extends K8sResourceCommon = K8sResourceCommon> = {
+  operatorStatus: OperatorStatusWithResources<R>;
+};

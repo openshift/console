@@ -13,6 +13,10 @@ export type FirehoseResult<
   data: R;
 };
 
+export type FirehoseResourcesResult = {
+  [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
+};
+
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
   loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor
