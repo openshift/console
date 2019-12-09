@@ -1,5 +1,5 @@
 import {
-  chart_color_gold_500 as knativeServingColor,
+  chart_color_cyan_400 as knativeServingColor,
   chart_color_red_300 as knativeEventingColor,
 } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -15,7 +15,7 @@ export const ConfigurationModel: K8sKind = {
   label: 'Configuration',
   labelPlural: 'Configurations',
   id: 'configuration',
-  abbr: 'C',
+  abbr: 'CFG',
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
@@ -45,7 +45,7 @@ export const RevisionModel: K8sKind = {
   labelPlural: 'Revisions',
   plural: 'revisions',
   id: 'revision',
-  abbr: 'R',
+  abbr: 'REV',
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
@@ -60,7 +60,7 @@ export const RouteModel: K8sKind = {
   labelPlural: 'Routes',
   plural: 'routes',
   id: 'route',
-  abbr: 'R',
+  abbr: 'RT',
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
@@ -75,7 +75,7 @@ export const ServiceModel: K8sKind = {
   labelPlural: 'Services',
   plural: 'services',
   id: 'service',
-  abbr: 'S',
+  abbr: 'KSVC',
   namespaced: true,
   crd: true,
   badge: BadgeType.TECH,
