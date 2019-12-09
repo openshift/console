@@ -76,19 +76,25 @@ const getActions = (selectedObj: any) => {
   }));
   return [
     ...pluginActions,
-    (kind, obj) => ({
-      label: `Edit ${kind.label}`,
-      href: `/k8s/ns/${obj.metadata.namespace}/${
-        ClusterServiceVersionModel.plural
-      }/${csvName()}/${referenceFor(obj)}/${obj.metadata.name}/yaml`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'update',
-      },
-    }),
+    (kind, obj) => {
+      const reference = referenceFor(obj);
+      const href = kind.namespaced
+        ? `/k8s/ns/${obj.metadata.namespace}/${
+            ClusterServiceVersionModel.plural
+          }/${csvName()}/${reference}/${obj.metadata.name}/yaml`
+        : `/k8s/cluster/${reference}/${obj.metadata.name}/yaml`;
+      return {
+        label: `Edit ${kind.label}`,
+        href,
+        accessReview: {
+          group: kind.apiGroup,
+          resource: kind.plural,
+          name: obj.metadata.name,
+          namespace: obj.metadata.namespace,
+          verb: 'update',
+        },
+      };
+    },
 
     (kind, obj) => ({
       label: `Delete ${kind.label}`,
