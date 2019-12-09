@@ -112,7 +112,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     },
     {
       id: CreateStepsBC.BACKINGSTORE,
-      name: 'BackingStore',
+      name: 'Backing Store',
       component: <BackingStorePageWithFirehose state={state} dispatcher={dispatch} />,
       enableNext: backingStoreNextConditions(),
     },

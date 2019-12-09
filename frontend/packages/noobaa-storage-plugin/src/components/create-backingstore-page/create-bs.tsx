@@ -99,7 +99,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const [showSecret, setShowSecret] = React.useState(true);
   const { provider, namespace, state, dispatch } = props;
 
-  const targetLabel = provider === 'Azure Blob' ? 'Target Container' : 'Target Bucket';
+  const targetLabel = provider === 'Azure Blob' ? 'Target Blob Container' : 'Target Bucket';
   const credentialField1Label = provider === 'Azure Blob' ? 'Account Name' : 'Access Key';
   const credentialField2Label = provider === 'Azure Blob' ? 'Account Key' : 'Secret Key';
   const resources = [
@@ -583,7 +583,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       </FormGroup>
 
       <FormGroup
-        label="BackingStore Name"
+        label="Backing Store Name"
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
         helperText="If not provided, a generic name will be generated."
@@ -593,7 +593,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
           onChange={setBsName}
           value={bsName}
           placeholder="my-backingstore"
-          aria-label="BackingStore Name"
+          aria-label="Backing Store Name"
         />
       </FormGroup>
 
@@ -619,7 +619,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
           <Button type="submit" variant="primary" isDisabled={disabled}>
-            Create BackingStore
+            Create Backing Store
           </Button>
           <Button onClick={cancel} variant="secondary">
             Cancel
