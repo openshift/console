@@ -116,13 +116,15 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           )}
         />
         <g className={contentsClasses}>
-          <image
-            x={cx - innerRadius}
-            y={cy - innerRadius}
-            width={innerRadius * 2}
-            height={innerRadius * 2}
-            xlinkHref={icon}
-          />
+          {icon && (
+            <image
+              x={cx - innerRadius}
+              y={cy - innerRadius}
+              width={innerRadius * 2}
+              height={innerRadius * 2}
+              xlinkHref={icon}
+            />
+          )}
           {(kind || element.getLabel()) && (
             <SvgBoxedText
               className="odc-base-node__label"

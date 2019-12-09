@@ -58,7 +58,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
         <BaseNode
           outerRadius={radius}
           innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}
-          icon={workloadData.builderImage}
+          icon={!workloadData.showPodCount ? workloadData.builderImage : undefined}
           kind={workloadData.kind}
           element={element}
           dropTarget={dropTarget}
@@ -105,7 +105,13 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
             />,
           ]}
         >
-          <PodSet size={size} x={cx} y={cy} data={workloadData.donutStatus} />
+          <PodSet
+            size={size}
+            x={cx}
+            y={cy}
+            data={workloadData.donutStatus}
+            showPodCount={workloadData.showPodCount}
+          />
           {workloadData.isKnativeResource && (
             <KnativeIcon
               x={cx - radius * 0.15}

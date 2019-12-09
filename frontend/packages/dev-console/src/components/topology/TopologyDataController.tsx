@@ -5,7 +5,9 @@ import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { RootState } from '@console/internal/redux';
 import { ServiceBindingRequestModel } from '../../models';
+import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
 import { allowedResources, transformTopologyData } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources } from './topology-types';
 
@@ -14,6 +16,11 @@ export interface RenderProps {
   loaded: boolean;
   loadError: any;
   serviceBinding: boolean;
+}
+
+interface StateProps {
+  resourceList: plugins.OverviewCRD[];
+  filters: TopologyFilters;
 }
 
 export interface ControllerProps {
@@ -25,29 +32,44 @@ export interface ControllerProps {
   application: string;
   cheURL: string;
   serviceBinding: boolean;
+  topologyFilters: TopologyFilters;
 }
 
-export interface TopologyDataControllerProps {
+export interface TopologyDataControllerProps extends StateProps {
   namespace: string;
   render(RenderProps): React.ReactElement;
   application: string;
   knative: boolean;
   cheURL: string;
   serviceBinding: boolean;
-  resourceList: plugins.OverviewCRD[];
 }
 
-const Controller: React.FC<ControllerProps> = React.memo(
-  ({ render, application, cheURL, resources, loaded, loadError, utils, serviceBinding }) =>
-    render({
-      loaded,
-      loadError,
-      serviceBinding,
-      data: loaded
-        ? transformTopologyData(resources, allowedResources, application, cheURL, utils)
-        : null,
-    }),
-);
+const Controller: React.FC<ControllerProps> = ({
+  render,
+  application,
+  cheURL,
+  resources,
+  loaded,
+  loadError,
+  utils,
+  serviceBinding,
+  topologyFilters,
+}) =>
+  render({
+    loaded,
+    loadError,
+    serviceBinding,
+    data: loaded
+      ? transformTopologyData(
+          resources,
+          allowedResources,
+          application,
+          cheURL,
+          utils,
+          topologyFilters,
+        )
+      : null,
+  });
 
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   namespace,
@@ -56,6 +78,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   cheURL,
   resourceList,
   serviceBinding,
+  filters,
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
   if (serviceBinding) {
@@ -84,16 +107,18 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         render={render}
         utils={utils}
         serviceBinding={serviceBinding}
+        topologyFilters={filters}
       />
     </Firehose>
   );
 };
 
-const DataControllerStateToProps = ({ FLAGS }) => {
+const DataControllerStateToProps = (state: RootState) => {
   const resourceList = plugins.registry
     .getOverviewCRDs()
-    .filter((resource) => FLAGS.get(resource.properties.required));
-  return { resourceList };
+    .filter((resource) => state.FLAGS.get(resource.properties.required));
+  const filters = getTopologyFilters(state);
+  return { resourceList, filters };
 };
 
 export default connect(DataControllerStateToProps)(TopologyDataController);

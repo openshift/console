@@ -1,10 +1,19 @@
 import * as React from 'react';
-import { PodStatus, calculateRadius, getPodData } from '@console/shared';
+import { get } from 'lodash';
+import {
+  PodStatus,
+  calculateRadius,
+  getPodData,
+  podRingLabel,
+  usePodScalingAccessStatus,
+} from '@console/shared';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { DonutStatusData } from '../../topology-types';
 
 interface PodSetProps {
   size: number;
   data: DonutStatusData;
+  showPodCount?: boolean;
   x?: number;
   y?: number;
 }
@@ -26,7 +35,7 @@ const calculateInnerPodStatusRadius = (
   return { innerPodStatusOuterRadius, innerPodStatusInnerRadius };
 };
 
-const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0 }) => {
+const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount }) => {
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,
   );
@@ -41,6 +50,14 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0 }) => {
     data.previous,
     data.isRollingOut,
   );
+  const accessAllowed = usePodScalingAccessStatus(
+    data.dc,
+    modelFor(referenceFor(data.dc)),
+    get(data, ['current', 'pods'], []),
+    true,
+  );
+  const obj = get(data, ['current', 'obj'], null) || data.dc;
+  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(obj, accessAllowed);
   return (
     <>
       <PodStatus
@@ -51,6 +68,10 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0 }) => {
         outerRadius={podStatusOuterRadius}
         data={completedDeploymentData}
         size={size}
+        subTitle={showPodCount && subTitle}
+        title={showPodCount && title}
+        titleComponent={showPodCount && titleComponent}
+        subTitleComponent={showPodCount && subTitleComponent}
       />
       {inProgressDeploymentData && (
         <PodStatus

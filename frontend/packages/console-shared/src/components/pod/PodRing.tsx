@@ -1,15 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
-import {
-  K8sResourceKind,
-  k8sPatch,
-  K8sKind,
-  SelfSubjectAccessReviewKind,
-} from '@console/internal/module/k8s';
-import { ChartLabel } from '@patternfly/react-charts';
+import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
-import { checkPodEditAccess, podRingLabel } from '../../utils';
+import { podRingLabel, usePodScalingAccessStatus } from '../../utils';
 import { ExtPodKind } from '../../types';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
@@ -33,16 +27,14 @@ const PodRing: React.FC<PodRingProps> = ({
   rc,
   enableScaling = true,
 }) => {
-  const [editable, setEditable] = React.useState(false);
   const [clickCount, setClickCount] = React.useState(obj.spec.replicas);
-  React.useEffect(() => {
-    checkPodEditAccess(obj, resourceKind, impersonate)
-      .then((resp: SelfSubjectAccessReviewKind) => setEditable(resp.status.allowed))
-      .catch((error) => {
-        throw error;
-      });
-  }, [pods, obj, resourceKind, impersonate]);
-
+  const isScalingAllowed = usePodScalingAccessStatus(
+    obj,
+    resourceKind,
+    pods,
+    enableScaling,
+    impersonate,
+  );
   const handleScaling = _.debounce(
     (operation: number) => {
       const patch = [{ op: 'replace', path, value: operation }];
@@ -62,11 +54,11 @@ const PodRing: React.FC<PodRingProps> = ({
     setClickCount(clickCount + operation);
     handleScaling(clickCount + operation);
   };
-
-  const isKnativeRevision = obj.kind === 'Revision';
-  const isScalingAllowed = !isKnativeRevision && editable && enableScaling;
   const resourceObj = rc || obj;
-  const { title, subTitle } = podRingLabel(resourceObj, isScalingAllowed);
+  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
+    resourceObj,
+    isScalingAllowed,
+  );
 
   return (
     <Split>
@@ -76,13 +68,9 @@ const PodRing: React.FC<PodRingProps> = ({
             standalone
             data={pods}
             subTitle={subTitle}
-            {...!isScalingAllowed && {
-              subTitleComponent: <ChartLabel style={{ fontSize: '14px' }} />,
-            }}
             title={title}
-            {...!resourceObj.status.availableReplicas && {
-              titleComponent: <ChartLabel style={{ fontSize: '14px' }} />,
-            }}
+            titleComponent={titleComponent}
+            subTitleComponent={subTitleComponent}
           />
         </div>
       </SplitItem>

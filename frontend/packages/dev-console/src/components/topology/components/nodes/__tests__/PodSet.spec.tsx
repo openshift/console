@@ -13,11 +13,21 @@ describe(PodSet.displayName, () => {
       pods: [],
       alerts: {},
       revision: 0,
-      obj: {},
+      obj: {
+        kind: 'ReplicationController',
+        metadata: {},
+        spec: {},
+        status: {},
+      },
       phase: 'Complete',
     };
     data = {
-      dc: {},
+      dc: {
+        kind: 'DeploymentConfig',
+        metadata: {},
+        spec: {},
+        status: {},
+      },
       current: { ...rc },
       previous: { ...rc },
       pods: [],
@@ -42,11 +52,21 @@ describe(PodSet.displayName, () => {
       pods: [samplePods.data[0] as PodKind],
       alerts: {},
       revision: 0,
-      obj: {},
+      obj: {
+        kind: 'ReplicationController',
+        metadata: {},
+        spec: {},
+        status: {},
+      },
       phase: 'Pending',
     };
     data.current = { ...rc };
-    data.dc = { spec: { strategy: { type: 'Rolling' } } };
+    data.dc = {
+      kind: 'DeploymentConfig',
+      metadata: {},
+      status: {},
+      spec: { strategy: { type: 'Rolling' } },
+    };
     data.isRollingOut = true;
     const wrapper = shallow(<PodSet data={data} size={10} />);
     expect(wrapper.find(PodStatus)).toHaveLength(2);
@@ -56,7 +76,12 @@ describe(PodSet.displayName, () => {
   });
 
   it('should PodStatus with key `notDeploy` exists when there is no strategy mentioned', () => {
-    data.dc = { spec: { strategy: { type: 'Rolling' } } };
+    data.dc = {
+      kind: 'DeploymentConfig',
+      metadata: {},
+      status: {},
+      spec: { strategy: { type: 'Rolling' } },
+    };
     const wrapper = shallow(<PodSet data={data} size={10} />);
     expect(wrapper.find(PodStatus)).toHaveLength(1);
     expect(wrapper.find(PodStatus).get(0).key).toEqual('notDeploy');
