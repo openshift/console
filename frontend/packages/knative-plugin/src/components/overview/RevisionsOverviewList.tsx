@@ -94,17 +94,15 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
   return (
     <>
       <SidebarSectionHeading text="Revisions" className="revision-overview-list">
-        {/* add extra check, if sidebar is opened for a knative deployment */}
-        {canSetTrafficDistribution &&
-          (service.kind === ServiceModel.kind && (
-            <Button
-              variant="secondary"
-              onClick={() => setTrafficDistributionModal({ obj: service })}
-              isDisabled={!(revisions && revisions.length)}
-            >
-              Set Traffic Distribution
-            </Button>
-          ))}
+        {canSetTrafficDistribution && (
+          <Button
+            variant="secondary"
+            onClick={() => setTrafficDistributionModal({ obj: service })}
+            isDisabled={!(revisions && revisions.length)}
+          >
+            Set Traffic Distribution
+          </Button>
+        )}
       </SidebarSectionHeading>
       {_.isEmpty(revisions) ? (
         <span className="text-muted">No Revisions found for this resource.</span>

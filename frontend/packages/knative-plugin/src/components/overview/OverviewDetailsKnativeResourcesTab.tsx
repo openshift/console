@@ -50,14 +50,7 @@ const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: Overv
     case EventSourceKafkaModel.kind:
       return <EventSinkServicesOverviewList obj={obj} />;
     default:
-      return (
-        <KnativeOverview
-          ksroutes={ksroutes}
-          revisions={revisions}
-          configurations={configurations}
-          obj={obj}
-        />
-      );
+      return null;
   }
 };
 const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabProps> = ({
@@ -86,21 +79,6 @@ const KnativeServicesResources: React.FC<KnativeServiceResourceProps> = ({
     <>
       <RevisionsOverviewList revisions={revisions} service={obj} />
       <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
-    </>
-  );
-};
-
-const KnativeOverview: React.FC<KnativeOverviewProps> = ({
-  ksroutes,
-  configurations,
-  revisions,
-  obj,
-}) => {
-  return (
-    <>
-      <RevisionsOverviewList revisions={revisions} service={obj} />
-      <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
-      <ConfigurationsOverviewList configurations={configurations} />
     </>
   );
 };
