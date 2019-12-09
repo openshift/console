@@ -43,12 +43,11 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
   const size = Math.min(width, height);
-  const { donutStatus } = workloadData;
+  const { donutStatus, editUrl, cheEnabled } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
-  const repoIcon = routeDecoratorIcon(workloadData.editUrl, decoratorRadius);
   const cx = width / 2;
   const cy = height / 2;
-
+  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
   const tipContent = `Create a ${
     element.getData().operatorBackedService ? 'binding' : 'visual'
   } connector`;
