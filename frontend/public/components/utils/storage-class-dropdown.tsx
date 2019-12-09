@@ -119,11 +119,13 @@ export class StorageClassDropdownInner extends React.Component<
 
   onChange = (key) => {
     const storageClass = _.get(this.state, ['items', key], {});
-    this.setState({
-      selectedKey: key,
-      title: this.getTitle(storageClass),
-    });
-    this.props.onChange(storageClass.resource);
+    this.setState(
+      {
+        selectedKey: key,
+        title: this.getTitle(storageClass),
+      },
+      () => this.props.onChange(storageClass.resource),
+    );
   };
 
   render() {
