@@ -11,11 +11,11 @@ import './create-bs.scss';
 const CreateBackingStoreFormModal: React.FC<CreateBackingStoreFormModal> = (props) => {
   return (
     <div className="nb-create-bs__modal">
-      <ModalTitle>Create new BackingStore</ModalTitle>
+      <ModalTitle>Create new Backing Store</ModalTitle>
       <ModalBody>
         <p>
-          BackingStore represents a storage target to be used as the underlying storage for the data
-          in MCG buckets.
+          Backing Store represents a storage target to be used as the underlying storage for the
+          data in MCG buckets.
         </p>
         <CreateBackingStoreForm {...props} />
       </ModalBody>
