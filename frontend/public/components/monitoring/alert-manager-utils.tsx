@@ -11,6 +11,7 @@ export const receiverTypes = {
   pagerduty_configs: 'PagerDuty',
   webhook_configs: 'Webhook',
   email_configs: 'Email',
+  slack_configs: 'Slack',
 };
 
 const decodeAlertManagerYaml = (secret: K8sResourceKind, setErrorMsg) => {

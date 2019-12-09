@@ -28,6 +28,7 @@ import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
+import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
 
 /**
@@ -123,6 +124,8 @@ const subFormFactory = (receiverType) => {
       return WebhookForm;
     case 'email_configs':
       return EmailForm;
+    case 'slack_configs':
+      return SlackForm;
     default:
       return WebhookForm;
   }
@@ -193,6 +196,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     PagerDutyForm.getInitialValues(allGlobals, null),
     WebhookForm.getInitialValues(allGlobals, null),
     EmailForm.getInitialValues(allGlobals, null),
+    SlackForm.getInitialValues(allGlobals, null),
   );
 
   let receiverToEdit: AlertManagerReceiver;
