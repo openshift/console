@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { match } from 'react-router';
+import { Status } from '@console/shared';
 import {
   ResourceLink,
   Timestamp,
@@ -63,7 +64,9 @@ export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({
   <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
     <TableData className={tableColumnClasses[0]}>{linkFor(obj)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
-    <TableData className={tableColumnClasses[2]}>{_.get(obj.status, 'phase', 'Created')}</TableData>
+    <TableData className={tableColumnClasses[2]}>
+      <Status status={_.get(obj.status, 'phase', 'Created')} />
+    </TableData>
     <TableData className={tableColumnClasses[3]}>
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </TableData>
