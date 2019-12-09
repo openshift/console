@@ -334,8 +334,10 @@ export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ flags, .
     {...rest}
     ListComponent={ProjectList}
     canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
-    skipAccessReview
     createHandler={() => createProjectModal({ blocking: true })}
+    filterLabel="by name or display name"
+    skipAccessReview
+    textFilter="project-name"
   />
 ));
 
