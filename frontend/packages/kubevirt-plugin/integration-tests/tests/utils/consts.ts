@@ -92,6 +92,13 @@ export enum NIC_MODEL {
   rtl8139 = 'rtl8139',
 }
 
+export enum NIC_TYPE {
+  bridge = 'bridge',
+  masquerade = 'masquerade',
+  slirp = 'slirp',
+  sriov = 'sriov',
+}
+
 export enum DISK_INTERFACE {
   VirtIO = 'VirtIO',
   sata = 'sata',

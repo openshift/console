@@ -4,6 +4,7 @@ import {
   STORAGE_CLASS,
   COMMON_TEMPLATES_VERSION,
   NIC_MODEL,
+  NIC_TYPE,
   DISK_INTERFACE,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
@@ -64,18 +65,28 @@ export const basicVMConfig = {
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
 
-export const networkBindingMethods = {
-  masquerade: 'masquerade',
-  bridge: 'bridge',
-  sriov: 'sriov',
+export const defaultWizardPodNetworkingInterface = {
+  name: 'nic0',
+  mac: '-',
+  model: NIC_MODEL.VirtIO,
+  type: NIC_TYPE.masquerade,
+  network: 'Pod Networking',
 };
 
-export const networkInterface = {
+export const defaultYAMLPodNetworkingInterface = {
+  name: 'default',
+  mac: '-',
+  model: NIC_MODEL.VirtIO,
+  type: NIC_TYPE.masquerade,
+  network: 'Pod Networking',
+};
+
+export const multusNetworkInterface = {
   name: `nic1-${testName.slice(-5)}`,
   model: NIC_MODEL.VirtIO,
   mac: getRandomMacAddress(),
+  type: NIC_TYPE.bridge,
   network: multusNAD.metadata.name,
-  type: networkBindingMethods.bridge,
 };
 
 export const rootDisk = {
