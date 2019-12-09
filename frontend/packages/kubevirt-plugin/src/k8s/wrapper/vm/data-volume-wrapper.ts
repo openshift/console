@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src';
+import { getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { validate } from '@console/internal/components/utils';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
@@ -11,6 +12,8 @@ import {
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
 import { toIECUnit } from '../../../components/form/size-unit-utils';
+import { DataVolumeModel } from '../../../models';
+import { compareOwnerReference } from '../../../utils';
 
 type CombinedTypeData = {
   name?: string;
@@ -52,6 +55,7 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
   static initializeFromSimpleData = (
     params?: {
       name?: string;
+      namespace?: string;
       type?: DataVolumeSourceType;
       typeData?: CombinedTypeData;
       accessModes?: object[] | string[];
@@ -65,7 +69,17 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
     if (!params) {
       return DataVolumeWrapper.EMPTY;
     }
-    const { name, type, typeData, accessModes, volumeMode, size, unit, storageClassName } = params;
+    const {
+      name,
+      namespace,
+      type,
+      typeData,
+      accessModes,
+      volumeMode,
+      size,
+      unit,
+      storageClassName,
+    } = params;
     const resources =
       size == null
         ? undefined
@@ -77,8 +91,11 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 
     return new DataVolumeWrapper(
       {
+        apiVersion: apiVersionForModel(DataVolumeModel),
+        kind: DataVolumeModel.kind,
         metadata: {
           name,
+          namespace,
         },
         spec: {
           pvc: {
@@ -114,6 +131,8 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 
   getName = () => getName(this.data as any);
 
+  getNamespace = () => getNamespace(this.data as any);
+
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
 
   getPesistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
@@ -140,4 +159,37 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
   getAccessModes = () => getDataVolumeAccessModes(this.data);
 
   getVolumeMode = () => getDataVolumeVolumeMode(this.data);
+}
+
+export class MutableDataVolumeWrapper extends DataVolumeWrapper {
+  public constructor(
+    dataVolumeT?: V1alpha1DataVolume,
+    opts?: {
+      initializeWithType?: DataVolumeSourceType;
+      initializeWithTypeData?: any;
+      copy?: boolean;
+    },
+  ) {
+    super(dataVolumeT, opts);
+  }
+
+  addOwnerReferences = (...additionalOwnerReferences) => {
+    if (!getOwnerReferences(this.data)) {
+      this.data.metadata.ownerReferences = [];
+    }
+
+    if (additionalOwnerReferences) {
+      const ownerReferences = getOwnerReferences(this.data);
+      additionalOwnerReferences.forEach((newReference) => {
+        if (
+          !ownerReferences.some((oldReference) => compareOwnerReference(oldReference, newReference))
+        ) {
+          ownerReferences.push(newReference);
+        }
+      });
+    }
+    return this;
+  };
+
+  asMutableResource = () => this.data;
 }

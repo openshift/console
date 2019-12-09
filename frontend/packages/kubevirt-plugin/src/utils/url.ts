@@ -42,4 +42,6 @@ export const resolvePathname = ({ pathname }, maxPathnameParts) => {
 };
 
 export const resolveURL = ({ urlObj, maxHostnameParts, maxPathnameParts }) =>
-  `${resolveOrigin(urlObj, maxHostnameParts)}${resolvePathname(urlObj, maxPathnameParts)}`;
+  urlObj.origin === 'null'
+    ? urlObj.href
+    : `${resolveOrigin(urlObj, maxHostnameParts)}${resolvePathname(urlObj, maxPathnameParts)}`;

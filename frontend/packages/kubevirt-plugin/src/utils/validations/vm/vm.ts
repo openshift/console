@@ -29,7 +29,9 @@ export const validateVmLikeEntityName = (
 export const validateUserTemplateProvisionSource = (
   userTemplate: TemplateKind,
 ): ValidationObject => {
-  const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate);
+  const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate, {
+    convertTemplateDataVolumesToAttachClonedDisk: true,
+  });
 
   return provisionSourceDetails.error
     ? asValidationObject(`Could not select Provision Source. ${provisionSourceDetails.error}`)

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getNamespace } from '@console/shared';
+import { getNamespace, createLookup, getName } from '@console/shared';
 import {
   Firehose,
   StatusBox,
@@ -8,11 +8,12 @@ import {
   SectionHeading,
   useAccessReview,
   asAccessReview,
+  FirehoseResult,
 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../models';
-import { getResource } from '../../utils';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
@@ -20,7 +21,13 @@ const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (pro
   const namespace = getNamespace(template);
 
   const resources = [
-    getResource(DataVolumeModel, { namespace, optional: true, prop: 'datavolumes' }),
+    {
+      kind: DataVolumeModel.kind,
+      isList: true,
+      namespace,
+      prop: 'dataVolumes',
+      optional: true,
+    },
   ];
 
   const otherProps = { template };
@@ -47,7 +54,7 @@ const stateToProps = ({ k8s }) => {
 export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetailsFirehose);
 
 const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
-  const { template, ...restProps } = props;
+  const { template, dataVolumes, ...restProps } = props;
   const loaded = props.loaded || !props.hasDataVolumes;
 
   const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
@@ -62,7 +69,11 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
             <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
           </div>
           <div className="col-sm-6">
-            <VMTemplateDetailsList template={template} canUpdateTemplate={canUpdate} />
+            <VMTemplateDetailsList
+              template={template}
+              dataVolumeLookup={createLookup(dataVolumes, getName)}
+              canUpdateTemplate={canUpdate}
+            />
           </div>
         </div>
       </div>
@@ -72,6 +83,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
 
 type VMTemplateDetailsProps = {
   template: TemplateKind;
+  dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
   loaded?: boolean;
   hasDataVolumes?: boolean;
 };

@@ -116,6 +116,9 @@ export class StorageUISource extends ValueEnum<string> {
 
   isSizeEditingSupported = () => this !== StorageUISource.IMPORT_DISK;
 
+  isPlainDataVolume = (isCreateTemplate: boolean) =>
+    isCreateTemplate && this === StorageUISource.URL;
+
   hasDynamicSize = () => this === StorageUISource.CONTAINER;
 
   canBeChangedToThisSource = () =>

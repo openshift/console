@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Form, FormSelect, FormSelectOption, TextInput } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Form,
+  FormSelect,
+  FormSelectOption,
+  TextInput,
+} from '@patternfly/react-core';
 import {
   FirehoseResult,
   HandlePromiseProps,
@@ -54,6 +61,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     onNamespaceChanged,
     usedDiskNames,
     disableSourceChange,
+    isCreateTemplate,
     onSubmit,
     inProgress,
     errorMessage,
@@ -380,6 +388,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onChange={(sc) => setStorageClassName(sc)}
             />
           )}
+          {source.isPlainDataVolume(isCreateTemplate) && (
+            <Alert
+              variant={AlertVariant.warning}
+              isInline
+              title="PVC will be created on template creation and used by VMs created from this template."
+            />
+          )}
         </Form>
       </ModalBody>
       <ModalFooter
@@ -402,6 +417,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 export type DiskModalProps = {
   disk?: DiskWrapper;
   disableSourceChange?: boolean;
+  isCreateTemplate?: boolean;
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;
   persistentVolumeClaim?: PersistentVolumeClaimWrapper;

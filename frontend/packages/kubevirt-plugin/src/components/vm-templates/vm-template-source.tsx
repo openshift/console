@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { Tooltip } from '@patternfly/react-core';
+import { K8sEntityMap } from '@console/shared/src';
 import { parseURL, resolveURL } from '../../utils/url';
 import { ProvisionSource } from '../../constants/vm/provision-source';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 
 export const URLObj: React.FC<URLObjProps> = ({
   urlPath,
@@ -74,8 +76,12 @@ type SourceProps = {
   error?: string;
 };
 
-export const TemplateSource: React.FC<TemplateSourceProps> = ({ template, detailed = false }) => {
-  const provisionSource = ProvisionSource.getProvisionSourceDetails(template);
+export const TemplateSource: React.FC<TemplateSourceProps> = ({
+  template,
+  dataVolumeLookup,
+  detailed = false,
+}) => {
+  const provisionSource = ProvisionSource.getProvisionSourceDetails(template, { dataVolumeLookup });
   const { type, source, error } = provisionSource;
 
   if (!detailed) {
@@ -92,5 +98,6 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({ template, detail
 
 type TemplateSourceProps = {
   template: TemplateKind;
+  dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
   detailed?: boolean;
 };

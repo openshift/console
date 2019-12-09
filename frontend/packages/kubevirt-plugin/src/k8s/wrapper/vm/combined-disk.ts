@@ -64,7 +64,16 @@ export class CombinedDisk {
 
   getSourceValue = () => this.source && this.source.getValue();
 
-  isEditingSupported = () => !!this.source && this.source.isEditingSupported();
+  isEditingSupported = (isTemplate: boolean) => {
+    if (isTemplate) {
+      // plain dataVolume creates dataVolumes on template creation
+      return this.source && this.source.isPlainDataVolume(isTemplate)
+        ? this.source.isEditingSupported()
+        : true;
+    }
+
+    return !!this.source && this.source.isEditingSupported();
+  };
 
   getName = () => this.diskWrapper.getName();
 
