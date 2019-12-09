@@ -25,6 +25,7 @@ const operatorHubFilterGroups = ['providerType', 'provider', 'installState', 'ca
 
 const operatorHubFilterMap = {
   providerType: 'Provider Type',
+  provider: 'Provider',
   installState: 'Install State',
   capabilityLevel: 'Capability Level',
 };
