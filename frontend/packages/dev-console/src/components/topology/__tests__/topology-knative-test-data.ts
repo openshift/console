@@ -292,6 +292,7 @@ export const sampleKnativeRoutes: FirehoseResult = {
       spec: {},
       status: {
         observedGeneration: 1,
+        traffic: [{ latestRevision: true, percent: 100, revisionName: 'overlayimage-fdqsf' }],
         url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
       },
     },
