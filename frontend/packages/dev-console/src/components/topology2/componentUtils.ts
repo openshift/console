@@ -72,10 +72,11 @@ const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean =>
 const nodeDragSourceSpec = (
   type: string,
   allowRegroup: boolean = true,
+  canEdit: boolean = false,
 ): DragSourceSpec<DragObjectWithType, Node, {}, NodeProps> => ({
   item: { type },
   operation: (monitor, props) => {
-    return props.canEdit && allowRegroup
+    return (canEdit || props.canEdit) && allowRegroup
       ? {
           [Modifiers.SHIFT]: REGROUP_OPERATION,
         }
