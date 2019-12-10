@@ -1,8 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
 
 import { SectionHeading } from '../../utils';
+import {
+  equalOrEmpty,
+  notEqualAndNotEmpty,
+  SaveAsDefaultCheckbox,
+} from './alert-manager-receiver-forms';
 
 const SMTP_CONFIG_FIELDS = [
   'from',
@@ -15,22 +19,25 @@ const SMTP_CONFIG_FIELDS = [
   'require_tls',
 ];
 
+const GLOBAL_PREFIX = 'smtp';
+const FORM_PREFIX = 'email';
+const SAVE_AS_DEFAULT_FLD = 'saveSMPTAsDefault';
+
 // Ex: converts 'auth_password' to 'emailAuthPassword'
-const getFormFieldName = (propName) =>
-  `email${_.map(_.split(propName, '_'), (part) => _.upperFirst(part)).join('')}`;
-const getFormValue = (formValues, propName) => _.get(formValues, getFormFieldName(propName));
-const getGlobalValue = (globals, propName) => _.get(globals, `smtp_${propName}`);
-const equalOrEmpty = (formValue, globalValue) =>
-  formValue === globalValue || (_.isEmpty(formValue) && globalValue === undefined);
-const notEqualAndNotEmpty = (formValue, globalValue) =>
-  formValue !== globalValue && !(_.isEmpty(formValue) && globalValue === undefined);
+const getFormFieldName = (prefix, propName) =>
+  `${prefix}${_.map(_.split(propName, '_'), (part) => _.upperFirst(part)).join('')}`;
+const getFormValue = (formValues, prefix, propName) =>
+  _.get(formValues, getFormFieldName(prefix, propName));
+const getGlobalValue = (globals, prefix, propName) => _.get(globals, `${prefix}_${propName}`);
 
 export const Form = ({ globals, formValues, handleChange }) => {
   // disable saveAsDefault if all SMTP form fields match global values
   const disableSaveAsDefault = _.every(SMTP_CONFIG_FIELDS, (propName) =>
-    equalOrEmpty(getFormValue(formValues, propName), getGlobalValue(globals, propName)),
+    equalOrEmpty(
+      getFormValue(formValues, FORM_PREFIX, propName),
+      getGlobalValue(globals, GLOBAL_PREFIX, propName),
+    ),
   );
-  const saveAsDefaultlabelClass = classNames({ 'co-no-bold': disableSaveAsDefault });
 
   return (
     <div data-test-id="email-receiver-form">
@@ -56,21 +63,13 @@ export const Form = ({ globals, formValues, handleChange }) => {
               <SectionHeading text="SMTP Configuration" />
             </div>
             <div className="col-sm-6">
-              <label className={saveAsDefaultlabelClass}>
-                <input
-                  type="checkbox"
-                  name="emailSMTPSaveAsDefault"
-                  data-test-id="save-as-default"
-                  onChange={(e) =>
-                    handleChange({
-                      target: { name: 'emailSMTPSaveAsDefault', value: e.target.checked },
-                    })
-                  }
-                  checked={formValues.emailSMTPSaveAsDefault}
-                  disabled={disableSaveAsDefault}
-                />
-                &nbsp; Save as default SMTP configuration
-              </label>
+              <SaveAsDefaultCheckbox
+                formField={SAVE_AS_DEFAULT_FLD}
+                disabled={disableSaveAsDefault}
+                label="Save as default SMTP configuration"
+                formValues={formValues}
+                handleChange={handleChange}
+              />
             </div>
           </div>
           <div className="form-group">
@@ -207,11 +206,11 @@ export const getInitialValues = (globals, receiverConfig) => {
   const getInitialValue = (propName: string) =>
     _.get(receiverConfig, propName) || _.get(globals, `smtp_${propName}`) || '';
 
-  const initValues: any = { emailSMTPSaveAsDefault: false };
+  const initValues: any = { [SAVE_AS_DEFAULT_FLD]: false };
   initValues.emailTo = _.get(receiverConfig, 'to') || '';
 
   _.forEach(SMTP_CONFIG_FIELDS, (propName) => {
-    initValues[`${getFormFieldName(propName)}`] = getInitialValue(propName);
+    initValues[`${getFormFieldName(FORM_PREFIX, propName)}`] = getInitialValue(propName);
   });
 
   return initValues;
@@ -226,18 +225,18 @@ export const isFormInvalid = (formValues) => {
   );
 };
 
-const updateConfig = (config, globals, formValues, saveAsGlobal = false) =>
+const updateConfig = (config, globals, formValues, saveAsGlobal) =>
   // Only save SMTP config values to receiverConfig or global if formValue is defined and different from global property
   // If they are the same, don't save in receiverConfig so the global property will be used
   _.forEach(SMTP_CONFIG_FIELDS, (propName) => {
-    const formValue = getFormValue(formValues, propName);
-    const globalValue = getGlobalValue(globals, propName);
+    const formValue = getFormValue(formValues, FORM_PREFIX, propName);
+    const globalValue = getGlobalValue(globals, GLOBAL_PREFIX, propName);
     if (notEqualAndNotEmpty(formValue, globalValue)) {
       _.set(
         config,
         saveAsGlobal ? `smtp_${propName}` : propName,
         formValue,
-        // TODO: check on this!
+        // TODO: does auth_secret need to be encoded?
         // propName === 'auth_secret' ? Base64.encode(formValue) : formValue,
       );
     }
@@ -245,21 +244,22 @@ const updateConfig = (config, globals, formValues, saveAsGlobal = false) =>
 
 export const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
-
-  if (formValues.emailSMTPSaveAsDefault === true) {
-    updateConfig(updatedGlobals, globals, formValues, true);
+  if (formValues[SAVE_AS_DEFAULT_FLD] === true) {
+    updateConfig(updatedGlobals, globals, formValues, formValues[SAVE_AS_DEFAULT_FLD]);
   }
-
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues) => {
-  const receiverConfig = {
-    to: formValues.emailTo,
-  };
+export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+  _.set(receiverConfig, 'to', formValues.emailTo);
 
-  if (formValues.emailSMTPSaveAsDefault === false) {
-    updateConfig(receiverConfig, globals, formValues);
+  if (formValues[SAVE_AS_DEFAULT_FLD] === false) {
+    updateConfig(receiverConfig, globals, formValues, formValues[SAVE_AS_DEFAULT_FLD]);
+  } else {
+    // saving all smtp props as global, so remove them from existing receiver config
+    _.forEach(SMTP_CONFIG_FIELDS, (propName) => {
+      _.unset(receiverConfig, propName);
+    });
   }
 
   return receiverConfig;

@@ -1,13 +1,19 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+
+import {
+  SaveAsDefaultCheckbox,
+  equalOrEmpty,
+  notEqualAndNotEmpty,
+} from './alert-manager-receiver-forms';
+
+const SAVE_AS_DEFAULT_FLD = 'saveSlackApiAsDefault';
 
 export const Form = ({ globals, formValues, handleChange }) => {
-  const globalApiUrlValue = _.get(globals, 'slack_api_url');
-  const disableSaveAsDefault =
-    formValues.slackApiUrl === globalApiUrlValue ||
-    (_.isEmpty(formValues.slackApiUrl) && globalApiUrlValue === undefined);
-  const saveAsDefaultLabelClass = classNames({ 'co-no-bold': disableSaveAsDefault });
+  const disableSaveAsDefault = equalOrEmpty(
+    formValues.slackApiUrl,
+    _.get(globals, 'slack_api_url'),
+  );
 
   return (
     <div data-test-id="slack-receiver-form">
@@ -28,21 +34,13 @@ export const Form = ({ globals, formValues, handleChange }) => {
             />
           </div>
           <div className="col-sm-5">
-            <label className={saveAsDefaultLabelClass}>
-              <input
-                type="checkbox"
-                name="slackApiUrlSaveAsDefault"
-                data-test-id="save-as-default"
-                onChange={(e) =>
-                  handleChange({
-                    target: { name: 'slackApiUrlSaveAsDefault', value: e.target.checked },
-                  })
-                }
-                checked={formValues.slackApiUrlSaveAsDefault}
-                disabled={disableSaveAsDefault}
-              />
-              &nbsp; Save as default Slack API Url
-            </label>
+            <SaveAsDefaultCheckbox
+              formField={SAVE_AS_DEFAULT_FLD}
+              disabled={disableSaveAsDefault}
+              label="Save as default Slack API Url"
+              formValues={formValues}
+              handleChange={handleChange}
+            />
           </div>
         </div>
         <div className="help-block" id="integration-key-help">
@@ -69,7 +67,7 @@ export const Form = ({ globals, formValues, handleChange }) => {
 };
 
 export const getInitialValues = (globals, receiverConfig) => {
-  const initValues: any = { slackApiUrlSaveAsDefault: false };
+  const initValues: any = { [SAVE_AS_DEFAULT_FLD]: false };
   // default to receiverConfig, global, or ''
   initValues.slackApiUrl =
     _.get(receiverConfig, 'api_url') || _.get(globals, 'slack_api_url') || '';
@@ -84,28 +82,25 @@ export const isFormInvalid = (formValues): boolean => {
 export const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (
-    formValues.slackApiUrlSaveAsDefault === true &&
-    formValues.slackApiUrl !== _.get(globals, 'slack_api_url') &&
-    !_.isEmpty(formValues.slackApiUrl)
+    formValues[SAVE_AS_DEFAULT_FLD] === true &&
+    notEqualAndNotEmpty(formValues.slackApiUrl, _.get(globals, 'slack_api_url'))
   ) {
     _.set(updatedGlobals, 'slack_api_url', formValues.slackApiUrl);
   }
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues) => {
-  const receiverConfig = {
-    channel: formValues.slackChannel,
-  };
-
+export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+  _.set(receiverConfig, 'channel', formValues.slackChannel);
   // Only save slackApiUrl to receiverConfig if defined and different from global property
   // If they are the same, don't save in receiverConfig so the global property will be used
-  const globalApiUrlValue = _.get(globals, 'slack_api_url');
   if (
-    formValues.slackApiUrlSaveAsDefault === false &&
-    formValues.slackApiUrl !== globalApiUrlValue
+    formValues[SAVE_AS_DEFAULT_FLD] === false &&
+    notEqualAndNotEmpty(formValues.slackApiUrl, _.get(globals, 'slack_api_url'))
   ) {
     _.set(receiverConfig, 'api_url', formValues.slackApiUrl);
+  } else {
+    _.unset(receiverConfig, 'api_url'); // saving api_url as global, so remove from existing receiver
   }
   return receiverConfig;
 };

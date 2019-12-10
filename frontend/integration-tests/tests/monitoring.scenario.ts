@@ -267,7 +267,7 @@ describe('Alertmanager: Configuration', () => {
     await firstElementByTestID('receiver-name').sendKeys('MyReceiver');
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
-    await firstElementByTestID('dropdown-menu').click();
+    await firstElementByTestID('dropdown-menu-pagerduty_configs').click();
     await crudView.isLoaded();
 
     // these should be shown after receiverType selected
@@ -324,12 +324,12 @@ describe('Alertmanager: Configuration', () => {
     });
   });
 
-  const getConfigs = (receiverName, yamlStr) => {
+  const getGlobalsAndReceiverConfig = (receiverName, yamlStr) => {
     const config = safeLoad(yamlStr);
     const receiverConfig: any = _.find(config.receivers, { name: receiverName });
     return {
-      config,
-      receiverPagerdutyConfig: receiverConfig.pagerduty_configs[0],
+      globals: config.global,
+      receiverConfig: receiverConfig.pagerduty_configs[0],
     };
   };
 
@@ -343,7 +343,7 @@ describe('Alertmanager: Configuration', () => {
     const saveAsDefault = firstElementByTestID('save-as-default');
 
     // saveAsDefault checkbox disabled when url equals global url
-    expect(_.isEmpty(pagerDutyURL.getAttribute('value'))).toBeFalsy();
+    expect(_.isEmpty(pagerDutyURL.getAttribute('value'))).toBeFalsy(); // expect pagerDutyURL's value to contain global value
     expect(saveAsDefault.isEnabled()).toBeFalsy();
 
     // changing url, enables saveAsDefault, save pagerduty-url with Receiver
@@ -358,11 +358,9 @@ describe('Alertmanager: Configuration', () => {
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();
     await yamlView.getEditorContent().then((yamlStr) => {
-      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
-      expect(_.has(config, 'global.pagerduty_url')).toBeFalsy();
-      expect(_.get(receiverPagerdutyConfig, 'pagerduty_url')).toBe(
-        'http://pagerduty-url-specific-to-receiver',
-      );
+      const { globals, receiverConfig } = getGlobalsAndReceiverConfig('MyEditedReceiver', yamlStr);
+      expect(_.has(globals, 'pagerduty_url')).toBeFalsy();
+      expect(_.get(receiverConfig, 'url')).toBe('http://pagerduty-url-specific-to-receiver');
     });
 
     // save pagerduty_url as default/global
@@ -382,9 +380,9 @@ describe('Alertmanager: Configuration', () => {
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();
     await yamlView.getEditorContent().then((yamlStr) => {
-      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
-      expect(_.get(config, 'global.pagerduty_url')).toBe('http://global-pagerduty-url');
-      expect(_.has(receiverPagerdutyConfig, 'pagerduty_url')).toBeFalsy();
+      const { globals, receiverConfig } = getGlobalsAndReceiverConfig('MyEditedReceiver', yamlStr);
+      expect(_.get(globals, 'pagerduty_url')).toBe('http://global-pagerduty-url');
+      expect(_.has(receiverConfig, 'url')).toBeFalsy();
     });
 
     // save pagerduty url to receiver with an existing global
@@ -403,11 +401,9 @@ describe('Alertmanager: Configuration', () => {
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();
     await yamlView.getEditorContent().then((yamlStr) => {
-      const { config, receiverPagerdutyConfig } = getConfigs('MyEditedReceiver', yamlStr);
-      expect(_.get(config, 'global.pagerduty_url')).toBe('http://global-pagerduty-url');
-      expect(_.get(receiverPagerdutyConfig, 'pagerduty_url')).toBe(
-        'http://pagerduty-url-specific-to-receiver',
-      );
+      const { globals, receiverConfig } = getGlobalsAndReceiverConfig('MyEditedReceiver', yamlStr);
+      expect(_.get(globals, 'pagerduty_url')).toBe('http://global-pagerduty-url');
+      expect(_.get(receiverConfig, 'url')).toBe('http://pagerduty-url-specific-to-receiver');
     });
   });
 

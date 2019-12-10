@@ -14,7 +14,7 @@ export const receiverTypes = {
   slack_configs: 'Slack',
 };
 
-const decodeAlertManagerYaml = (secret: K8sResourceKind, setErrorMsg) => {
+export const getAlertManagerYAML = (secret: K8sResourceKind, setErrorMsg): string => {
   const alertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
   let yaml: string = '';
 
@@ -34,13 +34,9 @@ const decodeAlertManagerYaml = (secret: K8sResourceKind, setErrorMsg) => {
   return yaml;
 };
 
-export const getAlertManagerYAML = (secret: K8sResourceKind, setErrorMsg): string => {
-  return decodeAlertManagerYaml(secret, setErrorMsg);
-};
-
 export const getAlertManagerConfig = (secret: K8sResourceKind, setErrorMsg): AlertManagerConfig => {
   let config: AlertManagerConfig;
-  const alertManagerYaml: string = decodeAlertManagerYaml(secret, setErrorMsg);
+  const alertManagerYaml: string = getAlertManagerYAML(secret, setErrorMsg);
   try {
     config = safeLoad(alertManagerYaml);
   } catch (e) {

@@ -2,14 +2,19 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { RadioInput } from '../../radio';
-import * as classNames from 'classnames';
+import {
+  SaveAsDefaultCheckbox,
+  equalOrEmpty,
+  notEqualAndNotEmpty,
+} from './alert-manager-receiver-forms';
+
+const SAVE_AS_DEFAULT_FLD = 'savePagerDutyUrlAsDefault';
 
 export const Form = ({ globals, formValues, handleChange }) => {
-  const globalPagerDutyURL = _.get(globals, 'pagerduty_url');
-  const disableSaveAsDefault =
-    formValues.pagerDutyURL === globalPagerDutyURL ||
-    (_.isEmpty(formValues.pagerDutyURL) && globalPagerDutyURL === undefined);
-  const saveAsDefaultLabelClass = classNames({ 'co-no-bold': disableSaveAsDefault });
+  const disableSaveAsDefault = equalOrEmpty(
+    formValues.pagerDutyURL,
+    _.get(globals, 'pagerduty_url'),
+  );
 
   return (
     <div data-test-id="pagerduty-receiver-form">
@@ -70,21 +75,13 @@ export const Form = ({ globals, formValues, handleChange }) => {
             />
           </div>
           <div className="col-sm-5">
-            <label className={saveAsDefaultLabelClass}>
-              <input
-                type="checkbox"
-                name="pagerDutyURLSaveAsDefault"
-                data-test-id="save-as-default"
-                onChange={(e) =>
-                  handleChange({
-                    target: { name: 'pagerDutyURLSaveAsDefault', value: e.target.checked },
-                  })
-                }
-                checked={formValues.pagerDutyURLSaveAsDefault}
-                disabled={disableSaveAsDefault}
-              />
-              &nbsp; Save as default PagerDuty URL
-            </label>
+            <SaveAsDefaultCheckbox
+              formField={SAVE_AS_DEFAULT_FLD}
+              disabled={disableSaveAsDefault}
+              label="Save as default PagerDuty URL"
+              formValues={formValues}
+              handleChange={handleChange}
+            />
           </div>
         </div>
         <div className="help-block" id="integration-key-help">
@@ -96,7 +93,7 @@ export const Form = ({ globals, formValues, handleChange }) => {
 };
 
 export const getInitialValues = (globals, receiverConfig) => {
-  const initValues: any = { pagerDutyURLSaveAsDefault: false };
+  const initValues: any = { [SAVE_AS_DEFAULT_FLD]: false };
 
   initValues.pagerDutyIntegrationType = _.has(receiverConfig, 'service_key')
     ? 'prometheus'
@@ -116,29 +113,29 @@ export const isFormInvalid = (formValues): boolean => {
 export const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (
-    formValues.pagerDutyURLSaveAsDefault === true &&
-    formValues.pagerDutyURL !== _.get(globals, 'pagerduty_url')
+    formValues[SAVE_AS_DEFAULT_FLD] === true &&
+    notEqualAndNotEmpty(formValues.pagerDutyURL, _.get(globals, 'pagerduty_url'))
   ) {
     _.set(updatedGlobals, 'pagerduty_url', formValues.pagerDutyURL);
   }
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues) => {
+export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   const pagerDutyIntegrationKeyName = `${
     formValues.pagerDutyIntegrationType === 'events' ? 'routing' : 'service'
   }_key`;
-  const receiverConfig = {
-    [pagerDutyIntegrationKeyName]: formValues.pagerDutyIntegrationKey,
-  };
+  _.set(receiverConfig, pagerDutyIntegrationKeyName, formValues.pagerDutyIntegrationKey);
 
   // Only save pagerDutyURL to receiverConfig if different from global property
   // If they are the same, don't save in receiverConfig so the global property will be used
   if (
-    formValues.pagerDutyURLSaveAsDefault === false &&
-    formValues.pagerDutyURL !== _.get(globals, 'pagerduty_url')
+    formValues[SAVE_AS_DEFAULT_FLD] === false &&
+    notEqualAndNotEmpty(formValues.pagerDutyURL, _.get(globals, 'pagerduty_url'))
   ) {
-    _.set(receiverConfig, 'pagerduty_url', formValues.pagerDutyURL);
+    _.set(receiverConfig, 'url', formValues.pagerDutyURL);
+  } else {
+    _.unset(receiverConfig, 'url'); // saving url as global, so remove from existing receiver
   }
   return receiverConfig;
 };

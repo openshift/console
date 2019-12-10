@@ -20,11 +20,9 @@ export const Form = ({ formValues, handleChange }) => (
 );
 
 export const getInitialValues = (globals, receiverConfig) => {
-  return _.isEmpty(receiverConfig)
-    ? { webhookUrl: '' }
-    : {
-        webhookUrl: _.get(receiverConfig, 'url'),
-      };
+  return {
+    webhookUrl: _.get(receiverConfig, 'url', ''),
+  };
 };
 
 export const isFormInvalid = (formValues) => {
@@ -35,6 +33,6 @@ export const updateGlobals = () => {
   return {};
 };
 
-export const createReceiverConfig = (globals, formValues) => {
-  return { url: formValues.webhookUrl };
+export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+  return _.set(receiverConfig, 'url', formValues.webhookUrl);
 };

@@ -5,8 +5,7 @@ import { Alert } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { StatusBox } from '../utils';
-import { AsyncComponent } from '../utils/async';
+import { AsyncComponent, StatusBox } from '../utils';
 import { patchAlertManagerConfig, getAlertManagerYAML } from './alert-manager-utils';
 
 const EditAlertmanagerYAML = (props) => (
@@ -23,9 +22,6 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
   const [errorMsg, setErrorMsg] = React.useState('');
   const [loadErrorMsg, setloadErrorMsg] = React.useState('');
   const [successMsg, setSuccessMsg] = React.useState('');
-  const alertManagerYamlStr = _.isEmpty(loadErrorMsg)
-    ? getAlertManagerYAML(secret, setloadErrorMsg)
-    : '';
 
   const save = (yaml: string) => {
     if (_.isEmpty(yaml)) {
@@ -68,6 +64,8 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
       </Alert>
     );
   }
+
+  const alertManagerYamlStr = getAlertManagerYAML(secret, setloadErrorMsg);
 
   return (
     <>
