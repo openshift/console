@@ -87,7 +87,7 @@ const OngoingActivity = withDashboardResources(
 );
 
 export const ActivityCard: React.FC<{}> = React.memo(() => (
-  <DashboardCard>
+  <DashboardCard gradient>
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
     </DashboardCardHeader>

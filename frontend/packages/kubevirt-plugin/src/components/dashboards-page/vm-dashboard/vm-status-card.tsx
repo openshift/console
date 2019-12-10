@@ -14,7 +14,7 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const { vm, vmi, pods, migrations } = vmDashboardContext;
 
   return (
-    <DashboardCard>
+    <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Status</DashboardCardTitle>
       </DashboardCardHeader>

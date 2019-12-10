@@ -82,7 +82,7 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
   const alerts = filterAlerts(getAlerts(alertsResponse));
 
   return (
-    <DashboardCard>
+    <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Status</DashboardCardTitle>
       </DashboardCardHeader>
