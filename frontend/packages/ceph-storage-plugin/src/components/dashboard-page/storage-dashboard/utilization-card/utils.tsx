@@ -1,6 +1,11 @@
 import * as _ from 'lodash';
 import { DataPoint } from '@console/internal/components/graphs';
-import { Humanize, humanizeNumber } from '@console/internal/components/utils';
+import {
+  Humanize,
+  humanizeNumber,
+  humanizeSeconds,
+  secondsToNanoSeconds,
+} from '@console/internal/components/utils';
 
 export const humanizeIOPS: Humanize = (value) => {
   const humanizedNumber = humanizeNumber(value);
@@ -13,13 +18,8 @@ export const humanizeIOPS: Humanize = (value) => {
 };
 
 export const humanizeLatency: Humanize = (value) => {
-  const humanizedNumber = humanizeNumber(value);
-  const unit = 'ms';
-  return {
-    ...humanizedNumber,
-    string: `${humanizedNumber.value} ${unit}`,
-    unit,
-  };
+  const humanizedTime = humanizeSeconds(secondsToNanoSeconds(value), null, 'ms');
+  return humanizedTime;
 };
 
 export const getLatestValue = (stats: DataPoint[]) => Number(_.get(stats[stats.length - 1], 'y'));
