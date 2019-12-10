@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { createVm, createVmTemplate } from 'kubevirt-web-ui-components';
+import { createVm as importVM } from 'kubevirt-web-ui-components';
 import { Wizard, WizardStep } from '@patternfly/react-core';
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history, units } from '@console/internal/components/utils';
 import { k8sGet, TemplateKind } from '@console/internal/module/k8s';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
-import { getName } from '@console/shared/src';
 import { withReduxID } from '../../utils/redux/common';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
 import {
@@ -17,7 +16,7 @@ import {
   TEMPLATE_TYPE_VM,
   VolumeType,
 } from '../../constants/vm';
-import { getResource, insertName } from '../../utils';
+import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
 import {
@@ -32,10 +31,7 @@ import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import {
-  DataVolumeWrapper,
-  MutableDataVolumeWrapper,
-} from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import {
   getDefaultSCAccessMode,
   getDefaultSCVolumeMode,
@@ -49,8 +45,7 @@ import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
 } from '../../k8s/wrapper/vm/cloud-init-data-helper';
-import { StorageUISource } from '../modals/disk-modal/storage-ui-source';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { createVM, createVMTemplate } from '../../k8s/requests/vm/create/create';
 import {
   ChangedCommonData,
   CommonData,
@@ -84,14 +79,12 @@ import './create-vm-wizard.scss';
  * kubevirt-web-ui-components InterOP
  */
 const kubevirtInterOP = async ({
-  isCreateTemplate,
   activeNamespace,
   vmSettings,
   networks,
   storages,
   templates,
 }: {
-  isCreateTemplate: boolean;
   activeNamespace: string;
   vmSettings: any;
   networks: VMWizardNetwork[];
@@ -102,7 +95,6 @@ const kubevirtInterOP = async ({
   const clonedNetworks = _.cloneDeep(networks);
   const clonedStorages = _.cloneDeep(storages);
 
-  const vmName = clonedVMsettings[VMSettingsField.NAME].value;
   const cloudInitVolume = clonedStorages.map((stor) => stor.volume).find(getVolumeCloudInitNoCloud);
   const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
   const hostname = new CloudInitDataHelper(data).get(CloudInitDataFormKeys.HOSTNAME);
@@ -142,8 +134,6 @@ const kubevirtInterOP = async ({
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
 
-  const dataVolumesToCreate: V1alpha1DataVolume[] = [];
-
   const interOPStorages = clonedStorages.map(
     ({ type, disk, volume, dataVolume, persistentVolumeClaim, importData }) => {
       const diskWrapper = DiskWrapper.initialize(disk);
@@ -179,19 +169,11 @@ const kubevirtInterOP = async ({
           data: importData,
         };
       }
-      const source = StorageUISource.fromTypes(
-        volumeWrapper.getType(),
-        dataVolumeWrapper && dataVolumeWrapper.getType(),
-        !!persistentVolumeClaim,
-      );
-      const isPlainDataVolume = source.isPlainDataVolume(isCreateTemplate);
 
       const finalDataVolumeWrapper = dataVolumeWrapper
         ? DataVolumeWrapper.mergeWrappers(
             dataVolumeWrapper,
             DataVolumeWrapper.initializeFromSimpleData({
-              name: isPlainDataVolume ? insertName(dataVolumeWrapper.getName(), vmName) : undefined,
-              namespace: isPlainDataVolume ? activeNamespace : undefined,
               accessModes: dataVolumeWrapper.getAccessModes() || [
                 getDefaultSCAccessMode(
                   storageClassConfigMap,
@@ -208,29 +190,14 @@ const kubevirtInterOP = async ({
           )
         : undefined;
 
-      let finalVolume = volume;
-      if (isPlainDataVolume) {
-        finalVolume = VolumeWrapper.mergeWrappers(
-          volumeWrapper,
-          VolumeWrapper.initializeFromSimpleData({
-            type: VolumeType.DATA_VOLUME,
-            typeData: { name: finalDataVolumeWrapper.getName() },
-          }),
-        ).asResource();
-        dataVolumesToCreate.push(finalDataVolumeWrapper.asResource());
-      }
-
-      const finalDataVolume =
-        !finalDataVolumeWrapper || isPlainDataVolume
-          ? undefined
-          : finalDataVolumeWrapper.asResource();
+      const finalDataVolume = finalDataVolumeWrapper && finalDataVolumeWrapper.asResource();
 
       return {
         name: diskWrapper.getName(),
         isBootable: diskWrapper.isFirstBootableDevice(),
         storageType: resolveType(finalDataVolume),
         templateStorage: {
-          volume: finalVolume,
+          volume,
           disk,
           dataVolumeTemplate: finalDataVolume,
         },
@@ -238,47 +205,10 @@ const kubevirtInterOP = async ({
     },
   );
 
-  let interOPCreate;
-  if (isCreateTemplate && dataVolumesToCreate.length > 0) {
-    interOPCreate = async (enhancedK8sMethods: EnhancedK8sMethods, ...args) => {
-      await createVmTemplate(enhancedK8sMethods, ...args);
-      const template = enhancedK8sMethods
-        .getActualState()
-        .reverse()
-        .find((resource) => resource.kind === TemplateModel.kind);
-      if (template) {
-        const templateOwnerReference = {
-          apiVersion: template.apiVersion,
-          blockOwnerDeletion: true,
-          controller: true,
-          kind: template.kind,
-          name: getName(template),
-          uid: template.metadata.uid,
-        };
-
-        for (const dv of dataVolumesToCreate) {
-          // eslint-disable-next-line no-await-in-loop
-          await enhancedK8sMethods.k8sCreate(
-            DataVolumeModel,
-            new MutableDataVolumeWrapper(dv, { copy: true })
-              .addOwnerReferences(templateOwnerReference)
-              .asMutableResource(),
-          );
-        }
-      }
-      return enhancedK8sMethods.getActualState();
-    };
-  } else if (isCreateTemplate) {
-    interOPCreate = createVmTemplate;
-  } else {
-    interOPCreate = createVm;
-  }
-
   return {
     interOPVMSettings: clonedVMsettings,
     interOPNetworks,
     interOPStorages,
-    interOPCreate,
   };
 };
 
@@ -341,7 +271,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 
   finish = async () => {
     this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
-    const { isCreateTemplate } = this.props;
+    const { isCreateTemplate, activeNamespace, isProviderImport } = this.props;
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
     const vmSettings = iGetIn(this.props.stepData, [VMWizardTab.VM_SETTINGS, 'value']).toJS();
@@ -351,36 +281,46 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     const storages = immutableListToShallowJS(
       iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']),
     );
-    const templates = immutableListToShallowJS(
+    const templates = immutableListToShallowJS<TemplateKind>(
       concatImmutableLists(
         iGetLoadedData(this.props[VMWizardProps.commonTemplates]),
         iGetLoadedData(this.props[VMWizardProps.userTemplates]),
       ),
     );
 
-    const {
-      interOPVMSettings,
-      interOPNetworks,
-      interOPStorages,
-      interOPCreate,
-    } = await kubevirtInterOP({
-      isCreateTemplate,
-      vmSettings,
-      networks,
-      storages,
-      templates,
-      activeNamespace: this.props.activeNamespace,
-    });
+    let promise;
 
-    interOPCreate(
-      enhancedK8sMethods,
-      templates,
-      interOPVMSettings,
-      interOPNetworks,
-      interOPStorages,
-      [],
-      units,
-    )
+    if (isProviderImport) {
+      const { interOPVMSettings, interOPNetworks, interOPStorages } = await kubevirtInterOP({
+        vmSettings,
+        networks,
+        storages,
+        templates,
+        activeNamespace,
+      });
+
+      promise = importVM(
+        enhancedK8sMethods,
+        templates,
+        interOPVMSettings,
+        interOPNetworks,
+        interOPStorages,
+        [],
+        units,
+      );
+    } else {
+      const create = isCreateTemplate ? createVMTemplate : createVM;
+      promise = create({
+        enhancedK8sMethods,
+        vmSettings,
+        networks,
+        storages,
+        templates,
+        namespace: activeNamespace,
+      });
+    }
+
+    promise
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
       .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>

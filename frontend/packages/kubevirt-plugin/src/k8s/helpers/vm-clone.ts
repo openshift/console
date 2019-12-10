@@ -21,7 +21,11 @@ import {
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../selectors/dv/selectors';
-import { TEMPLATE_OS_NAME_ANNOTATION, TEMPLATE_VM_NAME_LABEL } from '../../constants/vm';
+import {
+  ANNOTATION_DESCRIPTION,
+  TEMPLATE_OS_NAME_ANNOTATION,
+  TEMPLATE_VM_NAME_LABEL,
+} from '../../constants/vm';
 import { MutableVMWrapper } from '../wrapper/vm/vm-wrapper';
 
 export type CloneTo = {
@@ -55,8 +59,9 @@ export class VMClone {
       delete metadata.generation;
     }
 
-    this.vm.ensureDomain();
-    delete spec.template.spec.domain.firmware;
+    if (spec.template.spec.domain) {
+      delete spec.template.spec.domain.firmware;
+    }
     delete data.status;
     spec.dataVolumeTemplates = [];
 
@@ -65,24 +70,21 @@ export class VMClone {
 
   private setValues({ name, namespace, description, startVM = false }: CloneTo) {
     const data = this.vm.asMutableResource();
-    const { metadata } = data;
     const osId = getOperatingSystem(data);
     const osName = getOperatingSystemName(data);
 
-    this.vm.ensureSpec();
-    data.spec.running = startVM;
-    metadata.name = name;
-    metadata.namespace = namespace;
+    this.vm.setName(name);
+    this.vm.setNamespace(namespace);
+    this.vm.setRunning(startVM);
 
-    this.vm.ensureAnnotations();
     if (description) {
-      metadata.annotations.description = description;
+      this.vm.addAnotation(ANNOTATION_DESCRIPTION, description);
     }
     if (osId && osName) {
-      metadata.annotations[`${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`] = osName;
+      this.vm.addAnotation(`${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`, osName);
     }
 
-    this.vm.ensureTemplateLabels()[TEMPLATE_VM_NAME_LABEL] = name;
+    this.vm.addTemplateLabel(TEMPLATE_VM_NAME_LABEL, name);
     return this;
   }
 

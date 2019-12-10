@@ -11,15 +11,14 @@ import {
   getVolumes,
 } from '../../../selectors/vm';
 import { getLabels } from '../../../selectors/selectors';
+import { ensurePath } from '../utils/utils';
+import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 
 export class VMWrapper extends Wrapper<VMKind> {
-  static readonly EMPTY = new VMWrapper();
-
   static mergeWrappers = (...vmWrappers: VMWrapper[]): VMWrapper =>
     Wrapper.defaultMergeWrappers(VMWrapper, vmWrappers);
 
-  static initialize = (persistentVolumeClaim?: VMKind, copy?: boolean) =>
-    new VMWrapper(persistentVolumeClaim, copy && { copy });
+  static initialize = (vm?: VMKind, copy?: boolean) => new VMWrapper(vm, copy && { copy });
 
   protected constructor(
     vm?: VMKind,
@@ -48,46 +47,103 @@ export class VMWrapper extends Wrapper<VMKind> {
 }
 
 export class MutableVMWrapper extends VMWrapper {
-  public constructor(volume?: VMKind, opts?: { copy?: boolean }) {
-    super(volume, opts);
+  public constructor(vm?: VMKind, opts?: { copy?: boolean }) {
+    super(vm, opts);
   }
 
-  ensureMetadata = () => this.ensurePath('metadata', {});
-  ensureSpec = () => this.ensurePath('spec', {});
-  ensureDomain = () => this.ensurePath('spec.template.spec.domain', {});
+  setName = (name: string) => {
+    this.ensurePath('metadata', {});
+    this.data.metadata.name = name;
+  };
 
-  ensureLabels = () => this.ensurePath('metadata.labels', {});
-  ensureAnnotations = () => this.ensurePath('metadata.annotations', {});
-  ensureTemplateLabels = () => this.ensurePath('spec.template.metadata.labels', {});
+  setNamespace = (namespace: string) => {
+    this.ensurePath('metadata', {});
+    this.data.metadata.namespace = namespace;
+  };
+
+  addAnotation = (key: string, value: string) => {
+    if (key) {
+      this.ensurePath('metadata.annotations', {});
+      this.data.metadata.annotations[key] = value;
+    }
+  };
+
+  addLabel = (key: string, value: string) => {
+    if (key) {
+      this.ensurePath('metadata.labels', {});
+      this.data.metadata.labels[key] = value;
+    }
+  };
+
+  addTemplateLabel = (key: string, value: string) => {
+    if (key) {
+      this.ensurePath('spec.template.metadata.labels', {});
+      this.data.spec.template.metadata.labels[key] = value;
+    }
+  };
+
+  setMemory = (value: string, unit = 'G') => {
+    this.ensurePath('spec.template.spec.domain.resources.requests', {});
+    this.data.spec.template.spec.domain.resources.requests.memory = `${value}${unit}`;
+  };
+
+  setCPU = (cpus: string) => {
+    this.ensurePath('spec.template.spec.domain.cpu', {});
+    this.data.spec.template.spec.domain.cpu.cores = parseInt(cpus, 10);
+  };
+
+  setRunning = (isRunning?: boolean) => {
+    this.ensurePath('spec', {});
+    this.data.spec.running = !!isRunning;
+  };
+
+  setNetworks = (networks: VMWizardNetwork[]) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.data.spec.template.spec.domain.devices.interfaces = _.compact(
+      networks.map((network) => network.networkInterface),
+    );
+    this.data.spec.template.spec.networks = _.compact(networks.map((network) => network.network));
+
+    if (_.isEmpty(this.getInterfaces())) {
+      delete this.data.spec.template.spec.domain.devices.interfaces;
+    }
+    if (_.isEmpty(this.getNetworks())) {
+      delete this.data.spec.template.spec.networks;
+    }
+  };
+
+  setStorages = (storages: VMWizardStorage[]) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.data.spec.template.spec.domain.devices.disks = _.compact(
+      storages.map((storage) => storage.disk),
+    );
+    this.data.spec.template.spec.volumes = _.compact(storages.map((storage) => storage.volume));
+    this.data.spec.dataVolumeTemplates = _.compact(storages.map((storage) => storage.dataVolume));
+
+    if (_.isEmpty(this.getDisks())) {
+      delete this.data.spec.template.spec.domain.devices.disks;
+    }
+    if (_.isEmpty(this.getVolumes())) {
+      delete this.data.spec.template.spec.volumes;
+    }
+    if (_.isEmpty(this.getDataVolumeTemplates())) {
+      delete this.data.spec.dataVolumeTemplates;
+    }
+  };
+
+  setAutoAttachPodInterface = (autoAttach: boolean) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.data.spec.template.spec.domain.devices.autoattachPodInterface = autoAttach;
+  };
+
+  setHostname = (hostname: string) => {
+    this.ensurePath('spec.template.spec', {});
+    this.data.spec.template.spec.hostname = hostname;
+  };
 
   ensureDataVolumeTemplates = () => this.ensurePath('spec.dataVolumeTemplates', []);
-  ensureInterfaces = () => this.ensurePath('spec.template.spec.domain.devices.interfaces', []);
-  ensureDisks = () => this.ensurePath('spec.template.spec.domain.devices.disks', []);
-  ensureNetworks = () => this.ensurePath('spec.template.spec.networks', []);
-  ensureVolumes = () => this.ensurePath('spec.template.spec.volumes', []);
 
   asMutableResource = () => this.data;
 
-  ensurePath = (path: string[] | string, value) => {
-    let currentFragment: any = this.data;
-    if (path) {
-      const arrPath = _.isString(path) ? path.split('.') : path;
-
-      arrPath.forEach((pathElement, idx) => {
-        const isLast = idx === arrPath.length - 1;
-
-        const nextFragment = currentFragment[pathElement];
-
-        if (isLast ? nextFragment != null : _.isObject(nextFragment)) {
-          currentFragment = nextFragment;
-        } else {
-          const newFragment = isLast ? value : {};
-          currentFragment[pathElement] = newFragment;
-          currentFragment = newFragment;
-        }
-      });
-    }
-
-    return currentFragment;
-  };
+  ensurePath = (path: string[] | string, value) => ensurePath(this.data, path, value);
 }
