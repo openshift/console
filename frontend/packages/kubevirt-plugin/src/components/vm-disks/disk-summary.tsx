@@ -12,7 +12,7 @@ import { V1Disk } from '../../types/vm/disk/V1Disk';
 import './disk-summary.scss';
 
 export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => (
-  <dl className="oc-vm-details__datalist kubevirt-disk-summary">
+  <dl className="kubevirt-disk-summary">
     {disks.map(({ name }) => {
       const container = getContainerImageByDisk(vm, name);
       const pvc = getPVCSourceByDisk(vm, name);
@@ -32,13 +32,13 @@ export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => (
 
       return (
         <>
-          <dt id={nameKey} key={nameKey}>
+          <dt id={nameKey} key={nameKey} className="kubevirt-disk-summary__datalist-dt">
             {name}
           </dt>
           <dd
             id={`${nameKey}-info`}
             key={`${nameKey}-info`}
-            className="co-vm-details-cdroms__datalist-dd text-secondary"
+            className="kubevirt-disk-summary__datalist-dd"
           >
             {value}
           </dd>
