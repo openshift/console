@@ -9,13 +9,13 @@ import {
   STORAGE_CLASS_PATTERNS,
   STORAGE_CLUSTER_NAME,
   SECOND,
-} from '../utils/consts';
+} from '../../utils/consts';
 import {
   InstallCluster,
   filterInput,
   goToStorageClasses,
   ocsOperatorStatus,
-} from '../views/installFlow.view';
+} from '../../views/installFlow.view';
 import {
   checkIfClusterIsReady,
   getDataFromRowAndCol,
@@ -25,7 +25,7 @@ import {
   sendKeys,
   testPodIsRunning,
   verifyNodeLabels,
-} from '../utils/helpers';
+} from '../../utils/helpers';
 
 const Installer = new InstallCluster(NS);
 

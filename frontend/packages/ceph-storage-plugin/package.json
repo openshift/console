@@ -13,8 +13,9 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "integrationTestSuites": {
-      "ceph-storage-install": ["integration-tests/**/installFlow.scenario.ts "],
-      "ceph-storage": ["integration-tests/**/test-*.scenario.ts"]
+      "ceph-storage-install": ["integration-tests/**/1-install/installFlow.scenario.ts"],
+      "ceph-storage-tests": ["integration-tests/**/2-tests/*.scenario.ts"],
+      "ceph-storage": ["integration-tests/**/*.scenario.ts"]
     }
   }
 }
