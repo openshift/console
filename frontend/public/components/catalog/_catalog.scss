@@ -142,9 +142,22 @@ $co-modal-ignore-warning-icon-width: 30px;
     width: auto !important;
   }
 
+  &__btn-group__group-by {
+    display: inline;
+    margin-left: var(--pf-global--spacer--xl);
+  }
+
   &__num-items {
     font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 0 20px;
+  }
+
+  &__group-title {
+    margin-bottom: var(--pf-global--spacer--sm);
+  }
+
+  &__grouped-items {
+    margin-bottom: var(--pf-global--spacer--md);
   }
 
   // Enable scrolling on the modal

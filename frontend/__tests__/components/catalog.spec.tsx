@@ -16,12 +16,14 @@ import {
 import {
   CatalogTileViewPage,
   catalogCategories as initCatalogCategories,
+  groupItems,
 } from '../../public/components/catalog/catalog-items';
 import {
   catalogListPageProps,
   catalogItems,
   catalogCategories,
 } from '../../__mocks__/catalogItemsMocks';
+import { developerCatalogItems, groupedByType } from './catalog-data';
 import { categorizeItems } from '../../public/components/utils/tile-view-page';
 
 describe(CatalogTileViewPage.displayName, () => {
@@ -106,5 +108,15 @@ describe(CatalogTileViewPage.displayName, () => {
         expect(subcategory.numItems).toEqual(catalogCategories[key].subcategories[subKey].numItems);
       });
     });
+  });
+
+  it('should group catalog items by Operator', () => {
+    const groupedByTypeResult = groupItems(developerCatalogItems, 'Operator');
+    expect(groupedByTypeResult).toEqual(groupedByType);
+  });
+
+  it('should not group the items when None is selected in the Group By Dropdown', () => {
+    const groupedByTypeResult = groupItems(developerCatalogItems, 'None');
+    expect(groupedByTypeResult).toEqual(developerCatalogItems);
   });
 });

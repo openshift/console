@@ -137,6 +137,11 @@ const filterValueMap = {
   ImageStream: 'Source-to-Image',
 };
 
+const GroupByTypes = {
+  Operator: 'Operator',
+  None: 'None',
+};
+
 const keywordCompare = (filterString, item) => {
   if (!filterString) {
     return true;
@@ -157,6 +162,17 @@ const setURLParams = (params) => {
   const searchParams = `?${params.toString()}${url.hash}`;
 
   history.replace(`${url.pathname}${searchParams}`);
+};
+
+export const groupItems = (items, groupBy) => {
+  if (groupBy === GroupByTypes.Operator) {
+    const installedOperators = _.filter(items, (item) => item.kind === 'InstalledOperator');
+    const nonOperators = _.filter(items, (item) => item.kind !== 'InstalledOperator');
+    const groupedOperators = _.groupBy(installedOperators, (item) => item.obj.csv.spec.displayName);
+    const groupAllItems = { ...groupedOperators, 'Non Operators': nonOperators };
+    return groupAllItems;
+  }
+  return items;
 };
 
 export class CatalogTileViewPage extends React.Component {
@@ -250,6 +266,8 @@ export class CatalogTileViewPage extends React.Component {
           renderTile={this.renderTile}
           pageDescription={pageDescription}
           emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
+          groupItems={groupItems}
+          groupByTypes={GroupByTypes}
         />
         <Modal
           show={!!detailsItem}
