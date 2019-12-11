@@ -11,6 +11,7 @@ import {
   getBuildAlerts,
   getOwnedResources,
   OverviewItem,
+  OperatorBackedServiceKindMap,
 } from '@console/shared';
 import {
   Node,
@@ -289,7 +290,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
  */
 export const createTopologyServiceNodeData = (
   svcRes: OverviewItem,
-  operatorBackedServiceKinds: string[],
+  operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
   type: string,
   cheURL?: string,
 ): TopologyDataObject => {
@@ -303,7 +304,7 @@ export const createTopologyServiceNodeData = (
     name: _.get(knativeSvc, 'metadata.name') || labels['app.kubernetes.io/instance'],
     type,
     resources: { ...svcRes },
-    operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
+    operatorBackedService: nodeResourceKind in operatorBackedServiceKindMap,
     data: {
       url: getRoutesUrl(svcRes),
       kind: referenceFor(knativeSvc),
@@ -321,7 +322,7 @@ export const tranformKnNodeData = (
   type: string,
   topologyGraphAndNodeData: TopologyDataModel,
   resources: TopologyDataResources,
-  operatorBackedServiceKinds: string[],
+  operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
   utils?: Function[],
   cheURL?: string,
   application?: string,
@@ -350,7 +351,7 @@ export const tranformKnNodeData = (
         case NodeType.EventSource: {
           dataToShowOnNodes[uid] = createTopologyNodeData(
             item,
-            operatorBackedServiceKinds,
+            operatorBackedServiceKindMap,
             cheURL,
             type,
           );
@@ -365,7 +366,7 @@ export const tranformKnNodeData = (
         case NodeType.Revision: {
           dataToShowOnNodes[uid] = createTopologyNodeData(
             item,
-            operatorBackedServiceKinds,
+            operatorBackedServiceKindMap,
             cheURL,
             type,
             filters,
@@ -380,7 +381,7 @@ export const tranformKnNodeData = (
         case NodeType.KnService: {
           dataToShowOnNodes[uid] = createTopologyServiceNodeData(
             item,
-            operatorBackedServiceKinds,
+            operatorBackedServiceKindMap,
             type,
             cheURL,
           );
