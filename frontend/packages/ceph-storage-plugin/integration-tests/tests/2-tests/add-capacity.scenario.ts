@@ -14,7 +14,14 @@ import {
   storageClusterView,
   verifyFields,
 } from '../../views/add-capacity.view';
-import { CLUSTER_STATUS, EXPAND_WAIT, KIND, NS, POD_NAME_PATTERNS, SECOND } from '../../utils/consts';
+import {
+  CLUSTER_STATUS,
+  EXPAND_WAIT,
+  KIND,
+  NS,
+  POD_NAME_PATTERNS,
+  SECOND,
+} from '../../utils/consts';
 import {
   getOSDPreparePodsCnt,
   getPodName,
