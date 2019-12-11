@@ -142,8 +142,8 @@ const TaskComponent: React.FC<TaskProps> = ({
     </>
   );
   return (
-    <li className={cx('odc-pipeline-vis-task')}>
+    <div className={cx('odc-pipeline-vis-task')}>
       {path ? <Link to={path}>{visTask}</Link> : visTask}
-    </li>
+    </div>
   );
 };

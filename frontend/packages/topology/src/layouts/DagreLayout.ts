@@ -7,8 +7,15 @@ import { leafNodeElements } from '../utils/element-utils';
 class DagreNode {
   private node: Node;
 
+  public width: number;
+
+  public height: number;
+
   constructor(node: Node) {
     this.node = node;
+
+    this.width = this.node.getBounds().width;
+    this.height = this.node.getBounds().height;
   }
 
   getId(): string {
@@ -74,8 +81,11 @@ export default class DagreLayout implements Layout {
   // @ts-ignore
   private graph: Graph; // Usage is TBD
 
-  constructor(graph: Graph) {
+  private options: dagre.GraphLabel;
+
+  constructor(graph: Graph, options?: dagre.GraphLabel) {
     this.graph = graph;
+    this.options = options || {};
   }
 
   destroy(): void {}
@@ -95,6 +105,7 @@ export default class DagreLayout implements Layout {
       marginy: 0,
       nodesep: 20,
       ranker: 'tight-tree',
+      ...this.options,
     });
 
     _.forEach(nodes, (node) => {

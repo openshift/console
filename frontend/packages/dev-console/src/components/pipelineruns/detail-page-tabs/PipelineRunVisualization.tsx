@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
-import { getPipelineTasks } from '../../../utils/pipeline-utils';
 import { PipelineModel } from '../../../models';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { PipelineVisualizationGraph } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualizationGraph';
+import PipelineTopologyVisualization from '../../pipelines/detail-page-tabs/pipeline-details/pipeline-topology/PipelineTopologyVisualization';
+import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 
 export interface PipelineRunVisualizationProps {
   pipelineRun: K8sResourceKind;
@@ -21,7 +20,7 @@ export class PipelineRunVisualization extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      pipeline: { apiVersion: '', metadata: {}, kind: 'PipelineRun' },
+      pipeline: null,
       errorCode: null,
     };
   }
@@ -42,15 +41,18 @@ export class PipelineRunVisualization extends React.Component<
 
   render() {
     const { pipelineRun } = this.props;
-    if (this.state.errorCode === 404) {
+    const { errorCode, pipeline } = this.state;
+
+    if (errorCode === 404) {
       return null;
     }
+
+    if (!pipeline) return null;
+
     return (
-      <PipelineVisualizationGraph
-        pipelineRun={pipelineRun.metadata.name}
-        namespace={pipelineRun.metadata.namespace}
-        graph={getPipelineTasks(this.state.pipeline, pipelineRun)}
-        runStatus={pipelineRunFilterReducer(pipelineRun)}
+      <PipelineTopologyVisualization
+        pipeline={pipeline as Pipeline}
+        pipelineRun={pipelineRun as PipelineRun}
       />
     );
   }
