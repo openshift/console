@@ -136,7 +136,7 @@ export const OperatorHubPage = withFallback(
             appear in the <a href="/catalog">Developer Catalog</a>, providing a self-service
             experience.
           </p>
-          <div className="co-catalog-connect">
+          <div className="co-catalog__body">
             <Firehose
               resources={[
                 {
