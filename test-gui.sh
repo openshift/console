@@ -38,7 +38,10 @@ fi
 yarn install
 yarn run webdriver-update
 
-if [ $# -gt 0 ] && [ -n "$1" ];
+if [ $# -gt 0 ] && [ "$1" = "--specs" ] && [ -n "$2" ];
+then
+  yarn run test-suite --specs "$2" --params.openshift true
+elif [ $# -gt 0 ] && [ -n "$1" ];
 then
   yarn run test-suite --suite "$1" --params.openshift true
 else
