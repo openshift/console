@@ -8,6 +8,7 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
@@ -91,6 +92,8 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   migrations,
   canUpdateVM,
 }) => {
+  const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
+
   const id = getBasicID(vm);
   const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const { launcherPod } = vmStatus;
@@ -117,7 +120,18 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         )}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Boot Order" idValue={prefixedID(id, 'boot-order')}>
+      <VMDetailsItem
+        title="Boot Order"
+        canEdit
+        editButtonId={prefixedID(id, 'boot-order-edit')}
+        onEditClick={() => setBootOrderModalOpen(true)}
+        idValue={prefixedID(id, 'boot-order')}
+      >
+        <BootOrderModal
+          isOpen={isBootOrderModalOpen}
+          setOpen={setBootOrderModalOpen}
+          vmLikeEntity={vm}
+        />
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 

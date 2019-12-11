@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { BootableDeviceType } from '../../types';
-import { deviceLabel, deviceKey } from './constants';
-import { BootOrderSummaryEmptyState } from './boot-order-summary-empty-state';
+import { BootableDeviceType } from '../../../types';
+import { deviceLabel, deviceKey } from '../constants';
+import { BootOrderEmptySummary } from './boot-order-empty-summary';
 
 // NOTE(yaacov): using <ol> because '@patternfly/react-core' <List> currently miss isOrder parameter.
 export const BootOrderSummary: React.FC<BootOrderSummaryProps> = ({ devices }) => {
@@ -11,7 +11,7 @@ export const BootOrderSummary: React.FC<BootOrderSummaryProps> = ({ devices }) =
   return (
     <>
       {sources.length === 0 ? (
-        <BootOrderSummaryEmptyState devices={devices} />
+        <BootOrderEmptySummary devices={devices} />
       ) : (
         <ol>
           {sources.map((source) => (
