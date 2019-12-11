@@ -25,7 +25,6 @@ import {
   getClusterVersionChannel,
   ClusterUpdateStatus,
   getOCMLink,
-  k8sGet,
   K8sResourceKind,
 } from '../../../../module/k8s';
 import { FLAGS } from '../../../../const';
@@ -34,6 +33,7 @@ import { FirehoseResource, ExternalLink } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
+import { useK8sGet } from '../../../utils/k8s-get-hook';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -93,22 +93,13 @@ const mapStateToProps = (state: RootState) => ({
 
 export const DetailsCard_ = connect(mapStateToProps)(
   ({ watchK8sResource, stopWatchK8sResource, resources, openshiftFlag }: DetailsCardProps) => {
-    const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
-    const [infrastructureError, setInfrastructureError] = React.useState();
     const [k8sVersion, setK8sVersion] = React.useState<Response>();
     const [k8sVersionError, setK8sVersionError] = React.useState();
 
-    React.useEffect(() => {
-      const fetchInfrastructure = async () => {
-        try {
-          const infra = await k8sGet(InfrastructureModel, 'cluster');
-          setInfrastructure(infra);
-        } catch (error) {
-          setInfrastructureError(error);
-        }
-      };
-      fetchInfrastructure();
-    }, []);
+    const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
+      InfrastructureModel,
+      'cluster',
+    );
     React.useEffect(() => {
       if (flagPending(openshiftFlag)) {
         return;
@@ -154,7 +145,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
               <>
                 <DetailItem
                   title="Cluster API address"
-                  isLoading={!infrastructure && !infrastructureError}
+                  isLoading={!infrastructureLoaded}
                   error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
                   valueClassName="co-select-to-copy"
                 >
@@ -173,7 +164,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
                 <DetailItem
                   title="Provider"
                   error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-                  isLoading={!infrastructure}
+                  isLoading={!infrastructureLoaded}
                   valueClassName="co-select-to-copy"
                 >
                   {infrastructurePlatform}

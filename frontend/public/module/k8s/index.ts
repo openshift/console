@@ -107,17 +107,14 @@ export type Toleration = {
 
 // Properties common to (almost) all Kubernetes resources.
 export type K8sResourceCommon = {
-  apiVersion: string;
-  kind: string;
-  metadata: ObjectMetadata;
+  apiVersion?: string;
+  kind?: string;
+  metadata?: ObjectMetadata;
 };
 
 // Generic, unknown kind. Avoid when possible since it allows any key in spec
 // or status, weakening type checking.
-export type K8sResourceKind = {
-  apiVersion?: string;
-  kind?: string;
-  metadata?: ObjectMetadata;
+export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
     selector?: Selector | MatchLabels;
     [key: string]: any;

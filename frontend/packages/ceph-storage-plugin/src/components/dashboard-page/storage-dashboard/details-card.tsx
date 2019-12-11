@@ -14,9 +14,10 @@ import DetailsBody from '@console/shared/src/components/dashboard/details-card/D
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
-import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s/index';
+import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { CephClusterModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
 
@@ -39,19 +40,10 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
-  const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
-  const [infrastructureError, setInfrastructureError] = React.useState();
-  React.useEffect(() => {
-    const fetchInfrastructure = async () => {
-      try {
-        const infra = await k8sGet(InfrastructureModel, 'cluster');
-        setInfrastructure(infra);
-      } catch (error) {
-        setInfrastructureError(error);
-      }
-    };
-    fetchInfrastructure();
-  }, []);
+  const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
+    InfrastructureModel,
+    'cluster',
+  );
   React.useEffect(() => {
     watchK8sResource(cephClusterResource);
     watchK8sResource(SubscriptionResource);
@@ -94,7 +86,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             key="provider"
             title="Provider"
             error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-            isLoading={!infrastructure}
+            isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
           </DetailItem>
