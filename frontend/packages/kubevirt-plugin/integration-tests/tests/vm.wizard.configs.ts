@@ -7,7 +7,7 @@ import {
   hddDisk,
   dataVolumeManifest,
 } from './utils/mocks';
-import { StorageResource, ProvisionConfig } from './utils/types';
+import { StorageResource, ProvisionConfig, BaseVMConfig } from './utils/types';
 import {
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
@@ -17,7 +17,12 @@ import {
 import { resolveStorageDataAttribute, getResourceObject } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
-export const vmConfig = (name: string, namespace: string, provisionConfig: ProvisionConfig) => {
+export const vmConfig = (
+  name: string,
+  namespace: string,
+  provisionConfig: ProvisionConfig,
+  baseConfig: BaseVMConfig = basicVMConfig,
+) => {
   const commonSettings = {
     startOnCreation: true,
     cloudInit: {
@@ -25,9 +30,9 @@ export const vmConfig = (name: string, namespace: string, provisionConfig: Provi
     },
     namespace,
     description: `Default description ${namespace}`,
-    flavor: basicVMConfig.flavor,
-    operatingSystem: basicVMConfig.operatingSystem,
-    workloadProfile: basicVMConfig.workloadProfile,
+    flavor: baseConfig.flavor,
+    operatingSystem: baseConfig.operatingSystem,
+    workloadProfile: baseConfig.workloadProfile,
   };
 
   return {

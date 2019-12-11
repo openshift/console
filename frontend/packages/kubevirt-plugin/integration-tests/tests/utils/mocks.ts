@@ -1,5 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { CloudInitConfig } from './types';
+import { CloudInitConfig, BaseVMConfig } from './types';
 import {
   STORAGE_CLASS,
   COMMON_TEMPLATES_VERSION,
@@ -56,7 +56,7 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
   };
 };
 
-export const basicVMConfig = {
+export const basicVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.RHEL7_6,
   flavor: Flavor.TINY,
   workloadProfile: WorkloadProfile.DESKTOP,
@@ -79,6 +79,16 @@ export const defaultYAMLPodNetworkingInterface = {
   model: NIC_MODEL.VirtIO,
   type: NIC_TYPE.masquerade,
   network: 'Pod Networking',
+};
+
+// Fake windows machine, still cirros in the heart
+export const widowsVMConfig: BaseVMConfig = {
+  operatingSystem: OperatingSystem.WINDOWS_10,
+  flavor: Flavor.MEDIUM,
+  workloadProfile: WorkloadProfile.DESKTOP,
+  sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  sourceContainer: 'kubevirt/cirros-registry-disk-demo',
+  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`, // reusing cirros
 };
 
 export const multusNetworkInterface = {
