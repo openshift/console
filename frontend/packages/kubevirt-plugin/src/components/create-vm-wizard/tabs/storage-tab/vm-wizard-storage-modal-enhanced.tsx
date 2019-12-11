@@ -25,7 +25,7 @@ import { DiskModal } from '../../../modals/disk-modal';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 
-const VMWizardNICModal: React.FC<VMWizardStorageModalProps> = (props) => {
+const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
     storage,
     isCreateTemplate,
@@ -157,6 +157,6 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
 const VMWizardStorageModalConnected = connect(
   stateToProps,
   dispatchToProps,
-)(VMWizardNICModal);
+)(VMWizardStorageModal);
 
 export const vmWizardStorageModalEnhanced = createModalLauncher(VMWizardStorageModalConnected);

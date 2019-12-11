@@ -80,6 +80,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     volumeWrapper: volume,
     dataVolumeWrapper: dataVolume,
     persistentVolumeClaimWrapper: props.persistentVolumeClaim,
+    isNewPVC: !!props.persistentVolumeClaim,
   });
   const combinedDiskSize = combinedDisk.getSize();
 
@@ -311,6 +312,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               key="pvc-select"
               id={asId('pvc')}
               isDisabled={inProgress || !namespace}
+              isRequired
               name={pvcName}
               validation={pvcValidation}
               data={persistentVolumeClaims}
