@@ -116,11 +116,11 @@ export const ServiceBindingDetailsPage: React.SFC<ServiceBindingDetailsPageProps
 ServiceBindingDetailsPage.displayName = 'ServiceBindingDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -139,20 +139,20 @@ const ServiceBindingsTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Service Instance',
-      sortField: 'spec.instanceRef.name',
+      title: 'Status',
+      sortFunc: 'serviceCatalogStatus',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Secret',
-      sortField: 'spec.secretName',
+      title: 'Service Instance',
+      sortField: 'spec.instanceRef.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Status',
-      sortFunc: 'serviceCatalogStatus',
+      title: 'Secret',
+      sortField: 'spec.secretName',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
@@ -188,6 +188,9 @@ const ServiceBindingsTableRow: React.FC<ServiceBindingsTableRowProps> = ({
         />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        <StatusWithIcon obj={obj} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink
           kind={referenceForModel(ServiceInstanceModel)}
           name={obj.spec.instanceRef.name}
@@ -195,11 +198,8 @@ const ServiceBindingsTableRow: React.FC<ServiceBindingsTableRowProps> = ({
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-        {secretLink(obj)}
-      </TableData>
       <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
-        <StatusWithIcon obj={obj} />
+        {secretLink(obj)}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
