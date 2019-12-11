@@ -19,7 +19,7 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
+import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';

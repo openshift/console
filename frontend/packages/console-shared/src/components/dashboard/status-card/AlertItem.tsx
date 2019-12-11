@@ -3,12 +3,7 @@ import { Link } from 'react-router-dom';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { alertURL, Alert } from '@console/internal/components/monitoring';
-import {
-  getAlertSeverity,
-  getAlertMessage,
-  getAlertDescription,
-  getAlertTime,
-} from '../health-card/utils';
+import { getAlertSeverity, getAlertMessage, getAlertDescription, getAlertTime } from './utils';
 
 const getSeverityIcon = (severity: string) => {
   switch (severity) {

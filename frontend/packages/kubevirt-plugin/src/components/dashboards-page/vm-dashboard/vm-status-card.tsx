@@ -3,7 +3,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import HealthBody from '@console/shared/src/components/dashboard/health-card/HealthBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { VMStatus } from '../../vm-status';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
