@@ -23,7 +23,11 @@ export const BootOrderEmpty: React.FC<BootOrderEmptyProps> = ({
     </Title>
     <EmptyStateBody>{message}</EmptyStateBody>
     {!addItemIsDisabled ? (
-      <Button variant="secondary" onClick={onClick}>
+      <Button
+        variant="secondary"
+        onClick={onClick}
+        className="kubevirt-boot-order__boot-order-empty-btn"
+      >
         {addItemMessage}
       </Button>
     ) : (

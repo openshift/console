@@ -6,8 +6,13 @@
   margin-bottom: 0;
 }
 
-.kubevirt-boot-order__add-device-delete-btn {
+.kubevirt-boot-order__boot-order-empty-btn {
+  margin-top: var(--pf-global--spacer--md);
+}
+
+.pf-c-button.pf-m-link.kubevirt-boot-order__add-device-delete-btn {
   padding: 0;
+  color: var(--pf-global--Color--100);
 }
 
 .kubevirt-boot-order__add-device-select {
