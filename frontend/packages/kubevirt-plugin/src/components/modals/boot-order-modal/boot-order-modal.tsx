@@ -42,7 +42,9 @@ const BootOrderModalComponent = ({
 
   // Inform user on vmLikeEntity.
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      return;
+    }
 
     // Compare only bootOrder from initialDeviceList to current device list.
     const devicesMap = createBasicLookup(getDevices(vmLikeEntity), deviceKey);
