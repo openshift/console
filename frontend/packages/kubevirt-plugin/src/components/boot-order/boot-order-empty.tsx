@@ -23,7 +23,7 @@ export const BootOrderEmpty: React.FC<BootOrderEmptyProps> = ({
     </Title>
     <EmptyStateBody>{message}</EmptyStateBody>
     {!addItemIsDisabled ? (
-      <Button variant="primary" onClick={onClick}>
+      <Button variant="secondary" onClick={onClick}>
         {addItemMessage}
       </Button>
     ) : (

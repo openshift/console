@@ -9,7 +9,7 @@ import { VMLikeEntityKind, BootableDeviceType } from '../../../types';
 import { getVMLikeModel, getDevices } from '../../../selectors/vm';
 import { PatchBuilder, PatchOperation } from '../../../k8s/utils/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
-import { BootOrder } from '../../boot-order';
+import { BootOrder, deviceKey } from '../../boot-order';
 import { DeviceType } from '../../../constants';
 import { ModalFooter } from '../modal/modal-footer';
 
@@ -45,17 +45,16 @@ const BootOrderModalComponent = ({
     if (!isOpen) return;
 
     // Compare only bootOrder from initialDeviceList to current device list.
-    const devicesMap = createBasicLookup(
-      getDevices(vmLikeEntity),
-      (d) => `${d.type}/${d.value.name}`,
-    );
-    const updated = initialDeviceList.some((d) => {
-      // Find the initial device in the updated list.
-      const device = devicesMap[`${d.type}/${d.value.name}`];
+    const devicesMap = createBasicLookup(getDevices(vmLikeEntity), deviceKey);
+    const updated =
+      initialDeviceList.length &&
+      initialDeviceList.some((d) => {
+        // Find the initial device in the updated list.
+        const device = devicesMap[deviceKey(d)];
 
-      // If a device bootOrder changed, or it was deleted, set alert.
-      return !device || device.value.bootOrder !== d.value.bootOrder;
-    });
+        // If a device bootOrder changed, or it was deleted, set alert.
+        return !device || device.value.bootOrder !== d.value.bootOrder;
+      });
 
     setUpdatedAlert(updated);
   }, [vmLikeEntity]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -73,10 +72,10 @@ const BootOrderModalComponent = ({
 
     // Copy only bootOrder from devices to current device list.
     const currentDevices = _.cloneDeep(getDevices(vmLikeEntity));
-    const devicesMap = createBasicLookup(currentDevices, (d) => `${d.type}/${d.value.name}`);
+    const devicesMap = createBasicLookup(currentDevices, deviceKey);
     devices.forEach((d) => {
       // Find the device to update.
-      const device = devicesMap[`${d.type}/${d.value.name}`];
+      const device = devicesMap[deviceKey(d)];
 
       // Update device bootOrder.
       if (device && d.value.bootOrder) {
