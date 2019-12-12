@@ -118,7 +118,10 @@ export class InstallCluster {
     await browser.refresh();
     await this.installOperator();
     await browser.wait(until.visibilityOf(ocsOperator));
-    await waitFor(ocsOperatorStatus, 'Succeeded');
+    // Sometimes operator changes few times its status so we will wait for
+    // for 10 Succeeded status in row to be sure we have operator is
+    // installed properly.
+    await waitFor(ocsOperatorStatus, 'Succeeded', 10);
   }
 
   async installOperator() {
