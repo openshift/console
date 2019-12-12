@@ -1,4 +1,4 @@
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';

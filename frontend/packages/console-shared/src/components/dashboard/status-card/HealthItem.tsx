@@ -6,8 +6,8 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { InProgressIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
-import { HealthState } from '../health-card/states';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
+import { HealthState } from './states';
 
 const healthStateMapping = {
   [HealthState.OK]: {
