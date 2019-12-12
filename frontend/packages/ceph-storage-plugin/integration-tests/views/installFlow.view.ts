@@ -3,7 +3,7 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { MINUTE, NS, OCS_OP, SECOND } from '../utils/consts';
+import { MINUTE, NS, OCS_OP, SECOND, OCS_OP_NAME } from '../utils/consts';
 import { waitFor } from '../utils/helpers';
 
 // Operator Hub & Installed Operators
@@ -12,6 +12,7 @@ export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
 const installOperator = $('.pf-m-primary');
 const storageClusterLink = $('article:nth-child(10) a');
 const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
+const searchInputOperators = $('input[placeholder="Filter by name..."]');
 
 // Subscription Page
 const subscribeButton = $('.pf-m-primary');
@@ -82,10 +83,8 @@ export const selectWorkerRows = async () => {
     splitedRow = newCurrRow.split(/\s/g);
     if (splitedRow[3] === 'worker') {
       workerAz.push(splitedRow[4]);
-      await table
-        .$$('input')
-        .get(index)
-        .click();
+      const input = await $$('input').get(index);
+      if (!input.isSelected()) await input.click();
       selectedNodes.push(
         await table
           .$$('a')
@@ -131,10 +130,14 @@ export class InstallCluster {
     await nsTag.click();
     await subscribeButton.click();
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await browser.wait(until.visibilityOf(searchInputOperators));
+    await searchInputOperators.sendKeys(OCS_OP_NAME);
   }
 
   async createStorageCluster() {
     await goToInstalledOperators();
+    await browser.wait(until.visibilityOf(searchInputOperators));
+    await searchInputOperators.sendKeys(OCS_OP_NAME);
     await click(ocsOperator);
     await click(storageClusterLink);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
