@@ -392,13 +392,16 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
 };
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
+  defaultSamples,
   defaultTimespan,
   disabledSeries = [],
   filterLabels,
   GraphLink,
+  hideControls,
   hideGraphs,
   namespace,
   patchQuery,
+  pollInterval,
   queries,
 }) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
@@ -407,7 +410,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
 
   // Limit the number of samples so that the step size doesn't fall below minStep
-  const maxSamplesForSpan = _.clamp(Math.round(span / minStep), minSamples, maxSamples);
+  const maxSamplesForSpan =
+    defaultSamples || _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
   const [xDomain, setXDomain] = React.useState();
   const [error, setError] = React.useState();
@@ -498,7 +502,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is hidden. Otherwise
   // use a polling interval relative to the graph's timespan.
-  const delay = endTime || hideGraphs ? null : Math.max(span / 120, minPollInterval);
+  const tickInterval =
+    pollInterval === undefined ? Math.max(span / 120, minPollInterval) : pollInterval;
+  const delay = endTime || hideGraphs ? null : tickInterval;
 
   const queriesKey = _.reject(queries, _.isEmpty).join();
   usePoll(tick, delay, endTime, filterLabels, namespace, queriesKey, samples, span);
@@ -548,7 +554,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     >
       <div className="query-browser__controls">
         <div className="query-browser__controls--left">
-          <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
+          {!hideControls && (
+            <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
+          )}
           {updating && (
             <div className="query-browser__loading">
               <LoadingInline />
@@ -632,13 +640,16 @@ type ZoomableGraphProps = {
 };
 
 type QueryBrowserProps = {
+  defaultSamples?: number;
   defaultTimespan: number;
   disabledSeries?: Labels[][];
   filterLabels?: Labels;
   GraphLink?: React.ComponentType<{}>;
+  hideControls?: boolean;
   hideGraphs: boolean;
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
+  pollInterval?: number;
   queries: string[];
 };
 
