@@ -38,7 +38,7 @@ export class StorageUISource extends ValueEnum<string> {
 
   private readonly volumeType: VolumeType;
   private readonly dataVolumeSourceType: DataVolumeSourceType;
-  private readonly hasPVC: boolean;
+  private readonly hasNewPVC: boolean;
 
   private static readonly ALL = Object.freeze(
     ValueEnum.getAllClassEnumProperties<StorageUISource>(StorageUISource),
@@ -56,12 +56,12 @@ export class StorageUISource extends ValueEnum<string> {
     value: string,
     volumeType?: VolumeType,
     dataVolumeSourceType?: DataVolumeSourceType,
-    hasPVC: boolean = false,
+    hasNewPVC: boolean = false,
   ) {
     super(value);
     this.volumeType = volumeType;
     this.dataVolumeSourceType = dataVolumeSourceType;
-    this.hasPVC = hasPVC;
+    this.hasNewPVC = hasNewPVC;
   }
 
   static getAll = () => StorageUISource.ALL;
@@ -74,14 +74,14 @@ export class StorageUISource extends ValueEnum<string> {
   static fromTypes = (
     volumeType: VolumeType,
     dataVolumeSourceType?: DataVolumeSourceType,
-    hasPVC: boolean = false,
+    hasNewPVC: boolean = false,
   ) =>
     StorageUISource.ALL.find(
       (storageUIType) =>
         storageUIType !== StorageUISource.OTHER &&
         storageUIType.volumeType == volumeType && // eslint-disable-line eqeqeq
         storageUIType.dataVolumeSourceType == dataVolumeSourceType && // eslint-disable-line eqeqeq
-        storageUIType.hasPVC == hasPVC, // eslint-disable-line eqeqeq
+        storageUIType.hasNewPVC == hasNewPVC, // eslint-disable-line eqeqeq
     );
 
   getVolumeType = () => this.volumeType;
@@ -96,15 +96,15 @@ export class StorageUISource extends ValueEnum<string> {
   requiresPVC = () =>
     this === StorageUISource.ATTACH_DISK || this === StorageUISource.ATTACH_CLONED_DISK;
 
-  requiresNewPVC = () => this.hasPVC;
+  requiresNewPVC = () => this.hasNewPVC;
 
   requiresContainerImage = () => this === StorageUISource.CONTAINER;
 
   requiresURL = () => this === StorageUISource.URL;
 
-  requiresSize = () => this.requiresDatavolume() || this.hasPVC;
+  requiresSize = () => this.requiresDatavolume() || this.hasNewPVC;
 
-  requiresStorageClass = () => this.requiresDatavolume() || this.hasPVC;
+  requiresStorageClass = () => this.requiresDatavolume() || this.hasNewPVC;
 
   requiresVolume = () => !!this.volumeType;
 

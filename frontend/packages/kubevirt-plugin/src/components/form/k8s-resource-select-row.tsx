@@ -10,7 +10,8 @@ import { asFormSelectValue, FormSelectPlaceholderOption } from './form-select-pl
 
 type K8sResourceSelectProps = {
   id: string;
-  isDisabled: boolean;
+  isDisabled?: boolean;
+  isRequired?: boolean;
   isPlaceholderDisabled?: boolean;
   hasPlaceholder?: boolean;
   data?: FirehoseResult<K8sResourceKind[]>;
@@ -25,6 +26,7 @@ type K8sResourceSelectProps = {
 export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
   id,
   isDisabled,
+  isRequired,
   isPlaceholderDisabled,
   hasPlaceholder,
   data,
@@ -44,17 +46,29 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
     loadedData = loadedData.filter(filter);
   }
 
+  let nameValue;
+  let missingError;
+
+  if (name && !isLoading && !loadError && !loadedData.some((entity) => getName(entity) === name)) {
+    missingError = `Selected ${name} is not available`;
+  } else {
+    nameValue = name;
+  }
+
   return (
     <FormRow
       title={title || model.label}
       fieldId={id}
       isLoading={isLoading}
-      validationMessage={loadError || (validation && validation.message)}
-      validationType={loadError ? ValidationErrorType.Error : validation && validation.type}
+      validationMessage={loadError || missingError || (validation && validation.message)}
+      validationType={
+        loadError || missingError ? ValidationErrorType.Error : validation && validation.type
+      }
+      isRequired={isRequired}
     >
       <FormSelect
         onChange={onChange}
-        value={asFormSelectValue(name)}
+        value={asFormSelectValue(nameValue)}
         id={id}
         isDisabled={isDisabled || isLoading || loadError}
       >
