@@ -15,18 +15,15 @@ const onKebabOptionClick = (option: KebabOption) => {
   }
 };
 
-const createMenuItem = (action: KebabOption) => (
-  <ContextMenuItem
-    className="odc2-topology-context-menu__kebab-wrapper"
-    key={action.label}
-    onClick={() => onKebabOptionClick(action)}
-  >
-    <KebabItem option={action} onClick={null} />
-  </ContextMenuItem>
-);
-
 const createMenuItems = (actions: KebabOption[]) =>
-  actions.filter((o) => !o.hidden).map(createMenuItem);
+  actions
+    .filter((o) => !o.hidden)
+    .map((option) => (
+      <ContextMenuItem
+        key={option.label}
+        component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
+      />
+    ));
 
 const workloadContextMenu = (element: Node) => createMenuItems(workloadActions(element.getData()));
 
