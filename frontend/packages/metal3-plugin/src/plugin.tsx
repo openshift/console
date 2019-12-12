@@ -20,6 +20,9 @@ import { FLAGS } from '@console/internal/const';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
 import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';
+import { getHostPowerStatus } from './selectors';
+import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
+import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
@@ -181,6 +184,24 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'node-maintenance',
       icon: <MaintenanceIcon />,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        kind: referenceForModel(BareMetalHostModel),
+        prop: 'bmhs',
+        isList: true,
+      },
+      isActivity: (resource: BareMetalHostKind) =>
+        [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
+          getHostPowerStatus(resource),
+        ),
+      loader: () =>
+        import(
+          './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */
+        ).then((m) => m.default),
       required: [FLAGS.BAREMETAL, METAL3_FLAG],
     },
   },

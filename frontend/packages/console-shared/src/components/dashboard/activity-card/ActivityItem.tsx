@@ -18,22 +18,18 @@ export const ActivityProgress: React.FC<ActivityProgressProps> = ({
   </>
 );
 
-const ActivityItem: React.FC<ActivityItemProps> = ({ title, children }) => (
+const ActivityItem: React.FC = ({ children }) => (
   <>
     <div className="co-activity-item">
       <InProgressIcon className="co-dashboard-icon" />
-      <div className="co-activity-item__title">{title}</div>
+      <div className="co-activity-item__title">{children}</div>
     </div>
-    {children}
   </>
 );
 
 export default ActivityItem;
 
-type ActivityItemProps = {
+type ActivityProgressProps = {
   title: string;
-};
-
-type ActivityProgressProps = ActivityItemProps & {
   progress: number;
 };
