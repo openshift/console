@@ -5,6 +5,7 @@ import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
 import {
+  K8sResourceKind,
   MachineKind,
   podPhaseFilterReducer,
   serviceCatalogStatus,
@@ -145,6 +146,13 @@ export const tableFilters: TableFilterMap = {
     }
     const type = secretTypeFilterReducer(secret);
     return types.selected.has(type) || !_.includes(types.all, type);
+  },
+
+  'project-name': (str: string, project: K8sResourceKind) => {
+    const displayName = _.get(project, ['metadata', 'annotations', 'openshift.io/display-name']);
+    return (
+      fuzzyCaseInsensitive(str, project.metadata.name) || fuzzyCaseInsensitive(str, displayName)
+    );
   },
 
   'pvc-status': (phases, pvc) => {
