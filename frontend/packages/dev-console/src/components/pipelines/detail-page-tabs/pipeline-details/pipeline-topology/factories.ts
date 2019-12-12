@@ -8,13 +8,14 @@ import {
 } from '@console/topology';
 import TaskNode from './TaskNode';
 import TaskEdge from './TaskEdge';
+import ParallelSpacerNode from './ParallelSpacerNode';
 
-export const componentFactory: ComponentFactory = (kind: ModelKind) => {
+export const componentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (kind) {
     case ModelKind.graph:
       return GraphComponent;
     case ModelKind.node:
-      return TaskNode;
+      return type === 'node' ? TaskNode : ParallelSpacerNode;
     case ModelKind.edge:
       return TaskEdge;
     default:
@@ -28,7 +29,7 @@ export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
       return new DagreLayout(graph, {
         nodesep: 20,
         ranksep: 32,
-        edgesep: 20,
+        edgesep: 0,
         ranker: 'longest-path',
         rankdir: 'LR',
         align: 'UL',

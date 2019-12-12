@@ -1,4 +1,5 @@
 import { Point } from '@console/topology';
+import { PipelineNodeModel } from './types';
 
 const leftRight = (p1: Point, p2: Point) => p1.x < p2.x;
 const topDown = (p1: Point, p2: Point) => p1.y < p2.y;
@@ -64,4 +65,90 @@ export const path = (start: Point, finish: Point) => {
   linePoints.push(lineTo(finish));
 
   return linePoints.join(' ');
+};
+
+const makeNode = (name: string, data: {}, overrides: {} = {}) => ({
+  id: name,
+  data,
+  height: 35,
+  width: 120,
+  type: 'node',
+  ...overrides,
+});
+
+export const fixParallelToParallelNodes = (nodes) => {
+  const multipleRunBeforeMap = nodes.reduce((acc, node, idx) => {
+    const runAfters = node.data.task.runAfter;
+    if (runAfters && runAfters.length > 1) {
+      const id = [...runAfters]
+        .sort((a, b) => a.localeCompare(b))
+        .reduce((str, ref) => `${str}|${ref}`);
+      if (!Array.isArray(acc[id])) {
+        acc[id] = [];
+      }
+      acc[id].push({
+        node,
+        runAfters,
+        atIndex: idx,
+      });
+    }
+    return acc;
+  }, {});
+  const p2pList = Object.values(multipleRunBeforeMap).filter((data: []) => data.length > 1);
+
+  if (p2pList.length === 0) {
+    // No parallel to parallel
+    return nodes;
+  }
+  const newNodes = [];
+  p2pList.forEach((p2p: any) => {
+    const { runAfters } = p2p[0];
+
+    const names = p2p.map((p2pData: any) => p2pData.node.id);
+
+    const tempName = `parallel-${names.join('-')}`;
+    newNodes.push(
+      makeNode(
+        tempName,
+        {
+          task: {
+            name: tempName,
+            runAfter: runAfters,
+          },
+        },
+        { type: 'nodeSpacer' },
+      ),
+    );
+
+    nodes.forEach((node) => {
+      if (names.includes(node.id)) {
+        const { task } = node.data;
+        newNodes.push(
+          makeNode(node.id, {
+            ...node.data,
+            task: {
+              ...task,
+              runAfter: [tempName],
+            },
+          }),
+        );
+      } else {
+        newNodes.push(node);
+      }
+    });
+  });
+
+  return newNodes;
+};
+
+export const tasksToNodes = (taskList, pipeline, pipelineRun): PipelineNodeModel[] => {
+  const nodeList = taskList.map((task) =>
+    makeNode(task.name, {
+      task,
+      pipeline,
+      pipelineRun,
+    }),
+  );
+
+  return fixParallelToParallelNodes(nodeList);
 };

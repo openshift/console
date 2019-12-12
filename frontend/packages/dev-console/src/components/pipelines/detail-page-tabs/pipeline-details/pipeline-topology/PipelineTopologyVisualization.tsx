@@ -1,19 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  EdgeModel,
-  Model,
-  NodeModel,
-  Visualization,
-  VisualizationSurface,
-} from '@console/topology';
+import { Model, Visualization, VisualizationSurface } from '@console/topology';
 import { Pipeline, PipelineRun } from '../../../../../utils/pipeline-augment';
 import {
   getPipelineTasks,
   PipelineVisualizationTaskItem,
 } from '../../../../../utils/pipeline-utils';
-import { componentFactory, layoutFactory } from './layout';
-import {} from '@console/topology/src/types';
+import { componentFactory, layoutFactory } from './factories';
+import { tasksToNodes } from './utils';
+import { PipelineEdgeModel, PipelineNodeModel } from './types';
 
 const PipelineVisualizationSurface: React.FC<{ model: Model }> = ({ model }) => {
   const [vis, setVis] = React.useState(null);
@@ -34,15 +29,6 @@ const PipelineVisualizationSurface: React.FC<{ model: Model }> = ({ model }) => 
   return <VisualizationSurface visualization={vis} />;
 };
 
-type PipelineEdgeModel = EdgeModel;
-type PipelineNodeModel = {
-  data: {
-    task: PipelineVisualizationTaskItem;
-    pipeline: Pipeline;
-    pipelineRun?: PipelineRun;
-  };
-} & NodeModel;
-
 interface PipelineTopologyVisualizationProps {
   pipeline: Pipeline;
   pipelineRun?: PipelineRun;
@@ -55,17 +41,7 @@ const PipelineTopologyVisualization: React.FC<PipelineTopologyVisualizationProps
   const taskList: PipelineVisualizationTaskItem[] = _.flatten(
     getPipelineTasks(pipeline, pipelineRun),
   );
-  const nodes: PipelineNodeModel[] = taskList.map((task) => ({
-    data: {
-      task,
-      pipeline,
-      pipelineRun,
-    },
-    id: task.name,
-    type: 'node',
-    width: 120,
-    height: 35,
-  }));
+  const nodes: PipelineNodeModel[] = tasksToNodes(taskList, pipeline, pipelineRun);
 
   const edges: PipelineEdgeModel[] = _.flatten(
     nodes
