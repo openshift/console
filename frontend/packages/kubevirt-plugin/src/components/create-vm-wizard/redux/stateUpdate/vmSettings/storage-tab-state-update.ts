@@ -2,7 +2,7 @@ import {
   hasVmSettingsChanged,
   iGetProvisionSource,
 } from '../../../selectors/immutable/vm-settings';
-import { VMSettingsField } from '../../../types';
+import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../../types';
 import { InternalActionType, UpdateOptions } from '../../types';
 import { iGetProvisionSourceStorage } from '../../../selectors/immutable/storage';
 import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
@@ -20,7 +20,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   }
 
   const iOldSourceStorage = iGetProvisionSourceStorage(state, id);
-  const oldSourceStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
+  const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
   const newSourceStorage = getProvisionSourceStorage(iGetProvisionSource(state, id));
   const oldType =
@@ -39,7 +39,8 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
 
   if (newType !== oldType) {
     if (!newSourceStorage) {
-      if (oldSourceStorage) {
+      // not a template provision source
+      if (oldSourceStorage && oldSourceStorage.type === VMWizardStorageType.PROVISION_SOURCE_DISK) {
         dispatch(
           vmWizardInternalActions[InternalActionType.RemoveStorage](id, oldSourceStorage.id),
         );
