@@ -1,10 +1,10 @@
 import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, waitForCount } from '@console/shared/src/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { MINUTE, NS, OCS_OP, SECOND } from '../utils/consts';
-import { waitFor } from '../utils/helpers';
+import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
+import { waitFor, refreshIfNotVisible } from '../utils/helpers';
 
 // Operator Hub & Installed Operators
 const ocsOperator = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
@@ -12,6 +12,7 @@ export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
 const installOperator = $('.pf-m-primary');
 const storageClusterLink = $('article:nth-child(10) a');
 const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
+const searchInputOperators = $('input[placeholder="Filter by name..."]');
 
 // Subscription Page
 const subscribeButton = $('.pf-m-primary');
@@ -68,7 +69,9 @@ export const goToWorkLoads = async () => {
 
 // Operators page
 export const selectWorkerRows = async () => {
+  // Wait for 6 inputs to show up
   const selectedNodes = [];
+  await browser.wait(until.and(waitForCount($$('tbody tr'), 6)));
   const isAllSeleted = await selectAllBtn.isSelected();
   if (isAllSeleted === true) await selectAllBtn.click();
   const workerAz = [];
@@ -82,16 +85,21 @@ export const selectWorkerRows = async () => {
     splitedRow = newCurrRow.split(/\s/g);
     if (splitedRow[3] === 'worker') {
       workerAz.push(splitedRow[4]);
-      await table
-        .$$('input')
-        .get(index)
-        .click();
-      selectedNodes.push(
-        await table
-          .$$('a')
+      if (
+        !(await $$('tbody input')
           .get(index)
-          .getText(),
-      );
+          .isSelected())
+      ) {
+        await $$('tbody input')
+          .get(index)
+          .click();
+        selectedNodes.push(
+          await table
+            .$$('tbody a')
+            .get(index)
+            .getText(),
+        );
+      }
     }
   });
   return selectedNodes;
@@ -119,9 +127,9 @@ export class InstallCluster {
     await this.installOperator();
     await browser.wait(until.visibilityOf(ocsOperator));
     // Sometimes operator changes few times its status so we will wait for
-    // for 10 Succeeded status in row to be sure we have operator is
+    // for 5 Succeeded status in row to be sure we have operator is
     // installed properly.
-    await waitFor(ocsOperatorStatus, 'Succeeded', 10);
+    await waitFor(ocsOperatorStatus, 'Succeeded', 5);
   }
 
   async installOperator() {
@@ -134,15 +142,21 @@ export class InstallCluster {
     await nsTag.click();
     await subscribeButton.click();
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await browser.wait(until.visibilityOf(searchInputOperators));
+    await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
   }
 
   async createStorageCluster() {
     await goToInstalledOperators();
+    await browser.wait(until.visibilityOf(searchInputOperators));
+    await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
     await click(ocsOperator);
+    // Operators page does not directly show tiles so refresh until it shows
+    await refreshIfNotVisible(storageClusterLink, 5);
     await click(storageClusterLink);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     // Node list fluctautes
-    await browser.sleep(10 * SECOND);
+    await browser.sleep(20 * SECOND);
     const nodes = await selectWorkerRows();
     // Fluctating
     await browser.sleep(5 * SECOND);
