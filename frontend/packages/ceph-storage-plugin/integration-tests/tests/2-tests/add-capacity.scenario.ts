@@ -13,8 +13,15 @@ import {
   storageClusterRow,
   storageClusterView,
   verifyFields,
-} from '../views/add-capacity.view';
-import { CLUSTER_STATUS, EXPAND_WAIT, KIND, NS, POD_NAME_PATTERNS, SECOND } from '../utils/consts';
+} from '../../views/add-capacity.view';
+import {
+  CLUSTER_STATUS,
+  EXPAND_WAIT,
+  KIND,
+  NS,
+  POD_NAME_PATTERNS,
+  SECOND,
+} from '../../utils/consts';
 import {
   getOSDPreparePodsCnt,
   getPodName,
@@ -23,7 +30,7 @@ import {
   isPodPresent,
   testPodIsRunning,
   testPodIsSucceeded,
-} from '../utils/helpers';
+} from '../../utils/helpers';
 
 const storageCluster = JSON.parse(execSync(`kubectl get -o json -n ${NS} ${KIND}`).toString());
 const cephValue = JSON.parse(execSync(`kubectl get cephCluster -n ${NS} -o json`).toString());

@@ -2,7 +2,12 @@ import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { dashboardIsLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
-import { serviceName, clusterHealth, clusterName, allNodes } from '../views/storage-dashboard.view';
+import {
+  serviceName,
+  clusterHealth,
+  clusterName,
+  allNodes,
+} from '../../views/storage-dashboard.view';
 
 const OCS_SERVICE_NAME = 'OpenShift Container Storage';
 const STATUS_HEALTHY = 'healthy';
