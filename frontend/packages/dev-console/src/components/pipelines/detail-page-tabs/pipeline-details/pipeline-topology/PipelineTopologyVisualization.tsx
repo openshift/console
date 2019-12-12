@@ -98,7 +98,7 @@ const PipelineTopologyVisualization: React.FC<PipelineTopologyVisualizationProps
         fontSize: 12,
         marginBottom: 20,
         overflow: 'hidden',
-        padding: 20,
+        padding: `20px 36px`,
       }}
     >
       <PipelineVisualizationSurface
