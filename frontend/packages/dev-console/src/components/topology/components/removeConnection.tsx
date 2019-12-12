@@ -34,8 +34,7 @@ export const removeConnection = (edge: Edge): Promise<any> => {
         edge.getData().data && edge.getData().data.sbr,
         edge.getType(),
       ).catch((err) => {
-        const error = err.message;
-        errorModal({ error });
+        err && errorModal({ error: err.message });
       });
     },
   });
