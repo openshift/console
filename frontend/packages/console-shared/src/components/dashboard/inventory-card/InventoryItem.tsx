@@ -150,8 +150,7 @@ const StatusLink = connectToFlags<StatusLinkProps>(
     return null;
   }
   const statusItems = encodeURIComponent(statusIDs.join(','));
-  const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
-  const path = basePath || `/k8s/${namespacePath}/${kind.plural}`;
+  const path = basePath || resourcePathFromModel(kind, null, namespace);
   const to =
     filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
   const statusGroupIcons = getStatusGroupIcons(flags);

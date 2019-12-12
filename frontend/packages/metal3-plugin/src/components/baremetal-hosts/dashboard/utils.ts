@@ -14,6 +14,7 @@ const BMH_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.NOT_MAPPED]: HOST_SUCCESS_STATES,
   [InventoryStatusGroup.PROGRESS]: HOST_PROGRESS_STATES,
   [InventoryStatusGroup.ERROR]: HOST_ERROR_STATES,
+  'node-maintenance': ['maintenance'],
 };
 
 export const getBMHStatusGroups: StatusGroupMapper = (
@@ -38,6 +39,11 @@ export const getBMHStatusGroups: StatusGroupMapper = (
     },
     [InventoryStatusGroup.UNKNOWN]: {
       statusIDs: ['other'],
+      count: 0,
+      filterType: 'host-status',
+    },
+    'node-maintenance': {
+      statusIDs: ['maintenance'],
       count: 0,
       filterType: 'host-status',
     },

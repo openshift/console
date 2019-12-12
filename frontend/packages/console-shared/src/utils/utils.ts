@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FirehoseResult } from '@console/internal/components/utils';
-import { getUID } from '../selectors';
+import { FirehoseResult } from '@console/internal/components/utils/types';
+import { getUID } from '../selectors/common';
 
 export type EntityMap<A> = { [propertyName: string]: A };
 export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;
