@@ -2,5 +2,7 @@
   --edge--stroke: var(--pf-global--Color--400);
   --edge--fill: var(--pf-global--BackgroundColor--light-300);
   --edge__link--stroke: var(--pf-global--Color--400);
-  --edge__arrow--cursor: pointer;
+  &.odc2-m-editable {
+    --edge__arrow--cursor: pointer;
+  }
 }

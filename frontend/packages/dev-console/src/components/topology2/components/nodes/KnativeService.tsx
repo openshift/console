@@ -47,12 +47,6 @@ const KnativeService: React.FC<EventSourceProps> = ({
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const dragNodeRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE), { element })[1];
-  const dragLabelRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE), { element })[1];
-
-  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
-  const { data } = element.getData();
-  const hasDataUrl = !!data.url;
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
@@ -62,6 +56,16 @@ const KnativeService: React.FC<EventSourceProps> = ({
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
+  const dragNodeRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), {
+    element,
+  })[1];
+  const dragLabelRef = useDragNode(nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), {
+    element,
+  })[1];
+
+  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const { data } = element.getData();
+  const hasDataUrl = !!data.url;
   useAnchor(
     React.useCallback(
       (node: Node) => new RevisionTrafficSourceAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
