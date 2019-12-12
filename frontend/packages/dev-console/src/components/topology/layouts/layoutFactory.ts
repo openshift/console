@@ -7,18 +7,9 @@ const COLA_FORCE_LAYOUT = 'ColaForce';
 const layoutFactory: LayoutFactory = (type: string, graph: Graph): Layout | undefined => {
   switch (type) {
     case COLA_FORCE_LAYOUT:
-      return new TopologyColaLayout(graph, {
-        linkDistance: 60,
-        nodeDistance: 35,
-        groupDistance: 35,
-      });
+      return new TopologyColaLayout(graph, { layoutOnDrag: true });
     case COLA_LAYOUT:
-      return new TopologyColaLayout(graph, {
-        linkDistance: 60,
-        nodeDistance: 35,
-        groupDistance: 35,
-        layoutOnDrag: false,
-      });
+      return new TopologyColaLayout(graph, { layoutOnDrag: false });
     default:
       return undefined;
   }
