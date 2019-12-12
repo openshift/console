@@ -77,7 +77,10 @@ export const filterRevisionsByActiveApplication = (
   _.forEach(revisions, (revision) => {
     const configuration = getParentResource(revision, resources.configurations.data);
     const service = getParentResource(configuration, resources.ksservices.data);
-    const hasTraffic = _.find(service.status.traffic, { revisionName: revision.metadata.name });
+    const hasTraffic =
+      service &&
+      service.status &&
+      _.find(service.status.traffic, { revisionName: revision.metadata.name });
     const isServicePartofGroup = filterBasedOnActiveApplication([service], application).length > 0;
     if (hasTraffic && isServicePartofGroup) {
       filteredRevisions.push(revision);
