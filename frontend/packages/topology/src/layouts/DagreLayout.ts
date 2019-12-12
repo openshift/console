@@ -1,119 +1,136 @@
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
-import { Edge, GraphElement, Graph, Layout, Node } from '../types';
+import { Edge, Graph, Layout, Node } from '../types';
 import Point from '../geom/Point';
-import { leafNodeElements } from '../utils/element-utils';
+import { BaseLayout, LayoutGroup, LayoutLink, LayoutNode, LayoutOptions } from './BaseLayout';
 
-class DagreNode {
-  private node: Node;
-
-  constructor(node: Node) {
-    this.node = node;
+class DagreNode extends LayoutNode implements dagre.Node {
+  getUpdatableNode(): dagre.Node {
+    return {
+      id: this.id,
+      width: this.width,
+      height: this.height,
+      x: this.x,
+      y: this.y,
+    };
   }
 
-  getId(): string {
-    return this.node.getId();
-  }
-
-  getData(): any {
-    return this.node.getData();
-  }
-
-  get element(): Node {
-    return this.node;
-  }
-
-  get x(): number {
-    return this.node.getBounds().getCenter().x;
-  }
-
-  set x(value: number) {
-    this.node.setBounds(
-      this.node.getBounds().setCenter(value, this.node.getBounds().getCenter().y),
-    );
-  }
-
-  get y(): number {
-    return this.node.getBounds().getCenter().y;
-  }
-
-  set y(value: number) {
-    this.node.setBounds(
-      this.node
-        .getBounds()
-        .clone()
-        .setCenter(this.node.getBounds().getCenter().x, value),
-    );
+  updateToNode(updatedNode: dagre.Node | undefined): void {
+    if (updatedNode) {
+      this.x = updatedNode.x;
+      this.y = updatedNode.y;
+      this.update();
+    }
   }
 }
 
-class DagreEdge {
+class DagreGroup extends LayoutGroup {}
+
+class DagreLink extends LayoutLink {
   public points: any[];
 
-  private edge: Edge;
-
-  constructor(edge: Edge) {
-    this.edge = edge;
-  }
-
-  get element(): Edge {
-    return this.edge;
-  }
-
-  get source(): string {
-    return this.edge.getSource().getId();
-  }
-
-  get target(): string {
-    return this.edge.getTarget().getId();
+  updateBendpoints(): void {
+    if (this.points && !this.isFalse && this.points.length > 2) {
+      this.element.setBendpoints(
+        this.points.slice(1, -1).map((point: any) => new Point(point.x, point.y)),
+      );
+    }
   }
 }
 
-export default class DagreLayout implements Layout {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  private graph: Graph; // Usage is TBD
+type DagreLayoutOptions = LayoutOptions & {
+  marginx: number;
+  marginy: number;
+  nodesep: number;
+  edgesep: number;
+  ranker: string;
+  rankdir: string;
+};
 
-  constructor(graph: Graph) {
-    this.graph = graph;
+class DagreLayout extends BaseLayout implements Layout {
+  private dagreOptions: DagreLayoutOptions;
+
+  constructor(graph: Graph, options?: Partial<DagreLayoutOptions>) {
+    super(graph, options);
+    this.dagreOptions = {
+      ...this.options,
+      ...{
+        marginx: 0,
+        marginy: 0,
+        nodesep: this.options.nodeDistance,
+        edgesep: this.options.linkDistance,
+        ranker: 'tight-tree',
+        rankdir: 'TB',
+      },
+      ...options,
+    };
   }
 
-  destroy(): void {}
+  protected createLayoutNode(node: Node, nodeDistance: number, index: number) {
+    return new DagreNode(node, nodeDistance, index);
+  }
 
-  layout = () => {
-    const nodes: DagreNode[] = leafNodeElements(this.graph.getNodes()).map(
-      (node: GraphElement) => new DagreNode(node as Node),
-    );
-    const edges: DagreEdge[] = this.graph.getEdges().map((edge: Edge) => {
-      edge.setBendpoints([]);
-      return new DagreEdge(edge as Edge);
+  protected createLayoutLink(
+    edge: Edge,
+    source: LayoutNode,
+    target: LayoutNode,
+    isFalse: boolean,
+  ): LayoutLink {
+    return new DagreLink(edge, source, target, isFalse);
+  }
+
+  protected createLayoutGroup(node: Node, padding: number, index: number) {
+    return new DagreGroup(node, padding, index);
+  }
+
+  protected updateEdgeBendpoints(edges: DagreLink[]): void {
+    _.forEach(edges, (edge) => {
+      const link = edge as DagreLink;
+      link.updateBendpoints();
     });
+  }
 
-    const graph = new dagre.graphlib.Graph({ compound: true });
-    graph.setGraph({
-      marginx: 0,
-      marginy: 0,
-      nodesep: 20,
-      ranker: 'tight-tree',
-    });
+  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {
+    if (initialRun || addingNodes) {
+      const dagreGraph = new dagre.graphlib.Graph({ compound: true });
+      dagreGraph.setGraph({
+        marginx: this.dagreOptions.marginx,
+        marginy: this.dagreOptions.marginy,
+        nodesep: this.dagreOptions.nodesep,
+        edgesep: this.dagreOptions.edgesep,
+        ranker: this.dagreOptions.ranker,
+        rankdir: this.dagreOptions.rankdir,
+      });
 
-    _.forEach(nodes, (node) => {
-      graph.setNode(node.getId(), node);
-      graph.setParent(node.getId(), node.getData().group);
-    });
+      _.forEach(this.groups, (group) => {
+        dagreGraph.setNode(group.id, group);
+        dagreGraph.setParent(group.id, group.element.getParent().getId());
+      });
 
-    _.forEach(edges, (dagreEdge: DagreEdge) => {
-      graph.setEdge(dagreEdge.source, dagreEdge.target, dagreEdge);
-    });
+      const updatedNodes: dagre.Node[] = [];
+      _.forEach(this.nodes, (node) => {
+        const updateNode = (node as DagreNode).getUpdatableNode();
+        updatedNodes.push(updateNode);
+        dagreGraph.setNode(node.id, updateNode);
+        dagreGraph.setParent(node.id, node.element.getParent().getId());
+      });
 
-    dagre.layout(graph);
+      _.forEach(this.edges, (dagreEdge) => {
+        dagreGraph.setEdge(dagreEdge.source.id, dagreEdge.target.id, dagreEdge);
+      });
 
-    _.forEach(edges, (edge: DagreEdge) => {
-      if (edge.points && edge.points.length > 2) {
-        edge.element.setBendpoints(
-          edge.points.slice(1, -1).map((point: any) => new Point(point.x, point.y)),
-        );
-      }
-    });
-  };
+      dagre.layout(dagreGraph);
+      this.nodes.forEach((node) => {
+        (node as DagreNode).updateToNode(updatedNodes.find((n) => n.id === node.id));
+      });
+
+      this.updateEdgeBendpoints(this.edges as DagreLink[]);
+    }
+
+    if (this.options.layoutOnDrag) {
+      this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
+    }
+  }
 }
+
+export { DagreLayout, DagreNode, DagreLink, DagreGroup, DagreLayoutOptions };
