@@ -6,11 +6,13 @@ reviewers:
   - pcbailey
   - jelkosz
   - rhrazdil
+  - yaacov
 approvers:
   - mareklibra
   - rawagner
   - suomiy
   - jelkosz
   - rhrazdil
+  - yaacov
 labels:
   - component/kubevirt
