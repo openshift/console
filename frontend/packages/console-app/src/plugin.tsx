@@ -9,13 +9,6 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
 } from '@console/plugin-sdk';
-import {
-  ClusterVersionModel,
-  NodeModel,
-  PodModel,
-  StorageClassModel,
-  PersistentVolumeClaimModel,
-} from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   getNodeStatusGroups,
@@ -23,9 +16,13 @@ import {
   getPVCStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import {
-  isClusterUpdateActivity,
-  getClusterUpdateTimestamp,
-} from './components/dashboards-page/ClusterUpdateActivity';
+  ClusterVersionModel,
+  NodeModel,
+  PodModel,
+  StorageClassModel,
+  PersistentVolumeClaimModel,
+  ClusterOperatorModel,
+} from '@console/internal/models';
 import {
   fetchK8sHealth,
   getK8sHealthState,
@@ -37,6 +34,12 @@ import {
   CONTROLLER_MANAGERS_UP,
   SCHEDULERS_UP,
 } from './queries';
+import {
+  getClusterOperatorUpgradeTimestamp,
+  isClusterOperatorUpgradeActivity,
+  getClusterUpdateTimestamp,
+  isClusterUpdateActivity,
+} from './components/dashboards-page/activity';
 
 type ConsumedExtensions =
   | Perspective
@@ -133,6 +136,24 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: PersistentVolumeClaimModel,
       mapper: getPVCStatusGroups,
       useAbbr: true,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        prop: 'clusterOperators',
+        kind: referenceForModel(ClusterOperatorModel),
+        namespaced: false,
+      },
+      isActivity: isClusterOperatorUpgradeActivity,
+      getTimestamp: getClusterOperatorUpgradeTimestamp,
+      loader: () =>
+        import(
+          './components/dashboards-page/ClusterOperatorUpgradeActivity' /* webpackChunkName: "console-app" */
+        ).then((m) => m.default),
+      required: FLAGS.CLUSTER_VERSION,
     },
   },
 ];
