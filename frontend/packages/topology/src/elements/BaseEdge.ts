@@ -1,6 +1,6 @@
 import { observable, computed } from 'mobx';
 import Point from '../geom/Point';
-import { Edge, Node, EdgeModel, ModelKind, AnchorEnd, Anchor } from '../types';
+import { Edge, Node, EdgeModel, ModelKind, AnchorEnd, Anchor, isGraph } from '../types';
 import BaseElement from './BaseElement';
 
 export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends BaseElement<E, D>
@@ -34,22 +34,39 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
     return ModelKind.edge;
   }
 
-  getSource(): Node {
+  private getUncollapsedParent(node: Node): Node {
+    let returnNode: Node = node;
+    try {
+      let parent = !isGraph(node) && node.getParent();
+      while (parent && !isGraph(parent)) {
+        if ((parent as Node).isCollapsed()) {
+          returnNode = parent as Node;
+        }
+        parent = parent.getParent();
+      }
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
+    return returnNode;
+  }
+
+  getSource(ignoreCollapse: boolean = false): Node {
     if (!this.source) {
       throw new Error(`Edge with ID '${this.getId()}' has no source.`);
     }
-    return this.source;
+
+    return ignoreCollapse ? this.source : this.getUncollapsedParent(this.source);
   }
 
   setSource(source: Node) {
     this.source = source;
   }
 
-  getTarget(): Node {
+  getTarget(ignoreCollapse: boolean = false): Node {
     if (!this.target) {
       throw new Error(`Edge with ID '${this.getId()}' has no target.`);
     }
-    return this.target;
+
+    return ignoreCollapse ? this.target : this.getUncollapsedParent(this.target);
   }
 
   setTarget(target: Node) {

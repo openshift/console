@@ -13,7 +13,7 @@ import {
   withRemoveConnector,
   withContextMenu,
 } from '@console/topology';
-import ApplicationGroup from './components/nodes/ApplicationGroup';
+import Application from './components/nodes/Application';
 import ConnectsTo from './components/edges/ConnectsTo';
 import EventSource from './components/nodes/EventSource';
 import EventSourceLink from './components/edges/EventSourceLink';
@@ -76,7 +76,7 @@ class ComponentFactory {
                 groupContextMenu,
                 document.getElementById('modal-container'),
                 'odc-topology-context-menu',
-              )(ApplicationGroup),
+              )(Application),
             ),
           );
         case TYPE_KNATIVE_SERVICE:

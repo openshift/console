@@ -7,7 +7,7 @@ import { Padding, Translatable } from './geom/types';
 export type PointTuple = [number, number];
 
 export interface Layout {
-  layout(): void;
+  layout(initialize?: boolean): void;
   destroy(): void;
 }
 
@@ -55,6 +55,7 @@ export interface NodeModel extends ElementModel {
   height?: number;
   group?: boolean;
   shape?: NodeShape;
+  collapsed?: boolean;
 }
 
 export interface EdgeModel extends ElementModel {
@@ -116,6 +117,8 @@ export interface Node<E extends NodeModel = NodeModel, D = any> extends GraphEle
   getBounds(): Rect;
   setBounds(bounds: Rect): void;
   isGroup(): boolean;
+  isCollapsed(): boolean;
+  setCollapsed(collapsed: boolean): void;
   getNodeShape(): NodeShape;
   setNodeShape(shape: NodeShape): void;
   getSourceEdges(): Edge[];
@@ -123,9 +126,9 @@ export interface Node<E extends NodeModel = NodeModel, D = any> extends GraphEle
 }
 
 export interface Edge<E extends EdgeModel = EdgeModel, D = any> extends GraphElement<E, D> {
-  getSource(): Node;
+  getSource(ignoreCollapse?: boolean): Node;
   setSource(source: Node): void;
-  getTarget(): Node;
+  getTarget(ignoreCollapse?: boolean): Node;
   setTarget(target: Node): void;
   getStartPoint(): Point;
   setStartPoint(x?: number, y?: number): void;
@@ -145,7 +148,7 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
   setScale(scale: number): void;
   getLayout(): string | undefined;
   setLayout(type: string | undefined): void;
-  layout(): void;
+  layout(initialize?: boolean): void;
 
   // viewport operations
   reset(): void;
@@ -203,6 +206,8 @@ export interface Controller extends WithState {
   removeEventListener(type: string, listener: EventListener): Controller;
   fireEvent(type: string, ...args: any): void;
   getElements(): GraphElement[];
+  setTypeCollapsed(type: string, collapsed: boolean): void;
+  getTypeCollapsed(type: string): boolean;
 }
 
 type ElementEvent = { target: GraphElement };

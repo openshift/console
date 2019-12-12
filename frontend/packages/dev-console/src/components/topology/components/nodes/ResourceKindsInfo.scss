@@ -1,0 +1,8 @@
+.odc-resource-kinds-info {
+  &__resources {
+    cursor: pointer;
+    .odc-m-drag-active & {
+      cursor: grab;
+    }
+  }
+}

@@ -1,25 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import * as React from 'react';
 import { action } from 'mobx';
-import * as _ from 'lodash';
 import {
   TopologyView,
-  TopologySideBar,
   TopologyControlBar,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
 } from '@patternfly/react-topology';
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarItem,
-  Split,
-  SplitItem,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownPosition,
-} from '@patternfly/react-core';
+import { Toolbar, ToolbarGroup, ToolbarItem, Checkbox } from '@patternfly/react-core';
 import {
   EdgeModel,
   Model,
@@ -35,7 +23,7 @@ import {
   withSelection,
 } from '../src';
 import defaultLayoutFactory from './layouts/defaultLayoutFactory';
-import data from './data/reasonable';
+import data from './data/group-types';
 import GroupHull from './components/GroupHull';
 import Group from './components/DefaultGroup';
 import Node from './components/DefaultNode';
@@ -44,7 +32,7 @@ import '@patternfly/patternfly/patternfly.css';
 import '@patternfly/patternfly/patternfly-addons.css';
 
 export default {
-  title: 'Topology Package',
+  title: 'Collapsible Groups',
 };
 
 const getModel = (layout: string): Model => {
@@ -61,18 +49,24 @@ const getModel = (layout: string): Model => {
       x: 0,
       y: 0,
       data: d,
+      groupId: d.group,
     };
   });
 
   // create groups from data
-  const groupNodes: NodeModel[] = _.map(_.groupBy(nodes, (n) => n.data.group), (v, k) => ({
-    type: 'group-hull',
-    id: k,
+  const groupNodes: NodeModel[] = data.groups.map((d) => ({
+    type: d.type,
+    id: d.id,
     group: true,
-    children: v.map((n: NodeModel) => n.id),
-    label: `group-${k}`,
+    children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
+    label: `group-${d.id}`,
+    width: d.width,
+    height: d.height,
     style: {
       padding: 10,
+    },
+    data: {
+      background: d.color,
     },
   }));
 
@@ -112,10 +106,10 @@ const getVisualization = (model: Model): Visualization => {
     if (kind === ModelKind.graph) {
       return withPanZoom()(GraphComponent);
     }
-    if (type === 'group-hull') {
+    if (type === 'blue') {
       return withDragNode({ canCancel: false })(GroupHull);
     }
-    if (type === 'group') {
+    if (type === 'orange' || type === 'pink') {
       return withDragNode({ canCancel: false })(Group);
     }
     if (kind === ModelKind.node) {
@@ -130,68 +124,70 @@ const getVisualization = (model: Model): Visualization => {
 
 type TopologyViewComponentProps = {
   vis: Visualization;
-  useSidebar: boolean;
 };
 
-const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis, useSidebar }) => {
+const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) => {
   const [selectedIds, setSelectedIds] = React.useState<string[]>();
-  const [layoutDropdownOpen, setLayoutDropdownOpen] = React.useState(false);
-  const [layout, setLayout] = React.useState('Force');
+  const [collapseBlues, setCollapseBlues] = React.useState<boolean>(false);
+  const [collapseOrange, setCollapseOrange] = React.useState<boolean>(false);
+  const [collapsePink, setCollapsePink] = React.useState<boolean>(false);
 
   vis.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids) => {
     setSelectedIds(ids);
   });
 
-  const topologySideBar = (
-    <TopologySideBar show={_.size(selectedIds) > 0} onClose={() => setSelectedIds([])}>
-      <div style={{ marginTop: 27, marginLeft: 20 }}>{_.head(selectedIds)}</div>
-    </TopologySideBar>
-  );
-
-  const updateLayout = (newLayout: string) => {
-    // FIXME reset followed by layout causes a flash of the reset prior to the layout
-    vis.getGraph().reset();
-    vis.getGraph().setLayout(newLayout);
-    setLayout(newLayout);
-    setLayoutDropdownOpen(false);
-  };
-
-  const layoutDropdown = (
-    <Split>
-      <SplitItem>
-        <label className="pf-u-display-inline-block pf-u-mr-md pf-u-mt-sm">Layout</label>
-      </SplitItem>
-      <SplitItem>
-        <Dropdown
-          position={DropdownPosition.right}
-          toggle={
-            <DropdownToggle onToggle={() => setLayoutDropdownOpen(!layoutDropdownOpen)}>
-              {layout}
-            </DropdownToggle>
-          }
-          isOpen={layoutDropdownOpen}
-          dropdownItems={[
-            <DropdownItem key={1} onClick={() => updateLayout('Force')}>
-              Force
-            </DropdownItem>,
-            <DropdownItem key={2} onClick={() => updateLayout('Dagre')}>
-              Dagre
-            </DropdownItem>,
-            <DropdownItem key={3} onClick={() => updateLayout('Cola')}>
-              Cola
-            </DropdownItem>,
-          ]}
-        />
-      </SplitItem>
-    </Split>
-  );
   const viewToolbar = (
     <Toolbar className="pf-u-mx-md pf-u-my-md">
       <ToolbarGroup>
-        <ToolbarItem>{layoutDropdown}</ToolbarItem>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-blues"
+            label="Collapse Blues"
+            isChecked={collapseBlues}
+            onChange={setCollapseBlues}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-orange"
+            label="Collapse Orange"
+            isChecked={collapseOrange}
+            onChange={setCollapseOrange}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-pink"
+            label="Collapse Pink"
+            isChecked={collapsePink}
+            onChange={setCollapsePink}
+          />
+        </ToolbarItem>
       </ToolbarGroup>
     </Toolbar>
   );
+
+  React.useEffect(() => {
+    action(() => {
+      vis.setTypeCollapsed('blue', collapseBlues);
+    })();
+  }, [vis, collapseBlues]);
+
+  React.useEffect(() => {
+    action(() => {
+      vis.setTypeCollapsed('orange', collapseOrange);
+    })();
+  }, [vis, collapseOrange]);
+
+  React.useEffect(() => {
+    action(() => {
+      vis.setTypeCollapsed('pink', collapsePink);
+    })();
+  }, [vis, collapsePink]);
 
   return (
     <TopologyView
@@ -217,21 +213,14 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis, useS
         />
       }
       viewToolbar={viewToolbar}
-      sideBar={useSidebar && topologySideBar}
-      sideBarOpen={useSidebar && _.size(selectedIds) > 0}
     >
       <VisualizationSurface visualization={vis} state={{ selectedIds }} />
     </TopologyView>
   );
 };
 
-export const Topology = () => {
-  const vis: Visualization = getVisualization(getModel('Force'));
+export const CollapsibleGroups = () => {
+  const vis: Visualization = getVisualization(getModel('Cola'));
 
-  return <TopologyViewComponent useSidebar={false} vis={vis} />;
-};
-
-export const WithSideBar = () => {
-  const vis: Visualization = getVisualization(getModel('Force'));
-  return <TopologyViewComponent useSidebar vis={vis} />;
+  return <TopologyViewComponent vis={vis} />;
 };

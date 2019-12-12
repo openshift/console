@@ -37,6 +37,9 @@ export default class Visualization extends Stateful implements Controller {
 
   private eventListeners: { [type: string]: EventListener[] } = {};
 
+  @observable
+  private collapsedTypes: { [type: string]: boolean } = {};
+
   @observable.shallow
   private readonly store = {};
 
@@ -232,6 +235,20 @@ export default class Visualization extends Stateful implements Controller {
         listeners[i](...args);
       }
     }
+  }
+
+  setTypeCollapsed(type: string, collapsed: boolean): void {
+    if (this.collapsedTypes[type] !== collapsed) {
+      this.collapsedTypes[type] = collapsed;
+      try {
+        this.getGraph().layout(false);
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+    }
+  }
+
+  getTypeCollapsed(type: string): boolean {
+    return !!this.collapsedTypes[type];
   }
 
   private createElement<E extends GraphElement>(kind: ModelKind, elementModel: ElementModel): E {

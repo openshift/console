@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash';
 import { action } from 'mobx';
+import { connect } from 'react-redux';
 import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import {
   TopologyView,
@@ -12,12 +12,12 @@ import {
 import {
   Visualization,
   VisualizationSurface,
-  GraphElement,
   isNode,
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
@@ -28,8 +28,12 @@ import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutF
 import ComponentFactory from './componentFactory';
 import { TYPE_APPLICATION_GROUP } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
+import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 
-export interface TopologyProps {
+interface StateProps {
+  filters: TopologyFilters;
+}
+export interface TopologyProps extends StateProps {
   data: TopologyDataModel;
   serviceBinding: boolean;
 }
@@ -42,7 +46,7 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
+const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
@@ -71,6 +75,12 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   React.useEffect(() => {
     componentFactoryRef.current.serviceBinding = serviceBinding;
   }, [serviceBinding]);
+
+  React.useEffect(() => {
+    action(() => {
+      visRef.current.setTypeCollapsed(TYPE_APPLICATION_GROUP, !filters.display.appGrouping);
+    })();
+  }, [filters.display.appGrouping]);
 
   React.useEffect(() => {
     const newModel = topologyModelFromDataModel(data);
@@ -181,9 +191,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
             application={{
               id: selectedEntity.getId(),
               name: selectedEntity.getLabel(),
-              resources: _.map(selectedEntity.getChildren(), (node: GraphElement) =>
-                node.getData(),
-              ),
+              resources: selectedEntity.getData().groupResources,
             }}
           />
         );
@@ -220,4 +228,9 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   );
 };
 
-export default Topology;
+const TopologyStateToProps = (state: RootState): StateProps => {
+  const filters = getTopologyFilters(state);
+  return { filters };
+};
+
+export default connect(TopologyStateToProps)(Topology);

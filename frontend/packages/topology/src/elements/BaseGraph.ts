@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { computed, observable } from 'mobx';
 import Rect from '../geom/Rect';
 import Point from '../geom/Point';
@@ -19,7 +20,21 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
 
   @computed
   private get edges(): Edge[] {
-    return this.getChildren().filter(isEdge);
+    const edges: Edge[] = [];
+    return _.reduce(
+      this.getChildren().filter(isEdge),
+      (uniqueEdges, edge) => {
+        if (
+          !uniqueEdges.find(
+            (e) => e.getSource() === edge.getSource() && e.getTarget() === edge.getTarget(),
+          )
+        ) {
+          uniqueEdges.push(edge);
+        }
+        return uniqueEdges;
+      },
+      edges,
+    );
   }
 
   @computed
@@ -66,9 +81,9 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
     this.currentLayout = layout ? this.getController().getLayout(layout) : undefined;
   }
 
-  layout(): void {
+  layout(initialize: boolean = false): void {
     if (this.currentLayout) {
-      this.currentLayout.layout();
+      this.currentLayout.layout(initialize);
     }
   }
 

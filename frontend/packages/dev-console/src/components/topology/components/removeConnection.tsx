@@ -29,8 +29,8 @@ export const removeConnection = (edge: Edge): Promise<any> => {
     submitDanger: true,
     executeFn: () => {
       return removeTopologyResourceConnection(
-        edge.getSource().getData(),
-        edge.getTarget().getData(),
+        edge.getSource(true).getData(),
+        edge.getTarget(true).getData(),
         edge.getData().data && edge.getData().data.sbr,
         edge.getType(),
       ).catch((err) => {

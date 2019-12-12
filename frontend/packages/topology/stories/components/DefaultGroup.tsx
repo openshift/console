@@ -41,6 +41,32 @@ const DefaultGroup: React.FC<GroupProps> = ({
     boxRef.current = element.getBounds().clone();
   }
 
+  if (element.isCollapsed()) {
+    const { width, height } = element.getBounds();
+    return (
+      <g>
+        <rect
+          ref={refs}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          rx={5}
+          ry={5}
+          fill={
+            canDrop && hover
+              ? 'lightgreen'
+              : canDrop && droppable
+              ? 'lightblue'
+              : `${(element.getData() && element.getData().background) || '#ededed'}`
+          }
+          strokeWidth={2}
+          stroke={selected ? 'blue' : '#cdcdcd'}
+        />
+      </g>
+    );
+  }
+
   return (
     <Layer id="groups">
       <rect
@@ -50,7 +76,13 @@ const DefaultGroup: React.FC<GroupProps> = ({
         y={boxRef.current.y}
         width={boxRef.current.width}
         height={boxRef.current.height}
-        fill={canDrop && hover ? 'lightgreen' : canDrop && droppable ? 'lightblue' : '#ededed'}
+        fill={
+          canDrop && hover
+            ? 'lightgreen'
+            : canDrop && droppable
+            ? 'lightblue'
+            : `${(element.getData() && element.getData().background) || '#ededed'}`
+        }
         strokeWidth={2}
         stroke={selected ? 'blue' : '#cdcdcd'}
       />

@@ -5,10 +5,12 @@ import {
   NodeModel,
   ModelKind,
   isNode,
+  isEdge,
   AnchorEnd,
   GroupStyle,
   NodeShape,
   Edge,
+  GraphElement,
 } from '../types';
 import CenterAnchor from '../anchors/CenterAnchor';
 import Rect from '../geom/Rect';
@@ -30,11 +32,18 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   @computed
   private get nodes(): Node[] {
+    if (this.isCollapsed()) {
+      return [];
+    }
+
     return this.getChildren().filter(isNode);
   }
 
   @observable
   private group = false;
+
+  @observable
+  private collapsed = false;
 
   @observable
   private shape: NodeShape | undefined;
@@ -65,12 +74,6 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     const { padding } = this.getStyle<GroupStyle>();
     const result = rect.padding(padding);
 
-    // ensure size is at least the size of the set bounds
-    result.setSize(
-      Math.max(result.width, this.bounds.width),
-      Math.max(result.height, this.bounds.height),
-    );
-
     return result;
   }
 
@@ -88,12 +91,19 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
       .filter((e) => e.getTarget() === this);
   }
 
+  getChildren(): GraphElement[] {
+    if (this.isCollapsed()) {
+      return super.getChildren().filter(isEdge);
+    }
+    return super.getChildren();
+  }
+
   getKind(): ModelKind {
     return ModelKind.node;
   }
 
   getBounds(): Rect {
-    return this.group ? this.groupBounds : this.bounds;
+    return this.group && !this.collapsed ? this.groupBounds : this.bounds;
   }
 
   setBounds(bounds: Rect): void {
@@ -130,7 +140,15 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
   }
 
   isGroup(): boolean {
-    return this.group;
+    return this.group && !this.collapsed;
+  }
+
+  isCollapsed(): boolean {
+    return this.collapsed || this.getController().getTypeCollapsed(this.getType());
+  }
+
+  setCollapsed(collapsed: boolean): void {
+    this.collapsed = collapsed;
   }
 
   getNodeShape(): NodeShape {
@@ -189,17 +207,20 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     if ('shape' in model) {
       this.shape = model.shape;
     }
+    if ('collapsed' in model) {
+      this.collapsed = !!model.collapsed;
+    }
   }
 
   translateToParent(t: Translatable): void {
-    if (!this.group) {
+    if (!this.group || this.isCollapsed()) {
       const { x, y } = this.getBounds();
       t.translate(x, y);
     }
   }
 
   translateFromParent(t: Translatable): void {
-    if (!this.group) {
+    if (!this.group || this.isCollapsed()) {
       const { x, y } = this.getBounds();
       t.translate(-x, -y);
     }

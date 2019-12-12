@@ -490,11 +490,16 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   });
 
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    const data: TopologyDataObject =
+      dataModel.topology[d.id] || (({} as any) as TopologyDataObject);
+    data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
+      width: 300,
+      height: 180,
       id: d.id,
       group: true,
       type: TYPE_APPLICATION_GROUP,
-      data: dataModel.topology[d.id],
+      data,
       children: d.nodes,
       label: d.name,
       style: {
