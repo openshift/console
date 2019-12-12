@@ -226,7 +226,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           aria-describedby="pvc-name-help"
           id="pvc-name"
           name="pvcName"
-          pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
           required
         />
         <p className="help-block" id="pvc-name-help">
@@ -268,7 +267,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       </label>
       <RequestSizeInput
         name="requestSize"
-        required={false}
+        required
         onChange={handleRequestSizeInputChange}
         defaultRequestSizeUnit={requestSizeUnit}
         defaultRequestSizeValue={requestSizeValue}
