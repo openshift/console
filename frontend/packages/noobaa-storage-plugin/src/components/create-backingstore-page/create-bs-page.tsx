@@ -74,6 +74,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           isPage
           namespace={ns}
           className="nb-bs-page-form__short"
+          csv={clusterServiceVersion}
         />
       </div>
     </>
