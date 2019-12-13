@@ -90,7 +90,7 @@ class DagreLayout extends BaseLayout implements Layout {
     });
   }
 
-  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {
+  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): Promise<any> {
     if (initialRun || addingNodes) {
       const dagreGraph = new dagre.graphlib.Graph({ compound: true });
       dagreGraph.setGraph({
@@ -128,8 +128,14 @@ class DagreLayout extends BaseLayout implements Layout {
     }
 
     if (this.options.layoutOnDrag) {
-      this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
+      return this.forceSimulation.useForceSimulation(
+        this.nodes,
+        this.edges,
+        this.getFixedNodeDistance,
+      );
     }
+
+    return Promise.resolve();
   }
 }
 

@@ -21,18 +21,28 @@ export default class ForceLayout extends BaseLayout implements Layout {
     return distance;
   };
 
-  protected startLayout(graph: Graph): void {
+  protected startLayout(graph: Graph): Promise<any> {
     const cx = graph.getBounds().width / 2;
     const cy = graph.getBounds().height / 2;
     this.forceSimulation.forceCenter(cx, cy);
     this.forceSimulation.alpha(1);
-    this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getLinkDistance);
+    const promise = this.forceSimulation.useForceSimulation(
+      this.nodes,
+      this.edges,
+      this.getLinkDistance,
+    );
     this.forceSimulation.restart();
+    return promise;
   }
 
-  protected updateLayout(): void {
-    this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
+  protected updateLayout(): Promise<any> {
+    const promise = this.forceSimulation.useForceSimulation(
+      this.nodes,
+      this.edges,
+      this.getFixedNodeDistance,
+    );
     this.forceSimulation.alpha(0.2);
     this.forceSimulation.restart();
+    return promise;
   }
 }

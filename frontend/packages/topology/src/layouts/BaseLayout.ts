@@ -321,12 +321,17 @@ class BaseLayout implements Layout {
     this.forceSimulation.alphaTarget(0);
   };
 
-  layout = () => {
+  layout = (): Promise<any> => {
     this.stopListening();
 
-    this.runLayout(true);
-
-    this.startListening();
+    return new Promise((resolve, reject) => {
+      this.runLayout(true)
+        .then(() => {
+          this.startListening();
+          resolve();
+        })
+        .catch(reject);
+    });
   };
 
   private startListening(): void {
@@ -520,15 +525,22 @@ class BaseLayout implements Layout {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {}
+  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): Promise<any> {
+    return Promise.resolve();
+  }
 
-  protected updateLayout(): void {
-    this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
+  protected updateLayout(): Promise<any> {
+    const promise = this.forceSimulation.useForceSimulation(
+      this.nodes,
+      this.edges,
+      this.getFixedNodeDistance,
+    );
     this.forceSimulation.alpha(0.2);
+    return promise;
   }
 
   @action
-  private runLayout(initialRun: boolean, restart = true): void {
+  private runLayout(initialRun: boolean, restart = true): Promise<any> {
     const prevGroups = this.groups;
 
     // create datum
@@ -588,10 +600,14 @@ class BaseLayout implements Layout {
       // Reset the force simulation
       this.stopSimulation();
 
-      this.startLayout(this.graph, initialRun, addingNodes);
-    } else if (restart && this.options.layoutOnDrag) {
-      this.updateLayout();
+      return this.startLayout(this.graph, initialRun, addingNodes);
     }
+
+    if (restart && this.options.layoutOnDrag) {
+      return this.updateLayout();
+    }
+
+    return Promise.resolve();
   }
 }
 

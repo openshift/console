@@ -7,7 +7,7 @@ import { Padding, Translatable } from './geom/types';
 export type PointTuple = [number, number];
 
 export interface Layout {
-  layout(): void;
+  layout(): Promise<any>;
   destroy(): void;
 }
 

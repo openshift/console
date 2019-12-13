@@ -35,6 +35,10 @@ class ColaLayout extends BaseLayout implements Layout {
 
   private destroyed = false;
 
+  private onEndResolve: () => void = () => {};
+
+  private onEndReject: (reason: any) => void = () => {};
+
   constructor(graph: Graph, options?: Partial<ColaLayoutOptions>) {
     super(graph, options);
     this.colaOptions = {
@@ -84,12 +88,12 @@ class ColaLayout extends BaseLayout implements Layout {
           (d as ColaNode).fixed = 0;
         });
         if (this.options.layoutOnDrag) {
-          this.forceSimulation.useForceSimulation(
-            this.nodes,
-            this.edges,
-            this.getFixedNodeDistance,
-          );
+          this.forceSimulation
+            .useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance)
+            .then(this.onEndResolve)
+            .catch(this.onEndReject);
         }
+        this.onEndResolve();
       })();
     });
   }
@@ -145,17 +149,31 @@ class ColaLayout extends BaseLayout implements Layout {
     });
   }
 
-  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {
-    // start the layout
-    this.d3Cola.alpha(0.2);
-    this.d3Cola.start(
-      addingNodes ? 0 : this.colaOptions.initialUnconstrainedIterations,
-      addingNodes ? 0 : this.colaOptions.initialUserConstraintIterations,
-      addingNodes ? 0 : this.colaOptions.initialAllConstraintsIterations,
-      addingNodes ? 0 : this.colaOptions.gridSnapIterations,
-      true,
-      !addingNodes,
-    );
+  protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.onEndResolve = () => {
+        this.onEndResolve = () => {};
+        this.onEndReject = () => {};
+        resolve();
+      };
+      this.onEndReject = (reason: any) => {
+        this.onEndResolve = () => {};
+        this.onEndReject = () => {};
+        reject(reason);
+      };
+      this.onEndReject = reject;
+
+      // start the layout
+      this.d3Cola.alpha(0.2);
+      this.d3Cola.start(
+        addingNodes ? 0 : this.colaOptions.initialUnconstrainedIterations,
+        addingNodes ? 0 : this.colaOptions.initialUserConstraintIterations,
+        addingNodes ? 0 : this.colaOptions.initialAllConstraintsIterations,
+        addingNodes ? 0 : this.colaOptions.gridSnapIterations,
+        true,
+        !addingNodes,
+      );
+    });
   }
 }
 

@@ -75,7 +75,7 @@ class ForceSimulation {
       i: number,
       links: d3.SimulationLinkDatum<ForceSimulationNode>[],
     ) => number,
-  ): void {
+  ): Promise<any> {
     this.forceLink.distance(distance);
 
     // first remove the links so that the layout doesn't error
@@ -83,6 +83,13 @@ class ForceSimulation {
 
     this.simulation.nodes([...nodes]);
     this.forceLink.links([...links]);
+
+    return new Promise((resolve) => {
+      this.simulation.on('end', () => {
+        this.simulation.on('end', () => {});
+        resolve();
+      });
+    });
   }
 
   public haltForceSimulation(): void {
