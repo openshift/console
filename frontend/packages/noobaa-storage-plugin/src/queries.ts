@@ -38,7 +38,7 @@ export enum StatusCardQueries {
 
 export const CAPACITY_BREAKDOWN_QUERIES = {
   [ObjectDashboardQuery.PROJECTS_BY_USED]: 'NooBaa_projects_capacity_usage',
-  [ObjectDashboardQuery.BUCKETS_TOTAL_USED]: 'NooBaa_bucket_class_capacity_usage',
+  [ObjectDashboardQuery.BUCKETS_BY_USED]: 'NooBaa_bucket_class_capacity_usage',
 };
 
 export const breakdownQueryMap = {
@@ -58,10 +58,10 @@ export const breakdownQueryMap = {
     metric: 'bucket_class',
     queries: {
       [ObjectDashboardQuery.BUCKETS_BY_USED]: `sort_desc(topk(5, ${
-        CAPACITY_BREAKDOWN_QUERIES[ObjectDashboardQuery.BUCKETS_TOTAL_USED]
+        CAPACITY_BREAKDOWN_QUERIES[ObjectDashboardQuery.BUCKETS_BY_USED]
       }))`,
       [ObjectDashboardQuery.BUCKETS_TOTAL_USED]: `sum(${
-        CAPACITY_BREAKDOWN_QUERIES[ObjectDashboardQuery.BUCKETS_TOTAL_USED]
+        CAPACITY_BREAKDOWN_QUERIES[ObjectDashboardQuery.BUCKETS_BY_USED]
       })`,
     },
   },
