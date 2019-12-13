@@ -1,3 +1,33 @@
+.co-m-pane__heading--monitoring-dashboards {
+  justify-content: flex-start;
+}
+
+.monitoring-dashboards__dropdown {
+  width: 120px;
+}
+
+.monitoring-dashboards__dropdown-wrap {
+  margin-bottom: 10px;
+  margin-left: 20px;
+}
+
+.monitoring-dashboards__options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.monitoring-dashboards__options-group {
+  display: flex;
+}
+
+.monitoring-dashboards__panel {
+  margin: 0 -5px 20px -5px;
+}
+
+.monitoring-dashboards__single-stat {
+  font-size: var(--pf-global--FontSize--3xl);
+}
+
 .query-browser__toggle-graph {
   margin-bottom: 5px;
   float: right;
