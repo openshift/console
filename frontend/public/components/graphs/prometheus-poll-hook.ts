@@ -30,13 +30,16 @@ export const usePrometheusPoll = ({
         .then((data) => {
           setResponse(data);
           setError(undefined);
+          setLoading(false);
         })
         .catch((err) => {
-          setError(err);
-          // eslint-disable-next-line no-console
-          console.error(`Error polling Prometheus: ${err}`);
-        })
-        .then(() => setLoading(false));
+          if (err.name !== 'AbortError') {
+            setError(err);
+            setLoading(false);
+            // eslint-disable-next-line no-console
+            console.error(`Error polling Prometheus: ${err}`);
+          }
+        });
     } else {
       setLoading(false);
     }
