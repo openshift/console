@@ -83,11 +83,17 @@ export const selectWorkerRows = async () => {
     splitedRow = newCurrRow.split(/\s/g);
     if (splitedRow[3] === 'worker') {
       workerAz.push(splitedRow[4]);
-      const input = await $$('input').get(index);
-      if (!input.isSelected()) await input.click();
+      if (
+        !(await $$('tbody input')
+          .get(index)
+          .isSelected())
+      )
+        await $$('tbody input')
+          .get(index)
+          .click();
       selectedNodes.push(
         await table
-          .$$('a')
+          .$$('tbody a')
           .get(index)
           .getText(),
       );
@@ -120,7 +126,7 @@ export class InstallCluster {
     // Sometimes operator changes few times its status so we will wait for
     // for 10 Succeeded status in row to be sure we have operator is
     // installed properly.
-    await waitFor(ocsOperatorStatus, 'Succeeded', 10);
+    await waitFor(ocsOperatorStatus, 'Succeeded', 5);
   }
 
   async installOperator() {

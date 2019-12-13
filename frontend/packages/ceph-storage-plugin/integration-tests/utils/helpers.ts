@@ -18,9 +18,9 @@ export const checkIfClusterIsReady = async () => {
   }
 };
 
-export const waitFor = async (element, text, inRow = 1) => {
+export const waitFor = async (element, text, count = 1) => {
   let rowNumber = 0;
-  while (rowNumber !== inRow) {
+  while (rowNumber !== count) {
     await browser.wait(until.visibilityOf(element));
     const elemText = await element.getText();
     if (elemText.includes(text)) {
