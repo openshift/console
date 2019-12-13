@@ -9,6 +9,7 @@
     flex: 1 0 auto;
     flex-direction: column;
     background-color: var(--pf-global--Color--light-200);
+    position: relative;
 
     &.is-light {
       background-color: var(--pf-global--Color--light-100);
