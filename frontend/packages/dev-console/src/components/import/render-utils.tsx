@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import CheIcon from '../topology/shapes/CheIcon';
+import CheIcon from '../topology/components/nodes/CheIcon';
 import { detectGitType } from './import-validation-utils';
 import { GitTypes } from './import-types';
 

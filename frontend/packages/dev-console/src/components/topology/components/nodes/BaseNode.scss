@@ -1,0 +1,43 @@
+.odc-base-node {
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  .odc-m-drag-active & {
+    cursor: grab;
+  }
+
+  &__bg {
+    fill: var(--pf-global--BackgroundColor--light-100);
+    &.is-highlight {
+      stroke: var(--pf-global--active-color--400);
+      stroke-width: 4px;
+    }
+  }
+
+  &__selection {
+    stroke-width: 2px;
+    fill: none;
+    stroke: var(--pf-global--active-color--300);
+  }
+
+  &__label {
+    fill: var(--pf-global--Color--light-100);
+    font-size: var(--pf-global--FontSize--md);
+    text {
+      pointer-events: none;
+      fill: var(--pf-global--Color--300);
+    }
+  }
+}
+
+.odc-m-drag-active {
+  .odc-base-node__contents {
+    opacity: 0.3;
+    &.is-dragging, &.is-droppable {
+      opacity: 1;
+    }
+  }
+}

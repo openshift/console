@@ -1,0 +1,19 @@
+.odc-m-drag-active {
+  cursor: grab !important;
+}
+
+.topology-connector__remove-bg {
+  fill: var(--pf-global--active-color--400);
+  cursor: pointer;
+  .odc-m-drag-active & {
+    display: none;
+  }
+}
+
+.topology-connector__remove-icon {
+  color: var(--pf-global--Color--light-100);
+  cursor: pointer;
+  .odc-m-drag-active & {
+    display: none;
+  }
+}

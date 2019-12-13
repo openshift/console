@@ -1,226 +1,221 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { TopologyView } from '@patternfly/react-topology';
-import { confirmModal, errorModal } from '@console/internal/components/modals';
-import { edgeProvider, groupProvider, nodeProvider } from './shape-providers';
-import Graph from './Graph';
+import { action } from 'mobx';
+import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import {
-  GraphApi,
-  GraphElementType,
-  TopologyDataModel,
-  TopologyDataObject,
-} from './topology-types';
+  TopologyView,
+  TopologyControlBar,
+  createTopologyControlButtons,
+  defaultControlButtonsOptions,
+} from '@patternfly/react-topology';
 import {
-  createTopologyResourceConnection,
-  removeTopologyResourceConnection,
-  updateTopologyResourceApplication,
-} from './topology-utils';
-import TopologyControlBar from './TopologyControlBar';
+  Visualization,
+  VisualizationSurface,
+  GraphElement,
+  isNode,
+  Model,
+  SELECTION_EVENT,
+  SelectionEventListener,
+} from '@console/topology';
+import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
-import { ActionProviders } from './actions-providers';
-import TopologyApplicationPanel from './TopologyApplicationPanel';
+import { TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
-
-type State = {
-  selected?: string;
-  selectedType?: GraphElementType;
-  graphApi?: GraphApi;
-};
+import TopologyApplicationPanel from './TopologyApplicationPanel';
+import { topologyModelFromDataModel } from './topology-utils';
+import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
+import ComponentFactory from './componentFactory';
+import { TYPE_APPLICATION_GROUP } from './const';
 
 export interface TopologyProps {
   data: TopologyDataModel;
   serviceBinding: boolean;
 }
 
-const getSelectedItem = (
-  topologyData: TopologyDataModel,
-  selectedType: GraphElementType,
-  selectedId: string,
-) => {
-  let selectedItem;
-
-  switch (selectedType) {
-    case GraphElementType.node:
-      selectedItem = topologyData.topology[selectedId];
-      break;
-    case GraphElementType.group:
-      selectedItem = _.find(topologyData.graph.groups, { id: selectedId });
-      break;
-    default:
-      selectedItem = null;
-  }
-
-  return selectedItem;
+const graphModel: Model = {
+  graph: {
+    id: 'g1',
+    type: 'graph',
+    layout: COLA_LAYOUT,
+  },
 };
 
-export default class Topology extends React.Component<TopologyProps, State> {
-  constructor(props) {
-    super(props);
-    this.state = {};
+const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
+  const visRef = React.useRef<Visualization | null>(null);
+  const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
+  const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
+  const [model, setModel] = React.useState<Model>();
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+
+  if (!componentFactoryRef.current) {
+    componentFactoryRef.current = new ComponentFactory(serviceBinding);
   }
 
-  static getDerivedStateFromProps(nextProps: TopologyProps, prevState: State): State {
-    const { selected, selectedType } = prevState;
-
-    if (selected && selectedType) {
-      const selectedItem = getSelectedItem(nextProps.data, selectedType, selected);
-      if (!selectedItem) {
-        return { selected: null, selectedType: null };
+  if (!visRef.current) {
+    visRef.current = new Visualization();
+    visRef.current.registerLayoutFactory(layoutFactory);
+    visRef.current.registerComponentFactory(componentFactoryRef.current.getFactory());
+    visRef.current.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
+      // set empty selection when selecting the graph
+      if (ids.length > 0 && ids[0] === graphModel.graph.id) {
+        setSelectedIds([]);
+      } else {
+        setSelectedIds(ids);
       }
-    }
-
-    return prevState;
-  }
-
-  onSelect = (type: GraphElementType, id: string) => {
-    this.setState(({ selected, selectedType }) => {
-      if (!id || !type || (selected === id && selectedType === type)) {
-        return { selected: null, type: null };
-      }
-      return { selected: id, selectedType: type };
     });
-  };
+    visRef.current.fromModel(graphModel);
+  }
 
-  onUpdateNodeGroup = (nodeId: string, targetGroup: string): Promise<any> => {
-    const {
-      data: { topology },
-    } = this.props;
-    const item: TopologyDataObject = topology[nodeId];
+  React.useEffect(() => {
+    componentFactoryRef.current.serviceBinding = serviceBinding;
+  }, [serviceBinding]);
 
-    return updateTopologyResourceApplication(item, targetGroup);
-  };
+  React.useEffect(() => {
+    const newModel = topologyModelFromDataModel(data);
+    visRef.current.fromModel(newModel);
+    setModel(newModel);
+    if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
+      setSelectedIds([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
-  onCreateConnection = (
-    sourceNodeId: string,
-    targetNodeId: string,
-    replaceTargetNodeId: string = null,
-  ): Promise<any> => {
-    const {
-      data: { topology },
-      serviceBinding,
-    } = this.props;
-    const sourceItem: TopologyDataObject = topology[sourceNodeId];
-    const targetItem: TopologyDataObject = topology[targetNodeId];
-    const replaceTargetItem: TopologyDataObject =
-      replaceTargetNodeId && topology[replaceTargetNodeId];
-
-    return createTopologyResourceConnection(
-      sourceItem,
-      targetItem,
-      replaceTargetItem,
-      serviceBinding,
-    );
-  };
-
-  onRemoveConnection = (sourceNodeId: string, targetNodeId: string, edgeType: string): void => {
-    const {
-      data: {
-        topology,
-        graph: { edges },
-      },
-    } = this.props;
-    const sourceItem: TopologyDataObject = topology[sourceNodeId];
-    const targetItem: TopologyDataObject = topology[targetNodeId];
-    const sbr = _.get(
-      _.find(edges, (edge) => {
-        return edge.id === `${sourceNodeId}_${targetNodeId}`;
-      }),
-      'data.sbr',
-    );
-
-    const message = (
-      <>
-        Are you sure you want to remove the connection from <strong>{sourceItem.name}</strong> to{' '}
-        <strong>{targetItem.name}</strong>?
-      </>
-    );
-
-    confirmModal({
-      title: 'Delete Connection',
-      message,
-      btnText: 'Remove',
-      executeFn: () => {
-        return removeTopologyResourceConnection(sourceItem, targetItem, sbr, edgeType).catch(
-          (err) => {
-            const error = err.message;
-            errorModal({ error });
-          },
+  React.useEffect(() => {
+    let resizeTimeout = null;
+    if (selectedIds.length > 0) {
+      const selectedEntity = visRef.current.getElementById(selectedIds[0]);
+      if (selectedEntity && isNode(selectedEntity)) {
+        resizeTimeout = setTimeout(
+          action(() => {
+            visRef.current
+              .getGraph()
+              .panIntoView(selectedEntity, { offset: 20, minimumVisible: 40 });
+            resizeTimeout = null;
+          }),
+          500,
         );
-      },
-    });
-  };
-
-  onSidebarClose = () => {
-    this.setState({ selected: null });
-  };
-
-  graphApiRef = (api: GraphApi) => {
-    this.setState({ graphApi: api });
-  };
-
-  renderSelectedItemDetails() {
-    const { data } = this.props;
-    const { selected, selectedType } = this.state;
-    const selectedItem = getSelectedItem(data, selectedType, selected);
-
-    if (!selectedItem) {
-      return null;
+      }
     }
+    return () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+    };
+  }, [selectedIds]);
 
-    switch (selectedType) {
-      case GraphElementType.node:
-        return <TopologyResourcePanel item={selectedItem as TopologyDataObject} />;
-      case GraphElementType.group:
+  React.useEffect(() => {
+    action(() => {
+      visRef.current.getGraph().setLayout(layout);
+    })();
+  }, [layout]);
+
+  const onSidebarClose = () => {
+    setSelectedIds([]);
+  };
+
+  const renderControlBar = () => {
+    return (
+      <TopologyControlBar
+        controlButtons={[
+          ...createTopologyControlButtons({
+            ...defaultControlButtonsOptions,
+            zoomInCallback: action(() => {
+              visRef.current.getGraph().scaleBy(4 / 3);
+            }),
+            zoomOutCallback: action(() => {
+              visRef.current.getGraph().scaleBy(0.75);
+            }),
+            fitToScreenCallback: action(() => {
+              visRef.current.getGraph().fit(80);
+            }),
+            resetViewCallback: action(() => {
+              visRef.current.getGraph().reset();
+              visRef.current.getGraph().layout();
+            }),
+            legend: false,
+          }),
+        ]}
+      >
+        <div className="odc-topology__layout-group">
+          <Tooltip content="Layout 1">
+            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+              <Button
+                className={classNames('pf-topology-control-bar__button', {
+                  'pf-m-active': layout === COLA_LAYOUT,
+                })}
+                variant="tertiary"
+                onClick={() => setLayout(COLA_LAYOUT)}
+              >
+                <TopologyIcon className="odc-topology__layout-button__icon" />1
+                <span className="sr-only">Layout 1</span>
+              </Button>
+            </ToolbarItem>
+          </Tooltip>
+          <Tooltip content="Layout 2">
+            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+              <Button
+                className={classNames('pf-topology-control-bar__button', {
+                  'pf-m-active': layout === COLA_FORCE_LAYOUT,
+                })}
+                variant="tertiary"
+                onClick={() => setLayout(COLA_FORCE_LAYOUT)}
+              >
+                <TopologyIcon className="odc-topology__layout-button__icon" />2
+                <span className="sr-only">Layout 2</span>
+              </Button>
+            </ToolbarItem>
+          </Tooltip>
+        </div>
+      </TopologyControlBar>
+    );
+  };
+
+  const selectedItemDetails = () => {
+    const selectedEntity = selectedIds[0] ? visRef.current.getElementById(selectedIds[0]) : null;
+    if (isNode(selectedEntity)) {
+      if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
           <TopologyApplicationPanel
             application={{
-              id: selectedItem.id,
-              name: selectedItem.name,
-              resources: _.map(selectedItem.nodes, (nodeId: string) => data.topology[nodeId]),
+              id: selectedEntity.getId(),
+              name: selectedEntity.getLabel(),
+              resources: _.map(selectedEntity.getChildren(), (node: GraphElement) =>
+                node.getData(),
+              ),
             }}
           />
         );
-      default:
-        return null;
+      }
+      return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }
-  }
 
-  render() {
-    const {
-      data: { graph, topology },
-    } = this.props;
-    const { selected, selectedType, graphApi } = this.state;
+    return null;
+  };
 
-    const topologySideBar = (
-      <TopologySideBar show={!!selected} onClose={this.onSidebarClose}>
-        {this.renderSelectedItemDetails()}
+  const renderSideBar = () => {
+    const selectedEntity =
+      selectedIds.length === 0 ? null : visRef.current.getElementById(selectedIds[0]);
+    return (
+      <TopologySideBar show={!!selectedEntity} onClose={onSidebarClose}>
+        {selectedEntity && selectedItemDetails()}
       </TopologySideBar>
     );
+  };
 
-    const actionProvider = new ActionProviders(topology);
-
-    return (
-      <TopologyView
-        controlBar={<TopologyControlBar graphApi={graphApi} />}
-        sideBar={topologySideBar}
-        sideBarOpen={!!selected}
-      >
-        <Graph
-          graph={graph}
-          topology={topology}
-          nodeProvider={nodeProvider}
-          edgeProvider={edgeProvider}
-          groupProvider={groupProvider}
-          actionProvider={actionProvider.getActions}
-          selected={selected}
-          selectedType={selectedType}
-          onSelect={this.onSelect}
-          onUpdateNodeGroup={this.onUpdateNodeGroup}
-          onCreateConnection={this.onCreateConnection}
-          onRemoveConnection={this.onRemoveConnection}
-          graphApiRef={this.graphApiRef}
-        />
-      </TopologyView>
-    );
+  if (!model) {
+    return null;
   }
-}
+
+  return (
+    <TopologyView
+      controlBar={renderControlBar()}
+      sideBar={renderSideBar()}
+      sideBarOpen={selectedIds.length > 0}
+    >
+      <VisualizationSurface visualization={visRef.current} state={{ selectedIds }} />
+    </TopologyView>
+  );
+};
+
+export default Topology;
