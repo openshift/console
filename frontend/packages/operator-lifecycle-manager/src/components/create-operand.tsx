@@ -954,7 +954,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
     JSON.parse(
       _.get(props.clusterServiceVersion.data.metadata.annotations, annotationKey, '[]'),
     ).find((s: K8sResourceKind) => referenceFor(s) === referenceForModel(props.operandModel));
-  const [method, setMethod] = React.useState<'yaml' | 'form'>('yaml');
+  const [method, setMethod] = React.useState<'yaml' | 'form'>('form');
 
   const openAPI =
     (_.get(props.customResourceDefinition, [
