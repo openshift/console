@@ -31,7 +31,7 @@ export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => (
       }
 
       return (
-        <>
+        <React.Fragment key={nameKey}>
           <dt id={nameKey} key={nameKey} className="kubevirt-disk-summary__datalist-dt">
             {name}
           </dt>
@@ -42,7 +42,7 @@ export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => (
           >
             {value}
           </dd>
-        </>
+        </React.Fragment>
       );
     })}
   </dl>
