@@ -1,5 +1,6 @@
 import { ProjectModel } from '@console/internal/models';
 import { PROJECTS, BUCKET_CLASS } from './constants';
+import { NooBaaBucketClassModel } from './models';
 
 export enum ObjectDashboardQuery {
   CAPACITY_USAGE_PROJECT_QUERY = 'CAPACITY_USAGE_PROJECT_QUERY',
@@ -55,6 +56,7 @@ export const breakdownQueryMap = {
     },
   },
   [BUCKET_CLASS]: {
+    model: NooBaaBucketClassModel,
     metric: 'bucket_class',
     queries: {
       [ObjectDashboardQuery.BUCKETS_BY_USED]: `sort_desc(topk(5, ${
