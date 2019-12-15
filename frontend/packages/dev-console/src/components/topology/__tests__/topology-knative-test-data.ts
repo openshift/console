@@ -575,6 +575,12 @@ export const samplePipelineRun: FirehoseResult = {
   data: [],
 };
 
+export const sampleClusterServiceVersions: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [],
+};
+
 export const MockKnativeResources: TopologyDataResources = {
   deployments: sampleKnativeDeployments,
   deploymentConfigs: sampleKnativeDeploymentConfigs,
@@ -595,4 +601,5 @@ export const MockKnativeResources: TopologyDataResources = {
   eventSourceContainers: sampleEventSourceContainers,
   eventSourceCamel: sampleEventSourceCamel,
   eventSourceKafka: sampleEventSourceKafka,
+  clusterServiceVersions: sampleClusterServiceVersions,
 };

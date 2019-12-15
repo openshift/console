@@ -321,10 +321,9 @@ export const transformTopologyData = (
   utils?: Function[],
   filters?: TopologyFilters,
 ): TopologyDataModel => {
-  const installedOperators = _.get(resources, 'clusterServiceVersion.data');
+  const installedOperators = _.get(resources, 'clusterServiceVersions.data');
   let operatorBackedServiceKindMap: OperatorBackedServiceKindMap;
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
-
   if (installedOperators) {
     operatorBackedServiceKindMap = installedOperators.reduce((kindMap, csv) => {
       _.get(csv, 'spec.customresourcedefinitions.owned').forEach((crd) => {

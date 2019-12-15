@@ -85,7 +85,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
     isList: true,
     kind: referenceForModel(ClusterServiceVersionModel),
     namespace,
-    prop: 'clusterServiceVersion',
+    prop: 'clusterServiceVersions',
     optional: true,
   });
   if (serviceBinding) {

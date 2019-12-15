@@ -29,7 +29,7 @@ export interface TopologyDataResources {
   eventSourceApiServer?: FirehoseResult;
   eventSourceCamel?: FirehoseResult;
   eventSourceKafka?: FirehoseResult;
-  clusterServiceVersion?: FirehoseResult;
+  clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
 }
 

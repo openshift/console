@@ -98,7 +98,7 @@ describe('TransformResourceData', () => {
 
   it('should create Deployment Items for a provided deployment', () => {
     const transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data);
-    expect(transformedData).toHaveLength(2);
+    expect(transformedData).toHaveLength(3);
     expect(transformedData[0]).toHaveProperties(dcKeys);
     expect(transformedData[1]).toHaveProperties(dcKeys);
   });
@@ -118,7 +118,7 @@ describe('TransformResourceData', () => {
 
   it('should only have keys mentions in KnativeKeys for created Deployment Items for a provided deployment', () => {
     const transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data);
-    expect(transformedData).toHaveLength(2);
+    expect(transformedData).toHaveLength(3);
     expect(transformedData[0]).not.toHaveProperties([...knativeKeys, 'key']);
   });
 
@@ -156,7 +156,7 @@ describe('TransformResourceData', () => {
 
   it('should return pods and replication controllers for a given DeploymentConfig', () => {
     const transformedData = transformResourceData.getPodsForDeployments(sampleDeployments.data);
-    expect(transformedData).toHaveLength(2);
+    expect(transformedData).toHaveLength(3);
     expect(transformedData[0]).toHaveProperties(podRCKeys);
     expect(transformedData[1]).toHaveProperties(podRCKeys);
   });
