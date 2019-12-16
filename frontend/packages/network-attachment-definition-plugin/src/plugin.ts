@@ -48,7 +48,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: referenceForModel(models.NetworkAttachmentDefinitionModel),
         required: [FLAG_NET_ATTACH_DEF, FLAG_KUBEVIRT],
       },
-      mergeAfter: 'Network Policies',
     },
   },
   {

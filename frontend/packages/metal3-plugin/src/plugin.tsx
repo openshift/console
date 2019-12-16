@@ -56,12 +56,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       section: 'Compute',
-      mergeAfter: 'Machine Health Checks',
       componentProps: {
         name: 'Bare Metal Hosts',
         resource: referenceForModel(BareMetalHostModel),
         required: [FLAGS.BAREMETAL, METAL3_FLAG],
       },
+      mergeBefore: 'ComputeSeparator',
     },
   },
   {
