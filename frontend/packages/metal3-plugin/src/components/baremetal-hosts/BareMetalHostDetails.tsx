@@ -36,12 +36,15 @@ import {
   findNodeMaintenance,
   getHostBios,
   getHostProvisioningState,
+  getHostBootMACAddress,
 } from '../../selectors';
 import { BareMetalHostKind } from '../../types';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
+
+import './BareMetalHostDetails.scss';
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -93,9 +96,11 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             )}
             <dt>Host Addresses</dt>
             <dd>
-              Management: {getHostBMCAddress(host)}
-              <br />
-              NICs: {ips}
+              <ul className="metal3-bare-metal-host-details__simple-list">
+                <li>Management: {getHostBMCAddress(host)}</li>
+                <li>NICs: {ips}</li>
+                <li>Boot Interface MAC: {getHostBootMACAddress(host)}</li>
+              </ul>
             </dd>
             {machineName && (
               <>
@@ -158,11 +163,11 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               <>
                 <dt>Bios</dt>
                 <dd>
-                  Version: {bios.version}
-                  <br />
-                  Vendor: {bios.vendor}
-                  <br />
-                  Date: {bios.date}
+                  <ul className="metal3-bare-metal-host-details__simple-list">
+                    <li>Version: {bios.version}</li>
+                    <li>Vendor: {bios.vendor}</li>
+                    <li>Date: {bios.date}</li>
+                  </ul>
                 </dd>
               </>
             )}
@@ -176,11 +181,13 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               <>
                 <dt>Hardware</dt>
                 <dd>
-                  {CPUCount}x {CPUModel} CPU
-                  <br />
-                  {RAMGB} RAM
-                  <br />
-                  {totalStorageCapacity} Disk
+                  <ul className="metal3-bare-metal-host-details__simple-list">
+                    <li>
+                      {CPUCount}x {CPUModel} CPU
+                    </li>
+                    <li>{RAMGB} RAM</li>
+                    <li>{totalStorageCapacity} Disk</li>
+                  </ul>
                 </dd>
               </>
             )}
