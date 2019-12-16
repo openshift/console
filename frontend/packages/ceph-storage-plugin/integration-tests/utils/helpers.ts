@@ -18,16 +18,18 @@ export const checkIfClusterIsReady = async () => {
   }
 };
 
-export const waitFor = async (element, text) => {
-  let stillLoading = true;
-  while (stillLoading) {
+export const waitFor = async (element, text, count = 1) => {
+  let rowNumber = 0;
+  while (rowNumber !== count) {
     await browser.wait(until.visibilityOf(element));
     const elemText = await element.getText();
-    if (elemText.includes(text)) stillLoading = false;
+    if (elemText.includes(text)) {
+      rowNumber += 1;
+    } else {
+      rowNumber = 0;
+    }
     /* eslint-disable no-await-in-loop */
     await browser.sleep(5 * SECOND);
-    // Sometimes it flickers additonal guard for reliability
-    if (!elemText.includes(text)) stillLoading = true;
   }
 };
 
