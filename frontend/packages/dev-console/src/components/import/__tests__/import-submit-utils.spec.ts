@@ -13,7 +13,7 @@ import { Resources } from '../import-types';
 import * as submitUtils from '../import-submit-utils';
 import { defaultData, nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
 
-const { createDeployment, createResources } = submitUtils;
+const { createOrUpdateDeployment, createOrUpdateResources } = submitUtils;
 
 describe('Import Submit Utils', () => {
   describe('createDeployment tests', () => {
@@ -28,7 +28,7 @@ describe('Import Submit Utils', () => {
     });
 
     it('should set annotations for triggers while creating deployment', (done) => {
-      createDeployment(defaultData, buildImage.obj, false)
+      createOrUpdateDeployment(defaultData, buildImage.obj, false)
         .then((returnValue) => {
           const annotations = _.get(returnValue, 'data.metadata.annotations');
           expect(JSON.parse(annotations['image.openshift.io/triggers'])).toEqual([
@@ -50,18 +50,22 @@ describe('Import Submit Utils', () => {
         cpu: {
           request: 5,
           requestUnit: 'm',
+          defaultRequestUnit: 'm',
           limit: 10,
           limitUnit: 'm',
+          defaultLimitUnit: 'm',
         },
         memory: {
           request: 100,
           requestUnit: 'Mi',
+          defaultRequestUnit: 'Mi',
           limit: 200,
           limitUnit: 'Mi',
+          defaultLimitUnit: 'Mi',
         },
       };
 
-      createDeployment(data, buildImage.obj, false)
+      createOrUpdateDeployment(data, buildImage.obj, false)
         .then((returnValue) => {
           expect(_.get(returnValue, 'data.spec.template.spec.containers[0].resources')).toEqual({
             limits: { cpu: '10m', memory: '200Mi' },
@@ -90,7 +94,7 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
 
-      createResources(mockData, buildImage.obj, false)
+      createOrUpdateResources(mockData, buildImage.obj, false)
         .then((returnValue) => {
           expect(returnValue).toHaveLength(7);
           const models = returnValue.map((data) => _.get(data, 'model.kind'));
@@ -114,7 +118,7 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.OpenShift;
 
-      createResources(mockData, buildImage.obj, false)
+      createOrUpdateResources(mockData, buildImage.obj, false)
         .then((returnValue) => {
           expect(returnValue).toHaveLength(7);
           const models = returnValue.map((data) => _.get(data, 'model.kind'));
@@ -146,7 +150,7 @@ describe('Import Submit Utils', () => {
           },
         }));
 
-      createResources(mockData, buildImage.obj, false)
+      createOrUpdateResources(mockData, buildImage.obj, false)
         .then((returnValue) => {
           // createImageStream is called as separate entity
           expect(imageStreamSpy).toHaveBeenCalled();

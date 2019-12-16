@@ -61,6 +61,7 @@ export interface DeployImageFormData {
 }
 
 export interface GitImportFormData {
+  formType?: string;
   name: string;
   project: ProjectData;
   application: ApplicationData;
@@ -124,6 +125,7 @@ export interface DockerData {
 }
 
 export interface RouteData {
+  show?: boolean;
   create: boolean;
   targetPort: string;
   unknownTargetPort?: string;
@@ -237,8 +239,10 @@ export interface LimitsData {
 export interface ResourceType {
   request: number | string;
   requestUnit: string;
+  defaultRequestUnit: string;
   limit: number | string;
   limitUnit: string;
+  defaultLimitUnit: string;
 }
 
 export enum CPUUnits {

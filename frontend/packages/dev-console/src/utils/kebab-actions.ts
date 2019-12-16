@@ -8,7 +8,7 @@ import {
   ServiceModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { ModifyApplication } from '../actions/modify-application';
+import { ModifyApplication, EditApplication } from '../actions/modify-application';
 
 const modifyApplicationRefs = [
   referenceFor(DeploymentConfigModel),
@@ -24,5 +24,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
     return [];
   }
 
-  return _.includes(modifyApplicationRefs, referenceFor(resourceKind)) ? [ModifyApplication] : [];
+  return _.includes(modifyApplicationRefs, referenceFor(resourceKind))
+    ? [ModifyApplication, EditApplication]
+    : [];
 };

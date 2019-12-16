@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/internal/const';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
-import { createResources } from './import-submit-utils';
+import { createOrUpdateResources } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 
 export interface ImportFormProps {
@@ -71,6 +71,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       couldNotRecommend: false,
     },
     route: {
+      show: true,
       create: true,
       targetPort: '',
       path: '',
@@ -119,14 +120,18 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       cpu: {
         request: '',
         requestUnit: 'm',
+        defaultRequestUnit: 'm',
         limit: '',
         limitUnit: 'm',
+        defaultLimitUnit: 'm',
       },
       memory: {
         request: '',
         requestUnit: 'Mi',
+        defaultRequestUnit: 'Mi',
         limit: '',
         limitUnit: 'Mi',
+        defaultLimitUnit: 'Mi',
       },
     },
   };
@@ -148,8 +153,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       project: { name: projectName },
     } = values;
 
-    createResources(values, imageStream, createNewProject, true)
-      .then(() => createResources(values, imageStream))
+    createOrUpdateResources(values, imageStream, createNewProject, true)
+      .then(() => createOrUpdateResources(values, imageStream))
       .then(() => {
         actions.setSubmitting(false);
         handleRedirect(projectName);

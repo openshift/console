@@ -79,16 +79,20 @@ export const mockFormData: GitImportFormData = {
   },
   limits: {
     cpu: {
-      request: '',
-      requestUnit: 'millicores',
-      limit: '',
-      limitUnit: 'millicores',
+      request: null,
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: null,
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
     },
     memory: {
-      request: '',
-      requestUnit: 'MiB',
-      limit: '',
-      limitUnit: 'MiB',
+      request: null,
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: null,
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
     },
   },
 };

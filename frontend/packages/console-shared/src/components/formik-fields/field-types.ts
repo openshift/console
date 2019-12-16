@@ -10,6 +10,7 @@ export interface FieldProps {
   disableDeleteRow?: boolean;
   disableAddRow?: boolean;
   className?: string;
+  isDisabled?: boolean;
 }
 
 export interface InputFieldProps extends FieldProps {

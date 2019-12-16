@@ -22,6 +22,7 @@ export const getKnativeServiceDepResource = (
   imageStreamUrl: string,
   imageStreamName?: string,
   annotations?: { [name: string]: string },
+  originalKnativeService?: K8sResourceKind,
 ): K8sResourceKind => {
   const {
     name,
@@ -52,9 +53,11 @@ export const getKnativeServiceDepResource = (
   const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
   delete defaultLabel.app;
   const knativeDeployResource: K8sResourceKind = {
+    ...(originalKnativeService || {}),
     kind: ServiceModel.kind,
     apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
     metadata: {
+      ...(originalKnativeService ? originalKnativeService.metadata : {}),
       name,
       namespace,
       labels: {
@@ -64,6 +67,7 @@ export const getKnativeServiceDepResource = (
       },
     },
     spec: {
+      ...(originalKnativeService ? originalKnativeService.spec : {}),
       template: {
         metadata: {
           labels: {

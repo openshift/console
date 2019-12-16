@@ -83,14 +83,18 @@ export const defaultData: DeployImageFormData = {
     cpu: {
       request: '',
       requestUnit: 'm',
+      defaultRequestUnit: 'm',
       limit: '',
       limitUnit: 'm',
+      defaultLimitUnit: 'm',
     },
     memory: {
       request: '',
       requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
       limit: '',
       limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
     },
   },
 };
@@ -189,8 +193,22 @@ export const dataWithTargetPort: DeployImageFormData = {
   labels: {},
   env: {},
   limits: {
-    cpu: { request: '', requestUnit: 'm', limit: '', limitUnit: 'm' },
-    memory: { request: '', requestUnit: 'Mi', limit: '', limitUnit: 'Mi' },
+    cpu: {
+      request: '',
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: '',
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
+    },
   },
 };
 
@@ -396,8 +414,22 @@ export const dataWithPorts: DeployImageFormData = {
   labels: {},
   env: {},
   limits: {
-    cpu: { request: '', requestUnit: 'm', limit: '', limitUnit: 'm' },
-    memory: { request: '', requestUnit: 'Mi', limit: '', limitUnit: 'Mi' },
+    cpu: {
+      request: '',
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: '',
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
+    },
   },
 };
 
@@ -495,8 +527,22 @@ export const dataWithoutPorts: DeployImageFormData = {
   labels: {},
   env: {},
   limits: {
-    cpu: { request: '', requestUnit: 'm', limit: '', limitUnit: 'm' },
-    memory: { request: '', requestUnit: 'Mi', limit: '', limitUnit: 'Mi' },
+    cpu: {
+      request: '',
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: '',
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
+    },
   },
 };
 
@@ -768,14 +814,18 @@ export const internalImageData: DeployImageFormData = {
     cpu: {
       request: '',
       requestUnit: 'm',
+      defaultRequestUnit: 'm',
       limit: '',
       limitUnit: 'm',
+      defaultLimitUnit: 'm',
     },
     memory: {
       request: '',
       requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
       limit: '',
       limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
     },
   },
 };
