@@ -33,7 +33,6 @@ import {
   TRIGGERS_ANNOTATION,
   DEPLOYMENT_PHASE_ANNOTATION,
   CONTAINER_WAITING_STATE_ERROR_REASONS,
-  DEPLOYMENT_CONFIG_NAME_ANNOTATION,
   DEPLOYMENT_STRATEGY,
   DEPLOYMENT_PHASE,
   AllPodStatus,
@@ -235,7 +234,7 @@ const getDeploymentConfigVersion = (obj: K8sResourceKind): number => {
 };
 
 const getDeploymentConfigName = (obj: K8sResourceKind): string => {
-  return getAnnotation(obj, DEPLOYMENT_CONFIG_NAME_ANNOTATION);
+  return _.get(obj, 'metadata.ownerReferences[0].name', null);
 };
 
 export const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
@@ -416,7 +415,7 @@ const getRolloutStatus = (
   return notFailedOrCancelled && previous && previous.pods.length > 0;
 };
 
-const deploymentIsInProgress = (resource: K8sResourceKind): boolean => {
+const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean => {
   return (
     [
       DEPLOYMENT_PHASE.new,
@@ -428,7 +427,7 @@ const deploymentIsInProgress = (resource: K8sResourceKind): boolean => {
 };
 
 const isReplicationControllerVisible = (resource: K8sResourceKind): boolean => {
-  return _.get(resource, ['status', 'replicas'], false) || deploymentIsInProgress(resource);
+  return !!_.get(resource, ['status', 'replicas'], isDeploymentInProgressOrCompleted(resource));
 };
 
 export class TransformResourceData {
@@ -623,10 +622,11 @@ export class TransformResourceData {
       const buildConfigs = this.getBuildConfigsForResource(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
+      const rolloutAlerts = mostRecentRC ? getReplicationControllerAlerts(mostRecentRC) : {};
       const alerts = {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
-        ...getReplicationControllerAlerts(mostRecentRC),
+        ...rolloutAlerts,
       };
       const pods = [];
       if (!current && !previous) {
