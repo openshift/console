@@ -339,14 +339,16 @@ export const Catalog = connectToFlags<CatalogProps>(
   ];
 
   return (
-    <Firehose resources={mock ? [] : resources}>
-      <CatalogListPage
-        namespace={namespace}
-        templateMetadata={templateMetadata}
-        projectTemplateMetadata={projectTemplateMetadata}
-        {...props as any}
-      />
-    </Firehose>
+    <div className="co-catalog__body">
+      <Firehose resources={mock ? [] : resources}>
+        <CatalogListPage
+          namespace={namespace}
+          templateMetadata={templateMetadata}
+          projectTemplateMetadata={projectTemplateMetadata}
+          {...props as any}
+        />
+      </Firehose>
+    </div>
   );
 });
 
