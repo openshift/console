@@ -100,3 +100,17 @@ export const isPodPresent = (pods, podName) => {
 export const getOSDPreparePodsCnt = (pods) =>
   pods.items.filter((pod) => getPodName(pod).includes(POD_NAME_PATTERNS.ROOK_CEPH_OSD_PREPARE))
     .length;
+
+export const refreshIfNotVisible = async (element, maxTimes = 1) => {
+  let isVisible = await element.isPresent();
+  let count = 0;
+  while (count < maxTimes) {
+    if (!isVisible) {
+      /* eslint-disable no-await-in-loop */
+      await browser.refresh();
+      await browser.sleep(5 * SECOND);
+      isVisible = await element.isPresent();
+    }
+    count += 1;
+  }
+};

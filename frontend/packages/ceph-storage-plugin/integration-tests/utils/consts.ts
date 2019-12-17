@@ -39,3 +39,5 @@ export const EXPAND_WAIT = 15 * MINUTE;
 export const STORAGE_CLUSTER_TAB_CNT = 15;
 export const CAPACITY_UNIT = 'TiB';
 export const CAPACITY_VALUE = '2';
+
+export const OCS_OPERATOR_NAME = 'ocs-operator';

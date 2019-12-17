@@ -42,7 +42,7 @@ describe('Testing OCS Subscription', () => {
       const text = await ocsOperatorStatus.getText();
       expect(text.includes('Succeeded')).toBe(true);
     },
-    2 * MINUTE,
+    3 * MINUTE,
   );
 
   it('tests for presence of 3 operator pods', async () => {
@@ -77,7 +77,7 @@ describe('Test creation of Storage Cluster', () => {
       // Wait for cluster to come to ready state
       await checkIfClusterIsReady();
     },
-    15 * MINUTE,
+    16 * MINUTE,
   );
 });
 
