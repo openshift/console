@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace } from '@console/shared';
+import { getName, getUID, getNamespace, DASH } from '@console/shared';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BareMetalHostBundle } from '../types';
-import { getHostBMCAddress } from '../../selectors';
+import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
 import NodeLink from './NodeLink';
 import BareMetalHostStatus from './BareMetalHostStatus';
@@ -15,11 +15,12 @@ import { menuActions } from './host-menu-actions';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
 
 const tableColumnClasses = {
-  name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
-  status: classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
+  name: classNames('col-lg-2', 'col-md-4', 'col-sm-12', 'col-xs-12'),
+  status: classNames('col-lg-2', 'col-md-4', 'col-sm-6', 'hidden-xs'),
   node: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
   role: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  serialNumber: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   kebab: Kebab.columnClass,
 };
 
@@ -55,6 +56,12 @@ const HostsTableHeader = () => [
     props: { className: tableColumnClasses.address },
   },
   {
+    title: 'Serial Number',
+    sortField: 'host.status.hardware.systemVendor.serialNumber',
+    transforms: [sortable],
+    props: { className: tableColumnClasses.serialNumber },
+  },
+  {
     title: '',
     props: { className: tableColumnClasses.kebab },
   },
@@ -82,6 +89,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
   const address = getHostBMCAddress(host);
   const uid = getUID(host);
   const nodeName = getName(node);
+  const { serialNumber } = getHostVendorInfo(host);
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -102,7 +110,8 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       <TableData className={tableColumnClasses.role}>
         <BareMetalHostRole machine={machine} node={node} />
       </TableData>
-      <TableData className={tableColumnClasses.address}>{address}</TableData>
+      <TableData className={tableColumnClasses.address}>{address || DASH}</TableData>
+      <TableData className={tableColumnClasses.serialNumber}>{serialNumber || DASH}</TableData>
       <TableData className={tableColumnClasses.kebab}>
         <Kebab
           options={menuActions.map((action) =>
