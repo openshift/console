@@ -63,7 +63,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         const queryResultChanged = this.queries.some(query =>
           this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result'])
         );
-        const alertsResultChanged = this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'result']);
+        const alertsResultChanged = this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']) !== nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         return (
