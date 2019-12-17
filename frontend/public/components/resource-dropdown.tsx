@@ -148,6 +148,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         ariaLabelledBy={titleId}
         placeholderText="Select Resource"
         isCreatable={false}
+        isGrouped={false}
         maxHeight={400}
       >
         {getItems()}

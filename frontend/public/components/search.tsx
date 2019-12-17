@@ -12,7 +12,7 @@ import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { referenceForModel, kindForReference } from '../module/k8s';
 import { history, LoadingBox, PageHeading, SelectorInput } from './utils';
-import { SelectOptionObject } from '@patternfly/react-core';
+import { Expandable, SelectOptionObject } from '@patternfly/react-core';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector }) => {
   if (!kindObj) {
@@ -51,7 +51,7 @@ const updateTags = (tags) => updateUrlParams('q', tags.map(encodeURIComponent).j
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(['']);
-
+  const [collaspedState, setCollaspedState] = React.useState([]);
   const { location, namespace, noProjectsAvailable } = props;
   let kind: string, q: string;
 
@@ -87,6 +87,17 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     setSelectedItems([]);
   };
 
+  const isKindExpanded = (kind: string) => {
+    return collaspedState.includes(kind);
+  };
+
+  const toggleIfKindExpanded = (kind: string) => {
+    const collaspedItems: string[] = collaspedState.includes(kind)
+      ? collaspedState.filter((keepItem: string) => keepItem !== kind)
+      : [...collaspedState, kind as string];
+    setCollaspedState(collaspedItems);
+  };
+
   return (
     <>
       <Helmet>
@@ -109,17 +120,26 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           </div>
         </div>
       </PageHeading>
-      {selectedItems.map((item) => {
-        return (
-          <ResourceList
-            kind={item}
-            selector={selector}
-            namespace={namespace}
-            mock={noProjectsAvailable}
-            key={item}
-          />
-        );
-      })}
+      <div className="co-search">
+        {selectedItems.map((item) => {
+          return (
+            <Expandable
+              key={item}
+              toggleText={isKindExpanded(item) ? `Hide ${item}` : `Show ${item}`}
+              onToggle={() => toggleIfKindExpanded(item)}
+              isExpanded={isKindExpanded(item)}
+            >
+              <ResourceList
+                kind={item}
+                selector={selector}
+                namespace={namespace}
+                mock={noProjectsAvailable}
+                key={item}
+              />
+            </Expandable>
+          );
+        })}
+      </div>
     </>
   );
 };
