@@ -258,7 +258,7 @@ describe('TopologyUtils ', () => {
     expect((topologyTransformedData[keys[0]].data as WorkloadData).builderImage).toBe(nodejsIcon);
   });
 
-  it('should return builder image icon for nodejs', () => {
+  it('should return csv icon for operator backed service', () => {
     const csvIcon = getImageForCSVIcon(MockResources.clusterServiceVersions.data[0]);
     const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
       'deployments',

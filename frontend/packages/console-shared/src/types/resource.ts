@@ -23,8 +23,4 @@ export type OverviewItem<T = K8sResourceKind> = {
   revisions?: K8sResourceKind[];
 };
 
-export type OperatorBackedServiceKindMap = {
-  [name: string]: K8sResourceKind;
-};
-
 export type DeploymentStrategy = DEPLOYMENT_STRATEGY.recreate | DEPLOYMENT_STRATEGY.rolling;

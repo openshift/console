@@ -118,6 +118,10 @@ export interface DonutStatusData {
   isRollingOut: boolean;
 }
 
+export type OperatorBackedServiceKindMap = {
+  [name: string]: K8sResourceKind;
+};
+
 export interface GraphApi {
   zoomIn(): void;
   zoomOut(): void;

@@ -11,7 +11,6 @@ import {
   getBuildAlerts,
   getOwnedResources,
   OverviewItem,
-  OperatorBackedServiceKindMap,
 } from '@console/shared';
 import {
   Node,
@@ -19,6 +18,7 @@ import {
   TopologyDataResources,
   TopologyDataModel,
   TopologyDataObject,
+  OperatorBackedServiceKindMap,
 } from '@console/dev-console/src/components/topology/topology-types';
 import {
   allowedResources,

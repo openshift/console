@@ -12,7 +12,6 @@ import {
   isKnativeServing,
   OverviewItem,
   getImageForCSVIcon,
-  OperatorBackedServiceKindMap,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
@@ -39,6 +38,7 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
+  OperatorBackedServiceKindMap,
 } from './topology-types';
 import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 
