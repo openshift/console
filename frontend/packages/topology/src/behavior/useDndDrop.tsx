@@ -104,11 +104,6 @@ export const useDndDrop = <
           if (!(nodeRef.current instanceof SVGGraphicsElement)) {
             return false;
           }
-          // perform a fast bounds check
-          const { left, right, top, bottom } = nodeRef.current.getBBox();
-          if (x < left || x > right || y < top || y > bottom) {
-            return false;
-          }
 
           // Rounding the coordinates due to an issue with `point-in-svg-path` returning false
           // when the coordinates clearly are within the path.
@@ -116,6 +111,17 @@ export const useDndDrop = <
           // Translate to this element's coordinates.
           // Assumes the node is not within an svg element containing another transform.
           elementRef.current.translateFromAbsolute(point);
+
+          // perform a fast bounds check
+          const { x: bboxx, y: bboxy, width, height } = nodeRef.current.getBBox();
+          if (
+            point.x < bboxx ||
+            point.x > bboxx + width ||
+            point.y < bboxy ||
+            point.y > bboxy + height
+          ) {
+            return false;
+          }
 
           if (nodeRef.current instanceof SVGPathElement) {
             const d = nodeRef.current.getAttribute('d');

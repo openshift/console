@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8s from '@console/internal/module/k8s';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
@@ -9,6 +10,7 @@ import {
   filterRevisionsBaseOnTrafficStatus,
   getParentResource,
   filterRevisionsByActiveApplication,
+  createKnativeEventSourceSink,
 } from '../knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
@@ -114,5 +116,30 @@ describe('knative topology utils', () => {
   it('should return undefined if traffic status is not defined', () => {
     const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
     expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
+  });
+});
+
+describe('Knative Topology Utils', () => {
+  beforeAll(() => {
+    jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => Promise.resolve({ data }));
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should move sink to the target knServcice', (done) => {
+    createKnativeEventSourceSink(
+      MockKnativeResources.eventSourceCronjob.data[0],
+      MockKnativeResources.ksservices.data[0],
+    )
+      .then(({ data }) => {
+        expect(data.spec.sink.ref.name).toEqual('overlayimage');
+        expect(data.spec.sink.ref.kind).toEqual('service');
+        done();
+      })
+      .catch(() => {
+        done();
+      });
   });
 });

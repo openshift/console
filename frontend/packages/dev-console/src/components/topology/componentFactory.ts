@@ -24,10 +24,13 @@ import {
   graphWorkloadDropTargetSpec,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  groupWorkoadDropTargetSpec,
+  groupWorkloadDropTargetSpec,
   edgeDragSourceSpec,
+  graphEventSourceDropTargetSpec,
   createConnectorCallback,
   removeConnectorCallback,
+  MOVE_CONNECTOR_DROP_TYPE,
+  MOVE_EV_SRC_CONNECTOR_DROP_TYPE,
 } from './componentUtils';
 import './ContextMenu.scss';
 import {
@@ -45,6 +48,7 @@ import KnativeService from './components/nodes/KnativeService';
 import TrafficLink from './components/edges/TrafficLink';
 import ServiceBinding from './components/edges/ServiceBinding';
 import RevisionNode from './components/nodes/RevisionNode';
+import { createConnection, createSinkConnection } from './components/createConnection';
 import { withEditReviewAccess } from './withEditReviewAccess';
 
 type NodeProps = {
@@ -66,7 +70,7 @@ class ComponentFactory {
     return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_APPLICATION_GROUP:
-          return withDndDrop(groupWorkoadDropTargetSpec)(
+          return withDndDrop(groupWorkloadDropTargetSpec)(
             withSelection(false, true)(
               withContextMenu(
                 groupContextMenu,
@@ -76,12 +80,21 @@ class ComponentFactory {
             ),
           );
         case TYPE_KNATIVE_SERVICE:
-          return withSelection(false, true)(
-            withContextMenu(
-              nodeContextMenu,
-              document.getElementById('modal-container'),
-              'odc-topology-context-menu',
-            )(KnativeService),
+          return withDndDrop<
+            any,
+            any,
+            { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+            NodeProps
+          >(graphEventSourceDropTargetSpec)(
+            withEditReviewAccess('update')(
+              withSelection(false, true)(
+                withContextMenu(
+                  nodeContextMenu,
+                  document.getElementById('modal-container'),
+                  'odc-topology-context-menu',
+                )(KnativeService),
+              ),
+            ),
           );
         case TYPE_EVENT_SOURCE:
           return withDragNode(nodeDragSourceSpec(type))(
@@ -117,7 +130,7 @@ class ComponentFactory {
               { droppable?: boolean; hover?: boolean; canDrop?: boolean },
               NodeProps
             >(nodeDropTargetSpec)(
-              withEditReviewAccess()(
+              withEditReviewAccess('patch')(
                 withDragNode(nodeDragSourceSpec(type))(
                   withSelection(false, true)(
                     withContextMenu(
@@ -131,11 +144,17 @@ class ComponentFactory {
             ),
           );
         case TYPE_EVENT_SOURCE_LINK:
-          return EventSourceLink;
+          return withTargetDrag(
+            edgeDragSourceSpec(
+              MOVE_EV_SRC_CONNECTOR_DROP_TYPE,
+              this.hasServiceBinding,
+              createSinkConnection,
+            ),
+          )(EventSourceLink);
         case TYPE_CONNECTS_TO:
-          return withTargetDrag(edgeDragSourceSpec(this.hasServiceBinding))(
-            withRemoveConnector(removeConnectorCallback)(ConnectsTo),
-          );
+          return withTargetDrag(
+            edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, this.hasServiceBinding, createConnection),
+          )(withRemoveConnector(removeConnectorCallback)(ConnectsTo));
         case TYPE_SERVICE_BINDING:
           return withRemoveConnector(removeConnectorCallback)(ServiceBinding);
         default:

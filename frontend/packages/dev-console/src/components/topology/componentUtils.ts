@@ -13,6 +13,7 @@ import {
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
 } from '@console/topology';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createConnection } from './components/createConnection';
 import { removeConnection } from './components/removeConnection';
 import { moveNodeToGroup } from './components/moveNodeToGroup';
@@ -33,6 +34,7 @@ type EdgeProps = {
 };
 
 const MOVE_CONNECTOR_DROP_TYPE = '#moveConnector#';
+const MOVE_EV_SRC_CONNECTOR_DROP_TYPE = '#moveEvSrcConnector#';
 
 const MOVE_CONNECTOR_OPERATION = 'moveconnector';
 const REGROUP_OPERATION = 'regroup';
@@ -55,6 +57,10 @@ const canDropEdgeOnNode = (operation: string, edge: Edge, node: Node): boolean =
 
 const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean => {
   if (!monitor.isDragging() || !highlightNodeOperations.includes(monitor.getOperation())) {
+    return false;
+  }
+
+  if (monitor.getItemType() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE) {
     return false;
   }
 
@@ -155,7 +161,7 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   }),
 };
 
-const groupWorkoadDropTargetSpec: DropTargetSpec<
+const groupWorkloadDropTargetSpec: DropTargetSpec<
   any,
   any,
   { droppable: boolean; dropTarget: boolean; canDrop: boolean },
@@ -170,10 +176,35 @@ const groupWorkoadDropTargetSpec: DropTargetSpec<
   }),
 };
 
+const graphEventSourceDropTargetSpec: DropTargetSpec<
+  Edge,
+  any,
+  { droppable: boolean; canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
+  NodeProps
+> = {
+  accept: [MOVE_EV_SRC_CONNECTOR_DROP_TYPE],
+  canDrop: (item, monitor, props) => {
+    return item.getSource() !== props.element;
+  },
+  collect: (monitor, props) => ({
+    droppable: monitor.isDragging(),
+    canDrop: monitor.canDrop(),
+    dropTarget: monitor.isOver(),
+    edgeDragging: nodesEdgeIsDragging(monitor, props),
+  }),
+};
+
 const edgeDragSourceSpec = (
+  type: string,
   serviceBinding: boolean,
+  callback: (
+    sourceNode: Node,
+    targetNode: Node,
+    replaceTargetNode?: Node,
+    serviceBindingFlag?: boolean,
+  ) => Promise<K8sResourceKind[] | K8sResourceKind>,
 ): DragSourceSpec<DragObjectWithType, Node, { dragging: boolean }, EdgeProps> => ({
-  item: { type: MOVE_CONNECTOR_DROP_TYPE },
+  item: { type },
   operation: MOVE_CONNECTOR_OPERATION,
   begin: (monitor, props) => {
     props.element.raise();
@@ -185,12 +216,7 @@ const edgeDragSourceSpec = (
   end: (dropResult, monitor, props) => {
     props.element.setEndPoint();
     if (monitor.didDrop() && dropResult) {
-      createConnection(
-        props.element.getSource(),
-        dropResult,
-        props.element.getTarget(),
-        serviceBinding,
-      );
+      callback(props.element.getSource(), dropResult, props.element.getTarget(), serviceBinding);
     }
   },
   collect: (monitor) => ({
@@ -215,8 +241,11 @@ export {
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   graphWorkloadDropTargetSpec,
-  groupWorkoadDropTargetSpec,
+  groupWorkloadDropTargetSpec,
+  graphEventSourceDropTargetSpec,
   edgeDragSourceSpec,
   createConnectorCallback,
   removeConnectorCallback,
+  MOVE_CONNECTOR_DROP_TYPE,
+  MOVE_EV_SRC_CONNECTOR_DROP_TYPE,
 };

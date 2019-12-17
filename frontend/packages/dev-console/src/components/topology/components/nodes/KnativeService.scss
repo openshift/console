@@ -19,13 +19,21 @@
     fill: var(--pf-global--active-color--200);
     stroke: var(--pf-global--active-color--100);
   }
+
+  &.is-highlight {
+    stroke: var(--pf-global--active-color--400);
+    stroke-width: 4px;
+  }
 }
 
 .odc-m-drag-active {
   .odc-knative-service {
     opacity: 0.3;
     &.is-dragging {
-      opacity: 1;
+      opacity: var(--edge--drag-active--opacity);
+    }
+    &.is-highlight {
+      opacity: var(--edge--opacity);
     }
   }
 }

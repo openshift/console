@@ -234,7 +234,7 @@ const updateItemAppConnectTo = (
 export const createServiceBinding = (
   source: K8sResourceKind,
   target: K8sResourceKind,
-): Promise<any> => {
+): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
   }
@@ -286,7 +286,7 @@ export const createResourceConnection = (
   source: K8sResourceKind,
   target: K8sResourceKind,
   replacedTarget: K8sResourceKind = null,
-): Promise<any> => {
+): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
   }
@@ -303,7 +303,9 @@ export const createResourceConnection = (
     );
   const instanceName = _.get(source, ['metadata', 'labels', 'app.kubernetes.io/instance']);
 
-  const patches: Promise<any>[] = [updateItemAppConnectTo(source, connectValue, replaceValue)];
+  const patches: Promise<K8sResourceKind>[] = [
+    updateItemAppConnectTo(source, connectValue, replaceValue),
+  ];
 
   // If there is no instance label, only update this item
   if (!instanceName) {
