@@ -134,16 +134,14 @@ export const createTopologyNodeData = (
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
   const nodeResourceKind = _.get(deploymentConfig, 'metadata.ownerReferences[0].kind');
   const operatorBackedService = nodeResourceKind in operatorBackedServiceKindMap;
-  const getNodeIcon = () => {
-    if (operatorBackedService) {
-      return getImageForCSVIcon(operatorBackedServiceKindMap[nodeResourceKind]);
-    }
-    return (
-      getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
-      getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
-      getImageForIconClass(`icon-openshift`)
-    );
-  };
+
+  const csvIcon =
+    operatorBackedService && getImageForCSVIcon(operatorBackedServiceKindMap[nodeResourceKind]);
+  const builderImageIcon =
+    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+    getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
+  const defaultIcon = getImageForIconClass(`icon-openshift`);
+
   return {
     id: dcUID,
     name:
@@ -159,7 +157,7 @@ export const createTopologyNodeData = (
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
         getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),
       cheEnabled: !!cheURL,
-      builderImage: getNodeIcon(),
+      builderImage: csvIcon || builderImageIcon || defaultIcon,
       isKnativeResource:
         type && (type === 'event-source' || 'knative-revision')
           ? true
@@ -326,7 +324,7 @@ export const transformTopologyData = (
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
   if (installedOperators) {
     operatorBackedServiceKindMap = installedOperators.reduce((kindMap, csv) => {
-      _.get(csv, 'spec.customresourcedefinitions.owned').forEach((crd) => {
+      _.get(csv, 'spec.customresourcedefinitions.owned', []).forEach((crd) => {
         if (!(crd.kind in kindMap)) {
           kindMap[crd.kind] = csv;
         }

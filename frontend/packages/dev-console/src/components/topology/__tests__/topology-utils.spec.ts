@@ -7,6 +7,7 @@ import {
   getKnativeServingRoutes,
 } from '@console/knative-plugin/src/utils/get-knative-resources';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
 import {
   transformTopologyData,
@@ -259,7 +260,8 @@ describe('TopologyUtils ', () => {
   });
 
   it('should return csv icon for operator backed service', () => {
-    const csvIcon = getImageForCSVIcon(MockResources.clusterServiceVersions.data[0]);
+    const csvIcon = getImageForCSVIcon(MockResources.clusterServiceVersions
+      .data[0] as ClusterServiceVersionKind);
     const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
       'deployments',
     ]);
