@@ -25,6 +25,12 @@ import { vCPUCount } from './cpu';
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
 export const getCPU = (vm: VMKind): CPURaw => _.get(vm, 'spec.template.spec.domain.cpu');
+export const getResourcesRequestsCPUCount = (vm: VMKind): string =>
+  vm?.spec?.template?.spec?.domain?.resources?.requests?.cpu;
+export const getResourcesLimitsCPUCount = (vm: VMKind): string =>
+  vm?.spec?.template?.spec?.domain?.resources?.limits?.cpu;
+export const isDedicatedCPUPlacement = (vm: VMKind) =>
+  _.get(vm, 'spec.template.spec.domain.cpu.dedicatedCpuPlacement');
 export const getDisks = (vm: VMKind, defaultValue = []): V1Disk[] =>
   _.get(vm, 'spec.template.spec.domain.devices.disks') == null
     ? defaultValue

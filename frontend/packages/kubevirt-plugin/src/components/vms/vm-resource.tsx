@@ -8,9 +8,10 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getCDRoms } from '../../selectors/vm/selectors';
+import { getCDRoms, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
@@ -20,6 +21,11 @@ import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
 import { VirtualMachineInstanceModel } from '../../models';
+import {
+  RESOURCE_PINNED,
+  RESOURCE_NOT_PINNED,
+  DEDICATED_RESOURCES,
+} from '../modals/dedicated-resources-modal/consts';
 import {
   getOperatingSystemName,
   getOperatingSystem,
@@ -94,6 +100,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   canUpdateVM,
 }) => {
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
+  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
+    false,
+  );
 
   const id = getBasicID(vm);
   const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
@@ -104,6 +113,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
   const workloadProfile = getWorkloadProfile(vm);
   const flavorText = getFlavorText(vm);
+  const isCPUPinned = isDedicatedCPUPlacement(vm);
 
   return (
     <dl className="co-m-pane__details">
@@ -175,6 +185,21 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         >
           {flavorText}
         </EditButton>
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title={DEDICATED_RESOURCES}
+        idValue={prefixedID(id, 'dedicated-resources')}
+        canEdit
+        onEditClick={() => setDedicatedResourcesModalOpen(true)}
+        editButtonId={prefixedID(id, 'dedicated-resources-edit')}
+      >
+        <DedicatedResourcesModal
+          vmLikeEntity={vm}
+          isOpen={isDedicatedResourcesModalOpen}
+          setOpen={setDedicatedResourcesModalOpen}
+        />
+        {isCPUPinned ? RESOURCE_PINNED : RESOURCE_NOT_PINNED}
       </VMDetailsItem>
 
       <VMDetailsItem

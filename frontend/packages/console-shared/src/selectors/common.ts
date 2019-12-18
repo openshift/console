@@ -23,6 +23,11 @@ export const getLabels = <A extends K8sResourceCommon = K8sResourceCommon>(
   value: A,
   defaultValue?: K8sResourceCommon['metadata']['labels'],
 ) => (_.has(value, 'metadata.labels') ? value.metadata.labels : defaultValue);
+export const getLabel = <A extends K8sResourceCommon = K8sResourceCommon>(
+  value: A,
+  label: string,
+  defaultValue?: string,
+) => (_.has(value, 'metadata.labels') ? value.metadata.labels[label] : defaultValue);
 export const getAnnotations = <A extends K8sResourceCommon = K8sResourceCommon>(
   value: A,
   defaultValue?: K8sResourceCommon['metadata']['annotations'],
