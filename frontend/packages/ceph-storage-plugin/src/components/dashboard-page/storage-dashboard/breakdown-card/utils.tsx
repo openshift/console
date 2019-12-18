@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
-import { Colors, OTHER_TOOLTIP } from './consts';
+import { Colors, COLORMAP, OTHER_TOOLTIP } from './consts';
 
 const getTotal = (stats: StackDataPoint[]) =>
   stats.reduce((total, dataPoint) => total + dataPoint.y, 0);
@@ -19,6 +19,7 @@ const addOthers = (
     name: 'Other',
     color: Colors.OTHER,
     label: humanize(others).string,
+    fill: 'rgb(96, 98, 103)',
     link: OTHER_TOOLTIP,
     id: 6,
   };
@@ -48,6 +49,7 @@ export const addAvailable = (
       link: '',
       color: '',
       label: humanize(availableInBytes).string,
+      fill: '#b8bbbe',
       id: 7,
     };
     newChartData = [...newChartData, availableData] as StackDataPoint[];
@@ -66,24 +68,31 @@ export const getBarRadius = (index: number, length: number) => {
   return barRadius;
 };
 
-export const isAvailableBar = (name: string) => {
-  let barColor = {};
-  if (name === 'Available') {
-    barColor = { fill: Colors.AVAILABLE };
-  }
-  return barColor;
+export const sortInstantVectorStats = (stats: DataPoint[]): DataPoint[] => {
+  stats.sort((a, b) => {
+    const y1 = a.y;
+    const y2 = b.y;
+    if (y1 === y2) {
+      const x1 = a.x;
+      const x2 = b.x;
+      return x1 < x2 ? -1 : x1 > x2 ? 1 : 0;
+    }
+    return y2 - y1;
+  });
+  return stats.length === 6 ? stats.splice(0, 5) : stats;
 };
 
 export const getStackChartStats: GetStackStats = (response, humanize) =>
   response.map((r, i) => {
     const capacity = humanize(r.y).string;
     return {
-      // INFO: x value needs to be same for single bar stack chart
+      // x value needs to be same for single bar stack chart
       x: '0',
       y: r.y,
       name: _.truncate(`${r.x}`, { length: 12 }),
       link: `${r.x}`,
       color: Colors.LINK,
+      fill: COLORMAP[i],
       label: capacity,
       id: i,
     };
@@ -98,6 +107,7 @@ export type StackDataPoint = {
   label: string;
   link: string;
   color: string;
+  fill: string;
   id: number;
 };
 

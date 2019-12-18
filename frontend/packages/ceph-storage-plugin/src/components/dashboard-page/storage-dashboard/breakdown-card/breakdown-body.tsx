@@ -57,6 +57,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   const legends = chartData.map((d: StackDataPoint) => ({
     name: [d.name, d.label],
     labels: { fill: d.color },
+    symbol: { fill: d.fill },
     link: d.link,
   }));
 
