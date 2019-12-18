@@ -14,7 +14,7 @@ import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../../../const
 import { PROJECTS } from '../../../../constants/index';
 import { BreakdownCardBody } from '../breakdown-card/breakdown-body';
 import { HeaderPrometheusViewLink } from '../breakdown-card/breakdown-header';
-import { getStackChartStats } from '../breakdown-card/utils';
+import { getStackChartStats, sortInstantVectorStats } from '../breakdown-card/utils';
 import './capacity-breakdown-card.scss';
 
 const keys = Object.keys(breakdownQueryMap);
@@ -42,8 +42,9 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const queriesDataLoaded = queryKeys.some((q) => !prometheusResults.getIn([queries[q], 'data']));
 
   const humanize = humanizeBinaryBytes;
-  const top5MetricsData = getInstantVectorStats(results[0], metric);
-  const top5MetricsStats = getStackChartStats(top5MetricsData, humanize);
+  const top6MetricsData = getInstantVectorStats(results[0], metric);
+  const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
+  const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
   const metricTotal = _.get(results[1], 'data.result[0].value[1]');
   const cephTotal = _.get(results[2], 'data.result[0].value[1]');
   const cephUsed = _.get(results[3], 'data.result[0].value[1]');
