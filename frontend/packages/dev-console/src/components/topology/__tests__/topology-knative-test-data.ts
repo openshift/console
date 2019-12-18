@@ -430,6 +430,9 @@ export const sampleEventSourceContainers: FirehoseResult = {
           name: 'overlayimage',
         },
       },
+      status: {
+        sinkUri: 'http://event-display.testproject3.svc.cluster.local',
+      },
     },
   ],
 };
