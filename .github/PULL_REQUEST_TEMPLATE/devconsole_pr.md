@@ -8,7 +8,7 @@
 <!-- Describe your code changes in detail and explain the solution -->
 
 ### Screen shots / Gifs for design review
-<!-- If designer review required, tag @openshift/team-devconsole-ux and add screenshots/gifs  -->
+<!-- If change affects UI in any way, tag @openshift/team-devconsole-ux and add screenshots/gifs  -->
 
 ### Unit test coverage report
 <!-- Attach test coverage report -->
