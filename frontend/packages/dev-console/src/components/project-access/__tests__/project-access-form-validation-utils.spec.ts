@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { validationSchema } from '../project-access-form-validation-utils';
-import { mockProjectAccessData } from '../__mocks__/project-access-form-mock';
+import { mockProjectAccessData } from './project-access-form-data';
 
 describe('ValidationUtils', () => {
   it('should throw an error if Name field is empty', async () => {

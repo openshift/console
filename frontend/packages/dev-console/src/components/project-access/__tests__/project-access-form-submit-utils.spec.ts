@@ -17,7 +17,7 @@ import {
   rolesBindingsToBeRemoved,
   formValues2,
   roleBindingsToBeCreated2,
-} from '../__mocks__/project-access-form-mock';
+} from './project-access-form-data';
 
 describe('Project Access handleSubmit Utils', () => {
   it('should get roles removed by the user', async () => {

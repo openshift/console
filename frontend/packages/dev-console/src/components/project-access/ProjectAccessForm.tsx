@@ -11,7 +11,7 @@ enum accessRoles {
   edit = 'Edit',
 }
 
-const ProjectAccess: React.FC<FormikProps<FormikValues>> = ({
+const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({
   handleSubmit,
   handleReset,
   isSubmitting,
@@ -44,4 +44,4 @@ const ProjectAccess: React.FC<FormikProps<FormikValues>> = ({
   </Form>
 );
 
-export default ProjectAccess;
+export default ProjectAccessForm;
