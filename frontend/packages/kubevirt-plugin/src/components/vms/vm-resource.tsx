@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
-import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
@@ -25,6 +24,7 @@ import {
   getWorkloadProfile,
   getDevices,
 } from '../../selectors/vm';
+import { VirtualMachineInstanceModel } from '../../models';
 
 import './vm-resource.scss';
 
@@ -110,12 +110,12 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 
-      <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
-        {launcherPod && (
+      <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!launcherPod}>
+        {vmi && (
           <ResourceLink
-            kind={PodModel.kind}
-            name={getName(launcherPod)}
-            namespace={getNamespace(launcherPod)}
+            kind={VirtualMachineInstanceModel.kind}
+            name={getName(vmi)}
+            namespace={getNamespace(vmi)}
           />
         )}
       </VMDetailsItem>
