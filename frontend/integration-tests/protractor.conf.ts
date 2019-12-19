@@ -115,6 +115,7 @@ const testSuites = {
     'tests/monitoring.scenario.ts',
     'tests/devconsole/dev-perspective.scenario.ts',
     'tests/devconsole/git-import-flow.scenario.ts',
+    'tests/devconsole/pipeline.scenario.ts',
     'tests/crd-extensions.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
