@@ -1,24 +1,24 @@
-### [User Story/Defect/Task]: add JIRA link
-<!-- For e.g [User Story]: https://jira.coreos.com/browse/ODC-100 -->
+**Fixes**: 
+<!-- For e.g Fixes: https://issues.redhat.com/browse/ODC-XXX -->
 
-### Analysis / Root cause
-<!-- Briefly describe analysis of US/Task or root cause of defect -->
+**Analysis / Root cause**: 
+<!-- Briefly describe analysis of US/Task or root cause of Defect -->
 
-### Solution Description
+**Solution Description**: 
 <!-- Describe your code changes in detail and explain the solution -->
 
-### Screen shots / Gifs for design review
+**Screen shots / Gifs for design review**: 
 <!-- If change affects UI in any way, tag @openshift/team-devconsole-ux and add screenshots/gifs  -->
 
-### Unit test coverage report
+**Unit test coverage report**: 
 <!-- Attach test coverage report -->
 
-### Test setup
+**Test setup:**
 <!-- If any setup required to test this PR, mention the details -->
 
-### Browser conformance
+**Browser conformance**: 
 <!-- To mark tested browsers, use [x] -->
-    - [ ] Chrome
-    - [ ] Firefox
-    - [ ] Safari
-    - [ ] Edge
+- [ ] Chrome
+- [ ] Firefox
+- [ ] Safari
+- [ ] Edge
