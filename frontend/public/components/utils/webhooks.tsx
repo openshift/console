@@ -90,7 +90,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       setWebhookSecrets(_.compact(secrets));
       setLoaded(true);
     });
-  }, [isLoaded, canGetSecret]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoaded, canGetSecret]);
 
   if (_.isEmpty(webhooks)) {
     return null;
