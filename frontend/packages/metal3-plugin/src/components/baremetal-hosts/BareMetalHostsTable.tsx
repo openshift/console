@@ -78,7 +78,7 @@ type HostsTableRowProps = {
 };
 
 const HostsTableRow: React.FC<HostsTableRowProps> = ({
-  obj: { host, node, nodeMaintenance, machine, status },
+  obj: { host, node, nodeMaintenance, machine, machineSet, status },
   customData: { hasNodeMaintenanceCapability },
   index,
   key,
@@ -115,10 +115,12 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       <TableData className={tableColumnClasses.kebab}>
         <Kebab
           options={menuActions.map((action) =>
-            action(BareMetalHostModel, host, null, {
+            action(BareMetalHostModel, host, {
               nodeMaintenance,
               nodeName,
               hasNodeMaintenanceCapability,
+              machine,
+              machineSet,
               status: status.status,
             }),
           )}

@@ -1,33 +1,41 @@
-import { asAccessReview, KebabOption, Kebab } from '@console/internal/components/utils';
+import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
-  K8sResourceKind,
   k8sPatch,
+  K8sResourceKind,
   MachineKind,
+  MachineSetKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import { getMachineNode, getMachineNodeName } from '@console/shared';
-import { deleteModal } from '@console/internal/components/modals';
+import { getMachineNode, getMachineNodeName, getName, getAnnotations } from '@console/shared';
+import { confirmModal, deleteModal } from '@console/internal/components/modals';
+import { MachineModel, MachineSetModel } from '@console/internal/models';
 import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../../selectors';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostStatus } from '../../status/host-status';
 import {
-  HOST_POWER_STATUS_POWERING_OFF,
-  HOST_POWER_STATUS_POWERED_ON,
-  HOST_POWER_STATUS_POWERING_ON,
   HOST_POWER_STATUS_POWERED_OFF,
+  HOST_POWER_STATUS_POWERED_ON,
+  HOST_POWER_STATUS_POWERING_OFF,
+  HOST_POWER_STATUS_POWERING_ON,
+  HOST_STATUS_AVAILABLE,
+  HOST_STATUS_DISCOVERED,
+  HOST_STATUS_ERROR,
   HOST_STATUS_READY,
   HOST_STATUS_REGISTRATION_ERROR,
-  HOST_STATUS_ERROR,
-  HOST_STATUS_DISCOVERED,
-  HOST_STATUS_AVAILABLE,
 } from '../../constants';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import { powerOffHostModal } from '../modals/PowerOffHostModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import { BareMetalHostKind } from '../../types';
+import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
+import { deprovision } from '../../k8s/requests/bare-metal-host';
+import { getMachineMachineSetOwner } from '../../selectors/machine';
+import { findMachineSet } from '../../selectors/machine-set';
 
 type ActionArgs = {
+  machine?: MachineKind;
+  machineSet?: MachineSetKind;
   nodeName?: string;
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability?: boolean;
@@ -37,7 +45,6 @@ type ActionArgs = {
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
@@ -48,7 +55,6 @@ export const SetNodeMaintenance = (
 export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  resources: {},
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
@@ -71,10 +77,36 @@ export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption 
   };
 };
 
+export const Deprovision = (
+  kindObj: K8sKind,
+  host: BareMetalHostKind,
+  { machine, machineSet }: ActionArgs,
+): KebabOption => {
+  const title = 'Deprovision';
+  return {
+    hidden:
+      !machine ||
+      !!getAnnotations(machine, {})[DELETE_MACHINE_ANNOTATION] ||
+      (getMachineMachineSetOwner(machine) && !machineSet),
+    label: title,
+    callback: () =>
+      confirmModal({
+        title: `${title} ${getName(host)}`,
+        message: `Are you sure you want to delete ${getName(machine)} machine${
+          machineSet ? ' and scale down its machine set?' : '?'
+        }`,
+        btnText: title,
+        executeFn: () => deprovision(machine, machineSet),
+      }),
+    accessReview: machineSet
+      ? asAccessReview(MachineSetModel, machineSet, 'update')
+      : asAccessReview(MachineModel, machine, 'delete'),
+  };
+};
+
 export const PowerOff = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  resources: null,
   { hasNodeMaintenanceCapability, nodeName, status }: ActionArgs,
 ) => ({
   hidden: [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -88,7 +120,6 @@ export const PowerOff = (
 export const Delete = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  resources: null,
   { status }: ActionArgs,
 ): KebabOption => {
   const title = 'Delete Bare Metal Host';
@@ -114,6 +145,7 @@ export const menuActions = [
   SetNodeMaintenance,
   RemoveNodeMaintenance,
   PowerOn,
+  Deprovision,
   PowerOff,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
@@ -123,6 +155,7 @@ export const menuActions = [
 
 type ExtraResources = {
   machines: MachineKind[];
+  machineSets: MachineSetKind[];
   nodes: NodeKind[];
   nodeMaintenances: K8sResourceKind[];
 };
@@ -130,7 +163,7 @@ type ExtraResources = {
 export const menuActionsCreator = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { machines, nodes, nodeMaintenances }: ExtraResources,
+  { machines, machineSets, nodes, nodeMaintenances }: ExtraResources,
   { hasNodeMaintenanceCapability },
 ) => {
   const machine = getHostMachine(host, machines);
@@ -139,11 +172,16 @@ export const menuActionsCreator = (
   const nodeMaintenance = findNodeMaintenance(nodeMaintenances, nodeName);
   const status = getHostStatus({ host, machine, node, nodeMaintenance });
 
+  const machineOwner = getMachineMachineSetOwner(machine);
+  const machineSet = findMachineSet(machineSets, machineOwner && machineOwner.uid);
+
   return menuActions.map((action) => {
-    return action(kindObj, host, null, {
+    return action(kindObj, host, {
       hasNodeMaintenanceCapability,
       nodeMaintenance,
       nodeName,
+      machine,
+      machineSet,
       status: status.status,
     });
   });
