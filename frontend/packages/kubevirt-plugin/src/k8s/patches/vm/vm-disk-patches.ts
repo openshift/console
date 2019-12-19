@@ -1,5 +1,6 @@
 import { getName } from '@console/shared/src';
 import { Patch, k8sGet } from '@console/internal/module/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import {
   getDataVolumeTemplates,
   getDisks,
@@ -9,7 +10,6 @@ import {
 } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
 import { VMLikeEntityKind } from '../../../types';
-import { PatchBuilder } from '../../utils/patch';
 import { getSimpleName } from '../../../selectors/utils';
 import { DiskWrapper } from '../../wrapper/vm/disk-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';

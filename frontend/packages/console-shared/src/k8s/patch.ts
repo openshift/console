@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Patch } from '@console/internal/module/k8s';
-import { assureEndsWith } from '@console/shared';
+import { assureEndsWith } from '../utils';
 
 export const patchSafeValue = (value: string): string =>
   value.replace('~', '~0').replace('/', '~1');
@@ -97,7 +97,7 @@ export class PatchBuilder {
     return this;
   };
 
-  setObjectRemove = (key: string, object?: { [k: string]: any }) => {
+  setObjectRemove = (key: string, object: { [k: string]: any }) => {
     if (_.has(object, [key])) {
       this.value = undefined;
       this.valueKey = key;
@@ -108,9 +108,13 @@ export class PatchBuilder {
     return this;
   };
 
-  setObjectUpdate = (key: string, value: any, object?: { [k: string]: any }) => {
-    this.value = value;
-    this.valueKey = key;
+  setObjectUpdate = (key: string, value: any, object: { [k: string]: any }) => {
+    if (object == null) {
+      this.value = { [key]: value };
+    } else {
+      this.value = value;
+      this.valueKey = key;
+    }
     this.operation = _.has(object, [key]) ? PatchOperation.REPLACE : PatchOperation.ADD;
     return this;
   };
@@ -132,7 +136,7 @@ export class PatchBuilder {
       resultPath = `${assureEndsWith(this.path, '/')}${this.valueIndex}`;
     }
 
-    const result: any = {
+    const result: Patch = {
       op: this.operation,
       path: resultPath,
     };

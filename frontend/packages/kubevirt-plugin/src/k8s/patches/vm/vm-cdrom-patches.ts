@@ -1,6 +1,7 @@
 import { last, includes } from 'lodash';
 import { getName } from '@console/shared';
 import { Volume, k8sGet } from '@console/internal/module/k8s';
+import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { CD, StorageType } from '../../../components/modals/cdrom-vm-modal/constants';
 import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import {
@@ -8,7 +9,6 @@ import {
   getDefaultSCVolumeMode,
 } from '../../../selectors/config-map/sc-defaults';
 import { getStorageClassConfigMap } from '../../requests/config-map/storage-class';
-import { PatchBuilder, PatchOperation } from '../../utils/patch';
 import { VMLikeEntityKind } from '../../../types';
 import {
   getVolumes,
