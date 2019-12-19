@@ -60,3 +60,15 @@ export enum PVC_STATUS {
   PENDING = 'Pending',
   BOUND = 'Bound',
 }
+
+export enum OCP_TEXT_STATUS {
+  HEALTHY = 'healthy',
+  DEGRADED = 'health is degraded',
+  NOT_AVAILABLE = 'is not available',
+}
+
+export enum OCP_HEALTH_ICON_COLORS {
+  GREEN = 'var(--pf-chart-color-green-400)',
+  YELLOW = '#f0ab00',
+  RED = '#c9190b',
+}
