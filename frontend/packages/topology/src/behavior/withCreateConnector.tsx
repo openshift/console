@@ -5,7 +5,7 @@ import DefaultCreateConnector from '../components/DefaultCreateConnector';
 import Point from '../geom/Point';
 import Layer from '../components/layers/Layer';
 import ContextMenu, { ContextMenuItem } from '../components/contextmenu/ContextMenu';
-import { Node, isNode, AnchorEnd } from '../types';
+import { Node, isNode, AnchorEnd, GraphElement, isGraph, Graph } from '../types';
 import { DragSourceSpec, DragSourceMonitor, DragEvent } from './dnd-types';
 import { useDndDrag } from './useDndDrag';
 
@@ -25,7 +25,7 @@ type CreateConnectorWidgetProps = {
   onKeepAlive: (isAlive: boolean) => void;
   onCreate: (
     element: Node,
-    target: Node,
+    target: Node | Graph,
     event: DragEvent,
     choice?: ConnectorChoice,
   ) => ConnectorChoice[] | void | undefined | null;
@@ -35,16 +35,17 @@ type CreateConnectorWidgetProps = {
 type CollectProps = {
   event?: DragEvent;
   dragging: boolean;
+  hints?: string[] | undefined;
 };
 
 type PromptData = {
   element: Node;
-  target: Node;
+  target: Node | Graph;
   event: DragEvent;
   choices: ConnectorChoice[];
 };
 
-export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#"';
+export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
 
 const DEFAULT_HANDLE_ANGLE = 12 * (Math.PI / 180);
 const DEFAULT_HANDLE_LENGTH = 32;
@@ -60,6 +61,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
   } = props;
   const [prompt, setPrompt] = React.useState<PromptData | null>(null);
   const [active, setActive] = React.useState(false);
+  const hintsRef = React.useRef<string[] | undefined>();
 
   const spec = React.useMemo(() => {
     const dragSourceSpec: DragSourceSpec<any, any, CollectProps> = {
@@ -73,12 +75,12 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
         p.element.raise();
       },
       end: (
-        dropResult: Node,
+        dropResult: GraphElement,
         monitor: DragSourceMonitor,
         dragProps: CreateConnectorWidgetProps,
       ) => {
         const event = monitor.getDragEvent();
-        if (isNode(dropResult) && event) {
+        if ((isNode(dropResult) || isGraph(dropResult)) && event) {
           const choices = dragProps.onCreate(dragProps.element, dropResult, event);
           if (choices && choices.length) {
             setPrompt({ element: dragProps.element, target: dropResult, event, choices });
@@ -91,15 +93,21 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
       collect: (monitor) => ({
         dragging: !!monitor.getItem(),
         event: monitor.isDragging() ? monitor.getDragEvent() : undefined,
+        hints: monitor.getDropHints(),
       }),
     };
     return dragSourceSpec;
   }, [setActive]);
-  const [{ dragging, event }, dragRef] = useDndDrag(spec, props);
+  const [{ dragging, event, hints }, dragRef] = useDndDrag(spec, props);
 
   if (!active && dragging && !event) {
     // another connector is dragging right now
     return null;
+  }
+
+  if (dragging) {
+    // store the latest hints
+    hintsRef.current = hints;
   }
 
   const dragEvent = prompt ? prompt.event : event;
@@ -136,7 +144,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
           onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
           style={{ cursor: !dragging ? 'pointer' : undefined }}
         >
-          {renderConnector(startPoint, endPoint)}
+          {renderConnector(startPoint, endPoint, hintsRef.current)}
           {!active && (
             <path
               d={hullPath([[startPoint.x, startPoint.y], [endPoint.x, endPoint.y]], 7)}
@@ -179,11 +187,17 @@ export type WithCreateConnectorProps = {
   onHideCreateConnector: () => void;
 };
 
-type ConnectorRenderer = (startPoint: Point, endPoint: Point) => React.ReactElement;
+type ConnectorRenderer = <T extends any>(
+  startPoint: Point,
+  endPoint: Point,
+  hints: string[] | undefined,
+) => React.ReactElement;
 
-const defaultRenderConnector: ConnectorRenderer = (startPoint: Point, endPoint: Point) => (
-  <DefaultCreateConnector startPoint={startPoint} endPoint={endPoint} />
-);
+const defaultRenderConnector: ConnectorRenderer = (
+  startPoint: Point,
+  endPoint: Point,
+  hints?: string[] | undefined,
+) => <DefaultCreateConnector startPoint={startPoint} endPoint={endPoint} hints={hints} />;
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],

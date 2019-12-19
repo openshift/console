@@ -89,6 +89,13 @@ export const useDndDrop = <
   React.useEffect(() => {
     const dropTarget: DropTarget = {
       type: spec.accept,
+      dropHint: () => {
+        return typeof specRef.current.dropHint === 'string'
+          ? specRef.current.dropHint
+          : typeof specRef.current.dropHint === 'function'
+          ? specRef.current.dropHint(monitor.getItem(), monitor, propsRef.current)
+          : elementRef.current.getType();
+      },
       hitTest: (x: number, y: number) => {
         if (specRef.current.hitTest) {
           return specRef.current.hitTest(x, y, propsRef.current);

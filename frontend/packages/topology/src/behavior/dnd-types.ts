@@ -24,6 +24,7 @@ export type DragSource = {
 
 export type DropTarget = {
   type: TargetType;
+  dropHint(dndManager: DndManager): string | undefined;
   drop(dndManager: DndManager): any;
   hover(dndManager: DndManager): void;
   canDrop(dndManager: DndManager): boolean;
@@ -52,6 +53,7 @@ export type Unregister = () => void;
 export interface DndManager {
   registerSource(source: DragSource): [string, Unregister];
   registerTarget(target: DropTarget): [string, Unregister];
+  getDropHints(): string[] | undefined;
   canDragSource(sourceId: string | undefined): boolean;
   canDropOnTarget(targetId: string | undefined): boolean;
   isDragging(): boolean;
@@ -137,10 +139,13 @@ export type DropTargetSpec<
   Props extends {} = {}
 > = {
   accept: TargetType;
+  dropHint?:
+    | string
+    | ((item: DragObject, monitor: DropTargetMonitor, props: Props) => string | undefined);
   hitTest?: (x: number, y: number, props: Props) => boolean;
   drop?: (item: DragObject, monitor: DropTargetMonitor, props: Props) => DropResult | undefined;
   hover?: (item: DragObject, monitor: DropTargetMonitor, props: Props) => void;
-  canDrop?: (item: DragObject, monitor: DropTargetMonitor, props: Props) => boolean;
+  canDrop?: boolean | ((item: DragObject, monitor: DropTargetMonitor, props: Props) => boolean);
   collect?: (monitor: DropTargetMonitor, props: Props) => CollectedProps;
 };
 
@@ -150,6 +155,7 @@ export interface HandlerManager {
 }
 
 export interface DragSourceMonitor extends HandlerManager {
+  getDropHints(): string[] | undefined;
   canDrag(): boolean;
   isCancelled(): boolean;
   isDragging(): boolean;

@@ -21,6 +21,8 @@ import {
   withDragNode,
   WithDragNodeProps,
   Layer,
+  Graph,
+  isGraph,
 } from '../src';
 import defaultComponentFactory from './components/defaultComponentFactory';
 import DefaultEdge from './components/DefaultEdge';
@@ -199,13 +201,16 @@ export const createConnector = () => {
   vis.registerComponentFactory(defaultComponentFactory);
   vis.registerComponentFactory((kind) => {
     if (kind === ModelKind.graph) {
-      return withPanZoom()(GraphComponent);
+      return withDndDrop({
+        accept: CREATE_CONNECTOR_DROP_TYPE,
+        dropHint: 'create',
+      })(withPanZoom()(GraphComponent));
     }
     if (kind === ModelKind.node) {
       return withCreateConnector(
         (
           source: Node,
-          target: Node,
+          target: Node | Graph,
           event: DragEvent,
           choice: ColorChoice | undefined,
         ): any[] | null => {
@@ -216,6 +221,23 @@ export const createConnector = () => {
             ];
           }
 
+          let targetId;
+          if (isGraph(target)) {
+            if (!model.nodes) {
+              model.nodes = [];
+            }
+            targetId = `n${vis.getGraph().getNodes().length + 1}`;
+            model.nodes.push({
+              id: targetId,
+              type: 'node',
+              x: event.x - 15,
+              y: event.y - 15,
+              height: 30,
+              width: 30,
+            });
+          } else {
+            targetId = target.getId();
+          }
           const id = `e${vis.getGraph().getEdges().length + 1}`;
           if (!model.edges) {
             model.edges = [];
@@ -224,7 +246,7 @@ export const createConnector = () => {
             id,
             type: 'edge',
             source: source.getId(),
-            target: target.getId(),
+            target: targetId,
             data: {
               color: choice.color,
             },
