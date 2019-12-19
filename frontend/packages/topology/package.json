@@ -11,7 +11,12 @@
     "mobx-react-lite": "^1.4.2"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "topology": [
+        "integration-tests/**/*.scenario.ts"
+        ]
+    }
   },
   "peerDependencies": {
     "@types/dagre": "0.7.42",

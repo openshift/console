@@ -9,4 +9,5 @@ declare module 'protractor' {
   let ExpectedConditions: any;
   let Key: any;
   let until: any;
+  let protractor: any;
 }
