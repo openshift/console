@@ -67,7 +67,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Workloads',
       componentProps: {
-        name: 'Virtual Machines Instances',
+        name: models.VirtualMachineInstanceModel.labelPlural,
         resource: models.VirtualMachineInstanceModel.plural,
         required: FLAG_KUBEVIRT,
       },
@@ -86,7 +86,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: 'vmtemplates',
         required: FLAG_KUBEVIRT,
       },
-      mergeBefore: 'Virtual Machines Instances',
+      mergeBefore: models.VirtualMachineInstanceModel.labelPlural,
     },
   },
   {

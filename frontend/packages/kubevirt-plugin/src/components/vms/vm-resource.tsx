@@ -111,7 +111,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 
-      <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!launcherPod}>
+      <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!vmi}>
         {vmi && (
           <ResourceLink
             kind={VirtualMachineInstanceModel.kind}
