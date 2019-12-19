@@ -98,7 +98,7 @@ const OngoingActivity = connect(mapStateToProps)(
             .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
             .map((r) => ({
               resource: r,
-              timestamp: a.properties.getTimestamp(r),
+              timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
               loader: a.properties.loader,
             }));
         }),

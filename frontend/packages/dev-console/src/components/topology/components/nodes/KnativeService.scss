@@ -1,0 +1,31 @@
+.odc-knative-service {
+  fill: #e2e2e2;
+  stroke: #bbbbbb;
+  stroke-width: 4px;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    cursor: grab;
+  }
+
+  &__label {
+    cursor: pointer;
+    .odc-m-drag-active & {
+      cursor: grab;
+    }
+  }
+
+  &.is-selected {
+    fill: var(--pf-global--active-color--200);
+    stroke: var(--pf-global--active-color--100);
+  }
+}
+
+.odc-m-drag-active {
+  .odc-knative-service {
+    opacity: 0.3;
+    &.is-dragging {
+      opacity: 1;
+    }
+  }
+}

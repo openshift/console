@@ -278,12 +278,14 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
         taskStatus[runStatus.Running]++;
       } else if (status === 'Failed') {
         taskStatus[runStatus.Failed]++;
+      } else if (status === 'Cancelled') {
+        taskStatus[runStatus.Cancelled]++;
       } else {
         taskStatus[runStatus.Pending]++;
       }
     });
-    taskStatus[runStatus.Failed] > 0
-      ? (taskStatus[runStatus.Cancelled] =
+    taskStatus[runStatus.Failed] > 0 || taskStatus[runStatus.Cancelled] > 0
+      ? (taskStatus[runStatus.Cancelled] +=
           totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks)
       : (taskStatus[runStatus.Pending] +=
           totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks);

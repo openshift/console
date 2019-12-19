@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusHealthHandler } from '@console/plugin-sdk';
 import { getResiliencyProgress } from '../../../../utils';
 

@@ -22,6 +22,8 @@ const ProjectListPage: React.FC<ProjectListPageProps> = (props) => (
       kind="Project"
       ListComponent={props.listComponent || ProjectsTable}
       canCreate={false}
+      filterLabel="by name or display name"
+      textFilter="project-name"
     />
   </div>
 );

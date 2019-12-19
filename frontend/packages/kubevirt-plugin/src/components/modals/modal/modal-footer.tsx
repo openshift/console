@@ -28,6 +28,17 @@ export const ModalSimpleErrorMessage: React.FC<ModalSimpleErrorMessageProps> = (
   <Alert isInline className="co-alert" variant="danger" title={message} />
 );
 
+type ModalInfoMessageProps = {
+  title: string;
+  children: React.ReactNode;
+};
+
+export const ModalInfoMessage: React.FC<ModalInfoMessageProps> = ({ title, children }) => (
+  <Alert isInline className="co-alert co-alert--scrollable" variant="info" title={title}>
+    {children}
+  </Alert>
+);
+
 type ModalFooterProps = {
   id?: string;
   errorMessage?: string;
@@ -38,6 +49,8 @@ type ModalFooterProps = {
   inProgress?: boolean;
   submitButtonText?: string;
   cancelButtonText?: string;
+  infoTitle?: string;
+  infoMessage?: React.ReactNode;
 };
 
 export const ModalFooter: React.FC<ModalFooterProps> = ({
@@ -50,10 +63,13 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   onCancel,
   submitButtonText = 'Add',
   cancelButtonText = 'Cancel',
+  infoMessage = null,
+  infoTitle = null,
 }) => (
   <footer className="co-m-btn-bar modal-footer kubevirt-create-nic-modal__buttons">
     {errorMessage && isSimpleError && <ModalSimpleErrorMessage message={errorMessage} />}
     {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
+    {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
     <Button
       variant={ButtonVariant.primary}
       onClick={onSubmit}

@@ -18,16 +18,18 @@ export const checkIfClusterIsReady = async () => {
   }
 };
 
-export const waitFor = async (element, text) => {
-  let stillLoading = true;
-  while (stillLoading) {
+export const waitFor = async (element, text, count = 1) => {
+  let rowNumber = 0;
+  while (rowNumber !== count) {
     await browser.wait(until.visibilityOf(element));
     const elemText = await element.getText();
-    if (elemText.includes(text)) stillLoading = false;
+    if (elemText.includes(text)) {
+      rowNumber += 1;
+    } else {
+      rowNumber = 0;
+    }
     /* eslint-disable no-await-in-loop */
     await browser.sleep(5 * SECOND);
-    // Sometimes it flickers additonal guard for reliability
-    if (!elemText.includes(text)) stillLoading = true;
   }
 };
 
@@ -98,3 +100,17 @@ export const isPodPresent = (pods, podName) => {
 export const getOSDPreparePodsCnt = (pods) =>
   pods.items.filter((pod) => getPodName(pod).includes(POD_NAME_PATTERNS.ROOK_CEPH_OSD_PREPARE))
     .length;
+
+export const refreshIfNotVisible = async (element, maxTimes = 1) => {
+  let isVisible = await element.isPresent();
+  let count = 0;
+  while (count < maxTimes) {
+    if (!isVisible) {
+      /* eslint-disable no-await-in-loop */
+      await browser.refresh();
+      await browser.sleep(5 * SECOND);
+      isVisible = await element.isPresent();
+    }
+    count += 1;
+  }
+};

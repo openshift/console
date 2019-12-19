@@ -1,4 +1,5 @@
 import { DISK_SOURCE } from './consts';
+import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
 
 export type ProvisionOption = {
   method: string;
@@ -59,6 +60,15 @@ export type VMConfig = {
   cloudInit: CloudInitConfig;
   storageResources: StorageResource[];
   networkResources: NetworkResource[];
+};
+
+export type BaseVMConfig = {
+  operatingSystem: OperatingSystem;
+  flavor: Flavor;
+  workloadProfile: WorkloadProfile;
+  sourceURL: string;
+  sourceContainer: string;
+  cloudInitScript: string;
 };
 
 export type ProvisionConfig = {

@@ -1,4 +1,4 @@
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
@@ -100,20 +100,17 @@ namespace ExtensionProperties {
   }
 
   export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
-    /** Resource which will be fetched and grouped by `mapper` function. */
-    resource: FirehoseResource;
+    /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
+    model: K8sKind;
+
+    /** Function which will map various statuses to groups. */
+    mapper?: StatusGroupMapper;
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
     additionalResources?: FirehoseResource[];
 
-    /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
-    model: K8sKind;
-
     /** Defines whether model's label or abbr should be used when rendering the item. Defaults to false (label). */
     useAbbr?: boolean;
-
-    /** Function which will map various statuses to groups. */
-    mapper: StatusGroupMapper;
 
     /** Loader for the component which will be used when item is expanded. */
     expandedComponent?: LazyLoader<ExpandedComponentProps>;
@@ -140,7 +137,7 @@ namespace ExtensionProperties {
 
   export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
     /** Resource to watch */
-    k8sResource: FirehoseResource;
+    k8sResource: FirehoseResource & { isList: true };
 
     /**
      * Function which will determine if given resource represents the action.
@@ -149,7 +146,7 @@ namespace ExtensionProperties {
     isActivity?: (resource: K8sResourceKind) => boolean;
 
     /** Timestamp for given action, which will be used for ordering */
-    getTimestamp: (resource: K8sResourceKind) => Date;
+    getTimestamp?: (resource: K8sResourceKind) => Date;
 
     /** Loader for corresponding action component */
     loader: LazyLoader<K8sActivityProps>;
@@ -273,6 +270,16 @@ export interface ProjectDashboardInventoryItem
 
 export const isProjectDashboardInventoryItem = (e: Extension): e is ProjectDashboardInventoryItem =>
   e.type === 'Project/Dashboard/Inventory/Item';
+
+export interface DashboardsOverviewInventoryItemReplacement
+  extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
+  type: 'Dashboards/Overview/Inventory/Item/Replacement';
+}
+
+export const isDashboardsOverviewInventoryItemReplacement = (
+  e: Extension,
+): e is DashboardsOverviewInventoryItemReplacement =>
+  e.type === 'Dashboards/Overview/Inventory/Item/Replacement';
 
 export type DashboardCardSpan = 4 | 6 | 12;
 

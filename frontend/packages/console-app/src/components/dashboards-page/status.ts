@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { PrometheusHealthHandler, URLHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   ClusterVersionKind,

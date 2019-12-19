@@ -4,7 +4,7 @@ import {
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
 } from '@console/shared';
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getControlPlaneComponentHealth } from './status';
 

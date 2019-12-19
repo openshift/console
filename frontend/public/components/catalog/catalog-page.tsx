@@ -339,14 +339,16 @@ export const Catalog = connectToFlags<CatalogProps>(
   ];
 
   return (
-    <Firehose resources={mock ? [] : resources}>
-      <CatalogListPage
-        namespace={namespace}
-        templateMetadata={templateMetadata}
-        projectTemplateMetadata={projectTemplateMetadata}
-        {...props as any}
-      />
-    </Firehose>
+    <div className="co-catalog__body">
+      <Firehose resources={mock ? [] : resources}>
+        <CatalogListPage
+          namespace={namespace}
+          templateMetadata={templateMetadata}
+          projectTemplateMetadata={projectTemplateMetadata}
+          {...props as any}
+        />
+      </Firehose>
+    </div>
   );
 });
 
@@ -357,13 +359,16 @@ export const CatalogPage = withStartGuide(({ match, noProjectsAvailable }) => {
       <Helmet>
         <title>Developer Catalog</title>
       </Helmet>
-      <div className="co-catalog">
-        <PageHeading title="Developer Catalog" />
-        <p className="co-catalog-page__description">
-          Add shared apps, services, or source-to-image builders to your project from the Developer
-          Catalog. Cluster admins can install additional apps which will show up here automatically.
-        </p>
-        <Catalog namespace={namespace} mock={noProjectsAvailable} />
+      <div className="co-m-page__body">
+        <div className="co-catalog">
+          <PageHeading title="Developer Catalog" />
+          <p className="co-catalog-page__description">
+            Add shared apps, services, or source-to-image builders to your project from the
+            Developer Catalog. Cluster admins can install additional apps which will show up here
+            automatically.
+          </p>
+          <Catalog namespace={namespace} mock={noProjectsAvailable} />
+        </div>
       </div>
     </>
   );

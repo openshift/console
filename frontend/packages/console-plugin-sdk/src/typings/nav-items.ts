@@ -17,8 +17,8 @@ namespace ExtensionProperties {
       NavLinkProps,
       'name' | 'required' | 'disallowed' | 'startsWith' | 'testID'
     >;
-    /** Nav item after which this item should be placed. */
-    mergeAfter?: string;
+    /** Nav item before which this item should be placed. */
+    mergeBefore?: string;
   }
 
   export interface HrefNavItem extends NavItem {

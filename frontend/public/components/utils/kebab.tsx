@@ -28,17 +28,24 @@ import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
 
-const KebabItemEnabled: React.FC<KebabItemProps> = ({ option, onClick, onEscape, autoFocus }) => {
+const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
+  option,
+  onClick,
+  onEscape,
+  autoFocus,
+  isAllowed,
+}) => {
   const handleEscape = (e) => {
     if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
       onEscape();
     }
   };
-
+  const disabled = !isAllowed || option.isDisabled;
+  const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
-      className="pf-c-dropdown__menu-item"
-      onClick={(e) => onClick(e, option)}
+      className={classes}
+      onClick={(e) => !disabled && onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
       data-test-action={option.label}
@@ -48,19 +55,12 @@ const KebabItemEnabled: React.FC<KebabItemProps> = ({ option, onClick, onEscape,
   );
 };
 
-const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({ option }) => {
-  return (
-    <button className="pf-c-dropdown__menu-item pf-m-disabled" data-test-action={option.label}>
-      {option.label}
-    </button>
-  );
-};
-
 const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
-  return isAllowed ? <KebabItemEnabled {...props} /> : <KebabItemDisabled option={option} />;
+  return <KebabItem_ {...props} isAllowed={isAllowed} />;
 };
+
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
 export const KebabItem: React.FC<KebabItemProps> = (props) => {
@@ -68,10 +68,8 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
 
   if (props.option.accessReview) {
     item = <KebabItemAccessReview {...props} />;
-  } else if (props.option.isDisabled) {
-    item = <KebabItemDisabled option={props.option} />;
   } else {
-    item = <KebabItemEnabled {...props} />;
+    item = <KebabItem_ {...props} isAllowed />;
   }
 
   return props.option.tooltip ? (
@@ -384,11 +382,6 @@ type KebabItemProps = {
   isActionDropdown?: boolean;
   autoFocus?: boolean;
   onEscape?: () => void;
-};
-
-type KebabItemDisabledProps = React.HTMLProps<HTMLButtonElement> & {
-  option: KebabOption;
-  isActionDropdown?: boolean;
 };
 
 export type KebabItemsProps = {

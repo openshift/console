@@ -18,5 +18,5 @@ export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
 );
 
 export const DemoPrometheusActivity: React.FC<PrometheusActivityProps> = () => (
-  <ActivityItem title="Demo prometheus activity" />
+  <ActivityItem>Demo prometheus activity</ActivityItem>
 );

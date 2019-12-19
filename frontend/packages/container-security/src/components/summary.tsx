@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
 import { SecurityIcon } from '@patternfly/react-icons';
 import { URLHealthHandler } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { FirehoseResult } from '@console/internal/components/utils/types';
 import { Link } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';

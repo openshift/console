@@ -16,7 +16,7 @@ const getVersion = (cv: ClusterVersionKind) =>
   cv && cv.status.history[0] ? cv.status.history[0].version : null;
 
 const ClusterUpdateActivity: React.FC<ClusterUpdateActivityProps> = React.memo(
-  ({ resource }) => <ActivityItem title={`Updating cluster to ${getVersion(resource)}`} />,
+  ({ resource }) => <ActivityItem>{`Updating cluster to ${getVersion(resource)}`}</ActivityItem>,
   (prevProps, newProps) => getVersion(prevProps.resource) === getVersion(newProps.resource),
 );
 

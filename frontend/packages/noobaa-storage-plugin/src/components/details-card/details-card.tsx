@@ -14,9 +14,10 @@ import {
 import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
-import { referenceForModel, K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { getMetric } from '../../utils';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
@@ -37,19 +38,10 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   prometheusResults,
   resources,
 }) => {
-  const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
-  const [infrastructureError, setInfrastructureError] = React.useState();
-  React.useEffect(() => {
-    const fetchInfrastructure = async () => {
-      try {
-        const infra = await k8sGet(InfrastructureModel, 'cluster');
-        setInfrastructure(infra);
-      } catch (error) {
-        setInfrastructureError(error);
-      }
-    };
-    fetchInfrastructure();
-  }, []);
+  const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
+    InfrastructureModel,
+    'cluster',
+  );
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
@@ -106,7 +98,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="provider"
             title="Provider"
             error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-            isLoading={!infrastructure}
+            isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
           </DetailItem>

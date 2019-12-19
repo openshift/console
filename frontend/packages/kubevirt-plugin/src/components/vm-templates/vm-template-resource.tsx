@@ -4,6 +4,7 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
+import { BootOrderModal } from '../modals/boot-order-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getDescription } from '../../selectors/selectors';
 import {
@@ -34,7 +35,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   const templateNamespacedName = getVMTemplateNamespacedName(template);
 
   const description = getDescription(template);
-  const os = getOperatingSystemName(template) || getOperatingSystem(template);
+  const os = getOperatingSystemName(asVM(template)) || getOperatingSystem(asVM(template));
   const workloadProfile = getWorkloadProfile(template);
 
   return (
@@ -81,6 +82,8 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   dataVolumeLookup,
   canUpdateTemplate,
 }) => {
+  const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
+
   const id = getBasicID(template);
   const devices = getDevices(template);
   const cds = getCDRoms(asVM(template));
@@ -88,7 +91,18 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 
   return (
     <dl className="co-m-pane__details">
-      <VMDetailsItem title="Boot Order" idValue={prefixedID(id, 'boot-order')}>
+      <VMDetailsItem
+        title="Boot Order"
+        canEdit
+        editButtonId={prefixedID(id, 'boot-order-edit')}
+        onEditClick={() => setBootOrderModalOpen(true)}
+        idValue={prefixedID(id, 'boot-order')}
+      >
+        <BootOrderModal
+          isOpen={isBootOrderModalOpen}
+          setOpen={setBootOrderModalOpen}
+          vmLikeEntity={template}
+        />
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 

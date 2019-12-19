@@ -31,6 +31,7 @@ import {
 import store from '../redux';
 import { Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
+import MonitoringDashboardsPage from './monitoring/dashboards';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
 import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
@@ -1558,6 +1559,7 @@ const PollerPages = () => {
 export const MonitoringUI = () => (
   <Switch>
     <Redirect from="/monitoring" exact to="/monitoring/alerts" />
+    <Route path="/monitoring/dashboards" exact component={MonitoringDashboardsPage} />
     <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
     <Route component={PollerPages} />

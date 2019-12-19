@@ -69,12 +69,14 @@ export enum ListFilterId {
   Running = 'Running',
   Failed = 'Failed',
   Succeeded = 'Succeeded',
+  Cancelled = 'Cancelled',
 }
 
 export const ListFilterLabels = {
   [ListFilterId.Running]: 'Running',
   [ListFilterId.Failed]: 'Failed',
   [ListFilterId.Succeeded]: 'Complete',
+  [ListFilterId.Cancelled]: 'Cancelled',
 };
 
 // to be used by both Pipeline and Pipelinerun visualisation
@@ -135,23 +137,8 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
     if (!mTask.status) {
       mTask.status = { reason: runStatus.Idle };
     } else if (mTask.status && mTask.status.conditions) {
-      const statusCondition = mTask.status.conditions.pop() || {};
-      switch (statusCondition.status) {
-        case 'True':
-          mTask.status.reason = runStatus.Succeeded;
-          break;
-        case 'Unknown':
-          mTask.status.reason = runStatus['In Progress'];
-          break;
-        case 'False':
-          mTask.status.reason = runStatus.Failed;
-          break;
-        default:
-          mTask.status.reason = runStatus.Idle;
-          break;
-      }
+      mTask.status.reason = pipelineRunStatus(mTask) || runStatus.Idle;
     }
-
     return mTask;
   });
 };

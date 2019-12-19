@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
@@ -7,6 +8,7 @@ import {
   NodeType,
   filterRevisionsBaseOnTrafficStatus,
   getParentResource,
+  filterRevisionsByActiveApplication,
 } from '../knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
@@ -34,11 +36,22 @@ describe('knative topology utils', () => {
     expect(revision).toBeDefined();
     expect(revision.metadata.uid).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
   });
-  it('expect getParentResource to return parent resources', () => {
+  it('expect getParentResource not to throw error if resource is not defined', () => {
     const configuration = getParentResource(undefined, MockKnativeResources.configurations.data);
     const revision = getParentResource(undefined, MockKnativeResources.services.data);
     expect(configuration).not.toBeDefined();
     expect(revision).not.toBeDefined();
+  });
+  it('expect filterRevisionsByActiveApplication not to throw error if the service does not have traffic block', () => {
+    const mockResources = _.cloneDeep(MockKnativeResources);
+    mockResources.ksservices.data[0] = _.omit(MockKnativeResources.ksservices.data[0], 'status');
+    const revisions = filterRevisionsByActiveApplication(
+      mockResources.revisions.data,
+      mockResources,
+      'myapp',
+    );
+    expect(revisions).toBeDefined();
+    expect(revisions).toHaveLength(0);
   });
   it('expect getKnativeTopologyNodeItems to return node data for service', () => {
     const knServiceNode = getKnativeTopologyNodeItems(

@@ -247,12 +247,12 @@ export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPagePro
 ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-2', 'col-sm-2', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -271,14 +271,14 @@ const ServiceInstancesTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Service Class',
-      sortField: 'spec.clusterServiceClassExternalName',
+      title: 'Status',
+      sortFunc: 'serviceCatalogStatus',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status',
-      sortFunc: 'serviceCatalogStatus',
+      title: 'Service Class',
+      sortField: 'spec.clusterServiceClassExternalName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
@@ -326,7 +326,10 @@ const ServiceInstancesTableRow: React.FC<ServiceInstancesTableRowProps> = ({
           title={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={tableColumnClasses[2]}>
+        <StatusWithIcon obj={obj} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         {clusterServiceClassRefName ? (
           <ResourceLink
             kind={referenceForModel(ClusterServiceClassModel)}
@@ -337,9 +340,6 @@ const ServiceInstancesTableRow: React.FC<ServiceInstancesTableRowProps> = ({
         ) : (
           obj.spec.clusterServiceClassExternalName
         )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <StatusWithIcon obj={obj} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
         {planExternalName(obj) || '-'}

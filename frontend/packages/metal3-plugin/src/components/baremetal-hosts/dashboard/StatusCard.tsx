@@ -11,11 +11,11 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { HealthState } from '@console/shared/src/components/dashboard/health-card/states';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { getAlerts } from '@console/shared/src/components/dashboard/health-card/utils';
+import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {

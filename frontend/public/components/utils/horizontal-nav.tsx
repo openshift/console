@@ -218,11 +218,11 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) =>
   });
 
   return (
-    <div className={props.className}>
+    <div className={classNames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} />}
-        {renderContent(routes)}
       </div>
+      {renderContent(routes)}
     </div>
   );
 }, _.isEqual);

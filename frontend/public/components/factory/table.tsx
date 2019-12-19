@@ -8,7 +8,11 @@ import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
 import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
+  getClusterOperatorStatus,
+  getClusterOperatorVersion,
   getJobTypeAndCompletions,
+  getTemplateInstanceStatus,
+  K8sResourceKind,
   NodeKind,
   planExternalName,
   PodKind,
@@ -17,9 +21,6 @@ import {
   podRestarts,
   serviceCatalogStatus,
   serviceClassDisplayName,
-  getClusterOperatorStatus,
-  getClusterOperatorVersion,
-  getTemplateInstanceStatus,
 } from '../../module/k8s';
 
 import {
@@ -102,6 +103,8 @@ const sorts = {
   },
   numReplicas: (resource) => _.toInteger(_.get(resource, 'status.replicas')),
   planExternalName,
+  namespaceCPU: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'cpu'),
+  namespaceMemory: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'memory'),
   podCPU: (pod: PodKind): number => UIActions.getPodMetric(pod, 'cpu'),
   podMemory: (pod: PodKind): number => UIActions.getPodMetric(pod, 'memory'),
   podPhase,

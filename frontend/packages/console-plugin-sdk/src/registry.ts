@@ -29,6 +29,7 @@ import {
   isDashboardsOverviewPrometheusActivity,
   isProjectDashboardInventoryItem,
   isReduxReducer,
+  isDashboardsOverviewInventoryItemReplacement,
 } from './typings';
 
 /**
@@ -157,6 +158,10 @@ export class ExtensionRegistry {
 
   public getProjectDashboardInventoryItems() {
     return this.extensions.filter(isProjectDashboardInventoryItem);
+  }
+
+  public getDashboardsOverviewInventoryItemReplacements() {
+    return this.extensions.filter(isDashboardsOverviewInventoryItemReplacement);
   }
 }
 

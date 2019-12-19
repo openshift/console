@@ -35,6 +35,19 @@ const streamStatusMessages = {
   [STREAM_ACTIVE]: 'Log streaming...',
 };
 
+const replaceVariables = (template, values) => {
+  return _.reduce(
+    values,
+    (result, value, name) => {
+      // Replace all occurrences of template expressions like "${name}" with the URL-encoded value.
+      // eslint-disable-next-line prefer-template
+      const pattern = _.escapeRegExp('${' + name + '}');
+      return result.replace(new RegExp(pattern, 'g'), encodeURIComponent(value));
+    },
+    template,
+  );
+};
+
 // Component for log stream controls
 const LogControls = ({
   dropdown,
@@ -82,13 +95,14 @@ const LogControls = ({
                 return null;
               }
             }
-            const url = link.spec.hrefTemplate
-              .replace('${resourceName}', encodeURIComponent(resource.metadata.name))
-              .replace('${resourceUID}', encodeURIComponent(resource.metadata.uid))
-              .replace('${containerName}', encodeURIComponent(containerName))
-              .replace('${resourceNamespace}', encodeURIComponent(namespace))
-              .replace('${resourceNamespaceUID}', encodeURIComponent(namespaceUID))
-              .replace('${podLabels}', JSON.stringify(resource.metadata.labels));
+            const url = replaceVariables(link.spec.hrefTemplate, {
+              resourceName: resource.metadata.name,
+              resourceUID: resource.metadata.uid,
+              containerName,
+              resourceNamespace: namespace,
+              resourceNamespaceUID: namespaceUID,
+              podLabels: JSON.stringify(resource.metadata.labels),
+            });
             return (
               <React.Fragment key={link.metadata.uid}>
                 <ExternalLink
