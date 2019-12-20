@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { StorageClass } from '@console/internal/components/storage-class-form';
 
 export const cephStorageProvisioners = [
   'ceph.rook.io/block',
@@ -12,3 +13,7 @@ export const isCephProvisioner = (scProvisioner: string): boolean => {
     _.endsWith(scProvisioner, provisioner),
   );
 };
+
+// To check that a storage class' provisioners don't include the specified provisioner
+export const filterScOnProvisioner = (sc: StorageClass, provisioner: string = '') =>
+  !sc.provisioner.includes(provisioner);
