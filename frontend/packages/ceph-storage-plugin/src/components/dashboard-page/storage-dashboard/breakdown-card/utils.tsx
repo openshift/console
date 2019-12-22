@@ -22,6 +22,7 @@ const addOthers = (
     fill: 'rgb(96, 98, 103)',
     link: OTHER_TOOLTIP,
     id: 6,
+    ns: '',
   };
   return othersData;
 };
@@ -51,6 +52,7 @@ export const addAvailable = (
       label: humanize(availableInBytes).string,
       fill: '#b8bbbe',
       id: 7,
+      ns: '',
     };
     newChartData = [...newChartData, availableData] as StackDataPoint[];
   }
@@ -95,6 +97,7 @@ export const getStackChartStats: GetStackStats = (response, humanize) =>
       fill: COLORMAP[i],
       label: capacity,
       id: i,
+      ns: r.metric.namespace,
     };
   });
 
@@ -109,6 +112,7 @@ export type StackDataPoint = {
   color: string;
   fill: string;
   id: number;
+  ns: string;
 };
 
 export const getCapacityValue = (cephUsed: string, cephTotal: string, humanize: Humanize) => {
