@@ -1,0 +1,10 @@
+.kubevirt-resource-link-popover {
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  width: max-content;
+}
+
+.kubevirt-resource-link-popover__disabled {
+  color: #737679;
+}
