@@ -293,6 +293,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	handle("/api/console/helm/install", authHandlerWithUser(s.handleHelmInstall))
+
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -389,6 +392,19 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte("not found"))
+}
+
+func (s *Server) handleHelmInstall(user *auth.User, w http.ResponseWriter, r *http.Request) {
+
+	// get token
+	bearerToken := user.Token
+
+	// get helm chart URL & nameapace from request
+
+	// execute the helm install!
+
+	// respond with output in a well-formed json
+
 }
 
 func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
