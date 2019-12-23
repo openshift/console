@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { HintBlock, LoadingBox } from '@console/internal/components/utils';
+import { HintBlock, LoadingBox, FirehoseResult } from '@console/internal/components/utils';
 import ODCEmptyState from './EmptyState';
 
 export interface ProjectsExistWrapperProps {
   title: string;
-  projects?: { data: []; loaded: boolean };
+  projects?: FirehoseResult;
   children: () => React.ReactElement;
 }
 
