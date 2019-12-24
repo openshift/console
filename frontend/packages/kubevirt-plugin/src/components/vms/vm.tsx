@@ -46,6 +46,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
+export const getStatus = (obj: VMKind | VMIKind) =>
+  obj.kind === VirtualMachineModel.kind ? getVMStatus({ vm: obj as VMKind }) : getPhase(obj);
+
 const VMHeader = () =>
   dimensifyHeader(
     [
@@ -56,8 +59,6 @@ const VMHeader = () =>
       },
       {
         title: 'Instance',
-        sortFunc: 'string',
-        transforms: [sortable],
       },
       {
         title: 'Namespace',
@@ -66,7 +67,7 @@ const VMHeader = () =>
       },
       {
         title: 'Status',
-        sortFunc: 'string',
+        sortFunc: 'getStatus',
         transforms: [sortable],
       },
       {
@@ -76,12 +77,9 @@ const VMHeader = () =>
       },
       {
         title: 'Node',
-        sortFunc: 'string',
-        transforms: [sortable],
       },
       {
         title: 'IP Address',
-        sortFunc: 'string',
       },
       {
         title: '',
@@ -170,9 +168,7 @@ const VMRow: React.FC<VMRowProps> = ({
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       <TableData className={dimensify()}>{status}</TableData>
-      <TableData className={dimensify()}>
-        {vmi && fromNow(vmi.metadata.creationTimestamp)}
-      </TableData>
+      <TableData className={dimensify()}>{fromNow(obj.metadata.creationTimestamp)}</TableData>
       <TableData className={dimensify()}>
         {getVMINodeName(vmi) && (
           <ResourceLink kind={NodeModel.kind} name={getVMINodeName(vmi)} namespace={namespace} />
@@ -262,7 +258,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   ];
 
   const flatten = ({ vms, vmis }) =>
-    _.unionBy(getLoadedData(vms, []), getLoadedData(vmis, []), getName);
+    _.unionBy(getLoadedData(vms, []), getLoadedData(vmis, []), getUID);
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
 
