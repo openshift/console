@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { InfoCircleIcon, HourglassHalfIcon, InProgressIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon, HourglassHalfIcon, InProgressIcon, SyncAltIcon } from '@patternfly/react-icons';
 import {
   RedExclamationCircleIcon,
-  GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
 } from './icons';
 import GenericStatus from './GenericStatus';
@@ -30,7 +29,7 @@ export const ProgressStatus: React.FC<StatusComponentProps> = (props) => (
 ProgressStatus.displayName = 'ProgressStatus';
 
 export const SuccessStatus: React.FC<StatusComponentProps> = (props) => (
-  <StatusIconAndText {...props} icon={<GreenCheckCircleIcon />} />
+  <StatusIconAndText {...props} icon={<SyncAltIcon />} />
 );
 SuccessStatus.displayName = 'SuccessStatus';
 
