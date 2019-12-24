@@ -29,7 +29,7 @@ import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { getBasicID, getLoadedData, getResource } from '../../utils';
 import { getVMStatus } from '../../statuses/vm/vm';
-import { getVmiIpAddresses } from '../../selectors/vmi';
+import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { vmStatusFilter } from './table-filters';
 import { menuActions } from './menu-actions';
 
@@ -104,10 +104,10 @@ const VMRow: React.FC<VMRowProps> = ({
   const lookupID = getBasicID(obj);
   const migration = migrationLookup[lookupID];
 
-  let vm = null;
-  let vmi = null;
-  let status = null;
-  let vmStatus = null;
+  let vm: VMKind;
+  let vmi: VMIKind;
+  let status: React.ReactNode;
+  let vmStatus;
   let actions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Delete];
 
   if (obj.kind === VirtualMachineModel.kind) {
@@ -174,8 +174,8 @@ const VMRow: React.FC<VMRowProps> = ({
         {vmi && fromNow(vmi.metadata.creationTimestamp)}
       </TableData>
       <TableData className={dimensify()}>
-        {vmi && vmi.status.nodeName && (
-          <ResourceLink kind={NodeModel.kind} name={vmi.status.nodeName} namespace={namespace} />
+        {getVMINodeName(vmi) && (
+          <ResourceLink kind={NodeModel.kind} name={getVMINodeName(vmi)} namespace={namespace} />
         )}
       </TableData>
       <TableData className={dimensify()}>{vmi && getVmiIpAddresses(vmi)}</TableData>
