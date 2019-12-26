@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Dropdown, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 interface State {
   items: {};
@@ -35,7 +36,7 @@ interface ResourceDropdownProps {
   resources?: FirehoseResult[];
   selectedKey: string;
   autoSelect?: boolean;
-  resourceFilter?: (resource: any) => boolean;
+  resourceFilter?: (resource: K8sResourceKind) => boolean;
   onChange?: (key: string, name?: string, isListEmpty?: boolean) => void;
   onLoad?: (items: { [key: string]: string }) => void;
 }

@@ -6,13 +6,30 @@ import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: FirehoseList;
-  imageStreams?: FirehoseList;
 }
+export type ImageStreamPayload = boolean | K8sResourceKind;
 
-export interface ImageStreamProps {
-  imageStreams: K8sResourceKind[];
+export type ImageStreamState = {
+  hasAccessToPullImage: ImageStreamPayload;
+  accessLoading: ImageStreamPayload;
+  loading: ImageStreamPayload;
+  hasCreateAccess: ImageStreamPayload;
+  selectedImageStream: ImageStreamPayload;
+};
+export enum ImageStreamActions {
+  setAccessLoading = 'setAccessLoading',
+  setLoading = 'setLoading',
+  setSelectedImageStream = 'setSelectedImageStream',
+  setHasAccessToPullImage = 'setHasAccessToPullImage',
+  setHasCreateAccess = 'setHasCreateAccess',
 }
-
+export type ImageStreamAction = { type: ImageStreamActions; value: ImageStreamPayload };
+export interface ImageStreamContextProps {
+  state: ImageStreamState;
+  dispatch: React.Dispatch<ImageStreamAction>;
+  hasImageStreams: boolean;
+  setHasImageStreams: (value: boolean) => void;
+}
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: {
