@@ -10,7 +10,7 @@ import {
   getImageStreamIcon,
   getImageForIconClass,
 } from '@console/internal/components/catalog/catalog-item-icon';
-import { ProjectModel } from '@console/internal/models';
+import { ProjectModel, ImageStreamModel } from '@console/internal/models';
 import { FirehoseResource } from '@console/internal/components/utils';
 
 export interface ImageTag {
@@ -174,33 +174,12 @@ export const getSortedTags = (imageStream: K8sResourceKind) => {
       })
     : [];
 };
-export const getImageStreamTags = (imageStreams: K8sResourceKind[], name: string, ns: string) => {
-  const imageStream = _.find(imageStreams, (img) => {
-    return img.metadata.name === name && img.metadata.namespace === ns;
-  });
-  const sortedTags =
-    name && imageStream && !_.isEmpty(imageStream) ? getSortedTags(imageStream) : [];
+export const getImageStreamTags = (imageStream: K8sResourceKind) => {
+  const sortedTags = imageStream && !_.isEmpty(imageStream) ? getSortedTags(imageStream) : [];
   return sortedTags.reduce((tags, { tag }) => {
     tags[tag] = tag;
     return tags;
   }, {});
-};
-
-export const getImageStreamByNamespace = (imageStreams: K8sResourceKind[], ns: string) => {
-  const imageStreamsList = {};
-  const isBuilderImageNamespace = ns === BuilderImagesNamespace.Openshift;
-  const imgStreams = isBuilderImageNamespace
-    ? (normalizeBuilderImages(imageStreams) as NormalizedBuilderImages)
-    : (imageStreams as K8sResourceKind[]);
-  _.each(imgStreams, (img: BuilderImage | K8sResourceKind) => {
-    const { name, namespace } = isBuilderImageNamespace
-      ? (img as BuilderImage).obj.metadata
-      : (img as K8sResourceKind).metadata;
-    if (namespace === ns) {
-      imageStreamsList[name] = name;
-    }
-  });
-  return imageStreamsList;
 };
 
 export const getProjectResource = (): FirehoseResource[] => {
@@ -211,4 +190,17 @@ export const getProjectResource = (): FirehoseResource[] => {
       prop: ProjectModel.id,
     },
   ];
+};
+
+export const getImageStreamResource = (namespace: string): FirehoseResource[] => {
+  const resource = [];
+  if (namespace) {
+    resource.push({
+      isList: true,
+      kind: ImageStreamModel.kind,
+      prop: ImageStreamModel.id,
+      namespace,
+    });
+  }
+  return resource;
 };

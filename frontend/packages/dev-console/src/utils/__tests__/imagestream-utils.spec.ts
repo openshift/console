@@ -1,8 +1,8 @@
 import {
   getPorts,
   makePortName,
-  getImageStreamByNamespace,
   getImageStreamTags,
+  getImageStreamResource,
 } from '../imagestream-utils';
 import { ImageStreamTagData, sampleImageStreams } from './imagestream-test-data';
 
@@ -24,13 +24,25 @@ describe('Transform container port name', () => {
 });
 
 describe('Transform imagestream data', () => {
-  it('expect to return key: value pair for dropdown component ', () => {
-    const imgStreams = getImageStreamByNamespace(sampleImageStreams, 'project-1');
-    expect(imgStreams).toMatchObject({ 'os-test-image': 'os-test-image' });
+  it('expect to have imagestream tags', () => {
+    const imgStreamsTags = getImageStreamTags(sampleImageStreams[0]);
+    expect(imgStreamsTags).toMatchObject({ latest: 'latest' });
   });
 
-  it('expect to have imagestream tags', () => {
-    const imgStreamsTags = getImageStreamTags(sampleImageStreams, 'os-test-image', 'project-1');
-    expect(imgStreamsTags).toMatchObject({ latest: 'latest' });
+  it('expect to not have imagestream tags', () => {
+    const imgStreamsTags = getImageStreamTags({});
+    expect(imgStreamsTags).toMatchObject({});
+  });
+
+  it('expect to return the resource without namespace', () => {
+    const resources = getImageStreamResource('');
+    expect(resources).toHaveLength(0);
+    expect(resources).toMatchObject([]);
+  });
+
+  it('expect to return the resource with namespace', () => {
+    const resource = getImageStreamResource('test');
+    expect(resource).toHaveLength(1);
+    expect(resource[0].namespace).toBe('test');
   });
 });
