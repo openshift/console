@@ -22,7 +22,7 @@ export interface RouteRowProps {
   index: number;
   key?: string;
   style: object;
-  customData: {
+  customData?: {
     configurationsByName: {
       [key: string]: ConfigurationKind;
     };

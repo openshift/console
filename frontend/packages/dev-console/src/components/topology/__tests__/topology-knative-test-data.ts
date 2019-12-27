@@ -11,6 +11,7 @@ import {
   EventSourceKafkaModel,
   ConditionTypes,
   RevisionKind,
+  RouteKind,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
@@ -291,43 +292,48 @@ const sampleKnativeRevisions: FirehoseResult = {
   data: [revisionObj],
 };
 
+export const knativeRouteObj: RouteKind = {
+  apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
+  kind: RouteModel.kind,
+  metadata: {
+    name: 'overlayimage',
+    namespace: 'testproject3',
+    selfLink: '/api/v1/namespaces/testproject3/routes/overlayimage',
+    uid: '1317f615-9636-11e9-b134-06a61d886b62',
+    resourceVersion: '1157349',
+    creationTimestamp: '2019-06-12T07:07:57Z',
+    labels: {
+      'serving.knative.dev/route': 'overlayimage',
+      'serving.knative.dev/service': 'overlayimage',
+    },
+    ownerReferences: [
+      {
+        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+        kind: RouteModel.kind,
+        name: 'overlayimage',
+        uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
+        controller: true,
+        blockOwnerDeletion: true,
+      },
+    ],
+  },
+  spec: {},
+  status: {
+    observedGeneration: 1,
+    traffic: [{ latestRevision: true, percent: 100, revisionName: 'overlayimage-fdqsf' }],
+    url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    conditions: [
+      { lastTransitionTime: '2019-12-27T05:06:47Z', status: 'True', type: 'AllTrafficAssigned' },
+      { lastTransitionTime: '2019-12-27T05:07:29Z', status: 'True', type: 'IngressReady' },
+      { lastTransitionTime: '2019-12-27T05:07:29Z', status: 'True', type: 'Ready' },
+    ],
+  },
+};
+
 export const sampleKnativeRoutes: FirehoseResult = {
   loaded: true,
   loadError: '',
-  data: [
-    {
-      apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
-      kind: RouteModel.kind,
-      metadata: {
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/routes/overlayimage',
-        uid: '1317f615-9636-11e9-b134-06a61d886b62',
-        resourceVersion: '1157349',
-        creationTimestamp: '2019-06-12T07:07:57Z',
-        labels: {
-          'serving.knative.dev/route': 'overlayimage',
-          'serving.knative.dev/service': 'overlayimage',
-        },
-        ownerReferences: [
-          {
-            apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-            kind: RouteModel.kind,
-            name: 'overlayimage',
-            uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
-            controller: true,
-            blockOwnerDeletion: true,
-          },
-        ],
-      },
-      spec: {},
-      status: {
-        observedGeneration: 1,
-        traffic: [{ latestRevision: true, percent: 100, revisionName: 'overlayimage-fdqsf' }],
-        url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-      },
-    },
-  ],
+  data: [knativeRouteObj],
 };
 
 export const sampleKnativeServices: FirehoseResult = {
