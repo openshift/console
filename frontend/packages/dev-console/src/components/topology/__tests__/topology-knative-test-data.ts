@@ -12,6 +12,7 @@ import {
   ConditionTypes,
   RevisionKind,
   RouteKind,
+  ServiceKind as knativeServiceKind,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
@@ -336,47 +337,53 @@ export const sampleKnativeRoutes: FirehoseResult = {
   data: [knativeRouteObj],
 };
 
-export const sampleKnativeServices: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [
-    {
-      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-      kind: ServiceModel.kind,
+export const knativeServiceObj: knativeServiceKind = {
+  apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+  kind: ServiceModel.kind,
+  metadata: {
+    labels: {
+      'app.kubernetes.io/part-of': 'myapp',
+    },
+    name: 'overlayimage',
+    namespace: 'testproject3',
+    selfLink: '/api/v1/namespaces/testproject3/services/overlayimage',
+    uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
+    resourceVersion: '1157349',
+    generation: 1,
+  },
+  spec: {
+    template: {
       metadata: {
         labels: {
           'app.kubernetes.io/part-of': 'myapp',
         },
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/overlayimage',
-        uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
-        resourceVersion: '1157349',
-      },
-      spec: {
-        template: {
-          metadata: {
-            labels: {
-              'app.kubernetes.io/part-of': 'myapp',
-            },
-          },
-        },
-      },
-      status: {
-        observedGeneration: 1,
-        url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-        latestCreatedRevisionName: 'overlayimage-fdqsf',
-        latestReadyRevisionName: 'overlayimage-fdqsf',
-        traffic: [
-          {
-            latestRevision: true,
-            percent: 100,
-            revisionName: 'overlayimage-fdqsf',
-          },
-        ],
       },
     },
-  ],
+  },
+  status: {
+    observedGeneration: 1,
+    url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    latestCreatedRevisionName: 'overlayimage-fdqsf',
+    latestReadyRevisionName: 'overlayimage-fdqsf',
+    traffic: [
+      {
+        latestRevision: true,
+        percent: 100,
+        revisionName: 'overlayimage-fdqsf',
+      },
+    ],
+    conditions: [
+      { lastTransitionTime: '2019-12-27T05:06:47Z', status: 'True', type: 'ConfigurationsReady' },
+      { lastTransitionTime: '2019-12-27T05:07:29Z', status: 'True', type: 'Ready' },
+      { lastTransitionTime: '2019-12-27T05:07:29Z', status: 'True', type: 'RoutesReady' },
+    ],
+  },
+};
+
+export const sampleKnativeServices: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [knativeServiceObj],
 };
 
 export const sampleEventSourceCronjob: FirehoseResult = {
