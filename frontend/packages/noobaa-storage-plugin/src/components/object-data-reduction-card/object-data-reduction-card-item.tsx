@@ -3,16 +3,15 @@ import {
   FieldLevelHelp,
   humanizeBinaryBytes,
   humanizePercentage,
-  LoadingInline,
 } from '@console/internal/components/utils';
 
 const ItemBody: React.FC<ItemBodyProps> = React.memo(
   ({ title, stats, infoText, isLoading, error }) => {
     let status: React.ReactElement;
-    if (error || !stats) {
+    if (isLoading) {
+      status = <div className="skeleton-text nb-object-data-reduction__item-body--loading" />;
+    } else if (error || !stats) {
       status = <span className="co-dashboard-text--small text-muted">Not available</span>;
-    } else if (isLoading) {
-      status = <LoadingInline />;
     } else {
       status = <span className="nb-object-data-reduction-card__row-status-item-text">{stats}</span>;
     }
