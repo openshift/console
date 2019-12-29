@@ -258,7 +258,11 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   ];
 
   const flatten = ({ vms, vmis }) =>
-    _.unionBy(getLoadedData(vms, []), getLoadedData(vmis, []), getUID);
+    _.unionBy(
+      getLoadedData(vms, []),
+      getLoadedData(vmis, []),
+      (obj) => `${getName(obj)}-${getNamespace(obj)}`,
+    );
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
 
