@@ -4,7 +4,7 @@ import { ClusterServiceVersionKind } from './types';
 import { referenceForProvidedAPI, providedAPIsFor } from './components';
 import * as operatorLogo from './operator.svg';
 
-const isInternal = (crd: { name: string }): boolean => {
+export const isInternal = (crd: { name: string }): boolean => {
   const internalOpListString = _.get(
     crd,
     ['csv', 'metadata', 'annotations', 'operators.operatorframework.io/internal-objects'],
@@ -19,6 +19,7 @@ const isInternal = (crd: { name: string }): boolean => {
     return false;
   }
 };
+
 export const normalizeClusterServiceVersions = (
   clusterServiceVersions: ClusterServiceVersionKind[],
 ): K8sResourceKind[] => {
