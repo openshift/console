@@ -24,3 +24,5 @@ export const isVMIRunning = (vmi: VMIKind) => vmi && vmi.status && vmi.status.ph
 
 export const getVMIInterfaces = (vmi: VMIKind) =>
   (vmi && vmi.status && vmi.status.interfaces) || [];
+
+export const getVMINodeName = (vmi: VMIKind) => vmi && vmi.status && vmi.status.nodeName;

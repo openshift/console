@@ -152,7 +152,7 @@ const menuActionCdEdit = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs
   };
 };
 
-export const menuActions = [
+export const vmMenuActions = [
   menuActionStart,
   menuActionStop,
   menuActionRestart,
@@ -160,6 +160,12 @@ export const menuActions = [
   menuActionCancelMigration,
   menuActionClone,
   menuActionCdEdit,
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
+  Kebab.factory.Delete,
+];
+
+export const vmiMenuActions = [
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   Kebab.factory.Delete,
@@ -175,7 +181,7 @@ export const menuActionsCreator = (
   const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
   const migration = findVMIMigration(vmi, migrations);
 
-  return menuActions.map((action) => {
+  return vmMenuActions.map((action) => {
     return action(kindObj, vm, { vmi, vmStatus, migration });
   });
 };
