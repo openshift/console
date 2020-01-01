@@ -18,7 +18,7 @@ describe('Uninstall Kubevirt', () => {
   it('Uninstall Kubevirt', async () => {
     await isLoaded();
     element(by.xpath("//button[@data-test-id='kebab-button']")).click();
-    await browser.sleep(1000);             
+    await browser.sleep(1000);
     element(by.xpath("//button[@data-test-action='Uninstall Operator']")).click();
     await browser.sleep(1000);
     element(by.id('confirm-action')).click();

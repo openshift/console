@@ -7,7 +7,7 @@ const namespaceButton = $('.co-namespace-selector button');
 const openshiftNamespaceButton = $('#openshift-cnv-link');
 
  
-describe('******Install Kubevirt', () => {
+describe('Go to operators page', () => {
  
   beforeAll(async () => {
     await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
