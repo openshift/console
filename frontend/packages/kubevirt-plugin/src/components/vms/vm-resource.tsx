@@ -112,13 +112,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!getName(vmi)}>
-        {getName(vmi) && (
-          <ResourceLink
-            kind={VirtualMachineInstanceModel.kind}
-            name={getName(vmi)}
-            namespace={getNamespace(vmi)}
-          />
-        )}
+        <ResourceLink
+          kind={VirtualMachineInstanceModel.kind}
+          name={getName(vmi)}
+          namespace={getNamespace(vmi)}
+        />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
