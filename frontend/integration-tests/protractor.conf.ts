@@ -79,9 +79,9 @@ const testSuites = {
   crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
   e2e: suite([
     'tests/crud.scenario.ts',
+    'tests/filter.scenario.ts',
     'tests/secrets.scenario.ts',
     'tests/storage.scenario.ts',
-    'tests/filter.scenario.ts',
     'tests/modal-annotations.scenario.ts',
     'tests/environment.scenario.ts',
     'tests/overview/overview.scenario.ts',
