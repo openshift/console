@@ -123,6 +123,11 @@ const getAvailableFilters = (initialFilters) => {
       value: 'ClusterServiceClass',
       active: false,
     },
+    HelmChart: {
+      label: 'Helm Charts',
+      value: 'HelmChart',
+      active: false,
+    },
   };
 
   return filters;

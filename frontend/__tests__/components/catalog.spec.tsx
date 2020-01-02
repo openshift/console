@@ -43,7 +43,7 @@ describe(CatalogTileViewPage.displayName, () => {
   it('renders category filter controls', () => {
     const filterItems = wrapper.find<any>(FilterSidePanelCategoryItem);
     expect(filterItems.exists()).toBe(true);
-    expect(filterItems.length).toEqual(4); // Filter by Types
+    expect(filterItems.length).toEqual(5); // Filter by Types
     expect(filterItems.at(0).props().count).toBe(0); // total count for Operator Backed
     expect(filterItems.at(0).props().checked).toBe(true); //Check operator backed filter is true by default
     expect(filterItems.at(1).props().count).toBe(9); // total count for templates
