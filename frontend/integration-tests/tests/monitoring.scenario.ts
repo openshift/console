@@ -246,7 +246,7 @@ describe('Alertmanager: Configuration', () => {
 
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
-    expect(firstElementByTestID('group_by_value').getText()).toEqual('job, cluster');
+    expect(firstElementByTestID('group_by_value').getText()).toContain(', cluster');
     expect(firstElementByTestID('group_wait_value').getText()).toEqual('60s');
     expect(firstElementByTestID('group_interval_value').getText()).toEqual('10m');
     expect(firstElementByTestID('repeat_interval_value').getText()).toEqual('24h');
