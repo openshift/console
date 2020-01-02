@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
-import { Firehose, HorizontalNav, PageHeading } from '@console/internal/components/utils';
+import { Firehose, HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { ProjectModel } from '@console/internal/models';
 import { TechPreviewBadge } from '@console/shared';
@@ -9,13 +8,13 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
 import MonitoringDashboard from './MonitoringDashboard';
 import MonitoringMetrics from './MonitoringMetrics';
-import { useActiveNamespace, UseActiveNamespaceProps } from './utils';
+import { connectActiveNamespace, ConnectActiveNamespaceProps, redirectURI } from './utils';
 
-const handleNamespaceChange = (): void => {
-  /* ToDo: Update tab data on namespace change */
+const handleNamespaceChange = (newNamespace: string): void => {
+  history.push(redirectURI(newNamespace));
 };
 
-export const MonitoringPage: React.FC<UseActiveNamespaceProps> = ({
+export const MonitoringPage: React.FC<ConnectActiveNamespaceProps> = ({
   activeNamespace,
   ...props
 }) => {
@@ -62,7 +61,7 @@ export const MonitoringPage: React.FC<UseActiveNamespaceProps> = ({
                   component: MonitoringMetrics,
                 },
               ]}
-              className={`co-m-${_.get(ProjectModel.kind, 'kind', ProjectModel.kind)}`}
+              className={`co-m-${ProjectModel.kind}`}
               match={props.match}
               noStatusBox
             />
@@ -73,4 +72,4 @@ export const MonitoringPage: React.FC<UseActiveNamespaceProps> = ({
   );
 };
 
-export default useActiveNamespace(MonitoringPage);
+export default connectActiveNamespace(MonitoringPage);

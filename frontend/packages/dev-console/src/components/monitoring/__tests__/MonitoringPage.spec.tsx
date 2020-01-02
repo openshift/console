@@ -23,14 +23,14 @@ describe('Monitoring Page ', () => {
     };
   });
 
-  it('expect MonitoringPage to render ProjectList page when in all-projects namespace', () => {
+  it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps.activeNamespace = ALL_NAMESPACES_KEY;
     const component = shallow(<MonitoringPage {...monPageProps} />);
     expect(component.find(ProjectListPage).exists()).toBe(true);
     expect(component.find(ProjectListPage).prop('title')).toBe('Monitoring');
   });
 
-  it('expect MonitoringPage to render Tabs', () => {
+  it('should render all Tabs of Monitoring page', () => {
     const expectedTabs: string[] = ['Dashboard', 'Metrics'];
     const component = shallow(<MonitoringPage {...monPageProps} />);
     expect(component.exists()).toBe(true);

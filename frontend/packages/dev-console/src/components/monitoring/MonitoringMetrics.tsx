@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-const MonitoringMetrics: React.FC<{}> = () => {
+const MonitoringMetrics: React.FC = () => {
   return (
     <>
       <Helmet>

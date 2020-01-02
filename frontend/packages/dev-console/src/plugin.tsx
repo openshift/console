@@ -136,7 +136,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       componentProps: {
         name: 'Monitoring',
-        href: '/dev/monitoring',
+        href: '/dev-monitoring',
         required: FLAGS.OPENSHIFT,
         testID: 'monitoring-header',
       },
@@ -366,7 +366,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/deploy-image',
         '/metrics',
         '/project-access',
-        '/dev/monitoring',
+        '/dev-monitoring',
       ],
       component: NamespaceRedirect,
     },
@@ -520,10 +520,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       exact: false,
-      path: ['/dev/monitoring/all-namespaces', '/dev/monitoring/ns/:ns'],
+      path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
       loader: async () =>
         (await import(
-          './components/monitoring/MonitoringPage' /* webpackChunkName: "dev-console-metrics" */
+          './components/monitoring/MonitoringPage' /* webpackChunkName: "dev-console-monitoring" */
         )).default,
     },
   },
