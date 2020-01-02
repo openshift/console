@@ -24,6 +24,21 @@ describe('Github Service', () => {
     });
   });
 
+  it('should not be able to validate a non existing github repo', () => {
+    const gitSource: GitSource = {
+      url: 'https://github.com/redhat-developer/dev-git',
+    };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should list all branches of existing public github repo', () => {
     const gitSource: GitSource = { url: 'https://github.com/redhat-developer/devconsole-git' };
 
@@ -59,6 +74,7 @@ describe('Github Service', () => {
       const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('golang');
+      expect(buildTypes[0].buildType).not.toBe('nodejs');
       context.assertScopesFinished();
       nockDone();
     });

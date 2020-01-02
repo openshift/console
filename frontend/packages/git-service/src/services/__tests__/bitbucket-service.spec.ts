@@ -1,5 +1,5 @@
 import * as nock from 'nock';
-import { GitSource, RepoFileList, BuildType } from '../../types';
+import { GitSource, RepoFileList, BuildType, BranchList, RepoLanguageList } from '../../types';
 import { BitbucketService } from '../bitbucket-service';
 import { DockerFileParser } from '../../utils';
 
@@ -9,6 +9,51 @@ describe('Bitbucket Service', () => {
 
   nockBack.fixtures = `${__dirname}/__nock-fixtures__/bitbucket`;
 
+  it('should be able to detect existing public bitbucket repo', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/atlassian/confluence-react-components',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('repo.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not be able to detect a bitbucket repo that doesnot exist', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/atlassian/confluencereact-components',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should be able to list all the branches of an existing public bitbucket repo', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/atlassian/confluence-react-components',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('branches.json').then(async ({ nockDone, context }) => {
+      const branchList: BranchList = await gitService.getRepoBranchList();
+      expect(branchList.branches.length).toBeGreaterThanOrEqual(1);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should list all files of existing public bitbucket repo', () => {
     const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
 
@@ -17,6 +62,38 @@ describe('Bitbucket Service', () => {
     return nockBack('files.json').then(async ({ nockDone, context }) => {
       const fileList: RepoFileList = await gitService.getRepoFileList();
       expect(fileList.files.length).toBeGreaterThanOrEqual(1);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should be able to find the list of languages', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/atlassian/aui-react',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('languages.json').then(async ({ nockDone, context }) => {
+      const languageList: RepoLanguageList = await gitService.getRepoLanguageList();
+      expect(languageList.languages.length).toBeGreaterThanOrEqual(1);
+      expect(languageList.languages).toContain('nodejs');
+      expect(languageList.languages).not.toContain('Go');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should be able to detect build types', () => {
+    const gitSource: GitSource = { url: 'https://bitbucket.org/atlassian/aui-react' };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('files-modern-webapp.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toEqual(2);
+      expect(buildTypes[0].buildType).toBe('nodejs');
+      expect(buildTypes[1].buildType).toBe('modern-webapp');
       context.assertScopesFinished();
       nockDone();
     });
