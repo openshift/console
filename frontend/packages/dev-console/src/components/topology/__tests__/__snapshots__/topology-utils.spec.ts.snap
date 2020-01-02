@@ -2628,6 +2628,7 @@ Object {
         "editUrl": undefined,
         "isKnativeResource": false,
         "kind": "apps~v1~Deployment",
+        "showPodCount": undefined,
         "url": null,
       },
       "id": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",

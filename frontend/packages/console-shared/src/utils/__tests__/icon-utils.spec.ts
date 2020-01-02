@@ -1,19 +1,19 @@
-import * as _ from 'lodash';
-import { sampleClusterServiceVersions } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import * as operatorLogo from '../../images/operator.svg';
-import { getImageForCSVIcon } from '../icon-utils';
-import { mockCSVIcon } from '../__mocks__/mock-csv-icon';
+import { getImageForCSVIcon, CSVIcon } from '../icon-utils';
+
+const mockCSVIconObject: CSVIcon = {
+  mediatype: 'image/svg+xml',
+  base64data: 'mock-base64-data',
+};
+
+const mockCSVIcon = 'data:image/svg+xml;base64,mock-base64-data';
 
 describe('Icon Utils', () => {
   it('should return icon from csv data', () => {
-    const mockCSV = _.cloneDeep(sampleClusterServiceVersions.data[0]) as ClusterServiceVersionKind;
-    expect(getImageForCSVIcon(mockCSV)).toBe(mockCSVIcon);
+    expect(getImageForCSVIcon(mockCSVIconObject)).toBe(mockCSVIcon);
   });
 
   it('should return operator icon if csv has no icon data', () => {
-    const mockCSV = _.cloneDeep(sampleClusterServiceVersions.data[0]) as ClusterServiceVersionKind;
-    mockCSV.spec.icon = undefined;
-    expect(getImageForCSVIcon(mockCSV)).toBe(operatorLogo);
+    expect(getImageForCSVIcon(undefined)).toBe(operatorLogo);
   });
 });

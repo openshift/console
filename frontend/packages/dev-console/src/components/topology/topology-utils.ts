@@ -136,7 +136,8 @@ export const createTopologyNodeData = (
   const operatorBackedService = nodeResourceKind in operatorBackedServiceKindMap;
 
   const csvIcon =
-    operatorBackedService && getImageForCSVIcon(operatorBackedServiceKindMap[nodeResourceKind]);
+    operatorBackedService &&
+    getImageForCSVIcon(_.get(operatorBackedServiceKindMap[nodeResourceKind], 'spec.icon.0'));
   const builderImageIcon =
     getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
     getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
