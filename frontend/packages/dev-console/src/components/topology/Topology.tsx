@@ -22,7 +22,7 @@ import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
-import TopologyApplicationPanel from './TopologyApplicationPanel';
+import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
