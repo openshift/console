@@ -34,7 +34,7 @@ const ResponseRate: React.FC<ResponseRateProps> = ({ response, children, error }
 const ControlPlanePopup: React.FC<ControlPlanePopupProps> = ({ results, errors }) => (
   <>
     <div className="co-overview-status__control-plane-description">
-      Components of the Control Plane are responsible for maintaining and reconcilling the state of
+      Components of the Control Plane are responsible for maintaining and reconciling the state of
       the cluster.
     </div>
     <div className="co-overview-status__row">
