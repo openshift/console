@@ -24,6 +24,7 @@
     { "language": "json", "autoFix": true }
   ],
   "eslint.enable": true,
+  // legacy support
   "eslint.autoFixOnSave": true,
 
   "javascript.validate.enable": false,
@@ -34,6 +35,9 @@
     "**/bower_components": true,
     "**/.cache-loader": true,
     "**/public/dist": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
   }
 
   // TODO support prettier + stylelint
