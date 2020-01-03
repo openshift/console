@@ -596,7 +596,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({index, isEnabled, isExpanded, q
       cells={columns}
       gridBreakPoint={TableGridBreakpoint[breakPoint]}
       onSort={onSort}
-      rows={rows.slice((page - 1) * perPage, page * perPage - 1)}
+      rows={rows.slice((page - 1) * perPage, page * perPage)}
       sortBy={sortBy}
       variant={TableVariant.compact}
     >
