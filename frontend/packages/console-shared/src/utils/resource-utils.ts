@@ -233,6 +233,10 @@ const getDeploymentConfigVersion = (obj: K8sResourceKind): number => {
   return version && parseInt(version, 10);
 };
 
+const getDeploymentConfigName = (obj: K8sResourceKind): string => {
+  return _.get(obj, 'metadata.ownerReferences[0].name', null);
+};
+
 export const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
   return sortByRevision(replicaSets, getDeploymentRevision);
 };
@@ -273,7 +277,7 @@ const getAnnotatedTriggers = (obj: K8sResourceKind) => {
   }
 };
 
-const getDeploymentPhase = (rc: K8sResourceKind): string =>
+const getDeploymentPhase = (rc: K8sResourceKind): DEPLOYMENT_PHASE =>
   _.get(rc, ['metadata', 'annotations', DEPLOYMENT_PHASE_ANNOTATION]);
 
 // Only show an alert once if multiple pods have the same error for the same owner.
@@ -326,7 +330,8 @@ const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts =>
 const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
-  const label = _.isFinite(version) ? `#${version}` : rc.metadata.name;
+  const name = getDeploymentConfigName(rc);
+  const label = _.isFinite(version) ? `${name} #${version}` : rc.metadata.name;
   const key = `${rc.metadata.uid}--Rollout${phase}`;
   switch (phase) {
     case 'Cancelled':
@@ -401,6 +406,21 @@ const getRolloutStatus = (
   return notFailedOrCancelled && previous && previous.pods.length > 0;
 };
 
+const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean => {
+  return (
+    [
+      DEPLOYMENT_PHASE.new,
+      DEPLOYMENT_PHASE.pending,
+      DEPLOYMENT_PHASE.running,
+      DEPLOYMENT_PHASE.complete,
+    ].indexOf(getDeploymentPhase(resource)) > -1
+  );
+};
+
+const isReplicationControllerVisible = (resource: K8sResourceKind): boolean => {
+  return !!_.get(resource, ['status', 'replicas'], isDeploymentInProgressOrCompleted(resource));
+};
+
 export class TransformResourceData {
   private resources: any;
 
@@ -435,23 +455,25 @@ export class TransformResourceData {
     };
   };
 
-  getActiveReplicationControllers = (resource: K8sResourceKind): K8sResourceKind[] => {
-    const { replicationControllers } = this.resources;
-    const currentVersion = _.get(resource, 'status.latestVersion');
-    const ownedRC = getOwnedResources(resource, replicationControllers.data);
-    return _.filter(
-      ownedRC,
-      (rc) => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) >= currentVersion - 1,
-    );
-  };
-
   getReplicationControllersForResource = (
     resource: K8sResourceKind,
-  ): PodControllerOverviewItem[] => {
-    const replicationControllers = this.getActiveReplicationControllers(resource);
-    return sortReplicationControllersByRevision(replicationControllers).map((rc) =>
-      getIdledStatus(this.toReplicationControllerItem(rc), resource),
-    );
+  ): {
+    mostRecentRC: K8sResourceKind;
+    visibleReplicationControllers: PodControllerOverviewItem[];
+  } => {
+    const { replicationControllers } = this.resources;
+    const ownedRC = getOwnedResources(resource, replicationControllers.data);
+    const sortedRCs = sortReplicationControllersByRevision(ownedRC);
+    // get the most recent RCs included failed or canceled to show warnings
+    const [mostRecentRC] = sortedRCs;
+    // get the visible RCs except failed/canceled
+    const visibleReplicationControllers = _.filter(sortedRCs, isReplicationControllerVisible);
+    return {
+      mostRecentRC,
+      visibleReplicationControllers: visibleReplicationControllers.map((rc) =>
+        getIdledStatus(this.toReplicationControllerItem(rc), resource),
+      ),
+    };
   };
 
   toReplicaSetItem = (rs: K8sResourceKind): PodControllerOverviewItem => {
@@ -582,15 +604,20 @@ export class TransformResourceData {
         apiVersion: apiVersionForModel(DeploymentConfigModel),
         kind: DeploymentConfigModel.kind,
       };
-      const replicationControllers = this.getReplicationControllersForResource(obj);
-      const [current, previous] = replicationControllers;
+      const {
+        mostRecentRC,
+        visibleReplicationControllers,
+      } = this.getReplicationControllersForResource(obj);
+      const [current, previous] = visibleReplicationControllers;
       const isRollingOut = getRolloutStatus(obj, current, previous);
       const buildConfigs = this.getBuildConfigsForResource(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
+      const rolloutAlerts = mostRecentRC ? getReplicationControllerAlerts(mostRecentRC) : {};
       const alerts = {
         ...getResourcePausedAlert(obj),
         ...getBuildAlerts(buildConfigs),
+        ...rolloutAlerts,
       };
       const status = resourceStatus(obj, current, isRollingOut);
       const overviewItems = {
@@ -756,8 +783,8 @@ export class TransformResourceData {
         apiVersion: apiVersionForModel(DeploymentConfigModel),
         kind: DeploymentConfigModel.kind,
       };
-      const replicationControllers = this.getReplicationControllersForResource(obj);
-      const [current, previous] = replicationControllers;
+      const { visibleReplicationControllers } = this.getReplicationControllersForResource(obj);
+      const [current, previous] = visibleReplicationControllers;
       const isRollingOut = getRolloutStatus(obj, current, previous);
       return {
         obj,

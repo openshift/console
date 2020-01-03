@@ -9,6 +9,8 @@ export const CONTAINER_WAITING_STATE_ERROR_REASONS = [
 export const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION =
   'openshift.io/deployment-config.latest-version';
 
+export const DEPLOYMENT_CONFIG_NAME_ANNOTATION = 'openshift.io/deployment-config.name';
+
 // Annotation key for deployment phase
 export const DEPLOYMENT_PHASE_ANNOTATION = 'openshift.io/deployment.phase';
 
@@ -31,6 +33,7 @@ export enum DEPLOYMENT_STRATEGY {
 }
 
 export enum DEPLOYMENT_PHASE {
+  new = 'New',
   running = 'Running',
   pending = 'Pending',
   complete = 'Complete',
