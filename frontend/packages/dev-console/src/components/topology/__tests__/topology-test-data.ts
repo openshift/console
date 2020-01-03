@@ -1,5 +1,6 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
+import { Model } from '@console/topology';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 
 export const resources: TopologyDataResources = {
@@ -1447,6 +1448,58 @@ export const samplePipelineRun: FirehoseResult = {
       },
     },
   ],
+};
+
+export const topologyDataModel: TopologyDataModel = {
+  graph: {
+    nodes: [
+      { id: 'e187afa2-53b1-406d-a619-cf9ff1468031', type: 'workload', name: 'hello-openshift' },
+    ],
+    edges: [],
+    groups: [],
+  },
+  topology: {
+    'e187afa2-53b1-406d-a619-cf9ff1468031': {
+      data: {},
+      id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
+      name: 'hello-openshift',
+      operatorBackedService: false,
+      type: 'workload',
+      resources: {
+        buildConfigs: [],
+        obj: sampleDeployments.data[0],
+        routes: [],
+        services: [],
+      },
+    },
+    'e187afa2-53b1-406d-a619-cf9ff1468032': {
+      data: {},
+      id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
+      name: 'hello-openshift-1',
+      operatorBackedService: true,
+      type: 'workload',
+      resources: {
+        buildConfigs: [],
+        obj: sampleDeployments.data[1],
+        routes: [],
+        services: [],
+      },
+    },
+  },
+};
+
+export const dataModel: Model = {
+  nodes: [
+    {
+      data: topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
+      height: 104,
+      id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
+      label: 'hello-openshift',
+      type: 'workload',
+      width: 104,
+    },
+  ],
+  edges: [],
 };
 
 export const MockResources: TopologyDataResources = {
