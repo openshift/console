@@ -15,14 +15,13 @@ import { DataPoint } from '@console/internal/components/graphs';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';
-import { isAvailableBar, getBarRadius, StackDataPoint } from './utils';
+import { getBarRadius, StackDataPoint } from './utils';
 import { OTHER, CLUSTERWIDE, BUCKETCLASSKIND } from './consts';
 import './breakdown-card.scss';
 
 const LinkableLegend: React.FC<LinkableLegendProps> = React.memo((props: LinkableLegendProps) => {
   const { metricModel, datum, ocsVersion } = props;
   let href: string = resourcePathFromModel(metricModel, datum.link, CEPH_STORAGE_NAMESPACE);
-  const style = {};
   const customLegend = (
     <Tooltip content={datum.link} enableFlip>
       <ChartLabel
@@ -45,7 +44,7 @@ const LinkableLegend: React.FC<LinkableLegendProps> = React.memo((props: Linkabl
     }
   }
   return (
-    <Link to={href} style={style} className="capacity-breakdown-card__legend-link">
+    <Link to={href} className="capacity-breakdown-card__legend-link">
       {customLegend}
     </Link>
   );
@@ -60,7 +59,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
   const chartData = data.map((d: StackDataPoint, index) => (
     <ChartBar
       key={d.id}
-      style={{ data: { stroke: 'white', strokeWidth: 0.7, ...isAvailableBar(d.name) } }}
+      style={{ data: { stroke: 'white', strokeWidth: 0.7, fill: d.fill } }}
       cornerRadius={getBarRadius(index, data.length)}
       barWidth={18}
       padding={0}
@@ -93,7 +92,6 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
           right: 0,
           left: 0,
         }}
-        themeColor={ChartThemeColor.multiOrdered}
       >
         <ChartAxis
           style={{ axis: { stroke: 'none' }, ticks: { stroke: 'none' } }}
