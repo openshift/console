@@ -1,52 +1,33 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
+import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
-import { mockRevisionsData, mockRoutesData } from '../__mocks__/overview-knative-mock';
+
+type RoutesOverviewListProps = React.ComponentProps<typeof RoutesOverviewList>;
 
 describe('RoutesOverviewList', () => {
-  it('should component exists', () => {
-    const wrapper = shallow(<RoutesOverviewList ksroutes={[]} resource={mockRevisionsData[0]} />);
-    expect(wrapper.exists()).toBeTruthy();
-  });
-
-  it('should have title Routes', () => {
-    const wrapper = shallow(
-      <RoutesOverviewList ksroutes={mockRoutesData} resource={mockRevisionsData[0]} />,
+  let wrapper: ShallowWrapper<RoutesOverviewListProps>;
+  beforeEach(() => {
+    wrapper = shallow(
+      <RoutesOverviewList
+        ksroutes={MockKnativeResources.ksroutes.data}
+        resource={MockKnativeResources.revisions.data[0]}
+      />,
     );
-    expect(wrapper.find(utils.SidebarSectionHeading)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(utils.SidebarSectionHeading)
-        .at(0)
-        .props().text,
-    ).toEqual('Routes');
   });
 
   it('should show info if no Routes present', () => {
     const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
-    const wrapper = shallow(<RoutesOverviewList ksroutes={[]} resource={mockRevisionsData[0]} />);
-    expect(wrapper.find('span')).toHaveLength(1);
-    expect(
-      wrapper
-        .find('span')
-        .at(0)
-        .props().className,
-    ).toEqual('text-muted');
-    expect(
-      wrapper
-        .find('span')
-        .at(0)
-        .props().children,
-    ).toEqual('No Routes found for this resource.');
+    wrapper = shallow(
+      <RoutesOverviewList ksroutes={[]} resource={MockKnativeResources.revisions.data[0]} />,
+    );
+    expect(wrapper.text().includes('No Routes found for this resource.')).toBeTruthy();
   });
 
   it('should render RoutesOverviewListItem', () => {
-    const wrapper = shallow(
-      <RoutesOverviewList ksroutes={mockRoutesData} resource={mockRevisionsData[0]} />,
-    );
     expect(wrapper.find(RoutesOverviewListItem)).toHaveLength(1);
   });
 });
