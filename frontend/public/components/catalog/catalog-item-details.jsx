@@ -12,7 +12,8 @@ import {
 import { normalizeIconClass } from './catalog-item-icon';
 import { ClusterServicePlanModel } from '../../models';
 import { k8sGet } from '../../module/k8s';
-import { Timestamp, ExternalLink } from '../utils';
+import { Timestamp, ExternalLink, SectionHeading } from '../utils';
+import { SyncMarkdownView } from '../markdown-view';
 
 export class CatalogTileDetails extends React.Component {
   state = {
@@ -108,7 +109,8 @@ export class CatalogTileDetails extends React.Component {
                   )}
                 </PropertiesSidePanel>
                 <div className="co-catalog-page__overlay-description">
-                  {tileDescription && <p>{tileDescription}</p>}
+                  <SectionHeading text="Description" />
+                  {tileDescription && <SyncMarkdownView content={tileDescription} />}
                   {longDescription && <p>{longDescription}</p>}
                   {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
                   {documentationUrl && (
