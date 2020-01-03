@@ -14,17 +14,17 @@ The schema for a descriptor is the same, regardless of type:
 
 ```typescript
 type Descriptor = {
-  path: string; // Dot-delimited path of the field on the object that this descriptor 
+  path: string; // Dot-delimited path of the field on the object that this descriptor
   displayName: string;
   description: string;
   'x-descriptors': SpecCapability[] | StatusCapability[]; // Used to determine which "capabilities" this descriptor has, and which React component to use
-  value?: any; // Optional value 
+  value?: any; // Optional value
 }
 ```
 
 The `x-descriptors` field can be thought of as "capabilities" (and is referenced in the code using this term). Capabilities are defined in `types.ts` provide a mapping between descriptors and different UI components (implemented as React components) using [URN format](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier).
 
-### Example
+## Example
 
 From the `ClusterServiceVersion` for [etcd-operator](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/deploy/chart/catalog_resources/ocs/etcdoperator.v0.9.2.clusterserviceversion.yaml):
 
@@ -61,6 +61,10 @@ From the `ClusterServiceVersion` for [etcd-operator](https://github.com/operator
 Which yields this UI:
 
 ![screenshot_20180821_163304](https://user-images.githubusercontent.com/11700385/44427562-eb1fb500-a55f-11e8-83e5-98e7008dabdb.png)
+
+## OLM Descriptor Reference
+Checkout the [reference](reference/reference.md) of different specDescriptors and statusDescriptors available with sample code snippets and screenshots.
+
 
 ## Create Forms
 
