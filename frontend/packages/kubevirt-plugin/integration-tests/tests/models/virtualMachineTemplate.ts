@@ -57,6 +57,16 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
         await wizard.addDisk(resource);
       }
     }
+
+    if (provisionSource.method === ProvisionConfigName.DISK) {
+      // Select the last Disk as the source for booting
+      if (storageResources.length > 0) {
+        await wizard.selectBootableDisk(storageResources[storageResources.length - 1].name);
+      } else {
+        throw Error(`Provision source ${ProvisionConfigName.DISK} is missing a storage.`);
+      }
+    }
+
     await wizard.next();
 
     // Advanced - Cloud Init

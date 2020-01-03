@@ -212,8 +212,10 @@ export class VirtualMachine extends KubevirtDetailView {
       }
     }
     if (provisionSource.method === ProvisionConfigName.DISK) {
-      // Select the last Disk as the source for booting
-      await wizard.selectBootableDisk(storageResources[storageResources.length - 1].name);
+      // Select the last Disk as the source for booting or let the template select one by default
+      if (storageResources.length > 0) {
+        await wizard.selectBootableDisk(storageResources[storageResources.length - 1].name);
+      }
     }
     await wizard.next();
 
