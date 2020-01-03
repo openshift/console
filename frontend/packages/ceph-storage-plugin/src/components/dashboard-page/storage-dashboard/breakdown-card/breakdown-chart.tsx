@@ -21,7 +21,7 @@ import './breakdown-card.scss';
 
 const LinkableLegend: React.FC<LinkableLegendProps> = React.memo((props: LinkableLegendProps) => {
   const { metricModel, datum, ocsVersion } = props;
-  let href: string = resourcePathFromModel(metricModel, datum.link, CEPH_STORAGE_NAMESPACE);
+  let href: string = resourcePathFromModel(metricModel, datum.link, datum.ns);
   const customLegend = (
     <Tooltip content={datum.link} enableFlip>
       <ChartLabel
@@ -105,7 +105,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
 
 type BreakdownChartProps = {
   data: DataPoint[];
-  legends: any[]; // TBD(afreen23): pass down normal legends
+  legends: any[];
   metricModel: K8sKind;
   ocsVersion?: string;
 };

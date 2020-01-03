@@ -59,6 +59,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     labels: { fill: d.color },
     symbol: { fill: d.fill },
     link: d.link,
+    ns: d.ns,
   }));
 
   // Removes Legend for available
