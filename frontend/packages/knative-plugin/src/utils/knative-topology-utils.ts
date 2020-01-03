@@ -29,6 +29,7 @@ import {
   getTopologyEdgeItems,
   filterBasedOnActiveApplication,
 } from '@console/dev-console/src/components/topology/topology-utils';
+import { TopologyFilters } from '@console/dev-console/src/components/topology/filters/filter-utils';
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from './get-knative-resources';
@@ -324,6 +325,7 @@ export const tranformKnNodeData = (
   utils?: Function[],
   cheURL?: string,
   application?: string,
+  filters?: TopologyFilters,
 ) => {
   let nodesData = [];
   let edgesData = [];
@@ -366,6 +368,7 @@ export const tranformKnNodeData = (
             operatorBackedServiceKinds,
             cheURL,
             type,
+            filters,
           );
           edgesData = [
             ...edgesData,

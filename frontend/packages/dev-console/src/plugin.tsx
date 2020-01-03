@@ -15,6 +15,7 @@ import {
   OverviewCRD,
   YAMLTemplate,
   OverviewTabSection,
+  ReduxReducer,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { CodeIcon } from '@patternfly/react-icons';
@@ -34,6 +35,7 @@ import {
   newPipelineResourceTemplate,
   newClusterTaskTemplate,
 } from './templates';
+import reducer from './utils/reducer';
 
 const {
   ClusterTaskModel,
@@ -54,6 +56,7 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | Perspective
   | RoutePage
+  | ReduxReducer
   | KebabActions
   | OverviewCRD
   | YAMLTemplate
@@ -490,6 +493,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         (await import(
           './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
         )).default,
+    },
+  },
+  {
+    type: 'ReduxReducer',
+    properties: {
+      namespace: 'devconsole',
+      reducer,
     },
   },
   {

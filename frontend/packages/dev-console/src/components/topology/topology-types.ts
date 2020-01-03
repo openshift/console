@@ -107,6 +107,7 @@ export interface WorkloadData {
   build: K8sResourceKind;
   donutStatus: DonutStatusData;
   connectedPipeline: ConnectedWorkloadPipeline;
+  showPodCount?: boolean;
 }
 
 export interface DonutStatusData {
