@@ -11,8 +11,8 @@ fi
 CONSOLE_URL_WITHOUT_HTTP=${CONSOLE_URL#"https://"}
 SERVER="${CONSOLE_URL_WITHOUT_HTTP}:443"
 
-ROUTER_CA=$(oc get configmap router-ca -n openshift-config-managed -o json | jq -r '.data["ca-bundle.crt"]')
-echo "$ROUTER_CA" > /tmp/router-ca-file.txt
+DEFAULT_INGRESS_CERT=$(oc get configmap default-ingress-cert -n openshift-config-managed -o json | jq -r '.data["ca-bundle.crt"]')
+echo "$DEFAULT_INGRESS_CERT" > /tmp/default-ingress-cert-file.txt
 
 # CIPHER=ECDHE-ECDSA-CHACHA20-POLY1305 # DENIED
 VALID_CIPHER_SAMPLE=(
@@ -22,7 +22,7 @@ VALID_CIPHER_SAMPLE=(
 
 for CIPHER in "${VALID_CIPHER_SAMPLE[@]}"
 do
-  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/router-ca-file.txt 2>&1)
+  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1)
   if [[ $? -eq 0 ]]
   then
     echo "valid cipher was correctly accepted (${CIPHER})"
@@ -47,7 +47,7 @@ INVALID_CIPHER_SAMPLE=(
 
 for CIPHER in "${INVALID_CIPHER_SAMPLE[@]}"
 do
-  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/router-ca-file.txt 2>&1)
+  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1)
   if [[ $? -eq 0 ]]
   then
     echo "invalid cipher suite used to connect to console (${CIPHER})"  
