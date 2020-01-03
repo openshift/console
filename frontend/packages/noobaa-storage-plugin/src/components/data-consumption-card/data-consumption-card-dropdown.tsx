@@ -65,12 +65,13 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
   const onSelectTypeDropdown = React.useCallback(
     (e) => {
       setIsOpenTypeDropdown(!isOpenTypeDropdown);
-      setType(typesDropdown[e.target.id]);
+      setType(typesDropdown[e.currentTarget.id]);
       if (kpi === BY_LOGICAL_USAGE || kpi === BY_PHYSICAL_VS_LOGICAL_USAGE) {
-        const val = e.target.id === 'accounts' ? BY_LOGICAL_USAGE : BY_PHYSICAL_VS_LOGICAL_USAGE;
+        const val =
+          e.currentTarget.id === 'accounts' ? BY_LOGICAL_USAGE : BY_PHYSICAL_VS_LOGICAL_USAGE;
         setKpi(val);
       }
-      if (kpi === 'Egress' && e.target.id === 'accounts') {
+      if (kpi === 'Egress' && e.currentTarget.id === 'accounts') {
         setKpi(kpiDropdown.iops);
       }
     },
@@ -84,7 +85,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
   const onSelectKpiDropdown = React.useCallback(
     (e) => {
       setIsOpenKpiDropdown(!isOpenKpiDropdown);
-      setKpi(kpiDropdown[e.target.id]);
+      setKpi(kpiDropdown[e.currentTarget.id]);
     },
     [isOpenKpiDropdown, kpiDropdown, setKpi],
   );
