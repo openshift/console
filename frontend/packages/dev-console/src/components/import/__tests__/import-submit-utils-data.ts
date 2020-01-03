@@ -93,14 +93,18 @@ export const defaultData: GitImportFormData = {
     cpu: {
       request: '',
       requestUnit: 'm',
+      defaultRequestUnit: 'm',
       limit: '',
       limitUnit: 'm',
+      defaultLimitUnit: 'm',
     },
     memory: {
       request: '',
       requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
       limit: '',
       limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
     },
   },
   git: {

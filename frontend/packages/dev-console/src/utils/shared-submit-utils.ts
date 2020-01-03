@@ -19,6 +19,7 @@ const isDeployImageFormData = (
 export const createService = (
   formData: DeployImageFormData | GitImportFormData,
   imageStreamData?: K8sResourceKind,
+  originalService?: K8sResourceKind,
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
@@ -47,15 +48,18 @@ export const createService = (
   }
 
   const service: any = {
+    ...(originalService || {}),
     kind: 'Service',
     apiVersion: 'v1',
     metadata: {
+      ...(originalService ? originalService.metadata : {}),
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       annotations: { ...defaultAnnotations },
     },
     spec: {
+      ...(originalService ? originalService.spec : {}),
       selector: podLabels,
       ports: _.map(ports, (port) => ({
         port: port.containerPort,
@@ -73,6 +77,7 @@ export const createService = (
 export const createRoute = (
   formData: GitImportFormData | DeployImageFormData,
   imageStreamData?: K8sResourceKind,
+  originalRoute?: K8sResourceKind,
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
@@ -109,15 +114,18 @@ export const createRoute = (
   }
 
   const route: any = {
+    ...(originalRoute || {}),
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',
     metadata: {
+      ...(originalRoute ? originalRoute.metadata : {}),
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       defaultAnnotations,
     },
     spec: {
+      ...(originalRoute ? originalRoute.spec : {}),
       to: {
         kind: 'Service',
         name,

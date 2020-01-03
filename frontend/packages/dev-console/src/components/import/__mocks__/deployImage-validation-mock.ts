@@ -120,14 +120,18 @@ export const mockDeployImageFormData: DeployImageFormData = {
     cpu: {
       request: null,
       requestUnit: 'm',
+      defaultRequestUnit: 'm',
       limit: null,
       limitUnit: 'm',
+      defaultLimitUnit: 'm',
     },
     memory: {
       request: null,
       requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
       limit: null,
       limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
     },
   },
 };

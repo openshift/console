@@ -90,14 +90,18 @@ describe('DeployImage Submit Utils', () => {
         cpu: {
           request: 5,
           requestUnit: 'm',
+          defaultRequestUnit: 'm',
           limit: 10,
           limitUnit: 'm',
+          defaultLimitUnit: 'm',
         },
         memory: {
           request: 100,
           requestUnit: 'Mi',
+          defaultRequestUnit: 'Mi',
           limit: 200,
           limitUnit: 'Mi',
+          defaultLimitUnit: 'Mi',
         },
       };
 
