@@ -753,9 +753,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
   const onSort = (e, i, direction) => setSortBy({ index: i, direction });
 
-  const tableRows = rows
-    .slice((page - 1) * perPage, page * perPage - 1)
-    .map((cells) => ({ cells }));
+  const tableRows = rows.slice((page - 1) * perPage, page * perPage).map((cells) => ({ cells }));
 
   return (
     <>
