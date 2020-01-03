@@ -8,15 +8,14 @@ type MonitoringPageProps = React.ComponentProps<typeof MonitoringPage>;
 let monPageProps: MonitoringPageProps;
 
 describe('Monitoring Page ', () => {
-  
   it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps = {
       match: {
-        path: "/dev-monitoring/all-namespaces",
-        url: "/dev-monitoring/all-namespaces",
+        path: '/dev-monitoring/all-namespaces',
+        url: '/dev-monitoring/all-namespaces',
         isExact: true,
         params: {},
-      }
+      },
     };
     const component = shallow(<MonitoringPage {...monPageProps} />);
     expect(component.find(ProjectListPage).exists()).toBe(true);
@@ -27,13 +26,13 @@ describe('Monitoring Page ', () => {
     const expectedTabs: string[] = ['Dashboard', 'Metrics'];
     monPageProps = {
       match: {
-        path: "/dev-monitoring/ns/:ns",
-        url: "/dev-monitoring/ns/test-proj",
+        path: '/dev-monitoring/ns/:ns',
+        url: '/dev-monitoring/ns/test-proj',
         isExact: true,
         params: {
-          ns: "test-proj"
-        }
-      }
+          ns: 'test-proj',
+        },
+      },
     };
 
     const component = shallow(<MonitoringPage {...monPageProps} />);
