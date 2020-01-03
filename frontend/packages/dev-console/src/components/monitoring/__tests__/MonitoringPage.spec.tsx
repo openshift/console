@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { HorizontalNav, PageHeading } from '@console/internal/components/utils';
 import { MonitoringPage } from '../MonitoringPage';
 import ProjectListPage from '../../projects/ProjectListPage';
@@ -9,29 +8,34 @@ type MonitoringPageProps = React.ComponentProps<typeof MonitoringPage>;
 let monPageProps: MonitoringPageProps;
 
 describe('Monitoring Page ', () => {
-  beforeEach(() => {
-    monPageProps = {
-      activeNamespace: 'test-project',
-      match: {
-        params: {
-          ns: 'test-project',
-        },
-        isExact: true,
-        path: '',
-        url: '',
-      },
-    };
-  });
-
+  
   it('should render ProjectList page when in all-projects namespace', () => {
-    monPageProps.activeNamespace = ALL_NAMESPACES_KEY;
+    monPageProps = {
+      match: {
+        path: "/dev-monitoring/all-namespaces",
+        url: "/dev-monitoring/all-namespaces",
+        isExact: true,
+        params: {},
+      }
+    };
     const component = shallow(<MonitoringPage {...monPageProps} />);
     expect(component.find(ProjectListPage).exists()).toBe(true);
     expect(component.find(ProjectListPage).prop('title')).toBe('Monitoring');
   });
 
-  it('should render all Tabs of Monitoring page', () => {
+  it('should render all Tabs of Monitoring page for selected project', () => {
     const expectedTabs: string[] = ['Dashboard', 'Metrics'];
+    monPageProps = {
+      match: {
+        path: "/dev-monitoring/ns/:ns",
+        url: "/dev-monitoring/ns/test-proj",
+        isExact: true,
+        params: {
+          ns: "test-proj"
+        }
+      }
+    };
+
     const component = shallow(<MonitoringPage {...monPageProps} />);
     expect(component.exists()).toBe(true);
     expect(component.find(PageHeading).exists()).toBe(true);

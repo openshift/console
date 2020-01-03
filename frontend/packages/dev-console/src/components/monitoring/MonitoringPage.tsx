@@ -1,24 +1,36 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
+import { match as RMatch } from 'react-router';
 import { Firehose, HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/internal/const';
 import { ProjectModel } from '@console/internal/models';
 import { TechPreviewBadge } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
-import MonitoringDashboard from './MonitoringDashboard';
-import MonitoringMetrics from './MonitoringMetrics';
-import { connectActiveNamespace, ConnectActiveNamespaceProps, redirectURI } from './utils';
+import MonitoringDashboard from './dashboard/MonitoringDashboard';
+import MonitoringMetrics from './metrics/MonitoringMetrics';
+
+export const MONITORING_NS_PAGE_URI = '/dev-monitoring/ns';
+export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
+
+export interface MonitoringPageProps {
+  match: RMatch<{
+    ns?: string;
+  }>;
+}
 
 const handleNamespaceChange = (newNamespace: string): void => {
-  history.push(redirectURI(newNamespace));
+  const redirectURI =
+    newNamespace === ALL_NAMESPACES_KEY
+      ? `${MONITORING_ALL_NS_PAGE_URI}`
+      : `${MONITORING_NS_PAGE_URI}/${newNamespace}`;
+
+  history.push(redirectURI);
 };
 
-export const MonitoringPage: React.FC<ConnectActiveNamespaceProps> = ({
-  activeNamespace,
-  ...props
-}) => {
-  const allNamespaces = activeNamespace === ALL_NAMESPACES_KEY;
+export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => {
+  const activeNamespace = _.get(props, 'match.params.ns');
 
   return (
     <>
@@ -30,11 +42,7 @@ export const MonitoringPage: React.FC<ConnectActiveNamespaceProps> = ({
         variant={NamespacedPageVariants.light}
         onNamespaceChange={handleNamespaceChange}
       >
-        {allNamespaces ? (
-          <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
-            Select a project to view monitoring metrics
-          </ProjectListPage>
-        ) : (
+        {activeNamespace ? (
           <Firehose
             resources={[
               {
@@ -66,10 +74,14 @@ export const MonitoringPage: React.FC<ConnectActiveNamespaceProps> = ({
               noStatusBox
             />
           </Firehose>
+        ) : (
+          <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
+            Select a project to view monitoring metrics
+          </ProjectListPage>
         )}
       </NamespacedPage>
     </>
   );
 };
 
-export default connectActiveNamespace(MonitoringPage);
+export default MonitoringPage;
