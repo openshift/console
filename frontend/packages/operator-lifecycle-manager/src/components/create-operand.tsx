@@ -389,15 +389,26 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
   const inputFor = (field: OperandField) => {
     if (field.capabilities.find((c) => c.startsWith(SpecCapability.fieldDependency))) {
-      const masterFieldInfo = field.capabilities
-        .find((c) => c.startsWith(SpecCapability.fieldDependency))
-        .split(SpecCapability.fieldDependency)[1];
-      const currentMasterFieldValue = !_.isNil(formValues[masterFieldInfo.split(':')[0]])
-        ? formValues[masterFieldInfo.split(':')[0]].toString()
+      const controlFieldInfoList = field.capabilities.filter((c) =>
+        c.startsWith(SpecCapability.fieldDependency),
+      );
+      const controlFieldPathList = _.uniq(
+        controlFieldInfoList
+          .map((c) => c.split(SpecCapability.fieldDependency)[1])
+          .reduce((infoList, info) => [info.split(':')[0], ...infoList], []),
+      );
+      const controlFieldPath =
+        _.isArray(controlFieldPathList) && controlFieldPathList.length === 1
+          ? controlFieldPathList[0]
+          : null;
+      const currentControlFieldValue = !_.isNil(formValues[controlFieldPath])
+        ? formValues[controlFieldPath].toString()
         : null;
-      const expectedMasterFieldValue = masterFieldInfo.split(':')[1];
+      const expectedControlFieldValueList = controlFieldInfoList
+        .map((c) => c.split(SpecCapability.fieldDependency)[1])
+        .reduce((infoList, info) => [info.split(':')[1], ...infoList], []);
 
-      if (currentMasterFieldValue !== expectedMasterFieldValue) {
+      if (!expectedControlFieldValueList.includes(currentControlFieldValue)) {
         return null;
       }
     }
