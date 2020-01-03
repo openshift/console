@@ -226,6 +226,8 @@ $ export FORCE_CHROME_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa
 $ ./test-gui.sh e2e
 ```
 
+Chromium version to be used by CI jobs is defined in [chromium-version.sh](chromium-version.sh) script.
+
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
