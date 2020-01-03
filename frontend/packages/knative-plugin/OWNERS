@@ -16,5 +16,6 @@ approvers:
   - andrewballantyne
   - christianvogt
   - rohitkrai03
+  - invincibleJai
 labels:
   - component/knative
