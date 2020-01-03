@@ -34,4 +34,5 @@ export enum ConditionTypes {
 export type Traffic = {
   revisionName: string;
   percent: number;
+  latestRevision?: boolean;
 };
