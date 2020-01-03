@@ -19,6 +19,7 @@ import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
+import { VirtualMachineInstanceModel } from '../../models';
 import {
   getOperatingSystemName,
   getOperatingSystem,
@@ -108,6 +109,14 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
     <dl className="co-m-pane__details">
       <VMDetailsItem title="Status" idValue={prefixedID(id, 'vm-statuses')}>
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+      </VMDetailsItem>
+
+      <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!getName(vmi)}>
+        <ResourceLink
+          kind={VirtualMachineInstanceModel.kind}
+          name={getName(vmi)}
+          namespace={getNamespace(vmi)}
+        />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
