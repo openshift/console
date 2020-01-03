@@ -135,14 +135,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   const prometheusObc = getGaugeValue(obcCountResponse);
   const unhealthyObcCount = getGaugeValue(unhealthyObcCountResponse);
 
-  /* Controls the inconsistency due to the latency in prometheus and K8s endpoint data */
-  const getUnhealthyCount = () => {
-    if (prometheusObc && k8sObc && unhealthyObcCount)
-      return k8sObc - Number(prometheusObc) + Number(unhealthyObcCount);
-    return 0;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
-
   const bucketProps: BucketsType = {
     bucketsCount: getGaugeValue(obCountResponse),
     objectsCount: getGaugeValue(obObjectsCountResponse),
@@ -153,7 +145,7 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   const bucketClaimProps: BucketsType = {
     bucketsCount: String(k8sObc),
     objectsCount: getGaugeValue(obcObjectsCountsResponse),
-    unhealthyCount: React.useCallback(getUnhealthyCount, [unhealthyObcCount])(),
+    unhealthyCount: k8sObc - Number(prometheusObc) + Number(unhealthyObcCount),
     isLoading: !(obcCountResponse && obcObjectsCountsResponse && unhealthyObcCountResponse),
     error: obcCountResponseError || obcObjectsCountsResponseError || unhealthyObcCountResponseError,
   };
