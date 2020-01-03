@@ -95,6 +95,9 @@ export const useDndDrag = <
       receiveHandlerId: (sourceId: string | undefined): void => {
         idRef.current = sourceId;
       },
+      getDropHints: (): string[] | undefined => {
+        return dndManager.getDropHints();
+      },
       canDrag: (): boolean => {
         return dndManager.canDragSource(idRef.current);
       },
