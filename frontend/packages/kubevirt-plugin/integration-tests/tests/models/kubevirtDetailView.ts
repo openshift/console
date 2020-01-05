@@ -6,8 +6,9 @@ import { TAB, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils
 import { StorageResource, NetworkResource } from '../utils/types';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
 import { confirmAction } from '../../views/vm.actions.view';
-import { vmDetailFlavorEditButton, vmDetailCdEditButton } from '../../views/virtualMachine.view';
+import { vmDetailFlavorEditButton, vmDetailCdEditButton, vmDetailBootOrderEditButton } from '../../views/virtualMachine.view';
 import * as editCD from '../../views/editCDView';
+import * as editBootOrder from '../../views/editBootOrderView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
@@ -86,5 +87,10 @@ export class KubevirtDetailView extends DetailView {
   async modalEditCDRoms() {
     await click(vmDetailCdEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editCD.modalTitle));
+  }
+
+  async modalEditBootOrder() {
+    await click(vmDetailBootOrderEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editBootOrder.modalTitle));
   }
 }
