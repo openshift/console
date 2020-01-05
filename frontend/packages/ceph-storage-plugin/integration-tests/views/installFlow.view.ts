@@ -1,7 +1,7 @@
 import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click, waitForCount } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
 import { waitFor, refreshIfNotVisible } from '../utils/helpers';
@@ -19,7 +19,8 @@ const subscribeButton = $('.pf-m-primary');
 const dropdownForNamespace = $('#dropdown-selectbox');
 const customNamespaceRadio = $('input[value="OwnNamespace"]');
 const selectNamespace = (namespace: string) => $(`#${namespace}-Project-link`);
-const status = $('.co-icon-and-text');
+const statuses = $$('.co-icon-and-text');
+const status = statuses.get(0);
 
 // Create storage cluster page
 const btnCreate = $('.pf-m-primary');
@@ -69,13 +70,13 @@ export const goToWorkLoads = async () => {
 
 // Operators page
 export const selectWorkerRows = async () => {
-  // Wait for 6 inputs to show up
+  // Wait for 3 inputs to show up
   const selectedNodes = [];
-  await browser.wait(until.and(waitForCount($$('tbody tr'), 6)));
+  await browser.wait(until.presenceOf($('[data-label="Role"]')), 10000);
+  expect(await browser.wait($$('tbody tr').count())).toBeGreaterThanOrEqual(3);
   const isAllSeleted = await selectAllBtn.isSelected();
   if (isAllSeleted === true) await selectAllBtn.click();
   const workerAz = [];
-  await browser.wait(until.presenceOf($('[data-label="Role"]')), 10000);
   const table = $('.pf-c-table.pf-m-compact tbody');
   const rows = table.$$('tr');
   rows.each(async (row, index) => {
