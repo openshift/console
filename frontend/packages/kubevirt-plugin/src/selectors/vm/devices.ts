@@ -37,3 +37,8 @@ export const getBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] =
 
 export const getBootableDevicesInOrder = (vm: VMLikeEntityKind): BootableDeviceType[] =>
   _.sortBy(getBootableDevices(vm), 'value.bootOrder');
+
+export const getNonBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
+  const devices = getDevices(vm).filter((device) => !device.value.bootOrder);
+  return [...devices];
+};

@@ -23,7 +23,7 @@ export type DiskSourceConfig = {
 
 export type StorageResource = {
   name: string;
-  size?: string;
+  size: string;
   storageClass: string;
   interface: string;
   sourceConfig?: DiskSourceConfig;

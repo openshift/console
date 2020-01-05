@@ -40,6 +40,10 @@ export class VirtualMachine extends KubevirtDetailView {
     return vmView.vmDetailNode(this.namespace, this.name).getText();
   }
 
+  async getBootDevices(): Promise<string[]> {
+    return vmView.vmDetailBootOrder(this.namespace, this.name).getText();
+  }
+
   async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToTab(TAB.Overview);
 

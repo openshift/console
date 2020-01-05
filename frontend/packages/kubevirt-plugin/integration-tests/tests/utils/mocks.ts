@@ -1,5 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { CloudInitConfig, BaseVMConfig } from './types';
+import { CloudInitConfig, BaseVMConfig, StorageResource } from './types';
 import {
   STORAGE_CLASS,
   COMMON_TEMPLATES_VERSION,
@@ -99,14 +99,14 @@ export const multusNetworkInterface = {
   network: multusNAD.metadata.name,
 };
 
-export const rootDisk = {
+export const rootDisk: StorageResource = {
   name: 'rootdisk',
   size: '1',
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
 };
 
-export const hddDisk = {
+export const hddDisk: StorageResource = {
   name: `disk-${testName.slice(-5)}`,
   size: '1',
   interface: DISK_INTERFACE.VirtIO,
@@ -279,7 +279,7 @@ export function getVMManifest(
             },
             resources: {
               requests: {
-                memory: '1G',
+                memory: '1073741824',
               },
             },
           },
