@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { getPodStatus, podStatus } from '@console/shared';
+import { getPodStatus, podStatus, getImageForCSVIcon } from '@console/shared';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
 } from '@console/knative-plugin/src/utils/get-knative-resources';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { WorkloadData, TopologyDataResources } from '../topology-types';
 import {
   transformTopologyData,
@@ -247,6 +248,23 @@ describe('TopologyUtils ', () => {
       'deploymentConfigs',
     ]);
     expect((topologyTransformedData[keys[0]].data as WorkloadData).editUrl).toBe(mockGitURL);
+  });
+
+  it('should return builder image icon for nodejs', () => {
+    const nodejsIcon = getImageForIconClass('icon-nodejs');
+    const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
+      'deploymentConfigs',
+    ]);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).builderImage).toBe(nodejsIcon);
+  });
+
+  it('should return csv icon for operator backed service', () => {
+    const icon = _.get(MockResources.clusterServiceVersions.data[0], 'spec.icon.0');
+    const csvIcon = getImageForCSVIcon(icon);
+    const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
+      'deployments',
+    ]);
+    expect((topologyTransformedData[keys[2]].data as WorkloadData).builderImage).toBe(csvIcon);
   });
 });
 

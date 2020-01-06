@@ -7,7 +7,12 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { TransformResourceData, isKnativeServing, OverviewItem } from '@console/shared';
+import {
+  TransformResourceData,
+  isKnativeServing,
+  OverviewItem,
+  getImageForCSVIcon,
+} from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   tranformKnNodeData,
@@ -33,6 +38,7 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
+  OperatorBackedServiceKindMap,
 } from './topology-types';
 import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 
@@ -109,7 +115,7 @@ const createInstanceForResource = (resources: TopologyDataResources, utils?: Fun
  */
 export const createTopologyNodeData = (
   dc: TopologyOverviewItem,
-  operatorBackedServiceKinds: string[],
+  operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
   cheURL?: string,
   type?: string,
   filters?: TopologyFilters,
@@ -127,6 +133,16 @@ export const createTopologyNodeData = (
   const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
   const nodeResourceKind = _.get(deploymentConfig, 'metadata.ownerReferences[0].kind');
+  const operatorBackedService = nodeResourceKind in operatorBackedServiceKindMap;
+
+  const csvIcon =
+    operatorBackedService &&
+    getImageForCSVIcon(_.get(operatorBackedServiceKindMap[nodeResourceKind], 'spec.icon.0'));
+  const builderImageIcon =
+    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+    getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
+  const defaultIcon = getImageForIconClass(`icon-openshift`);
+
   return {
     id: dcUID,
     name:
@@ -134,7 +150,7 @@ export const createTopologyNodeData = (
     type: type || 'workload',
     resources: { ...dc },
     pods: dc.pods,
-    operatorBackedService: operatorBackedServiceKinds.includes(nodeResourceKind),
+    operatorBackedService,
     data: {
       url: getRoutesUrl(dc),
       kind: referenceFor(deploymentConfig),
@@ -142,10 +158,7 @@ export const createTopologyNodeData = (
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
         getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),
       cheEnabled: !!cheURL,
-      builderImage:
-        getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
-        getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
-        getImageForIconClass(`icon-openshift`),
+      builderImage: csvIcon || builderImageIcon || defaultIcon,
       isKnativeResource:
         type && (type === 'event-source' || 'knative-revision')
           ? true
@@ -307,16 +320,18 @@ export const transformTopologyData = (
   utils?: Function[],
   filters?: TopologyFilters,
 ): TopologyDataModel => {
-  const installedOperators = _.get(resources, 'clusterServiceVersion.data');
-  const operatorBackedServiceKinds = [];
+  const installedOperators = _.get(resources, 'clusterServiceVersions.data');
+  let operatorBackedServiceKindMap: OperatorBackedServiceKindMap;
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
-
   if (installedOperators) {
-    _.forEach(installedOperators, (op) => {
-      _.get(op, 'spec.customresourcedefinitions.owned').map((service) =>
-        operatorBackedServiceKinds.push(service.kind),
-      );
-    });
+    operatorBackedServiceKindMap = installedOperators.reduce((kindMap, csv) => {
+      _.get(csv, 'spec.customresourcedefinitions.owned', []).forEach((crd) => {
+        if (!(crd.kind in kindMap)) {
+          kindMap[crd.kind] = csv;
+        }
+      });
+      return kindMap;
+    }, {});
   }
 
   let topologyGraphAndNodeData: TopologyDataModel = {
@@ -338,7 +353,7 @@ export const transformTopologyData = (
         type,
         topologyGraphAndNodeData,
         resources,
-        operatorBackedServiceKinds,
+        operatorBackedServiceKindMap,
         utils,
         cheURL,
         application,
@@ -403,7 +418,7 @@ export const transformTopologyData = (
         const uid = _.get(deploymentConfig, ['metadata', 'uid']);
         dataToShowOnNodes[uid] = createTopologyNodeData(
           item,
-          operatorBackedServiceKinds,
+          operatorBackedServiceKindMap,
           cheURL,
           null,
           filters,

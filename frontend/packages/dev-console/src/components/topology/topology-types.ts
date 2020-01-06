@@ -2,6 +2,7 @@ import { ComponentType } from 'react';
 import { FirehoseResult, KebabOption } from '@console/internal/components/utils';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { DeploymentKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
 export type Point = [number, number];
@@ -29,7 +30,7 @@ export interface TopologyDataResources {
   eventSourceApiServer?: FirehoseResult;
   eventSourceCamel?: FirehoseResult;
   eventSourceKafka?: FirehoseResult;
-  clusterServiceVersion?: FirehoseResult;
+  clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
 }
 
@@ -117,6 +118,10 @@ export interface DonutStatusData {
   dc: K8sResourceKind;
   isRollingOut: boolean;
 }
+
+export type OperatorBackedServiceKindMap = {
+  [name: string]: ClusterServiceVersionKind;
+};
 
 export interface GraphApi {
   zoomIn(): void;

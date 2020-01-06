@@ -81,23 +81,21 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   filters,
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
+  resources.push({
+    isList: true,
+    kind: referenceForModel(ClusterServiceVersionModel),
+    namespace,
+    prop: 'clusterServiceVersions',
+    optional: true,
+  });
   if (serviceBinding) {
-    resources.push(
-      {
-        isList: true,
-        kind: referenceForModel(ClusterServiceVersionModel),
-        namespace,
-        prop: 'clusterServiceVersion',
-        optional: true,
-      },
-      {
-        isList: true,
-        kind: referenceForModel(ServiceBindingRequestModel),
-        namespace,
-        prop: 'serviceBindingRequests',
-        optional: true,
-      },
-    );
+    resources.push({
+      isList: true,
+      kind: referenceForModel(ServiceBindingRequestModel),
+      namespace,
+      prop: 'serviceBindingRequests',
+      optional: true,
+    });
   }
   return (
     <Firehose resources={resources}>
