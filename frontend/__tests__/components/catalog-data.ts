@@ -108,7 +108,7 @@ export const developerCatalogItems: Item[] = [
   },
 ];
 
-export const groupedByType = {
+export const groupedByOperator = {
   'Elastic Search Operator': [
     {
       createLabel: 'Create',

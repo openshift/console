@@ -23,8 +23,9 @@ import {
   catalogItems,
   catalogCategories,
 } from '../../__mocks__/catalogItemsMocks';
-import { developerCatalogItems, groupedByType } from './catalog-data';
+import { developerCatalogItems, groupedByOperator } from './catalog-data';
 import { categorizeItems } from '../../public/components/utils/tile-view-page';
+import { Dropdown } from '../../public/components/utils';
 
 describe(CatalogTileViewPage.displayName, () => {
   let wrapper: ReactWrapper<CatalogListPageProps, CatalogListPageState>;
@@ -132,9 +133,15 @@ describe(CatalogTileViewPage.displayName, () => {
     });
   });
 
+  it('should render the group-by dropdown', () => {
+    expect(wrapper.find(Dropdown).exists()).toBe(true);
+    expect(wrapper.find(Dropdown).props().titlePrefix).toBe('Group By');
+    expect(wrapper.find(Dropdown).props().items).toEqual({ Operator: 'Operator', None: 'None' });
+  });
+
   it('should group catalog items by Operator', () => {
-    const groupedByTypeResult = groupItems(developerCatalogItems, 'Operator');
-    expect(groupedByTypeResult).toEqual(groupedByType);
+    const groupedByOperatorResult = groupItems(developerCatalogItems, 'Operator');
+    expect(groupedByOperatorResult).toEqual(groupedByOperator);
   });
 
   it('should not group the items when None is selected in the Group By Dropdown', () => {
