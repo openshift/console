@@ -3,7 +3,7 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { activeTab } from '../../views/detailView.view';
-import * as VmsListView from '../../views/vms.list.view';
+import * as listView from '../../views/list.view';
 
 export class DetailView {
   readonly name: string;
@@ -36,7 +36,7 @@ export class DetailView {
   // Similar to navigateToTab(TABS.OVERVIEW) but passes through resource list page
   async navigateToDetail() {
     await this.navigateToListView();
-    await VmsListView.vmListByName(this.name).click();
+    await listView.listByName(this.name).click();
     await isLoaded();
     await clickHorizontalTab('Overview');
     await isLoaded();
@@ -44,18 +44,18 @@ export class DetailView {
 
   async navigateToConsoles() {
     await this.navigateToListView();
-    await VmsListView.vmListByName(this.name).click();
+    await listView.listByName(this.name).click();
     await isLoaded();
     await clickHorizontalTab('Consoles');
     await isLoaded();
   }
 
   async navigateToListView() {
-    const vmsListUrl = (namespace) =>
+    const listUrl = (namespace) =>
       `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/${this.kind}`;
     const currentUrl = await browser.getCurrentUrl();
-    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
-      await browser.get(vmsListUrl(this.namespace));
+    if (![listUrl(testName), listUrl('all-namespaces')].includes(currentUrl)) {
+      await browser.get(listUrl(this.namespace));
       await isLoaded();
     }
   }

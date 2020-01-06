@@ -4,7 +4,7 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import * as loginView from '@console/internal-integration-tests/views/login.view';
 import { withResource, removeLeakedResources } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { isRestrictedAccess } from '../views/vms.list.view';
+import { isRestrictedAccess } from '../views/list.view';
 import { createProject } from './utils/utils';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
