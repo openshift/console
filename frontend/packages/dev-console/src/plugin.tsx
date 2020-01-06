@@ -413,6 +413,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
+      path: ['/catalog/helm-install'],
+      loader: async () =>
+        (await import(
+          './components/helm/HelmInstallPage' /* webpackChunkName: "dev-console-helm-install" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
       path: '/edit/ns/:ns',
       loader: async () =>
         (

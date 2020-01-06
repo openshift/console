@@ -154,9 +154,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
           tileProvider: _.get(serviceClass, 'spec.externalMetadata.providerDisplayName'),
           tags: serviceClass.spec.tags,
           createLabel: 'Create Service Instance',
-          href: `/catalog/create-service-instance?cluster-service-class=${
-            serviceClass.metadata.name
-          }&preselected-ns=${namespace}`,
+          href: `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`,
           supportUrl: _.get(serviceClass, 'spec.externalMetadata.supportUrl'),
           longDescription: _.get(serviceClass, 'spec.externalMetadata.longDescription'),
           documentationUrl: _.get(serviceClass, 'spec.externalMetadata.documentationUrl'),
@@ -212,6 +210,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
           const iconClass = getImageForIconClass('icon-catalog');
           const tileImgUrl = chart.icon;
           const tileIconClass = tileImgUrl ? null : iconClass;
+          const chartURL = encodeURIComponent(_.get(chart, 'urls.0'));
 
           normalizedCharts.push({
             obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
@@ -225,7 +224,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             tileProvider: _.get(chart, 'maintainers.0.name'),
             documentationUrl: chart.home,
             supportUrl: chart.home,
-            href: `/catalog/install-helm-chart?chart=${name}&preselected-ns=${currentNamespace}`,
+            href: `/catalog/helm-install?chartURL=${chartURL}&preselected-ns=${currentNamespace}`,
           });
         });
         return normalizedCharts;
@@ -402,7 +401,7 @@ export const Catalog = connectToFlags<CatalogProps>(
           templateMetadata={templateMetadata}
           projectTemplateMetadata={projectTemplateMetadata}
           helmCharts={helmCharts}
-          {...props as any}
+          {...(props as any)}
         />
       </Firehose>
     </div>
@@ -464,11 +463,11 @@ export type HelmChart = {
   digest: string;
   home: string;
   icon: string;
-  keywords: Array<string>;
+  keywords: string[];
   maintainers: Array<{ email: string; name: string }>;
   name: string;
   tillerVersion: string;
-  urls: Array<string>;
+  urls: string[];
   version: string;
 };
 

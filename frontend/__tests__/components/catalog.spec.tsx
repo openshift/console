@@ -46,12 +46,14 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(filterItems.length).toEqual(5); // Filter by Types
     expect(filterItems.at(0).props().count).toBe(0); // total count for Operator Backed
     expect(filterItems.at(0).props().checked).toBe(true); //Check operator backed filter is true by default
-    expect(filterItems.at(1).props().count).toBe(9); // total count for templates
-    expect(filterItems.at(1).props().checked).toBe(false); // filter templates should be false by default
-    expect(filterItems.at(2).props().count).toBe(2); // total count for imagestreams
-    expect(filterItems.at(2).props().checked).toBe(false); // filter imagestreams should be false by default
-    expect(filterItems.at(3).props().count).toBe(11); // total count for clusterServiceClasses
-    expect(filterItems.at(3).props().checked).toBe(false); // filter clusterServiceClasses should be false by default
+    expect(filterItems.at(1).props().count).toBe(0); // total count for Helm Charts
+    expect(filterItems.at(1).props().checked).toBe(false); //Check Helm Charts filter is true by default
+    expect(filterItems.at(2).props().count).toBe(9); // total count for templates
+    expect(filterItems.at(2).props().checked).toBe(false); // filter templates should be false by default
+    expect(filterItems.at(3).props().count).toBe(2); // total count for imagestreams
+    expect(filterItems.at(3).props().checked).toBe(false); // filter imagestreams should be false by default
+    expect(filterItems.at(4).props().count).toBe(11); // total count for clusterServiceClasses
+    expect(filterItems.at(4).props().checked).toBe(false); // filter clusterServiceClasses should be false by default
   });
 
   it('renders tiles correctly', () => {
