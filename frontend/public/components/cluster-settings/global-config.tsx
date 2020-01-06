@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert } from '@patternfly/react-core';
+import { AlertVariant } from '@patternfly/react-core';
 import * as plugins from '../../plugins';
 
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
-import { resourcePathFromModel, EmptyBox, Kebab, LoadingBox } from '../utils';
+import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
@@ -53,7 +53,7 @@ const ItemRow = ({ item }) => {
 
 class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalConfigPageState> {
   readonly state: GlobalConfigPageState = {
-    errorMessage: '',
+    errors: [],
     items: [],
     loading: true,
     textFilter: '',
@@ -64,13 +64,13 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   }
 
   componentDidMount() {
-    let errorMessage = '';
     Promise.all(
       this.props.configResources.map((model: K8sKind) => {
         return k8sList(model)
-          .catch((err) => {
-            errorMessage += `${err.message} `;
-            this.setState({ errorMessage });
+          .catch(({ response: { status }, message = `Could not get resource ${model.kind}` }) => {
+            if (status !== 403) {
+              this.setState(({ errors }) => ({ errors: [...errors, message] }));
+            }
             return [];
           })
           .then((items) => items.map((i: K8sKind) => ({ ...i, model })));
@@ -146,7 +146,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   }
 
   render() {
-    const { errorMessage, items = [], loading, textFilter } = this.state;
+    const { errors, items = [], loading, textFilter } = this.state;
     const visibleItems = items.filter(({ label, description = '' }) => {
       return (
         fuzzyCaseInsensitive(textFilter, label) ||
@@ -172,10 +172,13 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
           </div>
         )}
         <div className="co-m-pane__body">
-          {errorMessage && (
-            <Alert isInline className="co-alert" variant="danger" title="Error loading resources">
-              {errorMessage}
-            </Alert>
+          {!_.isEmpty(errors) && (
+            <ExpandableAlert
+              variant={AlertVariant.danger}
+              alerts={errors.map((error, i) => (
+                <div key={i}>{error}</div>
+              ))}
+            />
           )}
           {loading && <LoadingBox />}
           {!loading &&
@@ -209,7 +212,7 @@ type GlobalConfigPageProps = {
 };
 
 type GlobalConfigPageState = {
-  errorMessage: string;
+  errors: string[];
   items: any;
   loading: boolean;
   textFilter: string;
