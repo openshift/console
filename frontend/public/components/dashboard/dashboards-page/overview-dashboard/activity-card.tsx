@@ -167,7 +167,7 @@ export const ActivityCard: React.FC<{}> = React.memo(() => (
       <DashboardCardLink to="/k8s/all-namespaces/events">View events</DashboardCardLink>
     </DashboardCardHeader>
     <DashboardCardBody>
-      <ActivityBody>
+      <ActivityBody className="co-overview-dashboard__activity-body">
         <OngoingActivity />
         <RecentEvent />
       </ActivityBody>
