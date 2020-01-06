@@ -10,6 +10,7 @@ import {
   referenceForModel,
   apiVersionForReference,
 } from '../module/k8s';
+import * as fuzzy from 'fuzzysearch';
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -41,6 +42,7 @@ const blacklistResources = ImmutableSet([
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [autocompleteText, setAutocompleteText] = React.useState('');
   const { clearSelection, selected, onChange, allModels, showAll, preferredVersions } = props;
 
   const onToggle = (expand: boolean) => {
@@ -111,8 +113,12 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     );
   };
 
-  const getItems = () => {
-    const options = [];
+  const changeTextFilter = (e) => {
+    setAutocompleteText(e.target.value);
+  };
+
+  const getItems = (): React.ReactElement[] => {
+    const options: React.ReactElement[] = [];
     if (showAll) {
       options.push(
         <SelectOption key={'All'} isDisabled={false} value={'All'}>
@@ -126,7 +132,9 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       );
     }
     resources.map((model) => {
-      options.push(selectItem(model, isDup(model.kind)));
+      if (fuzzy(_.toLower(autocompleteText), _.toLower(model.kind))) {
+        options.push(selectItem(model, isDup(model.kind)));
+      }
     });
     return options;
   };
@@ -138,7 +146,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         Select Resource
       </span>
       <Select
-        variant={SelectVariant.typeaheadMulti}
+        variant={SelectVariant.checkbox}
         aria-label="Select Resource"
         onToggle={onToggle}
         onSelect={onChange}
@@ -146,13 +154,25 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         selections={selected}
         isExpanded={isExpanded}
         ariaLabelledBy={titleId}
-        placeholderText="Select Resource"
-        isCreatable={false}
-        isGrouped={false}
+        placeholderText="Resources"
         maxHeight={400}
       >
-        {getItems()}
-        {/* {allItems} */}
+        <SelectOption key={'filtertext'} isDisabled={false} value={autocompleteText}>
+          <div className="dropdown-menu__filter">
+            <input
+              autoFocus
+              type="text"
+              onChange={changeTextFilter}
+              placeholder={'Filter Resource'}
+              value={autocompleteText}
+              autoCapitalize="none"
+              className="pf-c-form-control"
+              onClick={(e) => e.stopPropagation()}
+              data-test-id="dropdown-text-filter"
+            />
+          </div>
+        </SelectOption>
+        {getItems() as any}
       </Select>
     </div>
   );
