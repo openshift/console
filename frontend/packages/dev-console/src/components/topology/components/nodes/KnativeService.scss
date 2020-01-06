@@ -29,3 +29,10 @@
     }
   }
 }
+
+.odc-m-filter-active {
+  .odc-knative-service,
+  .odc-knative-service__label {
+    opacity: 0.3;
+  }
+}
