@@ -152,7 +152,7 @@ export const imageRegistryType = {
   },
   Internal: {
     value: RegistryType.Internal,
-    label: 'Image name from internal registry',
+    label: 'Image stream tag from internal registry',
   },
 };
 
