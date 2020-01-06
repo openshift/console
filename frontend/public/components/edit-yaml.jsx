@@ -83,7 +83,7 @@ const desktopGutter = 30;
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}>} */
+/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void>} */
 const EditYAML_ = connect(stateToProps)(
   class EditYAML extends React.Component {
     constructor(props) {
@@ -687,7 +687,14 @@ const EditYAML_ = connect(stateToProps)(
         return <Loading />;
       }
 
-      const { connectDropTarget, isOver, canDrop, create, yamlSamplesList } = this.props;
+      const {
+        connectDropTarget,
+        isOver,
+        canDrop,
+        create,
+        yamlSamplesList,
+        onChange = () => null,
+      } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
       });
@@ -790,7 +797,9 @@ const EditYAML_ = connect(stateToProps)(
                       value={yaml}
                       options={options}
                       editorDidMount={this.editorDidMount}
-                      onChange={(newValue) => this.setState({ yaml: newValue })}
+                      onChange={(newValue) =>
+                        this.setState({ yaml: newValue }, () => onChange(newValue))
+                      }
                     />
                     <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
                       {customAlerts}
