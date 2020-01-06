@@ -42,10 +42,6 @@ kbd {
   text-align: left;
 }
 
-.modal-title {
-  font-size: $font-size-base;
-}
-
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
 // bug occurs only if the suggestions overlay has been enabled
 .monaco-aria-container {

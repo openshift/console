@@ -11,7 +11,7 @@ export const cdTypeSelect = (number) => $(`#cd-rom-modal-select-type-cd-drive-${
 export const cdStorageClassSelect = (number) => $(`#cd-url-storageclass-input-cd-drive-${number}`);
 export const cdPVCSelect = (number) => $(`#cdrom-pvc-input-cd-drive-${number}`);
 
-export const modalTitle = $('.modal-title');
+export const modalTitle = $('[data-test-id="modal-title"]');
 export const saveButton = $('#cdrom-submit');
 export const cdValue = $('#cdrom-value');
 export const cdAddBtn = $('#vm-cd-add-btn');

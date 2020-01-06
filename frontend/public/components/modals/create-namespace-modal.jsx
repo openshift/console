@@ -111,7 +111,7 @@ const CreateNamespaceModal = connect(
         <form
           onSubmit={this._submit.bind(this)}
           name="form"
-          className="modal-content modal-content--no-inner-scroll co-p-new-user-modal"
+          className="modal-content modal-content--no-inner-scroll"
         >
           <ModalTitle>Create {label}</ModalTitle>
           <ModalBody>
