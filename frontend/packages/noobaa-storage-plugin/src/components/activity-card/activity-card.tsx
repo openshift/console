@@ -99,7 +99,7 @@ const OngoingActivity = withDashboardResources(
 );
 
 const ActivityCard: React.FC<{}> = () => (
-  <DashboardCard>
+  <DashboardCard gradient>
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
     </DashboardCardHeader>

@@ -66,7 +66,7 @@ export const VMActivityCard: React.FC = () => {
   const viewEventsLink = `${resourcePath(VirtualMachineModel.kind, name, namespace)}/events`;
 
   return (
-    <DashboardCard>
+    <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
         <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>

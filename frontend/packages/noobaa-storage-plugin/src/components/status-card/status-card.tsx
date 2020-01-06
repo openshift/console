@@ -129,7 +129,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   );
 
   return (
-    <DashboardCard>
+    <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Status</DashboardCardTitle>
       </DashboardCardHeader>

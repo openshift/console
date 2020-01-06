@@ -290,7 +290,7 @@ export const StatusCard = connect(mapStateToProps)(
   )(({ flags, k8sModels }) => {
     const subsystems = getSubsystems(flags, k8sModels);
     return (
-      <DashboardCard>
+      <DashboardCard gradient>
         <DashboardCardHeader>
           <DashboardCardTitle>Status</DashboardCardTitle>
           <DashboardCardLink to="monitoring/alerts">View alerts</DashboardCardLink>
