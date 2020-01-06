@@ -60,6 +60,7 @@ export const InstallPlanModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'installplans',
+  legacyPluralURL: true,
 };
 
 export const SubscriptionModel: K8sKind = {
