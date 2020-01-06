@@ -52,3 +52,18 @@
     }
   }
 }
+
+.odc-m-filter-active {
+  .odc-application-group {
+    opacity: 0.3;
+    &.is-filtered {
+      opacity: 1;
+    }
+    &__label {
+      opacity: 0.3;
+      &.is-filtered {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as classNames from 'classnames';
 import {
   Node,
   observer,
@@ -10,8 +12,12 @@ import {
   WithDragNodeProps,
   createSvgIdUrl,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { getKnativeEventSourceIcon } from '@console/knative-plugin';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
+import useFilter from '../../filters/useFilter';
+import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
+import { getTopologyResourceObject } from '../../topology-utils';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './EventSource.scss';
@@ -19,6 +25,7 @@ import './EventSource.scss';
 export type EventSourceProps = {
   element: Node;
   dragging?: boolean;
+  filters?: TopologyFilters;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithContextMenuProps;
@@ -31,17 +38,21 @@ const EventSource: React.FC<EventSourceProps> = ({
   contextMenuOpen,
   dragNodeRef,
   dragging,
+  filters,
 }) => {
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, hoverRef);
+  const filtered = useFilter(filters, getTopologyResourceObject(element.getData()));
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const { data } = element.getData();
 
   return (
     <g
-      className="odc-event-source"
+      className={classNames('odc-event-source', {
+        'is-filtered': filtered,
+      })}
       onClick={onSelect}
       onContextMenu={onContextMenu}
       ref={groupRefs}
@@ -91,5 +102,8 @@ const EventSource: React.FC<EventSourceProps> = ({
     </g>
   );
 };
-
-export default observer(EventSource);
+const EventSourceState = (state: RootState) => {
+  const filters = getTopologyFilters(state);
+  return { filters };
+};
+export default connect(EventSourceState)(observer(EventSource));

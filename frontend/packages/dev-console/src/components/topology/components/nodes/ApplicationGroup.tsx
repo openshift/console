@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { polygonHull } from 'd3-polygon';
 import * as _ from 'lodash';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import {
   Layer,
   Node,
@@ -19,6 +21,8 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
+import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
+import useFilter from '../../filters/useFilter';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
@@ -30,6 +34,7 @@ type ApplicationGroupProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   dragging?: boolean;
+  filters?: TopologyFilters;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps;
@@ -69,6 +74,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
   dragging,
+  filters,
 }) => {
   const [groupHover, groupHoverRef] = useHover();
   const [groupLabelHover, groupLabelHoverRef] = useHover();
@@ -77,7 +83,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const dragNodeRef = useDragNode()[1];
   const dragLabelRef = useDragNode()[1];
   const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
-
+  const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
   const hover = groupHover || groupLabelHover;
 
   // cast to number and coerce
@@ -122,6 +128,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     'is-highlight': canDrop,
     'is-selected': selected,
     'is-hover': hover || (canDrop && dropTarget) || contextMenuOpen,
+    'is-filtered': filtered,
   });
 
   return (
@@ -143,7 +150,9 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
       </Layer>
       <g ref={groupLabelHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
         <SvgBoxedText
-          className="odc-application-group__label"
+          className={classNames('odc-application-group__label', {
+            'is-filtered': filtered,
+          })}
           x={labelLocation.current[0]}
           y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
           paddingX={20}
@@ -157,5 +166,9 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     </>
   );
 };
+const ApplicationGroupState = (state: RootState) => {
+  const filters = getTopologyFilters(state);
+  return { filters };
+};
 
-export default observer(ApplicationGroup);
+export default connect(ApplicationGroupState)(observer(ApplicationGroup));

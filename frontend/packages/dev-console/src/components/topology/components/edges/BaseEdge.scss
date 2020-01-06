@@ -23,10 +23,12 @@
     stroke-width: var(--edge__link--stroke-width);
   }
 
-  &.is-hover, &.is-highlight {
+  &.is-hover,
+  &.is-highlight {
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
-    .odc-base-edge__link, .topology-connector-arrow {
+    .odc-base-edge__link,
+    .topology-connector-arrow {
       stroke: var(--edge__link--active--stroke);
     }
   }
@@ -54,10 +56,19 @@
         fill: var(--edge--fill);
         stroke: var(--edge--stroke);
 
-        .odc-base-edge__link, .topology-connector-arrow {
+        .odc-base-edge__link,
+        .topology-connector-arrow {
           stroke: var(--edge__link--stroke);
         }
       }
+    }
+  }
+}
+.odc-m-filter-active {
+  .odc-base-edge {
+    opacity: var(--edge--drag-active--opacity);
+    &.is-highlight {
+      opacity: var(--edge--opacity);
     }
   }
 }

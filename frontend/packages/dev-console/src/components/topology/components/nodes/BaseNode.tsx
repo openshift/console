@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import {
   Node,
@@ -14,10 +15,13 @@ import {
   observer,
   createSvgIdUrl,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { getTopologyResourceObject } from '../../topology-utils';
+import useFilter from '../../filters/useFilter';
+import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';
@@ -35,6 +39,7 @@ export type BaseNodeProps = {
   edgeDragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
+  filters: TopologyFilters;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -50,6 +55,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   selected,
   onSelect,
   children,
+  filters,
   attachments,
   dragNodeRef,
   dndDropRef,
@@ -75,12 +81,13 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-
+  const filtered = useFilter(filters, resourceObj);
   const contentsClasses = classNames('odc-base-node__contents', {
     'is-hover': hover || contextMenuOpen,
     'is-highlight': canDrop,
     'is-dragging': dragging || edgeDragging,
     'is-droppable': dropTarget && canDrop,
+    'is-filtered': filtered,
   });
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
@@ -148,5 +155,8 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     </g>
   );
 };
-
-export default observer(BaseNode);
+const BaseNodeState = (state: RootState) => {
+  const filters = getTopologyFilters(state);
+  return { filters };
+};
+export default connect(BaseNodeState)(observer(BaseNode));
