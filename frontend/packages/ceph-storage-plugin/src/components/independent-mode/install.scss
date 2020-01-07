@@ -1,0 +1,31 @@
+.im--light {
+  color: var(--pf-global--Color--200);
+}
+
+.im-install-page {
+  margin-top: var(--pf-global--spacer--lg);
+  margin-left: var(--pf-global--spacer--lg);
+  margin-right: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.im-install-page__form {
+  margin-top: var(--pf-global--spacer--md);
+}
+
+.im-install-page__sub-header {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.im-install-page-form__text-area {
+  min-height: 8em;
+}
+
+.im-install-page-sub-header__title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.im-install-page--error {
+  color: var(--pf-chart-global--danger--Color--100);
+}
