@@ -25,6 +25,7 @@ import {
 import { isValidationError, validateURL } from '../../../utils/validations/common';
 import { VMKind, VMLikeEntityKind } from '../../../types';
 import { CDRomRow } from './cdrom-row';
+import { getAvailableCDName } from './helpers';
 import { initialDisk, WINTOOLS_CONTAINER_NAMES, StorageType, CD, CDMap } from './constants';
 import './cdrom-modal.scss';
 
@@ -102,12 +103,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   };
 
   const onCDAdd = () => {
-    let index = 1;
-    let name = `cd-drive-${index}`;
-    while (cds[name]) {
-      index++;
-      name = `cd-drive-${index}`;
-    }
+    const name = getAvailableCDName(Object.values(cds));
     const newCD = {
       ...initialDisk,
       type: StorageType.CONTAINER,

@@ -6,9 +6,15 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getSimpleName } from '../../../selectors/utils';
-import { VolumeType } from '../../../constants/vm/storage';
+import { VolumeType, DiskType } from '../../../constants/vm/storage';
 import { VMLikeEntityKind } from '../../../types';
-import { asVM, getDataVolumeTemplates, getDisks, getVolumes } from '../../../selectors/vm';
+import {
+  asVM,
+  getDataVolumeTemplates,
+  getDisks,
+  getVolumes,
+  isWinToolsImage,
+} from '../../../selectors/vm';
 import { getLoadedData, isLoaded } from '../../../utils';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { DYNAMIC } from '../../../utils/strings';
@@ -63,6 +69,16 @@ export class CombinedDisk {
   }
 
   getSource = () => this.source;
+
+  getInitialSource = (isEditing) => {
+    if (this.diskWrapper.getType() === DiskType.CDROM) {
+      return this.source || StorageUISource.URL;
+    }
+    if (isEditing) {
+      return this.source || StorageUISource.OTHER;
+    }
+    return StorageUISource.BLANK;
+  };
 
   getSourceValue = () => this.source && this.source.getValue();
 
@@ -124,6 +140,33 @@ export class CombinedDisk {
 
     return null;
   };
+
+  getContent = () => {
+    switch (this.source) {
+      case StorageUISource.CONTAINER: {
+        return this.volumeWrapper.getContainerImage();
+      }
+      case StorageUISource.URL: {
+        return this.dataVolumeWrapper.getURL();
+      }
+      case StorageUISource.IMPORT_DISK: {
+        return this.getPVCName(this.source);
+      }
+      case StorageUISource.ATTACH_DISK: {
+        return this.getPVCName(this.source);
+      }
+      case StorageUISource.ATTACH_CLONED_DISK: {
+        return this.getPVCName(this.source);
+      }
+      default:
+        return null;
+    }
+  };
+
+  getCDROMSourceValue = () =>
+    isWinToolsImage(this.volumeWrapper.getContainerImage())
+      ? 'Windows Tools'
+      : this.getSourceValue();
 
   toString = () => {
     return _.compact([

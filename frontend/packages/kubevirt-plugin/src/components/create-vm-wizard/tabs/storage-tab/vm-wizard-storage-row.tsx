@@ -24,6 +24,7 @@ const menuActionEdit = (
       withProgress(
         vmWizardStorageModalEnhanced({
           blocking: true,
+          isEditing: true,
           wizardReduxID,
           storage: storageWithWrappers,
         }).result,
@@ -50,7 +51,7 @@ const menuActionRemove = (
     ),
 });
 
-const getActions = (
+export const getActions = (
   wizardNetworkData: VMWizardStorageWithWrappers,
   opts: VMWizardStorageRowActionOpts,
 ) => [menuActionEdit, menuActionRemove].map((a) => a(wizardNetworkData, opts));

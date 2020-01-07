@@ -69,6 +69,7 @@ type DiskModalFirehoseComponentProps = ModalComponentProps & {
   disk?: any;
   volume?: any;
   dataVolume?: any;
+  isEditing?: boolean;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
   storageClasses?: FirehoseResult<VMLikeEntityKind[]>;
@@ -127,6 +128,7 @@ type DiskModalFirehoseProps = ModalComponentProps & {
   disk?: any;
   volume?: any;
   dataVolume?: any;
+  isEditing?: boolean;
   useProjects: boolean;
 };
 
