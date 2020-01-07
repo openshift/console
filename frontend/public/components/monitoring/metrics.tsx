@@ -769,7 +769,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     </>
   );
 };
-const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
+export const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
 
 const NamespaceAlert_: React.FC<{ dismiss: () => undefined; isDismissed: boolean }> = ({
   dismiss,

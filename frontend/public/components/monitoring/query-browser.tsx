@@ -680,7 +680,7 @@ type ZoomableGraphProps = {
   xDomain?: AxisDomain;
 };
 
-type QueryBrowserProps = {
+export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
   disabledSeries?: Labels[][];
