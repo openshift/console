@@ -19,3 +19,11 @@ export const getKind = <A extends K8sResourceCommon = K8sResourceCommon>(value: 
   _.get(value, 'kind') as K8sResourceCommon['kind'];
 export const getOwnerReferences = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
   _.get(value, 'metadata.ownerReferences') as K8sResourceCommon['metadata']['ownerReferences'];
+export const getLabels = <A extends K8sResourceCommon = K8sResourceCommon>(
+  value: A,
+  defaultValue?: K8sResourceCommon['metadata']['labels'],
+) => (_.has(value, 'metadata.labels') ? value.metadata.labels : defaultValue);
+export const getAnnotations = <A extends K8sResourceCommon = K8sResourceCommon>(
+  value: A,
+  defaultValue?: K8sResourceCommon['metadata']['annotations'],
+) => (_.has(value, 'metadata.annotations') ? value.metadata.annotations : defaultValue);

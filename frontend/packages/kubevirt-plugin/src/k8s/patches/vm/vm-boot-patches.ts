@@ -1,19 +1,19 @@
-import * as _ from 'lodash';
+import { getAnnotations } from '@console/shared';
+import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { ANNOTATION_FIRST_BOOT, BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../../../constants/vm';
 import { getBootDeviceIndex, getDisks, getInterfaces } from '../../../selectors/vm';
 import { VMKind } from '../../../types/vm';
-import { patchSafeValue } from '../../utils/patch';
 
 export const getPxeBootPatch = (vm: VMKind) => {
   const patches = [];
-  const annotations = _.get(vm, 'metadata.annotations', {});
-  if (annotations[ANNOTATION_FIRST_BOOT]) {
+  const annotations = getAnnotations(vm);
+  if (annotations && annotations[ANNOTATION_FIRST_BOOT]) {
     if (annotations[ANNOTATION_FIRST_BOOT] === 'true') {
-      patches.push({
-        op: 'replace',
-        path: `/metadata/annotations/${patchSafeValue(ANNOTATION_FIRST_BOOT)}`,
-        value: 'false',
-      });
+      patches.push(
+        new PatchBuilder('/metadata/annotations')
+          .setObjectUpdate(ANNOTATION_FIRST_BOOT, 'false', annotations)
+          .build(),
+      );
     } else {
       // find bootable disk and change boot order
       const bootableDiskIndex = getBootDeviceIndex(getDisks(vm), BOOT_ORDER_SECOND);
@@ -21,15 +21,18 @@ export const getPxeBootPatch = (vm: VMKind) => {
 
       if (bootableDiskIndex !== -1 && bootableInterfaceIndex !== -1) {
         patches.push(
-          {
-            op: 'replace',
-            path: `/spec/template/spec/domain/devices/disks/${bootableDiskIndex}/bootOrder`,
-            value: BOOT_ORDER_FIRST,
-          },
-          {
-            op: 'remove',
-            path: `/spec/template/spec/domain/devices/interfaces/${bootableInterfaceIndex}/bootOrder`,
-          },
+          new PatchBuilder(
+            `/spec/template/spec/domain/devices/disks/${bootableDiskIndex}/bootOrder`,
+          )
+            .setOperation(PatchOperation.REPLACE)
+            .setValue(BOOT_ORDER_FIRST)
+            .build(),
+
+          new PatchBuilder(
+            `/spec/template/spec/domain/devices/interfaces/${bootableInterfaceIndex}/bootOrder`,
+          )
+            .setOperation(PatchOperation.REMOVE)
+            .build(),
         );
       }
     }

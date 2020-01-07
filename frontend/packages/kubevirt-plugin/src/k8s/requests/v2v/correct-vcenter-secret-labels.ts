@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
+import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { V2VVMwareModel } from '../../../models';
-import { PatchBuilder, PatchOperation } from '../../utils/patch';
 import { VCENTER_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { getLabels } from '../../../selectors/selectors';
 import { buildOwnerReferenceForModel, compareOwnerReference } from '../../../utils';
@@ -52,8 +52,7 @@ export const correctVCenterSecretLabels = async ({
     } else {
       patches.push(
         new PatchBuilder(`/metadata/labels`)
-          .setObjectUpdate(VCENTER_TEMPORARY_LABEL, true, getLabels(secret))
-          .setValue(true)
+          .setObjectUpdate(VCENTER_TEMPORARY_LABEL, 'true', getLabels(secret))
           .build(),
       );
     }
