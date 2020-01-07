@@ -5,7 +5,6 @@ import MonitoringDashboard from '../MonitoringDashboard';
 describe('Monitoring Dashboard Tab', () => {
   it('should render Monitoring Dashboard tab', () => {
     const wrapper = shallow(<MonitoringDashboard />);
-    expect(wrapper.exists()).toBe(true);
     expect(wrapper.contains(<title>Dashboard</title>)).toBe(true);
   });
 });

@@ -4,10 +4,9 @@ import { HorizontalNav, PageHeading } from '@console/internal/components/utils';
 import { MonitoringPage } from '../MonitoringPage';
 import ProjectListPage from '../../projects/ProjectListPage';
 
-type MonitoringPageProps = React.ComponentProps<typeof MonitoringPage>;
-let monPageProps: MonitoringPageProps;
-
 describe('Monitoring Page ', () => {
+  let monPageProps: React.ComponentProps<typeof MonitoringPage>;
+
   it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps = {
       match: {
@@ -36,7 +35,6 @@ describe('Monitoring Page ', () => {
     };
 
     const component = shallow(<MonitoringPage {...monPageProps} />);
-    expect(component.exists()).toBe(true);
     expect(component.find(PageHeading).exists()).toBe(true);
     expect(component.find(PageHeading).prop('title')).toBe('Monitoring');
     expect(component.find(HorizontalNav).exists()).toBe(true);
