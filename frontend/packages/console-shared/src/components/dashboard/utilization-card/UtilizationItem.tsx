@@ -97,6 +97,6 @@ type UtilizationItemProps = {
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
 };
 
-type TopConsumerPopoverProp = {
+export type TopConsumerPopoverProp = {
   current: string;
 };

@@ -4,19 +4,16 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import UtilizationItem from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import {
   ONE_HR,
   SIX_HR,
   TWENTY_FOUR_HR,
-  UTILIZATION_QUERY_HOUR_MAP,
 } from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { getName } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PopoverPosition } from '@patternfly/react-core';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getPrometheusQueryResponse } from '../../../actions/dashboards';
-import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import { Dropdown } from '../../utils/dropdown';
 import {
   humanizeBinaryBytes,
@@ -24,205 +21,151 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeNumber,
 } from '../../utils';
-import { getRangeVectorStats } from '../../graphs/utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { PodModel } from '../../../models';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
+import { PrometheusUtilizationItem } from '../dashboards-page/overview-dashboard/utilization-card';
 
 const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
 const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
-export const UtilizationCard = withDashboardResources(
-  ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
-    const [duration, setDuration] = React.useState(metricDurations[0]);
-    const { obj } = React.useContext(ProjectDashboardContext);
-    const projectName = getName(obj);
-    const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
-    React.useEffect(() => {
-      if (projectName) {
-        _.values(queries).forEach((query) =>
-          watchPrometheus(query, projectName, UTILIZATION_QUERY_HOUR_MAP[duration]),
-        );
-        return () => {
-          _.values(queries).forEach((query) =>
-            stopWatchPrometheusQuery(query, UTILIZATION_QUERY_HOUR_MAP[duration]),
-          );
-        };
-      }
-    }, [watchPrometheus, stopWatchPrometheusQuery, queries, projectName, duration]);
+export const UtilizationCard: React.FC = () => {
+  const [timestamps, setTimestamps] = React.useState<Date[]>();
+  const [duration, setDuration] = React.useState(metricDurations[0]);
+  const { obj } = React.useContext(ProjectDashboardContext);
+  const projectName = getName(obj);
+  const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
 
-    const [cpuUtilization, cpuError] = getPrometheusQueryResponse(
-      prometheusResults,
-      queries[ProjectQueries.CPU_USAGE],
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
-    const [memoryUtilization, memoryError] = getPrometheusQueryResponse(
-      prometheusResults,
-      queries[ProjectQueries.MEMORY_USAGE],
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
-    const [podCount, podCountError] = getPrometheusQueryResponse(
-      prometheusResults,
-      queries[ProjectQueries.POD_COUNT],
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
-    const [filesystemUtilization, filesystemError] = getPrometheusQueryResponse(
-      prometheusResults,
-      queries[ProjectQueries.FILESYSTEM_USAGE],
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
-    const [networkInOutUtilization, networkInOutError] = getPrometheusQueryResponse(
-      prometheusResults,
-      queries[ProjectQueries.NETWORK_IN_OUT_USAGE],
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
+  const cpuPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="CPU"
+        current={current}
+        consumers={[
+          {
+            query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_CPU],
+            model: PodModel,
+            metric: 'pod',
+          },
+        ]}
+        humanize={humanizeCpuCores}
+        namespace={projectName}
+        position={PopoverPosition.top}
+      />
+    )),
+    [projectName],
+  );
 
-    const cpuStats = getRangeVectorStats(cpuUtilization);
-    const memoryStats = getRangeVectorStats(memoryUtilization);
-    const podCountStats = getRangeVectorStats(podCount);
-    const filesystemStats = getRangeVectorStats(filesystemUtilization);
-    const networInOutStats = getRangeVectorStats(networkInOutUtilization);
+  const memPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="Memory"
+        current={current}
+        consumers={[
+          {
+            query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_MEMORY],
+            model: PodModel,
+            metric: 'pod',
+          },
+        ]}
+        humanize={humanizeBinaryBytes}
+        namespace={projectName}
+        position={PopoverPosition.top}
+      />
+    )),
+    [projectName],
+  );
 
-    const cpuPopover = React.useCallback(
-      ({ current }) => (
-        <ConsumerPopover
+  const filesystemPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="Filesystem"
+        current={current}
+        consumers={[
+          {
+            query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_FILESYSTEM],
+            model: PodModel,
+            metric: 'pod',
+          },
+        ]}
+        humanize={humanizeBinaryBytes}
+        namespace={projectName}
+        position={PopoverPosition.top}
+      />
+    )),
+    [projectName],
+  );
+
+  const networkPopover = React.useCallback(
+    React.memo<TopConsumerPopoverProp>(({ current }) => (
+      <ConsumerPopover
+        title="Network"
+        current={current}
+        consumers={[
+          {
+            query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_NETWORK],
+            model: PodModel,
+            metric: 'pod',
+          },
+        ]}
+        humanize={humanizeDecimalBytesPerSec}
+        namespace={projectName}
+        position={PopoverPosition.top}
+      />
+    )),
+    [projectName],
+  );
+
+  return (
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <Dropdown
+          items={metricDurationsOptions}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
+      </DashboardCardHeader>
+      <UtilizationBody timestamps={timestamps}>
+        <PrometheusUtilizationItem
           title="CPU"
-          current={current}
-          consumers={[
-            {
-              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_CPU],
-              model: PodModel,
-              metric: 'pod',
-            },
-          ]}
-          humanize={humanizeCpuCores}
-          namespace={projectName}
-          position={PopoverPosition.top}
+          humanizeValue={humanizeCpuCores}
+          utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
+          TopConsumerPopover={cpuPopover}
+          duration={duration}
+          setTimestamps={setTimestamps}
         />
-      ),
-      [projectName],
-    );
-
-    const memPopover = React.useCallback(
-      ({ current }) => (
-        <ConsumerPopover
+        <PrometheusUtilizationItem
           title="Memory"
-          current={current}
-          consumers={[
-            {
-              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_MEMORY],
-              model: PodModel,
-              metric: 'pod',
-            },
-          ]}
-          humanize={humanizeBinaryBytes}
-          namespace={projectName}
-          position={PopoverPosition.top}
+          humanizeValue={humanizeBinaryBytes}
+          utilizationQuery={queries[ProjectQueries.MEMORY_USAGE]}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          TopConsumerPopover={memPopover}
+          duration={duration}
         />
-      ),
-      [projectName],
-    );
-
-    const filesystemPopover = React.useCallback(
-      ({ current }) => (
-        <ConsumerPopover
+        <PrometheusUtilizationItem
           title="Filesystem"
-          current={current}
-          consumers={[
-            {
-              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_FILESYSTEM],
-              model: PodModel,
-              metric: 'pod',
-            },
-          ]}
-          humanize={humanizeBinaryBytes}
-          namespace={projectName}
-          position={PopoverPosition.top}
+          humanizeValue={humanizeBinaryBytes}
+          utilizationQuery={queries[ProjectQueries.FILESYSTEM_USAGE]}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          TopConsumerPopover={filesystemPopover}
+          duration={duration}
         />
-      ),
-      [projectName],
-    );
-
-    const networkPopover = React.useCallback(
-      ({ current }) => (
-        <ConsumerPopover
-          title="Network"
-          current={current}
-          consumers={[
-            {
-              query: getTopConsumerQueries(projectName)[ProjectQueries.PODS_BY_NETWORK],
-              model: PodModel,
-              metric: 'pod',
-            },
-          ]}
-          humanize={humanizeDecimalBytesPerSec}
-          namespace={projectName}
-          position={PopoverPosition.top}
+        <PrometheusUtilizationItem
+          title="Network Transfer"
+          humanizeValue={humanizeDecimalBytesPerSec}
+          utilizationQuery={queries[ProjectQueries.NETWORK_IN_OUT_USAGE]}
+          TopConsumerPopover={networkPopover}
+          duration={duration}
         />
-      ),
-      [projectName],
-    );
-
-    return (
-      <DashboardCard>
-        <DashboardCardHeader>
-          <DashboardCardTitle>Utilization</DashboardCardTitle>
-          <Dropdown
-            items={metricDurationsOptions}
-            onChange={setDuration}
-            selectedKey={duration}
-            title={duration}
-          />
-        </DashboardCardHeader>
-        <UtilizationBody timestamps={cpuStats.map((stat) => stat.x as Date)}>
-          <UtilizationItem
-            title="CPU"
-            data={cpuStats}
-            isLoading={!projectName || !cpuUtilization}
-            humanizeValue={humanizeCpuCores}
-            query={queries[ProjectQueries.CPU_USAGE]}
-            error={cpuError}
-            TopConsumerPopover={cpuPopover}
-          />
-          <UtilizationItem
-            title="Memory"
-            data={memoryStats}
-            isLoading={!projectName || !memoryUtilization}
-            humanizeValue={humanizeBinaryBytes}
-            query={queries[ProjectQueries.MEMORY_USAGE]}
-            byteDataType={ByteDataTypes.BinaryBytes}
-            error={memoryError}
-            TopConsumerPopover={memPopover}
-          />
-          <UtilizationItem
-            title="Filesystem"
-            data={filesystemStats}
-            isLoading={!projectName || !filesystemUtilization}
-            humanizeValue={humanizeBinaryBytes}
-            query={queries[ProjectQueries.FILESYSTEM_USAGE]}
-            byteDataType={ByteDataTypes.BinaryBytes}
-            error={filesystemError}
-            TopConsumerPopover={filesystemPopover}
-          />
-          <UtilizationItem
-            title="Network Transfer in/out"
-            data={networInOutStats}
-            isLoading={!projectName || !networkInOutUtilization}
-            humanizeValue={humanizeDecimalBytesPerSec}
-            query={queries[ProjectQueries.NETWORK_IN_OUT_USAGE]}
-            error={networkInOutError}
-            TopConsumerPopover={networkPopover}
-          />
-          <UtilizationItem
-            title="Pod count"
-            data={podCountStats}
-            isLoading={!projectName || !podCount}
-            humanizeValue={humanizeNumber}
-            query={queries[ProjectQueries.POD_COUNT]}
-            error={podCountError}
-          />
-        </UtilizationBody>
-      </DashboardCard>
-    );
-  },
-);
+        <PrometheusUtilizationItem
+          title="Pod count"
+          humanizeValue={humanizeNumber}
+          utilizationQuery={queries[ProjectQueries.POD_COUNT]}
+          duration={duration}
+        />
+      </UtilizationBody>
+    </DashboardCard>
+  );
+};
