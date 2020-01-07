@@ -22,9 +22,7 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, Net
       {
         initializeWithType: type,
         initializeWithTypeData:
-          type === NetworkType.MULTUS
-            ? { networkName: multusNetworkName, test: undefined }
-            : undefined,
+          type === NetworkType.MULTUS ? { networkName: multusNetworkName } : undefined,
       },
     );
   };

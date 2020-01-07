@@ -12,7 +12,7 @@ export type InitialStepStateGetter = (data: CommonData) => StepState;
 
 export type FieldMultiFlag = { [k: string]: boolean };
 
-type SettingsField = {
+export type SettingsField = {
   key?: VMSettingsField | VMWareProviderField;
   value?: any;
   isHidden?: FieldMultiFlag;

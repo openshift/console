@@ -70,13 +70,14 @@ export const parseNumber = (value, defaultValue = null) =>
 
 export const buildOwnerReference = (
   owner: K8sResourceKind,
-  blockOwnerDeletion = true,
+  opts: { blockOwnerDeletion?: boolean; controller?: boolean } = { blockOwnerDeletion: true },
 ): OwnerReference => ({
   apiVersion: getAPIVersion(owner),
   kind: getKind(owner),
   name: getName(owner),
   uid: getUID(owner),
-  blockOwnerDeletion,
+  blockOwnerDeletion: opts && opts.blockOwnerDeletion,
+  controller: opts && opts.controller,
 });
 
 export const buildOwnerReferenceForModel = (
