@@ -11,6 +11,7 @@ import { basicVMConfig, multusNAD } from './utils/mocks';
 import { getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
+import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('Kubevirt create VM Template using wizard', () => {
   const leakedResources = new Set<string>();
@@ -29,7 +30,7 @@ describe('Kubevirt create VM Template using wizard', () => {
   const vmTemplateConfig = (name, provisionConfig) => {
     return {
       ...commonSettings,
-      name: `${name}-${testName}`,
+      name: `${name}-${testName}-template`,
       provisionSource: provisionConfig.provision,
       storageResources: provisionConfig.storageResources,
       networkResources: provisionConfig.networkResources,
@@ -44,6 +45,10 @@ describe('Kubevirt create VM Template using wizard', () => {
       provisionSource: templateConfig.provisionSource,
       storageResources: [],
       networkResources: [],
+      bootableDevice:
+        templateConfig.provisionSource.method === ProvisionConfigName.DISK
+          ? testDataVolume.metadata.name
+          : undefined,
     };
   };
 

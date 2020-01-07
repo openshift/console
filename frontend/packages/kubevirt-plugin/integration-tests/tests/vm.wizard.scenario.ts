@@ -18,6 +18,7 @@ import {
   COMMON_TEMPLATES_VERSION,
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
+  INNER_TEMPLATE_VERSION,
 } from './utils/consts';
 import { multusNAD } from './utils/mocks';
 import {
@@ -107,7 +108,7 @@ describe('Kubevirt create VM using wizard', () => {
           }-${COMMON_TEMPLATES_VERSION}`,
           'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
-          'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
+          'vm.kubevirt.io/template.version': INNER_TEMPLATE_VERSION,
         };
 
         expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
