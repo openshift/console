@@ -54,6 +54,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       updateStorage,
       isReview,
       wizardReduxID,
+      openshiftFlag,
     } = this.props;
 
     return (
@@ -89,6 +90,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
             userTemplates={userTemplates}
             commonTemplates={commonTemplates}
+            openshiftFlag={openshiftFlag}
             onChange={this.props.onFieldChange}
           />
         )}
@@ -129,6 +131,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
           onChange={this.props.onFieldChange}
+          openshiftFlag={openshiftFlag}
         />
         <MemoryCPU
           memoryField={this.getField(VMSettingsField.MEMORY)}
@@ -145,6 +148,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
           onChange={this.props.onFieldChange}
         />
+
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.NAME)}
           fieldType={FormFieldType.TEXT}
@@ -185,6 +189,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
+  openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
 });
 
@@ -196,6 +201,7 @@ type VMSettingsTabComponentProps = {
   commonTemplates: any;
   userTemplates: any;
   isReview: boolean;
+  openshiftFlag: boolean;
   wizardReduxID: string;
 };
 

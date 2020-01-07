@@ -1,3 +1,4 @@
+import { FLAGS } from '@console/internal/const';
 import { isWinToolsImage, getVolumeContainerImage } from '../../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
@@ -126,6 +127,23 @@ export const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   }
 };
 
+export const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: UpdateOptions) => {
+  const state = getState();
+  if (!changedCommonData.has(VMWizardProps.openshiftFlag)) {
+    return;
+  }
+  const openshiftFlag = iGetCommonData(state, id, VMWizardProps.openshiftFlag);
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.WORKLOAD_PROFILE]: {
+        isHidden: asHidden(!openshiftFlag, FLAGS.OPENSHIFT),
+        isRequired: asRequired(openshiftFlag),
+      },
+    }),
+  );
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
@@ -135,6 +153,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     provisioningSourceUpdater,
     flavorUpdater,
     osUpdater,
+    nativeK8sUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

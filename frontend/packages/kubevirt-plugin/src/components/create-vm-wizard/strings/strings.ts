@@ -7,6 +7,7 @@ export const REVIEW_AND_CREATE = 'Review and create';
 export const NO_TEMPLATE = 'None';
 export const SELECT_TEMPLATE = '--- Select Template ---';
 export const NO_TEMPLATE_AVAILABLE = 'No template available';
+export const NO_OPENSHIFT_TEMPLATES = 'Non-Openshift Cluster detected - Templates are Unavailable';
 export const WIZARD_CLOSE_PROMPT =
   "Are you sure you want to navigate away from this form? Any data you've added will be lost.";
 

@@ -1,7 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createVm as importVM } from 'kubevirt-web-ui-components';
+import {
+  featureReducerName,
+  connectToFlags,
+  FlagsObject,
+} from '@console/internal/reducers/features';
+import { FLAGS } from '@console/internal/const';
 import { Wizard, WizardStep } from '@patternfly/react-core';
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history, units } from '@console/internal/components/utils';
@@ -272,7 +279,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 
   finish = async () => {
     this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
-    const { isCreateTemplate, activeNamespace, isProviderImport } = this.props;
+    const { isCreateTemplate, activeNamespace, isProviderImport, openshiftFlag } = this.props;
 
     const enhancedK8sMethods = new EnhancedK8sMethods();
     const vmSettings = iGetIn(this.props.stepData, [VMWizardTab.VM_SETTINGS, 'value']).toJS();
@@ -318,6 +325,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         storages,
         templates,
         namespace: activeNamespace,
+        openshiftFlag,
       });
     }
 
@@ -512,10 +520,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   reduxID,
   match,
   location,
+  flags,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
   const path = (match && match.path) || '';
   const search = location && location.search;
+
   const resources = [
     getResource(VirtualMachineModel, {
       namespace: activeNamespace,
@@ -525,21 +535,27 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       namespace: activeNamespace,
       prop: VMWizardProps.dataVolumes,
     }),
-    getResource(TemplateModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.userTemplates,
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
-    }),
-    getResource(TemplateModel, {
-      namespace: 'openshift',
-      prop: VMWizardProps.commonTemplates,
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-    }),
   ];
+
+  if (flags[FLAGS.OPENSHIFT]) {
+    resources.concat([
+      getResource(TemplateModel, {
+        namespace: activeNamespace,
+        prop: VMWizardProps.userTemplates,
+        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+      }),
+      getResource(TemplateModel, {
+        namespace: 'openshift',
+        prop: VMWizardProps.commonTemplates,
+        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+      }),
+    ]);
+  }
 
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
+  dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
 
   return (
     <Firehose resources={resources} doNotConnectToState>
@@ -547,7 +563,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         isCreateTemplate={!path.includes('/virtualmachines/')}
         isProviderImport={new URLSearchParams(search).get('mode') === 'import'}
         dataIDReferences={dataIDReferences}
-        activeNamespace={activeNamespace}
         reduxID={reduxID}
         onClose={() => history.goBack()}
       />
@@ -559,6 +574,10 @@ type CreateVMWizardPageComponentProps = {
   reduxID?: string;
   location?: Location;
   match?: RouterMatch<{ ns: string; plural: string; appName?: string }>;
+  flags: FlagsObject;
 };
 
-export const CreateVMWizardPage = withReduxID(CreateVMWizardPageComponent);
+export const CreateVMWizardPage = compose(
+  connectToFlags(FLAGS.OPENSHIFT),
+  withReduxID,
+)(CreateVMWizardPageComponent);

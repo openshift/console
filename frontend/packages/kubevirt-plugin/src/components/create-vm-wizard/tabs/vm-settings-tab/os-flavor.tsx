@@ -20,6 +20,7 @@ import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
 import { getPlaceholder } from '../../utils/vm-settings-tab-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
+import { operatingSystemsNative } from '../../native/consts';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -30,6 +31,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     flavorField,
     workloadProfile,
     onChange,
+    openshiftFlag,
   }) => {
     const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
@@ -44,13 +46,20 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       concatImmutableLists(iGetLoadedData(commonTemplates), iGetLoadedData(userTemplates)),
     );
 
-    const operatingSystems = ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), [
-      'name',
-    ]);
+    const operatingSystems = openshiftFlag
+      ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), ['name'])
+      : operatingSystemsNative;
 
     const flavors = flavorSort(getFlavors(vanillaTemplates, params));
 
     const workloadProfiles = getWorkloadProfiles(vanillaTemplates, params);
+
+    const loadingResources = openshiftFlag
+      ? {
+          userTemplates,
+          commonTemplates,
+        }
+      : {};
 
     let operatingSystemValidation;
     let flavorValidation;
@@ -77,10 +86,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
           field={operatinSystemField}
           fieldType={FormFieldType.SELECT}
           validation={operatingSystemValidation}
-          loadingResources={{
-            userTemplates,
-            commonTemplates,
-          }}
+          loadingResources={loadingResources}
         >
           <FormField>
             <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
@@ -98,10 +104,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
           field={flavorField}
           fieldType={FormFieldType.SELECT}
           validation={flavorValidation}
-          loadingResources={{
-            userTemplates,
-            commonTemplates,
-          }}
+          loadingResources={loadingResources}
         >
           <FormField isDisabled={flavor && flavors.length === 1}>
             <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.FLAVOR)}>
@@ -127,5 +130,6 @@ type OSFlavorProps = {
   operatinSystemField: any;
   userTemplate: string;
   workloadProfile: string;
+  openshiftFlag: boolean;
   onChange: (key: string, value: string) => void;
 };
