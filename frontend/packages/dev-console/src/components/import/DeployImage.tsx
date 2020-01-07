@@ -14,7 +14,6 @@ import DeployImageForm from './DeployImageForm';
 export interface DeployImageProps {
   namespace: string;
   projects?: FirehoseList;
-  imageStreams?: FirehoseList;
 }
 
 interface StateProps {
@@ -23,7 +22,7 @@ interface StateProps {
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, imageStreams }) => {
+const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -152,9 +151,7 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication, 
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={deployValidationSchema}
-      render={(props) => (
-        <DeployImageForm {...props} projects={projects} imageStreams={imageStreams} />
-      )}
+      render={(props) => <DeployImageForm {...props} projects={projects} />}
     />
   );
 };
