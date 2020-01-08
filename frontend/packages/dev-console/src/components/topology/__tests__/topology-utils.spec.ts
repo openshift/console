@@ -14,9 +14,12 @@ import {
   topologyModelFromDataModel,
   getTopologyResourceObject,
   createTopologyResourceConnection,
+  isHelmReleaseNode,
+  getTopologyHelmReleaseGroupItem,
 } from '../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
 import { TopologyFilters } from '../filters/filter-utils';
+import { TYPE_HELM_RELEASE } from '../const';
 import {
   resources,
   topologyData,
@@ -24,6 +27,8 @@ import {
   topologyDataModel,
   dataModel,
   sampleDeployments,
+  sampleHelmChartDeploymentConfig,
+  sampleDeploymentConfigs,
 } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 import { serviceBindingRequest } from './service-binding-test-data';
@@ -298,6 +303,34 @@ describe('TopologyUtils ', () => {
     expect(topologyTransformedData['1317f615-9636-11e9-b134-06a61d886b689'].type).toBe(
       'event-source',
     );
+  });
+  it('should return true for nodes created by helm charts', () => {
+    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0])).toBe(false);
+    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig)).toBe(true);
+  });
+
+  it('should add to groups with helm grouping type for a helm chart node', () => {
+    let groups = getTopologyHelmReleaseGroupItem(sampleDeploymentConfigs.data[0], []);
+    expect(groups).toHaveLength(0);
+    groups = getTopologyHelmReleaseGroupItem(sampleHelmChartDeploymentConfig, []);
+    expect(groups).toHaveLength(1);
+    expect(groups[0].type).toEqual(TYPE_HELM_RELEASE);
+  });
+
+  it('should group into Application or Helm based on the checks on label', () => {
+    const dc = { ...sampleDeploymentConfigs.data[0] };
+    dc.metadata.labels = {
+      app: 'nodejs',
+      'app.kubernetes.io/part-of': 'app-1',
+    };
+    const fireHoseDcs = {
+      ...sampleDeploymentConfigs,
+      data: [dc, sampleHelmChartDeploymentConfig],
+    };
+    const data = { ...MockResources, deploymentConfigs: fireHoseDcs };
+    const { graphData } = getTranformedTopologyData(data, ['deploymentConfigs']);
+    expect(graphData.groups).toHaveLength(2);
+    expect(graphData.groups[1].type).toEqual(TYPE_HELM_RELEASE);
   });
 });
 

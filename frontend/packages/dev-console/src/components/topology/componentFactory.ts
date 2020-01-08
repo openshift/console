@@ -48,6 +48,8 @@ import {
   TYPE_REVISION_TRAFFIC,
   TYPE_SERVICE_BINDING,
   TYPE_KNATIVE_REVISION,
+  TYPE_HELM_RELEASE,
+  TYPE_HELM_WORKLOAD,
 } from './const';
 import KnativeService from './components/nodes/KnativeService';
 import TrafficLink from './components/edges/TrafficLink';
@@ -55,6 +57,7 @@ import ServiceBinding from './components/edges/ServiceBinding';
 import RevisionNode from './components/nodes/RevisionNode';
 import { createConnection, createSinkConnection } from './components/createConnection';
 import { withEditReviewAccess } from './withEditReviewAccess';
+import HelmRelease from './components/groups/HelmRelease';
 
 type NodeProps = {
   element: Node;
@@ -74,6 +77,32 @@ class ComponentFactory {
   getFactory = (): TopologyComponentFactory => {
     return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
+        case TYPE_HELM_RELEASE:
+          return HelmRelease;
+        case TYPE_HELM_WORKLOAD:
+          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+            withDndDrop<
+              any,
+              any,
+              { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+              NodeProps
+            >(nodeDropTargetSpec)(
+              withEditReviewAccess('patch')(
+                withDragNode(nodeDragSourceSpec(type, false))(
+                  withSelection(
+                    false,
+                    true,
+                  )(
+                    withContextMenu(
+                      workloadContextMenu,
+                      document.getElementById('modal-container'),
+                      'odc-topology-context-menu',
+                    )(WorkloadNode),
+                  ),
+                ),
+              ),
+            ),
+          );
         case TYPE_APPLICATION_GROUP:
           return withDndDrop(groupWorkloadDropTargetSpec)(
             withSelection(

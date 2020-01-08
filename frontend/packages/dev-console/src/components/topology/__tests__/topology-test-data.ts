@@ -2110,6 +2110,53 @@ export const dataModel: Model = {
   edges: [],
 };
 
+export const sampleHelmChartDeploymentConfig = {
+  kind: 'DeploymentConfig',
+  apiVersion: 'apps/v1',
+  metadata: {
+    name: 'nodejs-helm',
+    namespace: 'testproject1',
+    selfLink: '/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs',
+    uid: 'b69ey0df-3f9382-11e9-02f68-525400680f2',
+    resourceVersion: '732186',
+    generation: 2,
+    creationTimestamp: '2019-04-22T11:58:33Z',
+    labels: {
+      app: 'nodejs-helm',
+      heritage: 'Helm',
+      chart: 'Nodejs',
+      release: 'nodejs-helm-12345',
+    },
+    annotations: {
+      'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
+      'app.openshift.io/vcs-ref': 'master',
+    },
+  },
+  spec: {
+    strategy: {
+      type: 'Rolling',
+    },
+    template: {
+      metadata: {
+        creationTimestamp: null,
+        labels: {
+          app: 'nodejs-helm',
+          deploymentconfig: 'nodejs-helm',
+        },
+      },
+      spec: {},
+    },
+  },
+  status: {
+    availableReplicas: 1,
+    unavailableReplicas: 0,
+    latestVersion: 1,
+    updatedReplicas: 1,
+    replicas: 1,
+    readyReplicas: 1,
+  },
+};
+
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
