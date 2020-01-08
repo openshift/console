@@ -542,7 +542,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
 
   return (
-    <Firehose resources={resources}>
+    <Firehose resources={resources} doNotConnectToState>
       <CreateVMWizard
         isCreateTemplate={!path.includes('/virtualmachines/')}
         isProviderImport={new URLSearchParams(search).get('mode') === 'import'}
