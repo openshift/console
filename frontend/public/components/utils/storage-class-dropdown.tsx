@@ -23,7 +23,7 @@ type StorageClassDropdownItems = {
 
 const getUnorderedItems = (
   items: StorageClass[],
-  filter: StorageClassFilter = (resource) => _.isEmpty(resource),
+  filter: StorageClassFilter = (resource) => !_.isEmpty(resource),
 ): StorageClassDropdownItems =>
   items.reduce(
     (acc, resource) => ({
