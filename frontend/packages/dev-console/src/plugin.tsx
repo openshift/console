@@ -143,9 +143,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
-        required: FLAGS.OPENSHIFT,
         testID: 'monitoring-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {

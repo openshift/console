@@ -40,7 +40,10 @@ const mergePluginChild = (
 };
 
 export const NavSection = connect(navSectionStateToProps)(
-  withExtensions(isNavItem, isPerspective)(
+  withExtensions(
+    isNavItem,
+    isPerspective,
+  )(
     class NavSection extends React.Component<Props, NavSectionState> {
       public state: NavSectionState;
 
