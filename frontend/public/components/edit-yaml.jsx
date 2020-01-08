@@ -127,7 +127,10 @@ const EditYAML_ = connect(stateToProps)(
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (!_.isEqual(prevState, this.state)) {
+      if (
+        !_.isEqual(prevState, this.state) ||
+        prevProps.yamlSamplesList !== this.props.yamlSamplesList
+      ) {
         this.resize();
       }
     }
@@ -890,16 +893,15 @@ const EditYAML_ = connect(stateToProps)(
 );
 
 export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
-  const resources =
-    flags[FLAGS.CONSOLE_YAML_SAMPLE] && props.create
-      ? [
-          {
-            kind: referenceForModel(ConsoleYAMLSampleModel),
-            isList: true,
-            prop: 'yamlSamplesList',
-          },
-        ]
-      : [];
+  const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
+    ? [
+        {
+          kind: referenceForModel(ConsoleYAMLSampleModel),
+          isList: true,
+          prop: 'yamlSamplesList',
+        },
+      ]
+    : [];
 
   return (
     <Firehose resources={resources}>
