@@ -131,6 +131,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'Monitoring',
+        href: '/dev-monitoring',
+        required: FLAGS.OPENSHIFT,
+        testID: 'monitoring-header',
+      },
+    },
+  },
+  {
     type: 'NavItem/ResourceCluster',
     properties: {
       section: 'Advanced',
@@ -347,7 +359,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/add', '/import', '/topology', '/deploy-image', '/metrics', '/project-access'],
+      path: [
+        '/add',
+        '/import',
+        '/topology',
+        '/deploy-image',
+        '/metrics',
+        '/project-access',
+        '/dev-monitoring',
+      ],
       component: NamespaceRedirect,
     },
   },
@@ -492,6 +512,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: false,
+      path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/monitoring/MonitoringPage' /* webpackChunkName: "dev-console-monitoring" */
         )).default,
     },
   },
