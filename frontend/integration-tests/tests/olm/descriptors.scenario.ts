@@ -3,7 +3,7 @@ import { browser, element, by, $, $$, ExpectedConditions as until, ElementFinder
 import { safeDump } from 'js-yaml';
 import { startCase, get, find, isUndefined } from 'lodash';
 
-import { appHost, testName, checkLogs, checkErrors, create } from '../../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors, create, retry } from '../../protractor.conf';
 import { SpecCapability, StatusCapability } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
 import * as crudView from '../../views/crud.view';
 import * as yamlView from '../../views/yaml.view';
@@ -287,7 +287,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays form for creating operand', async() => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
-    await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
+    await retry(() => browser.wait(until.visibilityOf(element(by.buttonText('Create App')))));
     await element(by.buttonText('Create App')).click();
     await yamlView.isLoaded();
     await element(by.buttonText('Edit Form')).click();

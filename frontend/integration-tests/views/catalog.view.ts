@@ -1,6 +1,7 @@
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 
 export const categoryTabs = $$('.vertical-tabs-pf-tab > a');
+export const categoryTabsPresent = () => browser.wait(until.presenceOf($('.vertical-tabs-pf-tab')));
 export const pageHeading = $('.co-catalog-page__heading');
 export const pageNumberItemsHeading = $('.co-catalog-page__num-items');
 export const pageHeadingNumberOfItems = () => pageNumberItemsHeading.getText()

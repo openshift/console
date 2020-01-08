@@ -2,7 +2,7 @@ import { browser, $, element, ExpectedConditions as until, by } from 'protractor
 import * as _ from 'lodash';
 import { execSync } from 'child_process';
 
-import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors, retry } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
@@ -61,9 +61,10 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   });
 
   it('displays subscription creation form for selected Operator', async() => {
+    await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox('providerType-custom');
-    await catalogPageView.catalogTileFor('Jaeger Tracing').click();
+    await retry(() => catalogPageView.catalogTileFor('Jaeger Tracing').click());
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
@@ -104,7 +105,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await crudView.filterForName(jaegerOperatorName);
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(jaegerOperatorName).$('a[title=pods]'), '1 of 1 pods'), 100000);
 
-    expect(crudView.rowForName(jaegerOperatorName).isDisplayed()).toBe(true);
+    const isDisplayed = retry(() => crudView.rowForName(jaegerOperatorName).isDisplayed());
+    expect(isDisplayed).toBe(true);
   });
 
   xit('recreates Operator `Deployment` if manually deleted', async() => {
@@ -118,7 +120,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays metadata about Operator in the "Overview" section', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await crudView.rowForOperator('Jaeger Tracing').$('.co-clusterserviceversion-logo').click();
+    await retry(() => crudView.rowForOperator('Jaeger Tracing').$('.co-clusterserviceversion-logo').click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
@@ -149,7 +151,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   });
 
   it('displays metadata about the created `Jaeger` in its "Overview" section', async() => {
-    await crudView.rowForName(jaegerName).element(by.linkText(jaegerName)).click();
+    await retry(() => crudView.rowForName(jaegerName).element(by.linkText(jaegerName)).click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
@@ -168,6 +170,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 
+    await crudView.rowFiltersPresent();
     jaegerResources.forEach(kind => {
       expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
     });

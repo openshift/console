@@ -23,6 +23,12 @@ import {
 describe('OperatorHubList', () => {
   let wrapper: ReactWrapper<OperatorHubListProps>;
 
+  beforeAll(() => {
+    const div = document.createElement('div');
+    div.setAttribute('id', 'content-scrollable');
+    document.body.appendChild(div);
+  });
+
   beforeEach(() => {
     wrapper = mount(<MemoryRouter>
       <OperatorHubList {...operatorHubListPageProps} marketplacePackageManifest={null} subscription={{loaded: false, data: []}} />
@@ -41,8 +47,6 @@ describe('OperatorHubList', () => {
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
 
     expect(amqTileProps.title).toEqual(amqPackageManifest.status.channels[0].currentCSVDesc.displayName);
-    expect(amqTileProps.iconImg).toEqual('/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/amq-streams/icon?resourceVersion=amq-streams.preview.amqstreams.v1.0.0.beta');
-    expect(amqTileProps.iconClass).toBe(null);
     expect(amqTileProps.vendor).toEqual(`provided by ${amqPackageManifest.metadata.labels.provider}`);
     expect(amqTileProps.description.startsWith('**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.')).toBe(true);
   });
@@ -53,8 +57,6 @@ describe('OperatorHubList', () => {
     const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
 
     expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.status.channels[0].currentCSVDesc.displayName);
-    expect(prometheusTileProps.iconImg).toEqual('/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/prometheus/icon?resourceVersion=prometheus.preview.prometheusoperator.0.22.2');
-    expect(prometheusTileProps.iconClass).toBe(null);
     expect(prometheusTileProps.vendor).toEqual(`provided by ${prometheusPackageManifest.metadata.labels.provider}`);
     expect(prometheusTileProps.description.startsWith('The Prometheus Operator for Kubernetes provides easy monitoring definitions for Kubernetes services and deployment and management of Prometheus instances.')).toBe(true);
   });
