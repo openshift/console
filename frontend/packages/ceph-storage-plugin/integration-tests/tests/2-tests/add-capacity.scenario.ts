@@ -17,19 +17,30 @@ import {
 import {
   CLUSTER_STATUS,
   EXPAND_WAIT,
+  HOST,
   KIND,
   NS,
+  OSD,
   POD_NAME_PATTERNS,
   SECOND,
+  ZONE,
+  MINUTE,
 } from '../../utils/consts';
 import {
+  createOSDTreeMap,
+  getIds,
+  getNewOSDIds,
   getOSDPreparePodsCnt,
   getPodName,
   getPodPhase,
   getPodRestartCount,
   isPodPresent,
+  NodeType,
+  FormattedOsdTreeType,
   testPodIsRunning,
   testPodIsSucceeded,
+  verifyNodeOSDMapping,
+  verifyZoneOSDMapping,
 } from '../../utils/helpers';
 
 const storageCluster = JSON.parse(execSync(`kubectl get -o json -n ${NS} ${KIND}`).toString());
@@ -37,13 +48,18 @@ const cephValue = JSON.parse(execSync(`kubectl get cephCluster -n ${NS} -o json`
 const clusterStatus = storageCluster.items[0];
 const cephHealth = cephValue.items[0];
 
-const expansionObjects = {
+const expansionObjects: ExpansionObjectsType = {
   clusterJSON: {},
   previousCnt: 0,
   updatedCnt: 0,
   updatedClusterJSON: {},
-  previousPods: { items: [] as PodKind[] },
-  updatedPods: { items: [] as PodKind[] },
+  previousPods: { items: [] },
+  updatedPods: { items: [] },
+  previousOSDTree: { nodes: [] },
+  updatedOSDTree: { nodes: [] },
+  formattedOSDTree: {},
+  previousOSDIds: [],
+  newOSDIds: [],
 };
 
 describe('Check availability of ocs cluster', () => {
@@ -84,6 +100,14 @@ if (clusterStatus && cephHealth) {
         execSync(`kubectl get pods -n ${NS} -o json`).toString(),
       );
 
+      expansionObjects.previousOSDTree = JSON.parse(
+        execSync(
+          `oc -n ${NS} rsh  $(oc -n ${NS} get pod | grep ceph-operator| awk '{print$1}') ceph --conf=/var/lib/rook/${NS}/${NS}.config osd tree --format=json`,
+        ).toString(),
+      );
+
+      expansionObjects.previousOSDIds = getIds(expansionObjects.previousOSDTree.nodes, OSD);
+
       await goToInstalledOperators();
       await click(ocsOp);
       await click(storageClusterView);
@@ -92,7 +116,7 @@ if (clusterStatus && cephHealth) {
       await verifyFields();
       await click(confirmButton);
 
-      const statusCol = storageClusterRow(uid).$('td:nth-child(4)');
+      const statusCol = storageClusterRow(uid).$('td:nth-child(3)');
 
       // need to wait as cluster states fluctuates for some time. Waiting for 2 secs for the same
       await browser.sleep(2 * SECOND);
@@ -115,6 +139,23 @@ if (clusterStatus && cephHealth) {
       expansionObjects.updatedPods = JSON.parse(
         execSync(`kubectl get pod -o json -n ${NS}`).toString(),
       );
+
+      // need to wait to get the new osds reflected in osd tree
+      await browser.sleep(1 * MINUTE);
+
+      expansionObjects.updatedOSDTree = JSON.parse(
+        execSync(
+          `oc -n ${NS} rsh  $(oc -n ${NS} get pod | grep ceph-operator| awk '{print$1}') ceph --conf=/var/lib/rook/${NS}/${NS}.config osd tree --format=json`,
+        ).toString(),
+      );
+
+      expansionObjects.formattedOSDTree = createOSDTreeMap(
+        expansionObjects.updatedOSDTree.nodes,
+      ) as FormattedOsdTreeType;
+      expansionObjects.newOSDIds = getNewOSDIds(
+        expansionObjects.updatedOSDTree.nodes,
+        expansionObjects.previousOSDIds,
+      );
     }, EXPAND_WAIT);
 
     it('Newly added capacity should takes into effect at the storage level', () => {
@@ -125,6 +166,7 @@ if (clusterStatus && cephHealth) {
     it('New osd pods corresponding to the additional capacity should be in running state', () => {
       const newOSDPods = [] as PodKind[];
       const newOSDPreparePods = [] as PodKind[];
+
       expansionObjects.updatedPods.items.forEach((pod) => {
         const podName = getPodName(pod);
         if (!isPodPresent(expansionObjects.previousPods, podName)) {
@@ -176,5 +218,37 @@ if (clusterStatus && cephHealth) {
       const cephHealthAfter = cephValueAfter.items[0];
       expect(cephHealthAfter.status.ceph.health).not.toBe(CLUSTER_STATUS.HEALTH_ERROR);
     });
+
+    it('New osds are added correctly to the availability zones/failure domains', () => {
+      const zones = getIds(expansionObjects.updatedOSDTree.nodes, ZONE);
+      expect(
+        verifyZoneOSDMapping(zones, expansionObjects.newOSDIds, expansionObjects.formattedOSDTree),
+      ).toEqual(true);
+    });
+
+    it('New osds are added correctly to the right nodes', () => {
+      const nodes = getIds(expansionObjects.updatedOSDTree.nodes, HOST);
+      expect(
+        verifyNodeOSDMapping(nodes, expansionObjects.newOSDIds, expansionObjects.formattedOSDTree),
+      ).toEqual(true);
+    });
   });
 }
+
+type PodType = {
+  items: PodKind[];
+};
+
+type ExpansionObjectsType = {
+  clusterJSON: {};
+  previousCnt: number;
+  updatedCnt: number;
+  updatedClusterJSON: {};
+  previousPods: PodType;
+  updatedPods: PodType;
+  previousOSDTree: { nodes: NodeType[] };
+  updatedOSDTree: { nodes: NodeType[] };
+  formattedOSDTree: FormattedOsdTreeType;
+  previousOSDIds: number[];
+  newOSDIds: number[];
+};

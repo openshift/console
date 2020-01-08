@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as _ from 'lodash';
-import { POD_NAME_PATTERNS, SECOND } from './consts';
+import { OSD, POD_NAME_PATTERNS, SECOND } from './consts';
 
 export const checkIfClusterIsReady = async () => {
   let stillLoading = true;
@@ -113,4 +113,68 @@ export const refreshIfNotVisible = async (element, maxTimes = 1) => {
     }
     count += 1;
   }
+};
+
+export const getIds = (nodes: NodeType[], type: string): number[] =>
+  nodes.filter((node) => node.type === type).map((node) => node.id);
+
+export const getNewOSDIds = (nodes: NodeType[], osds: number[]): number[] =>
+  nodes.filter((node) => node.type === OSD && osds.indexOf(node.id) === -1).map((node) => node.id);
+
+// created dictionary for faster acess O(1)
+export const createOSDTreeMap = (nodes: NodeType[]): FormattedOsdTreeType => {
+  const tree = {};
+  nodes.forEach((node) => {
+    tree[node.id] = node;
+  });
+  return tree;
+};
+
+export const verifyZoneOSDMapping = (
+  zones: number[],
+  osds: number[],
+  osdtree: FormattedOsdTreeType,
+): boolean => {
+  let filteredOsds = [...osds];
+  zones.forEach((zone) => {
+    const hostId = osdtree[zone].children[0];
+    const len = osdtree[hostId].children.length;
+    filteredOsds = filteredOsds.filter((osd) => osd !== osdtree[hostId].children[len - 1]);
+  });
+
+  return filteredOsds.length === 0;
+};
+
+export const verifyNodeOSDMapping = (
+  nodes: number[],
+  osds: number[],
+  osdtree: FormattedOsdTreeType,
+): boolean => {
+  let filteredOsds = [...osds];
+  nodes.forEach((node) => {
+    const len = osdtree[node].children.length;
+    filteredOsds = filteredOsds.filter((osd) => osd !== osdtree[node].children[len - 1]);
+  });
+
+  return filteredOsds.length === 0;
+};
+
+export type NodeType = {
+  id: number;
+  name: string;
+  type: string;
+  type_id: number;
+  children: number[];
+  pool_weights?: {};
+  device_class?: string;
+  crush_weight?: number;
+  depth?: number;
+  exists?: number;
+  status?: string;
+  reweight?: number;
+  primary_affinity?: number;
+};
+
+export type FormattedOsdTreeType = {
+  [key: string]: NodeType;
 };
