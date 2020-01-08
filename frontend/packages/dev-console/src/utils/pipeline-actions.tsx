@@ -30,6 +30,32 @@ const redirectToResourceList = (resource: string) => {
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   redirectToResourceList(`pipelineruns/${pipelineRun.metadata.name}`);
 };
+
+/**
+ * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
+ *
+ * Note: Each check within this method should be driven by the apiVersion number if the API is properly up-versioned
+ * for these breaking changes. (should be done moving from 0.10.x forward)
+ */
+export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
+  let newPipelineRun = pipelineRun;
+
+  const serviceAccountPath = 'spec.serviceAccount';
+  if (_.has(newPipelineRun, serviceAccountPath)) {
+    // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
+    // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
+    const serviceAccountName = _.get(newPipelineRun, serviceAccountPath);
+    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]);
+    newPipelineRun = _.merge(newPipelineRun, {
+      spec: {
+        serviceAccountName,
+      },
+    });
+  }
+
+  return newPipelineRun;
+};
+
 export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun): PipelineRun => {
   if (!pipeline || !pipeline.metadata || !pipeline.metadata.name || !pipeline.metadata.namespace) {
     // eslint-disable-next-line no-console
@@ -45,8 +71,8 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
     resourceRef: resource.resourceRef,
   }));
 
-  return {
-    apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
+  const newPipelineRun = {
+    apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
     metadata: {
       name: `${pipeline.metadata.name}-${getRandomChars(6)}`,
@@ -59,6 +85,7 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
             },
     },
     spec: {
+      ..._.get(latestRun, 'spec', {}),
       pipelineRef: {
         name: pipeline.metadata.name,
       },
@@ -69,9 +96,10 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
           : pipeline.spec && pipeline.spec.params
           ? pipeline.spec.params
           : null,
-      serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
     },
   };
+
+  return migratePipelineRun(newPipelineRun);
 };
 
 export const triggerPipeline = (
