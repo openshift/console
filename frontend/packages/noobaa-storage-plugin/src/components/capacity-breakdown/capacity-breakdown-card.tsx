@@ -15,6 +15,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardActions from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardActions';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src';
 import { HeaderPrometheusViewLink } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
@@ -28,8 +29,9 @@ import {
 } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/consts';
 import { PROJECTS } from '../../constants/index';
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../queries';
-import './capacity-breakdown-card.scss';
 import { NooBaaBucketClassModel } from '../../models';
+
+import './capacity-breakdown-card.scss';
 
 const SubscriptionResource: FirehoseResource = {
   kind: referenceForModel(SubscriptionModel),
@@ -95,9 +97,9 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
-        <div className="nb-capacity-breakdown-card__header">
+        <DashboardCardActions>
           <HeaderPrometheusViewLink link={link} />
           <Dropdown
             items={dropdownOptions}
@@ -105,7 +107,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
             selectedKey={metricType}
             title={metricType}
           />
-        </div>
+        </DashboardCardActions>
       </DashboardCardHeader>
       <DashboardCardBody classname="nb-capacity-breakdown-card__body">
         <BreakdownCardBody

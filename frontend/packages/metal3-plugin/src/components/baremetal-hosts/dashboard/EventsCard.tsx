@@ -51,7 +51,7 @@ const getHostEventsFilter = (
   machine: MachineKind,
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
-const EventsCard: React.FC<EventsCardProps> = ({
+const EventsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
   stopWatchK8sResource,
   resources,
@@ -106,7 +106,3 @@ const EventsCard: React.FC<EventsCardProps> = ({
 };
 
 export default withDashboardResources(EventsCard);
-
-type EventsCardProps = DashboardItemProps & {
-  obj: BareMetalHostKind;
-};

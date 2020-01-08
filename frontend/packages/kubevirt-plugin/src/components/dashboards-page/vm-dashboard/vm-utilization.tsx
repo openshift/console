@@ -59,7 +59,7 @@ export const VMUtilizationCard: React.FC = () => {
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
         <Dropdown
           items={metricDurationsOptions}

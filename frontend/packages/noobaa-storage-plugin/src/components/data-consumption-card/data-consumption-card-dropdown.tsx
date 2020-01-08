@@ -91,7 +91,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
   );
 
   return (
-    <div className="nb-data-consumption-card__dropdown">
+    <>
       <Dropdown
         className="nb-data-consumption-card__dropdown-item"
         autoFocus={false}
@@ -102,7 +102,6 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
         dropdownItems={typeDropdownItems}
       />
       <Dropdown
-        className="nb-data-consumption-card__dropdown-item"
         autoFocus={false}
         onSelect={onSelectKpiDropdown}
         toggle={<DropdownToggle onToggle={onToggleKpiDropdown}>{kpi}</DropdownToggle>}
@@ -112,7 +111,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
           type === typesDropdown.accounts ? accountKpiDropdownItems : providersKpiDropdownItems
         }
       />
-    </div>
+    </>
   );
 };
 

@@ -5,18 +5,12 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getName } from '@console/shared';
-import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import NodeLink from '../NodeLink';
 import BareMetalHostRole from '../BareMetalHostRole';
-import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
-const DetailsCard: React.FC<DetailsCardProps> = () => {
+const DetailsCard: React.FC = () => {
   const { obj, machine, node } = React.useContext(BareMetalHostDashboardContext);
   const hostName = getName(obj);
   const nodeCell = <NodeLink nodeName={getName(node)} />;
@@ -44,10 +38,4 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   );
 };
 
-export default withDashboardResources(DetailsCard);
-
-type DetailsCardProps = DashboardItemProps & {
-  obj: BareMetalHostKind;
-  machines: MachineKind[];
-  nodes: NodeKind[];
-};
+export default DetailsCard;

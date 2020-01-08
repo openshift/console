@@ -50,6 +50,11 @@ $co-dashboard-card--line-height: 19px;
   padding-top: var(--pf-c-card--first-child--PaddingTop);
 }
 
+.co-dashboard-card__header--compact {
+  padding-top: 1rem;
+  padding-bottom: 0.6rem;
+}
+
 .co-dashboard-card__title {
   font-size: 1rem;
   line-height: $co-dashboard-card--line-height;
@@ -62,4 +67,16 @@ $co-dashboard-card--line-height: 19px;
 
 .co-dashboard-text--small {
   font-size: 0.875rem;
+}
+
+.co-dashboard-card__actions {
+  align-items: center;
+  display: flex;
+
+  > * {
+    margin-right: var(--pf-global--spacer--md);
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }

@@ -15,14 +15,13 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardActions from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardActions';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
-import AlertItem, {
-  StatusItem,
-} from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { ALERTS_KEY } from '../../../../actions/dashboards';
 import {
   connectToFlags,
@@ -33,7 +32,7 @@ import {
 import * as plugins from '../../../../plugins';
 import { FirehoseResource, AsyncComponent } from '../../../utils';
 import { PrometheusResponse } from '../../../graphs';
-import { PrometheusRulesResponse, alertURL } from '../../../monitoring';
+import { PrometheusRulesResponse } from '../../../monitoring';
 import {
   ClusterVersionKind,
   referenceForModel,
@@ -44,6 +43,11 @@ import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
 import { FLAGS } from '../../../../const';
+import {
+  useFilters,
+  SelectedFilters,
+} from '@console/shared/src/components/dashboard/status-card/use-filter-hook';
+import AlertFilter from '@console/shared/src/components/dashboard/status-card/AlertFilter';
 
 const getSubsystems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
   plugins.registry
@@ -192,8 +196,8 @@ const cvResource: FirehoseResource = {
   prop: 'cv',
 };
 
-const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
-  withDashboardResources<WithFlagsProps & DashboardItemProps>(
+const ClusterAlerts = connectToFlags<WithFlagsProps & ClusterAlertsProps>(FLAGS.OPENSHIFT)(
+  withDashboardResources<WithFlagsProps & DashboardItemProps & ClusterAlertsProps>(
     ({
       watchAlerts,
       stopWatchAlerts,
@@ -202,6 +206,8 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       stopWatchK8sResource,
       resources,
       flags,
+      selectedFilters,
+      resetFilters,
     }) => {
       const isOpenshift = flags[FLAGS.OPENSHIFT];
       React.useEffect(() => {
@@ -240,28 +246,16 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
         [],
       );
 
-      let items: React.ReactNode;
-      if (!flagPending(isOpenshift)) {
-        if (isOpenshift && (hasAvailableUpdates(cv) || alerts.length)) {
-          items = (
-            <>
-              {hasAvailableUpdates(cv) && (
-                <StatusItem
-                  Icon={UpdateIcon}
-                  message="A cluster version update is available"
-                  LinkComponent={LinkComponent}
-                />
-              )}
-              {alerts.map((alert) => (
-                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-              ))}
-            </>
-          );
-        } else if (alerts.length) {
-          items = alerts.map((alert) => (
-            <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-          ));
-        }
+      const messages: React.ReactNode[] = [];
+      if (isOpenshift && hasAvailableUpdates(cv)) {
+        messages.push(
+          <StatusItem
+            key="cv-update"
+            Icon={UpdateIcon}
+            message="A cluster version update is available"
+            LinkComponent={LinkComponent}
+          />,
+        );
       }
 
       return (
@@ -272,9 +266,11 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
           }
           error={alertsResponseError}
           emptyMessage="No cluster alerts or messages"
-        >
-          {items}
-        </AlertsBody>
+          alerts={alerts}
+          selectedFilters={selectedFilters}
+          resetFilters={resetFilters}
+          messages={messages}
+        />
       );
     },
   ),
@@ -288,12 +284,23 @@ export const StatusCard = connect(mapStateToProps)(
   connectToFlags<StatusCardProps>(
     ...plugins.registry.getRequiredFlags([isDashboardsOverviewHealthSubsystem]),
   )(({ flags, k8sModels }) => {
+    const [filters, selectedFilters, resetFilters, toggleFilter] = useFilters();
+
     const subsystems = getSubsystems(flags, k8sModels);
     return (
       <DashboardCard gradient>
-        <DashboardCardHeader>
+        <DashboardCardHeader compact>
           <DashboardCardTitle>Status</DashboardCardTitle>
-          <DashboardCardLink to="monitoring/alerts">View alerts</DashboardCardLink>
+          <DashboardCardActions>
+            <DashboardCardLink className="co-overview-status__alerts-link" to="monitoring/alerts">
+              View alerts
+            </DashboardCardLink>
+            <AlertFilter
+              filters={filters}
+              selectedFilters={selectedFilters}
+              toggleFilter={toggleFilter}
+            />
+          </DashboardCardActions>
         </DashboardCardHeader>
         <DashboardCardBody>
           <HealthBody>
@@ -309,7 +316,7 @@ export const StatusCard = connect(mapStateToProps)(
               ))}
             </Gallery>
           </HealthBody>
-          <ClusterAlerts />
+          <ClusterAlerts selectedFilters={selectedFilters} resetFilters={resetFilters} />
         </DashboardCardBody>
       </DashboardCard>
     );
@@ -328,4 +335,9 @@ type URLHealthItemProps = DashboardItemProps & {
 type PrometheusHealthItemProps = DashboardItemProps & {
   subsystem: DashboardsOverviewHealthPrometheusSubsystem['properties'];
   models: ImmutableMap<string, K8sKind>;
+};
+
+type ClusterAlertsProps = {
+  selectedFilters: SelectedFilters;
+  resetFilters: () => void;
 };

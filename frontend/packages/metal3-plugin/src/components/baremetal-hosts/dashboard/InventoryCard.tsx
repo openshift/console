@@ -22,8 +22,8 @@ import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const PodInventoryItem = React.memo(
-  withDashboardResources(
-    ({ nodeName, resources, watchK8sResource, stopWatchK8sResource }: PodInventoryItemProps) => {
+  withDashboardResources<PodInventoryItemProps>(
+    ({ nodeName, resources, watchK8sResource, stopWatchK8sResource }) => {
       React.useEffect(() => {
         if (!nodeName) {
           return () => {};
@@ -108,7 +108,7 @@ const InventoryCard: React.FC = () => {
   );
 };
 
-export default withDashboardResources(InventoryCard);
+export default InventoryCard;
 
 type PodInventoryItemProps = DashboardItemProps & {
   nodeName: string;

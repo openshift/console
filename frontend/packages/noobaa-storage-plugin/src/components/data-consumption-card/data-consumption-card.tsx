@@ -14,6 +14,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardActions from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardActions';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -83,14 +84,16 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Data Consumption</DashboardCardTitle>
-        <DataConsumptionDropdown
-          type={metricType}
-          setType={setMetricType}
-          kpi={sortByKpi}
-          setKpi={setsortByKpi}
-        />
+        <DashboardCardActions>
+          <DataConsumptionDropdown
+            type={metricType}
+            setType={setMetricType}
+            kpi={sortByKpi}
+            setKpi={setsortByKpi}
+          />
+        </DashboardCardActions>
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--top-margin" isLoading={isLoading}>
         {!error && !chartData.some(_.isEmpty) ? (

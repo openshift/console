@@ -9,12 +9,14 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardActions from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardActions';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../../../constants/queries';
 import { PROJECTS } from '../../../../constants/index';
 import { BreakdownCardBody } from '../breakdown-card/breakdown-body';
 import { HeaderPrometheusViewLink } from '../breakdown-card/breakdown-header';
 import { getStackChartStats, sortInstantVectorStats } from '../breakdown-card/utils';
+
 import './capacity-breakdown-card.scss';
 
 const keys = Object.keys(breakdownQueryMap);
@@ -52,9 +54,9 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
-        <div className="ceph-capacity-breakdown-card__header">
+        <DashboardCardActions>
           <HeaderPrometheusViewLink link={link} />
           <Dropdown
             items={dropdownOptions}
@@ -62,7 +64,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
             selectedKey={metricType}
             title={metricType}
           />
-        </div>
+        </DashboardCardActions>
       </DashboardCardHeader>
       <DashboardCardBody classname="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody

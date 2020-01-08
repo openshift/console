@@ -14,17 +14,19 @@ const isGuestAgentInstalled = (vmi: VMIKind) => {
   return conditions && conditions.length > 0 && conditions[0].status === 'True';
 };
 
-export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => (
-  <AlertsBody emptyMessage="No VM messages" isLoading={!vm}>
-    {vmi && vmi.status && !isGuestAgentInstalled(vmi) && (
+export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => {
+  const messages = [];
+  if (vmi && vmi.status && !isGuestAgentInstalled(vmi)) {
+    messages.push(
       <StatusItem
         Icon={BlueInfoCircleIcon}
         message="This VM does not have guest agent installed. Some metrics and management features will not be available."
         LinkComponent={() => null /* TODO(mlibra) */}
-      />
-    )}
-  </AlertsBody>
-);
+      />,
+    );
+  }
+  return <AlertsBody emptyMessage="No VM messages" isLoading={!vm} messages={messages} />;
+};
 
 type VMAlertsProps = {
   vm?: VMKind;

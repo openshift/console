@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
@@ -106,7 +105,7 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
         <Dropdown
           items={metricDurationsOptions}
@@ -115,53 +114,51 @@ const UtilizationCard: React.FC<DashboardItemProps> = ({
           title={duration}
         />
       </DashboardCardHeader>
-      <DashboardCardBody>
-        <UtilizationBody timestamps={iopsStats.map((stat) => stat.x as Date)}>
-          <UtilizationItem
-            title="Used Capacity"
-            data={capacityStats}
-            humanizeValue={humanizeBinaryBytes}
-            byteDataType={ByteDataTypes.BinaryBytes}
-            query={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
-            error={capacityUtilizationError || totalCapacityError}
-            isLoading={!capacityUtilization && !totalCapacity}
-            max={maxCapacityStats}
-            TopConsumerPopover={storagePopover}
-          />
-          <UtilizationItem
-            title="IOPS"
-            data={iopsStats}
-            error={iopsUtilizationError}
-            isLoading={!iopsUtilization}
-            humanizeValue={humanizeIOPS}
-            query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
-          />
-          <UtilizationItem
-            title="Latency"
-            data={latencyStats}
-            error={latencyUtilizationError}
-            isLoading={!latencyUtilization}
-            humanizeValue={humanizeLatency}
-            query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
-          />
-          <UtilizationItem
-            title="Throughput"
-            data={throughputStats}
-            error={throughputUtilizationError}
-            isLoading={!throughputUtilization}
-            humanizeValue={humanizeDecimalBytesPerSec}
-            query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
-          />
-          <UtilizationItem
-            title="Recovery"
-            data={recoveryStats}
-            error={recoveryUtilizationError}
-            isLoading={!recoveryUtilization}
-            humanizeValue={humanizeDecimalBytesPerSec}
-            query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY]}
-          />
-        </UtilizationBody>
-      </DashboardCardBody>
+      <UtilizationBody timestamps={iopsStats.map((stat) => stat.x as Date)}>
+        <UtilizationItem
+          title="Used Capacity"
+          data={capacityStats}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          query={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
+          error={capacityUtilizationError || totalCapacityError}
+          isLoading={!capacityUtilization && !totalCapacity}
+          max={maxCapacityStats}
+          TopConsumerPopover={storagePopover}
+        />
+        <UtilizationItem
+          title="IOPS"
+          data={iopsStats}
+          error={iopsUtilizationError}
+          isLoading={!iopsUtilization}
+          humanizeValue={humanizeIOPS}
+          query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
+        />
+        <UtilizationItem
+          title="Latency"
+          data={latencyStats}
+          error={latencyUtilizationError}
+          isLoading={!latencyUtilization}
+          humanizeValue={humanizeLatency}
+          query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
+        />
+        <UtilizationItem
+          title="Throughput"
+          data={throughputStats}
+          error={throughputUtilizationError}
+          isLoading={!throughputUtilization}
+          humanizeValue={humanizeDecimalBytesPerSec}
+          query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
+        />
+        <UtilizationItem
+          title="Recovery"
+          data={recoveryStats}
+          error={recoveryUtilizationError}
+          isLoading={!recoveryUtilization}
+          humanizeValue={humanizeDecimalBytesPerSec}
+          query={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY]}
+        />
+      </UtilizationBody>
     </DashboardCard>
   );
 };

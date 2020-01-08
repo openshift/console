@@ -14,9 +14,14 @@ import HealthItem from '@console/shared/src/components/dashboard/status-card/Hea
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
-import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
+import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring';
+import DashboardCardActions from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardActions';
+import AlertFilter from '@console/shared/src/components/dashboard/status-card/AlertFilter';
+import {
+  SelectedFilters,
+  useFilters,
+} from '@console/shared/src/components/dashboard/status-card/use-filter-hook';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {
   HOST_SUCCESS_STATES,
@@ -66,25 +71,48 @@ const getHostHardwareHealthState = (obj): HostHealthState => {
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
-const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, alertsResults }) => {
-  const { obj } = React.useContext(BareMetalHostDashboardContext);
+const BareMetalAlerts = withDashboardResources<DashboardItemProps & BareMetalAlertsProps>(
+  ({ watchAlerts, stopWatchAlerts, alertsResults, selectedFilters, resetFilters }) => {
+    React.useEffect(() => {
+      watchAlerts();
+      return () => stopWatchAlerts();
+    }, [watchAlerts, stopWatchAlerts]);
 
-  React.useEffect(() => {
-    watchAlerts();
-    return () => stopWatchAlerts();
-  }, [watchAlerts, stopWatchAlerts]);
+    const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+    const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
+    const alerts = filterAlerts(getAlerts(alertsResponse));
+
+    return (
+      <AlertsBody
+        isLoading={!alertsResponse}
+        error={alertsResponseError}
+        emptyMessage="No alerts or messages"
+        alerts={alerts}
+        selectedFilters={selectedFilters}
+        resetFilters={resetFilters}
+      />
+    );
+  },
+);
+
+const HealthCard: React.FC = () => {
+  const { obj } = React.useContext(BareMetalHostDashboardContext);
+  const [filters, selectedFilters, resetFilters, toggleFilter] = useFilters();
 
   const health = getHostHealthState(obj);
   const hwHealth = getHostHardwareHealthState(obj);
 
-  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-  const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-  const alerts = filterAlerts(getAlerts(alertsResponse));
-
   return (
     <DashboardCard gradient>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardActions>
+          <AlertFilter
+            filters={filters}
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter}
+          />
+        </DashboardCardActions>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
@@ -97,29 +125,20 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
             </GalleryItem>
           </Gallery>
         </HealthBody>
-        <AlertsBody
-          isLoading={!alertsResponse}
-          error={alertsResponseError}
-          emptyMessage="No alerts or messages"
-        >
-          {alerts.length !== 0
-            ? alerts.map((alert) => (
-                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-              ))
-            : null}
-        </AlertsBody>
+        <BareMetalAlerts selectedFilters={selectedFilters} resetFilters={resetFilters} />
       </DashboardCardBody>
     </DashboardCard>
   );
 };
 
-export default withDashboardResources(HealthCard);
+export default HealthCard;
 
 type HostHealthState = {
   state: HealthState;
   title: string;
 };
 
-type HealthCardProps = DashboardItemProps & {
-  obj: BareMetalHostKind;
+type BareMetalAlertsProps = {
+  selectedFilters: SelectedFilters;
+  resetFilters: () => void;
 };

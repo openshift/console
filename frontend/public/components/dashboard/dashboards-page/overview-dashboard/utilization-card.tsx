@@ -231,7 +231,7 @@ export const UtilizationCard = connectToFlags(
 
   return (
     <DashboardCard>
-      <DashboardCardHeader>
+      <DashboardCardHeader compact>
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
         <Dropdown
           items={metricDurationsOptions}

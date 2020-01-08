@@ -1,9 +1,5 @@
-.nb-data-consumption-card__dropdown {
-  display: flex;
-}
-
 .nb-data-consumption-card__dropdown-item {
-  margin-right: 0.4em;
+  margin-right: var(--pf-global--spacer--md);
 }
 
 .nb-data-consumption-card__chart-label {

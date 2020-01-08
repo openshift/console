@@ -4,6 +4,16 @@ import {
   PrometheusRulesResponse,
 } from '@console/internal/components/monitoring';
 
+export enum FilterType {
+  Severity = 'Severity',
+  Type = 'Type',
+}
+
+export enum AlertSeverity {
+  Warning = 'warning',
+  Critical = 'critical',
+}
+
 export const getAlertSeverity = (alert: Alert) =>
   alert && alert.labels ? alert.labels.severity : null;
 export const getAlertMessage = (alert: Alert) =>
@@ -20,3 +30,19 @@ export const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
         .filter((a) => a.state === 'firing' && getAlertName(a) !== 'Watchdog')
         .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
     : [];
+
+export const alertFilters = {
+  [FilterType.Severity]: {
+    [AlertSeverity.Warning]: 'Warning',
+    [AlertSeverity.Critical]: 'Critical',
+  },
+  [FilterType.Type]: {
+    message: 'Messages',
+    alert: 'Alerts',
+  },
+};
+
+export type AlertFilters = {
+  [FilterType.Severity]: { [key: string]: string };
+  [FilterType.Type]: { [key: string]: string };
+};
