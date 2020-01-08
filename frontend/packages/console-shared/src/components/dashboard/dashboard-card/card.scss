@@ -9,7 +9,7 @@ $co-dashboard-card--line-height: 19px;
 .co-dashboard-card--gradient {
   position: relative;
   &:after {
-    background: linear-gradient(transparent, var(--pf-global--BackgroundColor--100));
+    background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-global--BackgroundColor--100));
     bottom: 0;
     content: '';
     left: 0;
