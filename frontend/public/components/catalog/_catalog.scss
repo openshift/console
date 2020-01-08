@@ -1,3 +1,6 @@
+$catalog-capability-level-icon-left: -20px;
+$catalog-capability-level-icon-top: 4px;
+$catalog-capability-level-inactive-color: var(--pf-global--Color--400);
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
@@ -233,6 +236,51 @@ $co-modal-ignore-warning-icon-width: 30px;
 
 .properties-side-panel-pf-property-label {
   font-size: ($font-size-base - 1);
+}
+
+.properties-side-panel-pf-property-value__capability-level {
+  color: $catalog-capability-level-inactive-color;
+  margin-bottom: 5px;
+  position: relative;
+
+  &--active {
+    color: inherit;
+
+    &::before {
+      display: none; // hide empty circle since icon is present
+    }
+  }
+
+  &::before { // empty circle
+    border: 1px solid $catalog-capability-level-inactive-color;
+    border-radius: 10px;
+    content: "";
+    height: 14px;
+    left: $catalog-capability-level-icon-left;
+    position: absolute;
+    top: $catalog-capability-level-icon-top;
+    width: 14px;
+  }
+
+  &:not(:last-child)::after { // pipe after circle
+    background: $catalog-capability-level-inactive-color;
+    content: "";
+    height: 6px;
+    left: -13px;
+    position: absolute;
+    top: 22px;
+    width: 1px;
+  }
+}
+
+.properties-side-panel-pf-property-value__capability-level-icon {
+  left: $catalog-capability-level-icon-left;
+  position: absolute;
+  top: $catalog-capability-level-icon-top;
+}
+
+.properties-side-panel-pf-property-value__capability-levels {
+  list-style: none;
 }
 
 // set font size to 14px
