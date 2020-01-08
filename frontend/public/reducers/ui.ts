@@ -153,6 +153,10 @@ export default (state: UIState, action: UIAction): UIState => {
         action.payload.key === 'alerts'
           ? action.payload.data
           : state.getIn(['monitoring', 'alerts']);
+      const notificationAlerts =
+        action.payload.key === 'notificationAlerts'
+          ? action.payload.data
+          : state.getIn(['monitoring', 'notificationAlerts']);
       const firingAlerts = _.filter(_.get(alerts, 'data'), (a) =>
         [AlertStates.Firing, AlertStates.Silenced].includes(a.state),
       );
@@ -178,6 +182,7 @@ export default (state: UIState, action: UIAction): UIState => {
         }
       });
       state = state.setIn(['monitoring', 'alerts'], alerts);
+      state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);
 
       // For each Silence, store a list of the Alerts it is silencing
       _.each(_.get(silences, 'data'), (s) => {
@@ -187,6 +192,15 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.ToggleMonitoringGraphs:
       return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
+
+    case ActionType.NotificationDrawerToggleExpanded:
+      return state.setIn(
+        ['notifications', 'isExpanded'],
+        !state.getIn(['notifications', 'isExpanded']),
+      );
+
+    case ActionType.NotificationDrawerToggleRead:
+      return state.setIn(['notifications', 'isRead'], !state.getIn(['notifications', 'isRead']));
 
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(

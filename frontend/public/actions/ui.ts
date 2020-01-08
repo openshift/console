@@ -28,6 +28,8 @@ export enum ActionType {
   MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
+  NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
+  NotificationDrawerToggleRead = 'notificationDrawerRead',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
@@ -266,16 +268,21 @@ export const monitoringDashboardsClearVariables = () =>
   action(ActionType.MonitoringDashboardsClearVariables);
 export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
   action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
-export const monitoringLoading = (key: 'alerts' | 'silences') =>
+export const monitoringLoading = (key: 'alerts' | 'silences' | 'notificationAlerts') =>
   action(ActionType.SetMonitoringData, {
     key,
     data: { loaded: false, loadError: null, data: null },
   });
-export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) =>
+export const monitoringLoaded = (key: 'alerts' | 'silences' | 'notificationAlerts', data: any) =>
   action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError: null, data } });
-export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) =>
-  action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
+export const monitoringErrored = (
+  key: 'alerts' | 'silences' | 'notificationAlerts',
+  loadError: any,
+) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
+export const notificationDrawerToggleExpanded = () =>
+  action(ActionType.NotificationDrawerToggleExpanded);
+export const notificationDrawerToggleRead = () => action(ActionType.NotificationDrawerToggleRead);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 export const queryBrowserDismissNamespaceAlert = () =>
@@ -352,6 +359,8 @@ const uiActions = {
   setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
+  notificationDrawerToggleExpanded,
+  notificationDrawerToggleRead,
 };
 
 export type UIAction = Action<typeof uiActions>;

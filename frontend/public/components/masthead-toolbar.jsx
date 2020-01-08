@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import {
   ArrowCircleUpIcon,
+  BellIcon,
   CaretDownIcon,
   EllipsisVIcon,
   PlusCircleIcon,
@@ -14,6 +15,7 @@ import {
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
   Button,
+  NotificationBadge,
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
@@ -21,7 +23,8 @@ import {
 import classNames from 'classnames';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-import { connectToFlags, flagPending } from '../reducers/features';
+import * as UIActions from '../actions/ui';
+import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink } from '../module/k8s';
 import { history, Firehose } from './utils';
@@ -520,8 +523,9 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, cv } = this.props;
+    const { consoleLinks, cv, drawerToggle, notificationsRead, canAccessNS } = this.props;
     const launchActions = this._launchActions();
+    const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
         <Toolbar>
@@ -549,6 +553,17 @@ class MastheadToolbarContents_ extends React.Component {
                   position="right"
                   isGrouped
                 />
+              </ToolbarItem>
+            )}
+            {alertAccess && (
+              <ToolbarItem>
+                <NotificationBadge
+                  aria-label="Notification Drawer"
+                  onClick={drawerToggle}
+                  isRead={notificationsRead}
+                >
+                  <BellIcon />
+                </NotificationBadge>
               </ToolbarItem>
             )}
             <ToolbarItem>
@@ -590,19 +605,22 @@ class MastheadToolbarContents_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = ({ UI }) => ({
-  activeNamespace: UI.get('activeNamespace'),
-  clusterID: UI.get('clusterID'),
-  user: UI.get('user'),
-  consoleLinks: UI.get('consoleLinks'),
+const mastheadToolbarStateToProps = (state) => ({
+  activeNamespace: state.UI.get('activeNamespace'),
+  clusterID: state.UI.get('clusterID'),
+  user: state.UI.get('user'),
+  consoleLinks: state.UI.get('consoleLinks'),
+  notificationsRead: !!state.UI.getIn(['notifications', 'isRead']),
+  canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
-const MastheadToolbarContents = connect(mastheadToolbarStateToProps)(
-  connectToFlags(
-    FLAGS.AUTH_ENABLED,
-    FLAGS.CONSOLE_CLI_DOWNLOAD,
-    FLAGS.OPENSHIFT,
-  )(MastheadToolbarContents_),
+const MastheadToolbarContents = connect(
+  mastheadToolbarStateToProps,
+  { drawerToggle: UIActions.notificationDrawerToggleExpanded },
+)(
+  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)()(
+    MastheadToolbarContents_,
+  ),
 );
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {

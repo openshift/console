@@ -10,6 +10,7 @@ import 'abort-controller/polyfill';
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
+import { ConnectedNotificationDrawer } from './notification-drawer';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { Navigation } from './nav';
@@ -115,7 +116,9 @@ class App extends React.PureComponent {
             />
           }
         >
-          <AppContents />
+          <ConnectedNotificationDrawer>
+            <AppContents />
+          </ConnectedNotificationDrawer>
         </Page>
         <ConsoleNotifier location="BannerBottom" />
       </>

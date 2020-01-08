@@ -31,6 +31,7 @@
 @import '~patternfly/dist/sass/patternfly/buttons'; // required by <FilterSidePanelCategory> in patternfly-react
 @import '~patternfly/dist/sass/patternfly/dropdowns'; // required by @patternfly/react-console
 @import '~patternfly/dist/sass/patternfly/modals';
+@import "~patternfly/dist/sass/patternfly/notifications-drawer";
 @import '~patternfly/dist/sass/patternfly/toolbar';
 @import '~patternfly/dist/sass/patternfly/forms';
 @import "~xterm/dist/addons/fullscreen/fullscreen";
@@ -44,9 +45,12 @@
 @import "~@patternfly/patternfly/variables";
 @import "~@patternfly/patternfly/fonts";
 @import "~@patternfly/patternfly/base";
+@import "~@patternfly/patternfly/components/Drawer/drawer";
 @import "~@patternfly/patternfly/components/Form/form";
 @import "~@patternfly/patternfly/components/FormControl/form-control";
 @import "~@patternfly/patternfly/components/InputGroup/input-group";
+@import "~@patternfly/patternfly/components/NotificationBadge/notification-badge";
+@import "~@patternfly/patternfly/components/NotificationDrawer/notification-drawer";
 @import "~@patternfly/patternfly/utilities/Sizing/sizing";
 @import "~@patternfly/patternfly/patternfly-charts";
 
