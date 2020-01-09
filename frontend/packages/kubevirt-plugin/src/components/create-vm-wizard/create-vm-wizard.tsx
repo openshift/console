@@ -289,16 +289,15 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     const storages = immutableListToShallowJS(
       iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']),
     );
-    const templates = immutableListToShallowJS<TemplateKind>(
-      concatImmutableLists(
-        iGetLoadedData(this.props[VMWizardProps.commonTemplates]),
-        iGetLoadedData(this.props[VMWizardProps.userTemplates]),
-      ),
-    );
 
+    const iUserTemplates = iGetLoadedData(this.props[VMWizardProps.userTemplates]);
+    const iCommonTemplates = iGetLoadedData(this.props[VMWizardProps.commonTemplates]);
     let promise;
 
     if (isProviderImport) {
+      const templates = immutableListToShallowJS<TemplateKind>(
+        concatImmutableLists(iUserTemplates, iCommonTemplates),
+      );
       const { interOPVMSettings, interOPNetworks, interOPStorages } = await kubevirtInterOP({
         vmSettings,
         networks,
@@ -323,7 +322,8 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         vmSettings,
         networks,
         storages,
-        templates,
+        iUserTemplates,
+        iCommonTemplates,
         namespace: activeNamespace,
         openshiftFlag,
       });

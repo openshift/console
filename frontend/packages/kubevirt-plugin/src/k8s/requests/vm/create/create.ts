@@ -21,21 +21,24 @@ import { buildOwnerReference } from '../../../../utils';
 import { selectVM } from '../../../../selectors/vm-template/selectors';
 import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { ProcessedTemplatesModel } from '../../../../models/models';
-import { findTemplate } from './selectors';
+import { toShallowJS } from '../../../../utils/immutable';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
-  const { vmSettings, templates } = params;
+  const { vmSettings, iCommonTemplates, iUserTemplates } = params;
   const settings = asSimpleSettings(vmSettings);
 
-  const temp = findTemplate(templates, {
-    userTemplateName: settings[VMSettingsField.USER_TEMPLATE],
-    workload: settings[VMSettingsField.WORKLOAD_PROFILE],
-    flavor: settings[VMSettingsField.FLAVOR],
-    os: settings[VMSettingsField.OPERATING_SYSTEM],
-  });
+  const temp = toShallowJS(
+    iGetRelevantTemplate(iUserTemplates, iCommonTemplates, {
+      userTemplateName: settings[VMSettingsField.USER_TEMPLATE],
+      workload: settings[VMSettingsField.WORKLOAD_PROFILE],
+      flavor: settings[VMSettingsField.FLAVOR],
+      os: settings[VMSettingsField.OPERATING_SYSTEM],
+    }),
+  );
 
   if (!temp) {
     return {};

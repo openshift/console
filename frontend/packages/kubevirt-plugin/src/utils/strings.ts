@@ -33,3 +33,11 @@ export const getSequenceName = (name: string, usedSequenceNames?: Set<string>) =
 
 export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) =>
   i === 1 ? singular : plural;
+
+export const intervalBracket = (isInclusive: boolean, leftValue?: number, rightValue?: number) => {
+  if (leftValue) {
+    return isInclusive && Number.isFinite(leftValue) ? '[' : '(';
+  }
+
+  return isInclusive && Number.isFinite(rightValue) ? ']' : ')';
+};

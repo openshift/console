@@ -85,6 +85,8 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     [VMSettingsField.WORKLOAD_PROFILE]: { value: null },
     [VMSettingsField.PROVISION_SOURCE_TYPE]: { value: isProviderImport ? undefined : null },
     [VMSettingsField.HOSTNAME]: { value: null },
+    [VMSettingsField.CPU]: { value: null },
+    [VMSettingsField.MEMORY]: { value: null },
   };
 
   // filter out oldTemplates

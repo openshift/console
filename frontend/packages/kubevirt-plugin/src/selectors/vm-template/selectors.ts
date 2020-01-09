@@ -140,8 +140,8 @@ export const getRelevantTemplates = (
   os: string,
   workloadProfile: string,
   flavor: string,
-) =>
-  (commonTemplates || []).filter(
+) => {
+  const relevantTemplates = (commonTemplates || []).filter(
     (template) =>
       iGetIn(template, ['metadata', 'labels', TEMPLATE_TYPE_LABEL]) === 'base' &&
       (!os || iGetIn(template, ['metadata', 'labels', `${TEMPLATE_OS_LABEL}/${os}`])) &&
@@ -154,3 +154,5 @@ export const getRelevantTemplates = (
       (flavor === 'Custom' ||
         iGetIn(template, ['metadata', 'labels', `${TEMPLATE_FLAVOR_LABEL}/${flavor}`])),
   );
+  return relevantTemplates;
+};
