@@ -1,3 +1,5 @@
+import { Map } from 'immutable';
+
 enum commonTemplatesValidationRules {
   integer = 'integer',
   string = 'string',
@@ -18,3 +20,6 @@ export type CommonTemplatesValidation = {
   values?: string[]; // For 'enum' rule
   justWarning?: boolean;
 };
+
+export type ILabels = Map<string, string>;
+export type ITemplate = Map<string, any>;

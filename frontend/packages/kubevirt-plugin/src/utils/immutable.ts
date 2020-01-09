@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { List } from 'immutable';
 
-export const concatImmutableLists = (...args) =>
+export const concatImmutableLists = (...args): List<any> =>
   args.filter((list) => list).reduce((acc, nextArray) => acc.concat(nextArray), List());
 
 export const iFirehoseResultToJS = (immutableValue, isList = true) => {

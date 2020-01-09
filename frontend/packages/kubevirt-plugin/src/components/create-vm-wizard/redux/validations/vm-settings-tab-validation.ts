@@ -41,11 +41,10 @@ import {
 import { validatePositiveInteger } from '../../../../utils/validations/common';
 import { pluralize } from '../../../../utils/strings';
 import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
 import { getValidationUpdate } from './utils';
-import {
-  getTemplateValidations,
-  runValidation,
-} from './common-template-validations/common-templates-validations';
+import { getTemplateValidations } from './utils/templates-validations';
 
 const validateVm: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
@@ -101,32 +100,25 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
 
 const memoryValidation: VmSettingsValidator = (field, options): ValidationObject => {
   const memValueGB = iGetFieldValue(field);
-  if (!memValueGB) {
+  if (memValueGB == null || memValueGB === '') {
     return null;
   }
   const memValueBytes = memValueGB * 1024 ** 3;
-  const validations = getTemplateValidations(options, VMSettingsField.MEMORY);
+  const validations = getTemplateValidations(options);
   if (validations.length === 0) {
-    return null;
+    validations.push(new TemplateValidations()); // add empty validation for positive integer if it is missing one
   }
 
-  const validationResult = runValidation(validations, memValueBytes);
+  const validationResults = validations
+    .map((v) => v.validateMemory(memValueBytes))
+    .filter(({ isValid }) => !isValid);
 
-  if (!validationResult.isValid) {
-    // Must have failed all validations, including first one:
-    const validation = validations[0];
-    let customMessage = validationResult.errorMsg;
-
-    if ('min' in validation && 'max' in validation) {
-      customMessage = `Memory must be between ${validation.min / 1024 ** 3}GB and ${validation.max /
-        1024 ** 3} GB`;
-    } else if ('min' in validation) {
-      customMessage = `Memory must be above ${validation.min / 1024 ** 3}GB`;
-    } else if ('max' in validation) {
-      customMessage = `Memory must be below ${validation.max / 1024 ** 3}GB`;
-    }
-
-    return asValidationObject(customMessage, ValidationErrorType.Error);
+  if (validationResults.length === validations.length) {
+    // every template failed its validations - we cannot choose one
+    return combineIntegerValidationResults(validationResults, {
+      defaultMin: 0,
+      isDefaultMinInclusive: false,
+    });
   }
 
   return null;
@@ -177,6 +169,7 @@ const validationConfig: VMSettingsValidationConfig = {
       VMSettingsField.OPERATING_SYSTEM,
       VMSettingsField.WORKLOAD_PROFILE,
     ],
+    detectCommonDataChanges: [VMWizardProps.userTemplates, VMWizardProps.commonTemplates],
     validator: memoryValidation,
   },
 };

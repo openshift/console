@@ -21,16 +21,21 @@ import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 import { MutableVMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { operatingSystemsNative } from '../../../../components/create-vm-wizard/native/consts';
+import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
 import { CreateVMEnhancedParams } from './types';
 
 export const initializeCommonMetadata = (
-  { vmSettings, templates, openshiftFlag }: CreateVMEnhancedParams,
+  { vmSettings, iUserTemplates, openshiftFlag, iCommonTemplates }: CreateVMEnhancedParams,
   entity: MutableVMWrapper | MutableVMTemplateWrapper,
   template?: TemplateKind,
 ) => {
   const settings = asSimpleSettings(vmSettings);
   const operatingSystems = openshiftFlag
-    ? getTemplateOperatingSystems(templates)
+    ? getTemplateOperatingSystems(
+        immutableListToShallowJS<TemplateKind>(
+          concatImmutableLists(iUserTemplates, iCommonTemplates),
+        ),
+      )
     : operatingSystemsNative;
   const osID = settings[VMSettingsField.OPERATING_SYSTEM];
   const osName = (operatingSystems.find(({ id }) => id === osID) || {}).name;

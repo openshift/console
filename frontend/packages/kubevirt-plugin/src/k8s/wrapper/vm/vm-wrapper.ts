@@ -96,7 +96,7 @@ export class MutableVMWrapper extends VMWrapper {
     return this;
   };
 
-  setMemory = (value: string, unit = 'G') => {
+  setMemory = (value: string, unit = 'Gi') => {
     this.ensurePath('spec.template.spec.domain.resources.requests', {});
     this.data.spec.template.spec.domain.resources.requests.memory = `${value}${unit}`;
     return this;
