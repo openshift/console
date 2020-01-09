@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
 
-export const joinGrammaticallyListOfItems = (items: string[]) => {
+export const joinGrammaticallyListOfItems = (items: string[], separator = 'and') => {
   const result = items.join(', ');
   const lastCommaIdx = result.lastIndexOf(',');
 
   return items.length > 1 && lastCommaIdx >= 0
-    ? `${result.substr(0, lastCommaIdx)} and${result.substr(lastCommaIdx + 1)}`
+    ? `${result.substr(0, lastCommaIdx)} ${separator}${result.substr(lastCommaIdx + 1)}`
     : result;
 };
 
