@@ -1,4 +1,4 @@
-import { stopPipelineRun, rerunPipeline } from '../pipeline-actions';
+import { stopPipelineRun, rerunPipeline, migratePipelineRun } from '../pipeline-actions';
 import { PipelineRun, Pipeline } from '../pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../models';
 
@@ -21,6 +21,11 @@ export const actionPipelineRuns: PipelineRun[] = [
     kind: 'PipelineRun',
     metadata: { name: 'winterfell', namespace: 'corazon' },
     status: { creationTimestamp: '31', conditions: [{ type: 'Succeeded', status: 'True' }] },
+    spec: {
+      pipelineRef: {
+        name: 'dragonstone',
+      },
+    },
   },
   {
     apiVersion: 'abhiapi/v1',
@@ -57,5 +62,40 @@ describe('PipelineAction testing stopPipelineRun create correct labels and callb
     const stopResult = stopAction(PipelineRunModel, actionPipelineRuns[0]);
     expect(stopResult.label).not.toBe('Stop');
     expect(stopResult.callback).toBeNull();
+  });
+});
+
+describe('PipelineAction testing migratePipelineRun', () => {
+  it('expect migratePipelineRun to do nothing when there is no migration needed', () => {
+    // Same instance should be returned if there was no need for a migration
+    expect(migratePipelineRun(actionPipelineRuns[0])).toEqual(actionPipelineRuns[0]);
+  });
+
+  it('expect migratePipelineRun to handle serviceAccount to serviceAccountName migration (Operator 0.9.x)', () => {
+    type OldPipelineRun = PipelineRun & {
+      spec: {
+        serviceAccount: string;
+      };
+    };
+    const serviceAccountValue = 'serviceAccountValue';
+    const plr: OldPipelineRun = {
+      ...actionPipelineRuns[0],
+      spec: {
+        ...actionPipelineRuns[0].spec,
+        serviceAccount: serviceAccountValue,
+      },
+    };
+
+    const result: PipelineRun = migratePipelineRun(plr);
+
+    // Should be a new instance
+    expect(result).not.toEqual(plr);
+
+    // The value should have moved
+    expect(result.spec.serviceAccountName).toEqual(serviceAccountValue);
+    expect((result as OldPipelineRun).spec.serviceAccount).toBeUndefined();
+
+    // Should still have other spec properties
+    expect(result.spec.pipelineRef).toEqual(actionPipelineRuns[0].spec.pipelineRef);
   });
 });
