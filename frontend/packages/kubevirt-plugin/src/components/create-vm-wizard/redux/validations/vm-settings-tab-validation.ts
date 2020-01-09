@@ -29,11 +29,7 @@ import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
-import {
-  getFieldReadableTitle,
-  getFieldTitle,
-  getFieldId,
-} from '../../utils/vm-settings-tab-utils';
+import { getFieldReadableTitle, getFieldTitle } from '../../utils/vm-settings-tab-utils';
 import { concatImmutableLists, iGet } from '../../../../utils/immutable';
 import {
   checkTabValidityChanged,
@@ -109,7 +105,7 @@ const memoryValidation: VmSettingsValidator = (field, options): ValidationObject
     return null;
   }
   const memValueBytes = memValueGB * 1024 ** 3;
-  const validations = getTemplateValidations(options, getFieldId(VMSettingsField.MEMORY));
+  const validations = getTemplateValidations(options, VMSettingsField.MEMORY);
   if (validations.length === 0) {
     return null;
   }
@@ -117,7 +113,20 @@ const memoryValidation: VmSettingsValidator = (field, options): ValidationObject
   const validationResult = runValidation(validations, memValueBytes);
 
   if (!validationResult.isValid) {
-    return asValidationObject(validationResult.errorMsg, ValidationErrorType.Error);
+    // Must have failed all validations, including first one:
+    const validation = validations[0];
+    let customMessage = validationResult.errorMsg;
+
+    if ('min' in validation && 'max' in validation) {
+      customMessage = `Memory must be between ${validation.min / 1024 ** 3}GB and ${validation.max /
+        1024 ** 3} GB`;
+    } else if ('min' in validation) {
+      customMessage = `Memory must be above ${validation.min / 1024 ** 3}GB`;
+    } else if ('max' in validation) {
+      customMessage = `Memory must be below ${validation.max / 1024 ** 3}GB`;
+    }
+
+    return asValidationObject(customMessage, ValidationErrorType.Error);
   }
 
   return null;
