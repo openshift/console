@@ -89,6 +89,8 @@ type Server struct {
 	ThanosTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
+	// A lister for resource listing of a particular kind
+	MonitoringDashboardConfigMapLister *ResourceLister
 }
 
 func (s *Server) authDisabled() bool {
@@ -292,10 +294,15 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/version", authHandler(s.versionHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
+}
+
+func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
+	s.MonitoringDashboardConfigMapLister.handleResources(w, r)
 }
 
 func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
