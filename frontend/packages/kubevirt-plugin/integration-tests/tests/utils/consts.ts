@@ -1,5 +1,11 @@
+import { execSync } from 'child_process';
+
 export const DASH = '-';
 export const { STORAGE_CLASS = 'rook-ceph-block' } = process.env;
+
+const rhelTinyCommonTemplateName = execSync(
+  "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
+).toString();
 
 // TIMEOUTS
 const SEC = 1000;
@@ -41,7 +47,10 @@ export const NODE_READY_STATUS = 'Ready';
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
-export const COMMON_TEMPLATES_VERSION = 'v0.6.2';
+
+export const COMMON_TEMPLATES_VERSION = rhelTinyCommonTemplateName.match(/v\d+\.\d+\.\d+/)[0];
+export const INNER_TEMPLATE_VERSION = 'v0.8.1';
+
 export const COMMON_TEMPLATES_NAMESPACE = 'openshift';
 export const COMMON_TEMPLATES_REVISION = '1';
 

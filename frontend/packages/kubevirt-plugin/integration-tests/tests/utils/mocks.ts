@@ -138,7 +138,9 @@ export function getVMManifest(
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
-      'vm.kubevirt.io/template': `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
+      'vm.kubevirt.io/template': `rhel7-desktop-${
+        basicVMConfig.flavor
+      }-${COMMON_TEMPLATES_VERSION}`,
       'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
       'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
@@ -247,7 +249,7 @@ export function getVMManifest(
         metadata: {
           labels: {
             'kubevirt.io/domain': metadata.name,
-            'kubevirt.io/size': 'tiny',
+            'kubevirt.io/size': basicVMConfig.flavor,
             'vm.kubevirt.io/name': metadata.name,
           },
         },

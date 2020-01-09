@@ -32,11 +32,11 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async getStatus(): Promise<string> {
-    return vmView.vmDetailStatus(this.namespace, this.name);
+    return vmView.vmDetailStatus(this.namespace, this.name).getText();
   }
 
   async getNode(): Promise<string> {
-    return vmView.vmDetailNode(this.namespace, this.name);
+    return vmView.vmDetailNode(this.namespace, this.name).getText();
   }
 
   async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
@@ -174,6 +174,7 @@ export class VirtualMachine extends KubevirtDetailView {
     cloudInit,
     storageResources,
     networkResources,
+    bootableDevice,
   }: VMConfig) {
     const wizard = new Wizard();
     await this.navigateToListView();
@@ -212,9 +213,13 @@ export class VirtualMachine extends KubevirtDetailView {
       }
     }
     if (provisionSource.method === ProvisionConfigName.DISK) {
-      // Select the last Disk as the source for booting or let the template select one by default
-      if (storageResources.length > 0) {
+      if (bootableDevice !== undefined) {
+        await wizard.selectBootableDisk(bootableDevice);
+      } else if (storageResources.length > 0) {
+        // Select the last Disk as the source for booting
         await wizard.selectBootableDisk(storageResources[storageResources.length - 1].name);
+      } else {
+        throw Error(`No bootable device provided for ${provisionSource.method} provision method.`);
       }
     }
     await wizard.next();
