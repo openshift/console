@@ -52,10 +52,33 @@ type BareMetalHostsPageProps = {
   hasNodeMaintenanceCapability: boolean;
 };
 
+const getCreateProps = ({ namespace }: { namespace: string }) => {
+  const items: any = {
+    dialog: 'New with Dialog',
+    yaml: 'New from YAML',
+  };
+
+  return {
+    items,
+    createLink: (itemName) => {
+      const base = `/k8s/ns/${namespace || 'default'}/${referenceForModel(BareMetalHostModel)}`;
+
+      switch (itemName) {
+        case 'dialog':
+          return `${base}/~new/form`;
+        case 'yaml':
+        default:
+          return `${base}/~new`;
+      }
+    },
+  };
+};
+
 const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = ({
   hasNodeMaintenanceCapability,
   ...props
 }) => {
+  const { namespace } = props;
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(BareMetalHostModel),
@@ -84,20 +107,14 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = ({
     });
   }
 
-  const createHostProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/${referenceForModel(
-      BareMetalHostModel,
-    )}/~new/form`,
-  };
-
   return (
     <MultiListPage
       {...props}
       canCreate
       rowFilters={[hostStatusFilter]}
-      createProps={createHostProps}
+      createProps={getCreateProps({ namespace })}
       createButtonText="Add Host"
-      namespace={props.namespace}
+      namespace={namespace}
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
