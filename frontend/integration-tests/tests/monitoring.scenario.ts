@@ -18,7 +18,8 @@ const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   }
 };
 
-describe('Monitoring: Alerts', () => {
+// Temporarily disable until OAuth proxy bug https://bugzilla.redhat.com/show_bug.cgi?id=1788419 is fixed
+xdescribe('Bug 1788419 - Monitoring: Alerts', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -104,7 +105,8 @@ describe('Monitoring: Alerts', () => {
   });
 });
 
-describe('Monitoring: Silences', () => {
+// Temporarily disable until OAuth proxy bug https://bugzilla.redhat.com/show_bug.cgi?id=1788419 is fixed
+xdescribe('Bug 1788419 - Monitoring: Silences', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();

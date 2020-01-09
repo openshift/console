@@ -11,7 +11,8 @@ const BROWSER_TIMEOUT = 15000;
 const WORKLOAD_NAME = `filter-${testName}`;
 const WORKLOAD_LABEL = `lbl-filter=${testName}`;
 
-describe('Filtering', () => {
+// Temporarily disable until OAuth proxy bug https://bugzilla.redhat.com/show_bug.cgi?id=1788419 is fixed
+xdescribe('Bug 1788419 - Filtering', () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
