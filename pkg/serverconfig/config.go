@@ -35,7 +35,18 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addAuth(fs, &config.Auth)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
+	addHelmConfig(fs, &config.Helm)
 
+	return nil
+}
+
+func addHelmConfig(fs *flag.FlagSet, helmConfig *Helm) (err error) {
+	if helmConfig.ChartRepo.URL != "" {
+		fs.Set("helm-chart-repo-url", helmConfig.ChartRepo.URL)
+	}
+	if helmConfig.ChartRepo.CAFile != "" {
+		fs.Set("helm-chart-repo-ca-file", helmConfig.ChartRepo.CAFile)
+	}
 	return nil
 }
 
