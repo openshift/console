@@ -56,13 +56,13 @@ const CronJobTableHeader = () => {
     },
     {
       title: 'Concurrency Policy',
-      sortField: 'spec.schedule',
+      sortField: 'spec.concurrencyPolicy',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Starting Deadline Seconds',
-      sortField: 'spec.schedule',
+      sortField: 'spec.startingDeadlineSeconds',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
