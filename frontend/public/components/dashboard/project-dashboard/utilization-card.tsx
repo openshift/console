@@ -1,15 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import {
-  ONE_HR,
-  SIX_HR,
-  TWENTY_FOUR_HR,
-} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { getName } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PopoverPosition } from '@patternfly/react-core';
@@ -25,13 +19,14 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { PodModel } from '../../../models';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
 import { PrometheusUtilizationItem } from '../dashboards-page/overview-dashboard/utilization-card';
-
-const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
-const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+import {
+  useMetricDuration,
+  Duration,
+} from '@console/shared/src/components/dashboard/duration-hook';
 
 export const UtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = React.useState(metricDurations[0]);
+  const [duration, setDuration] = useMetricDuration();
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
@@ -120,12 +115,7 @@ export const UtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
-        <Dropdown
-          items={metricDurationsOptions}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

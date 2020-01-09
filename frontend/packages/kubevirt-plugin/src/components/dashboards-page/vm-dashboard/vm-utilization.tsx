@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   Dropdown,
   humanizeDecimalBytes,
@@ -10,18 +9,14 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import {
-  ONE_HR,
-  SIX_HR,
-  TWENTY_FOUR_HR,
-} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/utilization-card';
+import {
+  useMetricDuration,
+  Duration,
+} from '@console/shared/src/components/dashboard/duration-hook';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
 import { getUtilizationQueries, VMQueries } from './queries';
-
-const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
-const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -34,7 +29,7 @@ const humanizeCpuCores = (v) => {
 
 export const VMUtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = React.useState(metricDurations[0]);
+  const [duration, setDuration] = useMetricDuration();
   const { vm, pods } = React.useContext(VMDashboardContext);
   const vmName = getName(vm);
   const namespace = getNamespace(vm);
@@ -61,12 +56,7 @@ export const VMUtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
-        <Dropdown
-          items={metricDurationsOptions}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

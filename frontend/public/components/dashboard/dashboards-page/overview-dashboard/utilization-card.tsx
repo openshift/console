@@ -8,12 +8,6 @@ import UtilizationItem, {
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import {
-  ONE_HR,
-  SIX_HR,
-  TWENTY_FOUR_HR,
-  UTILIZATION_QUERY_HOUR_MAP,
-} from '@console/shared/src/components/dashboard/utilization-card/dropdown-value';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
@@ -32,9 +26,11 @@ import * as plugins from '../../../../plugins';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
-
-const metricDurations = [ONE_HR, SIX_HR, TWENTY_FOUR_HR];
-const metricDurationsOptions = _.zipObject(metricDurations, metricDurations);
+import {
+  useMetricDuration,
+  UTILIZATION_QUERY_HOUR_MAP,
+  Duration,
+} from '@console/shared/src/components/dashboard/duration-hook';
 
 const cpuQueriesPopup = [
   {
@@ -175,7 +171,7 @@ export const UtilizationCard = connectToFlags(
 )(({ flags }) => {
   const queries = React.useMemo(() => getQueries(flags), [flags]);
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = React.useState(metricDurations[0]);
+  const [duration, setDuration] = useMetricDuration();
 
   const cpuPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
@@ -233,12 +229,7 @@ export const UtilizationCard = connectToFlags(
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
-        <Dropdown
-          items={metricDurationsOptions}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
@@ -290,7 +281,7 @@ export const UtilizationCard = connectToFlags(
 type PrometheusUtilizationItemProps = DashboardItemProps & {
   utilizationQuery: string;
   totalQuery?: string;
-  duration: string;
+  duration: Duration;
   title: string;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
   humanizeValue: Humanize;
