@@ -14,4 +14,4 @@ approvers:
   - rawagner
   - shyRozen
 labels:
-  - component/ceph
+  - component/noobaa-integration-tests
