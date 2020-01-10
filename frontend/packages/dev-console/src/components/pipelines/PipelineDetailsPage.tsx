@@ -78,6 +78,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               <PipelineForm
                 PipelineFormComponent={PipelineParameters}
                 formName="parameters"
+                obj={props.obj}
                 {...props}
               />
             ),
@@ -89,6 +90,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               <PipelineForm
                 PipelineFormComponent={PipelineResources}
                 formName="resources"
+                obj={props.obj}
                 {...props}
               />
             ),

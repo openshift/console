@@ -8,6 +8,7 @@ import {
   PageHeading,
   FirehoseResource,
   KebabOptionsCreator,
+  Page,
 } from '../utils';
 import { K8sResourceKindReference, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { withFallback } from '../utils/error-boundary';
@@ -62,12 +63,6 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
     </Firehose>
   );
 }, ErrorBoundaryFallback);
-
-export type Page = {
-  href: string;
-  name: string;
-  component?: React.ComponentType<any>;
-};
 
 export type DetailsPageProps = {
   match: match<any>;

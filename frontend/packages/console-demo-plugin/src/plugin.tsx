@@ -21,6 +21,7 @@ import {
   DashboardsOverviewUtilizationItem,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
+  HorizontalNavTab,
 } from '@console/plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
@@ -52,7 +53,8 @@ type ConsumedExtensions =
   | DashboardsInventoryItemGroup
   | DashboardsOverviewUtilizationItem
   | DashboardsOverviewResourceActivity
-  | DashboardsOverviewPrometheusActivity;
+  | DashboardsOverviewPrometheusActivity
+  | HorizontalNavTab;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -275,6 +277,20 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.DemoPrometheusActivity,
         ),
       required: 'TEST_MODEL_FLAG',
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: PodModel,
+      page: {
+        href: 'example',
+        name: 'Example',
+      },
+      loader: () =>
+        import('./components/test-pages' /* webpackChunkName: "demo" */).then(
+          (m) => m.DummyHorizontalNavTab,
+        ),
     },
   },
 ];
