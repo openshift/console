@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { GraphComponent as BaseGraphComponent } from '@console/topology';
+import { GraphComponent as BaseGraphComponent, WithContextMenuProps } from '@console/topology';
 import { TopologyFilters, getTopologyFilters } from '../filters/filter-utils';
 
 type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
   dragEditInProgress?: boolean;
   filters: TopologyFilters;
-};
+} & WithContextMenuProps;
 
 const DRAG_ACTIVE_CLASS = 'odc-m-drag-active';
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';

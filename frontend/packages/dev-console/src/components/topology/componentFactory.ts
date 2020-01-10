@@ -19,7 +19,12 @@ import EventSource from './components/nodes/EventSource';
 import EventSourceLink from './components/edges/EventSourceLink';
 import WorkloadNode from './components/nodes/WorkloadNode';
 import GraphComponent from './components/GraphComponent';
-import { workloadContextMenu, groupContextMenu, nodeContextMenu } from './nodeContextMenu';
+import {
+  workloadContextMenu,
+  groupContextMenu,
+  nodeContextMenu,
+  graphContextMenu,
+} from './nodeContextMenu';
 import {
   graphWorkloadDropTargetSpec,
   nodeDragSourceSpec,
@@ -176,7 +181,18 @@ class ComponentFactory {
           switch (kind) {
             case ModelKind.graph:
               return withDndDrop(graphWorkloadDropTargetSpec)(
-                withPanZoom()(withSelection(false, true)(GraphComponent)),
+                withPanZoom()(
+                  withSelection(
+                    false,
+                    true,
+                  )(
+                    withContextMenu(
+                      graphContextMenu,
+                      document.getElementById('modal-container'),
+                      'odc-topology-context-menu',
+                    )(GraphComponent),
+                  ),
+                ),
               );
             default:
               return undefined;

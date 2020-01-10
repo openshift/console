@@ -15,3 +15,6 @@
     transform: translateY(-50%);
   }
 }
+.oc-kebab__icon {
+  margin-right: calc(2 * var(--pf-c-dropdown__toggle-icon--MarginRight));
+}
