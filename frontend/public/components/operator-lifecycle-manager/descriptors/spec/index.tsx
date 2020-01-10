@@ -13,7 +13,7 @@ import { Tooltip } from '../../../utils/tooltip';
 import { k8sPatch } from '../../../../module/k8s';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
-  if (_.isEmpty(value) && !_.isNumber(value)) {
+  if (_.isEmpty(value) && !_.isNumber(value) && !_.isBoolean(value)) {
     return <span className="text-muted">None</span>;
   } else if (_.isObject(value)) {
     return <div>{_.map(value, (v, k) => <span key={k} className="row">{k}: {v}</span>)}</div>;
