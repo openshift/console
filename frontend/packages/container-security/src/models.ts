@@ -6,7 +6,7 @@ export const ImageManifestVulnModel: K8sKind = {
   labelPlural: 'ImageManifestVuln',
   apiGroup: 'secscan.quay.redhat.com',
   apiVersion: 'v1alpha1',
-  abbr: 'VULN',
+  abbr: 'IMV',
   namespaced: true,
   crd: true,
   plural: 'imagemanifestvulns',

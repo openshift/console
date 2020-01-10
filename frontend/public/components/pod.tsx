@@ -51,6 +51,7 @@ import {
   requirePrometheus,
 } from './graphs';
 import { VolumesTable } from './volumes-table';
+import { PodModel } from '../models';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -88,7 +89,10 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
   return Promise.all(promises).then((data: any[]) => _.assign({}, ...data));
 };
 
-export const menuActions = [...Kebab.factory.common];
+export const menuActions = [
+  ...Kebab.getExtensionsActionsForKind(PodModel),
+  ...Kebab.factory.common,
+];
 
 const tableColumnClasses = [
   '',
