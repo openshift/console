@@ -187,7 +187,7 @@ const sampleKnativeBuilds: FirehoseResult = {
   data: [],
 };
 
-const sampleKnativeConfigurations: FirehoseResult = {
+export const sampleKnativeConfigurations: FirehoseResult = {
   loaded: true,
   loadError: '',
   data: [

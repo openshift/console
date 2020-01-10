@@ -1,37 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { ConfigurationModel } from '@console/knative-plugin';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { SidebarSectionHeading } from '@console/internal/components/utils';
+import ConfigurationsOverviewListItem from './ConfigurationsOverviewListItem';
 
 export type ConfigurationsOverviewListProps = {
   configurations: K8sResourceKind[];
-};
-
-export type ConfigurationsOverviewListItemProps = {
-  configuration: K8sResourceKind;
-};
-
-const ConfigurationsOverviewListItem: React.FC<ConfigurationsOverviewListItemProps> = ({
-  configuration: {
-    metadata: { name, namespace },
-    status: { latestCreatedRevisionName, latestReadyRevisionName },
-  },
-}) => {
-  return (
-    <li className="list-group-item">
-      <ResourceLink
-        kind={referenceForModel(ConfigurationModel)}
-        name={name}
-        namespace={namespace}
-      />
-      <span className="text-muted">Latest Created Revision name: </span>
-      <span>{latestCreatedRevisionName}</span>
-      <br />
-      <span className="text-muted">Latest Ready Revision name: </span>
-      <span>{latestReadyRevisionName}</span>
-    </li>
-  );
 };
 
 const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
