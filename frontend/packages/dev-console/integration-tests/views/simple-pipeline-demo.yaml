@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: simple-pipeline
+spec:
+  tasks:
+    - name: push
+      taskRef:
+        name: echo-hello-world
+    - name: build-1
+      taskRef:
+        name: echo-hello-world
+      runAfter:
+        - push
+    - name: build-2
+      taskRef:
+        name: echo-hello-world
+      runAfter:
+        - push
+    - name: deploy
+      taskRef:
+        name: echo-hello-world
+      runAfter:
+        - build-2
+    - name: test-1
+      taskRef:
+        name: echo-hello-world
+      runAfter:
+        - deploy
+    - name: test-2
+      taskRef:
+        name: echo-hello-world
+      runAfter:
+        - deploy
