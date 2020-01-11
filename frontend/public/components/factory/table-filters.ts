@@ -24,6 +24,8 @@ export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
+  'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
+
   'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
 
   'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),

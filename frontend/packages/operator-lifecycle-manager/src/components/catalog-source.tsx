@@ -471,6 +471,7 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
     createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
     flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
     ListComponent={CatalogSourceList}
+    textFilter="catalog-source-name"
     resources={[
       {
         isList: true,
