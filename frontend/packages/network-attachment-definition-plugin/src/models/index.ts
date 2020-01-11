@@ -11,6 +11,7 @@ export const NetworkAttachmentDefinitionModel: K8sKind = {
   kind: 'NetworkAttachmentDefinition',
   id: 'network-attachment-definition',
   crd: true,
+  legacyPluralURL: true,
 };
 
 export const SriovNetworkNodePolicyModel: K8sKind = {
