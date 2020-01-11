@@ -22,6 +22,19 @@ describe('Gitlab Service', () => {
     });
   });
 
+  it('should not be able to validate a non existing gitlab repo', () => {
+    const gitSource: GitSource = { url: 'https://gitlab.com/jpratik99/devconsole-git.git' };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should list all branches of existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
 
@@ -70,6 +83,7 @@ describe('Gitlab Service', () => {
       const languageList: RepoLanguageList = await gitService.getRepoLanguageList();
       expect(languageList.languages.length).toBeGreaterThanOrEqual(1);
       expect(languageList.languages).toContain('Go');
+      expect(languageList.languages).not.toContain('Java');
       context.assertScopesFinished();
       nockDone();
     });
