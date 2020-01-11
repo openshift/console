@@ -72,7 +72,8 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   };
 
   const handleSubmit = (values, actions) => {
-    const imageStream = builderImages && builderImages[values.image.selected].obj;
+    const imageStream =
+      values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
 
     createOrUpdateResources(
       values,
