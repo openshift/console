@@ -1,3 +1,17 @@
-.oc-kebab__popper-items {
-  position: initial !important;
+.oc-kebab {
+  &__popper-items {
+    position: initial !important;
+  }
+
+  &__sub.pf-c-dropdown__menu-item {
+    position: relative;
+    padding-right: var(--pf-global--spacer--lg);
+  }
+
+  &__arrow {
+    position: absolute;
+    right: var(--pf-global--spacer--xs);
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
