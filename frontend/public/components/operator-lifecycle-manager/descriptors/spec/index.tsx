@@ -16,7 +16,7 @@ import { SecretValue } from '@console/internal/components/configmap-and-secret-d
 import { configureUpdateStrategyModal } from './configure-update-strategy';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
-  if (_.isEmpty(value) && !_.isNumber(value)) {
+  if (_.isEmpty(value) && !_.isNumber(value) && !_.isBoolean(value)) {
     return <span className="text-muted">None</span>;
   } else if (_.isObject(value)) {
     return <span className="text-muted">Unsupported</span>;
