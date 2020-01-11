@@ -14,7 +14,6 @@ import {
   TEMPLATE_PARAM_VM_NAME_DESC,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
-  TEMPLATE_VM_NAME_LABEL,
 } from '../../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
 import { MutableDataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
@@ -25,7 +24,7 @@ import { ProcessedTemplatesModel } from '../../../../models/models';
 import { findTemplate } from './selectors';
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
-import { initializeCommonMetadata } from './common';
+import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
   const { vmSettings, templates } = params;
@@ -104,7 +103,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 };
 
 export const createVM = async (params: CreateVMParams) => {
-  const { enhancedK8sMethods, namespace, vmSettings } = params;
+  const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
   const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
@@ -115,42 +114,49 @@ export const createVM = async (params: CreateVMParams) => {
   };
 
   // TODO add VMWARE import
+  let vm;
 
-  const { template } = getInitializedVMTemplate(enhancedParams);
+  if (openshiftFlag) {
+    const { template } = getInitializedVMTemplate(enhancedParams);
 
-  const templateToProcess = new MutableVMTemplateWrapper(template.asMutableResource(), {
-    copy: true,
-  });
-  // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
-  // common-templates are stored in openshift namespace, default user can read but cannot post
-  templateToProcess.setNamespace(namespace);
-  templateToProcess.setParameter(
-    TEMPLATE_PARAM_VM_NAME,
-    getFieldValue(vmSettings, VMSettingsField.NAME),
-  );
-  templateToProcess.unrequireParameters(
-    new Set(
-      templateToProcess
-        .getParameters()
-        .map((p) => p.name)
-        .filter((n) => n !== TEMPLATE_PARAM_VM_NAME),
-    ),
-  );
+    const templateToProcess = new MutableVMTemplateWrapper(template.asMutableResource(), {
+      copy: true,
+    });
+    // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
+    // common-templates are stored in openshift namespace, default user can read but cannot post
+    templateToProcess.setNamespace(namespace);
+    templateToProcess.setParameter(
+      TEMPLATE_PARAM_VM_NAME,
+      getFieldValue(vmSettings, VMSettingsField.NAME),
+    );
+    templateToProcess.unrequireParameters(
+      new Set(
+        templateToProcess
+          .getParameters()
+          .map((p) => p.name)
+          .filter((n) => n !== TEMPLATE_PARAM_VM_NAME),
+      ),
+    );
 
-  const processedTemplate = await k8sCreate(
-    ProcessedTemplatesModel,
-    templateToProcess.asMutableResource(),
-    null,
-    { disableHistory: true },
-  ); // temporary
+    const processedTemplate = await k8sCreate(
+      ProcessedTemplatesModel,
+      templateToProcess.asMutableResource(),
+      null,
+      { disableHistory: true },
+    ); // temporary
 
-  const vm = new MutableVMWrapper(selectVM(processedTemplate));
-
-  vm.setNamespace(namespace);
-
-  initializeCommonMetadata(enhancedParams, vm, template.asMutableResource());
-  vm.addTemplateLabel(TEMPLATE_VM_NAME_LABEL, vm.getName()); // for pairing service-vm (like for RDP)
-
+    vm = new MutableVMWrapper(selectVM(processedTemplate));
+    vm.setNamespace(namespace);
+    initializeCommonMetadata(enhancedParams, vm, template.asMutableResource());
+  } else {
+    vm = new MutableVMWrapper();
+    vm.setModel(VirtualMachineModel)
+      .setNamespace(namespace)
+      .setName(getFieldValue(vmSettings, VMSettingsField.NAME));
+    initializeCommonMetadata(enhancedParams, vm);
+    initializeVM(enhancedParams, vm);
+  }
+  initializeCommonVMMetadata(enhancedParams, vm);
   await k8sCreate(VirtualMachineModel, vm.asMutableResource());
 
   return getActualState();

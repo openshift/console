@@ -17,6 +17,7 @@ import {
   DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
+import { FLAGS } from '@console/internal/const';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import * as models from './models';
@@ -63,6 +64,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Workloads',
+      componentProps: {
+        name: 'Virtual Machines',
+        resource: models.VirtualMachineModel.plural,
+        required: FLAG_KUBEVIRT,
+      },
+      mergeBefore: 'Deployments',
+    },
+  },
+  {
     // NOTE(yaacov): vmtemplates is a template resource with a selector.
     // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
     // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
@@ -72,21 +85,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Virtual Machine Templates',
         resource: 'vmtemplates',
-        required: FLAG_KUBEVIRT,
+        required: [FLAG_KUBEVIRT, FLAGS.OPENSHIFT],
       },
       mergeBefore: 'Deployments',
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Workloads',
-      componentProps: {
-        name: 'Virtual Machines',
-        resource: models.VirtualMachineModel.plural,
-        required: FLAG_KUBEVIRT,
-      },
-      mergeBefore: 'Virtual Machine Templates',
     },
   },
   {

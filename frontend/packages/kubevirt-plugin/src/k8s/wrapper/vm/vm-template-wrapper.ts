@@ -1,4 +1,5 @@
 /* eslint-disable lines-between-class-members */
+import * as _ from 'lodash';
 import { getName } from '@console/shared/src';
 import { apiVersionForModel, K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
@@ -48,6 +49,7 @@ export class VMTemplateWrapper extends Wrapper<TemplateKind> {
 
   getName = () => getName(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
+  hasLabel = (label: string) => _.has(this.getLabels(null), label);
 
   getParameters = (defaultValue = []) => (this.data && this.data.parameters) || defaultValue;
 

@@ -29,6 +29,7 @@ export enum VMWizardProps {
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
   activeNamespace = 'activeNamespace',
+  openshiftFlag = 'openshiftFlag',
   reduxID = 'reduxID',
   virtualMachines = 'virtualMachines',
   userTemplates = 'userTemplates',
@@ -118,6 +119,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
+  | VMWizardProps.openshiftFlag
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
   | VMWareProviderProps.v2vvmware
@@ -134,6 +136,7 @@ export type ChangedCommonData = Set<ChangedCommonDataProp>;
 
 export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.activeNamespace,
+  VMWizardProps.openshiftFlag,
   VMWizardProps.virtualMachines,
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
@@ -159,6 +162,7 @@ export type CreateVMWizardComponentProps = {
   isCreateTemplate: boolean;
   dataIDReferences: IDReferences;
   activeNamespace: string;
+  openshiftFlag: boolean;
   reduxID: string;
   stepData: any;
   userTemplates: FirehoseResult<TemplateKind[]>;

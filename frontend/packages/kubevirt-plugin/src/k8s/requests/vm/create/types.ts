@@ -10,6 +10,7 @@ export type CreateVMParams = {
   storages: VMWizardStorage[];
   templates: TemplateKind[];
   namespace: string;
+  openshiftFlag: boolean;
 };
 
 export type CreateVMEnhancedParams = CreateVMParams & {
