@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -30,15 +30,6 @@ const AddBareMetalHostPage: React.FunctionComponent<AddBareMetalHostPageProps> =
         CreateResourceFormPageHeading) */}
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">{title}</div>
-          <div className="co-m-pane__heading-link">
-            <Link
-              to={`/k8s/ns/${namespace}/${referenceForModel(BareMetalHostModel)}/~new`}
-              id="yaml-link"
-              replace
-            >
-              Edit YAML
-            </Link>
-          </div>
         </h1>
         <p className="co-m-pane__explanation">
           Expand the hardware inventory by registering new Bare Metal Host.
