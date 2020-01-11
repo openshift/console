@@ -15,6 +15,8 @@ import {
   getTopologyResourceObject,
   createTopologyResourceConnection,
 } from '../topology-utils';
+import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
+import { TopologyFilters } from '../filters/filter-utils';
 import {
   resources,
   topologyData,
@@ -30,12 +32,16 @@ export function getTranformedTopologyData(
   mockData: TopologyDataResources,
   transformByProp: string[],
   mockCheURL?: string,
+  filters?: TopologyFilters,
 ) {
-  const result = transformTopologyData(mockData, transformByProp, undefined, mockCheURL, [
-    getKnativeServingRevisions,
-    getKnativeServingConfigurations,
-    getKnativeServingRoutes,
-  ]);
+  const result = transformTopologyData(
+    mockData,
+    transformByProp,
+    undefined,
+    mockCheURL,
+    [getKnativeServingRevisions, getKnativeServingConfigurations, getKnativeServingRoutes],
+    filters,
+  );
   const topologyTransformedData = result.topology;
   const graphData = result.graph;
   return { topologyTransformedData, graphData, keys: Object.keys(topologyTransformedData) };
@@ -265,6 +271,33 @@ describe('TopologyUtils ', () => {
       'deployments',
     ]);
     expect((topologyTransformedData[keys[2]].data as WorkloadData).builderImage).toBe(csvIcon);
+  });
+
+  it('should not render event sources if corresponding filter returns false', () => {
+    const eventFilter: TopologyFilters = _.set(
+      _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS),
+      'display.eventSources',
+      false,
+    );
+    const { topologyTransformedData } = getTranformedTopologyData(
+      MockKnativeResources,
+      [],
+      '',
+      eventFilter,
+    );
+    expect(topologyTransformedData['1317f615-9636-11e9-b134-06a61d886b689']).toBe(undefined);
+  });
+  it('should render event sources if corresponding filter returns true', () => {
+    const eventFilter: TopologyFilters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
+    const { topologyTransformedData } = getTranformedTopologyData(
+      MockKnativeResources,
+      [],
+      '',
+      eventFilter,
+    );
+    expect(topologyTransformedData['1317f615-9636-11e9-b134-06a61d886b689'].type).toBe(
+      'event-source',
+    );
   });
 });
 
