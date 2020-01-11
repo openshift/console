@@ -12,6 +12,7 @@ import {
   isKnativeServing,
   OverviewItem,
   getImageForCSVIcon,
+  getDefaultOperatorIcon,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
@@ -141,7 +142,9 @@ export const createTopologyNodeData = (
   const builderImageIcon =
     getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
     getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
-  const defaultIcon = getImageForIconClass(`icon-openshift`);
+  const defaultIcon = operatorBackedService
+    ? getDefaultOperatorIcon()
+    : getImageForIconClass(`icon-openshift`);
 
   return {
     id: dcUID,
@@ -158,7 +161,7 @@ export const createTopologyNodeData = (
         deploymentsAnnotations['app.openshift.io/edit-url'] ||
         getEditURL(deploymentsAnnotations['app.openshift.io/vcs-uri'], cheURL),
       cheEnabled: !!cheURL,
-      builderImage: csvIcon || builderImageIcon || defaultIcon,
+      builderImage: builderImageIcon || csvIcon || defaultIcon,
       isKnativeResource:
         type && (type === 'event-source' || 'knative-revision')
           ? true
