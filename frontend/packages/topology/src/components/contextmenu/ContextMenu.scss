@@ -1,3 +1,5 @@
 .topology-context-menu {
-  position: initial !important;
+  .pf-c-dropdown__menu {
+    position: initial !important;
+  }
 }

@@ -4,7 +4,7 @@ import { hullPath } from '../utils/svg-utils';
 import DefaultCreateConnector from '../components/DefaultCreateConnector';
 import Point from '../geom/Point';
 import Layer from '../components/layers/Layer';
-import ContextMenu, { ContextMenuItem } from '../components/contextmenu/ContextMenu';
+import { ContextMenu, ContextMenuItem } from '../components/contextmenu';
 import { Node, isNode, AnchorEnd, GraphElement, isGraph, Graph } from '../types';
 import { DragSourceSpec, DragSourceMonitor, DragEvent } from './dnd-types';
 import { useDndDrag } from './useDndDrag';
