@@ -44,3 +44,38 @@ export const VM_SIMPLE_STATUS_TO_TEXT = {
 };
 
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
+
+export const getVMStatusSortString = (vmStatus) => {
+  switch (vmStatus.status) {
+    case VM_STATUS_V2V_CONVERSION_PENDING:
+      return 'Pending (Import VMware)';
+    case VM_STATUS_IMPORT_PENDING:
+      return 'Pending (Import)';
+    case VM_STATUS_V2V_CONVERSION_IN_PROGRESS:
+      return 'Importing (VMware)';
+    case VM_STATUS_V2V_CONVERSION_ERROR:
+      return 'Error (Import VMware)';
+    case VM_STATUS_POD_ERROR:
+      return 'Error (Pod)';
+    case VM_STATUS_ERROR:
+      return 'Error (VM)';
+    case VM_STATUS_IMPORT_ERROR:
+      return 'Error (Import)';
+    case VM_STATUS_IMPORTING:
+      return 'Importing';
+    case VM_STATUS_VMI_WAITING:
+      return 'Pending';
+    case VM_STATUS_STARTING:
+      return 'Starting';
+    case VM_STATUS_MIGRATING:
+      return 'Migrating';
+    case VM_STATUS_STOPPING:
+      return 'Stopping';
+    case VM_STATUS_RUNNING:
+      return 'Running';
+    case VM_STATUS_OFF:
+      return 'Off';
+    default:
+      return 'Unknown';
+  }
+};

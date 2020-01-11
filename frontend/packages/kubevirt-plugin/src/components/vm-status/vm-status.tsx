@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { OffIcon, UnknownIcon } from '@patternfly/react-icons';
+import { OffIcon, UnknownIcon, SyncAltIcon } from '@patternfly/react-icons';
 import {
   PopoverStatus,
   StatusIconAndText,
@@ -9,7 +9,6 @@ import {
   ErrorStatus,
   ProgressStatus,
   PendingStatus,
-  SuccessStatus,
 } from '@console/shared';
 import { Progress, ProgressVariant, ProgressSize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -250,7 +249,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({
         </ProgressStatus>
       );
     case VM_STATUS_RUNNING:
-      return <SuccessStatus title="Running" />;
+      return <StatusIconAndText title="Running" icon={<SyncAltIcon />} />;
     case VM_STATUS_OFF:
       return <StatusIconAndText title="Off" icon={<OffIcon />} />;
     default:

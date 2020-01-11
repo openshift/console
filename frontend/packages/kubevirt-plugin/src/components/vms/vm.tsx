@@ -1,19 +1,24 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   getName,
   getNamespace,
   getUID,
+  getCreationTimestamp,
   createLookup,
   K8sEntityMap,
   dimensifyHeader,
   dimensifyRow,
+  Status,
 } from '@console/shared';
-import { NamespaceModel, PodModel } from '@console/internal/models';
+import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
+import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { getPhase } from '@console/noobaa-storage-plugin/src/utils';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   VirtualMachineInstanceMigrationModel,
@@ -23,16 +28,22 @@ import {
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { getBasicID, getLoadedData, getResource } from '../../utils';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
+import { getVMStatusSortString } from '../../statuses/vm/constants';
+import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
+import { isVM } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
-import { menuActions } from './menu-actions';
+import { vmMenuActions, vmiMenuActions } from './menu-actions';
 
 import './vm.scss';
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-4', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-3', 'col-xs-3'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-3', 'col-xs-3'),
   Kebab.columnClass,
 ];
 
@@ -51,8 +62,21 @@ const VMHeader = () =>
       },
       {
         title: 'Status',
-        sortFunc: 'string',
+        sortField: 'metadata.status',
         transforms: [sortable],
+      },
+      {
+        title: 'Created',
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+      },
+      {
+        title: 'Node',
+        sortField: 'metadata.node',
+        transforms: [sortable],
+      },
+      {
+        title: 'IP Address',
       },
       {
         title: '',
@@ -62,45 +86,55 @@ const VMHeader = () =>
   );
 
 const VMRow: React.FC<VMRowProps> = ({
-  obj: vm,
-  customData: { pods, migrations, vmiLookup, migrationLookup },
+  obj,
+  customData: { pods, migrations },
   index,
   key,
   style,
 }) => {
+  const { vm, vmi, migration } = obj;
+  const { name, namespace, node, creationTimestamp, uid, vmStatus } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
-  const name = getName(vm);
-  const namespace = getNamespace(vm);
-  const uid = getUID(vm);
-  const lookupID = getBasicID(vm);
 
-  const migration = migrationLookup[lookupID];
-  const vmi = vmiLookup[lookupID];
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
+  const status = vm ? (
+    <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+  ) : (
+    <Status status={getPhase(vmi)} />
+  );
+  const options = vm
+    ? vmMenuActions.map((action) =>
+        action(VirtualMachineModel, vm, {
+          vmStatus,
+          migration,
+          vmi,
+        }),
+      )
+    : vmiMenuActions.map((action) => action(VirtualMachineInstanceModel, vmi));
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
-        <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
+        {vm ? (
+          <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
+        ) : (
+          <ResourceLink
+            kind={VirtualMachineInstanceModel.kind}
+            name={getName(vmi)}
+            namespace={namespace}
+          />
+        )}
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
+      <TableData className={dimensify()}>{status}</TableData>
+      <TableData className={dimensify()}>{fromNow(creationTimestamp)}</TableData>
       <TableData className={dimensify()}>
-        <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+        {node && <ResourceLink kind={NodeModel.kind} name={node} namespace={namespace} />}
       </TableData>
+      <TableData className={dimensify()}>{vmi && getVmiIpAddresses(vmi)}</TableData>
       <TableData className={dimensify(true)}>
-        <Kebab
-          options={menuActions.map((action) => {
-            return action(VirtualMachineModel, vm, {
-              vmStatus,
-              migration,
-              vmi,
-            });
-          })}
-          key={`kebab-for-${uid}`}
-          id={`kebab-for-${uid}`}
-        />
+        <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
     </TableRow>
   );
@@ -119,11 +153,6 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
         customData={{
           pods: getLoadedData(resources.pods, []),
           migrations: getLoadedData(resources.migrations, []),
-          vmiLookup: createLookup(resources.vmis, getBasicID),
-          migrationLookup: createLookup(
-            resources.migrations,
-            (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,
-          ),
         }}
       />
     </div>
@@ -171,7 +200,50 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     }),
   ];
 
-  const flatten = ({ vms }) => getLoadedData(vms, []);
+  const flatten = ({ vms, vmis, pods, migrations }) => {
+    const loadedVMs = getLoadedData(vms);
+    const loadedVMIs = getLoadedData(vmis);
+    const loadedPods = getLoadedData(pods);
+    const loadedMigrations = getLoadedData(migrations);
+
+    if (!loadedVMs || !loadedVMIs || !loadedPods || !loadedMigrations) {
+      return null;
+    }
+
+    const vmisLookup = createLookup(loadedVMs, getBasicID);
+    const migrationLookup = createLookup(
+      loadedMigrations,
+      (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,
+    );
+    const virtualMachines = _.unionBy(loadedVMs, loadedVMIs, getBasicID);
+
+    return virtualMachines.map((obj: VMKind | VMIKind) => {
+      const lookupID = getBasicID(obj);
+      const { vm, vmi } = isVM(obj)
+        ? { vm: obj as VMKind, vmi: vmisLookup[lookupID] as VMIKind }
+        : { vm: null, vmi: obj as VMIKind };
+
+      const vmStatus =
+        vm && getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
+
+      return {
+        metadata: {
+          name: getName(obj),
+          namespace: getNamespace(obj),
+          vmStatus,
+          status: vm ? getVMStatusSortString(vmStatus) : getPhase(vmi),
+          node: getVMINodeName(vmi),
+          creationTimestamp: getCreationTimestamp(obj),
+          uid: getUID(obj),
+          lookupID,
+        },
+        vm,
+        vmi,
+        migration: migrationLookup[lookupID],
+      };
+    });
+  };
+
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
 
   return (
@@ -191,21 +263,36 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   );
 };
 
+type VMRowObjType = {
+  metadata: {
+    name: string;
+    namespace: string;
+    status: string;
+    node: string;
+    creationTimestamp: string;
+    uid: string;
+    lookupID: string;
+    vmStatus: VMStatusType;
+  };
+  vm: VMKind;
+  vmi: VMIKind;
+  migration: VMIKind;
+};
+
 type VMRowProps = {
-  obj: VMKind;
+  obj: VMRowObjType;
   index: number;
   key: string;
   style: object;
   customData: {
     pods: PodKind[];
     migrations: K8sResourceKind[];
-    migrationLookup: K8sEntityMap<VMIKind>;
     vmiLookup: K8sEntityMap<VMIKind>;
   };
 };
 
 type VMListProps = {
-  data: VMKind[];
+  data: VMRowObjType[];
   resources: {
     pods: FirehoseResult<PodKind[]>;
     migrations: FirehoseResult<K8sResourceKind[]>;
