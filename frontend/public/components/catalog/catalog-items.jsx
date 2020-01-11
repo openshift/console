@@ -103,9 +103,14 @@ const filterGroups = ['kind'];
 const getAvailableFilters = (initialFilters) => {
   const filters = _.cloneDeep(initialFilters);
   filters.kind = {
-    ClusterServiceClass: {
-      label: 'Service Class',
-      value: 'ClusterServiceClass',
+    ClusterServiceVersion: {
+      label: 'Operator Backed',
+      value: 'InstalledOperator',
+      active: true,
+    },
+    ImageStream: {
+      label: 'Builder Image',
+      value: 'ImageStream',
       active: false,
     },
     Template: {
@@ -113,14 +118,9 @@ const getAvailableFilters = (initialFilters) => {
       value: 'Template',
       active: false,
     },
-    ImageStream: {
-      label: 'Source-to-Image',
-      value: 'ImageStream',
-      active: false,
-    },
-    ClusterServiceVersion: {
-      label: 'Installed Operators',
-      value: 'InstalledOperator',
+    ClusterServiceClass: {
+      label: 'Service Class',
+      value: 'ClusterServiceClass',
       active: false,
     },
   };
@@ -216,7 +216,6 @@ export class CatalogTileViewPage extends React.Component {
     if (!item) {
       return null;
     }
-
     const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, kind } = item;
     const uid = obj.metadata.uid;
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
@@ -283,7 +282,6 @@ export class CatalogTileViewPage extends React.Component {
     );
   }
 }
-
 CatalogTileViewPage.displayName = 'CatalogTileViewPage';
 CatalogTileViewPage.propTypes = {
   items: PropTypes.array,
