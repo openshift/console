@@ -1,33 +1,22 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-.nb-buckets-card__row-status {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  :last-child {
-    margin-right: 0;
-  }
-}
-
-.nb-bucket-card__status-icon {
-  color: $pf-color-black-700;
-}
-
-.nb-buckets-card__row-status-item {
+.nb-buckets-card__buckets-failure-status {
   display: flex;
   flex-shrink: 0;
 }
 
-.nb-buckets-card__row-status-item-text {
+.nb-buckets-card__buckets-failure-status-count {
   color: $pf-color-blue-300;
-  margin-left: 0.25em;
+  margin-left: var(--pf-global--spacer--xs);
 }
 
-.nb-buckets-card__row-subtitle {
-  color: $pf-color-black-500;
+.nb-buckets-card__buckets-failure-status-item {
+  margin-left: var(--pf-global--spacer--sm);
+  .nb-buckets-card__buckets-failure-status-item--link {
+    text-decoration: none;
+  }
 }
 
-.nb-buckets-card__row-title {
-  margin-right: 0.5em;
+.nb-buckets-card__buckets-status-title {
+  margin-right: var(--pf-global--spacer--sm);
 }
-

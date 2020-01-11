@@ -9,13 +9,13 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { FirehoseResource } from '@console/internal/components/utils';
 import { StorageClassModel } from '@console/internal/models';
+import { FirehoseResource, resourcePathFromModel } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric, getGaugeValue } from '../../utils';
+import { getMetric, getGaugeValue, isBound } from '../../utils';
 import { NooBaaObjectBucketClaimModel } from '../../models';
-import { BucketsItem, BucketsType } from './buckets-card-item';
+import { BucketsItem, BucketsItemProps } from './buckets-card-item';
 import './buckets-card.scss';
 
 enum BucketsCardQueries {
@@ -41,16 +41,19 @@ const storageClassResource: FirehoseResource = {
   prop: 'storageclass',
 };
 
-const getNoobaaStorageClasses = (storageClassesList) =>
-  storageClassesList.filter((sc) => _.endsWith(_.get(sc, 'provisioner'), 'noobaa.io/obc'));
+const getNoobaaStorageClassList = (storageClassesList: K8sResourceKind[]): K8sResourceKind[] =>
+  storageClassesList.filter((sc: K8sResourceKind) =>
+    _.endsWith(_.get(sc, 'provisioner'), 'noobaa.io/obc'),
+  );
 
-const getNoobaaObcCount = (obcList, noobaaStorageClasses) => {
-  const result = obcList.filter((o) => {
-    const storageClassName = _.get(o, 'spec.storageClassName');
-    return noobaaStorageClasses.some((sc) => getName(sc) === storageClassName);
+const getNoobaaObcList = (
+  obcList: K8sResourceKind[],
+  noobaaStorageClassList: K8sResourceKind[],
+): K8sResourceKind[] =>
+  obcList.filter((obc: K8sResourceKind) => {
+    const storageClassName = _.get(obc, 'spec.storageClassName');
+    return noobaaStorageClassList.some((sc: K8sResourceKind) => getName(sc) === storageClassName);
   });
-  return result.length;
-};
 
 const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
@@ -65,11 +68,11 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     watchK8sResource(storageClassResource);
     Object.keys(BucketsCardQueries).forEach((key) => watchPrometheus(BucketsCardQueries[key]));
     return () => {
+      stopWatchK8sResource(objectBucketClaimsResource);
+      stopWatchK8sResource(storageClassResource);
       Object.keys(BucketsCardQueries).forEach((key) =>
         stopWatchPrometheusQuery(BucketsCardQueries[key]),
       );
-      stopWatchK8sResource(objectBucketClaimsResource);
-      stopWatchK8sResource(storageClassResource);
     };
   }, [watchK8sResource, watchPrometheus, stopWatchK8sResource, stopWatchPrometheusQuery]);
 
@@ -97,14 +100,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     BucketsCardQueries.UNHEALTHY_BUCKETS,
     'loadError',
   ]);
-  const obcCountResponse = prometheusResults.getIn([
-    BucketsCardQueries.BUCKET_CLAIMS_COUNT,
-    'data',
-  ]) as PrometheusResponse;
-  const obcCountResponseError = prometheusResults.getIn([
-    BucketsCardQueries.BUCKET_CLAIMS_COUNT,
-    'loadError',
-  ]);
   const obcObjectsCountsResponse = prometheusResults.getIn([
     BucketsCardQueries.BUCKET_CLAIMS_OBJECTS_COUNT,
     'data',
@@ -126,37 +121,58 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     'data',
   ]) as PrometheusResponse;
 
-  const obcData = _.get(resources.obc, 'data', []) as K8sResourceKind[];
-  const storageClassesData = _.get(resources.storageclass, 'data', []) as K8sResourceKind[];
   const noobaaBucketsLink = getMetric(bucketsLinksResponse, 'buckets');
 
-  const noobaaStorageClasses = getNoobaaStorageClasses(storageClassesData);
-  const k8sObc = getNoobaaObcCount(obcData, noobaaStorageClasses);
-  const prometheusObc = getGaugeValue(obcCountResponse);
-  const unhealthyObcCount = getGaugeValue(unhealthyObcCountResponse);
+  const storageClassesData = _.get(resources.storageclass, 'data', []) as K8sResourceKind[];
+  const storageClassesLoaded = _.get(resources.storageclass, 'loaded');
+  const storageClassesLoadError = _.get(resources.storageclass, 'loadError');
 
-  const bucketProps: BucketsType = {
-    bucketsCount: getGaugeValue(obCountResponse),
+  const obcData = _.get(resources.obc, 'data', []) as K8sResourceKind[];
+  const obcLoaded = _.get(resources.obc, 'loaded');
+  const obcLoadError = _.get(resources.obc, 'loadError');
+
+  const noobaaStorageClassList = getNoobaaStorageClassList(storageClassesData);
+  const noobaaObcList = getNoobaaObcList(obcData, noobaaStorageClassList);
+
+  const obcProvisioningFailure = noobaaObcList.filter((obc) => !isBound(obc)).length;
+
+  const bucketProps: BucketsItemProps = {
+    title: 'Noobaa Bucket',
+    bucketsCount: +getGaugeValue(obCountResponse),
     objectsCount: getGaugeValue(obObjectsCountResponse),
-    unhealthyCount: getGaugeValue(unhealthyObResponse),
+    unhealthyCounts: [+getGaugeValue(unhealthyObResponse)],
     isLoading: !(obCountResponse && obObjectsCountResponse && unhealthyObResponse),
-    error: obCountResponseError || obObjectsCountResponseError || unhealthyObResponseError,
+    hasLoadError: obCountResponseError || obObjectsCountResponseError || unhealthyObResponseError,
+    links: [noobaaBucketsLink],
   };
-  const bucketClaimProps: BucketsType = {
-    bucketsCount: String(k8sObc),
+
+  const bucketClaimProps: BucketsItemProps = {
+    title: 'Object Bucket Claim',
+    bucketsCount: noobaaObcList.length,
     objectsCount: getGaugeValue(obcObjectsCountsResponse),
-    unhealthyCount: k8sObc - Number(prometheusObc) + Number(unhealthyObcCount),
-    isLoading: !(obcCountResponse && obcObjectsCountsResponse && unhealthyObcCountResponse),
-    error: obcCountResponseError || obcObjectsCountsResponseError || unhealthyObcCountResponseError,
+    unhealthyCounts: [+getGaugeValue(unhealthyObcCountResponse), obcProvisioningFailure],
+    isLoading: !(
+      storageClassesLoaded &&
+      obcLoaded &&
+      obcObjectsCountsResponse &&
+      unhealthyObcCountResponse
+    ),
+    hasLoadError:
+      storageClassesLoadError ||
+      obcLoadError ||
+      obcObjectsCountsResponseError ||
+      unhealthyObcCountResponseError,
+    links: [noobaaBucketsLink, resourcePathFromModel(NooBaaObjectBucketClaimModel)],
   };
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Buckets</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <BucketsItem title="Noobaa Bucket" {...bucketProps} link={noobaaBucketsLink} />
-        <BucketsItem title="Object Bucket Claim" {...bucketClaimProps} link={noobaaBucketsLink} />
+        <BucketsItem {...bucketProps} />
+        <BucketsItem {...bucketClaimProps} />
       </DashboardCardBody>
     </DashboardCard>
   );

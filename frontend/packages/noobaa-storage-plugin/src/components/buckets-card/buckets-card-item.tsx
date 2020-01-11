@@ -1,75 +1,121 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
+import { InProgressIcon } from '@patternfly/react-icons';
 import { RedExclamationCircleIcon } from '@console/shared';
-import { LoadingInline, pluralize, humanizeNumber } from '@console/internal/components/utils';
+import { humanizeNumber, pluralize } from '@console/internal/components/utils';
 
 const formatCount = (count: number) => {
   const hCount = humanizeNumber(count);
   return `${hCount.string} Object${count === 1 ? '' : 's'}`;
 };
 
-const BucketsRowStatus: React.FC<BucketsRowStatusProps> = React.memo(({ status, link, error }) => (
-  <div className="nb-buckets-card__row-status-item">
-    {error || _.isNil(status) ? (
-      <span className="co-dashboard-text--small nb-buckets-card__row-subtitle">Not available</span>
-    ) : Number(status) > 0 ? (
-      <>
-        <a href={link} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
-          <RedExclamationCircleIcon className="co-dashboard-icon nb-bucket-card__status-icon" />
-          <span className="nb-buckets-card__row-status-item-text">{status}</span>
-        </a>
-      </>
-    ) : null}
+// Displays count of erroneous buckets due to issues not externalized as phase
+const OtherFailure: React.FC<BucketFailureItemProps> = React.memo(({ link, status }) => (
+  <div className="nb-buckets-card__buckets-failure-status-item">
+    <a
+      className="nb-buckets-card__buckets-failure-status-item--link"
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <RedExclamationCircleIcon />
+      <span className="nb-buckets-card__buckets-failure-status-count">{status}</span>
+    </a>
   </div>
 ));
 
-const BucketsRow: React.FC<BucketsRowProps> = React.memo(
-  ({ bucketsCount, title, objectsCount }) => {
-    const subtitle: string = _.isNil(objectsCount)
-      ? 'Not available'
-      : formatCount(Number(objectsCount));
-    return (
-      <div className="nb-buckets-card__row-title">
-        <div>{_.isNil(bucketsCount) ? title : pluralize(Number(bucketsCount), title)}</div>
-        <div className="co-dashboard-text--small nb-buckets-card__row-subtitle">{subtitle}</div>
-      </div>
-    );
+// Displays count of erroneous buckets due to failure in provision
+const ProvisioningFailure: React.FC<BucketFailureItemProps> = React.memo(({ link, status }) => (
+  <div className="nb-buckets-card__buckets-failure-status-item">
+    <Link to={link} className="nb-buckets-card__buckets-failure-status-item--link">
+      <InProgressIcon className="co-inventory-card__status-icon--progress" />
+      <span className="nb-buckets-card__buckets-failure-status-count">{status}</span>
+    </Link>
+  </div>
+));
+
+// Displays count of erroneous buckets
+const BucketFailureStatus: React.FC<BucketFailureStatusProps> = React.memo(
+  ({ failureCounts, failureLinks }) => (
+    <div className="nb-buckets-card__buckets-failure-status">
+      {failureCounts[0] > 0 && <OtherFailure link={failureLinks[0]} status={failureCounts[0]} />}
+      {failureCounts[1] > 0 && (
+        <ProvisioningFailure link={failureLinks[1]} status={failureCounts[1]} />
+      )}
+    </div>
+  ),
+);
+
+// Displays count of buckets and objects present in buckets
+const BucketsStatus: React.FC<BucketsStatusProps> = React.memo(
+  ({ isLoading, hasLoadError, title, bucketsCount, objectsCount }) => {
+    let body: JSX.Element;
+    if (isLoading && !hasLoadError) {
+      body = (
+        <>
+          <div className="co-inventory-card__item-title">
+            <div className="skeleton-inventory" />
+            <div>{title}</div>
+          </div>
+          <div className="skeleton-text" />
+        </>
+      );
+    } else {
+      body = (
+        <>
+          <div>{hasLoadError ? title : pluralize(bucketsCount, title)}</div>
+          <div className="co-dashboard-text--small text-secondary">
+            {hasLoadError || !objectsCount ? 'Not available' : formatCount(Number(objectsCount))}
+          </div>
+        </>
+      );
+    }
+    return <div className="nb-buckets-card__buckets-status-title">{body}</div>;
   },
 );
 
+// Displays Buckets and Bucket Claims information as rows
 export const BucketsItem: React.FC<BucketsItemProps> = React.memo(
-  ({ title, bucketsCount, objectsCount, unhealthyCount, isLoading, link, error }) =>
-    isLoading ? (
-      <LoadingInline />
-    ) : (
-      <div className="co-inventory-card__item">
-        <BucketsRow title={title} bucketsCount={bucketsCount} objectsCount={objectsCount} />
-        <BucketsRowStatus status={unhealthyCount} link={link} error={error} />
-      </div>
-    ),
+  ({ isLoading, hasLoadError, title, bucketsCount, objectsCount, unhealthyCounts, links }) => (
+    <div className="co-inventory-card__item">
+      <BucketsStatus
+        title={title}
+        bucketsCount={bucketsCount}
+        objectsCount={objectsCount}
+        hasLoadError={hasLoadError}
+        isLoading={isLoading}
+      />
+      {!(isLoading || hasLoadError) && (
+        <BucketFailureStatus failureCounts={unhealthyCounts} failureLinks={links} />
+      )}
+    </div>
+  ),
 );
 
-export type BucketsType = {
-  bucketsCount: string;
+export type BucketsItemProps = {
+  bucketsCount: number;
+  hasLoadError: boolean;
   isLoading: boolean;
+  links: string[];
   objectsCount: string;
-  unhealthyCount: string | number;
-  error: boolean;
+  title: string;
+  unhealthyCounts: number[];
 };
 
-type BucketsItemProps = BucketsType & {
-  link: string;
+type BucketsStatusProps = {
+  bucketsCount: number;
+  isLoading: boolean;
+  hasLoadError: boolean;
+  objectsCount: string;
   title: string;
 };
 
-type BucketsRowProps = {
-  bucketsCount: string;
-  title: string;
-  objectsCount: string;
+type BucketFailureItemProps = {
+  link: string;
+  status: number;
 };
 
-type BucketsRowStatusProps = {
-  link: string;
-  status: string | number;
-  error: boolean;
+type BucketFailureStatusProps = {
+  failureCounts: number[];
+  failureLinks: string[];
 };
