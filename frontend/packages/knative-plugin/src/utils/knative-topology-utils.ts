@@ -4,6 +4,8 @@ import {
   apiVersionForModel,
   DeploymentKind,
   referenceFor,
+  modelFor,
+  k8sUpdate,
 } from '@console/internal/module/k8s';
 import {
   TransformResourceData,
@@ -419,4 +421,27 @@ export const filterNonKnativeDeployments = (resources: DeploymentKind[]): Deploy
       !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_KAFKA])
     );
   });
+};
+
+export const createKnativeEventSourceSink = (
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+): Promise<K8sResourceKind> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+  const targetName = _.get(target, 'metadata.name');
+  const eventSourceObj = _.omit(source, 'status');
+  const sink = {
+    ref: {
+      apiVersion: target.apiVersion,
+      kind: target.kind,
+      name: targetName,
+    },
+  };
+  const updatePayload = {
+    ...eventSourceObj,
+    spec: { ...eventSourceObj.spec, sink },
+  };
+  return k8sUpdate(modelFor(referenceFor(source)), updatePayload);
 };

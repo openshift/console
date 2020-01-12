@@ -8,6 +8,7 @@ import {
   observer,
   WithSelectionProps,
   WithContextMenuProps,
+  WithDndDropProps,
   RectAnchor,
   useAnchor,
   useDragNode,
@@ -28,15 +29,21 @@ import Decorator from './Decorator';
 
 import './KnativeService.scss';
 
-export type EventSourceProps = {
+export type KnativeServiceProps = {
   element: Node;
+  droppable?: boolean;
+  hover?: boolean;
   dragging: boolean;
+  highlight?: boolean;
   regrouping: boolean;
+  canDrop?: boolean;
+  dropTarget?: boolean;
 } & WithSelectionProps &
+  WithDndDropProps &
   WithContextMenuProps;
 
 const DECORATOR_RADIUS = 13;
-const KnativeService: React.FC<EventSourceProps> = ({
+const KnativeService: React.FC<KnativeServiceProps> = ({
   element,
   selected,
   onSelect,
@@ -44,6 +51,9 @@ const KnativeService: React.FC<EventSourceProps> = ({
   contextMenuOpen,
   dragging,
   regrouping,
+  canDrop,
+  dropTarget,
+  dndDropRef,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -63,7 +73,7 @@ const KnativeService: React.FC<EventSourceProps> = ({
     element,
   })[1];
 
-  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef, dndDropRef);
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
   useAnchor(
@@ -76,54 +86,58 @@ const KnativeService: React.FC<EventSourceProps> = ({
   );
   useAnchor(RectAnchor);
   const { x, y, width, height } = element.getBounds();
+  const tipContent = `Move sink to service`;
 
   return (
-    <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>
-      <NodeShadows />
-      <Layer id={dragging && regrouping ? undefined : 'groups2'}>
-        <rect
-          ref={nodeRefs}
-          className={cx('odc-knative-service', {
-            'is-selected': selected,
-            'is-dragging': dragging,
-          })}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          rx="5"
-          ry="5"
-          filter={createSvgIdUrl(
-            hover || innerHover || dragging || contextMenuOpen
-              ? NODE_SHADOW_FILTER_ID_HOVER
-              : NODE_SHADOW_FILTER_ID,
-          )}
-        />
-      </Layer>
-      {hasDataUrl && (
-        <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
-          <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
-            <g transform="translate(-6.5, -6.5)">
-              <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} alt="Open URL" />
-            </g>
-          </Decorator>
-        </Tooltip>
-      )}
-      {(data.kind || element.getLabel()) && (
-        <SvgBoxedText
-          className="odc-knative-service__label odc-base-node__label"
-          x={x + width / 2}
-          y={y + height + 20}
-          paddingX={8}
-          paddingY={4}
-          kind={data.kind}
-          truncate={16}
-          dragRef={dragLabelRef}
-        >
-          {element.getLabel()}
-        </SvgBoxedText>
-      )}
-    </g>
+    <Tooltip content={tipContent} trigger="manual" isVisible={dropTarget && canDrop}>
+      <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>
+        <NodeShadows />
+        <Layer id={dragging && regrouping ? undefined : 'groups2'}>
+          <rect
+            ref={nodeRefs}
+            className={cx('odc-knative-service', {
+              'is-selected': selected,
+              'is-dragging': dragging,
+              'is-highlight': canDrop,
+            })}
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            rx="5"
+            ry="5"
+            filter={createSvgIdUrl(
+              hover || innerHover || dragging || contextMenuOpen || dropTarget
+                ? NODE_SHADOW_FILTER_ID_HOVER
+                : NODE_SHADOW_FILTER_ID,
+            )}
+          />
+        </Layer>
+        {hasDataUrl && (
+          <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+            <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
+              <g transform="translate(-6.5, -6.5)">
+                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} alt="Open URL" />
+              </g>
+            </Decorator>
+          </Tooltip>
+        )}
+        {(data.kind || element.getLabel()) && (
+          <SvgBoxedText
+            className="odc-knative-service__label odc-base-node__label"
+            x={x + width / 2}
+            y={y + height + 20}
+            paddingX={8}
+            paddingY={4}
+            kind={data.kind}
+            truncate={16}
+            dragRef={dragLabelRef}
+          >
+            {element.getLabel()}
+          </SvgBoxedText>
+        )}
+      </g>
+    </Tooltip>
   );
 };
 

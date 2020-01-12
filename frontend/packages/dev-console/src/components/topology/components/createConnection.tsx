@@ -1,16 +1,24 @@
 import { Node } from '@console/topology';
-import { createTopologyResourceConnection } from '../topology-utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { createTopologyResourceConnection, createTopologySinkConnection } from '../topology-utils';
 
 export const createConnection = (
   sourceNode: Node,
   targetNode: Node,
   replaceTargetNode: Node = null,
-  serviceBindingFlag: boolean,
-): Promise<any> => {
+  serviceBindingFlag: boolean = false,
+): Promise<K8sResourceKind[] | K8sResourceKind> => {
   return createTopologyResourceConnection(
     sourceNode.getData(),
     targetNode.getData(),
     replaceTargetNode ? replaceTargetNode.getData() : null,
     serviceBindingFlag,
   );
+};
+
+export const createSinkConnection = (
+  sourceNode: Node,
+  targetNode: Node,
+): Promise<K8sResourceKind> => {
+  return createTopologySinkConnection(sourceNode.getData(), targetNode.getData());
 };

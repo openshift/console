@@ -19,6 +19,7 @@ import {
   tranformKnNodeData,
   filterNonKnativeDeployments,
   filterRevisionsByActiveApplication,
+  createKnativeEventSourceSink,
   NodeType,
 } from '@console/knative-plugin/src/utils/knative-topology-utils';
 import {
@@ -553,7 +554,7 @@ export const createTopologyResourceConnection = (
   target: TopologyDataObject,
   replaceTarget: TopologyDataObject = null,
   serviceBindingFlag: boolean,
-): Promise<any> => {
+): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
   }
@@ -567,6 +568,19 @@ export const createTopologyResourceConnection = (
   }
 
   return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
+};
+
+export const createTopologySinkConnection = (
+  source: TopologyDataObject,
+  target: TopologyDataObject,
+): Promise<K8sResourceKind> => {
+  if (!source || !target || source === target) {
+    return Promise.reject();
+  }
+  const sourceObj = getTopologyResourceObject(source);
+  const targetObj = getTopologyResourceObject(target);
+
+  return createKnativeEventSourceSink(sourceObj, targetObj);
 };
 
 export const removeTopologyResourceConnection = (

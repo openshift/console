@@ -315,7 +315,8 @@ describe('Topology Utils', () => {
     const target = topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468032'];
     createTopologyResourceConnection(source, target, null, true)
       .then((resp) => {
-        expect(resp.data).toEqual(serviceBindingRequest.data);
+        const data = _.get(resp, 'data');
+        expect(data).toEqual(serviceBindingRequest.data);
         done();
       })
       .catch(() => {

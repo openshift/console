@@ -3,4 +3,8 @@
   --edge--stroke-width: 0;
   --edge--fill: #bbbbbb;
   --edge__link--stroke: #bbbbbb;
+  &.odc-m-editable {
+    --edge__arrow--cursor: pointer;
+  }
 }
+
