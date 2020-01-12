@@ -5,7 +5,7 @@ import {
   roleBindingsWithRequiredRolesResult,
   roleBindingsWithRequiredRoles,
   roleBindingsWithRequiredAttributes,
-} from '../__mocks__/project-access-form-mock';
+} from './project-access-form-data';
 
 describe('Fetch required roles', () => {
   it('should fetch the only the required rolebindings', async () => {
