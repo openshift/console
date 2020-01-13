@@ -538,7 +538,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   ];
 
   if (flags[FLAGS.OPENSHIFT]) {
-    resources.concat([
+    resources.push(
       getResource(TemplateModel, {
         namespace: activeNamespace,
         prop: VMWizardProps.userTemplates,
@@ -549,7 +549,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         prop: VMWizardProps.commonTemplates,
         matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
       }),
-    ]);
+    );
   }
 
   const dataIDReferences = makeIDReferences(resources);
