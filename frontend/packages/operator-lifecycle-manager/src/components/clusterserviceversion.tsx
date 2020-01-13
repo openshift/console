@@ -206,7 +206,7 @@ const getSubscriptionState = (subscription: SubscriptionKind): string => {
 };
 
 const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = ({
-  catalogSource,
+  catalogSourceMissing,
   obj,
   subscription,
 }) => {
@@ -216,14 +216,14 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
     return <>Disabling</>;
   }
 
-  // if (_.isEmpty(catalogSource)) {
-  //   return (
-  //     <>
-  //       <WarningStatus title="Cannot update" />
-  //       <span className="text-muted">Catalog source was removed</span>
-  //     </>
-  //   );
-  // }
+  if (catalogSourceMissing) {
+    return (
+      <>
+        <WarningStatus title="Cannot update" />
+        <span className="text-muted">Catalog source was removed</span>
+      </>
+    );
+  }
 
   return (
     <>
@@ -242,7 +242,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ obj, key, subscription, catalogSource, ...rest }) => {
+  ({ obj, key, subscription, catalogSourceMissing, ...rest }) => {
     const { displayName, provider, version } = _.get(obj, 'spec');
     const [icon] = _.get(obj, 'spec.icon', []);
     const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
@@ -276,7 +276,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
         <TableData className={tableColumnClasses[2]}>
           <div className="co-clusterserviceversion-row__status">
             <ClusterServiceVersionStatus
-              catalogSource={catalogSource}
+              catalogSourceMissing={catalogSourceMissing}
               obj={obj}
               subscription={subscription}
             />
@@ -326,7 +326,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 );
 
 export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProps> = ({
-  catalogSource,
+  catalogSourceMissing,
   key,
   obj,
   ...rest
@@ -338,7 +338,7 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
   const subscriptionState = _.get(obj, 'status.state', 'Unknown');
   const uid = getUID(obj);
   const getStatus = () => {
-    if (_.isEmpty(catalogSource)) {
+    if (catalogSourceMissing) {
       return (
         <>
           <WarningStatus title="Cannot update" />
@@ -413,19 +413,21 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
     : (obj as SubscriptionKind);
-  const catalogSource = catalogSourceForSubscription(catalogSources, subscription);
+  // Only warn about missing catalog sources if the user was able to list them.
+  const catalogSourceMissing =
+    !_.isEmpty(catalogSources) && !catalogSourceForSubscription(catalogSources, subscription);
 
   return isCSV(obj) ? (
     <ClusterServiceVersionTableRow
       {...rest}
-      catalogSource={catalogSource}
+      catalogSourceMissing={catalogSourceMissing}
       obj={obj as ClusterServiceVersionKind}
       subscription={subscription}
     />
   ) : (
     <FailedSubscriptionTableRow
       {...rest}
-      catalogSource={catalogSource}
+      catalogSourceMissing={catalogSourceMissing}
       obj={subscription as SubscriptionKind}
     />
   );
@@ -886,7 +888,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
 };
 
 type ClusterServiceVersionStatusProps = {
-  catalogSource: CatalogSourceKind;
+  catalogSourceMissing: boolean;
   obj: ClusterServiceVersionKind;
   subscription: SubscriptionKind;
 };
@@ -939,7 +941,7 @@ type InstalledOperatorTableRowProps = {
 };
 
 export type ClusterServiceVersionTableRowProps = {
-  catalogSource: CatalogSourceKind;
+  catalogSourceMissing: boolean;
   index: number;
   key?: string;
   obj: ClusterServiceVersionKind;
@@ -948,7 +950,7 @@ export type ClusterServiceVersionTableRowProps = {
 };
 
 export type FailedSubscriptionTableRowProps = {
-  catalogSource: CatalogSourceKind;
+  catalogSourceMissing: boolean;
   index: number;
   key?: string;
   obj: SubscriptionKind;
