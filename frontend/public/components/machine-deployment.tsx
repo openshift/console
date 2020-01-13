@@ -124,7 +124,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ ob
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Deployment Overview" />
+        <SectionHeading text="Machine Deployment Details" />
         <MachineCounts resourceKind={MachineDeploymentModel} resource={obj} />
         <div className="row">
           <div className="col-sm-6">

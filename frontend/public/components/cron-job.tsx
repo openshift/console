@@ -124,7 +124,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text="CronJob Overview" />
+            <SectionHeading text="CronJob Details" />
             <ResourceSummary resource={cronjob}>
               <DetailsItem label="Schedule" obj={cronjob} path="spec.schedule" />
               <DetailsItem label="Concurrency Policy" obj={cronjob} path="spec.concurrencyPolicy" />
@@ -143,7 +143,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <SectionHeading text="Job Overview" />
+            <SectionHeading text="Job Details" />
             <dl className="co-m-pane__details">
               <DetailsItem
                 label="Desired Completions"

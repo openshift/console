@@ -225,7 +225,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             ))}
           />
         )}
-        <SectionHeading text="Image Stream Overview" />
+        <SectionHeading text="Image Stream Details" />
         <ResourceSummary resource={imageStream}>
           {imageRepository && <dt>Image Repository</dt>}
           {imageRepository && <dd>{imageRepository}</dd>}

@@ -44,7 +44,7 @@ const Details = ({ obj: replicaSet }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Replica Set Overview" />
+        <SectionHeading text="Replica Set Details" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>

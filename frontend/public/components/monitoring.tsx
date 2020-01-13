@@ -318,7 +318,7 @@ const AlertsDetailsPage = withFallback(
           </div>
           <div className="co-m-pane__body">
             {state !== AlertStates.NotFiring && <ToggleGraph />}
-            <SectionHeading text="Alert Overview" />
+            <SectionHeading text="Alert Details" />
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
@@ -479,7 +479,7 @@ const AlertRulesDetailsPage = withFallback(
           </div>
           <div className="co-m-pane__body">
             <div className="monitoring-heading">
-              <SectionHeading text="Alerting Rule Overview" />
+              <SectionHeading text="Alerting Rule Details" />
             </div>
             <div className="co-m-pane__body-group">
               <div className="row">
@@ -616,7 +616,7 @@ const SilencesDetailsPage = withFallback(
             </h1>
           </div>
           <div className="co-m-pane__body">
-            <SectionHeading text="Silence Overview" />
+            <SectionHeading text="Silence Details" />
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-6">
@@ -1445,7 +1445,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
                 'co-m-horizontal-nav-item--active': match.url === ConfigPath,
               })}
             >
-              <Link to={ConfigPath}>Overview</Link>
+              <Link to={ConfigPath}>Details</Link>
             </li>
             <li
               className={classNames('co-m-horizontal-nav__menu-item', {

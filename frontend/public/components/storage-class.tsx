@@ -101,7 +101,7 @@ type StorageClassTableRowProps = {
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="StorageClass Overview" />
+      <SectionHeading text="StorageClass Details" />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj}>

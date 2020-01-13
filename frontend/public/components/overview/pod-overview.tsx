@@ -26,7 +26,7 @@ const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { routes, serv
 
 const tabs = [
   {
-    name: 'Overview',
+    name: 'Details',
     component: PodOverviewDetails,
   },
   {

@@ -147,7 +147,7 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="User Overview" />
+      <SectionHeading text="User Details" />
       <ResourceSummary resource={obj}>
         <dt>Full Name</dt>
         <dd>{obj.fullName || '-'}</dd>

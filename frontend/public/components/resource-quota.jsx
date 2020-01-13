@@ -311,7 +311,7 @@ const Details = ({ obj: rq }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${label} Overview`} />
+        <SectionHeading text={`${label} Details`} />
         {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
         <div className="row">
           <div className="col-sm-6">

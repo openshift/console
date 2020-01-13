@@ -16,7 +16,7 @@ const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = (
 
 const tabs = [
   {
-    name: 'Overview',
+    name: 'Details',
     component: StatefulSetOverviewDetails,
   },
   {

@@ -111,7 +111,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Service Broker Overview" />
+        <SectionHeading text="Service Broker Details" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={serviceBroker} />

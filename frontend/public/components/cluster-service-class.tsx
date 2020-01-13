@@ -108,7 +108,7 @@ const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({
         <ClusterServiceClassInfo obj={serviceClass} />
       </div>
       <div className="col-md-5 col-md-pull-7">
-        <SectionHeading text="Service Class Overview" />
+        <SectionHeading text="Service Class Details" />
         <ResourceSummary resource={serviceClass}>
           <dt>External Name</dt>
           <dd>{serviceClass.spec.externalName || '-'}</dd>

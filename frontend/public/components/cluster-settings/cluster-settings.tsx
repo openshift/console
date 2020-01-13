@@ -380,7 +380,7 @@ export const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({
 const pages = [
   {
     href: '',
-    name: 'Overview',
+    name: 'Details',
     component: ClusterVersionDetailsTable,
   },
   {

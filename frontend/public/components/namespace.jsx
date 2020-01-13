@@ -541,12 +541,12 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const Details_ = ({ obj: ns, consoleLinks }) => {
+const NamespaceDetails_ = ({ obj: ns, consoleLinks }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${ns.kind} Overview`} />
+        <SectionHeading text={`${ns.kind} Details`} />
         <NamespaceSummary ns={ns} />
       </div>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
@@ -572,7 +572,7 @@ const DetailsStateToProps = ({ UI }) => ({
   consoleLinks: UI.get('consoleLinks'),
 });
 
-const Details = connect(DetailsStateToProps)(Details_);
+const NamespaceDetails = connect(DetailsStateToProps)(NamespaceDetails_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
@@ -718,7 +718,11 @@ export const NamespacesDetailsPage = (props) => (
   <DetailsPage
     {...props}
     menuActions={nsMenuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)]}
+    pages={[
+      navFactory.details(NamespaceDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RolesPage),
+    ]}
   />
 );
 
@@ -729,13 +733,13 @@ export const ProjectsDetailsPage = (props) => (
     pages={[
       {
         href: '',
-        name: 'Dashboard',
+        name: 'Overview',
         component: ProjectDashboard,
       },
       {
-        href: 'overview',
-        name: 'Overview',
-        component: Details,
+        href: 'details',
+        name: 'Details',
+        component: NamespaceDetails,
       },
       navFactory.editYaml(),
       navFactory.workloads(Overview),

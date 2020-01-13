@@ -109,7 +109,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Deployment Overview" />
+        <SectionHeading text="Deployment Details" />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingController
           namespace={deployment.metadata.namespace}

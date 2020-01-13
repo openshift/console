@@ -238,7 +238,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 
       <div className="row">
         <div className="col-lg-4">
-          <SectionHeading text="Container Overview" />
+          <SectionHeading text="Container Details" />
           <dl className="co-m-pane__details">
             <dt>State</dt>
             <dd>

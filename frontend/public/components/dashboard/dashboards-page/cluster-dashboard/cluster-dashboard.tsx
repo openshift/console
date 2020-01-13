@@ -8,7 +8,7 @@ import { InventoryCard } from './inventory-card';
 import { UtilizationCard } from './utilization-card';
 import { ActivityCard } from './activity-card';
 
-export const OverviewDashboard: React.FC<{}> = () => {
+export const ClusterDashboard: React.FC<{}> = () => {
   const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
   const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
   const rightCards = [{ Card: ActivityCard }];

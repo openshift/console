@@ -136,7 +136,7 @@ const SecretDetails = ({ obj: secret }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Secret Overview" />
+        <SectionHeading text="Secret Details" />
         <ResourceSummary resource={secret} />
       </div>
       <div className="co-m-pane__body">

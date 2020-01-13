@@ -133,7 +133,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Template Instance Overview" />
+        <SectionHeading text="Template Instance Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

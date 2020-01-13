@@ -42,7 +42,7 @@ const Details = ({ obj: replicationController }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Replication Controller Overview" />
+        <SectionHeading text="Replication Controller Details" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary

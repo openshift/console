@@ -36,13 +36,13 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
 
   const dashboardPage = {
     href: '', // default landing page
-    name: 'Dashboard',
+    name: 'Overview',
     component: VMDashboard,
   };
 
   const overviewPage = {
     href: VM_DETAIL_OVERVIEW_HREF,
-    name: 'Overview',
+    name: 'Details',
     component: VMDetailsFirehose,
   };
 

@@ -411,7 +411,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Route Overview" />
+        <SectionHeading text="Route Details" />
         <RouteCharts namespace={route.metadata.namespace} route={route.metadata.name} />
         <div className="row">
           <div className="col-sm-6">

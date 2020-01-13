@@ -110,7 +110,7 @@ class Details extends React.Component {
     return (
       <div>
         <div className="co-m-pane__body">
-          <SectionHeading text="Role Overview" />
+          <SectionHeading text="Role Details" />
           <div className="row">
             <div className="col-xs-6">
               <dl className="co-m-pane__details">

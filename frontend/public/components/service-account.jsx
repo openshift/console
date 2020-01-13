@@ -180,7 +180,7 @@ const Details = ({ obj: serviceaccount }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Service Account Overview" />
+        <SectionHeading text="Service Account Details" />
         <ResourceSummary resource={serviceaccount} />
       </div>
       <div className="co-m-pane__body co-m-pane__body--section-heading">

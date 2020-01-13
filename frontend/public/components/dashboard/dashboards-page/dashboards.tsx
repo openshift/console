@@ -5,7 +5,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { Helmet } from 'react-helmet';
 
 import * as plugins from '../../../plugins';
-import { OverviewDashboard } from './overview-dashboard/overview-dashboard';
+import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid, {
@@ -57,8 +57,8 @@ const getPluginTabPages = (flags: FlagsObject): Page[] => {
 const getTabs = (flags: FlagsObject): Page[] => [
   {
     href: '',
-    name: 'Overview',
-    component: OverviewDashboard,
+    name: 'Cluster',
+    component: ClusterDashboard,
   },
   ...getPluginTabPages(flags),
 ];
@@ -69,7 +69,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({
   k8sModels,
   flags,
 }) => {
-  const title = 'Dashboards';
+  const title = 'Overview';
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
   ) : (

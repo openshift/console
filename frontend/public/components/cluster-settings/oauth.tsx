@@ -69,7 +69,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind })
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="OAuth Overview" />
+        <SectionHeading text="OAuth Details" />
         <ResourceSummary resource={obj}>
           {tokenConfig && (
             <>

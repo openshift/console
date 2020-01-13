@@ -142,7 +142,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Autoscaler Overview" />
+        <SectionHeading text="Machine Autoscaler Details" />
         <ResourceSummary resource={obj}>
           <dt>Scale Target</dt>
           <dd>

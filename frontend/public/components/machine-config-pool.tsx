@@ -182,7 +182,7 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Config Pool Overview " />
+        <SectionHeading text="Machine Config Pool Details " />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
         <div className="row">

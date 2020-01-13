@@ -353,7 +353,7 @@ export const APIExplorerPage: React.FC<{}> = () => (
 );
 APIExplorerPage.displayName = 'APIExplorerPage';
 
-const APIResourceOverview: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
+const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   const { kind, apiGroup, apiVersion, namespaced, verbs, shortNames } = kindObj;
   const description = getResourceDescription(kindObj);
   return (
@@ -652,8 +652,8 @@ const APIResourcePage_ = ({
   const pages = [
     {
       href: '',
-      name: 'Overview',
-      component: APIResourceOverview,
+      name: 'Details',
+      component: APIResourceDetails,
     },
     {
       href: 'schema',

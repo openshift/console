@@ -64,7 +64,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({ obj: sb 
           instanceName={sb.spec.instanceRef.name}
           className="co-m-pane__explanation"
         />
-        <SectionHeading text="Service Binding Overview" />
+        <SectionHeading text="Service Binding Details" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={sb} />

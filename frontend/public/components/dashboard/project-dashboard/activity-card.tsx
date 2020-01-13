@@ -18,7 +18,7 @@ import { EventKind, K8sKind } from '../../../module/k8s';
 import { FlagsObject, featureReducerName } from '../../../reducers/features';
 import * as plugins from '../../../plugins';
 import { isDashboardsOverviewResourceActivity } from '@console/plugin-sdk';
-import { uniqueResource } from '../dashboards-page/overview-dashboard/utils';
+import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';

@@ -133,7 +133,7 @@ const Details = ({ obj: pv }) => {
   const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="PersistentVolume Overview" />
+      <SectionHeading text="PersistentVolume Details" />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pv}>
