@@ -7,7 +7,6 @@ import {
 } from './icons';
 import GenericStatus from './GenericStatus';
 import { StatusComponentProps } from './types';
-import StatusIconAndText from './StatusIconAndText';
 
 export const ErrorStatus: React.FC<StatusComponentProps> = (props) => (
   <GenericStatus {...props} Icon={RedExclamationCircleIcon} />
@@ -30,11 +29,11 @@ export const ProgressStatus: React.FC<StatusComponentProps> = (props) => (
 ProgressStatus.displayName = 'ProgressStatus';
 
 export const SuccessStatus: React.FC<StatusComponentProps> = (props) => (
-  <StatusIconAndText {...props} icon={<GreenCheckCircleIcon />} />
+  <GenericStatus {...props} Icon={GreenCheckCircleIcon} />
 );
 SuccessStatus.displayName = 'SuccessStatus';
 
 export const WarningStatus: React.FC<StatusComponentProps> = (props) => (
-  <StatusIconAndText {...props} icon={<YellowExclamationTriangleIcon />} />
+  <GenericStatus {...props} Icon={YellowExclamationTriangleIcon} />
 );
 WarningStatus.displayName = 'WarningStatus';
