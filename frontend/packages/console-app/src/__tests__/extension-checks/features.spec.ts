@@ -9,7 +9,7 @@ describe('ModelFeatureFlag', () => {
     const baseModelRefs = _.keys(baseCRDs);
     const pluginModelRefs = _.flatMap(
       testedRegistry
-        .getFeatureFlags()
+        .getModelFeatureFlags()
         .filter(isModelFeatureFlag)
         .map((ff) => referenceForModel(ff.properties.model)),
     );
