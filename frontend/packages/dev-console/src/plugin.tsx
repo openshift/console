@@ -501,6 +501,19 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      path: ['/helm-releases/ns/:ns/release/:name'],
+      exact: false,
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleaseDetails' /* webpackChunkName: "dev-console-helmReleaseDetails" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       perspective: 'dev',
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
