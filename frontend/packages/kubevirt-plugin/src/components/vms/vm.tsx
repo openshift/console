@@ -210,9 +210,9 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       return null;
     }
 
-    const vmisLookup = createLookup(loadedVMs, getBasicID);
+    const vmisLookup = createLookup(vmis, getBasicID);
     const migrationLookup = createLookup(
-      loadedMigrations,
+      migrations,
       (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,
     );
     const virtualMachines = _.unionBy(loadedVMs, loadedVMIs, getBasicID);
