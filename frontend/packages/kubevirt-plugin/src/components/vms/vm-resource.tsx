@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
-import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
@@ -117,16 +116,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           name={getName(vmi)}
           namespace={getNamespace(vmi)}
         />
-      </VMDetailsItem>
-
-      <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
-        {launcherPod && (
-          <ResourceLink
-            kind={PodModel.kind}
-            name={getName(launcherPod)}
-            namespace={getNamespace(launcherPod)}
-          />
-        )}
       </VMDetailsItem>
 
       <VMDetailsItem
