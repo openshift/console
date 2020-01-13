@@ -32,7 +32,7 @@ export const getValidationUpdate = (
     const needsValidationUpdate =
       (detectValues &&
         detectValues.some((fieldKey) => compareField(prevState, state, id, fieldKey))) ||
-      (detectCommonData && detectCommonData.some((fieldKey) => changedCommonData[fieldKey]));
+      (detectCommonData && detectCommonData.some((fieldKey) => changedCommonData.has(fieldKey)));
 
     if (needsValidationUpdate) {
       const validation = validator(field, options);
