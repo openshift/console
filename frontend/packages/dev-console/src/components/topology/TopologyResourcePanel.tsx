@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
 import * as _ from 'lodash';
-import { KnativeResourceOverviewPage } from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
+import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import { TopologyDataObject } from './topology-types';
 
 export type TopologyResourcePanelProps = {

@@ -3,11 +3,11 @@ import { ResourceSummary } from '@console/internal/components/utils';
 import { OverviewItem, PodRing } from '@console/shared';
 import { RevisionModel } from '../../models';
 
-export type KnativeOverviewProps = {
+type KnativeOverviewProps = {
   item?: OverviewItem;
 };
 
-export const KnativeOverview: React.FC<KnativeOverviewProps> = ({ item }) => {
+const KnativeOverview: React.FC<KnativeOverviewProps> = ({ item }) => {
   const { obj, current } = item;
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
@@ -28,3 +28,5 @@ export const KnativeOverview: React.FC<KnativeOverviewProps> = ({ item }) => {
     </div>
   );
 };
+
+export default KnativeOverview;
