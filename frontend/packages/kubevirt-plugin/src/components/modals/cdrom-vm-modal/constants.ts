@@ -7,8 +7,7 @@ export type CD = {
 
   // UI
   changed?: boolean;
-  ejected?: boolean;
-  isInVM?: boolean;
+  newCD?: boolean;
   pvc?: string;
   container?: string;
   type?: string;
@@ -42,13 +41,6 @@ export const initialDisk = {
   size: 10,
   isURLValid: true,
   changed: false,
-};
-
-export const sourceDict = {
-  container: 'Container',
-  url: 'URL',
-  pvc: 'PVC',
-  windowsTools: 'Windows Tools',
 };
 
 export const StorageType = {

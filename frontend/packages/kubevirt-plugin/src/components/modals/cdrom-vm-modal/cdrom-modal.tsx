@@ -11,7 +11,6 @@ import { PlusCircleIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-ic
 import { k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooter } from '../modal/modal-footer';
 import { getCDsPatch } from '../../../k8s/patches/vm/vm-cdrom-patches';
-import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { getVMLikeModel, asVM, isWindows } from '../../../selectors/vm';
 import {
   getCDRoms,
@@ -52,7 +51,6 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
           name,
           cdrom,
           bootOrder,
-          isInVM: true,
         };
         const container = getContainerImageByDisk(vm, name);
         if (container) {
@@ -88,10 +86,12 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
 
   const [cds, setCDs] = React.useState<CDMap>(mapCDsToSource(getCDRoms(vm)));
   const [showRestartAlert, setShowRestartAlert] = React.useState<boolean>(false);
+  const [shouldPatch, setShouldPatch] = React.useState<boolean>(false);
 
   const onCDChange = (cdName: string, key: string, value: string) => {
     setShowRestartAlert(true);
-    const cd = { ...cds[cdName], [key]: value, changed: true };
+    setShouldPatch(true);
+    const cd = { ...cds[cdName], [key]: value };
     if (key === StorageType.URL) {
       if (isValidationError(validateURL(value))) {
         cd.isURLValid = false;
@@ -108,33 +108,21 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
       ...initialDisk,
       type: StorageType.CONTAINER,
       name,
-      isInVM: false,
-      changed: true,
+      newCD: true,
     };
     setShowRestartAlert(true);
+    setShouldPatch(true);
     setCDs({ ...cds, [name]: newCD });
   };
 
-  const onCDEject = (cdName: string) =>
-    setCDs({ ...cds, [cdName]: { ...cds[cdName], ejected: true } });
-
   const onCDDelete = (cdName: string) => {
-    if (cds[cdName].isInVM) {
-      const patch = getRemoveDiskPatches(vmLikeEntity, cds[cdName]);
-      const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patch);
-      // eslint-disable-next-line promise/catch-or-return
-      handlePromise(promise).then(() => {
-        setCDs(_.omit(cds, cdName));
-        setShowRestartAlert(true);
-      });
-    } else {
-      setCDs(_.omit(cds, cdName));
-    }
+    setShouldPatch(true);
+    setCDs(_.omit(cds, cdName));
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    if (Object.values(cds).find((cd) => cd.changed)) {
+    if (shouldPatch) {
       const patch = await getCDsPatch(vmLikeEntity, Object.values(cds));
       const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patch);
       handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
@@ -178,7 +166,6 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
                 inProgress={inProgress}
                 onChange={onCDChange}
                 onDelete={onCDDelete}
-                onEject={onCDEject}
               />
             ))
           ) : (
@@ -200,6 +187,8 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
             {_.size(cds) > 1 && (
               <Tooltip
                 position="bottom"
+                trigger="click mouseenter"
+                entryDelay={0}
                 content="You have reached the maximum amount of CD-ROM drives"
               >
                 <OutlinedQuestionCircleIcon />

@@ -10,14 +10,13 @@ import {
   FormSelectOption,
   TextInput,
   Button,
-  InputGroup,
 } from '@patternfly/react-core';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { VMKind } from '../../../types';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
-import { StorageType, sourceDict, CD, CD_SIZE, CD_STORAGE_CLASS } from './constants';
+import { StorageType, CD, CD_SIZE, CD_STORAGE_CLASS } from './constants';
 
 export const CDRomRow: React.FC<CDRomRowProps> = ({
   cd,
@@ -26,47 +25,12 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
   storageClasses,
   index,
   onChange,
-  onEject,
   onDelete,
   isWindows,
   inProgress,
   winToolsContainer,
 }) => {
-  const {
-    name,
-    type,
-    container,
-    pvc,
-    url,
-    windowsTools,
-    size,
-    storageClass,
-    isURLValid,
-    ejected,
-    isInVM,
-  } = cd;
-
-  if (isInVM && !ejected)
-    return (
-      <div>
-        <Text component={TextVariants.h4}>{`Drive ${index + 1}: ${sourceDict[type]}`}</Text>
-        <InputGroup>
-          <TextInput
-            isDisabled
-            type="text"
-            id={`cdrom-value-${name}`}
-            value={cd[type]}
-            aria-label="cdrom-value"
-          />
-          <Button className="vm-cd-eject-btn" variant="secondary" onClick={() => onEject(name)}>
-            Eject CD-ROM
-          </Button>
-          <Button className="vm-cd-delete-btn" onClick={() => onDelete(name)} variant="plain">
-            <MinusCircleIcon />
-          </Button>
-        </InputGroup>
-      </div>
-    );
+  const { name, type, container, pvc, url, windowsTools, size, storageClass, isURLValid } = cd;
 
   return (
     <div>
@@ -210,7 +174,6 @@ export type CDRomRowProps = {
   usedPVCs: string[];
   index: number;
   onChange: (cdName: string, key: string, value: string) => void;
-  onEject: (cdName: any) => void;
   onDelete: (cdName: any) => void;
   isWindows: boolean;
   inProgress: boolean;
