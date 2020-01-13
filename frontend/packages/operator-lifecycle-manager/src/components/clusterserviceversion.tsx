@@ -216,14 +216,14 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
     return <>Disabling</>;
   }
 
-  if (_.isEmpty(catalogSource)) {
-    return (
-      <>
-        <WarningStatus title="Cannot update" />
-        <span className="text-muted">Catalog source was removed</span>
-      </>
-    );
-  }
+  // if (_.isEmpty(catalogSource)) {
+  //   return (
+  //     <>
+  //       <WarningStatus title="Cannot update" />
+  //       <span className="text-muted">Catalog source was removed</span>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
@@ -531,10 +531,12 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
           {
             kind: referenceForModel(SubscriptionModel),
             prop: 'subscriptions',
+            optional: true,
           },
           {
             kind: referenceForModel(CatalogSourceModel),
             prop: 'catalogSources',
+            optional: true,
           },
         ]}
         flatten={flatten}
