@@ -203,7 +203,7 @@ export const tableFilters: TableFilterMap = {
   },
 };
 
-interface TableFilterGroups {
+export interface TableFilterGroups {
   selected: Set<string>;
   all: string[];
   values: Set<string>;

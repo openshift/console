@@ -11,11 +11,11 @@ import { SecretModel } from '@console/internal/models';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
-
 export interface HelmReleaseDetailsPageProps {
   match: RMatch<{
     ns?: string;
@@ -48,7 +48,14 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
         ]}
         title={secretResource[0]?.metadata.labels?.name}
         kind={SecretReference}
-        pages={[navFactory.details(HelmReleaseOverview)]}
+        pages={[
+          navFactory.details(HelmReleaseOverview),
+          {
+            href: 'resources',
+            name: 'Resources',
+            component: HelmReleaseResources,
+          },
+        ]}
         customKind={HelmReleaseReference}
       />
     );
