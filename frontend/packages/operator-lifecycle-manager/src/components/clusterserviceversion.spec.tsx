@@ -67,7 +67,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <ClusterServiceVersionTableRow
-        catalogSource={testCatalogSource}
+        catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
@@ -81,7 +81,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders a component wrapped in an `ErrorBoundary', () => {
     wrapper = shallow(
       <ClusterServiceVersionTableRow
-        catalogSource={testCatalogSource}
+        catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
