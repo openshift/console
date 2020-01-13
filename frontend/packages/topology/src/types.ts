@@ -55,6 +55,7 @@ export interface NodeModel extends ElementModel {
   height?: number;
   group?: boolean;
   shape?: NodeShape;
+  collapsed?: boolean;
 }
 
 export interface EdgeModel extends ElementModel {
@@ -116,6 +117,8 @@ export interface Node<E extends NodeModel = NodeModel, D = any> extends GraphEle
   getBounds(): Rect;
   setBounds(bounds: Rect): void;
   isGroup(): boolean;
+  isCollapsed(): boolean;
+  setCollapsed(collapsed: boolean): void;
   getNodeShape(): NodeShape;
   setNodeShape(shape: NodeShape): void;
   getSourceEdges(): Edge[];
@@ -145,7 +148,7 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
   setScale(scale: number): void;
   getLayout(): string | undefined;
   setLayout(type: string | undefined): void;
-  layout(): void;
+  layout(initialize?: boolean): void;
 
   // viewport operations
   reset(): void;
@@ -184,6 +187,11 @@ export type ComponentFactory = (
 
 export type ElementFactory = (kind: ModelKind, type: string) => GraphElement | undefined;
 
+export type AggregateEdgeHandler = (
+  edges: EdgeModel[] | undefined,
+  nodes: NodeModel[] | undefined,
+) => EdgeModel[];
+
 export interface Controller extends WithState {
   getStore<S extends {} = {}>(): S;
   fromModel(model: Model): void;
@@ -199,6 +207,7 @@ export interface Controller extends WithState {
   registerLayoutFactory(factory: LayoutFactory): void;
   registerComponentFactory(factory: ComponentFactory): void;
   registerElementFactory(factory: ElementFactory): void;
+  registerAggregateEdgeHandler(handler: AggregateEdgeHandler): void;
   addEventListener<L extends EventListener = EventListener>(type: string, listener: L): Controller;
   removeEventListener(type: string, listener: EventListener): Controller;
   fireEvent(type: string, ...args: any): void;
@@ -208,5 +217,8 @@ export interface Controller extends WithState {
 type ElementEvent = { target: GraphElement };
 export type ElementChildEventListener = EventListener<[ElementEvent & { child: GraphElement }]>;
 
+export type NodeCollapseChangeEventListener = EventListener<[{ node: Node }]>;
+
 export const ADD_CHILD_EVENT = 'element-add-child';
 export const REMOVE_CHILD_EVENT = 'element-remove-child';
+export const NODE_COLLAPSE_CHANGE_EVENT = 'node-collapse-change';

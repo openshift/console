@@ -8,8 +8,10 @@ import {
   ADD_CHILD_EVENT,
   REMOVE_CHILD_EVENT,
   ElementChildEventListener,
+  NODE_COLLAPSE_CHANGE_EVENT,
+  NodeCollapseChangeEventListener,
 } from '../types';
-import { leafNodeElements, groupNodeElements } from '../utils/element-utils';
+import { leafNodeElements, groupNodeElements, getTopCollapsedParent } from '../utils/element-utils';
 import {
   DRAG_MOVE_OPERATION,
   DRAG_NODE_END_EVENT,
@@ -332,12 +334,18 @@ class BaseLayout implements Layout {
   private startListening(): void {
     this.graph.getController().addEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
     this.graph.getController().addEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+    this.graph
+      .getController()
+      .addEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
   }
 
   private stopListening(): void {
     clearTimeout(this.scheduleHandle);
     this.graph.getController().removeEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
     this.graph.getController().removeEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+    this.graph
+      .getController()
+      .removeEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
   }
 
   private handleChildAdded: ElementChildEventListener = ({ child }): void => {
@@ -349,6 +357,13 @@ class BaseLayout implements Layout {
 
   private handleChildRemoved: ElementChildEventListener = ({ child }): void => {
     if (this.nodesMap[child.getId()]) {
+      this.scheduleRestart = true;
+      this.scheduleLayout();
+    }
+  };
+
+  private handleNodeCollapse: NodeCollapseChangeEventListener = ({ node }): void => {
+    if (!node.isCollapsed()) {
       this.scheduleRestart = true;
       this.scheduleLayout();
     }
@@ -371,10 +386,18 @@ class BaseLayout implements Layout {
   };
 
   protected getLayoutNode(nodes: LayoutNode[], node: Node): LayoutNode | undefined {
+    if (!node) {
+      return undefined;
+    }
+
     let colaNode = _.find(nodes, { id: node.getId() });
     if (!colaNode && _.size(node.getChildren())) {
       colaNode = _.find(nodes, { id: node.getChildren()[0].getId() });
     }
+    if (!colaNode) {
+      colaNode = this.getLayoutNode(nodes, getTopCollapsedParent(node));
+    }
+
     return colaNode;
   }
 
@@ -480,7 +503,9 @@ class BaseLayout implements Layout {
       });
       groupNode.leaves = leaves;
       const childGroups: LayoutGroup[] = [];
-      const groupElements = groupNode.element.getChildren().filter((node: Node) => node.isGroup());
+      const groupElements = groupNode.element
+        .getChildren()
+        .filter((node: Node) => node.isGroup() && !node.isCollapsed());
       groupElements.forEach((group: Node) => {
         const colaGroup = layoutGroups.find((g) => g.id === group.getId());
         if (colaGroup) {
@@ -537,7 +562,6 @@ class BaseLayout implements Layout {
 
     this.nodes = this.getNodes(leafNodes, this.options.nodeDistance);
 
-    this.edges = this.getLinks(this.graph.getEdges());
     const groupNodes: LayoutNode[] = this.getNodesFromGroups(
       groups,
       this.options.nodeDistance,
@@ -571,11 +595,16 @@ class BaseLayout implements Layout {
       addingNodes = newNodes.length > 0;
     }
 
+    this.edges = this.getLinks(this.graph.getEdges());
+
     // initialize new node positions
     this.initializeNewNodePositions(newNodes, this.graph);
 
     // re-create the nodes map
-    this.nodesMap = this.nodes.reduce((acc, n) => (acc[n.element.getId()] = n && acc), {});
+    this.nodesMap = this.nodes.reduce((acc, n) => {
+      acc[n.id] = n;
+      return acc;
+    }, {});
 
     // Add faux edges to keep grouped items together
     this.edges.push(...this.getFauxEdges(this.groups, this.nodes));

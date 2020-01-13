@@ -1,0 +1,226 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import * as React from 'react';
+import { action } from 'mobx';
+import {
+  TopologyView,
+  TopologyControlBar,
+  createTopologyControlButtons,
+  defaultControlButtonsOptions,
+} from '@patternfly/react-topology';
+import { Toolbar, ToolbarGroup, ToolbarItem, Checkbox } from '@patternfly/react-core';
+import {
+  EdgeModel,
+  Model,
+  ModelKind,
+  NodeModel,
+  Visualization,
+  withPanZoom,
+  GraphComponent,
+  withDragNode,
+  VisualizationSurface,
+  SELECTION_EVENT,
+  SelectionEventListener,
+  withSelection,
+} from '../src';
+import defaultLayoutFactory from './layouts/defaultLayoutFactory';
+import data from './data/group-types';
+import GroupHull from './components/GroupHull';
+import Group from './components/DefaultGroup';
+import Node from './components/DefaultNode';
+import defaultComponentFactory from './components/defaultComponentFactory';
+import '@patternfly/patternfly/patternfly.css';
+import '@patternfly/patternfly/patternfly-addons.css';
+import { defaultAggregateEdgeHandler } from '../src/elements';
+
+export default {
+  title: 'Collapsible Groups',
+};
+
+const getModel = (collapseTypes: string[] = []): Model => {
+  // create nodes from data
+  const nodes: NodeModel[] = data.nodes.map((d) => {
+    // randomize size somewhat
+    const width = 50 + d.id.length;
+    const height = 50 + d.id.length;
+    return {
+      id: d.id,
+      type: 'node',
+      width,
+      height,
+      x: 0,
+      y: 0,
+      data: d,
+      groupId: d.group,
+    };
+  });
+
+  // create groups from data
+  const groupNodes: NodeModel[] = data.groups.map((d) => ({
+    type: d.type,
+    id: d.id,
+    group: true,
+    children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
+    label: `group-${d.id}`,
+    width: d.width,
+    height: d.height,
+    collapsed: collapseTypes.includes(d.type),
+    style: {
+      padding: 10,
+    },
+    data: {
+      background: d.color,
+    },
+  }));
+
+  // create links from data
+  const edges = data.links.map(
+    (d): EdgeModel => ({
+      data: d,
+      source: d.source,
+      target: d.target,
+      id: `${d.source}_${d.target}`,
+      type: 'edge',
+    }),
+  );
+
+  // create topology model
+  return {
+    nodes: [...nodes, ...groupNodes],
+    edges,
+  };
+};
+
+const getVisualization = (model: Model): Visualization => {
+  const vis = new Visualization();
+  model.graph = {
+    id: 'g1',
+    type: 'graph',
+    layout: 'Cola',
+  };
+
+  vis.registerLayoutFactory(defaultLayoutFactory);
+  vis.registerComponentFactory(defaultComponentFactory);
+
+  // support pan zoom, drag, and selection
+  vis.registerComponentFactory((kind, type) => {
+    if (kind === ModelKind.graph) {
+      return withPanZoom()(GraphComponent);
+    }
+    if (type === 'blue') {
+      return withDragNode({ canCancel: false })(GroupHull);
+    }
+    if (type === 'orange' || type === 'pink') {
+      return withDragNode({ canCancel: false })(Group);
+    }
+    if (kind === ModelKind.node) {
+      return withDragNode({ canCancel: false })(withSelection()(Node));
+    }
+    return undefined;
+  });
+  vis.registerAggregateEdgeHandler(defaultAggregateEdgeHandler);
+  vis.fromModel(model);
+
+  return vis;
+};
+
+type TopologyViewComponentProps = {
+  vis: Visualization;
+};
+
+const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) => {
+  const [selectedIds, setSelectedIds] = React.useState<string[]>();
+  const [collapseBlues, setCollapseBlues] = React.useState<boolean>(false);
+  const [collapseOrange, setCollapseOrange] = React.useState<boolean>(false);
+  const [collapsePink, setCollapsePink] = React.useState<boolean>(false);
+
+  vis.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids) => {
+    setSelectedIds(ids);
+  });
+
+  const viewToolbar = (
+    <Toolbar className="pf-u-mx-md pf-u-my-md">
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-blues"
+            label="Collapse Blues"
+            isChecked={collapseBlues}
+            onChange={setCollapseBlues}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-orange"
+            label="Collapse Orange"
+            isChecked={collapseOrange}
+            onChange={setCollapseOrange}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-pink"
+            label="Collapse Pink"
+            isChecked={collapsePink}
+            onChange={setCollapsePink}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+    </Toolbar>
+  );
+
+  React.useEffect(() => {
+    action(() => {
+      const collapsedTypes: string[] = [];
+      if (collapseBlues) {
+        collapsedTypes.push('blue');
+      }
+      if (collapseOrange) {
+        collapsedTypes.push('orange');
+      }
+      if (collapsePink) {
+        collapsedTypes.push('pink');
+      }
+      const modelUpdate = getModel(collapsedTypes);
+      vis.fromModel(modelUpdate);
+    })();
+  }, [vis, collapseBlues, collapseOrange, collapsePink]);
+
+  return (
+    <TopologyView
+      controlBar={
+        <TopologyControlBar
+          controlButtons={createTopologyControlButtons({
+            ...defaultControlButtonsOptions,
+            zoomInCallback: action(() => {
+              vis.getGraph().scaleBy(4 / 3);
+            }),
+            zoomOutCallback: action(() => {
+              vis.getGraph().scaleBy(0.75);
+            }),
+            fitToScreenCallback: action(() => {
+              vis.getGraph().fit(80);
+            }),
+            resetViewCallback: action(() => {
+              vis.getGraph().reset();
+              vis.getGraph().layout();
+            }),
+            legend: false,
+          })}
+        />
+      }
+      viewToolbar={viewToolbar}
+    >
+      <VisualizationSurface visualization={vis} state={{ selectedIds }} />
+    </TopologyView>
+  );
+};
+
+export const CollapsibleGroups = () => {
+  const vis: Visualization = getVisualization(getModel());
+
+  return <TopologyViewComponent vis={vis} />;
+};

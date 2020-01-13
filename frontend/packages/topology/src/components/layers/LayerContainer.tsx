@@ -16,7 +16,7 @@ const LayerContainer: React.RefForwardingComponent<SVGGElement, LayerContainerPr
   let x = 0;
   let y = 0;
   while (isNode(p)) {
-    if (!p.isGroup()) {
+    if (!p.isGroup() || p.isCollapsed()) {
       const { x: px, y: py } = p.getBounds();
       x += px;
       y += py;

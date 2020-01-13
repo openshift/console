@@ -19,7 +19,7 @@ export default class SVGAnchor extends AbstractAnchor {
   getCircleLocation(circle: SVGCircleElement, reference: Point): Point {
     const center: Point = new Point(circle.cx.baseVal.value, circle.cy.baseVal.value);
     this.getOwner().translateToParent(center);
-    const diameter = circle.r.baseVal.value * 2;
+    const diameter = circle.r.baseVal.value * 2 + this.offset;
 
     return getEllipseAnchorPoint(center, diameter, diameter, reference);
   }
@@ -27,8 +27,8 @@ export default class SVGAnchor extends AbstractAnchor {
   getEllipseLocation(ellipse: SVGEllipseElement, reference: Point): Point {
     const center: Point = new Point(ellipse.cx.baseVal.value, ellipse.cy.baseVal.value);
     this.getOwner().translateToParent(center);
-    const width = ellipse.rx.baseVal.value * 2;
-    const height = ellipse.ry.baseVal.value * 2;
+    const width = ellipse.rx.baseVal.value * 2 + this.offset;
+    const height = ellipse.ry.baseVal.value * 2 + this.offset;
 
     return getEllipseAnchorPoint(center, width, height, reference);
   }
@@ -43,7 +43,7 @@ export default class SVGAnchor extends AbstractAnchor {
     );
     this.getOwner().translateToParent(center);
 
-    return getRectAnchorPoint(center, width, height, reference);
+    return getRectAnchorPoint(center, width + this.offset, height + this.offset, reference);
   }
 
   getPathLocation(path: SVGPathElement, reference: Point): Point {

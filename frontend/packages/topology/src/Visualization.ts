@@ -7,6 +7,7 @@ import {
   Edge,
   Node,
   ComponentFactory,
+  AggregateEdgeHandler,
   GraphElement,
   ElementFactory,
   ElementModel,
@@ -35,6 +36,8 @@ export default class Visualization extends Stateful implements Controller {
 
   private elementFactories: ElementFactory[] = [defaultElementFactory];
 
+  private aggregateEdgeHandler: AggregateEdgeHandler;
+
   private eventListeners: { [type: string]: EventListener[] } = {};
 
   @observable.shallow
@@ -61,8 +64,12 @@ export default class Visualization extends Stateful implements Controller {
         validIds.push(n.id);
       });
 
-    model.edges &&
-      model.edges.forEach((e) => {
+    const modelEdges = this.aggregateEdgeHandler
+      ? this.aggregateEdgeHandler(model.edges, model.nodes)
+      : model.edges;
+
+    modelEdges &&
+      modelEdges.forEach((e) => {
         idToElement[e.id] = e;
         this.createElement<Edge>(ModelKind.edge, e);
         validIds.push(e.id);
@@ -87,7 +94,7 @@ export default class Visualization extends Stateful implements Controller {
     };
 
     model.nodes && model.nodes.forEach(processElement);
-    model.edges && model.edges.forEach(processElement);
+    modelEdges && modelEdges.forEach(processElement);
 
     // remove all stale elements
     _.forIn(this.elements, (element) => {
@@ -195,6 +202,10 @@ export default class Visualization extends Stateful implements Controller {
 
   registerElementFactory(factory: ElementFactory): void {
     this.elementFactories.unshift(factory);
+  }
+
+  registerAggregateEdgeHandler(handler: AggregateEdgeHandler): void {
+    this.aggregateEdgeHandler = handler;
   }
 
   addEventListener<L extends EventListener = EventListener>(type: string, listener: L): Controller {
