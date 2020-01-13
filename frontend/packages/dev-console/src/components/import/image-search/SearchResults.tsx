@@ -47,7 +47,9 @@ const SearchResults: React.FC = () => {
                 {_.get(values.isi, 'result.ref.registry') && (
                   <span>from {values.isi.result.ref.registry}, </span>
                 )}
-                <Timestamp timestamp={values.isi.image.dockerImageMetadata.Created} />,{' '}
+                {_.get(values.isi, 'image.dockerImageMetadata.Created') && (
+                  <Timestamp timestamp={values.isi.image.dockerImageMetadata.Created} />
+                )}
                 {_.get(values.isi, 'image.dockerImageMetadata.Size') && (
                   <span>
                     {
@@ -80,7 +82,7 @@ const SearchResults: React.FC = () => {
                 </li>
               )}
             </ul>
-            {!_.isEmpty(values.isi.image.dockerImageMetadata.Config.Volumes) && (
+            {!_.isEmpty(_.get(values.isi, 'image.dockerImageMetadata.Config.Volumes')) && (
               <p className="help-block">
                 This image declares volumes and will default to use non-persistent, host-local
                 storage. You can add persistent storage later to the deployment config.

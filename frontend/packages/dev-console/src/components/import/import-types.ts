@@ -142,7 +142,7 @@ export interface DockerData {
 }
 
 export interface RouteData {
-  show?: boolean;
+  disable?: boolean;
   create: boolean;
   targetPort: string;
   unknownTargetPort?: string;

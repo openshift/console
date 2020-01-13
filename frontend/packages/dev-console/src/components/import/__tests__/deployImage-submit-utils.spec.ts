@@ -18,7 +18,11 @@ import {
   internalImageData,
 } from './deployImage-submit-utils-data';
 
-const { ensurePortExists, createDeployment, createResources } = submitUtils;
+const {
+  ensurePortExists,
+  createOrUpdateDeployment,
+  createOrUpdateDeployImageResources,
+} = submitUtils;
 
 describe('DeployImage Submit Utils', () => {
   describe('Ensure Port Exists', () => {
@@ -71,7 +75,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should choose image from dockerImageReference when creating Deployment using internal imagestream', (done) => {
-      createDeployment(internalImageData, false)
+      createOrUpdateDeployment(internalImageData, false)
         .then((returnValue) => {
           expect(_.get(returnValue, 'model.kind')).toEqual(DeploymentModel.kind);
           expect(_.get(returnValue, 'data.spec.template.spec.containers[0].image')).toEqual(
@@ -105,7 +109,7 @@ describe('DeployImage Submit Utils', () => {
         },
       };
 
-      createDeployment(data, false)
+      createOrUpdateDeployment(data, false)
         .then((returnValue) => {
           expect(_.get(returnValue, 'data.spec.template.spec.containers[0].resources')).toEqual({
             limits: { cpu: '10m', memory: '200Mi' },
@@ -131,7 +135,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call createImageStream when creating Resources using external image', (done) => {
-      createResources(defaultData, false)
+      createOrUpdateDeployImageResources(defaultData, false)
         .then((returnValue) => {
           expect(returnValue).toHaveLength(4);
           const models = returnValue.map((data) => _.get(data, 'model.kind'));
@@ -149,7 +153,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should not call createImageStream when creating Resources using internal imagestream', (done) => {
-      createResources(internalImageData, false)
+      createOrUpdateDeployImageResources(internalImageData, false)
         .then((returnValue) => {
           expect(returnValue).toHaveLength(3);
           const models = returnValue.map((data) => _.get(data, 'model.kind'));
@@ -166,14 +170,14 @@ describe('DeployImage Submit Utils', () => {
       mockData.resources = Resources.KnativeService;
 
       const imageStreamSpy = jest
-        .spyOn(submitUtils, 'createImageStream')
+        .spyOn(submitUtils, 'createOrUpdateImageStream')
         .mockImplementation(() => ({
           status: {
             dockerImageReference: 'test:1234',
           },
         }));
 
-      createResources(mockData, false)
+      createOrUpdateDeployImageResources(mockData, false)
         .then((returnValue) => {
           // createImageStream is called as separate entity
           expect(imageStreamSpy).toHaveBeenCalled();

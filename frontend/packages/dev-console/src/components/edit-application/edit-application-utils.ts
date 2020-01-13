@@ -5,6 +5,12 @@ import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models
 import { ServiceModel } from '@console/knative-plugin';
 import { Resources } from '../import/import-types';
 
+export enum CreateApplicationFlow {
+  Git = 'Import from Git',
+  Dockerfile = 'Import from Dockerfile',
+  Container = 'Deploy Image',
+}
+
 export const getResourcesType = (resource: K8sResourceKind): string => {
   switch (resource.kind) {
     case DeploymentConfigModel.kind:
@@ -15,6 +21,17 @@ export const getResourcesType = (resource: K8sResourceKind): string => {
       return Resources.KnativeService;
     default:
       return '';
+  }
+};
+
+export const getPageHeading = (buildStrategy: string): string => {
+  switch (buildStrategy) {
+    case BuildStrategyType.Source:
+      return CreateApplicationFlow.Git;
+    case BuildStrategyType.Docker:
+      return CreateApplicationFlow.Dockerfile;
+    default:
+      return CreateApplicationFlow.Container;
   }
 };
 
@@ -40,10 +57,11 @@ export const getGitData = (buildConfig: K8sResourceKind) => {
 
 export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
-    show: _.isEmpty(route),
+    disable: !_.isEmpty(route),
     create: true,
     targetPort: _.get(route, 'spec.port.targetPort', ''),
     unknownTargetPort: '',
+    defaultUnknownPort: 8080,
     path: _.get(route, 'spec.path', ''),
     hostname: _.get(route, 'spec.host', ''),
     secure: _.has(route, 'spec.termination'),
@@ -61,8 +79,8 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     const port = _.get(containers[0], 'ports[0].containerPort', '');
     routeData = {
       ...routeData,
-      show:
-        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') ===
+      disable:
+        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
         'cluster-local',
       unknownTargetPort: _.toString(port),
     };
@@ -166,8 +184,160 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.openshift.io/runtime',
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
+    'app/runtime-namespace',
   ];
   const allLabels = _.get(resource, 'metadata.labels', {});
   const userLabels = _.omit(allLabels, defaultLabels);
   return userLabels;
+};
+
+export const getCommonInitialValues = (
+  editAppResource: K8sResourceKind,
+  route: K8sResourceKind,
+  name: string,
+  namespace: string,
+) => {
+  const appGroupName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/part-of"]', '');
+  const commonInitialValues = {
+    formType: 'edit',
+    name,
+    application: {
+      name: appGroupName,
+      selectedKey: appGroupName,
+    },
+    project: {
+      name: namespace,
+    },
+    route: getRouteData(route, editAppResource),
+    resources: getResourcesType(editAppResource),
+    serverless: getServerlessData(editAppResource),
+    pipeline: {
+      enabled: false,
+    },
+    deployment: getDeploymentData(editAppResource),
+    labels: getUserLabels(editAppResource),
+    limits: getLimitsData(editAppResource),
+  };
+  return commonInitialValues;
+};
+
+export const getGitAndDockerfileInitialValues = (
+  buildConfig: K8sResourceKind,
+  route: K8sResourceKind,
+) => {
+  if (_.isEmpty(buildConfig)) {
+    return {};
+  }
+  const currentImage = _.split(
+    _.get(buildConfig, 'spec.strategy.sourceStrategy.from.name', ''),
+    ':',
+  );
+  const initialValues = {
+    git: getGitData(buildConfig),
+    docker: {
+      dockerfilePath: _.get(
+        buildConfig,
+        'spec.strategy.dockerStrategy.dockerfilePath',
+        'Dockerfile',
+      ),
+      containerPort: parseInt(_.split(_.get(route, 'spec.port.targetPort'), '-')[0], 10),
+    },
+    image: {
+      selected: currentImage[0] || '',
+      recommended: '',
+      tag: currentImage[1] || '',
+      tagObj: {},
+      ports: [],
+      isRecommending: false,
+      couldNotRecommend: false,
+    },
+    build: getBuildData(buildConfig),
+  };
+  return initialValues;
+};
+
+export const getExternalImageInitialValues = (
+  imageStream: K8sResourceKind,
+  editAppResource: K8sResourceKind,
+) => {
+  if (_.isEmpty(imageStream)) {
+    return {};
+  }
+  const name = _.get(imageStream, 'spec.tags[0].from.name');
+  const tag = _.get(imageStream, 'status.tags[0].tag');
+  const imageRef = _.get(imageStream, 'status.tags[0].items[0].dockerImageReference');
+  const ports = _.get(editAppResource, 'spec.template.spec.containers[0].ports');
+  const deployImageInitialValues = {
+    searchTerm: name,
+    registry: 'external',
+    imageStream: {
+      image: '',
+      tag: '',
+      namespace: '',
+      grantAccess: true,
+    },
+    isi: {
+      name,
+      image: {
+        dockerImageReference: imageRef,
+      },
+      tag,
+      status: { metadata: {}, status: '' },
+      ports,
+    },
+    image: {
+      name: '',
+      image: {},
+      tag,
+      status: { metadata: {}, status: '' },
+      ports,
+    },
+    build: {
+      strategy: '',
+    },
+    isSearchingForImage: false,
+  };
+  return deployImageInitialValues;
+};
+
+export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
+  const imageStreamNamespace = _.get(
+    editAppResource,
+    'metadata.labels["app/runtime-namespace"]',
+    '',
+  );
+  const imageStreamName = _.get(editAppResource, 'metadata.labels["app.openshift.io/runtime"]', '');
+  const internalImageStreamTag = _.get(
+    editAppResource,
+    'metadata.labels["app.openshift.io/runtime-version"]',
+    '',
+  );
+  const deployImageInitialValues = {
+    searchTerm: '',
+    registry: 'internal',
+    imageStream: {
+      image: imageStreamName,
+      tag: internalImageStreamTag,
+      namespace: imageStreamNamespace,
+    },
+    isi: {
+      name: '',
+      image: {},
+      tag: '',
+      status: { metadata: {}, status: '' },
+      ports: '',
+    },
+    image: {
+      name: '',
+      image: {},
+      tag: '',
+      status: { metadata: {}, status: '' },
+      ports: '',
+    },
+    build: {
+      strategy: '',
+    },
+    isSearchingForImage: false,
+  };
+  return deployImageInitialValues;
 };

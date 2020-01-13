@@ -71,7 +71,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       couldNotRecommend: false,
     },
     route: {
-      show: true,
+      disable: false,
       create: true,
       targetPort: '',
       path: '',

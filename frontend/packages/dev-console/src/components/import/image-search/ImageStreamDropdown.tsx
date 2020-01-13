@@ -63,7 +63,7 @@ const ImageStreamDropdown: React.FC = () => {
       key={imageStream.namespace}
       fullWidth
       required
-      title={getTitle()}
+      title={!_.isEmpty(imageStream.image) ? imageStream.image : getTitle()}
       disabled={!hasCreateAccess || !isStreamsAvailable}
       onChange={onDropdownChange}
       onLoad={onLoad}

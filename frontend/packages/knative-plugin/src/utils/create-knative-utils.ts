@@ -16,6 +16,7 @@ import {
   DeployImageFormData,
   GitImportFormData,
 } from '@console/dev-console/src/components/import/import-types';
+import * as _ from 'lodash';
 
 export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData,
@@ -52,12 +53,10 @@ export const getKnativeServiceDepResource = (
   } = limits;
   const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
   delete defaultLabel.app;
-  const knativeDeployResource: K8sResourceKind = {
-    ...(originalKnativeService || {}),
+  const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,
     apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
     metadata: {
-      ...(originalKnativeService ? originalKnativeService.metadata : {}),
       name,
       namespace,
       labels: {
@@ -67,7 +66,6 @@ export const getKnativeServiceDepResource = (
       },
     },
     spec: {
-      ...(originalKnativeService ? originalKnativeService.spec : {}),
       template: {
         metadata: {
           labels: {
@@ -115,6 +113,9 @@ export const getKnativeServiceDepResource = (
       },
     },
   };
+
+  const knativeDeployResource = _.merge({}, originalKnativeService || {}, newKnativeDeployResource);
+
   return knativeDeployResource;
 };
 

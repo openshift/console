@@ -1,6 +1,6 @@
 import { KebabOption } from '@console/internal/components/utils';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
-import { editApplicationModal, editApplication } from '../components/modals';
+import { editApplicationModal } from '../components/modals';
 
 export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
@@ -24,8 +24,8 @@ export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOpt
 
 export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
-    label: 'Edit Application',
-    callback: () => editApplication({ editAppResource: obj }),
+    label: 'Edit',
+    href: `/edit?name=${obj.metadata.name}&kind=${obj.kind}`,
     accessReview: {
       group: model.apiGroup,
       resource: model.plural,

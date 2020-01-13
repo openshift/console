@@ -143,7 +143,7 @@ describe('Import Submit Utils', () => {
       mockData.resources = Resources.KnativeService;
 
       const imageStreamSpy = jest
-        .spyOn(submitUtils, 'createImageStream')
+        .spyOn(submitUtils, 'createOrUpdateImageStream')
         .mockImplementation(() => ({
           status: {
             dockerImageReference: 'test:1234',

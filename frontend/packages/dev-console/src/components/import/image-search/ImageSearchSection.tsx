@@ -38,11 +38,13 @@ const ImageSearchSection: React.FC = () => {
           {
             label: imageRegistryType.External.label,
             value: imageRegistryType.External.value,
+            isDisabled: values.formType === 'edit' && values.registry === 'internal',
             activeChildren: <ImageSearch />,
           },
           {
             label: imageRegistryType.Internal.label,
             value: imageRegistryType.Internal.value,
+            isDisabled: values.formType === 'edit' && values.registry === 'external',
             activeChildren: <ImageStream />,
           },
         ]}

@@ -15,7 +15,7 @@ import { ImageStreamContext } from './ImageStreamContext';
 const ImageStreamTagDropdown: React.FC = () => {
   let imageStreamTagList = {};
   const {
-    values: { imageStream, application },
+    values: { imageStream, application, formType },
     setFieldValue,
     setFieldError,
   } = useFormikContext<FormikValues>();
@@ -42,7 +42,7 @@ const ImageStreamTagDropdown: React.FC = () => {
           setFieldValue('isi.tag', selectedTag);
           setFieldValue('isi.ports', ports);
           setFieldValue('image.ports', ports);
-          setFieldValue('name', getSuggestedName(name));
+          formType !== 'edit' && setFieldValue('name', getSuggestedName(name));
           !application.name && setFieldValue('application.name', `${getSuggestedName(name)}-app`);
           // set default port value
           const targetPort = _.head(ports);
@@ -54,7 +54,14 @@ const ImageStreamTagDropdown: React.FC = () => {
           setFieldValue('isSearchingForImage', false);
         });
     },
-    [setFieldValue, imageStream, application.name, setFieldError],
+    [
+      setFieldValue,
+      imageStream.image,
+      imageStream.namespace,
+      formType,
+      application.name,
+      setFieldError,
+    ],
   );
   return (
     <DropdownField
@@ -63,7 +70,11 @@ const ImageStreamTagDropdown: React.FC = () => {
       items={imageStreamTagList}
       key={imageStream.image}
       title={
-        isNamespaceSelected && isImageStreamSelected && !isTagsAvailable ? 'No Tag' : 'Select Tag'
+        !_.isEmpty(imageStream.tag)
+          ? imageStream.tag
+          : isNamespaceSelected && isImageStreamSelected && !isTagsAvailable
+          ? 'No Tag'
+          : 'Select Tag'
       }
       disabled={!isImageStreamSelected || !isTagsAvailable}
       fullWidth

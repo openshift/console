@@ -26,7 +26,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
 
   return (
     <FormSection title="Advanced Options" fullWidth>
-      {values.route.show && <RouteCheckbox />}
+      <RouteCheckbox isDisabled={values.route.disable} />
       <ProgressiveList
         text="Click on the names to access advanced options for"
         visibleItems={visibleItems}
