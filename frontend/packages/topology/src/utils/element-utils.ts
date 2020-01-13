@@ -7,7 +7,7 @@ const groupNodeElements = (nodes: GraphElement[]): Node[] => {
   }
   const groupNodes: Node[] = [];
   _.forEach(nodes, (nextNode) => {
-    if (isNode(nextNode) && nextNode.isGroup()) {
+    if (isNode(nextNode) && nextNode.isGroup() && !nextNode.isCollapsed()) {
       groupNodes.push(nextNode);
       groupNodes.push(...groupNodeElements(nextNode.getChildren()));
     }
@@ -29,7 +29,7 @@ const leafNodeElements = (nodeElements: Node | Node[] | null): Node[] => {
     return nodes;
   }
 
-  if (nodeElements.isGroup()) {
+  if (nodeElements.isGroup() && !nodeElements.isCollapsed()) {
     const leafNodes: Node[] = [];
     const children: GraphElement[] = nodeElements.getChildren();
     if (_.size(children)) {
@@ -44,6 +44,21 @@ const leafNodeElements = (nodeElements: Node | Node[] | null): Node[] => {
   }
 
   return [nodeElements];
+};
+
+const getTopCollapsedParent = (node: Node): Node => {
+  let returnNode: Node = node;
+  try {
+    let parent = !isGraph(node) && node.getParent();
+    while (parent && !isGraph(parent)) {
+      if ((parent as Node).isCollapsed()) {
+        returnNode = parent as Node;
+      }
+      parent = parent.getParent();
+    }
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+  return returnNode;
 };
 
 const getElementPadding = (element: GraphElement): number => {
@@ -67,7 +82,7 @@ const getGroupPadding = (element: GraphElement, padding = 0): number => {
     return padding;
   }
   let newPadding = padding;
-  if (isNode(element) && element.isGroup()) {
+  if (isNode(element) && element.isGroup() && !element.isCollapsed()) {
     newPadding += getElementPadding(element);
   }
   if (element.getParent()) {
@@ -76,4 +91,10 @@ const getGroupPadding = (element: GraphElement, padding = 0): number => {
   return newPadding;
 };
 
-export { groupNodeElements, leafNodeElements, getElementPadding, getGroupPadding };
+export {
+  groupNodeElements,
+  leafNodeElements,
+  getTopCollapsedParent,
+  getElementPadding,
+  getGroupPadding,
+};

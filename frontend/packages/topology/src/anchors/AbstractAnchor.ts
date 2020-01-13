@@ -4,8 +4,11 @@ import { Anchor, Node } from '../types';
 export default abstract class AbstractAnchor<E extends Node = Node> implements Anchor {
   private owner: E;
 
-  constructor(owner: E) {
+  protected offset = 0;
+
+  constructor(owner: E, offset: number = 0) {
     this.owner = owner;
+    this.offset = offset;
   }
 
   protected getOwner(): E {

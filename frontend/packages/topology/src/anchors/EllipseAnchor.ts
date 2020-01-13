@@ -9,6 +9,11 @@ export default class EllipseAnchor extends AbstractAnchor {
       return r.getCenter();
     }
 
-    return getEllipseAnchorPoint(r.getCenter(), r.width, r.height, reference);
+    return getEllipseAnchorPoint(
+      r.getCenter(),
+      r.width + this.offset,
+      r.height + this.offset,
+      reference,
+    );
   }
 }

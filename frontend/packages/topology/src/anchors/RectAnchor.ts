@@ -10,6 +10,6 @@ export default class RectAnchor extends AbstractAnchor {
       return center;
     }
 
-    return getRectAnchorPoint(center, r.width, r.height, reference);
+    return getRectAnchorPoint(center, r.width + this.offset, r.height + this.offset, reference);
   }
 }

@@ -62,7 +62,7 @@ const ElementWrapper: React.FC<ElementWrapperProps> = observer(({ element }) => 
       </g>
     );
   }
-  if (isNode(element) && !element.isGroup()) {
+  if (isNode(element) && (!element.isGroup() || element.isCollapsed())) {
     const { x, y } = element.getBounds();
     return (
       <g {...commonProps} transform={`translate(${x}, ${y})`}>
