@@ -19,7 +19,7 @@ enum TriggerTypes {
   GitLab = 'GitLab',
   ImageChange = 'ImageChange',
 }
-const webhookTriggers = new Set<TriggerTypes>([
+const webhookTriggerTypes = new Set<TriggerTypes>([
   TriggerTypes.Bitbucket,
   TriggerTypes.Generic,
   TriggerTypes.GitHub,
@@ -56,17 +56,28 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   });
   const tableColumnClasses = getTableColumnClasses(canGetSecret);
   const [webhookSecrets, setWebhookSecrets] = React.useState<K8sResourceKind[]>([]);
+  const [webhookTriggers, setWebhookTriggers] = React.useState<WebhookTrigger[]>([]);
+  const [secretNames, setSecretNames] = React.useState<string[]>([]);
   const [secretErrors, setSecretErrors] = React.useState<string[]>([]);
   const [isLoaded, setLoaded] = React.useState(false);
 
-  const webhooks: WebhookTrigger[] = _.filter(triggers, ({ type }) => webhookTriggers.has(type));
-  const secretNames: string[] = _.uniq(
-    webhooks.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
-      const triggerProperty = getTriggerProperty(webhook);
-      const secretName = _.get(webhook, [triggerProperty, 'secretReference', 'name']);
-      return secretName ? [...acc, secretName] : acc;
-    }, []),
-  );
+  React.useEffect(() => {
+    setWebhookTriggers((previousTriggers) => {
+      const newTriggers = _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type));
+      return _.isEqual(previousTriggers, newTriggers) ? previousTriggers : newTriggers;
+    });
+  }, [triggers]);
+
+  React.useEffect(() => {
+    const newSecretNames: string[] = _.uniq(
+      webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
+        const triggerProperty = getTriggerProperty(webhook);
+        const secretName = _.get(webhook, [triggerProperty, 'secretReference', 'name']);
+        return secretName ? [...acc, secretName] : acc;
+      }, []),
+    );
+    setSecretNames(newSecretNames);
+  }, [webhookTriggers]);
 
   React.useEffect(() => {
     if (!canGetSecret) {
@@ -90,9 +101,9 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       setWebhookSecrets(_.compact(secrets));
       setLoaded(true);
     });
-  }, [isLoaded, canGetSecret]);
+  }, [secretNames, isLoaded, canGetSecret, namespace]);
 
-  if (_.isEmpty(webhooks)) {
+  if (_.isEmpty(webhookTriggers)) {
     return null;
   }
 
@@ -192,7 +203,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
             </tr>
           </thead>
           <tbody>
-            {_.map(webhooks, (trigger, i) => {
+            {_.map(webhookTriggers, (trigger, i) => {
               const webhookURL = getWebhookURL(trigger);
               const secretReference = getSecretReference(trigger);
               const clipboardButton = getClipboardButton(trigger);
