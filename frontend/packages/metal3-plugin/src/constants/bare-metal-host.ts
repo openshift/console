@@ -15,8 +15,8 @@ export const HOST_STATUS_PROVISIONING = 'provisioning';
 export const HOST_STATUS_DEPROVISIONING = 'deprovisioning';
 export const HOST_STATUS_MAKING_HOST_AVAILABLE = 'making host available';
 export const HOST_STATUS_MATCH_PROFILE = 'match profile';
-export const HOST_STATUS_VALIDATION_ERROR = 'validation error';
 export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
+export const HOST_STATUS_INSPECTION_ERROR = 'inspection error';
 export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
 export const HOST_STATUS_POWER_MANAGEMENT_ERROR = 'power management error';
 
@@ -40,8 +40,8 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_PROVISIONING]: 'Provisioning',
   [HOST_STATUS_DEPROVISIONING]: 'Deprovisioning',
   [HOST_STATUS_MAKING_HOST_AVAILABLE]: 'Making host available',
-  [HOST_STATUS_VALIDATION_ERROR]: 'Validation Error(s)',
   [HOST_STATUS_REGISTRATION_ERROR]: 'Registration error',
+  [HOST_STATUS_INSPECTION_ERROR]: 'Inspection error',
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
@@ -61,8 +61,8 @@ export const HOST_PROVISIONING_STATES = [
 
 export const HOST_ERROR_STATES = [
   HOST_STATUS_REGISTRATION_ERROR,
+  HOST_STATUS_INSPECTION_ERROR,
   HOST_STATUS_PROVISIONING_ERROR,
-  HOST_STATUS_VALIDATION_ERROR,
   HOST_STATUS_POWER_MANAGEMENT_ERROR,
   HOST_STATUS_ERROR,
 ];
