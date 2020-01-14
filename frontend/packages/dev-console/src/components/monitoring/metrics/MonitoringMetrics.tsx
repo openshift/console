@@ -10,11 +10,7 @@ const MonitoringMetrics: React.FC = () => {
         <title>Metrics</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12 col-md-6">
-            <ConnectedMetricsQueryInput />
-          </div>
-        </div>
+        <ConnectedMetricsQueryInput />
         <div className="row">
           <div className="col-xs-12">
             <ConnectedMetricsChart />

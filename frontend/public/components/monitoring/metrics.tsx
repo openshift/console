@@ -511,7 +511,7 @@ const queryInputDispatchToProps = (dispatch, props) =>
     queryDispatchToProps(dispatch, props),
   );
 
-const QueryInput = connect(queryInputStateToProps, queryInputDispatchToProps)(QueryInput_);
+export const QueryInput = connect(queryInputStateToProps, queryInputDispatchToProps)(QueryInput_);
 
 const QueryKebab_: React.FC<QueryKebabProps> = ({
   deleteQuery,
