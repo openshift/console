@@ -1,3 +1,4 @@
+import { Dispatch } from 'react-redux';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Extension } from './extension';
 
@@ -8,19 +9,25 @@ namespace ExtensionProperties {
     /** The name of the feature flag. */
     flag: string;
   }
+
+  export interface ActionFeatureFlag {
+    /** Function used to detect the feature and set flag name/value via Redux action dispatch. */
+    detect: (dispatch: Dispatch) => Promise<any>;
+  }
 }
 
 export interface ModelFeatureFlag extends Extension<ExtensionProperties.ModelFeatureFlag> {
   type: 'FeatureFlag/Model';
 }
 
-// TODO(vojtech): add ActionFeatureFlag
-export type FeatureFlag = ModelFeatureFlag;
+export interface ActionFeatureFlag extends Extension<ExtensionProperties.ActionFeatureFlag> {
+  type: 'FeatureFlag/Action';
+}
 
 export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag => {
   return e.type === 'FeatureFlag/Model';
 };
 
-export const isFeatureFlag = (e: Extension): e is FeatureFlag => {
-  return isModelFeatureFlag(e);
+export const isActionFeatureFlag = (e: Extension): e is ActionFeatureFlag => {
+  return e.type === 'FeatureFlag/Action';
 };

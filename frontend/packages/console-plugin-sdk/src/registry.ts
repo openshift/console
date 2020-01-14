@@ -5,7 +5,8 @@ import {
   ExtensionTypeGuard,
   ActivePlugin,
   isModelDefinition,
-  isFeatureFlag,
+  isModelFeatureFlag,
+  isActionFeatureFlag,
   isNavItem,
   isResourceListPage,
   isResourceDetailsPage,
@@ -64,8 +65,12 @@ export class ExtensionRegistry {
     return this.extensions.filter(isModelDefinition);
   }
 
-  public getFeatureFlags() {
-    return this.extensions.filter(isFeatureFlag);
+  public getModelFeatureFlags() {
+    return this.extensions.filter(isModelFeatureFlag);
+  }
+
+  public getActionFeatureFlags() {
+    return this.extensions.filter(isActionFeatureFlag);
   }
 
   public getNavItems() {

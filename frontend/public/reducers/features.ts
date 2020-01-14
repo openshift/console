@@ -42,15 +42,12 @@ export const baseCRDs = {
 
 const CRDs = { ...baseCRDs };
 
-plugins.registry
-  .getFeatureFlags()
-  .filter(plugins.isModelFeatureFlag)
-  .forEach((ff) => {
-    const modelRef = referenceForModel(ff.properties.model);
-    if (!CRDs[modelRef]) {
-      CRDs[modelRef] = ff.properties.flag as FLAGS;
-    }
-  });
+plugins.registry.getModelFeatureFlags().forEach((ff) => {
+  const modelRef = referenceForModel(ff.properties.model);
+  if (!CRDs[modelRef]) {
+    CRDs[modelRef] = ff.properties.flag as FLAGS;
+  }
+});
 
 export type FeatureState = ImmutableMap<string, boolean>;
 
