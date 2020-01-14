@@ -13,13 +13,7 @@ import { createOrUpdateDeployImageResources } from '../import/deployImage-submit
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import EditApplicationForm from './EditApplicationForm';
 import { EditApplicationProps } from './edit-application-types';
-import {
-  getPageHeading,
-  getCommonInitialValues,
-  getGitAndDockerfileInitialValues,
-  getInternalImageInitialValues,
-  getExternalImageInitialValues,
-} from './edit-application-utils';
+import { getPageHeading, getInitialValues } from './edit-application-utils';
 
 export interface StateProps {
   perspective: string;
@@ -35,50 +29,11 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     appResources.imageStreams && appResources.imageStreams.loaded
       ? appResources.imageStreams.data
       : [];
-
   const builderImages: NormalizedBuilderImages = !_.isEmpty(imageStreamsData)
     ? normalizeBuilderImages(imageStreamsData)
     : null;
-
-  const getInitialValues = () => {
-    const commonValues = getCommonInitialValues(
-      appResources.editAppResource.data,
-      appResources.route.data,
-      appName,
-      namespace,
-    );
-
-    const gitDockerValues = getGitAndDockerfileInitialValues(
-      appResources.buildConfig.data,
-      appResources.route.data,
-    );
-
-    let externalImageValues = {};
-    let internalImageValues = {};
-
-    if (_.isEmpty(gitDockerValues)) {
-      externalImageValues = getExternalImageInitialValues(
-        appResources.imageStream.data,
-        appResources.editAppResource.data,
-      );
-      internalImageValues = _.isEmpty(externalImageValues)
-        ? getInternalImageInitialValues(appResources.editAppResource.data)
-        : {};
-    }
-    console.log('internal values ----', internalImageValues);
-    return {
-      ...commonValues,
-      ...gitDockerValues,
-      ...externalImageValues,
-      ...internalImageValues,
-    };
-  };
-
-  const initialValues = getInitialValues();
-  console.log('values ------------------', initialValues);
-
+  const initialValues = getInitialValues(appResources, appName, namespace);
   const pageHeading = getPageHeading(_.get(initialValues, 'build.strategy', ''));
-
   const handleRedirect = (project: string) => {
     const perspectiveData = plugins.registry
       .getPerspectives()
@@ -86,7 +41,6 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
     history.push(redirectURL);
   };
-
   const handleSubmit = (values, actions) => {
     if (!_.isEmpty(values.build.strategy)) {
       const imageStream =
@@ -120,7 +74,6 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
         });
     }
   };
-
   const renderForm = (props) => {
     return (
       <EditApplicationForm

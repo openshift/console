@@ -4,6 +4,8 @@ import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
 import { Resources } from '../import/import-types';
+import { UNASSIGNED_KEY } from '../import/app/ApplicationSelector';
+import { AppResources } from './edit-application-types';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -103,7 +105,7 @@ export const getBuildData = (buildConfig: K8sResourceKind) => {
   }
   const triggers = _.get(buildConfig, 'spec.triggers');
   const buildData = {
-    env: buildStrategyData.env,
+    env: buildStrategyData.env || [],
     triggers: {
       webhook: checkIfTriggerExists(triggers, 'GitHub'),
       image: checkIfTriggerExists(triggers, 'ImageChange'),
@@ -115,7 +117,14 @@ export const getBuildData = (buildConfig: K8sResourceKind) => {
 };
 
 export const getServerlessData = (resource: K8sResourceKind) => {
-  let serverlessData = {};
+  let serverlessData = {
+    scaling: {
+      minpods: 0,
+      maxpods: '',
+      concurrencytarget: '',
+      concurrencylimit: '',
+    },
+  };
   if (getResourcesType(resource) === Resources.KnativeService) {
     const annotations = _.get(resource, 'spec.template.metadata.annotations');
     serverlessData = {
@@ -197,13 +206,13 @@ export const getCommonInitialValues = (
   name: string,
   namespace: string,
 ) => {
-  const appGroupName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/part-of"]', '');
+  const appGroupName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/part-of"]');
   const commonInitialValues = {
     formType: 'edit',
     name,
     application: {
-      name: appGroupName,
-      selectedKey: appGroupName,
+      name: appGroupName || '',
+      selectedKey: appGroupName || UNASSIGNED_KEY,
     },
     project: {
       name: namespace,
@@ -265,7 +274,8 @@ export const getExternalImageInitialValues = (
   }
   const name = _.get(imageStream, 'spec.tags[0].from.name');
   const tag = _.get(imageStream, 'status.tags[0].tag');
-  const imageRef = _.get(imageStream, 'status.tags[0].items[0].dockerImageReference');
+  const imageRef = _.get(editAppResource, 'spec.template.spec.containers[0].image');
+  const creationTimestamp = _.get(imageStream, 'status.tags[0].items[0].created');
   const ports = _.get(editAppResource, 'spec.template.spec.containers[0].ports');
   const deployImageInitialValues = {
     searchTerm: name,
@@ -280,6 +290,9 @@ export const getExternalImageInitialValues = (
       name,
       image: {
         dockerImageReference: imageRef,
+        dockerImageMetadata: {
+          Created: creationTimestamp,
+        },
       },
       tag,
       status: { metadata: {}, status: '' },
@@ -307,32 +320,34 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     '',
   );
   const imageStreamName = _.get(editAppResource, 'metadata.labels["app.openshift.io/runtime"]', '');
-  const internalImageStreamTag = _.get(
+  const imageStreamTag = _.get(
     editAppResource,
     'metadata.labels["app.openshift.io/runtime-version"]',
     '',
   );
+  const ports = _.get(editAppResource, 'spec.template.spec.containers[0].ports');
+  const imageRef = _.get(editAppResource, 'spec.template.spec.containers[0].image');
   const deployImageInitialValues = {
     searchTerm: '',
     registry: 'internal',
     imageStream: {
       image: imageStreamName,
-      tag: internalImageStreamTag,
+      tag: imageStreamTag,
       namespace: imageStreamNamespace,
     },
     isi: {
-      name: '',
-      image: {},
-      tag: '',
+      name: imageStreamName,
+      image: { dockerImageReference: imageRef },
+      tag: imageStreamTag,
       status: { metadata: {}, status: '' },
-      ports: '',
+      ports,
     },
     image: {
       name: '',
       image: {},
-      tag: '',
+      tag: imageStreamTag,
       status: { metadata: {}, status: '' },
-      ports: '',
+      ports,
     },
     build: {
       strategy: '',
@@ -340,4 +355,40 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     isSearchingForImage: false,
   };
   return deployImageInitialValues;
+};
+
+export const getInitialValues = (
+  appResources: AppResources,
+  appName: string,
+  namespace: string,
+) => {
+  const commonValues = getCommonInitialValues(
+    appResources.editAppResource.data,
+    appResources.route.data,
+    appName,
+    namespace,
+  );
+  const gitDockerValues = getGitAndDockerfileInitialValues(
+    appResources.buildConfig.data,
+    appResources.route.data,
+  );
+  let externalImageValues = {};
+  let internalImageValues = {};
+
+  if (_.isEmpty(gitDockerValues)) {
+    externalImageValues = getExternalImageInitialValues(
+      appResources.imageStream.data,
+      appResources.editAppResource.data,
+    );
+    internalImageValues = _.isEmpty(externalImageValues)
+      ? getInternalImageInitialValues(appResources.editAppResource.data)
+      : {};
+  }
+
+  return {
+    ...commonValues,
+    ...gitDockerValues,
+    ...externalImageValues,
+    ...internalImageValues,
+  };
 };
