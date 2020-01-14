@@ -233,6 +233,8 @@ export class VirtualMachine extends KubevirtDetailView {
       await wizard.configureCloudInit(cloudInit);
     }
     await wizard.next();
+    // Advanced - Virtual Hardware
+    await wizard.next();
     // Review page
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
