@@ -8,7 +8,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS, NOT_AVAILABLE } from './utils/consts';
 import { selectOptionByOptionValue } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
@@ -55,7 +55,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailCd(vm.namespace, vm.name),
-            'Not available',
+            NOT_AVAILABLE,
           ),
         );
       });

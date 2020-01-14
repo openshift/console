@@ -7,6 +7,8 @@ const rhelTinyCommonTemplateName = execSync(
   "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
 ).toString();
 
+export const NOT_AVAILABLE = 'Not available';
+
 // TIMEOUTS
 const SEC = 1000;
 export const CLONE_VM_TIMEOUT_SECS = 720 * SEC;
@@ -56,6 +58,7 @@ export const COMMON_TEMPLATES_REVISION = '1';
 
 export enum TAB {
   Consoles = 'Consoles',
+  Dashboard = 'Dashboard',
   Disks = 'Disks',
   Events = 'Events',
   NetworkInterfaces = 'Network Interfaces',
