@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { EdgeModel, Model, NodeModel, NodeShape } from '@console/topology';
+import { EdgeModel, Model, NodeModel, NodeShape, createAggregateEdges } from '@console/topology';
 import {
   K8sResourceKind,
   modelFor,
@@ -47,6 +47,7 @@ import {
   TYPE_KNATIVE_SERVICE,
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
+  TYPE_AGGREGATE_EDGE,
 } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -501,7 +502,10 @@ export const transformTopologyData = (
   return topologyGraphAndNodeData;
 };
 
-export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
+export const topologyModelFromDataModel = (
+  dataModel: TopologyDataModel,
+  filters?: TopologyFilters,
+): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
       return {
@@ -530,11 +534,16 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   });
 
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    const data: any = dataModel.topology[d.id] || {};
+    data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
+      width: 300,
+      height: 180,
       id: d.id,
       group: true,
       type: d.type,
-      data: dataModel.topology[d.id],
+      collapsed: filters && d.type === TYPE_APPLICATION_GROUP && !filters.display.appGrouping,
+      data,
       children: d.nodes,
       label: d.name,
       style: {
@@ -557,7 +566,7 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   // create topology model
   const model: Model = {
     nodes: [...nodes, ...groupNodes],
-    edges,
+    edges: createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, [...nodes, ...groupNodes]),
   };
 
   return model;
