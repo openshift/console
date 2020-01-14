@@ -153,6 +153,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'Helm Releases',
+        href: '/helm-releases',
+        required: FLAGS.OPENSHIFT,
+        testID: 'helm-releases-header',
+      },
+    },
+  },
+  {
     type: 'NavItem/ResourceCluster',
     properties: {
       section: 'Advanced',
@@ -415,6 +427,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/project-access',
         '/dev-monitoring',
         '/edit',
+        '/helm-releases',
       ],
       component: NamespaceRedirect,
     },
@@ -607,6 +620,19 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import('./components/MetricsPage' /* webpackChunkName: "dev-console-metrics" */))
           .default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleasePage' /* webpackChunkName: "dev-console-helm-releases" */
+          )
+        ).default,
     },
   },
   {

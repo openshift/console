@@ -1,0 +1,44 @@
+import * as React from 'react';
+import { Status } from '@console/shared';
+import { TableRow, TableData } from '@console/internal/components/factory';
+import { Timestamp } from '@console/internal/components/utils';
+import { Link } from 'react-router-dom';
+import { HelmRelease } from './helm-types';
+import { tableColumnClasses } from './HelmReleaseHeader';
+
+interface HelmReleaseRowProps {
+  obj: HelmRelease;
+  index: number;
+  key?: string;
+  style: object;
+}
+
+const HelmReleaseRow: React.FC<HelmReleaseRowProps> = ({ obj, index, key, style }) => {
+  return (
+    <TableRow id={obj.name} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses.name}>
+        <Link
+          to={`/helm-releases/ns/${obj.namespace}/release/${obj.name}`}
+          title={obj.name}
+          className="co-resource-item__resource-name"
+          data-test-id={obj.name}
+        >
+          {obj.name}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>
+      <TableData className={tableColumnClasses.timestamp}>
+        <Timestamp timestamp={obj.info.last_deployed} />
+      </TableData>
+      <TableData className={tableColumnClasses.status}>
+        <Status status={obj.info.status} />
+      </TableData>
+      <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
+      <TableData className={tableColumnClasses.chartVersion}>
+        {obj.chart.metadata.version}
+      </TableData>
+    </TableRow>
+  );
+};
+
+export default HelmReleaseRow;
