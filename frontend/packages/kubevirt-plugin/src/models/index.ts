@@ -22,6 +22,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstance',
   id: 'virtualmachineinstance',
+  color: '#002F5D',
 };
 
 export const VirtualMachineInstancePresetModel: K8sKind = {
