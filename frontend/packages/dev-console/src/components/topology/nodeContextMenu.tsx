@@ -1,6 +1,13 @@
 import * as React from 'react';
-import { ContextMenuItem, GraphElement, Node } from '@console/topology';
-import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
+import { ContextMenuItem, ContextSubMenuItem, GraphElement, Node } from '@console/topology';
+import {
+  history,
+  KebabItem,
+  KebabOption,
+  KebabMenuOption,
+  kebabOptionsToMenu,
+  isKebabSubMenu,
+} from '@console/internal/components/utils';
 import { workloadActions } from './actions/workloadActions';
 import { groupActions } from './actions/groupActions';
 import { nodeActions } from './actions/nodeActions';
@@ -15,17 +22,22 @@ const onKebabOptionClick = (option: KebabOption) => {
   }
 };
 
-const createMenuItems = (actions: KebabOption[]) =>
-  actions
-    .filter((o) => !o.hidden)
-    .map((option) => (
+const createMenuItems = (actions: KebabMenuOption[]) =>
+  actions.map((option) =>
+    isKebabSubMenu(option) ? (
+      <ContextSubMenuItem label={option.label} key={option.label}>
+        {createMenuItems(option.children)}
+      </ContextSubMenuItem>
+    ) : (
       <ContextMenuItem
         key={option.label}
         component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
       />
-    ));
+    ),
+  );
 
-const workloadContextMenu = (element: Node) => createMenuItems(workloadActions(element.getData()));
+const workloadContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(workloadActions(element.getData())));
 
 const groupContextMenu = (element: Node) => {
   const applicationData: TopologyApplicationObject = {
@@ -34,9 +46,10 @@ const groupContextMenu = (element: Node) => {
     resources: element.getChildren().map((node: GraphElement) => node.getData()),
   };
 
-  return createMenuItems(groupActions(applicationData));
+  return createMenuItems(kebabOptionsToMenu(groupActions(applicationData)));
 };
 
-const nodeContextMenu = (element: Node) => createMenuItems(nodeActions(element.getData()));
+const nodeContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(nodeActions(element.getData())));
 
 export { workloadContextMenu, groupContextMenu, nodeContextMenu };

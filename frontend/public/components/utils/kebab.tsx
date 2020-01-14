@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
 import { KEY_CODES, Tooltip } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { EllipsisVIcon, AngleRightIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
   annotationsModal,
@@ -27,6 +27,38 @@ import {
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
+
+export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
+  const subs: { [key: string]: KebabSubMenu } = {};
+  const menuOptions: KebabMenuOption[] = [];
+
+  options.forEach((o) => {
+    if (!o.hidden) {
+      if (o.path) {
+        const parts = o.path.split('/');
+        parts.forEach((p, i) => {
+          let subMenu = subs[p];
+          if (!subs[p]) {
+            subMenu = {
+              label: p,
+              children: [],
+            };
+            subs[p] = subMenu;
+            if (i === 0) {
+              menuOptions.push(subMenu);
+            } else {
+              subs[parts[i - 1]].children.push(subMenu);
+            }
+          }
+        });
+        subs[parts[parts.length - 1]].children.push(o);
+      } else {
+        menuOptions.push(o);
+      }
+    }
+  });
+  return menuOptions;
+};
 
 const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   option,
@@ -63,17 +95,106 @@ const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string })
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
+type KebabSubMenuProps = {
+  option: KebabSubMenu;
+  onClick: KebabItemProps['onClick'];
+};
+
+const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
+  const [open, setOpen] = React.useState(false);
+  const nodeRef = React.useRef(null);
+  const subMenuRef = React.useRef(null);
+  const referenceCb = React.useCallback(() => nodeRef.current, []);
+  // use a callback ref because FocusTrap is old and doesn't support non-function refs
+  const subMenuCbRef = React.useCallback((node) => (subMenuRef.current = node), []);
+
+  return (
+    <>
+      <button
+        ref={nodeRef}
+        className="oc-kebab__sub pf-c-dropdown__menu-item"
+        data-test-action={option.label}
+        // mouse enter will open the sub menu
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={(e) => {
+          // if the mouse leaves this item, close the sub menu only if the mouse did not enter the sub menu itself
+          if (!subMenuRef.current || !subMenuRef.current.contains(e.relatedTarget as Node)) {
+            setOpen(false);
+          }
+        }}
+        onKeyDown={(e) => {
+          // open the sub menu on enter or right arrow
+          if (e.keyCode === 39 || e.keyCode === 13) {
+            setOpen(true);
+            e.stopPropagation();
+          }
+        }}
+      >
+        {option.label}
+        <AngleRightIcon className="oc-kebab__arrow" />
+      </button>
+      <Popper
+        open={open}
+        placement="right-start"
+        closeOnEsc
+        closeOnOutsideClick
+        onRequestClose={(e) => {
+          // only close the sub menu if clicking anywhere outside the menu item that owns the sub menu
+          if (!e || !nodeRef.current || !nodeRef.current.contains(e.target as Node)) {
+            setOpen(false);
+          }
+        }}
+        reference={referenceCb}
+      >
+        <FocusTrap focusTrapOptions={{ clickOutsideDeactivates: true }}>
+          <div
+            ref={subMenuCbRef}
+            role="presentation"
+            className="pf-c-dropdown pf-m-expanded"
+            onMouseLeave={(e) => {
+              // only close the sub menu if the mouse does not enter the item
+              if (!nodeRef.current || !nodeRef.current.contains(e.relatedTarget as Node)) {
+                setOpen(false);
+              }
+            }}
+            onKeyDown={(e) => {
+              // close the sub menu on left arrow
+              if (e.keyCode === 37) {
+                setOpen(false);
+                e.stopPropagation();
+              }
+            }}
+          >
+            <KebabMenuItems
+              options={option.children}
+              onClick={onClick}
+              className="oc-kebab__popper-items"
+              focusItem={option.children[0]}
+            />
+          </div>
+        </FocusTrap>
+      </Popper>
+    </>
+  );
+};
+
+export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenu => {
+  // only a sub menu has children
+  return Array.isArray((option as KebabSubMenu).children);
+};
+
 export const KebabItem: React.FC<KebabItemProps> = (props) => {
+  const { option } = props;
   let item;
 
-  if (props.option.accessReview) {
+  if (option.accessReview) {
     item = <KebabItemAccessReview {...props} />;
   } else {
     item = <KebabItem_ {...props} isAllowed />;
   }
 
-  return props.option.tooltip ? (
-    <Tooltip position="left" content={props.option.tooltip}>
+  return option.tooltip ? (
+    <Tooltip position="left" content={option.tooltip}>
       {item}
     </Tooltip>
   ) : (
@@ -81,29 +202,42 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
   );
 };
 
-export const KebabItems: React.SFC<KebabItemsProps> = ({
+type KebabMenuItemsProps = {
+  options: KebabMenuOption[];
+  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  focusItem?: KebabOption;
+  className?: string;
+};
+
+export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
   className,
   options,
   onClick,
   focusItem,
-}) => {
-  const visibleOptions = _.reject(options, (o) => _.get(o, 'hidden', false));
-  return (
-    <ul
-      className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
-      data-test-id="action-items"
-    >
-      {_.map(visibleOptions, (o, i) => (
-        <li key={i}>
+}) => (
+  <ul
+    className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
+    data-test-id="action-items"
+  >
+    {_.map(options, (o) => (
+      <li key={o.label}>
+        {isKebabSubMenu(o) ? (
+          <KebabSubMenu option={o} onClick={onClick} />
+        ) : (
           <KebabItem
             option={o}
             onClick={onClick}
             autoFocus={focusItem ? o === focusItem : undefined}
           />
-        </li>
-      ))}
-    </ul>
-  );
+        )}
+      </li>
+    ))}
+  </ul>
+);
+
+export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => {
+  const menuOptions = kebabOptionsToMenu(options);
+  return <KebabMenuItems {...props} options={menuOptions} />;
 };
 
 const kebabFactory: KebabFactory = {
@@ -294,8 +428,12 @@ export class Kebab extends React.Component<any, { active: boolean }> {
     }
   };
 
+  getPopperReference = () => this.dropdownElement.current;
+
   render() {
     const { options, isDisabled } = this.props;
+
+    const menuOptions = kebabOptionsToMenu(options);
 
     return (
       <div
@@ -325,24 +463,17 @@ export class Kebab extends React.Component<any, { active: boolean }> {
           closeOnEsc
           closeOnOutsideClick
           onRequestClose={this.handleRequestClose}
-          reference={() => this.dropdownElement.current}
-          popperOptions={{
-            modifiers: {
-              preventOverflow: {
-                boundariesElement: document.body,
-              },
-            },
-          }}
+          reference={this.getPopperReference}
         >
           <FocusTrap
             focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
           >
             <div className="pf-c-dropdown pf-m-expanded">
-              <KebabItems
-                options={options}
+              <KebabMenuItems
+                options={menuOptions}
                 onClick={this.onClick}
                 className="oc-kebab__popper-items"
-                focusItem={options[0]}
+                focusItem={menuOptions[0]}
               />
             </div>
           </FocusTrap>
@@ -360,7 +491,11 @@ export type KebabOption = {
   accessReview?: AccessReviewResourceAttributes;
   isDisabled?: boolean;
   tooltip?: string;
+  // a `/` separated string where each segment denotes a new sub menu entry
+  // Eg. `Menu 1/Menu 2/Menu 3`
+  path?: string;
 };
+
 export type KebabAction = (
   kind: K8sKind,
   obj: K8sResourceKind,
@@ -376,10 +511,16 @@ export type ResourceKebabProps = {
   isDisabled?: boolean;
 };
 
+type KebabSubMenu = {
+  label: string;
+  children: KebabMenuOption[];
+};
+
+export type KebabMenuOption = KebabSubMenu | KebabOption;
+
 type KebabItemProps = {
   option: KebabOption;
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
-  isActionDropdown?: boolean;
   autoFocus?: boolean;
   onEscape?: () => void;
 };
@@ -387,7 +528,6 @@ type KebabItemProps = {
 export type KebabItemsProps = {
   options: KebabOption[];
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
-  isActionDropdown?: boolean;
   focusItem?: KebabOption;
   className?: string;
 };

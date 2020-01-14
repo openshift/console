@@ -68,6 +68,7 @@ type PopperProps = {
   popperRef?: React.Ref<PopperJS>;
   reference: Reference | (() => Reference);
   zIndex?: number;
+  returnFocus?: boolean;
 };
 
 const DEFAULT_POPPER_OPTIONS: PopperOptions = {};
@@ -85,34 +86,52 @@ const Popper: React.FC<PopperProps> = ({
   onRequestClose,
   popperRef: popperRefIn,
   zIndex = 9999,
+  returnFocus,
 }) => {
   const controlled = typeof open === 'boolean';
   const openProp = controlled ? open : true;
   const nodeRef = React.useRef<Element>();
   const popperRef = React.useRef<PopperJS>(null);
   const popperRefs = useCombineRefs<PopperJS>(popperRef, popperRefIn);
-  const [isOpen, setOpen] = React.useState(openProp);
+  const [isOpen, setOpenState] = React.useState(openProp);
+  const focusRef = React.useRef<Element>();
+  const onRequestCloseRef = React.useRef(onRequestClose);
+  onRequestCloseRef.current = onRequestClose;
+
+  const setOpen = React.useCallback(
+    (newOpen: boolean) => {
+      if (returnFocus && newOpen !== isOpen) {
+        if (newOpen) {
+          focusRef.current = document.activeElement;
+        } else if (focusRef.current instanceof HTMLElement && focusRef.current.ownerDocument) {
+          focusRef.current.focus();
+        }
+      }
+      setOpenState(newOpen);
+    },
+    [returnFocus, isOpen],
+  );
 
   React.useEffect(() => {
     setOpen(openProp);
-  }, [openProp]);
+  }, [openProp, setOpen]);
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
       if (e.keyCode === 27) {
-        controlled ? onRequestClose && onRequestClose() : setOpen(false);
+        controlled ? onRequestCloseRef.current && onRequestCloseRef.current() : setOpen(false);
       }
     },
-    [onRequestClose, controlled],
+    [controlled, setOpen],
   );
 
   const onClickOutside = React.useCallback(
     (e: MouseEvent) => {
       if (!nodeRef.current || (e.target instanceof Node && !nodeRef.current.contains(e.target))) {
-        controlled ? onRequestClose && onRequestClose(e) : setOpen(false);
+        controlled ? onRequestCloseRef.current && onRequestCloseRef.current(e) : setOpen(false);
       }
     },
-    [onRequestClose, controlled],
+    [controlled, setOpen],
   );
 
   const destroy = React.useCallback(() => {

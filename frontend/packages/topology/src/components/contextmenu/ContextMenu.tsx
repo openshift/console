@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  DropdownMenu,
-  DropdownItem,
-  DropdownContext,
-  DropdownSeparator,
-} from '@patternfly/react-core';
+import { DropdownMenu, DropdownContext } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Dropdown/dropdown';
 // FIXME fully qualified due to the effect of long build times on storybook
 import Popper from '@console/shared/src/components/popper/Popper';
@@ -57,8 +52,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           separatorClass: styles.dropdownSeparator,
         }}
       >
-        <div className="pf-c-dropdown pf-m-expanded">
-          <DropdownMenu className="pf-c-dropdown__menu topology-context-menu" autoFocus>
+        <div className="pf-c-dropdown pf-m-expanded topology-context-menu">
+          <DropdownMenu className="pf-c-dropdown__menu " autoFocus>
             {children}
           </DropdownMenu>
         </div>
@@ -68,7 +63,3 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 };
 
 export default ContextMenu;
-
-// re-export dropdown components as context menu components
-export const ContextMenuSeparator = DropdownSeparator;
-export const ContextMenuItem = DropdownItem;
