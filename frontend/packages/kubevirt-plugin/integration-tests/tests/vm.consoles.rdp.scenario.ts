@@ -78,9 +78,7 @@ describe('KubeVirt VM console - RDP', () => {
 
         // the next command follows recommendation by documentation
         execSync(
-          `virtctl expose virtualmachine ${vm.name} --name ${
-            vm.name
-          }-rdp --port 4567 --target-port 3389 --type NodePort`,
+          `virtctl expose virtualmachine ${vm.name} --name ${vm.name}-rdp --port 4567 --target-port 3389 --type NodePort`,
           { stdio: 'inherit' },
         );
 

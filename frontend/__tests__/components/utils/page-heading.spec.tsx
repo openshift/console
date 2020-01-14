@@ -16,7 +16,10 @@ describe(BreadCrumbs.displayName, () => {
   let breadcrumbs: BreadCrumbsProps['breadcrumbs'];
 
   beforeEach(() => {
-    breadcrumbs = [{ name: 'pods', path: '/pods' }, { name: 'containers', path: '/pods' }];
+    breadcrumbs = [
+      { name: 'pods', path: '/pods' },
+      { name: 'containers', path: '/pods' },
+    ];
     wrapper = shallow(<BreadCrumbs breadcrumbs={breadcrumbs} />);
   });
 

@@ -545,9 +545,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
   const reference = referenceForProvidedAPI(crd);
   const model = modelFor(reference);
   const createRoute = () =>
-    `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
-      csv.metadata.name
-    }/${reference}/~new`;
+    `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`;
   return (
     <Card>
       <CardHeader>

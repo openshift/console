@@ -1,13 +1,11 @@
 {
   "env": {
     "node": true,
-    "es6": true,
+    "es6": true
   },
-  "extends": [
-    "../.eslintrc"
-  ],
+  "extends": ["../.eslintrc"],
   "globals": {},
   "rules": {
-    "no-console": ["error", { allow: ["warn", "error", "log", "info"] }],
+    "no-console": ["error", { "allow": ["warn", "error", "log", "info"] }]
   }
 }

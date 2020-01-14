@@ -20,7 +20,7 @@ export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.
       name: resourceObj.metadata.name,
       namespace: resourceObj.metadata.namespace,
     });
-    return <WrappedComponent {...props as any} canEdit={editAccess} />;
+    return <WrappedComponent {...(props as any)} canEdit={editAccess} />;
   };
   return observer(Component);
 };

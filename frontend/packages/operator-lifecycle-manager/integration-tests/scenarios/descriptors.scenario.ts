@@ -350,9 +350,7 @@ describe('Using OLM descriptor components', () => {
     create(testCR);
 
     await browser.get(
-      `${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${
-        testCRD.spec.group
-      }~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
     );
     await crudView.isLoaded();
   });
@@ -379,9 +377,7 @@ describe('Using OLM descriptor components', () => {
       names: { kind },
     } = testCRD.spec;
     await browser.get(
-      `${appHost}/ns/${testName}/clusterserviceversions/${
-        testCSV.metadata.name
-      }/${group}~${version}~${kind}/${testCR.metadata.name}`,
+      `${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
     );
     await crudView.isLoaded();
 

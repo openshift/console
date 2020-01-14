@@ -75,10 +75,9 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   );
 };
 
-const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(
-  null,
-  { startImpersonate: UIActions.startImpersonate },
-)(UserKebab_);
+const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
+  startImpersonate: UIActions.startImpersonate,
+})(UserKebab_);
 
 const UserTableRow: React.FC<UserTableRowProps> = ({ obj, index, key, style }) => {
   return (
@@ -200,10 +199,9 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   );
 };
 
-export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(
-  null,
-  { startImpersonate: UIActions.startImpersonate },
-)(UserDetailsPage_);
+export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(null, {
+  startImpersonate: UIActions.startImpersonate,
+})(UserDetailsPage_);
 
 type UserPageProps = {
   autoFocus?: boolean;

@@ -54,7 +54,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     };
   }
 
-  componentWillReceiveProps(nextProps: ResourceDropdownProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: ResourceDropdownProps) {
     const { loaded, loadError, autoSelect, selectedKey, placeholder, onLoad } = nextProps;
 
     if (!loaded) {

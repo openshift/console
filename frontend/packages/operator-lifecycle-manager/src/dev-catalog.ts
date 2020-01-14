@@ -65,9 +65,7 @@ export const normalizeClusterServiceVersions = (
         desc.csv.metadata.name
       }/${referenceForProvidedAPI(desc)}/~new`,
       supportUrl: null,
-      longDescription: `This resource is provided by ${
-        desc.csv.spec.displayName
-      }, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
+      longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
       documentationUrl: _.get(
         (desc.csv.spec.links || []).find(({ name }) => name === 'Documentation'),
         'url',

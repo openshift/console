@@ -33,7 +33,7 @@ const ModalComponentWrapper: React.FC<ModalComponentWrapperProps> = ({
       shouldCloseOnOverlayClick={!modalProps.blocking}
     >
       <Component
-        {..._.omit(modalProps, 'blocking', 'modalClassName') as any}
+        {...(_.omit(modalProps, 'blocking', 'modalClassName') as any)}
         {...resourceProps}
         cancel={onCancel}
         close={onClose}

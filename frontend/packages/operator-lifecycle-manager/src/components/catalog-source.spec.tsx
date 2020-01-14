@@ -119,9 +119,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   beforeEach(() => {
     const locationMock = new Location();
-    locationMock.search = `?pkg=${
-      testPackageManifest.metadata.name
-    }&catalog=ocs&catalogNamespace=default`;
+    locationMock.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
 
     wrapper = shallow(
       <CreateSubscriptionYAML

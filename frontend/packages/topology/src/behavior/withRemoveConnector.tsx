@@ -43,7 +43,7 @@ export const withRemoveConnector = <P extends WithRemoveConnectorProps & Element
 
     return (
       <WrappedComponent
-        {...props as any}
+        {...(props as any)}
         onShowRemoveConnector={onShowRemoveConnector}
         onHideRemoveConnector={onHideRemoveConnector}
       >

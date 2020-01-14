@@ -147,7 +147,13 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
           {renderConnector(startPoint, endPoint, hintsRef.current)}
           {!active && (
             <path
-              d={hullPath([[startPoint.x, startPoint.y], [endPoint.x, endPoint.y]], 7)}
+              d={hullPath(
+                [
+                  [startPoint.x, startPoint.y],
+                  [endPoint.x, endPoint.y],
+                ],
+                7,
+              )}
               fillOpacity="0"
             />
           )}
@@ -215,7 +221,7 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
     return (
       <>
         <WrappedComponent
-          {...props as any}
+          {...(props as any)}
           onShowCreateConnector={onShowCreateConnector}
           onHideCreateConnector={onHideCreateConnector}
         />

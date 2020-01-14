@@ -239,7 +239,7 @@ type StatusGroup = {
     filterType?: string;
     statusIDs: string[];
     count: number;
-  }
+  };
 };
 
 export type StatusGroupMapper = (

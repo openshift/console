@@ -98,7 +98,7 @@ export const withPanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT) => <
 ) => {
   const Component: React.FC<Omit<P, keyof WithPanZoomProps>> = (props) => {
     const panZoomRef = usePanZoom(zoomExtent);
-    return <WrappedComponent {...props as any} panZoomRef={panZoomRef} />;
+    return <WrappedComponent {...(props as any)} panZoomRef={panZoomRef} />;
   };
   return observer(Component);
 };

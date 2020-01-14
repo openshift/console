@@ -52,5 +52,5 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
 );
 
 export const CreateVMTemplateYAML = (props: any) => (
-  <CreateVMTemplateYAMLConnected {...props as any} plural={TemplateModel.plural} />
+  <CreateVMTemplateYAMLConnected {...(props as any)} plural={TemplateModel.plural} />
 );

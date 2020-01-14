@@ -141,7 +141,10 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
       if (type !== StorageType.URL) {
         // remove unnecessary dataVolumeTemplates
         DATATEMPLATES = DATATEMPLATES.filter((dataVol) =>
-          includes(VOLS.map((vol) => getVolumeDataVolumeName(vol)), dataVol.metadata.name),
+          includes(
+            VOLS.map((vol) => getVolumeDataVolumeName(vol)),
+            dataVol.metadata.name,
+          ),
         );
       }
       if (!existingCD) {

@@ -5,8 +5,13 @@ module.exports = {
 
   // Enforces the use of catch() on un-returned promises.
   'promise/catch-or-return': 'error',
+
+  // TODO This rule was not working as expected prior to eslint-plugin-promise v4.2.1
+  // Disabling for now since it is causing failures after the update.
   // Avoid wrapping values in Promise.resolve or Promise.reject when not needed.
-  'promise/no-return-wrap': 'error',
+  // 'promise/no-return-wrap': 'error',
+  'promise/no-return-wrap': 'off',
+
   // Enforce consistent param names and ordering when creating new promises.
   'promise/param-names': 'off',
   // Return inside each then() to create readable and reusable Promise chains.

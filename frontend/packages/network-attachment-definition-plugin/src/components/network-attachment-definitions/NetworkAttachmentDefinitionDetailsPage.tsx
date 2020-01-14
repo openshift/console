@@ -11,9 +11,9 @@ const menuActions = [
   ...common,
 ];
 
-export const NetworkAttachmentDefinitionsDetailsPage: React.FC<
-  NetworkAttachmentDefinitionsDetailPageProps
-> = (props) => {
+export const NetworkAttachmentDefinitionsDetailsPage: React.FC<NetworkAttachmentDefinitionsDetailPageProps> = (
+  props,
+) => {
   const overviewPage = {
     href: '', // default landing page
     name: 'Overview',

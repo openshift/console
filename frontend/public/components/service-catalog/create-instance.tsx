@@ -246,7 +246,7 @@ export const CreateInstancePage = (props) => {
   ];
   return (
     <Firehose resources={resources}>
-      <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />
+      <CreateInstance preselectedNamespace={preselectedNamespace} {...(props as any)} />
     </Firehose>
   );
 };

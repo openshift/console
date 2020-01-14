@@ -43,7 +43,7 @@ class App extends React.PureComponent {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     window.addEventListener('resize', this._onResize);
   }
 

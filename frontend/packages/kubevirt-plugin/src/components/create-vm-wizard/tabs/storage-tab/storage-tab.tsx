@@ -215,7 +215,4 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   },
 });
 
-export const StorageTab = connect(
-  stateToProps,
-  dispatchToProps,
-)(StorageTabConnected);
+export const StorageTab = connect(stateToProps, dispatchToProps)(StorageTabConnected);

@@ -101,7 +101,7 @@ export type VMWareProviderRenderableField =
   | VMWareProviderField.STATUS
   | VMWareProviderField.VM;
 export type VMSettingsRenderableFieldResolver = {
-  [key in VMSettingsRenderableField | VMWareProviderRenderableField]: string
+  [key in VMSettingsRenderableField | VMWareProviderRenderableField]: string;
 };
 
 export type VMSettingsFieldType = {

@@ -6,7 +6,10 @@ import { BootOrderEmptySummary } from './boot-order-empty-summary';
 
 // NOTE(yaacov): using <ol> because '@patternfly/react-core' <List> currently miss isOrder parameter.
 export const BootOrderSummary: React.FC<BootOrderSummaryProps> = ({ devices }) => {
-  const sources = _.sortBy(devices.filter((device) => device.value.bootOrder), 'value.bootOrder');
+  const sources = _.sortBy(
+    devices.filter((device) => device.value.bootOrder),
+    'value.bootOrder',
+  );
 
   return (
     <>

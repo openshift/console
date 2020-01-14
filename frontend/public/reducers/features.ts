@@ -111,12 +111,9 @@ export type ConnectToFlags = <P extends WithFlagsProps>(
 };
 
 export const connectToFlags: ConnectToFlags = (...flags) =>
-  connect(
-    (state: RootState) => stateToProps(flags, state),
-    null,
-    null,
-    { areStatePropsEqual: _.isEqual },
-  );
+  connect((state: RootState) => stateToProps(flags, state), null, null, {
+    areStatePropsEqual: _.isEqual,
+  });
 
 // Flag detection is not complete if the flag's value is `undefined`.
 export const flagPending = (flag) => flag === undefined;

@@ -20,7 +20,7 @@ export interface UserRole {
   subjects: [
     {
       name: string;
-    }
+    },
   ];
 }
 

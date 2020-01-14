@@ -54,7 +54,4 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  dispatchToProps,
-)(TopologyFilterBar);
+export default connect(mapStateToProps, dispatchToProps)(TopologyFilterBar);

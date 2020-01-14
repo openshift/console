@@ -42,7 +42,7 @@ const BindingParameters: React.SFC<BindingParametersProps> = (props) => {
   ];
   return (
     <Firehose resources={resources}>
-      <BindingParametersForm {...props as any} />
+      <BindingParametersForm {...(props as any)} />
     </Firehose>
   );
 };
@@ -205,7 +205,7 @@ export const CreateBindingPage: React.SFC<CreateBindingPageProps> = (props) => {
   ];
   return (
     <Firehose resources={resources}>
-      <CreateBindingForm {...props as any} />
+      <CreateBindingForm {...(props as any)} />
     </Firehose>
   );
 };

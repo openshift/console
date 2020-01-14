@@ -18,7 +18,10 @@ import {
 import './boot-order.scss';
 
 export const BootOrder = ({ devices, setDevices }: BootOrderProps) => {
-  const sources = _.sortBy(devices.filter((device) => device.value.bootOrder), 'value.bootOrder');
+  const sources = _.sortBy(
+    devices.filter((device) => device.value.bootOrder),
+    'value.bootOrder',
+  );
   const options = devices.filter((device) => !device.value.bootOrder);
   const [isEditMode, setEditMode] = React.useState<boolean>(false);
 

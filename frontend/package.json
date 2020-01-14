@@ -181,7 +181,7 @@
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "node-sass": "4.12.x",
-    "prettier": "1.17.1",
+    "prettier": "1.19.1",
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",

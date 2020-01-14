@@ -72,9 +72,7 @@ export class SyncMarkdownView extends React.Component<
     // Let the new height take effect, then reset again once we recompute
     setTimeout(() => {
       if (this.props.exactHeight) {
-        this.frame.style.height = `${
-          this.frame.contentWindow.document.body.firstChild.scrollHeight
-        }px`;
+        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
       } else {
         // Increase by 15px for the case where a horizontal scrollbar might appear
         this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild

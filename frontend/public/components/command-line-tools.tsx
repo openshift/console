@@ -83,7 +83,7 @@ export const CommandLineToolsPage = connectToFlags(FLAGS.CONSOLE_CLI_DOWNLOAD)(
 
     return (
       <Firehose resources={resources}>
-        <CommandLineTools {...props as any} />
+        <CommandLineTools {...(props as any)} />
       </Firehose>
     );
   },

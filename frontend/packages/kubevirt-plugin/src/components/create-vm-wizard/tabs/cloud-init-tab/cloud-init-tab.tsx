@@ -359,7 +359,4 @@ const dispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const CloudInitTab = connect(
-  stateToProps,
-  dispatchToProps,
-)(CloudInitTabComponent);
+export const CloudInitTab = connect(stateToProps, dispatchToProps)(CloudInitTabComponent);

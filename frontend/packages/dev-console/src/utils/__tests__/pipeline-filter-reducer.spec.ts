@@ -8,12 +8,18 @@ const mockPipelineRuns = [
   { status: { conditions: [{ status: 'True', type: 'Succeeded' }] } },
   {
     status: {
-      conditions: [{ status: 'True', type: 'Failure' }, { status: 'False', type: 'Succeeded' }],
+      conditions: [
+        { status: 'True', type: 'Failure' },
+        { status: 'False', type: 'Succeeded' },
+      ],
     },
   },
   {
     status: {
-      conditions: [{ status: 'True', type: 'Failure' }, { status: 'True', type: 'Succeeded' }],
+      conditions: [
+        { status: 'True', type: 'Failure' },
+        { status: 'True', type: 'Succeeded' },
+      ],
     },
   },
   {

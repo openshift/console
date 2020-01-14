@@ -123,13 +123,9 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     return null;
   };
 
-  const createLink = `/operatorhub/subscribe?pkg=${
-    item.obj.metadata.name
-  }&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
+  const createLink = `/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
   const uninstallLink = () =>
-    `/k8s/ns/${item.subscription.metadata.namespace}/${SubscriptionModel.plural}/${
-      item.subscription.metadata.name
-    }?showDelete=true`;
+    `/k8s/ns/${item.subscription.metadata.namespace}/${SubscriptionModel.plural}/${item.subscription.metadata.name}?showDelete=true`;
 
   return (
     <>

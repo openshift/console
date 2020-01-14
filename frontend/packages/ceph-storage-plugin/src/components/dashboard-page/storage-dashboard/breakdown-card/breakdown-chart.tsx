@@ -27,7 +27,10 @@ const LinkableLegend: React.FC<LinkableLegendProps> = React.memo((props: Linkabl
       <ChartLabel
         {...props}
         lineHeight={1.2}
-        style={[{ ...datum.labels, fontSize: 9 }, { fill: 'black', fontSize: 8 }]}
+        style={[
+          { ...datum.labels, fontSize: 9 },
+          { fill: 'black', fontSize: 8 },
+        ]}
       />
     </Tooltip>
   );

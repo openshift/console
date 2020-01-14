@@ -122,7 +122,7 @@ const AboutModal_: React.FC<AboutModalProps> = (props) => {
         </p>
       )}
       <Firehose resources={resources}>
-        <AboutModalItems {...props as any} />
+        <AboutModalItems {...(props as any)} />
       </Firehose>
     </PfAboutModal>
   );

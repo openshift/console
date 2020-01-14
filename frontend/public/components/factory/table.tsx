@@ -366,14 +366,9 @@ export const Table = connect<
   TablePropsFromDispatch,
   TableProps,
   TableOptionProps
->(
-  stateToProps,
-  { sortList: UIActions.sortList },
-  null,
-  {
-    areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
-  },
-)(
+>(stateToProps, { sortList: UIActions.sortList }, null, {
+  areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
+})(
   class TableInner extends React.Component<TableInnerProps, TableInnerState> {
     static propTypes = {
       customData: PropTypes.any,

@@ -48,7 +48,7 @@ export const operatorHealthPriority: {
   [key in HealthStateMappingKeys]: {
     priority: number;
     health: HealthState;
-  } & HealthStateMappingValues
+  } & HealthStateMappingValues;
 } = {
   [HealthState.OK]: {
     priority: 0,

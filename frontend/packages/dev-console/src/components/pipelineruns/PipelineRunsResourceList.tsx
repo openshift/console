@@ -5,9 +5,10 @@ import { PipelineRunModel } from '../../models';
 import { runFilters } from '../pipelines/detail-page-tabs/PipelineRuns';
 import PipelineRunsList from './list-page/PipelineRunList';
 
-const PipelineRunsResourceList: React.FC<
-  Omit<React.ComponentProps<typeof ListPage>, 'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'>
-> = (props) => {
+const PipelineRunsResourceList: React.FC<Omit<
+  React.ComponentProps<typeof ListPage>,
+  'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
+>> = (props) => {
   return (
     <ListPage
       {...props}

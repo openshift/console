@@ -21,11 +21,16 @@
       "jsx": true
     },
     "ecmaVersion": 2017,
-    "sourceType": "module"
+    "extraFileExtensions": [".json"],
+    "sourceType": "module",
+    "tsconfigRootDir": "./"
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint"],
   "rules": {
-    "camelcase": 2,
+    "camelcase": [
+      "error",
+      { "allow": ["UNSAFE_componentWillReceiveProps", "UNSAFE_componentWillMount"] }
+    ],
     "consistent-return": 0,
     "consistent-this": [1, "that"],
     "curly": [2, "all"],
@@ -45,6 +50,7 @@
     "no-else-return": ["error"],
     "no-global-strict": 0,
     "no-irregular-whitespace": ["error"],
+    "no-prototype-builtins": 0, // Disable with exlint v6 update.
     "no-shadow": ["error"],
     "no-underscore-dangle": 0,
     "@typescript-eslint/no-unused-vars": [
@@ -68,7 +74,8 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/display-name": 0,
-    "react/no-unescaped-entities": 0
+    "react/no-unescaped-entities": 0,
+    "require-atomic-updates": 0
   },
   "settings": {
     "import/extensions": [".js", ".jsx"],

@@ -211,9 +211,9 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     canCreate={true}
   />
 );
-export const CustomResourceDefinitionsDetailsPage: React.FC<
-  CustomResourceDefinitionsDetailsPageProps
-> = (props) => (
+export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefinitionsDetailsPageProps> = (
+  props,
+) => (
   <DetailsPage
     {...props}
     kind="CustomResourceDefinition"

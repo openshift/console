@@ -204,7 +204,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
             channel: ${channel.name}
         `;
           return (
-            <CreateYAML {...props as any} plural={SubscriptionModel.plural} template={template} />
+            <CreateYAML {...(props as any)} plural={SubscriptionModel.plural} template={template} />
           );
         }
         return <LoadingBox />;
@@ -237,7 +237,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
       ]}
     >
       {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <Create {...props as any} />
+      <Create {...(props as any)} />
     </Firehose>
   );
 };

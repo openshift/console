@@ -16,32 +16,31 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
       <div className="col-sm-6">
         <ResourceSummary resource={pipeline} />
       </div>
-      {pipeline.spec &&
-        (pipeline.spec.tasks && (
-          <div className="col-sm-6">
-            <SectionHeading text="Tasks" />
-            <dl>
-              {pipeline.spec.tasks.map((task) => {
-                const resourceModel = getResourceModelFromTask(task);
-                return (
-                  <React.Fragment key={task.name}>
-                    <dt>Name: {task.name}</dt>
-                    <dd>
-                      Ref:{' '}
-                      <ResourceLink
-                        kind={referenceForModel(resourceModel)}
-                        name={task.taskRef.name}
-                        namespace={pipeline.metadata.namespace}
-                        title={task.taskRef.name}
-                        inline
-                      />
-                    </dd>
-                  </React.Fragment>
-                );
-              })}
-            </dl>
-          </div>
-        ))}
+      {pipeline.spec && pipeline.spec.tasks && (
+        <div className="col-sm-6">
+          <SectionHeading text="Tasks" />
+          <dl>
+            {pipeline.spec.tasks.map((task) => {
+              const resourceModel = getResourceModelFromTask(task);
+              return (
+                <React.Fragment key={task.name}>
+                  <dt>Name: {task.name}</dt>
+                  <dd>
+                    Ref:{' '}
+                    <ResourceLink
+                      kind={referenceForModel(resourceModel)}
+                      name={task.taskRef.name}
+                      namespace={pipeline.metadata.namespace}
+                      title={task.taskRef.name}
+                      inline
+                    />
+                  </dd>
+                </React.Fragment>
+              );
+            })}
+          </dl>
+        </div>
+      )}
     </div>
   </div>
 );

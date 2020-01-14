@@ -390,8 +390,16 @@ const collectTargetPair = (connect) => ({
   connectDropTarget: connect.dropTarget(),
 });
 
-const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSourcePair)(
-  DropTarget(DRAGGABLE_TYPE.ENV_ROW, itemTarget, collectTargetPair)(
+const PairElement = DragSource(
+  DRAGGABLE_TYPE.ENV_ROW,
+  pairSource,
+  collectSourcePair,
+)(
+  DropTarget(
+    DRAGGABLE_TYPE.ENV_ROW,
+    itemTarget,
+    collectTargetPair,
+  )(
     class PairElement extends React.Component {
       constructor(props) {
         super(props);
@@ -542,8 +550,16 @@ PairElement.propTypes = {
   secrets: PropTypes.object,
 };
 
-const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, collectSourcePair)(
-  DropTarget(DRAGGABLE_TYPE.ENV_FROM_ROW, itemTarget, collectTargetPair)(
+const EnvFromPairElement = DragSource(
+  DRAGGABLE_TYPE.ENV_FROM_ROW,
+  pairSource,
+  collectSourcePair,
+)(
+  DropTarget(
+    DRAGGABLE_TYPE.ENV_FROM_ROW,
+    itemTarget,
+    collectTargetPair,
+  )(
     class EnvFromPairElement extends React.Component {
       constructor(props) {
         super(props);

@@ -192,9 +192,7 @@ describe(ClusterServiceVersionLogo.displayName, () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
     expect(image.props().src).toEqual(
-      `data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${
-        testClusterServiceVersion.spec.icon[0].base64data
-      }`,
+      `data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`,
     );
   });
 

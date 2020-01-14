@@ -103,7 +103,10 @@ const filters = [
     type: 'node-status',
     selected: ['Ready', 'Not Ready'],
     reducer: nodeStatus,
-    items: [{ id: 'Ready', title: 'Ready' }, { id: 'Not Ready', title: 'Not Ready' }],
+    items: [
+      { id: 'Ready', title: 'Ready' },
+      { id: 'Not Ready', title: 'Not Ready' },
+    ],
   },
 ];
 

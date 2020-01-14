@@ -153,7 +153,7 @@ export const withDragNode = <
   const Component: React.FC<Omit<P, keyof WithDragNodeProps>> = (props) => {
     // TODO fix cast to any
     const [dragNodeProps, dragNodeRef] = useDragNode(spec, props as any);
-    return <WrappedComponent {...props as any} dragNodeRef={dragNodeRef} {...dragNodeProps} />;
+    return <WrappedComponent {...(props as any)} dragNodeRef={dragNodeRef} {...dragNodeProps} />;
   };
   return observer(Component);
 };

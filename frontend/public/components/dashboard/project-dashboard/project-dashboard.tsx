@@ -27,29 +27,26 @@ export const getNamespaceDashboardConsoleLinks = (
   ns: K8sResourceKind,
   consoleLinks: K8sResourceKind[],
 ): K8sResourceKind[] => {
-  return _.filter(
-    consoleLinks,
-    (link: K8sResourceKind): boolean => {
-      if (link.spec.location !== 'NamespaceDashboard') {
-        return false;
-      }
+  return _.filter(consoleLinks, (link: K8sResourceKind): boolean => {
+    if (link.spec.location !== 'NamespaceDashboard') {
+      return false;
+    }
 
-      const namespaces: string[] = _.get(link, 'spec.namespaceDashboard.namespaces');
-      const selector: Selector = _.get(link, 'spec.namespaceDashboard.namespaceSelector');
+    const namespaces: string[] = _.get(link, 'spec.namespaceDashboard.namespaces');
+    const selector: Selector = _.get(link, 'spec.namespaceDashboard.namespaceSelector');
 
-      // If neither namespaces or selector was provided, show the link for all namespaces.
-      if (_.isEmpty(namespaces) && _.isEmpty(selector)) {
-        return true;
-      }
+    // If neither namespaces or selector was provided, show the link for all namespaces.
+    if (_.isEmpty(namespaces) && _.isEmpty(selector)) {
+      return true;
+    }
 
-      // Show the link if either namespaces or the selector matches this namespace.
-      if (_.includes(namespaces, ns.metadata.name)) {
-        return true;
-      }
+    // Show the link if either namespaces or the selector matches this namespace.
+    if (_.includes(namespaces, ns.metadata.name)) {
+      return true;
+    }
 
-      return !_.isEmpty(selector) && new LabelSelector(selector).matches(ns);
-    },
-  );
+    return !_.isEmpty(selector) && new LabelSelector(selector).matches(ns);
+  });
 };
 
 const ProjectDashboard_: React.FC<ProjectDashboardReduxProps & ProjectDashboardProps> = ({

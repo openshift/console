@@ -212,10 +212,12 @@ export const config = {
 };
 
 export const checkLogs = async () =>
-  (await browser
-    .manage()
-    .logs()
-    .get('browser')).map((log) => {
+  (
+    await browser
+      .manage()
+      .logs()
+      .get('browser')
+  ).map((log) => {
     browserLogs.push(log);
     return log;
   });

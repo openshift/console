@@ -53,9 +53,9 @@ const getResourceToWatch = (model: K8sKind, namespace: string) => ({
   prop: 'k8sResources',
 });
 
-const PopoverBodyInternal: React.FC<
-  DashboardItemProps & PopoverBodyProps & PopoverReduxProps
-> = React.memo((props) => {
+const PopoverBodyInternal: React.FC<DashboardItemProps &
+  PopoverBodyProps &
+  PopoverReduxProps> = React.memo((props) => {
   const {
     humanize,
     consumers,

@@ -157,9 +157,6 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   },
 });
 
-const VMWizardStorageModalConnected = connect(
-  stateToProps,
-  dispatchToProps,
-)(VMWizardStorageModal);
+const VMWizardStorageModalConnected = connect(stateToProps, dispatchToProps)(VMWizardStorageModal);
 
 export const vmWizardStorageModalEnhanced = createModalLauncher(VMWizardStorageModalConnected);

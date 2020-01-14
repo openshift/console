@@ -24,7 +24,7 @@ const GroupWithDecorator: React.FC<{ element: Node } & WithDragNodeProps> = obse
   const trafficSourceRef = useSvgAnchor(AnchorEnd.source, 'traffic');
   const b = props.element.getBounds();
   return (
-    <DefaultGroup {...props as any}>
+    <DefaultGroup {...(props as any)}>
       <circle
         ref={trafficSourceRef}
         cx={b.x + b.width}

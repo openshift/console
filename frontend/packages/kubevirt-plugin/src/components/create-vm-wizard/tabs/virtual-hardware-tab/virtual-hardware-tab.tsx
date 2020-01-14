@@ -208,7 +208,4 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   },
 });
 
-export const VirtualHardwareTab = connect(
-  stateToProps,
-  dispatchToProps,
-)(VirtualHardwareConnected);
+export const VirtualHardwareTab = connect(stateToProps, dispatchToProps)(VirtualHardwareConnected);

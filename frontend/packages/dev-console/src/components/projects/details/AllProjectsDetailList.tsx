@@ -29,4 +29,6 @@ export const AllProjectsDetailList: React.FC<UseActiveNamespaceProps> = ({ activ
   );
 };
 
+// TODO Figure out why this breaks eslint rules-of-hooks even though it is not a hook
+// eslint-disable-next-line react-hooks/rules-of-hooks
 export default useActiveNamespace(AllProjectsDetailList);

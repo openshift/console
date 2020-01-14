@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 
 import * as UIActions from '../actions/ui';
 
-export const ImpersonateNotifier = connect(
-  ({ UI }) => ({ impersonate: UI.get('impersonate') }),
-  { stopImpersonate: UIActions.stopImpersonate },
-)(({ stopImpersonate, impersonate }) => {
+export const ImpersonateNotifier = connect(({ UI }) => ({ impersonate: UI.get('impersonate') }), {
+  stopImpersonate: UIActions.stopImpersonate,
+})(({ stopImpersonate, impersonate }) => {
   if (!impersonate) {
     return null;
   }
@@ -15,9 +14,7 @@ export const ImpersonateNotifier = connect(
     <div className="co-global-notification">
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
-          <span className="text-uppercase co-global-notification__impersonate-kind">{`Impersonating ${
-            impersonate.kind
-          }`}</span>{' '}
+          <span className="text-uppercase co-global-notification__impersonate-kind">{`Impersonating ${impersonate.kind}`}</span>{' '}
           You are impersonating{' '}
           <span className="co-global-notification__impersonate-name">{impersonate.name}</span>. You
           are viewing all resources and roles this {_.toLower(impersonate.kind)} can access.{' '}

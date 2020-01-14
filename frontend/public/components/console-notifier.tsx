@@ -62,7 +62,7 @@ export const ConsoleNotifier = connectToFlags(FLAGS.CONSOLE_NOTIFICATION)(({ fla
     : [];
   return (
     <Firehose resources={resources}>
-      <ConsoleNotifier_ {...props as ConsoleNotifierProps} />
+      <ConsoleNotifier_ {...(props as ConsoleNotifierProps)} />
     </Firehose>
   );
 });

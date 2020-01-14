@@ -107,86 +107,83 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
   }
 
   const fields: OperandField[] = _.flatten(
-    _.map(
-      _.get(openAPI, 'properties.spec.properties', {}),
-      (val, key: string): OperandField[] => {
-        const capabilitiesFor = (property): SpecCapability[] => {
-          if (property.enum) {
-            return property.enum.map((i) => SpecCapability.select.concat(i));
-          }
-          switch (property.type) {
-            case 'integer':
-              return [SpecCapability.number];
-            case 'boolean':
-              return [SpecCapability.booleanSwitch];
-            case 'string':
-            default:
-              return [SpecCapability.text];
-          }
-        };
-
-        switch (val.type) {
-          case 'object':
-            if (
-              _.values(val.properties).some((nestedVal) =>
-                ['object', 'array'].includes(nestedVal.type),
-              )
-            ) {
-              return null;
-            }
-            return _.map(
-              val.properties,
-              (nestedVal, nestedKey: string): OperandField => ({
-                path: [key, nestedKey].join('.'),
-                displayName: _.startCase(nestedKey),
-                type: nestedVal.type,
-                required: _.get(val, 'required', []).includes(nestedKey),
-                validation: null,
-                capabilities: [
-                  SpecCapability.fieldGroup.concat(key) as SpecCapability.fieldGroup,
-                  ...capabilitiesFor(nestedVal),
-                ],
-              }),
-            );
-          case 'array':
-            if (
-              val.items.type !== 'object' ||
-              _.values(val.items.properties).some((itemVal) =>
-                ['object', 'array'].includes(itemVal.type),
-              )
-            ) {
-              return null;
-            }
-            return _.map(
-              val.items.properties,
-              (itemVal, itemKey: string): OperandField => ({
-                path: `${key}[0].${itemKey}`,
-                displayName: _.startCase(itemKey),
-                type: itemVal.type,
-                required: _.get(val.items, 'required', []).includes(itemKey),
-                validation: null,
-                capabilities: [
-                  SpecCapability.arrayFieldGroup.concat(key) as SpecCapability.fieldGroup,
-                  ...capabilitiesFor(itemVal),
-                ],
-              }),
-            );
-          case undefined:
-            return null;
-          default:
-            return [
-              {
-                path: key,
-                displayName: _.startCase(key),
-                type: val.type,
-                required: _.get(openAPI.properties.spec, 'required', []).includes(key),
-                validation: _.pick(val, [...Object.keys(Validations)]),
-                capabilities: capabilitiesFor(val),
-              },
-            ];
+    _.map(_.get(openAPI, 'properties.spec.properties', {}), (val, key: string): OperandField[] => {
+      const capabilitiesFor = (property): SpecCapability[] => {
+        if (property.enum) {
+          return property.enum.map((i) => SpecCapability.select.concat(i));
         }
-      },
-    ),
+        switch (property.type) {
+          case 'integer':
+            return [SpecCapability.number];
+          case 'boolean':
+            return [SpecCapability.booleanSwitch];
+          case 'string':
+          default:
+            return [SpecCapability.text];
+        }
+      };
+
+      switch (val.type) {
+        case 'object':
+          if (
+            _.values(val.properties).some((nestedVal) =>
+              ['object', 'array'].includes(nestedVal.type),
+            )
+          ) {
+            return null;
+          }
+          return _.map(
+            val.properties,
+            (nestedVal, nestedKey: string): OperandField => ({
+              path: [key, nestedKey].join('.'),
+              displayName: _.startCase(nestedKey),
+              type: nestedVal.type,
+              required: _.get(val, 'required', []).includes(nestedKey),
+              validation: null,
+              capabilities: [
+                SpecCapability.fieldGroup.concat(key) as SpecCapability.fieldGroup,
+                ...capabilitiesFor(nestedVal),
+              ],
+            }),
+          );
+        case 'array':
+          if (
+            val.items.type !== 'object' ||
+            _.values(val.items.properties).some((itemVal) =>
+              ['object', 'array'].includes(itemVal.type),
+            )
+          ) {
+            return null;
+          }
+          return _.map(
+            val.items.properties,
+            (itemVal, itemKey: string): OperandField => ({
+              path: `${key}[0].${itemKey}`,
+              displayName: _.startCase(itemKey),
+              type: itemVal.type,
+              required: _.get(val.items, 'required', []).includes(itemKey),
+              validation: null,
+              capabilities: [
+                SpecCapability.arrayFieldGroup.concat(key) as SpecCapability.fieldGroup,
+                ...capabilitiesFor(itemVal),
+              ],
+            }),
+          );
+        case undefined:
+          return null;
+        default:
+          return [
+            {
+              path: key,
+              displayName: _.startCase(key),
+              type: val.type,
+              required: _.get(openAPI.properties.spec, 'required', []).includes(key),
+              validation: _.pick(val, [...Object.keys(Validations)]),
+              capabilities: capabilitiesFor(val),
+            },
+          ];
+      }
+    }),
   );
 
   return _.compact(fields);
@@ -230,16 +227,18 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     // Associate `specDescriptors` with `fieldGroups` from OpenAPI
     .map((field, i, allFields) =>
       allFields.some((f) =>
-        f.capabilities.includes(SpecCapability.fieldGroup.concat(
-          field.path.split('.')[0],
-        ) as SpecCapability.fieldGroup),
+        f.capabilities.includes(
+          SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup,
+        ),
       )
         ? {
             ...field,
             capabilities: [
-              ...new Set(field.capabilities).add(SpecCapability.fieldGroup.concat(
-                field.path.split('.')[0],
-              ) as SpecCapability.fieldGroup),
+              ...new Set(field.capabilities).add(
+                SpecCapability.fieldGroup.concat(
+                  field.path.split('.')[0],
+                ) as SpecCapability.fieldGroup,
+              ),
             ],
           }
         : field,
@@ -667,9 +666,11 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   const fieldGroups = fields.reduce(
     (groups, field) =>
       field.capabilities.find((c) => c.startsWith(SpecCapability.fieldGroup))
-        ? groups.add(field.capabilities.find((c) =>
-            c.startsWith(SpecCapability.fieldGroup),
-          ) as SpecCapability.fieldGroup)
+        ? groups.add(
+            field.capabilities.find((c) =>
+              c.startsWith(SpecCapability.fieldGroup),
+            ) as SpecCapability.fieldGroup,
+          )
         : groups,
     new Set<SpecCapability.fieldGroup>(),
   );
@@ -677,9 +678,11 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   const arrayFieldGroups = fields.reduce(
     (groups, field) =>
       field.capabilities.find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
-        ? groups.add(field.capabilities.find((c) =>
-            c.startsWith(SpecCapability.arrayFieldGroup),
-          ) as SpecCapability.arrayFieldGroup)
+        ? groups.add(
+            field.capabilities.find((c) =>
+              c.startsWith(SpecCapability.arrayFieldGroup),
+            ) as SpecCapability.arrayFieldGroup,
+          )
         : groups,
     new Set<SpecCapability.arrayFieldGroup>(),
   );
@@ -1073,7 +1076,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
         ]}
       >
         {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-        <CreateOperand {...props as any} operandModel={props.operandModel} match={props.match} />
+        <CreateOperand {...(props as any)} operandModel={props.operandModel} match={props.match} />
       </Firehose>
     )}
   </>

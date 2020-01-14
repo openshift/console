@@ -378,16 +378,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           ) ? (
             <span className="text-muted">No Kubernetes APIs are provided by this Operator.</span>
           ) : (
-            providedAPIsForChannel(props.packageManifest.data[0])(selectedUpdateChannel).map(
-              (api) => (
-                <CRDCard
-                  key={referenceForProvidedAPI(api)}
-                  canCreate={false}
-                  crd={api}
-                  csv={null}
-                />
-              ),
-            )
+            providedAPIsForChannel(props.packageManifest.data[0])(
+              selectedUpdateChannel,
+            ).map((api) => (
+              <CRDCard key={referenceForProvidedAPI(api)} canCreate={false} crd={api} csv={null} />
+            ))
           )}
         </div>
       </div>
@@ -457,7 +452,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
         >
           {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
           <OperatorHubSubscribe
-            {...props as any}
+            {...(props as any)}
             targetNamespace={
               new URLSearchParams(window.location.search).get('targetNamespace') || null
             }

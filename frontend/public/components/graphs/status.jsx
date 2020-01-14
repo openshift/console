@@ -75,7 +75,7 @@ export class Status extends React.Component {
       );
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (_.isEqual(nextProps, this.props)) {
       return;
     }
@@ -89,7 +89,7 @@ export class Status extends React.Component {
     this.fetch(nextProps);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     clearInterval(this.interval);
     this.fetch();
   }

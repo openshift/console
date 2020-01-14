@@ -636,10 +636,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   );
 };
 export const QueryBrowser = withFallback(
-  connect(
-    ({ UI }: RootState) => ({ hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']) }),
-    { patchQuery: UIActions.queryBrowserPatchQuery },
-  )(QueryBrowser_),
+  connect(({ UI }: RootState) => ({ hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']) }), {
+    patchQuery: UIActions.queryBrowserPatchQuery,
+  })(QueryBrowser_),
 );
 
 type AxisDomain = [number, number];

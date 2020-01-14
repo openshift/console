@@ -93,7 +93,7 @@ describe('fromNow', () => {
 
 describe('isValid', () => {
   it('rejects non-dates', () => {
-    expect(isValid('hello' as (any))).toEqual(false);
+    expect(isValid('hello' as any)).toEqual(false);
   });
 
   it('accepts 0 epoch date', () => {

@@ -89,9 +89,7 @@ const createNetAttachDef = (
   }
 
   const newNetAttachDef = {
-    apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${
-      NetworkAttachmentDefinitionModel.apiVersion
-    }`,
+    apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${NetworkAttachmentDefinitionModel.apiVersion}`,
     kind: NetworkAttachmentDefinitionModel.kind,
     metadata: {
       name,

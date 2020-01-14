@@ -261,10 +261,7 @@ const Graph_: React.FC<GraphProps> = ({
     />
   );
 };
-const Graph = connect(
-  graphStateToProps,
-  { patchQuery: UIActions.queryBrowserPatchQuery },
-)(Graph_);
+const Graph = connect(graphStateToProps, { patchQuery: UIActions.queryBrowserPatchQuery })(Graph_);
 
 const SilenceMatchersList = ({ silence }) => (
   <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
@@ -831,7 +828,7 @@ const MonitoringListPage = connect(filtersToProps)(
       history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { nameFilterID, reduxID } = this.props;
       const params = new URLSearchParams(window.location.search);
 

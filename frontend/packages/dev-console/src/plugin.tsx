@@ -299,9 +299,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PipelineModel,
       loader: async () =>
-        (await import(
-          './components/pipelines/PipelineDetailsPage' /* webpackChunkName: "pipeline-details" */
-        )).default,
+        (
+          await import(
+            './components/pipelines/PipelineDetailsPage' /* webpackChunkName: "pipeline-details" */
+          )
+        ).default,
     },
   },
   {
@@ -309,9 +311,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PipelineRunModel,
       loader: async () =>
-        (await import(
-          './components/pipelineruns/PipelineRunDetailsPage' /* webpackChunkName: "pipelinerun-details" */
-        )).default,
+        (
+          await import(
+            './components/pipelineruns/PipelineRunDetailsPage' /* webpackChunkName: "pipelinerun-details" */
+          )
+        ).default,
     },
   },
   {
@@ -319,9 +323,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: TaskRunModel,
       loader: async () =>
-        (await import(
-          './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
-        )).default,
+        (
+          await import(
+            './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
+          )
+        ).default,
     },
   },
   {
@@ -329,9 +335,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PipelineModel,
       loader: async () =>
-        (await import(
-          './components/pipelines/PipelinesResourceList' /* webpackChunkName: "pipeline-resource-list" */
-        )).default,
+        (
+          await import(
+            './components/pipelines/PipelinesResourceList' /* webpackChunkName: "pipeline-resource-list" */
+          )
+        ).default,
     },
   },
   {
@@ -339,9 +347,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PipelineRunModel,
       loader: async () =>
-        (await import(
-          './components/pipelineruns/PipelineRunsResourceList' /* webpackChunkName: "pipelinerun-resource-list" */
-        )).default,
+        (
+          await import(
+            './components/pipelineruns/PipelineRunsResourceList' /* webpackChunkName: "pipelinerun-resource-list" */
+          )
+        ).default,
     },
   },
   {
@@ -391,9 +401,11 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/topology/ns/:name/list',
       ],
       loader: async () =>
-        (await import(
-          './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
-        )).default,
+        (
+          await import(
+            './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          )
+        ).default,
     },
   },
   {
@@ -402,9 +414,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
-        (await import(
-          './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
-        )).default,
+        (
+          await import(
+            './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+          )
+        ).default,
     },
   },
   {
@@ -413,9 +427,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/catalog/source-to-image'],
       loader: async () =>
-        (await import(
-          './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
-        )).default,
+        (
+          await import(
+            './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+          )
+        ).default,
     },
   },
   {
@@ -425,9 +441,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
       loader: async () =>
-        (await import(
-          './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
-        )).default,
+        (
+          await import(
+            './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+          )
+        ).default,
     },
   },
   {
@@ -440,9 +458,11 @@ const plugin: Plugin<ConsumedExtensions> = [
         `/k8s/ns/:ns/${referenceForModel(PipelineModel)}`,
       ],
       loader: async () =>
-        (await import(
-          './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
-        )).PipelinesPage,
+        (
+          await import(
+            './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
+          )
+        ).PipelinesPage,
     },
   },
   {
@@ -455,9 +475,11 @@ const plugin: Plugin<ConsumedExtensions> = [
         `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}`,
       ],
       loader: async () =>
-        (await import(
-          './components/pipelineruns/PipelineRunsPage' /* webpackChunkName: "pipelinerun-page" */
-        )).default,
+        (
+          await import(
+            './components/pipelineruns/PipelineRunsPage' /* webpackChunkName: "pipelinerun-page" */
+          )
+        ).default,
     },
   },
   {
@@ -466,9 +488,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/deploy-image/all-namespaces', '/deploy-image/ns/:ns'],
       loader: async () =>
-        (await import(
-          './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
-        )).default,
+        (
+          await import(
+            './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
+          )
+        ).default,
     },
   },
   {
@@ -478,9 +502,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/k8s/cluster/projects'],
       loader: async () =>
-        (await import(
-          './components/projects/details/AllProjectsDetailList' /* webpackChunkName: "all-projects-detail-list" */
-        )).default,
+        (
+          await import(
+            './components/projects/details/AllProjectsDetailList' /* webpackChunkName: "all-projects-detail-list" */
+          )
+        ).default,
     },
   },
   {
@@ -489,9 +515,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       path: ['/k8s/cluster/projects/:name'],
       loader: async () =>
-        (await import(
-          './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
-        )).default,
+        (
+          await import(
+            './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
+          )
+        ).default,
     },
   },
   {
@@ -510,9 +538,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/project-access/all-namespaces', '/project-access/ns/:ns'],
       loader: async () =>
-        (await import(
-          './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
-        )).default,
+        (
+          await import(
+            './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
+          )
+        ).default,
     },
   },
   {
@@ -522,9 +552,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: false,
       path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
       loader: async () =>
-        (await import(
-          './components/monitoring/MonitoringPage' /* webpackChunkName: "dev-console-monitoring" */
-        )).default,
+        (
+          await import(
+            './components/monitoring/MonitoringPage' /* webpackChunkName: "dev-console-monitoring" */
+          )
+        ).default,
     },
   },
   {

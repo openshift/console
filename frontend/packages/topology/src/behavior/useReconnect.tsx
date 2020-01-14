@@ -20,7 +20,7 @@ export const withSourceDrag = <
   const Component: React.FC<Omit<P, keyof WithSourceDragProps & CollectedProps>> = (props) => {
     // TODO fix cast to any
     const [dndDragProps, dndDragRef] = useDndDrag(spec, props as any);
-    return <WrappedComponent {...props as any} sourceDragRef={dndDragRef} {...dndDragProps} />;
+    return <WrappedComponent {...(props as any)} sourceDragRef={dndDragRef} {...dndDragProps} />;
   };
   return observer(Component);
 };
@@ -42,7 +42,7 @@ export const withTargetDrag = <
   const Component: React.FC<Omit<P, keyof WithSourceDragProps & CollectedProps>> = (props) => {
     // TODO fix cast to any
     const [dndDragProps, dndDragRef] = useDndDrag(spec, props as any);
-    return <WrappedComponent {...props as any} targetDragRef={dndDragRef} {...dndDragProps} />;
+    return <WrappedComponent {...(props as any)} targetDragRef={dndDragRef} {...dndDragProps} />;
   };
   return observer(Component);
 };
