@@ -187,7 +187,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"

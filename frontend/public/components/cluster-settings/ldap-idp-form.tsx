@@ -200,7 +200,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"

@@ -83,10 +83,11 @@ export const k8sUpdate = (kind, data, ns, name) =>
     data,
   );
 
-export const k8sPatch = (kind, resource, data) =>
+export const k8sPatch = (kind, resource, data, opts = {}) =>
   coFetchJSON.patch(
     resourceURL(kind, { ns: resource.metadata.namespace, name: resource.metadata.name }),
     data,
+    opts,
   );
 
 export const k8sKill = (kind, resource, opts = {}, json = null) =>

@@ -216,7 +216,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.issuerChanged}
               value={issuer}
               id="issuer"

@@ -159,7 +159,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.challengeURLChanged}
               value={challengeURL}
               id="challenge-url"
@@ -176,7 +176,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.loginURLChanged}
               value={loginURL}
               id="login-url"

@@ -2,12 +2,19 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
+import { SecretModel, ConfigMapModel, OAuthModel } from '../../models';
+import {
+  IdentityProvider,
+  k8sCreate,
+  K8sResourceKind,
+  OAuthKind,
+  k8sPatch,
+} from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { dryRunOpt } from '@console/dev-console/src/utils/shared-submit-utils';
 
 export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   readonly state: AddGitLabPageState = {
@@ -90,20 +97,37 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     return this.handlePromise(addIDP(oauth, idp));
   }
 
+  dryCreateOAuth(oauth): Promise<K8sResourceKind> {
+    const patch = [
+      {
+        op: 'add',
+        path: 'metadata/annotations',
+        value: { key: 'value' },
+      },
+    ];
+    return this.handlePromise(k8sPatch(OAuthModel, oauth, patch, dryRunOpt));
+  }
+
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [this.createClientSecret(), this.createCAConfigMap()];
+      this.dryCreateOAuth(oauth)
+        .then(() => {
+          const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises)
-        .then(([secret, configMap]) => {
-          const caName = configMap ? configMap.metadata.name : '';
-          return this.addGitLabIDP(oauth, secret.metadata.name, caName);
+          Promise.all(promises)
+            .then(([secret, configMap]) => {
+              const caName = configMap ? configMap.metadata.name : '';
+              return this.addGitLabIDP(oauth, secret.metadata.name, caName);
+            })
+            .then(redirectToOAuthPage);
         })
-        .then(redirectToOAuthPage);
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 
@@ -147,7 +171,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"
