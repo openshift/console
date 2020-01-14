@@ -32,15 +32,12 @@ const isTabValidResolver = {
 export const updateAndValidateState = (options: UpdateOptions) => {
   const { prevState, changedCommonData, getState } = options;
 
-  const propsChanged = Object.keys(changedCommonData).some((key) => changedCommonData[key]);
-  const enhancedOptions = { ...options, propsChanged };
-
   UPDATE_TABS.forEach((tabKey) => {
     const updater = updaterResolver[tabKey];
-    updater && updater(enhancedOptions);
+    updater && updater(options);
   });
 
-  if (propsChanged || prevState !== getState()) {
+  if (changedCommonData.size > 0 || prevState !== getState()) {
     UPDATE_TABS.forEach((tabKey) => {
       const dataValidator = validateTabResolver[tabKey];
       const tabValidator = isTabValidResolver[tabKey];
@@ -50,7 +47,7 @@ export const updateAndValidateState = (options: UpdateOptions) => {
       }
 
       if (tabValidator) {
-        tabValidator(enhancedOptions);
+        tabValidator(options);
       }
     });
   }
