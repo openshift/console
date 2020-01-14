@@ -24,7 +24,7 @@ export const SetNodeMaintenance = (
   const nodeName = getName(node);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-    label: 'Start maintenance',
+    label: 'Start Maintenance',
     callback: () => startNodeMaintenanceModal({ nodeName }),
   };
 };
@@ -38,7 +38,7 @@ export const RemoveNodeMaintenance = (
   const nodeName = getName(node);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-    label: 'Stop maintenance',
+    label: 'Stop Maintenance',
     callback: () => stopNodeMaintenanceModal(nodeMaintenance),
     accessReview:
       nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
