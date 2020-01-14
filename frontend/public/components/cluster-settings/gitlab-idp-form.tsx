@@ -2,19 +2,12 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { SecretModel, ConfigMapModel, OAuthModel } from '../../models';
-import {
-  IdentityProvider,
-  k8sCreate,
-  K8sResourceKind,
-  OAuthKind,
-  k8sPatch,
-} from '../../module/k8s';
+import { SecretModel, ConfigMapModel } from '../../models';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
-import { dryRunOpt } from '@console/dev-console/src/utils/shared-submit-utils';
 
 export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   readonly state: AddGitLabPageState = {
@@ -73,6 +66,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     oauth: OAuthKind,
     clientSecretName: string,
     caName: string,
+    dryRun?: boolean,
   ): Promise<K8sResourceKind> {
     const { name, clientID, url } = this.state;
     const idp: IdentityProvider = {
@@ -94,18 +88,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
       };
     }
 
-    return this.handlePromise(addIDP(oauth, idp));
-  }
-
-  dryCreateOAuth(oauth): Promise<K8sResourceKind> {
-    const patch = [
-      {
-        op: 'add',
-        path: 'metadata/annotations',
-        value: { key: 'value' },
-      },
-    ];
-    return this.handlePromise(k8sPatch(OAuthModel, oauth, patch, dryRunOpt));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -114,7 +97,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.dryCreateOAuth(oauth)
+      this.addGitLabIDP(oauth, mockNames.secret, mockNames.ca, true)
         .then(() => {
           const promises = [this.createClientSecret(), this.createCAConfigMap()];
 

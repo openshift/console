@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
@@ -75,6 +75,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
     oauth: OAuthKind,
     bindPasswordSecretName: string,
     caConfigMapName: string,
+    dryRun?: boolean,
   ): Promise<K8sResourceKind> {
     const {
       name,
@@ -117,7 +118,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
       };
     }
 
-    return this.handlePromise(addIDP(oauth, idp));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -125,15 +126,21 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [this.createBindPasswordSecret(), this.createCAConfigMap()];
+      this.addLDAPIDP(oauth, mockNames.secret, mockNames.ca, true)
+        .then(() => {
+          const promises = [this.createBindPasswordSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises)
-        .then(([bindPasswordSecret, caConfigMap]) => {
-          const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
-          const caConfigMapName = _.get(caConfigMap, 'metadata.name');
-          return this.addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
+          Promise.all(promises)
+            .then(([bindPasswordSecret, caConfigMap]) => {
+              const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
+              const caConfigMapName = _.get(caConfigMap, 'metadata.name');
+              return this.addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
+            })
+            .then(redirectToOAuthPage);
         })
-        .then(redirectToOAuthPage);
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 
