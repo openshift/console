@@ -87,6 +87,7 @@ type OwnProps = {
     name: string;
     component: any;
   }[];
+  isOperatorBacked?: boolean;
 };
 
 export type ResourceOverviewDetailsProps = PropsFromState & PropsFromDispatch & OwnProps;

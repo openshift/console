@@ -105,3 +105,11 @@ $overview-sidebar-width: 550px;
   font-size: 14px;
   margin-left: var(--pf-global--spacer--sm);
 }
+
+.sidebar__section-owner-operator-heading {
+  display: flex;
+}
+
+.sidebar__section-owner-reference-operator {
+  padding-left: var(--pf-global--spacer--sm);
+}

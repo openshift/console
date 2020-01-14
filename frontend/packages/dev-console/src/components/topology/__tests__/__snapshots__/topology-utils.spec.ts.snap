@@ -383,6 +383,7 @@ Object {
           "revision": undefined,
         },
         "events": undefined,
+        "isOperatorBackedService": false,
         "isRollingOut": undefined,
         "obj": Object {
           "apiVersion": "apps.openshift.io/v1",
@@ -1244,6 +1245,7 @@ Object {
           "revision": 1,
         },
         "events": undefined,
+        "isOperatorBackedService": false,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",
@@ -2216,6 +2218,7 @@ Object {
           "revision": 1,
         },
         "events": undefined,
+        "isOperatorBackedService": false,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",
@@ -2645,6 +2648,7 @@ Object {
         "buildConfigs": Array [],
         "current": undefined,
         "events": undefined,
+        "isOperatorBackedService": true,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",

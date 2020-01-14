@@ -161,7 +161,7 @@ export const createTopologyNodeData = (
     name:
       _.get(deploymentConfig, 'metadata.name') || deploymentsLabels['app.kubernetes.io/instance'],
     type: type || 'workload',
-    resources: { ...dc },
+    resources: { ...dc, isOperatorBackedService: operatorBackedService },
     pods: dc.pods,
     operatorBackedService,
     data: {

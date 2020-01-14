@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
+import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import {
   RevisionModel,
   ServiceModel,
@@ -45,6 +46,11 @@ const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: Overv
 };
 const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabProps> = ({
   item,
-}) => <div className="overview__sidebar-pane-body"> {getSidebarResources(item)} </div>;
+}) => (
+  <div className="overview__sidebar-pane-body">
+    <OperatorBackedOwnerReferences item={item} />
+    {getSidebarResources(item)}
+  </div>
+);
 
 export default OverviewDetailsKnativeResourcesTab;

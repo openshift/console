@@ -22,6 +22,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   ksservices?: K8sResourceKind[];
   revisions?: K8sResourceKind[];
   events?: EventKind[];
+  isOperatorBackedService?: boolean;
 };
 
 export type DeploymentStrategy = DEPLOYMENT_STRATEGY.recreate | DEPLOYMENT_STRATEGY.rolling;

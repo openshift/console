@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import KnativeServiceResources from '../KnativeServiceResources';
 import KnativeRevisionResources from '../KnativeRevisionResources';
@@ -23,6 +24,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
         buildConfigs: [],
         routes: [],
         services: [],
+        isOperatorBackedService: false,
       },
     };
   });
@@ -41,5 +43,16 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     knItem.item = { ...knItem.item, ...{ obj: MockKnativeResources.eventSourceCronjob.data[0] } };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
+  });
+
+  it('should render OperatorBackedOwnerReferences with proper props', () => {
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab item={knItem.item} />);
+    expect(wrapper.find(OperatorBackedOwnerReferences)).toHaveLength(1);
+    expect(
+      wrapper
+        .find(OperatorBackedOwnerReferences)
+        .at(0)
+        .props().item,
+    ).toEqual(knItem.item);
   });
 });
