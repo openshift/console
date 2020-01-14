@@ -293,7 +293,7 @@ export const StatusCard = connect(mapStateToProps)(
       <DashboardCard gradient>
         <DashboardCardHeader>
           <DashboardCardTitle>Status</DashboardCardTitle>
-          <DashboardCardLink to="monitoring/alerts">View alerts</DashboardCardLink>
+          <DashboardCardLink to="/monitoring/alerts">View alerts</DashboardCardLink>
         </DashboardCardHeader>
         <DashboardCardBody>
           <HealthBody>
