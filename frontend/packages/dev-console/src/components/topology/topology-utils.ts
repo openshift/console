@@ -30,6 +30,7 @@ import {
   createServiceBinding,
   removeServiceBinding,
   edgesFromServiceBinding,
+  getOperatorBackedServiceKindMap,
 } from '../../utils/application-utils';
 import { TopologyFilters } from './filters/filter-utils';
 import {
@@ -376,18 +377,8 @@ export const transformTopologyData = (
   filters?: TopologyFilters,
 ): TopologyDataModel => {
   const installedOperators = _.get(resources, 'clusterServiceVersions.data');
-  let operatorBackedServiceKindMap: OperatorBackedServiceKindMap;
+  const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
-  if (installedOperators) {
-    operatorBackedServiceKindMap = installedOperators.reduce((kindMap, csv) => {
-      _.get(csv, 'spec.customresourcedefinitions.owned', []).forEach((crd) => {
-        if (!(crd.kind in kindMap)) {
-          kindMap[crd.kind] = csv;
-        }
-      });
-      return kindMap;
-    }, {});
-  }
 
   let topologyGraphAndNodeData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },

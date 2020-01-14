@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import { connect } from 'react-redux';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { doContextualBinding } from '../../utils/application-utils';
+import { ALLOW_SERVICE_BINDING } from '../../const';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
@@ -14,15 +16,23 @@ import DeployImageForm from './DeployImageForm';
 export interface DeployImageProps {
   namespace: string;
   projects?: FirehoseList;
+  contextualSource?: string;
 }
 
 interface StateProps {
   activeApplication: string;
+  serviceBindingAvailable: boolean;
 }
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
+const DeployImage: React.FC<Props> = ({
+  namespace,
+  projects,
+  activeApplication,
+  contextualSource,
+  serviceBindingAvailable,
+}) => {
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -129,15 +139,23 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
       project: { name: projectName },
     } = values;
 
-    const dryRunRequests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(
+    const resourceActions: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(
       values,
       true,
-    );
-    dryRunRequests
-      .then(() => {
-        const requests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(values);
-        return requests;
-      })
+    ).then(() => {
+      const requests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(values);
+      return requests;
+    });
+
+    if (contextualSource) {
+      resourceActions
+        .then((resources) =>
+          doContextualBinding(resources, contextualSource, serviceBindingAvailable),
+        )
+        .catch(() => {});
+    }
+
+    resourceActions
       .then(() => {
         actions.setSubmitting(false);
         history.push(`/topology/ns/${projectName}`);
@@ -159,10 +177,14 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  const activeApplication = getActiveApplication(state);
+interface OwnProps extends DeployImageProps {
+  forApplication?: string;
+}
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
+  const activeApplication = ownProps.forApplication || getActiveApplication(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
+    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING),
   };
 };
 
