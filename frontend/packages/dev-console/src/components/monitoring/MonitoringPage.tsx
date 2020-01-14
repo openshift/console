@@ -6,7 +6,7 @@ import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
 import MonitoringDashboard from './dashboard/MonitoringDashboard';
-import MonitoringMetrics from './metrics/MonitoringMetrics';
+import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
@@ -48,7 +48,7 @@ export const MonitoringPage: React.FC<MonitoringPageProps> = ({ match }) => {
                 {
                   href: 'metrics',
                   name: 'Metrics',
-                  component: MonitoringMetrics,
+                  component: ConnectedMonitoringMetrics,
                 },
               ]}
               match={match}

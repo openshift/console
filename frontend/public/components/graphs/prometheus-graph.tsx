@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { FLAGS } from '@console/shared';
 import { featureReducerName } from '../../reducers/features';
 import { MonitoringRoutes } from '../../reducers/monitoring';
-import { getActivePerspective } from '../../reducers/ui';
+import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';
 
 export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
@@ -28,6 +28,7 @@ const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
     !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
   perspective: getActivePerspective(state),
+  namespace: getActiveNamespace(state),
 });
 
 export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
@@ -35,6 +36,7 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   children,
   perspective,
   query,
+  namespace,
 }) => {
   if (!query) {
     return <>{children}</>;
@@ -46,7 +48,7 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   const url =
     canAccessMonitoring && perspective === 'admin'
       ? `/monitoring/query-browser?${params.toString()}`
-      : `/metrics?${params.toString()}`;
+      : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
   return (
     <Link to={url} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -69,6 +71,7 @@ type PrometheusGraphLinkProps = {
   canAccessMonitoring: boolean;
   perspective: string;
   query: string;
+  namespace?: string;
 };
 
 type PrometheusGraphProps = {

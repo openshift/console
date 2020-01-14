@@ -3,6 +3,7 @@ import { QueryBrowser } from '@console/internal/components/monitoring/query-brow
 import { Humanize } from '@console/internal/components/utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { Area } from '@console/internal/components/graphs/area';
+import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import './MonitoringDashboardGraph.scss';
 
 export enum GraphTypes {
@@ -34,12 +35,14 @@ const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
       {graphType === GraphTypes.line ? (
         <>
           <h5 className="graph-title">{title}</h5>
-          <QueryBrowser
-            hideControls
-            defaultTimespan={defaultTimespan}
-            namespace={namespace}
-            queries={[query]}
-          />
+          <PrometheusGraphLink query={query}>
+            <QueryBrowser
+              hideControls
+              defaultTimespan={defaultTimespan}
+              namespace={namespace}
+              queries={[query]}
+            />
+          </PrometheusGraphLink>
         </>
       ) : (
         <Area

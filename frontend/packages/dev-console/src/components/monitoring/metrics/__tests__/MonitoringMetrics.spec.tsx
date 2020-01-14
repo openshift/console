@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import MonitoringMetrics from '../MonitoringMetrics';
+import { MonitoringMetrics } from '../MonitoringMetrics';
 
 describe('Monitoring Metrics Tab', () => {
   it('should render Monitoring Metrics tab', () => {
