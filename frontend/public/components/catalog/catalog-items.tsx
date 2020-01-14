@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import { Badge } from '@patternfly/react-core';
 import { CatalogTile, CatalogTileBadge } from '@patternfly/react-catalog-view-extension';
@@ -11,7 +10,63 @@ import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
 
-export const catalogCategories = {
+type Metadata = { uid?: string; name: string; namespace?: string };
+
+export type Item = {
+  obj?: {
+    metadata?: Metadata;
+    csv?: { kind?: string; spec: { displayName: string }; metadata?: Metadata };
+  };
+  createLabel: string;
+  href: string;
+  kind?: string;
+  tileName?: string;
+  tileImgUrl?: string;
+  tileIconClass?: string;
+  tileProvider?: string;
+  tileDescription?: string;
+  tags?: string[];
+  documentationUrl?: string | undefined;
+};
+
+export type CatalogTileViewPageProps = {
+  items: Item[];
+};
+export type CatalogTileViewPageState = {
+  detailsItem: Item;
+};
+
+export type FilterItem = {
+  label: string;
+  value: string;
+  active: boolean;
+};
+
+type TypeFilters = {
+  ClusterServiceVersion: FilterItem;
+  HelmChart: FilterItem;
+  ImageStream: FilterItem;
+  Template: FilterItem;
+  ClusterServiceClass: FilterItem;
+};
+
+type CapabilityFilters = {
+  BasicInstall: FilterItem;
+  SeamlessUpgrades: FilterItem;
+  FullLifecycle: FilterItem;
+  DeepInsights: FilterItem;
+  AutoPilot: FilterItem;
+};
+
+type PageFilters = {
+  kind: TypeFilters;
+  capabilityLevel: CapabilityFilters;
+};
+
+export const catalogCategories: Record<
+  string,
+  Record<string, string | Record<string, string | Record<string, any>>>
+> = {
   languages: {
     id: 'languages',
     label: 'Languages',
@@ -98,10 +153,11 @@ const pageDescription =
   'Catalog. Cluster admins can install additional apps which will show up here automatically.';
 
 // Filter property white list
-const filterGroups = ['kind'];
+const filterGroups = ['kind', 'capabilityLevel'];
 
-const getAvailableFilters = (initialFilters) => {
-  const filters = _.cloneDeep(initialFilters);
+// initialFilters cannot be typed as it has multiple usages
+const getAvailableFilters = (initialFilters): PageFilters => {
+  const filters: PageFilters = _.cloneDeep(initialFilters);
   filters.kind = {
     ClusterServiceVersion: {
       label: 'Operator Backed',
@@ -130,24 +186,48 @@ const getAvailableFilters = (initialFilters) => {
     },
   };
 
+  filters.capabilityLevel = {
+    BasicInstall: {
+      value: 'basicinstall',
+      label: 'Basic Install',
+      active: false,
+    },
+    SeamlessUpgrades: {
+      value: 'seamlessupgrades',
+      label: 'Seamless Upgrades',
+      active: false,
+    },
+    FullLifecycle: {
+      value: 'fulllifecycle',
+      label: 'Full Lifecycle',
+      active: true,
+    },
+    DeepInsights: {
+      value: 'deepinsights',
+      label: 'Deep Insights',
+      active: true,
+    },
+    AutoPilot: {
+      value: 'autopilot',
+      label: 'Auto Pilot',
+      active: true,
+    },
+  };
+
   return filters;
 };
 
-const filterGroupNameMap = {
+const filterGroupNameMap: Record<string, string> = {
   kind: 'Type',
+  capabilityLevel: 'Capability Level',
 };
 
-const filterValueMap = {
-  ClusterServiceClass: 'Service Class',
-  ImageStream: 'Source-to-Image',
-};
-
-const GroupByTypes = {
+const GroupByTypes: Record<string, string> = {
   Operator: 'Operator',
   None: 'None',
 };
 
-const keywordCompare = (filterString, item) => {
+const keywordCompare = (filterString: string, item: Item): boolean => {
   if (!filterString) {
     return true;
   }
@@ -162,14 +242,14 @@ const keywordCompare = (filterString, item) => {
   );
 };
 
-const setURLParams = (params) => {
-  const url = new URL(window.location);
+const setURLParams = (params): void => {
+  const url = new URL(window.location.pathname);
   const searchParams = `?${params.toString()}${url.hash}`;
 
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-export const groupItems = (items, groupBy) => {
+export const groupItems = (items: Item[], groupBy: string): Item[] | Record<string, Item[]> => {
   if (groupBy === GroupByTypes.Operator) {
     const installedOperators = _.filter(items, (item) => item.kind === 'InstalledOperator');
     const nonOperators = _.filter(items, (item) => item.kind !== 'InstalledOperator');
@@ -180,15 +260,16 @@ export const groupItems = (items, groupBy) => {
   return items;
 };
 
-export class CatalogTileViewPage extends React.Component {
+export class CatalogTileViewPage extends React.Component<
+  CatalogTileViewPageProps,
+  CatalogTileViewPageState
+> {
+  static displayName = `CatalogTileViewPage`;
+
   constructor(props) {
     super(props);
 
     this.state = { detailsItem: null };
-
-    this.openOverlay = this.openOverlay.bind(this);
-    this.closeOverlay = this.closeOverlay.bind(this);
-    this.renderTile = this.renderTile.bind(this);
   }
 
   componentDidMount() {
@@ -197,27 +278,26 @@ export class CatalogTileViewPage extends React.Component {
     const detailsItemID = searchParams.get('details-item');
     const detailsItem =
       detailsItemID && _.find(items, (item) => detailsItemID === _.get(item, 'obj.metadata.uid'));
-
     this.setState({ detailsItem });
   }
 
-  openOverlay(detailsItem) {
+  openOverlay = (detailsItem: Item): void => {
     const params = new URLSearchParams(window.location.search);
     params.set('details-item', _.get(detailsItem, 'obj.metadata.uid'));
     setURLParams(params);
 
     this.setState({ detailsItem });
-  }
+  };
 
-  closeOverlay() {
+  closeOverlay = (): void => {
     const params = new URLSearchParams(window.location.search);
     params.delete('details-item');
     setURLParams(params);
 
     this.setState({ detailsItem: null });
-  }
+  };
 
-  renderTile(item) {
+  renderTile = (item: Item): React.ReactElement => {
     if (!item) {
       return null;
     }
@@ -247,7 +327,7 @@ export class CatalogTileViewPage extends React.Component {
         maxDescriptionLength={55}
       />
     );
-  }
+  };
 
   render() {
     const { items } = this.props;
@@ -265,7 +345,6 @@ export class CatalogTileViewPage extends React.Component {
           getAvailableFilters={getAvailableFilters}
           filterGroups={filterGroups}
           filterGroupNameMap={filterGroupNameMap}
-          filterValueMap={filterValueMap}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
           pageDescription={pageDescription}
@@ -287,7 +366,3 @@ export class CatalogTileViewPage extends React.Component {
     );
   }
 }
-CatalogTileViewPage.displayName = 'CatalogTileViewPage';
-CatalogTileViewPage.propTypes = {
-  items: PropTypes.array,
-};
