@@ -115,6 +115,24 @@ const ssarChecks = [
     },
   },
   {
+    // TODO: Move into OLM plugin
+    flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
+    resourceAttributes: {
+      group: 'operators.coreos.com',
+      resource: 'operatorgroups',
+      verb: 'list',
+    },
+  },
+  {
+    // TODO: Move into OLM plugin
+    flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
+    resourceAttributes: {
+      group: 'operators.coreos.com',
+      resource: 'packagemanifests',
+      verb: 'list',
+    },
+  },
+  {
     flag: FLAGS.CAN_LIST_CHARGEBACK_REPORTS,
     resourceAttributes: {
       group: 'metering.openshift.io',
