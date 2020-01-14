@@ -147,7 +147,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"

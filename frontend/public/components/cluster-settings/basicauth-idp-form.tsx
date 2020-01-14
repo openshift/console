@@ -168,7 +168,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"
