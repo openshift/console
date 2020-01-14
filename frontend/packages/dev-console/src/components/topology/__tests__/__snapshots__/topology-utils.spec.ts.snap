@@ -382,6 +382,7 @@ Object {
           ],
           "revision": undefined,
         },
+        "events": undefined,
         "isRollingOut": undefined,
         "obj": Object {
           "apiVersion": "apps.openshift.io/v1",
@@ -1242,6 +1243,7 @@ Object {
           ],
           "revision": 1,
         },
+        "events": undefined,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",
@@ -2213,6 +2215,7 @@ Object {
           ],
           "revision": 1,
         },
+        "events": undefined,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",
@@ -2641,6 +2644,7 @@ Object {
         "alerts": Object {},
         "buildConfigs": Array [],
         "current": undefined,
+        "events": undefined,
         "isRollingOut": false,
         "obj": Object {
           "apiVersion": "apps/v1",

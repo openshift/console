@@ -32,6 +32,7 @@ export interface TopologyDataResources {
   eventSourceKafka?: FirehoseResult;
   clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
+  events?: FirehoseResult;
 }
 
 export interface Node {

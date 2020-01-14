@@ -12,6 +12,7 @@ import {
   ResourceDetailsPage,
   Perspective,
   RoutePage,
+  OverviewResourceTab,
   OverviewCRD,
   YAMLTemplate,
   OverviewTabSection,
@@ -58,6 +59,7 @@ type ConsumedExtensions =
   | RoutePage
   | ReduxReducer
   | KebabActions
+  | OverviewResourceTab
   | OverviewCRD
   | YAMLTemplate
   | OverviewTabSection;
@@ -315,6 +317,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/pipelines/pipeline-overview/PipelineOverview' /* webpackChunkName: "pipeline-overview-list" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Overview/Resource',
+    properties: {
+      name: 'Monitoring',
+      key: 'events',
+      loader: () =>
+        import(
+          './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "monitoring-overview" */
         ).then((m) => m.default),
     },
   },
