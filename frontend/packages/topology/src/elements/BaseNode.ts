@@ -148,12 +148,14 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
   }
 
   setCollapsed(collapsed: boolean): void {
-    const prevCenter = this.getBounds()
-      .getCenter()
-      .clone();
-    this.collapsed = collapsed;
-    this.getBounds().setCenter(prevCenter.x, prevCenter.y);
-    this.getController().fireEvent(NODE_COLLAPSE_CHANGE_EVENT, { node: this });
+    if (collapsed !== this.collapsed) {
+      const prevCenter = this.getBounds()
+        .getCenter()
+        .clone();
+      this.collapsed = collapsed;
+      this.getBounds().setCenter(prevCenter.x, prevCenter.y);
+      this.getController().fireEvent(NODE_COLLAPSE_CHANGE_EVENT, { node: this });
+    }
   }
 
   getNodeShape(): NodeShape {

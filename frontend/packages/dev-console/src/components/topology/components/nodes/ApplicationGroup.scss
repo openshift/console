@@ -19,14 +19,25 @@
       cursor: grab;
     }
 
-    & rect {
-      fill: var(--pf-global--Color--300);
-    }
-
     & text {
       fill: #fff;
       pointer-events: none;
       font-size: var(--pf-global--FontSize--sm);
+    }
+  }
+
+  &__node-title {
+    cursor: pointer;
+    font-size: var(--pf-global--FontSize--lg);
+    font-weight: var(--pf-global--FontWeight--bold);
+    .odc-m-drag-active & {
+      cursor: grab;
+    }
+  }
+  &__node-resources {
+    cursor: pointer;
+    .odc-m-drag-active & {
+      cursor: grab;
     }
   }
 }

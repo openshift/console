@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { action } from 'mobx';
+import { connect } from 'react-redux';
 import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import {
   TopologyView,
@@ -13,11 +14,13 @@ import {
   Visualization,
   VisualizationSurface,
   GraphElement,
+  createAggregateEdgeHandler,
   isNode,
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
@@ -26,10 +29,14 @@ import TopologyApplicationPanel from './application-panel/TopologyApplicationPan
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP } from './const';
+import { TYPE_AGGREGATE_EDGE, TYPE_APPLICATION_GROUP } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
+import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 
-export interface TopologyProps {
+interface StateProps {
+  filters: TopologyFilters;
+}
+export interface TopologyProps extends StateProps {
   data: TopologyDataModel;
   serviceBinding: boolean;
 }
@@ -42,7 +49,7 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
+const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
@@ -65,6 +72,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
         setSelectedIds(ids);
       }
     });
+    visRef.current.registerAggregateEdgeHandler(createAggregateEdgeHandler(TYPE_AGGREGATE_EDGE));
     visRef.current.fromModel(graphModel);
   }
 
@@ -73,7 +81,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   }, [serviceBinding]);
 
   React.useEffect(() => {
-    const newModel = topologyModelFromDataModel(data);
+    const newModel = topologyModelFromDataModel(data, filters);
     visRef.current.fromModel(newModel);
     setModel(newModel);
     if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
@@ -220,4 +228,9 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   );
 };
 
-export default Topology;
+const TopologyStateToProps = (state: RootState) => {
+  const filters = getTopologyFilters(state);
+  return { filters };
+};
+
+export default connect(TopologyStateToProps)(Topology);

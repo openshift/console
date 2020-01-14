@@ -501,7 +501,10 @@ export const transformTopologyData = (
   return topologyGraphAndNodeData;
 };
 
-export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
+export const topologyModelFromDataModel = (
+  dataModel: TopologyDataModel,
+  filters?: TopologyFilters,
+): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
       return {
@@ -530,11 +533,16 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   });
 
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    const data: any = dataModel.topology[d.id] || {};
+    data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
+      width: 300,
+      height: 180,
       id: d.id,
       group: true,
       type: d.type,
-      data: dataModel.topology[d.id],
+      collapsed: filters && !filters.display.appGrouping,
+      data,
       children: d.nodes,
       label: d.name,
       style: {

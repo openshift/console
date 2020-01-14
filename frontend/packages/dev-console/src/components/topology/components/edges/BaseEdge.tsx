@@ -39,7 +39,7 @@ const renderSegment = (startPoint: Point, endPoint: Point, index: number): React
   </React.Fragment>
 );
 
-const renderPoints = (points: Point[]): React.ReactNode => {
+export const renderPoints = (points: Point[]): React.ReactNode => {
   const segments = [];
   for (let i = 0; i < points.length - 1; i++) {
     segments.push([points[i], points[i + 1]]);
@@ -61,18 +61,18 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   const endPoint = element.getEndPoint();
   const bendpoints = element.getBendpoints();
   const resourceObj = getTopologyResourceObject(element.getSource().getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
 
   const editAccess = useAccessReview({
-    group: resourceModel && resourceModel.apiGroup,
+    group: resourceModel?.apiGroup,
     verb: 'patch',
-    resource: resourceModel && resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    resource: resourceModel?.plural,
+    name: resourceObj?.metadata.name,
+    namespace: resourceObj?.metadata.namespace,
   });
 
   React.useLayoutEffect(() => {
-    if (editAccess) {
+    if (!editAccess) {
       if (hover && !dragging) {
         onShowRemoveConnector && onShowRemoveConnector();
       } else {
