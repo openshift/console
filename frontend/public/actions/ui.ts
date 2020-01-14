@@ -24,6 +24,8 @@ export enum ActionType {
   SetActivePerspective = 'setActivePerspective',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
+  MonitoringDashboardsClearVariables = 'monitoringDashboardsClearVariables',
+  MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
@@ -269,6 +271,10 @@ export const updateOverviewLabels = (labels: string[]) =>
   action(ActionType.UpdateOverviewLabels, { labels });
 export const updateOverviewFilterValue = (value: string) =>
   action(ActionType.UpdateOverviewFilterValue, { value });
+export const monitoringDashboardsClearVariables = () =>
+  action(ActionType.MonitoringDashboardsClearVariables);
+export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
+  action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
 export const monitoringLoading = (key: 'alerts' | 'silences') =>
   action(ActionType.SetMonitoringData, {
     key,
@@ -335,6 +341,8 @@ const uiActions = {
   updateOverviewSelectedGroup,
   updateOverviewLabels,
   updateOverviewFilterValue,
+  monitoringDashboardsClearVariables,
+  monitoringDashboardsPatchVariable,
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,

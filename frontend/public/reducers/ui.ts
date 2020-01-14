@@ -78,6 +78,9 @@ export default (state: UIState, action: UIAction): UIState => {
       }),
       user: {},
       consoleLinks: [],
+      monitoringDashboards: ImmutableMap({
+        variables: ImmutableMap(),
+      }),
       queryBrowser: ImmutableMap({
         metrics: [],
         queries: ImmutableList([newQueryBrowserQuery()]),
@@ -135,6 +138,15 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.SetUser:
       return state.set('user', action.payload.user);
+
+    case ActionType.MonitoringDashboardsClearVariables:
+      return state.setIn(['monitoringDashboards', 'variables'], ImmutableMap());
+
+    case ActionType.MonitoringDashboardsPatchVariable:
+      return state.mergeIn(
+        ['monitoringDashboards', 'variables', action.payload.key],
+        action.payload.patch,
+      );
 
     case ActionType.SetMonitoringData: {
       const alerts =
