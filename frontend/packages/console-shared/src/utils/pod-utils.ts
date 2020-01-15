@@ -6,9 +6,8 @@ import {
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
-import { podColor, AllPodStatus } from '../constants/pod';
+import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
 import { ExtPodKind } from '../types/pod';
-import { DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
 
 export const podStatus = Object.keys(podColor);

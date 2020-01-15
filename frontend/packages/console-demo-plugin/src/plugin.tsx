@@ -24,7 +24,7 @@ import {
 } from '@console/plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
-import { FLAGS } from '@console/internal/const';
+import { FLAGS } from '@console/shared';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/queries';
 import { FooBarModel } from './models';

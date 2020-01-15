@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
-import { KEYBOARD_SHORTCUTS } from '../../const';
+import { KEYBOARD_SHORTCUTS, getBadgeFromType } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
@@ -23,7 +23,6 @@ import {
   PageHeading,
   RequireCreatePermission,
 } from '../utils';
-import { getBadgeFromType } from '@console/shared/src';
 
 /** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string}}>} */
 export const TextFilter = ({ label, onChange, defaultValue, style, className, value }) => {

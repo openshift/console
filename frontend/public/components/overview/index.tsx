@@ -5,27 +5,24 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 import { Link } from 'react-router-dom';
-
+import {
+  DEFAULT_GROUP_NAME,
+  METRICS_POLL_INTERVAL,
+  TransformResourceData,
+  OverviewItem,
+  getResourceList,
+} from '@console/shared';
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
 import * as UIActions from '../../actions/ui';
 import { DeploymentKind, K8sResourceKind, PodKind, RouteKind } from '../../module/k8s';
 import { CloseButton, Dropdown, Firehose, StatusBox, FirehoseResult, MsgBox } from '../utils';
-
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
 import * as plugins from '../../plugins';
 import { OverviewCRD } from '@console/plugin-sdk';
-import { TransformResourceData, OverviewItem, getResourceList } from '@console/shared';
-
-// Display name for default overview group.
-// Should not be a valid label key to avoid conflicts. https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-setexport
-const DEFAULT_GROUP_NAME = 'other resources';
-
-// Interval at which metrics are retrieved and updated
-const METRICS_POLL_INTERVAL = 30 * 1000;
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {

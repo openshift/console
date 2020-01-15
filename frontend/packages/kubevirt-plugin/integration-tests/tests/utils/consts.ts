@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 
-export const DASH = '-';
 export const { STORAGE_CLASS = 'rook-ceph-block' } = process.env;
 
 const rhelTinyCommonTemplateName = execSync(

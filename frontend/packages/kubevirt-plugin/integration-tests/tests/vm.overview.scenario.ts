@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { DASH } from '@console/shared';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
 import { getVMManifest, basicVMConfig } from './utils/mocks';
@@ -8,7 +9,6 @@ import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   TAB,
-  DASH,
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTION,
   VM_STATUS,

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { InProgressIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { InProgressIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+} from '../../status/icons';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState } from './states';
 

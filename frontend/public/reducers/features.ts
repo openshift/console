@@ -19,7 +19,7 @@ import { referenceForModel } from '../module/k8s';
 import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
-import { FLAGS } from '../const';
+import { FLAGS } from '@console/shared/src/constants';
 import * as plugins from '../plugins';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>

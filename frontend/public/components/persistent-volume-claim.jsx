@@ -3,10 +3,9 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 
-import { Status } from '@console/shared';
+import { Status, FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
-import { FLAGS } from '../const';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,

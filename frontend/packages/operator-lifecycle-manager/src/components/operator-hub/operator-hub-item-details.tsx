@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-catalog-view-extension';
 import { Link } from 'react-router-dom';
 import { history, ExternalLink, HintBlock } from '@console/internal/components/utils';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/internal/const';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { MarkdownView } from '../clusterserviceversion';
 import { SubscriptionModel } from '../../models';
 import { OperatorHubItem } from './index';

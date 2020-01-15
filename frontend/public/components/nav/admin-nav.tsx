@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { NavItemSeparator } from '@patternfly/react-core';
 
 import { featureReducerName } from '../../reducers/features';
-import { FLAGS } from '../../const';
+import { FLAGS } from '@console/shared';
 import { monitoringReducerName, MonitoringRoutes } from '../../reducers/monitoring';
 
 import {

@@ -4,9 +4,9 @@ import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
 
+import { FLAGS } from '@console/shared/src/constants';
 import { Dropdown, Firehose, LoadingInline, ResourceName } from './';
 import { connectToFlags, flagPending } from '../../reducers/features';
-import { FLAGS } from '../../const';
 
 class ListDropdown_ extends React.Component {
   constructor(props) {

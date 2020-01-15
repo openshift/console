@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
+import { KUBE_ADMIN_USERNAME } from '@console/shared';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';
-import { KUBE_ADMIN_USERNAME } from '../const';
 import { resourcePathFromModel } from './utils/resource-link';
 
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');

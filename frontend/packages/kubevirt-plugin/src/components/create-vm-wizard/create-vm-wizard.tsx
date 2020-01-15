@@ -3,13 +3,13 @@ import * as _ from 'lodash';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createVm as importVM } from 'kubevirt-web-ui-components';
+import { Wizard, WizardStep } from '@patternfly/react-core';
+import { FLAGS } from '@console/shared';
 import {
   featureReducerName,
   connectToFlags,
   FlagsObject,
 } from '@console/internal/reducers/features';
-import { FLAGS } from '@console/internal/const';
-import { Wizard, WizardStep } from '@patternfly/react-core';
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history, units } from '@console/internal/components/utils';
 import { k8sGet, TemplateKind } from '@console/internal/module/k8s';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 
-import { ANNOTATIONS, FLAGS } from '../../const';
+import { ANNOTATIONS, FLAGS } from '@console/shared';
 import { CatalogTileViewPage } from './catalog-items';
 import {
   k8sListPartialMetadata,

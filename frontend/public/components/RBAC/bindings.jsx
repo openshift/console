@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
+import { FLAGS } from '@console/shared/src/constants';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -30,7 +31,6 @@ import {
 } from '../utils';
 import { isSystemRole } from './index';
 import { connectToFlags, flagPending } from '../../reducers/features';
-import { FLAGS } from '../../const';
 
 const bindingKind = (binding) =>
   binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';

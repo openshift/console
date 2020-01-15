@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CogsIcon } from '@patternfly/react-icons';
-import { FLAGS } from '@console/internal/const';
+import { FLAGS } from '@console/shared/src/constants';
 import {
   Plugin,
   Perspective,
