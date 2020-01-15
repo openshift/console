@@ -1,12 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import {
-  KNATIVE_SERVING_LABEL,
-  KNATIVE_EVENT_SOURCE_APIGROUP,
-  KNATIVE_SERVING_APIGROUP,
-} from '../const';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { KNATIVE_SERVING_LABEL } from '../const';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -19,11 +13,6 @@ export type KnativeItem = {
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
 };
-
-interface StateProps {
-  kindsInFlight: boolean;
-  knativeModels: K8sKind[];
-}
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
   return !!_.get(dc.metadata, `labels["${KNATIVE_SERVING_LABEL}"]`);
@@ -38,20 +27,6 @@ const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResou
   }
   return ksResource;
 };
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-    knativeModels: state.k8s
-      .getIn(['RESOURCES', 'models'])
-      .filter(
-        (model: K8sKind) =>
-          model.apiGroup === KNATIVE_SERVING_APIGROUP ||
-          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP,
-      ),
-  };
-};
-
-export const getKsResourceModel = (wrappedComponent) => connect(mapStateToProps)(wrappedComponent);
 
 const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
   let revisionResource = [];
