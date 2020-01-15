@@ -290,8 +290,8 @@ const formatSeriesValues = (
     };
   });
 
-  // The data may have missing values, so we fill those gaps with nulls so that the graph correctly shows the
-  // missing values as gaps in the line
+  // The data may have missing values, so we fill those gaps with nulls so that the graph correctly
+  // shows the missing values as gaps in the line
   const start = Number(_.get(newValues, '[0].x'));
   const end = Number(_.get(_.last(newValues), 'x'));
   const step = span / samples;
@@ -315,8 +315,8 @@ const maxDataPointsHard = 10000;
 const minSamples = 10;
 const maxSamples = 300;
 
-// We don't want to refresh all the graph data for just a small adjustment in the number of samples, so don't update
-// unless the number of samples would change by at least this proportion
+// We don't want to refresh all the graph data for just a small adjustment in the number of samples,
+// so don't update unless the number of samples would change by at least this proportion
 const samplesLeeway = 0.2;
 
 // Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost no benefit
@@ -393,7 +393,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
-  defaultTimespan,
+  defaultTimespan = parsePrometheusDuration('30m'),
   disabledSeries = [],
   filterLabels,
   GraphLink,
@@ -403,11 +403,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   patchQuery,
   pollInterval,
   queries,
+  timespan,
 }) => {
-  // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
+  // For the default time span, use the first of the suggested span options that is at least as long
+  // as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
 
-  const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
+  // If we have both `timespan` and `defaultTimespan`, `timespan` takes precedence
+  const [span, setSpan] = React.useState(timespan || parsePrometheusDuration(defaultSpanText));
 
   // Limit the number of samples so that the step size doesn't fall below minStep
   const maxSamplesForSpan =
@@ -423,6 +426,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const endTime = _.get(xDomain, '[1]');
 
   const safeFetch = useSafeFetch();
+
+  // If provided, `timespan` overrides any existing span setting
+  React.useEffect(() => {
+    if (timespan) {
+      setSpan(timespan);
+    }
+  }, [timespan]);
 
   const safeFetchQuery = (query: string) => {
     if (_.isEmpty(query)) {
@@ -500,8 +510,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             }
           });
 
-  // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is hidden. Otherwise
-  // use a polling interval relative to the graph's timespan.
+  // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is
+  // hidden. Otherwise use a polling interval relative to the graph's timespan.
   const tickInterval =
     pollInterval === undefined ? Math.max(span / 120, minPollInterval) : pollInterval;
   const delay = endTime || hideGraphs ? null : tickInterval;
@@ -641,7 +651,7 @@ type ZoomableGraphProps = {
 
 type QueryBrowserProps = {
   defaultSamples?: number;
-  defaultTimespan: number;
+  defaultTimespan?: number;
   disabledSeries?: Labels[][];
   filterLabels?: Labels;
   GraphLink?: React.ComponentType<{}>;
@@ -651,6 +661,7 @@ type QueryBrowserProps = {
   patchQuery: (index: number, patch: QueryObj) => any;
   pollInterval?: number;
   queries: string[];
+  timespan?: number;
 };
 
 type SpanControlsProps = {
