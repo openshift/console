@@ -42,6 +42,14 @@ export class DetailView {
     await isLoaded();
   }
 
+  async navigateToDashboard() {
+    await this.navigateToListView();
+    await VmsListView.vmListByName(this.name).click();
+    await isLoaded();
+    await clickHorizontalTab('Dashboard');
+    await isLoaded();
+  }
+
   async navigateToConsoles() {
     await this.navigateToListView();
     await VmsListView.vmListByName(this.name).click();
