@@ -61,7 +61,7 @@ const HelmRelease: React.FC<HelmReleaseProps> = ({ element, dragging, filters })
           kind="HelmRelease"
           truncate={16}
           dragRef={dragLabelRef}
-          icon="helm"
+          typeIconClass="icon-helm"
         >
           {element.getLabel()}
         </SvgBoxedText>

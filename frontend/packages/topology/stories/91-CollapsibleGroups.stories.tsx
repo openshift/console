@@ -39,6 +39,24 @@ export default {
 const getModel = (collapseTypes: string[] = []): Model => {
   // create nodes from data
   const nodes: NodeModel[] = data.nodes.map((d) => {
+    if (d.type) {
+      return {
+        type: d.type,
+        id: d.id,
+        group: true,
+        children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
+        label: d.id,
+        width: d.width,
+        height: d.height,
+        collapsed: collapseTypes.includes(d.type),
+        style: {
+          padding: 10,
+        },
+        data: {
+          background: d.color,
+        },
+      };
+    }
     // randomize size somewhat
     const width = 50 + d.id.length;
     const height = 50 + d.id.length;
@@ -47,30 +65,10 @@ const getModel = (collapseTypes: string[] = []): Model => {
       type: 'node',
       width,
       height,
-      x: 0,
-      y: 0,
       data: d,
       groupId: d.group,
     };
   });
-
-  // create groups from data
-  const groupNodes: NodeModel[] = data.groups.map((d) => ({
-    type: d.type,
-    id: d.id,
-    group: true,
-    children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
-    label: `group-${d.id}`,
-    width: d.width,
-    height: d.height,
-    collapsed: collapseTypes.includes(d.type),
-    style: {
-      padding: 10,
-    },
-    data: {
-      background: d.color,
-    },
-  }));
 
   // create links from data
   const edges = data.links.map(
@@ -85,7 +83,7 @@ const getModel = (collapseTypes: string[] = []): Model => {
 
   // create topology model
   return {
-    nodes: [...nodes, ...groupNodes],
+    nodes,
     edges,
   };
 };
@@ -93,7 +91,7 @@ const getModel = (collapseTypes: string[] = []): Model => {
 const getVisualization = (model: Model): Visualization => {
   const vis = new Visualization();
   model.graph = {
-    id: 'g1',
+    id: 'graph1',
     type: 'graph',
     layout: 'Cola',
   };
@@ -106,10 +104,10 @@ const getVisualization = (model: Model): Visualization => {
     if (kind === ModelKind.graph) {
       return withPanZoom()(GraphComponent);
     }
-    if (type === 'blue') {
+    if (type === 'lightblue' || type === 'cyan') {
       return withDragNode({ canCancel: false })(GroupHull);
     }
-    if (type === 'orange' || type === 'pink') {
+    if (type === 'blue' || type === 'orange' || type === 'pink') {
       return withDragNode({ canCancel: false })(Group);
     }
     if (kind === ModelKind.node) {
@@ -129,7 +127,9 @@ type TopologyViewComponentProps = {
 
 const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) => {
   const [selectedIds, setSelectedIds] = React.useState<string[]>();
-  const [collapseBlues, setCollapseBlues] = React.useState<boolean>(false);
+  const [collapseBlue, setCollapseBlue] = React.useState<boolean>(false);
+  const [collapseLightBlue, setCollapseLightBlue] = React.useState<boolean>(false);
+  const [collapseCyan, setCollapseCyan] = React.useState<boolean>(false);
   const [collapseOrange, setCollapseOrange] = React.useState<boolean>(false);
   const [collapsePink, setCollapsePink] = React.useState<boolean>(false);
 
@@ -142,10 +142,30 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
       <ToolbarGroup>
         <ToolbarItem>
           <Checkbox
-            id="collapse-blues"
-            label="Collapse Blues"
-            isChecked={collapseBlues}
-            onChange={setCollapseBlues}
+            id="collapse-blue"
+            label="Collapse Blue"
+            isChecked={collapseBlue}
+            onChange={setCollapseBlue}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-light-blue"
+            label="Collapse Light Blue"
+            isChecked={collapseLightBlue}
+            onChange={setCollapseLightBlue}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-cyan"
+            label="Collapse Cyan"
+            isChecked={collapseCyan}
+            onChange={setCollapseCyan}
           />
         </ToolbarItem>
       </ToolbarGroup>
@@ -175,8 +195,14 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
   React.useEffect(() => {
     action(() => {
       const collapsedTypes: string[] = [];
-      if (collapseBlues) {
+      if (collapseBlue) {
         collapsedTypes.push('blue');
+      }
+      if (collapseLightBlue) {
+        collapsedTypes.push('lightblue');
+      }
+      if (collapseCyan) {
+        collapsedTypes.push('cyan');
       }
       if (collapseOrange) {
         collapsedTypes.push('orange');
@@ -187,7 +213,7 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
       const modelUpdate = getModel(collapsedTypes);
       vis.fromModel(modelUpdate);
     })();
-  }, [vis, collapseBlues, collapseOrange, collapsePink]);
+  }, [vis, collapseBlue, collapseLightBlue, collapseCyan, collapseOrange, collapsePink]);
 
   return (
     <TopologyView
