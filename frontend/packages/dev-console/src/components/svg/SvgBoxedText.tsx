@@ -7,6 +7,7 @@ import {
   createSvgIdUrl,
 } from '@console/topology';
 import SvgResourceIcon from '../topology/components/nodes/ResourceIcon';
+import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 
 export interface SvgBoxedTextProps {
@@ -18,6 +19,8 @@ export interface SvgBoxedTextProps {
   y?: number;
   cornerRadius?: number;
   kind?: string;
+  typeIconClass?: string;
+  typeIconPadding?: number;
   truncate?: number;
   dragRef?: WithDndDragProps['dndDragRef'];
   // TODO remove with 2.0
@@ -46,6 +49,8 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   x = 0,
   y = 0,
   kind,
+  typeIconClass,
+  typeIconPadding = 4,
   onMouseEnter,
   onMouseLeave,
   truncate,
@@ -57,14 +62,17 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   const [iconSize, iconRef] = useSize([kind]);
   const iconSpace = kind && iconSize ? iconSize.width + paddingX : 0;
   const refs = useCombineRefs(dragRef, typeof truncate === 'number' ? labelHoverRef : undefined);
+  const typedIconWidth = typeIconClass && iconSize ? iconSize.height + typeIconPadding * 2 : 0;
+  const midX = typedIconWidth ? x + typedIconWidth / 2 : x;
+
   return (
     <g className={className} ref={refs}>
       <SvgDropShadowFilter id={FILTER_ID} />
       {textSize && (
         <rect
           filter={createSvgIdUrl(FILTER_ID)}
-          x={x - paddingX - textSize.width / 2 - iconSpace / 2}
-          width={textSize.width + paddingX * 2 + iconSpace}
+          x={midX - paddingX - textSize.width / 2 - iconSpace / 2 - (typeIconClass ? 10 : 0)}
+          width={textSize.width + paddingX * 2 + iconSpace + (typeIconClass ? 10 : 0)}
           y={y - paddingY - textSize.height / 2}
           height={textSize.height + paddingY * 2}
           rx={cornerRadius}
@@ -74,15 +82,25 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
       {textSize && kind && (
         <SvgResourceIcon
           ref={iconRef}
-          x={x - textSize.width / 2 - paddingX / 2}
+          x={midX - textSize.width / 2 - paddingX / 2}
           y={y}
           kind={kind}
+        />
+      )}
+      {textSize && iconSize && typeIconClass && (
+        <SvgCircledIcon
+          x={midX - (textSize.width + iconSpace) / 2 - paddingX}
+          y={y - iconSize.height + paddingY * 1.5}
+          width={iconSize.height + paddingY}
+          height={iconSize.height + paddingY}
+          iconClass={typeIconClass}
+          padding={typeIconPadding}
         />
       )}
       <text
         {...other}
         ref={textRef}
-        x={x + iconSpace / 2}
+        x={midX + iconSpace / 2}
         y={y}
         textAnchor="middle"
         dy="0.35em"

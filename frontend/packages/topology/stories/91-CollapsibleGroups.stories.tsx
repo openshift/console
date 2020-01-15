@@ -38,6 +38,23 @@ export default {
 const getModel = (layout: string): Model => {
   // create nodes from data
   const nodes: NodeModel[] = data.nodes.map((d) => {
+    if (d.type) {
+      return {
+        type: d.type,
+        id: d.id,
+        group: true,
+        children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
+        label: `group-${d.id}`,
+        width: d.width,
+        height: d.height,
+        style: {
+          padding: 10,
+        },
+        data: {
+          background: d.color,
+        },
+      };
+    }
     // randomize size somewhat
     const width = 50 + d.id.length;
     const height = 50 + d.id.length;
@@ -53,23 +70,6 @@ const getModel = (layout: string): Model => {
     };
   });
 
-  // create groups from data
-  const groupNodes: NodeModel[] = data.groups.map((d) => ({
-    type: d.type,
-    id: d.id,
-    group: true,
-    children: data.nodes.filter((n: any) => n.group === d.id).map((n) => n.id),
-    label: `group-${d.id}`,
-    width: d.width,
-    height: d.height,
-    style: {
-      padding: 10,
-    },
-    data: {
-      background: d.color,
-    },
-  }));
-
   // create links from data
   const edges = data.links.map(
     (d): EdgeModel => ({
@@ -84,11 +84,11 @@ const getModel = (layout: string): Model => {
   // create topology model
   const model: Model = {
     graph: {
-      id: 'g1',
+      id: 'graph',
       type: 'graph',
       layout,
     },
-    nodes: [...nodes, ...groupNodes],
+    nodes,
     edges,
   };
 
@@ -106,10 +106,10 @@ const getVisualization = (model: Model): Visualization => {
     if (kind === ModelKind.graph) {
       return withPanZoom()(GraphComponent);
     }
-    if (type === 'blue') {
+    if (type === 'lightblue' || type === 'cyan') {
       return withDragNode({ canCancel: false })(GroupHull);
     }
-    if (type === 'orange' || type === 'pink') {
+    if (type === 'blue' || type === 'orange' || type === 'pink') {
       return withDragNode({ canCancel: false })(Group);
     }
     if (kind === ModelKind.node) {
@@ -128,7 +128,9 @@ type TopologyViewComponentProps = {
 
 const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) => {
   const [selectedIds, setSelectedIds] = React.useState<string[]>();
-  const [collapseBlues, setCollapseBlues] = React.useState<boolean>(false);
+  const [collapseBlue, setCollapseBlue] = React.useState<boolean>(false);
+  const [collapseLightBlue, setCollapseLightBlue] = React.useState<boolean>(false);
+  const [collapseCyan, setCollapseCyan] = React.useState<boolean>(false);
   const [collapseOrange, setCollapseOrange] = React.useState<boolean>(false);
   const [collapsePink, setCollapsePink] = React.useState<boolean>(false);
 
@@ -141,10 +143,30 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
       <ToolbarGroup>
         <ToolbarItem>
           <Checkbox
-            id="collapse-blues"
-            label="Collapse Blues"
-            isChecked={collapseBlues}
-            onChange={setCollapseBlues}
+            id="collapse-blue"
+            label="Collapse Blue"
+            isChecked={collapseBlue}
+            onChange={setCollapseBlue}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-light-blue"
+            label="Collapse Light Blue"
+            isChecked={collapseLightBlue}
+            onChange={setCollapseLightBlue}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Checkbox
+            id="collapse-cyan"
+            label="Collapse Cyan"
+            isChecked={collapseCyan}
+            onChange={setCollapseCyan}
           />
         </ToolbarItem>
       </ToolbarGroup>
@@ -173,9 +195,21 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
 
   React.useEffect(() => {
     action(() => {
-      vis.setTypeCollapsed('blue', collapseBlues);
+      vis.setTypeCollapsed('blue', collapseBlue);
     })();
-  }, [vis, collapseBlues]);
+  }, [vis, collapseBlue]);
+
+  React.useEffect(() => {
+    action(() => {
+      vis.setTypeCollapsed('lightblue', collapseLightBlue);
+    })();
+  }, [vis, collapseLightBlue]);
+
+  React.useEffect(() => {
+    action(() => {
+      vis.setTypeCollapsed('cyan', collapseCyan);
+    })();
+  }, [vis, collapseCyan]);
 
   React.useEffect(() => {
     action(() => {

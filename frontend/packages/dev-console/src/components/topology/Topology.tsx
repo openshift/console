@@ -26,7 +26,7 @@ import TopologyApplicationPanel from './TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP } from './const';
+import { TYPE_APPLICATION_GROUP, TYPE_KNATIVE_SERVICE } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 
@@ -81,6 +81,12 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
       visRef.current.setTypeCollapsed(TYPE_APPLICATION_GROUP, !filters.display.appGrouping);
     })();
   }, [filters.display.appGrouping]);
+
+  React.useEffect(() => {
+    action(() => {
+      visRef.current.setTypeCollapsed(TYPE_KNATIVE_SERVICE, !filters.display.knativeServices);
+    })();
+  }, [filters.display.knativeServices]);
 
   React.useEffect(() => {
     const newModel = topologyModelFromDataModel(data);
