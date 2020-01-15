@@ -6,6 +6,7 @@ import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { Alert, ActionGroup, Button, Switch, Accordion, Checkbox } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { JSONSchema6TypeName } from 'json-schema';
 import {
   apiVersionForModel,
@@ -190,7 +191,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
 };
 
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
-  const fields: OperandField[] = (!_.isEmpty(
+  const fieldsFromProps: OperandField[] = (!_.isEmpty(
     props.clusterServiceVersion && props.providedAPI.specDescriptors,
   )
     ? fieldsFor(props.providedAPI)
@@ -244,6 +245,8 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         : field,
     );
 
+  const [fields, setFields] = React.useState<OperandField[]>(fieldsFromProps);
+
   const defaultValueFor = (field: OperandField) => {
     if (
       _.intersection(field.capabilities, [
@@ -295,6 +298,21 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     return sampleValue ? { ...allFields, [field.path]: sampleValue } : allFields;
   }, {});
 
+  const getArrayFieldGroups = () => {
+    const arrayFieldGroupList = fields.reduce(
+      (groups, field) =>
+        field.capabilities.find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
+          ? groups.add(
+              field.capabilities.find((c) =>
+                c.startsWith(SpecCapability.arrayFieldGroup),
+              ) as SpecCapability.arrayFieldGroup,
+            )
+          : groups,
+      new Set<SpecCapability.arrayFieldGroup>(),
+    );
+    return new Set([...arrayFieldGroupList].sort());
+  };
+
   const [formValues, setFormValues] = React.useState<FormValues>({
     'metadata.name': 'example',
     'metadata.labels': [],
@@ -303,6 +321,9 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
   });
   const [error, setError] = React.useState<string>();
   const [formErrors, setFormErrors] = React.useState<FieldErrors>({});
+  const [arrayFieldGroups, setArrayFieldGroupList] = React.useState<
+    Set<SpecCapability.arrayFieldGroup>
+  >(getArrayFieldGroups());
 
   const updateFormValues = (values: FormValues) => (path: _.PropertyPath, value: any) =>
     _.set(_.cloneDeep(values), path, value);
@@ -660,7 +681,139 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     if (!_.isString(group) || !_.isString(groupType)) {
       return null;
     }
-    return _.startCase(group.split(groupType)[1]);
+    let groupName = group.split(groupType)[1];
+    if (groupType.startsWith(SpecCapability.arrayFieldGroup)) {
+      [groupName] = groupName.split(':');
+    }
+    return groupName;
+  };
+
+  const addFieldsToGroup = (fieldList, group) => {
+    const newFormValues = _.cloneDeep(formValues);
+    const groupName = getGroupName(group, SpecCapability.arrayFieldGroup);
+    const newFields = _.cloneDeep(fields);
+
+    if (_.isArray(fieldList) && !_.isEmpty(fieldList) && !_.isNil(group)) {
+      _.forEach(fieldList, (field) => {
+        const newField = _.cloneDeep(field);
+        const pathInfoList = newField.path.split('.');
+        const groupInfo = pathInfoList.find((ele) => ele.startsWith(groupName));
+        const groupNumIndex = pathInfoList.indexOf(groupInfo);
+        const groupIndex = group.split(groupName.concat(':'))[1];
+        const newGroupName = groupName
+          .concat('[')
+          .concat(groupIndex)
+          .concat(']');
+
+        // Generate new capabilities
+        const arrayFieldGroupCapability = newField.capabilities.find((c) =>
+          c.startsWith(SpecCapability.arrayFieldGroup),
+        );
+        const newArrayFieldGroupCapability = !_.isUndefined(
+          arrayFieldGroupCapability.split(groupName.concat(':'))[1],
+        )
+          ? _.dropRight(
+              newField.capabilities
+                .find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
+                .split(':'),
+            )
+              .join(':')
+              .concat(':')
+              .concat(groupIndex)
+          : arrayFieldGroupCapability.concat(':').concat(groupIndex);
+
+        newField.capabilities.splice(
+          _.findIndex(newField.capabilities, (c: string) =>
+            c.startsWith(SpecCapability.arrayFieldGroup),
+          ),
+          1,
+          newArrayFieldGroupCapability,
+        );
+        // Generate new group name part in path
+        pathInfoList.splice(groupNumIndex, 1, newGroupName);
+        newField.path = pathInfoList.join('.');
+
+        // Add new fieldValue
+        newFormValues[newField.path] = defaultValueFor(newField);
+
+        // Add new field
+        newFields.push(newField);
+      });
+      setFormValues(newFormValues);
+      setFields(newFields);
+    }
+  };
+
+  const removeFieldsFromGroup = (fieldList, groupName) => {
+    let newFormValues = _.cloneDeep(formValues);
+    let newFieldList = _.cloneDeep(fields);
+    let fieldsInGroup = [];
+
+    if (_.isArray(fieldList) && !_.isEmpty(fieldList) && !_.isNil(groupName)) {
+      fieldsInGroup = newFieldList.filter((f) =>
+        f.capabilities.some((c) => {
+          if (c.startsWith(SpecCapability.arrayFieldGroup)) {
+            return c.split(SpecCapability.arrayFieldGroup)[1].includes(groupName);
+          }
+          return false;
+        }),
+      );
+
+      _.forEach(fieldList, () => {
+        // Remove related formValue
+        const key = _.findLastKey(newFormValues, (v, k) =>
+          k.split('.').some((p) => p.includes(groupName)),
+        );
+        newFormValues = _.omit(newFormValues, [key]);
+
+        // Remove related fields
+        newFieldList = _.without(newFieldList, fieldsInGroup.pop());
+      });
+
+      setFormValues(newFormValues);
+      setFields(newFieldList);
+    }
+  };
+
+  const addGroup = (group) => {
+    const groupList = _.cloneDeep(arrayFieldGroups);
+
+    if (!_.isNil(group) && arrayFieldGroups.size > 0) {
+      groupList.add(group);
+      setArrayFieldGroupList(new Set([...groupList].sort()));
+    }
+  };
+
+  const removeGroup = (groupName) => {
+    const groupList = [...arrayFieldGroups];
+    const newGroupList = groupList.filter((g) => g.includes(groupName));
+
+    if (!_.isNil(groupName) && !_.isEmpty(groupList) && !_.isEmpty(newGroupList)) {
+      const newList = _.without(groupList, _.last(newGroupList));
+      setArrayFieldGroupList(new Set(newList.sort()));
+    }
+  };
+
+  const addGroupAndFields = (fieldList, groupName) => {
+    const groupIndex = _.filter([...arrayFieldGroups], (g) =>
+      g.split(':').includes(groupName),
+    ).length.toString();
+    const newGroup = SpecCapability.arrayFieldGroup
+      .concat(groupName)
+      .concat(':')
+      .concat(groupIndex);
+
+    if (!_.isNil(groupName) && !_.isEmpty(fieldList)) {
+      addGroup(newGroup);
+      addFieldsToGroup(fieldList, newGroup);
+    }
+  };
+
+  const removeGroupAndFields = (fieldList, groupName) => {
+    if (!_.isNil(groupName) && !_.isEmpty(fieldList)) {
+      removeFieldsFromGroup(fieldList, groupName);
+      removeGroup(groupName);
+    }
   };
 
   const fieldGroups = fields.reduce(
@@ -673,18 +826,6 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           )
         : groups,
     new Set<SpecCapability.fieldGroup>(),
-  );
-
-  const arrayFieldGroups = fields.reduce(
-    (groups, field) =>
-      field.capabilities.find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
-        ? groups.add(
-            field.capabilities.find((c) =>
-              c.startsWith(SpecCapability.arrayFieldGroup),
-            ) as SpecCapability.arrayFieldGroup,
-          )
-        : groups,
-    new Set<SpecCapability.arrayFieldGroup>(),
   );
 
   const advancedFields = fields
@@ -739,6 +880,24 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               return (
                 !_.isEmpty(fieldList) && (
                   <div id={group} key={group}>
+                    {[...arrayFieldGroups].filter((fieldGroup) =>
+                      fieldGroup
+                        .split(SpecCapability.arrayFieldGroup)[1]
+                        .split(':')[0]
+                        .includes(groupName),
+                    ).length > 1 ? (
+                      <div className="row co-array-field-group__remove">
+                        <Button
+                          type="button"
+                          className="co-array-field-group__remove-btn"
+                          onClick={() => removeGroupAndFields(fieldList, groupName)}
+                          variant="link"
+                        >
+                          <MinusCircleIcon className="co-icon-space-r" />
+                          Remove Field Group
+                        </Button>
+                      </div>
+                    ) : null}
                     <FieldGroup
                       defaultExpand={
                         !_.some(
@@ -746,7 +905,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
                         )
                       }
-                      groupName={groupName}
+                      groupName={_.startCase(groupName)}
                     >
                       {fieldList.map((field) => (
                         <div key={field.path}>
@@ -771,6 +930,16 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           </div>
                         </div>
                       ))}
+                      <div className="row">
+                        <Button
+                          type="button"
+                          onClick={() => addGroupAndFields(fieldList, groupName)}
+                          variant="link"
+                        >
+                          <PlusCircleIcon className="co-icon-space-r" />
+                          Add Field Group
+                        </Button>
+                      </div>
                     </FieldGroup>
                   </div>
                 )
@@ -792,7 +961,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
                         )
                       }
-                      groupName={groupName}
+                      groupName={_.startCase(groupName)}
                     >
                       {fieldList.map((field) => (
                         <div key={field.path}>
