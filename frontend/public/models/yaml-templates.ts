@@ -649,35 +649,21 @@ kind: StatefulSet
 metadata:
   name: example
 spec:
-  serviceName: "nginx"
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: hello-openshift
   template:
     metadata:
+      name: hello-openshift
       labels:
-        app: nginx
+        app: hello-openshift
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
-      - name: nginx
-        image: gcr.io/google_containers/nginx-slim:0.8
+      - name: hello-openshift
+        image: openshift/hello-openshift
         ports:
-        - containerPort: 80
-          name: web
-        volumeMounts:
-        - name: www
-          mountPath: /usr/share/nginx/html
-  volumeClaimTemplates:
-  - metadata:
-      name: www
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: my-storage-class
-      resources:
-        requests:
-          storage: 1Gi
+        - containerPort: 8080
 `,
   )
   .setIn(
