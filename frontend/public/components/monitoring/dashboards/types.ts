@@ -12,6 +12,7 @@ export type Panel = {
   postfix?: string;
   prefix?: string;
   span: number;
+  stack: boolean;
   targets: {
     expr: string;
   };
