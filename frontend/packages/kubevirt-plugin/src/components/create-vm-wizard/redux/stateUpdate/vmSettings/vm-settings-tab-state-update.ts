@@ -1,4 +1,5 @@
 import { FLAGS } from '@console/shared';
+import { TemplateValidations } from '../../../../../utils/validations/template/template-validations';
 import { isWinToolsImage, getVolumeContainerImage } from '../../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
@@ -20,6 +21,7 @@ import { ProvisionSource } from '../../../../../constants/vm/provision-source';
 import { getProviders } from '../../../provider-definitions';
 import { windowsToolsStorage } from '../../initial-state/storage-tab-initial-state';
 import { getStorages } from '../../../selectors/selectors';
+import { getTemplateValidations } from '../../validations/utils/templates-validations';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
@@ -144,6 +146,25 @@ export const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: 
   );
 };
 
+export const templateValidationsUpdater = (options: UpdateOptions) => {
+  const { id, prevState, dispatch, getState } = options;
+  const state = getState();
+  if (
+    !hasVmSettingsChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+    )
+  ) {
+    return;
+  }
+  const validations: TemplateValidations[] = getTemplateValidations(options);
+  dispatch(vmWizardInternalActions[InternalActionType.SetTemplateValidations](id, validations));
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
@@ -154,6 +175,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     flavorUpdater,
     osUpdater,
     nativeK8sUpdater,
+    templateValidationsUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

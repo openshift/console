@@ -11,6 +11,7 @@ export class ValidationJSONPath extends ValueEnum<string> {
   static readonly MEMORY = new ValidationJSONPath(
     'jsonpath::.spec.domain.resources.requests.memory',
   );
+  static readonly BUS = new ValidationJSONPath('jsonpath::.spec.domain.devices.disks[*].disk.bus');
 }
 
 export class TemplateValidations {
@@ -102,6 +103,25 @@ export class TemplateValidations {
       (isMaxInclusive ? value <= max : value < max);
 
     return { min, max, isMinInclusive, isMaxInclusive, isValid };
+  };
+
+  getAllowedBusses = (): Set<string> => this.getAllowedEnumValues(ValidationJSONPath.BUS);
+
+  private getAllowedEnumValues = (jsonPath: ValidationJSONPath): Set<string> => {
+    // Empty array means all values are allowed
+
+    // Get all the validations which has the 'values' key and aren't optional
+    const relevantValidations = this.getRelevantValidations(jsonPath).filter(
+      (validation) => !validation.justWarning && 'values' in validation,
+    );
+
+    return new Set(
+      relevantValidations.reduce(
+        (result: string[], validation: CommonTemplatesValidation) =>
+          result.concat(validation.values),
+        [],
+      ),
+    );
   };
 
   private getRelevantValidations = (jsonPath: ValidationJSONPath) =>

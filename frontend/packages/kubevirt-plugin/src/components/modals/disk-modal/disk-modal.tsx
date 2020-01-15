@@ -69,6 +69,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     handlePromise,
     close,
     cancel,
+    allowedBusses,
   } = props;
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || DiskWrapper.EMPTY;
@@ -380,9 +381,24 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isDisabled={inProgress}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {DiskBus.getAll().map((b) => (
-                <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
-              ))}
+              {!allowedBusses || allowedBusses.size === 0
+                ? DiskBus.getAll().map((b) => (
+                    <FormSelectOption
+                      key={b.getValue()}
+                      value={b.getValue()}
+                      label={b.toString()}
+                    />
+                  ))
+                : DiskBus.getAll().map(
+                    (b) =>
+                      Array.from(allowedBusses).includes(b.getValue()) && (
+                        <FormSelectOption
+                          key={b.getValue()}
+                          value={b.getValue()}
+                          label={b.toString()}
+                        />
+                      ),
+                  )}
             </FormSelect>
           </FormRow>
           {source.requiresStorageClass() && (
@@ -443,6 +459,7 @@ export type DiskModalProps = {
   vmName: string;
   vmNamespace: string;
   namespace: string;
+  allowedBusses?: Set<string>;
   onNamespaceChanged: (namespace: string) => void;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;

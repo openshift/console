@@ -1,3 +1,4 @@
+import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
 import {
   CloudInitField,
   VMImportProvider,
@@ -207,5 +208,12 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
       isPending,
     },
     type: InternalActionType.SetResults,
+  }),
+  [InternalActionType.SetTemplateValidations]: (id, value: TemplateValidations[]) => ({
+    payload: {
+      id,
+      value,
+    },
+    type: InternalActionType.SetTemplateValidations,
   }),
 };

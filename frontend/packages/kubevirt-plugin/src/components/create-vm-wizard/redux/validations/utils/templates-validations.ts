@@ -35,8 +35,8 @@ export const getTemplateValidations = (options: UpdateOptions): TemplateValidati
 
   if (templates.size > 0 && os && workload) {
     // templates are sorted by relevance if only flavor is missing
-    return getValidationsFromTemplates([templates.first()]);
+    return getValidationsFromTemplates(templates.toArray());
   }
 
-  return getValidationsFromTemplates(templates.toArray());
+  return getValidationsFromTemplates([templates.first()]);
 };

@@ -8,6 +8,7 @@ import {
   ProjectModel,
   StorageClassModel,
 } from '@console/internal/models';
+import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import {
   VMWizardProps,
@@ -17,7 +18,7 @@ import {
 } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
-import { getStoragesWithWrappers } from '../../selectors/selectors';
+import { getStoragesWithWrappers, getTemplateValidations } from '../../selectors/selectors';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -34,6 +35,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     useProjects,
     addUpdateStorage,
     storages,
+    templateValidations,
     ...restProps
   } = props;
   const {
@@ -80,6 +82,17 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     },
   ];
 
+  const getAllowedBusses = (): Set<string> => {
+    // Empty Set means all values are excepted
+    return new Set(
+      templateValidations.reduce(
+        (result: string[], tv: TemplateValidations) =>
+          result.concat(Array.from(tv.getAllowedBusses())),
+        [],
+      ),
+    );
+  };
+
   return (
     <Firehose resources={resources}>
       <DiskModal
@@ -100,6 +113,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         ].includes(type)}
         isCreateTemplate={isCreateTemplate}
         isEditing={isEditing}
+        allowedBusses={getAllowedBusses()}
         onSubmit={(
           resultDiskWrapper,
           resultVolumeWrapper,
@@ -138,6 +152,7 @@ type VMWizardStorageModalProps = ModalComponentProps & {
   useProjects?: boolean;
   isCreateTemplate: boolean;
   storages: VMWizardStorageWithWrappers[];
+  templateValidations: TemplateValidations[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
 };
 
@@ -148,6 +163,7 @@ const stateToProps = (state, { wizardReduxID }) => {
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
     isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
     storages: getStoragesWithWrappers(state, wizardReduxID),
+    templateValidations: getTemplateValidations(state, wizardReduxID),
   };
 };
 

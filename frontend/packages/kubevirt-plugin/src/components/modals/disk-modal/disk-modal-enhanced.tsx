@@ -11,7 +11,7 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { getLoadedData } from '../../../utils';
-import { asVM, getVMLikeModel } from '../../../selectors/vm';
+import { asVM, getVMLikeModel, getOperatingSystem } from '../../../selectors/vm';
 import { VMLikeEntityKind } from '../../../types';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
@@ -26,6 +26,9 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
   const vm = asVM(vmLikeFinal);
 
+  const allowedBusses = getOperatingSystem(vmLikeEntity).startsWith('win')
+    ? new Set<string>(['virtio', 'sata'])
+    : new Set<string>();
   const diskWrapper = disk ? DiskWrapper.initialize(disk) : DiskWrapper.EMPTY;
   const volumeWrapper = volume ? VolumeWrapper.initialize(volume) : VolumeWrapper.EMPTY;
   const dataVolumeWrapper = dataVolume
@@ -61,6 +64,7 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       volume={volumeWrapper}
       dataVolume={dataVolumeWrapper}
       onSubmit={onSubmit}
+      allowedBusses={allowedBusses}
     />
   );
 };

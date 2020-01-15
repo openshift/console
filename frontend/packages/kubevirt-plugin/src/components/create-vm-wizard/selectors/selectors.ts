@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { Map } from 'immutable';
+import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
 import { iGetIn, immutableListToShallowJS } from '../../../utils/immutable';
 import {
   VMWizardNetwork,
@@ -50,3 +51,6 @@ export const getStoragesWithWrappers = (state, id: string): VMWizardStorageWithW
     persistentVolumeClaim,
     ...rest,
   }));
+
+export const getTemplateValidations = (state, id: string): TemplateValidations[] =>
+  iGetIn(getCreateVMWizards(state), [id, 'commonData', 'dataIDReferences', 'templateValidations']);

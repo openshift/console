@@ -53,6 +53,7 @@ export enum InternalActionType {
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
+  SetTemplateValidations = 'TemplateValidations',
 }
 
 export type WizardInternalAction = {

@@ -251,6 +251,11 @@ export default (state, action: WizardInternalAction) => {
         [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value'],
         fromJS(payload.value),
       );
+    case InternalActionType.SetTemplateValidations:
+      return state.setIn(
+        [dialogID, 'commonData', 'dataIDReferences', 'templateValidations'],
+        payload.value,
+      );
     default:
       break;
   }
