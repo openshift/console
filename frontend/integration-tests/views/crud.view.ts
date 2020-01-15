@@ -58,7 +58,8 @@ export const actions = Object.freeze({
   edit: 'Edit',
   delete: 'Delete',
 });
-export const actionForLabel = (label: string) => $(`[data-test-action="${label}"]`);
+export const actionForLabel = (label: string) =>
+  $(`[data-test-action="${label}"]:not(.pf-m-disabled)`);
 
 export const filterForName = async (name: string) => {
   await browser.wait(until.presenceOf(textFilter));

@@ -45,9 +45,7 @@ export const openFirstRowKebabMenu = () => {
   return firstRow
     .$('[data-test-id="kebab-button"]')
     .click()
-    .then(() =>
-      browser.wait(until.elementToBeClickable(crudView.actionForLabel('Delete Receiver'))),
-    );
+    .then(() => browser.wait(until.visibilityOf($('[data-test-id="action-items"]'))));
 };
 
 export const clickFirstRowKebabAction = (actionLabel: string) => {
