@@ -72,8 +72,10 @@ export class DiskDialog {
   async edit(disk: StorageResource) {
     await this.fillName(disk.name);
     await this.selectInterface(disk.interface);
-    await this.fillSize(disk.size);
     await this.selectStorageClass(disk.storageClass);
+    if (disk.size) {
+      await this.fillSize(disk.size);
+    }
     await click(saveButton);
     await waitForNoLoaders();
   }

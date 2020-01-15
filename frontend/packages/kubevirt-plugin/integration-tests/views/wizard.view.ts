@@ -4,8 +4,8 @@ import { actionForLabel } from '@console/internal-integration-tests/views/crud.v
 import { click } from '@console/shared/src/test-utils/utils';
 
 // Wizard Common
-export const createWithWizardLink = $('#wizard-link');
-export const createWithYAMLLink = $('#yaml-link');
+export const createWithWizardButton = $('#wizard-link');
+export const createWithYAMLButton = $('#yaml-link');
 export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));

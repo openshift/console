@@ -18,6 +18,9 @@
     "integrationTestSuites": {
       "kubevirt": [
         "integration-tests/**/*.scenario.ts"
+      ],
+      "kubevirt-v2v": [
+        "integration-tests/v2v/*.scenario.ts"
       ]
     }
   }

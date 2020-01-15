@@ -11,7 +11,7 @@ import { DiskDialog } from '../dialogs/diskDialog';
 export class Wizard {
   async openWizard() {
     await click(createItemButton);
-    await click(wizardView.createWithWizardLink);
+    await click(wizardView.createWithWizardButton);
     await wizardView.waitForNoLoaders();
   }
 
@@ -77,6 +77,17 @@ export class Wizard {
     await addNICDialog.create(nic);
   }
 
+  /**
+   * Edits attributes of a NIC.
+   * @param   {string}              name     Name of a NIC to edit.
+   * @param   {NetworkResource}     NIC      NIC with the requested attributes.
+   */
+  async editNIC(name: string, NIC: NetworkResource) {
+    await wizardView.clickKebabAction(name, 'Edit');
+    const addNICDialog = new NetworkInterfaceDialog();
+    await addNICDialog.edit(NIC);
+  }
+
   async selectBootableNIC(networkDefinition: string) {
     await selectOptionByText(wizardView.pxeBootSourceSelect, networkDefinition);
   }
@@ -92,7 +103,7 @@ export class Wizard {
   }
 
   /**
-   * Edits attributes of a disk. Returns new StorageResource with updated attributes.
+   * Edits attributes of a disk.
    * @param   {string}              name     Name of a disk to edit.
    * @param   {StorageResource}     disk     Disk with the requested attributes.
    */
