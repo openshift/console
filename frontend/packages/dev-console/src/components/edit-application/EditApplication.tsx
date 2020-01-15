@@ -56,13 +56,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
           actions.setStatus({ error: err.message });
         });
     } else {
-      createOrUpdateDeployImageResources(
-        values,
-        false,
-        'update',
-        appResources,
-        _.get(initialValues, 'imageStream.namespace'),
-      )
+      createOrUpdateDeployImageResources(values, false, 'update', appResources)
         .then(() => {
           actions.setSubmitting(false);
           actions.setStatus({ error: '' });
@@ -78,10 +72,9 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     return (
       <EditApplicationForm
         {...props}
-        // enableReinitialize="true"
+        enableReinitialize="true"
         pageHeading={pageHeading}
         builderImages={builderImages}
-        imageStreams={imageStreamsData}
       />
     );
   };

@@ -265,18 +265,11 @@ export const getGitAndDockerfileInitialValues = (
   return initialValues;
 };
 
-export const getExternalImageInitialValues = (
-  imageStream: K8sResourceKind,
-  editAppResource: K8sResourceKind,
-) => {
+export const getExternalImageInitialValues = (imageStream: K8sResourceKind) => {
   if (_.isEmpty(imageStream)) {
     return {};
   }
   const name = _.get(imageStream, 'spec.tags[0].from.name');
-  const tag = _.get(imageStream, 'status.tags[0].tag');
-  const imageRef = _.get(editAppResource, 'spec.template.spec.containers[0].image');
-  const creationTimestamp = _.get(imageStream, 'status.tags[0].items[0].created');
-  const ports = _.get(editAppResource, 'spec.template.spec.containers[0].ports');
   const deployImageInitialValues = {
     searchTerm: name,
     registry: 'external',
@@ -287,25 +280,22 @@ export const getExternalImageInitialValues = (
       grantAccess: true,
     },
     isi: {
-      name,
-      image: {
-        dockerImageReference: imageRef,
-        dockerImageMetadata: {
-          Created: creationTimestamp,
-        },
-      },
-      tag,
+      name: '',
+      image: {},
+      tag: '',
       status: { metadata: {}, status: '' },
-      ports,
+      ports: [],
     },
     image: {
       name: '',
       image: {},
-      tag,
+      tag: '',
       status: { metadata: {}, status: '' },
-      ports,
+      ports: [],
     },
     build: {
+      env: [],
+      triggers: {},
       strategy: '',
     },
     isSearchingForImage: false,
@@ -325,8 +315,6 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     'metadata.labels["app.openshift.io/runtime-version"]',
     '',
   );
-  const ports = _.get(editAppResource, 'spec.template.spec.containers[0].ports');
-  const imageRef = _.get(editAppResource, 'spec.template.spec.containers[0].image');
   const deployImageInitialValues = {
     searchTerm: '',
     registry: 'internal',
@@ -336,20 +324,22 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
       namespace: imageStreamNamespace,
     },
     isi: {
-      name: imageStreamName,
-      image: { dockerImageReference: imageRef },
-      tag: imageStreamTag,
+      name: '',
+      image: {},
+      tag: '',
       status: { metadata: {}, status: '' },
-      ports,
+      ports: [],
     },
     image: {
       name: '',
       image: {},
-      tag: imageStreamTag,
+      tag: '',
       status: { metadata: {}, status: '' },
-      ports,
+      ports: [],
     },
     build: {
+      env: [],
+      triggers: {},
       strategy: '',
     },
     isSearchingForImage: false,
@@ -363,25 +353,22 @@ export const getInitialValues = (
   namespace: string,
 ) => {
   const commonValues = getCommonInitialValues(
-    appResources.editAppResource.data,
-    appResources.route.data,
+    _.get(appResources, 'editAppResource.data'),
+    _.get(appResources, 'route.data'),
     appName,
     namespace,
   );
   const gitDockerValues = getGitAndDockerfileInitialValues(
-    appResources.buildConfig.data,
-    appResources.route.data,
+    _.get(appResources, 'buildConfig.data'),
+    _.get(appResources, 'route.data'),
   );
   let externalImageValues = {};
   let internalImageValues = {};
 
   if (_.isEmpty(gitDockerValues)) {
-    externalImageValues = getExternalImageInitialValues(
-      appResources.imageStream.data,
-      appResources.editAppResource.data,
-    );
+    externalImageValues = getExternalImageInitialValues(_.get(appResources, 'imageStream.data'));
     internalImageValues = _.isEmpty(externalImageValues)
-      ? getInternalImageInitialValues(appResources.editAppResource.data)
+      ? getInternalImageInitialValues(_.get(appResources, 'editAppResource.data'))
       : {};
   }
 

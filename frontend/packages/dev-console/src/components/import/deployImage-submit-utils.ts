@@ -107,13 +107,7 @@ const getMetadata = (formData: DeployImageFormData) => {
     imageStream: { image: imgName, tag: imgTag, namespace: imgNamespace },
   } = formData;
 
-  const defaultLabels = getAppLabels(
-    name,
-    application,
-    !_.isEmpty(imgName) ? imgName : undefined,
-    !_.isEmpty(imgTag) ? imgTag : undefined,
-    !_.isEmpty(imgNamespace) ? imgNamespace : undefined,
-  );
+  const defaultLabels = getAppLabels(name, application, imgName || undefined, imgTag, imgNamespace);
   const labels = { ...defaultLabels, ...userLabels };
   const podLabels = getPodLabels(name);
 
@@ -349,18 +343,16 @@ export const createOrUpdateDeployImageResources = async (
   dryRun: boolean = false,
   verb: K8sVerb = 'create',
   appResources?: AppResources,
-  initialInternalImageStreamNamespace: string = '',
 ): Promise<K8sResourceKind[]> => {
   const formData = ensurePortExists(rawFormData);
   const {
     registry,
     route: { create: canCreateRoute, disable },
     isi: { ports, tag: imageStreamTag },
-    imageStream: { namespace: imgNamespace },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
-  if (registry === RegistryType.Internal && initialInternalImageStreamNamespace !== imgNamespace) {
+  if (registry === RegistryType.Internal) {
     formData.imageStream.grantAccess &&
       requests.push(createSystemImagePullerRoleBinding(formData, dryRun));
   }

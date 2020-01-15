@@ -10,73 +10,81 @@ import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagest
 import { secretModalLauncher } from '../CreateSecretModal';
 
 const ImageSearch: React.FC = () => {
-  const { values, setFieldValue, setFieldError } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldError, dirty } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
   const namespace = values.project.name;
-  const handleSearch = (searchTerm: string) => {
-    const importImage = {
-      kind: 'ImageStreamImport',
-      apiVersion: 'image.openshift.io/v1',
-      metadata: {
-        name: 'newapp',
-        namespace: values.project.name,
-      },
-      spec: {
-        import: false,
-        images: [
-          {
-            from: {
-              kind: 'DockerImage',
-              name: _.trim(searchTerm),
-            },
-          },
-        ],
-      },
-      status: {},
-    };
 
-    k8sCreate(ImageStreamImportsModel, importImage)
-      .then((imageStreamImport) => {
-        const status = _.get(imageStreamImport, 'status.images[0].status');
-        if (status.status === 'Success') {
-          const name = _.get(imageStreamImport, 'spec.images[0].from.name');
-          const image = _.get(imageStreamImport, 'status.images[0].image');
-          const tag = _.get(imageStreamImport, 'status.images[0].tag');
-          const isi = { name, image, tag, status };
-          const ports = getPorts(isi);
-          setFieldValue('isSearchingForImage', false);
-          setFieldValue('isi.name', name);
-          setFieldValue('isi.image', image);
-          setFieldValue('isi.tag', tag);
-          setFieldValue('isi.status', status);
-          setFieldValue('isi.ports', ports);
-          setFieldValue('image.ports', ports);
-          setFieldValue('image.tag', tag);
-          !values.name && setFieldValue('name', getSuggestedName(name));
-          !values.application.name &&
-            setFieldValue('application.name', `${getSuggestedName(name)}-app`);
-          // set default port value
-          const targetPort = _.head(ports);
-          targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
-        } else {
-          setFieldValue('isSearchingForImage', false);
+  const handleSearch = React.useCallback(
+    (searchTerm: string) => {
+      const importImage = {
+        kind: 'ImageStreamImport',
+        apiVersion: 'image.openshift.io/v1',
+        metadata: {
+          name: 'newapp',
+          namespace: values.project.name,
+        },
+        spec: {
+          import: false,
+          images: [
+            {
+              from: {
+                kind: 'DockerImage',
+                name: _.trim(searchTerm),
+              },
+            },
+          ],
+        },
+        status: {},
+      };
+
+      k8sCreate(ImageStreamImportsModel, importImage)
+        .then((imageStreamImport) => {
+          const status = _.get(imageStreamImport, 'status.images[0].status');
+          if (status.status === 'Success') {
+            const name = _.get(imageStreamImport, 'spec.images[0].from.name');
+            const image = _.get(imageStreamImport, 'status.images[0].image');
+            const tag = _.get(imageStreamImport, 'status.images[0].tag');
+            const isi = { name, image, tag, status };
+            const ports = getPorts(isi);
+            setFieldValue('isSearchingForImage', false);
+            setFieldValue('isi.name', name);
+            setFieldValue('isi.image', image);
+            setFieldValue('isi.tag', tag);
+            setFieldValue('isi.status', status);
+            setFieldValue('isi.ports', ports);
+            setFieldValue('image.ports', ports);
+            setFieldValue('image.tag', tag);
+            !values.name && setFieldValue('name', getSuggestedName(name));
+            !values.application.name &&
+              setFieldValue('application.name', `${getSuggestedName(name)}-app`);
+            // set default port value
+            const targetPort = _.head(ports);
+            targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
+          } else {
+            setFieldValue('isSearchingForImage', false);
+            setFieldValue('isi', {});
+            setFieldError('isi.image', status.message);
+            setFieldValue('route.targetPort', null);
+          }
+        })
+        .catch((error) => {
+          setFieldError('isi.image', error.message);
           setFieldValue('isi', {});
-          setFieldError('isi.image', status.message);
-          setFieldValue('route.targetPort', null);
-        }
-      })
-      .catch((error) => {
-        setFieldError('isi.image', error.message);
-        setFieldValue('isi', {});
-        setFieldValue('isSearchingForImage', false);
-      });
-  };
+          setFieldValue('isSearchingForImage', false);
+        });
+    },
+    [setFieldError, setFieldValue, values.application.name, values.name, values.project.name],
+  );
 
   const handleSave = (name: string) => {
     setNewImageSecret(name);
     values.searchTerm && handleSearch(values.searchTerm);
   };
+
+  React.useEffect(() => {
+    !dirty && values.searchTerm && handleSearch(values.searchTerm);
+  }, [dirty, handleSearch, values.searchTerm]);
 
   return (
     <>

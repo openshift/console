@@ -34,12 +34,23 @@ const ImageStreamDropdown: React.FC = () => {
       ? 'No Image Stream'
       : 'Select Image Stream';
   };
-  const onDropdownChange = (img: string) => {
-    setFieldValue('imageStream.tag', '');
-    setFieldValue('isi', initialValues.isi);
-    const image = imgCollection[imageStream.namespace][img];
-    dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
-  };
+
+  const onDropdownChange = React.useCallback(
+    (img: string) => {
+      setFieldValue('imageStream.tag', initialValues.imageStream.tag);
+      setFieldValue('isi', initialValues.isi);
+      const image = _.get(imgCollection, [imageStream.namespace, img], {});
+      dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
+    },
+    [
+      setFieldValue,
+      initialValues.imageStream.tag,
+      initialValues.isi,
+      imgCollection,
+      imageStream.namespace,
+      dispatch,
+    ],
+  );
   const onLoad = (imgstreams) => {
     const imageStreamAvailable = !_.isEmpty(imgstreams);
     setHasImageStreams(imageStreamAvailable);
@@ -54,6 +65,18 @@ const ImageStreamDropdown: React.FC = () => {
     collectImageStreams(namespace, resource);
     return namespace === imageStream.namespace;
   };
+
+  React.useEffect(() => {
+    imageStream.image && onDropdownChange(imageStream.image);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageStream.image, isStreamsAvailable]);
+
+  React.useEffect(() => {
+    if (initialValues.imageStream.image !== imageStream.image) {
+      initialValues.imageStream.tag = '';
+    }
+  }, [imageStream.image, initialValues.imageStream.image, initialValues.imageStream.tag]);
+
   return (
     <ResourceDropdownField
       name="imageStream.image"

@@ -63,6 +63,11 @@ const ImageStreamTagDropdown: React.FC = () => {
       setFieldError,
     ],
   );
+
+  React.useEffect(() => {
+    imageStream.tag && searchImageTag(imageStream.tag);
+  }, [imageStream.tag, searchImageTag]);
+
   return (
     <DropdownField
       name="imageStream.tag"
