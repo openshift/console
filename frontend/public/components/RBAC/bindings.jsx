@@ -295,7 +295,7 @@ export const RoleBindingsPage = ({
   createPath = '/k8s/cluster/rolebindings/~new',
 }) => (
   <MultiListPage
-    canCreate={true}
+    canCreate={!mock}
     createButtonText="Create Binding"
     createProps={{
       to: createPath,
