@@ -43,7 +43,6 @@ import {
   VM_STATUS_STOPPING,
   VM_STATUS_VMI_WAITING,
   VM_STATUS_UNKNOWN,
-  VM_SIMPLE_STATUS_OTHER,
   VM_STATUS_V2V_CONVERSION_PENDING,
   CONVERSION_PROGRESS_ANNOTATION,
   VM_STATUS_IMPORT_PENDING,
@@ -248,18 +247,6 @@ export const getVMStatus = ({
     isCreated(vm, launcherPod) ||
     isWaitingForVMI(vm) || { status: VM_STATUS_UNKNOWN }
   );
-};
-
-export const getSimpleVMStatus = (
-  vm: VMKind,
-  pods?: PodKind[],
-  migrations?: K8sResourceKind[],
-  vmi?: VMIKind,
-) => {
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations }).status;
-  return vmStatus === VM_STATUS_OFF || vmStatus === VM_STATUS_RUNNING
-    ? vmStatus
-    : VM_SIMPLE_STATUS_OTHER;
 };
 
 export const isVmOff = (vmStatus: VMStatus) => vmStatus.status === VM_STATUS_OFF;

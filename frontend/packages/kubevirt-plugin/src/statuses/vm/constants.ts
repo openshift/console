@@ -16,34 +16,19 @@ export const VM_STATUS_UNKNOWN = 'VM_STATUS_UNKNOWN';
 export const VM_STATUS_MIGRATING = 'VM_STATUS_MIGRATING';
 export const VM_STATUS_IMPORT_PENDING = 'VM_STATUS_IMPORT_PENDING';
 
-export const VM_STATUS_ALL_OFF = [VM_STATUS_OFF];
-export const VM_STATUS_ALL_WARNING = [VM_STATUS_UNKNOWN];
-
-export const VM_STATUS_ALL_ERROR = [
-  VM_STATUS_V2V_CONVERSION_ERROR,
-  VM_STATUS_POD_ERROR,
-  VM_STATUS_ERROR,
-  VM_STATUS_IMPORT_ERROR,
-];
-
-export const VM_STATUS_ALL_PROGRESS = [
-  VM_STATUS_V2V_CONVERSION_PENDING,
-  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-  VM_STATUS_STARTING,
-  VM_STATUS_VMI_WAITING,
-  VM_STATUS_IMPORTING,
-  VM_STATUS_MIGRATING,
-];
-
-export const VM_SIMPLE_STATUS_OTHER = 'VM_SIMPLE_STATUS_OTHER'; // used for grouping filters
-export const VM_SIMPLE_STATUS_ALL = [VM_STATUS_RUNNING, VM_STATUS_OFF, VM_SIMPLE_STATUS_OTHER];
-export const VM_SIMPLE_STATUS_TO_TEXT = {
-  [VM_STATUS_RUNNING]: 'Running',
-  [VM_STATUS_OFF]: 'Off',
-  [VM_SIMPLE_STATUS_OTHER]: 'Other',
-};
-
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
+
+export const VM_STATUS_FILTER_STRINGS = [
+  'Pending',
+  'Importing',
+  'Error',
+  'Starting',
+  'Migrating',
+  'Stopping',
+  'Running',
+  'Off',
+  'Other',
+];
 
 export const getVMStatusSortString = (vmStatus) => {
   switch (vmStatus.status) {
@@ -76,6 +61,6 @@ export const getVMStatusSortString = (vmStatus) => {
     case VM_STATUS_OFF:
       return 'Off';
     default:
-      return 'Unknown';
+      return 'Other';
   }
 };
