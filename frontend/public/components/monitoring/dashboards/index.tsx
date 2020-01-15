@@ -120,7 +120,12 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
         <DashboardCardBody>
           {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
           {panel.type === 'graph' && (
-            <Graph pollInterval={pollInterval} queries={queries} timespan={timespan} />
+            <Graph
+              isStack={panel.stack}
+              pollInterval={pollInterval}
+              queries={queries}
+              timespan={timespan}
+            />
           )}
           {panel.type === 'row' && !_.isEmpty(panel.panels) && (
             <div className="row">
