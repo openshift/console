@@ -237,10 +237,10 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   clearVariables,
   patchVariable,
 }) => {
-  const [pollInterval, setPollInterval] = React.useState<number>(
+  const [pollInterval, setPollInterval] = React.useState(
     parsePrometheusDuration(defaultPollInterval),
   );
-  const [timespan, setTimespan] = React.useState<number>(parsePrometheusDuration(defaultTimespan));
+  const [timespan, setTimespan] = React.useState(parsePrometheusDuration(defaultTimespan));
   const [board, setBoard] = React.useState(boards[0]);
 
   const onBoardChange = (newBoard: string) => {
@@ -283,9 +283,9 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         {board && (
           <Board
             board={board}
-            timespan={timespan}
             patchVariable={patchVariable}
             pollInterval={pollInterval}
+            timespan={timespan}
           />
         )}
       </Dashboard>

@@ -5,10 +5,10 @@ import { QueryBrowser } from '../query-browser';
 const Graph: React.FC<Props> = ({ pollInterval, queries, timespan }) => (
   <QueryBrowser
     defaultSamples={30}
-    defaultTimespan={timespan}
     hideControls
     pollInterval={pollInterval}
     queries={queries}
+    timespan={timespan}
   />
 );
 
