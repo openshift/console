@@ -61,7 +61,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
       key={d.id}
       style={{ data: { stroke: 'white', strokeWidth: 0.7, fill: d.fill } }}
       cornerRadius={getBarRadius(index, data.length)}
-      barWidth={18}
+      barWidth={12}
       padding={0}
       data={[d]}
       labelComponent={<ChartTooltip dx={0} style={{ fontSize: 8, padding: 5 }} />}
