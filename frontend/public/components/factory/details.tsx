@@ -47,7 +47,9 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         customData={props.customData}
         badge={props.badge || getBadgeFromType(props.kindObj && props.kindObj.badge)}
         icon={props.icon}
-      />
+      >
+        {props.children}
+      </PageHeading>
       <HorizontalNav
         pages={props.pages}
         pagesFor={props.pagesFor}
@@ -86,6 +88,7 @@ export type DetailsPageProps = {
   badge?: React.ReactNode;
   icon?: React.ComponentType<{ obj: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
+  children?: React.ReactNode;
 };
 
 DetailsPage.displayName = 'DetailsPage';
