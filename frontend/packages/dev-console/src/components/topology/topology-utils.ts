@@ -508,13 +508,15 @@ export const topologyModelFromDataModel = (
 ): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
+      const data: any = dataModel.topology[d.id] || {};
+      data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {
-        width: 104,
-        height: 104,
+        width: 300,
+        height: 100,
         id: d.id,
         type: d.type,
         label: dataModel.topology[d.id].name,
-        data: dataModel.topology[d.id],
+        data,
         children: (d as any).children,
         group: true,
         shape: NodeShape.rect,

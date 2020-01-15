@@ -5,6 +5,7 @@ import { getTopologyResourceObject } from '../../topology-utils';
 
 type ResourceKindsInfoProps = {
   groupResources: any;
+  emptyKind?: string;
   offsetX: number;
   offsetY: number;
 };
@@ -16,6 +17,7 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
   groupResources,
   offsetX,
   offsetY,
+  emptyKind,
 }) => {
   const resourcesData = {};
   _.forEach(groupResources, (res) => {
@@ -23,25 +25,39 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
     resourcesData[a.kind] = [...(resourcesData[a.kind] ? resourcesData[a.kind] : []), a];
   });
 
-  return (
-    <g className="odc-application-group__node-resources">
-      {_.map(_.keys(resourcesData), (key, index) => {
-        const kindObj = modelFor(referenceForOwnerRef(resourcesData[key][0]));
-        const rowX = offsetX;
-        const rowY = offsetY + ROW_HEIGHT * index;
-        return (
-          <g key={key}>
-            <text x={rowX} y={rowY} textAnchor="end">
-              {resourcesData[key].length}
-            </text>
-            <text x={rowX + TEXT_MARGIN} y={rowY}>
-              {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
-            </text>
-          </g>
-        );
-      })}
-    </g>
-  );
+  const resourceTypes = _.keys(resourcesData);
+  let resources = null;
+  if (resourceTypes.length) {
+    resources = _.map(resourceTypes, (key, index) => {
+      const kindObj = modelFor(referenceForOwnerRef(resourcesData[key][0]));
+      const rowX = offsetX;
+      const rowY = offsetY + ROW_HEIGHT * index;
+      return (
+        <g key={key}>
+          <text x={rowX} y={rowY} textAnchor="end">
+            {resourcesData[key].length}
+          </text>
+          <text x={rowX + TEXT_MARGIN} y={rowY}>
+            {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
+          </text>
+        </g>
+      );
+    });
+  } else if (emptyKind) {
+    const kindObj = modelFor(emptyKind);
+    resources = (
+      <g>
+        <text x={offsetX} y={offsetY} textAnchor="end">
+          0
+        </text>
+        <text x={offsetX + TEXT_MARGIN} y={offsetY}>
+          {kindObj ? kindObj.labelPlural : emptyKind}
+        </text>
+      </g>
+    );
+  }
+
+  return <g className="odc-resource-kinds-info__resources">{resources}</g>;
 };
 
 export default ResourceKindsInfo;
