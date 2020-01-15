@@ -516,6 +516,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       kind="Pod"
       ListComponent={PodList}
       rowFilters={filters}
+      namespace={namespace}
     />
   );
 });
