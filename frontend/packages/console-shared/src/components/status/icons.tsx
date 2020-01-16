@@ -4,12 +4,15 @@ import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
   InfoCircleIcon,
+  UnknownIcon,
+  SyncAltIcon,
 } from '@patternfly/react-icons';
 import {
   global_warning_color_100 as warningColor,
   global_danger_color_100 as dangerColor,
   global_success_color_200 as okColor,
   global_info_color_100 as blueInfoColor,
+  global_disabled_color_100 as disabledColor,
 } from '@patternfly/react-tokens';
 
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
@@ -26,6 +29,14 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({ clas
 
 export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
   <InfoCircleIcon color={blueInfoColor.value} className={className} alt={alt} />
+);
+
+export const GrayUnknownIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
+  <UnknownIcon color={disabledColor.value} className={className} alt={alt} />
+);
+
+export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
+  <SyncAltIcon color={blueInfoColor.value} className={className} alt={alt} />
 );
 
 type ColoredIconProps = {

@@ -5,8 +5,8 @@ import { Map as ImmutableMap } from 'immutable';
 import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthPrometheusSubsystem,
+  isDashboardsOverviewHealthPrometheusSubsystem,
+  isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
@@ -18,9 +18,8 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
+import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
@@ -32,8 +31,7 @@ import {
   flagPending,
 } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
-import { FirehoseResource, AsyncComponent } from '../../../utils';
-import { PrometheusResponse } from '../../../graphs';
+import { FirehoseResource } from '../../../utils';
 import { PrometheusRulesResponse, alertURL } from '../../../monitoring';
 import {
   ClusterVersionKind,
@@ -44,145 +42,23 @@ import {
 import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
+import { OperatorHealthItem, PrometheusHealthItem, URLHealthItem } from './health-item';
 
 const getSubsystems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
-  plugins.registry
-    .getDashboardsOverviewHealthSubsystems()
-    .filter(
-      (e) =>
-        plugins.registry.isExtensionInUse(e, flags) &&
-        (e.properties.additionalResource && !e.properties.additionalResource.optional
-          ? !!k8sModels.get(e.properties.additionalResource.kind)
-          : true),
-    );
-
-const URLHealthItem = withDashboardResources(
-  ({
-    watchURL,
-    stopWatchURL,
-    urlResults,
-    resources,
-    watchK8sResource,
-    stopWatchK8sResource,
-    subsystem,
-    models,
-  }: URLHealthItemProps) => {
-    const modelExists =
-      subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
-    React.useEffect(() => {
-      watchURL(subsystem.url, subsystem.fetch);
-      if (modelExists) {
-        watchK8sResource(subsystem.additionalResource);
-      }
-      return () => {
-        stopWatchURL(subsystem.url);
-        if (modelExists) {
-          stopWatchK8sResource(subsystem.additionalResource);
-        }
-      };
-    }, [watchURL, stopWatchURL, watchK8sResource, stopWatchK8sResource, subsystem, modelExists]);
-
-    const healthResult = urlResults.getIn([subsystem.url, 'data']);
-    const healthResultError = urlResults.getIn([subsystem.url, 'loadError']);
-
-    const k8sResult = subsystem.additionalResource
-      ? resources[subsystem.additionalResource.prop]
-      : null;
-    const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
-
-    const PopupComponentCallback = subsystem.popupComponent
-      ? React.useCallback(
-          () => (
-            <AsyncComponent
-              loader={subsystem.popupComponent}
-              healthResult={healthResult}
-              healthResultError={healthResultError}
-              k8sResult={k8sResult}
-            />
-          ),
-          [subsystem, healthResult, healthResultError, k8sResult],
-        )
-      : null;
-
-    return (
-      <HealthItem
-        title={subsystem.title}
-        state={healthState.state}
-        details={healthState.message}
-        popupTitle={subsystem.popupTitle}
-        PopupComponent={PopupComponentCallback}
-      />
-    );
-  },
-);
-
-const PrometheusHealthItem = withDashboardResources(
-  ({
-    watchK8sResource,
-    stopWatchK8sResource,
-    resources,
-    watchPrometheus,
-    stopWatchPrometheusQuery,
-    prometheusResults,
-    subsystem,
-    models,
-  }: PrometheusHealthItemProps) => {
-    const modelExists =
-      subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
-    React.useEffect(() => {
-      subsystem.queries.forEach((q) => watchPrometheus(q));
-      if (modelExists) {
-        watchK8sResource(subsystem.additionalResource);
-      }
-      return () => {
-        subsystem.queries.forEach((q) => stopWatchPrometheusQuery(q));
-        if (modelExists) {
-          stopWatchK8sResource(subsystem.additionalResource);
-        }
-      };
-    }, [
-      watchK8sResource,
-      stopWatchK8sResource,
-      watchPrometheus,
-      stopWatchPrometheusQuery,
-      subsystem,
-      modelExists,
-    ]);
-
-    const queryResults = subsystem.queries.map(
-      (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
-    );
-    const queryErrors = subsystem.queries.map((q) => prometheusResults.getIn([q, 'loadError']));
-
-    const k8sResult = subsystem.additionalResource
-      ? resources[subsystem.additionalResource.prop]
-      : null;
-    const healthState = subsystem.healthHandler(queryResults, queryErrors, k8sResult);
-
-    const PopupComponentCallback = subsystem.popupComponent
-      ? React.useCallback(
-          () => (
-            <AsyncComponent
-              loader={subsystem.popupComponent}
-              results={queryResults}
-              errors={queryErrors}
-            />
-          ),
-          [queryResults, queryErrors, subsystem],
-        )
-      : null;
-
-    return (
-      <HealthItem
-        title={subsystem.title}
-        state={healthState.state}
-        details={healthState.message}
-        popupTitle={subsystem.popupTitle}
-        PopupComponent={PopupComponentCallback}
-      />
-    );
-  },
-);
+  plugins.registry.getDashboardsOverviewHealthSubsystems().filter((e) => {
+    if (!plugins.registry.isExtensionInUse(e, flags)) {
+      return false;
+    }
+    if (
+      isDashboardsOverviewHealthPrometheusSubsystem(e) ||
+      isDashboardsOverviewHealthURLSubsystem(e)
+    ) {
+      return e.properties.additionalResource && !e.properties.additionalResource.optional
+        ? !!k8sModels.get(e.properties.additionalResource.kind)
+        : true;
+    }
+    return true;
+  });
 
 const cvResource: FirehoseResource = {
   kind: referenceForModel(ClusterVersionModel),
@@ -289,6 +165,29 @@ export const StatusCard = connect(mapStateToProps)(
     ...plugins.registry.getRequiredFlags([isDashboardsOverviewHealthSubsystem]),
   )(({ flags, k8sModels }) => {
     const subsystems = getSubsystems(flags, k8sModels);
+    const operatorSubsystemIndex = subsystems.findIndex(isDashboardsOverviewHealthOperator);
+
+    const healthItems: { title: string; Component: React.ReactNode }[] = [];
+    subsystems.forEach((subsystem) => {
+      if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+        healthItems.push({
+          title: subsystem.properties.title,
+          Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
+        });
+      } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+        healthItems.push({
+          title: subsystem.properties.title,
+          Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
+        });
+      }
+    });
+    if (operatorSubsystemIndex !== -1) {
+      const operatorSubsystems = subsystems.filter(isDashboardsOverviewHealthOperator);
+      healthItems.splice(operatorSubsystemIndex, 0, {
+        title: 'Operators',
+        Component: <OperatorHealthItem operatorExtensions={operatorSubsystems} />,
+      });
+    }
     return (
       <DashboardCard gradient>
         <DashboardCardHeader>
@@ -298,15 +197,9 @@ export const StatusCard = connect(mapStateToProps)(
         <DashboardCardBody>
           <HealthBody>
             <Gallery className="co-overview-status__health" gutter="md">
-              {subsystems.map((subsystem) => (
-                <GalleryItem key={subsystem.properties.title}>
-                  {isDashboardsOverviewHealthURLSubsystem(subsystem) ? (
-                    <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />
-                  ) : (
-                    <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />
-                  )}
-                </GalleryItem>
-              ))}
+              {healthItems.map((item) => {
+                return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
+              })}
             </Gallery>
           </HealthBody>
           <ClusterAlerts />
@@ -318,14 +211,4 @@ export const StatusCard = connect(mapStateToProps)(
 
 type StatusCardProps = WithFlagsProps & {
   k8sModels: ImmutableMap<string, K8sKind>;
-};
-
-type URLHealthItemProps = DashboardItemProps & {
-  subsystem: DashboardsOverviewHealthURLSubsystem<any>['properties'];
-  models: ImmutableMap<string, K8sKind>;
-};
-
-type PrometheusHealthItemProps = DashboardItemProps & {
-  subsystem: DashboardsOverviewHealthPrometheusSubsystem['properties'];
-  models: ImmutableMap<string, K8sKind>;
 };

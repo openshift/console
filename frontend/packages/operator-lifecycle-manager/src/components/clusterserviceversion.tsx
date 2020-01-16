@@ -11,7 +11,6 @@ import * as UIActions from '@console/internal/actions/ui';
 import {
   ALL_NAMESPACES_KEY,
   ErrorStatus,
-  getName,
   ProgressStatus,
   Status,
   SuccessStatus,
@@ -81,6 +80,7 @@ import {
   SubscriptionKind,
   SubscriptionState,
 } from '../types';
+import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
@@ -88,19 +88,6 @@ import { SubscriptionDetails, catalogSourceForSubscription } from './subscriptio
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
 
 const FAILED_SUBSCRIPTION_STATES = ['Unknown', SubscriptionState.SubscriptionStateFailed];
-
-const subscriptionForCSV = (
-  subscriptions: SubscriptionKind[],
-  csv: ClusterServiceVersionKind,
-): SubscriptionKind =>
-  _.find(subscriptions, {
-    metadata: {
-      namespace: _.get(csv, ['metadata', 'annotations', 'olm.operatorNamespace']),
-    },
-    status: {
-      installedCSV: getName(csv),
-    },
-  } as any); // 'as any' to supress typescript error caused by lodash
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
@@ -191,20 +178,6 @@ const menuActionsForCSV = (
       ];
 };
 
-const getSubscriptionState = (subscription: SubscriptionKind): string => {
-  const state: SubscriptionState = _.get(subscription, 'status.state');
-  switch (state) {
-    case SubscriptionState.SubscriptionStateUpgradeAvailable:
-      return 'Upgrade available';
-    case SubscriptionState.SubscriptionStateUpgradePending:
-      return 'Upgrading';
-    case SubscriptionState.SubscriptionStateAtLatest:
-      return 'Up to date';
-    default:
-      return '';
-  }
-};
-
 const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = ({
   catalogSourceMissing,
   obj,
@@ -212,6 +185,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 }) => {
   const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
   const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
+  const subscriptionStatus = getSubscriptionStatus(subscription);
   if (obj.metadata.deletionTimestamp) {
     return <>Disabling</>;
   }
@@ -233,10 +207,10 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
         </span>
       ) : (
         <span className="co-error co-icon-and-text">
-          <ErrorStatus title="Failed" />
+          <ErrorStatus title={statusString} />
         </span>
       )}
-      {subscription && <span className="text-muted">{getSubscriptionState(subscription)}</span>}
+      {subscription && <span className="text-muted">{subscriptionStatus.title}</span>}
     </>
   );
 };

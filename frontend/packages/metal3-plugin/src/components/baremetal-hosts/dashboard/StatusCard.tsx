@@ -15,7 +15,7 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/utils';
+import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {

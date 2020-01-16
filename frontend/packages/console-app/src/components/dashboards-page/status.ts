@@ -1,14 +1,27 @@
 import * as _ from 'lodash';
-import { PrometheusHealthHandler, URLHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import {
+  PrometheusHealthHandler,
+  URLHealthHandler,
+  SubsystemHealth,
+  GetOperatorsWithStatuses,
+  GetOperatorStatusPriority,
+} from '@console/plugin-sdk';
+import {
+  HealthState,
+  operatorHealthPriority,
+} from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   ClusterVersionKind,
   ClusterUpdateStatus,
   getClusterUpdateStatus,
+  getClusterOperatorStatus,
+  OperatorStatus,
+  ClusterOperator,
 } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
+import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
 
 export const fetchK8sHealth = async (url: string) => {
   const response = await coFetch(url);
@@ -38,7 +51,8 @@ export const getControlPlaneComponentHealth = (
   if (
     error ||
     (response &&
-      (response.status === 'success' && _.isNil(_.get(response, 'data.result[0].value[1]'))))
+      response.status === 'success' &&
+      _.isNil(_.get(response, 'data.result[0].value[1]')))
   ) {
     return { state: HealthState.UNKNOWN, message: 'Not available' };
   }
@@ -55,6 +69,8 @@ export const getControlPlaneComponentHealth = (
   return { state: HealthState.ERROR, message: perc.string };
 };
 
+const errorStates = [HealthState.WARNING, HealthState.ERROR, HealthState.UNKNOWN];
+
 export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], errors = []) => {
   const componentsHealth = responses.map((r, index) =>
     getControlPlaneComponentHealth(r, errors[index]),
@@ -62,12 +78,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], e
   if (componentsHealth.some((c) => c.state === HealthState.LOADING)) {
     return { state: HealthState.LOADING };
   }
-  const errComponents = componentsHealth.filter(
-    (c) =>
-      c.state === HealthState.WARNING ||
-      c.state === HealthState.ERROR ||
-      c.state === HealthState.UNKNOWN,
-  );
+  const errComponents = componentsHealth.filter(({ state }) => errorStates.includes(state));
   if (errComponents.length) {
     return {
       state: errComponents.length === 4 ? HealthState.UNKNOWN : HealthState.WARNING,
@@ -75,4 +86,28 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], e
     };
   }
   return { state: HealthState.OK };
+};
+
+export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperator> = (
+  co,
+) => {
+  const status = getClusterOperatorStatus(co);
+  if (status === OperatorStatus.Degraded) {
+    return { ...operatorHealthPriority[HealthState.WARNING], title: status };
+  }
+  if (status === OperatorStatus.Unknown) {
+    return { ...operatorHealthPriority[HealthState.UNKNOWN], title: status };
+  }
+  if (status === OperatorStatus.Updating) {
+    return { ...operatorHealthPriority[HealthState.UPDATING], title: status };
+  }
+  return { ...operatorHealthPriority[HealthState.OK], title: status };
+};
+
+export const getClusterOperatorHealthStatus: GetOperatorsWithStatuses<ClusterOperator> = (
+  resources,
+) => {
+  return (resources.clusterOperators.data as ClusterOperator[]).map((co) =>
+    getOperatorsStatus<ClusterOperator>([co], getClusterOperatorStatusPriority),
+  );
 };
