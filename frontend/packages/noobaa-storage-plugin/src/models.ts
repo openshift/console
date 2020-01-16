@@ -11,6 +11,7 @@ export const NooBaaSystemModel: K8sKind = {
   kind: 'NooBaa',
   id: 'noobaasystem',
   crd: true,
+  legacyPluralURL: true,
 };
 
 export const NooBaaBackingStoreModel: K8sKind = {
@@ -37,6 +38,7 @@ export const NooBaaBucketClassModel: K8sKind = {
   kind: 'BucketClass',
   id: 'noobaabucketclasses',
   crd: true,
+  legacyPluralURL: true,
 };
 
 export const NooBaaObjectBucketClaimModel: K8sKind = {
@@ -50,6 +52,7 @@ export const NooBaaObjectBucketClaimModel: K8sKind = {
   kind: 'ObjectBucketClaim',
   id: 'objectbucketclaims',
   crd: true,
+  legacyPluralURL: true,
 };
 
 export const NooBaaObjectBucketModel: K8sKind = {
@@ -63,4 +66,5 @@ export const NooBaaObjectBucketModel: K8sKind = {
   kind: 'ObjectBucket',
   id: 'objectbucket',
   crd: true,
+  legacyPluralURL: true,
 };
