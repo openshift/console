@@ -194,6 +194,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
+	handleFunc("/health/oauthconnect", s.OAuthConnect)
+
 	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),

@@ -113,6 +113,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 			SpecialAuthURLs{
 				requestTokenURL,
 				kubeAdminLogoutURL,
+				metadata.Issuer,
 			},
 		}, nil
 }

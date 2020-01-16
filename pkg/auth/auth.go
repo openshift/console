@@ -72,6 +72,8 @@ type SpecialAuthURLs struct {
 	RequestToken string
 	// KubeAdminLogout is the logout URL for the special kube:admin user in OpenShift.
 	KubeAdminLogout string
+	// Issuer is the base URL for the OAuth server
+	Issuer string
 }
 
 // loginMethod is used to handle OAuth2 responses and associate bearer tokens
