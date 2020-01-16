@@ -8,8 +8,9 @@ import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
-import { Pipeline, PipelineRun } from './pipeline-augment';
+import { Pipeline, PipelineParam, PipelineRun, PipelineRunParam } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
+import { getPipelineRunParams } from './pipeline-utils';
 
 interface Action {
   label: string | Record<string, any>;
@@ -71,7 +72,10 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
     resourceRef: resource.resourceRef,
   }));
 
-  const newPipelineRun = {
+  const pipelineRunParams: PipelineRunParam[] = _.get(latestRun, 'spec.params');
+  const pipelineParams: PipelineParam[] = _.get(pipeline, 'spec.params');
+
+  const newPipelineRun: PipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
     metadata: {
@@ -90,12 +94,7 @@ export const getPipelineRunData = (pipeline: Pipeline, latestRun?: PipelineRun):
         name: pipeline.metadata.name,
       },
       resources,
-      params:
-        latestRun && latestRun.spec && latestRun.spec.params
-          ? latestRun.spec.params
-          : pipeline.spec && pipeline.spec.params
-          ? pipeline.spec.params
-          : null,
+      params: pipelineRunParams || getPipelineRunParams(pipelineParams),
     },
   };
 
