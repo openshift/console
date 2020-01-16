@@ -7,8 +7,15 @@ import { leafNodeElements } from '../utils/element-utils';
 class DagreNode {
   private node: Node;
 
+  public width: number;
+
+  public height: number;
+
   constructor(node: Node) {
     this.node = node;
+
+    this.width = this.node.getBounds().width;
+    this.height = this.node.getBounds().height;
   }
 
   getId(): string {
@@ -69,13 +76,23 @@ class DagreEdge {
   }
 }
 
+export type LayoutCallback = (nodes: Node[], edges: Edge[]) => void;
+type AdditionalDagreLayoutOptions = { onLayout: LayoutCallback };
 export default class DagreLayout implements Layout {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  private graph: Graph; // Usage is TBD
+  private graph: Graph;
 
-  constructor(graph: Graph) {
+  private readonly options: dagre.GraphLabel;
+
+  private readonly onLayout: LayoutCallback | undefined;
+
+  constructor(
+    graph: Graph,
+    options?: dagre.GraphLabel,
+    additionalOptions?: AdditionalDagreLayoutOptions,
+  ) {
     this.graph = graph;
+    this.options = options || {};
+    this.onLayout = additionalOptions?.onLayout;
   }
 
   destroy(): void {}
@@ -95,6 +112,7 @@ export default class DagreLayout implements Layout {
       marginy: 0,
       nodesep: 20,
       ranker: 'tight-tree',
+      ...this.options,
     });
 
     _.forEach(nodes, (node) => {
@@ -115,5 +133,7 @@ export default class DagreLayout implements Layout {
         );
       }
     });
+
+    this.onLayout && this.onLayout(this.graph.getNodes(), this.graph.getEdges());
   };
 }

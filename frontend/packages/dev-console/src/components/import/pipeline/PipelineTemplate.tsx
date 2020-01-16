@@ -6,7 +6,7 @@ import { Alert, Expandable } from '@patternfly/react-core';
 import { CheckboxField } from '@console/shared';
 import { CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
-import { PipelineVisualization } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
+import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 
 const MISSING_DOCKERFILE_LABEL_TEXT =
   'The pipeline template for Dockerfiles is not available at this time.';
