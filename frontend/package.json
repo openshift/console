@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@patternfly/patternfly": "2.46.1",
+    "@patternfly/patternfly": "2.47.2",
     "@patternfly/react-charts": "5.2.2",
     "@patternfly/react-core": "3.124.1",
     "@patternfly/react-table": "2.24.41",
