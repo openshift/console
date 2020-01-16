@@ -3,7 +3,7 @@ import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
 import { history, PageHeading, useAccessReview } from '@console/internal/components/utils';
-import { formatNamespacedRouteForResource } from '@console/internal/actions/ui';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import {
   BuildConfigModel,
   ImageStreamModel,

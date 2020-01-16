@@ -12,6 +12,7 @@ import {
   OverviewItem,
   getResourceList,
 } from '@console/shared';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
@@ -360,10 +361,8 @@ class OverviewMainContent_ extends React.Component<
         title="No Workloads Found."
         detail={
           <div>
-            <Link to={UIActions.formatNamespacedRouteForResource('import', namespace)}>
-              Import YAML
-            </Link>{' '}
-            or <Link to={`/add/ns/${namespace}`}>add other content</Link> to your project.
+            <Link to={formatNamespacedRouteForResource('import', namespace)}>Import YAML</Link> or{' '}
+            <Link to={`/add/ns/${namespace}`}>add other content</Link> to your project.
           </div>
         }
       />

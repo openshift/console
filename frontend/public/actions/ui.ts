@@ -100,15 +100,6 @@ export const getPodMetric = (pod: PodKind, metric: string): number => {
   return _.get(metrics, [metric, pod.metadata.namespace, pod.metadata.name], 0);
 };
 
-export const formatNamespacedRouteForResource = (
-  resource,
-  activeNamespace = getActiveNamespace(),
-) => {
-  return activeNamespace === ALL_NAMESPACES_KEY
-    ? `/k8s/all-namespaces/${resource}`
-    : `/k8s/ns/${activeNamespace}/${resource}`;
-};
-
 export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
