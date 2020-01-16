@@ -1,0 +1,14 @@
+.odc-pipeline-builder-form {
+  height: 100%;
+  overflow: hidden;
+
+  &__content {
+    height: 100%;
+    overflow: auto;
+    padding: 30px;
+  }
+
+  &__short-section {
+    max-width: 400px;
+  }
+}

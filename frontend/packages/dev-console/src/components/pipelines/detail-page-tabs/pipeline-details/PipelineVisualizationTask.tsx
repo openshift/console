@@ -15,7 +15,7 @@ import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils'
 import './PipelineVisualizationTask.scss';
 
 interface TaskProps {
-  pipelineRun?: string;
+  pipelineRunName?: string;
   name: string;
   loaded?: boolean;
   task?: {
@@ -27,7 +27,7 @@ interface TaskProps {
 }
 
 interface PipelineVisualizationTaskProp {
-  pipelineRun?: string;
+  pipelineRunName?: string;
   namespace: string;
   task: {
     name?: string;
@@ -42,7 +42,7 @@ interface PipelineVisualizationTaskProp {
 }
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
-  pipelineRun,
+  pipelineRunName,
   task,
   namespace,
   pipelineRunStatus,
@@ -82,7 +82,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   return (
     <Firehose resources={resources}>
       <TaskComponent
-        pipelineRun={pipelineRun}
+        pipelineRunName={pipelineRunName}
         name={task.name || ''}
         namespace={namespace}
         status={taskStatus}
@@ -92,7 +92,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   );
 };
 const TaskComponent: React.FC<TaskProps> = ({
-  pipelineRun,
+  pipelineRunName,
   namespace,
   task,
   status,
@@ -104,8 +104,8 @@ const TaskComponent: React.FC<TaskProps> = ({
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const path = pipelineRun
-    ? `${resourcePathFromModel(PipelineRunModel, pipelineRun, namespace)}/logs/${name}`
+  const path = pipelineRunName
+    ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
   const visTask = (
     <>
@@ -142,8 +142,6 @@ const TaskComponent: React.FC<TaskProps> = ({
     </>
   );
   return (
-    <li className={cx('odc-pipeline-vis-task')}>
-      {path ? <Link to={path}>{visTask}</Link> : visTask}
-    </li>
+    <div className="odc-pipeline-vis-task">{path ? <Link to={path}>{visTask}</Link> : visTask}</div>
   );
 };

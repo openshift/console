@@ -1,0 +1,13 @@
+.odc-pipeline-builder-page {
+  &__header {
+    padding: var(--pf-global--spacer--xl);
+  }
+
+  &__title {
+    margin: var(--pf-global--spacer--xs) 0 0 0;
+  }
+
+  hr {
+    margin: 0;
+  }
+}

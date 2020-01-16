@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { history, resourcePathFromModel, KebabAction } from '@console/internal/components/utils';
-import { k8sCreate, K8sKind, k8sPatch } from '@console/internal/module/k8s';
+import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
-import { PipelineRunModel } from '../models';
+import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
 import { Pipeline, PipelineRun } from './pipeline-augment';
@@ -121,6 +121,23 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
     name: pipelineRun.metadata.name,
     namespace: pipelineRun.metadata.namespace,
     verb: 'create',
+  },
+});
+
+export const editPipeline: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
+  label: 'Edit Pipeline',
+  callback: () => {
+    const {
+      metadata: { name, namespace },
+    } = pipeline;
+    history.push(`/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${name}/builder`);
+  },
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    name: pipeline.metadata.name,
+    namespace: pipeline.metadata.namespace,
+    verb: 'update',
   },
 });
 

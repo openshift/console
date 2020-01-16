@@ -544,6 +544,32 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      exact: true,
+      path: [`/k8s/ns/:ns/${referenceForModel(PipelineModel)}/~new/builder`],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/pipeline-builder/PipelineBuilderPage' /* webpackChunkName: "pipeline-builder-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [`/k8s/ns/:ns/${referenceForModel(PipelineModel)}/:pipelineName/builder`],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/pipeline-builder/PipelineBuilderEditPage' /* webpackChunkName: "pipeline-builder-edit-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       perspective: 'dev',
       exact: true,
       path: [

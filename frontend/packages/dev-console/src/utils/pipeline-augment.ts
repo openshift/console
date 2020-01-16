@@ -34,13 +34,30 @@ export interface TaskStatus {
   Failed: number;
 }
 
+export interface PipelineTaskRef {
+  kind?: string;
+  name: string;
+}
+
+export interface PipelineTaskParam {
+  name: string;
+  value: any;
+}
+export interface PipelineTaskResources {
+  inputs?: PipelineTaskResource[];
+  outputs?: PipelineTaskResource[];
+}
+export interface PipelineTaskResource {
+  name: string;
+  resource?: string;
+  from?: string[];
+}
 export interface PipelineTask {
   name: string;
   runAfter?: string[];
-  taskRef: {
-    kind?: string;
-    name: string;
-  };
+  taskRef: PipelineTaskRef;
+  params?: PipelineTaskParam[];
+  resources?: PipelineTaskResources;
 }
 
 export interface Resource {
@@ -49,10 +66,10 @@ export interface Resource {
 }
 
 export interface PipelineResource {
-  name?: string;
+  name: string;
   type?: string;
   resourceRef?: {
-    name?: string;
+    name: string;
   };
 }
 
@@ -65,7 +82,6 @@ export type KeyedRuns = { [key: string]: Runs };
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
   spec?: {
-    pipelineRef?: { name: string };
     params?: PipelineParam[];
     resources?: PipelineResource[];
     tasks: PipelineTask[];
@@ -92,6 +108,32 @@ export interface PipelineRun extends K8sResourceKind {
     taskRuns?: {
       [key: string]: { pipelineTaskName?: string } & K8sResourceKind;
     };
+  };
+}
+
+export interface PipelineResourceTaskParam extends PipelineParam {
+  type: string;
+}
+export interface PipelineResourceTaskResource {
+  name: string;
+  type: string;
+}
+export interface PipelineResourceTask extends K8sResourceKind {
+  spec: {
+    inputs?: {
+      params?: PipelineResourceTaskParam[];
+      resources?: PipelineResourceTaskResource[];
+    };
+    outputs?: {
+      resources?: PipelineResourceTaskResource[];
+    };
+    steps: {
+      // TODO: Figure out required fields
+      args?: string[];
+      command?: string[];
+      image?: string;
+      resources?: {}[];
+    }[];
   };
 }
 

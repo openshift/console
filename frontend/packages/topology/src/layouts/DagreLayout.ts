@@ -47,10 +47,13 @@ type DagreLayoutOptions = LayoutOptions & {
   rankdir: string;
 };
 
+export type LayoutCallback = (nodes: Node[], edges: Edge[]) => void;
 class DagreLayout extends BaseLayout implements Layout {
   private dagreOptions: DagreLayoutOptions;
 
-  constructor(graph: Graph, options?: Partial<DagreLayoutOptions>) {
+  private hackOnRender: LayoutCallback | undefined;
+
+  constructor(graph: Graph, options?: Partial<DagreLayoutOptions>, hackOnRender?: LayoutCallback) {
     super(graph, options);
     this.dagreOptions = {
       ...this.options,
@@ -64,6 +67,7 @@ class DagreLayout extends BaseLayout implements Layout {
       },
       ...options,
     };
+    this.hackOnRender = hackOnRender;
   }
 
   protected createLayoutNode(node: Node, nodeDistance: number, index: number) {
@@ -130,6 +134,8 @@ class DagreLayout extends BaseLayout implements Layout {
     if (this.options.layoutOnDrag) {
       this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
     }
+
+    this.hackOnRender && this.hackOnRender(graph.getNodes(), graph.getEdges());
   }
 }
 

@@ -1,57 +1,35 @@
 import * as React from 'react';
-import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
-import { getPipelineTasks } from '../../../utils/pipeline-utils';
+import { Alert } from '@patternfly/react-core';
+import { k8sGet } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { PipelineVisualizationGraph } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualizationGraph';
+import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
+import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 
-export interface PipelineRunVisualizationProps {
-  pipelineRun: K8sResourceKind;
-}
+type PipelineRunVisualizationProps = {
+  pipelineRun: PipelineRun;
+};
 
-export interface PipelineVisualizationRunState {
-  pipeline: K8sResourceKind;
-  errorCode?: number;
-}
+const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({ pipelineRun }) => {
+  const [errorMessage, setErrorMessage] = React.useState<string>(null);
+  const [pipeline, setPipeline] = React.useState<Pipeline>(null);
 
-export class PipelineRunVisualization extends React.Component<
-  PipelineRunVisualizationProps,
-  PipelineVisualizationRunState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pipeline: { apiVersion: '', metadata: {}, kind: 'PipelineRun' },
-      errorCode: null,
-    };
+  React.useEffect(() => {
+    k8sGet(PipelineModel, pipelineRun.spec.pipelineRef.name, pipelineRun.metadata.namespace)
+      .then((res: Pipeline) => setPipeline(res))
+      .catch((error) =>
+        setErrorMessage(error?.message || 'Could not load visualization at this time.'),
+      );
+  }, [pipelineRun, setPipeline]);
+
+  if (errorMessage) {
+    return <Alert variant="danger" isInline title={errorMessage} />;
   }
 
-  componentDidMount() {
-    k8sGet(
-      PipelineModel,
-      this.props.pipelineRun.spec.pipelineRef.name,
-      this.props.pipelineRun.metadata.namespace,
-    )
-      .then((res) => {
-        this.setState({
-          pipeline: res,
-        });
-      })
-      .catch((error) => this.setState({ errorCode: error.response.status }));
+  if (!pipeline || !pipelineRun) {
+    return null;
   }
 
-  render() {
-    const { pipelineRun } = this.props;
-    if (this.state.errorCode === 404) {
-      return null;
-    }
-    return (
-      <PipelineVisualizationGraph
-        pipelineRun={pipelineRun.metadata.name}
-        namespace={pipelineRun.metadata.namespace}
-        graph={getPipelineTasks(this.state.pipeline, pipelineRun)}
-        runStatus={pipelineRunFilterReducer(pipelineRun)}
-      />
-    );
-  }
-}
+  return <PipelineVisualization pipeline={pipeline} pipelineRun={pipelineRun} />;
+};
+
+export default PipelineRunVisualization;

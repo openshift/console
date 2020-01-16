@@ -53,7 +53,7 @@ const PipelineForm: React.FC<PipelineFormProps> = ({ PipelineFormComponent, form
         onSubmit={handleSubmit}
         onReset={handleReset}
         validationSchema={validationSchema}
-        render={(props) => <PipelineFormComponent {...props} />}
+        render={(props) => <PipelineFormComponent namespace={obj.metadata.namespace} {...props} />}
       />
     </div>
   );
