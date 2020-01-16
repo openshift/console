@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { convertToBaseValue, humanizeDecimalBytes } from '@console/internal/components/utils';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getFlavor, vCPUCount, getCPU, getMemory, asVM } from '../selectors/vm';
 import { VMLikeEntityKind } from '../types';
 
@@ -12,7 +12,7 @@ export const getFlavorText = (vmLike: VMLikeEntityKind) => {
   const vcpusText = `${vcpusCount} vCPU${vcpusCount > 1 ? 's' : ''}`;
 
   const memoryBase = convertToBaseValue(getMemory(vm));
-  const memoryText = humanizeDecimalBytes(memoryBase).string;
+  const memoryText = humanizeBinaryBytes(memoryBase).string;
 
   return `${flavor || ''}${flavor ? ': ' : ''}${vcpusText}, ${memoryText} Memory`;
 };
