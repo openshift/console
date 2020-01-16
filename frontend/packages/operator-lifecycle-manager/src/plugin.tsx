@@ -36,8 +36,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.PackageManifestModel,
-      flag: Flags.CAN_LIST_PACKAGE_MANIFEST,
+      model: models.ClusterServiceVersionModel,
+      flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
     },
   },
   {
