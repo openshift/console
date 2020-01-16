@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as _ from 'lodash';
+import * as classNames from 'classnames';
 import { Modal } from 'patternfly-react';
 import { Button } from '@patternfly/react-core';
 import {
@@ -6,12 +8,53 @@ import {
   PropertiesSidePanel,
   PropertyItem,
 } from '@patternfly/react-catalog-view-extension';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { history, ExternalLink, HintBlock } from '@console/internal/components/utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { MarkdownView } from '../clusterserviceversion';
 import { SubscriptionModel } from '../../models';
 import { OperatorHubItem } from './index';
+
+const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) => {
+  const levels = [
+    'Basic Install',
+    'Seamless Upgrades',
+    'Full Lifecycle',
+    'Deep Insights',
+    'Auto Pilot',
+  ];
+  const capabilityLevelIndex = _.indexOf(levels, capabilityLevel);
+
+  return (
+    <ul className="properties-side-panel-pf-property-value__capability-levels">
+      {levels.map((level, i) => {
+        const active = capabilityLevelIndex >= i;
+        return (
+          <li
+            className={classNames('properties-side-panel-pf-property-value__capability-level', {
+              'properties-side-panel-pf-property-value__capability-level--active': active,
+            })}
+            key={level}
+          >
+            {active && (
+              <CheckCircleIcon
+                color="var(--pf-global--primary-color--100)"
+                className="properties-side-panel-pf-property-value__capability-level-icon"
+                title="Checked"
+              />
+            )}
+            {level}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+type CapabilityLevelProps = {
+  capabilityLevel: string;
+};
 
 export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   item,
@@ -37,6 +80,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     support,
     catalogSource,
     catalogSourceNamespace,
+    capabilityLevel,
   } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
@@ -121,6 +165,16 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
                   </Button>
                 )}
                 <PropertyItem label="Operator Version" value={version || notAvailable} />
+                <PropertyItem
+                  label="Capability Level"
+                  value={
+                    capabilityLevel ? (
+                      <CapabilityLevel capabilityLevel={capabilityLevel} />
+                    ) : (
+                      notAvailable
+                    )
+                  }
+                />
                 <PropertyItem label="Provider Type" value={providerType || notAvailable} />
                 <PropertyItem label="Provider" value={provider || notAvailable} />
                 <PropertyItem label="Repository" value={repository || notAvailable} />
