@@ -15,8 +15,10 @@ import { Extension } from './extension';
 import { LazyLoader } from './types';
 
 export interface DashboardsExtensionProperties {
-  /** Name of feature flag for this item. */
+  /** Feature flags which are required for this extension to be effective. */
   required?: string | string[];
+  /** Feature flags which are disallowed for this extension to be effective. */
+  disallowed?: string | string[];
 }
 
 namespace ExtensionProperties {

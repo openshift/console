@@ -106,7 +106,7 @@ const getPluginItems = (flags: FlagsObject) =>
     .filter((e) => plugins.registry.isExtensionInUse(e, flags));
 
 export const InventoryCard = connectToFlags(
-  ...plugins.registry.getRequiredFlags([isProjectDashboardInventoryItem]),
+  ...plugins.registry.getGatingFlagNames([isProjectDashboardInventoryItem]),
 )(({ flags }) => {
   const pluginItems = getPluginItems(flags);
   const { obj } = React.useContext(ProjectDashboardContext);

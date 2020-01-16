@@ -167,7 +167,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
 );
 
 export const UtilizationCard = connectToFlags(
-  ...plugins.registry.getRequiredFlags([isDashboardsOverviewUtilizationItem]),
+  ...plugins.registry.getGatingFlagNames([isDashboardsOverviewUtilizationItem]),
 )(({ flags }) => {
   const queries = React.useMemo(() => getQueries(flags), [flags]);
   const [timestamps, setTimestamps] = React.useState<Date[]>();

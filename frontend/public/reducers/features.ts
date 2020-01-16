@@ -42,12 +42,18 @@ export const baseCRDs = {
 
 const CRDs = { ...baseCRDs };
 
-plugins.registry.getModelFeatureFlags().forEach((ff) => {
-  const modelRef = referenceForModel(ff.properties.model);
-  if (!CRDs[modelRef]) {
-    CRDs[modelRef] = ff.properties.flag as FLAGS;
-  }
-});
+plugins.registry
+  .getFeatureFlags()
+  .filter(plugins.isModelFeatureFlag)
+  .forEach((ff) => {
+    const modelRef = referenceForModel(ff.properties.model);
+    if (!CRDs[modelRef]) {
+      CRDs[modelRef] = ff.properties.flag as FLAGS;
+    }
+  });
+
+const pluginFlagNames = _.uniq(plugins.registry.getFeatureFlags().map((ff) => ff.properties.flag));
+const isKnownFlag = (flag: string) => !!FLAGS[flag] || pluginFlagNames.includes(flag);
 
 export type FeatureState = ImmutableMap<string, boolean>;
 
@@ -59,14 +65,16 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
 
   switch (action.type) {
     case ActionType.SetFlag:
-      if (!FLAGS[action.payload.flag]) {
-        throw new Error(`unknown key for reducer ${action.payload.flag}`);
+      if (!isKnownFlag(action.payload.flag)) {
+        throw new Error(`unknown flag ${action.payload.flag}`);
       }
-      return state.merge({ [action.payload.flag]: action.payload.value });
+      return state.set(action.payload.flag, action.payload.value);
+
     case ActionType.ClearSSARFlags:
       return state.withMutations((s) =>
         action.payload.flags.reduce((acc, curr) => acc.remove(curr), s),
       );
+
     case K8sActionType.ReceivedResources:
       // Flip all flags to false to signify that we did not see them
       _.each(CRDs, (v) => (state = state.set(v, false)));

@@ -162,7 +162,7 @@ const mapStateToProps = (state: RootState) => ({
 
 export const StatusCard = connect(mapStateToProps)(
   connectToFlags<StatusCardProps>(
-    ...plugins.registry.getRequiredFlags([isDashboardsOverviewHealthSubsystem]),
+    ...plugins.registry.getGatingFlagNames([isDashboardsOverviewHealthSubsystem]),
   )(({ flags, k8sModels }) => {
     const subsystems = getSubsystems(flags, k8sModels);
     const operatorSubsystemIndex = subsystems.findIndex(isDashboardsOverviewHealthOperator);

@@ -143,8 +143,8 @@ const mapStateToProps = ({ k8s }) => ({
 
 export const InventoryCard = connect(mapStateToProps)(
   connectToFlags<InventoryCardProps>(
-    ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItem]),
-    ...plugins.registry.getRequiredFlags([isDashboardsOverviewInventoryItemReplacement]),
+    ...plugins.registry.getGatingFlagNames([isDashboardsOverviewInventoryItem]),
+    ...plugins.registry.getGatingFlagNames([isDashboardsOverviewInventoryItemReplacement]),
   )(({ flags, k8sModels }) => {
     const items = getItems(flags, k8sModels);
     return (

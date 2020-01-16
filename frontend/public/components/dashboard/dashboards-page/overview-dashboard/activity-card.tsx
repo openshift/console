@@ -59,7 +59,7 @@ const mapStateToProps = ({ k8s }) => ({
 
 const OngoingActivity = connect(mapStateToProps)(
   connectToFlags(
-    ...plugins.registry.getRequiredFlags([
+    ...plugins.registry.getGatingFlagNames([
       isDashboardsOverviewResourceActivity,
       isDashboardsOverviewPrometheusActivity,
     ]),
