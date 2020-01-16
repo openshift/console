@@ -28,8 +28,9 @@ type CreateConnectorWidgetProps = {
     target: Node | Graph,
     event: DragEvent,
     choice?: ConnectorChoice,
-  ) => ConnectorChoice[] | void | undefined | null;
+  ) => ConnectorChoice[] | void | undefined | null | React.ReactElement[];
   renderConnector: ConnectorRenderer;
+  contextMenuClass?: string;
 } & CreateConnectorOptions;
 
 type CollectProps = {
@@ -42,7 +43,7 @@ type PromptData = {
   element: Node;
   target: Node | Graph;
   event: DragEvent;
-  choices: ConnectorChoice[];
+  choices: (ConnectorChoice | React.ReactElement)[];
 };
 
 export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
@@ -58,6 +59,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
     renderConnector,
     handleAngle = DEFAULT_HANDLE_ANGLE,
     handleLength = DEFAULT_HANDLE_LENGTH,
+    contextMenuClass,
   } = props;
   const [prompt, setPrompt] = React.useState<PromptData | null>(null);
   const [active, setActive] = React.useState(false);
@@ -162,22 +164,25 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
       {prompt && (
         <ContextMenu
           reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}
+          className={contextMenuClass}
           open
           onRequestClose={() => {
             setActive(false);
             onKeepAlive(false);
           }}
         >
-          {prompt.choices.map((c) => (
-            <ContextMenuItem
-              key={c.label}
-              onClick={() => {
-                onCreate(prompt.element, prompt.target, prompt.event, c);
-              }}
-            >
-              {c.label}
-            </ContextMenuItem>
-          ))}
+          {React.isValidElement(prompt.choices?.[0])
+            ? prompt.choices
+            : prompt.choices.map((c: ConnectorChoice) => (
+                <ContextMenuItem
+                  key={c.label}
+                  onClick={() => {
+                    onCreate(prompt.element, prompt.target, prompt.event, c);
+                  }}
+                >
+                  {c.label}
+                </ContextMenuItem>
+              ))}
         </ContextMenu>
       )}
     </>
@@ -207,6 +212,7 @@ const defaultRenderConnector: ConnectorRenderer = (
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],
+  contextMenuClass?: string,
   renderConnector: ConnectorRenderer = defaultRenderConnector,
   options?: CreateConnectorOptions,
 ) => (WrappedComponent: React.ComponentType<P>) => {
@@ -232,6 +238,7 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
             onCreate={onCreate}
             onKeepAlive={onKeepAlive}
             renderConnector={renderConnector}
+            contextMenuClass={contextMenuClass}
           />
         )}
       </>

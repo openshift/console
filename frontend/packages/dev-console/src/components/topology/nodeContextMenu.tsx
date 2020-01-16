@@ -40,17 +40,19 @@ const createMenuItems = (actions: KebabMenuOption[]) =>
 export const workloadContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(workloadActions(element.getData())));
 
-export const groupContextMenu = (element: Node) => {
+export const groupContextMenu = (element: Node, connectorSource?: Node) => {
   const applicationData: TopologyApplicationObject = {
     id: element.getId(),
     name: element.getLabel(),
     resources: element.getChildren().map((node: GraphElement) => node.getData()),
   };
 
-  return createMenuItems(kebabOptionsToMenu(groupActions(applicationData)));
+  return createMenuItems(kebabOptionsToMenu(groupActions(applicationData, connectorSource)));
 };
 export const nodeContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(nodeActions(element.getData())));
 
-export const graphContextMenu = (element: Graph) =>
-  createMenuItems(kebabOptionsToMenu(graphActions(element.getController().getElements())));
+export const graphContextMenu = (element: Graph, connectorSource?: Node) =>
+  createMenuItems(
+    kebabOptionsToMenu(graphActions(element.getController().getElements(), connectorSource)),
+  );
