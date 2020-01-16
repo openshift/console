@@ -5,7 +5,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { AsyncComponent, ButtonBar, PromiseComponent, history } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
 export const DroppableFileInput = (props: any) => (
@@ -43,7 +43,7 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
     return this.handlePromise(k8sCreate(SecretModel, secret));
   }
 
-  addHTPasswdIDP(oauth: OAuthKind, secretName: string): Promise<K8sResourceKind> {
+  addHTPasswdIDP(oauth: OAuthKind, secretName: string, dryRun?: boolean): Promise<K8sResourceKind> {
     const { name } = this.state;
     const idp: IdentityProvider = {
       name,
@@ -56,7 +56,7 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
       },
     };
 
-    return this.handlePromise(addIDP(oauth, idp));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -69,9 +69,15 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      return this.createHTPasswdSecret()
-        .then((secret: K8sResourceKind) => this.addHTPasswdIDP(oauth, secret.metadata.name))
-        .then(redirectToOAuthPage);
+      this.addHTPasswdIDP(oauth, mockNames.secret, true)
+        .then(() => {
+          return this.createHTPasswdSecret()
+            .then((secret: K8sResourceKind) => this.addHTPasswdIDP(oauth, secret.metadata.name))
+            .then(redirectToOAuthPage);
+        })
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 

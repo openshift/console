@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history, AsyncComponent } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
@@ -76,7 +76,12 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addKeystoneIDP(oauth: OAuthKind, secretName: string, caName: string): Promise<K8sResourceKind> {
+  addKeystoneIDP(
+    oauth: OAuthKind,
+    secretName: string,
+    caName: string,
+    dryRun?: boolean,
+  ): Promise<K8sResourceKind> {
     const { name, domainName, url } = this.state;
     const idp: IdentityProvider = {
       name,
@@ -103,7 +108,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
       };
     }
 
-    return this.handlePromise(addIDP(oauth, idp));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -117,15 +122,21 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      const promises = [this.createTLSSecret(), this.createCAConfigMap()];
+      this.addKeystoneIDP(oauth, mockNames.secret, mockNames.ca, true)
+        .then(() => {
+          const promises = [this.createTLSSecret(), this.createCAConfigMap()];
 
-      Promise.all(promises)
-        .then(([tlsSecret, configMap]) => {
-          const caName = configMap ? configMap.metadata.name : '';
-          const secretName = tlsSecret ? tlsSecret.metadata.name : '';
-          return this.addKeystoneIDP(oauth, secretName, caName);
+          Promise.all(promises)
+            .then(([tlsSecret, configMap]) => {
+              const caName = configMap ? configMap.metadata.name : '';
+              const secretName = tlsSecret ? tlsSecret.metadata.name : '';
+              return this.addKeystoneIDP(oauth, secretName, caName);
+            })
+            .then(redirectToOAuthPage);
         })
-        .then(redirectToOAuthPage);
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 
@@ -187,7 +198,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.urlChanged}
               value={url}
               id="url"

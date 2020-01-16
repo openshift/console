@@ -5,7 +5,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
 export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
@@ -39,7 +39,11 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
     return this.handlePromise(k8sCreate(SecretModel, secret));
   }
 
-  addGoogleIDP(oauth: OAuthKind, clientSecretName: string): Promise<K8sResourceKind> {
+  addGoogleIDP(
+    oauth: OAuthKind,
+    clientSecretName: string,
+    dryRun?: boolean,
+  ): Promise<K8sResourceKind> {
     const { name, clientID, hostedDomain } = this.state;
     const idp: IdentityProvider = {
       name,
@@ -54,7 +58,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
       },
     };
 
-    return this.handlePromise(addIDP(oauth, idp));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -63,9 +67,15 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      return this.createClientSecret()
-        .then((secret: K8sResourceKind) => this.addGoogleIDP(oauth, secret.metadata.name))
-        .then(redirectToOAuthPage);
+      this.addGoogleIDP(oauth, mockNames.secret, true)
+        .then(() => {
+          return this.createClientSecret()
+            .then((secret: K8sResourceKind) => this.addGoogleIDP(oauth, secret.metadata.name))
+            .then(redirectToOAuthPage);
+        })
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 

@@ -5,7 +5,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
@@ -49,7 +49,11 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addRequestHeaderIDP(oauth: OAuthKind, caName: string): Promise<K8sResourceKind> {
+  addRequestHeaderIDP(
+    oauth: OAuthKind,
+    caName: string,
+    dryRun?: boolean,
+  ): Promise<K8sResourceKind> {
     const {
       name,
       loginURL,
@@ -78,7 +82,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
       },
     };
 
-    return this.handlePromise(addIDP(oauth, idp));
+    return this.handlePromise(addIDP(oauth, idp, dryRun));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -91,11 +95,17 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      return this.createCAConfigMap()
-        .then((configMap: K8sResourceKind) =>
-          this.addRequestHeaderIDP(oauth, configMap.metadata.name),
-        )
-        .then(redirectToOAuthPage);
+      this.addRequestHeaderIDP(oauth, mockNames.ca, true)
+        .then(() => {
+          return this.createCAConfigMap()
+            .then((configMap: K8sResourceKind) =>
+              this.addRequestHeaderIDP(oauth, configMap.metadata.name),
+            )
+            .then(redirectToOAuthPage);
+        })
+        .catch((err) => {
+          this.setState({ errorMessage: err });
+        });
     });
   };
 
@@ -159,7 +169,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.challengeURLChanged}
               value={challengeURL}
               id="challenge-url"
@@ -176,7 +186,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
             </label>
             <input
               className="pf-c-form-control"
-              type="text"
+              type="url"
               onChange={this.loginURLChanged}
               value={loginURL}
               id="login-url"
