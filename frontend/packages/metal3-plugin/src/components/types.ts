@@ -4,6 +4,7 @@ import { BareMetalHostKind } from '../types';
 export type StatusProps = {
   status: string;
   title?: string;
+  description?: string;
   [key: string]: any;
 };
 

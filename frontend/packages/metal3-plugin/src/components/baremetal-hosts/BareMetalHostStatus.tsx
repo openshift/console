@@ -18,11 +18,6 @@ import {
   NODE_STATUS_UNDER_MAINTENANCE,
   NODE_STATUS_STARTING_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
-  HOST_STATUS_INSPECTING,
-  HOST_STATUS_DEPROVISIONING,
-  HOST_STATUS_AVAILABLE,
-  HOST_STATUS_READY,
-  HOST_STATUS_PROVISIONING,
 } from '../../constants';
 import { BareMetalHostModel } from '../../models';
 import { getHostErrorMessage } from '../../selectors';
@@ -46,44 +41,24 @@ export const AddDiscoveredHostButton: React.FC<{ host: BareMetalHostKind }> = (
   );
 };
 
-const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, ...props }) => {
+const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, description, ...props }) => {
   const statusTitle = title || status;
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
       return <AddDiscoveredHostButton host={props.host} />;
     case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
       return <MaintenancePopover title={statusTitle} maintenance={props.maintenance} />;
-    case status === HOST_STATUS_INSPECTING:
-      return (
-        <ProgressStatus title={statusTitle}>
-          The hardware details of the host are being collected. This will take a while. The host
-          will become available when finished.
-        </ProgressStatus>
-      );
-    case status === HOST_STATUS_PROVISIONING:
-      return (
-        <ProgressStatus title={statusTitle}>
-          An image is being written to the host&apos;s disk(s). This will take a while.
-        </ProgressStatus>
-      );
-    case status === HOST_STATUS_DEPROVISIONING:
-      return (
-        <ProgressStatus title={statusTitle}>
-          The image is being wiped from the host&apos;s disk(s). This may take a while.
-        </ProgressStatus>
-      );
     case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
-      return <ProgressStatus title={statusTitle} />;
+      return <ProgressStatus title={statusTitle}>{description}</ProgressStatus>;
     case HOST_ERROR_STATES.includes(status):
-      return <ErrorStatus title={statusTitle}>{getHostErrorMessage(props.host)}</ErrorStatus>;
-    case [HOST_STATUS_AVAILABLE, HOST_STATUS_READY].includes(status):
       return (
-        <SuccessStatus title={statusTitle}>
-          The host is available to be provisioned as a node.
-        </SuccessStatus>
+        <ErrorStatus title={statusTitle}>
+          <p>{description}</p>
+          <p>{getHostErrorMessage(props.host)}</p>
+        </ErrorStatus>
       );
     case HOST_SUCCESS_STATES.includes(status):
-      return <SuccessStatus title={statusTitle} />;
+      return <SuccessStatus title={statusTitle}>{description}</SuccessStatus>;
     default:
       return <Status status={status} title={statusTitle} />;
   }

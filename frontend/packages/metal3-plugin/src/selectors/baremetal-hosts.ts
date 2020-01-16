@@ -18,8 +18,7 @@ import {
 
 export const getHostOperationalStatus = (host: BareMetalHostKind): string =>
   _.get(host, 'status.operationalStatus');
-export const getHostErrorType = (host: BareMetalHostKind): string =>
-  _.get(host, 'status.errorType');
+export const getHostErrorType = (host: BareMetalHostKind): string => host.status?.errorType;
 export const getHostProvisioningState = (host: BareMetalHostKind): string =>
   _.get(host, 'status.provisioning.state');
 export const getHostMachineName = (host: BareMetalHostKind): string =>

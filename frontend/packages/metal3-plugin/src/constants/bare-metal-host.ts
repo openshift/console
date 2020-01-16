@@ -10,10 +10,8 @@ export const HOST_STATUS_PROVISIONED = 'provisioned';
 export const HOST_STATUS_DEPROVISIONED = 'deprovisioned';
 export const HOST_STATUS_REGISTERING = 'registering';
 export const HOST_STATUS_INSPECTING = 'inspecting';
-export const HOST_STATUS_PREPARING_TO_PROVISION = 'preparing to provision';
 export const HOST_STATUS_PROVISIONING = 'provisioning';
 export const HOST_STATUS_DEPROVISIONING = 'deprovisioning';
-export const HOST_STATUS_MAKING_HOST_AVAILABLE = 'making host available';
 export const HOST_STATUS_MATCH_PROFILE = 'match profile';
 export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
 export const HOST_STATUS_INSPECTION_ERROR = 'inspection error';
@@ -36,15 +34,30 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_DEPROVISIONED]: 'Deprovisioned',
   [HOST_STATUS_REGISTERING]: 'Registering',
   [HOST_STATUS_INSPECTING]: 'Inspecting',
-  [HOST_STATUS_PREPARING_TO_PROVISION]: 'Preparing to provision',
   [HOST_STATUS_PROVISIONING]: 'Provisioning',
   [HOST_STATUS_DEPROVISIONING]: 'Deprovisioning',
-  [HOST_STATUS_MAKING_HOST_AVAILABLE]: 'Making host available',
   [HOST_STATUS_REGISTRATION_ERROR]: 'Registration error',
   [HOST_STATUS_INSPECTION_ERROR]: 'Inspection error',
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
+};
+
+export const HOST_STATUS_DESCRIPTIONS = {
+  [HOST_STATUS_READY]: 'The host is available to be provisioned as a node.',
+  [HOST_STATUS_AVAILABLE]: 'The host is available to be provisioned as a node.',
+  [HOST_STATUS_INSPECTING]:
+    'The hardware details of the host are being collected. This will take a while. The host will become available when finished.',
+  [HOST_STATUS_PROVISIONING]:
+    "An image is being written to the host's disk(s). This will take a while.",
+  [HOST_STATUS_DEPROVISIONING]:
+    "The image is being wiped from the host's disk(s). This may take a while.",
+  [HOST_STATUS_REGISTRATION_ERROR]:
+    "The details for the host's BMC are either incorrect or incomplete therefore the host could not be managed.",
+  [HOST_STATUS_INSPECTION_ERROR]: 'Collecting hardware details from the host failed',
+  [HOST_STATUS_PROVISIONING_ERROR]: 'The image could not be written to the host.',
+  [HOST_STATUS_POWER_MANAGEMENT_ERROR]:
+    'An error was found while trying to power the host either on or off.',
 };
 
 export const HOST_REGISTERING_STATES = [
@@ -53,11 +66,7 @@ export const HOST_REGISTERING_STATES = [
   HOST_STATUS_MATCH_PROFILE,
 ];
 
-export const HOST_PROVISIONING_STATES = [
-  HOST_STATUS_PREPARING_TO_PROVISION,
-  HOST_STATUS_PROVISIONING,
-  HOST_STATUS_MAKING_HOST_AVAILABLE,
-];
+export const HOST_PROVISIONING_STATES = [HOST_STATUS_PROVISIONING, HOST_STATUS_DEPROVISIONING];
 
 export const HOST_ERROR_STATES = [
   HOST_STATUS_REGISTRATION_ERROR,
@@ -71,10 +80,8 @@ export const HOST_WARN_STATES = [];
 
 export const HOST_PROGRESS_STATES = [
   HOST_STATUS_INSPECTING,
-  HOST_STATUS_PREPARING_TO_PROVISION,
   HOST_STATUS_PROVISIONING,
   HOST_STATUS_DEPROVISIONING,
-  HOST_STATUS_MAKING_HOST_AVAILABLE,
   HOST_STATUS_REGISTERING,
   HOST_STATUS_MATCH_PROFILE,
 ];
