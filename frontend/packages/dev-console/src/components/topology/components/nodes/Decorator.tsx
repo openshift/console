@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createSvgIdUrl } from '@console/topology';
+import { createSvgIdUrl, useHover } from '@console/topology';
 import SvgDropShadowFilter from '../../../svg/SvgDropShadowFilter';
 
 import './Decorator.scss';
@@ -15,6 +15,7 @@ type DecoratorTypes = {
 };
 
 const FILTER_ID = 'DecoratorDropShadowFilterId';
+const HOVER_FILTER_ID = 'DecoratorDropShadowHoverFilterId';
 
 const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   x,
@@ -26,6 +27,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   external,
   circleRef,
 }) => {
+  const [hover, hoverRef] = useHover();
   const decorator = (
     <g
       className="odc-decorator"
@@ -33,15 +35,17 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
         e.stopPropagation();
         onClick && onClick(e);
       }}
+      ref={hoverRef}
     >
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
+      <SvgDropShadowFilter id={HOVER_FILTER_ID} dy={3} stdDeviation={5} floodOpacity={0.5} />
       <circle
         ref={circleRef}
         className="odc-decorator__bg"
         cx={x}
         cy={y}
         r={radius}
-        filter={createSvgIdUrl(FILTER_ID)}
+        filter={createSvgIdUrl(hover ? HOVER_FILTER_ID : FILTER_ID)}
       />
       <g transform={`translate(${x}, ${y})`}>{children}</g>
     </g>
