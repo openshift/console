@@ -37,8 +37,6 @@ import {
   SCHEDULERS_UP,
 } from './queries';
 import {
-  getClusterOperatorUpgradeTimestamp,
-  isClusterOperatorUpgradeActivity,
   getClusterUpdateTimestamp,
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
@@ -139,24 +137,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: PersistentVolumeClaimModel,
       mapper: getPVCStatusGroups,
       useAbbr: true,
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Activity/Resource',
-    properties: {
-      k8sResource: {
-        isList: true,
-        prop: 'clusterOperators',
-        kind: referenceForModel(ClusterOperatorModel),
-        namespaced: false,
-      },
-      isActivity: isClusterOperatorUpgradeActivity,
-      getTimestamp: getClusterOperatorUpgradeTimestamp,
-      loader: () =>
-        import(
-          './components/dashboards-page/ClusterOperatorUpgradeActivity' /* webpackChunkName: "console-app" */
-        ).then((m) => m.default),
-      required: FLAGS.CLUSTER_VERSION,
     },
   },
   {
