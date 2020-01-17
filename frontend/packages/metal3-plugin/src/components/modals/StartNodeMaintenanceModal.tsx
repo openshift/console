@@ -8,16 +8,14 @@ import {
   FirehoseResult,
 } from '@console/internal/components/utils';
 import { ModalTitle, ModalBody, ModalSubmitFooter } from '@console/internal/components/factory';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { CephClusterModel } from '@console/ceph-storage-plugin/src/models';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
-import { NodeMaintenanceModel } from '../../models';
 import { createModalResourceLauncher } from './create-modal-resource-launcher';
 
 const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModalProps) => {
   const {
     nodeName,
-    nodeMaintenances,
     cephClusterHealthy,
     inProgress,
     errorMessage,
@@ -56,12 +54,6 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
             onChange={(event) => setReason(event.target.value)}
           />
         </div>
-        {nodeMaintenances.length > 0 && (
-          <Alert variant="warning" title="Too many nodes are already under maintenance." isInline>
-            Putting this node into maintenance will reduce the number of available nodes to an
-            unsafe level. Stop maintenance on other nodes before proceeding.
-          </Alert>
-        )}
         {!cephClusterHealthy && (
           <Alert
             variant="warning"
@@ -84,7 +76,6 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
 
 export type NodeMaintenanceModalProps = {
   nodeName: string;
-  nodeMaintenances: K8sResourceKind[];
   cephClusterHealthy: boolean;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
@@ -93,26 +84,14 @@ export type NodeMaintenanceModalProps = {
   close?: () => void;
 };
 
-const resourcesToProps = ({
-  nodeMaintenances,
-  cephClusters,
-}: {
-  [key: string]: FirehoseResult;
-}) => {
+const resourcesToProps = ({ cephClusters }: { [key: string]: FirehoseResult }) => {
   const cephCluster = _.get(cephClusters, 'data.0');
   return {
-    nodeMaintenances: _.get(nodeMaintenances, 'data', []),
     cephClusterHealthy: !cephCluster || _.get(cephCluster, 'status.health') === 'OK',
   };
 };
 
 const resources: FirehoseResource[] = [
-  {
-    kind: referenceForModel(NodeMaintenanceModel),
-    namespaced: false,
-    isList: true,
-    prop: 'nodeMaintenances',
-  },
   {
     kind: referenceForModel(CephClusterModel),
     namespaced: true,
