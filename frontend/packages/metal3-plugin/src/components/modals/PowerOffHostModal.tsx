@@ -22,7 +22,7 @@ type SafePowerOffDialogProps = { isUnderMaintenance: boolean };
 
 const SafePowerOffDialog: React.FC<SafePowerOffDialogProps> = ({ isUnderMaintenance }) => (
   <p>
-    Host is ready to be shut down gracefully.{' '}
+    Host is ready to be gracefully powered off.{' '}
     {isUnderMaintenance && (
       <>The host is currently under maintenance and all workloads have already been moved.</>
     )}
@@ -45,7 +45,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   return (
     <>
       <p>
-        To shut down gracefully,{' '}
+        To power off gracefully,{' '}
         <Button
           variant="link"
           onClick={() => startNodeMaintenanceModal({ nodeName })}
@@ -59,16 +59,16 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
       <div className="form-group">
         <FormGroup controlId="host-force-off">
           <Checkbox onChange={() => setForceOff(!forceOff)} checked={forceOff} inline>
-            Shut down immediately
+            Power off immediately
           </Checkbox>
           <HelpBlock id="host-force-off-help">
-            Workloads and data won&apos;t be moved before shutting down.
+            Workloads and data won&apos;t be moved before Bare Metal Host powers off.
           </HelpBlock>
         </FormGroup>
         {forceOff && (
           <Alert variant="warning" title="Applications may be temporarily disrupted." isInline>
-            Workloads currently running on this host will not be moved before shutting down. This
-            may cause service disruptions.
+            Workloads currently running on this host will not be moved before powering off. This may
+            cause service disruptions.
           </Alert>
         )}
       </div>
@@ -123,13 +123,10 @@ const PowerOffHostModal = withHandlePromise(
       return handlePromise(promise).then(close);
     };
 
-    const title = `Shut down`;
     const isUnderMaintenance = status === NODE_STATUS_UNDER_MAINTENANCE;
     return (
       <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle>
-          {title} {name}
-        </ModalTitle>
+        <ModalTitle>Power Off Host {name}</ModalTitle>
         <ModalBody>
           {canPowerOffSafely ? (
             <SafePowerOffDialog isUnderMaintenance={isUnderMaintenance} />
@@ -147,7 +144,7 @@ const PowerOffHostModal = withHandlePromise(
           errorMessage={errorMessage}
           inProgress={inProgress}
           submitDisabled={!canPowerOffSafely && !forceOff}
-          submitText={title}
+          submitText="Power Off"
         />
       </form>
     );

@@ -41,7 +41,7 @@ export const SetNodeMaintenance = (
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-  label: 'Start node maintenance',
+  label: 'Start Node Maintenance',
   callback: () => startNodeMaintenanceModal({ nodeName }),
 });
 
@@ -52,13 +52,13 @@ export const RemoveNodeMaintenance = (
   { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-  label: 'Stop node maintenance',
+  label: 'Stop Node Maintenance',
   callback: () => stopNodeMaintenanceModal(nodeMaintenance),
   accessReview: nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
 });
 
 export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => {
-  const title = 'Power on';
+  const title = 'Power On';
   return {
     hidden: [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
       getHostPowerStatus(host),
@@ -80,7 +80,7 @@ export const PowerOff = (
   hidden: [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
     getHostPowerStatus(host),
   ),
-  label: 'Shut down',
+  label: 'Power Off',
   callback: () => powerOffHostModal({ hasNodeMaintenanceCapability, host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });

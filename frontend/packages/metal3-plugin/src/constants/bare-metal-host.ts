@@ -22,7 +22,7 @@ export const HOST_STATUS_POWER_MANAGEMENT_ERROR = 'power management error';
 
 export const HOST_POWER_STATUS_POWERED_ON = 'Powered on';
 export const HOST_POWER_STATUS_POWERED_OFF = 'Powered off';
-export const HOST_POWER_STATUS_POWERING_OFF = 'Shutting down';
+export const HOST_POWER_STATUS_POWERING_OFF = 'Powering off';
 export const HOST_POWER_STATUS_POWERING_ON = 'Powering on';
 
 export const HOST_STATUS_TITLES = {
