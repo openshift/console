@@ -86,7 +86,7 @@
     "core-js": "2.x",
     "d3": "^5.9.2",
     "file-saver": "1.3.x",
-    "formik": "2.0.1-rc.1",
+    "formik": "2.0.1-rc.5",
     "focus-trap-react": "^6.0.0",
     "fuzzysearch": "1.0.x",
     "history": "4.x",
