@@ -55,9 +55,9 @@ const getCSVPriorityStatus = (
   return getOperatorStatus(subscriptionStatus, csvStatus);
 };
 
-export const getClusterServiceVersionsWithStatuses: GetOperatorsWithStatuses<
-  ClusterServiceVersionKind
-> = (resources) => {
+export const getClusterServiceVersionsWithStatuses: GetOperatorsWithStatuses<ClusterServiceVersionKind> = (
+  resources,
+) => {
   const grouppedOperators = _.groupBy(
     resources.clusterServiceVersions.data as ClusterServiceVersionKind[],
     (o) => o.metadata.name,

@@ -442,9 +442,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     expect(
       listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name),
     ).toEqual(
-      `/k8s/ns/default/${
-        ClusterServiceVersionModel.plural
-      }/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
+      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
     );
   });
 
@@ -457,9 +455,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
     expect(listPage.props().createProps.to).toEqual(
-      `/k8s/ns/default/${
-        ClusterServiceVersionModel.plural
-      }/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
+      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
     );
   });
 

@@ -90,9 +90,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
             if (previous.includes(NO_SH)) {
               current.reset();
               current.onConnectionClosed(
-                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${
-                  metadata.namespace
-                } exec ${metadata.name} -ti <command>`,
+                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${metadata.namespace} exec ${metadata.name} -ti <command>`,
               );
               this.ws.destroy();
               previous = '';

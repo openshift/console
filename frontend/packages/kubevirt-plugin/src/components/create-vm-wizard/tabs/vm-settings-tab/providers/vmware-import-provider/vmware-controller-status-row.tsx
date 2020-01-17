@@ -99,32 +99,32 @@ const vmwareStatusComponentResolver = {
   [V2VVMWareDeploymentStatus.FAILED.getValue()]: DeploymentFailed,
 };
 
-const VmwareControllerStatusRowComponent: React.FC<
-  VmwareControllerStatusRowComponentProps
-> = React.memo(({ id, hasErrors, deployment, deploymentPods }) => {
-  const status = getV2vVMwareDeploymentStatus(
-    toShallowJS(deployment, undefined, true),
-    immutableListToShallowJS(deploymentPods),
-  );
-  if (
-    hasErrors ||
-    status.status === V2VVMWareDeploymentStatus.ROLLOUT_COMPLETE ||
-    ([V2VVMWareDeploymentStatus.FAILED, V2VVMWareDeploymentStatus.UNKNOWN].includes(
-      status.status,
-    ) &&
-      hasErrors) // deployment failed
-  ) {
-    return null;
-  }
+const VmwareControllerStatusRowComponent: React.FC<VmwareControllerStatusRowComponentProps> = React.memo(
+  ({ id, hasErrors, deployment, deploymentPods }) => {
+    const status = getV2vVMwareDeploymentStatus(
+      toShallowJS(deployment, undefined, true),
+      immutableListToShallowJS(deploymentPods),
+    );
+    if (
+      hasErrors ||
+      status.status === V2VVMWareDeploymentStatus.ROLLOUT_COMPLETE ||
+      ([V2VVMWareDeploymentStatus.FAILED, V2VVMWareDeploymentStatus.UNKNOWN].includes(
+        status.status,
+      ) &&
+        hasErrors) // deployment failed
+    ) {
+      return null;
+    }
 
-  const StatusComponent = vmwareStatusComponentResolver[status.status.getValue()] || NoDeployment;
+    const StatusComponent = vmwareStatusComponentResolver[status.status.getValue()] || NoDeployment;
 
-  return (
-    <FormRow fieldId={prefixedID(id, 'status')}>
-      <StatusComponent id={prefixedID(id, 'status')} {...status} />
-    </FormRow>
-  );
-});
+    return (
+      <FormRow fieldId={prefixedID(id, 'status')}>
+        <StatusComponent id={prefixedID(id, 'status')} {...status} />
+      </FormRow>
+    );
+  },
+);
 
 type VmwareControllerStatusRowComponentProps = {
   id: string;

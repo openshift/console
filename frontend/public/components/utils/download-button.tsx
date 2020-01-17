@@ -16,7 +16,10 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
     coFetch(props.url, {}, 30000)
       .then((response) => response.blob())
       .then((blob) => saveAs(blob, props.filename))
-      .then(() => setError(null), (e) => setError(e))
+      .then(
+        () => setError(null),
+        (e) => setError(e),
+      )
       .then(() => setInFlight(false));
   };
 

@@ -406,9 +406,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   }
 
   const to = kindObj.namespaced
-    ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
-        csv.metadata.name
-      }/${kind}/~new`
+    ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`
     : `${resourcePathFromModel(kindObj)}/~new`;
   return (
     <ListPage

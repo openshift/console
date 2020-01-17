@@ -21,9 +21,7 @@ export const MAC_REGEX_PERIOD_DELIMITER = new RegExp(
 // IEEE 802 MAC-48, EUI-48, EUI-64, or a 20-octet IP over InfiniBand link-layer address
 // https://golang.org/pkg/net/#ParseMAC
 export const MAC_REGEX = new RegExp(
-  `^(${MAC_REGEX_COLON_DELIMITER.source}|${MAC_REGEX_DASH_DELIMITER.source}|${
-    MAC_REGEX_PERIOD_DELIMITER.source
-  })$`,
+  `^(${MAC_REGEX_COLON_DELIMITER.source}|${MAC_REGEX_DASH_DELIMITER.source}|${MAC_REGEX_PERIOD_DELIMITER.source})$`,
 );
 
 export const IPV6_ADDRESS = new RegExp(

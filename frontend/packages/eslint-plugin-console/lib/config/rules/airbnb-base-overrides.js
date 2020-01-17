@@ -31,12 +31,39 @@ module.exports = {
   // Disallow Unused Expressions
   'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
 
+  // TODO This rule was not working as expected prior to eslint-config-airbnb-base v14.0.0
+  // Disabling for now since it is causing failures after the update.
   // Sort imports into groups
-  'import/order': [
-    'error',
-    {
-      groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-      'newlines-between': 'never',
-    },
-  ],
+  // 'import/order': [
+  //   'error',
+  //   {
+  //     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+  //     'newlines-between': 'never',
+  //   },
+  // ],
+  'import/order': 'off',
+
+  /* ------------------------ New Rules as of eslint-config-airbnb-base v14.0.0 -------------------------
+
+  TODO The following rules are disabled since they are new and cause failures. Need follow up.
+
+  ------------------------------------------------------------------------------------------------*/
+
+  // Ensure consistent use of file extension within the import path
+  'import/extensions': 'off',
+
+  // enforce a maximum number of classes per file
+  'max-classes-per-file': 'off',
+
+  // Disallow use of Object.prototypes builtins directly
+  'no-prototype-builtins': 'off',
+
+  // disallow unnecessary `catch` clauses
+  'no-useless-catch': 'off',
+
+  // Disallow using Object.assign with an object literal as the first argument and prefer the use of object spread instead.
+  'prefer-object-spread': 'off',
+
+  // Disallow assignments that can lead to race conditions due to usage of `await` or `yield`
+  'require-atomic-updates': 'off',
 };

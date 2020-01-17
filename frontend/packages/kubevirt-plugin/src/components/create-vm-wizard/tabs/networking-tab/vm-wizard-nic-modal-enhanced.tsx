@@ -126,9 +126,6 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   },
 });
 
-const VMWizardNICModalConnected = connect(
-  stateToProps,
-  dispatchToProps,
-)(VMWizardNICModal);
+const VMWizardNICModalConnected = connect(stateToProps, dispatchToProps)(VMWizardNICModal);
 
 export const vmWizardNicModalEnhanced = createModalLauncher(VMWizardNICModalConnected);

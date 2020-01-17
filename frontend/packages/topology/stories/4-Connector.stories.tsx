@@ -145,7 +145,10 @@ export const reconnect = () => {
         type: 'edge',
         source: 'n1',
         target: 'n2',
-        bendpoints: [[50, 30], [110, 10]],
+        bendpoints: [
+          [50, 30],
+          [110, 10],
+        ],
       },
       {
         id: 'e2',
@@ -287,7 +290,7 @@ export const anchors = () => {
     return (
       <>
         <Layer id="bottom">
-          <NodeRect {...props as any} />
+          <NodeRect {...(props as any)} />
         </Layer>
         <circle
           ref={nodeRef}

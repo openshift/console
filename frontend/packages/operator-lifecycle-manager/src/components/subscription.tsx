@@ -195,9 +195,7 @@ const menuActions = [
     const installedCSV = _.get(obj, 'status.installedCSV');
     return {
       label: `View ${ClusterServiceVersionModel.kind}...`,
-      href: `/k8s/ns/${obj.metadata.namespace}/${
-        ClusterServiceVersionModel.plural
-      }/${installedCSV}`,
+      href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
       hidden: !installedCSV,
     };
   },
@@ -419,8 +417,8 @@ export class SubscriptionUpdates extends React.Component<
   static getDerivedStateFromProps(nextProps, prevState) {
     const stillWaiting =
       prevState.waitingForUpdate &&
-      (_.get(nextProps, 'obj.spec.channel') === prevState.channel &&
-        _.get(nextProps, 'obj.spec.installPlanApproval') === prevState.installPlanApproval);
+      _.get(nextProps, 'obj.spec.channel') === prevState.channel &&
+      _.get(nextProps, 'obj.spec.installPlanApproval') === prevState.installPlanApproval;
 
     return stillWaiting
       ? null
@@ -580,7 +578,7 @@ export type SubscriptionsPageProps = {
 export type SubscriptionsListProps = {
   loaded: boolean;
   loadError?: string;
-  data: (SubscriptionKind)[];
+  data: SubscriptionKind[];
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
 };
 

@@ -36,7 +36,7 @@ export const withContextMenu = <E extends TopologyElement>(
     return (
       <>
         <WrappedComponent
-          {...props as any}
+          {...(props as any)}
           onContextMenu={onContextMenu}
           contextMenuOpen={!!reference}
         />

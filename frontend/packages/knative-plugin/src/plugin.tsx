@@ -272,9 +272,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.RevisionModel,
       loader: async () =>
-        (await import(
-          './components/revisions/RevisionsPage' /* webpackChunkName: "knative-revisions-page" */
-        )).default,
+        (
+          await import(
+            './components/revisions/RevisionsPage' /* webpackChunkName: "knative-revisions-page" */
+          )
+        ).default,
     },
   },
   {
@@ -282,9 +284,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceModel,
       loader: async () =>
-        (await import(
-          './components/services/ServicesPage' /* webpackChunkName: "knative-services-page" */
-        )).default,
+        (
+          await import(
+            './components/services/ServicesPage' /* webpackChunkName: "knative-services-page" */
+          )
+        ).default,
     },
   },
   {
@@ -292,9 +296,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceModel,
       loader: async () =>
-        (await import(
-          './components/services/ServiceDetailsPage' /* webpackChunkName: "knative-service-details-page" */
-        )).default,
+        (
+          await import(
+            './components/services/ServiceDetailsPage' /* webpackChunkName: "knative-service-details-page" */
+          )
+        ).default,
     },
   },
   {
@@ -302,9 +308,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.RouteModel,
       loader: async () =>
-        (await import(
-          './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
-        )).default,
+        (
+          await import(
+            './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
+          )
+        ).default,
     },
   },
   {
@@ -312,9 +320,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.RouteModel,
       loader: async () =>
-        (await import(
-          './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
-        )).default,
+        (
+          await import(
+            './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
+          )
+        ).default,
     },
   },
   {

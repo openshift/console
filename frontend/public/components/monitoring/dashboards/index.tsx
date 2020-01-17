@@ -297,13 +297,10 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
     </>
   );
 };
-const MonitoringDashboardsPage = connect(
-  null,
-  {
-    clearVariables: UIActions.monitoringDashboardsClearVariables,
-    patchVariable: UIActions.monitoringDashboardsPatchVariable,
-  },
-)(MonitoringDashboardsPage_);
+const MonitoringDashboardsPage = connect(null, {
+  clearVariables: UIActions.monitoringDashboardsClearVariables,
+  patchVariable: UIActions.monitoringDashboardsPatchVariable,
+})(MonitoringDashboardsPage_);
 
 type TemplateVariable = {
   name: string;

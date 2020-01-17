@@ -357,7 +357,10 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   if (!kindObj) {
     return null;
   }
-  const options = _.reject(actions.map((a) => a(kindObj, resource)), 'hidden');
+  const options = _.reject(
+    actions.map((a) => a(kindObj, resource)),
+    'hidden',
+  );
   return (
     <Kebab
       options={options}

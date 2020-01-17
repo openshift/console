@@ -53,9 +53,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         obj: pkg,
         kind: PackageManifestModel.kind,
         name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-        uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${
-          pkg.status.catalogSourceNamespace
-        }`,
+        uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
         installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
           namespace,
         ),
@@ -169,7 +167,7 @@ export const OperatorHubPage = withFallback(
               ]}
             >
               {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-              <OperatorHubList {...props as any} namespace={props.match.params.ns} />
+              <OperatorHubList {...(props as any)} namespace={props.match.params.ns} />
             </Firehose>
           </div>
         </div>

@@ -202,9 +202,7 @@ const getImportErrors = (imageStream: K8sResourceKind): string[] => {
     );
     importErrorCondition &&
       acc.push(
-        `Unable to sync image for tag ${imageStream.metadata.name}:${tag.tag}. ${
-          importErrorCondition.message
-        }`,
+        `Unable to sync image for tag ${imageStream.metadata.name}:${tag.tag}. ${importErrorCondition.message}`,
       );
   });
 };

@@ -24,6 +24,6 @@ export const useShowErrorToggler = (
   return [showError, setShowError, checkValidity] as [
     boolean,
     React.Dispatch<React.SetStateAction<boolean>>,
-    (isValid: boolean) => void
+    (isValid: boolean) => void,
   ];
 };

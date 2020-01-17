@@ -84,7 +84,7 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
     this.sizeContainer();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!_.isEqual(this.props, nextProps)) {
       const pod: Pod = _.get(nextProps, ['obj', 'data'], {});
       const { containers, stillFetching } = getRenderContainers(pod);

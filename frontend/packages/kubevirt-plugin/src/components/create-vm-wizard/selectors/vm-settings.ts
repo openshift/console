@@ -8,12 +8,9 @@ export const getFieldValue = (vmSettings: VMSettings, key: VMSettingsField) =>
 type SimpleSettings = { [key in VMSettingsField]: any };
 
 export const asSimpleSettings = (vmSettings: VMSettings): SimpleSettings =>
-  Object.keys(vmSettings).reduce(
-    (accumulator, key) => {
-      if (_.has(vmSettings[key], 'value')) {
-        accumulator[key] = vmSettings[key].value;
-      }
-      return accumulator;
-    },
-    {} as any,
-  );
+  Object.keys(vmSettings).reduce((accumulator, key) => {
+    if (_.has(vmSettings[key], 'value')) {
+      accumulator[key] = vmSettings[key].value;
+    }
+    return accumulator;
+  }, {} as any);

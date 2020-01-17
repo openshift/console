@@ -153,7 +153,7 @@ const EditYAML_ = connect(stateToProps)(
       window.removeEventListener('sidebar_toggle', this.resize);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (nextProps.isOver) {
         return;
       }
@@ -365,9 +365,7 @@ const EditYAML_ = connect(stateToProps)(
       const model = this.getModel(obj);
       if (!model) {
         this.handleError(
-          `The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${
-            obj.apiVersion
-          }".`,
+          `The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`,
         );
         return;
       }
@@ -400,9 +398,7 @@ const EditYAML_ = connect(stateToProps)(
         }
         if (this.props.obj.kind !== obj.kind) {
           this.handleError(
-            `Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${
-              obj.kind
-            }").`,
+            `Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${obj.kind}").`,
           );
           return;
         }

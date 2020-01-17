@@ -194,9 +194,9 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC<
-  HorizontalPodAutoscalersDetailsPageProps
-> = (props) => (
+export const HorizontalPodAutoscalersDetailsPage: React.FC<HorizontalPodAutoscalersDetailsPageProps> = (
+  props,
+) => (
   <DetailsPage
     {...props}
     kind={HorizontalPodAutoscalersReference}

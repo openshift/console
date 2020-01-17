@@ -33,7 +33,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
     this.setState({ activeItem });
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.obj !== nextProps.obj) {
       const { obj, activeTask } = this.props;
       const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});

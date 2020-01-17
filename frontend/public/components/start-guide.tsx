@@ -50,39 +50,40 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
 );
 
 export const withStartGuide = (WrappedComponent, disable: boolean = true) =>
-  connectToFlags(FLAGS.SHOW_OPENSHIFT_START_GUIDE, FLAGS.CAN_CREATE_PROJECT)(
-    ({ flags, ...rest }: any) => {
-      const { kindObj } = rest;
-      const kind = _.get(kindObj, 'kind', rest.kind);
+  connectToFlags(
+    FLAGS.SHOW_OPENSHIFT_START_GUIDE,
+    FLAGS.CAN_CREATE_PROJECT,
+  )(({ flags, ...rest }: any) => {
+    const { kindObj } = rest;
+    const kind = _.get(kindObj, 'kind', rest.kind);
 
-      // The start guide does not need to be shown on the Projects list page.
-      if (kind === ProjectModel.kind) {
-        return <WrappedComponent {...rest} />;
-      }
-
-      if (flags[FLAGS.SHOW_OPENSHIFT_START_GUIDE]) {
-        return (
-          <>
-            <div className="co-m-pane__body">
-              <HintBlock title="Getting Started">
-                <OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />
-              </HintBlock>
-            </div>
-            {// Whitelist certain resource kinds that should not be disabled when no projects are
-            // available. Disabling should also be optional
-            !disable || WHITELIST.includes(kind) ? (
-              <WrappedComponent {...rest} noProjectsAvailable />
-            ) : (
-              <Disabled>
-                <WrappedComponent {...rest} noProjectsAvailable />
-              </Disabled>
-            )}
-          </>
-        );
-      }
+    // The start guide does not need to be shown on the Projects list page.
+    if (kind === ProjectModel.kind) {
       return <WrappedComponent {...rest} />;
-    },
-  );
+    }
+
+    if (flags[FLAGS.SHOW_OPENSHIFT_START_GUIDE]) {
+      return (
+        <>
+          <div className="co-m-pane__body">
+            <HintBlock title="Getting Started">
+              <OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />
+            </HintBlock>
+          </div>
+          {// Whitelist certain resource kinds that should not be disabled when no projects are
+          // available. Disabling should also be optional
+          !disable || WHITELIST.includes(kind) ? (
+            <WrappedComponent {...rest} noProjectsAvailable />
+          ) : (
+            <Disabled>
+              <WrappedComponent {...rest} noProjectsAvailable />
+            </Disabled>
+          )}
+        </>
+      );
+    }
+    return <WrappedComponent {...rest} />;
+  });
 
 type OpenShiftGettingStartedProps = {
   canCreateProject: boolean;

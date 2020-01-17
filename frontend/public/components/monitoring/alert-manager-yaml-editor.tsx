@@ -48,9 +48,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
     patchAlertManagerConfig(secret, yaml).then(
       (newSecret) => {
         setSuccessMsg(
-          `${newSecret.metadata.name} has been updated to version ${
-            newSecret.metadata.resourceVersion
-          }`,
+          `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
         );
         setErrorMsg('');
       },
@@ -86,20 +84,20 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
   );
 };
 
-export const AlertManagerYAMLEditorWrapper: React.FC<
-  AlertManagerYAMLEditorWrapperProps
-> = React.memo(({ obj, ...props }) => {
-  return (
-    <>
-      <Helmet>
-        <title>Alerting</title>
-      </Helmet>
-      <StatusBox {...obj}>
-        <AlertManagerYAMLEditor {...props} obj={obj.data} />
-      </StatusBox>
-    </>
-  );
-});
+export const AlertManagerYAMLEditorWrapper: React.FC<AlertManagerYAMLEditorWrapperProps> = React.memo(
+  ({ obj, ...props }) => {
+    return (
+      <>
+        <Helmet>
+          <title>Alerting</title>
+        </Helmet>
+        <StatusBox {...obj}>
+          <AlertManagerYAMLEditor {...props} obj={obj.data} />
+        </StatusBox>
+      </>
+    );
+  },
+);
 
 type AlertManagerYAMLEditorWrapperProps = {
   obj?: {

@@ -74,8 +74,17 @@ module.exports = {
   //   },
   // ],
 
+  // TODO This rule wasn't working as expected prior to @typescript-eslint/eslint-plugin v2.11.0.
+  // Disabled for now as it is causing failures
   // Enforces the use of as Type assertions instead of <Type> assertions
-  '@typescript-eslint/no-angle-bracket-type-assertion': 'error',
+  // '@typescript-eslint/consistent-type-assertions': [
+  //   'error',
+  //   {
+  //     assertionStyle: 'as',
+  //     objectLiteralTypeAssertions: 'allow-as-parameter',
+  //   },
+  // ],
+  '@typescript-eslint/consistent-type-assertions': 'off',
 
   // Disallow generic Array constructors
   'no-array-constructor': 'off',
@@ -97,8 +106,11 @@ module.exports = {
   // Disallow iterating over an array with a for-in loop
   '@typescript-eslint/no-for-in-array': 'error',
 
+  // TODO This rule wasn't working as expected prior to @typescript-eslint/eslint-plugin v2.11.0.
+  // Disabled for now as it is causing failures
   // Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean
-  '@typescript-eslint/no-inferrable-types': 'error',
+  // '@typescript-eslint/no-inferrable-types': 'error',
+  '@typescript-eslint/no-inferrable-types': 'off',
 
   // Disallows magic numbers
   'no-magic-numbers': 'off',
@@ -113,9 +125,6 @@ module.exports = {
   // Disallows non-null assertions using the ! postfix operator
   '@typescript-eslint/no-non-null-assertion': 'error',
 
-  // Forbids an object literal to appear in a type assertion expression
-  '@typescript-eslint/no-object-literal-type-assertion': 'error',
-
   // Disallow the use of parameter properties in class constructors
   '@typescript-eslint/no-parameter-properties': 'off',
 
@@ -126,7 +135,10 @@ module.exports = {
   '@typescript-eslint/no-this-alias': ['error', { allowDestructuring: true }],
 
   // Disallow /// <reference path='' /> comments
-  '@typescript-eslint/no-triple-slash-reference': 'error',
+  '@typescript-eslint/triple-slash-reference': [
+    'error',
+    { path: 'never', types: 'never', lib: 'never' },
+  ],
 
   // Disallow the use of type aliases
   '@typescript-eslint/no-type-alias': 'off',

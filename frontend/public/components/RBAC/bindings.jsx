@@ -95,9 +95,7 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
           callback: () =>
             confirmModal({
               title: `Delete ${kind.label} Subject`,
-              message: `Are you sure you want to delete subject ${subject.name} of type ${
-                subject.kind
-              }?`,
+              message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
               btnText: 'Delete Subject',
               executeFn: () =>
                 k8sPatch(kind, binding, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
@@ -180,10 +178,9 @@ export const BindingName = ({ binding }) => {
   />;
 };
 
-export const BindingKebab = connect(
-  null,
-  { startImpersonate: UIActions.startImpersonate },
-)(({ binding, startImpersonate }) =>
+export const BindingKebab = connect(null, {
+  startImpersonate: UIActions.startImpersonate,
+})(({ binding, startImpersonate }) =>
   binding.subjects ? (
     <ResourceKebab
       actions={menuActions(binding, startImpersonate)}
@@ -382,10 +379,7 @@ const Section = ({ label, children }) => (
   </div>
 );
 
-const BaseEditRoleBinding = connect(
-  null,
-  { setActiveNamespace: UIActions.setActiveNamespace },
-)(
+const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setActiveNamespace })(
   class BaseEditRoleBinding_ extends React.Component {
     constructor(props) {
       super(props);

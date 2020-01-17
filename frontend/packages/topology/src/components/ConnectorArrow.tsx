@@ -55,7 +55,11 @@ const ConnectorArrow: React.FC<ConnectorArrowProps> = ({
     prevPoint[1] + (arrowEndPoint[1] - prevPoint[1]) * ratio,
   ];
 
-  const arrowPoints: [number, number][] = [[0, size / 2], [0, -size / 2], [size, 0]];
+  const arrowPoints: [number, number][] = [
+    [0, size / 2],
+    [0, -size / 2],
+    [size, 0],
+  ];
   const padding = Math.max(size, 8);
   const deltaY = padding / 2;
   const boundingBox: [number, number][] = [

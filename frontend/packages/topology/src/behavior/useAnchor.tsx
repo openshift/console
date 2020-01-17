@@ -31,7 +31,11 @@ export const withAnchor = <P extends {} = {}>(anchor: Anchor, end?: AnchorEnd, t
   WrappedComponent: React.ComponentType<P>,
 ) => {
   const Component: React.FC<P> = (props) => {
-    useAnchor(React.useCallback(() => anchor, []), end, type);
+    useAnchor(
+      React.useCallback(() => anchor, []),
+      end,
+      type,
+    );
     return <WrappedComponent {...props} />;
   };
   return observer(Component);

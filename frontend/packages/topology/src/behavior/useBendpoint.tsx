@@ -82,7 +82,7 @@ export const WithBendpoint = <DropResult, CollectedProps, Props = {}>(
 ) => {
   const Component: React.FC<Omit<P, keyof WithBendpointProps> & HocProps> = (props) => {
     const [dragProps, bendpointRef] = useBendpoint(props.point, spec, props);
-    return <WrappedComponent {...props as any} bendpointRef={bendpointRef} {...dragProps} />;
+    return <WrappedComponent {...(props as any)} bendpointRef={bendpointRef} {...dragProps} />;
   };
   return observer(Component);
 };

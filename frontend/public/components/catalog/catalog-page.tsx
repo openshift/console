@@ -143,9 +143,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
           tileProvider: _.get(serviceClass, 'spec.externalMetadata.providerDisplayName'),
           tags: serviceClass.spec.tags,
           createLabel: 'Create Service Instance',
-          href: `/catalog/create-service-instance?cluster-service-class=${
-            serviceClass.metadata.name
-          }&preselected-ns=${namespace}`,
+          href: `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`,
           supportUrl: _.get(serviceClass, 'spec.externalMetadata.supportUrl'),
           longDescription: _.get(serviceClass, 'spec.externalMetadata.longDescription'),
           documentationUrl: _.get(serviceClass, 'spec.externalMetadata.documentationUrl'),
@@ -345,7 +343,7 @@ export const Catalog = connectToFlags<CatalogProps>(
           namespace={namespace}
           templateMetadata={templateMetadata}
           projectTemplateMetadata={projectTemplateMetadata}
-          {...props as any}
+          {...(props as any)}
         />
       </Firehose>
     </div>

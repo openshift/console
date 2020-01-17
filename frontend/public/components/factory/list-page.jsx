@@ -122,10 +122,7 @@ ListPageWrapper_.propTypes = {
 };
 
 /** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
-export const FireMan_ = connect(
-  null,
-  { filterList },
-)(
+export const FireMan_ = connect(null, { filterList })(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
       super(props);
@@ -138,7 +135,7 @@ export const FireMan_ = connect(
       this.state = { reduxIDs };
     }
 
-    componentWillReceiveProps({ resources }) {
+    UNSAFE_componentWillReceiveProps({ resources }) {
       const reduxIDs = resources.map((r) =>
         makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
       );
@@ -148,7 +145,7 @@ export const FireMan_ = connect(
 
       // reapply filters to the new list...
       // TODO (kans): we probably just need to be able to create new lists with filters already applied
-      this.setState({ reduxIDs }, () => this.componentWillMount());
+      this.setState({ reduxIDs }, () => this.UNSAFE_componentWillMount());
     }
 
     onExpandChange(expand) {
@@ -182,7 +179,7 @@ export const FireMan_ = connect(
       this.updateURL(filterName, options);
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const params = new URLSearchParams(window.location.search);
       this.defaultValue = params.get(this.props.textFilter);
       params.forEach((v, k) => this.applyFilter(k, v));
@@ -398,7 +395,7 @@ export const ListPage = withFallback((props) => {
     return <ErrorPage404 />;
   }
 
-  return ((
+  return (
     <MultiListPage
       autoFocus={autoFocus}
       canCreate={canCreate}
@@ -420,7 +417,7 @@ export const ListPage = withFallback((props) => {
       title={title}
       badge={badge || getBadgeFromType(ko.badge)}
     />
-  ));
+  );
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';

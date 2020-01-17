@@ -4,9 +4,7 @@ import { NetworkAttachmentDefinitionModel } from '..';
 export const NetworkAttachmentDefinitionsYAMLTemplates = ImmutableMap().setIn(
   ['default'],
   `
-apiVersion: ${NetworkAttachmentDefinitionModel.apiGroup}/${
-    NetworkAttachmentDefinitionModel.apiVersion
-  }
+apiVersion: ${NetworkAttachmentDefinitionModel.apiGroup}/${NetworkAttachmentDefinitionModel.apiVersion}
 kind: ${NetworkAttachmentDefinitionModel.kind}
 metadata:
   name: example

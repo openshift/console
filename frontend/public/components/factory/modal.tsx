@@ -50,7 +50,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
             shouldCloseOnOverlayClick={!props.blocking}
           >
             <Component
-              {..._.omit(props, 'blocking', 'modalClassName') as any}
+              {...(_.omit(props, 'blocking', 'modalClassName') as any)}
               cancel={_handleCancel}
               close={_handleClose}
             />

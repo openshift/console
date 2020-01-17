@@ -19,11 +19,11 @@ export class StorageClassDropdownInner extends React.Component<
     defaultClass: this.props.defaultClass,
   };
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
+  UNSAFE_componentWillMount() {
+    this.UNSAFE_componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { loaded, loadError, resources } = nextProps;
 
     if (loadError) {

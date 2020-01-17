@@ -15,6 +15,9 @@ module.exports = {
   // One JSX element Per line
   'react/jsx-one-expression-per-line': 'off',
 
+  // Prop spreading is forbidden
+  'react/jsx-props-no-spreading': 'off',
+
   // Declare only one React component per file
   'react/no-multi-comp': 'off',
 
@@ -23,4 +26,22 @@ module.exports = {
 
   // Enforce that a label tag has a text label and an associated control.
   'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
+
+  /* ------------------------ New Rules as of eslint-plugin-react v7.17.0 --------------------------
+
+    TODO The following rules are disabled since they are new and cause failures. Need follow up.
+
+  ------------------------------------------------------------------------------------------------*/
+
+  //  Enforces where React component static properties should be positioned.
+  'react/static-property-placement': 'off',
+
+  // Enforce the state initialization style to be either in a constructor or with a class property
+  'react/state-in-constructor': 'off',
+
+  // Enforce curly braces or disallow unnecessary curly braces in JSX
+  'react/jsx-curly-brace-presence': 'off',
+
+  // Enforce component methods order (fixable)
+  'react/sort-comp': 'off',
 };

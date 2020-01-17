@@ -25,7 +25,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
     <ActionGroup className="pf-c-form">
       <Button
         type={handleSubmit ? 'button' : 'submit'}
-        {...handleSubmit && { onClick: handleSubmit }}
+        {...(handleSubmit && { onClick: handleSubmit })}
         variant={ButtonVariant.primary}
         isDisabled={disableSubmit}
       >

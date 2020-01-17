@@ -38,9 +38,7 @@ import { ServiceBindingModel, ServiceInstanceModel, ClusterServiceClassModel } f
 
 const goToCreateBindingPage = (serviceInstance: K8sResourceKind) => {
   history.push(
-    `/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${
-      serviceInstance.metadata.name
-    }/create-binding`,
+    `/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`,
   );
 };
 

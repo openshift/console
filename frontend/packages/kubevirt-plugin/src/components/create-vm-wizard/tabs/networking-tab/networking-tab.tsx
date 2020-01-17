@@ -160,7 +160,4 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   },
 });
 
-export const NetworkingTab = connect(
-  stateToProps,
-  dispatchToProps,
-)(NetworkingTabComponent);
+export const NetworkingTab = connect(stateToProps, dispatchToProps)(NetworkingTabComponent);

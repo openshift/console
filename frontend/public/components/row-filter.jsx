@@ -164,7 +164,4 @@ class CheckBoxes_ extends React.Component {
 }
 
 /** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
-export const CheckBoxes = connect(
-  null,
-  { filterList },
-)(CheckBoxes_);
+export const CheckBoxes = connect(null, { filterList })(CheckBoxes_);

@@ -89,10 +89,7 @@ const stateToProps = (state) => {
   return resourceMap ? resourceMap.toObject() : {};
 };
 
-const EditRule = connect(
-  stateToProps,
-  { getResources: k8sActions.getResources },
-)(
+const EditRule = connect(stateToProps, { getResources: k8sActions.getResources })(
   class EditRule_ extends PromiseComponent {
     constructor(props) {
       super(props);
@@ -123,7 +120,7 @@ const EditRule = connect(
       this.getResource();
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.props.getResources();
     }
 

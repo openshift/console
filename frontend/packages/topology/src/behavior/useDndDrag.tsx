@@ -323,7 +323,7 @@ export const withDndDrag = <
   const Component: React.FC<Omit<P, keyof WithDndDragProps & CollectedProps>> = (props) => {
     // TODO fix cast to any
     const [dndDragProps, dndDragRef] = useDndDrag(spec, props as any);
-    return <WrappedComponent {...props as any} {...dndDragProps} dndDragRef={dndDragRef} />;
+    return <WrappedComponent {...(props as any)} {...dndDragProps} dndDragRef={dndDragRef} />;
   };
   return observer(Component);
 };

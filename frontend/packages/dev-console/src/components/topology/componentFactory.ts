@@ -71,7 +71,10 @@ class ComponentFactory {
       switch (type) {
         case TYPE_APPLICATION_GROUP:
           return withDndDrop(groupWorkloadDropTargetSpec)(
-            withSelection(false, true)(
+            withSelection(
+              false,
+              true,
+            )(
               withContextMenu(
                 groupContextMenu,
                 document.getElementById('modal-container'),
@@ -87,7 +90,10 @@ class ComponentFactory {
             NodeProps
           >(graphEventSourceDropTargetSpec)(
             withEditReviewAccess('update')(
-              withSelection(false, true)(
+              withSelection(
+                false,
+                true,
+              )(
                 withContextMenu(
                   nodeContextMenu,
                   document.getElementById('modal-container'),
@@ -98,7 +104,10 @@ class ComponentFactory {
           );
         case TYPE_EVENT_SOURCE:
           return withDragNode(nodeDragSourceSpec(type))(
-            withSelection(false, true)(
+            withSelection(
+              false,
+              true,
+            )(
               withContextMenu(
                 nodeContextMenu,
                 document.getElementById('modal-container'),
@@ -110,7 +119,10 @@ class ComponentFactory {
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withDndDrop<any>(graphWorkloadDropTargetSpec)(
               withDragNode(nodeDragSourceSpec(type, false))(
-                withSelection(false, true)(
+                withSelection(
+                  false,
+                  true,
+                )(
                   withContextMenu(
                     nodeContextMenu,
                     document.getElementById('modal-container'),
@@ -132,7 +144,10 @@ class ComponentFactory {
             >(nodeDropTargetSpec)(
               withEditReviewAccess('patch')(
                 withDragNode(nodeDragSourceSpec(type))(
-                  withSelection(false, true)(
+                  withSelection(
+                    false,
+                    true,
+                  )(
                     withContextMenu(
                       workloadContextMenu,
                       document.getElementById('modal-container'),

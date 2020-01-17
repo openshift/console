@@ -108,7 +108,4 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
     ),
 });
 
-export const VMWareSecrets = connect(
-  stateToProps,
-  dispatchToProps,
-)(VMWareSecretsConnected);
+export const VMWareSecrets = connect(stateToProps, dispatchToProps)(VMWareSecretsConnected);

@@ -43,8 +43,8 @@ export default class Point implements Translatable {
   }
 
   scale(scaleX: number, scaleY?: number): Point {
-    this.x = this.x * scaleX;
-    this.y = this.y * (scaleY != null ? scaleY : scaleX);
+    this.x *= scaleX;
+    this.y *= scaleY != null ? scaleY : scaleX;
     return this;
   }
 

@@ -95,9 +95,13 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
   );
 
   const defaultResources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'];
-  const firehoseResources = _.get(providedAPI, 'resources', defaultResources.map((kind) => ({
-    kind,
-  })) as CRDDescription['resources']).map(
+  const firehoseResources = _.get(
+    providedAPI,
+    'resources',
+    defaultResources.map((kind) => ({
+      kind,
+    })) as CRDDescription['resources'],
+  ).map(
     ({ name, kind, version }): FirehoseResource => {
       const group = name ? name.substring(name.indexOf('.') + 1) : '';
       const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
@@ -116,18 +120,15 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
   }) => {
     return _.flatMap(resources, (resource, kind: string) =>
       _.map(resource.data, (item) => ({ ...item, kind })),
-    ).reduce(
-      (owned, resource) => {
-        return (resource.metadata.ownerReferences || []).some(
-          (ref) =>
-            ref.uid === parentObj.metadata.uid ||
-            owned.some(({ metadata }) => metadata.uid === ref.uid),
-        )
-          ? owned.concat([resource])
-          : owned;
-      },
-      [] as K8sResourceKind[],
-    );
+    ).reduce((owned, resource) => {
+      return (resource.metadata.ownerReferences || []).some(
+        (ref) =>
+          ref.uid === parentObj.metadata.uid ||
+          owned.some(({ metadata }) => metadata.uid === ref.uid),
+      )
+        ? owned.concat([resource])
+        : owned;
+    }, [] as K8sResourceKind[]);
   };
 
   // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource

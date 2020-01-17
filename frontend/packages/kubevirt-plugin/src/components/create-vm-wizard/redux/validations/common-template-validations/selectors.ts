@@ -8,9 +8,9 @@ export const getValidationsFromTemplates = (
   jsonPath: string,
 ): CommonTemplatesValidation[] => {
   const templateValidations: CommonTemplatesValidation[][] = templates.map((relevantTemplate) =>
-    JSON.parse(iGetIn(relevantTemplate, ['metadata', 'annotations', 'validations'])).filter(
-      (validation: CommonTemplatesValidation) => validation.path.includes(jsonPath),
-    ),
+    JSON.parse(
+      iGetIn(relevantTemplate, ['metadata', 'annotations', 'validations']),
+    ).filter((validation: CommonTemplatesValidation) => validation.path.includes(jsonPath)),
   );
 
   // If we have a template with no restrictions, ignore all other validation rules, the most

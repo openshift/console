@@ -12,7 +12,10 @@ const RANGE_VECTOR_RESPONSE: PrometheusResponse = {
     result: [
       {
         metric: { testMetric: 'test-0' },
-        values: [[1, '123.4'], [2, '5678.9']],
+        values: [
+          [1, '123.4'],
+          [2, '5678.9'],
+        ],
       },
     ],
   },

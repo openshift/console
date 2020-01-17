@@ -207,7 +207,10 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _getAdditionalLinks(links, type) {
-    return _.sortBy(_.filter(links, (link) => link.spec.location === type), 'spec.text');
+    return _.sortBy(
+      _.filter(links, (link) => link.spec.location === type),
+      'spec.text',
+    );
   }
 
   _getSectionLauncherItems(launcherItems, sectionName) {
@@ -595,9 +598,11 @@ const mastheadToolbarStateToProps = ({ UI }) => ({
 });
 
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps)(
-  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(
-    MastheadToolbarContents_,
-  ),
+  connectToFlags(
+    FLAGS.AUTH_ENABLED,
+    FLAGS.CONSOLE_CLI_DOWNLOAD,
+    FLAGS.OPENSHIFT,
+  )(MastheadToolbarContents_),
 );
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {

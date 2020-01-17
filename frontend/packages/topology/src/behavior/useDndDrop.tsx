@@ -212,7 +212,7 @@ export const withDndDrop = <
   const Component: React.FC<Omit<P, keyof WithDndDropProps & CollectedProps>> = (props) => {
     // TODO fix cast to any
     const [dndDropProps, dndDropRef] = useDndDrop(spec, props as any);
-    return <WrappedComponent {...props as any} {...dndDropProps} dndDropRef={dndDropRef} />;
+    return <WrappedComponent {...(props as any)} {...dndDropProps} dndDropRef={dndDropRef} />;
   };
   return observer(Component);
 };

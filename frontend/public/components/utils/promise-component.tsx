@@ -23,7 +23,7 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
 
   return (
     <Component
-      {...props as any}
+      {...(props as any)}
       handlePromise={handlePromise}
       inProgress={inProgress}
       errorMessage={errorMessage}
@@ -44,7 +44,10 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
     this.setState({
       inProgress: true,
     });
-    return promise.then((res) => this.then(res), (error) => this.catch(error));
+    return promise.then(
+      (res) => this.then(res),
+      (error) => this.catch(error),
+    );
   }
 
   private then(res) {

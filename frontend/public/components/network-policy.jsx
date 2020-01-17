@@ -79,9 +79,9 @@ const NetworkPolicyTableRow = ({ obj: np, index, key, style }) => {
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {_.isEmpty(np.spec.podSelector) ? (
-          <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${
-            np.metadata.namespace
-          }`}</Link>
+          <Link
+            to={`/search/ns/${np.metadata.namespace}?kind=Pod`}
+          >{`All pods within ${np.metadata.namespace}`}</Link>
         ) : (
           <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
         )}
