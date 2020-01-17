@@ -35,6 +35,13 @@ export async function fillInput(elem: any, value: string) {
   } while ((await elem.getAttribute('value')) !== value && attempts > 0);
 }
 
+export async function setCheckboxState(elem: any, targetState: boolean) {
+  const checkboxState = await elem.isSelected();
+  if (checkboxState !== targetState) {
+    await click(elem);
+  }
+}
+
 export async function createProject(name: string) {
   // Use projects if OpenShift so non-admin users can run tests.
   const resource = browser.params.openshift === 'true' ? 'projects' : 'namespaces';

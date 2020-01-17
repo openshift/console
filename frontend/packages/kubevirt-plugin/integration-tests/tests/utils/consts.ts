@@ -29,8 +29,13 @@ export const POD_CREATE_DELETE_TIMEOUT_SECS =
   POD_CREATION_TIMEOUT_SECS + POD_TERMINATION_TIMEOUT_SECS;
 
 export const NODE_STOP_MAINTENANCE_TIMEOUT = 40 * SEC;
-export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500000;
+export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500 * SEC;
 
+export const V2V_INSTANCE_CONNECTION_TIMEOUT = 30 * SEC;
+export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
+
+// Import Wizard strings
+export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 // Web-UI Exceptions
 export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
 export const WIZARD_CREATE_VM_SUCCESS = 'Successfully created virtual machine';

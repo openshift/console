@@ -7,7 +7,7 @@ import {
   resolveTimeout,
 } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../../views/virtualMachine.view';
-import { VMConfig } from '../utils/types';
+import { VMConfig, VMImportConfig } from '../utils/types';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
@@ -25,6 +25,7 @@ import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirt
 import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
 import { KubevirtDetailView } from './kubevirtDetailView';
+import { ImportWizard } from './importWizard';
 
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config) {
@@ -245,5 +246,87 @@ export class VirtualMachine extends KubevirtDetailView {
       // Else wait for possible import to finish
       await this.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     }
+  }
+
+  async import({
+    provider,
+    instanceConfig,
+    sourceVMName,
+    name,
+    description,
+    operatingSystem,
+    flavorConfig,
+    workloadProfile,
+    storageResources,
+    networkResources,
+    cloudInit,
+  }: VMImportConfig) {
+    const importWizard = new ImportWizard();
+    await this.navigateToListView();
+    await importWizard.openWizard();
+
+    // General section
+    await importWizard.selectProvider(provider);
+    await importWizard.waitForVMWarePod();
+    await importWizard.configureInstance(instanceConfig);
+
+    await importWizard.connectToInstance();
+    await importWizard.waitForInstanceSync();
+
+    await importWizard.selectSourceVirtualMachine(sourceVMName);
+    await importWizard.waitForInstanceSync();
+
+    if (operatingSystem) {
+      await importWizard.selectOperatingSystem(operatingSystem as string);
+    }
+    if (flavorConfig) {
+      await importWizard.configureFlavor(flavorConfig);
+    }
+    if (workloadProfile) {
+      await importWizard.selectWorkloadProfile(workloadProfile);
+    }
+    if (name) {
+      await importWizard.fillName(name);
+    }
+    if (description) {
+      await importWizard.fillDescription(description);
+    }
+    await importWizard.next();
+
+    // Networking
+    // Frst update imported network interfaces to comply with k8s
+    await importWizard.updateImportedNICs();
+    // Optionally add new interfaces, if any
+    if (networkResources !== undefined) {
+      for (const NIC of networkResources) {
+        await importWizard.addNIC(NIC);
+      }
+    }
+    await importWizard.next();
+
+    // Storage
+    // First update disks that come from the source VM
+    await importWizard.updateImportedDisks();
+    // Optionally add new disks
+    if (networkResources !== undefined) {
+      for (const disk of storageResources) {
+        await importWizard.addDisk(disk);
+      }
+    }
+    await importWizard.next();
+
+    // Advanced - Cloud Init
+    if (cloudInit !== undefined) {
+      await importWizard.configureCloudInit(cloudInit);
+    }
+    await importWizard.next();
+    // Advanced - Virtual HW
+    await importWizard.next();
+    // Review
+    await importWizard.confirmAndCreate();
+    await importWizard.waitForCreation();
+
+    // Navigate to detail page
+    await importWizard.navigateToDetail();
   }
 }

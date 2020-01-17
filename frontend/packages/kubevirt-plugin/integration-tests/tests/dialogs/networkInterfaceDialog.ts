@@ -1,8 +1,8 @@
 import { click } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
-import { fillInput, selectOptionByText } from '../utils/utils';
+import { fillInput, selectOptionByText, getSelectOptions } from '../utils/utils';
 import { NetworkResource } from '../utils/types';
-import { applyButton } from '../../views/kubevirtDetailView.view';
+import { applyButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class NetworkInterfaceDialog {
@@ -26,14 +26,39 @@ export class NetworkInterfaceDialog {
     await fillInput(view.nicMACAddress, mac);
   }
 
-  async create(nic: NetworkResource) {
+  async getNetworks(): Promise<string[]> {
+    return getSelectOptions(view.nicNetwork);
+  }
+
+  async create(NIC: NetworkResource) {
     await waitForNoLoaders();
-    await this.fillName(nic.name);
-    await this.selectModel(nic.model);
-    await this.selectNetwork(nic.network);
-    await this.selectType(nic.type);
-    await this.fillMAC(nic.mac);
+    await this.fillName(NIC.name);
+    await this.selectModel(NIC.model);
+    await this.selectNetwork(NIC.network);
+    await this.selectType(NIC.type);
+    await this.fillMAC(NIC.mac);
     await click(applyButton);
+    await waitForNoLoaders();
+  }
+
+  async edit(NIC) {
+    await waitForNoLoaders();
+    if (NIC.name) {
+      await this.fillName(NIC.name);
+    }
+    if (NIC.model) {
+      await this.selectModel(NIC.model);
+    }
+    if (NIC.network) {
+      await this.selectNetwork(NIC.network);
+    }
+    if (NIC.type) {
+      await this.selectType(NIC.type);
+    }
+    if (NIC.mac) {
+      await this.fillMAC(NIC.mac);
+    }
+    await click(saveButton);
     await waitForNoLoaders();
   }
 }
