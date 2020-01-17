@@ -1,5 +1,5 @@
 import { JSONSchema6 } from 'json-schema';
-import { BadgeType } from '@console/shared';
+import { BadgeType, NodeAddress } from '@console/shared';
 import { EventInvolvedObject } from './event';
 
 export * from './job';
@@ -543,9 +543,16 @@ export type TemplateInstanceKind = {
   };
 } & K8sResourceCommon;
 
+export type MachineAWSPlacement = {
+  availabilityZone?: string;
+  region?: string;
+};
+
 export type MachineSpec = {
   providerSpec: {
-    value: K8sResourceKind;
+    value?: {
+      placement?: MachineAWSPlacement;
+    };
   };
   versions: {
     kubelet: string;
@@ -557,10 +564,7 @@ export type MachineKind = {
   spec: MachineSpec;
   status?: {
     phase?: string;
-    addresses: {
-      address?: string;
-      type: string;
-    };
+    addresses: NodeAddress[];
     lastUpdated: string;
     nodeRef: {
       kind: string;

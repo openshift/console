@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import {
@@ -187,7 +186,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Conditions" />
-        <Conditions conditions={_.get(obj, 'status.providerStatus.conditions')} />
+        <Conditions conditions={obj.status?.providerStatus?.conditions} />
       </div>
     </>
   );

@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import {
+  MachineAWSPlacement,
   MachineKind,
   MachineSetKind,
   MachineDeploymentKind,
@@ -8,20 +8,25 @@ import {
 import { getName } from './common';
 
 export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string =>
-  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/cluster-api-machine-role']);
+  obj?.metadata?.labels?.['machine.openshift.io/cluster-api-machine-role'];
 
 export const getMachineInstanceType = (obj: MachineKind): string =>
-  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/instance-type']);
+  obj?.metadata?.labels?.['machine.openshift.io/instance-type'];
 
 export const getMachineRegion = (obj: MachineKind): string =>
-  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/region']);
+  obj?.metadata?.labels?.['machine.openshift.io/region'];
 
 export const getMachineZone = (obj: MachineKind): string =>
-  _.get(obj, ['metadata', 'labels', 'machine.openshift.io/zone']);
+  obj?.metadata?.labels?.['machine.openshift.io/zone'];
 
-export const getMachineNodeName = (obj: MachineKind) => _.get(obj, 'status.nodeRef.name');
+// Machine sets don't have the region and zone labels. Use `providerSpec` if set.
+export const getMachineAWSPlacement = (
+  machineSet: MachineSetKind | MachineDeploymentKind,
+): MachineAWSPlacement => machineSet?.spec?.template?.spec?.providerSpec?.value?.placement || {};
+
+export const getMachineNodeName = (obj: MachineKind) => obj?.status?.nodeRef?.name;
 
 export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): NodeKind =>
   nodes.find((node) => getMachineNodeName(machine) === getName(node));
 
-export const getMachineAddresses = (machine: MachineKind) => _.get(machine, 'status.addresses', []);
+export const getMachineAddresses = (machine: MachineKind) => machine?.status?.addresses;
