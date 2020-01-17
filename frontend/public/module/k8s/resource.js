@@ -89,7 +89,7 @@ export const k8sPatch = (kind, resource, data, opts = {}) =>
       kind,
       Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
     ),
-    data,
+    _.compact(data),
   );
 
 export const k8sKill = (kind, resource, opts = {}, json = null) =>
