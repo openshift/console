@@ -103,6 +103,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${referenceForModel(BareMetalHostModel)}/:name/edit`,
+      loader: () =>
+        import(
+          './components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage' /* webpackChunkName: "metal3-baremetalhost" */
+        ).then((m) => m.default),
+      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+    },
+  },
+  {
     type: 'Dashboards/Overview/Inventory/Item/Replacement',
     properties: {
       model: NodeModel,
