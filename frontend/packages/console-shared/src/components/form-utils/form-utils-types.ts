@@ -10,4 +10,6 @@ export interface FormFooterProps {
   successMessage?: string;
   disableSubmit: boolean;
   showAlert?: boolean;
+  infoTitle?: string;
+  infoMessage?: string;
 }

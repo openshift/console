@@ -10,6 +10,8 @@ const FormFooter: React.FC<FormFooterProps> = ({
   submitLabel = 'Save',
   resetLabel = 'Reload',
   cancelLabel = 'Cancel',
+  infoTitle = 'You made changes to this page.',
+  infoMessage = `Click ${submitLabel} to save changes or ${resetLabel} to cancel changes.`,
   isSubmitting,
   errorMessage,
   successMessage,
@@ -18,8 +20,8 @@ const FormFooter: React.FC<FormFooterProps> = ({
 }) => (
   <ButtonBar inProgress={isSubmitting} errorMessage={errorMessage} successMessage={successMessage}>
     {showAlert && (
-      <Alert isInline className="co-alert" variant="info" title="You made changes to this page.">
-        {`Click ${submitLabel} to save changes or ${resetLabel} to cancel changes.`}
+      <Alert isInline className="co-alert" variant="info" title={infoTitle}>
+        {infoMessage}
       </Alert>
     )}
     <ActionGroup className="pf-c-form">
