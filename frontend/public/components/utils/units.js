@@ -133,7 +133,8 @@ const formatValue = (value, options) => {
     maximumFractionDigits: fractionDigits,
   });
 
-  if (!isFinite(value)) {
+  // Handle special case of `-0`, which can be printed as "-0" in some environments.
+  if (!isFinite(value) || value === 0) {
     return Intl.NumberFormat(locales, rest).format(0);
   }
   return Intl.NumberFormat(locales, rest).format(value);
@@ -196,6 +197,10 @@ const formatPercentage = (value, options) => {
       maximumFractionDigits: 1,
     },
   );
+  // Handle special case of `-0`, which can be printed as "-0" in some environments.
+  if (!isFinite(value) || value === 0) {
+    return Intl.NumberFormat(locales, rest).format(0);
+  }
   return Intl.NumberFormat(locales, rest).format(value);
 };
 
