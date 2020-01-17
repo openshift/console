@@ -43,6 +43,18 @@ export class PatchBuilder {
     return this;
   };
 
+  add = (value) => {
+    this.value = value;
+    return this.setOperation(PatchOperation.ADD);
+  };
+
+  replace = (value) => {
+    this.value = value;
+    return this.setOperation(PatchOperation.REPLACE);
+  };
+
+  remove = () => this.setOperation(PatchOperation.REMOVE);
+
   setListRemove = <T>(value: T, items: T[], compareGetter?: (t: T) => any) =>
     this.setListRemoveSimpleValue(
       compareGetter ? compareGetter(value) : value,
@@ -111,6 +123,8 @@ export class PatchBuilder {
   setObjectUpdate = (key: string, value: any, object: { [k: string]: any }) => {
     if (object == null) {
       this.value = { [key]: value };
+    } else if (object[key] === value) {
+      this.valid = false;
     } else {
       this.value = value;
       this.valueKey = key;
@@ -146,5 +160,24 @@ export class PatchBuilder {
     }
 
     return result;
+  };
+
+  buildAddObjectKeysPatches = (
+    newObject: { [k: string]: any },
+    oldObject: { [k: string]: any },
+  ): Patch[] => {
+    if (!newObject) {
+      return [];
+    }
+    let builders;
+    if (!oldObject) {
+      builders = [new PatchBuilder(this.path).add(newObject)];
+    } else {
+      builders = Object.keys(newObject).map((key) =>
+        new PatchBuilder(this.path).setObjectUpdate(key, newObject[key], oldObject),
+      );
+    }
+
+    return _.compact(builders.map((u) => u.build()));
   };
 }
