@@ -1,13 +1,19 @@
-# Used for compiling the tectonic-console. After editing this file,
-# (and committing your edits) you should run ./push-builder.sh to
-# push a new version of your image to quay.io/coreos/tectonic-console-builder
+# Used for testing OpenShift console in CI. After editing this file:
+#
+# * Bump the builder version in `Dockerfile` and `builder-run.sh`
+# * Commit the changes
+# * Run `DOCKER_TAG=<new-tag> ./push-builder.sh` to update the image on quay
+#   (requires edit permission to the quay.io/coreos/tectonic-console-builder repo)
+#
+# You can test the image using `./builder-run.sh`. For instance:
+#   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.11-stretch
+FROM golang:1.13-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
 ### For golang testing stuff
-RUN go get -u github.com/golang/lint/golint
+RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
