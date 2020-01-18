@@ -1,0 +1,93 @@
+import * as React from 'react';
+import { BaseEdge } from '@console/topology';
+import {
+  ActionsMenu,
+  ResourceLink,
+  SidebarSectionHeading,
+} from '@console/internal/components/utils';
+import {
+  TYPE_CONNECTS_TO,
+  TYPE_EVENT_SOURCE_LINK,
+  TYPE_REVISION_TRAFFIC,
+  TYPE_SERVICE_BINDING,
+} from './const';
+import { edgeActions } from './actions/edgeActions';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { referenceFor } from '@console/internal/module/k8s';
+import { TopologyDataModel, TopologyDataObject } from './topology-types';
+
+export type TopologyEdgePanelProps = {
+  edge: BaseEdge;
+  data: TopologyDataModel;
+};
+
+const connectorTypeToTitle = (type: string): string => {
+  switch (type) {
+    case TYPE_CONNECTS_TO:
+      return 'Visual connector';
+    case TYPE_SERVICE_BINDING:
+      return 'Binding connector';
+    case TYPE_REVISION_TRAFFIC:
+      return 'Traffic distribution connector';
+    case TYPE_EVENT_SOURCE_LINK:
+      return 'Event source connector';
+    default:
+      return '';
+  }
+};
+
+const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data }) => {
+  const source: TopologyDataObject = edge.getSource().getData();
+  const target: TopologyDataObject = edge.getTarget().getData();
+  const resources = [source?.resources?.obj, target?.resources?.obj];
+
+  const nodes = data.graph.nodes.map((n) => edge.getController().getNodeById(n.id));
+
+  return (
+    <div className="overview__sidebar-pane resource-overview">
+      <div className="overview__sidebar-pane-head resource-overview__heading">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name co-resource-item">
+            {connectorTypeToTitle(edge.getType())}
+          </div>
+          <div className="co-actions">
+            <ActionsMenu actions={edgeActions(edge, nodes)} />
+          </div>
+        </h1>
+      </div>
+      <ul
+        className={classNames(
+          'co-m-horizontal-nav__menu',
+          'co-m-horizontal-nav__menu--within-sidebar',
+          'co-m-horizontal-nav__menu--within-overview-sidebar',
+          'odc-application-resource-tab',
+        )}
+      >
+        <li className="co-m-horizontal-nav__menu-item">
+          <button type="button">Resources</button>
+        </li>
+      </ul>
+      <div className="overview__sidebar-pane-body">
+        <SidebarSectionHeading text="Connections" />
+        <ul className="list-group">
+          {_.map(resources, (resource) => {
+            if (!resource) {
+              return null;
+            }
+            const {
+              metadata: { name, namespace, uid },
+            } = resource;
+            return (
+              <li className="list-group-item  container-fluid" key={uid}>
+                <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default TopologyEdgePanel;

@@ -604,6 +604,19 @@ export const createTopologyResourceConnection = (
   const replaceTargetObj = replaceTarget && getTopologyResourceObject(replaceTarget);
 
   if (serviceBindingFlag && target.operatorBackedService) {
+    if (replaceTarget) {
+      return new Promise<K8sResourceKind[] | K8sResourceKind>((resolve, reject) => {
+        createServiceBinding(sourceObj, targetObj)
+          .then(() => {
+            // eslint-disable-next-line promise/no-nesting
+            removeResourceConnection(sourceObj, replaceTargetObj)
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(resolve);
+      });
+    }
+
     return createServiceBinding(sourceObj, targetObj);
   }
 

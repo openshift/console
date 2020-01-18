@@ -2,7 +2,14 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { Layer, Edge, WithRemoveConnectorProps, observer, useHover } from '@console/topology';
+import {
+  Layer,
+  Edge,
+  WithRemoveConnectorProps,
+  observer,
+  useHover,
+  useSelection,
+} from '@console/topology';
 import { getTopologyResourceObject } from '../../topology-utils';
 import './BaseEdge.scss';
 
@@ -21,6 +28,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   className,
 }) => {
   const [hover, hoverRef] = useHover();
+  const [selected, onSelect] = useSelection(false, true);
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
   const resourceObj = getTopologyResourceObject(element.getSource().getData());
@@ -51,8 +59,9 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
         data-test-id="edge-handler"
         className={classNames(className, 'odc-base-edge', {
           'is-highlight': dragging,
-          'is-hover': hover,
+          'is-hover': hover || selected,
         })}
+        onClick={onSelect}
       >
         <line
           x1={startPoint.x}
