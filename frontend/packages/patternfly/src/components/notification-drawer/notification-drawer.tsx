@@ -16,7 +16,6 @@ import {
 
 import NotificationDrawerHeading from './notification-drawer-heading';
 import NotificationTypeHeading from './notification-type-heading';
-import { NotificationEntryProps } from './notification-entry';
 
 export enum NotificationTypes {
   info = 'info',
@@ -87,8 +86,8 @@ NotificationDrawer.displayName = 'NotificationDrawer';
 export type NotificationDrawerProps = {
   isDrawerExpanded: boolean;
   toggleNotificationDrawer: () => any;
-  alertData?: React.FC<NotificationEntryProps>[];
-  updateData?: React.FC<NotificationEntryProps>[];
+  alertData?: JSX.Element[];
+  updateData?: JSX.Element[];
 };
 
 export default NotificationDrawer;

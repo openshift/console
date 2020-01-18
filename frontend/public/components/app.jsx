@@ -14,10 +14,11 @@ import { ConnectedNotificationDrawer } from './notification-drawer';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { Navigation } from './nav';
-import { history } from './utils';
+import { history, Firehose } from './utils';
 import * as UIActions from '../actions/ui';
-import { fetchSwagger, getCachedResources } from '../module/k8s';
+import { fetchSwagger, getCachedResources, referenceForModel } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
+import { ClusterVersionModel } from '../models';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -25,6 +26,16 @@ import '../style.scss';
 import { Page } from '@patternfly/react-core';
 
 const breakpointMD = 768;
+
+const cvResource = [
+  {
+    kind: referenceForModel(ClusterVersionModel),
+    namespaced: false,
+    name: 'version',
+    isList: false,
+    prop: 'cv',
+  },
+];
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
@@ -116,9 +127,11 @@ class App extends React.PureComponent {
             />
           }
         >
-          <ConnectedNotificationDrawer>
-            <AppContents />
-          </ConnectedNotificationDrawer>
+          <Firehose resources={cvResource}>
+            <ConnectedNotificationDrawer>
+              <AppContents />
+            </ConnectedNotificationDrawer>
+          </Firehose>
         </Page>
         <ConsoleNotifier location="BannerBottom" />
       </>

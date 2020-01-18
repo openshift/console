@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { NotificationDrawer, NotificationEntry } from '@console/patternfly';
-
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
 import { Alert, alertURL } from '@console/internal/components/monitoring';
@@ -14,7 +13,16 @@ import {
   getAlertTime,
   getAlerts,
 } from '@console/shared/src/components/dashboard/status-card/utils';
+
 import { coFetchJSON } from '../co-fetch';
+import { FirehoseResult } from './utils';
+import {
+  ClusterUpdate,
+  ClusterVersionKind,
+  hasAvailableUpdates,
+  K8sResourceKind,
+} from '../module/k8s';
+import { getSortedUpdates } from './modals/cluster-update-modal';
 
 export enum NotificationTypes {
   info = 'info',
@@ -24,25 +32,13 @@ export enum NotificationTypes {
   update = 'update',
 }
 
-const fakeUpdateData = [
-  {
-    description: '4.4.0-0.ci-2020-01-01-204859',
-    type: NotificationTypes.update,
-    title: 'Cluster update avaialble',
-  },
-  {
-    description: '4.4.0-0.ci-2020-01-01-2048510',
-    type: NotificationTypes.update,
-    title: 'Cluster security update avaialble',
-  },
-];
-
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   toggleNotificationDrawer,
   toggleNotificationsRead,
   isDrawerExpanded,
   notificationsRead,
   alerts,
+  resources,
   children,
 }) => {
   React.useEffect(() => {
@@ -70,35 +66,37 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }
     return () => pollerTimeout.clearTimeout;
   }, []);
-  let updateList = [];
-  let alertList = [];
-  const { data } = alerts;
-  if (fakeUpdateData.length > 0) {
-    updateList = fakeUpdateData.map(({ description, title, type }, i) => (
-      <NotificationEntry
-        key={i}
-        description={description}
-        timestamp={new Date().toISOString()}
-        type={type}
-        title={title}
-        targetURL="/settings/cluster"
-        toggleNotificationDrawer={toggleNotificationDrawer}
-      />
-    ));
-  }
-  if (data && data.length > 0) {
-    alertList = data.map((alert, i) => (
-      <NotificationEntry
-        key={i}
-        description={getAlertDescription(alert) || getAlertMessage(alert)}
-        timestamp={getAlertTime(alert)}
-        type={NotificationTypes[getAlertSeverity(alert)]}
-        title={getAlertName(alert)}
-        toggleNotificationDrawer={toggleNotificationDrawer}
-        targetURL={alertURL(alert, alert.rule.id)}
-      />
-    ));
-  }
+  const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
+  const cvLoaded: boolean = _.get(resources.cv, 'loaded');
+  const updateData: ClusterUpdate[] = hasAvailableUpdates(cv) ? getSortedUpdates(cv) : [];
+  const { data, loaded } = alerts;
+  const updateList =
+    cvLoaded && !_.isEmpty(updateData)
+      ? [
+          <NotificationEntry
+            key="cluster-udpate"
+            description={updateData[0].version || 'Unknown'}
+            type={NotificationTypes.update}
+            title="Cluster update available"
+            toggleNotificationDrawer={toggleNotificationDrawer}
+            targetURL="/settings/cluster"
+          />,
+        ]
+      : [];
+  const alertList =
+    loaded && !_.isEmpty(data)
+      ? data.map((alert, i) => (
+          <NotificationEntry
+            key={i}
+            description={getAlertDescription(alert) || getAlertMessage(alert)}
+            timestamp={getAlertTime(alert)}
+            type={NotificationTypes[getAlertSeverity(alert)]}
+            title={getAlertName(alert)}
+            toggleNotificationDrawer={toggleNotificationDrawer}
+            targetURL={alertURL(alert, alert.rule.id)}
+          />
+        ))
+      : [];
   if (_.isEmpty(alertList) && _.isEmpty(updateList) && !notificationsRead) {
     toggleNotificationsRead();
   } else if ((!_.isEmpty(alertList) || !_.isEmpty(updateList)) && notificationsRead) {
@@ -137,6 +135,9 @@ export type ConnectedNotificationDrawerProps = {
     data: Alert[];
     loaded: boolean;
     loadError?: string;
+  };
+  resources?: {
+    [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
   };
 };
 
