@@ -79,7 +79,8 @@ const AllVariableDropdowns = connect(
 const timespanOptions = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const defaultTimespan = '30m';
 
-const pollIntervalOptions = ['5s', '15s', '30s', '1m', '2m', '5m', '15m', '30m'];
+const pollOffText = 'Off';
+const pollIntervalOptions = [pollOffText, '15s', '30s', '1m', '5m', '15m', '30m', '1h', '2h', '1d'];
 const defaultPollInterval = '30s';
 
 // TODO: Dynamically load the list of dashboards
@@ -276,7 +277,9 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
               title="Time Range"
             />
             <VariableDropdown
-              onChange={(v: string) => setPollInterval(parsePrometheusDuration(v))}
+              onChange={(v: string) =>
+                setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
+              }
               options={pollIntervalOptions}
               selected={defaultPollInterval}
               title="Refresh Interval"
@@ -327,7 +330,7 @@ type VariableDropdownProps = {
 type BoardProps = {
   board: string;
   patchVariable: (key: string, patch: Variable) => undefined;
-  pollInterval: number;
+  pollInterval: null | number;
   timespan: number;
 };
 
@@ -338,7 +341,7 @@ type AllVariableDropdownsProps = {
 
 type CardProps = {
   panel: Panel;
-  pollInterval: number;
+  pollInterval: null | number;
   timespan: number;
   variables: VariablesMap;
 };
