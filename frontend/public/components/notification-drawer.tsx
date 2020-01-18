@@ -12,7 +12,7 @@ import {
   getAlertSeverity,
   getAlertTime,
   getAlerts,
-} from '@console/shared/src/components/dashboard/status-card/utils';
+} from '@console/shared/src/components/dashboard/status-card/alert-utils';
 
 import { coFetchJSON } from '../co-fetch';
 import { FirehoseResult } from './utils';
@@ -105,8 +105,8 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
   return (
     <NotificationDrawer
-      toggleNotificationDrawer={toggleNotificationDrawer}
-      isDrawerExpanded={isDrawerExpanded}
+      toggleExpanded={toggleNotificationDrawer}
+      isExpanded={isDrawerExpanded}
       alertData={alertList}
       updateData={updateList}
     >
@@ -147,11 +147,8 @@ const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => 
   alerts: UI.getIn(['monitoring', 'notificationAlerts']) || {},
 });
 
-const connectToNotifications = connect(
-  (state: RootState) => notificationStateToProps(state),
-  {
-    toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
-    toggleNotificationsRead: UIActions.notificationDrawerToggleRead,
-  },
-);
+const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
+  toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
+  toggleNotificationsRead: UIActions.notificationDrawerToggleRead,
+});
 export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

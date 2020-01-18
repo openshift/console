@@ -15,11 +15,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json",
     "comment": true,
     "ecmaFeatures": {
       "jsx": true
     },
+    "extraFileExtensions": [".json"],
     "ecmaVersion": 2017,
     "sourceType": "module"
   },

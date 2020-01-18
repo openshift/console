@@ -614,13 +614,14 @@ const mastheadToolbarStateToProps = (state) => ({
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
-const MastheadToolbarContents = connect(
-  mastheadToolbarStateToProps,
-  { drawerToggle: UIActions.notificationDrawerToggleExpanded },
-)(
-  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)()(
-    MastheadToolbarContents_,
-  ),
+const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
+  drawerToggle: UIActions.notificationDrawerToggleExpanded,
+})(
+  connectToFlags(
+    FLAGS.AUTH_ENABLED,
+    FLAGS.CONSOLE_CLI_DOWNLOAD,
+    FLAGS.OPENSHIFT,
+  )(MastheadToolbarContents_),
 );
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {

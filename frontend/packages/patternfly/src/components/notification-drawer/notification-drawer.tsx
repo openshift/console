@@ -25,7 +25,7 @@ export enum NotificationTypes {
   update = 'update',
 }
 
-const emptyState = (toggleDrawer) => (
+const emptyState = (toggleExpanded) => (
   <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
     <Title headingLevel="h5" size="lg">
       No critical alerts
@@ -35,7 +35,7 @@ const emptyState = (toggleDrawer) => (
       or silenced critical alerts however.
     </EmptyStateBody>
     <EmptyStateSecondaryActions>
-      <Link to="/monitoring/alerts" onClick={toggleDrawer}>
+      <Link to="/monitoring/alerts" onClick={toggleExpanded}>
         View all alerts
       </Link>
     </EmptyStateSecondaryActions>
@@ -43,17 +43,17 @@ const emptyState = (toggleDrawer) => (
 );
 
 const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
-  isDrawerExpanded,
+  isExpanded,
   children,
-  toggleNotificationDrawer,
+  toggleExpanded,
   alertData = [],
   updateData = [],
 }) => {
   const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(true);
   const [isAvailableUpdateExpanded, toggleAvailableUpdateExpanded] = React.useState<boolean>(false);
-  const criticalAlerts = _.isEmpty(alertData) ? emptyState(toggleNotificationDrawer) : alertData;
+  const criticalAlerts = _.isEmpty(alertData) ? emptyState(toggleExpanded) : alertData;
   return (
-    <Drawer isExpanded={isDrawerExpanded} isInline>
+    <Drawer isExpanded={isExpanded} isInline>
       <DrawerContent>{children}</DrawerContent>
       <DrawerPanelContent noPadding>
         <NotificationDrawerHeading count={alertData.length + updateData.length}>
@@ -84,8 +84,8 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 NotificationDrawer.displayName = 'NotificationDrawer';
 
 export type NotificationDrawerProps = {
-  isDrawerExpanded: boolean;
-  toggleNotificationDrawer: () => any;
+  isExpanded: boolean;
+  toggleExpanded: () => any;
   alertData?: JSX.Element[];
   updateData?: JSX.Element[];
 };
