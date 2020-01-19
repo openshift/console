@@ -2,25 +2,38 @@ import * as React from 'react';
 import { ModelKind } from '@console/topology';
 import PipelineVisualizationSurface from './PipelineVisualizationSurface';
 import { PipelineLayout } from './const';
-import { PipelineEdgeModel, PipelineNodeModel } from './types';
+import { PipelineEdgeModel, PipelineMixedNodeModel } from './types';
 
 import './PipelineTopologyGraph.scss';
 
 type PipelineTopologyGraphProps = {
   id: string;
-  nodes: PipelineNodeModel[];
+  fluid?: boolean;
+  nodes: PipelineMixedNodeModel[];
   edges: PipelineEdgeModel[];
+  layout: PipelineLayout;
 };
 
-const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({ id, nodes, edges }) => {
+const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
+  id,
+  fluid,
+  nodes,
+  edges,
+  layout,
+}) => {
+  console.debug('updating graph', nodes, edges);
+
   return (
-    <div className="odc-pipeline-topology-visualization">
+    <div
+      className="odc-pipeline-topology-visualization"
+      style={{ display: fluid ? 'block' : undefined }}
+    >
       <PipelineVisualizationSurface
         model={{
           graph: {
             id,
             type: ModelKind.graph,
-            layout: PipelineLayout.DAGRE,
+            layout,
           },
           nodes,
           edges,

@@ -1,19 +1,53 @@
 import { EdgeModel, NodeModel } from '@console/topology';
 import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
-import { NodeType } from './const';
+import { AddNodeDirection, NodeType } from './const';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
-export type PipelineEdgeModel = EdgeModel;
+// Builder Callbacks
+export type NewTaskListNodeCallback = (direction: AddNodeDirection) => void;
+export type NewTaskNodeCallback = (resource: K8sResourceKind) => void;
 
-export type PipelineNodeModelData = {
+// Node Data Models
+export type PipelineRunAfterNodeModelData = {
+  task: {
+    name: string;
+    runAfter?: string[];
+  };
+};
+export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
+  clusterTaskList: K8sResourceKind[];
+  namespaceTaskList: K8sResourceKind[];
+  onNewTask: NewTaskNodeCallback;
+};
+export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
+  task: PipelineVisualizationTaskItem;
+  onAddNode: NewTaskListNodeCallback;
+};
+export type SpacerNodeModelData = PipelineRunAfterNodeModelData & {};
+export type TaskNodeModelData = PipelineRunAfterNodeModelData & {
   task: PipelineVisualizationTaskItem;
   pipeline?: Pipeline;
   pipelineRun?: PipelineRun;
 };
 
-export type PipelineNodeModel = NodeModel & {
-  data: PipelineNodeModelData;
+// Graph Models
+type PipelineNodeModel<D extends PipelineRunAfterNodeModelData> = NodeModel & {
+  data: D;
+  type: NodeType;
 };
+export type PipelineMixedNodeModel = PipelineNodeModel<PipelineRunAfterNodeModelData>;
+export type PipelineTaskNodeModel = PipelineNodeModel<TaskNodeModelData>;
+export type PipelineTaskListNode = PipelineNodeModel<TaskListNodeModelData>;
 
-export type NodeCreator = (name: string, data: PipelineNodeModelData) => PipelineNodeModel;
-export type NodeCreatorSetup = (type: NodeType, width?: number) => NodeCreator;
+export type PipelineEdgeModel = EdgeModel;
+
+// Node Creators
+export type NodeCreator<D extends PipelineRunAfterNodeModelData> = (
+  name: string,
+  data: D,
+) => PipelineNodeModel<D>;
+export type NodeCreatorSetup = (
+  type: NodeType,
+  width?: number,
+) => NodeCreator<PipelineRunAfterNodeModelData>;

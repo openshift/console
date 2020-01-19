@@ -32,7 +32,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       createProps={{
         to: `/k8s/${namespace ? `ns/${namespace}` : 'cluster'}/${referenceForModel(
           PipelineModel,
-        )}/~new`,
+        )}/~new/builder`,
       }}
       filterLabel="by name"
       textFilter="name"

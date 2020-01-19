@@ -1,8 +1,28 @@
+import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 import { getPipelineTasks, PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
-import { NODE_HEIGHT, NodeType, NODE_WIDTH } from './const';
-import { PipelineEdgeModel, PipelineNodeModel, NodeCreator, NodeCreatorSetup } from './types';
+import {
+  NODE_HEIGHT,
+  NodeType,
+  NODE_WIDTH,
+  AddNodeDirection,
+  PipelineLayout,
+  DAGRE_BUILDER_PROPS,
+  DAGRE_VIEWER_PROPS,
+} from './const';
+import {
+  PipelineEdgeModel,
+  NodeCreator,
+  NodeCreatorSetup,
+  SpacerNodeModelData,
+  TaskListNodeModelData,
+  TaskNodeModelData,
+  PipelineMixedNodeModel,
+  PipelineTaskNodeModel,
+  BuilderNodeModelData,
+  PipelineRunAfterNodeModelData,
+} from './types';
 
 const createGenericNode: NodeCreatorSetup = (type, width?) => (name, data) => ({
   id: name,
@@ -13,12 +33,37 @@ const createGenericNode: NodeCreatorSetup = (type, width?) => (name, data) => ({
 });
 
 // Node variations
-export const createTaskNode: NodeCreator = createGenericNode(NodeType.TASK_NODE);
-export const createSpacerNode: NodeCreator = createGenericNode(NodeType.SPACER_NODE, 0);
+export const createTaskNode: NodeCreator<TaskNodeModelData> = createGenericNode(NodeType.TASK_NODE);
+export const createSpacerNode: NodeCreator<SpacerNodeModelData> = createGenericNode(
+  NodeType.SPACER_NODE,
+  0,
+);
+export const createTaskListNode: NodeCreator<TaskListNodeModelData> = createGenericNode(
+  NodeType.TASK_LIST_NODE,
+);
+export const createBuilderNode: NodeCreator<BuilderNodeModelData> = createGenericNode(
+  NodeType.BUILDER_NODE,
+);
 
-export const handleParallelToParallelNodes = (nodes: PipelineNodeModel[]): PipelineNodeModel[] => {
+export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNodeModelData> => {
+  switch (type) {
+    case NodeType.TASK_LIST_NODE:
+      return createTaskListNode;
+    case NodeType.BUILDER_NODE:
+      return createBuilderNode;
+    case NodeType.SPACER_NODE:
+      return createSpacerNode;
+    case NodeType.TASK_NODE:
+    default:
+      return createTaskNode;
+  }
+};
+
+export const handleParallelToParallelNodes = (
+  nodes: PipelineMixedNodeModel[],
+): PipelineMixedNodeModel[] => {
   type ParallelNodeReference = {
-    node: PipelineNodeModel;
+    node: PipelineTaskNodeModel;
     runAfter: string[];
     atIndex: number;
   };
@@ -61,7 +106,8 @@ export const handleParallelToParallelNodes = (nodes: PipelineNodeModel[]): Pipel
   }
 
   // Insert a spacer node between the multiple nodes on the sides of a parallel-to-parallel
-  const newNodes: PipelineNodeModel[] = [];
+  const newNodes: PipelineMixedNodeModel[] = [];
+  const newRunAfterNodeMap: { [nodeId: string]: string[] } = {};
   multiParallelToParallelList.forEach((p2p: ParallelNodeReference[]) => {
     // All nodes in each array share their runAfters
     const { runAfter } = p2p[0];
@@ -69,50 +115,59 @@ export const handleParallelToParallelNodes = (nodes: PipelineNodeModel[]): Pipel
     const names: string[] = p2p.map((p2pData) => p2pData.node.id);
     const parallelSpacerName = `parallel-${names.join('-')}`;
 
+    names.forEach((p2pNodeId) => {
+      if (!Array.isArray(newRunAfterNodeMap[p2pNodeId])) {
+        newRunAfterNodeMap[p2pNodeId] = [];
+      }
+      newRunAfterNodeMap[p2pNodeId].push(parallelSpacerName);
+    });
+
     newNodes.push(
       createSpacerNode(parallelSpacerName, {
         task: {
           name: parallelSpacerName,
           runAfter,
-          // TODO: Find a way to abstract this away from calls; it's a valid part of PipelineTasks, just not spacerNodes
-          taskRef: { name: '' },
         },
       }),
     );
+  });
 
-    // Update all impacted nodes to point at the spacer node as the spacer points at their original runAfters
-    nodes.forEach((node) => {
-      if (names.includes(node.id)) {
-        const {
-          data: { task },
-        } = node;
+  // Update all impacted nodes to point at the spacer node as the spacer points at their original runAfters
+  nodes.forEach((node) => {
+    const newRunAfters: string[] | undefined = newRunAfterNodeMap[node.id];
+    if (newRunAfters && newRunAfters.length > 0) {
+      const {
+        data: { task },
+        type,
+      } = node;
 
-        // Recreate the node with the new runAfter pointing to the spacer node
-        newNodes.push(
-          createTaskNode(node.id, {
-            ...node.data,
-            task: {
-              ...task,
-              runAfter: [parallelSpacerName],
-            },
-          }),
-        );
-      } else {
-        // Unaffected node, just carry it over
-        newNodes.push(node);
-      }
-    });
+      const createNode: NodeCreator<PipelineRunAfterNodeModelData> = getNodeCreator(type);
+
+      // Recreate the node with the new runAfter pointing to the spacer node
+      newNodes.push(
+        createNode(node.id, {
+          ...node.data,
+          task: {
+            ...task,
+            runAfter: newRunAfters,
+          },
+        }),
+      );
+    } else {
+      // Unaffected node, just carry it over
+      newNodes.push(node);
+    }
   });
 
   return newNodes;
 };
 
-const tasksToNodes = (
+export const tasksToNodes = (
   taskList: PipelineVisualizationTaskItem[],
   pipeline?: Pipeline,
   pipelineRun?: PipelineRun,
-): PipelineNodeModel[] => {
-  const nodeList: PipelineNodeModel[] = taskList.map((task) =>
+): PipelineMixedNodeModel[] => {
+  const nodeList: PipelineTaskNodeModel[] = taskList.map((task) =>
     createTaskNode(task.name, {
       task,
       pipeline,
@@ -123,22 +178,36 @@ const tasksToNodes = (
   return handleParallelToParallelNodes(nodeList);
 };
 
-export const getEdgesFromNodes = (nodes: PipelineNodeModel[]): PipelineEdgeModel[] =>
+export const tasksToBuilderNodes = (
+  taskList: PipelineVisualizationTaskItem[],
+  onAddNode: (task: PipelineVisualizationTaskItem, direction: AddNodeDirection) => void,
+): PipelineMixedNodeModel[] => {
+  return taskList.map((task) => {
+    return createBuilderNode(task.name, {
+      task,
+      onAddNode: (direction: AddNodeDirection) => {
+        onAddNode(task, direction);
+      },
+    });
+  });
+};
+
+export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdgeModel[] =>
   _.flatten(
     nodes.map((node) => {
       const {
         data: {
-          task: { name, runAfter = [] },
+          task: { name: target, runAfter = [] },
         },
       } = node;
 
       if (runAfter.length === 0) return null;
 
-      return runAfter.map((beforeName) => ({
-        id: `${name}-to-${beforeName}`,
+      return runAfter.map((source) => ({
+        id: `${source}~to~${target}`,
         type: 'edge',
-        source: beforeName,
-        target: name,
+        source,
+        target,
       }));
     }),
   ).filter((edgeList) => !!edgeList);
@@ -146,12 +215,23 @@ export const getEdgesFromNodes = (nodes: PipelineNodeModel[]): PipelineEdgeModel
 export const getTopologyNodesEdges = (
   pipeline: Pipeline,
   pipelineRun?: PipelineRun,
-): { nodes: PipelineNodeModel[]; edges: PipelineEdgeModel[] } => {
+): { nodes: PipelineMixedNodeModel[]; edges: PipelineEdgeModel[] } => {
   const taskList: PipelineVisualizationTaskItem[] = _.flatten(
     getPipelineTasks(pipeline, pipelineRun),
   );
-  const nodes: PipelineNodeModel[] = tasksToNodes(taskList, pipeline, pipelineRun);
+  const nodes: PipelineMixedNodeModel[] = tasksToNodes(taskList, pipeline, pipelineRun);
   const edges: PipelineEdgeModel[] = getEdgesFromNodes(nodes);
 
   return { nodes, edges };
+};
+
+export const getLayoutData = (layout: PipelineLayout): dagre.GraphLabel => {
+  switch (layout) {
+    case PipelineLayout.DAGRE_BUILDER:
+      return DAGRE_BUILDER_PROPS;
+    case PipelineLayout.DAGRE_VIEWER:
+      return DAGRE_VIEWER_PROPS;
+    default:
+      return null;
+  }
 };

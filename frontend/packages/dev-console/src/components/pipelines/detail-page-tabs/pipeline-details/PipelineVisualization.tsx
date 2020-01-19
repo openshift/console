@@ -3,6 +3,7 @@ import { Alert } from '@patternfly/react-core';
 import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
 import PipelineTopologyGraph from '../../pipeline-topology/PipelineTopologyGraph';
 import { getTopologyNodesEdges } from '../../pipeline-topology/utils';
+import { PipelineLayout } from '../../pipeline-topology/const';
 
 interface PipelineTopologyVisualizationProps {
   pipeline: Pipeline;
@@ -26,6 +27,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
       id={pipelineRun?.metadata?.name || pipeline.metadata.name}
       nodes={nodes}
       edges={edges}
+      layout={PipelineLayout.DAGRE_VIEWER}
     />
   );
 };

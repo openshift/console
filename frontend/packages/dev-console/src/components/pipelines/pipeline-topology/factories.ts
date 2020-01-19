@@ -7,15 +7,13 @@ import {
   Graph,
 } from '@console/topology';
 import { LayoutCallback } from '@console/topology/src/layouts/DagreLayout';
-import {
-  NODE_SEPARATION_HORIZONTAL,
-  NodeType,
-  PipelineLayout,
-  NODE_SEPARATION_VERTICAL,
-} from './const';
+import { NodeType, PipelineLayout } from './const';
 import SpacerNode from './SpacerNode';
 import TaskNode from './TaskNode';
 import TaskEdge from './TaskEdge';
+import TaskListNode from './TaskListNode';
+import BuilderNode from './BuilderNode';
+import { getLayoutData } from './utils';
 
 export const componentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (kind) {
@@ -29,6 +27,10 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
           return TaskNode;
         case NodeType.SPACER_NODE:
           return SpacerNode;
+        case NodeType.TASK_LIST_NODE:
+          return TaskListNode;
+        case NodeType.BUILDER_NODE:
+          return BuilderNode;
         default:
           return undefined;
       }
@@ -41,19 +43,9 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
 type CallbackLayout = (onLayout: LayoutCallback) => LayoutFactory;
 export const layoutFactory: CallbackLayout = (onLayout) => (type: string, graph: Graph) => {
   switch (type) {
-    case PipelineLayout.DAGRE:
-      return new DagreLayout(
-        graph,
-        {
-          nodesep: NODE_SEPARATION_VERTICAL,
-          ranksep: NODE_SEPARATION_HORIZONTAL,
-          edgesep: 0,
-          ranker: 'longest-path',
-          rankdir: 'LR',
-          align: 'UL',
-        },
-        { onLayout },
-      );
+    case PipelineLayout.DAGRE_BUILDER:
+    case PipelineLayout.DAGRE_VIEWER:
+      return new DagreLayout(graph, getLayoutData(type), { onLayout });
     default:
       return undefined;
   }

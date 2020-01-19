@@ -470,6 +470,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       exact: true,
+      path: [`/k8s/ns/:ns/${referenceForModel(PipelineModel)}/~new/builder`],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/pipeline-builder/PipelineBuilder' /* webpackChunkName: "pipeline-builder" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
       path: [
         `/k8s/all-namespaces/${referenceForModel(PipelineRunModel)}`,
         `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}`,
