@@ -24,6 +24,8 @@ import {
   getPodStatusGroups,
   getPVCStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { OCSServiceModel } from '@console/ceph-storage-plugin/src/models';
+import { isClusterExpandActivity } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 import {
   fetchK8sHealth,
   getK8sHealthState,
@@ -79,6 +81,23 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/dashboards-page/ClusterUpdateActivity' /* webpackChunkName: "console-app" */
         ).then((m) => m.default),
       required: FLAGS.CLUSTER_VERSION,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(OCSServiceModel),
+        namespaced: false,
+        prop: 'storage-cluster',
+      },
+      isActivity: isClusterExpandActivity,
+      loader: () =>
+        import(
+          '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
+        ).then((m) => m.ClusterExpandActivity),
+      required: 'CEPH',
     },
   },
   {
