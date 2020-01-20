@@ -30,12 +30,13 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
 
   const handleSubmit = (values, actions) => {
     const { releaseName }: HelmInstallFormData = values;
+    const payload = {
+      namespace: preselectedNamespace,
+      name: releaseName,
+      url: chartURL,
+    };
     coFetchJSON
-      .post(
-        `/api/console/helm/install?ns=${preselectedNamespace}&name=${releaseName}&url=${chartURL}`,
-        null,
-        null,
-      )
+      .post('/api/helm/release', payload, null)
       .then(() => {
         actions.setSubmitting(false);
         history.push(`/topology/ns/${preselectedNamespace}`);

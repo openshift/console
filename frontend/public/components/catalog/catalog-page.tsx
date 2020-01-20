@@ -207,16 +207,14 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         charts.forEach((chart: HelmChart) => {
           const tags = chart.keywords;
           const name = _.startCase(chart.name);
-          const iconClass = getImageForIconClass('icon-catalog');
-          const tileImgUrl = chart.icon;
-          const tileIconClass = tileImgUrl ? null : iconClass;
+          const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
           const chartURL = encodeURIComponent(_.get(chart, 'urls.0'));
 
           normalizedCharts.push({
             obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
             kind: 'HelmChart',
             tileName: `${name} v${chart.version}`,
-            tileIconClass,
+            tileIconClass: null,
             tileImgUrl,
             tileDescription: chart.description,
             tags,
@@ -336,7 +334,7 @@ export const Catalog = connectToFlags<CatalogProps>(
   }, [loadTemplates, namespace]);
 
   React.useEffect(() => {
-    coFetch('https://raw.githubusercontent.com/IBM/charts/master/repo/community/index.yaml').then(
+    coFetch('https://redhat-developer.github.io/redhat-helm-charts/index.yaml').then(
       async (res) => {
         const yaml = await res.text();
         const json = safeLoad(yaml);

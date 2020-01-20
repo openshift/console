@@ -415,9 +415,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/catalog/helm-install'],
       loader: async () =>
-        (await import(
-          './components/helm/HelmInstallPage' /* webpackChunkName: "dev-console-helm-install" */
-        )).default,
+        (
+          await import(
+            './components/helm/HelmInstallPage' /* webpackChunkName: "dev-console-helm-install" */
+          )
+        ).default,
     },
   },
   {
