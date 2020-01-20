@@ -15,7 +15,7 @@ import { k8sBasePath } from '../../../module/k8s';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { Dropdown, LoadingInline, useSafeFetch } from '../../utils';
+import { Dropdown, history, LoadingInline, useSafeFetch } from '../../utils';
 import { parsePrometheusDuration } from '../../utils/datetime';
 import { withFallback } from '../../utils/error-boundary';
 import BarChart from './bar-chart';
@@ -40,8 +40,8 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
   selected,
   title,
 }) => (
-  <div className="monitoring-dashboards__dropdown-wrap">
-    {title && <h4>{title}</h4>}
+  <div className="form-group monitoring-dashboards__dropdown-wrap">
+    {title && <label>{title}</label>}
     <Dropdown
       buttonClassName={buttonClassName}
       items={_.zipObject(options, options)}
@@ -181,17 +181,17 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
   );
 
   React.useEffect(() => {
+    setData(undefined);
+    setError(undefined);
     const path = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/grafana-dashboard-${board}`;
     safeFetch(path)
       .then((response) => {
         const json = _.get(response, ['data', `${board}.json`]);
         if (!json) {
-          setData(undefined);
           setError('Dashboard definition JSON not found');
         } else {
           const newData = JSON.parse(json);
           setData(newData);
-          setError(undefined);
 
           const newVars = _.get(newData, 'templating.list') as TemplateVariable[];
           const optionsVars = _.filter(newVars, (v) => v.type === 'query' || v.type === 'interval');
@@ -212,12 +212,14 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
-          setData(undefined);
           setError(_.get(err, 'json.error', err.message));
         }
       });
   }, [board, loadVariableValues, patchVariable, safeFetch]);
 
+  if (!board) {
+    return null;
+  }
   if (error) {
     return <ErrorAlert message={error} />;
   }
@@ -243,16 +245,20 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   clearVariables,
   patchVariable,
+  match,
 }) => {
+  const { board } = match.params;
+
   const [pollInterval, setPollInterval] = React.useState(
     parsePrometheusDuration(defaultPollInterval),
   );
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration(defaultTimespan));
-  const [board, setBoard] = React.useState(boards[0]);
 
   const onBoardChange = (newBoard: string) => {
-    clearVariables();
-    setBoard(newBoard);
+    if (newBoard !== board) {
+      clearVariables();
+      history.replace(`/monitoring/dashboards/${newBoard}`);
+    }
   };
 
   return (
@@ -261,42 +267,41 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         <title>Metrics Dashboards</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
-        <h1 className="co-m-pane__heading co-m-pane__heading--monitoring-dashboards">
-          Metrics Dashboards
-          <VariableDropdown onChange={onBoardChange} options={boards} selected={boards[0]} />
-        </h1>
         <div className="monitoring-dashboards__options">
-          <div className="monitoring-dashboards__options-group">
-            <AllVariableDropdowns />
-          </div>
-          <div className="monitoring-dashboards__options-group">
-            <VariableDropdown
-              buttonClassName="monitoring-dashboards__dropdown"
-              onChange={(v: string) => setTimespan(parsePrometheusDuration(v))}
-              options={timespanOptions}
-              selected={defaultTimespan}
-              title="Time Range"
-            />
-            <VariableDropdown
-              onChange={(v: string) =>
-                setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
-              }
-              options={pollIntervalOptions}
-              selected={defaultPollInterval}
-              title="Refresh Interval"
-            />
-          </div>
+          <VariableDropdown
+            buttonClassName="monitoring-dashboards__dropdown"
+            onChange={(v: string) => setTimespan(parsePrometheusDuration(v))}
+            options={timespanOptions}
+            selected={defaultTimespan}
+            title="Time Range"
+          />
+          <VariableDropdown
+            onChange={(v: string) =>
+              setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
+            }
+            options={pollIntervalOptions}
+            selected={defaultPollInterval}
+            title="Refresh Interval"
+          />
+        </div>
+        <h1 className="co-m-pane__heading">Dashboards</h1>
+        <div className="monitoring-dashboards__variables">
+          <VariableDropdown
+            onChange={onBoardChange}
+            options={boards}
+            selected={board}
+            title="Board Type"
+          />
+          <AllVariableDropdowns />
         </div>
       </div>
       <Dashboard>
-        {board && (
-          <Board
-            board={board}
-            patchVariable={patchVariable}
-            pollInterval={pollInterval}
-            timespan={timespan}
-          />
-        )}
+        <Board
+          board={board}
+          patchVariable={patchVariable}
+          pollInterval={pollInterval}
+          timespan={timespan}
+        />
       </Dashboard>
     </>
   );
@@ -350,6 +355,7 @@ type CardProps = {
 type MonitoringDashboardsPageProps = {
   clearVariables: () => undefined;
   patchVariable: (key: string, patch: Variable) => undefined;
+  match: any;
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallback);

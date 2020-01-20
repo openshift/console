@@ -1557,7 +1557,7 @@ const PollerPages = () => {
 export const MonitoringUI = () => (
   <Switch>
     <Redirect from="/monitoring" exact to="/monitoring/alerts" />
-    <Route path="/monitoring/dashboards" exact component={MonitoringDashboardsPage} />
+    <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
     <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
     <Route component={PollerPages} />
