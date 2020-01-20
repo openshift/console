@@ -208,6 +208,12 @@ If you your local Chrome version doesn't match the Chromedriver version from the
 ```
 yarn run webdriver-update --versions.chrome=77.0.3865.120
 ```
+Or if you are using macOS (OS X), run:
+```
+# automatically select the correct Chrome version
+yarn run webdriver-update-webdriver-update-macos
+```
+
 
 You can look up the version number you need at [omahaProxy.appspot.com](https://omahaproxy.appspot.com/).
 
