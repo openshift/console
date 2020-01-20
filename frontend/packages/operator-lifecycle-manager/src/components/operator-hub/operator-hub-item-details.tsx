@@ -120,6 +120,18 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
       );
     }
 
+    if (providerType === 'Marketplace') {
+      return (
+        <HintBlock title="Marketplace Operator">
+          <p>
+            This Operator is purchased through Red Hat Marketplace. After completing the purchase
+            process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat
+            Marketplace for more details and to track your usage of this application.
+          </p>
+        </HintBlock>
+      );
+    }
+
     return null;
   };
 
