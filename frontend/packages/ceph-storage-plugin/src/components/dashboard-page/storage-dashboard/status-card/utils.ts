@@ -14,7 +14,7 @@ const CephHealthStatus = [
     state: HealthState.ERROR,
   },
   {
-    state: HealthState.UNKNOWN,
+    state: HealthState.NOT_AVAILABLE,
   },
 ];
 

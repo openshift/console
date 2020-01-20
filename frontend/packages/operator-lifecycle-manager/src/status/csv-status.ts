@@ -8,6 +8,13 @@ import {
   ClusterServiceVersionStatus,
 } from '../types';
 
+const pedingPhases = [
+  ClusterServiceVersionPhase.CSVPhasePending,
+  ClusterServiceVersionPhase.CSVPhaseInstalling,
+  ClusterServiceVersionPhase.CSVPhaseReplacing,
+  ClusterServiceVersionPhase.CSVPhaseDeleting,
+];
+
 export const subscriptionForCSV = (
   subscriptions: SubscriptionKind[],
   csv: ClusterServiceVersionKind,
@@ -26,21 +33,22 @@ export const getCSVStatus = (
 ): { status: ClusterServiceVersionStatus; title: string } => {
   const statusPhase = _.get(csv, 'status.phase', ClusterServiceVersionPhase.CSVPhaseUnknown);
   let status: ClusterServiceVersionStatus;
-  switch (statusPhase) {
-    case ClusterServiceVersionPhase.CSVPhaseSucceeded:
-      status = ClusterServiceVersionStatus.OK;
-      break;
-    case ClusterServiceVersionPhase.CSVPhaseFailed:
-      status = ClusterServiceVersionStatus.Failed;
-      break;
-    case ClusterServiceVersionPhase.CSVPhasePending:
-      status = ClusterServiceVersionStatus.Pending;
-      break;
-    default:
-      return {
-        status: ClusterServiceVersionStatus.Unknown,
-        title: statusPhase,
-      };
+  if (pedingPhases.includes(statusPhase)) {
+    status = ClusterServiceVersionStatus.Pending;
+  } else {
+    switch (statusPhase) {
+      case ClusterServiceVersionPhase.CSVPhaseSucceeded:
+        status = ClusterServiceVersionStatus.OK;
+        break;
+      case ClusterServiceVersionPhase.CSVPhaseFailed:
+        status = ClusterServiceVersionStatus.Failed;
+        break;
+      default:
+        return {
+          status: ClusterServiceVersionStatus.Unknown,
+          title: statusPhase,
+        };
+    }
   }
   return {
     status,

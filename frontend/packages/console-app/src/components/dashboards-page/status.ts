@@ -30,7 +30,7 @@ export const fetchK8sHealth = async (url: string) => {
 
 export const getK8sHealthState: URLHealthHandler<string> = (k8sHealth, error, resource) => {
   if (error) {
-    return { state: HealthState.UNKNOWN };
+    return { state: HealthState.NOT_AVAILABLE };
   }
   if (!k8sHealth) {
     return { state: HealthState.LOADING };
@@ -54,7 +54,7 @@ export const getControlPlaneComponentHealth = (
       response.status === 'success' &&
       _.isNil(_.get(response, 'data.result[0].value[1]')))
   ) {
-    return { state: HealthState.UNKNOWN, message: 'Not available' };
+    return { state: HealthState.NOT_AVAILABLE };
   }
   if (!response) {
     return { state: HealthState.LOADING };
@@ -69,7 +69,7 @@ export const getControlPlaneComponentHealth = (
   return { state: HealthState.ERROR, message: perc.string };
 };
 
-const errorStates = [HealthState.WARNING, HealthState.ERROR, HealthState.UNKNOWN];
+const errorStates = [HealthState.WARNING, HealthState.ERROR, HealthState.NOT_AVAILABLE];
 
 export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], errors = []) => {
   const componentsHealth = responses.map((r, index) =>
