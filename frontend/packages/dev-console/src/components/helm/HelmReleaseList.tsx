@@ -20,7 +20,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
   const [filteredReleases, setFilteredReleases] = React.useState([]);
   const [fetched, setFetched] = React.useState(false);
 
-  const memoizedSecrets = useDeepCompareMemoize(secrets.data);
+  const memoizedSecrets = useDeepCompareMemoize(_.get(secrets, 'data'));
 
   React.useEffect(() => {
     let ignore = false;
@@ -30,7 +30,13 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
       getQueryArgument('rowFilter-helm-release-status').split(',');
 
     const fetchHelmReleases = async () => {
-      const res: HelmRelease[] = await coFetchJSON('/api/console/helm/list');
+      let res: HelmRelease[];
+      try {
+        res = await coFetchJSON('/api/helm/releases');
+      } catch {
+        setReleases([]);
+        setFetched(true);
+      }
       const namespacedReleases = (res && res.filter((rel) => rel.namespace === namespace)) || [];
 
       if (ignore) return;
