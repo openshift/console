@@ -22,6 +22,8 @@ export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData,
   imageStreamUrl: string,
   imageStreamName?: string,
+  imageStreamTag?: string,
+  imageNamespace?: string,
   annotations?: { [name: string]: string },
   originalKnativeService?: K8sResourceKind,
 ): K8sResourceKind => {
@@ -51,7 +53,13 @@ export const getKnativeServiceDepResource = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels(name, applicationName, imageStreamName, imageTag);
+  const defaultLabel = getAppLabels(
+    name,
+    applicationName,
+    imageStreamName,
+    imageStreamTag || imageTag,
+    imageNamespace,
+  );
   delete defaultLabel.app;
   const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,

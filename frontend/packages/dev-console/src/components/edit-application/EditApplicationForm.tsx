@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { Form, ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
-import { ButtonBar, PageHeading } from '@console/internal/components/utils';
+import { Form } from '@patternfly/react-core';
+import { PageHeading } from '@console/internal/components/utils';
+import { FormFooter } from '@console/shared';
 import GitSection from '../import/git/GitSection';
 import BuilderSection from '../import/builder/BuilderSection';
 import DockerSection from '../import/git/DockerSection';
@@ -13,7 +14,7 @@ import ImageSearchSection from '../import/image-search/ImageSearchSection';
 import { CreateApplicationFlow } from './edit-application-utils';
 
 export interface EditApplicationFormProps {
-  pageHeading: string;
+  createFlowType: string;
   builderImages?: NormalizedBuilderImages;
 }
 
@@ -21,7 +22,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   handleSubmit,
   handleReset,
   values,
-  pageHeading,
+  createFlowType,
   builderImages,
   dirty,
   errors,
@@ -29,33 +30,26 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   isSubmitting,
 }) => (
   <>
-    <PageHeading title={pageHeading} style={{ padding: '0px' }} />
+    <PageHeading title={createFlowType} style={{ padding: '0px' }} />
     <Form onSubmit={handleSubmit}>
-      {pageHeading !== CreateApplicationFlow.Container && <GitSection />}
-      {pageHeading === CreateApplicationFlow.Git && (
+      {createFlowType !== CreateApplicationFlow.Container && <GitSection />}
+      {createFlowType === CreateApplicationFlow.Git && (
         <BuilderSection image={values.image} builderImages={builderImages} />
       )}
-      {pageHeading === CreateApplicationFlow.Dockerfile && (
+      {createFlowType === CreateApplicationFlow.Dockerfile && (
         <DockerSection buildStrategy={values.build.strategy} />
       )}
-      {pageHeading === CreateApplicationFlow.Container && <ImageSearchSection />}
+      {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
       <AppSection project={values.project} />
       <AdvancedSection values={values} />
-      <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-        <ActionGroup className="pf-c-form">
-          <Button
-            type="submit"
-            variant={ButtonVariant.primary}
-            isDisabled={!dirty || !_.isEmpty(errors)}
-            data-test-id="edit-app-save-button"
-          >
-            Save
-          </Button>
-          <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </ButtonBar>
+      <FormFooter
+        handleReset={handleReset}
+        errorMessage={status && status.submitError}
+        isSubmitting={isSubmitting}
+        submitLabel="Save"
+        disableSubmit={!dirty || !_.isEmpty(errors)}
+        resetLabel="Cancel"
+      />
     </Form>
   </>
 );

@@ -415,9 +415,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/edit/ns/:ns',
       loader: async () =>
-        (await import(
-          './components/edit-application/EditApplicationPage' /* webpackChunkName: "dev-console-edit" */
-        )).default,
+        (
+          await import(
+            './components/edit-application/EditApplicationPage' /* webpackChunkName: "dev-console-edit" */
+          )
+        ).default,
     },
   },
   {

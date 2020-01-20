@@ -50,7 +50,7 @@ export const appResources: AppResources = {
           'app.kubernetes.io/name': 'python',
           'app.openshift.io/runtime': 'python',
           'app.openshift.io/runtime-version': '3.6',
-          'app/runtime-namespace': 'div',
+          'app.openshift.io/runtime-namespace': 'div',
         },
       },
       spec: {

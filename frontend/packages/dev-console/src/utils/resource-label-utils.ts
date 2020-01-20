@@ -20,7 +20,7 @@ export const getAppLabels = (
     labels['app.openshift.io/runtime-version'] = selectedTag;
   }
   if (namespace) {
-    labels['app/runtime-namespace'] = namespace;
+    labels['app.openshift.io/runtime-namespace'] = namespace;
   }
 
   return labels;

@@ -193,7 +193,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.openshift.io/runtime',
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
-    'app/runtime-namespace',
+    'app.openshift.io/runtime-namespace',
   ];
   const allLabels = _.get(resource, 'metadata.labels', {});
   const userLabels = _.omit(allLabels, defaultLabels);
@@ -306,7 +306,7 @@ export const getExternalImageInitialValues = (imageStream: K8sResourceKind) => {
 export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
   const imageStreamNamespace = _.get(
     editAppResource,
-    'metadata.labels["app/runtime-namespace"]',
+    'metadata.labels["app.openshift.io/runtime-namespace"]',
     '',
   );
   const imageStreamName = _.get(editAppResource, 'metadata.labels["app.openshift.io/runtime"]', '');

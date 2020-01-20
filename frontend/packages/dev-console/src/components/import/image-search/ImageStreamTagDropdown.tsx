@@ -75,11 +75,8 @@ const ImageStreamTagDropdown: React.FC = () => {
       items={imageStreamTagList}
       key={imageStream.image}
       title={
-        !_.isEmpty(imageStream.tag)
-          ? imageStream.tag
-          : isNamespaceSelected && isImageStreamSelected && !isTagsAvailable
-          ? 'No Tag'
-          : 'Select Tag'
+        imageStream.tag ||
+        (isNamespaceSelected && isImageStreamSelected && !isTagsAvailable ? 'No Tag' : 'Select Tag')
       }
       disabled={!isImageStreamSelected || !isTagsAvailable}
       fullWidth

@@ -346,9 +346,11 @@ export const createOrUpdateDeployImageResources = async (
 ): Promise<K8sResourceKind[]> => {
   const formData = ensurePortExists(rawFormData);
   const {
+    name,
     registry,
     route: { create: canCreateRoute, disable },
-    isi: { ports, tag: imageStreamTag },
+    isi: { ports, tag: imageStreamTag, image },
+    imageStream: { image: internalImageName, namespace: internalImageNamespace },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -396,18 +398,26 @@ export const createOrUpdateDeployImageResources = async (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
-    const imageStreamResponse = await createOrUpdateImageStream(
-      formData,
-      dryRun,
-      _.get(appResources, 'imageStream.data'),
-      verb,
-    );
+    let imageStreamRepo: string = _.split(_.get(image, 'dockerImageReference', ''), '@')[0];
+    if (registry === RegistryType.External) {
+      const imageStreamResponse = await createOrUpdateImageStream(
+        formData,
+        dryRun,
+        _.get(appResources, 'imageStream.data'),
+        verb,
+      );
+      imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+    }
     const imageStreamUrl = imageStreamTag
-      ? `${imageStreamResponse.status.dockerImageRepository}:${imageStreamTag}`
-      : imageStreamResponse.status.dockerImageRepository;
+      ? `${imageStreamRepo}:${imageStreamTag}`
+      : imageStreamRepo;
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
+      internalImageName || name,
+      imageStreamTag,
+      internalImageNamespace,
+      undefined,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(
