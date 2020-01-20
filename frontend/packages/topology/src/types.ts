@@ -210,3 +210,4 @@ export type ElementChildEventListener = EventListener<[ElementEvent & { child: G
 
 export const ADD_CHILD_EVENT = 'element-add-child';
 export const REMOVE_CHILD_EVENT = 'element-remove-child';
+export const GRAPH_LAYOUT_END_EVENT = 'graph-layout-end';
