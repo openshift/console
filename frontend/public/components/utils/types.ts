@@ -10,6 +10,7 @@ export type FirehoseResult<
 > = {
   loaded: boolean;
   loadError: string;
+  optional?: boolean;
   data: R;
 };
 
