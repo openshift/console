@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 
-import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
+import { checkLogs, checkErrors, firstElementByTestID, waitForCount } from '../protractor.conf';
 import { dropdownMenuForTestID } from '../views/form.view';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
@@ -246,7 +246,9 @@ describe('Alertmanager: Configuration', () => {
     await firstElementByTestID('input-repeat-interval').sendKeys('24h');
 
     await monitoringView.saveButton.click();
-    await crudView.isLoaded();
+    browser.wait(
+      until.textToBePresentInElement(firstElementByTestID('repeat_interval_value'), '24h'),
+    );
     expect(firstElementByTestID('group_by_value').getText()).toContain(', cluster');
     expect(firstElementByTestID('group_wait_value').getText()).toEqual('60s');
     expect(firstElementByTestID('group_interval_value').getText()).toEqual('10m');
@@ -333,7 +335,7 @@ describe('Alertmanager: Configuration', () => {
     await browser.wait(until.presenceOf(monitoringView.saveButton));
     await monitoringView.saveButton.click();
 
-    await crudView.isLoaded();
+    browser.wait(waitForCount(crudView.resourceRows, 1));
     expect(crudView.resourceRows.count()).toBe(1);
   });
 
