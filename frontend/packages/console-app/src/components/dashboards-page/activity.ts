@@ -4,8 +4,8 @@ import {
   getClusterUpdateStatus,
 } from '@console/internal/module/k8s';
 
-export const isClusterUpdateActivity = (cv: ClusterVersionKind) =>
+export const isClusterUpgradeActivity = (cv: ClusterVersionKind) =>
   getClusterUpdateStatus(cv) === ClusterUpdateStatus.Updating;
 
-export const getClusterUpdateTimestamp = (cv: ClusterVersionKind) =>
+export const getClusterUpgradeTimestamp = (cv: ClusterVersionKind) =>
   cv && cv.status && cv.status.history[0] ? new Date(cv.status.history[0].startedTime) : null;

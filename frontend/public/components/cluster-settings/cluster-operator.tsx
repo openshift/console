@@ -39,7 +39,7 @@ export const clusterOperatorReference: K8sResourceKindReference = referenceForMo
 const getIcon = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
-    [OperatorStatus.Updating]: <SyncAltIcon />,
+    [OperatorStatus.Upgrading]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
@@ -138,7 +138,7 @@ export const ClusterOperatorList: React.SFC = (props) => (
 
 const allStatuses = [
   OperatorStatus.Available,
-  OperatorStatus.Updating,
+  OperatorStatus.Upgrading,
   OperatorStatus.Degraded,
   OperatorStatus.Unknown,
 ];

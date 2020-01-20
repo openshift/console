@@ -2,8 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
-import { ArrowCircleUpIcon, InProgressIcon } from '@patternfly/react-icons';
-import { FLAGS, getInfrastructureAPIURL, getInfrastructurePlatform } from '@console/shared';
+import { ArrowCircleUpIcon } from '@patternfly/react-icons';
+import {
+  FLAGS,
+  getInfrastructureAPIURL,
+  getInfrastructurePlatform,
+  BlueSyncIcon,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -46,8 +51,8 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
           <span className="co-select-to-copy">{desiredVersion}</span>
           <div>
             <Link to="/settings/cluster/">
-              <InProgressIcon className="co-icon-and-text__icon" />
-              Updating
+              <BlueSyncIcon className="co-icon-and-text__icon" />
+              Upgrading
             </Link>
           </div>
         </>
@@ -61,10 +66,10 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
               variant="link"
               className="btn-link--no-btn-default-values"
               onClick={() => clusterUpdateModal({ cv })}
-              icon={<ArrowCircleUpIcon />}
+              icon={<ArrowCircleUpIcon className="update-pending" />}
               isInline
             >
-              Update
+              Upgrade
             </Button>
           </div>
         </>
@@ -176,7 +181,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   <ClusterVersion cv={clusterVersionData} />
                 </DetailItem>
                 <DetailItem
-                  title="Update channel"
+                  title="Upgrade channel"
                   isLoading={!clusterVersionLoaded && !clusterVersionError}
                   error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
                   valueClassName="co-select-to-copy"

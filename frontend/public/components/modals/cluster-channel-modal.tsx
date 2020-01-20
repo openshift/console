@@ -48,10 +48,10 @@ class ClusterChannelModal extends PromiseComponent<
         name="form"
         className="modal-content modal-content--no-inner-scroll"
       >
-        <ModalTitle>Update Channel</ModalTitle>
+        <ModalTitle>Upgrade Channel</ModalTitle>
         <ModalBody>
           <p>
-            Select a channel that reflects your desired version. Critical security updates will be
+            Select a channel that reflects your desired version. Critical security upgrades will be
             delivered to any vulnerable channels.
           </p>
           <div className="form-group">

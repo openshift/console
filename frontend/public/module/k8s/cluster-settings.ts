@@ -14,8 +14,8 @@ import {
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
-  UpdatesAvailable = 'Updates Available',
-  Updating = 'Updating',
+  UpdatesAvailable = 'Upgrades Available',
+  Updating = 'Upgrading',
   Failing = 'Failing',
   ErrorRetrieving = 'Error Retrieving',
   Invalid = 'Invalid Cluster Version',

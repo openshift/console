@@ -39,7 +39,7 @@ export const getK8sHealthState: URLHealthHandler<string> = (k8sHealth, error, re
     getClusterUpdateStatus(_.get(resource, 'data') as ClusterVersionKind) ===
     ClusterUpdateStatus.Updating
   ) {
-    return { state: HealthState.UPDATING, message: 'Updating' };
+    return { state: HealthState.UPGRADING };
   }
   return { state: k8sHealth === 'ok' ? HealthState.OK : HealthState.ERROR };
 };
@@ -98,8 +98,8 @@ export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<Cluster
   if (status === OperatorStatus.Unknown) {
     return { ...operatorHealthPriority[HealthState.UNKNOWN], title: status };
   }
-  if (status === OperatorStatus.Updating) {
-    return { ...operatorHealthPriority[HealthState.UPDATING], title: status };
+  if (status === OperatorStatus.Upgrading) {
+    return { ...operatorHealthPriority[HealthState.UPGRADING], title: status };
   }
   return { ...operatorHealthPriority[HealthState.OK], title: status };
 };

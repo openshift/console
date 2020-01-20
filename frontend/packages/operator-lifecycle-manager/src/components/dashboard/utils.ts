@@ -36,7 +36,7 @@ const getOperatorStatus = (
     subscriptionStatus.status === SubscriptionState.SubscriptionStateUpgradePending
   ) {
     return {
-      ...operatorHealthPriority[HealthState.UPDATING],
+      ...operatorHealthPriority[HealthState.UPGRADING],
       title: subscriptionStatus.title,
     };
   }

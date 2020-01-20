@@ -80,7 +80,7 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
       <RedExclamationCircleIcon /> Invalid cluster version
     </div>
     <Button onClick={() => cancelUpdate(cv)} variant="primary">
-      Cancel update
+      Cancel upgrade
     </Button>
   </>
 );
@@ -88,11 +88,11 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
 const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
   <>
     <div className="co-update-status">
-      <ArrowCircleUpIcon className="update-pending" /> Update available
+      <ArrowCircleUpIcon className="update-pending" /> Upgrade available
     </div>
     <div>
       <Button onClick={() => clusterUpdateModal({ cv })} variant="primary">
-        Update now
+        Upgrade now
       </Button>
     </div>
   </>
@@ -123,7 +123,7 @@ const ErrorRetrievingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
     K8sResourceConditionStatus.False,
   );
   return retrievedUpdatesCondition.reason === 'NoChannel' ? (
-    <span className="text-muted">No update channel selected</span>
+    <span className="text-muted">No upgrade channel selected</span>
   ) : (
     <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
       <span>
@@ -206,7 +206,7 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
         status === ClusterUpdateStatus.Failing ||
         status === ClusterUpdateStatus.Updating) ? (
         <Button variant="link" type="button" onClick={() => clusterUpdateModal({ cv })}>
-          Update to another version
+          Upgrade to another version
         </Button>
       ) : null}
     </>
@@ -264,7 +264,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
               </div>
               <div className="co-detail-table__section col-sm-4 col-md-4">
                 <dl className="co-m-pane__details">
-                  <dt className="co-detail-table__section-header">Update Status</dt>
+                  <dt className="co-detail-table__section-header">Upgrade Status</dt>
                   <dd>
                     <UpdateStatus cv={cv} />
                   </dd>
@@ -322,7 +322,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Update History">
+        <SectionHeading text="Upgrade History">
           {errataLink && (
             <small>
               <ExternalLink text="View errata" href={errataLink} />

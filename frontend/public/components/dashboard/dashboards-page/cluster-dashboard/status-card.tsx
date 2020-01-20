@@ -124,7 +124,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
               {hasAvailableUpdates(cv) && (
                 <StatusItem
                   Icon={UpdateIcon}
-                  message="A cluster version update is available"
+                  message="A cluster version upgrade is available"
                   LinkComponent={LinkComponent}
                 />
               )}

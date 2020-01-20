@@ -3,7 +3,7 @@ import { ClusterOperator, OperandVersion } from '.';
 
 export enum OperatorStatus {
   Available = 'Available',
-  Updating = 'Updating',
+  Upgrading = 'Upgrading',
   Degraded = 'Degraded',
   Unknown = 'Unknown',
 }
@@ -17,7 +17,7 @@ export const getStatusAndMessage = (operator: ClusterOperator) => {
 
   const progressing: any = _.find(conditions, { type: 'Progressing', status: 'True' });
   if (progressing) {
-    return { status: OperatorStatus.Updating, message: progressing.message };
+    return { status: OperatorStatus.Upgrading, message: progressing.message };
   }
 
   const available: any = _.find(conditions, { type: 'Available', status: 'True' });

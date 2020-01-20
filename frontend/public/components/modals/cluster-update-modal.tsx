@@ -53,7 +53,7 @@ class ClusterUpdateModal extends PromiseComponent<
     const desired = _.find(available, { version: selectedVersion });
     if (!desired) {
       this.setState({
-        errorMessage: `Version ${selectedVersion} not found among the available updates. Select another version.`,
+        errorMessage: `Version ${selectedVersion} not found among the available upgrades. Select another version.`,
       });
       return;
     }
@@ -91,7 +91,7 @@ class ClusterUpdateModal extends PromiseComponent<
         name="form"
         className="modal-content modal-content--no-inner-scroll"
       >
-        <ModalTitle>Update Cluster</ModalTitle>
+        <ModalTitle>Upgrade Cluster</ModalTitle>
         <ModalBody>
           {/* <p>
           // TODO: Determine what content goes here.
@@ -115,7 +115,7 @@ class ClusterUpdateModal extends PromiseComponent<
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}
           inProgress={this.state.inProgress}
-          submitText="Update"
+          submitText="Upgrade"
           cancel={this._cancel}
         />
       </form>
