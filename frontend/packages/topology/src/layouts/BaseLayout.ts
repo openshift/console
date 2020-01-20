@@ -7,6 +7,7 @@ import {
   Node,
   ADD_CHILD_EVENT,
   REMOVE_CHILD_EVENT,
+  GRAPH_LAYOUT_END_EVENT,
   ElementChildEventListener,
 } from '../types';
 import { leafNodeElements, groupNodeElements } from '../utils/element-utils';
@@ -600,11 +601,15 @@ class BaseLayout implements Layout {
       // Reset the force simulation
       this.stopSimulation();
 
-      return this.startLayout(this.graph, initialRun, addingNodes);
+      return this.startLayout(this.graph, initialRun, addingNodes).then(() => {
+        this.graph.getController().fireEvent(GRAPH_LAYOUT_END_EVENT, this.graph);
+      });
     }
 
     if (restart && this.options.layoutOnDrag) {
-      return this.updateLayout();
+      return this.updateLayout().then(() => {
+        this.graph.getController().fireEvent(GRAPH_LAYOUT_END_EVENT, this.graph);
+      });
     }
 
     return Promise.resolve();
