@@ -15,7 +15,7 @@ set -e
 export GOBIN=${PWD}/bin:${GOBIN}
 
 # Use deps from vendor dir.
-export GOFLAGS=-mod=vendor
+export GOFLAGS="-mod=vendor"
 
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
