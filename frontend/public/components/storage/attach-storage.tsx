@@ -324,10 +324,10 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         </div>
         {!useContainerSelector && (
           <p>
-            The volume will be mounted into all containers. You can
-            <Button type="button" onClick={handleSelectContainers} variant="link">
+            The volume will be mounted into all containers. You can{' '}
+            <Button type="button" onClick={handleSelectContainers} variant="link" isInline>
               select specific containers
-            </Button>
+            </Button>{' '}
             instead.
           </p>
         )}
