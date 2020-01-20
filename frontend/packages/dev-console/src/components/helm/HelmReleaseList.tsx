@@ -20,20 +20,21 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
   const [filteredReleases, setFilteredReleases] = React.useState([]);
   const [fetched, setFetched] = React.useState(false);
 
-  const memoizedSecrets = useDeepCompareMemoize(_.get(secrets, 'data'));
+  const memoizedSecrets = useDeepCompareMemoize(secrets?.data);
 
   React.useEffect(() => {
     let ignore = false;
 
-    const activeFilters =
-      getQueryArgument('rowFilter-helm-release-status') &&
-      getQueryArgument('rowFilter-helm-release-status').split(',');
+    const queryArgument = getQueryArgument('rowFilter-helm-release-status');
+    const activeFilters = queryArgument?.split(',');
 
     const fetchHelmReleases = async () => {
       let res: HelmRelease[];
       try {
         res = await coFetchJSON('/api/helm/releases');
       } catch {
+        if (ignore) return;
+
         setReleases([]);
         setFetched(true);
       }
@@ -79,7 +80,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
     [releases],
   );
 
-  const RowsOfRowFilters = _.map(helmRowFilters, ({ items, reducer, selected, type }, i) => {
+  const rowsOfRowFilters = _.map(helmRowFilters, ({ items, reducer, selected, type }, i) => {
     return (
       <CheckBoxes
         key={i}
@@ -103,7 +104,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
       </div>
 
       <div className="co-m-pane__body">
-        {!_.isEmpty(releases) && RowsOfRowFilters}
+        {!_.isEmpty(releases) && rowsOfRowFilters}
         <Table
           data={filteredReleases}
           defaultSortField="name"
