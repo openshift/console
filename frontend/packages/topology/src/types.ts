@@ -208,5 +208,8 @@ export interface Controller extends WithState {
 type ElementEvent = { target: GraphElement };
 export type ElementChildEventListener = EventListener<[ElementEvent & { child: GraphElement }]>;
 
+export type GraphLayoutEndEventListener = EventListener<[{ graph: Graph }]>;
+
 export const ADD_CHILD_EVENT = 'element-add-child';
 export const REMOVE_CHILD_EVENT = 'element-remove-child';
+export const GRAPH_LAYOUT_END_EVENT = 'graph-layout-end';

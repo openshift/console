@@ -7,6 +7,7 @@ import {
   Node,
   ADD_CHILD_EVENT,
   REMOVE_CHILD_EVENT,
+  GRAPH_LAYOUT_END_EVENT,
   ElementChildEventListener,
 } from '../types';
 import { leafNodeElements, groupNodeElements } from '../utils/element-utils';
@@ -592,6 +593,7 @@ class BaseLayout implements Layout {
     } else if (restart && this.options.layoutOnDrag) {
       this.updateLayout();
     }
+    this.graph.getController().fireEvent(GRAPH_LAYOUT_END_EVENT, { graph: this.graph });
   }
 }
 
