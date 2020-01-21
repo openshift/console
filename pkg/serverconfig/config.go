@@ -36,6 +36,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
 	addHelmConfig(fs, &config.Helm)
+	addKialiConfig(fs, &config.Kiali)
 
 	return nil
 }
@@ -46,6 +47,16 @@ func addHelmConfig(fs *flag.FlagSet, helmConfig *Helm) (err error) {
 	}
 	if helmConfig.ChartRepo.CAFile != "" {
 		fs.Set("helm-chart-repo-ca-file", helmConfig.ChartRepo.CAFile)
+	}
+	return nil
+}
+
+func addKialiConfig(fs *flag.FlagSet, kialiConfig *Kiali) (err error) {
+	if kialiConfig.URL != "" {
+		fs.Set("kiali-host-url", kialiConfig.URL)
+	}
+	if kialiConfig.CAFile != "" {
+		fs.Set("kiali-host-ca-file", kialiConfig.CAFile)
 	}
 	return nil
 }

@@ -14,6 +14,7 @@ type Config struct {
 	Customization `yaml:"customization"`
 	Providers     `yaml:"providers"`
 	Helm          `yaml:"helm"`
+	Kiali         `yaml:"kiali"`
 }
 
 // ServingInfo holds configuration for serving HTTP.
@@ -67,4 +68,9 @@ type HelmChartRepo struct {
 
 type Helm struct {
 	ChartRepo HelmChartRepo `yaml:"chartRepository"`
+}
+
+type Kiali struct {
+	URL    string `yaml:"url,omitempty"`
+	CAFile string `yaml:"caFile,omitempty"`
 }

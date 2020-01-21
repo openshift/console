@@ -35,6 +35,7 @@ const (
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
+	kialiProxyEndpoint             = "/api/namespaces"
 )
 
 var (
@@ -93,6 +94,7 @@ type Server struct {
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister *ResourceLister
 	HelmChartRepoProxyConfig           *proxy.Config
+	KialiProxyConfig                   *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -304,6 +306,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle(helmChartRepoProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
+
+	kialiProxy := proxy.NewProxy(s.KialiProxyConfig)
+
+	handle(kialiProxyEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyEndpoint),
+		http.HandlerFunc(kialiProxy.ServeHTTP)))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
