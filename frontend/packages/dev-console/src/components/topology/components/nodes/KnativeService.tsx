@@ -90,29 +90,45 @@ const KnativeService: React.FC<KnativeServiceProps> = ({
 
   return (
     <Tooltip content={tipContent} trigger="manual" isVisible={dropTarget && canDrop}>
-      <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>
-        <NodeShadows />
-        <Layer id={dragging && regrouping ? undefined : 'groups2'}>
-          <rect
-            ref={nodeRefs}
-            className={cx('odc-knative-service', {
-              'is-selected': selected,
-              'is-dragging': dragging,
-              'is-highlight': canDrop,
-            })}
-            x={x}
-            y={y}
-            width={width}
-            height={height}
-            rx="5"
-            ry="5"
-            filter={createSvgIdUrl(
-              hover || innerHover || dragging || contextMenuOpen || dropTarget
-                ? NODE_SHADOW_FILTER_ID_HOVER
-                : NODE_SHADOW_FILTER_ID,
-            )}
-          />
-        </Layer>
+      <g>
+        <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>
+          <NodeShadows />
+          <Layer id={dragging && regrouping ? undefined : 'groups2'}>
+            <rect
+              ref={nodeRefs}
+              className={cx('odc-knative-service', {
+                'is-selected': selected,
+                'is-dragging': dragging,
+                'is-highlight': canDrop,
+              })}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
+              rx="5"
+              ry="5"
+              filter={createSvgIdUrl(
+                hover || innerHover || dragging || contextMenuOpen || dropTarget
+                  ? NODE_SHADOW_FILTER_ID_HOVER
+                  : NODE_SHADOW_FILTER_ID,
+              )}
+            />
+          </Layer>
+          {(data.kind || element.getLabel()) && (
+            <SvgBoxedText
+              className="odc-knative-service__label odc-base-node__label"
+              x={x + width / 2}
+              y={y + height + 20}
+              paddingX={8}
+              paddingY={4}
+              kind={data.kind}
+              truncate={16}
+              dragRef={dragLabelRef}
+            >
+              {element.getLabel()}
+            </SvgBoxedText>
+          )}
+        </g>
         {hasDataUrl && (
           <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
             <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
@@ -121,20 +137,6 @@ const KnativeService: React.FC<KnativeServiceProps> = ({
               </g>
             </Decorator>
           </Tooltip>
-        )}
-        {(data.kind || element.getLabel()) && (
-          <SvgBoxedText
-            className="odc-knative-service__label odc-base-node__label"
-            x={x + width / 2}
-            y={y + height + 20}
-            paddingX={8}
-            paddingY={4}
-            kind={data.kind}
-            truncate={16}
-            dragRef={dragLabelRef}
-          >
-            {element.getLabel()}
-          </SvgBoxedText>
         )}
       </g>
     </Tooltip>
