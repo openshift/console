@@ -42,6 +42,8 @@ import {
   Group,
   TopologyOverviewItem,
   OperatorBackedServiceKindMap,
+  TrafficData,
+  KialiNode,
 } from './topology-types';
 import {
   TYPE_APPLICATION_GROUP,
@@ -50,8 +52,9 @@ import {
   TYPE_HELM_WORKLOAD,
   TYPE_AGGREGATE_EDGE,
   TYPE_OPERATOR_BACKED_SERVICE,
-  TYPE_WORKLOAD,
   TYPE_OPERATOR_WORKLOAD,
+  TYPE_TRAFFIC_CONNECTOR,
+  TYPE_WORKLOAD,
 } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -462,6 +465,42 @@ const getOperatoarBackedServiceData = (
   };
 };
 
+export const getFilteredTrafficWorkload = (nodes: KialiNode[]): KialiNode[] =>
+  nodes.filter(({ data }) => data.nodeType === TYPE_WORKLOAD);
+
+export const getTrafficConnectors = (
+  trafficData: TrafficData,
+  resources: K8sResourceKind[],
+): Edge[] => {
+  const filteredWorkload = getFilteredTrafficWorkload(trafficData.nodes);
+  return trafficData.edges.reduce((acc, { data }) => {
+    const { data: sourceTrafficNode } = filteredWorkload.find(
+      (wrkld) => wrkld.data.id === data.source,
+    );
+    const { data: targetTrafficNode } = filteredWorkload.find(
+      (wrkld) => wrkld.data.id === data.target,
+    );
+    const sourceResourceNode = resources.find((res) => {
+      return res.metadata.name === sourceTrafficNode[sourceTrafficNode.nodeType];
+    });
+    const targetResourceNode = resources.find(
+      (res) => res.metadata.name === targetTrafficNode[targetTrafficNode.nodeType],
+    );
+    return sourceResourceNode && targetResourceNode
+      ? [
+          ...acc,
+          {
+            id: `${sourceResourceNode.metadata.uid}_${targetResourceNode.metadata.uid}`,
+            type: TYPE_TRAFFIC_CONNECTOR,
+            source: sourceResourceNode.metadata.uid,
+            target: targetResourceNode.metadata.uid,
+            data: data.traffic,
+          },
+        ]
+      : acc;
+  }, []);
+};
+
 /**
  * Tranforms the k8s resources objects into topology data
  * @param resources K8s resources
@@ -477,6 +516,7 @@ export const transformTopologyData = (
   cheURL?: string,
   utils?: Function[],
   filters?: TopologyFilters,
+  trafficData?: TrafficData,
 ): TopologyDataModel => {
   const installedOperators = _.get(resources, 'clusterServiceVersions.data');
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
@@ -486,6 +526,13 @@ export const transformTopologyData = (
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
   };
+  if (trafficData)
+    topologyGraphAndNodeData.graph.edges = getTrafficConnectors(trafficData, [
+      ...resources.deploymentConfigs.data,
+      ...resources.deployments.data,
+      ...resources.statefulSets.data,
+      ...resources.daemonSets.data,
+    ]);
 
   /**
    * form data model specific to knative resources

@@ -53,6 +53,7 @@ import {
   TYPE_HELM_WORKLOAD,
   TYPE_OPERATOR_BACKED_SERVICE,
   TYPE_OPERATOR_WORKLOAD,
+  TYPE_TRAFFIC_CONNECTOR,
 } from './const';
 import OperatorBackedService from './components/nodes/OperatorBackedService';
 import KnativeService from './components/nodes/KnativeService';
@@ -63,6 +64,7 @@ import { createConnection, createSinkConnection } from './components/createConne
 import { withEditReviewAccess } from './withEditReviewAccess';
 import HelmRelease from './components/groups/HelmRelease';
 import AggregateEdge from './components/edges/AggregateEdge';
+import TrafficConnector from './components/edges/TrafficConnector';
 
 type NodeProps = {
   element: Node;
@@ -233,6 +235,8 @@ class ComponentFactory {
           return withRemoveConnector(removeConnectorCallback)(ServiceBinding);
         case TYPE_AGGREGATE_EDGE:
           return AggregateEdge;
+        case TYPE_TRAFFIC_CONNECTOR:
+          return TrafficConnector;
         default:
           switch (kind) {
             case ModelKind.graph:

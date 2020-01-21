@@ -9,7 +9,8 @@ import { RootState } from '@console/internal/redux';
 import { ServiceBindingRequestModel } from '../../models';
 import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
 import { allowedResources, transformTopologyData } from './topology-utils';
-import { TopologyDataModel, TopologyDataResources } from './topology-types';
+import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
+import trafficConnectorMock from './__mocks__/traffic-connector.mock';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -33,6 +34,7 @@ export interface ControllerProps {
   cheURL: string;
   serviceBinding: boolean;
   topologyFilters: TopologyFilters;
+  trafficData?: TrafficData;
 }
 
 export interface TopologyDataControllerProps extends StateProps {
@@ -54,6 +56,7 @@ const Controller: React.FC<ControllerProps> = ({
   utils,
   serviceBinding,
   topologyFilters,
+  trafficData,
 }) =>
   render({
     loaded,
@@ -67,6 +70,7 @@ const Controller: React.FC<ControllerProps> = ({
           cheURL,
           utils,
           topologyFilters,
+          trafficData,
         )
       : null,
   });
@@ -106,6 +110,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         utils={utils}
         serviceBinding={serviceBinding}
         topologyFilters={filters}
+        trafficData={trafficConnectorMock.elements}
       />
     </Firehose>
   );
