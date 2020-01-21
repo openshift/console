@@ -1,0 +1,11 @@
+.odc-metrics-chart {
+    border: 1px solid var(--pf-global--BorderColor--100);
+    padding: var(--pf-global--spacer--sm);
+    .query-browser__wrapper {
+        border: none;
+    }
+
+    tr > :first-child {
+        width: 40px;
+    }
+}
