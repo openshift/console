@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { navFactory } from '@console/internal/components/utils';
+import { navFactory, HintBlock, ExternalLink } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
@@ -19,10 +19,14 @@ import {
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
-import { vmMenuActionsCreator } from './menu-actions';
+import { vmiMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
 
-export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
+import './vmi-details-page.scss';
+
+export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanceDetailsPageProps> = (
+  props,
+) => {
   const { name, ns: namespace } = props.match.params;
 
   const breadcrumbsForVMPage = (match: any) => () => [
@@ -35,13 +39,13 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
 
   const dashboardPage = {
     href: '', // default landing page
-    name: 'Overview',
+    name: 'Dashboard',
     component: VMDashboard,
   };
 
   const overviewPage = {
     href: VM_DETAIL_OVERVIEW_HREF,
-    name: 'Details',
+    name: 'Overview',
     component: VMDetailsFirehose,
   };
 
@@ -74,11 +78,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   ];
 
   const resources = [
-    getResource(VirtualMachineInstanceModel, {
+    getResource(VirtualMachineModel, {
       name,
       namespace,
       isList: false,
-      prop: 'vmi',
+      prop: 'vm',
       optional: true,
     }),
     getResource(PodModel, { namespace, prop: 'pods' }),
@@ -90,16 +94,31 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       {...props}
       name={name}
       namespace={namespace}
-      kind={VirtualMachineModel.kind}
-      kindObj={VirtualMachineModel}
-      menuActions={vmMenuActionsCreator}
+      kind={VirtualMachineInstanceModel.kind}
+      kindObj={VirtualMachineInstanceModel}
+      menuActions={vmiMenuActionsCreator}
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(props.match)}
-    />
+    >
+      <HintBlock
+        className="kubevirt-details-page__hint-block"
+        title={`Virtual Machine Instance ${name}`}
+      >
+        <p>
+          This is a VirtualMachineInstance overview page. Please consider using a VirtualMachine
+          that will provide additional management capabilities to a VirtualMachineInstance inside
+          the cluster.
+        </p>
+        <ExternalLink
+          href="https://kubevirt.io/user-guide/docs/latest/architecture/virtual-machine.html"
+          text="Learn more"
+        />
+      </HintBlock>
+    </DetailsPage>
   );
 };
 
-export type VirtualMachinesDetailsPageProps = {
+export type VirtualMachinesInstanceDetailsPageProps = {
   match: any;
 };

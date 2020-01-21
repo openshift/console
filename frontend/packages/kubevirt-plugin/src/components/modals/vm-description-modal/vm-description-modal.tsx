@@ -10,8 +10,8 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getDescription } from '../../../selectors/selectors';
-import { VMLikeEntityKind } from '../../../types';
-import { getVMLikeModel } from '../../../selectors/vm';
+import { VMGenericLikeEntityKind } from '../../../types';
+import { getVMLikeModel, isVMI } from '../../../selectors/vm';
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
 
 // TODO: should be moved under kubevirt-plugin/src/style.scss
@@ -25,7 +25,9 @@ export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalPr
   const submit = (e) => {
     e.preventDefault();
 
-    const patches = getUpdateDescriptionPatches(vmLikeEntity, description);
+    const patches = isVMI(vmLikeEntity)
+      ? []
+      : getUpdateDescriptionPatches(vmLikeEntity, description);
     if (patches.length === 0) {
       close();
     } else {
@@ -57,7 +59,7 @@ export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalPr
 
 export type VMDescriptionModalProps = HandlePromiseProps &
   ModalComponentProps & {
-    vmLikeEntity: VMLikeEntityKind;
+    vmLikeEntity: VMGenericLikeEntityKind;
   };
 
 export const vmDescriptionModal = createModalLauncher(VMDescriptionModal);

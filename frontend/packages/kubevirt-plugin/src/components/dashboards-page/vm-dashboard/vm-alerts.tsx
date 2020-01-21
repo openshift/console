@@ -15,7 +15,7 @@ const isGuestAgentInstalled = (vmi: VMIKind) => {
 };
 
 export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => (
-  <AlertsBody emptyMessage="No VM messages" isLoading={!vm}>
+  <AlertsBody emptyMessage="No VM messages" isLoading={!(vm || vmi)}>
     {vmi && vmi.status && !isGuestAgentInstalled(vmi) && (
       <StatusItem
         Icon={BlueInfoCircleIcon}

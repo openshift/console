@@ -191,7 +191,7 @@ export const vmiMenuActions = [
 
 type ExtraResources = { vmi: VMIKind; pods: PodKind[]; migrations: K8sResourceKind[] };
 
-export const menuActionsCreator = (
+export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
   { vmi, pods, migrations }: ExtraResources,
@@ -201,5 +201,11 @@ export const menuActionsCreator = (
 
   return vmMenuActions.map((action) => {
     return action(kindObj, vm, { vmi, vmStatus, migration });
+  });
+};
+
+export const vmiMenuActionsCreator = (kindObj: K8sKind, vm: VMKind) => {
+  return vmiMenuActions.map((action) => {
+    return action(kindObj, vm);
   });
 };

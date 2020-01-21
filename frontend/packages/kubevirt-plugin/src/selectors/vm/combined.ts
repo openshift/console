@@ -4,6 +4,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { PodKind } from '@console/internal/module/k8s';
 import { buildOwnerReference } from '../../utils';
 import { VMIKind, VMKind } from '../../types/vm';
+import { VMILikeEntityKind } from '../../types/types';
 import { VMMultiStatus } from '../../types';
 import {
   VM_STATUS_IMPORTING,
@@ -26,7 +27,7 @@ export const isVMStarting = (vm: VMKind, vmi: VMIKind) => isVMRunning(vm) && !is
 export const isWindows = (vm: VMKind): boolean =>
   (getOperatingSystem(vm) || '').startsWith(OS_WINDOWS_PREFIX);
 
-export const findConversionPod = (vm: VMKind, pods: PodKind[]) => {
+export const findConversionPod = (vm: VMILikeEntityKind, pods: PodKind[]) => {
   if (!pods) {
     return null;
   }

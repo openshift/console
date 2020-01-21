@@ -1,7 +1,7 @@
 import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
-import { VMIKind, VMKind } from '../../types/vm';
+import { VMILikeEntityKind } from '../../types/types';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -11,22 +11,30 @@ import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
 
 type EventFilterFunction = (src: EventInvolvedObject) => boolean;
 
-const vmEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) =>
+const vmEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({ kind, namespace, name }) =>
   kind === VirtualMachineModel.kind && name === getName(vm) && namespace === getNamespace(vm);
 
-const vmiEventFilter = (vm: VMKind | VMIKind): EventFilterFunction => ({ kind, namespace, name }) =>
+const vmiEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) =>
   kind === VirtualMachineInstanceModel.kind &&
   name === getName(vm) &&
   namespace === getNamespace(vm);
 
-const launcherPodEventFilter = (vm: VMKind): EventFilterFunction => {
+const launcherPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => {
   const podNameStart = `${VIRT_LAUNCHER_POD_PREFIX}${getName(vm)}-`;
 
   return ({ kind, namespace, name }) =>
     kind === PodModel.kind && namespace === getNamespace(vm) && name.startsWith(podNameStart);
 };
 
-const importerPodEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) => {
+const importerPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) => {
   // importer pod example importer-<diskName>-<vmname>-<generatedId>
   // note: diskName and vmname may contain '-' which means pod name should have at least 4 parts
   if (
@@ -45,14 +53,18 @@ const importerPodEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, nam
   return false;
 };
 
-const vmiMigrationEventFilter = (vm: VMKind): EventFilterFunction => ({ kind, namespace, name }) =>
+const vmiMigrationEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) =>
   kind === VirtualMachineInstanceMigrationModel.kind &&
   namespace === getNamespace(vm) &&
   name === `${getName(vm)}-migration`;
 
 // Conversion pod name example: kubevirt-v2v-conversion-[vmName]-<generatedId>
 const V2V_CONVERSION_POD_NAME_PREFIX = 'kubevirt-v2v-conversion-';
-const v2vConversionPodEventFilter = (vm: VMKind): EventFilterFunction => ({
+const v2vConversionPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
   kind,
   namespace,
   name,
@@ -80,7 +92,7 @@ const v2vConversionPodEventFilter = (vm: VMKind): EventFilterFunction => ({
   return false;
 };
 
-export const getVmEventsFilters = (vm: VMKind): EventFilterFunction[] => [
+export const getVmEventsFilters = (vm: VMILikeEntityKind): EventFilterFunction[] => [
   vmiEventFilter(vm),
   vmEventFilter(vm),
   launcherPodEventFilter(vm),

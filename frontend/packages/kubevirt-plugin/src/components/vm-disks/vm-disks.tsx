@@ -19,6 +19,7 @@ import { VHW_TYPES } from '../create-vm-wizard/tabs/virtual-hardware-tab/types';
 import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
+import { isVMI } from '../../selectors/vm';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -120,25 +121,27 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
   const withProgress = wrapWithProgress(setIsLocked);
   return (
     <div className="co-m-list">
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Button
-            variant={ButtonVariant.primary}
-            id="create-disk-btn"
-            onClick={() =>
-              withProgress(
-                diskModalEnhanced({
-                  blocking: true,
-                  vmLikeEntity,
-                }).result,
-              )
-            }
-            isDisabled={isLocked}
-          >
-            Create Disk
-          </Button>
+      {!isVMI(vmLikeEntity) && (
+        <div className="co-m-pane__filter-bar">
+          <div className="co-m-pane__filter-bar-group">
+            <Button
+              variant={ButtonVariant.primary}
+              id="create-disk-btn"
+              onClick={() =>
+                withProgress(
+                  diskModalEnhanced({
+                    blocking: true,
+                    vmLikeEntity,
+                  }).result,
+                )
+              }
+              isDisabled={isLocked}
+            >
+              Create Disk
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
       <div className="co-m-pane__body">
         <VMDisksTable
           data={getStoragesData({ vmLikeEntity, pvcs, datavolumes })}

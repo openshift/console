@@ -10,11 +10,10 @@ import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/ded
 import { getDescription } from '../../selectors/selectors';
 import {
   getCDRoms,
-  getOperatingSystemName,
-  getOperatingSystem,
   getWorkloadProfile,
   isDedicatedCPUPlacement,
 } from '../../selectors/vm/selectors';
+import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
@@ -42,7 +41,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   const templateNamespacedName = getVMTemplateNamespacedName(template);
 
   const description = getDescription(template);
-  const os = getOperatingSystemName(asVM(template)) || getOperatingSystem(asVM(template));
+  const os = getTemplateOperatingSystems([template])[0];
   const workloadProfile = getWorkloadProfile(template);
 
   return (
@@ -62,7 +61,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
-        {os}
+        {os ? os.name || os.id : null}
       </VMDetailsItem>
 
       <VMDetailsItem

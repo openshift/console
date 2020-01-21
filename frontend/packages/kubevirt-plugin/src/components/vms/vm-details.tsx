@@ -18,15 +18,22 @@ import { VirtualMachineInstanceModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';
+import { asVM, isVM, isVMI } from '../../selectors/vm/vmlike';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
-  obj: vm,
-  vmi,
+  obj: objProp,
+  vm: vmProp,
+  vmi: vmiProp,
   pods,
   migrations,
   templates,
 }) => {
-  const resources = [getResource(ServiceModel, { namespace: getNamespace(vm), prop: 'services' })];
+  const vm = asVM(objProp) || (isVM(vmProp) && vmProp);
+  const vmi = (isVMI(objProp) && objProp) || vmiProp;
+
+  const resources = [
+    getResource(ServiceModel, { namespace: getNamespace(objProp), prop: 'services' }),
+  ];
 
   return (
     <div className="co-m-pane__body">
@@ -47,21 +54,21 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
     templates,
   };
 
+  const vmLike = vm || vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
-
-  const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vm, 'patch'));
+  const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vmLike, 'patch'));
 
   return (
-    <StatusBox data={vm} {...restProps}>
+    <StatusBox data={vmLike} {...restProps}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="VM Overview" />
+        <SectionHeading text="Virtual Machine Overview" />
         <div className="row">
           <div className="col-sm-6">
-            <VMResourceSummary canUpdateVM={canUpdate} {...mainResources} />
+            <VMResourceSummary canUpdateVM={!!vm && canUpdate} {...mainResources} />
           </div>
           <div className="col-sm-6">
-            <VMDetailsList canUpdateVM={canUpdate} {...mainResources} />
+            <VMDetailsList canUpdateVM={!!vm && canUpdate} {...mainResources} />
           </div>
         </div>
       </div>
@@ -74,7 +81,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
 };
 
 type VMDetailsProps = {
-  vm: VMKind;
+  vm?: VMKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
   vmi?: VMIKind;

@@ -17,12 +17,12 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { VMKind } from '../../../types';
+import { VMILikeEntityKind } from '../../../types/types';
 import { VirtualMachineModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 
-const combinedVmFilter = (vm: VMKind): EventFilterFuncion => (event) =>
+const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
   getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
 
 const getEventsResource = (namespace: string): FirehoseResource => ({
@@ -56,13 +56,14 @@ const RecentEvent = withDashboardResources<RecentEventProps>(
 );
 
 export const VMActivityCard: React.FC = () => {
-  const { vm } = React.useContext(VMDashboardContext);
+  const { vm, vmi } = React.useContext(VMDashboardContext);
+  const vmLike = vm || vmi;
 
   const [paused, setPaused] = React.useState(false);
   const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
 
-  const name = getName(vm);
-  const namespace = getNamespace(vm);
+  const name = getName(vmLike);
+  const namespace = getNamespace(vmLike);
   const viewEventsLink = `${resourcePath(VirtualMachineModel.kind, name, namespace)}/events`;
 
   return (
@@ -76,7 +77,7 @@ export const VMActivityCard: React.FC = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
-          <RecentEvent vm={vm} paused={paused} setPaused={setPaused} />
+          <RecentEvent vm={vmLike} paused={paused} setPaused={setPaused} />
         </ActivityBody>
       </DashboardCardBody>
     </DashboardCard>
@@ -86,7 +87,7 @@ export const VMActivityCard: React.FC = () => {
 type EventFilterFuncion = (event: EventKind) => boolean;
 
 type RecentEventProps = DashboardItemProps & {
-  vm: VMKind;
+  vm: VMILikeEntityKind;
   paused: boolean;
   setPaused: (paused: boolean) => void;
 };

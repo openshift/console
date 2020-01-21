@@ -4,6 +4,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { PodKind } from '@console/internal/module/k8s';
 import { getLabelValue } from '../selectors';
 import { VMKind } from '../../types';
+import { VMILikeEntityKind } from '../../types/types';
 import { getDataVolumeTemplates } from '../vm';
 import {
   CDI_KUBEVIRT_IO,
@@ -47,7 +48,7 @@ export const isPodSchedulable = (pod: PodKind) => {
 };
 
 export const findVMPod = (
-  vm: VMKind,
+  vm: VMILikeEntityKind,
   pods?: PodKind[],
   podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
 ) => {

@@ -21,10 +21,10 @@ import {
   RDPConnectionDetailsType,
   VNCConnectionDetailsType,
 } from '../../selectors/vmi';
-import { findVMPod } from '../../selectors/pod/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getLoadedData, getResource } from '../../utils';
-import { isVMStarting, isWindows } from '../../selectors/vm';
+import { findVMPod } from '../../selectors/pod/selectors';
+import { isVMStarting, isWindows, asVM } from '../../selectors/vm';
 import { VMIKind, VMKind } from '../../types/vm';
 import { menuActionStart } from './menu-actions';
 import { SerialConsoleConnector } from './serial-console-connector';
@@ -100,7 +100,8 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 };
 
 const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
-  const { vm } = props;
+  const { vm: vmProp } = props;
+  const vm = asVM(vmProp);
   const vmi = getLoadedData(props.vmi);
   const pods = getLoadedData(props.pods);
   const services = getLoadedData(props.services);

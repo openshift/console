@@ -9,6 +9,9 @@ export const getVMIDisks = (vmi: VMIKind): VMIKind['spec']['domain']['devices'][
 export const getVMINetworks = (vmi: VMIKind): VMIKind['spec']['networks'] =>
   vmi && vmi.spec && vmi.spec.networks ? vmi.spec.networks : [];
 
+export const getVMIVolumes = (vmi: VMIKind): VMIKind['spec']['volumes'] =>
+  vmi && vmi.spec && vmi.spec.volumes ? vmi.spec.volumes : [];
+
 export const getVMIConditionsByType = (
   vmi: VMIKind,
   condType: string,

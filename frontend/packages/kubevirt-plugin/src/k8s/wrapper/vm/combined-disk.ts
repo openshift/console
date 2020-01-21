@@ -10,6 +10,7 @@ import { VolumeType, DiskType } from '../../../constants/vm/storage';
 import { VMLikeEntityKind } from '../../../types';
 import {
   asVM,
+  isVMI,
   getDataVolumeTemplates,
   getDisks,
   getVolumes,
@@ -22,6 +23,7 @@ import { DiskWrapper } from './disk-wrapper';
 import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
+import { getVMIDisks, getVMIVolumes } from '../../../selectors/vmi/basic';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -222,10 +224,11 @@ export class CombinedDiskFactory {
     pvcs?: FirehoseResult<K8sResourceKind[]>,
   ) => {
     const vm = asVM(vmLikeEntity);
+    const vmi = isVMI(vmLikeEntity) && vmLikeEntity;
 
     return new CombinedDiskFactory({
-      disks: getDisks(vm),
-      volumes: getVolumes(vm),
+      disks: vmi ? getVMIDisks(vmi) : getDisks(vm),
+      volumes: vmi ? getVMIVolumes(vmi) : getVolumes(vm),
       dataVolumes: [...getLoadedData(datavolumes, []), ...getDataVolumeTemplates(vm)],
       pvcs: getLoadedData(pvcs),
       dataVolumesLoading: !isLoaded(datavolumes),

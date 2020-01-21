@@ -4,6 +4,7 @@ import { VMLikeEntityKind } from '../../types';
 
 export type VMTabProps = {
   obj?: VMKind;
+  vm?: VMKind;
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
@@ -12,4 +13,5 @@ export type VMTabProps = {
 
 export type VMLikeEntityTabProps = {
   obj?: VMLikeEntityKind;
+  vmi?: VMIKind;
 };

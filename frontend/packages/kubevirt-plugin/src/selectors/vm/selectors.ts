@@ -8,7 +8,15 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
+import {
+  V1Network,
+  V1NetworkInterface,
+  VMKind,
+  VMIKind,
+  VMGenericLikeEntityKind,
+  CPURaw,
+} from '../../types';
+import { VMILikeEntityKind } from '../../types/types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -21,6 +29,8 @@ import {
   getVolumeCloudInitNoCloud,
 } from './volume';
 import { vCPUCount } from './cpu';
+import { getVMIDisks } from '../vmi/basic';
+import { VirtualMachineModel } from '../../models';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
@@ -47,17 +57,17 @@ export const getVolumes = (vm: VMKind, defaultValue = []) =>
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
 
-export const getOperatingSystem = (vmLike: VMLikeEntityKind): string =>
+export const getOperatingSystem = (vmLike: VMGenericLikeEntityKind): string =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_OS_LABEL);
-export const getOperatingSystemName = (vmLike: VMLikeEntityKind) =>
+export const getOperatingSystemName = (vmLike: VMGenericLikeEntityKind) =>
   getValueByPrefix(
     getAnnotations(vmLike),
     `${TEMPLATE_OS_NAME_ANNOTATION}/${getOperatingSystem(vmLike)}`,
   );
 
-export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
+export const getWorkloadProfile = (vm: VMGenericLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
-export const getFlavor = (vmLike: VMLikeEntityKind) =>
+export const getFlavor = (vmLike: VMGenericLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
 
 export const isVMRunning = (value: VMKind) =>
@@ -92,7 +102,7 @@ export const getFlavorDescription = (vm: VMKind) => {
   return resourceStr || undefined;
 };
 
-export const getVMStatusConditions = (vm: VMKind) =>
+export const getVMStatusConditions = (vm: VMILikeEntityKind) =>
   _.get(vm, 'status.conditions', []) as VMKind['status']['conditions'];
 
 export const getCloudInitVolume = (vm: VMKind) => {
@@ -111,7 +121,10 @@ export const getCloudInitVolume = (vm: VMKind) => {
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
 
-export const getCDRoms = (vm: VMKind) => getDisks(vm).filter((device) => !!device.cdrom);
+export const getCDRoms = (vm: VMILikeEntityKind) =>
+  vm.kind === VirtualMachineModel.kind
+    ? getDisks(vm as VMKind).filter((device) => !!device.cdrom)
+    : getVMIDisks(vm as VMIKind).filter((device) => !!device.cdrom);
 
 export const getContainerImageByDisk = (vm: VMKind, name: string) =>
   getVolumeContainerImage(getVolumes(vm).find((vol) => name === vol.name));

@@ -33,6 +33,9 @@ import {
   getWorkloadProfile,
   getDevices,
 } from '../../selectors/vm';
+import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
+import { findVMPod } from '../../selectors/pod/selectors';
+
 import './vm-resource.scss';
 import { isVMIPaused } from '../../selectors/vmi';
 
@@ -58,22 +61,26 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   );
 };
 
-export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpdateVM }) => {
-  const templateNamespacedName = getVMTemplateNamespacedName(vm);
+export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, vmi, canUpdateVM }) => {
+  const vmLike = vm || vmi;
 
-  const id = getBasicID(vm);
-  const description = getDescription(vm);
-  const os = getOperatingSystemName(vm) || getOperatingSystem(vm);
+  const templateNamespacedName = getVMTemplateNamespacedName(vmLike);
+  const id = getBasicID(vmLike);
+  const description = getDescription(vmLike);
+  const os = getOperatingSystemName(vmLike) || getOperatingSystem(vmLike);
 
   return (
-    <ResourceSummary resource={vm}>
+    <ResourceSummary resource={vmLike}>
       <VMDetailsItem
         title="Description"
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
         isNotAvail={!description}
       >
-        <EditButton canEdit={canUpdateVM} onClick={() => vmDescriptionModal({ vmLikeEntity: vm })}>
+        <EditButton
+          canEdit={canUpdateVM}
+          onClick={() => vmDescriptionModal({ vmLikeEntity: vmLike })}
+        >
           {description}
         </EditButton>
       </VMDetailsItem>
@@ -104,15 +111,15 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
     false,
   );
+  const vmLike = vm || vmi;
   const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
 
-  const id = getBasicID(vm);
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
-  const { launcherPod } = vmStatus;
-  const cds = getCDRoms(vm);
-  const devices = getDevices(vm);
+  const launcherPod = findVMPod(vmLike, pods);
+  const id = getBasicID(vmLike);
+  const cds = getCDRoms(vmLike);
+  const devices = getDevices(vmLike);
   const nodeName = getNodeName(launcherPod);
-  const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
+  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
   const workloadProfile = getWorkloadProfile(vm);
   const flavorText = getFlavorText(vm);
   const isCPUPinned = isDedicatedCPUPlacement(vm);
@@ -130,14 +137,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 
-      <VMDetailsItem title="VM Instance" idValue={prefixedID(id, 'vmi')} isNotAvail={!getName(vmi)}>
-        <ResourceLink
-          kind={VirtualMachineInstanceModel.kind}
-          name={getName(vmi)}
-          namespace={getNamespace(vmi)}
-        />
-      </VMDetailsItem>
-
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
         {launcherPod && (
           <ResourceLink
@@ -150,7 +149,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
       <VMDetailsItem
         title="Boot Order"
-        canEdit
+        canEdit={!!vm}
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => setBootOrderModalOpen(true)}
         idValue={prefixedID(id, 'boot-order')}
@@ -199,7 +198,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       <VMDetailsItem
         title={DEDICATED_RESOURCES}
         idValue={prefixedID(id, 'dedicated-resources')}
-        canEdit
+        canEdit={!!vm}
         onEditClick={() => setDedicatedResourcesModalOpen(true)}
         editButtonId={prefixedID(id, 'dedicated-resources-edit')}
       >
@@ -234,12 +233,13 @@ type VMDetailsItemProps = {
 };
 
 type VMResourceSummaryProps = {
-  vm: VMKind;
+  vm?: VMKind;
+  vmi?: VMIKind;
   canUpdateVM: boolean;
 };
 
 type VMResourceListProps = {
-  vm: VMKind;
+  vm?: VMKind;
   pods?: PodKind[];
   migrations?: any[];
   vmi?: VMIKind;
