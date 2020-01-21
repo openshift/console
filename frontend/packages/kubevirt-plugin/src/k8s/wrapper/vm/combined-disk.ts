@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
@@ -9,7 +10,7 @@ import { getSimpleName } from '../../../selectors/utils';
 import { VolumeType, DiskType } from '../../../constants/vm/storage';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
 import { asVM, getDataVolumeTemplates, isWinToolsImage } from '../../../selectors/vm';
-import { getLoadedData, isLoaded } from '../../../utils';
+import { isLoaded } from '../../../utils';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { DYNAMIC } from '../../../utils/strings';
 import { DiskWrapper } from './disk-wrapper';

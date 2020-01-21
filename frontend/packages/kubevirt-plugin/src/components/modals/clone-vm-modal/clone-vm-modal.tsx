@@ -27,9 +27,10 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { getName, getNamespace, ValidationErrorType } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
-import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
+import { getLoadError, prefixedID } from '../../../utils';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { validateVmLikeEntityName } from '../../../utils/validations/vm';

@@ -5,6 +5,7 @@ import {
   K8sResourceKind,
   OwnerReference,
   MatchExpression,
+  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
@@ -25,16 +26,12 @@ export const prefixedID = (idPrefix: string, id: string) =>
 
 export const joinIDs = (...ids: string[]) => ids.join('-');
 
-export const isLoaded = (result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>) =>
-  result && result.loaded;
+export const isLoaded = <A extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]>(
+  result: FirehoseResult<A>,
+) => result?.loaded;
 
-export const getLoadedData = (
-  result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-  defaultValue = null,
-) => (result && result.loaded && !result.loadError ? result.data : defaultValue);
-
-export const getLoadError = (
-  result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+export const getLoadError = <A extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]>(
+  result: FirehoseResult<A>,
   model: K8sKind,
 ) => {
   if (!result) {

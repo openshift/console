@@ -3,6 +3,7 @@ import { Checkbox, Modal, Text, TextVariants } from '@patternfly/react-core';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { getLabel } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import {
   Firehose,
   withHandlePromise,
@@ -14,7 +15,7 @@ import { ModalFooter } from '../modal/modal-footer';
 import { getVMLikeModel, isDedicatedCPUPlacement, asVM } from '../../../selectors/vm';
 import { getDedicatedCpuPatch } from '../../../k8s/patches/vm/vm-cpu-patches';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getLoadedData, isLoaded, getLoadError } from '../../../utils';
+import { isLoaded, getLoadError } from '../../../utils';
 import { RESOURCE_NO_NODES_AVAILABLE, DEDICATED_RESOURCES } from './consts';
 import './dedicated-resources-modal.scss';
 

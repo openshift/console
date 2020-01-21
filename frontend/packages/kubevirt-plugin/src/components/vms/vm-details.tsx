@@ -9,11 +9,12 @@ import {
   asAccessReview,
 } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { K8sKind, K8sResourceKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
-import { getLoadedData, getResource } from '../../utils';
+import { getResource } from '../../utils';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';

@@ -13,8 +13,9 @@ import {
 } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ValidationErrorType } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
+import { getLoadError, isLoaded, prefixedID } from '../../../utils';
 import { validateNIC } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
 import { FormRow } from '../../form/form-row';
@@ -84,7 +85,7 @@ export const Network: React.FC<NetworkProps> = ({
         }}
         value={asFormSelectValue(network && network.getReadableName())}
         id={id}
-        isDisabled={isDisabled || nadsLoading || nadsLoadError}
+        isDisabled={isDisabled || nadsLoading || !!nadsLoadError}
       >
         <FormSelectPlaceholderOption
           isDisabled

@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import { history, resourcePathFromModel, FirehoseResult } from '@console/internal/components/utils';
 import { nameValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
 import { getName } from '@console/shared/src';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
@@ -16,7 +17,6 @@ import {
   isHostOnline,
 } from '../../../selectors';
 import { getSecretPassword, getSecretUsername } from '../../../selectors/secret';
-import { getLoadedData } from '../../../utils';
 import { usePrevious } from '../../../hooks';
 import AddBareMetalHostForm from './AddBareMetalHostForm';
 import { AddBareMetalHostFormValues } from './types';

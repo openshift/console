@@ -3,6 +3,7 @@ import { AccessConsoles, VncConsole } from '@patternfly/react-console';
 import { Button } from '@patternfly/react-core';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
@@ -18,7 +19,7 @@ import {
   VNCConnectionDetailsType,
 } from '../../selectors/vmi';
 import { getVMStatus } from '../../statuses/vm/vm';
-import { getLoadedData, getResource } from '../../utils';
+import { getResource } from '../../utils';
 import { findVMPod } from '../../selectors/pod/selectors';
 import { isVMStarting, isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
 import { VMIKind, VMKind } from '../../types/vm';

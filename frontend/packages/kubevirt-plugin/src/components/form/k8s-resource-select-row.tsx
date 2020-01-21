@@ -3,7 +3,8 @@ import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, ValidationErrorType, ValidationObject } from '@console/shared';
-import { getLoadedData, getLoadError, isLoaded } from '../../utils';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
+import { getLoadError, isLoaded } from '../../utils';
 import { ignoreCaseSort } from '../../utils/sort';
 import { FormRow } from './form-row';
 import { asFormSelectValue, FormSelectPlaceholderOption } from './form-select-placeholder-option';
@@ -70,7 +71,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
         onChange={onChange}
         value={asFormSelectValue(nameValue)}
         id={id}
-        isDisabled={isDisabled || isLoading || loadError}
+        isDisabled={isDisabled || isLoading || !!loadError}
       >
         {hasPlaceholder && (
           <FormSelectPlaceholderOption

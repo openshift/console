@@ -4,13 +4,13 @@ import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   ProjectModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { getLoadedData } from '../../../utils';
 import { asVM, getVMLikeModel } from '../../../selectors/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';

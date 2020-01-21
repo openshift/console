@@ -12,6 +12,7 @@ import {
   dimensifyHeader,
   dimensifyRow,
 } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
@@ -25,7 +26,7 @@ import {
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
-import { getBasicID, getLoadedData, getResource } from '../../utils';
+import { getBasicID, getResource } from '../../utils';
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
 import { getVMStatusSortString } from '../../statuses/vm/constants';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
@@ -188,7 +189,17 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     }),
   ];
 
-  const flatten = ({ vms, vmis, pods, migrations }) => {
+  const flatten = ({
+    vms,
+    vmis,
+    pods,
+    migrations,
+  }: {
+    vms: FirehoseResult<VMKind[]>;
+    vmis: FirehoseResult<VMIKind[]>;
+    pods: FirehoseResult<PodKind[]>;
+    migrations: FirehoseResult;
+  }) => {
     const loadedVMs = getLoadedData(vms);
     const loadedVMIs = getLoadedData(vmis);
     const loadedPods = getLoadedData(pods);

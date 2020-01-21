@@ -26,7 +26,8 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { getName } from '@console/shared/src';
-import { getLoadedData, prefixedID } from '../../../utils';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
+import { prefixedID } from '../../../utils';
 import { validateDisk } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
 import { FormRow } from '../../form/form-row';

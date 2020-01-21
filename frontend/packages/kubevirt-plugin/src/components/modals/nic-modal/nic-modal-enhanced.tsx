@@ -5,7 +5,7 @@ import { createModalLauncher, ModalComponentProps } from '@console/internal/comp
 import { k8sPatch, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
-import { getLoadedData } from '../../../utils';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { NetworkType } from '../../../constants/vm';
 import { getInterfaces, getUsedNetworks, asVM, getVMLikeModel } from '../../../selectors/vm';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';

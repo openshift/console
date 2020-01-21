@@ -27,13 +27,13 @@ import {
   createLookup,
   K8sEntityMap,
 } from '@console/shared';
+import { getLoadedData } from '@console/shared/src/utils/firehose';
 import { match } from 'react-router';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import {
   getTemplateOperatingSystems,
   getTemplateFlavors,
 } from '../../selectors/vm-template/advanced';
-import { getLoadedData } from '../../utils';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
