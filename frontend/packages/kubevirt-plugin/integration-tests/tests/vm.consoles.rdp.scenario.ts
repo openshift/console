@@ -7,6 +7,8 @@ import {
   waitForStringInElement,
   getDropdownOptions,
   selectDropdownOption,
+  selectDropdownOptionById,
+  createResource,
 } from '@console/shared/src/test-utils/utils';
 import {
   consoleTypeSelector,
@@ -18,12 +20,21 @@ import {
   manualConnectionTitle,
   rdpManualConnectionTitles,
   rdpManualConnectionValues,
+  networkSelectorId,
 } from '../views/consolesView';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS } from './utils/consts';
+import { vmDetailIP } from '../views/virtualMachine.view';
+import {
+  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+  PAGE_LOAD_TIMEOUT_SECS,
+  VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
+} from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
-import { widowsVMConfig } from './utils/mocks';
+import { widowsVMConfig, multusNAD } from './utils/mocks';
+import { getWindowsVM } from './utils/templates/windowsVMForRDPL2';
+
+const VM_IP = '123.123.123.123';
 
 describe('KubeVirt VM console - RDP', () => {
   beforeAll(async () => {
@@ -45,13 +56,14 @@ describe('KubeVirt VM console - RDP', () => {
   provisionConfig.storageResources = [];
 
   it(
-    'creates new windows VM',
+    'connects via exposed service',
     async () => {
       const windowsConfig = vmConfig(
         configName.toLowerCase(),
         testName,
         provisionConfig,
         widowsVMConfig,
+        true, // startOnCreation
       );
       const vm = new VirtualMachine(windowsConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
@@ -120,5 +132,76 @@ describe('KubeVirt VM console - RDP', () => {
       });
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+  );
+
+  it(
+    'connects via L2 network',
+    async () => {
+      // created just for reusing the later navigation
+      const windowsConfig = vmConfig(configName.toLowerCase(), testName, provisionConfig);
+      const vm = new VirtualMachine(windowsConfig);
+      await withResource(leakedResources, vm.asResource(), async () => {
+        createResource(multusNAD);
+        /* Pre-requisite:
+         * - L2 network is configured on the cluster/node
+         * - the Windows-VM has guest-agent installed
+         * and so the Windows VM gets IP which is reported back to the VMI object among VMI.status.interfaces[].
+         *
+         * We mimmic this "final" state here.
+         */
+        execSync('kubectl create -f -', {
+          input: getWindowsVM({
+            name: windowsConfig.name,
+            networkName: multusNAD.metadata.name,
+            vmIP: VM_IP,
+          }),
+        });
+
+        await vm.navigateToDetail();
+        // eslint-disable-next-line no-console
+        console.log(
+          'Waiting for static IP to be reported by the guest-agent (can take up to several minutes ...)',
+        );
+        // Waiting for instllation & start of the guest-agent and reporting the static IP back
+        await browser.wait(
+          waitForStringInElement(vmDetailIP(vm.namespace, vm.name), VM_IP),
+          VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
+        );
+
+        await vm.navigateToConsoles();
+
+        await browser.wait(until.presenceOf(consoleTypeSelector));
+        await click(consoleTypeSelector);
+        await browser.wait(
+          waitForStringInElement(consoleTypeSelector, 'VNC Console'),
+          PAGE_LOAD_TIMEOUT_SECS,
+        );
+
+        const items = await getDropdownOptions(consoleTypeSelectorId);
+        expect(items[0]).toBe('VNC Console');
+        expect(items[1]).toBe('Serial Console');
+        expect(items[2]).toBe('Desktop Viewer');
+
+        await click(consoleTypeSelector); // close before re-opening
+        await selectDropdownOption(consoleTypeSelectorId, 'Desktop Viewer');
+
+        await selectDropdownOptionById(networkSelectorId, 'nic1-link');
+        await browser.wait(
+          until.textToBePresentInElement(manualConnectionTitle, 'Manual Connection'),
+        );
+        const titles = rdpManualConnectionTitles();
+        expect(titles.first().getText()).toBe('RDP Address:');
+        expect(titles.last().getText()).toBe('RDP Port:');
+
+        const values = rdpManualConnectionValues();
+        expect(values.count()).toBe(2);
+        expect(values.first().getText()).toBe(VM_IP);
+        expect(values.last().getText()).toBe('3389');
+
+        // TODO: download the .rdp file and verify content
+        // will require protractor configuration change: https://stackoverflow.com/questions/21935696/protractor-e2e-test-case-for-downloading-pdf-file/26127745#26127745
+      });
+    },
+    VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
   );
 });
