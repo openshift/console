@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ResourceIcon, ActionsMenu } from '@console/internal/components/utils';
-import { TopologyApplicationObject } from './topology-types';
+import { TopologyApplicationObject } from '../topology-types';
+import { groupActions } from '../actions/groupActions';
 import TopologyApplicationResources from './TopologyApplicationResources';
-import { groupActions } from './actions/groupActions';
 
 export type TopologyApplicationPanelProps = {
   application: TopologyApplicationObject;
