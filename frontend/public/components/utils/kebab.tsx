@@ -82,11 +82,11 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       onKeyDown={onEscape && handleEscape}
       data-test-action={option.label}
     >
+      {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
       {option.label}
     </button>
   );
 };
-
 const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
@@ -497,6 +497,7 @@ export type KebabOption = {
   // a `/` separated string where each segment denotes a new sub menu entry
   // Eg. `Menu 1/Menu 2/Menu 3`
   path?: string;
+  icon?: React.ReactNode;
 };
 
 export type KebabAction = (

@@ -271,3 +271,11 @@ export enum MemoryUnits {
   Mi = 'Mi',
   Gi = 'Gi',
 }
+
+export enum ImportOptions {
+  GIT = 'GIT',
+  CONTAINER = 'CONTAINER',
+  CATALOG = 'CATALOG',
+  DOCKERFILE = 'DOCKERFILE',
+  DATABASE = 'DATABASE',
+}
