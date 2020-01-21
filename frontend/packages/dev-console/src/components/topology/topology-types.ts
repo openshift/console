@@ -208,6 +208,33 @@ export type GroupProps = ViewGroup &
     groupRef(element: GroupElementInterface): void;
   };
 
+export type TrafficData = {
+  nodes: KialiNode[];
+  edges: KialiEdge[];
+};
+
+export type KialiNode = {
+  data: {
+    id: string;
+    nodeType: string;
+    namespace: string;
+    workload: string;
+    app: string;
+    version?: string;
+    destServices?: { [key: string]: any }[];
+    traffic?: { [key: string]: any }[];
+  };
+};
+
+export type KialiEdge = {
+  data: {
+    id: string;
+    source: string;
+    target: string;
+    traffic: { [key: string]: any };
+  };
+};
+
 export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
 export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;

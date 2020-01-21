@@ -1,0 +1,9 @@
+.odc-traffic-connector {
+  --edge--stroke: var(--pf-global--BackgroundColor--dark-200);
+  --edge--fill: var(--pf-global--BackgroundColor--dark-200);
+  --edge__link--stroke: var(--pf-global--BackgroundColor--dark-200);
+  --edge__arrow--cursor: default;
+  line {
+    stroke-dasharray: 5;
+  }
+}

@@ -12,3 +12,4 @@ export const TYPE_HELM_RELEASE = 'helm-release';
 export const TYPE_HELM_WORKLOAD = 'helm-workload';
 export const TYPE_OPERATOR_BACKED_SERVICE = 'operator-backed-service';
 export const TYPE_OPERATOR_WORKLOAD = 'operator-workload';
+export const TYPE_TRAFFIC_CONNECTOR = 'traffic-connector';

@@ -2200,3 +2200,78 @@ export const MockResources: TopologyDataResources = {
   clusterServiceVersions: sampleClusterServiceVersions,
   events: sampleEventsResource,
 };
+
+export const MockKialiGraphData = {
+  nodes: [
+    {
+      data: {
+        id: '5cd385c1ee3309ae40828b5702ae57fb',
+        nodeType: 'workload',
+        namespace: 'testproject1',
+        workload: 'wit-deployment',
+        app: 'details',
+        version: 'v1',
+        destServices: [
+          {
+            namespace: 'bookinfo',
+            name: 'details',
+          },
+        ],
+        traffic: [
+          {
+            protocol: 'http',
+            rates: {
+              httpIn: '0.04',
+            },
+          },
+        ],
+      },
+    },
+    {
+      data: {
+        id: '240c2314cefc993c5d9479a5c349fbd2',
+        nodeType: 'workload',
+        namespace: 'testproject1',
+        workload: 'analytics-deployment',
+        app: 'productpage',
+        version: 'v1',
+        destServices: [
+          {
+            namespace: 'bookinfo',
+            name: 'productpage',
+          },
+        ],
+        traffic: [
+          {
+            protocol: 'http',
+            rates: {
+              httpIn: '0.04',
+              httpOut: '0.08',
+            },
+          },
+        ],
+      },
+    },
+  ],
+  edges: [
+    {
+      data: {
+        id: 'df66cffc756bf9983dd453837e4e14a7',
+        source: '240c2314cefc993c5d9479a5c349fbd2',
+        target: '5cd385c1ee3309ae40828b5702ae57fb',
+        traffic: {
+          protocol: 'http',
+          rates: {
+            http: '0.04',
+            httpPercentReq: '50.6',
+          },
+          responses: {
+            '200': {
+              '-': '100.0',
+            },
+          },
+        },
+      },
+    },
+  ],
+};

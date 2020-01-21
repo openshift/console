@@ -16,10 +16,11 @@ import {
   createTopologyResourceConnection,
   isHelmReleaseNode,
   getTopologyHelmReleaseGroupItem,
+  getTrafficConnectors,
 } from '../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
 import { TopologyFilters } from '../filters/filter-utils';
-import { TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from '../const';
+import { TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import {
   resources,
   topologyData,
@@ -29,6 +30,7 @@ import {
   sampleDeployments,
   sampleHelmChartDeploymentConfig,
   sampleDeploymentConfigs,
+  MockKialiGraphData,
 } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 import { serviceBindingRequest } from './service-binding-test-data';
@@ -392,6 +394,56 @@ describe('TopologyUtils ', () => {
     const { graphData } = getTranformedTopologyData(data, ['deploymentConfigs']);
     expect(graphData.groups).toHaveLength(2);
     expect(graphData.groups[1].type).toEqual(TYPE_HELM_RELEASE);
+  });
+
+  it('should create a connector using kiali graph data', () => {
+    const expectedEdgeId = `5ca9ae28-680d-11e9-8c69-5254003f9382_60a9b423-680d-11e9-8c69-5254003f9382`;
+    const edges = getTrafficConnectors(MockKialiGraphData, [...sampleDeployments.data]);
+    expect(edges).toHaveLength(1);
+    expect(edges[0].id).toEqual(expectedEdgeId);
+  });
+
+  it('should not create a connector if kiali graph node data doesnt match any on the resource name', () => {
+    const nodeData = MockKialiGraphData.nodes;
+    const kialiData = {
+      nodes: [
+        {
+          data: {
+            ...nodeData[0].data,
+            workload: 'a',
+          },
+        },
+        {
+          data: {
+            ...nodeData[1].data,
+            workload: 'b',
+          },
+        },
+      ],
+      edges: MockKialiGraphData.edges,
+    };
+    const edges = getTrafficConnectors(kialiData, [...sampleDeployments.data]);
+    expect(edges).toHaveLength(0);
+  });
+
+  it('should not have connector of TYPE_TRAFFIC_CONNECTOR if there is not traffic data', () => {
+    const { graphData } = getTranformedTopologyData(MockResources, ['deployments']);
+    expect(graphData.edges).toHaveLength(1);
+    expect(graphData.edges[0].type).not.toEqual(TYPE_TRAFFIC_CONNECTOR);
+  });
+
+  it('should add a traffic connector when kiali data is passed through trafficData', () => {
+    const transformedData = transformTopologyData(
+      MockResources,
+      ['deployments'],
+      null,
+      null,
+      null,
+      null,
+      MockKialiGraphData,
+    );
+    expect(transformedData.graph.edges).toHaveLength(2);
+    expect(transformedData.graph.edges[0].type).toEqual(TYPE_TRAFFIC_CONNECTOR);
   });
 });
 
