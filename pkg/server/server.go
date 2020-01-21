@@ -305,6 +305,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/release", authHandlerWithUser(helmHandlers.HandleHelmInstall))
+	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
 
 	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
 
