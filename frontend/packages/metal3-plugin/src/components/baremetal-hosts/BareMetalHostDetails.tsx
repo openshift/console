@@ -20,6 +20,8 @@ import {
   getNamespace,
   getMachineRole,
   StatusIconAndText,
+  DetailPropertyList,
+  DetailPropertyListItem,
 } from '@console/shared';
 import { getHostStatus } from '../../status/host-status';
 import {
@@ -43,8 +45,6 @@ import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
-
-import './BareMetalHostDetails.scss';
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -96,11 +96,15 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             )}
             <dt>Host Addresses</dt>
             <dd>
-              <ul className="metal3-bare-metal-host-details__simple-list">
-                <li>Management: {getHostBMCAddress(host)}</li>
-                <li>NICs: {ips}</li>
-                <li>Boot Interface MAC: {getHostBootMACAddress(host)}</li>
-              </ul>
+              <DetailPropertyList>
+                <DetailPropertyListItem title="Management">
+                  {getHostBMCAddress(host)}
+                </DetailPropertyListItem>
+                <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
+                <DetailPropertyListItem title="Boot Interface MAC">
+                  {getHostBootMACAddress(host)}
+                </DetailPropertyListItem>
+              </DetailPropertyList>
             </dd>
             {machineName && (
               <>
@@ -163,11 +167,11 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               <>
                 <dt>Bios</dt>
                 <dd>
-                  <ul className="metal3-bare-metal-host-details__simple-list">
-                    <li>Version: {bios.version}</li>
-                    <li>Vendor: {bios.vendor}</li>
-                    <li>Date: {bios.date}</li>
-                  </ul>
+                  <DetailPropertyList>
+                    <DetailPropertyListItem title="Version">{bios.version}</DetailPropertyListItem>
+                    <DetailPropertyListItem title="Vendor">{bios.vendor}</DetailPropertyListItem>
+                    <DetailPropertyListItem title="Date">{bios.date}</DetailPropertyListItem>
+                  </DetailPropertyList>
                 </dd>
               </>
             )}
@@ -181,13 +185,15 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               <>
                 <dt>Hardware</dt>
                 <dd>
-                  <ul className="metal3-bare-metal-host-details__simple-list">
-                    <li>
-                      {CPUCount}x {CPUModel} CPU
-                    </li>
-                    <li>{RAMGB} RAM</li>
-                    <li>{totalStorageCapacity} Disk</li>
-                  </ul>
+                  <DetailPropertyList>
+                    <DetailPropertyListItem title="CPU">
+                      {CPUCount}x {CPUModel}
+                    </DetailPropertyListItem>
+                    <DetailPropertyListItem title="RAM">{RAMGB}</DetailPropertyListItem>
+                    <DetailPropertyListItem title="Storage">
+                      {totalStorageCapacity}
+                    </DetailPropertyListItem>
+                  </DetailPropertyList>
                 </dd>
               </>
             )}

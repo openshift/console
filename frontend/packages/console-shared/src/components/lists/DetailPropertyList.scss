@@ -1,0 +1,11 @@
+ul.pf-c-list:not(.pf-m-inline).co-detail-property-list {
+  list-style: none;
+  padding-left: 0;
+  li + li {
+    margin-top: 0;
+  }
+}
+
+.co-detail-property-list__item-title {
+  color: var(--pf-global--Color--200);
+}
