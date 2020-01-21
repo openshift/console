@@ -1,18 +1,17 @@
 import * as _ from 'lodash';
 import { Filter } from '@console/shared';
-import { VM_SIMPLE_STATUS_ALL, VM_SIMPLE_STATUS_TO_TEXT } from '../../statuses/vm/constants';
-import { getSimpleVMStatus } from '../../statuses/vm/vm';
+import { VM_STATUS_FILTER_STRINGS } from '../../statuses/vm/constants';
 
 export const vmStatusFilter: Filter = {
   type: 'vm-status',
-  selected: VM_SIMPLE_STATUS_ALL,
-  reducer: getSimpleVMStatus,
-  items: VM_SIMPLE_STATUS_ALL.map((status) => ({
+  selected: VM_STATUS_FILTER_STRINGS,
+  reducer: (obj) => _.get(obj, 'metadata.status').split(' ')[0],
+  items: VM_STATUS_FILTER_STRINGS.map((status) => ({
     id: status,
-    title: VM_SIMPLE_STATUS_TO_TEXT[status],
+    title: status,
   })),
-  filter: (statuses, vm) => {
-    const status = getSimpleVMStatus(vm);
+  filter: (statuses, obj) => {
+    const status = _.get(obj, 'metadata.status').split(' ')[0];
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 };
