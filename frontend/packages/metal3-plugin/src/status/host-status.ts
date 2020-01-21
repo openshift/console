@@ -1,12 +1,8 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getHostOperationalStatus, getHostProvisioningState } from '../selectors';
+import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
 import {
   HOST_STATUS_TITLES,
-  HOST_STATUS_REGISTRATION_ERROR,
-  HOST_STATUS_REGISTERING,
   HOST_STATUS_ERROR,
-  HOST_STATUS_PROVISIONING,
-  HOST_STATUS_PROVISIONING_ERROR,
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
   HOST_STATUS_DEPROVISIONING,
@@ -18,19 +14,15 @@ import { getNodeMaintenanceStatus } from './node-maintenance-status';
 export const getBareMetalHostStatus = (host: BareMetalHostKind) => {
   const operationalStatus = getHostOperationalStatus(host);
   const provisioningState = getHostProvisioningState(host);
+  const errorType = getHostErrorType(host);
 
   let hostStatus;
 
   if (operationalStatus === HOST_STATUS_ERROR) {
-    switch (provisioningState) {
-      case HOST_STATUS_REGISTERING:
-        hostStatus = HOST_STATUS_REGISTRATION_ERROR;
-        break;
-      case HOST_STATUS_PROVISIONING:
-        hostStatus = HOST_STATUS_PROVISIONING_ERROR;
-        break;
-      default:
-        hostStatus = HOST_STATUS_ERROR;
+    if (errorType) {
+      hostStatus = errorType;
+    } else {
+      hostStatus = HOST_STATUS_ERROR;
     }
   } else if (operationalStatus === HOST_STATUS_DISCOVERED) {
     hostStatus = HOST_STATUS_DISCOVERED;
