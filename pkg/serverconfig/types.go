@@ -13,6 +13,7 @@ type Config struct {
 	Auth          `yaml:"auth"`
 	Customization `yaml:"customization"`
 	Providers     `yaml:"providers"`
+	Helm          `yaml:"helm"`
 }
 
 // ServingInfo holds configuration for serving HTTP.
@@ -57,4 +58,13 @@ type Customization struct {
 
 type Providers struct {
 	StatuspageID string `yaml:"statuspageID,omitempty"`
+}
+
+type HelmChartRepo struct {
+	URL    string `yaml:"url,omitempty"`
+	CAFile string `yaml:"caFile,omitempty"`
+}
+
+type Helm struct {
+	ChartRepo HelmChartRepo `yaml:"chartRepository"`
 }

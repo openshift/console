@@ -19,6 +19,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/crypto"
+	"github.com/openshift/console/pkg/helm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -107,6 +108,8 @@ func main() {
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
+
+	helmConfig := helm.RegisterFlags(fs)
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -520,6 +523,8 @@ func main() {
 	default:
 		bridge.FlagFatalf("listen", "scheme must be one of: http, https")
 	}
+
+	helmConfig.Configure(srv)
 
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,

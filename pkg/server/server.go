@@ -34,6 +34,7 @@ const (
 	alertManagerProxyEndpoint      = "/api/alertmanager"
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
+	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
 )
 
 var (
@@ -91,6 +92,7 @@ type Server struct {
 	MeteringProxyConfig      *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister *ResourceLister
+	HelmChartRepoProxyConfig           *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -296,6 +298,13 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
+
+	handle(helmChartRepoProxyEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
+		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
+
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
