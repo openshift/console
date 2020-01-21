@@ -15,6 +15,8 @@ import { K8sResourceKind, PodKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
+import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
@@ -242,10 +244,6 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, sortAsNumber, orderBy });
 };
-export const setCreateProjectMessage = (message: string) =>
-  action(ActionType.SetCreateProjectMessage, { message });
-export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, { clusterID });
-export const setUser = (user: any) => action(ActionType.SetUser, { user });
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -304,8 +302,6 @@ export const queryBrowserToggleIsEnabled = (index: number) =>
 export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) => {
   return action(ActionType.QueryBrowserToggleSeries, { index, labels });
 };
-export const setConsoleLinks = (consoleLinks: string[]) =>
-  action(ActionType.SetConsoleLinks, { consoleLinks });
 export const setPodMetrics = (podMetrics: PodMetrics) =>
   action(ActionType.SetPodMetrics, { podMetrics });
 export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>

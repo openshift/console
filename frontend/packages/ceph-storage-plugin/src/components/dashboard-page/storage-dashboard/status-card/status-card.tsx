@@ -27,30 +27,32 @@ import { getCephHealthState, getDataResiliencyState } from './utils';
 const cephStatusQuery = STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY];
 const resiliencyProgressQuery = DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS];
 
-const CephAlerts = withDashboardResources(({ watchAlerts, stopWatchAlerts, alertsResults }) => {
-  React.useEffect(() => {
-    watchAlerts();
-    return () => {
-      stopWatchAlerts();
-    };
-  }, [watchAlerts, stopWatchAlerts]);
+export const CephAlerts = withDashboardResources(
+  ({ watchAlerts, stopWatchAlerts, alertsResults }) => {
+    React.useEffect(() => {
+      watchAlerts();
+      return () => {
+        stopWatchAlerts();
+      };
+    }, [watchAlerts, stopWatchAlerts]);
 
-  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-  const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-  const alerts = filterCephAlerts(getAlerts(alertsResponse));
+    const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
+    const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
+    const alerts = filterCephAlerts(getAlerts(alertsResponse));
 
-  return (
-    <AlertsBody
-      isLoading={!alertsResponse}
-      error={alertsResponseError}
-      emptyMessage="No persistent storage alerts"
-    >
-      {alerts.length
-        ? alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)
-        : null}
-    </AlertsBody>
-  );
-});
+    return (
+      <AlertsBody
+        isLoading={!alertsResponse}
+        error={alertsResponseError}
+        emptyMessage="No persistent storage alerts"
+      >
+        {alerts.length
+          ? alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)
+          : null}
+      </AlertsBody>
+    );
+  },
+);
 
 export const StatusCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
