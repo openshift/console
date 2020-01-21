@@ -226,7 +226,7 @@ const graphContainer = (
 );
 
 const Graph: React.FC<GraphProps> = React.memo(
-  ({ allSeries, disabledSeries, isStack, span, xDomain }) => {
+  ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, xDomain }) => {
     const [containerRef, width] = useRefWidth();
 
     // Remove any disabled series
@@ -264,6 +264,12 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     const xTickFormat = span < 5 * 60 * 1000 ? twentyFourHourTimeWithSeconds : twentyFourHourTime;
 
+    const legendData = formatLegendLabel
+      ? _.flatMap(allSeries, (series, i) =>
+          _.map(series, (s) => ({ name: formatLegendLabel(s[0], i) })),
+        )
+      : undefined;
+
     return (
       <div ref={containerRef} style={{ width: '100%' }}>
         {width > 0 && (
@@ -272,6 +278,9 @@ const Graph: React.FC<GraphProps> = React.memo(
             domain={domain}
             domainPadding={{ y: 1 }}
             height={200}
+            legendAllowWrap={true}
+            legendData={legendData}
+            legendPosition="bottom-left"
             scale={{ x: 'time', y: 'linear' }}
             theme={chartTheme}
             width={width}
@@ -352,6 +361,7 @@ const minPollInterval = 10 * 1000;
 const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   allSeries,
   disabledSeries,
+  formatLegendLabel,
   isStack,
   onZoom,
   span,
@@ -411,6 +421,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
       <Graph
         allSeries={allSeries}
         disabledSeries={disabledSeries}
+        formatLegendLabel={formatLegendLabel}
         isStack={isStack}
         span={span}
         xDomain={xDomain}
@@ -424,6 +435,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan = parsePrometheusDuration('30m'),
   disabledSeries = [],
   filterLabels,
+  formatLegendLabel,
   GraphLink,
   hideControls,
   hideGraphs,
@@ -624,6 +636,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             <ZoomableGraph
               allSeries={graphData}
               disabledSeries={disabledSeries}
+              formatLegendLabel={formatLegendLabel}
               isStack={isStack}
               onZoom={onZoom}
               span={span}
@@ -663,9 +676,12 @@ export type QueryObj = {
 
 type PrometheusValue = [number, string];
 
+export type FormatLegendLabel = (labels: Labels, i: number) => string;
+
 type GraphProps = {
   allSeries: Series[];
   disabledSeries?: Labels[][];
+  formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   span: number;
   xDomain?: AxisDomain;
@@ -674,6 +690,7 @@ type GraphProps = {
 type ZoomableGraphProps = {
   allSeries: Series[];
   disabledSeries?: Labels[][];
+  formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   onZoom: (from: number, to: number) => void;
   span: number;
@@ -688,6 +705,7 @@ export type QueryBrowserProps = {
   GraphLink?: React.ComponentType<{}>;
   hideControls?: boolean;
   hideGraphs: boolean;
+  formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
