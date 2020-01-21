@@ -25,6 +25,9 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
         title,
         message,
         btnText,
+        close: () => {
+          reject();
+        },
         cancel: () => {
           reject();
         },
