@@ -100,8 +100,10 @@ export async function getSelectOptions(selector: any): Promise<string[]> {
       .then((text) => options.push(text))
       .catch((err) => Promise.reject(err));
   });
-  if (options.length > 0 && options[0].startsWith('---')) {
-    return options.slice(1);
+  if (options.length > 0) {
+    if (options[0].startsWith('---') || options[0].startsWith('Please select')) {
+      return options.slice(1);
+    }
   }
   return options;
 }
