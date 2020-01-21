@@ -12,7 +12,13 @@ import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { global_info_color_100 as blueInfoColor } from '@patternfly/react-tokens';
 import { history, Timestamp } from '@console/internal/components/utils';
 
-import { NotificationTypes } from './notification-drawer';
+export enum NotificationTypes {
+  info = 'info',
+  warning = 'warning',
+  critical = 'danger',
+  success = 'success',
+  update = 'update',
+}
 
 const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   switch (type) {
@@ -22,11 +28,11 @@ const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
       return <GreenCheckCircleIcon />;
     case NotificationTypes.critical:
       return <RedExclamationCircleIcon />;
-    case NotificationTypes.info:
-      return <BlueInfoCircleIcon />;
     case NotificationTypes.warning:
-    default:
       return <YellowExclamationTriangleIcon />;
+    case NotificationTypes.info:
+    default:
+      return <BlueInfoCircleIcon />;
   }
 };
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Badge } from '@patternfly/react-core';
 
-const NotificationTypeHeading: React.FC<NotificationTypeHeadingProps> = ({
+const NotificationCategory: React.FC<NotificationCategoryProps> = ({
   label,
   count,
   isExpanded,
@@ -39,7 +39,7 @@ const NotificationTypeHeading: React.FC<NotificationTypeHeadingProps> = ({
   </section>
 );
 
-type NotificationTypeHeadingProps = {
+type NotificationCategoryProps = {
   children: React.ReactNode;
   count: number;
   isExpanded: boolean;
@@ -47,4 +47,4 @@ type NotificationTypeHeadingProps = {
   onExpandContents: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default NotificationTypeHeading;
+export default NotificationCategory;
