@@ -1,0 +1,35 @@
+.nb-info__section {
+  margin: var(--pf-global--spacer--md);
+}
+
+.nb-data-section {
+  margin: var(--pf-global--spacer--lg);
+  padding: var(--pf-global--spacer--sm);
+}
+
+.nb-data-section__left {
+  flex-grow: 10;
+}
+
+.nb-data-section__right {
+  flex-grow: 2;
+}
+
+.nb-data-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.nb-data-section__right-faq {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.nb-data-section__right-entry--faded {
+  color: var(--pf-global--Color--400);
+}
+
+.nb-data-section__left--block {
+  display: block;
+}

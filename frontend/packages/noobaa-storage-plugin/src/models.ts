@@ -11,6 +11,7 @@ export const NooBaaSystemModel: K8sKind = {
   kind: 'NooBaa',
   id: 'noobaasystem',
   crd: true,
+  legacyPluralURL: true,
 };
 
 export const NooBaaBackingStoreModel: K8sKind = {
