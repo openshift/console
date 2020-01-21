@@ -48,7 +48,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
-  data?: { sbr?: K8sResourceKind };
+  data?: {};
 }
 
 export interface Group {

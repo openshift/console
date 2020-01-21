@@ -12,6 +12,7 @@ import {
   TYPE_KNATIVE_SERVICE,
   TYPE_REVISION_TRAFFIC,
   TYPE_SERVICE_BINDING,
+  TYPE_TRAFFIC_CONNECTOR,
 } from '../const';
 import { moveConnectionModal } from '../components/MoveConnectionModal';
 
@@ -59,6 +60,8 @@ export const edgeActions = (edge: BaseEdge, nodes: Node[]): KebabOption[] => {
         case TYPE_EVENT_SOURCE_LINK:
           return n.getType() === TYPE_KNATIVE_SERVICE;
         case TYPE_REVISION_TRAFFIC:
+          return false;
+        case TYPE_TRAFFIC_CONNECTOR:
           return false;
         default:
           return true;

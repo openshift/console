@@ -1,26 +1,35 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
 import { BaseEdge } from '@console/topology';
+import { RootState } from '@console/internal/redux';
+import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ActionsMenu,
   ResourceLink,
   SidebarSectionHeading,
+  ExternalLink,
 } from '@console/internal/components/utils';
 import {
   TYPE_CONNECTS_TO,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_REVISION_TRAFFIC,
   TYPE_SERVICE_BINDING,
+  TYPE_TRAFFIC_CONNECTOR,
 } from './const';
 import { edgeActions } from './actions/edgeActions';
-import * as classNames from 'classnames';
-import * as _ from 'lodash';
-import { referenceFor } from '@console/internal/module/k8s';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
+import { getKialiLink } from './topology-utils';
+
+type StateProps = {
+  consoleLinks?: K8sResourceKind[];
+};
 
 export type TopologyEdgePanelProps = {
   edge: BaseEdge;
   data: TopologyDataModel;
-};
+} & StateProps;
 
 const connectorTypeToTitle = (type: string): string => {
   switch (type) {
@@ -32,17 +41,21 @@ const connectorTypeToTitle = (type: string): string => {
       return 'Traffic distribution connector';
     case TYPE_EVENT_SOURCE_LINK:
       return 'Event source connector';
+    case TYPE_TRAFFIC_CONNECTOR:
+      return 'Traffic connector';
     default:
       return '';
   }
 };
 
-const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data }) => {
+const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data, consoleLinks }) => {
   const source: TopologyDataObject = edge.getSource().getData();
   const target: TopologyDataObject = edge.getTarget().getData();
   const resources = [source?.resources?.obj, target?.resources?.obj];
-
   const nodes = data.graph.nodes.map((n) => edge.getController().getNodeById(n.id));
+  const {
+    metadata: { namespace },
+  } = resources[1];
 
   return (
     <div className="overview__sidebar-pane resource-overview">
@@ -76,7 +89,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data }) => 
               return null;
             }
             const {
-              metadata: { name, namespace, uid },
+              metadata: { name, uid },
             } = resource;
             return (
               <li className="list-group-item  container-fluid" key={uid}>
@@ -85,9 +98,21 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data }) => 
             );
           })}
         </ul>
+
+        {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
+          <>
+            <SidebarSectionHeading text="Kiali Link" />
+            <ExternalLink href={getKialiLink(consoleLinks, namespace)} text="Kiali Graph View" />
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export default TopologyEdgePanel;
+const TopologyEdgeStateToProps = (state: RootState) => {
+  const consoleLinks = state.UI.get('consoleLinks');
+  return { consoleLinks };
+};
+
+export default connect(TopologyEdgeStateToProps)(TopologyEdgePanel);

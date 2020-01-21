@@ -70,6 +70,12 @@ export const isHelmReleaseNode = (obj: K8sResourceKind): boolean => {
   return obj?.metadata?.labels?.['heritage'] === 'Helm' || !!obj?.metadata?.labels?.['charts'];
 };
 
+export const getKialiLink = (consoleLinks: K8sResourceKind[], namespace: string): string => {
+  const kialiLink = _.find(consoleLinks, ['metadata.name', `kiali-namespace-${namespace}`])?.spec
+    ?.href;
+  return kialiLink || '';
+};
+
 /**
  * filter data based on the active application
  * @param data

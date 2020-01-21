@@ -25,7 +25,7 @@ import TopologySideBar from './TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
-import TopologyEdgePanel from './TopologyEdgePanel';
+import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
@@ -204,7 +204,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
     }
 
     if (isEdge(selectedEntity)) {
-      return <TopologyEdgePanel edge={selectedEntity as BaseEdge} data={data} />;
+      return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} data={data} />;
     }
     return null;
   };
