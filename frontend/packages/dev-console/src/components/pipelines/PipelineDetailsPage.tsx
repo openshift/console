@@ -12,8 +12,8 @@ import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import {
   PipelineDetails,
-  PipelineParameters,
-  PipelineResources,
+  PipelineParametersForm,
+  PipelineResourcesForm,
   PipelineRuns,
 } from './detail-page-tabs';
 import PipelineForm from './pipeline-form/PipelineForm';
@@ -76,7 +76,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             name: 'Parameters',
             component: (props) => (
               <PipelineForm
-                PipelineFormComponent={PipelineParameters}
+                PipelineFormComponent={PipelineParametersForm}
                 formName="parameters"
                 {...props}
               />
@@ -87,7 +87,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             name: 'Resources',
             component: (props) => (
               <PipelineForm
-                PipelineFormComponent={PipelineResources}
+                PipelineFormComponent={PipelineResourcesForm}
                 formName="resources"
                 {...props}
               />

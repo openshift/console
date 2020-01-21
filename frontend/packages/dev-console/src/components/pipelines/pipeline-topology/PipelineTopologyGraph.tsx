@@ -21,8 +21,6 @@ const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
   edges,
   layout,
 }) => {
-  console.debug('updating graph', nodes, edges);
-
   return (
     <div
       className="odc-pipeline-topology-visualization"

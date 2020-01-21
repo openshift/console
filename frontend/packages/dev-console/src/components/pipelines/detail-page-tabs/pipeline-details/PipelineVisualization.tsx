@@ -23,12 +23,14 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   }
 
   return (
-    <PipelineTopologyGraph
-      id={pipelineRun?.metadata?.name || pipeline.metadata.name}
-      nodes={nodes}
-      edges={edges}
-      layout={PipelineLayout.DAGRE_VIEWER}
-    />
+    <div style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
+      <PipelineTopologyGraph
+        id={pipelineRun?.metadata?.name || pipeline.metadata.name}
+        nodes={nodes}
+        edges={edges}
+        layout={PipelineLayout.DAGRE_VIEWER}
+      />
+    </div>
   );
 };
 
