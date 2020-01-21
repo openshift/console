@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { PodKind } from '@console/internal/module/k8s';
-import { buildOwnerReference, compareOwnerReference } from '../../utils';
+import { buildOwnerReference } from '../../utils';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMMultiStatus } from '../../types';
 import {

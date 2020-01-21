@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { validate } from '@console/internal/components/utils';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
@@ -13,7 +14,6 @@ import {
 } from '../../../selectors/dv/selectors';
 import { toIECUnit } from '../../../components/form/size-unit-utils';
 import { DataVolumeModel } from '../../../models';
-import { compareOwnerReference } from '../../../utils';
 
 type CombinedTypeData = {
   name?: string;

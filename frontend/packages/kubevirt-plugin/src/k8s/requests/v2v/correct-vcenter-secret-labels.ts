@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
 import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { V2VVMwareModel } from '../../../models';
 import { VCENTER_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { getLabels } from '../../../selectors/selectors';
-import { buildOwnerReferenceForModel, compareOwnerReference } from '../../../utils';
+import { buildOwnerReferenceForModel } from '../../../utils';
 
 export const correctVCenterSecretLabels = async ({
   secret,
