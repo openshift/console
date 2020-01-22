@@ -73,7 +73,7 @@ describe('Auth test', () => {
     it('logs out htpasswd user', async () => {
       await loginView.logout();
       expect(browser.getCurrentUrl()).toContain('oauth-openshift');
-      expect($('.login-pf').isPresent()).toBeTruthy();
+      expect(until.or(loginView.pf3Login, loginView.pf4Login)).toBeTruthy();
     });
 
     it('logs in as kubeadmin user', async () => {
@@ -89,7 +89,7 @@ describe('Auth test', () => {
     it('logs out kubeadmin user', async () => {
       await loginView.logout();
       expect(browser.getCurrentUrl()).toContain('oauth-openshift');
-      expect($('.login-pf').isPresent()).toBeTruthy();
+      expect(until.or(loginView.pf3Login, loginView.pf4Login)).toBeTruthy();
 
       // Log back in so that remaining tests can be run
       await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
