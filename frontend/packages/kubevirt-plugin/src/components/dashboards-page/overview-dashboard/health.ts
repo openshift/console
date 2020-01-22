@@ -7,7 +7,7 @@ export const getKubevirtHealthState: URLHealthHandler<KubevirtHealthResponse> = 
   error,
 ) => {
   if (error) {
-    return { state: HealthState.UNKNOWN };
+    return { state: HealthState.NOT_AVAILABLE };
   }
   if (!response) {
     return { state: HealthState.LOADING };

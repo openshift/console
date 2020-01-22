@@ -66,7 +66,7 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
       if (
         Object.keys(operatorResources).some((resource) => operatorResources[resource].loadError)
       ) {
-        return { health: HealthState.UNKNOWN };
+        return { health: HealthState.NOT_AVAILABLE };
       }
       if (Object.keys(operatorResources).some((resource) => !operatorResources[resource].loaded)) {
         return { health: HealthState.LOADING };

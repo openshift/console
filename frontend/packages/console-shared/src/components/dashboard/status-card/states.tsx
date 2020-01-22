@@ -16,6 +16,7 @@ export enum HealthState {
   UNKNOWN = 'UNKNOWN',
   UPDATING = 'UPDATING',
   PROGRESS = 'PROGRESS',
+  NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
 
 export const healthStateMapping: { [key in HealthStateMappingKeys]: HealthStateMappingValues } = {
@@ -39,6 +40,10 @@ export const healthStateMapping: { [key in HealthStateMappingKeys]: HealthStateM
     message: 'Pending',
   },
   [HealthState.UNKNOWN]: {
+    icon: <GrayUnknownIcon />,
+    message: 'Unknown',
+  },
+  [HealthState.NOT_AVAILABLE]: {
     icon: <GrayUnknownIcon />,
     message: 'Not available',
   },
@@ -79,6 +84,11 @@ export const operatorHealthPriority: {
     priority: 5,
     health: HealthState.ERROR,
     ...healthStateMapping[HealthState.ERROR],
+  },
+  [HealthState.NOT_AVAILABLE]: {
+    priority: 6,
+    health: HealthState.NOT_AVAILABLE,
+    ...healthStateMapping[HealthState.NOT_AVAILABLE],
   },
 };
 
