@@ -8,7 +8,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
   onChange,
   selected,
 }) => (
-  <div>
+  <div className="pf-c-form__checkbox-row">
     {containers.map((container: ContainerSpec) => (
       <Checkbox
         key={container.name}

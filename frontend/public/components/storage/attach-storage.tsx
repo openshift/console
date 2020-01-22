@@ -332,7 +332,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           </p>
         )}
         {useContainerSelector && (
-          <div className="form-group">
+          <div className="form-group co-break-word">
             <label className="control-label">Containers</label>
             <Button type="button" onClick={handleSelectContainers} variant="link">
               (use all containers)

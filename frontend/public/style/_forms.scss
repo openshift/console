@@ -72,6 +72,11 @@
   justify-content: flex-end;
 }
 
+.pf-c-form__checkbox-row {
+  display: grid;
+  row-gap: ($grid-gutter-width / 2);
+}
+
 .pf-c-form__group--no-top-margin {
   margin-top: 0 !important;
 }
