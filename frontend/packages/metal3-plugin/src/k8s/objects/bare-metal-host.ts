@@ -1,9 +1,8 @@
-import { Base64 } from 'js-base64';
 import { SecretModel } from '@console/internal/models';
 import { BareMetalHostModel } from '../../models';
 import { BareMetalHostKind } from '../../types';
 
-const getSecretName = (name: string): string => `${name}-bmc-secret`;
+export const getSecretName = (name: string): string => `${name}-bmc-secret`;
 
 export const buildBareMetalHostSecret = (name, namespace, username, password) => ({
   apiVersion: SecretModel.apiVersion,
@@ -13,8 +12,8 @@ export const buildBareMetalHostSecret = (name, namespace, username, password) =>
     name: getSecretName(name),
   },
   data: {
-    username: Base64.encode(username),
-    password: Base64.encode(password),
+    username: btoa(username),
+    password: btoa(password),
   },
   type: 'Opaque',
 });

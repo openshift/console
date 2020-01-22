@@ -4,35 +4,74 @@ import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { history, resourcePathFromModel, FirehoseResult } from '@console/internal/components/utils';
 import { nameValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
-import { getName } from '@console/shared';
-import { createBareMetalHost } from '../../../k8s/requests/bare-metal-host';
+import { getName } from '@console/shared/src';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
 import {
-  buildBareMetalHostSecret,
-  buildBareMetalHostObject,
-} from '../../../k8s/objects/bare-metal-host';
+  getHostBMCAddress,
+  getHostBootMACAddress,
+  getHostDescription,
+  isHostOnline,
+} from '../../../selectors';
+import { getSecretPassword, getSecretUsername } from '../../../selectors/secret';
+import { getLoadedData } from '../../../utils';
+import { usePrevious } from '../../../hooks';
 import AddBareMetalHostForm from './AddBareMetalHostForm';
 import { AddBareMetalHostFormValues } from './types';
 import { MAC_REGEX, BMC_ADDRESS_REGEX } from './utils';
 
-const initialValues: AddBareMetalHostFormValues = {
-  name: '',
-  BMCAddress: '',
-  username: '',
-  password: '',
-  bootMACAddress: '',
-  online: true,
-  description: '',
-};
+const getInitialValues = (
+  host: BareMetalHostKind,
+  secret: K8sResourceKind,
+): AddBareMetalHostFormValues => ({
+  name: getName(host) || '',
+  BMCAddress: getHostBMCAddress(host) || '',
+  username: getSecretUsername(secret) || '',
+  password: getSecretPassword(secret) || '',
+  bootMACAddress: getHostBootMACAddress(host) || '',
+  online: isHostOnline(host) || true,
+  description: getHostDescription(host) || '',
+});
 
 type AddBareMetalHostProps = {
   namespace: string;
+  isEditing: boolean;
+  loaded?: boolean;
   hosts?: FirehoseResult<BareMetalHostKind[]>;
+  host?: FirehoseResult<BareMetalHostKind>;
+  secret?: FirehoseResult<K8sResourceKind>;
 };
 
-const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({ namespace, hosts }) => {
-  const hostNames = _.flatMap(_.get(hosts, 'data', []), (host) => getName(host));
+const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
+  namespace,
+  isEditing,
+  hosts,
+  host: resultHost,
+  secret: resultSecret,
+}) => {
+  const [reload, setReload] = React.useState<boolean>(false);
+  const hostNames = _.flatMap(getLoadedData(hosts, []), (host) => getName(host));
+  const initialHost = getLoadedData(resultHost);
+  const initialSecret = getLoadedData(resultSecret);
+  const prevInitialHost = usePrevious(initialHost);
+  const prevInitialSecret = usePrevious(initialSecret);
+
+  const initialValues = getInitialValues(initialHost, initialSecret);
+  const prevInitialValues = getInitialValues(prevInitialHost, prevInitialSecret);
+
+  React.useEffect(() => {
+    if (reload) {
+      setReload(false);
+    }
+  }, [reload, setReload]);
+
+  const showUpdated =
+    isEditing &&
+    prevInitialHost &&
+    prevInitialSecret &&
+    !_.isEqual(prevInitialValues, initialValues);
 
   const addHostValidationSchema = Yup.object().shape({
     name: Yup.mixed()
@@ -52,23 +91,16 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({ namespace, hosts })
       .required('Required.'),
   });
 
-  const handleSubmit = (
-    { name, BMCAddress, username, password, bootMACAddress, online, description },
-    actions,
-  ) => {
-    const secret = buildBareMetalHostSecret(name, namespace, username, password);
-    const bareMetalHost = buildBareMetalHostObject(
-      name,
-      namespace,
-      BMCAddress,
-      bootMACAddress,
-      online,
-      description,
-    );
-    createBareMetalHost(bareMetalHost, secret)
+  const handleSubmit = (values, actions) => {
+    const opts = { ...values, namespace };
+    const promise = isEditing
+      ? updateBareMetalHost(initialHost, initialSecret, opts)
+      : createBareMetalHost(opts);
+
+    promise
       .then(() => {
         actions.setSubmitting(false);
-        history.push(resourcePathFromModel(BareMetalHostModel, name, namespace));
+        history.push(resourcePathFromModel(BareMetalHostModel, values.name, namespace));
       })
       .catch((error) => {
         actions.setSubmitting(false);
@@ -79,11 +111,15 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({ namespace, hosts })
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize={isEditing && (reload || !prevInitialHost || !prevInitialSecret)}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => setReload(true)}
       validationSchema={addHostValidationSchema}
-      component={AddBareMetalHostForm}
-    />
+    >
+      {(props) => (
+        <AddBareMetalHostForm {...props} isEditing={isEditing} showUpdated={showUpdated} />
+      )}
+    </Formik>
   );
 };
 

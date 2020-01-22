@@ -6,8 +6,15 @@ import {
   MachineKind,
   MachineSetKind,
   NodeKind,
+  referenceForModel,
 } from '@console/internal/module/k8s';
-import { getMachineNode, getMachineNodeName, getName, getAnnotations } from '@console/shared';
+import {
+  getMachineNode,
+  getMachineNodeName,
+  getName,
+  getNamespace,
+  getAnnotations,
+} from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
 import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../../selectors';
@@ -41,6 +48,11 @@ type ActionArgs = {
   hasNodeMaintenanceCapability?: boolean;
   status: string;
 };
+
+export const Edit = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => ({
+  label: `Edit ${kindObj.label}`,
+  href: `/k8s/ns/${getNamespace(host)}/${referenceForModel(kindObj)}/${getName(host)}/edit`,
+});
 
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
@@ -149,7 +161,7 @@ export const menuActions = [
   PowerOff,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Edit,
+  Edit,
   Delete,
 ];
 
