@@ -37,8 +37,8 @@ import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
-import { AlertManagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
-import { AlertManagerConfigWrapper } from './monitoring/alert-manager-config';
+import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
+import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import {
   ActionsMenu,
   ButtonBar,
@@ -773,15 +773,15 @@ const AlertsPageDescription = () => (
 );
 
 const HeaderAlertmanagerLink_ = ({ path, urls }) =>
-  _.isEmpty(urls[MonitoringRoutes.AlertManager]) ? null : (
+  _.isEmpty(urls[MonitoringRoutes.Alertmanager]) ? null : (
     <span className="monitoring-header-link">
       <ExternalLink
-        href={`${urls[MonitoringRoutes.AlertManager]}${path || ''}`}
+        href={`${urls[MonitoringRoutes.Alertmanager]}${path || ''}`}
         text="Alertmanager UI"
       />
     </span>
   );
-const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(
+const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.Alertmanager)(
   HeaderAlertmanagerLink_,
 );
 
@@ -1365,7 +1365,7 @@ const CreateSilence = () => {
   );
 };
 
-const AlertManagerYAML = () => {
+const AlertmanagerYAML = () => {
   return (
     <Firehose
       resources={[
@@ -1378,12 +1378,12 @@ const AlertManagerYAML = () => {
         },
       ]}
     >
-      <AlertManagerYAMLEditorWrapper />
+      <AlertmanagerYAMLEditorWrapper />
     </Firehose>
   );
 };
 
-const AlertManagerConfig = () => {
+const AlertmanagerConfig = () => {
   return (
     <Firehose
       resources={[
@@ -1396,7 +1396,7 @@ const AlertManagerConfig = () => {
         },
       ]}
     >
-      <AlertManagerConfigWrapper />
+      <AlertmanagerConfigWrapper />
     </Firehose>
   );
 };
@@ -1459,8 +1459,8 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
       <Switch>
         <Route path="/monitoring/alerts" exact component={AlertsPage} />
         <Route path="/monitoring/silences" exact component={SilencesPage} />
-        <Route path={ConfigPath} exact component={AlertManagerConfig} />
-        <Route path="/monitoring/alertmanageryaml" exact component={AlertManagerYAML} />
+        <Route path={ConfigPath} exact component={AlertmanagerConfig} />
+        <Route path="/monitoring/alertmanageryaml" exact component={AlertmanagerYAML} />
       </Switch>
     </>
   );

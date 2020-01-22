@@ -1,6 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 
 import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
+import { dropdownMenuForTestID } from '../views/form.view';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 import * as monitoringView from '../views/monitoring.view';
@@ -266,12 +267,10 @@ describe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('receiver-name').isPresent()).toBe(true);
     await firstElementByTestID('receiver-name').sendKeys('MyReceiver');
 
-    expect(firstElementByTestID('dropdown-button').isDisplayed()).toBe(true);
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
 
-    expect(firstElementByTestID('dropdown-menu').isDisplayed()).toBe(true);
-    await firstElementByTestID('dropdown-menu').click();
+    await dropdownMenuForTestID('pagerduty_configs').click();
     await crudView.isLoaded();
 
     // these should be shown after receiverType selected

@@ -1,14 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
-import { Base64 } from 'js-base64';
 import { safeLoad } from 'js-yaml';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { StatusBox } from '../utils';
-import { AsyncComponent } from '../utils/async';
-import { patchAlertManagerConfig } from './alert-manager-utils';
-import { Helmet } from 'react-helmet';
+import { AsyncComponent, StatusBox } from '../utils';
+import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alert-manager-utils';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
@@ -19,18 +17,11 @@ const EditAlertmanagerYAML = (props) => (
   />
 );
 
-const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) => {
+const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) => {
   const secret: K8sResourceKind = obj;
-  const encodedAlertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  const initErrorMsg = _.isEmpty(encodedAlertManagerYaml)
-    ? 'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"'
-    : null;
-
-  const [errorMsg, setErrorMsg] = React.useState(initErrorMsg);
-  const [successMsg, setSuccessMsg] = React.useState();
-  const alertManagerYamlStr = !_.isEmpty(encodedAlertManagerYaml)
-    ? Base64.decode(encodedAlertManagerYaml)
-    : '';
+  const [errorMsg, setErrorMsg] = React.useState<string>();
+  const [loadErrorMsg, setloadErrorMsg] = React.useState<string>();
+  const [successMsg, setSuccessMsg] = React.useState<string>();
 
   const save = (yaml: string) => {
     if (_.isEmpty(yaml)) {
@@ -45,7 +36,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
       setSuccessMsg('');
       return;
     }
-    patchAlertManagerConfig(secret, yaml).then(
+    patchAlertmanagerConfig(secret, yaml).then(
       (newSecret) => {
         setSuccessMsg(
           `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
@@ -59,6 +50,21 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
     );
   };
 
+  if (loadErrorMsg) {
+    return (
+      <Alert
+        isInline
+        className="co-alert co-alert--scrollable"
+        variant="danger"
+        title="An error occurred"
+      >
+        <div className="co-pre-line">{loadErrorMsg}</div>
+      </Alert>
+    );
+  }
+
+  const alertmanagerYAML = getAlertmanagerYAML(secret, setloadErrorMsg);
+
   return (
     <>
       <div className="co-m-nav-title">
@@ -67,7 +73,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
           settings.
         </p>
       </div>
-      <EditAlertmanagerYAML onSave={save} obj={alertManagerYamlStr}>
+      <EditAlertmanagerYAML onSave={save} obj={alertmanagerYAML}>
         {errorMsg && (
           <Alert
             isInline
@@ -84,7 +90,7 @@ const AlertManagerYAMLEditor: React.FC<AlertManagerYAMLEditorProps> = ({ obj }) 
   );
 };
 
-export const AlertManagerYAMLEditorWrapper: React.FC<AlertManagerYAMLEditorWrapperProps> = React.memo(
+export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
   ({ obj, ...props }) => {
     return (
       <>
@@ -92,21 +98,21 @@ export const AlertManagerYAMLEditorWrapper: React.FC<AlertManagerYAMLEditorWrapp
           <title>Alerting</title>
         </Helmet>
         <StatusBox {...obj}>
-          <AlertManagerYAMLEditor {...props} obj={obj.data} />
+          <AlertmanagerYAMLEditor {...props} obj={obj.data} />
         </StatusBox>
       </>
     );
   },
 );
 
-type AlertManagerYAMLEditorWrapperProps = {
+type AlertmanagerYAMLEditorWrapperProps = {
   obj?: {
     data?: K8sResourceKind;
     [key: string]: any;
   };
 };
 
-type AlertManagerYAMLEditorProps = {
+type AlertmanagerYAMLEditorProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
