@@ -1,24 +1,18 @@
-# Used for testing OpenShift console in CI. After editing this file:
-#
-# * Bump the builder version in `Dockerfile` and `builder-run.sh`
-# * Commit the changes
-# * Run `DOCKER_TAG=<new-tag> ./push-builder.sh` to update the image on quay
-#   (requires edit permission to the quay.io/coreos/tectonic-console-builder repo)
-#
-# You can test the image using `./builder-run.sh`. For instance:
-#   $ ./builder-run.sh ./build-backend.sh
+# Used for compiling the tectonic-console. After editing this file,
+# (and committing your edits) you should run ./push-builder.sh to
+# push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.13-buster
+FROM golang:1.11-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
 ### For golang testing stuff
-RUN go get -u golang.org/x/lint/golint
+RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v13.6.0"
-ENV YARN_VERSION="v1.21.1"
+ENV NODE_VERSION="v10.17.0"
+ENV YARN_VERSION="v1.7.0"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
@@ -29,7 +23,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
     curl wget git unzip bzip2 jq
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.1/bin/linux/amd64/kubectl && \
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 
