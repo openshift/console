@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
+import { safeLoad } from 'js-yaml';
 
 import { ANNOTATIONS, FLAGS } from '@console/shared';
 import { CatalogTileViewPage } from './catalog-items';
@@ -31,6 +32,7 @@ import {
 } from './catalog-item-icon';
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
 import * as plugins from '../../plugins';
+import { coFetch } from '../../co-fetch';
 
 export class CatalogListPage extends React.Component<CatalogListPageProps, CatalogListPageState> {
   constructor(props: CatalogListPageProps) {
@@ -46,6 +48,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       templateMetadata,
       projectTemplateMetadata,
       imageStreams,
+      helmCharts,
       namespace,
       loaded,
     } = this.props;
@@ -55,7 +58,8 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       !_.isEqual(clusterServiceClasses, prevProps.clusterServiceClasses) ||
       !_.isEqual(templateMetadata, prevProps.templateMetadata) ||
       !_.isEqual(projectTemplateMetadata, prevProps.projectTemplateMetadata) ||
-      !_.isEqual(imageStreams, prevProps.imageStreams)
+      !_.isEqual(imageStreams, prevProps.imageStreams) ||
+      !_.isEqual(helmCharts, prevProps.helmCharts)
     ) {
       const items = this.getItems();
       this.setState({ items });
@@ -77,12 +81,14 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       imageStreams,
       templateMetadata,
       projectTemplateMetadata,
+      helmCharts,
       loaded,
     } = this.props;
     let clusterServiceClassItems = [];
     let imageStreamItems = [];
     let templateItems = [];
     let projectTemplateItems = [];
+    let helmChartItems = [];
 
     if (!loaded) {
       return [];
@@ -106,12 +112,17 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       projectTemplateItems = this.normalizeTemplates(projectTemplateMetadata);
     }
 
+    if (helmCharts) {
+      helmChartItems = this.normalizeHelmCharts(helmCharts);
+    }
+
     const items = [
       ...clusterServiceClassItems,
       ...imageStreamItems,
       ...templateItems,
       ...extensionItems,
       ...projectTemplateItems,
+      ...helmChartItems,
     ];
 
     return _.sortBy(items, 'tileName');
@@ -187,6 +198,39 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
     );
   }
 
+  normalizeHelmCharts(chartEntries: HelmChartEntries) {
+    const { namespace: currentNamespace = '' } = this.props;
+
+    return _.reduce(
+      chartEntries,
+      (normalizedCharts, charts) => {
+        charts.forEach((chart: HelmChart) => {
+          const tags = chart.keywords;
+          const name = _.startCase(chart.name);
+          const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
+          const chartURL = encodeURIComponent(_.get(chart, 'urls.0'));
+
+          normalizedCharts.push({
+            obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
+            kind: 'HelmChart',
+            tileName: `${name} v${chart.version}`,
+            tileIconClass: null,
+            tileImgUrl,
+            tileDescription: chart.description,
+            tags,
+            createLabel: 'Install Helm Chart',
+            tileProvider: _.get(chart, 'maintainers.0.name'),
+            documentationUrl: chart.home,
+            supportUrl: chart.home,
+            href: `/catalog/helm-install?chartURL=${chartURL}&preselected-ns=${currentNamespace}`,
+          });
+        });
+        return normalizedCharts;
+      },
+      [],
+    );
+  }
+
   normalizeImageStreams(imageStreams) {
     const builderimageStreams = _.filter(imageStreams, isBuilder);
     return _.map(builderimageStreams, (imageStream) => {
@@ -251,6 +295,7 @@ export const Catalog = connectToFlags<CatalogProps>(
   const [templateError, setTemplateError] = React.useState();
   const [projectTemplateMetadata, setProjectTemplateMetadata] = React.useState();
   const [projectTemplateError, setProjectTemplateError] = React.useState();
+  const [helmCharts, setHelmCharts] = React.useState();
 
   const loadTemplates = openshiftFlag && !mock;
 
@@ -287,6 +332,16 @@ export const Catalog = connectToFlags<CatalogProps>(
         .catch(setTemplateError);
     }
   }, [loadTemplates, namespace]);
+
+  React.useEffect(() => {
+    coFetch('https://redhat-developer.github.io/redhat-helm-charts/index.yaml').then(
+      async (res) => {
+        const yaml = await res.text();
+        const json = safeLoad(yaml);
+        setHelmCharts(json.entries);
+      },
+    );
+  }, []);
 
   const error = templateError || projectTemplateError;
   if (error) {
@@ -343,6 +398,7 @@ export const Catalog = connectToFlags<CatalogProps>(
           namespace={namespace}
           templateMetadata={templateMetadata}
           projectTemplateMetadata={projectTemplateMetadata}
+          helmCharts={helmCharts}
           {...(props as any)}
         />
       </Firehose>
@@ -377,6 +433,7 @@ export type CatalogListPageProps = {
   imageStreams?: FirehoseResult<K8sResourceKind[]>;
   templateMetadata?: PartialObjectMetadata[];
   projectTemplateMetadata?: PartialObjectMetadata[];
+  helmCharts?: HelmChartEntries;
   loaded: boolean;
   loadError?: string;
   namespace?: string;
@@ -390,6 +447,26 @@ export type CatalogProps = {
   flags: FlagsObject;
   namespace?: string;
   mock: boolean;
+};
+
+export type HelmChartEntries = {
+  [name: string]: Array<HelmChart>;
+};
+
+export type HelmChart = {
+  apiVersion: string;
+  appVersion: string;
+  created: string;
+  description: string;
+  digest: string;
+  home: string;
+  icon: string;
+  keywords: string[];
+  maintainers: Array<{ email: string; name: string }>;
+  name: string;
+  tillerVersion: string;
+  urls: string[];
+  version: string;
 };
 
 CatalogPage.displayName = 'CatalogPage';

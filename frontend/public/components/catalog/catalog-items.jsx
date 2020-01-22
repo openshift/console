@@ -108,6 +108,11 @@ const getAvailableFilters = (initialFilters) => {
       value: 'InstalledOperator',
       active: true,
     },
+    HelmChart: {
+      label: 'Helm Charts',
+      value: 'HelmChart',
+      active: false,
+    },
     ImageStream: {
       label: 'Builder Image',
       value: 'ImageStream',
