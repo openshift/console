@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
-import { MachineModel, NodeModel } from '@console/internal/models';
+import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
@@ -29,6 +29,12 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = ({
       namespaced: true,
       isList: true,
       prop: 'machines',
+    },
+    {
+      kind: referenceForModel(MachineSetModel),
+      namespaced: true,
+      isList: true,
+      prop: 'machineSets',
     },
     {
       kind: NodeModel.kind,
