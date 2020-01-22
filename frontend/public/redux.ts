@@ -57,9 +57,9 @@ const store = createStore(
 
 const addPluginListener = () => {
   const getReduxFlagsObject = () => {
-    const requiredFlags = registry.getRequiredFlags([isReduxReducer]);
+    const gatingFlags = registry.getGatingFlagNames([isReduxReducer]);
     const featureState = store.getState()[featureReducerName];
-    return featureState ? _.pick(featureState.toObject(), requiredFlags) : null;
+    return featureState ? _.pick(featureState.toObject(), gatingFlags) : null;
   };
 
   let flagsObject = getReduxFlagsObject();

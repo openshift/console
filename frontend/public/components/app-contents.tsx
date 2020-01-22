@@ -639,6 +639,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
 
 const AppContents = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
-}))(connectToFlags(...plugins.registry.getRequiredFlags([plugins.isRoutePage]))(AppContents_));
+}))(connectToFlags(...plugins.registry.getGatingFlagNames([plugins.isRoutePage]))(AppContents_));
 
 export default AppContents;

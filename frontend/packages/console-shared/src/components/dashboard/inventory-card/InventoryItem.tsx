@@ -128,7 +128,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
 );
 
 export const Status = connectToFlags<StatusProps>(
-  ...plugins.registry.getRequiredFlags([isDashboardsInventoryItemGroup]),
+  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
 )(({ groupID, count, flags }) => {
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -144,7 +144,7 @@ export const Status = connectToFlags<StatusProps>(
 });
 
 const StatusLink = connectToFlags<StatusLinkProps>(
-  ...plugins.registry.getRequiredFlags([isDashboardsInventoryItemGroup]),
+  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
 )(({ groupID, count, statusIDs, kind, namespace, filterType, flags, basePath }) => {
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -173,7 +173,7 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
 }) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
 
 export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
-  ...plugins.registry.getRequiredFlags([isDashboardsInventoryItemGroup]),
+  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
 )(
   ({
     kind,

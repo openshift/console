@@ -54,7 +54,7 @@ const getResourceActivities = (flags: FlagsObject, k8sModels: ImmutableMap<strin
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
   flags: plugins.registry
-    .getRequiredFlags([isDashboardsOverviewResourceActivity])
+    .getGatingFlagNames([isDashboardsOverviewResourceActivity])
     .reduce((allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }), {}),
 });
 

@@ -90,7 +90,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 export const DashboardsPage = connect(mapStateToProps)(
-  connectToFlags(...plugins.registry.getRequiredFlags([isDashboardsCard, isDashboardsTab]))(
+  connectToFlags(...plugins.registry.getGatingFlagNames([isDashboardsCard, isDashboardsTab]))(
     DashboardsPage_,
   ),
 );

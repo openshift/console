@@ -5,8 +5,7 @@ import {
   ExtensionTypeGuard,
   ActivePlugin,
   isModelDefinition,
-  isModelFeatureFlag,
-  isActionFeatureFlag,
+  isFeatureFlag,
   isNavItem,
   isResourceListPage,
   isResourceDetailsPage,
@@ -43,34 +42,33 @@ export class ExtensionRegistry {
     this.extensions = _.flatMap(plugins.map((p) => p.extensions));
   }
 
-  public get<E extends Extension>(typeGuard: ExtensionTypeGuard<E>): E[] {
-    return this.extensions.filter(typeGuard);
-  }
-
-  public getRequiredFlags(typeGuards: ExtensionTypeGuard<ExtensionWithFlags>[]) {
-    return _.flatMap(typeGuards.map((tg) => this.extensions.filter(tg)))
-      .filter((e) => e.properties.required)
-      .reduce(
-        (requiredFlags, e) => _.uniq([...requiredFlags, ..._.castArray(e.properties.required)]),
-        [] as string[],
-      );
+  public getGatingFlagNames(typeGuards: ExtensionTypeGuard<ExtensionWithFlags>[]) {
+    return _.flatMap(typeGuards.map((tg) => this.extensions.filter(tg))).reduce(
+      (gatingFlags, e) =>
+        _.uniq([
+          ...gatingFlags,
+          ..._.castArray(e.properties.required || []),
+          ..._.castArray(e.properties.disallowed || []),
+        ]),
+      [] as string[],
+    );
   }
 
   public isExtensionInUse(e: ExtensionWithFlags, flags: FlagsObject) {
-    const requiredFlags = e.properties.required ? _.castArray(e.properties.required) : [];
-    return _.every(requiredFlags, (f) => flags[f]);
+    const requiredFlags = _.castArray(e.properties.required || []);
+    const disallowedFlags = _.castArray(e.properties.disallowed || []);
+    return (
+      _.every(requiredFlags, (f) => flags[f] === true) &&
+      _.every(disallowedFlags, (f) => flags[f] === false)
+    );
   }
 
   public getModelDefinitions() {
     return this.extensions.filter(isModelDefinition);
   }
 
-  public getModelFeatureFlags() {
-    return this.extensions.filter(isModelFeatureFlag);
-  }
-
-  public getActionFeatureFlags() {
-    return this.extensions.filter(isActionFeatureFlag);
+  public getFeatureFlags() {
+    return this.extensions.filter(isFeatureFlag);
   }
 
   public getNavItems() {
@@ -170,4 +168,7 @@ export class ExtensionRegistry {
   }
 }
 
-type ExtensionWithFlags = Extension<{ required?: string | string[] }>;
+type ExtensionWithFlags = Extension<{
+  required?: string | string[];
+  disallowed?: string | string[];
+}>;

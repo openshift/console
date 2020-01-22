@@ -3,14 +3,17 @@ import { K8sKind } from '@console/internal/module/k8s';
 import { Extension } from './extension';
 
 namespace ExtensionProperties {
-  export interface ModelFeatureFlag {
-    /** If a CRD for this model exists, the feature will be enabled. */
-    model: K8sKind;
+  interface FeatureFlag {
     /** The name of the feature flag. */
     flag: string;
   }
 
-  export interface ActionFeatureFlag {
+  export interface ModelFeatureFlag extends FeatureFlag {
+    /** If a CRD for this model exists, the feature will be enabled. */
+    model: K8sKind;
+  }
+
+  export interface ActionFeatureFlag extends FeatureFlag {
     /** Function used to detect the feature and set flag name/value via Redux action dispatch. */
     detect: (dispatch: Dispatch) => Promise<any>;
   }
@@ -24,10 +27,16 @@ export interface ActionFeatureFlag extends Extension<ExtensionProperties.ActionF
   type: 'FeatureFlag/Action';
 }
 
+export type FeatureFlag = ModelFeatureFlag | ActionFeatureFlag;
+
 export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag => {
   return e.type === 'FeatureFlag/Model';
 };
 
 export const isActionFeatureFlag = (e: Extension): e is ActionFeatureFlag => {
   return e.type === 'FeatureFlag/Action';
+};
+
+export const isFeatureFlag = (e: Extension): e is FeatureFlag => {
+  return isModelFeatureFlag(e) || isActionFeatureFlag(e);
 };

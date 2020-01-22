@@ -26,7 +26,8 @@ export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
 );
 
-export const setFlag = (flag: FLAGS, value: boolean) => action(ActionType.SetFlag, { flag, value });
+export const setFlag = (flag: FLAGS | string, value: boolean) =>
+  action(ActionType.SetFlag, { flag, value });
 
 const retryFlagDetection = (dispatch, cb) => {
   setTimeout(() => cb(dispatch), 15000);
@@ -302,5 +303,8 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
     detectLoggingURL,
     detectConsoleLinks,
     ...ssarCheckActions,
-    ...plugins.registry.getActionFeatureFlags().map((ff) => ff.properties.detect),
+    ...plugins.registry
+      .getFeatureFlags()
+      .filter(plugins.isActionFeatureFlag)
+      .map((ff) => ff.properties.detect),
   ].forEach((detect) => detect(dispatch));

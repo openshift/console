@@ -12,6 +12,7 @@ import {
   DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { FLAGS } from '@console/shared/src/constants';
 import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
 import { Flags } from './const';
@@ -60,7 +61,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'OperatorHub',
         href: '/operatorhub',
-        required: [Flags.CAN_LIST_PACKAGE_MANIFEST, Flags.CAN_LIST_OPERATOR_GROUP],
+        required: [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
       },
     },
   },
