@@ -8,6 +8,8 @@ import { getStoragesWithWrappers } from '../../selectors/selectors';
 import { iGetStorages } from '../../selectors/immutable/storage';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { getTemplateValidation } from '../../selectors/template';
 
 export const validateStorages = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -28,6 +30,8 @@ export const validateStorages = (options: UpdateOptions) => {
   }
 
   const storages = getStoragesWithWrappers(state, id);
+  const templateValidation = getTemplateValidation(state, id);
+  const allowedBusses = (templateValidation || new TemplateValidations()).getAllowedBusses();
 
   const validatedStorages = storages.map(
     ({
@@ -56,6 +60,7 @@ export const validateStorages = (options: UpdateOptions) => {
           {
             usedDiskNames,
             usedPVCNames,
+            allowedBusses,
           },
         ),
       };

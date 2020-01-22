@@ -69,11 +69,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     handlePromise,
     close,
     cancel,
+    allowedBusses = new Set(DiskBus.getAll()),
   } = props;
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || DiskWrapper.EMPTY;
   const volume = props.volume || VolumeWrapper.EMPTY;
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
+  const validAllowedBusses = allowedBusses || new Set(DiskBus.getAll());
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -102,7 +104,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getName() || getSequenceName('disk', usedDiskNames),
   );
   const [bus, setBus] = React.useState<DiskBus>(
-    disk.getDiskBus() || (isEditing ? null : DiskBus.VIRTIO),
+    disk.getDiskBus() ||
+      (isEditing
+        ? null
+        : validAllowedBusses.has(DiskBus.VIRTIO)
+        ? DiskBus.VIRTIO
+        : [...validAllowedBusses][0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName(),
@@ -170,6 +177,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       size: sizeValidation,
       container: containerValidation,
       pvc: pvcValidation,
+      diskInterface: busValidation,
       url: urlValidation,
     },
     isValid,
@@ -177,6 +185,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   } = validateDisk(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim, {
     usedDiskNames,
     usedPVCNames,
+    allowedBusses,
   });
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
@@ -370,17 +379,30 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               />
             </FormRow>
           )}
-          <FormRow title="Interface" fieldId={asId('interface')} isRequired>
+          <FormRow
+            title="Interface"
+            fieldId={asId('interface')}
+            isRequired
+            validation={busValidation}
+          >
             <FormSelect
               onChange={React.useCallback((diskBus) => setBus(DiskBus.fromString(diskBus)), [
                 setBus,
               ])}
+              isValid={!isValidationError(busValidation)}
               value={asFormSelectValue(bus)}
               id={asId('interface')}
               isDisabled={inProgress}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {DiskBus.getAll().map((b) => (
+              {!validAllowedBusses.has(bus) && (
+                <FormSelectOption
+                  key={bus.getValue()}
+                  value={bus.getValue()}
+                  label={`${bus.toString()} --- Invalid ---`}
+                />
+              )}
+              {[...validAllowedBusses].map((b) => (
                 <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
               ))}
             </FormSelect>
@@ -444,6 +466,7 @@ export type DiskModalProps = {
   vmNamespace: string;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
+  allowedBusses?: Set<DiskBus>;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
 } & ModalComponentProps &
