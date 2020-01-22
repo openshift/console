@@ -97,6 +97,7 @@ const getUpdateNotificationEntries = (
     : [];
 
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
+  isDesktop,
   toggleNotificationDrawer,
   toggleNotificationsRead,
   isDrawerExpanded,
@@ -188,6 +189,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
   return (
     <NotificationDrawer
+      isInline={isDesktop}
       isExpanded={isDrawerExpanded}
       notificationEntries={[criticalAlertType, nonCriticalAlertType]}
       count={criticalAlertList.length + otherAlertList.length}
@@ -210,6 +212,7 @@ export type WithNotificationsProps = {
 };
 
 export type ConnectedNotificationDrawerProps = {
+  isDesktop: boolean;
   toggleNotificationsRead: () => any;
   toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;

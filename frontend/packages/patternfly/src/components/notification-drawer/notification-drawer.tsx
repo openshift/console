@@ -9,12 +9,13 @@ import NotificationDrawerHeading from './notification-drawer-heading';
 
 const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   isExpanded,
+  isInline,
   children,
   notificationEntries,
   count = 0,
 }) => {
   return (
-    <Drawer isExpanded={isExpanded} isInline>
+    <Drawer isExpanded={isExpanded} isInline={isInline}>
       <DrawerContent>{children}</DrawerContent>
       <DrawerPanelContent noPadding>
         <NotificationDrawerHeading count={count}>{notificationEntries}</NotificationDrawerHeading>
@@ -26,6 +27,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 NotificationDrawer.displayName = 'NotificationDrawer';
 
 export type NotificationDrawerProps = {
+  isInline: boolean;
   isExpanded: boolean;
   notificationEntries?: JSX.Element[];
   count?: number;
