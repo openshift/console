@@ -29,6 +29,7 @@ describe('TopologyDataController', () => {
             knativeServices: true,
             appGrouping: true,
             operatorGrouping: true,
+            helmGrouping: true,
           },
           searchQuery: null,
         }}

@@ -517,6 +517,7 @@ export const topologyModelFromDataModel = (
         type: d.type,
         label: dataModel.topology[d.id].name,
         data,
+        collapsed: filters && !filters.display.knativeServices,
         children: (d as any).children,
         group: true,
         shape: NodeShape.rect,
@@ -544,7 +545,10 @@ export const topologyModelFromDataModel = (
       id: d.id,
       group: true,
       type: d.type,
-      collapsed: filters && d.type === TYPE_APPLICATION_GROUP && !filters.display.appGrouping,
+      collapsed:
+        filters &&
+        ((d.type === TYPE_HELM_RELEASE && !filters.display.helmGrouping) ||
+          (d.type === TYPE_APPLICATION_GROUP && !filters.display.appGrouping)),
       data,
       children: d.nodes,
       label: d.name,
