@@ -89,6 +89,7 @@ import * as windowsImg from '../../imgs/logos/windows.svg';
 import * as wordpressImg from '../../imgs/logos/wordpress.svg';
 import * as xamarinImg from '../../imgs/logos/xamarin.svg';
 import * as zendImg from '../../imgs/logos/zend.svg';
+import * as helm from '../../imgs/logos/helm.svg';
 
 const logos = new Map()
   .set('icon-3scale', threeScaleImg)
@@ -126,6 +127,7 @@ const logos = new Map()
   .set('icon-grails', grailsImg)
   .set('icon-hadoop', hadoopImg)
   .set('icon-haproxy', haproxyImg)
+  .set('icon-helm', helm)
   .set('icon-infinispan', infinispanImg)
   .set('icon-jboss', jbossImg)
   .set('icon-jenkins', jenkinsImg)
