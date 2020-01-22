@@ -45,7 +45,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.CephClusterModel,
+      model: models.OCSServiceModel,
       flag: CEPH_FLAG,
     },
   },
@@ -53,7 +53,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      title: 'OCS PV',
+      title: 'Persistent Storage',
       required: CEPH_FLAG,
     },
   },

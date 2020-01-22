@@ -5,7 +5,7 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { OCS_OPERATOR } from '../constants';
 
-const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
+export const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
 export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'ceph');

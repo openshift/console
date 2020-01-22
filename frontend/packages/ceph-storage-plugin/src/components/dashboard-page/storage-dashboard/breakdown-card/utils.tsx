@@ -60,14 +60,19 @@ export const addAvailable = (
 };
 
 export const getBarRadius = (index: number, length: number) => {
-  let barRadius = {};
+  if (index === length - 1) {
+    return {
+      bottom: 3,
+      top: 3,
+    };
+  }
   if (index === 0) {
-    barRadius = { bottom: 3 };
+    return { bottom: 3 };
   }
   if (index === length - 1) {
-    barRadius = { top: 3 };
+    return { top: 3 };
   }
-  return barRadius;
+  return {};
 };
 
 export const sortInstantVectorStats = (stats: DataPoint[]): DataPoint[] => {

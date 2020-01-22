@@ -93,7 +93,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'object-service',
-      title: 'OCS Object Service',
+      title: 'Object Service',
       required: NOOBAA_FLAG,
     },
   },
