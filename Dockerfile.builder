@@ -8,7 +8,7 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.13-buster
+FROM golang:1.13-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
@@ -17,8 +17,8 @@ RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v13.6.0"
-ENV YARN_VERSION="v1.21.1"
+ENV NODE_VERSION="v10.17.0"
+ENV YARN_VERSION="v1.7.0"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
@@ -29,7 +29,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
     curl wget git unzip bzip2 jq
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.1/bin/linux/amd64/kubectl && \
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 
