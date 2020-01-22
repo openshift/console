@@ -4,7 +4,7 @@ import { MaintenanceIcon } from '@patternfly/react-icons';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
-  ResourceNSNavItem,
+  HrefNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -17,6 +17,9 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/shared/src/constants';
+// TODO(jtomasek): chage this to '@console/shared/src/utils' once @console/shared/src/utils modules
+// no longer import from @console/internal (cyclic deps issues)
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
 import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';
@@ -28,7 +31,7 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewInventoryItemReplacement
   | DashboardsInventoryItemGroup
-  | ResourceNSNavItem
+  | HrefNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
@@ -53,12 +56,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       section: 'Compute',
       componentProps: {
         name: 'Bare Metal Hosts',
-        resource: referenceForModel(BareMetalHostModel),
+        href: formatNamespacedRouteForResource(
+          referenceForModel(BareMetalHostModel),
+          'openshift-machine-api',
+        ),
         required: [FLAGS.BAREMETAL, METAL3_FLAG],
       },
       mergeBefore: 'ComputeSeparator',
