@@ -1406,13 +1406,14 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
   const silencePath = '/monitoring/silences';
   const YAMLPath = '/monitoring/alertmanageryaml';
   const ConfigPath = '/monitoring/alertmanagerconfig';
+  const isAlertmanager = match.url === ConfigPath || match.url === YAMLPath;
   return (
     <>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
-              Alerting
+              {isAlertmanager ? 'Alertmanager' : 'Alerting'}
             </span>
             <HeaderAlertmanagerLink path="/#/alerts" />
           </div>
@@ -1437,7 +1438,7 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
             </li>
           </>
         )}
-        {(match.url === ConfigPath || match.url === YAMLPath) && (
+        {isAlertmanager && (
           <>
             <li
               className={classNames('co-m-horizontal-nav__menu-item', {
