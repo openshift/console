@@ -15,6 +15,9 @@ export type Panel = {
     y: number;
   };
   id: string;
+  legend?: {
+    show: boolean;
+  };
   panels: Panel[];
   postfix?: string;
   prefix?: string;
@@ -23,6 +26,7 @@ export type Panel = {
   styles?: ColumnStyle[];
   targets: {
     expr: string;
+    legendFormat?: string;
   };
   title: string;
   transform?: string;

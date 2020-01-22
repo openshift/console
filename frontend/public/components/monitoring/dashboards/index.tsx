@@ -98,20 +98,30 @@ const boards = [
   'node-rsrc-use',
 ];
 
+// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
+const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
+
 const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }) => {
-  const rawQueries = _.map(panel.targets, 'expr');
-  if (!rawQueries.length) {
-    return null;
-  }
-
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables));
-
   // If panel doesn't specify a span, default to 12
   const panelSpan: number = _.get(panel, 'span', 12);
   // If panel.span is greater than 12, default colSpan to 12
   const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
   // If colSpan is less than 7, double it for small
   const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
+
+  const formatLegendLabel = React.useCallback(
+    (labels, i) => {
+      const compiled = _.template(panel.targets?.[i]?.legendFormat, legendTemplateOptions);
+      return compiled(labels);
+    },
+    [panel],
+  );
+
+  const rawQueries = _.map(panel.targets, 'expr');
+  if (!rawQueries.length) {
+    return null;
+  }
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables));
 
   return (
     <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
@@ -123,6 +133,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
           {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
           {panel.type === 'graph' && (
             <Graph
+              formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
               isStack={panel.stack}
               pollInterval={pollInterval}
               queries={queries}
