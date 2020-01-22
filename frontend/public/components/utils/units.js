@@ -39,6 +39,11 @@ const TYPES = {
     space: true,
     divisor: 1000,
   },
+  packetsPerSec: {
+    units: ['pps', 'kpps'],
+    space: true,
+    divisor: 1000,
+  },
   seconds: {
     units: ['ns', 'μs', 'ms', 's'],
     space: true,
@@ -212,6 +217,8 @@ export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) =>
   humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
 export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) =>
   humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
+export const humanizePacketsPerSec = (v, initialUnit, preferredUnit) =>
+  humanize(v, 'packetsPerSec', true, initialUnit, preferredUnit);
 export const humanizeNumber = (v, initialUnit, preferredUnit) =>
   humanize(v, 'numeric', true, initialUnit, preferredUnit);
 export const humanizeNumberSI = (v, initialUnit, preferredUnit) =>
@@ -393,7 +400,7 @@ export const secondsToNanoSeconds = (value) => {
   return Number.isFinite(val) ? val * 1000 ** 3 : 0;
 };
 
-const formatToFractionalDigits = (value, digits) =>
+export const formatToFractionalDigits = (value, digits) =>
   Intl.NumberFormat(undefined, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,

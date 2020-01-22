@@ -106,16 +106,17 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
 
   const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables));
 
-  // If panel doesn't specify a span, try to get it from the gridPos or default to full width
-  let colSpan = panel.span;
-  if (!_.isNumber(colSpan)) {
-    colSpan = _.has(panel, 'gridPos.w') ? panel.gridPos.w / 2 : 12;
-  }
+  // If panel doesn't specify a span, default to 12
+  const panelSpan: number = _.get(panel, 'span', 12);
+  // If panel.span is greater than 12, default colSpan to 12
+  const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
+  // If colSpan is less than 7, double it for small
+  const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
 
   return (
-    <div className={`col-xs-${colSpan}`}>
+    <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
       <DashboardCard className="monitoring-dashboards__panel">
-        <DashboardCardHeader>
+        <DashboardCardHeader className="monitoring-dashboards__card-header">
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody>
@@ -146,7 +147,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
               units={panel.units}
             />
           )}
-          {panel.type === 'table' && (
+          {panel.type === 'table' && panel.transform === 'table' && (
             <Table panel={panel} pollInterval={pollInterval} queries={queries} />
           )}
         </DashboardCardBody>
@@ -229,7 +230,7 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
   return (
     <>
       {_.map(rows, (row, i) => (
-        <div className="row" key={i}>
+        <div className="row monitoring-dashboards__row" key={i}>
           {_.map(row.panels, (panel, j) => (
             <Card key={j} panel={panel} pollInterval={pollInterval} timespan={timespan} />
           ))}
