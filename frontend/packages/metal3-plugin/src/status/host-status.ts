@@ -2,6 +2,7 @@ import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module
 import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
 import {
   HOST_STATUS_TITLES,
+  HOST_STATUS_DESCRIPTIONS,
   HOST_STATUS_ERROR,
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
@@ -33,6 +34,7 @@ export const getBareMetalHostStatus = (host: BareMetalHostKind) => {
   return {
     status: hostStatus,
     title: HOST_STATUS_TITLES[hostStatus] || hostStatus,
+    description: HOST_STATUS_DESCRIPTIONS[hostStatus],
     host,
   };
 };

@@ -82,6 +82,7 @@ export type BareMetalHostKind = {
       };
       state: string;
     };
+    errorType?: string;
     errorMessage: string;
   };
 } & K8sResourceKind;
