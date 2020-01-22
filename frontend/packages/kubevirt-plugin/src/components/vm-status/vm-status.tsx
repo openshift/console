@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { OffIcon, UnknownIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { OffIcon, PausedIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import {
   PopoverStatus,
   StatusIconAndText,
@@ -10,12 +10,24 @@ import {
   ProgressStatus,
   PendingStatus,
 } from '@console/shared';
-import { Progress, ProgressVariant, ProgressSize } from '@patternfly/react-core';
+import {
+  Progress,
+  ProgressVariant,
+  ProgressSize,
+  Button,
+  ButtonVariant,
+} from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
+import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VirtualMachineModel } from '../../models';
-import { VM_DETAIL_EVENTS_HREF, CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
+import {
+  VM_DETAIL_EVENTS_HREF,
+  CDI_KUBEVIRT_IO,
+  STORAGE_IMPORT_PVC_NAME,
+  PAUSED_VM_MODAL_MESSAGE,
+} from '../../constants';
 import { getLabels } from '../../selectors/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import {
@@ -33,6 +45,7 @@ import {
   VM_STATUS_OFF,
   VM_STATUS_ERROR,
   VM_STATUS_IMPORT_PENDING,
+  VM_STATUS_PAUSED,
 } from '../../statuses/vm/constants';
 import { VMKind, VMIKind } from '../../types';
 
@@ -101,6 +114,11 @@ export const VMStatus: React.FC<VMStatusProps> = ({
     getNamespace(statusDetail.launcherPod),
   )}`; // to default tab
   const additionalText = verbose ? getAdditionalImportText(statusDetail.pod) : null;
+
+  const unpauseVM = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    await unpauseVMI(vmi);
+  };
 
   switch (statusDetail.status) {
     case VM_STATUS_V2V_CONVERSION_PENDING:
@@ -247,6 +265,16 @@ export const VMStatus: React.FC<VMStatusProps> = ({
             progress={statusDetail.progress}
           />
         </ProgressStatus>
+      );
+    case VM_STATUS_PAUSED:
+      return (
+        <PopoverStatus title="Paused" icon={<PausedIcon />}>
+          <VMStatusPopoverContent message={PAUSED_VM_MODAL_MESSAGE}>
+            <Button variant={ButtonVariant.primary} onClick={unpauseVM} id="paused-popover-submit">
+              Unpause
+            </Button>
+          </VMStatusPopoverContent>
+        </PopoverStatus>
       );
     case VM_STATUS_RUNNING:
       return <StatusIconAndText title="Running" icon={<SyncAltIcon />} />;

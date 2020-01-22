@@ -46,8 +46,10 @@ import {
   VM_STATUS_V2V_CONVERSION_PENDING,
   CONVERSION_PROGRESS_ANNOTATION,
   VM_STATUS_IMPORT_PENDING,
+  VM_STATUS_PAUSED,
 } from './constants';
 import { Status } from '..';
+import { isVMIPaused } from '../../selectors/vmi/basic';
 
 const isBeingMigrated = (vm: VMKind, migrations?: K8sResourceKind[]): VMStatus => {
   const migration = findVMIMigration(vm, migrations);
@@ -95,6 +97,9 @@ const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatus => {
   }
   return NOT_HANDLED;
 };
+
+const isPaused = (vmi: VMIKind): VMStatus =>
+  isVMIPaused(vmi) ? { status: VM_STATUS_PAUSED } : NOT_HANDLED;
 
 const isVMError = (vm: VMKind): VMStatus => {
   // is an issue with the VM definition?
@@ -237,6 +242,7 @@ export const getVMStatus = ({
 }): VMStatus => {
   const launcherPod = findVMPod(vm, pods);
   return (
+    isPaused(vmi) ||
     isV2VConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
     isBeingMigrated(vm, migrations) || //  -||-
     isBeingImported(vm, pods) || //  -||-

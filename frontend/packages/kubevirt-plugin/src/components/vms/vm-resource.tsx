@@ -10,6 +10,7 @@ import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
@@ -32,8 +33,8 @@ import {
   getWorkloadProfile,
   getDevices,
 } from '../../selectors/vm';
-
 import './vm-resource.scss';
+import { isVMIPaused } from '../../selectors/vmi';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -103,6 +104,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
     false,
   );
+  const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
 
   const id = getBasicID(vm);
   const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
@@ -117,7 +119,14 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
   return (
     <dl className="co-m-pane__details">
-      <VMDetailsItem title="Status" idValue={prefixedID(id, 'vm-statuses')}>
+      <VMDetailsItem
+        title="Status"
+        canEdit={isVMIPaused(vmi)}
+        editButtonId={prefixedID(id, 'status-edit')}
+        onEditClick={() => setStatusModalOpen(true)}
+        idValue={prefixedID(id, 'vm-statuses')}
+      >
+        <VMStatusModal isOpen={isStatusModalOpen} setOpen={setStatusModalOpen} vmi={vmi} />
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 

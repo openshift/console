@@ -26,3 +26,6 @@ export const getVMIInterfaces = (vmi: VMIKind) =>
   (vmi && vmi.status && vmi.status.interfaces) || [];
 
 export const getVMINodeName = (vmi: VMIKind) => vmi && vmi.status && vmi.status.nodeName;
+
+export const isVMIPaused = (vmi: VMIKind): boolean =>
+  getVMIConditionsByType(vmi, 'Paused').length > 0;

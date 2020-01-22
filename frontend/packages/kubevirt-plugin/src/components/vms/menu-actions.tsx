@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -15,6 +15,8 @@ import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { isVMIPaused } from '../../selectors/vmi';
+import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
 
 type ActionArgs = {
   migration?: K8sResourceKind;
@@ -22,10 +24,10 @@ type ActionArgs = {
   vmStatus?: VMMultiStatus;
 };
 
-const getVMActionMessage = (vm, action: VMActionType) => (
+const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActionType) => (
   <>
-    Are you sure you want to {action} <strong>{getName(vm)}</strong> in namespace{' '}
-    <strong>{getNamespace(vm)}</strong>?
+    Are you sure you want to {action} <strong>{getName(obj)}</strong> in namespace{' '}
+    <strong>{getNamespace(obj)}</strong>?
   </>
 );
 
@@ -41,7 +43,7 @@ export const menuActionStart = (
     callback: () =>
       confirmModal({
         title,
-        message: getVMActionMessage(vm, VMActionType.Start),
+        message: getActionMessage(vm, VMActionType.Start),
         btnText: _.capitalize(VMActionType.Start),
         executeFn: () => startVM(vm),
       }),
@@ -57,7 +59,7 @@ const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
     callback: () =>
       confirmModal({
         title,
-        message: getVMActionMessage(vm, VMActionType.Stop),
+        message: getActionMessage(vm, VMActionType.Stop),
         btnText: _.capitalize(VMActionType.Stop),
         executeFn: () => stopVM(vm),
       }),
@@ -77,11 +79,26 @@ const menuActionRestart = (
     callback: () =>
       confirmModal({
         title,
-        message: getVMActionMessage(vm, VMActionType.Restart),
+        message: getActionMessage(vm, VMActionType.Restart),
         btnText: _.capitalize(VMActionType.Restart),
         executeFn: () => restartVM(vm),
       }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
+  };
+};
+
+const menuActionUnpause = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): KebabOption => {
+  const title = 'Unpause Virtual Machine';
+  return {
+    hidden: !isVMIPaused(vmi),
+    label: title,
+    callback: () =>
+      confirmModal({
+        title,
+        message: getActionMessage(vmi, VMIActionType.Unpause),
+        btnText: _.capitalize(VMIActionType.Unpause),
+        executeFn: () => unpauseVMI(vmi),
+      }),
   };
 };
 
@@ -156,6 +173,7 @@ export const vmMenuActions = [
   menuActionStart,
   menuActionStop,
   menuActionRestart,
+  menuActionUnpause,
   menuActionMigrate,
   menuActionCancelMigration,
   menuActionClone,
