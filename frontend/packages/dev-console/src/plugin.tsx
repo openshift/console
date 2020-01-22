@@ -101,9 +101,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Topology',
         href: '/topology',
-        required: FLAGS.OPENSHIFT,
         testID: 'topology-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -113,9 +115,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Builds',
         resource: 'buildconfigs',
-        required: FLAGS.OPENSHIFT,
         testID: 'build-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -125,9 +129,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
         testID: 'pipeline-header',
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -137,9 +143,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
-        required: FLAGS.OPENSHIFT,
         testID: 'monitoring-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -150,9 +158,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Project Details',
         resource: 'projects',
-        required: FLAGS.OPENSHIFT,
         testID: 'advanced-project-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -175,9 +185,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Metrics',
         href: '/metrics',
-        required: FLAGS.OPENSHIFT,
         testID: 'metrics-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
@@ -220,8 +232,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -232,8 +246,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineRunModel.labelPlural,
         resource: referenceForModel(PipelineRunModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -244,8 +260,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: PipelineResourceModel.labelPlural,
         resource: referenceForModel(PipelineResourceModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -256,8 +274,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: TaskModel.labelPlural,
         resource: referenceForModel(TaskModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -268,8 +288,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: TaskRunModel.labelPlural,
         resource: referenceForModel(TaskRunModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {
@@ -280,8 +302,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: ClusterTaskModel.labelPlural,
         resource: referenceForModel(ClusterTaskModel),
-        required: FLAG_OPENSHIFT_PIPELINE,
       },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {

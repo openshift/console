@@ -158,8 +158,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.ServiceModel.labelPlural,
         resource: referenceForModel(models.ServiceModel),
-        required: FLAG_KNATIVE_SERVING_SERVICE,
       },
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_SERVICE],
     },
   },
   {
@@ -169,8 +171,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RevisionModel.labelPlural,
         resource: referenceForModel(models.RevisionModel),
-        required: FLAG_KNATIVE_SERVING_REVISION,
       },
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_REVISION],
     },
   },
   {
@@ -180,8 +184,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: models.RouteModel.labelPlural,
         resource: referenceForModel(models.RouteModel),
-        required: FLAG_KNATIVE_SERVING_ROUTE,
       },
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_ROUTE],
     },
   },
   {

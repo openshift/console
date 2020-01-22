@@ -35,6 +35,8 @@ declare interface Window {
   };
   windowError?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
+  store?: {}; // Redux store
+  pluginStore?: {}; // Console plugin store
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html

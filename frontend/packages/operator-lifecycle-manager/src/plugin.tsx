@@ -61,8 +61,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'OperatorHub',
         href: '/operatorhub',
-        required: [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
       },
+    },
+    flags: {
+      required: [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
     },
   },
   {

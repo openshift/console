@@ -70,9 +70,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Virtual Machines',
         resource: models.VirtualMachineModel.plural,
-        required: FLAG_KUBEVIRT,
       },
       mergeBefore: 'Deployments',
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -85,9 +87,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Virtual Machine Templates',
         resource: 'vmtemplates',
-        required: [FLAG_KUBEVIRT, FLAGS.OPENSHIFT],
       },
       mergeBefore: 'Deployments',
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT, FLAGS.OPENSHIFT],
     },
   },
   {

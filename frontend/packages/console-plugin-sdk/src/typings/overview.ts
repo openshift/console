@@ -2,8 +2,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { OverviewDetailsResourcesTabProps } from '@console/internal/components/overview/resource-overview-page';
 import { OverviewMainContentProps } from '@console/internal/components/overview';
-import { Extension } from './extension';
-import { LazyLoader } from './types';
+import { Extension, LazyLoader } from './base';
 
 type ResourceItem = {
   [key: string]: K8sResourceKind[];

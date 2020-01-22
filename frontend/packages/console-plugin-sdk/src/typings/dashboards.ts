@@ -11,8 +11,7 @@ import {
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { Extension } from './extension';
-import { LazyLoader } from './types';
+import { Extension, LazyLoader } from './base';
 
 export interface DashboardsExtensionProperties {
   /** Feature flags which are required for this extension to be effective. */

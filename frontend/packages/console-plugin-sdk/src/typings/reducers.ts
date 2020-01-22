@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { Extension } from './extension';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface ReduxReducer {

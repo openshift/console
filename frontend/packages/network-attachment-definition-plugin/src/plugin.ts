@@ -46,8 +46,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Network Attachment Definitions',
         resource: referenceForModel(models.NetworkAttachmentDefinitionModel),
-        required: [FLAG_NET_ATTACH_DEF, FLAG_KUBEVIRT],
       },
+    },
+    flags: {
+      required: [FLAG_NET_ATTACH_DEF, FLAG_KUBEVIRT],
     },
   },
   {
