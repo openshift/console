@@ -63,6 +63,7 @@ export type CPU = {
   sockets: number;
   cores: number;
   threads: number;
+  dedicatedCpuPlacement?: boolean;
 };
 
 export type CPURaw =
