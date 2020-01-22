@@ -4,7 +4,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { EventKind } from '@console/internal/module/k8s';
+import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import {
   EventModel,
@@ -21,12 +21,35 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { CEPH_STORAGE_NAMESPACE } from '../../../../constants/index';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
+import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager';
+import { CEPH_STORAGE_NAMESPACE, OCS_OPERATOR } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
 import { getResiliencyProgress } from '../../../../utils';
+import { OCSServiceModel } from '../../../../models';
+import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
+import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
+const subscriptionResource: FirehoseResource = {
+  isList: true,
+  kind: referenceForModel(SubscriptionModel),
+  namespaced: false,
+  prop: 'subs',
+};
+
+const storageClusterResource: FirehoseResource = {
+  isList: true,
+  kind: referenceForModel(OCSServiceModel),
+  namespaced: false,
+  prop: 'storage-cluster',
+};
+
+export const getOCSSubscription = (subscriptions: FirehoseResult): SubscriptionKind => {
+  const itemsData: K8sResourceKind[] = subscriptions?.data;
+  return _.find(itemsData, (item) => item?.spec?.name === OCS_OPERATOR) as SubscriptionKind;
+};
 
 const ocsEventNamespaceKindFilter = (event: EventKind): boolean =>
   getNamespace(event) === CEPH_STORAGE_NAMESPACE ||
@@ -51,12 +74,24 @@ const RecentEvent = withDashboardResources(
 );
 
 const OngoingActivity = withDashboardResources(
-  ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
+  ({
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    watchK8sResource,
+    stopWatchK8sResource,
+    resources,
+    prometheusResults,
+  }) => {
     React.useEffect(() => {
+      watchK8sResource(subscriptionResource);
+      watchK8sResource(storageClusterResource);
       watchPrometheus(DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS]);
-      return () =>
+      return () => {
+        stopWatchK8sResource(subscriptionResource);
+        stopWatchK8sResource(storageClusterResource);
         stopWatchPrometheusQuery(DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS]);
-    }, [watchPrometheus, stopWatchPrometheusQuery]);
+      };
+    }, [watchPrometheus, stopWatchPrometheusQuery, watchK8sResource, stopWatchK8sResource]);
 
     const progressResponse = prometheusResults.getIn([
       DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
@@ -66,6 +101,15 @@ const OngoingActivity = withDashboardResources(
       DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS],
       'loadError',
     ]);
+
+    const subscriptions = resources?.subs as FirehoseResult;
+    const subscriptionsLoaded = subscriptions?.loaded;
+    const ocsSubscription: SubscriptionKind = getOCSSubscription(subscriptions);
+
+    const storageClusters = resources?.['storage-cluster'] as FirehoseResult;
+    const storageClustersLoaded = storageClusters?.loaded;
+    const ocsCluster: K8sResourceKind = storageClusters?.data?.[0];
+
     const prometheusActivities = [];
     const resourceActivities = [];
 
@@ -76,9 +120,25 @@ const OngoingActivity = withDashboardResources(
       });
     }
 
+    if (isOCSUpgradeActivity(ocsSubscription)) {
+      resourceActivities.push({
+        resource: ocsSubscription,
+        timestamp: ocsSubscription?.status?.lastUpdated,
+        loader: () => Promise.resolve(OCSUpgradeActivity),
+      });
+    }
+
+    if (isClusterExpandActivity(ocsCluster)) {
+      resourceActivities.push({
+        resource: ocsCluster,
+        timestamp: null,
+        loader: () => Promise.resolve(ClusterExpandActivity),
+      });
+    }
+
     return (
       <OngoingActivityBody
-        loaded={progressResponse || progressError}
+        loaded={(progressResponse || progressError) && subscriptionsLoaded && storageClustersLoaded}
         resourceActivities={resourceActivities}
         prometheusActivities={prometheusActivities}
       />
@@ -86,7 +146,7 @@ const OngoingActivity = withDashboardResources(
   },
 );
 
-export const ActivityCard: React.FC<{}> = React.memo(() => (
+export const ActivityCard: React.FC = React.memo(() => (
   <DashboardCard gradient>
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
