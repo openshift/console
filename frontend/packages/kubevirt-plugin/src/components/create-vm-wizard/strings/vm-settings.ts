@@ -24,7 +24,7 @@ export const titleResolver: VMSettingsRenderableFieldResolver = {
   [VMSettingsField.IMAGE_URL]: 'URL',
   [VMSettingsField.OPERATING_SYSTEM]: 'Operating System',
   [VMSettingsField.FLAVOR]: 'Flavor',
-  [VMSettingsField.MEMORY]: 'Memory (GB)',
+  [VMSettingsField.MEMORY]: 'Memory (GiB)',
   [VMSettingsField.CPU]: 'CPUs',
   [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
