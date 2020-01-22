@@ -46,7 +46,7 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
     };
     const footer = (
       <ModalFooter
-        className=""
+        className="kubevirt-dedicated-resources__footer"
         warningMessage={!loadError && !isNodeAvailable && RESOURCE_NO_NODES_AVAILABLE}
         errorMessage={showPatchError && errorMessage}
         inProgress={inProgress || isLoading}
@@ -67,14 +67,14 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
         isFooterLeftAligned
       >
         <Checkbox
-          className="kubevirt-cpu-pinning__checkbox"
+          className="kubevirt-dedicated-resources__checkbox"
           label="Schedule this workload with dedicated resources (guaranteed policy)"
           isChecked={isPinned}
           isDisabled={isLoading}
           onChange={setIsPinned}
-          id="cpu-pinning-checkbox"
+          id="dedicated-resources-checkbox"
         />
-        <Text className="kubevirt-cpu-pinning__helper-text" component={TextVariants.small}>
+        <Text className="kubevirt-dedicated-resources__helper-text" component={TextVariants.small}>
           Available only on Nodes with labels{' '}
           <Label kind={NodeModel.kind} name="cpumanager" value="true" expand />
         </Text>
