@@ -61,14 +61,14 @@ describe('<PrometheusGraphLink />', () => {
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
-    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
+    expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
     store.dispatch(UIActions.setActivePerspective('admin'));
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
-    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
+    expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
     store.dispatch(UIActions.setActivePerspective('dev'));
@@ -76,7 +76,7 @@ describe('<PrometheusGraphLink />', () => {
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
-    expect(wrapper.find(Link).props().to).toEqual('/metrics?query0=test');
+    expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
     store.dispatch(UIActions.setActivePerspective('admin'));
     wrapper = getWrapper('');
