@@ -22,9 +22,10 @@ export const vmConfig = (
   namespace: string,
   provisionConfig: ProvisionConfig,
   baseConfig: BaseVMConfig = basicVMConfig,
+  startOnCreation: boolean = true,
 ) => {
   const commonSettings = {
-    startOnCreation: true,
+    startOnCreation,
     cloudInit: {
       useCloudInit: false,
     },
