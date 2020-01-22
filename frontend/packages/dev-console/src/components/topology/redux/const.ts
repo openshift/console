@@ -6,6 +6,7 @@ export const DEFAULT_TOPOLOGY_FILTERS = {
     knativeServices: true,
     appGrouping: true,
     operatorGrouping: true,
+    helmGrouping: true,
   },
   searchQuery: '',
 };

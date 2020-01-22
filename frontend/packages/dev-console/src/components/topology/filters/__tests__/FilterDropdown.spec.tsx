@@ -10,6 +10,7 @@ const VALID_FILTERS = {
   knativeServices: true,
   appGrouping: true,
   operatorGrouping: true,
+  helmGrouping: true,
 };
 
 describe(FilterDropdown.displayName, () => {
@@ -25,7 +26,7 @@ describe(FilterDropdown.displayName, () => {
     expect(wrapper.exists()).toBeTruthy();
   });
 
-  it('should have 5 filters in total', () => {
+  it('should have 6 filters in total', () => {
     const wrapper = shallow(<FilterDropdown filters={dropdownFilter} onChange={onChange} />);
     expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(VALID_FILTERS).length);
   });
