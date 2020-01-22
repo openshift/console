@@ -1,14 +1,17 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { FormProps } from './alert-manager-receiver-forms';
 
-export const Form = ({ formValues, dispatchFormChange }) => (
+export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) => (
   <div data-test-id="webhook-receiver-form" className="form-group">
-    <label className="control-label co-required">URL</label>
+    <label className="control-label co-required" htmlFor="webhook-url">
+      URL
+    </label>
     <input
       className="pf-c-form-control"
       type="text"
       aria-describedby="webhook-url-help"
-      name="webhookUrl"
+      id="webhook-url"
       data-test-id="webhook-url"
       value={formValues.webhookUrl}
       onChange={(e) =>
@@ -24,7 +27,7 @@ export const Form = ({ formValues, dispatchFormChange }) => (
   </div>
 );
 
-export const getInitialValues = (receiverConfig) => {
+export const getInitialValues = (globals, receiverConfig) => {
   return {
     webhookUrl: receiverConfig?.url || '',
   };
@@ -34,6 +37,11 @@ export const isFormInvalid = (formValues) => {
   return !formValues.webhookUrl;
 };
 
-export const createReceiverConfig = (formValues, receiverConfig) => {
-  return _.set(receiverConfig, 'url', formValues.webhookUrl);
+export const updateGlobals = () => {
+  return {};
+};
+
+export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+  _.set(receiverConfig, 'url', formValues.webhookUrl);
+  return receiverConfig;
 };

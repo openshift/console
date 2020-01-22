@@ -1,5 +1,8 @@
+import { Base64 } from 'js-base64';
+
 import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
 import * as crudView from '../views/crud.view';
+import { firstElementByTestID } from '../protractor.conf';
 
 export const wait = async (condition) => await browser.wait(condition, 15000);
 
@@ -61,3 +64,21 @@ export const getFirstRowAsText = () => {
     return text.replace(/[\n\r]/g, ' ');
   });
 };
+
+export const saveAsDefault = firstElementByTestID('save-as-default');
+
+export const defaultAlertmanagerYaml = Base64.encode(`"global":
+  "resolve_timeout": "5m"
+"receivers":
+- "name": "null"
+"route":
+  "group_by":
+  - "job"
+  "group_interval": "5m"
+  "group_wait": "30s"
+  "receiver": "null"
+  "repeat_interval": "12h"
+  "routes":
+  - "match":
+      "alertname": "Watchdog"
+    "receiver": "null"`);

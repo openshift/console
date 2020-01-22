@@ -8,6 +8,7 @@ import * as monitoringView from '../views/monitoring.view';
 import * as namespaceView from '../views/namespace.view';
 import * as sidenavView from '../views/sidenav.view';
 import * as horizontalnavView from '../views/horizontal-nav.view';
+import { execSync } from 'child_process';
 
 const testAlertName = 'Watchdog';
 
@@ -214,6 +215,12 @@ xdescribe('Alertmanager: YAML', () => {
 });
 
 xdescribe('Alertmanager: Configuration', () => {
+  afterAll(() => {
+    execSync(
+      `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
+    );
+  });
+
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -253,9 +260,8 @@ xdescribe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('repeat_interval_value').getText()).toEqual('24h');
   });
 
-  it('creates PagerDuty Receiver correctly', async () => {
+  it('creates a receiver correctly', async () => {
     await crudView.isLoaded();
-    expect(firstElementByTestID('create-receiver').isPresent()).toBe(true);
     await firstElementByTestID('create-receiver').click();
     await crudView.isLoaded();
 
@@ -264,9 +270,7 @@ xdescribe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('receiver-routing-labels-editor').isPresent()).toBe(false);
     expect(monitoringView.saveButton.isEnabled()).toBe(false);
 
-    expect(firstElementByTestID('receiver-name').isPresent()).toBe(true);
     await firstElementByTestID('receiver-name').sendKeys('MyReceiver');
-
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
 
@@ -280,10 +284,13 @@ xdescribe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Routing Key');
     await firstElementByTestID('integration-type-prometheus').click();
     expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
+
+    // pagerduty subform should still be invalid at this point, thus save button should be disabled
+    expect(monitoringView.saveButton.isEnabled()).toBe(false);
     await firstElementByTestID('integration-key').sendKeys('<integration_key>');
+    expect(monitoringView.saveButton.isEnabled()).toBe(true); // subform valid, save should be enabled at this point
 
-    expect(monitoringView.saveButton.isEnabled()).toBe(true); // should be enabled at this point
-
+    // labels
     await firstElementByTestID('label-name-0').sendKeys('severity');
     await firstElementByTestID('label-value-0').sendKeys('warning');
 
@@ -294,7 +301,7 @@ xdescribe('Alertmanager: Configuration', () => {
     });
   });
 
-  it('edits PagerDuty Receiver correctly', async () => {
+  it('edits a receiver correctly', async () => {
     await crudView.isLoaded();
     expect(crudView.resourceRows.count()).toBe(2);
     await monitoringView.clickFirstRowKebabAction('Edit Receiver');
@@ -325,7 +332,8 @@ xdescribe('Alertmanager: Configuration', () => {
     });
   });
 
-  it('deletes PagerDuty Receiver correctly', async () => {
+  it('deletes a receiver correctly', async () => {
+    await horizontalnavView.clickHorizontalTab('Overview');
     await crudView.isLoaded();
     expect(crudView.resourceRows.count()).toBe(2);
 
@@ -369,32 +377,5 @@ receivers:
     await monitoringView.openFirstRowKebabMenu();
     expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
     expect(crudView.actionForLabel('Edit YAML').isPresent()).toBe(true); // should be 'Edit YAML' not 'Edit Receiver'
-  });
-
-  it('restores default/initial alertmanager.yaml', async () => {
-    // add receiver with sub-route
-    const defaultAlertmanagerYaml = `"global":
-  "resolve_timeout": "5m"
-"receivers":
-- "name": "null"
-"route":
-  "group_by":
-  - "job"
-  "group_interval": "5m"
-  "group_wait": "30s"
-  "receiver": "null"
-  "repeat_interval": "12h"
-  "routes":
-  - "match":
-      "alertname": "Watchdog"
-    "receiver": "null"`;
-
-    await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('YAML');
-    await yamlView.isLoaded();
-    await yamlView.setEditorContent(defaultAlertmanagerYaml);
-    await yamlView.saveButton.click();
-    await yamlView.isLoaded();
-    expect(monitoringView.successAlert.isPresent()).toBe(true);
   });
 });
