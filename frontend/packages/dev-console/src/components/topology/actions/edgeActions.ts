@@ -44,6 +44,9 @@ export const edgeActions = (edge: BaseEdge, nodes: Node[]): KebabOption[] => {
 
   const availableTargets = nodes
     .filter((n) => {
+      if (n.getId() === edge.getSource().getId()) {
+        return false;
+      }
       switch (edge.getType()) {
         case TYPE_CONNECTS_TO:
           return n.getType() !== TYPE_KNATIVE_REVISION && n.getType() !== TYPE_KNATIVE_SERVICE;

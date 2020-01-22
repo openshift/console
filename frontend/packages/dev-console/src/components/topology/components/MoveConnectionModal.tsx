@@ -63,7 +63,6 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
       <DropdownItem
         key={node.getId()}
         component="button"
-        isDisabled={node.getId() === edge.getTarget().getId()}
         onClick={() => {
           values.target = node;
           setOpen(false);
@@ -136,10 +135,9 @@ class MoveConnectionModal extends PromiseComponent<
         actions.setSubmitting(false);
         close();
       })
-      .catch((errorMessage) => {
+      .catch((err) => {
         actions.setSubmitting(false);
-        actions.setStatus({ submitError: errorMessage });
-        close();
+        actions.setStatus({ submitError: err });
       });
   };
 
