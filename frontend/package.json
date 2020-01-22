@@ -180,7 +180,7 @@
     "mini-css-extract-plugin": "0.4.x",
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
-    "node-sass": "4.12.x",
+    "node-sass": "4.13.x",
     "prettier": "1.19.1",
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
