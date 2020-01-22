@@ -23,7 +23,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
   return (
     <div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Alert Manager Overview" />
+        <SectionHeading text="Alert Manager Details" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">

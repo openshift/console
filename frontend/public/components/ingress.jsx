@@ -199,7 +199,7 @@ const RulesRows = (props) => {
 const Details = ({ obj: ingress }) => (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Ingress Overview" />
+      <SectionHeading text="Ingress Details" />
       <ResourceSummary resource={ingress}>
         <dt>TLS Certificate</dt>
         <dd>{getTLSCert(ingress)}</dd>

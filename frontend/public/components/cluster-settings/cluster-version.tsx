@@ -14,7 +14,7 @@ const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Version Overview" />
+        <SectionHeading text="Cluster Version Details" />
         <ResourceSummary resource={obj} />
       </div>
       <div className="co-m-pane__body">

@@ -184,7 +184,7 @@ export const LimitRangeDetailsList = (resource) => {
 const Details = ({ obj: rq }) => (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Limit Range Overview" />
+      <SectionHeading text="Limit Range Details" />
       <ResourceSummary resource={rq} />
     </div>
     <LimitRangeDetailsList resource={rq} />

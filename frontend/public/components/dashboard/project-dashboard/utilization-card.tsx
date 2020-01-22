@@ -18,7 +18,7 @@ import {
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { PodModel } from '../../../models';
 import { getUtilizationQueries, ProjectQueries, getTopConsumerQueries } from './queries';
-import { PrometheusUtilizationItem } from '../dashboards-page/overview-dashboard/utilization-card';
+import { PrometheusUtilizationItem } from '../dashboards-page/cluster-dashboard/utilization-card';
 import {
   useMetricDuration,
   Duration,

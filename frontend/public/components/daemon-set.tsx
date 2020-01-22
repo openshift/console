@@ -142,7 +142,7 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
 const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Daemon Set Overview" />
+      <SectionHeading text="Daemon Set Details" />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={daemonset} showPodSelector showNodeSelector showTolerations />

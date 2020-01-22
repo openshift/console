@@ -65,16 +65,21 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = ({
     component: BareMetalHostDisks,
   };
   const dashboardPage = {
-    href: 'dashboard',
-    name: 'Dashboard',
+    href: '',
+    name: 'Overview',
     component: BareMetalHostDashboard,
+  };
+  const detailsPage = {
+    href: 'details',
+    name: 'Details',
+    component: BareMetalHostDetails,
   };
   return (
     <DetailsPage
       {...props}
       pagesFor={() => [
-        navFactory.details(BareMetalHostDetails),
         dashboardPage,
+        detailsPage,
         navFactory.editYaml(),
         nicsPage,
         disksPage,

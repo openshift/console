@@ -80,7 +80,7 @@ const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({
 }) => {
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Service Plan Overview" />
+      <SectionHeading text="Service Plan Details" />
       <div className="row">
         <div className="col-md-6">
           <ResourceSummary resource={servicePlan} />

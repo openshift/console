@@ -31,7 +31,7 @@ const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj }) => 
 
 const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => (
   <div className="co-m-pane__body">
-    <SectionHeading text="Machine Config Overview" />
+    <SectionHeading text="Machine Config Details" />
     <div className="row">
       <div className="col-xs-12">
         <MachineConfigSummary obj={obj} />

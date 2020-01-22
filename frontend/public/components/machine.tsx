@@ -137,7 +137,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Overview" />
+        <SectionHeading text="Machine Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

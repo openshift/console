@@ -154,7 +154,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
     return (
       <div>
         <div className="co-m-pane__body">
-          <SectionHeading text="Report Overview" />
+          <SectionHeading text="Report Details" />
           <div className="row">
             <div className="col-sm-6 col-xs-12">
               <ResourceSummary resource={obj} />

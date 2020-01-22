@@ -59,7 +59,7 @@ StatefulSetTableHeader.displayName = 'StatefulSetTableHeader';
 const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="StatefulSet Overview" />
+      <SectionHeading text="StatefulSet Details" />
       <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
     </div>
     <div className="co-m-pane__body">

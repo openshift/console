@@ -54,7 +54,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-md-6 col-sm-12">
-            <SectionHeading text="Image Overview" />
+            <SectionHeading text="Image Details" />
             <ResourceSummary resource={imageStreamTag}>
               {labels.name && <dt>Image Name</dt>}
               {labels.name && <dd>{labels.name}</dd>}

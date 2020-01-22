@@ -395,7 +395,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
     <>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="Pod Overview" />
+        <SectionHeading text="Pod Details" />
         <PodGraphs pod={pod} />
         <div className="row">
           <div className="col-sm-6">

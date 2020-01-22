@@ -21,7 +21,7 @@ const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ it
 
 const tabs = [
   {
-    name: 'Overview',
+    name: 'Details',
     component: DaemonSetOverviewDetails,
   },
   {

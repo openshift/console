@@ -67,7 +67,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
-        <SectionHeading text="Build Config Overview" />
+        <SectionHeading text="Build Config Details" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={buildConfig} />

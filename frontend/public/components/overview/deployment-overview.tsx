@@ -56,7 +56,7 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
 
 const tabs = [
   {
-    name: 'Overview',
+    name: 'Details',
     component: DeploymentOverviewDetails,
   },
   {

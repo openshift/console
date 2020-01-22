@@ -48,20 +48,20 @@ describe('Monitoring: Alerts', () => {
     expect(firstElementByTestID('alert-resource-link').getText()).toContain(testAlertName);
     await firstElementByTestID('alert-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
-    testDetailsPage('Alert Overview', testAlertName);
+    testDetailsPage('Alert Detail', testAlertName);
   });
 
   it('links to the Alerting Rule details page', async () => {
     expect(monitoringView.ruleLink.getText()).toContain(testAlertName);
     await monitoringView.ruleLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingRuleIcon));
-    testDetailsPage('Alerting Rule Overview', testAlertName, false);
+    testDetailsPage('Alerting Rule Details', testAlertName, false);
 
     // Active Alerts list should contain a link back to the Alert details page
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstAlertsListLink));
     await monitoringView.firstAlertsListLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
-    testDetailsPage('Alert Overview', testAlertName);
+    testDetailsPage('Alert Details', testAlertName);
   });
 
   it('creates a new Silence from an existing alert', async () => {
@@ -72,7 +72,7 @@ describe('Monitoring: Alerts', () => {
 
     // After creating the Silence, should be redirected to its details page
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
-    testDetailsPage('Silence Overview', testAlertName);
+    testDetailsPage('Silence Details', testAlertName);
   });
 
   it('shows the silenced Alert in the Silenced Alerts list', async () => {
@@ -82,7 +82,7 @@ describe('Monitoring: Alerts', () => {
     // Click the link to navigate back to the Alert details link
     await monitoringView.firstAlertsListLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
-    testDetailsPage('Alert Overview', testAlertName);
+    testDetailsPage('Alert Details', testAlertName);
   });
 
   it('shows the newly created Silence in the Silenced By list', async () => {
@@ -94,7 +94,7 @@ describe('Monitoring: Alerts', () => {
     // Click the link to navigate back to the Silence details page
     await firstElementByTestID('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
-    testDetailsPage('Silence Overview', testAlertName);
+    testDetailsPage('Silence Details', testAlertName);
   });
 
   it('expires the Silence', async () => {
@@ -136,7 +136,7 @@ describe('Monitoring: Silences', () => {
   // After creating the Silence, should be redirected to its details page
   it('displays detail view for new Silence', async () => {
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
-    testDetailsPage('Silence Overview', testAlertName);
+    testDetailsPage('Silence Details', testAlertName);
   });
 
   it('filters Silences by name', async () => {
@@ -155,7 +155,7 @@ describe('Monitoring: Silences', () => {
     expect(firstElementByTestID('silence-resource-link').getText()).toContain(testAlertName);
     await firstElementByTestID('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
-    testDetailsPage('Silence Overview', testAlertName);
+    testDetailsPage('Silence Details', testAlertName);
   });
 
   it('edits the Silence', async () => {
@@ -167,7 +167,7 @@ describe('Monitoring: Silences', () => {
 
     // After editing the Silence, should be redirected to its details page, where we check that the edit is reflected
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
-    testDetailsPage('Silence Overview', testAlertName);
+    testDetailsPage('Silence Details', testAlertName);
     expect(monitoringView.silenceComment.getText()).toEqual('Test Comment');
   });
 
@@ -219,7 +219,7 @@ describe('Alertmanager: Configuration', () => {
     checkErrors();
   });
 
-  it('displays the Alermanager Configuration Overview page', async () => {
+  it('displays the Alermanager Configuration Details page', async () => {
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Global Configuration');
@@ -365,7 +365,7 @@ receivers:
     await yamlView.isLoaded();
     expect(monitoringView.successAlert.isPresent()).toBe(true);
 
-    await horizontalnavView.clickHorizontalTab('Overview');
+    await horizontalnavView.clickHorizontalTab('Details');
     await monitoringView.openFirstRowKebabMenu();
     expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
     expect(crudView.actionForLabel('Edit YAML').isPresent()).toBe(true); // should be 'Edit YAML' not 'Edit Receiver'

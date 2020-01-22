@@ -134,7 +134,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="PersistentVolumeClaim Overview" />
+        <SectionHeading text="PersistentVolumeClaim Details" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>

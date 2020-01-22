@@ -223,7 +223,7 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
       {
         title: 'Add a link to the namespace dashboard',
         description:
-          'Namespace dashboard links appear on the project dashboard and namespace overview pages in a section called "Launcher".  Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
+          'Namespace dashboard links appear on the project dashboard and namespace details pages in a section called "Launcher".  Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
         id: 'cl-namespace-dashboard',
         targetResource: getTargetResource(ConsoleLinkModel),
       },

@@ -97,7 +97,7 @@ const ConfigMapDetails = ({ obj: configMap }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Config Map Overview" />
+        <SectionHeading text="Config Map Details" />
         <ResourceSummary resource={configMap} />
       </div>
       <div className="co-m-pane__body">

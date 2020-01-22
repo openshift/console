@@ -132,7 +132,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine HealthCheck Overview" />
+        <SectionHeading text="Machine HealthCheck Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

@@ -257,7 +257,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Set Overview" />
+        <SectionHeading text="Machine Set Details" />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <ResourceSummary resource={obj}>
           <dt>Selector</dt>

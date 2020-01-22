@@ -198,7 +198,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
-        <SectionHeading text="Build Overview" />
+        <SectionHeading text="Build Details" />
         <BuildGraphs build={build} />
         {hasPipeline && (
           <div className="row">

@@ -153,7 +153,7 @@ const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-md-6">
-          <SectionHeading text="Job Overview" />
+          <SectionHeading text="Job Details" />
           <ResourceSummary resource={job} showPodSelector>
             <DetailsItem label="Desired Completions" obj={job} path="spec.completions" />
             <DetailsItem label="Parallelism" obj={job} path="spec.parallelism" />

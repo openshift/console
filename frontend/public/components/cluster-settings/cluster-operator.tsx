@@ -217,13 +217,13 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj })
   const { status, message } = getStatusAndMessage(obj);
   const versions: OperandVersion[] = _.get(obj, 'status.versions', []);
   const conditions = _.get(obj, 'status.conditions', []);
-  // Show the operator version in the details overview if it's the only version.
+  // Show the operator version in the details if it's the only version.
   const operatorVersion =
     versions.length === 1 && versions[0].name === 'operator' ? versions[0].version : null;
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Operator Overview" />
+        <SectionHeading text="Cluster Operator Details" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />

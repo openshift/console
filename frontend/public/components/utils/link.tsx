@@ -26,7 +26,7 @@ export const namespacedPrefixes = [
   '/operatorhub',
   '/operatormanagement',
   '/operators',
-  '/overview',
+  '/details',
   '/provisionedservices',
   '/search',
   '/status',

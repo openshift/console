@@ -232,7 +232,7 @@ const Details = ({ obj: s }) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-sm-6">
-        <SectionHeading text="Service Overview" />
+        <SectionHeading text="Service Details" />
         <ResourceSummary resource={s} showPodSelector>
           <DetailsItem label="Session Affinity" obj={s} path="spec.sessionAffinity" />
         </ResourceSummary>

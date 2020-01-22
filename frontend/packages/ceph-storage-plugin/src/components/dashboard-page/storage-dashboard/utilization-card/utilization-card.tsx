@@ -10,7 +10,7 @@ import {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/overview-dashboard/utilization-card';
+import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   useMetricDuration,
   Duration,

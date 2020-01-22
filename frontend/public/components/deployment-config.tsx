@@ -151,7 +151,7 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Deployment Config Overview" />
+        <SectionHeading text="Deployment Config Details" />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
         <PodRingController
           namespace={dc.metadata.namespace}

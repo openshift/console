@@ -83,7 +83,7 @@ describe('Cluster Settings page', () => {
         .find(HorizontalNav)
         .at(0)
         .props().pages[0].name,
-    ).toBe('Overview');
+    ).toBe('Details');
     expect(
       wrapper
         .find(HorizontalNav)
