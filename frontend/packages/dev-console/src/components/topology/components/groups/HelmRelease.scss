@@ -1,0 +1,33 @@
+.odc-helm-release {
+  fill: #e2e2e2;
+  stroke: #bbbbbb;
+  stroke-width: 4px;
+  stroke-dasharray: 9;
+  cursor: pointer;
+
+  &__label {
+    cursor: pointer;
+  }
+}
+
+.odc-m-filter-active {
+  .odc-helm-release {
+    &__label {
+      opacity: 0.3;
+      &.is-filtered {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.odc-m-drag-active {
+  .odc-helm-release {
+    &__label {
+      opacity: 0.3;
+      &.is-dragging {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import {
   useCombineRefs,
   createSvgIdUrl,
 } from '@console/topology';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgResourceIcon from '../topology/components/nodes/ResourceIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 
@@ -20,12 +21,16 @@ export interface SvgBoxedTextProps {
   kind?: string;
   truncate?: number;
   dragRef?: WithDndDragProps['dndDragRef'];
+  icon?: string;
   // TODO remove with 2.0
   onMouseEnter?: React.MouseEventHandler<SVGGElement>;
   onMouseLeave?: React.MouseEventHandler<SVGGElement>;
 }
 
 const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
+const iconFilterID = 'SVGBoxedTextRectIconFilter';
+const iconSize = 36;
+const iconPadding = 3;
 
 const truncateEnd = (text: string = '', length: number): string => {
   if (text.length <= length) {
@@ -50,21 +55,25 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   onMouseLeave,
   truncate,
   dragRef,
+  icon,
   ...other
 }) => {
   const [labelHover, labelHoverRef] = useHover();
   const [textSize, textRef] = useSize([children, className, labelHover]);
-  const [iconSize, iconRef] = useSize([kind]);
-  const iconSpace = kind && iconSize ? iconSize.width + paddingX : 0;
+  const [badgeSize, badgeRef] = useSize([kind]);
+  const [labelSize, labelRef] = useSize([children, textSize, badgeSize]);
+  const iconSpace = kind && badgeSize ? badgeSize.width + paddingX : 0;
+  const labelSizeWidth = icon ? paddingX * 2 + iconSpace + iconSize / 2 : paddingX * 2 + iconSpace;
   const refs = useCombineRefs(dragRef, typeof truncate === 'number' ? labelHoverRef : undefined);
   return (
     <g className={className} ref={refs}>
       <SvgDropShadowFilter id={FILTER_ID} />
       {textSize && (
         <rect
+          ref={labelRef}
           filter={createSvgIdUrl(FILTER_ID)}
           x={x - paddingX - textSize.width / 2 - iconSpace / 2}
-          width={textSize.width + paddingX * 2 + iconSpace}
+          width={textSize.width + labelSizeWidth}
           y={y - paddingY - textSize.height / 2}
           height={textSize.height + paddingY * 2}
           rx={cornerRadius}
@@ -73,12 +82,13 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
       )}
       {textSize && kind && (
         <SvgResourceIcon
-          ref={iconRef}
+          ref={badgeRef}
           x={x - textSize.width / 2 - paddingX / 2}
           y={y}
           kind={kind}
         />
       )}
+
       <text
         {...other}
         ref={textRef}
@@ -95,6 +105,28 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
             : truncateEnd(children, truncate)
           : children}
       </text>
+      {icon && textSize && badgeSize && labelSize && (
+        <>
+          <SvgDropShadowFilter id={iconFilterID} />
+          <rect
+            x={x + labelSize.width / 2 + paddingX - iconSize / 2}
+            y={y}
+            width={iconSize}
+            height={iconSize}
+            fill="#fff"
+            rx={cornerRadius}
+            ry={cornerRadius}
+            filter={createSvgIdUrl(iconFilterID)}
+          />
+          <image
+            x={x + labelSize.width / 2 + paddingX - iconSize / 2 + iconPadding}
+            y={y + iconPadding}
+            width={30}
+            height={30}
+            xlinkHref={getImageForIconClass(`icon-${icon}`)}
+          />
+        </>
+      )}
     </g>
   );
 };
