@@ -5,6 +5,7 @@ export const metricsQuery = {
   PODS_BY_MEMORY: 'PODS_BY_MEMORY',
   PODS_BY_FILESYSTEM: 'PODS_BY_FILESYSTEM',
   PODS_BY_NETWORK: 'PODS_BY_NETWORK',
+  PODS_BY_STORAGE: 'PODS_BY_STORAGE',
 };
 
 const topMetricsQueries = {
@@ -20,6 +21,9 @@ const topMetricsQueries = {
   [metricsQuery.PODS_BY_NETWORK]: _.template(
     `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace = '<%= project %>'}[5m]) + rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace = '<%= project %>'}[5m])) BY (namespace, pod)))`,
   ),
+  [metricsQuery.PODS_BY_STORAGE]: _.template(
+    `topk(25, sort_desc(sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!="", namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
+  ),
 };
 
 export const getTopMetricsQueries = (project: string) => ({
@@ -29,4 +33,5 @@ export const getTopMetricsQueries = (project: string) => ({
     project,
   }),
   [metricsQuery.PODS_BY_NETWORK]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK]({ project }),
+  [metricsQuery.PODS_BY_STORAGE]: topMetricsQueries[metricsQuery.PODS_BY_STORAGE]({ project }),
 });
