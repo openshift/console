@@ -8,7 +8,7 @@ import { FirehoseResult } from '@console/internal/components/utils/types';
 import { Link } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ImageManifestVuln } from '../types';
-import { VulnPriority } from '../const';
+import { vulnPriority } from '../const';
 import { ImageManifestVulnModel } from '../models';
 
 export const securityHealthHandler: URLHealthHandler<string> = (
@@ -28,7 +28,7 @@ export const securityHealthHandler: URLHealthHandler<string> = (
   return { state: HealthState.OK, message: '0 vulnerabilities' };
 };
 
-const quayURLFor = (vuln: ImageManifestVuln) => {
+export const quayURLFor = (vuln: ImageManifestVuln) => {
   const base = vuln.spec.image
     .split('/')
     .reduce((url, part, i) => [...url, part, ...(i === 0 ? ['repository'] : [])], [])
@@ -57,34 +57,38 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                 <div className="co-overview-status__text--bold">Severity</div>
                 <div className="text-secondary">Fixable</div>
               </div>
-              {_.map(VulnPriority, (priority) =>
-                !_.isEmpty(vulnsFor(priority.value)) ? (
-                  <div className="co-overview-status__row" key={priority.value}>
-                    <div className="co-overview-status__text--bold">
-                      {vulnsFor(priority.value).length} {priority.title}
+              {vulnPriority
+                .map((priority) =>
+                  !_.isEmpty(vulnsFor(priority.value)) ? (
+                    <div className="co-overview-status__row" key={priority.value}>
+                      <div className="co-overview-status__text--bold">
+                        {vulnsFor(priority.value).length} {priority.title}
+                      </div>
+                      <div className="text-secondary">
+                        {
+                          props.k8sResult.data.filter(
+                            (v) =>
+                              _.get(v.status, 'highestSeverity') === priority.value &&
+                              _.get(v.status, 'fixableCount', 0) > 0,
+                          ).length
+                        }{' '}
+                        <SecurityIcon color={priority.color.value} />
+                      </div>
                     </div>
-                    <div className="text-secondary">
-                      {
-                        props.k8sResult.data.filter(
-                          (v) =>
-                            _.get(v.status, 'highestSeverity') === priority.value &&
-                            _.get(v.status, 'fixableCount', 0) > 0,
-                        ).length
-                      }{' '}
-                      <SecurityIcon color={priority.color.value} />
-                    </div>
-                  </div>
-                ) : null,
-              )}
+                  ) : null,
+                )
+                .toArray()}
             </div>
             <div>
               <ChartDonut
-                colorScale={_.map(VulnPriority, (priority) => priority.color.value)}
-                data={_.map(VulnPriority, (priority) => ({
-                  label: priority.title,
-                  x: priority.value,
-                  y: vulnsFor(priority.value).length,
-                }))}
+                colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
+                data={vulnPriority
+                  .map((priority) => ({
+                    label: priority.title,
+                    x: priority.value,
+                    y: vulnsFor(priority.value).length,
+                  }))
+                  .toArray()}
                 title={`${props.k8sResult.data.length} total`}
               />
             </div>
@@ -98,7 +102,10 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                 <div className="co-overview-status__row" key={v.metadata.name}>
                   <span>
                     <SecurityIcon
-                      color={VulnPriority[_.get(v.status, 'highestSeverity')].color.value}
+                      color={
+                        vulnPriority.find((p) => p.title === _.get(v.status, 'highestSeverity'))
+                          .color.value
+                      }
                     />{' '}
                     <a href={quayURLFor(v)}>{v.spec.features[0].name}</a>
                   </span>

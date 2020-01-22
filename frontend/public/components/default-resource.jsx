@@ -125,7 +125,7 @@ export const DefaultList = (props) => {
     />
   );
 };
-DefaultList.displayName = DefaultList;
+DefaultList.displayName = 'DefaultList';
 
 export const DefaultPage = (props) => (
   <ListPage

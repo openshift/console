@@ -15,7 +15,7 @@ const highVuln: ImageManifestVuln = {
     namespaceName: 'centos:7',
   },
   status: {
-    afftectedPods: {
+    affectedPods: {
       'test/some-pod': ['cri-o://524638ef02d6da6bfe48650663f838f9f2fbe1e9769f886863fe509bc74b75ef'],
     },
     fixableCount: 61,

@@ -15,7 +15,7 @@ export type Vulnerability = {
   link: string;
   fixedby: string;
   severity: string;
-  metadata: string;
+  metadata?: string;
 };
 
 export type ImageManifestVulnSpec = {
@@ -36,7 +36,7 @@ export type ImageManifestVulnStatus = {
   criticalCount?: number;
   defcon1Count?: number;
   fixableCount?: number;
-  afftectedPods: { [path: string]: string[] };
+  affectedPods: { [path: string]: string[] };
 };
 
 export type ImageManifestVuln = {
