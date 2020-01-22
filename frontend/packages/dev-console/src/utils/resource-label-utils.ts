@@ -3,6 +3,7 @@ export const getAppLabels = (
   application?: string,
   imageStreamName?: string,
   selectedTag?: string,
+  namespace?: string,
 ) => {
   const labels = {
     app: name,
@@ -17,6 +18,9 @@ export const getAppLabels = (
   }
   if (selectedTag) {
     labels['app.openshift.io/runtime-version'] = selectedTag;
+  }
+  if (namespace) {
+    labels['app.openshift.io/runtime-namespace'] = namespace;
   }
 
   return labels;

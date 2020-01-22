@@ -377,6 +377,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/metrics',
         '/project-access',
         '/dev-monitoring',
+        '/edit',
       ],
       component: NamespaceRedirect,
     },
@@ -404,6 +405,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: '/edit/ns/:ns',
+      loader: async () =>
+        (
+          await import(
+            './components/edit-application/EditApplicationPage' /* webpackChunkName: "dev-console-edit" */
           )
         ).default,
     },

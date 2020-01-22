@@ -52,6 +52,7 @@ export interface FirehoseList {
 }
 
 export interface DeployImageFormData {
+  formType?: string;
   project: ProjectData;
   application: ApplicationData;
   name: string;
@@ -70,7 +71,7 @@ export interface DeployImageFormData {
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   labels: { [name: string]: string };
-  env: { [name: string]: string };
+  env?: { [name: string]: string };
   route: RouteData;
   build: BuildData;
   deployment: DeploymentData;
@@ -96,7 +97,7 @@ export interface GitImportFormData {
 }
 
 export interface ApplicationData {
-  initial: string;
+  initial?: string;
   name: string;
   selectedKey: string;
 }
@@ -121,8 +122,8 @@ export interface ImageStreamImageData {
 
 export interface ProjectData {
   name: string;
-  displayName: string;
-  description: string;
+  displayName?: string;
+  description?: string;
 }
 
 export interface GitData {
@@ -142,7 +143,7 @@ export interface DockerData {
 }
 
 export interface RouteData {
-  show?: boolean;
+  disable?: boolean;
   create: boolean;
   targetPort: string;
   unknownTargetPort?: string;
@@ -164,9 +165,9 @@ export interface TLSData {
 
 export interface BuildData {
   triggers: {
-    webhook: boolean;
-    image: boolean;
-    config: boolean;
+    webhook?: boolean;
+    image?: boolean;
+    config?: boolean;
   };
   env: (NameValuePair | NameValueFromPair)[];
   strategy: string;

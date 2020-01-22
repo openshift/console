@@ -1,93 +1,58 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
+import { connect } from 'react-redux';
+import { getActivePerspective } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { history } from '@console/internal/components/utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import { createOrUpdateResources } from '../import/import-submit-utils';
-import { validationSchema } from '../import/import-validation-utils';
+import {
+  createOrUpdateResources as createOrUpdateGitResources,
+  handleRedirect,
+} from '../import/import-submit-utils';
+import { validationSchema as gitValidationSchema } from '../import/import-validation-utils';
+import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
+import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import EditApplicationForm from './EditApplicationForm';
 import { EditApplicationProps } from './edit-application-types';
-import * as EditApplicationUtils from './edit-application-utils';
+import { getPageHeading, getInitialValues } from './edit-application-utils';
 
-const EditApplication: React.FC<EditApplicationProps> = ({
+export interface StateProps {
+  perspective: string;
+}
+
+const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
+  perspective,
   namespace,
   appName,
-  editAppResource,
   resources: appResources,
-  onCancel,
-  onSubmit,
 }) => {
-  const builderImages: NormalizedBuilderImages =
+  const imageStreamsData =
     appResources.imageStreams && appResources.imageStreams.loaded
-      ? normalizeBuilderImages(appResources.imageStreams.data)
-      : null;
+      ? appResources.imageStreams.data
+      : [];
+  const builderImages: NormalizedBuilderImages = !_.isEmpty(imageStreamsData)
+    ? normalizeBuilderImages(imageStreamsData)
+    : null;
 
-  const currentImage = _.split(
-    _.get(appResources, 'buildConfig.data.spec.strategy.sourceStrategy.from.name', ''),
-    ':',
-  );
+  const initialValues = getInitialValues(appResources, appName, namespace);
+  const pageHeading = getPageHeading(_.get(initialValues, 'build.strategy', ''));
 
-  const appGroupName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/part-of"]');
-
-  const initialValues = {
-    formType: 'edit',
-    name: appName,
-    application: {
-      name: appGroupName,
-      selectedKey: appGroupName,
-    },
-    project: {
-      name: namespace,
-    },
-    git: EditApplicationUtils.getGitData(_.get(appResources, 'buildConfig.data')),
-    docker: {
-      dockerfilePath: _.get(
-        appResources,
-        'buildConfig.data.spec.strategy.dockerStrategy.dockerfilePath',
-        'Dockerfile',
-      ),
-      containerPort: parseInt(
-        _.split(_.get(appResources, 'route.data.spec.port.targetPort'), '-')[0],
-        10,
-      ),
-    },
-    image: {
-      selected: currentImage[0] || '',
-      recommended: '',
-      tag: currentImage[1] || '',
-      tagObj: {},
-      ports: [],
-      isRecommending: false,
-      couldNotRecommend: false,
-    },
-    route: EditApplicationUtils.getRouteData(_.get(appResources, 'route.data'), editAppResource),
-    resources: EditApplicationUtils.getResourcesType(editAppResource),
-    serverless: EditApplicationUtils.getServerlessData(editAppResource),
-    pipeline: {
-      enabled: false,
-    },
-    build: EditApplicationUtils.getBuildData(_.get(appResources, 'buildConfig.data')),
-    deployment: EditApplicationUtils.getDeploymentData(editAppResource),
-    labels: EditApplicationUtils.getUserLabels(editAppResource),
-    limits: EditApplicationUtils.getLimitsData(editAppResource),
+  const updateResources = (values) => {
+    if (values.build.strategy) {
+      const imageStream =
+        values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
+      return createOrUpdateGitResources(values, imageStream, false, false, 'update', appResources);
+    }
+    return createOrUpdateDeployImageResources(values, false, 'update', appResources);
   };
 
   const handleSubmit = (values, actions) => {
-    const imageStream =
-      values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
-
-    createOrUpdateResources(
-      values,
-      imageStream,
-      false,
-      false,
-      'update',
-      appResources,
-      editAppResource,
-    )
+    updateResources(values)
       .then(() => {
         actions.setSubmitting(false);
         actions.setStatus({ error: '' });
-        onSubmit();
+        handleRedirect(namespace, perspective);
       })
       .catch((err) => {
         actions.setSubmitting(false);
@@ -96,18 +61,34 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   };
 
   const renderForm = (props) => {
-    return <EditApplicationForm {...props} builderImages={builderImages} />;
+    return (
+      <EditApplicationForm
+        {...props}
+        enableReinitialize="true"
+        createFlowType={pageHeading}
+        builderImages={builderImages}
+      />
+    );
   };
 
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={onCancel}
-      validationSchema={validationSchema}
+      onReset={history.goBack}
+      validationSchema={
+        _.get(initialValues, 'build.strategy') ? gitValidationSchema : deployValidationSchema
+      }
       render={renderForm}
     />
   );
 };
 
-export default EditApplication;
+const mapStateToProps = (state: RootState) => {
+  const perspective = getActivePerspective(state);
+  return {
+    perspective,
+  };
+};
+
+export default connect(mapStateToProps)(EditApplication);

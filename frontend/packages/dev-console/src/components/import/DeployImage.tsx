@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
-import { createResources } from './deployImage-submit-utils';
+import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 
@@ -67,7 +67,7 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
       },
     },
     route: {
-      show: true,
+      disable: false,
       create: true,
       targetPort: '',
       unknownTargetPort: '',
@@ -129,10 +129,13 @@ const DeployImage: React.FC<Props> = ({ namespace, projects, activeApplication }
       project: { name: projectName },
     } = values;
 
-    const dryRunRequests: Promise<K8sResourceKind[]> = createResources(values, true);
+    const dryRunRequests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(
+      values,
+      true,
+    );
     dryRunRequests
       .then(() => {
-        const requests: Promise<K8sResourceKind[]> = createResources(values);
+        const requests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(values);
         return requests;
       })
       .then(() => {
