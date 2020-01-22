@@ -53,15 +53,13 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = ({ match }) => {
           </Button>
         </div>
       </div>
-      <div className="co-m-pane__body">
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          onReset={history.goBack}
-          validationSchema={validationSchema}
-          render={(props) => <PipelineBuilderForm {...props} namespace={ns} />}
-        />
-      </div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={history.goBack}
+        validationSchema={validationSchema}
+        render={(props) => <PipelineBuilderForm {...props} namespace={ns} />}
+      />
     </>
   );
 };

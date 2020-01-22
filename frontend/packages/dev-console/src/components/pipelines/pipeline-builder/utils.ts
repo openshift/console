@@ -1,14 +1,10 @@
-import {
-  apiVersionForModel,
-  K8sResourceKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
-import { Pipeline, PipelineTask } from '../../../utils/pipeline-augment';
+import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
+import { Pipeline, PipelineResourceTask, PipelineTask } from '../../../utils/pipeline-augment';
 import { ClusterTaskModel, PipelineModel } from '../../../models';
 import { PipelineBuilderFormikValues } from './types';
 
 export const convertResourceToTask = (
-  resource: K8sResourceKind,
+  resource: PipelineResourceTask,
   runAfter?: string[],
 ): PipelineTask => {
   return {
@@ -18,6 +14,10 @@ export const convertResourceToTask = (
       kind: resource.kind === ClusterTaskModel.kind ? ClusterTaskModel.kind : undefined,
       name: resource.metadata.name,
     },
+    params: resource.spec.inputs?.params?.map((param) => ({
+      name: param.name,
+      value: param.default,
+    })),
   };
 };
 

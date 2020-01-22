@@ -4,13 +4,13 @@ import { Button } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { KebabMenuItems, KebabOption } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { observer, Node } from '@console/topology';
+import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 
 import './TaskListNode.scss';
 
-const taskToOption = (task: K8sResourceKind, callback: NewTaskNodeCallback): KebabOption => {
+const taskToOption = (task: PipelineResourceTask, callback: NewTaskNodeCallback): KebabOption => {
   const {
     metadata: { name },
   } = task;
@@ -72,7 +72,7 @@ const TaskListNode: React.FC<{ element: Node }> = ({ element }) => {
               onClick={(e, option) => {
                 option.callback && option.callback();
               }}
-              className="oc-kebab__popper-items"
+              className="oc-kebab__popper-items odc-task-list-node__list-items"
             />
           </div>
         </FocusTrap>

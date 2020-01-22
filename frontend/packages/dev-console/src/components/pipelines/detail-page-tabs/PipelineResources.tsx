@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { MultiColumnField, InputField, DropdownField } from '@console/shared';
-
-enum resourceTypes {
-  '' = 'Select resource type',
-  git = 'Git',
-  image = 'Image',
-  cluster = 'Cluster',
-  storage = 'Storage',
-}
+import { PipelineResourceType } from '../const';
 
 type PipelineResourcesParam = {
   addLabel?: string;
@@ -33,7 +26,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         placeholder="Name"
         isReadOnly={isReadOnly}
       />
-      <DropdownField name="type" items={resourceTypes} fullWidth disabled={isReadOnly} />
+      <DropdownField name="type" items={PipelineResourceType} fullWidth disabled={isReadOnly} />
     </MultiColumnField>
   );
 };

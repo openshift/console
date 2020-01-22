@@ -1,27 +1,42 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
-import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
-import { PipelineTask } from '../../../utils/pipeline-augment';
-import { getEdgesFromNodes } from '../pipeline-topology/utils';
 import { LoadingBox } from '@console/internal/components/utils';
-import { useNodes } from './hooks';
+import { PipelineTask } from '../../../utils/pipeline-augment';
 import { PipelineLayout } from '../pipeline-topology/const';
+import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
+import { getEdgesFromNodes } from '../pipeline-topology/utils';
+import { useNodes } from './hooks';
+import {
+  SelectTaskCallback,
+  SetTaskErrorCallback,
+  TaskErrorMap,
+  UpdateTaskCallback,
+} from './types';
 
 type PipelineBuilderVisualizationProps = {
   namespace: string;
-  onUpdateTasks: (updatedTasks: PipelineTask[]) => void;
+  onSetError: SetTaskErrorCallback;
+  onTaskSelection: SelectTaskCallback;
+  onUpdateTasks: UpdateTaskCallback;
   pipelineTasks: PipelineTask[];
+  tasksInError: TaskErrorMap;
 };
 
 const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> = ({
   namespace,
+  onSetError,
+  onTaskSelection,
   onUpdateTasks,
   pipelineTasks,
+  tasksInError,
 }) => {
   const { tasksLoaded, tasksCount, nodes, loadingTasksError } = useNodes(
     namespace,
+    onSetError,
+    onTaskSelection,
     onUpdateTasks,
     pipelineTasks,
+    tasksInError,
   );
 
   if (loadingTasksError) {

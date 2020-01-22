@@ -1,12 +1,13 @@
 import { EdgeModel, NodeModel } from '@console/topology';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
+import { Pipeline, PipelineResourceTask, PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
+import { TaskErrorMapData } from '../pipeline-builder/types';
 import { AddNodeDirection, NodeType } from './const';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 
 // Builder Callbacks
 export type NewTaskListNodeCallback = (direction: AddNodeDirection) => void;
-export type NewTaskNodeCallback = (resource: K8sResourceKind) => void;
+export type NewTaskNodeCallback = (resource: PipelineResourceTask) => void;
+export type NodeSelectionCallback = (nodeData: BuilderNodeModelData) => void;
 
 // Node Data Models
 export type PipelineRunAfterNodeModelData = {
@@ -16,13 +17,15 @@ export type PipelineRunAfterNodeModelData = {
   };
 };
 export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
-  clusterTaskList: K8sResourceKind[];
-  namespaceTaskList: K8sResourceKind[];
+  clusterTaskList: PipelineResourceTask[];
+  namespaceTaskList: PipelineResourceTask[];
   onNewTask: NewTaskNodeCallback;
 };
 export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
+  error?: TaskErrorMapData;
   task: PipelineVisualizationTaskItem;
   onAddNode: NewTaskListNodeCallback;
+  onNodeSelection: NodeSelectionCallback;
 };
 export type SpacerNodeModelData = PipelineRunAfterNodeModelData & {};
 export type TaskNodeModelData = PipelineRunAfterNodeModelData & {

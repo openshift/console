@@ -18,7 +18,7 @@ export const validationSchema = yup.object({
         .string()
         .min(1)
         .required('Required'),
-      description: yup.string(),
+      type: yup.string().required('Required'),
     }),
   ),
   tasks: yup

@@ -1,7 +1,11 @@
 import * as React from 'react';
-import { k8sList, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sList } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../../models';
-import { PipelineTask } from '../../../utils/pipeline-augment';
+import {
+  PipelineResourceTask,
+  PipelineTask,
+  PipelineTaskRef,
+} from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { PipelineMixedNodeModel, PipelineTaskListNode } from '../pipeline-topology/types';
 import {
@@ -10,16 +14,23 @@ import {
   tasksToBuilderNodes,
 } from '../pipeline-topology/utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
+import {
+  SelectTaskCallback,
+  SetTaskErrorCallback,
+  TaskErrorMap,
+  UpdateTaskCallback,
+} from './types';
 import { convertResourceToTask } from './utils';
 
 type UseTasks = {
-  namespacedTasks: K8sResourceKind[] | null;
-  clusterTasks: K8sResourceKind[] | null;
+  namespacedTasks: PipelineResourceTask[] | null;
+  clusterTasks: PipelineResourceTask[] | null;
   errorMsg?: string;
+  getTask: (taskRef: PipelineTaskRef) => PipelineResourceTask;
 };
 export const useTasks = (namespace?: string, taskNames?: string[]): UseTasks => {
-  const [namespacedTasks, setNamespacedTasks] = React.useState<K8sResourceKind[]>(null);
-  const [clusterTasks, setClusterTasks] = React.useState<K8sResourceKind[]>(null);
+  const [namespacedTasks, setNamespacedTasks] = React.useState<PipelineResourceTask[]>(null);
+  const [clusterTasks, setClusterTasks] = React.useState<PipelineResourceTask[]>(null);
   const [loadErrorMsg, setLoadErrorMsg] = React.useState<string>(undefined);
 
   React.useEffect(() => {
@@ -28,7 +39,7 @@ export const useTasks = (namespace?: string, taskNames?: string[]): UseTasks => 
         setNamespacedTasks([]);
       } else {
         k8sList(TaskModel, { ns: namespace })
-          .then((res: K8sResourceKind[]) => {
+          .then((res: PipelineResourceTask[]) => {
             setNamespacedTasks(res);
           })
           .catch(() => {
@@ -39,7 +50,7 @@ export const useTasks = (namespace?: string, taskNames?: string[]): UseTasks => 
 
     if (!clusterTasks) {
       k8sList(ClusterTaskModel)
-        .then((res: K8sResourceKind[]) => {
+        .then((res: PipelineResourceTask[]) => {
           setClusterTasks(res);
         })
         .catch(() => {
@@ -56,13 +67,19 @@ export const useTasks = (namespace?: string, taskNames?: string[]): UseTasks => 
     loadErrorMsg,
   ]);
 
-  const includedValues = (resource: K8sResourceKind) =>
+  const includedValues = (resource: PipelineResourceTask) =>
     !taskNames?.includes(resource.metadata.name);
 
   return {
     namespacedTasks: namespacedTasks?.filter(includedValues),
     clusterTasks: clusterTasks?.filter(includedValues),
     errorMsg: loadErrorMsg,
+    getTask: (taskRef) => {
+      if (taskRef.kind === ClusterTaskModel.kind) {
+        return clusterTasks.find((task) => task.metadata.name === taskRef.name);
+      }
+      return namespacedTasks.find((task) => task.metadata.name === taskRef.name);
+    },
   };
 };
 
@@ -74,10 +91,13 @@ type UseNodes = {
 };
 export const useNodes = (
   namespace: string,
-  onUpdateTasks: (v: PipelineTask[]) => void,
+  onSetError: SetTaskErrorCallback,
+  onTaskSelection: SelectTaskCallback,
+  onUpdateTasks: UpdateTaskCallback,
   pipelineTasks: PipelineTask[],
+  tasksInError: TaskErrorMap,
 ): UseNodes => {
-  const { clusterTasks, namespacedTasks, errorMsg } = useTasks(
+  const { clusterTasks, namespacedTasks, errorMsg, getTask } = useTasks(
     namespace,
     pipelineTasks.map((plTask) => plTask.name),
   );
@@ -90,7 +110,8 @@ export const useNodes = (
     createTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
       clusterTaskList: clusterTasks,
-      onNewTask: (resource: K8sResourceKind) => {
+      onNewTask: (resource: PipelineResourceTask) => {
+        const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
         onUpdateTasks([
           ...pipelineTaskList.current.map((task) => {
             if (!task.runAfter?.includes(name)) {
@@ -106,9 +127,25 @@ export const useNodes = (
               }),
             };
           }),
-          convertResourceToTask(resource, runAfter),
+          newPipelineTask,
         ]);
         setListNodes(listNodes.filter((n) => n.id !== name));
+
+        const hasNonDefaultParams = newPipelineTask.params
+          ?.map(({ value }) => !value)
+          .reduce((acc, missingDefault) => missingDefault || acc, false);
+        const inputResourceCount = resource.spec?.inputs?.resources?.length || 0;
+        const outputResourceCount = resource.spec?.outputs?.resources?.length || 0;
+        const totalResourceCount = inputResourceCount + outputResourceCount;
+
+        if (hasNonDefaultParams || totalResourceCount > 0) {
+          onSetError(
+            newPipelineTask.name,
+            inputResourceCount,
+            outputResourceCount,
+            hasNonDefaultParams,
+          );
+        }
       },
       task: {
         name,
@@ -193,7 +230,9 @@ export const useNodes = (
 
   const existingNodes: PipelineMixedNodeModel[] =
     pipelineTasks.length > 0
-      ? tasksToBuilderNodes(pipelineTasks, onNewListNode)
+      ? tasksToBuilderNodes(pipelineTasks, tasksInError, onNewListNode, (task) =>
+          onTaskSelection(task, getTask(task.taskRef)),
+        )
       : [newListNode('initial-node')];
 
   const nodes: PipelineMixedNodeModel[] = handleParallelToParallelNodes([
