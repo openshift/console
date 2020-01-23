@@ -38,7 +38,7 @@ import {
 import { getResource } from '../../../utils';
 import './_vm-flavor-modal.scss';
 
-const MB = 1000 ** 2;
+const Gi = 1024 ** 3;
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 const dehumanizeMemory = (memory?: string) => {
@@ -46,7 +46,7 @@ const dehumanizeMemory = (memory?: string) => {
     return null;
   }
 
-  return convertToBaseValue(memory) / MB;
+  return convertToBaseValue(memory) / Gi;
 };
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
@@ -81,7 +81,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const submit = (e) => {
     e.preventDefault();
 
-    const patches = getUpdateFlavorPatches(vmLike, flattenTemplates, flavor, cpu, `${mem}M`);
+    const patches = getUpdateFlavorPatches(vmLike, flattenTemplates, flavor, cpu, `${mem}Gi`);
     if (patches.length === 0) {
       close();
     } else {
@@ -124,7 +124,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
                   aria-label="CPU count"
                 />
               </FormGroup>
-              <FormGroup label="Memory (MB)" isRequired fieldId={getId('memory')}>
+              <FormGroup label="Memory (Gi)" isRequired fieldId={getId('memory')}>
                 <TextInput
                   isRequired
                   type="number"
