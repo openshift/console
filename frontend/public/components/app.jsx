@@ -10,11 +10,10 @@ import 'abort-controller/polyfill';
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
-import { ConnectedNotificationDrawer } from './notification-drawer';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { Navigation } from './nav';
-import { history, Firehose } from './utils';
+import { history, Firehose, AsyncComponent } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources, referenceForModel } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
@@ -40,6 +39,13 @@ const cvResource = [
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
+
+const NotificationDrawer = (props) => (
+  <AsyncComponent
+    loader={() => import('./notification-drawer').then((c) => c.ConnectedNotificationDrawer)}
+    {...props}
+  />
+);
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -140,9 +146,9 @@ class App extends React.PureComponent {
           }
         >
           <Firehose resources={cvResource}>
-            <ConnectedNotificationDrawer isDesktop={isDrawerInline}>
+            <NotificationDrawer isDesktop={isDrawerInline}>
               <AppContents />
-            </ConnectedNotificationDrawer>
+            </NotificationDrawer>
           </Firehose>
         </Page>
         <ConsoleNotifier location="BannerBottom" />

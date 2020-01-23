@@ -65,9 +65,9 @@ const getAlertNotificationEntries = (
   isLoaded && !_.isEmpty(alertData)
     ? alertData
         .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
-        .map((alert) => (
+        .map((alert, i) => (
           <NotificationEntry
-            key={alert.activeAt}
+            key={`${i}_${alert.activeAt}`}
             description={getAlertDescription(alert) || getAlertMessage(alert)}
             timestamp={getAlertTime(alert)}
             type={NotificationTypes[getAlertSeverity(alert)]}
@@ -159,9 +159,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
     false,
   );
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
 
-  const criticalAlertType: React.ReactElement = (
+  const criticalAlertCategory: React.ReactElement = (
     <NotificationCategory
+      key="critical-alerts"
       isExpanded={isAlertExpanded}
       label="Critical Alerts"
       count={criticalAlertList.length}
@@ -170,14 +172,27 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       {_.isEmpty(criticalAlertList) ? emptyState(toggleNotificationDrawer) : criticalAlertList}
     </NotificationCategory>
   );
-  const nonCriticalAlertType: React.ReactElement = !_.isEmpty(otherAlertList) ? (
+  const nonCriticalAlertCategory: React.ReactElement = !_.isEmpty(otherAlertList) ? (
     <NotificationCategory
+      key="other-alerts"
       isExpanded={isNonCriticalAlertExpanded}
       label="Other Alerts"
       count={otherAlertList.length}
       onExpandContents={toggleNonCriticalAlertExpanded}
     >
       {otherAlertList}
+    </NotificationCategory>
+  ) : null;
+
+  const messageCategory: React.ReactElement = !_.isEmpty(updateList) ? (
+    <NotificationCategory
+      key="messages"
+      isExpanded={isClusterUpdateExpanded}
+      label="Messages"
+      count={updateList.length}
+      onExpandContents={toggleClusterUpdateExpanded}
+    >
+      {updateList}
     </NotificationCategory>
   ) : null;
 
@@ -191,7 +206,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     <NotificationDrawer
       isInline={isDesktop}
       isExpanded={isDrawerExpanded}
-      notificationEntries={[criticalAlertType, nonCriticalAlertType]}
+      notificationEntries={[criticalAlertCategory, nonCriticalAlertCategory, messageCategory]}
       count={criticalAlertList.length + otherAlertList.length}
     >
       {children}
