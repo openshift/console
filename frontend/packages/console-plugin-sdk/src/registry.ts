@@ -12,8 +12,6 @@ import {
   isYAMLTemplate,
   isRoutePage,
   isDashboardsOverviewHealthSubsystem,
-  isDashboardsCard,
-  isDashboardsTab,
   isDashboardsOverviewInventoryItem,
   isDashboardsInventoryItemGroup,
   isDashboardsOverviewUtilizationItem,
@@ -94,14 +92,6 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewHealthSubsystems() {
     return this.extensions.filter(isDashboardsOverviewHealthSubsystem);
-  }
-
-  public getDashboardsTabs() {
-    return this.extensions.filter(isDashboardsTab);
-  }
-
-  public getDashboardsCards() {
-    return this.extensions.filter(isDashboardsCard);
   }
 
   public getDashboardsOverviewUtilizationItems() {
