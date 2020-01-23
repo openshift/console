@@ -37,6 +37,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   );
 
   const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
+
   const pluginPages = React.useMemo(
     () =>
       resourcePageExtensions

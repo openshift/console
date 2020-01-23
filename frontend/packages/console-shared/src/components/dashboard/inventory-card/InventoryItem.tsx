@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { FlagsObject, WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import {
@@ -10,9 +9,12 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import * as plugins from '@console/internal/plugins';
 import { pluralize } from '@console/internal/components/utils';
-import { isDashboardsInventoryItemGroup } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  DashboardsInventoryItemGroup,
+  isDashboardsInventoryItemGroup,
+} from '@console/plugin-sdk';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
@@ -28,35 +30,29 @@ const defaultStatusGroupIcons = {
   ),
 };
 
-const getTop3Groups = (groupIDs: string[], flags: FlagsObject) => {
+const getStatusGroupIcons = (groups: DashboardsInventoryItemGroup[]) => {
+  const groupStatusIcons = { ...defaultStatusGroupIcons };
+  groups.forEach((group) => {
+    if (!groupStatusIcons[group.properties.id]) {
+      groupStatusIcons[group.properties.id] = group.properties.icon;
+    }
+  });
+  return groupStatusIcons;
+};
+
+const getTop3Groups = (groups: DashboardsInventoryItemGroup[], groupIDs: string[]) => {
   const groupStatuses: (InventoryStatusGroup | string)[] = [
     InventoryStatusGroup.ERROR,
     InventoryStatusGroup.WARN,
     InventoryStatusGroup.PROGRESS,
   ];
-  plugins.registry
-    .getDashboardsInventoryItemGroups()
-    .filter((e) => plugins.registry.isExtensionInUse(e, flags))
-    .forEach((group) => {
-      if (!groupStatuses.includes(group.properties.id)) {
-        groupStatuses.push(group.properties.id);
-      }
-    });
+  groups.forEach((group) => {
+    if (!groupStatuses.includes(group.properties.id)) {
+      groupStatuses.push(group.properties.id);
+    }
+  });
   groupStatuses.push(InventoryStatusGroup.UNKNOWN);
   return groupIDs.sort((a, b) => groupStatuses.indexOf(b) - groupStatuses.indexOf(a)).slice(0, 3);
-};
-
-const getStatusGroupIcons = (flags: FlagsObject) => {
-  const groupStatusIcons = { ...defaultStatusGroupIcons };
-  plugins.registry
-    .getDashboardsInventoryItemGroups()
-    .filter((e) => plugins.registry.isExtensionInUse(e, flags))
-    .forEach((group) => {
-      if (!groupStatusIcons[group.properties.id]) {
-        groupStatusIcons[group.properties.id] = group.properties.icon;
-      }
-    });
-  return groupStatusIcons;
 };
 
 export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
@@ -127,34 +123,56 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   },
 );
 
-export const Status = connectToFlags<StatusProps>(
-  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
-)(({ groupID, count, flags }) => {
+export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
+    isDashboardsInventoryItemGroup,
+  );
+
+  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
+    groupExtensions,
+  ]);
+
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
   }
-  const statusGroupIcons = getStatusGroupIcons(flags);
+
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.UNKNOWN];
+
   return (
     <div className="co-inventory-card__status">
       <span className="co-dashboard-icon">{groupIcon}</span>
       <span className="co-inventory-card__status-text">{count}</span>
     </div>
   );
-});
+};
 
-const StatusLink = connectToFlags<StatusLinkProps>(
-  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
-)(({ groupID, count, statusIDs, kind, namespace, filterType, flags, basePath }) => {
+const StatusLink: React.FC<StatusLinkProps> = ({
+  groupID,
+  count,
+  statusIDs,
+  kind,
+  namespace,
+  filterType,
+  basePath,
+}) => {
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
+    isDashboardsInventoryItemGroup,
+  );
+
+  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
+    groupExtensions,
+  ]);
+
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
   }
+
+  const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const path = basePath || resourcePathFromModel(kind, null, namespace);
   const to =
     filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
-  const statusGroupIcons = getStatusGroupIcons(flags);
-  const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
+
   return (
     <div className="co-inventory-card__status">
       <Link to={to} style={{ textDecoration: 'none' }}>
@@ -163,7 +181,7 @@ const StatusLink = connectToFlags<StatusLinkProps>(
       </Link>
     </div>
   );
-});
+};
 
 const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
   kind,
@@ -172,71 +190,83 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
   basePath,
 }) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
 
-export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
-  ...plugins.registry.getGatingFlagNames([isDashboardsInventoryItemGroup]),
-)(
-  ({
-    kind,
-    useAbbr,
-    resources = [],
-    additionalResources,
-    isLoading,
+export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
+  kind,
+  useAbbr,
+  resources = [],
+  additionalResources,
+  isLoading,
+  mapper,
+  namespace,
+  error,
+  showLink = true,
+  ExpandedComponent,
+  basePath,
+}) => {
+  const TitleComponent = React.useCallback(
+    (props) => (
+      <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
+    ),
+    [kind, namespace, basePath],
+  );
+
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
+    isDashboardsInventoryItemGroup,
+  );
+
+  const groups = React.useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
     mapper,
-    namespace,
-    error,
-    showLink = true,
-    flags = {},
-    ExpandedComponent,
-    basePath,
-  }) => {
-    const TitleComponent = React.useCallback(
-      (props) => (
-        <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
+    resources,
+    additionalResources,
+  ]);
+
+  const top3Groups = React.useMemo(
+    () =>
+      getTop3Groups(
+        groupExtensions,
+        Object.keys(groups).filter((key) => groups[key].count > 0),
       ),
-      [kind, namespace, basePath],
-    );
+    [groupExtensions, groups],
+  );
 
-    const groups = mapper ? mapper(resources, additionalResources) : {};
-    const top3Groups = getTop3Groups(
-      Object.keys(groups).filter((key) => groups[key].count > 0),
-      flags,
-    );
+  // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
+  const totalCount = React.useMemo(
+    () =>
+      mapper
+        ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
+        : resources.length,
+    [mapper, groups, resources],
+  );
 
-    // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
-    const totalCount = mapper
-      ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
-      : resources.length;
-
-    return (
-      <InventoryItem
-        isLoading={isLoading}
-        title={useAbbr ? kind.abbr : kind.label}
-        titlePlural={useAbbr ? undefined : kind.labelPlural}
-        count={totalCount}
-        error={error}
-        TitleComponent={showLink ? TitleComponent : null}
-        ExpandedComponent={ExpandedComponent}
-      >
-        {top3Groups.map((key) =>
-          showLink ? (
-            <StatusLink
-              key={key}
-              kind={kind}
-              namespace={namespace}
-              groupID={key}
-              count={groups[key].count}
-              statusIDs={groups[key].statusIDs}
-              filterType={groups[key].filterType}
-              basePath={basePath}
-            />
-          ) : (
-            <Status key={key} groupID={key} count={groups[key].count} />
-          ),
-        )}
-      </InventoryItem>
-    );
-  },
-);
+  return (
+    <InventoryItem
+      isLoading={isLoading}
+      title={useAbbr ? kind.abbr : kind.label}
+      titlePlural={useAbbr ? undefined : kind.labelPlural}
+      count={totalCount}
+      error={error}
+      TitleComponent={showLink ? TitleComponent : null}
+      ExpandedComponent={ExpandedComponent}
+    >
+      {top3Groups.map((key) =>
+        showLink ? (
+          <StatusLink
+            key={key}
+            kind={kind}
+            namespace={namespace}
+            groupID={key}
+            count={groups[key].count}
+            statusIDs={groups[key].statusIDs}
+            filterType={groups[key].filterType}
+            basePath={basePath}
+          />
+        ) : (
+          <Status key={key} groupID={key} count={groups[key].count} />
+        ),
+      )}
+    </InventoryItem>
+  );
+};
 
 export default InventoryItem;
 
@@ -264,7 +294,7 @@ type InventoryItemProps = {
   ExpandedComponent?: React.ComponentType<{}>;
 };
 
-type StatusProps = WithFlagsProps & {
+type StatusProps = {
   groupID: InventoryStatusGroup | string;
   count: number;
 };
@@ -282,7 +312,7 @@ export type ExpandedComponentProps = {
   additionalResources?: { [key: string]: K8sResourceKind[] };
 };
 
-type ResourceInventoryItemProps = WithFlagsProps & {
+type ResourceInventoryItemProps = {
   resources: K8sResourceKind[];
   additionalResources?: { [key: string]: K8sResourceKind[] };
   mapper?: StatusGroupMapper;

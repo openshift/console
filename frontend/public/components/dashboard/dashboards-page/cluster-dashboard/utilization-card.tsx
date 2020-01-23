@@ -11,7 +11,11 @@ import UtilizationItem, {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  DashboardsOverviewUtilizationItem,
+  isDashboardsOverviewUtilizationItem,
+} from '@console/plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
@@ -28,8 +32,6 @@ import {
   top25ConsumerQueries,
   multilineQueries,
 } from './queries';
-import { connectToFlags, FlagsObject } from '../../../../reducers/features';
-import * as plugins from '../../../../plugins';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
@@ -142,23 +144,6 @@ const networkOutQueriesPopup = [
     metric: 'node',
   },
 ];
-
-const getQueries = (flags: FlagsObject) => {
-  const pluginQueries = {};
-  plugins.registry
-    .getDashboardsOverviewUtilizationItems()
-    .filter((e) => plugins.registry.isExtensionInUse(e, flags))
-    .forEach((pluginQuery) => {
-      const id = pluginQuery.properties.id;
-      if (!pluginQueries[id]) {
-        pluginQueries[id] = {
-          utilization: pluginQuery.properties.query,
-          total: pluginQuery.properties.totalQuery,
-        };
-      }
-    });
-  return _.defaults(pluginQueries, utilizationQueries);
-};
 
 export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
   ({
@@ -326,10 +311,26 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
   },
 );
 
-export const UtilizationCard = connectToFlags(
-  ...plugins.registry.getGatingFlagNames([isDashboardsOverviewUtilizationItem]),
-)(({ flags }) => {
-  const queries = React.useMemo(() => getQueries(flags), [flags]);
+const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem[]) => {
+  const pluginQueries = {};
+  itemExtensions.forEach((e) => {
+    if (!pluginQueries[e.properties.id]) {
+      pluginQueries[e.properties.id] = {
+        utilization: e.properties.query,
+        total: e.properties.totalQuery,
+      };
+    }
+  });
+  return _.defaults(pluginQueries, utilizationQueries);
+};
+
+export const UtilizationCard = () => {
+  const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(
+    isDashboardsOverviewUtilizationItem,
+  );
+
+  const queries = React.useMemo(() => getQueries(itemExtensions), [itemExtensions]);
+
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
 
@@ -462,7 +463,7 @@ export const UtilizationCard = connectToFlags(
       </UtilizationBody>
     </DashboardCard>
   );
-});
+};
 
 type PrometheusCommonProps = {
   duration: string;

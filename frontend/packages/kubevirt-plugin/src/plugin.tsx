@@ -216,7 +216,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Virtualization',
       url: `apis/subresources.${models.VirtualMachineModel.apiGroup}/${models.VirtualMachineModel.apiVersion}/healthz`,
       healthHandler: getKubevirtHealthState,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -239,7 +241,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -247,7 +251,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'vm-off',
       icon: <VMOffGroupIcon />,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -292,7 +298,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -309,7 +317,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
         ).then((m) => m.DiskImportActivity),
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -326,7 +336,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
         ).then((m) => m.V2VImportActivity),
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
 ];

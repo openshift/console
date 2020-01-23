@@ -14,15 +14,8 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { Extension, LazyLoader } from './base';
 
-export interface DashboardsExtensionProperties {
-  /** Feature flags which are required for this extension to be effective. */
-  required?: string | string[];
-  /** Feature flags which are disallowed for this extension to be effective. */
-  disallowed?: string | string[];
-}
-
 namespace ExtensionProperties {
-  interface DashboardsOverviewHealthSubsystem extends DashboardsExtensionProperties {
+  interface DashboardsOverviewHealthSubsystem {
     /** The subsystem's display name */
     title: string;
   }
@@ -104,7 +97,7 @@ namespace ExtensionProperties {
     viewAllLink?: string;
   }
 
-  export interface DashboardsTab extends DashboardsExtensionProperties {
+  export interface DashboardsTab {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
@@ -112,7 +105,7 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsCard extends DashboardsExtensionProperties {
+  export interface DashboardsCard {
     /** The tab's ID where this card should be rendered */
     tab: string;
 
@@ -126,7 +119,7 @@ namespace ExtensionProperties {
     span?: DashboardCardSpan;
   }
 
-  export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewInventoryItem {
     /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
     model: K8sKind;
 
@@ -143,7 +136,7 @@ namespace ExtensionProperties {
     expandedComponent?: LazyLoader<ExpandedComponentProps>;
   }
 
-  export interface DashboardsInventoryItemGroup extends DashboardsExtensionProperties {
+  export interface DashboardsInventoryItemGroup {
     /** The ID of status group. */
     id: string;
 
@@ -151,7 +144,7 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
   }
 
-  export interface DashboardsOverviewUtilizationItem extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewUtilizationItem {
     /** The utilization item to be replaced */
     id: string;
 
@@ -162,7 +155,7 @@ namespace ExtensionProperties {
     totalQuery: string;
   }
 
-  export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewResourceActivity {
     /** Resource to watch */
     k8sResource: FirehoseResource & { isList: true };
 
@@ -179,7 +172,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<K8sActivityProps>;
   }
 
-  export interface DashboardsOverviewPrometheusActivity extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewPrometheusActivity {
     /** Queries to watch */
     queries: string[];
 
@@ -190,7 +183,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<PrometheusActivityProps>;
   }
 
-  export interface ProjectDashboardInventoryItem extends DashboardsExtensionProperties {
+  export interface ProjectDashboardInventoryItem {
     /** The K8s model which will be scoped to project, fetched and passed to `mapper` function. */
     model: K8sKind;
 

@@ -5,15 +5,6 @@ import {
   Extension,
   ExtensionTypeGuard,
   isClusterServiceVersionAction,
-  isDashboardsCard,
-  isDashboardsInventoryItemGroup,
-  isDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsOverviewInventoryItemReplacement,
-  isDashboardsOverviewPrometheusActivity,
-  isDashboardsOverviewResourceActivity,
-  isDashboardsOverviewUtilizationItem,
-  isDashboardsTab,
   isDevCatalogModel,
   isFeatureFlag,
   isGlobalConfig,
@@ -23,7 +14,6 @@ import {
   isOverviewResourceTab,
   isOverviewTabSection,
   isPerspective,
-  isProjectDashboardInventoryItem,
   isReduxReducer,
   isResourceDetailsPage,
   isResourceListPage,
@@ -94,30 +84,6 @@ export class ExtensionRegistry {
     return this.extensions.filter(isYAMLTemplate);
   }
 
-  public getDashboardsOverviewHealthSubsystems() {
-    return this.extensions.filter(isDashboardsOverviewHealthSubsystem);
-  }
-
-  public getDashboardsTabs() {
-    return this.extensions.filter(isDashboardsTab);
-  }
-
-  public getDashboardsCards() {
-    return this.extensions.filter(isDashboardsCard);
-  }
-
-  public getDashboardsOverviewUtilizationItems() {
-    return this.extensions.filter(isDashboardsOverviewUtilizationItem);
-  }
-
-  public getDashboardsOverviewInventoryItems() {
-    return this.extensions.filter(isDashboardsOverviewInventoryItem);
-  }
-
-  public getDashboardsInventoryItemGroups() {
-    return this.extensions.filter(isDashboardsInventoryItemGroup);
-  }
-
   public getOverviewResourceTabs() {
     return this.extensions.filter(isOverviewResourceTab);
   }
@@ -146,24 +112,8 @@ export class ExtensionRegistry {
     return this.extensions.filter(isDevCatalogModel);
   }
 
-  public getDashboardsOverviewResourceActivities() {
-    return this.extensions.filter(isDashboardsOverviewResourceActivity);
-  }
-
-  public getDashboardsOverviewPrometheusActivities() {
-    return this.extensions.filter(isDashboardsOverviewPrometheusActivity);
-  }
-
   public getReduxReducers() {
     return this.extensions.filter(isReduxReducer);
-  }
-
-  public getProjectDashboardInventoryItems() {
-    return this.extensions.filter(isProjectDashboardInventoryItem);
-  }
-
-  public getDashboardsOverviewInventoryItemReplacements() {
-    return this.extensions.filter(isDashboardsOverviewInventoryItemReplacement);
   }
 }
 

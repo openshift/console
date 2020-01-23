@@ -1,4 +1,12 @@
-import { Extension, DashboardsExtensionProperties } from '@console/plugin-sdk';
+import { Extension } from '@console/plugin-sdk';
+
+interface DashboardsExtensionProperties {
+  /** Feature flags which are required for this extension to be effective. */
+  required?: string | string[];
+
+  /** Feature flags which are disallowed for this extension to be effective. */
+  disallowed?: string | string[];
+}
 
 namespace ExtensionProperties {
   export interface DashboardsStorageCapacityDropdownItem extends DashboardsExtensionProperties {

@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Map as ImmutableMap } from 'immutable';
-
-import * as plugins from '../../../../plugins';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -13,13 +10,13 @@ import {
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import { AsyncComponent } from '../../../utils';
-import { connectToFlags, FlagsObject, WithFlagsProps } from '../../../../reducers/features';
 import {
-  LazyLoader,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsOverviewInventoryItemReplacement,
+  useExtensions,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewInventoryItemReplacement,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement,
+  LazyLoader,
 } from '@console/plugin-sdk';
 import {
   useK8sWatchResource,
@@ -27,21 +24,13 @@ import {
   WatchK8sResources,
 } from '../../../utils/k8s-watch-hook';
 
-const filterExtension = (
-  extensions: Array<DashboardsOverviewInventoryItem | DashboardsOverviewInventoryItemReplacement>,
-  flags: FlagsObject,
-) => extensions.filter((e) => plugins.registry.isExtensionInUse(e, flags));
-
-const getItems = (flags: FlagsObject) => {
-  const items = filterExtension(plugins.registry.getDashboardsOverviewInventoryItems(), flags);
-  const replacements = filterExtension(
-    plugins.registry.getDashboardsOverviewInventoryItemReplacements(),
-    flags,
-  );
-  return items.map(
+const mergeItems = (
+  items: DashboardsOverviewInventoryItem[],
+  replacements: DashboardsOverviewInventoryItemReplacement[],
+) =>
+  items.map(
     (item) => replacements.find((r) => r.properties.model === item.properties.model) || item,
   );
-};
 
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
@@ -106,18 +95,28 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
     },
   ),
 );
-export const InventoryCard = connectToFlags<InventoryCardProps>(
-  ...plugins.registry.getGatingFlagNames([isDashboardsOverviewInventoryItem]),
-  ...plugins.registry.getGatingFlagNames([isDashboardsOverviewInventoryItemReplacement]),
-)(({ flags }) => {
-  const items = getItems(flags);
+
+export const InventoryCard = () => {
+  const itemExtensions = useExtensions<DashboardsOverviewInventoryItem>(
+    isDashboardsOverviewInventoryItem,
+  );
+
+  const replacementExtensions = useExtensions<DashboardsOverviewInventoryItemReplacement>(
+    isDashboardsOverviewInventoryItemReplacement,
+  );
+
+  const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
+    itemExtensions,
+    replacementExtensions,
+  ]);
+
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        {items.map((item) => (
+        {mergedItems.map((item) => (
           <ClusterInventoryItem
             key={item.properties.model.kind}
             model={item.properties.model}
@@ -130,10 +129,6 @@ export const InventoryCard = connectToFlags<InventoryCardProps>(
       </DashboardCardBody>
     </DashboardCard>
   );
-});
-
-type InventoryCardProps = WithFlagsProps & {
-  k8sModels: ImmutableMap<string, K8sKind>;
 };
 
 type ClusterInventoryItemProps = DashboardItemProps & {
