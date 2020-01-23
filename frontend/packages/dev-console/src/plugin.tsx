@@ -159,9 +159,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Helm Releases',
         href: '/helm-releases',
-        required: FLAGS.OPENSHIFT,
         testID: 'helm-releases-header',
       },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
     },
   },
   {
