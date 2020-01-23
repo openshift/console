@@ -36,8 +36,9 @@ import {
   K8sResourceKind,
 } from '../module/k8s';
 import { getSortedUpdates } from './modals/cluster-update-modal';
+import { usePrevious } from '@console/metal3-plugin/src/hooks';
 
-const emptyState = (toggleExpanded) => (
+const emptyState = (toggleExpanded: () => void) => (
   <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
     <Title headingLevel="h5" size="lg">
       No critical alerts
@@ -53,14 +54,14 @@ const emptyState = (toggleExpanded) => (
     </EmptyStateSecondaryActions>
   </EmptyState>
 );
-const criticalCompare = (a): boolean => getAlertSeverity(a) === 'critical';
-const otherAlertCompare = (a): boolean => getAlertSeverity(a) !== 'critical';
+const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
+const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
 
 const getAlertNotificationEntries = (
-  isLoaded,
-  alertData,
-  toggleNotificationDrawer,
-  isCritical,
+  isLoaded: boolean,
+  alertData: Alert[],
+  toggleNotificationDrawer: () => void,
+  isCritical: boolean,
 ): React.ReactNode[] =>
   isLoaded && !_.isEmpty(alertData)
     ? alertData
@@ -79,9 +80,9 @@ const getAlertNotificationEntries = (
     : [];
 
 const getUpdateNotificationEntries = (
-  isLoaded,
-  updateData,
-  toggleNotificationDrawer,
+  isLoaded: boolean,
+  updateData: ClusterUpdate[],
+  toggleNotificationDrawer: () => void,
 ): React.ReactNode[] =>
   isLoaded && !_.isEmpty(updateData)
     ? [
@@ -160,11 +161,13 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     false,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
+  const prevDrawerToggleState = usePrevious(isDrawerExpanded);
+
   React.useEffect(() => {
-    if (criticalAlertList.length > 0 && !isDrawerExpanded) {
+    if (criticalAlertList.length > 0 && !prevDrawerToggleState && isDrawerExpanded) {
       toggleAlertExpanded(!_.isEmpty(criticalAlertList));
     }
-  }, [criticalAlertList, isAlertExpanded, isDrawerExpanded]);
+  }, [criticalAlertList, isAlertExpanded, isDrawerExpanded, prevDrawerToggleState]);
 
   const criticalAlertCategory: React.ReactElement = (
     <NotificationCategory
