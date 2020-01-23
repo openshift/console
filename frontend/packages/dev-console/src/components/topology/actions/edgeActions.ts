@@ -6,6 +6,7 @@ import { getTopologyResourceObject } from '../topology-utils';
 import { removeConnection } from '../components/removeConnection';
 import {
   TYPE_CONNECTS_TO,
+  TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_REVISION,
   TYPE_KNATIVE_SERVICE,
@@ -45,6 +46,9 @@ export const edgeActions = (edge: BaseEdge, nodes: Node[]): KebabOption[] => {
   const availableTargets = nodes
     .filter((n) => {
       if (n.getId() === edge.getSource().getId()) {
+        return false;
+      }
+      if (n.getType() === TYPE_EVENT_SOURCE) {
         return false;
       }
       switch (edge.getType()) {
