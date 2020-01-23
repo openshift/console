@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -56,7 +57,7 @@ const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
   variables,
 }) => (
   <>
-    {_.map(variables, ({ options, value }, k) =>
+    {_.map(variables.toJS(), ({ options, value }, k) =>
       _.isEmpty(options) ? null : (
         <VariableDropdown
           key={k}
@@ -71,7 +72,7 @@ const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
 );
 const AllVariableDropdowns = connect(
   ({ UI }: RootState) => ({
-    variables: UI.getIn(['monitoringDashboards', 'variables']).toJS(),
+    variables: UI.getIn(['monitoringDashboards', 'variables']),
   }),
   { patchVariable: UIActions.monitoringDashboardsPatchVariable },
 )(AllVariableDropdowns_);
@@ -121,7 +122,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
   if (!rawQueries.length) {
     return null;
   }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables));
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables.toJS()));
 
   return (
     <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
@@ -167,7 +168,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
   );
 };
 const Card = connect(({ UI }: RootState) => ({
-  variables: UI.getIn(['monitoringDashboards', 'variables']).toJS(),
+  variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(Card_);
 
 const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, timespan }) => {
@@ -353,14 +354,14 @@ type BoardProps = {
 
 type AllVariableDropdownsProps = {
   patchVariable: (key: string, patch: Variable) => undefined;
-  variables: VariablesMap;
+  variables: ImmutableMap<string, Variable>;
 };
 
 type CardProps = {
   panel: Panel;
   pollInterval: null | number;
   timespan: number;
-  variables: VariablesMap;
+  variables: ImmutableMap<string, Variable>;
 };
 
 type MonitoringDashboardsPageProps = {
