@@ -3,9 +3,9 @@ import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
 import { TechPreviewBadge } from '@console/shared';
 import { QueryBrowserPage } from '@console/internal/components/monitoring/metrics';
-import { NamespaceBar } from '@console/internal/components/namespace';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import ProjectListPage from './projects/ProjectListPage';
+import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 
 export interface MetricsPageProps {
   match: RMatch<{
@@ -16,8 +16,7 @@ export interface MetricsPageProps {
 const MetricsPage: React.FC<MetricsPageProps> = ({ match }) => {
   const namespace = match.params.ns;
   return (
-    <>
-      <NamespaceBar />
+    <NamespacedPage variant={NamespacedPageVariants.light}>
       <Helmet>
         <title>Metrics</title>
       </Helmet>
@@ -28,7 +27,7 @@ const MetricsPage: React.FC<MetricsPageProps> = ({ match }) => {
           Select a project to view metrics
         </ProjectListPage>
       )}
-    </>
+    </NamespacedPage>
   );
 };
 
