@@ -555,7 +555,8 @@ class MastheadToolbarContents_ extends React.Component {
                 />
               </ToolbarItem>
             )}
-            {alertAccess && (
+            {/* desktop -- (notification drawer button) */
+            alertAccess && (
               <ToolbarItem>
                 <NotificationBadge
                   aria-label="Notification Drawer"
@@ -591,6 +592,18 @@ class MastheadToolbarContents_ extends React.Component {
             </ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup>
+            {/* mobile -- (notification drawer button) */
+            alertAccess && !notificationsRead && (
+              <ToolbarItem className="visible-xs-block">
+                <NotificationBadge
+                  aria-label="Notification Drawer"
+                  onClick={drawerToggle}
+                  isRead={notificationsRead}
+                >
+                  <BellIcon />
+                </NotificationBadge>
+              </ToolbarItem>
+            )}
             {/* mobile -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
