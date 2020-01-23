@@ -10,7 +10,6 @@ import {
   TableGridBreakpoint,
 } from '@patternfly/react-table';
 import {
-  getInfrastructurePlatform,
   getName,
   getNodeRoles,
   getNodeCPUCapacity,
@@ -22,32 +21,31 @@ import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { history } from '@console/internal/components/utils/router';
 import {
   convertToBaseValue,
+  FieldLevelHelp,
   humanizeCpuCores,
   humanizeBinaryBytes,
   ResourceLink,
-} from '@console/internal/components/utils/index';
+} from '@console/internal/components/utils/';
 import {
   k8sCreate,
   k8sPatch,
-  k8sGet,
   K8sResourceKind,
-  k8sList,
   NodeKind,
   referenceForModel,
-  StorageClassResourceKind,
   Taint,
 } from '@console/internal/module/k8s';
-import { NodeModel, InfrastructureModel, StorageClassModel } from '@console/internal/models';
-import { isDefaultClass } from '@console/internal/components/storage-class';
+import { NodeModel } from '@console/internal/models';
 import { OCSServiceModel } from '../../models';
 import {
-  infraProvisionerMap,
   minSelectedNode,
+  labelTooltip,
   ocsRequestData,
   ocsTaint,
 } from '../../constants/ocs-install';
 import './ocs-install.scss';
+import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { hasLabel } from '../../../../console-shared/src/selectors/common';
+import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
 
 const ocsLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
@@ -177,14 +175,14 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
   ocsProps,
 }) => {
   const columns = getColumns();
+  const [osdSize, setOsdSize] = React.useState('2Ti');
   const [nodes, setNodes] = React.useState([]);
   const [unfilteredNodes, setUnfilteredNodes] = React.useState([]);
   const [error, setError] = React.useState('');
   const [inProgress, setProgress] = React.useState(false);
   const [selectedNodesCnt, setSelectedNodesCnt] = React.useState(0);
   const [nodesWarningMsg, setNodesWarningMsg] = React.useState('');
-
-  let storageClass = '';
+  const [storageClass, setStorageClass] = React.useState(null);
 
   // pre-selection of nodes
   if (loaded && !unfilteredNodes.length) {
@@ -238,7 +236,6 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
       setNodes(filterData);
     }
   }, [data, isFiltered, nodes.length, unfilteredNodes]);
-
   const onSelect = (
     event: React.MouseEvent<HTMLButtonElement>,
     isSelected: boolean,
@@ -315,6 +312,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
 
     const ocsObj = _.cloneDeep(ocsRequestData);
     ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
+    ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
 
     Promise.all(promises)
       .then(() => {
@@ -337,34 +335,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
     event.preventDefault();
     setProgress(true);
     setError('');
-
-    let provisioner = '';
-
-    k8sGet(InfrastructureModel, 'cluster')
-      .then((infra: K8sResourceKind) => {
-        // find infra supported provisioner
-        provisioner = infraProvisionerMap[_.toLower(getInfrastructurePlatform(infra))];
-        return k8sList(StorageClassModel);
-      })
-      .then((storageClasses: StorageClassResourceKind[]) => {
-        // find all storageclass with the given provisioner
-        const scList = _.filter(storageClasses, (sc) => sc.provisioner === provisioner);
-        // take the provisioner based storageclass
-        _.forEach(scList, (sc) => {
-          if (isDefaultClass(sc)) {
-            storageClass = sc.metadata.name;
-          }
-        });
-        // take the first storageclass if default not set
-        if (!storageClass && storageClass.length > 0) {
-          storageClass = getName(_.get(scList, '0'));
-        }
-        makeOCSRequest();
-      })
-      .catch((err) => {
-        setProgress(false);
-        setError(err.message);
-      });
+    makeOCSRequest();
   };
 
   return (
@@ -393,6 +364,20 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
           isInline
         />
       )}
+      <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
+        <OCSStorageClassDropdown onChange={setStorageClass} />
+      </div>
+      <div className="ceph-ocs-install__ocs-service-capacity">
+        <label className="control-label" htmlFor="ocs-service-stoargeclass">
+          OCS Service Capacity
+          <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+        </label>
+        <OSDSizeDropdown
+          className="ceph-ocs-install__ocs-service-capacity--dropdown"
+          selectedKey={osdSize}
+          onChange={setOsdSize}
+        />
+      </div>
       <ButtonBar errorMessage={error} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
           <Button

@@ -2,6 +2,26 @@
   max-height: 400px;
   overflow: auto;
 }
+
 .ceph-ocs-install__alert {
   margin-top: 1em;
+}
+
+.ceph-ocs-install__ocs-service-capacity {
+  margin-top: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--3xl);
+}
+
+.ceph-ocs-install__ocs-service-capacity--dropdown {
+  width: 15rem;
+}
+
+.ceph-ocs-install__ocs-service-capacity--help-text {
+  font-size: var(--pf-global--FontSize--sm);
+  margin-bottom: 0;
+}
+
+.ceph-ocs-install__ocs-service-capacity--title {
+  font-weight: var(--pf-global--FontWeight--bold);
+  font-size: var(--pf-global--FontSize--md);
 }
