@@ -6,7 +6,7 @@ export type CD = {
   cdrom?: V1CDRomTarget;
 
   // UI
-  changed?: boolean;
+  newCD?: boolean;
   ejected?: boolean;
   isInVM?: boolean;
   pvc?: string;
