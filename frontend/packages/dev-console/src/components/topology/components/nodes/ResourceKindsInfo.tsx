@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { modelFor, referenceForOwnerRef } from '@console/internal/module/k8s';
 import { getTopologyResourceObject } from '../../topology-utils';
+import { TopologyDataObject } from '../../topology-types';
 
 type ResourceKindsInfoProps = {
-  groupResources: any;
+  groupResources: TopologyDataObject;
   emptyKind?: string;
   offsetX: number;
   offsetY: number;
@@ -20,7 +21,7 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
   emptyKind,
 }) => {
   const resourcesData = {};
-  _.forEach(groupResources, (res) => {
+  _.forEach(groupResources, (res: TopologyDataObject) => {
     const a = getTopologyResourceObject(res);
     resourcesData[a.kind] = [...(resourcesData[a.kind] ? resourcesData[a.kind] : []), a];
   });

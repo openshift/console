@@ -502,13 +502,24 @@ export const transformTopologyData = (
   return topologyGraphAndNodeData;
 };
 
+const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
+  return {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    resources: null,
+    operatorBackedService: false,
+    data: null,
+  };
+};
+
 export const topologyModelFromDataModel = (
   dataModel: TopologyDataModel,
   filters?: TopologyFilters,
 ): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
-      const data: any = dataModel.topology[d.id] || {};
+      const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
       data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {
         width: 300,
@@ -518,8 +529,8 @@ export const topologyModelFromDataModel = (
         label: dataModel.topology[d.id].name,
         data,
         collapsed: filters && !filters.display.knativeServices,
-        children: (d as any).children,
-        group: true,
+        children: d.children,
+        group: d.children?.length > 0,
         shape: NodeShape.rect,
         style: {
           padding: [40, 50, 40, 40],
@@ -537,7 +548,7 @@ export const topologyModelFromDataModel = (
   });
 
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
-    const data: any = dataModel.topology[d.id] || {};
+    const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
     data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
       width: 300,

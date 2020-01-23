@@ -86,6 +86,7 @@ export interface TopologyDataObject<D = {}> {
   pods?: ExtPodKind[];
   data: D;
   operatorBackedService: boolean;
+  groupResources?: TopologyDataObject[];
 }
 
 export interface TopologyApplicationObject {

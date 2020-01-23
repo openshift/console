@@ -149,6 +149,10 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   setCollapsed(collapsed: boolean): void {
     if (collapsed !== this.collapsed) {
+      // Get the location prior to the collapse change and apply it after the collapse.
+      // This updates the new node(s) location(s) to be what the node was originally, basically
+      // keeping the nodes ln place so the layout doesn't start fresh (putting the new nodes at 0,0
+      // TODO: Update to better position the nodes at a point location rather than relying on the setCenter updating the nodes.
       const prevCenter = this.getBounds()
         .getCenter()
         .clone();

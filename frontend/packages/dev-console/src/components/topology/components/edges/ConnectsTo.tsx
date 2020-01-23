@@ -40,9 +40,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
 
   return (
     <BaseEdge className={edgeClasses} element={element} {...others}>
-      {(!element.getSource().isCollapsed() || !element.getTarget().isCollapsed()) && (
-        <EdgeConnectorArrow dragRef={editAccess ? targetDragRef : undefined} edge={element} />
-      )}
+      <EdgeConnectorArrow dragRef={editAccess ? targetDragRef : undefined} edge={element} />
       {children}
     </BaseEdge>
   );

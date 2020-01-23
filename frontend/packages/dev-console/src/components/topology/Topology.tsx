@@ -222,7 +222,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
   );
 };
 
-const TopologyStateToProps = (state: RootState) => {
+const TopologyStateToProps = (state: RootState): StateProps => {
   const filters = getTopologyFilters(state);
   return { filters };
 };

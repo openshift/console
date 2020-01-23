@@ -12,7 +12,7 @@ import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils'
 import ApplicationNode from './ApplicationNode';
 import ApplicationGroup from './ApplicationGroup';
 
-import './ApplicationGroup.scss';
+import './Application.scss';
 
 type ApplicationProps = {
   element: Node;
