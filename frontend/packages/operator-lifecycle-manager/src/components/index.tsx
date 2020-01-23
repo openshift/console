@@ -43,9 +43,9 @@ export const referenceForStepResource = (resource: StepResource): GroupVersionKi
   referenceForGroupVersionKind(resource.group || 'core')(resource.version)(resource.kind);
 
 export const defaultChannelFor = (pkg: PackageManifestKind) =>
-  pkg.status.defaultChannel || pkg.status.channels[0].name;
+  pkg.status.defaultChannel || pkg?.status?.channels?.[0]?.name;
 export const installModesFor = (pkg: PackageManifestKind) => (channel: string) =>
-  pkg.status.channels.find((ch) => ch.name === channel).currentCSVDesc.installModes;
+  pkg.status.channels.find((ch) => ch.name === channel)?.currentCSVDesc?.installModes || [];
 export const supportedInstallModesFor = (pkg: PackageManifestKind) => (channel: string) =>
   installModesFor(pkg)(channel).filter(({ supported }) => supported);
 export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: string) =>
