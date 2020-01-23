@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 import { FirehoseResult, KebabOption } from '@console/internal/components/utils';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
-import { DeploymentKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { DeploymentKind, K8sResourceKind, PodKind, EventKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
@@ -32,7 +32,7 @@ export interface TopologyDataResources {
   eventSourceKafka?: FirehoseResult;
   clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
-  events?: FirehoseResult;
+  events?: FirehoseResult<EventKind[]>;
 }
 
 export interface Node {
@@ -110,6 +110,7 @@ export interface WorkloadData {
   donutStatus: DonutStatusData;
   connectedPipeline: ConnectedWorkloadPipeline;
   showPodCount?: boolean;
+  eventWarning?: boolean;
 }
 
 export interface DonutStatusData {
