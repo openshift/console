@@ -184,10 +184,10 @@ const updateItemAppConnectTo = (
   connectValue: string,
   oldValue: string = undefined,
 ) => {
-  const model = modelFor(referenceFor(item));
+  const model = modelFor(referenceFor(item) || item.kind);
 
   if (!model) {
-    return Promise.reject();
+    return Promise.reject(new Error(`Unable to retrieve model for: ${item.kind}`));
   }
 
   const tags = _.toPairs(item.metadata.annotations);
