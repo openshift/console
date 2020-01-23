@@ -4,16 +4,22 @@ go 1.12
 
 require (
 	github.com/coreos/dex v2.3.0+incompatible
-	github.com/coreos/go-oidc v0.0.0-20180117170138-065b426bd416
-	github.com/coreos/pkg v0.0.0-20150728231633-7373797ee9cd
-	github.com/gorilla/websocket v0.0.0-20180201015256-4ac909741dfa
-	github.com/pquerna/cachecontrol v0.0.0-20160421231612-c97913dcbd76 // indirect
-	github.com/stretchr/testify v1.3.0 // indirect
-	golang.org/x/net v0.0.0-20190311183353-d8887717615a // indirect
-	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2 // indirect
-	google.golang.org/genproto v0.0.0-20190508193815-b515fa19cec8 // indirect
-	google.golang.org/grpc v1.19.0
-	gopkg.in/square/go-jose.v2 v2.0.1 // indirect
-	gopkg.in/yaml.v2 v2.2.1
+	github.com/coreos/go-oidc v2.1.0+incompatible
+	github.com/coreos/pkg v0.0.0-20180108230652-97fdf19511ea
+	github.com/gorilla/websocket v1.4.0
+	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
+	github.com/stretchr/testify v1.4.0
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	google.golang.org/grpc v1.24.0
+	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
+	gopkg.in/yaml.v2 v2.2.4
+	helm.sh/helm/v3 v3.0.1
+	k8s.io/cli-runtime v0.0.0-20191016114015-74ad18325ed5
+	k8s.io/client-go v0.0.0-20191016111102-bec269661e48
+	k8s.io/klog v1.0.0
+)
+
+replace (
+	github.com/Azure/go-autorest/autorest => github.com/Azure/go-autorest/autorest v0.9.0
+	github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503-38ab9da00309
 )
