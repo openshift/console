@@ -1,8 +1,11 @@
 import * as React from 'react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
 import { getName, getNamespace } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 
 import store from '../../redux';
 import { impersonateStateToProps } from '../../reducers/ui';
@@ -99,8 +102,9 @@ export const useAccessReview = (
     subresource = '',
     verb = '' as K8sVerb,
     name = '',
-    namespace = '',
   } = resourceAttributes;
+  const activeNamespace = useActiveNamespace();
+  const namespace = resourceAttributes.namespace || activeNamespace || '';
   const impersonateKey = getImpersonateKey(impersonate);
   React.useEffect(() => {
     checkAccessInternal(group, resource, subresource, verb, name, namespace, impersonateKey)

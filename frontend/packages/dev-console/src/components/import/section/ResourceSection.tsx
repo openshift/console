@@ -9,7 +9,6 @@ import {
 } from '@console/knative-plugin';
 import { getBadgeFromType, RadioButtonField, RadioOption } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources } from '../import-types';
 import FormSection from './FormSection';
 import './ResourceSection.scss';
@@ -53,7 +52,6 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
-    namespace: getActiveNamespace(),
     verb: 'create',
   });
 

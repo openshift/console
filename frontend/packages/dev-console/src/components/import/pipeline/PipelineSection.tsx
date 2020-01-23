@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { getBadgeFromType } from '@console/shared';
 import { Split, SplitItem, Alert } from '@patternfly/react-core';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFormikContext, FormikValues } from 'formik';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
@@ -25,14 +24,12 @@ const usePipelineAccessReview = (): boolean => {
   const canCreatePipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
-    namespace: getActiveNamespace(),
     verb: 'create',
   });
 
   const canCreatePipelineResource = useAccessReview({
     group: PipelineResourceModel.apiGroup,
     resource: PipelineResourceModel.plural,
-    namespace: getActiveNamespace(),
     verb: 'create',
   });
 
