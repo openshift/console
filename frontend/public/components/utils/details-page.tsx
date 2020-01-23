@@ -36,6 +36,7 @@ const getNodeSelectorPath = (obj: K8sResourceKind): string => {
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
   children,
   resource,
+  customPathName,
   showPodSelector = false,
   showNodeSelector = false,
   showAnnotations = true,
@@ -59,7 +60,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
 
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
-      <DetailsItem label="Name" obj={resource} path="metadata.name" />
+      <DetailsItem label="Name" obj={resource} path={customPathName || 'metadata.name'} />
       {metadata.namespace && (
         <DetailsItem label="Namespace" obj={resource} path="metadata.namespace">
           <ResourceLink
@@ -149,6 +150,7 @@ export type ResourceSummaryProps = {
   showTolerations?: boolean;
   podSelector?: string;
   children?: React.ReactNode;
+  customPathName?: string;
 };
 
 export type ResourcePodCountProps = {

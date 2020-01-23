@@ -32,11 +32,11 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
     >
       <PageHeading
         detail={true}
-        title={props.name}
+        title={props.title || props.name}
         titleFunc={props.titleFunc}
         menuActions={props.menuActions}
         buttonActions={props.buttonActions}
-        kind={props.kind}
+        kind={props.customKind || props.kind}
         breadcrumbsFor={
           props.breadcrumbsFor
             ? props.breadcrumbsFor
@@ -89,6 +89,7 @@ export type DetailsPageProps = {
   icon?: React.ComponentType<{ obj: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   children?: React.ReactNode;
+  customKind?: string;
 };
 
 DetailsPage.displayName = 'DetailsPage';
