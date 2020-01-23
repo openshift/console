@@ -2,15 +2,11 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import { ProjectsDetailsPage } from '@console/internal/components/namespace';
 import { ProjectModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
-import {
-  PROJECT_LIST_URI,
-  redirectURI,
-  useActiveNamespace,
-  UseActiveNamespaceProps,
-} from './utils';
+import { PROJECT_LIST_URI, redirectURI } from './utils';
 
 const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
@@ -20,10 +16,8 @@ const handleNamespaceChange = (newNamespace: string): void => {
   history.push(redirectURI(newNamespace));
 };
 
-export const ProjectDetailsPage: React.FC<UseActiveNamespaceProps> = ({
-  activeNamespace,
-  ...props
-}) => {
+const ProjectDetailsPage: React.FC = (props) => {
+  const activeNamespace = useActiveNamespace();
   const allNamespaces = activeNamespace === ALL_NAMESPACES_KEY;
 
   if (allNamespaces) {
@@ -47,6 +41,4 @@ export const ProjectDetailsPage: React.FC<UseActiveNamespaceProps> = ({
   );
 };
 
-// TODO Figure out why this breaks eslint rules-of-hooks even though it is not a hook
-// eslint-disable-next-line react-hooks/rules-of-hooks
-export default useActiveNamespace(ProjectDetailsPage);
+export default ProjectDetailsPage;
