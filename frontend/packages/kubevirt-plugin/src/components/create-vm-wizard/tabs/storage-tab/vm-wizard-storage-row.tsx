@@ -76,6 +76,7 @@ export const VmWizardStorageRow: React.FC<VMWizardNicRowProps> = ({
       validation={{
         name: validations.name || validations.url || validations.container || validations.pvc,
         size: validations.size,
+        diskInterface: validations.diskInterface,
       }}
       columnClasses={columnClasses}
       index={index}

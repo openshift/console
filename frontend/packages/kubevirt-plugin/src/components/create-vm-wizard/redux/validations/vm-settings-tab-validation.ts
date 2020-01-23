@@ -44,7 +44,7 @@ import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state'
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
 import { getValidationUpdate } from './utils';
-import { getTemplateValidations } from './utils/templates-validations';
+import { getTemplateValidations } from '../../selectors/template';
 
 const validateVm: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
@@ -103,8 +103,10 @@ const memoryValidation: VmSettingsValidator = (field, options): ValidationObject
   if (memValueGB == null || memValueGB === '') {
     return null;
   }
+  const { id, getState } = options;
+  const state = getState();
   const memValueBytes = memValueGB * 1024 ** 3;
-  const validations = getTemplateValidations(options);
+  const validations = getTemplateValidations(state, id);
   if (validations.length === 0) {
     validations.push(new TemplateValidations()); // add empty validation for positive integer if it is missing one
   }

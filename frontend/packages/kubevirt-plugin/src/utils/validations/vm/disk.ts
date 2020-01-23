@@ -6,7 +6,7 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { validateTrim, validateURL } from '../common';
+import { validateTrim, validateURL, validateBus } from '../common';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -14,6 +14,8 @@ import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { DiskBus } from '../../../constants/vm/storage/disk-bus';
+import { DiskType } from '../../../constants/vm/storage/disk-type';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -51,9 +53,11 @@ export const validateDisk = (
   {
     usedDiskNames,
     usedPVCNames,
+    allowedBusses,
   }: {
     usedDiskNames?: Set<string>;
     usedPVCNames?: Set<string>;
+    allowedBusses: Set<DiskBus>;
   },
 ): UIDiskValidation => {
   const validations = {
@@ -61,6 +65,7 @@ export const validateDisk = (
     size: null,
     url: null,
     container: null,
+    diskInterface: null,
     pvc: null,
   };
   let hasAllRequiredFilled = disk && disk.getName();
@@ -129,8 +134,13 @@ export const validateDisk = (
       addRequired(pvcName);
       validations.pvc = validatePVCName(pvcName, usedPVCNames);
     }
-  }
 
+    // TODO: implement CDROM disk bus validation
+    if (disk.getType() === DiskType.DISK) {
+      addRequired(disk.getDiskBus());
+      validations.diskInterface = validateBus(disk.getDiskBus(), allowedBusses);
+    }
+  }
   return {
     validations,
     hasAllRequiredFilled: !!hasAllRequiredFilled,
@@ -144,6 +154,7 @@ export type UIDiskValidation = {
     size?: ValidationObject;
     url?: ValidationObject;
     container?: ValidationObject;
+    diskInterface?: ValidationObject;
     pvc?: ValidationObject;
   };
   isValid: boolean;

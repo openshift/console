@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
 import { ValidationErrorType } from '@console/shared/src';
-import { ValueEnum } from '../../../constants';
+import { ValueEnum, DiskBus } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
 import {
   IntervalValidationResult,
@@ -14,6 +14,7 @@ export class ValidationJSONPath extends ValueEnum<string> {
   static readonly MEMORY = new ValidationJSONPath(
     'jsonpath::.spec.domain.resources.requests.memory',
   );
+  static readonly BUS = new ValidationJSONPath('jsonpath::.spec.domain.devices.disks[*].disk.bus');
 }
 
 export class TemplateValidations {
@@ -108,6 +109,28 @@ export class TemplateValidations {
       isMinInclusive,
       isMaxInclusive,
     });
+  };
+
+  getAllowedBusses = (): Set<DiskBus> => {
+    const allowedBusses = this.getAllowedEnumValues(
+      ValidationJSONPath.BUS,
+      ValidationErrorType.Error,
+    ).map(DiskBus.fromString);
+
+    return new Set(allowedBusses.length === 0 ? DiskBus.getAll() : allowedBusses);
+  };
+
+  // Empty array means all values are allowed
+  private getAllowedEnumValues = (
+    jsonPath: ValidationJSONPath,
+    type: ValidationErrorType,
+  ): string[] => {
+    const relevantValidations = this.getRelevantValidations(jsonPath, type);
+
+    return relevantValidations.reduce(
+      (result: string[], validation: CommonTemplatesValidation) => result.concat(validation.values),
+      [],
+    );
   };
 
   private getRelevantValidations = (jsonPath: ValidationJSONPath, type: ValidationErrorType) => {

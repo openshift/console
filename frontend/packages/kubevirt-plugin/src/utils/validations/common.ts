@@ -7,9 +7,11 @@ import {
   validateEmptyValue,
   ValidationErrorType,
   ValidationObject,
+  joinGrammaticallyListOfItems,
 } from '@console/shared';
 import { parseURL } from '../url';
 import { END_WHITESPACE_ERROR, START_WHITESPACE_ERROR, URL_INVALID_ERROR } from './strings';
+import { DiskBus } from '../../constants/vm/storage/disk-bus';
 
 export const isValidationError = (validationObject: ValidationObject) =>
   !!validationObject && validationObject.type === ValidationErrorType.Error;
@@ -80,4 +82,16 @@ export const validateURL = (
   }
 
   return parseURL(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
+};
+
+export const validateBus = (value: DiskBus, allowedBusses: Set<DiskBus>): ValidationObject => {
+  if (allowedBusses && !allowedBusses.has(value)) {
+    return asValidationObject(
+      `Invalid interface type. Valid types are: ${joinGrammaticallyListOfItems(
+        [...allowedBusses].map((b) => b.toString()),
+      )}`,
+      ValidationErrorType.Error,
+    );
+  }
+  return null;
 };
