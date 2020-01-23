@@ -10,7 +10,7 @@ import {
   PrometheusGraphLink,
 } from '@console/internal/components/graphs/prometheus-graph';
 
-const MOCK_DATA = [{ x: 1, y: 100 }];
+const MOCK_DATA = [[{ x: 1, y: 100 }]];
 
 describe('<AreaChart />', () => {
   it('should render an area chart', () => {

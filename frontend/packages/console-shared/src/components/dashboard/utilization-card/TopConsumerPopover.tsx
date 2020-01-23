@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect, Dispatch } from 'react-redux';
-import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
+import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { K8sKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -15,6 +15,7 @@ import { featureReducerName } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
 import * as UIActions from '@console/internal/actions/ui';
 import { getActivePerspective } from '@console/internal/reducers/ui';
+import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
 import { FLAGS } from '../../../constants';
 import { getName, getNamespace } from '../../..';
@@ -100,8 +101,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
   const consumerLoaded = _.get(resources, ['k8sResources', 'loaded']);
   const consumersLoadError = _.get(resources, ['k8sResources', 'loadError']);
 
-  const error = prometheusResults.getIn([query, 'loadError']);
-  const data = prometheusResults.getIn([query, 'data']) as PrometheusResponse;
+  const [data, error] = getPrometheusQueryResponse(prometheusResults, query);
   const bodyData = getInstantVectorStats(data, metric);
 
   if (consumerLoaded && !consumersLoadError) {
@@ -153,6 +153,35 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
     }
   }, [canAccessMonitoring, setActivePerspective, activePerspective]);
 
+  let body: React.ReactNode;
+  if (error || consumersLoadError) {
+    body = <div className="text-secondary">Not available</div>;
+  } else if (!consumerLoaded || !data) {
+    body = (
+      <ul className="co-utilization-card-popover__consumer-list">
+        <li className="skeleton-consumer" />
+        <li className="skeleton-consumer" />
+        <li className="skeleton-consumer" />
+        <li className="skeleton-consumer" />
+        <li className="skeleton-consumer" />
+      </ul>
+    );
+  } else {
+    body = (
+      <>
+        <ul
+          className="co-utilization-card-popover__consumer-list"
+          aria-label={`Top consumer by ${model.labelPlural}`}
+        >
+          <ConsumerItems items={top5Data} model={model} />
+        </ul>
+        <Link to={monitoringURL} onClick={viewMoreAction}>
+          View more
+        </Link>
+      </>
+    );
+  }
+
   return (
     <div className="co-utilization-card-popover__body">
       <h4 className="co-utilization-card-popover__title">
@@ -171,27 +200,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
           selectedKey={referenceForModel(model)}
         />
       )}
-      {consumerLoaded && data && !error ? (
-        <>
-          <ul
-            className="co-utilization-card-popover__consumer-list"
-            aria-label={`Top consumer by ${model.labelPlural}`}
-          >
-            <ConsumerItems items={top5Data} model={model} />
-          </ul>
-          <Link to={monitoringURL} onClick={viewMoreAction}>
-            View more
-          </Link>
-        </>
-      ) : (
-        <ul className="co-utilization-card-popover__consumer-list">
-          <li className="skeleton-consumer" />
-          <li className="skeleton-consumer" />
-          <li className="skeleton-consumer" />
-          <li className="skeleton-consumer" />
-          <li className="skeleton-consumer" />
-        </ul>
-      )}
+      {body}
     </div>
   );
 });

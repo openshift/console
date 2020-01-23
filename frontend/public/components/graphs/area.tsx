@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   Chart,
   ChartArea,
@@ -7,6 +8,8 @@ import {
   ChartThemeVariant,
   ChartVoronoiContainer,
   getCustomTheme,
+  ChartGroup,
+  ChartTooltip,
 } from '@patternfly/react-charts';
 import {
   global_warning_color_100 as warningColor,
@@ -69,20 +72,41 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     }
   }, [byteDataType, data]);
 
+  const firstDescription = React.useMemo(() => _.get(processedData, `[0][0].description`), [
+    processedData,
+  ]);
+
   const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
   ]);
+
   const getLabel = React.useCallback(
-    ({ datum: { x, y } }) => `${humanize(y, unit, unit).string} at ${formatDate(x)}`,
-    [humanize, unit, formatDate],
+    (prop) => {
+      const { x, y, description } = prop.datum as DataPoint<Date>;
+      const value = humanize(y, unit, unit).string;
+      const date = formatDate(x);
+      if (!description) {
+        return `${value} at ${date}`;
+      }
+      const text = `${description.toUpperCase()}: ${value}`;
+      return description === firstDescription ? `${date}\n${text}` : `${text}`;
+    },
+    [humanize, unit, formatDate, firstDescription],
   );
-  const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
-  const style = chartStatus ? { data: { fill: chartStatusColors[chartStatus] } } : null;
+
+  const container = (
+    <ChartVoronoiContainer
+      voronoiDimension="x"
+      labels={getLabel}
+      activateData={false}
+      labelComponent={<ChartTooltip centerOffset={data.length > 1 ? { x: 0, y: -30 } : null} />}
+    />
+  );
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
-      {data.length ? (
+      {data && data[0] && data[0].length ? (
         <PrometheusGraphLink query={query}>
           <Chart
             containerComponent={container}
@@ -95,7 +119,19 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
-            <ChartArea data={processedData} style={style} />
+            <ChartGroup>
+              {processedData.map((datum, index) => (
+                <ChartArea
+                  key={index}
+                  data={datum}
+                  style={
+                    chartStatus && chartStatus[index]
+                      ? { data: { fill: chartStatusColors[chartStatus[index]] } }
+                      : null
+                  }
+                />
+              ))}
+            </ChartGroup>
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -122,7 +158,7 @@ export const Area: React.FC<AreaProps> = ({
     timespan,
   });
   const data = getRangeVectorStats(response);
-  return <AreaChart data={data} loading={loading} query={query} {...rest} />;
+  return <AreaChart data={[data]} loading={loading} query={query} {...rest} />;
 };
 
 type AreaChartProps = {
@@ -135,11 +171,11 @@ type AreaChartProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
-  data?: DataPoint[];
+  data?: DataPoint[][];
   xAxis?: boolean;
   yAxis?: boolean;
   padding?: object;
-  chartStatus?: AreaChartStatus;
+  chartStatus?: AreaChartStatus[];
   byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
 };
 

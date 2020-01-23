@@ -20,11 +20,12 @@ export const Gauge = (props) => (
 );
 
 // Types
-export type DataPoint = {
-  x?: Date | string | number;
+export type DataPoint<X = Date | number | string> = {
+  x?: X;
   y?: number;
   label?: string;
   metric?: { [key: string]: string };
+  description?: string;
 };
 
 // Only covers range and instant vector responses for now.

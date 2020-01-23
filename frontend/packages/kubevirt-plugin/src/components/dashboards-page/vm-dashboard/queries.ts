@@ -4,9 +4,9 @@ export enum VMQueries {
   CPU_USAGE = 'CPU_USAGE',
   MEMORY_USAGE = 'MEMORY_USAGE',
   FILESYSTEM_USAGE = 'FILESYSTEM_USAGE',
-  NETWORK_INOUT_USAGE = 'NETWORK_INOUT_USAGE',
-  // NETWORK_IN_USAGE = 'NETWORK_IN_USAGE',
-  // NETWORK_OUT_USAGE = 'NETWORK_OUT_USAGE',
+  NETWORK_USAGE = 'NETWORK_USAGE',
+  NETWORK_IN_USAGE = 'NETWORK_IN_USAGE',
+  NETWORK_OUT_USAGE = 'NETWORK_OUT_USAGE',
 }
 
 const queries = {
@@ -21,17 +21,12 @@ const queries = {
   [VMQueries.FILESYSTEM_USAGE]: _.template(
     `sum(kubevirt_vmi_storage_traffic_bytes_total{exported_namespace='<%= namespace %>',name='<%= vmName %>'})`,
   ),
-  [VMQueries.NETWORK_INOUT_USAGE]: _.template(
-    `sum(kubevirt_vmi_network_traffic_bytes_total{exported_namespace='<%= namespace %>',name='<%= vmName %>'})`,
-  ),
-  /* TODO: use when multi-line chart is ready
   [VMQueries.NETWORK_IN_USAGE]: _.template(
     `sum(kubevirt_vmi_network_traffic_bytes_total{type='rx',exported_namespace='<%= namespace %>',name='<%= vmName %>'})`,
   ),
   [VMQueries.NETWORK_OUT_USAGE]: _.template(
     `sum(kubevirt_vmi_network_traffic_bytes_total{type='tx',exported_namespace='<%= namespace %>',name='<%= vmName %>'})`,
   ),
-  */
 };
 
 export const getUtilizationQueries = (props: {
@@ -42,6 +37,21 @@ export const getUtilizationQueries = (props: {
   [VMQueries.CPU_USAGE]: queries[VMQueries.CPU_USAGE](props),
   [VMQueries.MEMORY_USAGE]: queries[VMQueries.MEMORY_USAGE](props),
   [VMQueries.FILESYSTEM_USAGE]: queries[VMQueries.FILESYSTEM_USAGE](props),
-  [VMQueries.NETWORK_INOUT_USAGE]: queries[VMQueries.NETWORK_INOUT_USAGE](props),
-  // [VMQueries.NETWORK_OUT_USAGE]: queries[VMQueries.NETWORK_OUT_USAGE](props),
+});
+
+export const getMultilineUtilizationQueries = (props: {
+  vmName: string;
+  namespace: string;
+  launcherPodName?: string;
+}) => ({
+  [VMQueries.NETWORK_USAGE]: [
+    {
+      query: queries[VMQueries.NETWORK_IN_USAGE](props),
+      desc: 'In',
+    },
+    {
+      query: queries[VMQueries.NETWORK_OUT_USAGE](props),
+      desc: 'Out',
+    },
+  ],
 });

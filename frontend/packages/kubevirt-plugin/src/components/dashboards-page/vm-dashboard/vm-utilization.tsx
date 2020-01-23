@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   Dropdown,
-  humanizeDecimalBytes,
+  humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
@@ -9,14 +9,18 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
+import {
+  PrometheusUtilizationItem,
+  PrometheusMultilineUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   useMetricDuration,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
-import { getUtilizationQueries, VMQueries } from './queries';
+import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -44,13 +48,15 @@ export const VMUtilizationCard: React.FC = () => {
     [vmName, namespace, launcherPodName],
   );
 
-  /* TODO: use when multi-line charts are ready
-    const netStats = [
-      getRangeVectorStats(netUtilizationIn),
-      getRangeVectorStats(netUtilizationOut),
-    ];
-    const netDataUnits = ['In', 'Out'];
-    */
+  const multilineQueries = React.useMemo(
+    () =>
+      getMultilineUtilizationQueries({
+        vmName,
+        namespace,
+        launcherPodName,
+      }),
+    [vmName, namespace, launcherPodName],
+  );
 
   return (
     <DashboardCard>
@@ -69,19 +75,22 @@ export const VMUtilizationCard: React.FC = () => {
         <PrometheusUtilizationItem
           title="Memory"
           utilizationQuery={queries[VMQueries.MEMORY_USAGE]}
-          humanizeValue={humanizeDecimalBytes}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
           utilizationQuery={queries[VMQueries.FILESYSTEM_USAGE]}
-          humanizeValue={humanizeDecimalBytes}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
         />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title="Network Transfer"
-          utilizationQuery={queries[VMQueries.NETWORK_INOUT_USAGE]}
-          humanizeValue={humanizeDecimalBytes}
+          queries={multilineQueries[VMQueries.NETWORK_USAGE]}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
         />
       </UtilizationBody>
