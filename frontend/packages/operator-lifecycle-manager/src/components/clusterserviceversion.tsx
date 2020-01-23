@@ -81,6 +81,7 @@ import {
   SubscriptionState,
 } from '../types';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
+import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
@@ -587,22 +588,32 @@ const crdCardRowStateToProps = ({ k8s }, { crdDescs }) => {
   };
 };
 
-export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProps) => (
-  <div className="co-crd-card-row">
-    {_.isEmpty(props.crdDescs) ? (
-      <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
-    ) : (
-      props.crdDescs.map((desc) => (
-        <CRDCard
-          key={referenceForProvidedAPI(desc)}
-          crd={desc}
-          csv={props.csv}
-          canCreate={props.createable.includes(referenceForProvidedAPI(desc))}
-        />
-      ))
-    )}
-  </div>
-));
+export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProps) => {
+  const internalObjects = getInternalObjects(props.csv);
+  return (
+    <div className="co-crd-card-row">
+      {_.isEmpty(props.crdDescs) ? (
+        <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
+      ) : (
+        props.crdDescs.reduce(
+          (acc, desc) =>
+            !isInternalObject(internalObjects, desc.name)
+              ? [
+                  ...acc,
+                  <CRDCard
+                    key={referenceForProvidedAPI(desc)}
+                    crd={desc}
+                    csv={props.csv}
+                    canCreate={props.createable.includes(referenceForProvidedAPI(desc))}
+                  />,
+                ]
+              : acc,
+          [],
+        )
+      )}
+    </div>
+  );
+});
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (
   props,
@@ -771,24 +782,34 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   props,
 ) => {
   const instancePagesFor = (obj: ClusterServiceVersionKind) => {
+    const internalObjects = getInternalObjects(obj);
     return (providedAPIsFor(obj).length > 1
       ? [{ href: 'instances', name: 'All Instances', component: ProvidedAPIsPage }]
       : ([] as Page[])
     ).concat(
-      providedAPIsFor(obj).map((desc: CRDDescription) => ({
-        href: referenceForProvidedAPI(desc),
-        name: desc.displayName,
-        component: React.memo(
-          () => (
-            <ProvidedAPIPage
-              csv={obj}
-              kind={referenceForProvidedAPI(desc)}
-              namespace={obj.metadata.namespace}
-            />
-          ),
-          _.isEqual,
-        ),
-      })),
+      providedAPIsFor(obj).reduce(
+        (acc, desc: CRDDescription) =>
+          !isInternalObject(internalObjects, desc.name)
+            ? [
+                {
+                  href: referenceForProvidedAPI(desc),
+                  name: desc.displayName,
+                  component: React.memo(
+                    () => (
+                      <ProvidedAPIPage
+                        csv={obj}
+                        kind={referenceForProvidedAPI(desc)}
+                        namespace={obj.metadata.namespace}
+                      />
+                    ),
+                    _.isEqual,
+                  ),
+                },
+                ...acc,
+              ]
+            : acc,
+        [],
+      ),
     );
   };
   type ExtraResources = { subscriptions: SubscriptionKind[] };
