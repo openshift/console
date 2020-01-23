@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { NamespaceBar } from '@console/internal/components/namespace';
 import RenderProjectAccess from './RenderProjectAccessPage';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 
 export interface ProjectAccessPageProps {
   match: RMatch<{
@@ -15,10 +15,9 @@ const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ match }) => {
     namespace,
   };
   return (
-    <>
-      <NamespaceBar />
+    <NamespacedPage variant={NamespacedPageVariants.light}>
       <RenderProjectAccess {...props} />
-    </>
+    </NamespacedPage>
   );
 };
 
