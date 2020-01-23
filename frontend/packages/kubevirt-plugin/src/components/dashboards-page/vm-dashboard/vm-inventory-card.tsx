@@ -17,18 +17,18 @@ import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF } from '../../../constant
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi } = vmDashboardContext;
-  const vmLike = vm || vmi;
+  const vmiLike = vm || vmi;
 
-  const isLoading = !vmLike;
-  const name = getName(vmLike);
-  const namespace = getNamespace(vmLike);
+  const isLoading = !vmiLike;
+  const name = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
 
   // prefer vmi over vm if available (means: is running)
   const nicCount = vm ? getNetworks(vm).length : getVMINetworks(vmi).length;
   const diskCount = vm ? getDisks(vm).length : getVMIDisks(vmi).length;
   // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
-  const basePath = resourcePath(getVMLikeModel(vmLike).kind, name, namespace);
+  const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
     ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}`}>{children}</Link>,
     [basePath],

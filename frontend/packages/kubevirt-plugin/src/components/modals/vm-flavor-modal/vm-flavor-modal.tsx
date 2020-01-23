@@ -18,7 +18,7 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import {
   getFlavor,
   getMemory,

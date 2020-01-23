@@ -96,6 +96,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(props.match)}
+      customData={{ kindObj: VirtualMachineModel }}
     />
   );
 };

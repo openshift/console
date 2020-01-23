@@ -30,7 +30,6 @@ import {
 } from '../pod/constants';
 import { NOT_HANDLED } from '../constants';
 import { VMKind, VMIKind } from '../../types';
-import { VMILikeEntityKind } from '../../types/types';
 import {
   VM_STATUS_V2V_CONVERSION_ERROR,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
@@ -53,6 +52,7 @@ import {
 import { Status } from '..';
 import { isVMIPaused } from '../../selectors/vmi/basic';
 import { getPhase } from '@console/noobaa-storage-plugin/src/utils';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatus => {
   const migration = findVMIMigration(vm, migrations);

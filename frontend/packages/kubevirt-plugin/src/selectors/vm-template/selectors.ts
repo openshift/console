@@ -1,19 +1,19 @@
 import * as _ from 'lodash';
-import { getNamespace, getName } from '@console/shared/src/selectors';
+import { getName, getNamespace } from '@console/shared/src/selectors';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { VirtualMachineModel } from '../../models';
-import { VMKind, VMGenericLikeEntityKind } from '../../types';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { iGetIn } from '../../utils/immutable';
 import {
+  CUSTOM_FLAVOR,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
-  TEMPLATE_WORKLOAD_LABEL,
-  CUSTOM_FLAVOR,
   TEMPLATE_TYPE_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants';
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
 import { flavorSort } from '../../utils/sort';
+import { VMKind } from '../../types/vm';
 
 export const getVMTemplateNamespacedName = (
   vm: VMGenericLikeEntityKind,
@@ -37,9 +37,6 @@ const getVMTemplate = (vm: VMGenericLikeEntityKind, templates: TemplateKind[]): 
       )
     : undefined;
 };
-
-export const selectVM = (vmTemplate: TemplateKind): VMKind =>
-  _.get(vmTemplate, 'objects', []).find((obj) => obj.kind === VirtualMachineModel.kind);
 
 export const getTemplatesLabelValues = (templates: TemplateKind[], label: string) => {
   const labelValues = [];

@@ -23,15 +23,15 @@ import { findVMPod } from '../../../selectors/pod/selectors';
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, pods } = vmDashboardContext;
-  const vmLike = vm || vmi;
+  const vmiLike = vm || vmi;
 
-  const launcherPod = findVMPod(vmLike, pods);
+  const launcherPod = findVMPod(vmiLike, pods);
 
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
 
-  const isNodeLoading = !vmLike || !pods;
-  const name = getName(vmLike);
-  const namespace = getNamespace(vmLike);
+  const isNodeLoading = !vmiLike || !pods;
+  const name = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
 
   const viewAllLink = `${resourcePath(
     VirtualMachineModel.kind,
@@ -50,21 +50,21 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem
             title="Name"
             error={false}
-            isLoading={!vmLike}
+            isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
             {name}
           </DetailItem>
-          <DetailItem title="Namespace" error={false} isLoading={!vmLike}>
+          <DetailItem title="Namespace" error={false} isLoading={!vmiLike}>
             <ResourceLink
               kind="Namespace"
               name={namespace}
-              title={getUID(vmLike)}
+              title={getUID(vmiLike)}
               namespace={null}
             />
           </DetailItem>
-          <DetailItem title="Created" error={false} isLoading={!vmLike}>
-            <Timestamp timestamp={getCreationTimestamp(vmLike)} />
+          <DetailItem title="Created" error={false} isLoading={!vmiLike}>
+            <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
           <DetailItem title="Node" error={!isNodeLoading && !launcherPod} isLoading={isNodeLoading}>
             {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
@@ -72,7 +72,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem
             title="IP Address"
             error={!ipAddrs}
-            isLoading={!vmLike}
+            isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
             {ipAddrs}

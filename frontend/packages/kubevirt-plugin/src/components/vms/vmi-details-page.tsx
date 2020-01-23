@@ -100,6 +100,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(props.match)}
+      customData={{ kindObj: VirtualMachineInstanceModel }}
     >
       <HintBlock
         className="kubevirt-details-page__hint-block"

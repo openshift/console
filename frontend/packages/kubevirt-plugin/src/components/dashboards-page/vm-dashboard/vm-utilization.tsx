@@ -35,10 +35,10 @@ export const VMUtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
   const { vm, vmi, pods } = React.useContext(VMDashboardContext);
-  const vmLike = vm || vmi;
-  const vmName = getName(vmLike);
-  const namespace = getNamespace(vmLike);
-  const launcherPodName = getName(findVMPod(vmLike, pods));
+  const vmiLike = vm || vmi;
+  const vmName = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
+  const launcherPodName = getName(findVMPod(vmiLike, pods));
   const queries = React.useMemo(
     () =>
       getUtilizationQueries({

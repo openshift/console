@@ -4,8 +4,8 @@ import { sortable } from '@patternfly/react-table';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { VMLikeEntityKind, VMIKind } from '../../types';
-import { getInterfaces, getNetworks, asVM, isVMI } from '../../selectors/vm';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
+import { isVMI } from '../../selectors/vm';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
@@ -15,14 +15,13 @@ import { wrapWithProgress } from '../../utils/utils';
 import { NicRow } from './nic-row';
 import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
-import { getVMINetworks, getVMIInterfaces } from '../../selectors/vmi';
+import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 
-const getNicsData = (vmLikeEntity: VMLikeEntityKind, vmiProp?: VMIKind): NetworkBundle[] => {
-  const vm = asVM(vmLikeEntity);
-  const vmi = isVMI(vmLikeEntity) ? vmLikeEntity : vmiProp;
+const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
+  const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
 
-  const networks = vm ? getNetworks(vm) : getVMINetworks(vmi);
-  const interfaces = vm ? getInterfaces(vm) : getVMIInterfaces(vmi);
+  const networks = vmiLikeWrapper?.getNetworks() || [];
+  const interfaces = vmiLikeWrapper?.getInterfaces() || [];
 
   const networkLookup = createBasicLookup(networks, getSimpleName);
 
@@ -103,7 +102,7 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   );
 };
 
-export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity, vmi }) => {
+export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   return (
@@ -131,7 +130,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity, vmi 
       )}
       <div className="co-m-pane__body">
         <VMNicsTable
-          data={getNicsData(vmLikeEntity, vmi)}
+          data={getNicsData(vmLikeEntity)}
           customData={{
             vmLikeEntity,
             withProgress,

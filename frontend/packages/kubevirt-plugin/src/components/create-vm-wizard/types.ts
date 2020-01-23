@@ -4,7 +4,7 @@ import { getStringEnumValues } from '../../utils/types';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
-import { UIDiskValidation, UINetworkInterfaceValidation } from '../../utils/validations/vm';
+import { UINetworkInterfaceValidation } from '../../utils/validations/vm/nic';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
@@ -14,6 +14,7 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { IDReferences } from '../../utils/redux/id-reference';
 import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
 import { PersistentVolumeClaimWrapper } from '../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { UIDiskValidation } from '../../utils/validations/vm/types';
 
 export enum VMWizardTab { // order important
   VM_SETTINGS = 'VM_SETTINGS',

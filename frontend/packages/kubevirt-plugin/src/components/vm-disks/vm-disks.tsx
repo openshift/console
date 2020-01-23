@@ -8,7 +8,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
-import { VMLikeEntityKind } from '../../types';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { getResource } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
@@ -26,7 +26,7 @@ const getStoragesData = ({
   datavolumes,
   pvcs,
 }: {
-  vmLikeEntity: VMLikeEntityKind;
+  vmLikeEntity: VMGenericLikeEntityKind;
   pvcs: FirehoseResult<K8sResourceKind[]>;
   datavolumes: FirehoseResult<V1alpha1DataVolume[]>;
 }): StorageBundle[] => {
@@ -111,7 +111,7 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
 };
 
 type VMDisksProps = {
-  vmLikeEntity?: VMLikeEntityKind;
+  vmLikeEntity?: VMGenericLikeEntityKind;
   pvcs?: FirehoseResult<K8sResourceKind[]>;
   datavolumes?: FirehoseResult<V1alpha1DataVolume[]>;
 };

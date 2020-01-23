@@ -1,13 +1,13 @@
 import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
-import { VMILikeEntityKind } from '../../types/types';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 type EventFilterFunction = (src: EventInvolvedObject) => boolean;
 
@@ -70,7 +70,7 @@ const v2vConversionPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction
   name,
 }) => {
   /* Idea for improvement:
-       Find the conversion pod via provided event.involvedObject.uid and check it's ownerReference to VirtualMachine vm. 
+       Find the conversion pod via provided event.involvedObject.uid and check it's ownerReference to VirtualMachine vm.
        This way, we would avoid false-positive matching which is possible when comparing just by name as implemented bellow.
      When this can happen:
        Conversion is started, the VM deleted and a new conversion for a VM of the same name is created again. The events will be merged together in that case.

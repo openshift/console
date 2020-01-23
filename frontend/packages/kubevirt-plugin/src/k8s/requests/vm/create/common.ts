@@ -24,12 +24,12 @@ import { operatingSystemsNative } from '../../../../components/create-vm-wizard/
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
 import { CreateVMEnhancedParams } from './types';
 
-export const initializeCommonMetadata = (
-  { vmSettings, iUserTemplates, openshiftFlag, iCommonTemplates }: CreateVMEnhancedParams,
-  entity: MutableVMWrapper | MutableVMTemplateWrapper,
-  template?: TemplateKind,
-) => {
-  const settings = asSimpleSettings(vmSettings);
+export const getOS = ({
+  vmSettings,
+  iUserTemplates,
+  openshiftFlag,
+  iCommonTemplates,
+}: CreateVMEnhancedParams) => {
   const operatingSystems = openshiftFlag
     ? getTemplateOperatingSystems(
         immutableListToShallowJS<TemplateKind>(
@@ -37,8 +37,21 @@ export const initializeCommonMetadata = (
         ),
       )
     : operatingSystemsNative;
-  const osID = settings[VMSettingsField.OPERATING_SYSTEM];
-  const osName = (operatingSystems.find(({ id }) => id === osID) || {}).name;
+
+  const osID = getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM);
+  return {
+    osID,
+    osName: (operatingSystems.find(({ id }) => id === osID) || {}).name,
+  };
+};
+
+export const initializeCommonMetadata = (
+  createVMParams: CreateVMEnhancedParams,
+  entity: MutableVMWrapper | MutableVMTemplateWrapper,
+  template?: TemplateKind,
+) => {
+  const settings = asSimpleSettings(createVMParams.vmSettings);
+  const { osID, osName } = getOS(createVMParams);
 
   entity.addAnotation(`${TEMPLATE_OS_NAME_ANNOTATION}/${osID}`, osName);
 
@@ -65,10 +78,11 @@ export const initializeCommonMetadata = (
 };
 
 export const initializeCommonVMMetadata = (
-  { vmSettings }: CreateVMEnhancedParams,
+  createVMParams: CreateVMEnhancedParams,
   entity: MutableVMWrapper,
 ) => {
-  const name = getFieldValue(vmSettings, VMSettingsField.NAME);
+  const settings = asSimpleSettings(createVMParams.vmSettings);
+  const name = settings[VMSettingsField.NAME];
 
   entity.addTemplateLabel(TEMPLATE_VM_NAME_LABEL, name); // for pairing service-vm (like for RDP)
 
@@ -78,5 +92,18 @@ export const initializeCommonVMMetadata = (
 
   if (!entity.hasLabel(APP)) {
     entity.addLabel(APP, name);
+  }
+
+  // show metadata inside a VMI
+  const { osID } = getOS(createVMParams);
+
+  entity.addTemplateLabel(`${TEMPLATE_OS_LABEL}/${osID}`, 'true');
+  entity.addTemplateLabel(`${TEMPLATE_FLAVOR_LABEL}/${settings[VMSettingsField.FLAVOR]}`, 'true');
+
+  if (settings[VMSettingsField.WORKLOAD_PROFILE]) {
+    entity.addTemplateLabel(
+      `${TEMPLATE_WORKLOAD_LABEL}/${settings[VMSettingsField.WORKLOAD_PROFILE]}`,
+      'true',
+    );
   }
 };

@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
-import { PodKind } from '@console/internal/module/k8s';
+import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
-import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getCDRoms, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -24,17 +23,14 @@ import {
   RESOURCE_NOT_PINNED,
   DEDICATED_RESOURCES,
 } from '../modals/dedicated-resources-modal/consts';
-import {
-  getOperatingSystemName,
-  getOperatingSystem,
-  getWorkloadProfile,
-  getDevices,
-} from '../../selectors/vm';
+import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMPod } from '../../selectors/pod/selectors';
 import { isVMIPaused } from '../../selectors/vmi';
 
 import './vm-resource.scss';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -58,25 +54,31 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   );
 };
 
-export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, vmi, canUpdateVM }) => {
-  const vmLike = vm || vmi;
+export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
+  vm,
+  vmi,
+  canUpdateVM,
+  kindObj,
+}) => {
+  const isVM = kindObj === VirtualMachineModel;
+  const vmiLike = isVM ? vm : vmi;
 
-  const templateNamespacedName = getVMTemplateNamespacedName(vmLike);
-  const id = getBasicID(vmLike);
-  const description = getDescription(vmLike);
-  const os = getOperatingSystemName(vmLike) || getOperatingSystem(vmLike);
+  const templateNamespacedName = getVMTemplateNamespacedName(vm);
+  const id = getBasicID(vmiLike);
+  const description = getDescription(vmiLike);
+  const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
   return (
-    <ResourceSummary resource={vmLike}>
+    <ResourceSummary resource={vmiLike}>
       <VMDetailsItem
         title="Description"
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
-        isNotAvail={!description}
       >
+        {!description && <span className="text-secondary">Not available</span>}
         <EditButton
           canEdit={canUpdateVM}
-          onClick={() => vmDescriptionModal({ vmLikeEntity: vmLike })}
+          onClick={() => vmDescriptionModal({ vmLikeEntity: vmiLike })}
         >
           {description}
         </EditButton>
@@ -86,13 +88,15 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, vmi, c
         {os}
       </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Template"
-        idValue={prefixedID(id, 'template')}
-        isNotAvail={!templateNamespacedName}
-      >
-        {templateNamespacedName && <VMTemplateLink {...templateNamespacedName} />}
-      </VMDetailsItem>
+      {isVM && (
+        <VMDetailsItem
+          title="Template"
+          idValue={prefixedID(id, 'template')}
+          isNotAvail={!templateNamespacedName}
+        >
+          {templateNamespacedName && <VMTemplateLink {...templateNamespacedName} />}
+        </VMDetailsItem>
+      )}
     </ResourceSummary>
   );
 };
@@ -103,23 +107,33 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   pods,
   migrations,
   canUpdateVM,
+  kindObj,
 }) => {
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
   const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
     false,
   );
-  const vmLike = vm || vmi;
+  const isVM = kindObj === VirtualMachineModel;
+  const vmiLike = isVM ? vm : vmi;
+  const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
+
+  const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
+
   const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
 
-  const launcherPod = findVMPod(vmLike, pods);
-  const id = getBasicID(vmLike);
-  const cds = getCDRoms(vmLike);
-  const devices = getDevices(vmLike);
+  const launcherPod = findVMPod(vmiLike, pods);
+  const id = getBasicID(vmiLike);
+  const cds = vmiLikeWrapper?.getCDROMs() || [];
+  const devices = vmiLikeWrapper?.getLabeledDevices() || [];
   const nodeName = getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
-  const workloadProfile = getWorkloadProfile(vm);
-  const flavorText = getFlavorText(vm);
-  const isCPUPinned = isDedicatedCPUPlacement(vm);
+  const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
+  const flavorText = getFlavorText({
+    memory: vmiLikeWrapper?.getMemory(),
+    cpu: vmiLikeWrapper?.getCPU(),
+    flavor: vmiLikeWrapper?.getFlavor(),
+  });
+  const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
 
   return (
     <dl className="co-m-pane__details">
@@ -146,7 +160,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
       <VMDetailsItem
         title="Boot Order"
-        canEdit={!!vm}
+        canEdit={canEdit}
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => setBootOrderModalOpen(true)}
         idValue={prefixedID(id, 'boot-order')}
@@ -161,7 +175,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
       <VMDetailsItem
         title="CD-ROMs"
-        canEdit={canUpdateVM}
+        canEdit={canEdit}
         editButtonId={prefixedID(id, 'cdrom-edit')}
         onEditClick={() => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'cdrom')}
@@ -183,19 +197,23 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
-        <EditButton
-          id={prefixedID(id, 'flavor-edit')}
-          canEdit={canUpdateVM}
-          onClick={() => vmFlavorModal({ vmLike: vm })}
-        >
-          {flavorText}
-        </EditButton>
+        {canEdit ? (
+          <EditButton
+            id={prefixedID(id, 'flavor-edit')}
+            canEdit={canEdit}
+            onClick={() => vmFlavorModal({ vmLike: vm })}
+          >
+            {flavorText}
+          </EditButton>
+        ) : (
+          <>{flavorText}</>
+        )}
       </VMDetailsItem>
 
       <VMDetailsItem
         title={DEDICATED_RESOURCES}
         idValue={prefixedID(id, 'dedicated-resources')}
-        canEdit={!!vm}
+        canEdit={canEdit}
         onEditClick={() => setDedicatedResourcesModalOpen(true)}
         editButtonId={prefixedID(id, 'dedicated-resources-edit')}
       >
@@ -230,12 +248,14 @@ type VMDetailsItemProps = {
 };
 
 type VMResourceSummaryProps = {
+  kindObj: K8sKind;
   vm?: VMKind;
   vmi?: VMIKind;
   canUpdateVM: boolean;
 };
 
 type VMResourceListProps = {
+  kindObj: K8sKind;
   vm?: VMKind;
   pods?: PodKind[];
   migrations?: any[];

@@ -24,7 +24,6 @@ import {
   VirtualMachineModel,
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
-import { VMILikeEntityKind } from '../../types/types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { getBasicID, getLoadedData, getResource } from '../../utils';
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
@@ -35,6 +34,7 @@ import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 
 import './vm.scss';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),

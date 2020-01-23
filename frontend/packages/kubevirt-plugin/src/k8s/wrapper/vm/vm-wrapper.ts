@@ -1,23 +1,31 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src';
+import { getLabels } from '@console/shared/src';
 import { apiVersionForModel, K8sKind } from '@console/internal/module/k8s';
-import { Wrapper } from '../common/wrapper';
-import { VMKind } from '../../../types/vm';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { CPURaw, VMKind } from '../../../types/vm';
 import {
   getDataVolumeTemplates,
   getDisks,
   getInterfaces,
   getNetworks,
   getVolumes,
-} from '../../../selectors/vm';
-import { getLabels } from '../../../selectors/selectors';
+  isDedicatedCPUPlacement,
+} from '../../../selectors/vm/selectors';
 import { ensurePath } from '../utils/utils';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
+import { VMILikeMethods } from './types';
+import { transformDevices } from '../../../selectors/vm';
+import { findKeySuffixValue } from '../../../selectors/utils';
+import {
+  TEMPLATE_FLAVOR_LABEL,
+  TEMPLATE_OS_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
+} from '../../../constants/vm';
 
-export class VMWrapper extends Wrapper<VMKind> {
+export class VMWrapper extends K8sResourceWrapper<VMKind> implements VMILikeMethods {
   static mergeWrappers = (...vmWrappers: VMWrapper[]): VMWrapper =>
-    Wrapper.defaultMergeWrappers(VMWrapper, vmWrappers);
+    K8sResourceWrapper.defaultMergeWrappers(VMWrapper, vmWrappers);
 
   static initialize = (vm?: VMKind, copy?: boolean) => new VMWrapper(vm, copy && { copy });
 
@@ -30,10 +38,14 @@ export class VMWrapper extends Wrapper<VMKind> {
     super(vm, opts);
   }
 
-  getName = () => getName(this.data);
-  getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
-  hasLabel = (label: string) => _.has(this.getLabels(null), label);
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
+
+  getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
+  getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
+  getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
+
+  getMemory = () => this.data?.spec?.template?.spec?.domain?.resources?.requests?.memory;
+  getCPU = (): CPURaw => this.data?.spec?.template?.spec?.domain?.cpu;
 
   getTemplateLabels = (defaultValue = {}) =>
     getLabels(_.get(this.data, 'spec.template'), defaultValue);
@@ -43,10 +55,15 @@ export class VMWrapper extends Wrapper<VMKind> {
   getInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
 
   getDisks = (defaultValue = []) => getDisks(this.data, defaultValue);
+  getCDROMs = () => this.getDisks().filter((device) => !!device.cdrom);
 
   getNetworks = (defaultValue = []) => getNetworks(this.data, defaultValue);
 
   getVolumes = (defaultValue = []) => getVolumes(this.data, defaultValue);
+
+  getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
+
+  isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
 }
 
 export class MutableVMWrapper extends VMWrapper {
@@ -92,6 +109,14 @@ export class MutableVMWrapper extends VMWrapper {
     if (key) {
       this.ensurePath('spec.template.metadata.labels', {});
       this.data.spec.template.metadata.labels[key] = value;
+    }
+    return this;
+  };
+
+  addTemplateAnnotation = (key: string, value: string) => {
+    if (key) {
+      this.ensurePath('spec.template.metadata.annotations', {});
+      this.data.spec.template.metadata.annotations[key] = value;
     }
     return this;
   };

@@ -6,7 +6,7 @@ import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VirtualMachineModel } from '../../models';
 import { asVM, isVM, isVMI, isVMRunning } from '../../selectors/vm';
-import { VMLikeEntityKind } from '../../types';
+import { VMLikeEntityKind } from '../../types/vmLike';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
 import { ValidationCell } from '../table/validation-cell';
 import {

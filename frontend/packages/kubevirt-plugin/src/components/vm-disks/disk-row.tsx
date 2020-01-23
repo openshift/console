@@ -9,7 +9,7 @@ import {
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
-import { VMLikeEntityKind } from '../../types';
+import { VMLikeEntityKind } from '../../types/vmLike';
 import { asVM, isVM, isVMI, isVMRunning } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
 import { ValidationCell } from '../table/validation-cell';

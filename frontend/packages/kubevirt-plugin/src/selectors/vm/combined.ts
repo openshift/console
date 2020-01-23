@@ -4,7 +4,6 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { PodKind } from '@console/internal/module/k8s';
 import { buildOwnerReference } from '../../utils';
 import { VMIKind, VMKind } from '../../types/vm';
-import { VMILikeEntityKind } from '../../types/types';
 import { VMMultiStatus } from '../../types';
 import {
   VM_STATUS_IMPORTING,
@@ -13,6 +12,7 @@ import {
 import { OS_WINDOWS_PREFIX } from '../../constants';
 import { isVMIRunning } from '../vmi/basic';
 import { isVMRunning, getOperatingSystem } from './selectors';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 const IMPORTING_STATUSES = new Set([VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS]);
 
@@ -22,7 +22,8 @@ export const isVMImporting = (status: VMMultiStatus): boolean =>
 export const isVMRunningWithVMI = ({ vm, vmi }: { vm: VMKind; vmi: VMIKind }): boolean =>
   isVMRunning(vm) && !_.isEmpty(vmi);
 
-export const isVMStarting = (vm: VMKind, vmi: VMIKind) => isVMRunning(vm) && !isVMIRunning(vmi);
+export const isVMStarting = (vm: VMKind, vmi: VMIKind) =>
+  (isVMRunning(vm) || vmi) && !isVMIRunning(vmi);
 
 export const isWindows = (vm: VMKind): boolean =>
   (getOperatingSystem(vm) || '').startsWith(OS_WINDOWS_PREFIX);

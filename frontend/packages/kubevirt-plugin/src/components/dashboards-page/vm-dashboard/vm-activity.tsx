@@ -17,10 +17,10 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { VMILikeEntityKind } from '../../../types/types';
 import { VirtualMachineModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { VMILikeEntityKind } from '../../../types/vmLike';
 
 const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
   getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
@@ -57,13 +57,13 @@ const RecentEvent = withDashboardResources<RecentEventProps>(
 
 export const VMActivityCard: React.FC = () => {
   const { vm, vmi } = React.useContext(VMDashboardContext);
-  const vmLike = vm || vmi;
+  const vmiLike = vm || vmi;
 
   const [paused, setPaused] = React.useState(false);
   const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
 
-  const name = getName(vmLike);
-  const namespace = getNamespace(vmLike);
+  const name = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
   const viewEventsLink = `${resourcePath(VirtualMachineModel.kind, name, namespace)}/events`;
 
   return (
@@ -77,7 +77,7 @@ export const VMActivityCard: React.FC = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
-          <RecentEvent vm={vmLike} paused={paused} setPaused={setPaused} />
+          <RecentEvent vm={vmiLike} paused={paused} setPaused={setPaused} />
         </ActivityBody>
       </DashboardCardBody>
     </DashboardCard>

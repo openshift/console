@@ -9,16 +9,16 @@ import {
   asAccessReview,
 } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
-import { K8sResourceKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
 import { getLoadedData, getResource } from '../../utils';
-import { VirtualMachineInstanceModel } from '../../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';
-import { asVM, isVM, isVMI } from '../../selectors/vm/vmlike';
+import { isVM, isVMI } from '../../selectors/vm/vmlike';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -27,9 +27,10 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   pods,
   migrations,
   templates,
+  customData: { kindObj },
 }) => {
-  const vm = asVM(objProp) || (isVM(vmProp) && vmProp);
-  const vmi = (isVMI(objProp) && objProp) || vmiProp;
+  const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
+  const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmiProp;
 
   const resources = [
     getResource(ServiceModel, { namespace: getNamespace(objProp), prop: 'services' }),
@@ -38,37 +39,45 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VMDetails vm={vm} vmi={vmi} pods={pods} migrations={migrations} templates={templates} />
+        <VMDetails
+          kindObj={kindObj}
+          vm={vm}
+          vmi={vmi}
+          pods={pods}
+          migrations={migrations}
+          templates={templates}
+        />
       </Firehose>
     </div>
   );
 };
 
 const VMDetails: React.FC<VMDetailsProps> = (props) => {
-  const { vm, vmi, pods, migrations, templates, ...restProps } = props;
+  const { kindObj, vm, vmi, pods, migrations, templates, ...restProps } = props;
   const mainResources = {
     vm,
     vmi,
     pods,
     migrations,
     templates,
+    kindObj,
   };
 
-  const vmLike = vm || vmi;
+  const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
-  const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vmLike, 'patch'));
+  const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
 
   return (
-    <StatusBox data={vmLike} {...restProps}>
+    <StatusBox data={vmiLike} {...restProps}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="Virtual Machine Overview" />
+        <SectionHeading text={`${kindObj.label} Overview`} />
         <div className="row">
           <div className="col-sm-6">
-            <VMResourceSummary canUpdateVM={!!vm && canUpdate} {...mainResources} />
+            <VMResourceSummary canUpdateVM={canUpdate} {...mainResources} />
           </div>
           <div className="col-sm-6">
-            <VMDetailsList canUpdateVM={!!vm && canUpdate} {...mainResources} />
+            <VMDetailsList canUpdateVM={canUpdate} {...mainResources} />
           </div>
         </div>
       </div>
@@ -81,6 +90,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
 };
 
 type VMDetailsProps = {
+  kindObj: K8sKind;
   vm?: VMKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
