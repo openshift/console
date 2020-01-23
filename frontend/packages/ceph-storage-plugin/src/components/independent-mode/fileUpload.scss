@@ -1,0 +1,22 @@
+.upload-component {
+  display: inline-flex;
+}
+
+.input-btn {
+  display: inline-flex;
+}
+
+.custom-input-btn {
+  flex-grow: 10;
+}
+
+.upload-btn__input {
+  position: absolute;
+  opacity: 0;
+  border: none;
+  max-width: 4em;
+}
+
+.upload-component__textInput {
+    color: var(--pf-global--Color--dark-200);
+}
