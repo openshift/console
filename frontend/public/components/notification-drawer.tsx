@@ -143,9 +143,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   );
   const criticalAlertList: React.ReactNode[] = getAlertNotificationEntries(
     true,
-    loaded,
     data,
     toggleNotificationDrawer,
+    true,
   );
   const otherAlertList: React.ReactNode[] = getAlertNotificationEntries(
     loaded,
@@ -160,6 +160,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     false,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    if (criticalAlertList.length > 0 && !isDrawerExpanded) {
+      toggleAlertExpanded(!_.isEmpty(criticalAlertList));
+    }
+  }, [criticalAlertList, isAlertExpanded, isDrawerExpanded]);
 
   const criticalAlertCategory: React.ReactElement = (
     <NotificationCategory
@@ -207,7 +212,6 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       isInline={isDesktop}
       isExpanded={isDrawerExpanded}
       notificationEntries={[criticalAlertCategory, nonCriticalAlertCategory, messageCategory]}
-      count={criticalAlertList.length + otherAlertList.length}
     >
       {children}
     </NotificationDrawer>

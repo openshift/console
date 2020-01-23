@@ -7,7 +7,9 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
   <div className="pf-c-notification-drawer">
     <div className="pf-c-notification-drawer__header">
       <h1 className="pf-c-notification-drawer__header-title">Notifications</h1>
-      <span className="pf-c-notification-drawer__header-status">{`${count} unread`}</span>
+      {count && (
+        <span className="pf-c-notification-drawer__header-status">{`${count} unread`}</span>
+      )}
     </div>
     <div className="pf-c-notification-drawer__body">
       <div className="pf-c-notification-drawer__group-list">{children}</div>
@@ -17,7 +19,7 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
 
 type NotificationDrawerHeadingProps = {
   children: React.ReactNode;
-  count: number;
+  count?: number;
 };
 
 export default NotificationDrawerHeading;

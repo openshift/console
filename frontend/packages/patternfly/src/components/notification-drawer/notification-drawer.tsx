@@ -12,13 +12,12 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   isInline,
   children,
   notificationEntries,
-  count = 0,
 }) => {
   return (
     <Drawer isExpanded={isExpanded} isInline={isInline}>
       <DrawerContent>{children}</DrawerContent>
       <DrawerPanelContent noPadding>
-        <NotificationDrawerHeading count={count}>{notificationEntries}</NotificationDrawerHeading>
+        <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
       </DrawerPanelContent>
     </Drawer>
   );
