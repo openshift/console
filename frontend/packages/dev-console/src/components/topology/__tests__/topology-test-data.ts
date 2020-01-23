@@ -17,6 +17,7 @@ export const resources: TopologyDataResources = {
   statefulSets: { loaded: true, loadError: '', data: [] },
   pipelineRuns: { loaded: true, loadError: '', data: [] },
   pipelines: { loaded: true, loadError: '', data: [] },
+  events: { loaded: true, loadError: '', data: [] },
 };
 
 export const topologyData: TopologyDataModel = {

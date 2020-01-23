@@ -20,12 +20,13 @@ const getResourceTabComp = (t) => (props) => (
 );
 
 const getPluginTabResources = (item, tabs): ResourceOverviewDetailsProps['tabs'] => {
-  const tabEntry = plugins.registry
+  let tabEntry = plugins.registry
     .getOverviewResourceTabs()
     .filter((tab) => item[tab.properties.key]);
-  const newTabs = tabs.map((tab) => {
+  const overridenTabs = tabs.map((tab) => {
     const tabEntryConfig = tabEntry.find((t) => tab.name === t.properties.name);
     if (tabEntryConfig) {
+      tabEntry = tabEntry.filter((entry) => tab.name !== entry.properties.name);
       return {
         name: tab.name,
         component: getResourceTabComp(tabEntryConfig),
@@ -33,7 +34,16 @@ const getPluginTabResources = (item, tabs): ResourceOverviewDetailsProps['tabs']
     }
     return tab;
   });
-  return newTabs;
+
+  /** Add new tabs from plugin */
+  const newTabs = tabEntry.map((entry) => {
+    return {
+      name: entry.properties.name,
+      component: getResourceTabComp(entry),
+    };
+  });
+
+  return overridenTabs.concat(newTabs);
 };
 
 export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch, OwnProps>(

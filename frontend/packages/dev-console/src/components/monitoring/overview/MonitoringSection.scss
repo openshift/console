@@ -1,0 +1,14 @@
+.odc-monitoring-section {
+    &__metric-accordion {
+        padding: 0;
+    }
+    h5 {
+        margin: 0;
+    }
+    .pf-c-accordion__expanded-content.pf-m-expanded {
+        --pf-c-accordion__expanded-content--BorderLeftColor: transparent;
+    }
+    .pf-c-accordion__toggle.pf-m-expanded {
+        --pf-c-accordion__toggle--BorderLeftColor: transparent;
+    }
+} 
