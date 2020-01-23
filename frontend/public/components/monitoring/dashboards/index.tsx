@@ -193,6 +193,9 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
   );
 
   React.useEffect(() => {
+    if (!board) {
+      return;
+    }
     setData(undefined);
     setError(undefined);
     const path = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/grafana-dashboard-${board}`;
@@ -266,12 +269,17 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   );
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration(defaultTimespan));
 
-  const onBoardChange = (newBoard: string) => {
+  const setBoard = (newBoard: string) => {
     if (newBoard !== board) {
       clearVariables();
       history.replace(`/monitoring/dashboards/${newBoard}`);
     }
   };
+
+  if (!board && boards?.[0]) {
+    setBoard(boards[0]);
+    return null;
+  }
 
   return (
     <>
@@ -299,7 +307,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         <h1 className="co-m-pane__heading">Dashboards</h1>
         <div className="monitoring-dashboards__variables">
           <VariableDropdown
-            onChange={onBoardChange}
+            onChange={setBoard}
             options={boards}
             selected={board}
             title="Board Type"
