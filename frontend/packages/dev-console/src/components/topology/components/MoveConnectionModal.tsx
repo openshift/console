@@ -100,7 +100,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
       </ModalBody>
       <ModalSubmitFooter
         submitText="Move"
-        submitDisabled={(status && !!status.submitError) || !isDirty}
+        submitDisabled={!isDirty}
         cancel={cancel}
         inProgress={isSubmitting}
         errorMessage={status && status.submitError}
