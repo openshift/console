@@ -14,14 +14,11 @@ import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
-import { getVMStatus } from '../../statuses/vm/vm';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
-import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
-import { VirtualMachineInstanceModel } from '../../models';
 import {
   RESOURCE_PINNED,
   RESOURCE_NOT_PINNED,
@@ -35,9 +32,9 @@ import {
 } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMPod } from '../../selectors/pod/selectors';
+import { isVMIPaused } from '../../selectors/vmi';
 
 import './vm-resource.scss';
-import { isVMIPaused } from '../../selectors/vmi';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,

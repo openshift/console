@@ -48,10 +48,8 @@ import {
   VM_STATUS_V2V_CONVERSION_PENDING,
   CONVERSION_PROGRESS_ANNOTATION,
   VM_STATUS_IMPORT_PENDING,
-  VM_STATUS_PAUSED,
 } from './constants';
 import { Status } from '..';
-import { isVMIPaused } from '../../selectors/vmi/basic';
 import { getPhase } from '@console/noobaa-storage-plugin/src/utils';
 
 const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatus => {
@@ -103,9 +101,6 @@ const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatus => {
   }
   return NOT_HANDLED;
 };
-
-const isPaused = (vmi: VMIKind): VMStatus =>
-  isVMIPaused(vmi) ? { status: VM_STATUS_PAUSED } : NOT_HANDLED;
 
 const isVMError = (vm: VMILikeEntityKind): VMStatus => {
   // is an issue with the VM definition?

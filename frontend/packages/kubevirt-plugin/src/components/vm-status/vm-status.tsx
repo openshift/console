@@ -21,7 +21,6 @@ import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
-import { VirtualMachineModel } from '../../models';
 import {
   VM_DETAIL_EVENTS_HREF,
   CDI_KUBEVIRT_IO,
