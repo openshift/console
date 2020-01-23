@@ -19,7 +19,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/crypto"
-	"github.com/openshift/console/pkg/helm"
+	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -109,7 +109,7 @@ func main() {
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
-	helmConfig := helm.RegisterFlags(fs)
+	helmConfig := chartproxy.RegisterFlags(fs)
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

@@ -1,4 +1,4 @@
-package helm
+package chartproxy
 
 import (
 	"crypto/tls"
