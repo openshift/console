@@ -1,6 +1,7 @@
 import { Dispatch } from 'react-redux';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Extension, AlwaysOnExtension } from './base';
+import { Action } from 'typesafe-actions';
 
 namespace ExtensionProperties {
   interface FeatureFlag {
@@ -15,7 +16,7 @@ namespace ExtensionProperties {
 
   export interface ActionFeatureFlag extends FeatureFlag {
     /** Function used to detect the feature and set flag name/value via Redux action dispatch. */
-    detect: (dispatch: Dispatch) => Promise<any>;
+    detect: ActionFeatureFlagDetector;
   }
 }
 
@@ -40,3 +41,5 @@ export const isActionFeatureFlag = (e: Extension): e is ActionFeatureFlag => {
 export const isFeatureFlag = (e: Extension): e is FeatureFlag => {
   return isModelFeatureFlag(e) || isActionFeatureFlag(e);
 };
+
+export type ActionFeatureFlagDetector = (dispatch: Dispatch) => Promise<void | Action>;
