@@ -19,7 +19,7 @@ import {
 } from '../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
 import { TopologyFilters } from '../filters/filter-utils';
-import { TYPE_HELM_RELEASE } from '../const';
+import { TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from '../const';
 import {
   resources,
   topologyData,
@@ -75,8 +75,26 @@ describe('TopologyUtils ', () => {
 
   it('should return graph and topology data only for the deployment kind', () => {
     const { graphData, keys } = getTranformedTopologyData(MockResources, ['deployments']);
-    expect(graphData.nodes).toHaveLength(MockResources.deployments.data.length); // should contain only two deployment
-    expect(keys).toHaveLength(MockResources.deployments.data.length); // should contain only two deployment
+    const totalNodes =
+      MockResources.deployments.data.length + MockResources.clusterServiceVersions.data.length;
+    expect(graphData.nodes).toHaveLength(totalNodes); // should contain only two deployment
+    expect(keys).toHaveLength(totalNodes); // should contain only two deployment
+  });
+
+  it('should return graph nodes for operator backed services', () => {
+    const { topologyTransformedData, graphData, keys } = getTranformedTopologyData(MockResources, [
+      'deployments',
+    ]);
+    const totalNodes =
+      MockResources.deployments.data.length + MockResources.clusterServiceVersions.data.length;
+    const operatorBackedServices = _.filter(graphData.nodes, {
+      type: TYPE_OPERATOR_BACKED_SERVICE,
+    });
+    expect(operatorBackedServices).toHaveLength(1);
+    expect(topologyTransformedData[operatorBackedServices[0].id].type).toBe(
+      TYPE_OPERATOR_BACKED_SERVICE,
+    );
+    expect(keys).toHaveLength(totalNodes);
   });
 
   it('should contain edges information for the deployment kind', () => {

@@ -49,6 +49,9 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
   TYPE_AGGREGATE_EDGE,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_WORKLOAD,
+  TYPE_OPERATOR_WORKLOAD,
 } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -142,6 +145,7 @@ export const createTopologyNodeData = (
   cheURL?: string,
   type?: string,
   filters?: TopologyFilters,
+  installedOperators?: K8sResourceKind[],
 ): TopologyDataObject => {
   const {
     obj: deploymentConfig,
@@ -156,7 +160,12 @@ export const createTopologyNodeData = (
   const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
   const nodeResourceKind = _.get(deploymentConfig, 'metadata.ownerReferences[0].kind');
-  const operatorBackedService = nodeResourceKind in operatorBackedServiceKindMap;
+  const ownerUid = _.get(deploymentConfig, 'metadata.ownerReferences[0].uid');
+  const operatorResource: K8sResourceKind = _.find(installedOperators, {
+    metadata: { uid: ownerUid },
+  }) as K8sResourceKind;
+  const operatorBackedService =
+    !_.isEmpty(operatorResource) || nodeResourceKind in operatorBackedServiceKindMap;
 
   const csvIcon =
     operatorBackedService &&
@@ -167,12 +176,12 @@ export const createTopologyNodeData = (
   const defaultIcon = operatorBackedService
     ? getDefaultOperatorIcon()
     : getImageForIconClass(`icon-openshift`);
-
+  const nodeType = operatorBackedService ? TYPE_OPERATOR_WORKLOAD : TYPE_WORKLOAD;
   return {
     id: dcUID,
     name:
       _.get(deploymentConfig, 'metadata.name') || deploymentsLabels['app.kubernetes.io/instance'],
-    type: type || 'workload',
+    type: type || nodeType,
     resources: { ...dc, isOperatorBackedService: operatorBackedService },
     pods: dc.pods,
     operatorBackedService,
@@ -355,10 +364,102 @@ export const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): Gro
       });
     } else {
       const gIndex = _.findIndex(groups, { name: label });
-      groups[gIndex].nodes.push(uid);
+      if (!groups[gIndex].nodes.includes(uid)) {
+        groups[gIndex].nodes.push(uid);
+      }
     }
   });
   return groups;
+};
+/**
+ * Creates the operator backed services topology data
+ * @param resources
+ * @param transformBy
+ * @param installedOperators
+ * @param operatorBackedServiceKindMap
+ * @param topologyGraphAndNodeData
+ */
+const getOperatoarBackedServiceData = (
+  resources: TopologyDataResources,
+  transformBy: string[],
+  installedOperators: K8sResourceKind[],
+  operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
+  topologyGraphAndNodeData: TopologyDataModel,
+): TopologyDataModel => {
+  const obsGroups = {};
+  const operatorMap = {};
+  let obsNodeItems = [];
+  const obsTopology = {};
+  const {
+    graph: { nodes, edges, groups },
+    topology,
+  } = topologyGraphAndNodeData;
+  _.forEach(transformBy, (key) => {
+    if (!_.isEmpty(resources[key].data)) {
+      _.map(resources[key].data, (deployment) => {
+        const nodeResourceKind = _.get(deployment, 'metadata.ownerReferences[0].kind');
+        const ownerUid = _.get(deployment, 'metadata.ownerReferences[0].uid');
+        const appGroup = _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
+        let operator: K8sResourceKind = _.find(installedOperators, {
+          metadata: { uid: ownerUid },
+        }) as K8sResourceKind;
+
+        if (_.isEmpty(operator)) {
+          operator = operatorBackedServiceKindMap[nodeResourceKind];
+        }
+        if (operator) {
+          const operatorName = appGroup
+            ? `${appGroup}:${operator.metadata.name}`
+            : operator.metadata.name;
+          if (!(operatorName in obsGroups)) {
+            obsGroups[operatorName] = [];
+          }
+          operatorMap[operatorName] = _.merge({}, operator, {
+            metadata: {
+              uid: `${operatorName}:${operator.metadata.uid}`,
+            },
+          });
+          obsGroups[operatorName].push(deployment.metadata.uid);
+          if (appGroup) {
+            getTopologyGroupItems(
+              _.merge({}, deployment, {
+                metadata: {
+                  uid: `${operatorName}:${operator.metadata.uid}`,
+                },
+              }),
+              groups,
+            );
+          }
+        }
+      });
+    }
+  });
+
+  _.forIn(obsGroups, (children, grp) => {
+    obsNodeItems = [
+      ...obsNodeItems,
+      getTopologyNodeItem(operatorMap[grp], TYPE_OPERATOR_BACKED_SERVICE, children),
+    ];
+    obsTopology[operatorMap[grp].metadata.uid] = {
+      id: operatorMap[grp].metadata.uid,
+      name: operatorMap[grp].metadata.name,
+      type: TYPE_OPERATOR_BACKED_SERVICE,
+      resources: { obj: operatorMap[grp] },
+      operatorBackedService: true,
+      data: {
+        builderImage:
+          getImageForCSVIcon(_.get(operatorMap[grp], 'spec.icon.0')) || getDefaultOperatorIcon(),
+      },
+    };
+  });
+  return {
+    graph: {
+      nodes: [...nodes, ...obsNodeItems],
+      edges: [...edges],
+      groups: [...groups],
+    },
+    topology: { ...topology, ...obsTopology },
+  };
 };
 
 /**
@@ -470,9 +571,12 @@ export const transformTopologyData = (
           cheURL,
           null,
           filters,
+          installedOperators,
         );
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
-          nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig)];
+          const operatorBacked = dataToShowOnNodes[uid].operatorBackedService;
+          const nodeType = operatorBacked ? TYPE_OPERATOR_WORKLOAD : TYPE_WORKLOAD;
+          nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig, nodeType)];
           edgesData = [
             ...edgesData,
             ...getTopologyEdgeItems(
@@ -482,9 +586,11 @@ export const transformTopologyData = (
               application,
             ),
           ];
-          groupsData = [
-            ...getTopologyGroupItems(deploymentConfig, topologyGraphAndNodeData.graph.groups),
-          ];
+          if (!operatorBacked) {
+            groupsData = [
+              ...getTopologyGroupItems(deploymentConfig, topologyGraphAndNodeData.graph.groups),
+            ];
+          }
         }
       });
       const {
@@ -501,6 +607,13 @@ export const transformTopologyData = (
       };
     }
   });
+  topologyGraphAndNodeData = getOperatoarBackedServiceData(
+    resources,
+    transformBy,
+    installedOperators,
+    operatorBackedServiceKindMap,
+    topologyGraphAndNodeData,
+  );
   return topologyGraphAndNodeData;
 };
 
@@ -520,7 +633,7 @@ export const topologyModelFromDataModel = (
   filters?: TopologyFilters,
 ): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
-    if (d.type === TYPE_KNATIVE_SERVICE) {
+    if (d.type === TYPE_KNATIVE_SERVICE || d.type === TYPE_OPERATOR_BACKED_SERVICE) {
       const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
       data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {

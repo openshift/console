@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { GraphElement, Node } from '@console/topology';
-import { TYPE_WORKLOAD } from '../const';
+import { TYPE_WORKLOAD, TYPE_OPERATOR_WORKLOAD, TYPE_HELM_WORKLOAD } from '../const';
 import { addResourceMenu } from '../../../actions/add-resources';
 import { TopologyDataObject } from '../topology-types';
 
@@ -21,8 +21,8 @@ const addResourcesMenu = (workload: TopologyDataObject, connectorSource?: Node) 
 };
 
 export const graphActions = (elements: GraphElement[], connectorSource?: Node): KebabOption[] => {
-  const primaryResource: Node = _.find(elements, {
-    type: TYPE_WORKLOAD,
-  }) as Node;
+  const primaryResource: Node = _.filter(elements, (e) =>
+    [TYPE_WORKLOAD, TYPE_OPERATOR_WORKLOAD, TYPE_HELM_WORKLOAD].includes(e.getType()),
+  )?.[0] as Node;
   return [...addResourcesMenu(primaryResource.getData(), connectorSource)];
 };
