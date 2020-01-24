@@ -16,6 +16,7 @@ import Decorator from './Decorator';
 import PodSet from './PodSet';
 import KnativeIcon from './KnativeIcon';
 import BuildDecorator from './build-decorators/BuildDecorator';
+import ConnectedMonitoringDecorator from './MonitoringDecorator';
 import BaseNode from './BaseNode';
 
 export type WorkloadNodeProps = {
@@ -43,7 +44,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
   const size = Math.min(width, height);
-  const { donutStatus, editUrl, cheEnabled } = workloadData;
+  const { donutStatus, editUrl, cheEnabled, eventWarning } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
   const cy = height / 2;
@@ -95,6 +96,15 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
                   </g>
                 </Decorator>
               </Tooltip>
+            ),
+            eventWarning && (
+              <ConnectedMonitoringDecorator
+                key="monitoring"
+                x={cx - radius + decoratorRadius * 0.7}
+                y={cy - radius + decoratorRadius * 0.7}
+                radius={decoratorRadius}
+                element={element}
+              />
             ),
             <BuildDecorator
               key="build"

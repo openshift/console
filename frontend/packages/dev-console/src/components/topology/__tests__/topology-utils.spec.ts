@@ -154,6 +154,49 @@ describe('TopologyUtils ', () => {
     expect((topologyTransformedData[keys[0]].data as WorkloadData).isKnativeResource).toBeFalsy();
   });
 
+  it('should return false for eventWarning if workloads pods have no events of type warning', () => {
+    const { topologyTransformedData, keys } = getTranformedTopologyData(MockResources, [
+      'deploymentConfigs',
+      'deployments',
+    ]);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).eventWarning).toBe(false);
+  });
+
+  it('should return true for eventWarning if workload pods have events of type warning', () => {
+    const mockResources = {
+      ...MockResources,
+      events: {
+        loaded: true,
+        loadError: '',
+        data: [
+          {
+            apiVersion: 'v1',
+            kind: 'Event',
+            type: 'Warning',
+            lastTimestamp: '2020-01-23T10:00:47Z',
+            reason: 'BackOff',
+            firstTimestamp: '2020-01-23T08:21:06Z',
+            involvedObject: {
+              kind: 'Pod',
+              namespace: 'testproject3',
+              name: 'analytics-deployment-59dd7c47d4-6btjb',
+              uid: 'f5ee90e4-959f-47df-b305-56a78cb047ea',
+            },
+            source: {
+              component: 'kubelet',
+              host: 'ip-10-0-130-190.us-east-2.compute.internal',
+            },
+          },
+        ],
+      },
+    };
+    const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
+      'deployments',
+      'deploymentConfigs',
+    ]);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).eventWarning).toBe(true);
+  });
+
   it('should return a valid pod status for scale to 0', () => {
     const { topologyTransformedData } = getTranformedTopologyData(MockKnativeResources, [
       'deploymentConfigs',

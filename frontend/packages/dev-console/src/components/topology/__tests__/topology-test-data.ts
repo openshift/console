@@ -1,5 +1,5 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
+import { DeploymentKind, PodKind, EventKind } from '@console/internal/module/k8s';
 import { Model } from '@console/topology';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 
@@ -2158,6 +2158,31 @@ export const sampleHelmChartDeploymentConfig = {
   },
 };
 
+export const sampleEventsResource: FirehoseResult<EventKind[]> = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: 'v1',
+      kind: 'Event',
+      type: 'Normal',
+      lastTimestamp: '2020-01-23T10:00:47Z',
+      reason: 'Started',
+      firstTimestamp: '2020-01-23T08:21:06Z',
+      involvedObject: {
+        kind: 'Pod',
+        namespace: 'testproject3',
+        name: 'analytics-deployment-59dd7c47d4-2jp7t',
+        uid: 'f5ee90e4-959f-47df-b305-56a78cb047ea',
+      },
+      source: {
+        component: 'kubelet',
+        host: 'ip-10-0-130-190.us-east-2.compute.internal',
+      },
+    },
+  ],
+};
+
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
@@ -2173,4 +2198,5 @@ export const MockResources: TopologyDataResources = {
   pipelines: samplePipeline,
   pipelineRuns: samplePipelineRun,
   clusterServiceVersions: sampleClusterServiceVersions,
+  events: sampleEventsResource,
 };
