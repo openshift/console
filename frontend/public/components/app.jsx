@@ -13,10 +13,11 @@ import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { Navigation } from './nav';
-import { history } from './utils';
+import { history, Firehose, AsyncComponent } from './utils';
 import * as UIActions from '../actions/ui';
-import { fetchSwagger, getCachedResources } from '../module/k8s';
+import { fetchSwagger, getCachedResources, referenceForModel } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
+import { ClusterVersionModel } from '../models';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -24,9 +25,27 @@ import '../style.scss';
 import { Page } from '@patternfly/react-core';
 
 const breakpointMD = 768;
+const breakpointLG = 1600;
+
+const cvResource = [
+  {
+    kind: referenceForModel(ClusterVersionModel),
+    namespaced: false,
+    name: 'version',
+    isList: false,
+    prop: 'cv',
+  },
+];
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
+
+const NotificationDrawer = (props) => (
+  <AsyncComponent
+    loader={() => import('./notification-drawer').then((c) => c.ConnectedNotificationDrawer)}
+    {...props}
+  />
+);
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -37,9 +56,11 @@ class App extends React.PureComponent {
     this._isDesktop = this._isDesktop.bind(this);
     this._onResize = this._onResize.bind(this);
     this.previousDesktopState = this._isDesktop();
+    this.previousDrawerInlineState = this._isLargeLayout();
 
     this.state = {
       isNavOpen: this._isDesktop(),
+      isDrawerInline: this._isLargeLayout(),
     };
   }
 
@@ -62,6 +83,10 @@ class App extends React.PureComponent {
     // two way data binding :-/
     const { pathname } = props.location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
+  }
+
+  _isLargeLayout() {
+    return window.innerWidth >= breakpointLG;
   }
 
   _isDesktop() {
@@ -91,14 +116,19 @@ class App extends React.PureComponent {
 
   _onResize() {
     const isDesktop = this._isDesktop();
+    const isDrawerInline = this._isLargeLayout();
     if (this.previousDesktopState !== isDesktop) {
       this.setState({ isNavOpen: isDesktop });
       this.previousDesktopState = isDesktop;
     }
+    if (this.previousDrawerInlineState !== isDrawerInline) {
+      this.setState({ isDrawerInline });
+      this.previousDrawerInlineState = isDrawerInline;
+    }
   }
 
   render() {
-    const { isNavOpen } = this.state;
+    const { isNavOpen, isDrawerInline } = this.state;
     const { productName } = getBrandingDetails();
 
     return (
@@ -115,7 +145,11 @@ class App extends React.PureComponent {
             />
           }
         >
-          <AppContents />
+          <Firehose resources={cvResource}>
+            <NotificationDrawer isDesktop={isDrawerInline}>
+              <AppContents />
+            </NotificationDrawer>
+          </Firehose>
         </Page>
         <ConsoleNotifier location="BannerBottom" />
       </>
