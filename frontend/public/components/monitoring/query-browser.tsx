@@ -6,6 +6,7 @@ import {
   ChartArea,
   ChartAxis,
   ChartGroup,
+  ChartLegend,
   ChartLine,
   ChartStack,
   ChartThemeColor,
@@ -278,9 +279,6 @@ const Graph: React.FC<GraphProps> = React.memo(
             domain={domain}
             domainPadding={{ y: 1 }}
             height={200}
-            legendAllowWrap={true}
-            legendData={legendData}
-            legendPosition="bottom-left"
             scale={{ x: 'time', y: 'linear' }}
             theme={chartTheme}
             width={width}
@@ -299,6 +297,19 @@ const Graph: React.FC<GraphProps> = React.memo(
                   <ChartLine key={i} data={values} />
                 ))}
               </ChartGroup>
+            )}
+            {legendData && (
+              <ChartLegend
+                data={legendData}
+                itemsPerRow={4}
+                orientation="vertical"
+                style={{
+                  labels: { fontSize: 11 },
+                }}
+                symbolSpacer={4}
+                x={0}
+                y={230}
+              />
             )}
           </Chart>
         )}
@@ -429,6 +440,12 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
     </div>
   );
 };
+
+const Loading = () => (
+  <div className="query-browser__loading">
+    <LoadingInline />
+  </div>
+);
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
@@ -603,23 +620,21 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         'graph-empty-state': _.isEmpty(graphData),
       })}
     >
-      <div className="query-browser__controls">
-        <div className="query-browser__controls--left">
-          {!hideControls && (
+      {hideControls ? (
+        <>{updating && <Loading />}</>
+      ) : (
+        <div className="query-browser__controls">
+          <div className="query-browser__controls--left">
             <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
-          )}
-          {updating && (
-            <div className="query-browser__loading">
-              <LoadingInline />
+            {updating && <Loading />}
+          </div>
+          {GraphLink && (
+            <div className="query-browser__controls--right">
+              <GraphLink />
             </div>
           )}
         </div>
-        {GraphLink && (
-          <div className="query-browser__controls--right">
-            <GraphLink />
-          </div>
-        )}
-      </div>
+      )}
       {error && <Error error={error} />}
       {_.isEmpty(graphData) && !updating && <GraphEmpty />}
       {!_.isEmpty(graphData) && (
@@ -678,6 +693,8 @@ type PrometheusValue = [number, string];
 
 export type FormatLegendLabel = (labels: Labels, i: number) => string;
 
+export type PatchQuery = (index: number, patch: QueryObj) => any;
+
 type GraphProps = {
   allSeries: Series[];
   disabledSeries?: Labels[][];
@@ -708,7 +725,7 @@ export type QueryBrowserProps = {
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   namespace?: string;
-  patchQuery: (index: number, patch: QueryObj) => any;
+  patchQuery: PatchQuery;
   pollInterval?: number;
   queries: string[];
   timespan?: number;

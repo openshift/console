@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -130,7 +131,11 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
         <DashboardCardHeader className="monitoring-dashboards__card-header">
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
-        <DashboardCardBody>
+        <DashboardCardBody
+          className={classNames({
+            'co-dashboard-card__body--dashboard-graph': panel.type === 'graph',
+          })}
+        >
           {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
           {panel.type === 'graph' && (
             <Graph
@@ -259,10 +264,14 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
 
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   clearVariables,
+  deleteAll,
   patchVariable,
   match,
 }) => {
   const { board } = match.params;
+
+  // Clear queries on unmount
+  React.useEffect(() => deleteAll, [deleteAll]);
 
   const [pollInterval, setPollInterval] = React.useState(
     parsePrometheusDuration(defaultPollInterval),
@@ -328,6 +337,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
 };
 const MonitoringDashboardsPage = connect(null, {
   clearVariables: UIActions.monitoringDashboardsClearVariables,
+  deleteAll: UIActions.queryBrowserDeleteAllQueries,
   patchVariable: UIActions.monitoringDashboardsPatchVariable,
 })(MonitoringDashboardsPage_);
 
@@ -374,6 +384,7 @@ type CardProps = {
 
 type MonitoringDashboardsPageProps = {
   clearVariables: () => undefined;
+  deleteAll: () => undefined;
   patchVariable: (key: string, patch: Variable) => undefined;
   match: any;
 };
