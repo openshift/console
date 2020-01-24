@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Node, observer } from '@console/topology';
+import { Node, observer, WithSelectionProps } from '@console/topology';
 import { RootState } from '@console/internal/redux';
-import './HelmRelease.scss';
 import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
 import HelmReleaseNode from './HelmReleaseNode';
 import HelmReleaseGroup from './HelmReleaseGroup';
+
+import './HelmRelease.scss';
 
 export type HelmReleaseProps = {
   element: Node;
   dragging?: boolean;
   filters: TopologyFilters;
-};
+} & WithSelectionProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
   if (

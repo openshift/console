@@ -80,7 +80,7 @@ class ComponentFactory {
     return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_HELM_RELEASE:
-          return HelmRelease;
+          return withSelection(false, true)(HelmRelease);
         case TYPE_HELM_WORKLOAD:
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withDndDrop<

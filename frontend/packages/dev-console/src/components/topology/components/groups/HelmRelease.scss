@@ -8,6 +8,10 @@
   &__label {
     cursor: pointer;
   }
+  &.is-selected {
+    stroke: var(--pf-global--active-color--100);
+    fill: var(--pf-global--active-color--200);
+  }
 }
 
 .odc-m-filter-active {

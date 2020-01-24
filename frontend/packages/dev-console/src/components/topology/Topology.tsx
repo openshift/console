@@ -29,9 +29,10 @@ import TopologyEdgePanel from './TopologyEdgePanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP } from './const';
+import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
+import TopologyHelmReleasePanel from './TopologyHelmReleasePanel';
 
 interface StateProps {
   filters: TopologyFilters;
@@ -195,6 +196,9 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
             }}
           />
         );
+      }
+      if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
+        return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
       }
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }
