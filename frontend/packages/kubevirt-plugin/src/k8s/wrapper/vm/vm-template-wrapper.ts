@@ -1,15 +1,20 @@
 /* eslint-disable lines-between-class-members */
-import * as _ from 'lodash';
-import { getName } from '@console/shared/src';
 import { apiVersionForModel, K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
-import { Wrapper } from '../common/wrapper';
-import { getLabels } from '../../../selectors/selectors';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { ensurePath } from '../utils/utils';
-import { selectVM } from '../../../selectors/vm-template/selectors';
 import { MutableVMWrapper, VMWrapper } from './vm-wrapper';
+import { K8sResourceKindMethods } from '../types/types';
+import { selectVM } from '../../../selectors/vm-template/basic';
+import { findKeySuffixValue } from '../../../selectors/utils';
+import {
+  TEMPLATE_FLAVOR_LABEL,
+  TEMPLATE_OS_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
+} from '../../../constants/vm';
 
-export class VMTemplateWrapper extends Wrapper<TemplateKind> {
+export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind>
+  implements K8sResourceKindMethods {
   static mergeWrappers = (...vmTemplateWrappers: VMTemplateWrapper[]): VMTemplateWrapper =>
     VMTemplateWrapper.defaultMergeWrappers(VMTemplateWrapper, vmTemplateWrappers);
 
@@ -47,9 +52,9 @@ export class VMTemplateWrapper extends Wrapper<TemplateKind> {
     super(vmTemplate, opts);
   }
 
-  getName = () => getName(this.data);
-  getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
-  hasLabel = (label: string) => _.has(this.getLabels(null), label);
+  getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
+  getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
+  getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
 
   getParameters = (defaultValue = []) => (this.data && this.data.parameters) || defaultValue;
 

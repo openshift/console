@@ -9,7 +9,7 @@ import {
   getVolumes,
 } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getSimpleName } from '../../../selectors/utils';
 import { DiskWrapper } from '../../wrapper/vm/disk-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';

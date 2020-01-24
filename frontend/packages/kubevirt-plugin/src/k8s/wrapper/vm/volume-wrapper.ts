@@ -6,7 +6,7 @@ import {
   getVolumeContainerImage,
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
-} from '../../../selectors/vm';
+} from '../../../selectors/vm/volume';
 
 type CombinedTypeData = {
   name?: string;

@@ -12,7 +12,7 @@ import {
 } from '@console/internal/models';
 import { getLoadedData } from '../../../utils';
 import { asVM, getVMLikeModel } from '../../../selectors/vm';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';

@@ -18,7 +18,6 @@ import {
 import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
 import { MutableDataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
-import { selectVM } from '../../../../selectors/vm-template/selectors';
 import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { toShallowJS } from '../../../../utils/immutable';
@@ -26,6 +25,7 @@ import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/c
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import { selectVM } from '../../../../selectors/vm-template/basic';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;

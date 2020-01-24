@@ -12,6 +12,7 @@ import {
 } from '../../constants';
 import { buildOwnerReferenceForModel } from '../../utils';
 import { VirtualMachineInstanceModel } from '../../models';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];
@@ -47,7 +48,7 @@ export const isPodSchedulable = (pod: PodKind) => {
 };
 
 export const findVMPod = (
-  vm: VMKind,
+  vm: VMILikeEntityKind,
   pods?: PodKind[],
   podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
 ) => {

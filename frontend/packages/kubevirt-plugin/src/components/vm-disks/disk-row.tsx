@@ -9,8 +9,8 @@ import {
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
-import { VMLikeEntityKind } from '../../types';
-import { asVM, isVM, isVMRunning } from '../../selectors/vm';
+import { VMLikeEntityKind } from '../../types/vmLike';
+import { asVM, isVM, isVMI, isVMRunning } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
 import { ValidationCell } from '../table/validation-cell';
 import { VMNicRowActionOpts } from '../vm-nics/types';
@@ -74,7 +74,7 @@ const getActions = (
   opts: VMStorageRowActionOpts,
 ) => {
   const actions = [];
-  if (isVMRunning(asVM(vmLikeEntity))) {
+  if (isVMI(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))) {
     return actions;
   }
 
@@ -163,7 +163,10 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
             withProgress,
           })}
           isDisabled={
-            isDisabled || !!getDeletetionTimestamp(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))
+            isDisabled ||
+            isVMI(vmLikeEntity) ||
+            !!getDeletetionTimestamp(vmLikeEntity) ||
+            isVMRunning(asVM(vmLikeEntity))
           }
           id={`kebab-for-${disk.getName()}`}
         />

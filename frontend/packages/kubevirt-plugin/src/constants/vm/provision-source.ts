@@ -9,7 +9,7 @@ import {
   getVolumeDataVolumeName,
   getVolumes,
 } from '../../selectors/vm';
-import { VMLikeEntityKind } from '../../types';
+import { VMLikeEntityKind } from '../../types/vmLike';
 import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-source';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';

@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getDescription } from '../../../selectors/selectors';
-import { VMLikeEntityKind } from '../../../types';
+import { VMGenericLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
 
@@ -57,7 +57,7 @@ export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalPr
 
 export type VMDescriptionModalProps = HandlePromiseProps &
   ModalComponentProps & {
-    vmLikeEntity: VMLikeEntityKind;
+    vmLikeEntity: VMGenericLikeEntityKind;
   };
 
 export const vmDescriptionModal = createModalLauncher(VMDescriptionModal);

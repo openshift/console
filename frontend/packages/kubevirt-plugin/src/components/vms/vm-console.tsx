@@ -2,14 +2,10 @@ import * as React from 'react';
 import { AccessConsoles, VncConsole } from '@patternfly/react-console';
 import { Button } from '@patternfly/react-core';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PodModel, ServiceModel } from '@console/internal/models';
-import {
-  VirtualMachineInstanceMigrationModel,
-  VirtualMachineInstanceModel,
-  VirtualMachineModel,
-} from '../../models';
+import { getNamespace } from '@console/shared';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { ServiceModel } from '@console/internal/models';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import {
   findRDPService,
   getRdpConnectionDetails,
@@ -21,10 +17,10 @@ import {
   RDPConnectionDetailsType,
   VNCConnectionDetailsType,
 } from '../../selectors/vmi';
-import { findVMPod } from '../../selectors/pod/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getLoadedData, getResource } from '../../utils';
-import { isVMStarting, isWindows } from '../../selectors/vm';
+import { findVMPod } from '../../selectors/pod/selectors';
+import { isVMStarting, isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
 import { VMIKind, VMKind } from '../../types/vm';
 import { menuActionStart } from './menu-actions';
 import { SerialConsoleConnector } from './serial-console-connector';
@@ -100,11 +96,9 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 };
 
 const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
-  const { vm } = props;
-  const vmi = getLoadedData(props.vmi);
-  const pods = getLoadedData(props.pods);
+  const { vm: vmProp, vmi, pods, migrations } = props;
+  const vm = asVM(vmProp);
   const services = getLoadedData(props.services);
-  const migrations = getLoadedData(props.migrations);
 
   const onStartVm = () => {
     const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
@@ -131,35 +125,29 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   );
 };
 
-export const VMConsoleFirehose: React.FC<VMTabProps> = ({ obj: vm }) => {
-  const name = getName(vm);
+export const VMConsoleFirehose: React.FC<VMTabProps> = ({
+  obj: objProp,
+  vm: vmProp,
+  vmi: vmiProp,
+  pods,
+  migrations,
+  customData: { kindObj },
+}) => {
+  const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
+  const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmiProp;
+
   const namespace = getNamespace(vm);
 
-  const vmiRes = getResource(VirtualMachineInstanceModel, {
-    name,
-    namespace,
-    isList: false,
-    prop: 'vmi',
-    optional: true,
-  });
-
   const resources = [
-    vmiRes,
     // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
     // So read all services and filter on frontend.
     getResource(ServiceModel, { namespace, prop: 'services' }),
-    getResource(PodModel, {
-      namespace,
-      matchExpressions: [{ key: 'kubevirt.io', operator: 'Exists' }],
-      prop: 'pods',
-    }),
-    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
   ];
 
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VmConsolesWrapper vm={vm} />
+        <VmConsolesWrapper vm={vm} vmi={vmi} migrations={migrations} pods={pods} />
       </Firehose>
     </div>
   );
@@ -167,10 +155,10 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({ obj: vm }) => {
 
 type VmConsolesWrapperProps = {
   vm?: VMKind;
-  vmi?: FirehoseResult<VMIKind>;
-  services?: FirehoseResult<K8sResourceKind[]>;
-  pods?: FirehoseResult<K8sResourceKind[]>;
-  migrations?: FirehoseResult<K8sResourceKind[]>;
+  vmi?: VMIKind;
+  services?: FirehoseResult;
+  pods?: PodKind[];
+  migrations?: K8sResourceKind[];
 };
 
 type VMConsolesProps = {

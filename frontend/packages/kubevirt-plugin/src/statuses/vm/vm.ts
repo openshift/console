@@ -18,6 +18,7 @@ import {
   isVMCreated,
   findConversionPod,
   getVMStatusConditions,
+  isVMI,
 } from '../../selectors/vm';
 import { getPodStatus } from '../pod/pod';
 import {
@@ -50,8 +51,10 @@ import {
 } from './constants';
 import { Status } from '..';
 import { isVMIPaused } from '../../selectors/vmi/basic';
+import { getPhase } from '@console/noobaa-storage-plugin/src/utils';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
-const isBeingMigrated = (vm: VMKind, migrations?: K8sResourceKind[]): VMStatus => {
+const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatus => {
   const migration = findVMIMigration(vm, migrations);
   if (isMigrating(migration)) {
     return { status: VM_STATUS_MIGRATING, message: getMigrationStatusPhase(migration) };
@@ -59,7 +62,11 @@ const isBeingMigrated = (vm: VMKind, migrations?: K8sResourceKind[]): VMStatus =
   return NOT_HANDLED;
 };
 
-const isBeingStopped = (vm: VMKind, launcherPod: PodKind = null): VMStatus => {
+const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatus => {
+  if (isVMI(vm)) {
+    return NOT_HANDLED;
+  }
+
   if (isVMReady(vm) || isVMCreated(vm)) {
     const podStatus = getPodStatus(launcherPod);
     const containerStatuses = getPodContainerStatuses(launcherPod);
@@ -84,8 +91,7 @@ const isBeingStopped = (vm: VMKind, launcherPod: PodKind = null): VMStatus => {
   return NOT_HANDLED;
 };
 
-const isRunning = (vm: VMKind): VMStatus =>
-  isVMRunning(vm) ? NOT_HANDLED : { status: VM_STATUS_OFF };
+const isOff = (vm: VMKind): VMStatus => (isVMRunning(vm) ? NOT_HANDLED : { status: VM_STATUS_OFF });
 
 const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatus => {
   if ((getStatusPhase(vmi) || '').toLowerCase() === 'running') {
@@ -101,7 +107,7 @@ const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatus => {
 const isPaused = (vmi: VMIKind): VMStatus =>
   isVMIPaused(vmi) ? { status: VM_STATUS_PAUSED } : NOT_HANDLED;
 
-const isVMError = (vm: VMKind): VMStatus => {
+const isVMError = (vm: VMILikeEntityKind): VMStatus => {
   // is an issue with the VM definition?
   const condition = getVMStatusConditions(vm)[0];
   if (condition) {
@@ -113,7 +119,11 @@ const isVMError = (vm: VMKind): VMStatus => {
   return NOT_HANDLED;
 };
 
-const isCreated = (vm: VMKind, launcherPod: PodKind = null): VMStatus => {
+const isCreated = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatus => {
+  if (isVMI(vm)) {
+    return NOT_HANDLED;
+  }
+
   if (isVMCreated(vm)) {
     // created but not yet ready
     if (launcherPod) {
@@ -182,7 +192,7 @@ const isBeingImported = (vm: VMKind, pods?: PodKind[]): VMStatus => {
   return NOT_HANDLED;
 };
 
-const isV2VConversion = (vm: VMKind, pods?: PodKind[]): VMStatus => {
+const isV2VConversion = (vm: VMILikeEntityKind, pods?: PodKind[]): VMStatus => {
   const conversionPod = findConversionPod(vm, pods);
   const podPhase = getPodStatusPhase(conversionPod);
   if (conversionPod && podPhase !== POD_PHASE_SUCEEDED) {
@@ -235,23 +245,28 @@ export const getVMStatus = ({
   pods,
   migrations,
 }: {
-  vm: VMKind;
+  vm?: VMKind;
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
 }): VMStatus => {
-  const launcherPod = findVMPod(vm, pods);
+  const vmLike = vm || vmi;
+  const launcherPod = findVMPod(vmLike, pods);
   return (
     isPaused(vmi) ||
-    isV2VConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
-    isBeingMigrated(vm, migrations) || //  -||-
-    isBeingImported(vm, pods) || //  -||-
-    isBeingStopped(vm, launcherPod) ||
-    isRunning(vm) ||
+    isV2VConversion(vmLike, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
+    isBeingMigrated(vmLike, migrations) || //  -||-
+    (vm && isBeingImported(vm, pods)) || //  -||-
+    isBeingStopped(vmLike, launcherPod) ||
+    (vm && isOff(vm)) ||
     isReady(vmi, launcherPod) ||
-    isVMError(vm) ||
-    isCreated(vm, launcherPod) ||
-    isWaitingForVMI(vm) || { status: VM_STATUS_UNKNOWN }
+    isVMError(vmLike) ||
+    isCreated(vmLike, launcherPod) ||
+    (!vmi && vm && isWaitingForVMI(vm)) ||
+    (getPhase(vmi) === 'Running' && { status: VM_STATUS_RUNNING }) ||
+    (['Scheduling', 'Scheduled'].includes(getPhase(vmi)) && { status: VM_STATUS_STARTING }) ||
+    (getPhase(vmi) === 'Pending' && { status: VM_STATUS_VMI_WAITING }) ||
+    (getPhase(vmi) === 'Failed' && { status: VM_STATUS_ERROR }) || { status: VM_STATUS_UNKNOWN }
   );
 };
 

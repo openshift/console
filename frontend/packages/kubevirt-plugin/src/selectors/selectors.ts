@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../types';
+import { VMGenericLikeEntityKind } from '../types/vmLike';
 
 export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'];
 
@@ -9,12 +9,15 @@ export const getGeneratedName = (value) =>
 
 export const getLabels = (entity: K8sResourceKind, defaultValue?: any) =>
   _.get(entity, 'metadata.labels', defaultValue) as K8sResourceKind['metadata']['labels'];
-export const getAnnotations = (vm: VMLikeEntityKind, defaultValue?: any) =>
+export const getAnnotations = (vm: VMGenericLikeEntityKind, defaultValue?: any) =>
   _.get(vm, 'metadata.annotations', defaultValue);
-export const getAnnotation = (vm: VMLikeEntityKind, annotationName: string, defaultValue?: any) =>
-  _.get(vm, ['metadata', 'annotations', annotationName], defaultValue);
+export const getAnnotation = (
+  vm: VMGenericLikeEntityKind,
+  annotationName: string,
+  defaultValue?: any,
+) => _.get(vm, ['metadata', 'annotations', annotationName], defaultValue);
 
-export const getDescription = (vm: VMLikeEntityKind) =>
+export const getDescription = (vm: VMGenericLikeEntityKind) =>
   _.get(vm, 'metadata.annotations.description');
 
 export const getLabelValue = (entity: K8sResourceKind, label: string): string =>

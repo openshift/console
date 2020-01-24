@@ -7,14 +7,8 @@ import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getSimpleName } from '../../../selectors/utils';
 import { VolumeType, DiskType } from '../../../constants/vm/storage';
-import { VMLikeEntityKind } from '../../../types';
-import {
-  asVM,
-  getDataVolumeTemplates,
-  getDisks,
-  getVolumes,
-  isWinToolsImage,
-} from '../../../selectors/vm';
+import { VMGenericLikeEntityKind } from '../../../types/vmLike';
+import { asVM, getDataVolumeTemplates, isWinToolsImage } from '../../../selectors/vm';
 import { getLoadedData, isLoaded } from '../../../utils';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { DYNAMIC } from '../../../utils/strings';
@@ -22,6 +16,7 @@ import { DiskWrapper } from './disk-wrapper';
 import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
+import { asVMILikeWrapper } from '../utils/convert';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -217,16 +212,19 @@ export class CombinedDiskFactory {
   private readonly pvcsLoading: boolean;
 
   static initializeFromVMLikeEntity = (
-    vmLikeEntity: VMLikeEntityKind,
+    vmLikeEntity: VMGenericLikeEntityKind,
     datavolumes?: FirehoseResult<V1alpha1DataVolume[]>,
-    pvcs?: FirehoseResult<K8sResourceKind[]>,
+    pvcs?: FirehoseResult,
   ) => {
-    const vm = asVM(vmLikeEntity);
+    const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
 
     return new CombinedDiskFactory({
-      disks: getDisks(vm),
-      volumes: getVolumes(vm),
-      dataVolumes: [...getLoadedData(datavolumes, []), ...getDataVolumeTemplates(vm)],
+      disks: vmiLikeWrapper?.getDisks() || [],
+      volumes: vmiLikeWrapper?.getVolumes() || [],
+      dataVolumes: [
+        ...getLoadedData(datavolumes, []),
+        ...getDataVolumeTemplates(asVM(vmLikeEntity)),
+      ],
       pvcs: getLoadedData(pvcs),
       dataVolumesLoading: !isLoaded(datavolumes),
       pvcsLoading: !isLoaded(pvcs),

@@ -13,7 +13,7 @@ import {
 import { ModalFooter } from '../modal/modal-footer';
 import { getVMLikeModel, isDedicatedCPUPlacement, asVM } from '../../../selectors/vm';
 import { getDedicatedCpuPatch } from '../../../k8s/patches/vm/vm-cpu-patches';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getLoadedData, isLoaded, getLoadError } from '../../../utils';
 import { RESOURCE_NO_NODES_AVAILABLE, DEDICATED_RESOURCES } from './consts';
 import './dedicated-resources-modal.scss';

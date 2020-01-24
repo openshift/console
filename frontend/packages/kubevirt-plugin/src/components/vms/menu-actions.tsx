@@ -13,7 +13,7 @@ import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm'
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
-import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { isVMIPaused } from '../../selectors/vmi';
 import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
@@ -191,7 +191,7 @@ export const vmiMenuActions = [
 
 type ExtraResources = { vmi: VMIKind; pods: PodKind[]; migrations: K8sResourceKind[] };
 
-export const menuActionsCreator = (
+export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
   { vmi, pods, migrations }: ExtraResources,
@@ -201,5 +201,11 @@ export const menuActionsCreator = (
 
   return vmMenuActions.map((action) => {
     return action(kindObj, vm, { vmi, vmStatus, migration });
+  });
+};
+
+export const vmiMenuActionsCreator = (kindObj: K8sKind, vmi: VMIKind) => {
+  return vmiMenuActions.map((action) => {
+    return action(kindObj, vmi);
   });
 };

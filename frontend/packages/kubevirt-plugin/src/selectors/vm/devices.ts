@@ -1,9 +1,11 @@
 import * as _ from 'lodash';
-import { VMLikeEntityKind, BootableDeviceType } from '../../types';
+import { BootableDeviceType, V1NetworkInterface } from '../../types';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { DeviceType } from '../../constants';
 import { getDisks, getInterfaces } from './selectors';
 import { asVM } from './vmlike';
+import { VMLikeEntityKind } from '../../types/vmLike';
+import { V1Disk } from '../../types/vm/disk/V1Disk';
 
 export const getBootDeviceIndex = (devices, bootOrder) =>
   devices.findIndex((device) => device.bootOrder === bootOrder);
@@ -11,23 +13,29 @@ export const getBootDeviceIndex = (devices, bootOrder) =>
 export const getDeviceBootOrder = (device, defaultValue?): number =>
   device && device.bootOrder === undefined ? defaultValue : device.bootOrder;
 
-export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
-  const vm = asVM(vmLikeEntity);
-
-  const disks = getDisks(vm).map((disk) => ({
+export const transformDevices = (
+  disks: V1Disk[] = [],
+  nics: V1NetworkInterface[] = [],
+): BootableDeviceType[] => {
+  const transformedDisks = disks.map((disk) => ({
     type: DeviceType.DISK,
     typeLabel: DiskWrapper.initialize(disk)
       .getType()
       .toString(),
     value: disk,
   }));
-  const nics = getInterfaces(vm).map((nic) => ({
+  const transformedNics = nics.map((nic) => ({
     type: DeviceType.NIC,
     typeLabel: 'NIC',
     value: nic,
   }));
 
-  return [...disks, ...nics];
+  return [...transformedDisks, ...transformedNics];
+};
+
+export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
+  const vm = asVM(vmLikeEntity);
+  return transformDevices(getDisks(vm), getInterfaces(vm));
 };
 
 export const getBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {

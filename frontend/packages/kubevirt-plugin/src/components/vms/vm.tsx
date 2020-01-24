@@ -11,14 +11,12 @@ import {
   K8sEntityMap,
   dimensifyHeader,
   dimensifyRow,
-  Status,
 } from '@console/shared';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { getPhase } from '@console/noobaa-storage-plugin/src/utils';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   VirtualMachineInstanceMigrationModel,
@@ -31,11 +29,12 @@ import { getBasicID, getLoadedData, getResource } from '../../utils';
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
 import { getVMStatusSortString } from '../../statuses/vm/constants';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
-import { isVM } from '../../selectors/vm';
+import { isVM, getVMLikeModel } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 
 import './vm.scss';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
@@ -96,11 +95,6 @@ const VMRow: React.FC<VMRowProps> = ({
   const { name, namespace, node, creationTimestamp, uid, vmStatus } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
 
-  const status = vm ? (
-    <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
-  ) : (
-    <Status status={getPhase(vmi)} />
-  );
   const options = vm
     ? vmMenuActions.map((action) =>
         action(VirtualMachineModel, vm, {
@@ -114,20 +108,14 @@ const VMRow: React.FC<VMRowProps> = ({
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
-        {vm ? (
-          <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
-        ) : (
-          <ResourceLink
-            kind={VirtualMachineInstanceModel.kind}
-            name={getName(vmi)}
-            namespace={namespace}
-          />
-        )}
+        <ResourceLink kind={getVMLikeModel(vm || vmi).kind} name={name} namespace={namespace} />
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
-      <TableData className={dimensify()}>{status}</TableData>
+      <TableData className={dimensify()}>
+        <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+      </TableData>
       <TableData className={dimensify()}>{fromNow(creationTimestamp)}</TableData>
       <TableData className={dimensify()}>
         {node && <ResourceLink kind={NodeModel.kind} name={node} namespace={namespace} />}
@@ -217,21 +205,20 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     );
     const virtualMachines = _.unionBy(loadedVMs, loadedVMIs, getBasicID);
 
-    return virtualMachines.map((obj: VMKind | VMIKind) => {
+    return virtualMachines.map((obj: VMILikeEntityKind) => {
       const lookupID = getBasicID(obj);
       const { vm, vmi } = isVM(obj)
         ? { vm: obj as VMKind, vmi: vmisLookup[lookupID] as VMIKind }
         : { vm: null, vmi: obj as VMIKind };
 
-      const vmStatus =
-        vm && getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
+      const vmStatus = getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
 
       return {
         metadata: {
           name: getName(obj),
           namespace: getNamespace(obj),
           vmStatus,
-          status: vm ? getVMStatusSortString(vmStatus) : getPhase(vmi),
+          status: getVMStatusSortString(vmStatus),
           node: getVMINodeName(vmi),
           creationTimestamp: getCreationTimestamp(obj),
           uid: getUID(obj),

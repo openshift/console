@@ -34,10 +34,11 @@ const humanizeCpuCores = (v) => {
 export const VMUtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
-  const { vm, pods } = React.useContext(VMDashboardContext);
-  const vmName = getName(vm);
-  const namespace = getNamespace(vm);
-  const launcherPodName = getName(findVMPod(vm, pods));
+  const { vm, vmi, pods } = React.useContext(VMDashboardContext);
+  const vmiLike = vm || vmi;
+  const vmName = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
+  const launcherPodName = getName(findVMPod(vmiLike, pods));
   const queries = React.useMemo(
     () =>
       getUtilizationQueries({

@@ -1,22 +1,22 @@
 import * as _ from 'lodash';
-import { getNamespace, getName } from '@console/shared/src/selectors';
+import { getName, getNamespace } from '@console/shared/src/selectors';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { VirtualMachineModel } from '../../models';
-import { VMKind, VMLikeEntityKind } from '../../types';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { iGetIn } from '../../utils/immutable';
 import {
+  CUSTOM_FLAVOR,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
-  TEMPLATE_WORKLOAD_LABEL,
-  CUSTOM_FLAVOR,
   TEMPLATE_TYPE_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants';
 import { getLabels } from '../selectors';
 import { getOperatingSystem, getWorkloadProfile } from '../vm/selectors';
 import { flavorSort } from '../../utils/sort';
+import { VMKind } from '../../types/vm';
 
 export const getVMTemplateNamespacedName = (
-  vm: VMLikeEntityKind,
+  vm: VMGenericLikeEntityKind,
 ): { name: string; namespace: string } => {
   if (!vm || !vm.metadata || !vm.metadata.labels) {
     return null;
@@ -27,7 +27,7 @@ export const getVMTemplateNamespacedName = (
   return name && namespace ? { name, namespace } : null;
 };
 
-const getVMTemplate = (vm: VMLikeEntityKind, templates: TemplateKind[]): TemplateKind => {
+const getVMTemplate = (vm: VMGenericLikeEntityKind, templates: TemplateKind[]): TemplateKind => {
   const namespacedName = getVMTemplateNamespacedName(vm);
   return namespacedName
     ? templates.find(
@@ -37,9 +37,6 @@ const getVMTemplate = (vm: VMLikeEntityKind, templates: TemplateKind[]): Templat
       )
     : undefined;
 };
-
-export const selectVM = (vmTemplate: TemplateKind): VMKind =>
-  _.get(vmTemplate, 'objects', []).find((obj) => obj.kind === VirtualMachineModel.kind);
 
 export const getTemplatesLabelValues = (templates: TemplateKind[], label: string) => {
   const labelValues = [];
@@ -105,7 +102,7 @@ export const getTemplateForFlavor = (templates: TemplateKind[], vm: VMKind, flav
   return matchingTemplates.length > 0 ? matchingTemplates[0] : undefined;
 };
 
-export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
+export const getFlavors = (vm: VMGenericLikeEntityKind, templates: TemplateKind[]) => {
   const vmTemplate = getVMTemplate(vm, templates);
 
   const flavors = {

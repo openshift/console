@@ -3,7 +3,7 @@ import { getNamespace } from '@console/shared';
 import { Firehose } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { asVM } from '../../../selectors/vm';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { CDRomModal } from './cdrom-modal';

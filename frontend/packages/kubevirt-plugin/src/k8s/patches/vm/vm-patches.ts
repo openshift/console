@@ -1,12 +1,14 @@
 import * as _ from 'lodash';
 import { Patch, TemplateKind } from '@console/internal/module/k8s';
-import { VMLikeEntityKind, VMKind, CPU } from '../../../types';
+import { VMGenericLikeEntityKind, VMLikeEntityKind } from '../../../types/vmLike';
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
 import { getFlavor, getCPU, getMemory, isVM, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
 import { CUSTOM_FLAVOR, TEMPLATE_FLAVOR_LABEL } from '../../../constants';
-import { selectVM, getTemplateForFlavor } from '../../../selectors/vm-template/selectors';
+import { getTemplateForFlavor } from '../../../selectors/vm-template/selectors';
 import { getVMLikePatches } from '../vm-template';
 import { isCPUEqual } from '../../../utils';
+import { selectVM } from '../../../selectors/vm-template/basic';
+import { CPU, VMKind } from '../../../types/vm';
 
 const getLabelsPatch = (vmLike: VMLikeEntityKind): Patch => {
   if (!_.has(vmLike.metadata, 'labels')) {
@@ -155,7 +157,7 @@ const getUpdateCpuMemoryPatch = (vm: VMKind, cpu: CPU, memory: string): Patch[] 
 };
 
 export const getUpdateDescriptionPatches = (
-  vmLikeEntity: VMLikeEntityKind,
+  vmLikeEntity: VMGenericLikeEntityKind,
   description: string,
 ): Patch[] => {
   const patches = [];

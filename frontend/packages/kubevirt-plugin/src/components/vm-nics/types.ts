@@ -1,5 +1,5 @@
 import { ValidationObject } from '@console/shared';
-import { VMLikeEntityKind } from '../../types';
+import { VMLikeEntityKind } from '../../types/vmLike';
 
 export type NetworkSimpleData = {
   name?: string;
