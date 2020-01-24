@@ -102,6 +102,7 @@ class CheckBoxes_ extends React.Component {
     const all = _.map(this.props.items, 'id');
     const recognized = _.intersection(this.state.selected, all);
     if (!_.isEmpty(recognized)) {
+      this.props.applyFilter && this.props.applyFilter(recognized);
       this.props.reduxIDs.forEach((id) =>
         this.props.filterList(id, this.props.type, { selected: new Set(recognized), all }),
       );
@@ -163,5 +164,5 @@ class CheckBoxes_ extends React.Component {
   }
 }
 
-/** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
+/** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string, applyFilter?: (filter) => void}>} */
 export const CheckBoxes = connect(null, { filterList })(CheckBoxes_);
