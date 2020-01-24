@@ -41,13 +41,16 @@ describe('<PrometheusGraphLink />', () => {
     // Need full mount with redux store since this is a redux-connected component
     const getWrapper = (query: string) => {
       const wrapper = mount(
-        <Router history={history}>
-          <Provider store={store}>
-            <PrometheusGraphLink query={query}>
-              <p className="test-class" />
-            </PrometheusGraphLink>
-          </Provider>
-        </Router>,
+        <PrometheusGraphLink query={query}>
+          <p className="test-class" />
+        </PrometheusGraphLink>,
+        {
+          wrappingComponent: ({ children }) => (
+            <Router history={history}>
+              <Provider store={store}>{children}</Provider>
+            </Router>
+          ),
+        },
       );
       expect(wrapper.find('p.test-class').exists()).toBe(true);
       return wrapper;

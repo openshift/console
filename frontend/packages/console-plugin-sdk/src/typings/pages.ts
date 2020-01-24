@@ -1,5 +1,5 @@
-import { RouteProps, RouteComponentProps } from 'react-router-dom';
-import { K8sKind, K8sResourceKindReference } from '@console/internal/module/k8s';
+import { RouteComponentProps, RouteProps } from 'react-router-dom';
+import { K8sKind, K8sResourceKindReference, K8sResourceKind } from '@console/internal/module/k8s';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {
@@ -9,6 +9,23 @@ namespace ExtensionProperties {
     /** Loader for the corresponding React page component. */
     loader: LazyLoader<T>;
   }
+
+  /** To add an additonal page to public components(ex: PVs, PVCs) via plugins */
+  export type ResourceTabPage = ResourcePage<{
+    /** See https://reacttraining.com/react-router/web/api/match */
+    match: RouteComponentProps['match'];
+    /** The resource kind scope. */
+    kind: K8sResourceKindReference;
+    /** The namespace scope. */
+    namespace: string;
+    /** Name of the resource tab inside detailsPage  */
+    name: string;
+  }> & {
+    /** The href for the resource page */
+    href: string;
+    /** Name of the resource tab inside detailsPage  */
+    name: string;
+  };
 
   export type ResourceListPage = ResourcePage<{
     /** See https://reacttraining.com/react-router/web/api/match */
@@ -21,7 +38,10 @@ namespace ExtensionProperties {
     mock: boolean;
     /** The namespace scope. */
     namespace: string;
-  }>;
+  }> & {
+    /** Some Resources require ReferenceFor instead of ReferenceForModel */
+    modelParser?: (obj: K8sResourceKind) => string;
+  };
 
   export type ResourceDetailsPage = ResourcePage<{
     /** See https://reacttraining.com/react-router/web/api/match */
@@ -32,7 +52,10 @@ namespace ExtensionProperties {
     namespace: string;
     /** The page name. */
     name: string;
-  }>;
+  }> & {
+    /** Some Resources require ReferenceFor instead of ReferenceForModel */
+    modelParser?: (obj: K8sResourceKind) => string;
+  };
 
   // Maps to react-router#https://reacttraining.com/react-router/web/api/Route
   // See https://reacttraining.com/react-router/web/api/Route
@@ -60,6 +83,10 @@ export interface RoutePage extends Extension<ExtensionProperties.RoutePage> {
   type: 'Page/Route';
 }
 
+export interface ResourceTabPage extends Extension<ExtensionProperties.ResourceTabPage> {
+  type: 'Page/Resource/Tab';
+}
+
 export type ResourcePage = ResourceListPage | ResourceDetailsPage;
 
 export const isResourceListPage = (e: Extension): e is ResourceListPage => {
@@ -68,6 +95,10 @@ export const isResourceListPage = (e: Extension): e is ResourceListPage => {
 
 export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage => {
   return e.type === 'Page/Resource/Details';
+};
+
+export const isResourceTabPage = (e: Extension): e is ResourceTabPage => {
+  return e.type === 'Page/Resource/Tab';
 };
 
 export const isRoutePage = (e: Extension): e is RoutePage => {
