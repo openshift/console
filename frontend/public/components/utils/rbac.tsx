@@ -15,6 +15,7 @@ import {
   SelfSubjectAccessReviewKind,
 } from '../../module/k8s';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../models';
+import { useSafetyFirst } from '../../components/safety-first';
 
 // Memoize the result so we only make the request once for each access review.
 // This does mean that the user will have to refresh the page to see updates.
@@ -90,7 +91,7 @@ export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?,
 ): boolean => {
-  const [isAllowed, setAllowed] = React.useState(false);
+  const [isAllowed, setAllowed] = useSafetyFirst(false);
   // Destructure the attributes to pass them as dependencies to `useEffect`,
   // which doesn't do deep comparison of object dependencies.
   const {
@@ -115,7 +116,7 @@ export const useAccessReview = (
         // still enforces access control.
         setAllowed(true);
       });
-  }, [group, resource, subresource, verb, name, namespace, impersonateKey]);
+  }, [setAllowed, group, resource, subresource, verb, name, namespace, impersonateKey]);
 
   return isAllowed;
 };
