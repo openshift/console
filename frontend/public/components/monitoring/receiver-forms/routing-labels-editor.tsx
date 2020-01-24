@@ -69,7 +69,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
 
   const InvalidLabelName = () => (
     <span data-test-id="invalid-label-name-error">
-      Invalid name
+      Invalid name.
       <Tooltip
         content={
           <p>
@@ -167,14 +167,16 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               <div className="row">
                 <div className="col-xs-12 col-sm-12">
                   <div className="form-group">
-                    <label className="co-no-bold">
-                      <input
-                        type="checkbox"
-                        onChange={(e) => onRoutingLabelRegexChange(e, i)}
-                        checked={routeLabel.isRegex}
-                      />
-                      &nbsp; Regular Expression
-                    </label>
+                    <div className="checkbox">
+                      <label className="control-label">
+                        <input
+                          type="checkbox"
+                          onChange={(e) => onRoutingLabelRegexChange(e, i)}
+                          checked={routeLabel.isRegex}
+                        />
+                        Regular Expression
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>

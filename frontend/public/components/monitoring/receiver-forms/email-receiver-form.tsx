@@ -2,8 +2,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { SectionHeading } from '../../utils';
-import { SaveAsDefaultCheckbox, FormProps } from './alert-manager-receiver-forms';
+import { SectionHeading, ExpandCollapse } from '../../utils';
+import {
+  SaveAsDefaultCheckbox,
+  SendResolvedAlertsCheckbox,
+  FormProps,
+} from './alert-manager-receiver-forms';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',
@@ -15,19 +19,12 @@ const SMTP_GLOBAL_FIELDS = [
   'smtp_auth_secret',
   'smtp_require_tls',
 ];
-const GLOBAL_FIELDS = [...SMTP_GLOBAL_FIELDS]; //TODO follow up PR will add advanced fields
-
-const getGlobalValue = (globals, propName) => {
-  const fieldName = SMTP_GLOBAL_FIELDS.includes(propName)
-    ? propName
-    : propName.replace('smtp_', 'email_'); // 'email_...' are globals for advanced fields
-  return globals[fieldName];
-};
+const GLOBAL_FIELDS = [...SMTP_GLOBAL_FIELDS, 'email_send_resolved', 'email_html'];
 
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   // disable saveAsDefault if all SMTP form fields match global values
   const disableSaveAsDefault = SMTP_GLOBAL_FIELDS.every(
-    (propName) => formValues[propName] === getGlobalValue(globals, propName),
+    (propName) => formValues[propName] === globals[propName],
   );
 
   return (
@@ -51,7 +48,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="email-to-help">
-          The email address to send notifications to
+          The email address to send notifications to.
         </div>
       </div>
       <div className="form-group">
@@ -64,7 +61,6 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               <SaveAsDefaultCheckbox
                 formField="emailSaveAsDefault"
                 disabled={disableSaveAsDefault}
-                aria-disabled={disableSaveAsDefault}
                 label="Save as default SMTP configuration"
                 formValues={formValues}
                 dispatchFormChange={dispatchFormChange}
@@ -92,7 +88,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               }
             />
             <div className="help-block" id="email-from-help">
-              The email address to send notifications from
+              The email address to send notifications from.
             </div>
           </div>
           <div className="row">
@@ -116,7 +112,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   }
                 />
                 <div className="help-block" id="email-smarthost-help">
-                  Smarthost used for sending emails, including port number
+                  Smarthost used for sending emails, including port number.
                 </div>
               </div>
             </div>
@@ -140,7 +136,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   }
                 />
                 <div className="help-block" id="email-hello-help">
-                  The hostname to identify to the SMTP server
+                  The hostname to identify to the SMTP server.
                 </div>
               </div>
             </div>
@@ -229,29 +225,68 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
           </div>
-          <label className="co-no-bold" htmlFor="email-require-tls">
-            <input
-              type="checkbox"
-              id="email-require-tls"
-              data-test-id="email-require-tls"
-              onChange={(e) =>
-                dispatchFormChange({
-                  type: 'setFormValues',
-                  payload: {
-                    smtp_require_tls: e.target.checked,
-                  },
-                })
-              }
-              checked={formValues.smtp_require_tls}
-              aria-checked={formValues.smtp_require_tls}
-            />
-            &nbsp; Require TLS
-          </label>
+          <div className="checkbox">
+            <label className="control-label" htmlFor="email-require-tls">
+              <input
+                type="checkbox"
+                id="email-require-tls"
+                data-test-id="email-require-tls"
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: {
+                      smtp_require_tls: e.target.checked,
+                    },
+                  })
+                }
+                checked={formValues.smtp_require_tls}
+                aria-checked={formValues.smtp_require_tls}
+              />
+              Require TLS
+            </label>
+          </div>
         </div>
+      </div>
+      <div className="form-group">
+        <ExpandCollapse
+          textCollapsed="Show advanced configuration"
+          textExpanded="Hide advanced configuration"
+        >
+          <div className="co-form-subsection">
+            <div className="form-group">
+              <SendResolvedAlertsCheckbox
+                formField="email_send_resolved"
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="email-html">
+                Body of Email Notifications (HTML)
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="html-help"
+                id="email-html"
+                data-test-id="email-html"
+                value={formValues.email_html}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { email_html: e.target.value },
+                  })
+                }
+              />
+            </div>
+          </div>
+        </ExpandCollapse>
       </div>
     </div>
   );
 };
+
+const getConfigFieldName = (fld) => fld.substring(fld.indexOf('_') + 1); //strip off leading 'email_' or 'smtp_' prefix
 
 export const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = {
@@ -260,8 +295,7 @@ export const getInitialValues = (globals, receiverConfig) => {
   };
 
   GLOBAL_FIELDS.forEach((fld) => {
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'email_' or 'smtp_' prefix
-    initValues[fld] = _.get(receiverConfig, configFieldName, getGlobalValue(globals, fld));
+    initValues[fld] = _.get(receiverConfig, getConfigFieldName(fld), globals[fld]);
   });
 
   return initValues;
@@ -295,8 +329,8 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   // Only save these props in receiverConfig if different from global
   GLOBAL_FIELDS.forEach((fld) => {
     const formValue = formValues[fld];
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'email_' or 'smtp_' prefix
-    if (formValue !== getGlobalValue(globals, fld)) {
+    const configFieldName = getConfigFieldName(fld);
+    if (formValue !== globals[fld]) {
       if (SMTP_GLOBAL_FIELDS.includes(fld) && formValues.emailSaveAsDefault) {
         _.unset(receiverConfig, configFieldName); // saving as global so unset in config
       } else {

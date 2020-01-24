@@ -3,9 +3,21 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { RadioInput } from '../../radio';
-import { FormProps, SaveAsDefaultCheckbox } from './alert-manager-receiver-forms';
+import {
+  FormProps,
+  SendResolvedAlertsCheckbox,
+  SaveAsDefaultCheckbox,
+} from './alert-manager-receiver-forms';
+import { ExpandCollapse } from '../../utils';
 
-const GLOBAL_FIELDS = ['pagerduty_url']; //TODO follow up PR will add advanced fields
+const GLOBAL_FIELDS = [
+  'pagerduty_url',
+  'pagerduty_send_resolved',
+  'pagerduty_client',
+  'pagerduty_client_url',
+  'pagerduty_description',
+  'pagerduty_severity',
+];
 
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   return (
@@ -22,7 +34,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             onChange={(e) =>
               dispatchFormChange({
                 type: 'setFormValues',
-                payload: { pagerDutyIntegrationType: e.target.value },
+                payload: { pagerdutyIntegrationKeyType: e.target.value },
               })
             }
             checked={formValues.pagerdutyIntegrationKeyType === 'events'}
@@ -69,7 +81,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="integration-key-help">
-          PagerDuty integration key
+          PagerDuty integration key.
         </div>
       </div>
       <div className="form-group">
@@ -110,8 +122,112 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           </div>
         </div>
         <div className="help-block" id="pagerduty-url-help">
-          The URL of your PagerDuty Installation
+          The URL of your PagerDuty Installation.
         </div>
+      </div>
+      <div className="form-group">
+        <ExpandCollapse
+          textCollapsed="Show advanced configuration"
+          textExpanded="Hide advanced configuration"
+        >
+          <div className="co-form-subsection">
+            <SendResolvedAlertsCheckbox
+              formField="pagerduty_send_resolved"
+              formValues={formValues}
+              dispatchFormChange={dispatchFormChange}
+            />
+            <h3>Client Details</h3>
+            <div className="form-group">
+              <label className="control-label" htmlFor="pagerduty-client">
+                Client
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="client-help"
+                id="pagerduty-client"
+                data-test-id="pagerduty-client"
+                value={formValues.pagerduty_client}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { pagerduty_client: e.target.value },
+                  })
+                }
+              />
+              <div className="help-block" id="client-help">
+                The client identification of the Alertmanager.
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="pagerduty-client-url">
+                Client URL
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="client-url-help"
+                id="pagerduty-client-url"
+                data-test-id="pagerduty-client-url"
+                value={formValues.pagerduty_client_url}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { pagerduty_client_url: e.target.value },
+                  })
+                }
+              />
+              <div className="help-block" id="client-url-help">
+                A backlink to the sender of the notification.
+              </div>
+            </div>
+            <h3>Incident Details</h3>
+            <div className="form-group">
+              <label className="control-label" htmlFor="pagerduty-description">
+                Description
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="description-help"
+                id="pagerduty-description"
+                data-test-id="pagerduty-description"
+                value={formValues.pagerduty_description}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { pagerduty_description: e.target.value },
+                  })
+                }
+              />
+              <div className="help-block" id="description-help">
+                Description of the incident.
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="pagerduty-severity">
+                Severity
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="severity-help"
+                id="pagerduty-severity"
+                data-test-id="pagerduty-severity"
+                value={formValues.pagerduty_severity}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { pagerduty_severity: e.target.value },
+                  })
+                }
+              />
+              <div className="help-block" id="severity-help">
+                Severity of the incident.
+              </div>
+            </div>
+          </div>
+        </ExpandCollapse>
       </div>
     </div>
   );
