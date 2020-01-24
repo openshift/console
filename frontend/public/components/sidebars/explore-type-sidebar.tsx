@@ -109,7 +109,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         </Breadcrumb>
       )}
       {description && (
-        <p className="co-break-word co-pre-line">
+        <p className="co-break-word co-pre-wrap">
           <LinkifyExternal>{description}</LinkifyExternal>
         </p>
       )}
@@ -131,7 +131,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   </small>
                 </h5>
                 {definition.description && (
-                  <p className="co-break-word co-pre-line">
+                  <p className="co-break-word co-pre-wrap">
                     <LinkifyExternal>{definition.description}</LinkifyExternal>
                   </p>
                 )}
