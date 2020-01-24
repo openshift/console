@@ -6,7 +6,6 @@ import {
   ModelKind,
   Graph,
 } from '@console/topology';
-import { LayoutCallback } from '@console/topology/src/layouts/DagreLayout';
 import { NodeType, PipelineLayout } from './const';
 import SpacerNode from './SpacerNode';
 import TaskNode from './TaskNode';
@@ -39,29 +38,23 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
   }
 };
 
-// TODO: Fix this hack as it's not the best way to get the layout update
-type CallbackLayout = (onLayout: LayoutCallback) => LayoutFactory;
-export const layoutFactory: CallbackLayout = (onLayout) => (type: string, graph: Graph) => {
+export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
   switch (type) {
     case PipelineLayout.DAGRE_BUILDER:
     case PipelineLayout.DAGRE_VIEWER:
-      return new DagreLayout(
-        graph,
-        {
-          // Hack to get around undesirable defaults
-          // TODO: fix this, it's not ideal but it works for now
-          linkDistance: 20,
-          nodeDistance: 20,
-          groupDistance: 0,
-          collideDistance: 0,
-          simulationSpeed: 0,
-          chargeStrength: 0,
-          allowDrag: false,
-          layoutOnDrag: false,
-          ...getLayoutData(type),
-        },
-        onLayout,
-      );
+      return new DagreLayout(graph, {
+        // Hack to get around undesirable defaults
+        // TODO: fix this, it's not ideal but it works for now
+        linkDistance: 0,
+        nodeDistance: 0,
+        groupDistance: 0,
+        collideDistance: 0,
+        simulationSpeed: 0,
+        chargeStrength: 0,
+        allowDrag: false,
+        layoutOnDrag: false,
+        ...getLayoutData(type),
+      });
     default:
       return undefined;
   }

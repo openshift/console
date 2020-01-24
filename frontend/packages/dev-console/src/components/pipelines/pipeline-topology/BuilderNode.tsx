@@ -28,12 +28,12 @@ const BuilderNode: React.FC<{ element: Node }> = ({ element }) => {
         fill="transparent"
       />
       <g onClick={() => onNodeSelection(data)}>
-        <TaskNode element={element} />
-        {error?.message && (
+        <TaskNode element={element} disableTooltip />
+        {error && (
           <ErrorNodeDecorator
             x={BUILDER_NODE_ERROR_RADIUS / 2}
             y={BUILDER_NODE_ERROR_RADIUS / 4}
-            errorStr={error.message}
+            errorStr={error}
           />
         )}
       </g>

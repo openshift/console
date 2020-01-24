@@ -24,6 +24,7 @@ interface TaskProps {
   status?: TaskStatus;
   namespace: string;
   isPipelineRun: boolean;
+  disableTooltip?: boolean;
 }
 
 interface PipelineVisualizationTaskProp {
@@ -39,6 +40,7 @@ interface PipelineVisualizationTaskProp {
   };
   taskRun?: string;
   pipelineRunStatus?: string;
+  disableTooltip?: boolean;
 }
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
@@ -46,6 +48,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   task,
   namespace,
   pipelineRunStatus,
+  disableTooltip,
 }) => {
   const taskStatus = task.status || {
     duration: '',
@@ -60,6 +63,22 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       taskStatus.reason = runStatus.Cancelled;
     }
   }
+
+  const taskComponent = (
+    <TaskComponent
+      pipelineRunName={pipelineRunName}
+      name={task.name || ''}
+      namespace={namespace}
+      status={taskStatus}
+      isPipelineRun={!!pipelineRunStatus}
+      disableTooltip={disableTooltip}
+    />
+  );
+
+  if (disableTooltip) {
+    return taskComponent;
+  }
+
   let resources;
   if (task.taskRef.kind === ClusterTaskModel.kind) {
     resources = [
@@ -79,17 +98,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       },
     ];
   }
-  return (
-    <Firehose resources={resources}>
-      <TaskComponent
-        pipelineRunName={pipelineRunName}
-        name={task.name || ''}
-        namespace={namespace}
-        status={taskStatus}
-        isPipelineRun={!!pipelineRunStatus}
-      />
-    </Firehose>
-  );
+  return <Firehose resources={resources}>{taskComponent}</Firehose>;
 };
 const TaskComponent: React.FC<TaskProps> = ({
   pipelineRunName,
@@ -98,18 +107,35 @@ const TaskComponent: React.FC<TaskProps> = ({
   status,
   name,
   isPipelineRun,
+  disableTooltip,
 }) => {
-  const taskData: K8sResourceKind = task.data;
-  const stepList = _.get(taskData, ['spec', 'steps'], []);
+  const stepList = _.get(task, ['data', 'spec', 'steps'], []);
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
   const path = pipelineRunName
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
-  const visTask = (
-    <>
-      <div className="odc-pipeline-vis-task__connector" />
+
+  let taskPill = (
+    <div className="odc-pipeline-vis-task__content">
+      <div
+        className={cx('odc-pipeline-vis-task__title-wrapper', {
+          'is-text-center': !isPipelineRun,
+        })}
+      >
+        <div className="odc-pipeline-vis-task__title">{visualName}</div>
+        {showStatusState && <TaskComponentTaskStatus steps={stepStatusList} />}
+      </div>
+      {isPipelineRun && (
+        <div className="odc-pipeline-vis-task__status">
+          {showStatusState && <ColoredStatusIcon status={status.reason} height={18} width={18} />}
+        </div>
+      )}
+    </div>
+  );
+  if (!disableTooltip) {
+    taskPill = (
       <Tooltip
         position="bottom"
         enableFlip={false}
@@ -121,24 +147,15 @@ const TaskComponent: React.FC<TaskProps> = ({
           />
         }
       >
-        <div className="odc-pipeline-vis-task__content">
-          <div
-            className={cx('odc-pipeline-vis-task__title-wrapper', {
-              'is-text-center': !isPipelineRun,
-            })}
-          >
-            <div className="odc-pipeline-vis-task__title">{visualName}</div>
-            {showStatusState && <TaskComponentTaskStatus steps={stepStatusList} />}
-          </div>
-          {isPipelineRun && (
-            <div className="odc-pipeline-vis-task__status">
-              {showStatusState && (
-                <ColoredStatusIcon status={status.reason} height={18} width={18} />
-              )}
-            </div>
-          )}
-        </div>
+        {taskPill}
       </Tooltip>
+    );
+  }
+
+  const visTask = (
+    <>
+      <div className="odc-pipeline-vis-task__connector" />
+      {taskPill}
     </>
   );
   return (

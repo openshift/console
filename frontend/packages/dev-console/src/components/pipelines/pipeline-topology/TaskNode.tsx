@@ -5,7 +5,10 @@ import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/
 import { DROP_SHADOW_SPACING } from './const';
 import { TaskNodeModelData } from './types';
 
-const TaskNode: React.FC<{ element: Node }> = ({ element }) => {
+const TaskNode: React.FC<{ element: Node; disableTooltip?: boolean }> = ({
+  element,
+  disableTooltip,
+}) => {
   const { height, width } = element.getBounds();
   const { pipeline, pipelineRun, task } = element.getData() as TaskNodeModelData;
 
@@ -16,6 +19,7 @@ const TaskNode: React.FC<{ element: Node }> = ({ element }) => {
         task={task}
         pipelineRunStatus={pipelineRun && pipelineRunFilterReducer(pipelineRun)}
         namespace={pipeline?.metadata?.namespace}
+        disableTooltip={disableTooltip}
       />
     </foreignObject>
   );

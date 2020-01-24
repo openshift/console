@@ -2,7 +2,14 @@ import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import { Edge, Graph, Layout, Node } from '../types';
 import Point from '../geom/Point';
-import { BaseLayout, LayoutGroup, LayoutLink, LayoutNode, LayoutOptions } from './BaseLayout';
+import {
+  BaseLayout,
+  LayoutGroup,
+  LayoutLink,
+  LayoutNode,
+  LayoutOptions,
+  LAYOUT_DEFAULTS,
+} from './BaseLayout';
 
 class DagreNode extends LayoutNode implements dagre.Node {
   getUpdatableNode(): dagre.Node {
@@ -38,36 +45,23 @@ class DagreLink extends LayoutLink {
   }
 }
 
-type DagreLayoutOptions = LayoutOptions & {
-  marginx: number;
-  marginy: number;
-  nodesep: number;
-  edgesep: number;
-  ranker: string;
-  rankdir: string;
-};
+type DagreLayoutOptions = LayoutOptions & dagre.GraphLabel;
 
-export type LayoutCallback = (nodes: Node[], edges: Edge[]) => void;
 class DagreLayout extends BaseLayout implements Layout {
   private dagreOptions: DagreLayoutOptions;
 
-  private hackOnRender: LayoutCallback | undefined;
-
-  constructor(graph: Graph, options?: Partial<DagreLayoutOptions>, hackOnRender?: LayoutCallback) {
+  constructor(graph: Graph, options?: Partial<DagreLayoutOptions>) {
     super(graph, options);
     this.dagreOptions = {
       ...this.options,
-      ...{
-        marginx: 0,
-        marginy: 0,
-        nodesep: this.options.nodeDistance,
-        edgesep: this.options.linkDistance,
-        ranker: 'tight-tree',
-        rankdir: 'TB',
-      },
+      marginx: 0,
+      marginy: 0,
+      nodesep: this.options.nodeDistance,
+      edgesep: this.options.linkDistance,
+      ranker: 'tight-tree',
+      rankdir: 'TB',
       ...options,
     };
-    this.hackOnRender = hackOnRender;
   }
 
   protected createLayoutNode(node: Node, nodeDistance: number, index: number) {
@@ -97,14 +91,7 @@ class DagreLayout extends BaseLayout implements Layout {
   protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {
     if (initialRun || addingNodes) {
       const dagreGraph = new dagre.graphlib.Graph({ compound: true });
-      dagreGraph.setGraph({
-        marginx: this.dagreOptions.marginx,
-        marginy: this.dagreOptions.marginy,
-        nodesep: this.dagreOptions.nodesep,
-        edgesep: this.dagreOptions.edgesep,
-        ranker: this.dagreOptions.ranker,
-        rankdir: this.dagreOptions.rankdir,
-      });
+      dagreGraph.setGraph(_.omit(this.dagreOptions, Object.keys(LAYOUT_DEFAULTS)));
 
       _.forEach(this.groups, (group) => {
         dagreGraph.setNode(group.id, group);
@@ -134,8 +121,6 @@ class DagreLayout extends BaseLayout implements Layout {
     if (this.options.layoutOnDrag) {
       this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getFixedNodeDistance);
     }
-
-    this.hackOnRender && this.hackOnRender(graph.getNodes(), graph.getEdges());
   }
 }
 

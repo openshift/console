@@ -1,41 +1,37 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
-import { PipelineTask } from '../../../utils/pipeline-augment';
 import { PipelineLayout } from '../pipeline-topology/const';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
 import { getEdgesFromNodes } from '../pipeline-topology/utils';
 import { useNodes } from './hooks';
 import {
+  PipelineBuilderTaskGroup,
   SelectTaskCallback,
-  SetTaskErrorCallback,
   TaskErrorMap,
-  UpdateTaskCallback,
+  UpdateTasksCallback,
 } from './types';
 
 type PipelineBuilderVisualizationProps = {
   namespace: string;
-  onSetError: SetTaskErrorCallback;
   onTaskSelection: SelectTaskCallback;
-  onUpdateTasks: UpdateTaskCallback;
-  pipelineTasks: PipelineTask[];
+  onUpdateTasks: UpdateTasksCallback;
+  taskGroup: PipelineBuilderTaskGroup;
   tasksInError: TaskErrorMap;
 };
 
 const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> = ({
   namespace,
-  onSetError,
   onTaskSelection,
   onUpdateTasks,
-  pipelineTasks,
+  taskGroup,
   tasksInError,
 }) => {
   const { tasksLoaded, tasksCount, nodes, loadingTasksError } = useNodes(
     namespace,
-    onSetError,
     onTaskSelection,
     onUpdateTasks,
-    pipelineTasks,
+    taskGroup,
     tasksInError,
   );
 
@@ -49,7 +45,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   if (!tasksLoaded) {
     return <LoadingBox />;
   }
-  if (tasksCount === 0 && pipelineTasks.length === 0) {
+  if (tasksCount === 0 && taskGroup.tasks.length === 0) {
     // No tasks, nothing we can do here...
     return <Alert variant="danger" isInline title="Unable to locate any tasks." />;
   }

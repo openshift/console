@@ -65,7 +65,7 @@ export const integralShapePath: DoubleDraw = (start, finish) => {
   let secondCurve: string = null;
 
   if (start.y !== finish.y) {
-    const cornerX = start.x + Math.floor(NODE_SEPARATION_HORIZONTAL / 2);
+    const cornerX = Math.floor(start.x + NODE_SEPARATION_HORIZONTAL / 2);
     const firstCorner = new Point(cornerX, start.y);
     const secondCorner = new Point(cornerX, finish.y);
 

@@ -7,7 +7,7 @@ import {
   rerunPipelineAndRedirect,
   startPipeline,
   handlePipelineRunSubmit,
-  // editPipeline,
+  editPipeline,
 } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
@@ -49,7 +49,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
                 ...(latestRun && latestRun.metadata
                   ? [() => rerunPipelineAndRedirect(PipelineRunModel, latestRun)]
                   : []),
-                // editPipeline,
+                editPipeline,
                 Kebab.factory.Delete,
               ],
             });

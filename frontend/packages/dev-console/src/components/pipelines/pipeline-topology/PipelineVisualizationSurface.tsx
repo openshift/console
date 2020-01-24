@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { Model, Visualization, VisualizationSurface } from '@console/topology';
-import { LayoutCallback } from '@console/topology/src/layouts/DagreLayout';
+import {
+  GRAPH_LAYOUT_END_EVENT,
+  Model,
+  Node,
+  Visualization,
+  VisualizationSurface,
+} from '@console/topology';
 import { componentFactory, layoutFactory } from './factories';
 import { DROP_SHADOW_SPACING, NODE_WIDTH, NODE_HEIGHT, PipelineLayout } from './const';
 import { getLayoutData } from './utils';
@@ -15,11 +20,15 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
 
   const layout: PipelineLayout = model.graph.layout as PipelineLayout;
 
-  const onLayoutUpdate: LayoutCallback = React.useCallback(
-    (nodes) => {
+  const onLayoutUpdate = React.useCallback(
+    (nodes: Node[]) => {
       const nodeBounds = nodes.map((node) => node.getBounds());
-      const maxX = nodeBounds.map((bounds) => bounds.x).reduce((x1, x2) => Math.max(x1, x2), 0);
-      const maxY = nodeBounds.map((bounds) => bounds.y).reduce((y1, y2) => Math.max(y1, y2), 0);
+      const maxX = Math.floor(
+        nodeBounds.map((bounds) => bounds.x).reduce((x1, x2) => Math.max(x1, x2), 0),
+      );
+      const maxY = Math.floor(
+        nodeBounds.map((bounds) => bounds.y).reduce((y1, y2) => Math.max(y1, y2), 0),
+      );
 
       let horizontalMargin = 0;
       let verticalMargin = 0;
@@ -30,8 +39,8 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
 
       setMaxSize({
         // Nodes are rendered from the top-left
-        height: maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin,
-        width: maxX + NODE_WIDTH + horizontalMargin,
+        height: maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin * 2,
+        width: maxX + NODE_WIDTH + horizontalMargin * 2,
       });
     },
     [setMaxSize, layout],
@@ -40,9 +49,12 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
   React.useEffect(() => {
     if (vis === null) {
       const visualization = new Visualization();
-      visualization.registerLayoutFactory(layoutFactory(onLayoutUpdate));
+      visualization.registerLayoutFactory(layoutFactory);
       visualization.registerComponentFactory(componentFactory);
       visualization.fromModel(model);
+      visualization.addEventListener(GRAPH_LAYOUT_END_EVENT, () => {
+        onLayoutUpdate(visualization.getGraph().getNodes());
+      });
       setVis(visualization);
     } else {
       vis.fromModel(model);

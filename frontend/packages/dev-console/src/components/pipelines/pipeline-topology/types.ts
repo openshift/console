@@ -1,7 +1,6 @@
 import { EdgeModel, NodeModel } from '@console/topology';
 import { Pipeline, PipelineResourceTask, PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
-import { TaskErrorMapData } from '../pipeline-builder/types';
 import { AddNodeDirection, NodeType } from './const';
 
 // Builder Callbacks
@@ -22,7 +21,7 @@ export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
   onNewTask: NewTaskNodeCallback;
 };
 export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
-  error?: TaskErrorMapData;
+  error?: string;
   task: PipelineVisualizationTaskItem;
   onAddNode: NewTaskListNodeCallback;
   onNodeSelection: NodeSelectionCallback;
@@ -41,7 +40,8 @@ type PipelineNodeModel<D extends PipelineRunAfterNodeModelData> = NodeModel & {
 };
 export type PipelineMixedNodeModel = PipelineNodeModel<PipelineRunAfterNodeModelData>;
 export type PipelineTaskNodeModel = PipelineNodeModel<TaskNodeModelData>;
-export type PipelineTaskListNode = PipelineNodeModel<TaskListNodeModelData>;
+export type PipelineBuilderTaskNodeModel = PipelineNodeModel<BuilderNodeModelData>;
+export type PipelineTaskListNodeModel = PipelineNodeModel<TaskListNodeModelData>;
 
 export type PipelineEdgeModel = EdgeModel;
 

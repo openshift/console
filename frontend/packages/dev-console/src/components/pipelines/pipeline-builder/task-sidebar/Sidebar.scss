@@ -21,7 +21,7 @@ $overview-sidebar-width: 550px;
   }
 
   &__content {
-    padding: var(--pf-global--spacer--lg);
+    padding: var(--pf-global--spacer--lg) 0;
   }
 
   // CSSTransitionGroup classes
