@@ -17,8 +17,10 @@
 package josecipher
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/ecdsa"
+	"crypto/elliptic"
 	"encoding/binary"
 )
 
@@ -28,7 +30,7 @@ import (
 // size may be at most 1<<16 bytes (64 KiB).
 func DeriveECDHES(alg string, apuData, apvData []byte, priv *ecdsa.PrivateKey, pub *ecdsa.PublicKey, size int) []byte {
 	if size > 1<<16 {
-		panic("ECDH-ES output size too large, must be less than 1<<16")
+		panic("ECDH-ES output size too large, must be less than or equal to 1<<16")
 	}
 
 	// algId, partyUInfo, partyVInfo inputs must be prefixed with the length
@@ -44,14 +46,36 @@ func DeriveECDHES(alg string, apuData, apvData []byte, priv *ecdsa.PrivateKey, p
 		panic("public key not on same curve as private key")
 	}
 
-	z, _ := priv.PublicKey.Curve.ScalarMult(pub.X, pub.Y, priv.D.Bytes())
-	reader := NewConcatKDF(crypto.SHA256, z.Bytes(), algID, ptyUInfo, ptyVInfo, supPubInfo, []byte{})
+	z, _ := priv.Curve.ScalarMult(pub.X, pub.Y, priv.D.Bytes())
+	zBytes := z.Bytes()
 
+	// Note that calling z.Bytes() on a big.Int may strip leading zero bytes from
+	// the returned byte array. This can lead to a problem where zBytes will be
+	// shorter than expected which breaks the key derivation. Therefore we must pad
+	// to the full length of the expected coordinate here before calling the KDF.
+	octSize := dSize(priv.Curve)
+	if len(zBytes) != octSize {
+		zBytes = append(bytes.Repeat([]byte{0}, octSize-len(zBytes)), zBytes...)
+	}
+
+	reader := NewConcatKDF(crypto.SHA256, zBytes, algID, ptyUInfo, ptyVInfo, supPubInfo, []byte{})
 	key := make([]byte, size)
 
 	// Read on the KDF will never fail
 	_, _ = reader.Read(key)
+
 	return key
+}
+
+// dSize returns the size in octets for a coordinate on a elliptic curve.
+func dSize(curve elliptic.Curve) int {
+	order := curve.Params().P
+	bitLen := order.BitLen()
+	size := bitLen / 8
+	if bitLen%8 != 0 {
+		size++
+	}
+	return size
 }
 
 func lengthPrefixed(data []byte) []byte {

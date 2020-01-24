@@ -17,6 +17,7 @@
 package jose
 
 import (
+	"bytes"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -52,8 +53,19 @@ type JSONWebSignature struct {
 
 // Signature represents a single signature over the JWS payload and protected header.
 type Signature struct {
-	// Header fields, such as the signature algorithm
+	// Merged header fields. Contains both protected and unprotected header
+	// values. Prefer using Protected and Unprotected fields instead of this.
+	// Values in this header may or may not have been signed and in general
+	// should not be trusted.
 	Header Header
+
+	// Protected header. Values in this header were signed and
+	// will be verified as part of the signature verification process.
+	Protected Header
+
+	// Unprotected header. Values in this header were not signed
+	// and in general should not be trusted.
+	Unprotected Header
 
 	// The actual signature value
 	Signature []byte
@@ -64,13 +76,21 @@ type Signature struct {
 }
 
 // ParseSigned parses a signed message in compact or full serialization format.
-func ParseSigned(input string) (*JSONWebSignature, error) {
-	input = stripWhitespace(input)
-	if strings.HasPrefix(input, "{") {
-		return parseSignedFull(input)
+func ParseSigned(signature string) (*JSONWebSignature, error) {
+	signature = stripWhitespace(signature)
+	if strings.HasPrefix(signature, "{") {
+		return parseSignedFull(signature)
 	}
 
-	return parseSignedCompact(input)
+	return parseSignedCompact(signature, nil)
+}
+
+// ParseDetached parses a signed message in compact serialization format with detached payload.
+func ParseDetached(signature string, payload []byte) (*JSONWebSignature, error) {
+	if payload == nil {
+		return nil, errors.New("square/go-jose: nil payload")
+	}
+	return parseSignedCompact(stripWhitespace(signature), payload)
 }
 
 // Get a header value
@@ -82,20 +102,39 @@ func (sig Signature) mergedHeaders() rawHeader {
 }
 
 // Compute data to be signed
-func (obj JSONWebSignature) computeAuthData(signature *Signature) []byte {
-	var serializedProtected string
+func (obj JSONWebSignature) computeAuthData(payload []byte, signature *Signature) ([]byte, error) {
+	var authData bytes.Buffer
+
+	protectedHeader := new(rawHeader)
 
 	if signature.original != nil && signature.original.Protected != nil {
-		serializedProtected = signature.original.Protected.base64()
+		if err := json.Unmarshal(signature.original.Protected.bytes(), protectedHeader); err != nil {
+			return nil, err
+		}
+		authData.WriteString(signature.original.Protected.base64())
 	} else if signature.protected != nil {
-		serializedProtected = base64.RawURLEncoding.EncodeToString(mustSerializeJSON(signature.protected))
-	} else {
-		serializedProtected = ""
+		protectedHeader = signature.protected
+		authData.WriteString(base64.RawURLEncoding.EncodeToString(mustSerializeJSON(protectedHeader)))
 	}
 
-	return []byte(fmt.Sprintf("%s.%s",
-		serializedProtected,
-		base64.RawURLEncoding.EncodeToString(obj.payload)))
+	needsBase64 := true
+
+	if protectedHeader != nil {
+		var err error
+		if needsBase64, err = protectedHeader.getB64(); err != nil {
+			needsBase64 = true
+		}
+	}
+
+	authData.WriteByte('.')
+
+	if needsBase64 {
+		authData.WriteString(base64.RawURLEncoding.EncodeToString(payload))
+	} else {
+		authData.Write(payload)
+	}
+
+	return authData.Bytes(), nil
 }
 
 // parseSignedFull parses a message in full format.
@@ -132,7 +171,7 @@ func (parsed *rawJSONWebSignature) sanitized() (*JSONWebSignature, error) {
 		}
 
 		// Check that there is not a nonce in the unprotected header
-		if parsed.Header != nil && parsed.Header.Nonce != "" {
+		if parsed.Header != nil && parsed.Header.getNonce() != "" {
 			return nil, ErrUnprotectedNonce
 		}
 
@@ -153,7 +192,25 @@ func (parsed *rawJSONWebSignature) sanitized() (*JSONWebSignature, error) {
 			Signature: parsed.Signature,
 		}
 
-		signature.Header = signature.mergedHeaders().sanitized()
+		var err error
+		signature.Header, err = signature.mergedHeaders().sanitized()
+		if err != nil {
+			return nil, err
+		}
+
+		if signature.header != nil {
+			signature.Unprotected, err = signature.header.sanitized()
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if signature.protected != nil {
+			signature.Protected, err = signature.protected.sanitized()
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		// As per RFC 7515 Section 4.1.3, only public keys are allowed to be embedded.
 		jwk := signature.Header.JSONWebKey
@@ -174,11 +231,30 @@ func (parsed *rawJSONWebSignature) sanitized() (*JSONWebSignature, error) {
 		}
 
 		// Check that there is not a nonce in the unprotected header
-		if sig.Header != nil && sig.Header.Nonce != "" {
+		if sig.Header != nil && sig.Header.getNonce() != "" {
 			return nil, ErrUnprotectedNonce
 		}
 
-		obj.Signatures[i].Header = obj.Signatures[i].mergedHeaders().sanitized()
+		var err error
+		obj.Signatures[i].Header, err = obj.Signatures[i].mergedHeaders().sanitized()
+		if err != nil {
+			return nil, err
+		}
+
+		if obj.Signatures[i].header != nil {
+			obj.Signatures[i].Unprotected, err = obj.Signatures[i].header.sanitized()
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if obj.Signatures[i].protected != nil {
+			obj.Signatures[i].Protected, err = obj.Signatures[i].protected.sanitized()
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		obj.Signatures[i].Signature = sig.Signature.bytes()
 
 		// As per RFC 7515 Section 4.1.3, only public keys are allowed to be embedded.
@@ -198,10 +274,14 @@ func (parsed *rawJSONWebSignature) sanitized() (*JSONWebSignature, error) {
 }
 
 // parseSignedCompact parses a message in compact format.
-func parseSignedCompact(input string) (*JSONWebSignature, error) {
+func parseSignedCompact(input string, payload []byte) (*JSONWebSignature, error) {
 	parts := strings.Split(input, ".")
 	if len(parts) != 3 {
 		return nil, fmt.Errorf("square/go-jose: compact JWS format must have three parts")
+	}
+
+	if parts[1] != "" && payload != nil {
+		return nil, fmt.Errorf("square/go-jose: payload is not detached")
 	}
 
 	rawProtected, err := base64.RawURLEncoding.DecodeString(parts[0])
@@ -209,9 +289,11 @@ func parseSignedCompact(input string) (*JSONWebSignature, error) {
 		return nil, err
 	}
 
-	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
-	if err != nil {
-		return nil, err
+	if payload == nil {
+		payload, err = base64.RawURLEncoding.DecodeString(parts[1])
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	signature, err := base64.RawURLEncoding.DecodeString(parts[2])
@@ -227,19 +309,30 @@ func parseSignedCompact(input string) (*JSONWebSignature, error) {
 	return raw.sanitized()
 }
 
-// CompactSerialize serializes an object using the compact serialization format.
-func (obj JSONWebSignature) CompactSerialize() (string, error) {
+func (obj JSONWebSignature) compactSerialize(detached bool) (string, error) {
 	if len(obj.Signatures) != 1 || obj.Signatures[0].header != nil || obj.Signatures[0].protected == nil {
 		return "", ErrNotSupported
 	}
 
-	serializedProtected := mustSerializeJSON(obj.Signatures[0].protected)
+	serializedProtected := base64.RawURLEncoding.EncodeToString(mustSerializeJSON(obj.Signatures[0].protected))
+	payload := ""
+	signature := base64.RawURLEncoding.EncodeToString(obj.Signatures[0].Signature)
 
-	return fmt.Sprintf(
-		"%s.%s.%s",
-		base64.RawURLEncoding.EncodeToString(serializedProtected),
-		base64.RawURLEncoding.EncodeToString(obj.payload),
-		base64.RawURLEncoding.EncodeToString(obj.Signatures[0].Signature)), nil
+	if !detached {
+		payload = base64.RawURLEncoding.EncodeToString(obj.payload)
+	}
+
+	return fmt.Sprintf("%s.%s.%s", serializedProtected, payload, signature), nil
+}
+
+// CompactSerialize serializes an object using the compact serialization format.
+func (obj JSONWebSignature) CompactSerialize() (string, error) {
+	return obj.compactSerialize(false)
+}
+
+// DetachedCompactSerialize serializes an object using the compact serialization format with detached payload.
+func (obj JSONWebSignature) DetachedCompactSerialize() (string, error) {
+	return obj.compactSerialize(true)
 }
 
 // FullSerialize serializes an object using the full JSON serialization format.
