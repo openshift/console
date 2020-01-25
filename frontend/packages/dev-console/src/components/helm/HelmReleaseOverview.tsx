@@ -9,7 +9,7 @@ export interface HelmReleaseOverviewProps {
 const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj: resourceDetails }) => {
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Helm Release Overview" />
+      <SectionHeading text="Helm Release Details" />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={resourceDetails} customPathName={'metadata.labels.name'} />

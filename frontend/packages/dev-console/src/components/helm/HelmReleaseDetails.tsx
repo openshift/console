@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { Firehose } from '@console/internal/components/utils';
-import { NamespaceBar } from '@console/internal/components/namespace';
+import { Firehose, history } from '@console/internal/components/utils';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { SecretModel } from '@console/internal/models';
 import HelmReleaseDetailsPage from './HelmReleaseDetailsPage';
 
+export const HELMRELEASES_ALL_NS_PAGE_URI = '/helm-releases/all-namespaces';
 export interface HelmReleaseDetailsProps {
   match: RMatch<{
     ns?: string;
@@ -12,25 +14,38 @@ export interface HelmReleaseDetailsProps {
   }>;
 }
 
+const handleNamespaceChange = (newNamespace: string): void => {
+  if (newNamespace === ALL_NAMESPACES_KEY) {
+    history.push(HELMRELEASES_ALL_NS_PAGE_URI);
+  } else {
+    history.push('/helm-releases/ns/:ns');
+  }
+};
+
 const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ match }) => {
   const namespace = match.params.ns;
   const helmReleaseName = match.params.name;
   return (
     <>
-      <NamespaceBar />
-      <Firehose
-        resources={[
-          {
-            kind: SecretModel.kind,
-            namespace,
-            isList: true,
-            selector: { name: `${helmReleaseName}` },
-            prop: 'secret',
-          },
-        ]}
+      <NamespacedPage
+        variant={NamespacedPageVariants.light}
+        hideApplications
+        onNamespaceChange={handleNamespaceChange}
       >
-        <HelmReleaseDetailsPage match={match} />
-      </Firehose>
+        <Firehose
+          resources={[
+            {
+              namespace,
+              kind: SecretModel.kind,
+              prop: 'secret',
+              isList: true,
+              selector: { name: `${helmReleaseName}` },
+            },
+          ]}
+        >
+          <HelmReleaseDetailsPage match={match} />
+        </Firehose>
+      </NamespacedPage>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { NamespaceBar } from '@console/internal/components/namespace';
+import NamespacedPage from '../../NamespacedPage';
 import HelmReleaseDetails from '../HelmReleaseDetails';
 import HelmReleaseDetailsPage from '../HelmReleaseDetailsPage';
 
@@ -19,7 +19,7 @@ describe('HelmReleaseDetails', () => {
   };
   const helmReleaseDetails = shallow(<HelmReleaseDetails {...helmReleaseDetailsProps} />);
   it('should render the NamespaceBar component', () => {
-    expect(helmReleaseDetails.find(NamespaceBar).exists()).toBe(true);
+    expect(helmReleaseDetails.find(NamespacedPage).exists()).toBe(true);
   });
   it('should render the HelmReleaseDetailsPage component', () => {
     expect(helmReleaseDetails.find(HelmReleaseDetailsPage).exists()).toBe(true);

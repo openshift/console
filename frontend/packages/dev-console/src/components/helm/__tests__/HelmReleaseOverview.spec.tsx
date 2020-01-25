@@ -26,7 +26,7 @@ describe('HelmReleaseOverview', () => {
         .find(SectionHeading)
         .at(0)
         .props().text,
-    ).toEqual('Helm Release Overview');
+    ).toEqual('Helm Release Details');
   });
   it('should render the ResourceSummary component', () => {
     const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
