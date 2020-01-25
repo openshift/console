@@ -6,6 +6,7 @@ export enum ProviderType {
   Certified = 'Certified',
   Community = 'Community',
   Custom = 'Custom',
+  Marketplace = 'Marketplace',
 }
 
 export enum InstalledState {
