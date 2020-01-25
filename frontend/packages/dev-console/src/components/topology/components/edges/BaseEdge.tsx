@@ -24,14 +24,14 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
   const resourceObj = getTopologyResourceObject(element.getSource().getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
 
   const editAccess = useAccessReview({
-    group: resourceModel && resourceModel.apiGroup,
+    group: resourceModel?.apiGroup,
     verb: 'patch',
-    resource: resourceModel && resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    resource: resourceModel?.plural,
+    name: resourceObj?.metadata.name,
+    namespace: resourceObj?.metadata.namespace,
   });
 
   React.useLayoutEffect(() => {

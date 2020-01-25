@@ -9,6 +9,8 @@ import {
   Layer,
   WithDndDropProps,
   WithDndDragProps,
+  useAnchor,
+  RectAnchor,
 } from '../../src';
 
 type GroupProps = {
@@ -33,12 +35,39 @@ const DefaultGroup: React.FC<GroupProps> = ({
   hover,
   canDrop,
 }) => {
+  useAnchor(RectAnchor);
   const boxRef = React.useRef<Rect | null>(null);
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDragRef, dndDropRef);
 
   if (!droppable || !boxRef.current) {
     // change the box only when not dragging
     boxRef.current = element.getBounds().clone();
+  }
+
+  if (element.isCollapsed()) {
+    const { width, height } = element.getBounds();
+    return (
+      <g>
+        <rect
+          ref={refs}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          rx={5}
+          ry={5}
+          fill={
+            canDrop && hover
+              ? 'lightgreen'
+              : canDrop && droppable
+              ? 'lightblue'
+              : `${(element.getData() && element.getData().background) || '#ededed'}`
+          }
+          strokeWidth={2}
+          stroke={selected ? 'blue' : '#cdcdcd'}
+        />
+      </g>
+    );
   }
 
   return (
@@ -50,7 +79,13 @@ const DefaultGroup: React.FC<GroupProps> = ({
         y={boxRef.current.y}
         width={boxRef.current.width}
         height={boxRef.current.height}
-        fill={canDrop && hover ? 'lightgreen' : canDrop && droppable ? 'lightblue' : '#ededed'}
+        fill={
+          canDrop && hover
+            ? 'lightgreen'
+            : canDrop && droppable
+            ? 'lightblue'
+            : `${(element.getData() && element.getData().background) || '#ededed'}`
+        }
         strokeWidth={2}
         stroke={selected ? 'blue' : '#cdcdcd'}
       />

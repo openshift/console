@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { polygonHull } from 'd3-polygon';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import {
   Layer,
   Node,
@@ -21,12 +19,10 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
+import { TopologyFilters } from '../../filters/filter-utils';
 import useFilter from '../../filters/useFilter';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
-
-import './ApplicationGroup.scss';
 
 type ApplicationGroupProps = {
   element: Node;
@@ -46,15 +42,16 @@ type PointWithSize = [number, number, number];
 // export for testing only
 export function computeLabelLocation(points: PointWithSize[]): PointWithSize {
   let lowPoints: PointWithSize[];
+  const threshold = 5;
 
   _.forEach(points, (p) => {
-    if (!lowPoints || p[1] > lowPoints[0][1]) {
+    const delta = !lowPoints ? Infinity : Math.round(p[1]) - Math.round(lowPoints[0][1]);
+    if (delta > threshold) {
       lowPoints = [p];
-    } else if (p[1] === lowPoints[0][1]) {
+    } else if (Math.abs(delta) <= threshold) {
       lowPoints.push(p);
     }
   });
-
   return [
     (_.minBy(lowPoints, (p) => p[0])[0] + _.maxBy(lowPoints, (p) => p[0])[0]) / 2,
     lowPoints[0][1],
@@ -85,6 +82,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
   const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
   const hover = groupHover || groupLabelHover;
+  const kind = 'application';
 
   // cast to number and coerce
   const padding = maxPadding(element.getStyle<GroupStyle>().padding);
@@ -153,9 +151,10 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           className={classNames('odc-application-group__label', {
             'is-filtered': filtered,
           })}
+          kind={kind}
           x={labelLocation.current[0]}
           y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
-          paddingX={20}
+          paddingX={8}
           paddingY={5}
           truncate={16}
           dragRef={dragLabelRef}
@@ -166,9 +165,5 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     </>
   );
 };
-const ApplicationGroupState = (state: RootState) => {
-  const filters = getTopologyFilters(state);
-  return { filters };
-};
 
-export default connect(ApplicationGroupState)(observer(ApplicationGroup));
+export default observer(ApplicationGroup);

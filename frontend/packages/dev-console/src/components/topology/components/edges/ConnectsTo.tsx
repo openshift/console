@@ -22,7 +22,12 @@ type ConnectsToProps = {
   WithRemoveConnectorProps;
 
 const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, children, ...others }) => {
-  const resourceObj = getTopologyResourceObject(element.getSource().getData());
+  const childEdges = element.getChildren();
+  const sourceData =
+    childEdges?.length > 0
+      ? (childEdges[0] as Edge).getSource().getData()
+      : element.getSource().getData();
+  const resourceObj = getTopologyResourceObject(sourceData);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,
@@ -31,7 +36,8 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const edgeClasses = classNames('odc-connects-to', { 'odc2-m-editable': editAccess });
+  const edgeClasses = classNames('odc-connects-to', { 'odc-m-editable': editAccess });
+
   return (
     <BaseEdge className={edgeClasses} element={element} {...others}>
       <EdgeConnectorArrow dragRef={editAccess ? targetDragRef : undefined} edge={element} />

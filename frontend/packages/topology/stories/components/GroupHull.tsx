@@ -15,6 +15,8 @@ import {
   useCombineRefs,
   maxPadding,
   hullPath,
+  useAnchor,
+  RectAnchor,
 } from '../../src';
 
 type GroupHullProps = {
@@ -42,7 +44,34 @@ const GroupHull: React.FC<GroupHullProps> = ({
   canDrop,
 }) => {
   const pathRef = React.useRef<string | null>(null);
-  const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDragRef, dndDropRef);
+  const refs = useCombineRefs<SVGPathElement | SVGRectElement>(dragNodeRef, dndDragRef, dndDropRef);
+  useAnchor(RectAnchor);
+
+  if (element.isCollapsed()) {
+    const { width, height } = element.getBounds();
+    return (
+      <g>
+        <rect
+          ref={refs}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          rx={5}
+          ry={5}
+          fill={
+            canDrop && hover
+              ? 'lightgreen'
+              : canDrop && droppable
+              ? 'lightblue'
+              : `${(element.getData() && element.getData().background) || '#ededed'}`
+          }
+          strokeWidth={2}
+          stroke={selected ? 'blue' : '#cdcdcd'}
+        />
+      </g>
+    );
+  }
 
   if (!droppable || !pathRef.current) {
     const nodeChildren = element.getNodes();
@@ -70,7 +99,6 @@ const GroupHull: React.FC<GroupHullProps> = ({
     if (!hullPoints) {
       return null;
     }
-
     // cast to number and coerce
     const padding = maxPadding(element.getStyle<GroupStyle>().padding);
     const hullPadding = (point: PointWithSize) => (point[2] || 0) + padding;
@@ -84,7 +112,13 @@ const GroupHull: React.FC<GroupHullProps> = ({
         ref={refs}
         onClick={onSelect}
         d={pathRef.current}
-        fill={canDrop && hover ? 'lightgreen' : canDrop && droppable ? 'lightblue' : '#ededed'}
+        fill={
+          canDrop && hover
+            ? 'lightgreen'
+            : canDrop && droppable
+            ? 'lightblue'
+            : `${(element.getData() && element.getData().background) || '#ededed'}`
+        }
         strokeWidth={2}
         stroke={selected ? 'blue' : '#cdcdcd'}
       />

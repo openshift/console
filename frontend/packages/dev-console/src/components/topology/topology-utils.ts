@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { EdgeModel, Model, NodeModel, NodeShape } from '@console/topology';
+import { EdgeModel, Model, NodeModel, NodeShape, createAggregateEdges } from '@console/topology';
 import {
   K8sResourceKind,
   modelFor,
@@ -47,6 +47,7 @@ import {
   TYPE_KNATIVE_SERVICE,
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
+  TYPE_AGGREGATE_EDGE,
 } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -512,18 +513,35 @@ export const transformTopologyData = (
   return topologyGraphAndNodeData;
 };
 
-export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model => {
+const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
+  return {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    resources: null,
+    operatorBackedService: false,
+    data: null,
+  };
+};
+
+export const topologyModelFromDataModel = (
+  dataModel: TopologyDataModel,
+  filters?: TopologyFilters,
+): Model => {
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
+      const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
+      data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {
-        width: 104,
-        height: 104,
+        width: 300,
+        height: 100,
         id: d.id,
         type: d.type,
         label: dataModel.topology[d.id].name,
-        data: dataModel.topology[d.id],
-        children: (d as any).children,
-        group: true,
+        data,
+        collapsed: filters && !filters.display.knativeServices,
+        children: d.children,
+        group: d.children?.length > 0,
         shape: NodeShape.rect,
         style: {
           padding: [40, 50, 40, 40],
@@ -541,11 +559,19 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   });
 
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
+    data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
+      width: 300,
+      height: 180,
       id: d.id,
       group: true,
       type: d.type,
-      data: dataModel.topology[d.id],
+      collapsed:
+        filters &&
+        ((d.type === TYPE_HELM_RELEASE && !filters.display.helmGrouping) ||
+          (d.type === TYPE_APPLICATION_GROUP && !filters.display.appGrouping)),
+      data,
       children: d.nodes,
       label: d.name,
       style: {
@@ -568,7 +594,7 @@ export const topologyModelFromDataModel = (dataModel: TopologyDataModel): Model 
   // create topology model
   const model: Model = {
     nodes: [...nodes, ...groupNodes],
-    edges,
+    edges: createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, [...nodes, ...groupNodes]),
   };
 
   return model;

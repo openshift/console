@@ -13,7 +13,7 @@ import {
   withRemoveConnector,
   withContextMenu,
 } from '@console/topology';
-import ApplicationGroup from './components/nodes/ApplicationGroup';
+import Application from './components/nodes/Application';
 import ConnectsTo from './components/edges/ConnectsTo';
 import EventSource from './components/nodes/EventSource';
 import EventSourceLink from './components/edges/EventSourceLink';
@@ -44,6 +44,7 @@ import {
   TYPE_CONNECTS_TO,
   TYPE_APPLICATION_GROUP,
   TYPE_EVENT_SOURCE_LINK,
+  TYPE_AGGREGATE_EDGE,
   TYPE_KNATIVE_SERVICE,
   TYPE_REVISION_TRAFFIC,
   TYPE_SERVICE_BINDING,
@@ -58,6 +59,7 @@ import RevisionNode from './components/nodes/RevisionNode';
 import { createConnection, createSinkConnection } from './components/createConnection';
 import { withEditReviewAccess } from './withEditReviewAccess';
 import HelmRelease from './components/groups/HelmRelease';
+import AggregateEdge from './components/edges/AggregateEdge';
 
 type NodeProps = {
   element: Node;
@@ -113,7 +115,7 @@ class ComponentFactory {
                 groupContextMenu,
                 document.getElementById('modal-container'),
                 'odc-topology-context-menu',
-              )(ApplicationGroup),
+              )(Application),
             ),
           );
         case TYPE_KNATIVE_SERVICE:
@@ -206,6 +208,8 @@ class ComponentFactory {
           )(withRemoveConnector(removeConnectorCallback)(ConnectsTo));
         case TYPE_SERVICE_BINDING:
           return withRemoveConnector(removeConnectorCallback)(ServiceBinding);
+        case TYPE_AGGREGATE_EDGE:
+          return AggregateEdge;
         default:
           switch (kind) {
             case ModelKind.graph:

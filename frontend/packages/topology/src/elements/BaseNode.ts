@@ -5,10 +5,13 @@ import {
   NodeModel,
   ModelKind,
   isNode,
+  isEdge,
   AnchorEnd,
   GroupStyle,
   NodeShape,
   Edge,
+  GraphElement,
+  NODE_COLLAPSE_CHANGE_EVENT,
 } from '../types';
 import CenterAnchor from '../anchors/CenterAnchor';
 import Rect from '../geom/Rect';
@@ -30,11 +33,18 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   @computed
   private get nodes(): Node[] {
+    if (this.isCollapsed()) {
+      return [];
+    }
+
     return this.getChildren().filter(isNode);
   }
 
   @observable
   private group = false;
+
+  @observable
+  private collapsed = false;
 
   @observable
   private shape: NodeShape | undefined;
@@ -63,15 +73,8 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     }
 
     const { padding } = this.getStyle<GroupStyle>();
-    const result = rect.padding(padding);
 
-    // ensure size is at least the size of the set bounds
-    result.setSize(
-      Math.max(result.width, this.bounds.width),
-      Math.max(result.height, this.bounds.height),
-    );
-
-    return result;
+    return rect.padding(padding);
   }
 
   @computed
@@ -88,12 +91,19 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
       .filter((e) => e.getTarget() === this);
   }
 
+  getChildren(): GraphElement[] {
+    if (this.isCollapsed()) {
+      return super.getChildren().filter(isEdge);
+    }
+    return super.getChildren();
+  }
+
   getKind(): ModelKind {
     return ModelKind.node;
   }
 
   getBounds(): Rect {
-    return this.group ? this.groupBounds : this.bounds;
+    return this.group && !this.collapsed ? this.groupBounds : this.bounds;
   }
 
   setBounds(bounds: Rect): void {
@@ -131,6 +141,25 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   isGroup(): boolean {
     return this.group;
+  }
+
+  isCollapsed(): boolean {
+    return this.collapsed;
+  }
+
+  setCollapsed(collapsed: boolean): void {
+    if (collapsed !== this.collapsed) {
+      // Get the location prior to the collapse change and apply it after the collapse.
+      // This updates the new node(s) location(s) to be what the node was originally, basically
+      // keeping the nodes ln place so the layout doesn't start fresh (putting the new nodes at 0,0
+      // TODO: Update to better position the nodes at a point location rather than relying on the setCenter updating the nodes.
+      const prevCenter = this.getBounds()
+        .getCenter()
+        .clone();
+      this.collapsed = collapsed;
+      this.getBounds().setCenter(prevCenter.x, prevCenter.y);
+      this.getController().fireEvent(NODE_COLLAPSE_CHANGE_EVENT, { node: this });
+    }
   }
 
   getNodeShape(): NodeShape {
@@ -189,17 +218,20 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     if ('shape' in model) {
       this.shape = model.shape;
     }
+    if ('collapsed' in model) {
+      this.setCollapsed(!!model.collapsed);
+    }
   }
 
   translateToParent(t: Translatable): void {
-    if (!this.group) {
+    if (!this.group || this.isCollapsed()) {
       const { x, y } = this.getBounds();
       t.translate(x, y);
     }
   }
 
   translateFromParent(t: Translatable): void {
-    if (!this.group) {
+    if (!this.group || this.isCollapsed()) {
       const { x, y } = this.getBounds();
       t.translate(-x, -y);
     }

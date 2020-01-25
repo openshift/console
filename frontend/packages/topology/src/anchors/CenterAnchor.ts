@@ -5,6 +5,7 @@ export default class CenterAnchor extends AbstractAnchor {
   getLocation(): Point {
     return this.getOwner()
       .getBounds()
-      .getCenter();
+      .getCenter()
+      .translate(this.offset, this.offset);
   }
 }

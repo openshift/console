@@ -14,7 +14,6 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import Decorator from './Decorator';
 import PodSet from './PodSet';
-import KnativeIcon from './KnativeIcon';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import ConnectedMonitoringDecorator from './MonitoringDecorator';
 import BaseNode from './BaseNode';
@@ -122,14 +121,6 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
             data={workloadData.donutStatus}
             showPodCount={workloadData.showPodCount}
           />
-          {workloadData.isKnativeResource && (
-            <KnativeIcon
-              x={cx - radius * 0.15}
-              y={cy - radius * 0.65}
-              width={radius * 0.39}
-              height={radius * 0.31}
-            />
-          )}
         </BaseNode>
       </Tooltip>
     </g>

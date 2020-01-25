@@ -16,6 +16,11 @@ const ZOOM_EXTENT: [number, number] = [0.25, 4];
 
 export type PanZoomRef = (node: SVGGElement | null) => void;
 
+// Used to send events prevented by d3.zoom to the document allowing modals, dropdowns, etc, to close
+const propagatePanZoomMouseEvent = (e: Event): void => {
+  document.dispatchEvent(new MouseEvent(e.type, e));
+};
+
 export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomRef => {
   const element = React.useContext(ElementContext);
   if (!isGraph(element)) {
@@ -31,6 +36,10 @@ export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomR
         if (node) {
           // TODO fix any type
           const $svg = d3.select(node.ownerSVGElement) as any;
+          if (node && node.ownerSVGElement) {
+            node.ownerSVGElement.addEventListener('mousedown', propagatePanZoomMouseEvent);
+            node.ownerSVGElement.addEventListener('click', propagatePanZoomMouseEvent);
+          }
           const zoom = d3
             .zoom()
             .scaleExtent(zoomExtent)
@@ -77,6 +86,10 @@ export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomR
           if (node) {
             // remove all zoom listeners
             d3.select(node.ownerSVGElement).on('.zoom', null);
+            if (node.ownerSVGElement) {
+              node.ownerSVGElement.removeEventListener('mousedown', propagatePanZoomMouseEvent);
+              node.ownerSVGElement.removeEventListener('click', propagatePanZoomMouseEvent);
+            }
           }
         };
       },

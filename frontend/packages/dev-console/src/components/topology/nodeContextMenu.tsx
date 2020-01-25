@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContextMenuItem, ContextSubMenuItem, GraphElement, Node, Graph } from '@console/topology';
+import { ContextMenuItem, ContextSubMenuItem, Node, Graph } from '@console/topology';
 import {
   history,
   KebabItem,
@@ -44,7 +44,7 @@ export const groupContextMenu = (element: Node) => {
   const applicationData: TopologyApplicationObject = {
     id: element.getId(),
     name: element.getLabel(),
-    resources: element.getChildren().map((node: GraphElement) => node.getData()),
+    resources: element.getData().groupResources,
   };
 
   return createMenuItems(kebabOptionsToMenu(groupActions(applicationData)));
