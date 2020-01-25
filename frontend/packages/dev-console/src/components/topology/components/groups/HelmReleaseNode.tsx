@@ -8,6 +8,7 @@ import {
   Node,
   createSvgIdUrl,
   useDragNode,
+  WithSelectionProps,
   observer,
   useCombineRefs,
 } from '@console/topology';
@@ -21,14 +22,20 @@ export type HelmReleaseNodeProps = {
   element: Node;
   dragging?: boolean;
   filters: TopologyFilters;
-};
+} & WithSelectionProps;
 
 const TOP_MARGIN = 20;
 const LEFT_MARGIN = 20;
 const TEXT_MARGIN = 10;
 const RESOURCES_MARGIN = 40;
 
-const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, dragging, filters }) => {
+const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
+  element,
+  dragging,
+  filters,
+  onSelect,
+  selected,
+}) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
   const [labelHover, labelHoverRef] = useHover();
@@ -41,7 +48,8 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, dragging, fi
   const iconHeight = iconSize ? iconSize.height : 0;
 
   const rectClasses = classNames('odc-helm-release', {
-    'is-hover': hover || labelHover,
+    'is-selected': selected,
+    'is-hover': hover,
     'is-filtered': filtered,
   });
 
@@ -64,7 +72,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, dragging, fi
   return (
     <>
       <NodeShadows />
-      <g ref={hoverRef}>
+      <g ref={hoverRef} onClick={onSelect}>
         <rect
           ref={refs}
           filter={createSvgIdUrl(
