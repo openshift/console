@@ -1,28 +1,32 @@
 import * as _ from 'lodash';
+import * as models from './models';
+
 import {
+  ActionFeatureFlag,
+  ClusterServiceVersionAction,
   DashboardsCard,
-  DashboardsTab,
   DashboardsOverviewHealthPrometheusSubsystem,
-  ModelFeatureFlag,
+  DashboardsOverviewUtilizationItem,
+  DashboardsTab,
+  KebabActions,
   ModelDefinition,
+  ModelFeatureFlag,
   Plugin,
   RoutePage,
-  ClusterServiceVersionAction,
-  DashboardsOverviewUtilizationItem,
-  ActionFeatureFlag,
 } from '@console/plugin-sdk';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { referenceForModel } from '@console/internal/module/k8s';
-import * as models from './models';
 import {
   CAPACITY_USAGE_QUERIES,
-  StorageDashboardQuery,
   STORAGE_HEALTH_QUERIES,
+  StorageDashboardQuery,
 } from './constants/queries';
+import { OCS_INDEPENDENT_FLAG, detectIndependentMode } from './features';
+
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
-import { detectIndependentMode, OCS_INDEPENDENT_FLAG } from './features';
+import { getKebabActionsForKind } from './utils/kebab-actions';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -33,7 +37,8 @@ type ConsumedExtensions =
   | DashboardsOverviewUtilizationItem
   | RoutePage
   | ActionFeatureFlag
-  | ClusterServiceVersionAction;
+  | ClusterServiceVersionAction
+  | KebabActions;
 
 const CEPH_FLAG = 'CEPH';
 
@@ -274,6 +279,12 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
       required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  {
+    type: 'KebabActions',
+    properties: {
+      getKebabActionsForKind,
     },
   },
 ];
