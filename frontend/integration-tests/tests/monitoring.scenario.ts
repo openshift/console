@@ -19,7 +19,7 @@ const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   }
 };
 
-describe('Monitoring: Alerts', () => {
+xdescribe('Monitoring: Alerts', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -105,7 +105,7 @@ describe('Monitoring: Alerts', () => {
   });
 });
 
-describe('Monitoring: Silences', () => {
+xdescribe('Monitoring: Silences', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -185,7 +185,7 @@ describe('Monitoring: Silences', () => {
   });
 });
 
-describe('Alertmanager: YAML', () => {
+xdescribe('Alertmanager: YAML', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -213,7 +213,7 @@ describe('Alertmanager: YAML', () => {
   });
 });
 
-describe('Alertmanager: Configuration', () => {
+xdescribe('Alertmanager: Configuration', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
