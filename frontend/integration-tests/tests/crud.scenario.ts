@@ -137,10 +137,9 @@ describe('Kubernetes resource CRUD operations', () => {
         await browser.get(
           `${appHost}/search/${
             namespaced ? `ns/${testName}` : 'all-namespaces'
-          }?kind=${kind}&q=${testLabel}%3d${testName}`,
+          }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
         await crudView.resourceRowsPresent();
-        await crudView.filterForName(name);
         await crudView
           .rowForName(name)
           .element(by.linkText(name))
@@ -154,9 +153,8 @@ describe('Kubernetes resource CRUD operations', () => {
           await browser.get(
             `${appHost}/search/${
               namespaced ? `ns/${testName}` : 'all-namespaces'
-            }?kind=${kind}&q=${testLabel}%3d${testName}`,
+            }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
           );
-          await crudView.filterForName(name);
           await crudView.resourceRowsPresent();
           await crudView.editRow(kind)(name);
         }
@@ -373,7 +371,7 @@ describe('Kubernetes resource CRUD operations', () => {
         until.urlContains(`/search/ns/${testName}?kind=core~v1~ConfigMap&q=${labelValue}`),
       );
 
-      expect($('.co-text-configmap').isDisplayed()).toBe(true);
+      expect($('.pf-c-chip__text').isDisplayed()).toBe(true);
     });
 
     afterAll(async () => {

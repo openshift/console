@@ -12,7 +12,7 @@ form.pf-c-form {
 
 kbd {
   border-radius: 3px;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 .modal.right-side-modal-pf {
@@ -123,7 +123,7 @@ h6 {
   float: right;
   font-size: 21px !important;
   line-height: 1;
-  opacity: .35;
+  opacity: 0.35;
   padding: 0;
   &:hover,
   &:focus {
@@ -161,7 +161,7 @@ h6 {
   float: right;
   font-size: 21px !important;
   line-height: 1;
-  opacity: .35;
+  opacity: 0.35;
   padding: 0;
   &:hover,
   &:focus {
@@ -182,6 +182,9 @@ h6 {
   color: var(--pf-c-button--m-plain--Color);
 }
 
+.pf-c-chip-group.pf-m-toolbar {
+  margin-bottom: var(--pf-global--spacer--xs);
+}
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {
@@ -204,10 +207,11 @@ h6 {
   }
 
   &__header-tools {
-    @media(max-width: $grid-float-breakpoint-max) {
+    @media (max-width: $grid-float-breakpoint-max) {
       margin-right: 8px !important;
     }
-    .pf-c-dropdown__toggle, .pf-c-app-launcher__toggle {
+    .pf-c-dropdown__toggle,
+    .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
     }
   }
@@ -273,7 +277,9 @@ h6 {
   }
 
   &.pf-m-expanded {
-    width: var(--pf-c-page__sidebar--md--Width) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
+    width: var(
+      --pf-c-page__sidebar--md--Width
+    ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   // Perspective switcher
@@ -420,14 +426,13 @@ h6 {
   }
 }
 
-
 .xterm .xterm-screen canvas {
   // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
   // see https://github.com/xtermjs/xterm.js/issues/1974
   border-right: 1px solid transparent;
 }
 
-button.pf-c-dropdown__menu-item.pf-m-disabled  {
+button.pf-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
 }
