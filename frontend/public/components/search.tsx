@@ -45,7 +45,6 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collaspedState, setCollaspedState] = React.useState(new Set<string>([]));
-  const [selector, setSelector] = React.useState(selectorFromString(''));
   const [nameFilter, setNameFilter] = React.useState([]);
   const [labelFilter, setLabelFilter] = React.useState([]);
 
@@ -70,7 +69,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     const nameTags = split(name || '');
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     const validNameTags = _.reject(nameTags, (tag) => requirementFromString(tag) === undefined);
-    setSelector(selectorFromString(validTags.join(',')));
     setLabelFilter(validTags);
     setNameFilter(validNameTags);
   }, []);
@@ -94,7 +92,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   const clearLabelFilter = () => {
     setLabelFilter([]);
-    setSelector(selectorFromString(''));
     setQueryArgument('q', '');
   };
 
@@ -122,7 +119,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const updateLabelFilter = (value: string) => {
     if (requirementFromString(value) !== undefined) {
       setLabelFilter([...labelFilter, value]);
-      setSelector(selectorFromString([...labelFilter, value].join(',')));
       setQueryArgument('q', [...labelFilter, value].join(','));
     }
   };
@@ -229,7 +225,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             >
               <ResourceList
                 kind={item}
-                selector={selector}
+                selector={selectorFromString(labelFilter.join(','))}
                 nameFilter={nameFilter.join(',')}
                 namespace={namespace}
                 mock={noProjectsAvailable}
