@@ -38,7 +38,8 @@
 
 .modal-body-inner-shadow-covers {
   min-height: 100%;
-  padding: ($grid-gutter-width / 2) $modal-title-padding-horizontal;
+  // --pf-c-modal-box--Padding* will not render correctly here so applying pf4 spacer values
+  padding: 0 var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
   @include scroll-shadows-vertical-covers;
   width: 100%;
 
@@ -71,8 +72,19 @@
       padding-bottom: 100px;
     }
     // Dropdown workaround: use when modal content is short and cannot expand
-    &--no-inner-scroll .modal-body {
-      overflow-y: visible ;
+    &--no-inner-scroll {
+      .modal-body {
+        overflow-y: visible !important;
+      }
+      .modal-body-content {
+        background-color: var(--pf-global--BackgroundColor--100);
+      }
+      .modal-body-inner-shadow-covers {
+        padding-bottom: var(--pf-global--spacer--lg);
+      }
+      .modal-footer {
+        padding-top: 0;
+      }
     }
   }
 }
@@ -91,7 +103,14 @@
 }
 
 .modal-footer {
+  background-color: var(--pf-global--BackgroundColor--100);
   margin-top: 0;
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
+}
+
+.modal-header {
+  background-color:var(--pf-global--BackgroundColor--100);
+  padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--lg);
 }
 
 .toleration-modal__field, .taint-modal__field  {

@@ -67,7 +67,9 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
   className = 'modal-header',
 }) => (
   <div className={className}>
-    <h4 className="modal-title">{children}</h4>
+    <h1 className="pf-c-title pf-m-2xl" data-test-id="modal-title">
+      {children}
+    </h1>
   </div>
 );
 
