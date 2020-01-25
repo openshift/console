@@ -171,7 +171,10 @@ class ComponentFactory {
         case TYPE_REVISION_TRAFFIC:
           return TrafficLink;
         case TYPE_WORKLOAD:
-          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+          return withCreateConnector(
+            createConnectorCallback(this.hasServiceBinding),
+            'odc-topology-context-menu',
+          )(
             withDndDrop<
               any,
               any,

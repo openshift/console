@@ -9,6 +9,7 @@ export const getAddPageUrl = (
   obj: K8sResourceKind,
   type: string,
   hasApplication: boolean,
+  contextSource?: string,
 ): string => {
   let pageUrl = '';
   const params = new URLSearchParams();
@@ -38,15 +39,17 @@ export const getAddPageUrl = (
     default:
       throw new Error('Invalid Import option provided');
   }
-  params.append('isKnativeDisabled', 'true');
   if (hasApplication && appGroup) {
     params.append('application', encodeURIComponent(appGroup));
+  }
+  if (contextSource) {
+    params.append('contextSource', encodeURIComponent(contextSource));
   }
   return `${pageUrl}?${params.toString()}`;
 };
 
-export const getMenuPath = (hasApplication: boolean): string =>
-  hasApplication ? 'Add to Application' : 'Add to Project';
+export const getMenuPath = (hasApplication: boolean, connectorSourceContext?: string): string =>
+  connectorSourceContext?.length ? null : hasApplication ? 'Add to Application' : 'Add to Project';
 
 type KebabFactory = (
   label: string,
@@ -55,18 +58,26 @@ type KebabFactory = (
   checkAccess?: boolean,
 ) => KebabAction;
 
-export type KebabAction = (obj?: K8sResourceKind, hasApplication?: boolean) => KebabOption;
+export type KebabAction = (
+  obj?: K8sResourceKind,
+  hasApplication?: boolean,
+  connectorSourceObj?: K8sResourceKind,
+) => KebabOption;
 
 export const createKebabAction: KebabFactory = (label, icon, importType, checkAccess = true) => (
   obj: K8sResourceKind,
   hasApplication: boolean,
+  connectorSourceObj: K8sResourceKind,
 ) => {
   const resourceModel = modelFor(referenceFor(obj));
+  const connectorSourceContext: string = connectorSourceObj?.metadata
+    ? `${referenceFor(connectorSourceObj)}/${connectorSourceObj?.metadata?.name}`
+    : null;
   return {
     label,
     icon,
-    path: getMenuPath(hasApplication),
-    href: getAddPageUrl(obj, importType, hasApplication),
+    path: getMenuPath(hasApplication, connectorSourceContext),
+    href: getAddPageUrl(obj, importType, hasApplication, connectorSourceContext),
     accessReview: checkAccess && asAccessReview(resourceModel, obj, 'create'),
   };
 };

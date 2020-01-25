@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { Node } from '@console/topology';
 import { asAccessReview } from '@console/internal/components/utils';
 import { addResourceMenu } from '../../../actions/add-resources';
 import { TopologyDataMap, TopologyApplicationObject } from '../topology-types';
@@ -51,10 +52,17 @@ const deleteGroup = (application: TopologyApplicationObject) => {
   };
 };
 
-const addResourcesMenu = (application: TopologyApplicationObject) => {
+const addResourcesMenu = (application: TopologyApplicationObject, connectorSource?: Node) => {
   const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
-  return addResourceMenu.map((menuItem) => menuItem(primaryResource, true));
+  const connectorSourceObj = connectorSource?.getData()?.resources?.obj || {};
+  return addResourceMenu.map((menuItem) => menuItem(primaryResource, true, connectorSourceObj));
 };
-export const groupActions = (application: TopologyApplicationObject): KebabOption[] => {
-  return [deleteGroup(application), ...addResourcesMenu(application)];
+
+export const groupActions = (
+  application: TopologyApplicationObject,
+  connectorSource?: Node,
+): KebabOption[] => {
+  return !connectorSource
+    ? [deleteGroup(application), ...addResourcesMenu(application)]
+    : [...addResourcesMenu(application, connectorSource)];
 };

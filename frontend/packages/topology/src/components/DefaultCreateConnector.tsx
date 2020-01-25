@@ -23,7 +23,7 @@ const DefaultCreateConnector: React.FC<DefaultCreateConnectorProps> = ({
       x2={endPoint.x}
       y2={endPoint.y}
     />
-    {hints && hints.length === 1 && hints[0] === 'create' ? (
+    {hints && hints[hints.length - 1] === 'create' ? (
       <g
         transform={`translate(${endPoint.x},${endPoint.y})`}
         className="topology-default-create-connector__create"

@@ -12,6 +12,7 @@ import {
   DropTargetMonitor,
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
+  isGraph,
 } from '@console/topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createConnection } from './components/createConnection';
@@ -19,6 +20,7 @@ import { removeConnection } from './components/removeConnection';
 import { moveNodeToGroup } from './components/moveNodeToGroup';
 import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
 import './components/GraphComponent.scss';
+import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 
 type GraphProps = {
   element: Graph;
@@ -152,13 +154,23 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   { dragEditInProgress: boolean },
   GraphProps
 > = {
-  accept: [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE, TYPE_CONNECTS_TO],
+  accept: [
+    TYPE_WORKLOAD,
+    TYPE_KNATIVE_SERVICE,
+    TYPE_EVENT_SOURCE,
+    TYPE_CONNECTS_TO,
+    CREATE_CONNECTOR_DROP_TYPE,
+  ],
   canDrop: (item, monitor, props) => {
-    return monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element;
+    return (
+      (monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element) ||
+      monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE
+    );
   },
   collect: (monitor) => ({
     dragEditInProgress: monitor.isDragging() && editOperations.includes(monitor.getOperation()),
   }),
+  dropHint: 'create',
 };
 
 const groupWorkloadDropTargetSpec: DropTargetSpec<
@@ -167,13 +179,16 @@ const groupWorkloadDropTargetSpec: DropTargetSpec<
   { droppable: boolean; dropTarget: boolean; canDrop: boolean },
   any
 > = {
-  accept: [TYPE_WORKLOAD, TYPE_EVENT_SOURCE, TYPE_KNATIVE_SERVICE],
-  canDrop: (item, monitor) => monitor.getOperation() === REGROUP_OPERATION,
+  accept: [TYPE_WORKLOAD, TYPE_EVENT_SOURCE, TYPE_KNATIVE_SERVICE, CREATE_CONNECTOR_DROP_TYPE],
+  canDrop: (item, monitor) =>
+    monitor.getOperation() === REGROUP_OPERATION ||
+    monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE,
   collect: (monitor) => ({
     droppable: monitor.isDragging() && monitor.getOperation() === REGROUP_OPERATION,
     dropTarget: monitor.isOver(),
     canDrop: monitor.canDrop(),
   }),
+  dropHint: 'create',
 };
 
 const graphEventSourceDropTargetSpec: DropTargetSpec<
@@ -226,8 +241,14 @@ const edgeDragSourceSpec = (
 
 const createConnectorCallback = (serviceBinding: boolean) => (
   source: Node,
-  target: Node,
-): any[] | null => {
+  target: Node | Graph,
+): React.ReactElement[] | null => {
+  if (isGraph(target)) {
+    return graphContextMenu(target, source);
+  }
+  if (target.isGroup()) {
+    return groupContextMenu(target, source);
+  }
   createConnection(source, target, null, serviceBinding);
   return null;
 };
