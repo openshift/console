@@ -51,7 +51,10 @@ import {
   TYPE_KNATIVE_REVISION,
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_OPERATOR_WORKLOAD,
 } from './const';
+import OperatorBackedService from './components/nodes/OperatorBackedService';
 import KnativeService from './components/nodes/KnativeService';
 import TrafficLink from './components/edges/TrafficLink';
 import ServiceBinding from './components/edges/ServiceBinding';
@@ -116,6 +119,23 @@ class ComponentFactory {
                 document.getElementById('modal-container'),
                 'odc-topology-context-menu',
               )(Application),
+            ),
+          );
+        case TYPE_OPERATOR_BACKED_SERVICE:
+          return OperatorBackedService;
+        case TYPE_OPERATOR_WORKLOAD:
+          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+            withEditReviewAccess('patch')(
+              withSelection(
+                false,
+                true,
+              )(
+                withContextMenu(
+                  workloadContextMenu,
+                  document.getElementById('modal-container'),
+                  'odc-topology-context-menu',
+                )(WorkloadNode),
+              ),
             ),
           );
         case TYPE_KNATIVE_SERVICE:

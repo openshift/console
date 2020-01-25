@@ -10,3 +10,5 @@ export const TYPE_REVISION_TRAFFIC = 'revision-traffic';
 export const TYPE_KNATIVE_REVISION = 'knative-revision';
 export const TYPE_HELM_RELEASE = 'helm-release';
 export const TYPE_HELM_WORKLOAD = 'helm-workload';
+export const TYPE_OPERATOR_BACKED_SERVICE = 'operator-backed-service';
+export const TYPE_OPERATOR_WORKLOAD = 'operator-workload';
