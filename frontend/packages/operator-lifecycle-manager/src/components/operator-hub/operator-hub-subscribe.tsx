@@ -458,7 +458,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               <RadioInput
                 onChange={(e) => {
                   setInstallMode(e.target.value);
-                  setTargetNamespace(null);
+                  setTargetNamespace(
+                    useSuggestedNSForSingleInstallMode ? suggestedNamespace : null,
+                  );
                   setCannotResolve(false);
                 }}
                 value={InstallModeType.InstallModeTypeOwnNamespace}
