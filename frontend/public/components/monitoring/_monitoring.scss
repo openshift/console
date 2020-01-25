@@ -21,11 +21,14 @@
   height: calc(100% - 20px);
   margin: 0 -5px 20px -5px;
 
+  .co-dashboard-card__body--dashboard-graph {
+    padding: 0;
+  }
+
   .query-browser__wrapper {
     border: 0;
     margin: 0;
     overflow: hidden;
-    padding-right: 0;
     padding-top: 0;
   }
 }
