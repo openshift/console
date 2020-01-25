@@ -13,6 +13,8 @@ import {
   Visualization,
   VisualizationSurface,
   isNode,
+  isEdge,
+  BaseEdge,
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
@@ -23,6 +25,7 @@ import TopologySideBar from './TopologySideBar';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
+import TopologyEdgePanel from './TopologyEdgePanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
@@ -90,12 +93,15 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
     let resizeTimeout = null;
     if (selectedIds.length > 0) {
       const selectedEntity = visRef.current.getElementById(selectedIds[0]);
-      if (selectedEntity && isNode(selectedEntity)) {
+      if (selectedEntity) {
+        const visibleEntity = isNode(selectedEntity)
+          ? selectedEntity
+          : (selectedEntity as BaseEdge).getSource();
         resizeTimeout = setTimeout(
           action(() => {
             visRef.current
               .getGraph()
-              .panIntoView(selectedEntity, { offset: 20, minimumVisible: 40 });
+              .panIntoView(visibleEntity, { offset: 20, minimumVisible: 40 });
             resizeTimeout = null;
           }),
           500,
@@ -193,6 +199,9 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }
 
+    if (isEdge(selectedEntity)) {
+      return <TopologyEdgePanel edge={selectedEntity as BaseEdge} data={data} />;
+    }
     return null;
   };
 

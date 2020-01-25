@@ -22,7 +22,6 @@ const TopologyApplicationPanel: React.FC<TopologyApplicationPanelProps> = ({ app
       </h1>
     </div>
     <TopologyApplicationResources resources={application.resources} group={application.name} />
-    <div className="overview__sidebar-pane-body resource-overview__body" />
   </div>
 );
 

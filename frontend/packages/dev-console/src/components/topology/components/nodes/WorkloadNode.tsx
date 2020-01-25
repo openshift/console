@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { calculateRadius } from '@console/shared';
 import {
   Node,
@@ -9,14 +10,20 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ALLOW_SERVICE_BINDING } from '../../../../const';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import Decorator from './Decorator';
 import PodSet from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import ConnectedMonitoringDecorator from './MonitoringDecorator';
 import BaseNode from './BaseNode';
+
+interface StateProps {
+  serviceBinding: boolean;
+}
 
 export type WorkloadNodeProps = {
   element: Node;
@@ -31,13 +38,15 @@ export type WorkloadNodeProps = {
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps &
-  WithCreateConnectorProps;
+  WithCreateConnectorProps &
+  StateProps;
 
 const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   element,
   urlAnchorRef,
   canDrop,
   dropTarget,
+  serviceBinding,
   ...rest
 }) => {
   const { width, height } = element.getBounds();
@@ -49,7 +58,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   const cy = height / 2;
   const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
   const tipContent = `Create a ${
-    element.getData().operatorBackedService ? 'binding' : 'visual'
+    serviceBinding && element.getData().operatorBackedService ? 'binding' : 'visual'
   } connector`;
 
   return (
@@ -127,4 +136,12 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   );
 };
 
-export default observer(WorkloadNode);
+const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
+
+const mapStateToProps = (state: RootState): StateProps => {
+  return {
+    serviceBinding: getServiceBindingStatus(state),
+  };
+};
+
+export default connect(mapStateToProps)(observer(WorkloadNode));
